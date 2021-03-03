@@ -1,5 +1,5 @@
 
-FAIL ":focus-visible" should be a valid selector The string did not match the expected pattern.
-FAIL "a:focus-visible" should be a valid selector The string did not match the expected pattern.
-FAIL ":focus:not(:focus-visible)" should be a valid selector The string did not match the expected pattern.
+PASS ":focus-visible" should be a valid selector
+PASS "a:focus-visible" should be a valid selector
+PASS ":focus:not(:focus-visible)" should be a valid selector
 

@@ -690,268 +690,671 @@ RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange& range)
     return CSSValuePool::singleton().createValue(url.toString(), CSSUnitType::CSS_URI);
 }
 
-static uint8_t clampRGBComponent(double value, bool isPercentage)
+static Color consumeOriginColor(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    if (isPercentage)
+    auto value = consumeColor(args, context);
+    if (!value)
+        return { };
+
+    if (value->isRGBColor())
+        return value->color();
+
+    ASSERT(value->isValueID());
+    auto keyword = value->valueID();
+
+    // FIXME: We don't have enough context in the parser to resolving a system keyword
+    // correctly. We should package up the relative color parameters and resolve the
+    // whole thing at the appropriate time when the origin color is a system keyword.
+    if (StyleColor::isSystemColor(keyword))
+        return { };
+
+    return StyleColor::colorFromKeyword(keyword, { });
+}
+
+static Optional<double> consumeOptionalAlpha(CSSParserTokenRange& range)
+{
+    if (!consumeSlashIncludingWhitespace(range))
+        return 1.0;
+
+    if (auto alphaParameter = consumeNumberOrPercentDividedBy100Raw(range))
+        return clampTo(*alphaParameter, 0.0, 1.0);
+
+    return WTF::nullopt;
+}
+
+template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumeOptionalAlphaOrIdent(CSSParserTokenRange& range)
+{
+    if (auto alpha = consumeOptionalAlpha(range))
+        return { *alpha };
+
+    if (auto ident = consumeIdentRaw<allowedIdents...>(range))
+        return { *ident };
+
+    return WTF::nullopt;
+}
+
+static Optional<double> consumeHue(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (auto angle = consumeAngleRaw(range, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
+        return CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
+
+    return consumeNumberRaw(range);
+}
+
+template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumeHueOrIdent(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (auto hue = consumeHue(range, context))
+        return { *hue };
+
+    if (auto ident = consumeIdentRaw<allowedIdents...>(range))
+        return { *ident };
+
+    return WTF::nullopt;
+}
+
+static double normalizeHue(double hue)
+{
+    return std::fmod(std::fmod(hue, 360.0) + 360.0, 360.0);
+}
+
+template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumeNumberOrIdent(CSSParserTokenRange& range)
+{
+    if (auto number = consumeNumberRaw(range))
+        return { *number };
+
+    if (auto ident = consumeIdentRaw<allowedIdents...>(range))
+        return { *ident };
+
+    return WTF::nullopt;
+}
+
+template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumePercentOrIdent(CSSParserTokenRange& range)
+{
+    if (auto percent = consumePercentRaw(range))
+        return { *percent };
+
+    if (auto ident = consumeIdentRaw<allowedIdents...>(range))
+        return { *ident };
+
+    return WTF::nullopt;
+}
+
+template<CSSValueID C1, CSSValueID C2, CSSValueID C3, CSSValueID AlphaChannel, typename ColorType> static auto extractChannelValue(CSSValueID channel, const ColorType& originColor) -> typename ColorType::ComponentType
+{
+    auto components = asColorComponents(originColor);
+    switch (channel) {
+    case C1:
+        return components[0];
+    case C2:
+        return components[1];
+    case C3:
+        return components[2];
+    case AlphaChannel:
+        return components[3];
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return 0;
+}
+
+template<CSSValueID C1, CSSValueID C2, CSSValueID C3, CSSValueID AlphaChannel, typename ColorType, typename ValueTransformer> static decltype(auto) resolveRelativeColorChannel(const Variant<double, CSSValueID>& parsedChannel, const ColorType& originColor, ValueTransformer&& valueTransformer)
+{
+    return switchOn(parsedChannel,
+        [&] (double value) {
+            return valueTransformer(value);
+        },
+        [&] (CSSValueID channel) {
+            return extractChannelValue<C1, C2, C3, AlphaChannel>(channel, originColor);
+        }
+    );
+}
+
+template<CSSValueID C1, CSSValueID C2, CSSValueID C3, CSSValueID AlphaChannel, typename ColorType> static decltype(auto) resolveRelativeColorChannel(const Variant<double, CSSValueID>& parsedChannel, const ColorType& originColor)
+{
+    return resolveRelativeColorChannel<C1, C2, C3, AlphaChannel>(parsedChannel, originColor, [](auto value) { return value; });
+}
+
+enum class RGBComponentType { Number, Percentage };
+
+static uint8_t clampRGBComponent(double value, RGBComponentType componentType)
+{
+    if (componentType == RGBComponentType::Percentage)
         value = value / 100.0 * 255.0;
 
     return convertPrescaledSRGBAFloatToSRGBAByte(value);
 }
 
-static Color parseRGBParameters(CSSParserTokenRange& range)
+enum class RGBOrHSLSeparatorSyntax { Commas, WhitespaceSlash };
+
+static bool consumeRGBOrHSLSeparator(CSSParserTokenRange& args, RGBOrHSLSeparatorSyntax syntax)
+{
+    if (syntax == RGBOrHSLSeparatorSyntax::Commas)
+        return consumeCommaIncludingWhitespace(args);
+    return true;
+}
+
+static bool consumeRGBOrHSLAlphaSeparator(CSSParserTokenRange& args, RGBOrHSLSeparatorSyntax syntax)
+{
+    if (syntax == RGBOrHSLSeparatorSyntax::Commas)
+        return consumeCommaIncludingWhitespace(args);
+    return consumeSlashIncludingWhitespace(args);
+}
+
+static Optional<double> consumeRGBOrHSLOptionalAlpha(CSSParserTokenRange& args, RGBOrHSLSeparatorSyntax syntax)
+{
+    if (!consumeRGBOrHSLAlphaSeparator(args, syntax))
+        return 1.0;
+
+    return consumeNumberOrPercentDividedBy100Raw(args);
+}
+
+struct RelativeRGBComponent {
+    Variant<double, CSSValueID> value;
+    Optional<RGBComponentType> type;
+};
+
+template<CSSValueID C> static Optional<RelativeRGBComponent> consumeRelativeRGBComponent(CSSParserTokenRange& args, Optional<RGBComponentType> componentType)
+{
+    if (!componentType) {
+        if (auto number = consumeNumberRaw(args))
+            return RelativeRGBComponent { *number, RGBComponentType::Number };
+        if (auto percent = consumePercentRaw(args))
+            return RelativeRGBComponent { *percent, RGBComponentType::Percentage };
+        if (auto channel = consumeIdentRaw<C>(args))
+            return RelativeRGBComponent { *channel, WTF::nullopt };
+        return WTF::nullopt;
+    }
+
+    switch (*componentType) {
+    case RGBComponentType::Number: {
+        if (auto number = consumeNumberRaw(args))
+            return RelativeRGBComponent { *number, RGBComponentType::Number };
+        if (auto channel = consumeIdentRaw<C>(args))
+            return RelativeRGBComponent { *channel, RGBComponentType::Number };
+        return WTF::nullopt;
+    }
+    case RGBComponentType::Percentage: {
+        if (auto percent = consumePercentRaw(args))
+            return RelativeRGBComponent { *percent, RGBComponentType::Percentage };
+        if (auto channel = consumeIdentRaw<C>(args))
+            return RelativeRGBComponent { *channel, RGBComponentType::Percentage };
+        return WTF::nullopt;
+    }
+    }
+}
+
+static Color parseRelativeRGBParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    Optional<RGBComponentType> componentType;
+    auto redResult = consumeRelativeRGBComponent<CSSValueR>(args, componentType);
+    if (!redResult)
+        return { };
+    auto red = redResult->value;
+    componentType = redResult->type;
+
+    auto greenResult = consumeRelativeRGBComponent<CSSValueG>(args, componentType);
+    if (!greenResult)
+        return { };
+    auto green = greenResult->value;
+    componentType = greenResult->type;
+
+    auto blueResult = consumeRelativeRGBComponent<CSSValueB>(args, componentType);
+    if (!blueResult)
+        return { };
+    auto blue = blueResult->value;
+    componentType = blueResult->type;
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // After parsing, convert identifiers to values from the origin color.
+
+    // FIXME: Do we want to being doing this in uint8_t values? Or should we use 
+    // higher precision and clamp at the end? It won't make a difference until we
+    // support calculations on the origin's components.
+    auto originColorAsSRGB = originColor.toSRGBALossy<uint8_t>();
+
+    auto resolvedComponentType = componentType.valueOr(RGBComponentType::Percentage);
+    auto channelResolver = [resolvedComponentType](auto value) {
+        return clampRGBComponent(value, resolvedComponentType);
+    };
+
+    auto resolvedRed = resolveRelativeColorChannel<CSSValueR, CSSValueG, CSSValueB, CSSValueAlpha>(red, originColorAsSRGB, channelResolver);
+    auto resolvedGreen = resolveRelativeColorChannel<CSSValueR, CSSValueG, CSSValueB, CSSValueAlpha>(green, originColorAsSRGB, channelResolver);
+    auto resolvedBlue = resolveRelativeColorChannel<CSSValueR, CSSValueG, CSSValueB, CSSValueAlpha>(blue, originColorAsSRGB, channelResolver);
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueR, CSSValueG, CSSValueB, CSSValueAlpha>(*alpha, originColorAsSRGB, [](auto value) {
+        return convertFloatAlphaTo<uint8_t>(value);
+    });
+
+    return SRGBA<uint8_t> { resolvedRed, resolvedGreen, resolvedBlue, resolvedAlpha };
+}
+
+enum class RGBFunctionMode { RGB, RGBA };
+
+template<RGBFunctionMode Mode> static Color parseRGBParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueRgb || range.peek().functionId() == CSSValueRgba);
     auto args = consumeFunction(range);
 
-    bool isPercentage = false;
-    double colorParameter;
-    if (auto number = consumeNumberRaw(args))
-        colorParameter = *number;
-    else if (auto percent = consumePercentRaw(args)) {
-        colorParameter = *percent;
-        isPercentage = true;
-    } else
+    if constexpr (Mode == RGBFunctionMode::RGB) {
+        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+            return parseRelativeRGBParameters(args, context);
+    }
+
+    struct InitialComponent {
+        double value;
+        RGBComponentType type;
+    };
+
+    auto consumeInitialComponent = [](auto& args) -> Optional<InitialComponent> {
+        if (auto number = consumeNumberRaw(args))
+            return { { *number, RGBComponentType::Number } };
+        if (auto percent = consumePercentRaw(args))
+            return { { *percent, RGBComponentType::Percentage } };
+        return WTF::nullopt;
+    };
+
+    auto consumeComponent = [](auto& args, auto componentType) {
+        switch (componentType) {
+        case RGBComponentType::Percentage:
+            return consumePercentRaw(args);
+        case RGBComponentType::Number:
+            return consumeNumberRaw(args);
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    auto initialComponent = consumeInitialComponent(args);
+    if (!initialComponent)
         return { };
 
-    enum class ColorSyntax {
-        Commas,
-        WhitespaceSlash,
-    };
+    auto componentType = initialComponent->type;
+    auto red = initialComponent->value;
 
-    ColorSyntax syntax = ColorSyntax::Commas;
-    auto consumeSeparator = [&] {
-        if (syntax == ColorSyntax::Commas)
-            return consumeCommaIncludingWhitespace(args);
-        
-        return true;
-    };
+    auto syntax = consumeCommaIncludingWhitespace(args) ? RGBOrHSLSeparatorSyntax::Commas : RGBOrHSLSeparatorSyntax::WhitespaceSlash;
+    
+    auto green = consumeComponent(args, componentType);
+    if (!green)
+        return { };
 
-    uint8_t colorArray[3];
-    colorArray[0] = clampRGBComponent(colorParameter, isPercentage);
-    for (int i = 1; i < 3; i++) {
-        if (i == 1)
-            syntax = consumeCommaIncludingWhitespace(args) ? ColorSyntax::Commas : ColorSyntax::WhitespaceSlash;
-        else if (!consumeSeparator())
-            return { };
+    if (!consumeRGBOrHSLSeparator(args, syntax))
+        return { };
 
-        if (isPercentage) {
-            auto percent = consumePercentRaw(args);
-            if (!percent)
-                return { };
-            colorArray[i] = clampRGBComponent(*percent, true);
-        } else {
-            auto number = consumeNumberRaw(args);
-            if (!number)
-                return { };
-            colorArray[i] = clampRGBComponent(*number, false);
-        }
-    }
+    auto blue = consumeComponent(args, componentType);
+    if (!blue)
+        return { };
 
-    // Historically, alpha was only parsed for rgba(), but css-color-4 specifies that rgba() is a simple alias for rgb().
-    auto consumeAlphaSeparator = [&] {
-        if (syntax == ColorSyntax::Commas)
-            return consumeCommaIncludingWhitespace(args);
-        
-        return consumeSlashIncludingWhitespace(args);
-    };
-
-    uint8_t alphaComponent = 255;
-    if (consumeAlphaSeparator()) {
-        auto alpha = consumeNumberOrPercentDividedBy100Raw(args);
-        if (!alpha)
-            return { };
-        alphaComponent = convertFloatAlphaTo<uint8_t>(*alpha);
-    }
+    auto alpha = consumeRGBOrHSLOptionalAlpha(args, syntax);
+    if (!alpha)
+        return { };
 
     if (!args.atEnd())
         return { };
 
-    return SRGBA<uint8_t> { colorArray[0], colorArray[1], colorArray[2], alphaComponent };
+    auto normalizedRed = clampRGBComponent(red, componentType);
+    auto normalizedGreen = clampRGBComponent(*green, componentType);
+    auto normalizedBlue = clampRGBComponent(*blue, componentType);
+    auto normalizedAlpha = convertFloatAlphaTo<uint8_t>(*alpha);
+
+    return SRGBA<uint8_t> { normalizedRed, normalizedGreen, normalizedBlue, normalizedAlpha };
 }
 
-static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static Color parseRelativeHSLParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    auto hue = consumeHueOrIdent<CSSValueH>(args, context);
+    if (!hue)
+        return { };
+
+    auto saturation = consumePercentOrIdent<CSSValueS>(args);
+    if (!saturation)
+        return { };
+
+    auto lightness = consumePercentOrIdent<CSSValueL>(args);
+    if (!lightness)
+        return { };
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // After parsing, convert identifiers to values from the origin color.
+
+    auto originColorAsHSL = originColor.toColorTypeLossy<HSLA<float>>();
+
+    auto resolvedHue = resolveRelativeColorChannel<CSSValueH, CSSValueS, CSSValueL, CSSValueAlpha>(*hue, originColorAsHSL, [](auto hue) {
+        return normalizeHue(hue);
+    });
+    auto resolvedSaturation = resolveRelativeColorChannel<CSSValueH, CSSValueS, CSSValueL, CSSValueAlpha>(*saturation, originColorAsHSL, [](auto saturation) {
+        return clampTo(saturation, 0.0, 100.0);
+    });
+    auto resolvedLightness = resolveRelativeColorChannel<CSSValueH, CSSValueS, CSSValueL, CSSValueAlpha>(*lightness, originColorAsHSL, [](auto lightness) {
+        return clampTo(lightness, 0.0, 100.0);
+    });
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueH, CSSValueS, CSSValueL, CSSValueAlpha>(*alpha, originColorAsHSL);
+
+    return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(resolvedHue), static_cast<float>(resolvedSaturation), static_cast<float>(resolvedLightness), static_cast<float>(resolvedAlpha) });
+}
+
+enum class HSLFunctionMode { HSL, HSLA };
+
+template<HSLFunctionMode Mode> static Color parseHSLParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
     auto args = consumeFunction(range);
 
-    double hueAngleInDegrees;
-    if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
-        hueAngleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
-    else if (auto number = consumeNumberRaw(args))
-        hueAngleInDegrees = *number;
-    else
-        return { };
-
-    double colorArray[3];
-    colorArray[0] = fmod(fmod(hueAngleInDegrees, 360.0) + 360.0, 360.0) / 360.0;
-
-    bool requiresCommas = false;
-    for (int i = 1; i < 3; i++) {
-        if (consumeCommaIncludingWhitespace(args)) {
-            if (i != 1 && !requiresCommas)
-                return { };
-            requiresCommas = true;
-        } else if (requiresCommas || args.atEnd() || (&args.peek() - 1)->type() != WhitespaceToken)
-            return { };
-        auto percent = consumePercentRaw(args);
-        if (!percent)
-            return { };
-        colorArray[i] = clampTo<double>(*percent, 0.0, 100.0) / 100.0; // Needs to be value between 0 and 1.0.
+    if constexpr (Mode == HSLFunctionMode::HSL) {
+        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+            return parseRelativeHSLParameters(args, context);
     }
 
-    bool commaConsumed = consumeCommaIncludingWhitespace(args);
-    bool slashConsumed = consumeSlashIncludingWhitespace(args);
-    if ((commaConsumed && !requiresCommas) || (slashConsumed && requiresCommas))
+    auto hue = consumeHue(args, context);
+    if (!hue)
         return { };
 
-    double alpha = 1.0;
-    if (commaConsumed || slashConsumed) {
-        auto alphaParameter = consumeNumberOrPercentDividedBy100Raw(args);
-        if (!alphaParameter)
-            return { };
-        alpha = clampTo<double>(*alphaParameter, 0.0, 1.0);
-    }
+    auto syntax = consumeCommaIncludingWhitespace(args) ? RGBOrHSLSeparatorSyntax::Commas : RGBOrHSLSeparatorSyntax::WhitespaceSlash;
 
-    if (!args.atEnd())
+    auto saturation = consumePercentRaw(args);
+    if (!saturation)
         return { };
 
-    return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha) });
-}
-
-static Optional<float> parseOptionalAlpha(CSSParserTokenRange& range)
-{
-    if (!consumeSlashIncludingWhitespace(range))
-        return 1.0f;
-
-    if (auto alphaParameter = consumeNumberOrPercentDividedBy100Raw(range))
-        return clampTo<float>(*alphaParameter, 0.0, 1.0);
-
-    return WTF::nullopt;
-}
-
-static Color parseHWBParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
-{
-    ASSERT(range.peek().functionId() == CSSValueHwb);
-    auto args = consumeFunction(range);
-
-    double hueAngleInDegrees;
-    if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
-        hueAngleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
-    else if (auto number = consumeNumberRaw(args))
-        hueAngleInDegrees = *number;
-    else
+    if (!consumeRGBOrHSLSeparator(args, syntax))
         return { };
 
-    auto whiteness = consumePercentRaw(args, ValueRangeAll);
-    if (!whiteness)
+    auto lightness = consumePercentRaw(args);
+    if (!lightness)
         return { };
 
-    auto blackness = consumePercentRaw(args, ValueRangeAll);
-    if (!blackness)
-        return { };
-
-    auto alpha = parseOptionalAlpha(args);
+    auto alpha = consumeRGBOrHSLOptionalAlpha(args, syntax);
     if (!alpha)
         return { };
 
     if (!args.atEnd())
         return { };
 
-    // Normalize hue.
+    auto normalizedHue = normalizeHue(*hue);
+    auto normalizedSaturation = clampTo(*saturation, 0.0, 100.0);
+    auto normalizedLightness = clampTo(*lightness, 0.0, 100.0);
+    auto normalizedAlpha = clampTo(*alpha, 0.0, 1.0);
 
-    hueAngleInDegrees = std::fmod(hueAngleInDegrees, 360.0);
-    if (hueAngleInDegrees < 0.0)
-        hueAngleInDegrees += 360.0;
-    
-    // Convert angle to normalized form from 0 - 1.
-    auto normalizedHue = hueAngleInDegrees / 360.0;
+    return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(normalizedAlpha) });
+}
 
-    // Normalize whiteness/blackness.
-
+struct WhitenessBlackness {
+    double whiteness;
+    double blackness;
+};
+static WhitenessBlackness normalizeWhitenessBlackness(double whiteness, double blackness)
+{
     //   Values outside of these ranges are not invalid, but are clamped to the
     //   ranges defined here at computed-value time.
-    auto nomalizedWhiteness = clampTo<double>(*whiteness, 0, 100);
-    auto nomalizedBlackness = clampTo<double>(*blackness, 0, 100);
+    WhitenessBlackness result {
+        clampTo(whiteness, 0.0, 100.0),
+        clampTo(blackness, 0.0, 100.0)
+    };
 
     //   If the sum of these two arguments is greater than 100%, then at
     //   computed-value time they are further normalized to add up to 100%, with
     //   the same relative ratio.
-    if (auto sum = nomalizedWhiteness + nomalizedBlackness; sum >= 100) {
-        nomalizedWhiteness *= 100.0 / sum;
-        nomalizedBlackness *= 100.0 / sum;
+    if (auto sum = result.whiteness + result.blackness; sum >= 100) {
+        result.whiteness *= 100.0 / sum;
+        result.blackness *= 100.0 / sum;
     }
 
-    // Convert to normalized form from 0 - 1.
-    nomalizedWhiteness /= 100.0;
-    nomalizedBlackness /= 100.0;
-
-    return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(nomalizedWhiteness), static_cast<float>(nomalizedBlackness), static_cast<float>(*alpha) });
+    return result;
 }
 
-static Color parseLabParameters(CSSParserTokenRange& range)
+static Color parseRelativeHWBParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    auto hue = consumeHueOrIdent<CSSValueH>(args, context);
+    if (!hue)
+        return { };
+
+    auto whiteness = consumePercentOrIdent<CSSValueW>(args);
+    if (!whiteness)
+        return { };
+
+    auto blackness = consumePercentOrIdent<CSSValueB>(args);
+    if (!blackness)
+        return { };
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // After parsing, convert identifiers to values from the origin color.
+
+    auto originColorAsHWB = originColor.toColorTypeLossy<HWBA<float>>();
+
+    auto resolvedHue = resolveRelativeColorChannel<CSSValueH, CSSValueW, CSSValueB, CSSValueAlpha>(*hue, originColorAsHWB, [](auto hue) {
+        return normalizeHue(hue);
+    });
+    auto resolvedWhiteness = resolveRelativeColorChannel<CSSValueH, CSSValueW, CSSValueB, CSSValueAlpha>(*whiteness, originColorAsHWB);
+    auto resolvedBlackness = resolveRelativeColorChannel<CSSValueH, CSSValueW, CSSValueB, CSSValueAlpha>(*blackness, originColorAsHWB);
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueH, CSSValueW, CSSValueB, CSSValueAlpha>(*alpha, originColorAsHWB);
+
+    auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(resolvedWhiteness, resolvedBlackness);
+
+    return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(resolvedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(resolvedAlpha) });
+}
+
+static Color parseHWBParameters(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    ASSERT(range.peek().functionId() == CSSValueHwb);
+    auto args = consumeFunction(range);
+
+    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        return parseRelativeHWBParameters(args, context);
+
+    auto hue = consumeHue(args, context);
+    if (!hue)
+        return { };
+
+    auto whiteness = consumePercentRaw(args);
+    if (!whiteness)
+        return { };
+
+    auto blackness = consumePercentRaw(args);
+    if (!blackness)
+        return { };
+
+    auto alpha = consumeOptionalAlpha(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    auto normalizedHue = normalizeHue(*hue);
+    auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(*whiteness, *blackness);
+
+    return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) });
+}
+
+static Color parseRelativeLabParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    auto lightness = consumePercentOrIdent<CSSValueL>(args);
+    if (!lightness)
+        return { };
+
+    auto aValue = consumeNumberOrIdent<CSSValueA>(args);
+    if (!aValue)
+        return { };
+
+    auto bValue = consumeNumberOrIdent<CSSValueB>(args);
+    if (!bValue)
+        return { };
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    // After parsing, convert identifiers to values from the origin color.
+
+    auto originColorAsLab = originColor.toColorTypeLossy<Lab<float>>();
+
+    auto resolvedLightness = resolveRelativeColorChannel<CSSValueL, CSSValueA, CSSValueB, CSSValueAlpha>(*lightness, originColorAsLab, [](auto lightness) {
+        return std::max(0.0, lightness);
+    });
+    auto resolvedAValue = resolveRelativeColorChannel<CSSValueL, CSSValueA, CSSValueB, CSSValueAlpha>(*aValue, originColorAsLab);
+    auto resolvedBValue = resolveRelativeColorChannel<CSSValueL, CSSValueA, CSSValueB, CSSValueAlpha>(*bValue, originColorAsLab);
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueL, CSSValueA, CSSValueB, CSSValueAlpha>(*alpha, originColorAsLab);
+
+    return Lab<float> { static_cast<float>(resolvedLightness), static_cast<float>(resolvedAValue), static_cast<float>(resolvedBValue), static_cast<float>(resolvedAlpha) };
+}
+
+static Color parseLabParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueLab);
     auto args = consumeFunction(range);
 
-    auto lightness = consumePercentRaw(args, ValueRangeAll);
+    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        return parseRelativeLabParameters(args, context);
+
+    auto lightness = consumePercentRaw(args);
     if (!lightness)
         return { };
 
-    auto aValue = consumeNumberRaw(args, ValueRangeAll);
+    auto aValue = consumeNumberRaw(args);
     if (!aValue)
         return { };
 
-    auto bValue = consumeNumberRaw(args, ValueRangeAll);
+    auto bValue = consumeNumberRaw(args);
     if (!bValue)
         return { };
 
-    auto alpha = parseOptionalAlpha(args);
+    auto alpha = consumeOptionalAlpha(args);
     if (!alpha)
         return { };
 
     if (!args.atEnd())
         return { };
 
-    return Lab<float> { static_cast<float>(*lightness), static_cast<float>(*aValue), static_cast<float>(*bValue), *alpha };
+    auto normalizedLightness = std::max(0.0, *lightness);
+
+    return Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(*aValue), static_cast<float>(*bValue), static_cast<float>(*alpha) };
 }
 
-static Color parseLCHParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static Color parseRelativeLCHParameters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    ASSERT(args.peek().id() == CSSValueFrom);
+    consumeIdentRaw(args);
+
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return { };
+
+    auto lightness = consumePercentOrIdent<CSSValueL>(args);
+    if (!lightness)
+        return { };
+
+    auto chroma = consumeNumberOrIdent<CSSValueC>(args);
+    if (!chroma)
+        return { };
+
+    auto hue = consumeHueOrIdent<CSSValueH>(args, context);
+    if (!hue)
+        return { };
+
+    auto alpha = consumeOptionalAlphaOrIdent<CSSValueAlpha>(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    auto originColorAsLCH = originColor.toColorTypeLossy<LCHA<float>>();
+
+    auto resolvedLightness = resolveRelativeColorChannel<CSSValueL, CSSValueC, CSSValueH, CSSValueAlpha>(*lightness, originColorAsLCH, [](auto lightness) {
+        return std::max(0.0, lightness);
+    });
+    auto resolvedChroma = resolveRelativeColorChannel<CSSValueL, CSSValueC, CSSValueH, CSSValueAlpha>(*chroma, originColorAsLCH, [](auto chroma) {
+        return std::max(0.0, chroma);
+    });
+    auto resolvedHue = resolveRelativeColorChannel<CSSValueL, CSSValueC, CSSValueH, CSSValueAlpha>(*hue, originColorAsLCH, [](auto hue) {
+        return normalizeHue(hue);
+    });
+    auto resolvedAlpha = resolveRelativeColorChannel<CSSValueL, CSSValueC, CSSValueH, CSSValueAlpha>(*alpha, originColorAsLCH);
+
+    return LCHA<float> { static_cast<float>(resolvedLightness), static_cast<float>(resolvedChroma), static_cast<float>(resolvedHue), static_cast<float>(resolvedAlpha) };
+}
+
+static Color parseLCHParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueLch);
     auto args = consumeFunction(range);
 
-    auto lightness = consumePercentRaw(args, ValueRangeAll);
+    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        return parseRelativeLCHParameters(args, context);
+
+    auto lightness = consumePercentRaw(args);
     if (!lightness)
         return { };
 
-    auto chromaValue = consumeNumberRaw(args, ValueRangeAll);
-    if (!chromaValue)
+    auto chroma = consumeNumberRaw(args);
+    if (!chroma)
         return { };
 
-    double hueAngleInDegrees;
-    if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
-        hueAngleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
-    else if (auto number = consumeNumberRaw(args, ValueRangeAll))
-        hueAngleInDegrees = *number;
-    else
+    auto hue = consumeHue(args, context);
+    if (!hue)
         return { };
 
-    hueAngleInDegrees = fmod(hueAngleInDegrees, 360.0);
-    if (hueAngleInDegrees < 0.0)
-        hueAngleInDegrees += 360.0;
-
-    auto alpha = parseOptionalAlpha(args);
+    auto alpha = consumeOptionalAlpha(args);
     if (!alpha)
         return { };
 
     if (!args.atEnd())
         return { };
 
-    return convertColor<Lab<float>>(LCHA<float> { static_cast<float>(*lightness), static_cast<float>(*chromaValue), static_cast<float>(hueAngleInDegrees), *alpha });
+    auto normalizedLightness = std::max(0.0, *lightness);
+    auto normalizedChroma = std::max(0.0, *chroma);
+    auto normalizedHue = normalizeHue(*hue);
+
+    return LCHA<float> { static_cast<float>(normalizedLightness), static_cast<float>(normalizedChroma), static_cast<float>(normalizedHue), static_cast<float>(*alpha) };
 }
 
-template<typename ColorType>
-static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args)
+template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args)
 {
     ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSRGB);
     consumeIdentRaw(args);
@@ -964,11 +1367,11 @@ static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args)
         channels[i] = *value;
     }
 
-    auto alpha = parseOptionalAlpha(args);
+    auto alpha = consumeOptionalAlpha(args);
     if (!alpha)
         return { };
 
-    return ColorType { clampTo<float>(channels[0], 0.0, 1.0), clampTo<float>(channels[1], 0.0, 1.0), clampTo<float>(channels[2], 0.0, 1.0), *alpha };
+    return { ColorType { clampTo<float>(channels[0], 0.0, 1.0), clampTo<float>(channels[1], 0.0, 1.0), clampTo<float>(channels[2], 0.0, 1.0), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
 static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
@@ -978,27 +1381,29 @@ static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
 
     double channels[3] = { 0, 0, 0 };
     [&] {
-        auto lightness = consumePercentRaw(args, ValueRangeAll);
+        auto lightness = consumePercentRaw(args);
         if (!lightness)
             return;
         channels[0] = *lightness;
 
-        auto aValue = consumeNumberRaw(args, ValueRangeAll);
+        auto aValue = consumeNumberRaw(args);
         if (!aValue)
             return;
         channels[1] = *aValue;
 
-        auto bValue = consumeNumberRaw(args, ValueRangeAll);
+        auto bValue = consumeNumberRaw(args);
         if (!bValue)
             return;
         channels[2] = *bValue;
     }();
 
-    auto alpha = parseOptionalAlpha(args);
+    auto alpha = consumeOptionalAlpha(args);
     if (!alpha)
         return { };
 
-    return Lab<float> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), *alpha };
+    auto normalizedLightness = std::max(0.0, channels[0]);
+
+    return { Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
 static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)
@@ -1008,27 +1413,27 @@ static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)
 
     double channels[3] = { 0, 0, 0 };
     [&] {
-        auto x = consumeNumberRaw(args, ValueRangeAll);
+        auto x = consumeNumberRaw(args);
         if (!x)
             return;
         channels[0] = *x;
 
-        auto y = consumeNumberRaw(args, ValueRangeAll);
+        auto y = consumeNumberRaw(args);
         if (!y)
             return;
         channels[1] = *y;
 
-        auto z = consumeNumberRaw(args, ValueRangeAll);
+        auto z = consumeNumberRaw(args);
         if (!z)
             return;
         channels[2] = *z;
     }();
 
-    auto alpha = parseOptionalAlpha(args);
+    auto alpha = consumeOptionalAlpha(args);
     if (!alpha)
         return { };
 
-    return XYZA<float, WhitePoint::D50> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), *alpha };
+    return { XYZA<float, WhitePoint::D50> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)
@@ -1071,7 +1476,382 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
     if (!args.atEnd())
         return { };
 
+    ASSERT(color.usesColorFunctionSerialization());
     return color;
+}
+
+struct HueColorAdjuster {
+    enum class Type {
+        Shorter,
+        Longer,
+        Increasing,
+        Decreasing,
+        Specified
+    };
+
+    static std::pair<double, double> fixupAnglesForInterpolation(double theta1, double theta2, Type type)
+    {
+        ASSERT(theta1 >= 0.0);
+        ASSERT(theta1 <= 360.0);
+        ASSERT(theta2 >= 0.0);
+        ASSERT(theta2 <= 360.0);
+
+        switch (type) {
+        case Type::Shorter: {
+            auto difference = theta2 - theta1;
+            if (difference > 180.0)
+                return { theta1 + 360.0, theta2 };
+            if (difference < -180.0)
+                return { theta1, theta2 + 360.0 };
+            return { theta1, theta2 };
+        }
+        case Type::Longer: {
+            auto difference = theta2 - theta1;
+            if (difference >= 0.0 && difference < 180.0)
+                return { theta1 + 360.0, theta2 };
+            if (difference >= -180.0  && difference < 0)
+                return { theta1, theta2 + 360.0 };
+            return { theta1, theta2 };
+        }
+        case Type::Increasing: {
+            if (theta2 < theta1)
+                return { theta1, theta2 + 360.0 };
+            return { theta1, theta2 };
+        }
+        case Type::Decreasing: {
+            if (theta1 < theta2)
+                return { theta1 + 360.0, theta2 };
+            return { theta1, theta2 };
+        }
+        case Type::Specified:
+            return { theta1, theta2 };
+        }
+    }
+
+    HueColorAdjuster(double value = 0.0, Type type = Type::Shorter)
+        : type { type }
+        , value { value }
+    {
+    }
+
+    Type type;
+    double value;
+};
+
+template<typename C, CSSValueID ID0, typename Channel0, CSSValueID ID1, typename Channel1, CSSValueID ID2, typename Channel2, CSSValueID ID3, typename Channel3>
+struct ColorAdjuster {
+    using ColorType = C;
+    static constexpr auto channelCSSValueIDs = std::make_tuple(ID0, ID1, ID2, ID3);
+
+    ColorAdjuster() = default;
+    explicit ColorAdjuster(double percentage)
+        : channels { percentage, percentage, percentage, percentage }
+    {
+    }
+
+    std::tuple<Optional<Channel0>, Optional<Channel1>, Optional<Channel2>, Optional<Channel3>> channels;
+};
+
+using HSLColorAdjuster = ColorAdjuster<HSLA<float>, CSSValueHue, HueColorAdjuster, CSSValueSaturation, double, CSSValueLightness, double, CSSValueAlpha, double>;
+using HWBColorAdjuster = ColorAdjuster<HWBA<float>, CSSValueHue, HueColorAdjuster, CSSValueWhiteness, double, CSSValueBlackness, double, CSSValueAlpha, double>;
+using LCHColorAdjuster = ColorAdjuster<LCHA<float>, CSSValueLightness, double, CSSValueChroma, HueColorAdjuster, CSSValueHue, double, CSSValueAlpha, double>;
+using LabColorAdjuster = ColorAdjuster<Lab<float>, CSSValueLightness, double, CSSValueA, double, CSSValueB, double, CSSValueAlpha, double>;
+using SRGBColorAdjuster = ColorAdjuster<SRGBA<float>, CSSValueRed, double, CSSValueGreen, double, CSSValueBlue, double, CSSValueAlpha, double>;
+using XYZColorAdjuster = ColorAdjuster<XYZA<float, WhitePoint::D50>, CSSValueX, double, CSSValueY, double, CSSValueZ, double, CSSValueAlpha, double>;
+
+template<typename Adjuster> struct ColorMixComponent {
+    Color color;
+    Adjuster adjuster;
+};
+
+template<CSSValueID Ident, typename T> struct AdjusterConsumer;
+
+template<CSSValueID Ident> struct AdjusterConsumer<Ident, HueColorAdjuster> {
+    static Optional<HueColorAdjuster> consume(CSSParserTokenRange& args)
+    {
+        if (!consumeIdentRaw<Ident>(args))
+            return WTF::nullopt;
+
+        HueColorAdjuster result;
+        if (auto hueAdjustmentType = consumeHueAdjustmentType(args))
+            result.type = *hueAdjustmentType;
+
+        // FIXME: Is clamping to 0 for negative percentages the right thing to do?
+        if (auto percentage = consumePercentRaw(args))
+            result.value = std::max(0.0, *percentage);
+
+        // FIXME: Should an adjuster without a percetange be allowed?
+        //  e.g color-mix(hsl, teal hue, red);
+
+        return result;
+    }
+
+    static Optional<HueColorAdjuster::Type> consumeHueAdjustmentType(CSSParserTokenRange& args)
+    {
+        switch (args.peek().id()) {
+        case CSSValueShorter:
+            consumeIdentRaw(args);
+            return HueColorAdjuster::Type::Shorter;
+        case CSSValueLonger:
+            consumeIdentRaw(args);
+            return HueColorAdjuster::Type::Longer;
+        case CSSValueIncreasing:
+            consumeIdentRaw(args);
+            return HueColorAdjuster::Type::Increasing;
+        case CSSValueDecreasing:
+            consumeIdentRaw(args);
+            return HueColorAdjuster::Type::Decreasing;
+        case CSSValueSpecified:
+            consumeIdentRaw(args);
+            return HueColorAdjuster::Type::Specified;
+        default:
+            return WTF::nullopt;
+        }
+    }
+};
+
+template<CSSValueID Ident> struct AdjusterConsumer<Ident, double> {
+    static Optional<double> consume(CSSParserTokenRange& args)
+    {
+        if (!consumeIdentRaw<Ident>(args))
+            return WTF::nullopt;
+        
+        // FIXME: Is clamping to 0 for negative percentages the right thing to do?
+        if (auto percentage = consumePercentRaw(args))
+            return std::max(0.0, *percentage);
+
+        // FIXME: Should an adjuster without a percetange be allowed?
+        //  e.g color-mix(hsl, teal saturation, red);
+
+        return 0;
+    }
+};
+
+template<CSSValueID Ident, typename T> inline decltype(auto) consumeAdjuster(CSSParserTokenRange& args)
+{
+    return AdjusterConsumer<Ident, T>::consume(args);
+}
+
+template<std::size_t I, typename Adjuster> static bool consumeAndUpdateAdjusterAtIndex(CSSParserTokenRange& args, Adjuster& adjuster)
+{
+    using AdjusterType = std::decay_t<decltype(std::get<I>(adjuster.channels).value())>;
+    static constexpr CSSValueID Ident = std::get<I>(Adjuster::channelCSSValueIDs);
+
+    if (auto adjustment = consumeAdjuster<Ident, AdjusterType>(args)) {
+        std::get<I>(adjuster.channels) = *adjustment;
+        return true;
+    }
+    return false;
+}
+
+template<typename Adjuster> static bool consumeAndUpdateAdjuster(CSSParserTokenRange& args, Adjuster& adjuster)
+{
+    if (consumeAndUpdateAdjusterAtIndex<0>(args, adjuster))
+        return true;
+    if (consumeAndUpdateAdjusterAtIndex<1>(args, adjuster))
+        return true;
+    if (consumeAndUpdateAdjusterAtIndex<2>(args, adjuster))
+        return true;
+    if (consumeAndUpdateAdjusterAtIndex<3>(args, adjuster))
+        return true;
+    return false;
+}
+
+template<typename Adjuster> static Adjuster consumeAdjusters(CSSParserTokenRange& args)
+{
+    Adjuster adjuster;
+    while (consumeAndUpdateAdjuster(args, adjuster)) {
+        // Keep consuming until there are no more adjusters.
+    }
+    
+    return adjuster;
+}
+
+template<typename Adjuster> static Optional<ColorMixComponent<Adjuster>> consumeMixComponents(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    auto originColor = consumeOriginColor(args, context);
+    if (!originColor.isValid())
+        return WTF::nullopt;
+
+    // FIXME: Is clamping to 0 for negative percentages the right thing to do?
+    if (auto percentage = consumePercentRaw(args))
+        return { { WTFMove(originColor), Adjuster { std::max(0.0, *percentage) } } };
+
+    return { { WTFMove(originColor), consumeAdjusters<Adjuster>(args) } };
+}
+
+static std::pair<HueColorAdjuster, HueColorAdjuster> normalizeAdjusterValues(HueColorAdjuster adjuster1, HueColorAdjuster adjuster2)
+{
+    if (auto sum = adjuster1.value + adjuster2.value; sum != 100.0) {
+        adjuster1.value *= 100.0 / sum;
+        adjuster2.value *= 100.0 / sum;
+    }
+
+    return { adjuster1, adjuster2 };
+}
+
+static std::pair<double, double> normalizeAdjusterValues(double adjuster1, double adjuster2)
+{
+    if (auto sum = adjuster1 + adjuster2; sum != 100.0) {
+        adjuster1 *= 100.0 / sum;
+        adjuster2 *= 100.0 / sum;
+    }
+
+    return { adjuster1, adjuster2 };
+}
+
+static HueColorAdjuster remainingAdjustment(HueColorAdjuster adjuster)
+{
+    return { 100.0 - adjuster.value, adjuster.type };
+}
+
+static double remainingAdjustment(double adjuster)
+{
+    return 100.0 - adjuster;
+}
+
+template<typename AdjusterType> static auto normalizeAdjusterValues(Optional<AdjusterType> adjuster1, Optional<AdjusterType> adjuster2) -> std::pair<AdjusterType, AdjusterType>
+{
+    if (adjuster1 && adjuster2)
+        return normalizeAdjusterValues(*adjuster1, *adjuster2);
+    if (!adjuster1 && adjuster2)
+        return { remainingAdjustment(*adjuster2), *adjuster2 };
+    if (adjuster1 && !adjuster2)
+        return { *adjuster1, remainingAdjustment(*adjuster1) };
+    // When neigher mix component provides an adjuster, the result is the non-modified
+    // channel from from the first color.
+    ASSERT(!adjuster1 && !adjuster2);
+    return { 100.0, 0.0 };
+}
+
+static double mixComponent(float component1, HueColorAdjuster adjustment1, float component2, HueColorAdjuster adjustment2)
+{
+    // FIXME: The spec does not indicate what to do if two different hue types are specified. We always use the first one for now,
+    // though we probably should take into account whether it was actually specified or is the default value. That normalization
+    // should happen in normalizeAdjusterValues().
+
+    auto [fixedUpComponent1, fixedUpComponent2] = HueColorAdjuster::fixupAnglesForInterpolation(component1, component2, adjustment1.type);
+    auto result = (fixedUpComponent1 * (adjustment1.value / 100.0)) + (fixedUpComponent2 * (adjustment2.value / 100.0));
+    // FIXME: Check if this full normalization is needed.
+    return normalizeHue(result);
+}
+
+static double mixComponent(float component1, double adjustment1, float component2, double adjustment2)
+{
+    return (component1 * (adjustment1 / 100.0)) + (component2 * (adjustment2 / 100.0));
+}
+
+template<std::size_t I, typename Adjuster> static double mixComponentAtIndex(const ColorComponents<float>& color1, const Adjuster& adjuster1, const ColorComponents<float>& color2, const Adjuster& adjuster2)
+{
+    auto [normalizedAdjuster1Value, normalizedAdjuster2Value] = normalizeAdjusterValues(std::get<I>(adjuster1.channels), std::get<I>(adjuster2.channels));
+    return mixComponent(color1[I], normalizedAdjuster1Value, color2[I], normalizedAdjuster2Value);
+}
+
+template<typename ColorType> inline ColorType makeColorTypeByNormalizingComponentsAfterMix(double channel0, double channel1, double channel2, double channel3)
+{
+    return { static_cast<float>(channel0), static_cast<float>(channel1), static_cast<float>(channel2), static_cast<float>(channel3) };
+}
+
+template<> inline HWBA<float> makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>(double hue, double whiteness, double blackness, double alpha)
+{
+    auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(whiteness, blackness);
+    return { static_cast<float>(hue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(alpha) };
+}
+
+template<typename Adjuster> static typename Adjuster::ColorType mix(const ColorMixComponent<Adjuster>& mixComponents1, const ColorMixComponent<Adjuster>& mixComponents2)
+{
+    using ColorType = typename Adjuster::ColorType;
+
+    auto color1 = asColorComponents(mixComponents1.color.template toColorTypeLossy<ColorType>());
+    auto color2 = asColorComponents(mixComponents2.color.template toColorTypeLossy<ColorType>());
+
+    auto adjuster1 = mixComponents1.adjuster;
+    auto adjuster2 = mixComponents2.adjuster;
+
+    if (!std::get<0>(adjuster1.channels) && !std::get<1>(adjuster1.channels) && !std::get<2>(adjuster1.channels) && !std::get<3>(adjuster1.channels) && !std::get<0>(adjuster2.channels) && !std::get<1>(adjuster2.channels) && !std::get<2>(adjuster2.channels) && !std::get<3>(adjuster2.channels)) {
+        // No adjusters being specified at all is special cased to mean mix 50-50.
+        adjuster1 = Adjuster { 50.0 };
+        adjuster2 = Adjuster { 50.0 };
+    }
+
+    auto channel0 = mixComponentAtIndex<0>(color1, adjuster1, color2, adjuster2);
+    auto channel1 = mixComponentAtIndex<1>(color1, adjuster1, color2, adjuster2);
+    auto channel2 = mixComponentAtIndex<2>(color1, adjuster1, color2, adjuster2);
+    auto channel3 = mixComponentAtIndex<3>(color1, adjuster1, color2, adjuster2);
+
+    return makeColorTypeByNormalizingComponentsAfterMix<ColorType>(channel0, channel1, channel2, channel3);
+}
+
+template<typename Adjuster> static Optional<typename Adjuster::ColorType> parseColorMixFunctionParametersUsingAdjusters(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    auto mixComponents1 = consumeMixComponents<Adjuster>(args, context);
+    if (!mixComponents1)
+        return WTF::nullopt;
+
+    // FIXME: This comma is not in the grammar, but is in all the examples.
+    if (!consumeCommaIncludingWhitespace(args))
+        return WTF::nullopt;
+
+    auto mixComponents2 = consumeMixComponents<Adjuster>(args, context);
+    if (!mixComponents2)
+        return WTF::nullopt;
+
+    return mix(*mixComponents1, *mixComponents2);
+}
+
+static Color parseColorMixFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    ASSERT(range.peek().functionId() == CSSValueColorMix);
+
+    if (!context.colorMixEnabled)
+        return { };
+
+    auto args = consumeFunction(range);
+
+    auto consumeIdentAndComma = [](CSSParserTokenRange& args) {
+        consumeIdentRaw(args);
+        // FIXME: This comma is not in the grammar, but is in all the examples.
+        return consumeCommaIncludingWhitespace(args);
+    };
+
+    switch (args.peek().id()) {
+    case CSSValueHsl: {
+        if (!consumeIdentAndComma(args))
+            return { };
+        auto hsl = parseColorMixFunctionParametersUsingAdjusters<HSLColorAdjuster>(args, context);
+        if (!hsl)
+            return { };
+        return convertColor<SRGBA<uint8_t>>(*hsl);
+    }
+    case CSSValueHwb: {
+        if (!consumeIdentAndComma(args))
+            return { };
+        auto hwb = parseColorMixFunctionParametersUsingAdjusters<HWBColorAdjuster>(args, context);
+        if (!hwb)
+            return { };
+        return convertColor<SRGBA<uint8_t>>(*hwb);
+    }
+    case CSSValueLch:
+        if (!consumeIdentAndComma(args))
+            return { };
+        return parseColorMixFunctionParametersUsingAdjusters<LCHColorAdjuster>(args, context);
+    case CSSValueLab:
+        if (!consumeIdentAndComma(args))
+            return { };
+        return parseColorMixFunctionParametersUsingAdjusters<LabColorAdjuster>(args, context);
+    case CSSValueXyz:
+        if (!consumeIdentAndComma(args))
+            return { };
+        return parseColorMixFunctionParametersUsingAdjusters<XYZColorAdjuster>(args, context);
+    case CSSValueSRGB:
+        if (!consumeIdentAndComma(args))
+            return { };
+        return parseColorMixFunctionParametersUsingAdjusters<SRGBColorAdjuster>(args, context);
+    default:
+        // Default to using LCH if no color space is provided as per the spec.
+        // FIXME: This behavior is unnecessarily confusing, we should remove the default from the spec.
+        return parseColorMixFunctionParametersUsingAdjusters<LCHColorAdjuster>(args, context);
+    }
 }
 
 static Optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
@@ -1111,31 +1891,38 @@ static Optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool a
     return *result;
 }
 
-static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static Color parseColorFunction(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     CSSParserTokenRange colorRange = range;
     CSSValueID functionId = range.peek().functionId();
     Color color;
     switch (functionId) {
     case CSSValueRgb:
+        color = parseRGBParameters<RGBFunctionMode::RGB>(colorRange, context);
+        break;
     case CSSValueRgba:
-        color = parseRGBParameters(colorRange);
+        color = parseRGBParameters<RGBFunctionMode::RGBA>(colorRange, context);
         break;
     case CSSValueHsl:
+        color = parseHSLParameters<HSLFunctionMode::HSL>(colorRange, context);
+        break;
     case CSSValueHsla:
-        color = parseHSLParameters(colorRange, cssParserMode);
+        color = parseHSLParameters<HSLFunctionMode::HSLA>(colorRange, context);
         break;
     case CSSValueHwb:
-        color = parseHWBParameters(colorRange, cssParserMode);
+        color = parseHWBParameters(colorRange, context);
         break;
     case CSSValueLab:
-        color = parseLabParameters(colorRange);
+        color = parseLabParameters(colorRange, context);
         break;
     case CSSValueLch:
-        color = parseLCHParameters(colorRange, cssParserMode);
+        color = parseLCHParameters(colorRange, context);
         break;
     case CSSValueColor:
         color = parseColorFunctionParameters(colorRange);
+        break;
+    case CSSValueColorMix:
+        color = parseColorMixFunctionParameters(colorRange, context);
         break;
     default:
         return { };
@@ -1145,7 +1932,7 @@ static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssPar
     return color;
 }
 
-Color consumeColorWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+Color consumeColorWorkerSafe(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     Color result;
     auto keyword = range.peek().id();
@@ -1154,7 +1941,7 @@ Color consumeColorWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParser
         //        For now, we detect the system color, but then intentionally fail parsing.
         if (StyleColor::isSystemColor(keyword))
             return { };
-        if (!isValueAllowedInMode(keyword, cssParserMode))
+        if (!isValueAllowedInMode(keyword, context.mode))
             return { };
         result = StyleColor::colorFromKeyword(keyword, { });
         range.consumeIncludingWhitespace();
@@ -1163,7 +1950,7 @@ Color consumeColorWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParser
     if (auto parsedColor = parseHexColor(range, false))
         result = *parsedColor;
     else
-        result = parseColorFunction(range, cssParserMode);
+        result = parseColorFunction(range, context);
 
     if (!range.atEnd())
         return { };
@@ -1171,11 +1958,11 @@ Color consumeColorWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParser
     return result;
 }
 
-RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, CSSParserMode cssParserMode, bool acceptQuirkyColors)
+RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, const CSSParserContext& context, bool acceptQuirkyColors)
 {
     auto keyword = range.peek().id();
     if (StyleColor::isColorKeyword(keyword)) {
-        if (!isValueAllowedInMode(keyword, cssParserMode))
+        if (!isValueAllowedInMode(keyword, context.mode))
             return nullptr;
         return consumeIdent(range);
     }
@@ -1183,7 +1970,7 @@ RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, CSSParserMode
     if (auto parsedColor = parseHexColor(range, acceptQuirkyColors))
         color = *parsedColor;
     else {
-        color = parseColorFunction(range, cssParserMode);
+        color = parseColorFunction(range, context);
         if (!color.isValid())
             return nullptr;
     }
@@ -1413,14 +2200,14 @@ static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPoint(CSSParserTokenRa
 }
 
 // Used to parse colors for -webkit-gradient(...).
-static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientStopColor(CSSParserTokenRange& args, CSSParserMode cssParserMode)
+static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientStopColor(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     if (args.peek().id() == CSSValueCurrentcolor)
         return nullptr;
-    return consumeColor(args, cssParserMode);
+    return consumeColor(args, context);
 }
 
-static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGradientColorStop& stop, CSSParserMode cssParserMode)
+static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGradientColorStop& stop, const CSSParserContext& context)
 {
     CSSValueID id = range.peek().functionId();
     if (id != CSSValueFrom && id != CSSValueTo && id != CSSValueColorStop)
@@ -1442,11 +2229,11 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
     }
 
     stop.position = CSSValuePool::singleton().createValue(position, CSSUnitType::CSS_NUMBER);
-    stop.color = consumeDeprecatedGradientStopColor(args, cssParserMode);
+    stop.color = consumeDeprecatedGradientStopColor(args, context);
     return stop.color && args.atEnd();
 }
 
-static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode)
+static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     RefPtr<CSSGradientValue> result;
     CSSValueID id = args.consumeIncludingWhitespace().id();
@@ -1499,7 +2286,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
 
     CSSGradientColorStop stop;
     while (consumeCommaIncludingWhitespace(args)) {
-        if (!consumeDeprecatedGradientColorStop(args, stop, cssParserMode))
+        if (!consumeDeprecatedGradientColorStop(args, stop, context))
             return nullptr;
         result->addStop(WTFMove(stop));
     }
@@ -1508,20 +2295,20 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
     return result;
 }
 
-static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode mode, CSSGradientValue& gradient)
+static bool consumeGradientColorStops(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientValue& gradient)
 {
     bool supportsColorHints = gradient.gradientType() == CSSLinearGradient || gradient.gradientType() == CSSRadialGradient || gradient.gradientType() == CSSConicGradient;
     
     auto consumeStopPosition = [&] {
         return gradient.gradientType() == CSSConicGradient
-            ? consumeAngleOrPercent(range, mode, ValueRangeAll, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)
-            : consumeLengthOrPercent(range, mode, ValueRangeAll);
+            ? consumeAngleOrPercent(range, context.mode, ValueRangeAll, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)
+            : consumeLengthOrPercent(range, context.mode, ValueRangeAll);
     };
 
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;
     do {
-        CSSGradientColorStop stop { consumeColor(range, mode), consumeStopPosition(), { } };
+        CSSGradientColorStop stop { consumeColor(range, context), consumeStopPosition(), { } };
         if (!stop.color && !stop.position)
             return false;
 
@@ -1552,11 +2339,11 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
     return true;
 }
 
-static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode, CSSGradientRepeat repeating)
+static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
     auto result = CSSRadialGradientValue::create(repeating, CSSPrefixedRadialGradient);
 
-    auto centerCoordinate = consumeOneOrTwoValuedPositionCoordinates(args, cssParserMode, UnitlessQuirk::Forbid);
+    auto centerCoordinate = consumeOneOrTwoValuedPositionCoordinates(args, context.mode, UnitlessQuirk::Forbid);
     if (centerCoordinate && !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
@@ -1567,10 +2354,10 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
 
     // Or, two lengths or percentages
     if (!shape && !sizeKeyword) {
-        auto horizontalSize = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
+        auto horizontalSize = consumeLengthOrPercent(args, context.mode, ValueRangeNonNegative);
         RefPtr<CSSPrimitiveValue> verticalSize;
         if (horizontalSize) {
-            verticalSize = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
+            verticalSize = consumeLengthOrPercent(args, context.mode, ValueRangeNonNegative);
             if (!verticalSize)
                 return nullptr;
             consumeCommaIncludingWhitespace(args);
@@ -1581,7 +2368,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
         consumeCommaIncludingWhitespace(args);
     }
 
-    if (!consumeGradientColorStops(args, cssParserMode, result))
+    if (!consumeGradientColorStops(args, context, result))
         return nullptr;
 
     if (centerCoordinate) {
@@ -1596,7 +2383,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
     return result;
 }
 
-static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode, CSSGradientRepeat repeating)
+static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
     RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating, CSSRadialGradient);
 
@@ -1624,13 +2411,13 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
                 break;
             }
         } else {
-            auto center = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
+            auto center = consumeLengthOrPercent(args, context.mode, ValueRangeNonNegative);
             if (!center)
                 break;
             if (horizontalSize)
                 return nullptr;
             horizontalSize = center;
-            center = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
+            center = consumeLengthOrPercent(args, context.mode, ValueRangeNonNegative);
             if (center) {
                 verticalSize = center;
                 ++i;
@@ -1659,7 +2446,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
     if (args.peek().id() == CSSValueAt) {
         args.consumeIncludingWhitespace();
         
-        auto centerCoordinate = consumePositionCoordinates(args, cssParserMode, UnitlessQuirk::Forbid, PositionSyntax::Position);
+        auto centerCoordinate = consumePositionCoordinates(args, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
         if (!centerCoordinate)
             return nullptr;
         
@@ -1676,7 +2463,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
 
     if ((shape || sizeKeyword || horizontalSize || centerX || centerY) && !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    if (!consumeGradientColorStops(args, cssParserMode, *result))
+    if (!consumeGradientColorStops(args, context, *result))
         return nullptr;
 
     result->setShape(WTFMove(shape));
@@ -1687,12 +2474,12 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
     return result;
 }
 
-static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode, CSSGradientRepeat repeating, CSSGradientType gradientType)
+static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating, CSSGradientType gradientType)
 {
     RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating, gradientType);
 
     bool expectComma = true;
-    RefPtr<CSSPrimitiveValue> angle = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    RefPtr<CSSPrimitiveValue> angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (angle)
         result->setAngle(angle.releaseNonNull());
     else if (gradientType == CSSPrefixedLinearGradient || consumeIdent<CSSValueTo>(args)) {
@@ -1715,12 +2502,12 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, CSSPars
 
     if (expectComma && !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    if (!consumeGradientColorStops(args, cssParserMode, *result))
+    if (!consumeGradientColorStops(args, context, *result))
         return nullptr;
     return result;
 }
 
-static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParserContext context, CSSGradientRepeat repeating)
+static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
 #if ENABLE(CSS_CONIC_GRADIENTS)
     RefPtr<CSSConicGradientValue> result = CSSConicGradientValue::create(repeating);
@@ -1754,7 +2541,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParse
 
     if (expectComma && !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    if (!consumeGradientColorStops(args, context.mode, *result))
+    if (!consumeGradientColorStops(args, context, *result))
         return nullptr;
     return result;
 #else
@@ -1765,14 +2552,14 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParse
 #endif
 }
 
-RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange& range, CSSParserContext context)
+RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
     return consumeImage(range, context);
 }
 
-static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, CSSParserContext context, bool prefixed)
+static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, const CSSParserContext& context, bool prefixed)
 {
     auto fromImageValue = consumeImageOrNone(args, context);
     if (!fromImageValue || !consumeCommaIncludingWhitespace(args))
@@ -1848,30 +2635,30 @@ static RefPtr<CSSValue> consumeCustomPaint(CSSParserTokenRange& args)
 }
 #endif
 
-static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSParserContext context)
+static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     CSSValueID id = range.peek().functionId();
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
     RefPtr<CSSValue> result;
     if (id == CSSValueRadialGradient)
-        result = consumeRadialGradient(args, context.mode, NonRepeating);
+        result = consumeRadialGradient(args, context, NonRepeating);
     else if (id == CSSValueRepeatingRadialGradient)
-        result = consumeRadialGradient(args, context.mode, Repeating);
+        result = consumeRadialGradient(args, context, Repeating);
     else if (id == CSSValueWebkitLinearGradient)
-        result = consumeLinearGradient(args, context.mode, NonRepeating, CSSPrefixedLinearGradient);
+        result = consumeLinearGradient(args, context, NonRepeating, CSSPrefixedLinearGradient);
     else if (id == CSSValueWebkitRepeatingLinearGradient)
-        result = consumeLinearGradient(args, context.mode, Repeating, CSSPrefixedLinearGradient);
+        result = consumeLinearGradient(args, context, Repeating, CSSPrefixedLinearGradient);
     else if (id == CSSValueRepeatingLinearGradient)
-        result = consumeLinearGradient(args, context.mode, Repeating, CSSLinearGradient);
+        result = consumeLinearGradient(args, context, Repeating, CSSLinearGradient);
     else if (id == CSSValueLinearGradient)
-        result = consumeLinearGradient(args, context.mode, NonRepeating, CSSLinearGradient);
+        result = consumeLinearGradient(args, context, NonRepeating, CSSLinearGradient);
     else if (id == CSSValueWebkitGradient)
-        result = consumeDeprecatedGradient(args, context.mode);
+        result = consumeDeprecatedGradient(args, context);
     else if (id == CSSValueWebkitRadialGradient)
-        result = consumeDeprecatedRadialGradient(args, context.mode, NonRepeating);
+        result = consumeDeprecatedRadialGradient(args, context, NonRepeating);
     else if (id == CSSValueWebkitRepeatingRadialGradient)
-        result = consumeDeprecatedRadialGradient(args, context.mode, Repeating);
+        result = consumeDeprecatedRadialGradient(args, context, Repeating);
     else if (id == CSSValueConicGradient)
         result = consumeConicGradient(args, context, NonRepeating);
     else if (id == CSSValueRepeatingConicGradient)
@@ -2017,7 +2804,7 @@ static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range
     RefPtr<CSSValue> parsedValue;
 
     if (filterType == CSSValueDropShadow)
-        parsedValue = consumeSingleShadow(args, context.mode, false, false);
+        parsedValue = consumeSingleShadow(args, context, false, false);
     else {
         if (args.atEnd())
             return filterValue;
@@ -2064,7 +2851,7 @@ RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContex
     return list.ptr();
 }
 
-RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParserMode cssParserMode, bool allowInset, bool allowSpread)
+RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSSParserContext& context, bool allowInset, bool allowSpread)
 {
     RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> color;
@@ -2089,7 +2876,7 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParser
             continue;
         }
         
-        auto maybeColor = consumeColor(range, cssParserMode);
+        auto maybeColor = consumeColor(range, context);
         if (maybeColor) {
             // If we just parsed a color but already had one, the given token range is not a valid <shadow>.
             if (color)
@@ -2103,23 +2890,23 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParser
             // If we've already parsed these lengths, the given value is invalid as there cannot be two lengths components in a single <shadow> value.
             return nullptr;
         }
-        horizontalOffset = consumeLength(range, cssParserMode, ValueRangeAll);
+        horizontalOffset = consumeLength(range, context.mode, ValueRangeAll);
         if (!horizontalOffset)
             return nullptr;
-        verticalOffset = consumeLength(range, cssParserMode, ValueRangeAll);
+        verticalOffset = consumeLength(range, context.mode, ValueRangeAll);
         if (!verticalOffset)
             return nullptr;
 
         const CSSParserToken& token = range.peek();
         // The explicit check for calc() is unfortunate. This is ensuring that we only fail parsing if there is a length, but it fails the range check.
         if (token.type() == DimensionToken || token.type() == NumberToken || (token.type() == FunctionToken && CSSCalcValue::isCalcFunction(token.functionId()))) {
-            blurRadius = consumeLength(range, cssParserMode, ValueRangeNonNegative);
+            blurRadius = consumeLength(range, context.mode, ValueRangeNonNegative);
             if (!blurRadius)
                 return nullptr;
         }
 
         if (blurRadius && allowSpread)
-            spreadDistance = consumeLength(range, cssParserMode, ValueRangeAll);
+            spreadDistance = consumeLength(range, context.mode, ValueRangeAll);
     }
     
     // In order for this to be a valid <shadow>, at least these lengths must be present.
@@ -2128,7 +2915,7 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParser
     return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color));
 }
 
-RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext context, OptionSet<AllowedImageType> allowedImageTypes)
+RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<AllowedImageType> allowedImageTypes)
 {
     if ((range.peek().type() == StringToken) && (allowedImageTypes.contains(AllowedImageType::RawStringAsURL))) {
         auto urlStringView = range.consumeIncludingWhitespace().value();

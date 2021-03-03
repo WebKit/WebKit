@@ -27,10 +27,13 @@
 
 #include "AccessibilityTextMarker.h"
 #include "AccessibilityTextMarkerRange.h"
+#include "InjectedBundle.h"
+#include "InjectedBundlePage.h"
 #include "JSWrappable.h"
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <WebKit/WKBundleFrame.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
@@ -192,7 +195,8 @@ public:
     JSRetainPtr<JSStringRef> documentURI();
     JSRetainPtr<JSStringRef> url();
     JSRetainPtr<JSStringRef> classList() const;
-
+    JSRetainPtr<JSStringRef> embeddedImageDescription() const;
+    
     // CSS3-speech properties.
     JSRetainPtr<JSStringRef> speakAs();
     
@@ -221,11 +225,12 @@ public:
     RefPtr<AccessibilityUIElement> disclosedRowAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> rowAtIndex(unsigned);
 
+    JSValueRef errorMessageElements() const;
     // ARIA specific
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
-#if PLATFORM(MAC) || USE(ATK)
+#if PLATFORM(COCOA) || USE(ATK)
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
 #else
@@ -298,6 +303,7 @@ public:
     RefPtr<AccessibilityTextMarkerRange> misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForElement(AccessibilityUIElement*);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);
+    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForRange(unsigned location, unsigned length);
     RefPtr<AccessibilityTextMarkerRange> selectedTextMarkerRange();
     void resetSelectedTextMarkerRange();
     bool replaceTextInRange(JSStringRef, int position, int length);
@@ -407,5 +413,19 @@ private:
 #ifdef __OBJC__
 inline Optional<RefPtr<AccessibilityUIElement>> makeVectorElement(const RefPtr<AccessibilityUIElement>*, id element) { return { { AccessibilityUIElement::create(element) } }; }
 #endif
+
+template<typename T>
+JSObjectRef makeJSArray(const Vector<T>& elements)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
+    size_t size = elements.size();
+    for (size_t i = 0; i < size; ++i)
+        JSObjectSetPropertyAtIndex(context, array, i, JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get()), nullptr);
+
+    return array;
+}
 
 } // namespace WTR

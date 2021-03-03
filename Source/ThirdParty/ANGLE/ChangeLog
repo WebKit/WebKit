@@ -1,3 +1,171 @@
+2021-02-19  Kyle Piddington  <kpiddington@apple.com>
+
+        Fix a number of functional regressions caused by enabling the Metal ANGLE backend by default.
+        https://bugs.webkit.org/show_bug.cgi?id=220895
+        <rdar://problem/73539537>
+
+        Reviewed by Kenneth Russell.
+
+        Take two of this commit - this time with the new files FixTypeConstructors and NameEmbeddedUniformStructsMetal.
+        
+        Fixed webgl/1.0.3/conformance/context/context-hidden-alpha.html
+
+        MTL Translator direct fixes for webgl/1.0.3/conformance/glsl/constructors/glsl-construct-*vec2 tests, Plus fix for GL_VertexIndex
+
+        Fix EmitMetal crash for missing function textureRect.
+
+        Additional fixes for 73675990, shaders-with-invariance.html, shaders-with-uniform-structs.html, struct-specifiers-in-uniforms.html, framebuffer-object-attachment.html
+
+        Fixed clamping of array elements.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitPostQualifier):
+        (GenMetalTraverser::visitBinary):
+        (GenMetalTraverser::BuildFuncToName):
+        * src/compiler/translator/TranslatorMetalDirect/FixTypeConstructors.cpp: Added.
+        (sh::FixTypeTraverser::FixTypeTraverser):
+        (sh::FixTypeConstructors):
+        * src/compiler/translator/TranslatorMetalDirect/FixTypeConstructors.h: Added.
+        * src/compiler/translator/TranslatorMetalDirect/NameEmbeddedUniformStructsMetal.cpp: Added.
+        (sh::NameEmbeddedStructUniformsMetal):
+        * src/compiler/translator/TranslatorMetalDirect/NameEmbeddedUniformStructsMetal.h: Added.
+        * src/compiler/translator/TranslatorMetalDirect/Pipeline.cpp:
+        (SaturateVectorOf):
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+        (sh::ProgramPrelude::ProgramPrelude):
+        * src/compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.cpp:
+        (sh::Reducer::Reducer):
+        (sh::ReduceInterfaceBlocks):
+        * src/compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.h:
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.cpp:
+        * src/libANGLE/renderer/load_functions_table_autogen.cpp:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::drawElementsImpl):
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.h:
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm:
+        (rx::IOSurfaceSurfaceMtl::IOSurfaceSurfaceMtl):
+        (rx::IOSurfaceSurfaceMtl::createBackingTexture):
+        * src/libANGLE/renderer/metal/RenderBufferMtl.mm:
+        (rx::RenderbufferMtl::setStorageImpl):
+        * src/libANGLE/renderer/metal/VertexArrayMtl.h:
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::getIndexBuffer):
+        (rx::VertexArrayMtl::convertIndexBuffer):
+        (rx::VertexArrayMtl::streamIndexBufferFromClient):
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::InitializeDepthStencilTextureContentsGPU):
+        * src/libANGLE/renderer/metal/shaders/blit.metal:
+        * src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc:
+
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r273188.
+
+        Broke the build: Is missing a cpp file
+
+        Reverted changeset:
+
+        "Fix a number of functional regressions caused by enabling the
+        Metal ANGLE backend by default."
+        https://bugs.webkit.org/show_bug.cgi?id=220895
+        https://commits.webkit.org/r273188
+
+2021-02-19  Kyle Piddington  <kpiddington@apple.com>
+
+        Fix a number of functional regressions caused by enabling the Metal ANGLE backend by default.
+        https://bugs.webkit.org/show_bug.cgi?id=220895
+        <rdar://problem/73539537>
+
+        Reviewed by Kenneth Russell.
+
+        Fixed webgl/1.0.3/conformance/context/context-hidden-alpha.html
+
+        MTL Translator direct fixes for webgl/1.0.3/conformance/glsl/constructors/glsl-construct-*vec2 tests, Plus fix for GL_VertexIndex
+
+        Fix EmitMetal crash for missing function textureRect.
+
+        Additional fixes for 73675990, shaders-with-invariance.html, shaders-with-uniform-structs.html, struct-specifiers-in-uniforms.html, framebuffer-object-attachment.html
+
+        Fixed clamping of array elements.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitPostQualifier):
+        (GenMetalTraverser::visitBinary):
+        (GenMetalTraverser::BuildFuncToName):
+        * src/compiler/translator/TranslatorMetalDirect/FixTypeConstructors.cpp: Added.
+        (sh::FixTypeTraverser::FixTypeTraverser):
+        (sh::FixTypeConstructors):
+        * src/compiler/translator/TranslatorMetalDirect/FixTypeConstructors.h: Added.
+        * src/compiler/translator/TranslatorMetalDirect/NameEmbeddedUniformStructsMetal.cpp: Added.
+        (sh::NameEmbeddedStructUniformsMetal):
+        * src/compiler/translator/TranslatorMetalDirect/NameEmbeddedUniformStructsMetal.h: Added.
+        * src/compiler/translator/TranslatorMetalDirect/Pipeline.cpp:
+        (SaturateVectorOf):
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+        (sh::ProgramPrelude::ProgramPrelude):
+        * src/compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.cpp:
+        (sh::Reducer::Reducer):
+        (sh::ReduceInterfaceBlocks):
+        * src/compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.h:
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.cpp:
+        * src/libANGLE/renderer/load_functions_table_autogen.cpp:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::drawElementsImpl):
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.h:
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm:
+        (rx::IOSurfaceSurfaceMtl::IOSurfaceSurfaceMtl):
+        (rx::IOSurfaceSurfaceMtl::createBackingTexture):
+        * src/libANGLE/renderer/metal/RenderBufferMtl.mm:
+        (rx::RenderbufferMtl::setStorageImpl):
+        * src/libANGLE/renderer/metal/VertexArrayMtl.h:
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::getIndexBuffer):
+        (rx::VertexArrayMtl::convertIndexBuffer):
+        (rx::VertexArrayMtl::streamIndexBufferFromClient):
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::InitializeDepthStencilTextureContentsGPU):
+        * src/libANGLE/renderer/metal/shaders/blit.metal:
+        * src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc:
+
+2021-02-19  Kyle Piddington  <kpiddington@apple.com>
+
+        Crash in readPixels with ANGLE Metal backend
+        https://bugs.webkit.org/show_bug.cgi?id=220877
+
+        RenderbufferMtl::initializeContents is sometimes bound with a
+        default level index, which doesn't specify type, layer count, or
+        other information. When this path is called with an invalid index,
+        assume a 2d index.
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/RenderBufferMtl.mm:
+        (rx::RenderbufferMtl::initializeContents):
+
+2021-02-17  Dean Jackson  <dino@apple.com>
+
+        Metal-Angle on IOS fails in ValidateCreatePbufferFromClientBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=222069
+
+        Reviewed by Simon Fraser.
+
+        Due to the differences between OpenGL and OpenGLES, WebCore
+        binds its IOSurfaces to a different texture target on macOS and iOS.
+        This isn't really needed with the Metal-ANGLE backend, but while we're
+        still supporting the OpenGL backend it is easier to have the Metal backend
+        use both targets.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::generateConfigs): Look for EGL_TEXTURE_2D on iOS. Note
+        we don't have to worry about the weird "iOS App on macOS" situation since
+        that only applies to using OpenGLES on macOS. Yay for Metal!
+
 2021-01-13  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] fbostatequery, negativebufferapi, negativevertexarrayapi, shaderstatequery conformance failures

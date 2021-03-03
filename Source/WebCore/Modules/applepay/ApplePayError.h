@@ -27,37 +27,76 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
+#include "ApplePayErrorCode.h"
+#include "ApplePayErrorContactField.h"
+#include <wtf/Optional.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class ApplePayError final : public RefCounted<ApplePayError> {
 public:
-    using Code = PaymentError::Code;
-    using ContactField = PaymentError::ContactField;
+    static Ref<ApplePayError> create(ApplePayErrorCode code, Optional<ApplePayErrorContactField> contactField, const String& message)
+    {
+        return adoptRef(*new ApplePayError(code, contactField, message));
+    }
 
-    static Ref<ApplePayError> create(Code, Optional<ContactField>, const String& message);
-    virtual ~ApplePayError();
+    virtual ~ApplePayError() = default;
 
-    Code code() const { return m_code; }
-    void setCode(Code code) { m_code = code; }
+    ApplePayErrorCode code() const { return m_code; }
+    void setCode(ApplePayErrorCode code) { m_code = code; }
 
-    Optional<ContactField> contactField() const { return m_contactField; }
-    void setContactField(Optional<ContactField> contactField) { m_contactField = contactField; }
+    Optional<ApplePayErrorContactField> contactField() const { return m_contactField; }
+    void setContactField(Optional<ApplePayErrorContactField> contactField) { m_contactField = contactField; }
 
     String message() const { return m_message; }
     void setMessage(String&& message) { m_message = WTFMove(message); }
 
-private:
-    ApplePayError(Code, Optional<ContactField>, const String& message);
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static RefPtr<ApplePayError> decode(Decoder&);
 
-    Code m_code;
-    Optional<ContactField> m_contactField;
+private:
+    ApplePayError(ApplePayErrorCode code, Optional<ApplePayErrorContactField> contactField, const String& message)
+        : m_code(code)
+        , m_contactField(contactField)
+        , m_message(message)
+    {
+    }
+
+    ApplePayErrorCode m_code;
+    Optional<ApplePayErrorContactField> m_contactField;
     String m_message;
 };
 
+template<class Encoder>
+void ApplePayError::encode(Encoder& encoder) const
+{
+    encoder << m_code;
+    encoder << m_contactField;
+    encoder << m_message;
 }
+
+template<class Decoder>
+RefPtr<ApplePayError> ApplePayError::decode(Decoder& decoder)
+{
+#define DECODE(name, type) \
+    Optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return nullptr; \
+
+    DECODE(code, ApplePayErrorCode)
+    DECODE(contactField, Optional<ApplePayErrorContactField>)
+    DECODE(message, String)
+
+#undef DECODE
+
+    return ApplePayError::create(WTFMove(*code), WTFMove(*contactField), WTFMove(*message));
+}
+
+} // namespace WebCore
 
 #endif

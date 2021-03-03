@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,8 @@ void JSWebAssemblyInstance::destroy(JSCell* cell)
     static_cast<JSWebAssemblyInstance*>(cell)->JSWebAssemblyInstance::~JSWebAssemblyInstance();
 }
 
-void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     auto* thisObject = jsCast<JSWebAssemblyInstance*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -101,6 +102,8 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     for (auto& wrapper : thisObject->instance().functionWrappers())
         visitor.appendUnbarriered(wrapper.get());
 }
+
+DEFINE_VISIT_CHILDREN(JSWebAssemblyInstance);
 
 void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObject, Ref<Wasm::CodeBlock>&& wasmCodeBlock, JSObject* importObject, Wasm::CreationMode creationMode)
 {

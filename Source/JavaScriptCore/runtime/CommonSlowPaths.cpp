@@ -852,11 +852,8 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_in_by_id)
 }
 
 template<OpcodeSize width>
-ALWAYS_INLINE SlowPathReturnType iteratorOpenTryFastImpl(CallFrame* callFrame, const Instruction* pc)
+ALWAYS_INLINE SlowPathReturnType iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, const Instruction* pc)
 {
-    // Don't set PC; we can't throw and it's relatively slow.
-    BEGIN_NO_SET_PC();
-
     auto bytecode = pc->asKnownWidth<OpIteratorOpen, width>();
     auto& metadata = bytecode.metadata(codeBlock);
     JSValue iterable = GET_C(bytecode.m_iterable).jsValue();
@@ -881,24 +878,28 @@ ALWAYS_INLINE SlowPathReturnType iteratorOpenTryFastImpl(CallFrame* callFrame, c
 
 JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_narrow)
 {
-    return iteratorOpenTryFastImpl<Narrow>(callFrame, pc);
+    // Don't set PC; we can't throw and it's relatively slow.
+    BEGIN_NO_SET_PC();
+    return iteratorOpenTryFastImpl<Narrow>(vm, globalObject, codeBlock, callFrame, pc);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_wide16)
 {
-    return iteratorOpenTryFastImpl<Wide16>(callFrame, pc);
+    // Don't set PC; we can't throw and it's relatively slow.
+    BEGIN_NO_SET_PC();
+    return iteratorOpenTryFastImpl<Wide16>(vm, globalObject, codeBlock, callFrame, pc);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_wide32)
 {
-    return iteratorOpenTryFastImpl<Wide32>(callFrame, pc);
+    // Don't set PC; we can't throw and it's relatively slow.
+    BEGIN_NO_SET_PC();
+    return iteratorOpenTryFastImpl<Wide32>(vm, globalObject, codeBlock, callFrame, pc);
 }
 
 template<OpcodeSize width>
-ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(CallFrame* callFrame, const Instruction* pc)
+ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, ThrowScope& throwScope, const Instruction* pc)
 {
-    BEGIN();
-
     auto bytecode = pc->asKnownWidth<OpIteratorNext, width>();
     auto& metadata = bytecode.metadata(codeBlock);
 
@@ -938,17 +939,20 @@ ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(CallFrame* callFrame, c
 
 JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_narrow)
 {
-    return iteratorNextTryFastImpl<Narrow>(callFrame, pc);
+    BEGIN();
+    return iteratorNextTryFastImpl<Narrow>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_wide16)
 {
-    return iteratorNextTryFastImpl<Wide16>(callFrame, pc);
+    BEGIN();
+    return iteratorNextTryFastImpl<Wide16>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_wide32)
 {
-    return iteratorNextTryFastImpl<Wide32>(callFrame, pc);
+    BEGIN();
+    return iteratorNextTryFastImpl<Wide32>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_del_by_val)

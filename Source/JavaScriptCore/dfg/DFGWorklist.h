@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 
-namespace JSC {
-
-class SlotVisitor;
-
-namespace DFG {
+namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT)
 
@@ -56,8 +52,8 @@ public:
     // worklist->completeAllReadyPlansForVM(vm);
     void completeAllPlansForVM(VM&);
 
-    template<typename Func>
-    void iterateCodeBlocksForGC(VM&, const Func&);
+    template<typename Func, typename Visitor>
+    void iterateCodeBlocksForGC(Visitor&, VM&, const Func&);
 
     void waitUntilAllPlansForVMAreReady(VM&);
     State completeAllReadyPlansForVM(VM&, CompilationKey = CompilationKey());
@@ -73,7 +69,7 @@ public:
     bool isActiveForVM(VM&) const;
     
     // Only called on the main thread after suspending all threads.
-    void visitWeakReferences(SlotVisitor&);
+    template<typename Visitor> void visitWeakReferences(Visitor&);
     void removeDeadPlans(VM&);
     
     void removeNonCompilingPlansForVM(VM&);
@@ -143,8 +139,8 @@ Worklist& existingWorklistForIndex(unsigned index);
 
 void completeAllPlansForVM(VM&);
 
-template<typename Func>
-void iterateCodeBlocksForGC(VM&, const Func&);
+template<typename Func, typename Visitor>
+void iterateCodeBlocksForGC(Visitor&, VM&, const Func&);
 
 } } // namespace JSC::DFG
 

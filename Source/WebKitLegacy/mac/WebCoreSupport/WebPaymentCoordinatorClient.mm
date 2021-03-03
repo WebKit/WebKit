@@ -72,17 +72,25 @@ void WebPaymentCoordinatorClient::completeMerchantValidation(const WebCore::Paym
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate>&&)
+void WebPaymentCoordinatorClient::completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingContactSelection(Optional<WebCore::ShippingContactUpdate>&&)
+void WebPaymentCoordinatorClient::completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completePaymentMethodSelection(Optional<WebCore::PaymentMethodUpdate>&&)
+void WebPaymentCoordinatorClient::completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&)
 {
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void WebPaymentCoordinatorClient::completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&&)
+{
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 void WebPaymentCoordinatorClient::completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&&)
 {

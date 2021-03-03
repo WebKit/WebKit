@@ -44,9 +44,11 @@ public:
     {
     }
 
-    AuthenticationChallenge(SoupMessage*, SoupAuth*, bool retrying, AuthenticationClient* = nullptr);
-    AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
+    AuthenticationChallenge(SoupMessage*, SoupAuth*, bool retrying);
+    AuthenticationClient* authenticationClient() const { return nullptr; }
+#if USE(SOUP2)
     SoupMessage* soupMessage() const { return m_soupMessage.get(); }
+#endif
     SoupAuth* soupAuth() const { return m_soupAuth.get(); }
     void setProposedCredential(const Credential& credential) { m_proposedCredential = credential; }
 
@@ -54,9 +56,10 @@ private:
     friend class AuthenticationChallengeBase;
     static bool platformCompare(const AuthenticationChallenge&, const AuthenticationChallenge&);
 
+#if USE(SOUP2)
     GRefPtr<SoupMessage> m_soupMessage;
+#endif
     GRefPtr<SoupAuth> m_soupAuth;
-    RefPtr<AuthenticationClient> m_authenticationClient;
 };
 
 } // namespace WebCore

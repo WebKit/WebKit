@@ -42,6 +42,7 @@
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteScrollingCoordinator.h"
 #import "SandboxUtilities.h"
+#import "ShareableBitmapUtilities.h"
 #import "SharedMemory.h"
 #import "SyntheticEditingCommandType.h"
 #import "TextCheckingControllerProxy.h"
@@ -113,6 +114,7 @@
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
+#import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
@@ -2677,7 +2679,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.isAnimatedImage = image->isAnimated();
 
     if (request.includeSnapshot || request.includeImageData)
-        info.image = page.shareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
+        info.image = createShareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
 }
 
 static void boundsPositionInformation(RenderObject& renderer, InteractionInformationAtPosition& info)
@@ -2985,7 +2987,7 @@ void WebPage::performActionOnElement(uint32_t action)
                     title = linkElement->textContent();
                 title = stripLeadingAndTrailingHTMLSpaces(title);
             }
-            m_interactionNode->document().editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), element, url, title);
+            m_interactionNode->document().editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(element.document().pageID())), element, url, title);
         } else if (element.isLink())
             m_interactionNode->document().editor().copyURL(element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(element.attributeWithoutSynchronization(HTMLNames::hrefAttr))), element.textContent());
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -3200,6 +3202,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
+        information.isFocusingWithDataListDropdown = element.isFocusingWithDataListDropdown();
         information.hasSuggestions = !!element.list();
 #endif
         information.inputMode = element.canonicalInputMode();

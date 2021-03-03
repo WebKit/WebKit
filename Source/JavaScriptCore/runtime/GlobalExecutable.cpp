@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GlobalExecutable.h"
 
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 const ClassInfo GlobalExecutable::s_info = { "GlobalExecutable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalExecutable) };

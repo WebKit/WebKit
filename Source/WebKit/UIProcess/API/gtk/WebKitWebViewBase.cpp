@@ -2527,10 +2527,10 @@ static inline OptionSet<WebEvent::Modifier> toWebKitModifiers(unsigned modifiers
 
 static inline PointerID primaryPointerForType(const String& pointerType)
 {
-    if (pointerType == PointerEvent::mousePointerType())
+    if (pointerType == mousePointerEventType())
         return mousePointerID;
 
-    if (pointerType == PointerEvent::penPointerType())
+    if (pointerType == penPointerEventType())
         return 2;
 
     return mousePointerID;
@@ -2619,7 +2619,7 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(webEventType, webEventButton, webEventButtons, { x, y },
         widgetRootCoords(GTK_WIDGET(webViewBase), x, y), clickCount, toWebKitModifiers(modifiers), movementDelta,
-        primaryPointerForType(pointerType), pointerType.isNull() ? PointerEvent::mousePointerType() : pointerType));
+        primaryPointerForType(pointerType), pointerType.isNull() ? mousePointerEventType() : pointerType));
 }
 
 void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEventType type, unsigned keyval, unsigned modifiers, ShouldTranslateKeyboardState shouldTranslate)

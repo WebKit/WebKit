@@ -104,4 +104,9 @@ WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const
     return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), directoryName);
 }
 
+void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
+{
+    notImplemented();
+}
+
 } // namespace API

@@ -49,7 +49,7 @@ function runTest() {
     req.onreadystatechange = onReqreadystatechange;
     req.onerror = onSyncReqError;
     req.onabort = onReqAbort;
-    req.open('GET', '/resources/redirect.php?url=http://localhost:8080/xmlhttprequest/resources/forbidden.txt', false);
+    req.open('GET', '/resources/redirect.py?url=http://localhost:8080/xmlhttprequest/resources/forbidden.txt', false);
     try {
         req.send(null);
     } catch (e) {
@@ -67,7 +67,7 @@ function runTest() {
     req.onload = didReadFile;
     req.onerror = onReqError;
     req.onabort = onReqAbort;
-    req.open('GET', '/resources/redirect.php?url=http://localhost:8080/xmlhttprequest/resources/forbidden.txt');
+    req.open('GET', '/resources/redirect.py?url=http://localhost:8080/xmlhttprequest/resources/forbidden.txt');
     req.send(null);
 }
 </script>

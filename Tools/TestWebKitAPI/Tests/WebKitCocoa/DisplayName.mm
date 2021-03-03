@@ -56,10 +56,10 @@ static void checkUntilDisplayNameIs(WKWebView *webView, NSString *expectedName, 
 
 TEST(WebKit, CustomDisplayName)
 {
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
     NSString *displayNameToSet = @"test display name";
-    configuration._processDisplayName = displayNameToSet;
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    configuration.get()._processDisplayName = displayNameToSet;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@"start web process"];
 
     bool done = false;

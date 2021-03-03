@@ -53,6 +53,7 @@
 #include "MouseEvent.h"
 #include "Node.h"
 #include "Page.h"
+#include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "ScriptState.h"
 #include "Settings.h"
@@ -414,7 +415,8 @@ String InspectorFrontendHost::port() const
 
 void InspectorFrontendHost::copyText(const String& text)
 {
-    Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
+    auto pageID = m_frontendPage ? m_frontendPage->mainFrame().pageID() : WTF::nullopt;
+    Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(WTFMove(pageID)))->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
 void InspectorFrontendHost::killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence)

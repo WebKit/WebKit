@@ -21,6 +21,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <WebCore/SoupVersioning.h>
 #include <libsoup/soup.h>
 #include <string.h>
 
@@ -29,24 +30,28 @@ static const int kBackForwardListLimit = 100;
 
 static WebKitTestServer* kServer;
 
-static void serverCallback(SoupServer* server, SoupMessage* msg, const char* path, GHashTable* query, SoupClientContext* context, gpointer data)
+#if USE(SOUP2)
+static void serverCallback(SoupServer* server, SoupMessage* msg, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* msg, const char* path, GHashTable*, gpointer)
+#endif
 {
-    if (msg->method != SOUP_METHOD_GET) {
-        soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(msg) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
     if (g_str_has_suffix(path, "favicon.ico")) {
-        soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
+        soup_server_message_set_status(msg, SOUP_STATUS_NOT_FOUND, nullptr);
         return;
     }
 
-    soup_message_set_status(msg, SOUP_STATUS_OK);
+    soup_server_message_set_status(msg, SOUP_STATUS_OK, nullptr);
 
     char* body = g_strdup_printf("<html><title>%s</title><body>%s</body></html>", path + 1, path + 1);
-    soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, body, strlen(body));
-
-    soup_message_body_complete(msg->response_body);
+    auto* responseBody = soup_server_message_get_response_body(msg);
+    soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, body, strlen(body));
+    soup_message_body_complete(responseBody);
 }
 
 class BackForwardListTest: public WebViewTest {

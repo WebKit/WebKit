@@ -41,23 +41,25 @@
     UIKeyboardInputFlags inputFlags;
     NSInteger modifierFlags;
     BOOL isHardwareKeyboardEvent = !!event._hidEvent;
+    RetainPtr<UIEvent> uiEvent;
     if (!isHardwareKeyboardEvent) {
         keyCode = 0;
         inputFlags = (UIKeyboardInputFlags)0;
         modifierFlags = 0;
+        uiEvent = event;
     } else {
         UIPhysicalKeyboardEvent *keyEvent = (UIPhysicalKeyboardEvent *)event;
         keyCode = keyEvent._keyCode;
         inputFlags = keyEvent._inputFlags;
         modifierFlags = keyEvent._gsModifierFlags;
-        event = [[keyEvent _cloneEvent] autorelease]; // UIKit uses a singleton for hardware keyboard events.
+        uiEvent = adoptNS([keyEvent _cloneEvent]); // UIKit uses a singleton for hardware keyboard events.
     }
 
-    self = [super initWithKeyEventType:(event._isKeyDown ? WebEventKeyDown : WebEventKeyUp) timeStamp:event.timestamp characters:event._modifiedInput charactersIgnoringModifiers:event._unmodifiedInput modifiers:modifierFlags isRepeating:(inputFlags & kUIKeyboardInputRepeat) withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:[event._modifiedInput isEqualToString:@"\t"]];
+    self = [super initWithKeyEventType:([uiEvent _isKeyDown] ? WebEventKeyDown : WebEventKeyUp) timeStamp:[uiEvent timestamp] characters:[uiEvent _modifiedInput] charactersIgnoringModifiers:[uiEvent _unmodifiedInput] modifiers:modifierFlags isRepeating:(inputFlags & kUIKeyboardInputRepeat) withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:[[uiEvent _modifiedInput] isEqualToString:@"\t"]];
     if (!self)
         return nil;
 
-    _uiEvent = event;
+    _uiEvent = WTFMove(uiEvent);
 
     return self;
 }

@@ -69,6 +69,8 @@
         assert_equals(devices[0].kind, "audioinput");
         assert_equals(devices[0].label, "my mic");
 
+        const micStream = await navigator.mediaDevices.getUserMedia({ audio : { deviceId : "id2" } });
+        assert_equals(micStream.getAudioTracks()[0].label, "my mic");
     }, "'devicechange' event fired when device list changes");
 
     promise_test(async (test) => {

@@ -71,7 +71,7 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     if (m_registrationData.activeWorker)
         m_activeWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.activeWorker));
 
-    REGISTRATION_RELEASE_LOG_IF_ALLOWED("ServiceWorkerRegistration: ID %llu, installing: %llu, waiting: %llu, active: %llu", identifier().toUInt64(), m_installingWorker ? m_installingWorker->identifier().toUInt64() : 0, m_waitingWorker ? m_waitingWorker->identifier().toUInt64() : 0, m_activeWorker ? m_activeWorker->identifier().toUInt64() : 0);
+    REGISTRATION_RELEASE_LOG_IF_ALLOWED("ServiceWorkerRegistration: ID %llu, installing=%llu, waiting=%llu, active=%llu", identifier().toUInt64(), m_installingWorker ? m_installingWorker->identifier().toUInt64() : 0, m_waitingWorker ? m_waitingWorker->identifier().toUInt64() : 0, m_activeWorker ? m_activeWorker->identifier().toUInt64() : 0);
 
     m_container->addRegistration(*this);
 
@@ -148,8 +148,7 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    // FIXME: Support worker types.
-    m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), WorkerType::Classic, WTFMove(promise));
+    m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), newestWorker->workerType(), WTFMove(promise));
 }
 
 void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)

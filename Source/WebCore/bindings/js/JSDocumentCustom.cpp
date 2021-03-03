@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009, 2011, 2016, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -91,10 +91,13 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObjec
     return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref<Document>(document));
 }
 
-void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void JSDocument::visitAdditionalChildren(Visitor& visitor)
 {
     visitor.addOpaqueRoot(static_cast<ScriptExecutionContext*>(&wrapped()));
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDocument);
 
 void JSDocument::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {

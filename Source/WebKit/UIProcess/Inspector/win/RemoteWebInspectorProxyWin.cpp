@@ -109,10 +109,10 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     preferences->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
 
-    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(nullptr));
+    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(nullptr));
 
     auto pageConfiguration = API::PageConfiguration::create();
-    pageConfiguration->setProcessPool(&inspectorProcessPool(inspectorLevelForPage(nullptr)));
+    pageConfiguration->setProcessPool(&WebKit::defaultInspectorProcessPool(inspectorLevelForPage(nullptr)));
     pageConfiguration->setPreferences(preferences.get());
     pageConfiguration->setPageGroup(pageGroup.get());
 

@@ -227,7 +227,6 @@ static const Vector<ASCIILiteral>& nonBrowserServices()
     ASSERT(isMainThread());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.lsd.open"_s,
-        "com.apple.mobileassetd"_s,
         "com.apple.iconservices"_s,
         "com.apple.PowerManagement.control"_s,
         "com.apple.frontboard.systemappservices"_s
@@ -275,7 +274,6 @@ static const Vector<ASCIILiteral>& diagnosticServices()
         "com.apple.osanalytics.osanalyticshelper"_s
 #else
         "com.apple.analyticsd"_s,
-        "com.apple.powerlog.plxpclogger.xpc"_s
 #endif
     });
     return services;
@@ -632,6 +630,7 @@ void WebProcessPool::registerNotificationObservers()
         if (weakThis)
             weakThis->sendToAllProcesses(Messages::WebProcess::SystemWillPowerOn());
     });
+    m_systemSleepListener = PAL::SystemSleepListener::create(*this);
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
     m_enhancedAccessibilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         setEnhancedAccessibility([[[note userInfo] objectForKey:@"AXEnhancedUserInterface"] boolValue]);
@@ -730,6 +729,7 @@ void WebProcessPool::unregisterNotificationObservers()
 {
 #if !PLATFORM(IOS_FAMILY)
     m_powerObserver = nullptr;
+    m_systemSleepListener = nullptr;
     [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticTextReplacementNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticSpellingCorrectionNotificationObserver.get()];
@@ -939,6 +939,17 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
         PAL::softLink_CoreMedia_CMNotificationCenterAddListener(center, object, webProcessPoolHighDynamicRangeDidChangeCallback, notification, object, 0);
     });
 }
+
+void WebProcessPool::systemWillSleep()
+{
+    sendToAllProcesses(Messages::WebProcess::SystemWillSleep());
+}
+
+void WebProcessPool::systemDidWake()
+{
+    sendToAllProcesses(Messages::WebProcess::SystemDidWake());
+}
+
 #endif
 
 } // namespace WebKit

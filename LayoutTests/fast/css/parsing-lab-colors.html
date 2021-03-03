@@ -3,7 +3,7 @@
 </head>
 <body>
 <script>
-    description("Test the parsing of lab, lch and gray colors.");
+    description("Test the parsing of lab(...), lch(...) and color(lab ...) colors.");
 
     function computedStyle(property, value)
     {
@@ -46,46 +46,54 @@
     testComputed("background-color", "lab(0% 0 0 / -10%)", "lab(0% 0 0 / 0)");
     testComputed("background-color", "lab(0% 0 0 / 110%)", "lab(0% 0 0)");
     testComputed("background-color", "lab(0% 0 0 / 300%)", "lab(0% 0 0)");
+    testComputed("background-color", "lab(-40% 0 0)", "lab(0% 0 0)");
+    testComputed("background-color", "lab(50% -20 0)", "lab(50% -20 0)");
+    testComputed("background-color", "lab(50% 0 -20)", "lab(50% 0 -20)");
 
     debug('');
     debug('lch()');
-    testComputed("background-color", "lch(0% 0 0deg)", "lab(0% 0 0)");
-    testComputed("background-color", "lch(0% 0 0deg / 1)", "lab(0% 0 0)");
-    testComputed("background-color", "lch(0% 0 0deg / 0.5)", "lab(0% 0 0 / 0.5)");
-    testComputed("background-color", "lch(100% 230 0deg / 0.5)", "lab(100% 230 0 / 0.5)");
-    testComputed("background-color", "lch(20% 50 20deg/0.5)", "lab(20% 46.98463 17.101006 / 0.5)");
-    testComputed("background-color", "lch(20% 50 20deg/50%)", "lab(20% 46.98463 17.101006 / 0.5)");
-    testComputed("background-color", "lch(10% 20 20deg / -10%)", "lab(10% 18.793852 6.8404026 / 0)");
-    testComputed("background-color", "lch(10% 20 20deg / 110%)", "lab(10% 18.793852 6.8404026)");
-    testComputed("background-color", "lch(10% 20 1.28rad)", "lab(10% 5.7343025 19.160316)");
-    testComputed("background-color", "lch(10% 20 380deg)", "lab(10% 18.793852 6.8404026)");
-    testComputed("background-color", "lch(10% 20 -340deg)", "lab(10% 18.793852 6.8404026)");
-    testComputed("background-color", "lch(10% 20 740deg)", "lab(10% 18.793852 6.8404026)");
-    testComputed("background-color", "lch(10% 20 -700deg)", "lab(10% 18.793852 6.8404026)");
+    testComputed("background-color", "lch(0% 0 0deg)", "lch(0% 0 0)");
+    testComputed("background-color", "lch(0% 0 0deg / 1)", "lch(0% 0 0)");
+    testComputed("background-color", "lch(0% 0 0deg / 0.5)", "lch(0% 0 0 / 0.5)");
+    testComputed("background-color", "lch(100% 230 0deg / 0.5)", "lch(100% 230 0 / 0.5)");
+    testComputed("background-color", "lch(20% 50 20deg/0.5)", "lch(20% 50 20 / 0.5)");
+    testComputed("background-color", "lch(20% 50 20deg/50%)", "lch(20% 50 20 / 0.5)");
+    testComputed("background-color", "lch(10% 20 20deg / -10%)", "lch(10% 20 20 / 0)");
+    testComputed("background-color", "lch(10% 20 20deg / 110%)", "lch(10% 20 20)");
+    testComputed("background-color", "lch(10% 20 1.28rad)", "lch(10% 20 73.3386)");
+    testComputed("background-color", "lch(10% 20 380deg)", "lch(10% 20 20)");
+    testComputed("background-color", "lch(10% 20 -340deg)", "lch(10% 20 20)");
+    testComputed("background-color", "lch(10% 20 740deg)", "lch(10% 20 20)");
+    testComputed("background-color", "lch(10% 20 -700deg)", "lch(10% 20 20)");
+    testComputed("background-color", "lch(-40% 0 0)", "lch(0% 0 0)");
+    testComputed("background-color", "lch(20% -20 0)", "lch(20% 0 0)");
     // hue (the third argument) can be either an angle or number, with number interpreted as degrees.
-    testComputed("background-color", "lch(0% 0 0 / 0.5)", "lab(0% 0 0 / 0.5)"); 
-    testComputed("background-color", "lch(10% 20 20 / 110%)", "lab(10% 18.793852 6.8404026)");
-    testComputed("background-color", "lch(10% 20 -700)", "lab(10% 18.793852 6.8404026)");
+    testComputed("background-color", "lch(0% 0 0 / 0.5)", "lch(0% 0 0 / 0.5)"); 
+    testComputed("background-color", "lch(10% 20 20 / 110%)", "lch(10% 20 20)");
+    testComputed("background-color", "lch(10% 20 -700)", "lch(10% 20 20)");
 
     debug('');
     debug('color(lab )');
-    testComputed("background-color", "color(lab 0% 0 0)", "lab(0% 0 0)");
-    testComputed("background-color", "color(lab 0% 0 0 / 1)", "lab(0% 0 0)");
-    testComputed("background-color", "color(lab 0% 0 0 / 0.5)", "lab(0% 0 0 / 0.5)");
-    testComputed("background-color", "color(lab 20% 0 10/0.5)", "lab(20% 0 10 / 0.5)");
-    testComputed("background-color", "color(lab 20% 0 10/50%)", "lab(20% 0 10 / 0.5)");
-    testComputed("background-color", "color(lab 400% 0 10/50%)", "lab(400% 0 10 / 0.5)");
-    testComputed("background-color", "color(lab 50% -160 160)", "lab(50% -160 160)");
-    testComputed("background-color", "color(lab 50% -200 200)", "lab(50% -200 200)");
-    testComputed("background-color", "color(lab 0% 0 0 / -10%)", "lab(0% 0 0 / 0)");
-    testComputed("background-color", "color(lab 0% 0 0 / 110%)", "lab(0% 0 0)");
-    testComputed("background-color", "color(lab 0% 0 0 / 300%)", "lab(0% 0 0)");
-    testComputed("background-color", "color(lab 50% -200)", "lab(50% -200 0)");
-    testComputed("background-color", "color(lab 50%)", "lab(50% 0 0)");
-    testComputed("background-color", "color(lab)", "lab(0% 0 0)");
-    testComputed("background-color", "color(lab 50% -200 / 0.5)", "lab(50% -200 0 / 0.5)");
-    testComputed("background-color", "color(lab 50% / 0.5)", "lab(50% 0 0 / 0.5)");
-    testComputed("background-color", "color(lab / 0.5)", "lab(0% 0 0 / 0.5)");
+    testComputed("background-color", "color(lab 0% 0 0)", "color(lab 0% 0 0)");
+    testComputed("background-color", "color(lab 0% 0 0 / 1)", "color(lab 0% 0 0)");
+    testComputed("background-color", "color(lab 0% 0 0 / 0.5)", "color(lab 0% 0 0 / 0.5)");
+    testComputed("background-color", "color(lab 20% 0 10/0.5)", "color(lab 20% 0 10 / 0.5)");
+    testComputed("background-color", "color(lab 20% 0 10/50%)", "color(lab 20% 0 10 / 0.5)");
+    testComputed("background-color", "color(lab 400% 0 10/50%)", "color(lab 400% 0 10 / 0.5)");
+    testComputed("background-color", "color(lab 50% -160 160)", "color(lab 50% -160 160)");
+    testComputed("background-color", "color(lab 50% -200 200)", "color(lab 50% -200 200)");
+    testComputed("background-color", "color(lab 0% 0 0 / -10%)", "color(lab 0% 0 0 / 0)");
+    testComputed("background-color", "color(lab 0% 0 0 / 110%)", "color(lab 0% 0 0)");
+    testComputed("background-color", "color(lab 0% 0 0 / 300%)", "color(lab 0% 0 0)");
+    testComputed("background-color", "color(lab 50% -200)", "color(lab 50% -200 0)");
+    testComputed("background-color", "color(lab 50%)", "color(lab 50% 0 0)");
+    testComputed("background-color", "color(lab)", "color(lab 0% 0 0)");
+    testComputed("background-color", "color(lab 50% -200 / 0.5)", "color(lab 50% -200 0 / 0.5)");
+    testComputed("background-color", "color(lab 50% / 0.5)", "color(lab 50% 0 0 / 0.5)");
+    testComputed("background-color", "color(lab / 0.5)", "color(lab 0% 0 0 / 0.5)");
+    testComputed("background-color", "color(lab -40% 0 0)", "color(lab 0% 0 0)");
+    testComputed("background-color", "color(lab 50% -20 0)", "color(lab 50% -20 0)");
+    testComputed("background-color", "color(lab 50% 0 -20)", "color(lab 50% 0 -20)");
 
     debug('');
     debug('Test invalid values');

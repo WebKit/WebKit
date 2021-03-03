@@ -85,16 +85,15 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     [globalCookieStore addObserver:observer1.get()];
     [globalCookieStore addObserver:observer2.get()];
 
-    NSArray<NSHTTPCookie *> *cookies = nil;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    RetainPtr<NSArray<NSHTTPCookie *>> cookies;
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
-    ASSERT_EQ(cookies.count, 0u);
-    [cookies release];
+    ASSERT_EQ([cookies count], 0u);
 
     gotFlag = false;
 
@@ -130,19 +129,19 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    ASSERT_EQ(cookies.count, 2u);
+    ASSERT_EQ([cookies count], 2u);
     while (observerCallbacks != 4u)
         TestWebKitAPI::Util::spinRunLoop();
 
-    for (NSHTTPCookie *cookie : cookies) {
+    for (NSHTTPCookie *cookie : cookies.get()) {
         if ([cookie.name isEqual:@"CookieName"]) {
             ASSERT_TRUE([cookie1.get().path isEqualToString:cookie.path]);
             ASSERT_TRUE([cookie1.get().value isEqualToString:cookie.value]);
@@ -158,7 +157,6 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
             ASSERT_FALSE(cookie.sessionOnly);
         }
     }
-    [cookies release];
 
     [globalCookieStore deleteCookie:cookie2.get() completionHandler:[](){
         gotFlag = true;
@@ -167,26 +165,25 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    ASSERT_EQ(cookies.count, 1u);
+    ASSERT_EQ([cookies count], 1u);
     while (observerCallbacks != 6u)
         TestWebKitAPI::Util::spinRunLoop();
 
-    for (NSHTTPCookie *cookie : cookies) {
+    for (NSHTTPCookie *cookie : cookies.get()) {
         ASSERT_TRUE([cookie1.get().path isEqualToString:cookie.path]);
         ASSERT_TRUE([cookie1.get().value isEqualToString:cookie.value]);
         ASSERT_TRUE([cookie1.get().domain isEqualToString:cookie.domain]);
         ASSERT_TRUE(cookie.secure);
         ASSERT_TRUE(cookie.sessionOnly);
     }
-    [cookies release];
 
     [globalCookieStore removeObserver:observer1.get()];
     [globalCookieStore removeObserver:observer2.get()];
@@ -251,27 +248,26 @@ TEST(WKHTTPCookieStore, HttpOnly)
 
     globalCookieStore = dataStore.httpCookieStore;
 
-    NSArray<NSHTTPCookie *> *cookies = nil;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    RetainPtr<NSArray<NSHTTPCookie *>> cookies;
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
-    ASSERT_EQ(cookies.count, 0u);
-    [cookies release];
+    ASSERT_EQ([cookies count], 0u);
 
-    NSMutableDictionary *cookieProperties = [[NSMutableDictionary alloc] init];
+    auto cookieProperties = adoptNS([[NSMutableDictionary alloc] init]);
     [cookieProperties setObject:@"cookieName" forKey:NSHTTPCookieName];
     [cookieProperties setObject:@"cookieValue" forKey:NSHTTPCookieValue];
     [cookieProperties setObject:@".www.webkit.org" forKey:NSHTTPCookieDomain];
     [cookieProperties setObject:@"/path" forKey:NSHTTPCookiePath];
     [cookieProperties setObject:@YES forKey:@"HttpOnly"];
-    RetainPtr<NSHTTPCookie> httpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    RetainPtr<NSHTTPCookie> httpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties.get()];
     [cookieProperties setObject:@"cookieValue2" forKey:NSHTTPCookieValue];
-    RetainPtr<NSHTTPCookie> httpOnlyCookie2 = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    RetainPtr<NSHTTPCookie> httpOnlyCookie2 = [NSHTTPCookie cookieWithProperties:cookieProperties.get()];
     [cookieProperties removeObjectForKey:@"HttpOnly"];
-    RetainPtr<NSHTTPCookie> notHttpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    RetainPtr<NSHTTPCookie> notHttpOnlyCookie = [NSHTTPCookie cookieWithProperties:cookieProperties.get()];
 
     EXPECT_TRUE(httpOnlyCookie.get().HTTPOnly);
     EXPECT_FALSE(notHttpOnlyCookie.get().HTTPOnly);
@@ -290,15 +286,14 @@ TEST(WKHTTPCookieStore, HttpOnly)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
-    ASSERT_EQ(cookies.count, 1u);
+    ASSERT_EQ([cookies count], 1u);
     EXPECT_TRUE([[[cookies objectAtIndex:0] value] isEqual:@"cookieValue2"]);
-    [cookies release];
 
     // Setting notHttpOnlyCookie should fail because we cannot overwrite HTTPOnly property using public API.
     [globalCookieStore setCookie:notHttpOnlyCookie.get() completionHandler:[]() {
@@ -307,15 +302,14 @@ TEST(WKHTTPCookieStore, HttpOnly)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
-    ASSERT_EQ(cookies.count, 1u);
+    ASSERT_EQ([cookies count], 1u);
     EXPECT_TRUE([[cookies objectAtIndex:0] isHTTPOnly]);
-    [cookies release];
 
     // Deleting notHttpOnlyCookie should fail because the cookie stored is HTTPOnly.
     [globalCookieStore deleteCookie:notHttpOnlyCookie.get() completionHandler:[]() {
@@ -324,14 +318,13 @@ TEST(WKHTTPCookieStore, HttpOnly)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
-    ASSERT_EQ(cookies.count, 1u);
-    [cookies release];
+    ASSERT_EQ([cookies count], 1u);
 
     // Deleting httpOnlyCookie should succeed. 
     [globalCookieStore deleteCookie:httpOnlyCookie.get() completionHandler:[]() {
@@ -340,14 +333,13 @@ TEST(WKHTTPCookieStore, HttpOnly)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
-    ASSERT_EQ(cookies.count, 0u);
-    [cookies release];
+    ASSERT_EQ([cookies count], 0u);
 }
 
 // FIXME: Would be good to enable this test for watchOS and tvOS.
@@ -370,14 +362,14 @@ TEST(WKHTTPCookieStore, CreationTime)
 
     globalCookieStore = dataStore.httpCookieStore;
 
-    NSMutableDictionary *cookieProperties = [[NSMutableDictionary alloc] init];
+    auto cookieProperties = adoptNS([[NSMutableDictionary alloc] init]);
     [cookieProperties setObject:@"cookieName" forKey:NSHTTPCookieName];
     [cookieProperties setObject:@"cookieValue" forKey:NSHTTPCookieValue];
     [cookieProperties setObject:@".www.webkit.org" forKey:NSHTTPCookieDomain];
     [cookieProperties setObject:@"/path" forKey:NSHTTPCookiePath];
     RetainPtr<NSNumber> creationTime = @(100000);
     [cookieProperties setObject:creationTime.get() forKey:@"Created"];
-    RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:cookieProperties.get()];
 
     [globalCookieStore setCookie:cookie.get() completionHandler:[]() {
         gotFlag = true;
@@ -619,7 +611,7 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolWithPrewarming)
 
 TEST(WebKit, WKHTTPCookieStoreMultipleViews)
 {
-    TestWKWebView *webView1 = [[TestWKWebView new] autorelease];
+    auto webView1 = adoptNS([TestWKWebView new]);
     [webView1 synchronouslyLoadHTMLString:@"start network process"];
 
     NSHTTPCookie *sessionCookie = [NSHTTPCookie cookieWithProperties:@{
@@ -630,7 +622,7 @@ TEST(WebKit, WKHTTPCookieStoreMultipleViews)
     }];
 
     __block bool setCookieDone = false;
-    [webView1.configuration.websiteDataStore.httpCookieStore setCookie:sessionCookie completionHandler:^{
+    [[webView1 configuration].websiteDataStore.httpCookieStore setCookie:sessionCookie completionHandler:^{
         setCookieDone = true;
     }];
     TestWebKitAPI::Util::run(&setCookieDone);
@@ -641,7 +633,7 @@ TEST(WebKit, WKHTTPCookieStoreMultipleViews)
     [webView1 loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");
 
-    TestWKWebView *webView2 = [[TestWKWebView new] autorelease];
+    auto webView2 = adoptNS([TestWKWebView new]);
     [webView2 setUIDelegate:delegate.get()];
     [webView2 loadHTMLString:[delegate alertCookieHTML] baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     EXPECT_WK_STREQ([delegate waitForMessage], "SessionCookieName=CookieValue");

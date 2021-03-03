@@ -200,6 +200,7 @@ public:
         
         void* start() const { return &m_block->atoms()[0]; }
         void* end() const { return &m_block->atoms()[m_endAtom]; }
+        void* atomAt(size_t i) const { return &m_block->atoms()[i]; }
         bool contains(void* p) const { return start() <= p && p < end(); }
 
         void dumpState(PrintStream&);
@@ -295,9 +296,10 @@ public:
 
         Bitmap<atomsPerBlock> m_marks;
         Bitmap<atomsPerBlock> m_newlyAllocated;
+        void* m_verifierMemo { nullptr };
     };
     
-private:    
+private:
     Footer& footer();
     const Footer& footer() const;
 
@@ -384,7 +386,11 @@ public:
         *bitwise_cast<volatile uint8_t*>(&footer());
     }
     
+    void setVerifierMemo(void*);
+    template<typename T> T verifierMemo() const;
+
     static constexpr size_t offsetOfFooter = endAtom * atomSize;
+    static_assert(offsetOfFooter + sizeof(Footer) <= blockSize);
 
 private:
     MarkedBlock(VM&, Handle&);
@@ -658,6 +664,17 @@ inline void MarkedBlock::noteMarked()
     footer().m_biasedMarkCount = biasedMarkCount;
     if (UNLIKELY(!biasedMarkCount))
         noteMarkedSlow();
+}
+
+inline void MarkedBlock::setVerifierMemo(void* p)
+{
+    footer().m_verifierMemo = p;
+}
+
+template<typename T>
+T MarkedBlock::verifierMemo() const
+{
+    return bitwise_cast<T>(footer().m_verifierMemo);
 }
 
 } // namespace JSC

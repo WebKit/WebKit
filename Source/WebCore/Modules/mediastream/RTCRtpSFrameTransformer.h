@@ -80,7 +80,12 @@ private:
     Vector<uint8_t> m_authenticationKey;
     Vector<uint8_t> m_encryptionKey;
     Vector<uint8_t> m_saltKey;
-    HashMap<uint64_t, Vector<uint8_t>> m_keys;
+
+    struct IdentifiedKey {
+        uint64_t keyId { 0 };
+        Vector<uint8_t> keyData;
+    };
+    Vector<IdentifiedKey> m_keys;
 
     bool m_isEncrypting { false };
     uint64_t m_authenticationSize { 10 };

@@ -33,7 +33,12 @@
 #include "ExtensionsGL.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "MediaPlayerPrivate.h"
 #include <wtf/UniqueArray.h>
+
+#if USE(AVFOUNDATION)
+#include "GraphicsContextGLCV.h"
+#endif
 
 namespace WebCore {
 
@@ -196,7 +201,7 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 }
 #endif
 
-void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
+void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer& imageBuffer)
 {
     if (!makeContextCurrent())
         return;
@@ -205,10 +210,10 @@ void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBu
     auto imageData = readRenderingResults();
     if (!imageData)
         return;
-    paintToCanvas(imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
+    paintToCanvas(contextAttributes(), imageData.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
 }
 
-void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer* imageBuffer)
+void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
 {
     if (!makeContextCurrent())
         return;
@@ -217,20 +222,33 @@ void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer* imageB
     auto imageData = readCompositedResults();
     if (!imageData)
         return;
-    paintToCanvas(imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
+    paintToCanvas(contextAttributes(), imageData.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
 }
 
 RefPtr<ImageData> GraphicsContextGLOpenGL::paintRenderingResultsToImageData()
+{
+    // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
+    if (contextAttributes().premultipliedAlpha)
+        return nullptr;
+    return readRenderingResultsForPainting();
+}
+
+RefPtr<ImageData> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
         return nullptr;
     if (getInternalFramebufferSize().isEmpty())
         return nullptr;
-    // Reading premultiplied alpha would involve unpremultiplying, which is
-    // lossy.
-    if (contextAttributes().premultipliedAlpha)
-        return nullptr;
     return readRenderingResults();
+}
+
+RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
+{
+    if (!makeContextCurrent())
+        return nullptr;
+    if (getInternalFramebufferSize().isEmpty())
+        return nullptr;
+    return readCompositedResults();
 }
 
 #if !PLATFORM(COCOA)
@@ -239,6 +257,25 @@ RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResults()
     return readRenderingResults();
 }
 #endif
+
+bool GraphicsContextGLOpenGL::copyTextureFromMedia(MediaPlayer& player, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+{
+#if USE(AVFOUNDATION)
+    auto pixelBuffer = player.pixelBufferForCurrentTime();
+    if (!pixelBuffer)
+        return false;
+
+    auto contextCV = asCV();
+    if (!contextCV)
+        return false;
+
+    UNUSED_VARIABLE(premultiplyAlpha);
+    ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
+    return contextCV->copyPixelBufferToTexture(pixelBuffer, outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
+#else
+    return player.copyVideoTextureToPlatformTexture(this, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
+#endif
+}
 
 } // namespace WebCore
 

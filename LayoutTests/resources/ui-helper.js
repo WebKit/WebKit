@@ -1278,6 +1278,33 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static waitForTargetScrollAnimationToSettle(scrollTarget)
+    {
+        return new Promise((resolved) => {
+            let lastObservedScrollPosition = [scrollTarget.scrollLeft, scrollTarget.scrollTop];
+            let frameOfLastChange = 0;
+            let totalFrames = 0;
+
+            function animationFrame() {
+                if (lastObservedScrollPosition[0] != scrollTarget.scrollLeft ||
+                    lastObservedScrollPosition[1] != scrollTarget.scrollTop) {
+                    lastObservedScrollPosition = [scrollTarget.scrollLeft, scrollTarget.scrollTop];
+                    frameOfLastChange = totalFrames;
+                }
+
+                // If we have gone 20 frames without changing, resolve. If we have gone 500, then time out.
+                // This matches the amount of frames used in the WPT scroll animation helper.
+                if (totalFrames - frameOfLastChange >= 20 || totalFrames > 500)
+                    resolved();
+
+                totalFrames++;
+                requestAnimationFrame(animationFrame);
+            }
+
+            requestAnimationFrame(animationFrame);
+        });
+    }
+
     static rotateDevice(orientationName, animatedResize = false)
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

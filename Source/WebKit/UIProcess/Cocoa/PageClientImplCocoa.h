@@ -38,6 +38,8 @@ class Attachment;
 
 namespace WebCore {
 class AlternativeTextUIController;
+
+struct AppHighlight;
 }
 
 namespace WebKit {
@@ -74,7 +76,7 @@ public:
     NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) final;
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) final;
+    void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
 protected:

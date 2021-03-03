@@ -1,3 +1,823 @@
+2021-02-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Implement the Top-level await proposal
+        https://bugs.webkit.org/show_bug.cgi?id=202484
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-4-tla-expected.txt:
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/module-tla-delayed-expected.txt:
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/module-tla-immediate-promise-expected.txt:
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/module-tla-import-expected.txt:
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/module-tla-promise-expected.txt:
+
+2021-02-22  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=222266
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream 9b505f9fc3.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-015-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-015.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-016-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-016.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-017-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-017.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-012-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-012.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-013-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-013.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-014-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-014.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-015-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-015.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-016-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-016.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/w3c-import.log:
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-033-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-033.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
+2021-02-22  Sam Weinig  <weinig@apple.com>
+
+        Update web-platform-tests/css/css-color
+        https://bugs.webkit.org/show_bug.cgi?id=222235
+
+        Reviewed by Antti Koivisto.
+
+        Update to latest version.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-color/background-color-hsl-001-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-001.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-002-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-002.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-003-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-003.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-004-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-hsl-004.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-001.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-002-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-002.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-003-expected.html: Added.
+        * web-platform-tests/css/css-color/background-color-rgb-003.html: Added.
+        * web-platform-tests/css/css-color/lab-008-expected.html:
+        * web-platform-tests/css/css-color/lab-008.html:
+        * web-platform-tests/css/css-color/lch-008-expected.html:
+        * web-platform-tests/css/css-color/lch-008.html:
+        * web-platform-tests/css/css-color/predefined-003-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-003.html: Removed.
+        * web-platform-tests/css/css-color/predefined-004-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-004.html: Removed.
+        * web-platform-tests/css/css-color/predefined-017-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-017.html: Removed.
+        * web-platform-tests/css/css-color/prophoto-rgb-005-expected.html: Added.
+        * web-platform-tests/css/css-color/prophoto-rgb-005.html: Added.
+        * web-platform-tests/css/css-color/rec2020-001.html:
+        * web-platform-tests/css/css-color/rec2020-005-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-005.html: Added.
+        * web-platform-tests/css/css-color/w3c-import.log:
+
+2021-02-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Support modules in service workers
+        https://bugs.webkit.org/show_bug.cgi?id=222155
+
+        Reviewed by Saam Barati.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.tentative-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-module-scripts.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-registration-with-type.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-client-id.https-expected.txt:
+
+2021-02-20  Rob Buis  <rbuis@igalia.com>
+
+        "min-content" & "max-content" keywords should behave as initial value in block axis (but WebKit improperly treats them as the content-size)
+        https://bugs.webkit.org/show_bug.cgi?id=191390
+
+        Reviewed by Darin Adler.
+
+        Update improved test expectation.
+
+        * web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/min-inline-size-expected.txt:
+
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JS Modules in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=164860
+
+        Reviewed by Saam Barati.
+
+        Some of worklet failures in WPT is because,
+
+            1. Previously, worklet does not support module. These tests are passing incorrectly when modules are not supported.
+               Now, modules are supported, and some edge features are missing, so start failing
+            2. WPT is using www1.localhost in some tests (CSP tests), and this is not supported in WebKit's WPT testing. So failing incorrectly.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/non-object.tentative.any.worker-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/checkpoint-after-workerglobalscope-onerror-module-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/alpha/base-url-worker-importScripts-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/alpha/base-url-worker.sub-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-1-nothrow-worker-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-1-worker-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-2-import-worker-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-3-dynamic-worker-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-module-scripts.https-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/import-in-moduleworker-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/importScripts-in-worker-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-moduleworker-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-worker-expected.txt:
+        * web-platform-tests/workers/constructors/Worker/same-origin-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerGlobalScope/location/redirect-module-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-csp-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-failure-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-meta-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-meta.html:
+        * web-platform-tests/workers/modules/dedicated-worker-import-referrer-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import.any-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-options-type-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-parse-error-failure-expected.txt:
+        * web-platform-tests/workers/name-property-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-credentials.https-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-csp.https-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-import.https-expected.txt:
+        * web-platform-tests/worklets/audio-worklet-referrer.https-expected.txt:
+        * web-platform-tests/xhr/open-url-redirected-worker-origin-expected.txt:
+
+2021-02-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Fix Selenium key code for ENTER in testdriver-vendor.js
+        https://bugs.webkit.org/show_bug.cgi?id=222037
+
+        Reviewed by Carlos Garcia Campos.
+
+        In r272726 we added a bunch of Selenium key codes,
+        but the one for 0XE007 (ENTER) was wrong
+        as eventSender.keyDown() expects "\n" and not "enter".
+        This patch fixes the wrong code.
+
+        * web-platform-tests/resources/testdriver-vendor.js:
+
+2021-02-19  Imanol Fernandez  <ifernandez@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
+
+        Implement WebXR getViewerPose and getPose
+        https://bugs.webkit.org/show_bug.cgi?id=221225
+        <rdar://problem/74112910>
+
+        Reviewed by Youenn Fablet.
+
+        Mark pose and reference space WebXR tests as passing.
+
+        * web-platform-tests/webxr/xrFrame_getPose.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrView_eyes.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrView_match.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrView_oneframeupdate.https-expected.txt: Added.
+
+2021-02-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Root scroll snapping broken overflow:scroll is set on the <body>
+        https://bugs.webkit.org/show_bug.cgi?id=221407
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/scrollTo-scrollBy-snaps-expected.txt:
+
+2021-02-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Implement section 9.8 Definite and Indefinite Sizes case 1
+        https://bugs.webkit.org/show_bug.cgi?id=219538
+        <rdar://problem/72136484>
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013-expected.txt: Replaced FAIL by PASS expectations.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-003v-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/image-as-flexitem-size-004v-expected.txt: Ditto.
+        * web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html: Updated expectation. Still failing.
+
+2021-02-18  Rob Buis  <rbuis@igalia.com>
+
+        Treat <ratio> that ends with forward slash as invalid
+        https://bugs.webkit.org/show_bug.cgi?id=221978
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid-expected.txt:
+        * web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html:
+
+2021-02-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Import CSS @counter-style WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=222024
+
+        Reviewed by Fujii Hironori.
+
+        Import css-counter-style WPTs via `Tools/Scripts/import-w3c-tests -t web-platform-tests/css/css-counter-styles`
+        and add expectations.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-counter-styles/META.yml: Added.
+        * web-platform-tests/css/css-counter-styles/README: Added.
+        * web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-101-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-101.html: Added.
+        * web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-102-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-102.html: Added.
+        * web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-103-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-103.html: Added.
+        * web-platform-tests/css/css-counter-styles/arabic-indic/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-006-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-006.html: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-007-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-007.html: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-008-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-008.html: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-009-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-009.html: Added.
+        * web-platform-tests/css/css-counter-styles/armenian/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-116-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-116.html: Added.
+        * web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html: Added.
+        * web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-118-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-118.html: Added.
+        * web-platform-tests/css/css-counter-styles/bengali/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/broken-symbols-expected.htm: Added.
+        * web-platform-tests/css/css-counter-styles/broken-symbols.htm: Added.
+        * web-platform-tests/css/css-counter-styles/cambodian/css3-counter-styles-158-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cambodian/css3-counter-styles-158.html: Added.
+        * web-platform-tests/css/css-counter-styles/cambodian/css3-counter-styles-159-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cambodian/css3-counter-styles-159.html: Added.
+        * web-platform-tests/css/css-counter-styles/cambodian/css3-counter-styles-160-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cambodian/css3-counter-styles-160.html: Added.
+        * web-platform-tests/css/css-counter-styles/cambodian/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-001-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-001.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-004-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-004.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-005-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-decimal/css3-counter-styles-005.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-decimal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-201-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-201.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-202-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-202.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-203-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-203.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-earthly-branch/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-204-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-204.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-205-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-205.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-206-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/css3-counter-styles-206.html: Added.
+        * web-platform-tests/css/css-counter-styles/cjk-heavenly-stem/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-additive-symbols-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-additive-symbols-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-fallback-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-fallback.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-name-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-name-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-negative-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-negative-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-pad-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-pad-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-range-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-range-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-speak-as-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-speak-as-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-symbols-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-symbols-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-system-syntax-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/counter-style-system-syntax.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid.html: Added.
+        * web-platform-tests/css/css-counter-styles/cssom/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-119-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-119.html: Added.
+        * web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-120-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-120.html: Added.
+        * web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-121-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-121.html: Added.
+        * web-platform-tests/css/css-counter-styles/devanagari/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-010-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-010.html: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-011-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-011.html: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-012-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-012.html: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-014-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-014.html: Added.
+        * web-platform-tests/css/css-counter-styles/georgian/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-122-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-122.html: Added.
+        * web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123.html: Added.
+        * web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-124-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-124.html: Added.
+        * web-platform-tests/css/css-counter-styles/gujarati/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-125-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-125.html: Added.
+        * web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html: Added.
+        * web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-127-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-127.html: Added.
+        * web-platform-tests/css/css-counter-styles/gurmukhi/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-015-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-015.html: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016.html: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a.html: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-017-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-017.html: Added.
+        * web-platform-tests/css/css-counter-styles/hebrew/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-033-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-033.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-034-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-034.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-035-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana-iroha/css3-counter-styles-035.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana-iroha/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-030-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-030.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-031-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-031.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-032-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana/css3-counter-styles-032.html: Added.
+        * web-platform-tests/css/css-counter-styles/hiragana/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/idlharness-expected.txt: Added.
+        * web-platform-tests/css/css-counter-styles/idlharness.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-047-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-047.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-048-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-048.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-049-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-049.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-050-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-050.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-051-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-051.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-formal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-042-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-042.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-043-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-043.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-044-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-044.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-045-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-045.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-046-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/css3-counter-styles-046.html: Added.
+        * web-platform-tests/css/css-counter-styles/japanese-informal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/kannada/css3-counter-styles-128-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/kannada/css3-counter-styles-128.html: Added.
+        * web-platform-tests/css/css-counter-styles/kannada/css3-counter-styles-129-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/kannada/css3-counter-styles-129.html: Added.
+        * web-platform-tests/css/css-counter-styles/kannada/css3-counter-styles-130-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/kannada/css3-counter-styles-130.html: Added.
+        * web-platform-tests/css/css-counter-styles/kannada/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-039-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-039.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-040-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-040.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-041-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana-iroha/css3-counter-styles-041.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana-iroha/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-036-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-036.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-037-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-037.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-038-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana/css3-counter-styles-038.html: Added.
+        * web-platform-tests/css/css-counter-styles/katakana/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/khmer/css3-counter-styles-161-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/khmer/css3-counter-styles-161.html: Added.
+        * web-platform-tests/css/css-counter-styles/khmer/css3-counter-styles-162-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/khmer/css3-counter-styles-162.html: Added.
+        * web-platform-tests/css/css-counter-styles/khmer/css3-counter-styles-163-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/khmer/css3-counter-styles-163.html: Added.
+        * web-platform-tests/css/css-counter-styles/khmer/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-052-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-052.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-053-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-053.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-055-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-055.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-056-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-056.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hangul-formal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-062-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-062.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-063-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-063.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-064-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-064.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-065-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-065.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-066-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-066.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-formal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-057-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-057.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-058-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-058.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-060-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-060.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-061-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-061.html: Added.
+        * web-platform-tests/css/css-counter-styles/korean-hanja-informal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-131-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-131.html: Added.
+        * web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html: Added.
+        * web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-133-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-133.html: Added.
+        * web-platform-tests/css/css-counter-styles/lao/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-111-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-111.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-114-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-114.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-115-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-115.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-armenian/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-027-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-027.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-028-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-028.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-029-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-029.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-greek/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-019-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-019.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020a-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020a.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020b-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020b.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-021-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-021.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-022-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-022.html: Added.
+        * web-platform-tests/css/css-counter-styles/lower-roman/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/malayalam/css3-counter-styles-134-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/malayalam/css3-counter-styles-134.html: Added.
+        * web-platform-tests/css/css-counter-styles/malayalam/css3-counter-styles-135-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/malayalam/css3-counter-styles-135.html: Added.
+        * web-platform-tests/css/css-counter-styles/malayalam/css3-counter-styles-136-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/malayalam/css3-counter-styles-136.html: Added.
+        * web-platform-tests/css/css-counter-styles/malayalam/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-137-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-137.html: Added.
+        * web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-138-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-138.html: Added.
+        * web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-139-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-139.html: Added.
+        * web-platform-tests/css/css-counter-styles/mongolian/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/myanmar/css3-counter-styles-140-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/myanmar/css3-counter-styles-140.html: Added.
+        * web-platform-tests/css/css-counter-styles/myanmar/css3-counter-styles-141-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/myanmar/css3-counter-styles-141.html: Added.
+        * web-platform-tests/css/css-counter-styles/myanmar/css3-counter-styles-142-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/myanmar/css3-counter-styles-142.html: Added.
+        * web-platform-tests/css/css-counter-styles/myanmar/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/oriya/css3-counter-styles-143-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/oriya/css3-counter-styles-143.html: Added.
+        * web-platform-tests/css/css-counter-styles/oriya/css3-counter-styles-144-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/oriya/css3-counter-styles-144.html: Added.
+        * web-platform-tests/css/css-counter-styles/oriya/css3-counter-styles-145-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/oriya/css3-counter-styles-145.html: Added.
+        * web-platform-tests/css/css-counter-styles/oriya/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/persian/css3-counter-styles-104-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/persian/css3-counter-styles-104.html: Added.
+        * web-platform-tests/css/css-counter-styles/persian/css3-counter-styles-105-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/persian/css3-counter-styles-105.html: Added.
+        * web-platform-tests/css/css-counter-styles/persian/css3-counter-styles-106-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/persian/css3-counter-styles-106.html: Added.
+        * web-platform-tests/css/css-counter-styles/persian/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-076-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-076.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-077-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-077.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-078-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-078.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-079-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-079.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-080-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-080.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-formal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-071-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-071.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-072-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-072.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-073-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-073.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-074-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-074.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-075-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-075.html: Added.
+        * web-platform-tests/css/css-counter-styles/simp-chinese-informal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/support/counter-style-testcommon.js: Added.
+        (test_counter_style_descriptor):
+        (test_valid_counter_style_descriptor):
+        (test_invalid_counter_style_descriptor):
+        (test_counter_style_name):
+        (test_valid_name):
+        (test_invalid_name):
+        * web-platform-tests/css/css-counter-styles/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-146-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-146.html: Added.
+        * web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-147-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-147.html: Added.
+        * web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-148-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/tamil/css3-counter-styles-148.html: Added.
+        * web-platform-tests/css/css-counter-styles/tamil/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/telugu/css3-counter-styles-149-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/telugu/css3-counter-styles-149.html: Added.
+        * web-platform-tests/css/css-counter-styles/telugu/css3-counter-styles-150-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/telugu/css3-counter-styles-150.html: Added.
+        * web-platform-tests/css/css-counter-styles/telugu/css3-counter-styles-151-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/telugu/css3-counter-styles-151.html: Added.
+        * web-platform-tests/css/css-counter-styles/telugu/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/thai/css3-counter-styles-152-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/thai/css3-counter-styles-152.html: Added.
+        * web-platform-tests/css/css-counter-styles/thai/css3-counter-styles-153-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/thai/css3-counter-styles-153.html: Added.
+        * web-platform-tests/css/css-counter-styles/thai/css3-counter-styles-154-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/thai/css3-counter-styles-154.html: Added.
+        * web-platform-tests/css/css-counter-styles/thai/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-155-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-155.html: Added.
+        * web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html: Added.
+        * web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-157-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-157.html: Added.
+        * web-platform-tests/css/css-counter-styles/tibetan/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-086-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-086.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-087-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-087.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-088-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-088.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-089-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-089.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-090-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-090.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-formal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-081-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-081.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-082-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-082.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-083-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-083.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-084-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-084.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-085-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/css3-counter-styles-085.html: Added.
+        * web-platform-tests/css/css-counter-styles/trad-chinese-informal/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-107-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-107.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-108-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-108.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-109-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-109.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-110-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-110.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-armenian/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-025-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-025.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-026-expected.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-026.html: Added.
+        * web-platform-tests/css/css-counter-styles/upper-roman/w3c-import.log: Added.
+        * web-platform-tests/css/css-counter-styles/w3c-import.log: Added.
+
+2021-02-17  Antoine Quint  <graouts@webkit.org>
+
+        CSS properties that disallow negative values should not animate to negative values
+        https://bugs.webkit.org/show_bug.cgi?id=222034
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-box/animation/padding-bottom-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-interpolation-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-left-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-right-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-top-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-interpolation-expected.txt:
+
+2021-02-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus-visible parsing and experimental flag
+        https://bugs.webkit.org/show_bug.cgi?id=221895
+
+        Reviewed by Darin Adler.
+
+        Update expectations as now :focus-visible is a valid selector.
+
+        * web-platform-tests/css/selectors/focus-in-focus-event-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-in-focusin-event-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-003-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-004-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-005-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-006-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-007-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-009-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-010-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-012-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-015-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-016-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-017-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-018-expected.txt:
+        * web-platform-tests/css/selectors/parsing/parse-focus-visible-expected.txt:
+
+
+2021-02-16  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder.stop() does not work correctly when recording has been paused.
+        https://bugs.webkit.org/show_bug.cgi?id=221916
+        <rdar://problem/74366154>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html:
+
+2021-02-16  Antoine Quint  <graouts@webkit.org>
+
+        Web Animations JS API does not support "inherit" CSS values for keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=221931
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-align/animation/column-gap-interpolation-expected.txt:
+        * web-platform-tests/css/css-align/animation/row-gap-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-image-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-x-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-y-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-size-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-outset-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-source-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-interpolation-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-interpolation-expected.txt:
+        * web-platform-tests/css/css-color/animation/color-interpolation-expected.txt:
+        * web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-grow-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-shrink-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/order-interpolation-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-size-interpolation-001-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-size-interpolation-002-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation-expected.txt:
+        * web-platform-tests/css/css-lists/animations/list-style-image-interpolation-expected.txt:
+        * web-platform-tests/css/css-multicol/animation/column-count-interpolation-expected.txt:
+        * web-platform-tests/css/css-multicol/animation/column-rule-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-multicol/animation/column-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/bottom-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/left-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/right-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/top-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-image-threshold-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/width-interpolation-expected.txt:
+        * web-platform-tests/css/css-text/animations/letter-spacing-interpolation-expected.txt:
+        * web-platform-tests/css/css-text/animations/text-indent-interpolation-expected.txt:
+        * web-platform-tests/css/css-text/animations/word-spacing-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/perspective-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/scale-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-006-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/z-index-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/animation/caret-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/animation/outline-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/animation/outline-offset-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/animation/outline-width-interpolation-expected.txt:
+
+2021-02-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] PropertySlot should allow passing custom setters
+        https://bugs.webkit.org/show_bug.cgi?id=221872
+
+        Reviewed by Yusuke Suzuki.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/attributes-accessors-unique-function-objects-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/attributes-accessors-unique-function-objects.html: Added.
+        * web-platform-tests/dom/events/Event-isTrusted.any-expected.txt:
+        * web-platform-tests/dom/events/Event-isTrusted.any.worker-expected.txt:
+        * web-platform-tests/html/browsers/history/the-location-interface/document_location-expected.txt:
+        * web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-setter.window-expected.txt:
+        * web-platform-tests/html/browsers/windows/embedded-opener-expected.txt:
+
+2021-02-15  Antoine Quint  <graouts@webkit.org>
+
+        Getting the computed style should resolve animations using the last style change event style
+        https://bugs.webkit.org/show_bug.cgi?id=221882
+
+        Reviewed by Dean Jackson.
+
+        Mark 20 new PASS results.
+
+        * web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/scale-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-006-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation-expected.txt:
+
 2021-02-15  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Update WPT test suite

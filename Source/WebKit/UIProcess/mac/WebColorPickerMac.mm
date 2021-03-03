@@ -132,20 +132,20 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 
 + (NSPopover *)_colorPopoverCreateIfNecessary:(BOOL)forceCreation
 {
-    static NSPopover *colorPopover = nil;
+    static NeverDestroyed<RetainPtr<NSPopover>> colorPopover;
     if (forceCreation) {
-        NSPopover *popover = [[NSPopover alloc] init];
+        auto popover = adoptNS([[NSPopover alloc] init]);
         [popover _setRequiresCorrectContentAppearance:YES];
-        popover.behavior = NSPopoverBehaviorTransient;
+        [popover setBehavior:NSPopoverBehaviorTransient];
 
         auto controller = adoptNS([[NSClassFromString(@"NSColorPopoverController") alloc] init]);
-        popover.contentViewController = controller.get();
-        [controller setPopover:popover];
+        [popover setContentViewController:controller.get()];
+        [controller setPopover:popover.get()];
 
-        colorPopover = popover;
+        colorPopover.get() = WTFMove(popover);
     }
 
-    return colorPopover;
+    return colorPopover.get().get();
 }
 
 - (id <WKPopoverColorWellDelegate>)webDelegate
@@ -233,14 +233,14 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     [_popoverWell setAction:@selector(didChooseColor:)];
     [_popoverWell setColor:color];
 
-    NSColorList *suggestedColors = nil;
+    RetainPtr<NSColorList> suggestedColors;
     if (suggestions.size()) {
-        suggestedColors = [[[NSColorList alloc] init] autorelease];
+        suggestedColors = adoptNS([[NSColorList alloc] init]);
         for (size_t i = 0; i < std::min(suggestions.size(), maxColorSuggestions); i++)
             [suggestedColors insertColor:nsColor(suggestions.at(i)) key:@(i).stringValue atIndex:i];
     }
 
-    [_popoverWell setSuggestedColors:suggestedColors];
+    [_popoverWell setSuggestedColors:suggestedColors.get()];
     [_popoverWell _showPopover];
 
     [[NSColorPanel sharedColorPanel] setDelegate:self];

@@ -65,7 +65,7 @@ function errorListener(evt) {
 
 function startRequest()
 {
-    es = new EventSource("resources/response-content-type-charset.php?contentType=" + escape(contentTypes[i]));
+    es = new EventSource("resources/response-content-type-charset.py?contentType=" + escape(contentTypes[i]));
     es.onopen = openListener;
     es.onmessage = messageListener;
     es.onerror = errorListener;

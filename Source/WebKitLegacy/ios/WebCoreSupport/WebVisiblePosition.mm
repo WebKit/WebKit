@@ -56,10 +56,10 @@ using namespace WebCore;
 
 + (WebVisiblePosition *)_wrapVisiblePosition:(VisiblePosition)visiblePosition
 {
-    WebVisiblePosition *vp = [[WebVisiblePosition alloc] init];
+    auto vp = adoptNS([[WebVisiblePosition alloc] init]);
     VisiblePosition *copy = new VisiblePosition(visiblePosition);
     vp->_internal = reinterpret_cast<WebObjectInternal *>(copy);
-    return [vp autorelease];
+    return vp.autorelease();
 }
 
 // Returns nil if visible position is null.

@@ -148,6 +148,9 @@ void TestController::platformResetPreferencesToConsistentValues()
     WKPreferencesSetTextAutosizingEnabled(preferences, false);
     WKPreferencesSetTextAutosizingUsesIdempotentMode(preferences, false);
     WKPreferencesSetContentChangeObserverEnabled(preferences, false);
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    WKPreferencesSetVP9DecoderEnabled(preferences, false);
+#endif
 }
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)

@@ -87,16 +87,16 @@ using namespace JSC;
 
 - (WebArchive *)webArchive
 {
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self))] autorelease];
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self))]).autorelease();
 }
 
 - (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter
 {
-    WebArchive *webArchive = [[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](Frame& subframe) -> bool {
+    auto webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](Frame& subframe) -> bool {
         return webArchiveSubframeFilter(kit(&subframe));
-    })];
+    })]);
 
-    return [webArchive autorelease];
+    return webArchive.autorelease();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -186,7 +186,7 @@ using namespace JSC;
 
 - (WebArchive *)webArchive
 {
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(makeSimpleRange(*core(self)))] autorelease];
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(makeSimpleRange(*core(self)))]).autorelease();
 }
 
 - (NSString *)markupString

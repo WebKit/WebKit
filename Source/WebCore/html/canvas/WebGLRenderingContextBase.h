@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +58,7 @@
 #endif
 
 namespace JSC {
-class SlotVisitor;
+class AbstractSlotVisitor;
 }
 
 namespace WTF {
@@ -411,7 +411,7 @@ public:
     void recycleContext() override;
     void dispatchContextChangedNotification() override;
 
-    virtual void addMembersToOpaqueRoots(JSC::SlotVisitor&);
+    virtual void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&);
     // This lock must be held across all mutations of containers like
     // Vectors, HashSets, etc. which contain RefPtr<WebGLObject>, and
     // which are traversed by addMembersToOpaqueRoots() or any of the

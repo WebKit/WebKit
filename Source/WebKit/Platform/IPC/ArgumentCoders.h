@@ -55,6 +55,7 @@ template<typename T> struct SimpleArgumentCoder {
 
 template<typename T, size_t Extent> struct ArgumentCoder<ArrayReference<T, Extent>> {
     using ArrayReferenceType = ArrayReference<T, Extent>;
+    template<typename Encoder>
     static void encode(Encoder& encoder, const ArrayReferenceType& arrayReference)
     {
         if (!Extent)
@@ -74,6 +75,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<ArrayReference<T, Exten
 
 template<typename T> struct ArgumentCoder<ArrayReference<T, arrayReferenceDynamicExtent>> {
     using ArrayReferenceType = ArrayReference<T, arrayReferenceDynamicExtent>;
+    template<typename Encoder>
     static void encode(Encoder& encoder, const ArrayReferenceType& arrayReference)
     {
         encoder << static_cast<uint64_t>(arrayReference.size());
@@ -266,6 +268,7 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
 
 template<size_t index, typename... Elements>
 struct TupleEncoder {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
     {
         encoder << std::get<sizeof...(Elements) - index>(tuple);
@@ -275,6 +278,7 @@ struct TupleEncoder {
 
 template<typename... Elements>
 struct TupleEncoder<0, Elements...> {
+    template<typename Encoder>
     static void encode(Encoder&, const std::tuple<Elements...>&)
     {
     }
@@ -338,6 +342,7 @@ struct TupleDecoder<0> {
 };
 
 template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
     {
         TupleEncoder<sizeof...(Elements), Elements...>::encode(encoder, tuple);
@@ -374,6 +379,7 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
 template<bool fixedSizeElements, typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder;
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder<false, T, inlineCapacity, OverflowHandler, minCapacity> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
@@ -411,6 +417,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 };
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder<true, T, inlineCapacity, OverflowHandler, minCapacity> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
@@ -753,6 +760,7 @@ template<> struct ArgumentCoder<CString> {
 };
 
 template<> struct ArgumentCoder<String> {
+    template<typename Encoder>
     static void encode(Encoder&, const String&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, String&);
     static Optional<String> decode(Decoder&);

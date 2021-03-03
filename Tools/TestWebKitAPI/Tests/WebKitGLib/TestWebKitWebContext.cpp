@@ -21,6 +21,7 @@
 
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
+#include <WebCore/SoupVersioning.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <wtf/HashMap.h>
@@ -386,30 +387,40 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
 }
 
+#if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext* context, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
+    auto* responseBody = soup_server_message_get_response_body(message);
+
     if (g_str_equal(path, "/")) {
-        const char* acceptLanguage = soup_message_headers_get_one(message->request_headers, "Accept-Language");
-        soup_message_set_status(message, SOUP_STATUS_OK);
-        soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, acceptLanguage, strlen(acceptLanguage));
-        soup_message_body_complete(message->response_body);
+        const char* acceptLanguage = soup_message_headers_get_one(soup_server_message_get_request_headers(message), "Accept-Language");
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        soup_message_body_append(responseBody, SOUP_MEMORY_COPY, acceptLanguage, strlen(acceptLanguage));
+        soup_message_body_complete(responseBody);
     } else if (g_str_equal(path, "/empty")) {
         const char* emptyHTML = "<html><body></body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/echoPort")) {
-        char* port = g_strdup_printf("%u", g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS((soup_client_context_get_local_address(context)))));
-        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, port, strlen(port));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+#if USE(SOUP2)
+        char* port = g_strdup_printf("%u", g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(soup_client_context_get_local_address(context))));
+#else
+        char* port = g_strdup_printf("%u", g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(soup_server_message_get_local_address(message))));
+#endif
+        soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, port, strlen(port));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 }
 
 class SecurityPolicyTest: public Test {
@@ -579,7 +590,11 @@ public:
         Proxy
     };
 
+#if USE(SOUP2)
     static void webSocketProxyServerCallback(SoupServer*, SoupWebsocketConnection*, const char* path, SoupClientContext*, gpointer userData)
+#else
+    static void webSocketProxyServerCallback(SoupServer*, SoupServerMessage*, const char* path, SoupWebsocketConnection*, gpointer userData)
+#endif
     {
         static_cast<ProxyTest*>(userData)->webSocketConnected(ProxyTest::WebSocketServerType::Proxy);
     }
@@ -593,10 +608,10 @@ public:
         // actually a proxy server. We're testing whether the proxy settings
         // work, not whether we can write a soup proxy server.
         m_proxyServer.run(serverCallback);
-        g_assert_nonnull(m_proxyServer.baseURI());
+        g_assert_false(m_proxyServer.baseURL().isNull());
 #if SOUP_CHECK_VERSION(2, 61, 90)
         m_proxyServer.addWebSocketHandler(webSocketProxyServerCallback, this);
-        g_assert_nonnull(m_proxyServer.baseWebSocketURI());
+        g_assert_false(m_proxyServer.baseWebSocketURL().isNull());
 #endif
     }
 
@@ -611,7 +626,7 @@ public:
 
     GUniquePtr<char> proxyServerPortAsString()
     {
-        GUniquePtr<char> port(g_strdup_printf("%u", soup_uri_get_port(m_proxyServer.baseURI())));
+        GUniquePtr<char> port(g_strdup_printf("%u", m_proxyServer.port()));
         return port;
     }
 
@@ -640,7 +655,11 @@ public:
 };
 
 #if SOUP_CHECK_VERSION(2, 61, 90)
+#if USE(SOUP2)
 static void webSocketServerCallback(SoupServer*, SoupWebsocketConnection*, const char*, SoupClientContext*, gpointer userData)
+#else
+static void webSocketServerCallback(SoupServer*, SoupServerMessage*, const char*, SoupWebsocketConnection*, gpointer userData)
+#endif
 {
     static_cast<ProxyTest*>(userData)->webSocketConnected(ProxyTest::WebSocketServerType::NoProxy);
 }
@@ -657,7 +676,7 @@ static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loa
 static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 {
     // Proxy URI is unset by default. Requests to kServer should be received by kServer.
-    GUniquePtr<char> serverPortAsString(g_strdup_printf("%u", soup_uri_get_port(kServer->baseURI())));
+    GUniquePtr<char> serverPortAsString(g_strdup_printf("%u", kServer->port()));
     auto mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
@@ -669,8 +688,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 #endif
 
     // Set default proxy URI to point to proxyServer. Requests to kServer should be received by proxyServer instead.
-    GUniquePtr<char> proxyURI(soup_uri_to_string(test->m_proxyServer.baseURI(), FALSE));
-    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(proxyURI.get(), nullptr);
+    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().data(), nullptr);
     auto* dataManager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
@@ -718,7 +736,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Use a default proxy uri, but ignoring requests to localhost.
     static const char* ignoreHosts[] = { "localhost", nullptr };
-    settings = webkit_network_proxy_settings_new(proxyURI.get(), ignoreHosts);
+    settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().data(), ignoreHosts);
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
@@ -734,7 +752,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Use scheme specific proxy instead of the default.
     settings = webkit_network_proxy_settings_new(nullptr, nullptr);
-    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", proxyURI.get());
+    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", test->m_proxyServer.baseURL().string().utf8().data());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());

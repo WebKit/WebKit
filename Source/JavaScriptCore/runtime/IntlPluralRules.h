@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Andy VanWagoner (andy@vanwagoner.family)
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +58,7 @@ public:
     DECLARE_INFO;
 
     template<typename IntlType>
-    friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
+    friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, Optional<JSObject&>, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
 
     void initializePluralRules(JSGlobalObject*, JSValue locales, JSValue options);
     JSValue select(JSGlobalObject*, double value) const;
@@ -66,7 +67,7 @@ public:
 private:
     IntlPluralRules(VM&, Structure*);
     void finishCreation(VM&);
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
     static Vector<String> localeData(const String&, RelevantExtensionKey);
 

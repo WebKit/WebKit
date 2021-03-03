@@ -165,7 +165,7 @@ static bool processHasActiveRunTimeLimitation()
 {
     if (!_assertionsNeedingBackgroundTask.computesEmpty() && ![self _hasBackgroundTask]) {
         if (processHasActiveRunTimeLimitation()) {
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because RunningBoard has already started the expiration timer", self);
+            RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because RunningBoard has already started the expiration timer", self);
             return;
         }
         RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: beginBackgroundTaskWithName", self);
@@ -204,7 +204,7 @@ static bool processHasActiveRunTimeLimitation()
 - (void)_handleBackgroundTaskExpiration
 {
     auto remainingTime = [RBSProcessHandle currentProcess].activeLimitations.runTime;
-    RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Background task expired while holding WebKit ProcessAssertion (isMainThread: %d, remainingTime: %g).", RunLoop::isMain(), remainingTime);
+    RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Background task expired while holding WebKit ProcessAssertion (isMainThread=%d, remainingTime=%g).", RunLoop::isMain(), remainingTime);
 
     callOnMainRunLoopAndWait([self] {
         [self _handleBackgroundTaskExpirationOnMainThread];
@@ -216,7 +216,7 @@ static bool processHasActiveRunTimeLimitation()
     ASSERT(RunLoop::isMain());
 
     auto remainingTime = [RBSProcessHandle currentProcess].activeLimitations.runTime;
-    RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: _handleBackgroundTaskExpirationOnMainThread (remainingTime: %g).", remainingTime);
+    RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: _handleBackgroundTaskExpirationOnMainThread (remainingTime=%g).", remainingTime);
 
     // If there is no time limitation, then it means that the process is now allowed to run again and the expiration notification
     // is outdated (e.g. we did not have time to process the expiration notification before suspending and thus only process it
@@ -315,24 +315,24 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
     [m_rbsAssertion addObserver:m_delegate.get()];
     m_delegate.get().invalidationCallback = ^{
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID %d was invalidated", this, runningBoardAssertionName, pid);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d was invalidated", this, runningBoardAssertionName, pid);
         processAssertionWasInvalidated();
     };
 
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process with PID %d, error: %{public}@", this, runningBoardAssertionName, reason.utf8().data(), pid, acquisitionError);
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process with PID=%d, error: %{public}@", this, runningBoardAssertionName, reason.utf8().data(), pid, acquisitionError);
         RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
             if (weakThis)
                 weakThis->processAssertionWasInvalidated();
         });
     } else
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: Successfully took RBS %{public}@ assertion '%{public}s' for process with PID %d", this, runningBoardAssertionName, reason.utf8().data(), pid);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: Successfully took RBS %{public}@ assertion '%{public}s' for process with PID=%d", this, runningBoardAssertionName, reason.utf8().data(), pid);
 }
 
 ProcessAssertion::~ProcessAssertion()
 {
-    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion() Releasing process assertion for process with PID %d", this, m_pid);
+    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion() Releasing process assertion for process with PID=%d", this, m_pid);
 
     if (m_rbsAssertion) {
         m_delegate.get().invalidationCallback = nil;
@@ -345,7 +345,7 @@ ProcessAssertion::~ProcessAssertion()
 void ProcessAssertion::processAssertionWasInvalidated()
 {
     ASSERT(RunLoop::isMain());
-    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::processAssertionWasInvalidated() PID: %d", this, m_pid);
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::processAssertionWasInvalidated() PID=%d", this, m_pid);
 
     if (m_invalidationHandler)
         m_invalidationHandler();

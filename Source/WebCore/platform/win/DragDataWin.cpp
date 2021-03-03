@@ -40,13 +40,13 @@
 
 namespace WebCore {
 
-DragData::DragData(const DragDataMap& data, const IntPoint& clientPosition, const IntPoint& globalPosition,
-    OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags)
+DragData::DragData(const DragDataMap& data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, Optional<PageIdentifier> pageID)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(0)
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
+    , m_pageID(pageID)
     , m_dragDataMap(data)
 {
 }

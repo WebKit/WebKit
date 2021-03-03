@@ -50,6 +50,13 @@ try:
 except ImportError:
     from urllib2 import urlopen
 
+try:
+    from contextlib import nullcontext
+except ImportError:
+    @contextmanager
+    def nullcontext(enter_result=None):
+        yield enter_result
+
 FLATPAK_REQUIRED_VERSION = "1.4.4"
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
@@ -389,11 +396,13 @@ class FlatpakPackage(FlatpakObject):
 
 
 @contextmanager
-def disable_signals(signals=[signal.SIGINT]):
+def disable_signals(signals=[signal.SIGINT, signal.SIGTERM, signal.SIGHUP]):
     old_signal_handlers = []
 
     for disabled_signal in signals:
-        old_signal_handlers.append((disabled_signal, signal.getsignal(disabled_signal)))
+        handler = signal.getsignal(disabled_signal)
+        if handler:
+            old_signal_handlers.append((disabled_signal, handler))
         signal.signal(disabled_signal, signal.SIG_IGN)
 
     yield
@@ -517,20 +526,25 @@ class WebkitFlatpak:
         self.sccache_token = ""
         self.sccache_scheduler = DEFAULT_SCCACHE_SCHEDULER
 
-    def execute_command(self, args, stdout=None, stderr=None, env=None):
+    def execute_command(self, args, stdout=None, stderr=None, env=None, keep_signals=True):
+        if keep_signals:
+            ctx_manager = nullcontext()
+        else:
+            ctx_manager = disable_signals()
         _log.debug('Running: %s\n' % ' '.join(string_utils.decode(arg) for arg in args))
         result = 0
-        try:
-            result = subprocess.check_call(args, stdout=stdout, stderr=stderr, env=env)
-        except subprocess.CalledProcessError as err:
-            if self.verbose:
-                cmd = ' '.join(string_utils.decode(arg) for arg in err.cmd)
-                message = "'%s' returned a non-zero exit code." % cmd
-                if stderr:
-                    with open(stderr.name, 'r') as stderrf:
-                        message += " Stderr: %s" % stderrf.read()
-                Console.error_message(message)
-            return err.returncode
+        with ctx_manager:
+            try:
+                result = subprocess.check_call(args, stdout=stdout, stderr=stderr, env=env)
+            except subprocess.CalledProcessError as err:
+                if self.verbose:
+                    cmd = ' '.join(string_utils.decode(arg) for arg in err.cmd)
+                    message = "'%s' returned a non-zero exit code." % cmd
+                    if stderr:
+                        with open(stderr.name, 'r') as stderrf:
+                            message += " Stderr: %s" % stderrf.read()
+                    Console.error_message(message)
+                return err.returncode
         return result
 
     def clean_args(self):
@@ -602,7 +616,7 @@ class WebkitFlatpak:
         if not gst_dir:
             if building:
                 _log.debug("$GST_BUILD_PATH environment variable not set. Skipping gst-build\n")
-            return []
+            return {}
 
         if not os.path.exists(os.path.join(gst_dir, 'gst-env.py')):
             raise RuntimeError('GST_BUILD_PATH set to %s but it doesn\'t seem to be a valid `gst-build` checkout.' % gst_dir)
@@ -627,7 +641,7 @@ class WebkitFlatpak:
         gst_env = run_sanitized(command, gather_output=True)
         allowlist = ("LD_LIBRARY_PATH", "PATH", "PKG_CONFIG_PATH")
         nopathlist = ("GST_DEBUG", "GST_VERSION", "GST_ENV")
-        env = []
+        env = {}
         for line in [line for line in gst_env.splitlines() if not line.startswith("export")]:
             tokens = line.split("=")
             var_name, contents = tokens[0], "=".join(tokens[1:])
@@ -637,7 +651,7 @@ class WebkitFlatpak:
                 new_contents = ':'.join([self.host_path_to_sandbox_path(p) for p in contents.split(":")])
             else:
                 new_contents = contents.replace("'", "")
-            env.append("--env=%s=%s" % (var_name, new_contents))
+            env[var_name] = new_contents
         return env
 
     def is_branch_build(self):
@@ -779,6 +793,7 @@ class WebkitFlatpak:
             "QML2_IMPORT_PATH",
             "RESULTS_SERVER_API_KEY",
             "SSLKEYLOGFILE",
+            "XR_RUNTIME_JSON",
         ]
 
         def envvar_in_suffixes_to_keep(envvar):
@@ -849,11 +864,27 @@ class WebkitFlatpak:
                 "NUMBER_OF_PROCESSORS": n_cores,
             })
 
-        for envvar, value in sandbox_environment.items():
-            flatpak_command.append("--env=%s=%s" % (envvar, value))
+        # Set PKG_CONFIG_PATH in sandbox so uninstalled WebKit.pc files can be used.
+        pkg_config_path = os.environ.get("PKG_CONFIG_PATH")
+        if pkg_config_path:
+            pkg_config_path = "%s:%s" % (self.build_path, pkg_config_path)
+        else:
+            pkg_config_path = self.build_path
+        sandbox_environment["PKG_CONFIG_PATH"] = pkg_config_path
 
         if not building_gst and args[0] != "sccache":
-            extra_flatpak_args.extend(self.setup_gstbuild(building))
+            # Merge gst-build env vars in sandbox environment, without overriding previously set PATH values.
+            gst_env = self.setup_gstbuild(building)
+            for var_name in list(gst_env.keys()):
+                if var_name not in sandbox_environment:
+                    sandbox_environment[var_name] = gst_env[var_name]
+                else:
+                    contents = gst_env[var_name]
+                    if var_name.endswith('PATH'):
+                        sandbox_environment[var_name] = "%s:%s" % (sandbox_environment[var_name], contents)
+
+        for envvar, value in sandbox_environment.items():
+            flatpak_command.append("--env=%s=%s" % (envvar, value))
 
         flatpak_env = os.environ.copy()
         for envvar in list(flatpak_env.keys()):
@@ -866,8 +897,15 @@ class WebkitFlatpak:
         # all `LANG` vars.
         flatpak_env["LANG"] = "en_US.UTF-8"
 
-        flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
+        keep_signals = args[0] != "gdb"
+        if not keep_signals:
+            module_path = os.path.join(self.build_path, "lib", "libsigaction-disabler.so")
+            # Enable module in bwrap child processes.
+            extra_flatpak_args.append("--env=WEBKIT_FLATPAK_LD_PRELOAD=%s" % module_path)
+            # Enable module in `flatpak run`.
+            flatpak_env["LD_PRELOAD"] = module_path
 
+        flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
 
         flatpak_env.update({
             "FLATPAK_BWRAP": os.path.join(scriptdir, "webkit-bwrap"),
@@ -875,15 +913,12 @@ class WebkitFlatpak:
             "WEBKIT_FLATPAK_USER_DIR": os.environ["FLATPAK_USER_DIR"],
         })
 
-        pkg_config_path = flatpak_env.get("PKG_CONFIG_PATH")
-        if pkg_config_path:
-            pkg_config_path = "%s:%s" % (self.build_path, pkg_config_path)
-        else:
-            pkg_config_path = self.build_path
-        flatpak_env["PKG_CONFIG_PATH"] = pkg_config_path
+        display = os.environ.get("DISPLAY")
+        if display:
+            flatpak_env["WEBKIT_FLATPAK_DISPLAY"] = display
 
         try:
-            return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env)
+            return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env, keep_signals=keep_signals)
         except KeyboardInterrupt:
             return 0
 

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,8 @@ void RegExpObject::finishCreation(VM& vm)
     ASSERT(type() == RegExpObjectType);
 }
 
-void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void RegExpObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     RegExpObject* thisObject = jsCast<RegExpObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -54,6 +55,8 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendUnbarriered(thisObject->regExp());
     visitor.append(thisObject->m_lastIndex);
 }
+
+DEFINE_VISIT_CHILDREN(RegExpObject);
 
 bool RegExpObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {

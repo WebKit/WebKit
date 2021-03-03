@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009-2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@ using namespace JSC;
 
 using namespace HTMLNames;
 
-static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor, const char** reason)
+static inline bool isReachableFromDOM(Node* node, AbstractSlotVisitor& visitor, const char** reason)
 {
     if (!node->isConnected()) {
         if (is<Element>(*node)) {
@@ -123,7 +123,7 @@ static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor, const ch
     return visitor.containsOpaqueRoot(root(node));
 }
 
-bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)
+bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
     JSNode* jsNode = jsCast<JSNode*>(handle.slot()->asCell());
     return isReachableFromDOM(&jsNode->wrapped(), visitor, reason);
@@ -136,10 +136,13 @@ JSScope* JSNode::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSSc
     return node;
 }
 
-void JSNode::visitAdditionalChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void JSNode::visitAdditionalChildren(Visitor& visitor)
 {
     visitor.addOpaqueRoot(root(wrapped()));
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNode);
 
 static ALWAYS_INLINE JSValue createWrapperInline(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<Node>&& node)
 {

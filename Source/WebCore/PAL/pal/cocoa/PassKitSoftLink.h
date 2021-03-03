@@ -78,4 +78,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorPostalAddressUserInfoK
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion))
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/PassKitSoftLinkAdditions.h>
+#endif
+
 #endif // USE(PASSKIT)

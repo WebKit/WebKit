@@ -24,3 +24,7 @@
  */
 
 #import "config.h"
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebCoreAdditions.mm>
+#endif

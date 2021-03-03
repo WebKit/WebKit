@@ -70,7 +70,7 @@ messages -> WebPageProxy {
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
     ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted) Async
     ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (Optional<Vector<WebCore::ContactInfo>> info) Async
-    PrintFrame(WebCore::FrameIdentifier frameID, String title) -> () Synchronous
+    PrintFrame(WebCore::FrameIdentifier frameID, String title, WebCore::FloatSize pdfFirstPageSize) -> () Synchronous
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
     RecommendedScrollbarStyleDidChange(int32_t newStyle)
@@ -531,7 +531,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    UpdateAppHighlightsStorage(IPC::SharedBufferCopy data)
+    StoreAppHighlight(struct WebCore::AppHighlight info)
 #endif
 
     SignedPublicKeyAndChallengeString(unsigned keySizeIndex, String challengeString, URL url) -> (String result) Synchronous

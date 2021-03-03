@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,13 +63,16 @@ void IntlRelativeTimeFormat::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-void IntlRelativeTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void IntlRelativeTimeFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     auto* thisObject = jsCast<IntlRelativeTimeFormat*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
 }
+
+DEFINE_VISIT_CHILDREN(IntlRelativeTimeFormat);
 
 Vector<String> IntlRelativeTimeFormat::localeData(const String& locale, RelevantExtensionKey key)
 {
@@ -85,13 +89,8 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSObject* options;
-    if (optionsValue.isUndefined())
-        options = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
-    else {
-        options = optionsValue.toObject(globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-    }
+    Optional<JSObject&> options = intlCoerceOptionsToObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, void());
 
     ResolveLocaleOptions localeOptions;
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);

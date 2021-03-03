@@ -70,6 +70,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageData; }
     static const bool isSync = true;
 
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<RefPtr<WebCore::ImageData>&>;
     using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
     const Arguments& arguments() const

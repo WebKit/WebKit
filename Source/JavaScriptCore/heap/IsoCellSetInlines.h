@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,10 +91,10 @@ void IsoCellSet::forEachMarkedCell(const Func& func)
         });
 }
 
-template<typename Func>
-Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Func& func)
+template<typename Visitor, typename Func>
+Ref<SharedTask<void(Visitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Func& func)
 {
-    class Task final : public SharedTask<void(SlotVisitor&)> {
+    class Task final : public SharedTask<void(Visitor&)> {
     public:
         Task(IsoCellSet& set, const Func& func)
             : m_set(set)
@@ -103,7 +103,7 @@ Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(cons
         {
         }
         
-        void run(SlotVisitor& visitor) final
+        void run(Visitor& visitor) final
         {
             while (MarkedBlock::Handle* handle = m_blockSource->run()) {
                 unsigned blockIndex = handle->index();

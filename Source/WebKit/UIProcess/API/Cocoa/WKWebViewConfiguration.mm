@@ -477,6 +477,16 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _userContentController.set(userContentController);
 }
 
+- (BOOL)upgradeKnownHostsToHTTPS
+{
+    return _pageConfiguration->httpsUpgradeEnabled();
+}
+
+- (void)setUpgradeKnownHostsToHTTPS:(BOOL)upgrade
+{
+    _pageConfiguration->setHTTPSUpgradeEnabled(upgrade);
+}
+
 - (WKWebsiteDataStore *)websiteDataStore
 {
     return _websiteDataStore.get([] { return [WKWebsiteDataStore defaultDataStore]; });

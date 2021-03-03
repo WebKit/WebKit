@@ -27,7 +27,8 @@
 
 namespace WebKit {
 
-enum class NavigatingToAppBoundDomain : bool { Yes, No };
+enum class NavigatingToAppBoundDomain : bool { No, Yes };
+enum class LastNavigationWasAppBound : bool { No, Yes };
 
 }
 

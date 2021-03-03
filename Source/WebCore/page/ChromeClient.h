@@ -114,6 +114,7 @@ class Widget;
 class MediaPlayerRequestInstallMissingPluginsCallback;
 #endif
 
+struct AppHighlight;
 struct ContactsRequestData;
 struct ContentRuleListResults;
 struct DateTimeChooserParameters;
@@ -304,7 +305,7 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    virtual void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const = 0;
+    virtual void storeAppHighlight(const WebCore::AppHighlight&) const = 0;
 #endif
 
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;

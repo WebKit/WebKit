@@ -250,16 +250,16 @@ static inline void setVisible(TestWKWebView *webView)
 TEST(WebKit, QuotaDelegateHidden)
 {
     done = false;
-    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
-    storeConfiguration.perOriginStorageQuota = 1024 * 400;
-    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:dataStore];
+    [configuration setWebsiteDataStore:dataStore.get()];
 
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
@@ -310,16 +310,16 @@ TEST(WebKit, QuotaDelegateHidden)
 TEST(WebKit, QuotaDelegate)
 {
     done = false;
-    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
-    storeConfiguration.perOriginStorageQuota = 1024 * 400;
-    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:dataStore];
+    [configuration setWebsiteDataStore:dataStore.get()];
 
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
@@ -371,16 +371,16 @@ TEST(WebKit, QuotaDelegate)
 TEST(WebKit, QuotaDelegateReload)
 {
     done = false;
-    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
-    storeConfiguration.perOriginStorageQuota = 1024 * 400;
-    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:dataStore];
+    [configuration setWebsiteDataStore:dataStore.get()];
     
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
@@ -419,16 +419,16 @@ TEST(WebKit, QuotaDelegateReload)
 TEST(WebKit, QuotaDelegateNavigateFragment)
 {
     done = false;
-    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
-    storeConfiguration.perOriginStorageQuota = 1024 * 400;
-    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:dataStore];
+    [configuration setWebsiteDataStore:dataStore.get()];
 
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
@@ -470,8 +470,8 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
 TEST(WebKit, DefaultQuota)
 {
     done = false;
-    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
-    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
 
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -479,7 +479,7 @@ TEST(WebKit, DefaultQuota)
     TestWebKitAPI::Util::run(&done);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:dataStore];
+    [configuration setWebsiteDataStore:dataStore.get()];
 
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];

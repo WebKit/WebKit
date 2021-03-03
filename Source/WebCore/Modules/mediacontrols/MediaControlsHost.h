@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
@@ -39,6 +40,7 @@ class HTMLMediaElement;
 class MediaControlTextTrackContainerElement;
 class TextTrack;
 class TextTrackList;
+class VoidCallback;
 
 class MediaControlsHost : public RefCounted<MediaControlsHost> {
     WTF_MAKE_FAST_ALLOCATED(MediaControlsHost);
@@ -92,11 +94,7 @@ public:
     static String formattedStringForDuration(double);
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    struct ContextMenuOptions {
-        bool includeAudioTracks { false };
-        bool includeTextTracks { false };
-    };
-    void showMediaControlsContextMenu(HTMLElement&, ContextMenuOptions&&);
+    bool showMediaControlsContextMenu(HTMLElement&, String&& optionsJSONString, Ref<VoidCallback>&&);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 private:
@@ -104,6 +102,11 @@ private:
 
     WeakPtr<HTMLMediaElement> m_mediaElement;
     RefPtr<MediaControlTextTrackContainerElement> m_textTrackContainer;
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    RefPtr<VoidCallback> m_showMediaControlsContextMenuCallback;
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
     bool m_simulateCompactMode { false };
 };
 

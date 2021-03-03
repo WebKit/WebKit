@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +67,8 @@ StructureRareData::StructureRareData(VM& vm, Structure* previous)
         m_previous.set(vm, this, previous);
 }
 
-void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void StructureRareData::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     StructureRareData* thisObject = jsCast<StructureRareData*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -85,6 +86,8 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
             visitor.appendUnbarriered(cached);
     }
 }
+
+DEFINE_VISIT_CHILDREN(StructureRareData);
 
 // ----------- Cached special properties helper watchpoint classes -----------
 

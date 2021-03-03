@@ -106,10 +106,10 @@
 
 static NSString *dispositionTypeFromContentDispositionHeader(NSString *header)
 {
-    NSMutableString *result = [[[[header componentsSeparatedByString:@";"] objectAtIndex:0] mutableCopy] autorelease];
+    auto result = adoptNS([[[header componentsSeparatedByString:@";"] objectAtIndex:0] mutableCopy]);
     if (result)
-        CFStringTrimWhitespace((CFMutableStringRef)result);
-    return result;
+        CFStringTrimWhitespace((CFMutableStringRef)result.get());
+    return result.autorelease();
 }
 
 - (void)webView:(WebView *)c decidePolicyForMIMEType:(NSString *)type

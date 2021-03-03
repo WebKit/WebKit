@@ -3461,6 +3461,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitAppearance:
             return cssValuePool.createValue(style.appearance());
         case CSSPropertyAspectRatio:
+            if (renderer && !renderer->settings().aspectRatioEnabled())
+                return nullptr;
             switch (style.aspectRatioType()) {
             case AspectRatioType::Auto:
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
@@ -3610,7 +3612,18 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         case CSSPropertyTransformStyle:
         case CSSPropertyWebkitTransformStyle:
-            return cssValuePool.createIdentifierValue((style.transformStyle3D() == TransformStyle3D::Preserve3D) ? CSSValuePreserve3d : CSSValueFlat);
+            switch (style.transformStyle3D()) {
+            case TransformStyle3D::Flat:
+                return cssValuePool.createIdentifierValue(CSSValueFlat);
+            case TransformStyle3D::Preserve3D:
+                return cssValuePool.createIdentifierValue(CSSValuePreserve3d);
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+            case TransformStyle3D::Optimized3D:
+                return cssValuePool.createIdentifierValue(CSSValueOptimized3d);
+#endif
+            }
+            ASSERT_NOT_REACHED();
+            return nullptr;
         case CSSPropertyTranslate:
             if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;

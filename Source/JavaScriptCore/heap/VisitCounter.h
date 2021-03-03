@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SlotVisitor.h"
+#include "AbstractSlotVisitor.h"
 
 namespace JSC {
 
@@ -33,13 +33,13 @@ class VisitCounter {
 public:
     VisitCounter() { }
     
-    VisitCounter(SlotVisitor& visitor)
+    VisitCounter(AbstractSlotVisitor& visitor)
         : m_visitor(&visitor)
         , m_initialVisitCount(visitor.visitCount())
     {
     }
     
-    SlotVisitor& visitor() const { return *m_visitor; }
+    AbstractSlotVisitor& visitor() const { return *m_visitor; }
     
     size_t visitCount() const
     {
@@ -47,7 +47,7 @@ public:
     }
     
 private:
-    SlotVisitor* m_visitor { nullptr };
+    AbstractSlotVisitor* m_visitor { nullptr };
     size_t m_initialVisitCount { 0 };
 };
 

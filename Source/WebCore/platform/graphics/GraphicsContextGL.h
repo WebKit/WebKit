@@ -32,6 +32,7 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "MediaPlayer.h"
 #include "PlatformLayer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -1291,9 +1292,9 @@ public:
     // FIXME: these should be removed, they're part of drawing buffer and
     // display buffer abstractions that the caller should hold separate to
     // the context.
-    virtual void paintRenderingResultsToCanvas(ImageBuffer*) = 0;
+    virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
     virtual RefPtr<ImageData> paintRenderingResultsToImageData() = 0;
-    virtual void paintCompositedResultsToCanvas(ImageBuffer*) = 0;
+    virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
 
     // FIXME: this should be removed. The layer should be marked composited by
     // preparing for display, so that canvas image buffer and the layer agree
@@ -1306,7 +1307,7 @@ public:
     // Returns interface for CV interaction if the functionality is present.
     virtual GraphicsContextGLCV* asCV() = 0;
 #endif
-
+    virtual bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
 

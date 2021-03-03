@@ -2257,6 +2257,13 @@ String AccessibilityObject::rolePlatformDescription() const
 }
 #endif
 
+String AccessibilityObject::embeddedImageDescription() const
+{
+    if (!is<RenderImage>(renderer()))
+        return { };
+    return downcast<RenderImage>(renderer())->accessibilityDescription();
+}
+
 String AccessibilityObject::ariaLandmarkRoleDescription() const
 {
     switch (roleValue()) {
@@ -3288,17 +3295,16 @@ void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, cons
     if (!node || !node->isElementNode())
         return;
 
-    TreeScope& treeScope = node->treeScope();
-
-    const AtomString& idList = getAttribute(attribute);
-    if (idList.isEmpty())
+    auto& idsString = getAttribute(attribute);
+    if (idsString.isEmpty())
         return;
 
-    auto spaceSplitString = SpaceSplitString(idList, false);
+    auto& treeScope = node->treeScope();
+    auto spaceSplitString = SpaceSplitString(idsString, false);
     size_t length = spaceSplitString.size();
     for (size_t i = 0; i < length; ++i) {
-        if (auto* idElement = treeScope.getElementById(spaceSplitString[i]))
-            elements.append(idElement);
+        if (auto* element = treeScope.getElementById(spaceSplitString[i]))
+            elements.append(element);
     }
 }
 

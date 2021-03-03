@@ -162,7 +162,7 @@ NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const
     if (!cfCookieStorage || [NSHTTPCookieStorage sharedHTTPCookieStorage]._cookieStorage == cfCookieStorage)
         return [NSHTTPCookieStorage sharedHTTPCookieStorage];
 
-    return [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cfCookieStorage.get()] autorelease];
+    return adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cfCookieStorage.get()]).autorelease();
 }
 
 CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const

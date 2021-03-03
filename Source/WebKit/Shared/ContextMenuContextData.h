@@ -58,6 +58,7 @@ public:
     const WebCore::IntPoint& menuLocation() const { return m_menuLocation; }
     const Vector<WebKit::WebContextMenuItemData>& menuItems() const { return m_menuItems; }
 
+    WebHitTestResultData& webHitTestResultData() { return m_webHitTestResultData; }
     const WebHitTestResultData& webHitTestResultData() const { return m_webHitTestResultData; }
     const String& selectedText() const { return m_selectedText; }
 

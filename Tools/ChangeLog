@@ -1,3 +1,1822 @@
+2021-02-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r273307.
+        https://bugs.webkit.org/show_bug.cgi?id=222320
+
+        Need to update CI code for CLoop bot before landing this
+
+        Reverted changeset:
+
+        "Detect unrecognized options in run-javascriptcore-tests"
+        https://bugs.webkit.org/show_bug.cgi?id=221186
+        https://trac.webkit.org/changeset/273307
+
+2021-02-23  Jonathan Bedard  <jbedard@apple.com>
+
+        show-identifier fails with error: ascii codec can't decode byte 0xc3 in position
+        https://bugs.webkit.org/show_bug.cgi?id=222313
+        <rdar://problem/74645910>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor.__repr__): Always return unicode for Python 2.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/contributor_unittest.py:
+        (TestContributor.test_unicode):
+
+2021-02-23  Rob Buis  <rbuis@igalia.com>
+
+        aspect-ratio shows in computed style when disabled
+        https://bugs.webkit.org/show_bug.cgi?id=222286
+
+        Reviewed by Simon Fraser.
+
+        Add support for disabling aspect-ratio in wk1.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
+2021-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks in Tools/
+        https://bugs.webkit.org/show_bug.cgi?id=222288
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::zoomScale const):
+        (WTR::UIScriptControllerIOS::scrollToOffset):
+        (WTR::UIScriptControllerIOS::immediateScrollToOffset):
+        (WTR::UIScriptControllerIOS::minimumZoomScale const):
+        (WTR::UIScriptControllerIOS::maximumZoomScale const):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (fontAllowList):
+        (adjustWebDocumentForFlexibleViewport):
+        (createWebViewAndOffscreenWindow):
+        (allocateGlobalControllers):
+        (releaseGlobalControllers):
+        (resetWebViewToConsistentState):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (+[DumpRenderTreePasteboard _pasteboardWithName:]):
+        (+[DumpRenderTreePasteboard releaseLocalPasteboards]):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (drt_WebHTMLView_beginDraggingSessionWithItemsEventSource):
+        (+[EventSendingController initialize]):
+        (-[EventSendingController beginDragWithFiles:]):
+        (-[EventSendingController beginDragWithFilePromises:]):
+        (-[EventSendingController mouseUp:withModifiers:]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate didClearWindowObjectInStandardWorldForFrame:]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setCustomPolicyDelegate):
+        (TestRunner::waitForPolicyDelegate):
+        (TestRunner::apiTestNewWindowDataLoadBaseURL):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:]):
+        (-[UIDelegate dealloc]):
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (ensureGlobalLayoutTestSpellChecker):
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/CustomBundleParameter.mm:
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        * TestWebKitAPI/Tests/WebKitCocoa/CommandBackForward.mm:
+        (WebKit2_CommandBackForwardTestWKView::SetUp):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlayingControlsTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ReparentWebViewTimeout.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/SchemeRegistry.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/SystemPreview.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (-[TestSOAuthorizationDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserInitiatedActionInNavigationAction.mm:
+        (UserInitiatedActionTest::URLWithFragment):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (-[UIDelegate _webView:configurationForLocalInspector:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCandidateTests.mm:
+        (+[CandidateTestWebView setUpWithFrame:testPage:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDoesNotLogDuringInitialization.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (runWebsiteDataStoreCustomPaths):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/ClosingWebView.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/CustomProtocolsInvalidScheme.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/PreventImageLoadWithAutoResizing.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/UserContentTest.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (+[InputAssistantItemTestingWebView leadingItemsForWebView:]):
+        (+[InputAssistantItemTestingWebView trailingItemsForWebView:]):
+        * TestWebKitAPI/Tests/ios/WKScrollViewDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CandidateTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MemoryCachePruneWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/mainIOS.mm:
+        (main):
+        * TestWebKitAPI/mac/TestFontOptions.mm:
+        (+[TestFontOptions sharedInstance]):
+        * TestWebKitAPI/mac/mainMac.mm:
+        (main):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm:
+        (WTR::AccessibilityController::addNotificationListener):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::globalWebViewConfiguration):
+        (WTR::globalWebsiteDataStoreDelegateClient):
+        (WTR::initializeWebViewConfiguration):
+        (WTR::TestController::platformContext):
+        (WTR::TestController::platformPreferences):
+        (WTR::TestController::platformInitializeDataStore):
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::platformCreateOtherPage):
+        (WTR::TestController::platformAdjustContext):
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        (WTR::TestController::removeAllSessionCredentials):
+        (WTR::TestController::getAllStorageAccessEntries):
+        (WTR::TestController::loadedSubresourceDomains):
+        (WTR::TestController::clearLoadedSubresourceDomains):
+        (WTR::TestController::injectUserScript):
+        (WTR::TestController::setAllowStorageQuotaIncrease):
+        (WTR::TestController::setAllowsAnySSLCertificate):
+        * WebKitTestRunner/ios/GeneratedTouchesDebugWindow.mm:
+        (+[GeneratedTouchesDebugWindow sharedGeneratedTouchesDebugWindow]):
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (+[HIDEventGenerator sharedHIDEventGenerator]):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::configureContentExtensionForTest):
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (+[WebKitTestRunnerPasteboard _pasteboardWithName:]):
+        (+[WebKitTestRunnerPasteboard releaseLocalPasteboards]):
+
+2021-02-23  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Detect unrecognized options in run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=221186
+
+        Reviewed by Keith Miller.
+
+        run-javascriptcore-tests saves unrecognized arguments to pass
+        through to build-jsc even when --no-build is used. However, when
+        we're not building, nothing will ever use or look at the extra
+        arguments. This means that those arguments are silently eaten
+        up and, consequently, typos in option names can go undetected.
+
+        Change the script to fail when --no-build has been passed and
+        there are unrecognized options.
+
+        * Scripts/run-javascriptcore-tests:
+
+2021-02-23  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Use std::bitset to specify WebKitTestServer's options
+        https://bugs.webkit.org/show_bug.cgi?id=222273
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::WebKitTestServer):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
+
+2021-02-22  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable RangeResponseGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+        <rdar://problem/74551753>
+
+        r273263 was a false alarm.  Reverting that revision.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Add WKWebView session restoration API
+        https://bugs.webkit.org/show_bug.cgi?id=220958
+        <rdar://70956146>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKit/WKBackForwardList.mm:
+        (TEST):
+
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks
+        https://bugs.webkit.org/show_bug.cgi?id=222237
+
+        Reviewed by Darin Adler.
+
+        * TestRunnerShared/mac/NSPasteboardAdditions.mm:
+        (+[NSPasteboard _modernPasteboardType:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/DeallocWebViewInEventListener.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CancelLoadFromResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CloseNewWindowInNavigationPolicyDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MemoryCacheDisableWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/MemoryCachePruneWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/StopLoadingFromDidReceiveResponse.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WindowlessWebViewWithMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/mainIOS.mm:
+        (main):
+        * TestWebKitAPI/mac/mainMac.mm:
+        (main):
+
+2021-02-22  Sam Sneddon  <gsnedders@apple.com>
+
+        Run Python tests for Source/WebKit/Scripts changes in EWS
+        https://bugs.webkit.org/show_bug.cgi?id=222276
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+
+2021-02-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Failure to retrieve commit in EWS
+        https://bugs.webkit.org/show_bug.cgi?id=222050
+        <rdar://problem/74439957>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Load GitHub credentials.
+        * CISupport/ews-build/steps.py:
+        (ShowIdentifier.start): Pass GitHub credentials to worker.
+        * CISupport/ews-build/steps_unittest.py:
+
+2021-02-22  Alex Christensen  <achristensen@webkit.org>
+
+        Disable RangeResponseGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+        <rdar://problem/74551753>
+
+        It might be causing issues.  Disabling to speculatively fix the radar.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
+2021-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] gdb unusable in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=222247
+
+        Reviewed by Žan Doberšek.
+
+        This patch adds support for unix signals disabling in developer builds, for the Flatpak SDK
+        runtime. Currently SIGINT, SIGHUP and SIGTERM will be ignored by the flatpak and bwrap
+        processes when they're running gdb in the sandbox runtime. This allows for nicer interactive
+        debugging sessions where Ctrl-C is actually handled by gdb.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * flatpak/CMakeLists.txt: Added.
+        * flatpak/flatpakutils.py:
+        (nullcontext):
+        (disable_signals):
+        (WebkitFlatpak.execute_command):
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/sigaction-disabler.c: Added.
+        (real_sigaction):
+        (sigaction):
+        * flatpak/webkit-bwrap:
+
+2021-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add Monado for XR runtime support
+        https://bugs.webkit.org/show_bug.cgi?id=220738
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Allow runtime XR environment setup in the sandbox through
+        the XR_RUNTIME_JSON variable.
+
+2021-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] X11 SSH forwarding fails
+        https://bugs.webkit.org/show_bug.cgi?id=222246
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Forward the DISPLAY env var to the sandbox.
+        * flatpak/webkit-bwrap: Set the DISPLAY env var if it was set in the parent process.
+
+2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=222093
+
+        Reviewed by Adrian Perez de Castro.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (tlsErrorsDialogResponse):
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (Tunnel::Tunnel):
+        (Tunnel::connect):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        (testCookieManagerAddCookie):
+        (testCookieManagerGetCookies):
+        (testCookieManagerDeleteCookie):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (addContentDispositionHTTPHeaderToResponse):
+        (writeNextChunk):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        (testLoadingError):
+        (testWebViewIsLoading):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp:
+        (addCacheHTTPHeadersToResponse):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (WebSocketTest::serverWebSocketCallback):
+        (httpsServerCallback):
+        (httpServerCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (serverCallback):
+        (ProxyTest::webSocketProxyServerCallback):
+        (webSocketServerCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp:
+        (writeNextChunk):
+        (serverCallback):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::run):
+        (WebKitTestServer::addWebSocketHandler):
+
+2021-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Cog build fails when gst-build is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=222102
+
+        Reviewed by Žan Doberšek.
+
+        Merge gst-build env vars in the sandbox environment, without overriding previously set PATH
+        values such as PKG_CONFIG_PATH.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_gstbuild):
+        (WebkitFlatpak.run_in_sandbox):
+
+2021-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Bootstrap the run-httpd script in the SDK runtime
+        https://bugs.webkit.org/show_bug.cgi?id=221464
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/run-webkit-httpd: On Linux platforms, run the script within the SDK runtime, if it
+        is available on the host system.
+
+2021-02-21  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.
+        https://bugs.webkit.org/show_bug.cgi?id=222154
+
+        Reviewed by Chris Fleizach and Darin Adler.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+
+2021-02-20  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Image should report the embedded accessibility description if available
+        https://bugs.webkit.org/show_bug.cgi?id=221875
+        <rdar://problem/74320584>
+
+        Reviewed by Jer Noble.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getEmbeddedImageDescription):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::embeddedImageDescription const):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::embeddedImageDescription const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::embeddedImageDescription const):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::embeddedImageDescription const):
+
+2021-02-20  Peng Liu  <peng.liu6@apple.com>
+
+        Video elements do not work as sources for TexImage2D calls in GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=218184
+
+        Reviewed by Jer Noble.
+
+        * Scripts/generate-gpup-webgl:
+
+2021-02-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Store and report source unlinkable tokens
+        https://bugs.webkit.org/show_bug.cgi?id=222208
+        <rdar://problem/73582032>
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setFraudPreventionValuesForTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setFraudPreventionValuesForTesting):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        Rebases some test cases.
+
+2021-02-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL GPU process IPC should use shared memory for asynchronous messages
+        https://bugs.webkit.org/show_bug.cgi?id=219641
+        <rdar://problem/72340651>
+
+        Reviewed by Geoff Garen.
+
+        Mark RemoteGraphicsContextGL message receiver as "Stream",
+        a new variant of receiver.
+
+        * Scripts/generate-gpup-webgl:
+
+2021-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, reverting r273115.
+
+        Breaks autocorrect without the accompanying change in
+        rdar://problem/74211293
+
+        Reverted changeset:
+
+        "Unconditionally return information in _autofillContext SPI
+        when a field is focused"
+        https://bugs.webkit.org/show_bug.cgi?id=221828
+        https://commits.webkit.org/r273115
+
+2021-02-20  Aakash Jain  <aakash_jain@apple.com>
+
+        Revert r272384 [Python-3] Change shebang in git-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=221412
+ 
+        Unreviewed infrastructure fix.
+
+        Revert to Python 2 for git-webkit command because of auto-install issues.
+        * CISupport/ews-build/steps.py:
+        * CISupport/ews-build/steps_unittest.py:
+
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Review remaining usage of autorelease to make sure it is necessary
+        https://bugs.webkit.org/show_bug.cgi?id=222177
+
+        Reviewed by Geoffrey Garen.
+
+        * TestRunnerShared/mac/NSPasteboardAdditions.mm:
+        (+[NSPasteboard _modernPasteboardType:]):
+        * TestWebKitAPI/Tests/JavaScriptCore/JSRunLoopTimer.mm:
+        (TestWebKitAPI::triggerGC):
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuImgWithVideo.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (-[ContentRuleListNotificationDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceManagementRestrictions.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::webViewWithDownloadMonitorSpeedMultiplier):
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (runDragStartDataTestCase):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/JITEnabled.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ReparentWebViewTimeout.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        (-[ResourceLoadStatisticsSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+        (-[UITestDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (webViewForScriptMessageHandlerMultipleHandlerRemovalTest):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[SyncErrorScheme webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (TestWebKitAPI::TEST):
+
+2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=222072
+        <rdar://problem/74208576>
+
+        Reviewed by Devin Rousso.
+
+        Add a couple of new API tests to verify that `+[UIPasteboard _performAsDataOwner:block:]` is invoked with the
+        expected data owner type when copying and pasting.
+
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        (+[TestUIPasteboard _performAsDataOwner:block:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView contentsAsString]):
+
+        Additionally add a helper method to grab a `WKWebView`'s contents as an `NSString`, just for convenience.
+
+2021-02-19  Alex Christensen  <achristensen@webkit.org>
+
+        NSError returned by WebKit API should actually conform to NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=222204
+        <rdar://problem/63893583>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate waitForDidFailProvisionalNavigation]):
+
+2021-02-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Generate secret token and corresponding unlinkable token
+        https://bugs.webkit.org/show_bug.cgi?id=222019
+        <rdar://problem/73581412>
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        Add tests.
+
+2021-02-19  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Enable the new appearance by default
+        https://bugs.webkit.org/show_bug.cgi?id=222015
+        <rdar://problem/74415537>
+
+        Reviewed by Wenson Hsieh.
+
+        Rebaselined tests to account for changes to <input> and
+        <textarea> elements.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (DocumentEditingContext.SpatialRequestInTextField):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (DragAndDropTests.BackgroundImageLinkToInput):
+        (DragAndDropTests.ContentEditableToTextarea):
+        (DragAndDropTests.ImageInLinkToInput):
+        (DragAndDropTests.LinkToInput):
+        (DragAndDropTests.TextAreaToInput):
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (KeyboardInputTests.SelectionClipRectsWhenPresentingInputView):
+
+2021-02-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Ensure that the test failures are listed in sorted order
+        https://bugs.webkit.org/show_bug.cgi?id=222176
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (ReRunJavaScriptCoreTests.evaluateCommand):
+        (AnalyzeJSCTestsResults.start):
+        (RunWebKitTests.commandComplete):
+        (ReRunWebKitTests.evaluateCommand):
+        (ReRunWebKitTests.commandComplete):
+        * CISupport/ews-build/steps_unittest.py:
+        (TestAnalyzeJSCTestsResults.test_multiple_new_stress_failure):
+        (TestAnalyzeJSCTestsResults.test_multiple_new_binary_failure):
+
+2021-02-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add clean command
+        https://bugs.webkit.org/show_bug.cgi?id=222135
+        <rdar://problem/74496504>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git):
+        (Git.clean): Throw away all local changes.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn):
+        (Svn.clean): Throw away all local changes, delete untracked files.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add Clean command
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/clean.py: Added.
+        (Clean): Command to remove all local changes from the current checkout.
+
+2021-02-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Request server public key to generate secret token
+        https://bugs.webkit.org/show_bug.cgi?id=222141
+        <rdar://problem/74462955>
+
+        Reviewed by John Wilander.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        Paperwork to add a way to set test URL.
+
+2021-02-19  Youenn Fablet  <youenn@apple.com>
+
+        Update WKWebView getUserMedia delegate to latest proposal
+        https://bugs.webkit.org/show_bug.cgi?id=222103
+
+        Reviewed by Eric Carlson.
+
+        Introduce UserMediaCaptureUIDelegate to share more code between tests.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (-[NavigationWhileGetUserMediaPromptDisplayedUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/MediaStreamTrackDetached.mm:
+        (-[MediaStreamTrackDetachedUIDelegate _webView:mediaCaptureStateDidChange:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm:
+        (-[SpeechRecognitionUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        (-[SpeechRecognitionUIDelegate _webView:requestMediaCaptureAuthorization:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (-[UserMediaUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        (-[SimulateFailedSandboxUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        * TestWebKitAPI/cocoa/UserMediaCaptureUIDelegate.h: Added.
+        * TestWebKitAPI/cocoa/UserMediaCaptureUIDelegate.mm: Added.
+        (-[UserMediaCaptureUIDelegate init]):
+        (-[UserMediaCaptureUIDelegate wasPrompted]):
+        (-[UserMediaCaptureUIDelegate resetWasPrompted]):
+        (-[UserMediaCaptureUIDelegate waitUntilPrompted]):
+        (-[UserMediaCaptureUIDelegate setAudioDecision:]):
+        (-[UserMediaCaptureUIDelegate setVideoDecision:]):
+        (-[UserMediaCaptureUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]):
+        (-[UserMediaCaptureUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+
+2021-02-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening debug OffscreenCanvas crashes
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json: Update bug number after
+        last gardening.
+
+2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        MotionMark scores are super sensitive to a single long frame
+        https://bugs.webkit.org/show_bug.cgi?id=220847
+        <rdar://problem/74152743>
+
+        Unreviewed.
+
+        Upgrade motionmark1.1.plan to r273122.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
+
+2021-02-18  Ricky Mondello  <rmondello@apple.com>
+
+        Unconditionally return information in _autofillContext SPI when a field is focused
+        https://bugs.webkit.org/show_bug.cgi?id=221828
+        rdar://74211237
+
+        Reviewed by Darin Adler.
+
+        Tests updated by Wenson Hsieh.
+
+        Rebaseline tests.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        (-[AutoFillTestView acceptsAutoFillLoginCredentials]): Renamed in line with the Password AutoFill-related
+            contract these tests are about.
+
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add null check in _getMainResourceDataWithCompletionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=222139
+        <rdar://problem/74449438>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GetResourceData.mm:
+        (TEST):
+
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix null dereferencing in RangeResponseGenerator::giveResponseToTasksWithFinishedRanges
+        https://bugs.webkit.org/show_bug.cgi?id=222126
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
+2021-02-18  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add support for non app-bound requests
+        https://bugs.webkit.org/show_bug.cgi?id=221909
+        <rdar://problem/73512988>
+
+        API test coverage.
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView lastNavigationWasAppBound:]):
+
+2021-02-18  Sam Sneddon  <gsnedders@apple.com>
+
+        Undeprecate some webkit-patch commands
+        https://bugs.webkit.org/show_bug.cgi?id=222106
+
+        Reviewed by Jonathan Bedard.
+
+        This removes the deprecated decorator from the webkit-patch commands we quickly heard are
+        actually used: apply-watchlist-local, check-style, clean, create-revert, prepare-revert,
+        and validate-changelog.
+
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+
+2021-02-18  Don Olmstead  <don.olmstead@sony.com>
+
+        Skip platform specific Python tests
+        https://bugs.webkit.org/show_bug.cgi?id=222066
+
+        Reviewed by Jonathan Bedard.
+
+        Catalog platform specific tests based on operating system. Skip those tests that don't
+        apply to the platform. Mac should continue to run all tests since it runs the webkitpy
+        tests in EWS.
+
+        * Scripts/webkitpy/test/main.py:
+
+2021-02-18  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Ensure that uat instance doesn't comment on bugs
+        https://bugs.webkit.org/show_bug.cgi?id=222035
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (SetCommitQueueMinusFlagOnPatch.getResultSummary):
+        (SetCommitQueueMinusFlagOnPatch.doStepIf):
+        (CommentOnBug.getResultSummary):
+        (CommentOnBug.doStepIf):
+        (PushCommitToWebKitRepo.doStepIf):
+        * CISupport/ews-build/steps_unittest.py: Updated unit-test accordingly.
+
+2021-02-18  John Wilander  <wilander@apple.com>
+
+        PCM: Request signature for unlinkable token using attributionSourceNonce
+        https://bugs.webkit.org/show_bug.cgi?id=222076
+        <rdar://73581651>
+
+        Reviewed by Chris Dumez.
+
+        The changes to the TestRunner are:
+        - Rename setPrivateClickMeasurementConversionURLForTesting() to
+        setPrivateClickMeasurementAttributionReportURLForTesting() to align with other
+        naming and make it clear that it does.
+        - Add the new setPrivateClickMeasurementTokenSignatureURLForTesting() used for
+        testing the token signing request.
+
+        The changes to API tests are to adopt renamed functions in
+        WebCore::PrivateClickMeasurement:
+        - reportURL() renamed attributionReportURL().
+        - json() renamed attributionReportJSON().
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WTR::TestRunner::setPrivateClickMeasurementAttributionReportURLForTesting):
+        (WTR::TestRunner::setPrivateClickMeasurementConversionURLForTesting): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WTR::TestController::setPrivateClickMeasurementAttributionReportURLForTesting):
+        (WTR::TestController::setPrivateClickMeasurementConversionURLForTesting): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
+2021-02-18  Youenn Fablet  <youenn@apple.com>
+
+        Set ENABLE_VP9 to 1 on IOS
+        https://bugs.webkit.org/show_bug.cgi?id=222042
+        <rdar://problem/74433523>
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        Disable VP9Decoder in ios simulator since there is no support for it through VTB.
+
+2021-02-18  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Remove all Google user agent quirks except for Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=222039
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::assertUserAgentForURLHasLinuxPlatformQuirk): Deleted.
+
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Disable RangeResponseGenerator again.
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
+2021-02-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL contexts do not work as source for Context2D drawImage calls in GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=221811
+
+        Reviewed by Darin Adler.
+
+        Update two signatures for manually implemented messages.
+
+        * Scripts/generate-gpup-webgl:
+
+2021-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for getting size of PDF document during printing
+        https://bugs.webkit.org/show_bug.cgi?id=222064
+        <rdar://problem/74370891>
+
+        Reviewed by Geoff Garen and Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/test_print.pdf: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (-[PrintUIDelegate _webView:printFrame:pdfFirstPageSize:completionHandler:]):
+        (-[PrintUIDelegate waitForPageSize]):
+        (-[PrintUIDelegate lastPrintedFrame]):
+        (TEST):
+
+2021-02-18  Antoine Quint  <graouts@webkit.org>
+
+        Page updates and rAF callbacks should run at a frequency close to 60Hz on high refresh-rate displays
+        https://bugs.webkit.org/show_bug.cgi?id=221673
+        <rdar://problem/72398605>
+
+        Reviewed by Simon Fraser.
+
+        Add API tests for the methods in AnimationFrameRate.h.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/AnimationFrameRate.cpp: Added.
+
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC autorelease] in WebKit even further
+        https://bugs.webkit.org/show_bug.cgi?id=222060
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC autorelease] in WebKit further by using RetainPtr.
+
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.mm:
+        (-[DumpRenderTreeWebScrollView initWithFrame:]):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (createJSStringRef):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (dumpFramesAsText):
+        (dump):
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[SyntheticTouch touchWithLocation:phase:identifier:]):
+        (-[EventSendingController beginDragWithFiles:]):
+        (+[EventSendingController replaySavedEvents]):
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (dispositionTypeFromContentDispositionHeader):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.mm:
+        (+[EventSerializer dictionaryForEvent:relativeToTime:]):
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (-[LayoutTestSpellChecker setResultsFromJSValue:inContext:]):
+        * TestWebKitAPI/Tests/JavaScriptCore/JSRunLoopTimer.mm:
+        (TestWebKitAPI::triggerGC):
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuImgWithVideo.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleEditingDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleFormDelegatePlugIn.mm:
+        (-[BundleFormDelegatePlugIn _webProcessPlugInBrowserContextController:willBeginInputSessionForElement:inFrame:userIsInteracting:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ClipboardTests.mm:
+        (readMarkupFromPasteboard):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (-[ContentRuleListNotificationDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (-[TestContextMenuUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuAPIBeforeSPIUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        (-[TestContextMenuSuggestedActionsUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+        (readHTMLStringFromPasteboard):
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceManagementRestrictions.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/DisplayName.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::webViewWithDownloadMonitorSpeedMultiplier):
+        (TestWebKitAPI::mutateFile):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBMultiProcess.mm:
+        (getNextMessage):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm:
+        (getNextMessage):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/JITEnabled.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageDatabaseTracker.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NavigationAction.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Preferences.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ReparentWebViewTimeout.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        (-[ResourceLoadStatisticsSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (+[TestServiceLookupResult resultWithProvider:phishing:malware:unwantedSoftware:]):
+        (+[TestLookupResult resultWithResults:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWCustomUserAgentDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/StorageQuota.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::makeWebViewWith):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+        (-[UITestDelegate webView:startURLSchemeTask:]):
+        (-[ModalDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (webViewForScriptMessageHandlerMultipleHandlerRemovalTest):
+        (TEST):
+        (-[AsyncScriptMessageHandler userContentController:didReceiveScriptMessage:replyHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentWorld.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (platformCopyRichTextWithImage):
+        (platformImageWithData):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (-[UIDelegate _webView:configurationForLocalInspector:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[TaskSchemeHandler webView:startURLSchemeTask:]):
+        (-[SyncErrorScheme webView:startURLSchemeTask:]):
+        (-[FrameSchemeHandler webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewConfiguration.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebGLPolicy.mm:
+        (-[WebGLTestDelegate webView:startURLSchemeTask:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm:
+        (getNextMessage):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (getNextMessage):
+        (runWebsiteDataStoreCustomPaths):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[ContentBlockingWebsitePoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[AutoplayPoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[AsyncAutoplayPoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (TEST):
+        (-[TestSchemeHandler webView:startURLSchemeTask:]):
+        (respond):
+        (-[CustomHeaderFieldsDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[CustomUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomJavaScriptUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomNavigatorPlatformDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[WebsitePoliciesDeviceOrientationDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]):
+        (-[PopUpPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/DateTimeInputsAccessoryViewTests.mm:
+        (cellForRowAtIndexPath):
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        (TestWebKitAPI::swizzledResizableSnapshotViewFromRect):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/InspectorBar.mm:
+        (-[InspectorBarController convertAttributes:]):
+        * TestWebKitAPI/Tests/mac/JavascriptURLNavigation.mm:
+        (-[JavascriptURLNavigationDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        * TestWebKitAPI/Tests/mac/LegacyDragAndDropTests.mm:
+        (+[FrameLoadCompletionListener listenerWithCompletionBlock:]):
+        (TestWebKitAPI::getTestImage):
+        * TestWebKitAPI/Tests/mac/MemoryPressureHandler.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WKWebViewMacEditingTests.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/mac/WebViewIconLoading.mm:
+        (imageFromData):
+        * TestWebKitAPI/cocoa/TestProtocol.mm:
+        (additionalResponseHeaders):
+        (+[TestProtocol additionalResponseHeaders]):
+        (+[TestProtocol setAdditionalResponseHeaders:]):
+        (-[TestProtocol startLoading]):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView objectByCallingAsyncFunction:withArguments:error:]):
+        (-[TestWKWebView initWithFrame:]):
+        (-[TestWKWebView initWithFrame:configuration:processPoolConfiguration:]):
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[MockDropSession initWithProviders:location:window:allowMove:]):
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator _webView:willUpdateDropProposalToProposal:forSession:]):
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (defaultExternalDragImage):
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator runFrom:to:]):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::createJSStringRef):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformInitializeDataStore):
+        (WTR::TestController::platformCreateOtherPage):
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator sendEventStream:completionBlock:]):
+
+2021-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix a few issues with RangeResponseGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=222087
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+
+2021-02-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening most common EWS flakiness
+
+        Unreviewed test gardening.
+
+        Flakiness happening mostly on a single bot. Marking them temporarily
+        as flaky until investigation is performed.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [Python-3] Child process environment on Windows can only contain strings
+        https://bugs.webkit.org/show_bug.cgi?id=222012
+        <rdar://problem/74437205>
+
+        Unreviewed test runner fix.
+
+        Use old Python 2 behavior of encoding when running with that version.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.popen):
+
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        _W3CTestConverter tests don't run on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=221855
+
+        Reviewed by Jonathan Bedard.
+
+        In _W3CTestConverter it retrieves a relative path and then uses that to populate a
+        regular expression. On Windows the path separator is `\` which causes a re.error due to
+        a bad escape. Normalize the path to use `/` in this code.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.__init__):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (W3CTestConverterTest.verify_test_harness_paths):
+
+2021-02-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add new datalist dropdown for text inputs
+        https://bugs.webkit.org/show_bug.cgi?id=222008
+        <rdar://problem/74410513>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::activateDataListSuggestion):
+
+        Implemented this method to enable testing selection of datalist options
+        on iOS.
+
+        (WTR::UIScriptControllerIOS::isShowingDataListSuggestions const):
+
+        The new appearance does not use a UIPickerView, check for the presence
+        of the new view controller instead.
+
+2021-02-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Follow-up fix after r273023.
+        https://bugs.webkit.org/show_bug.cgi?id=221641
+        <rdar://problem/74166568>
+
+        Reviewed by Chris Dumez.
+
+        Correct the string comparison for the back/forward list test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewLoadAPIs.mm:
+
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        DumpRenderTree's createWebViewAndOffscreenWindow() should return a RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=222068
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (createGlobalWebViewAndOffscreenWindow):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+
+2021-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        Effectively revert r272908
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::runVideoTest):
+        (TestWebKitAPI::TEST):
+
+2021-02-17  Sam Sneddon  <gsnedders@apple.com>
+
+        Add deprecation notices to believed-unused commands in webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=222058
+
+        Reviewed by Jonathan Bedard.
+
+        This only adds notices, asking any users of the commands to comment on
+        https://bugs.webkit.org/show_bug.cgi?id=221991; it doesn't in any way break the commands,
+        and the deprecation is easily undone.
+
+        * Scripts/webkitpy/tool/commands/adduserstogroups.py:
+        * Scripts/webkitpy/tool/commands/analyzechangelog.py:
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal.py:
+        * Scripts/webkitpy/tool/commands/bugfortest.py:
+        * Scripts/webkitpy/tool/commands/bugsearch.py:
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        (CommandsTest.assert_execute_outputs): Strip the warnings from unittest output to avoid changing every test
+        (CommandsTest._remove_deprecated_warning):
+        * Scripts/webkitpy/tool/commands/deprecatedcommand.py: Added. Class decorator for Commands output notice.
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/findusers.py:
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        * Scripts/webkitpy/tool/commands/openbugs.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run): Deprecate running tests through webkit-patch, even indirectly.
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_runtests_args):
+
+2021-02-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand stubs to thread actual NSURLRequest/NSURLResponse for the new simulated-request API
+        https://bugs.webkit.org/show_bug.cgi?id=221641
+        <rdar://problem/74166568>
+
+        Reviewed by Chris Dumez.
+
+        Add a new test to confirm that simulated loads work and are properly added to the
+        back-forward list.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewLoadAPIs.mm:
+        (TEST):
+
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Use smart pointer for WebView ownership in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=222009
+
+        Reviewed by Geoffrey Garen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (globalWebView):
+        (createWebViewAndOffscreenWindow):
+        (destroyGlobalWebViewAndOffscreenWindow):
+        (createGlobalWebViewAndOffscreenWindow):
+        (dumpRenderTree):
+        (runTest):
+        (destroyWebViewAndOffscreenWindow): Deleted.
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [Python-3] UnicodeDecodeError when checking for an interpreter on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=222059
+
+        Reviewed by Jonathan Bedard.
+
+        When calling open to determine which interpreter should be used Python 3 was throwing a
+        UnicodeDecodeError. On Python 3 an encoding of cp437 is specified since all characters are
+        defined in it. Python 2 does not have this problem and throws with a TypeError if an
+        encoding argument is passed.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.popen):
+
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [Python-3] Catch winerror.ERROR_INVALID_FUNCTION in ServerProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222047
+
+        Reviewed by Jonathan Bedard.
+
+        The catch statement in _non_blocking_read_win32 throws a TypeError because the 'error'
+        object is not subscriptable. The block assumed a pywintypes.error so it was modified
+        to catch that exception. Using the proper type stopped that occurance but surfaced
+        additional issues.
+
+        When shutting down the server process the call to win32pipe.PeekNamedPipe can throw a
+        winerror.ERROR_INVALID_FUNCTION. There isn't really any documentation on MSDN pointing to
+        why this error would be thrown. ERROR_INVALID_FUNCTION seems to be around device driver
+        issues so the best guess is that the handle is no longer valid at this point of execution.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._non_blocking_read_win32):
+
+2021-02-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Failure to retrieve commit in EWS (Investigation)
+        https://bugs.webkit.org/show_bug.cgi?id=222050
+        <rdar://problem/74439957>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.request): Increase logging.
+
+2021-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [Python-3] Child process environment on Windows can only contain strings
+        https://bugs.webkit.org/show_bug.cgi?id=222012
+
+        Reviewed by Jonathan Bedard.
+
+        When running Python 3 on Windows a 'TypeError: environment can only contain strings' is
+        thrown during execution of run-webkit-tests. If the Executive is running on native Windows
+        it converts the keys and values of the environment dictionary into strings and passes them
+        into the popen call.
+
+        In ServerProcess it was modifying the environment as well. This code was removed so
+        Executive is the only place that handles this issue.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.popen):
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__):
+
+2021-02-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Support unicode when printing changelogs
+        https://bugs.webkit.org/show_bug.cgi?id=222044
+        <rdar://problem/74435276>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/find.py:
+        (Find.main): Explicitly print unicode.
+
+2021-02-17  Aakash Jain  <aakash_jain@apple.com>
+
+        commit-queue should retry when it fails to commit
+        https://bugs.webkit.org/show_bug.cgi?id=222038
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (PushCommitToWebKitRepo):
+        (PushCommitToWebKitRepo.evaluateCommand):
+        * CISupport/ews-build/steps_unittest.py:
+
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Introduce a new context menu item to preview images
+        https://bugs.webkit.org/show_bug.cgi?id=221917
+        <rdar://problem/74363578>
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        Rebaseline an existing API test, since `ContextMenuItemTagRevealImage` is now the last valid enum.
+
+        * TestWebKitAPI/Tests/WebCore/ContextMenuAction.cpp:
+        (TestWebKitAPI::TEST):
+
+2021-02-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [Flatpak SDK] Script 'webkit-flatpak-run-nightly' expects different format for a built product name
+        https://bugs.webkit.org/show_bug.cgi?id=221950
+
+        Reviewed by Philippe Normand.
+
+        The name format for uploaded built products for WPE and GTK has
+        changed. Now the format is: '[release|debug]_rXXXXXX.zip'. The script
+        is still expecting the former name format, so it needs to be updated.
+
+        * Scripts/webkit-flatpak-run-nightly:
+
+2021-02-17  Andres Gonzalez  <andresg_22@apple.com>
+
+        Support aria-errormessage on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=221975
+        <rdar://problem/74397704>
+
+        Reviewed by Chris Fleizach.
+
+        - Added AccessibilityUIElement::errorMessageElements on iOS and MacOS,
+        which is used in the new test.
+        - For completion, added implementation for ariaErrorMessageElementAtIndex
+        on iOS, which is not in use at the moment.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::errorMessageElements const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::errorMessageElements const): Added.
+        (WTR::AccessibilityUIElement::ariaDetailsElementAtIndex): Added.
+        (WTR::AccessibilityUIElement::ariaErrorMessageElementAtIndex): Added.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::errorMessageElements const): Added.
+
+2021-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r272636) [GTK] Crash and failures in API test /WebKit2Gtk/TestResources
+        https://bugs.webkit.org/show_bug.cgi?id=221672
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2021-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Reduce the use of SoupURI in unit tests in preparation for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=221963
+
+        Reviewed by Adrian Perez de Castro.
+
+        Now that URL is in WTF we can just use it instead.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (testWebViewAuthenticationRequest):
+        (ProxyAuthenticationTest::ProxyAuthenticationTest):
+        (ProxyAuthenticationTest::proxyServerPortAsString):
+        (testWebViewAuthenticationProxy):
+        (testWebViewAuthenticationProxyHTTPS):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (testLoadFailedWithTLSErrors):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionPageID):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (ProxyTest::ProxyTest):
+        (ProxyTest::proxyServerPortAsString):
+        (testWebContextProxySettings):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (setInitialNotificationPermissionsAllowedCallback):
+        (setInitialNotificationPermissionsDisallowedCallback):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::run):
+        (WebKitTestServer::addWebSocketHandler):
+        (WebKitTestServer::removeWebSocketHandler):
+        (WebKitTestServer::getWebSocketURIForPath const):
+        (WebKitTestServer::getURIForPath const):
+        (WebKitTestServer::port const):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
+        (WebKitTestServer::baseURL const):
+        (WebKitTestServer::baseWebSocketURL const):
+
+2021-02-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Use makeJSArray in both AccessibilityUIElementMac/IOS.mm.
+        https://bugs.webkit.org/show_bug.cgi?id=221999
+        <rdar://problem/74407113>
+
+        Reviewed by Chris Fleizach.
+
+        We had functions makeJSArray and convertElementsToObjectArray doing
+        exactly the same thing, one for Mac and One for iOS.
+        - Moved makeJSArray to the platform independent header so it can be used
+        in both platforms.
+        - Moved the retrieval of the JS context inside makeJSArray, so that the
+        caller doesn't have to do that.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (WTR::makeJSArray): Added to platform independent header.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::elementsForRange):
+        (WTR::convertElementsToObjectArray): Deleted.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::rowHeaders const):
+        (WTR::AccessibilityUIElement::columnHeaders const):
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue const):
+        (WTR::AccessibilityUIElement::searchTextWithCriteria):
+        (WTR::makeJSArray): Deleted.
+
+2021-02-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Document package usage
+        https://bugs.webkit.org/show_bug.cgi?id=221986
+        <rdar://problem/74401363>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitcorepy/README.md: Add library.
+        * Scripts/libraries/webkitscmpy/README.md:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.from_path): Remove unneeded space.
+
+2021-02-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up WKWebView media API
+        https://bugs.webkit.org/show_bug.cgi?id=221929
+        <rdar://problem/73460121>
+
+        Reviewed by Youenn Fablet.
+
+        Update naming.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/StopSuspendResumeAllMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+        (TEST):
+
+2021-02-16  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Need new user agent quirk for Google Docs and Google Drive
+        https://bugs.webkit.org/show_bug.cgi?id=221845
+
+        Reviewed by Adrian Perez de Castro.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::assertUserAgentForURLHasChromeBrowserQuirk):
+        (TestWebKitAPI::assertUserAgentForURLHasFirefoxBrowserQuirk):
+        (TestWebKitAPI::assertUserAgentForURLHasLinuxPlatformQuirk):
+        (TestWebKitAPI::assertUserAgentForURLHasMacPlatformQuirk):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::assertUserAgentForURLHasInternetExplorerBrowserQuirk): Deleted.
+        (TestWebKitAPI::assertUserAgentForURLHasWindowsPlatformQuirk): Deleted.
+
+2021-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add API to disable HTTPS upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=221591
+        <rdar://problem/56254945>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewConfiguration.mm:
+        (TEST):
+
+2021-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit even more
+        https://bugs.webkit.org/show_bug.cgi?id=221914
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (destroyWebViewAndOffscreenWindow):
+        (releaseAndZero):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (+[DumpRenderTreePasteboard releaseLocalPasteboards]):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController clearSavedEvents]):
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm:
+        (TestWebKitAPI::WebCoreNSURLSessionTest::SetUp):
+        (TestWebKitAPI::WebCoreNSURLSessionTest::TearDown):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (setUpCookieTestWithWebsiteDataStore):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (runTestWithWebsiteDataStore):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        * TestWebKitAPI/Tests/WebKitObjC/UserContentTest.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitObjC/WKBrowsingContextGroupTest.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/WKBrowsingContextLoadDelegateTest.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/ios/WKScrollViewDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/CandidateTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DOMNodeFromJSObject.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/SubresourceErrorCrash.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/TypingStyleCrash.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WebScriptObjectDescription.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WebViewCanPasteURL.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WebViewCanPasteZeroPng.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WebViewDidCreateJavaScriptContext.mm:
+        (-[DidCreateJavaScriptContextFrameLoadDelegate webView:didCreateJavaScriptContext:forFrame:]):
+        * TestWebKitAPI/cocoa/TestProtocol.mm:
+        (+[TestProtocol registerWithScheme:]):
+        (+[TestProtocol unregister]):
+        * TestWebKitAPI/mac/InjectedBundleControllerMac.mm:
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::addChromeInputField):
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (+[WebKitTestRunnerPasteboard releaseLocalPasteboards]):
+
+2021-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Set a default path for device ID hash salts
+        https://bugs.webkit.org/show_bug.cgi?id=221955
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (TestWebKitAPI::TEST):
+
+2021-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Synthesize range responses if needed in WebCoreNSURLSession
+        https://bugs.webkit.org/show_bug.cgi?id=221072
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebCore/ParsedContentRange.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::clientCertServer):
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::testVideoBytes):
+        (TestWebKitAPI::runVideoTest):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        (TestWebKitAPI::HTTPResponse::HTTPResponse):
+        (TestWebKitAPI::HTTPServer::HTTPResponse::HTTPResponse): Deleted.
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::RequestData::RequestData):
+        (TestWebKitAPI::appendToVector):
+        (TestWebKitAPI::HTTPServer::parsePath):
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+        (TestWebKitAPI::HTTPResponse::bodyFromString):
+        (TestWebKitAPI::HTTPResponse::serialize):
+
+2021-02-15  John Wilander  <wilander@apple.com>
+
+        PCM: Add high entropy attributionSourceNonce attribute to anchor tags
+        https://bugs.webkit.org/show_bug.cgi?id=221934
+        <rdar://73581230>
+
+        Reviewed by Jiewen Tan.
+
+        In Private Click Measurement (PCM), the source site should have the option to
+        provide a high entropy nonce with which PCM can asynchronously validate its
+        subsequent, asynchronous request for a signature of its unlinkable token.
+
+        The nonce attribute's name is attributionSourceNonce and it's a
+        128-bit/16-byte Base64URL encoded string.
+
+        The attribute is behind the experimental feature flag
+        PrivateClickMeasurementFraudPrevention.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+
+2021-02-15  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add python 3 support - part 2
+        https://bugs.webkit.org/show_bug.cgi?id=221899
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py: Map unicode() to str() for python 3, in order to keep code compatible with 
+        both Python 2 and 3.
+        (ValidateCommiterAndReviewer.load_contributors): Used items instead of iteritems.
+        (PrintConfiguration.convert_build_to_os_name): Ditto.
+        * CISupport/ews-build/steps_unittest.py:
+        (BuildStepMixinAdditions.executedSteps): Converted filter to list comprehension.
+        * CISupport/ews-build/factories_unittest.py: Ditto.
+
+2021-02-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [results.webkit.org] Distinguish hash and revision
+        https://bugs.webkit.org/show_bug.cgi?id=221861
+        <rdar://problem/74298457>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit.py:
+        (Commit.from_json): Pass hash and revision via json.
+        (Commit.__init__): Convert id to hash or revision.
+
+2021-02-15  Sam Weinig  <weinig@apple.com>
+
+        Prepare for adding relative color support
+        https://bugs.webkit.org/show_bug.cgi?id=221881
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        Update HSLA tests to account for HSLA now using 0-360, 0-100, 0-100 bounds rather than 0-1, 0-1, 0-1.
+
 2021-02-15  Adam Roben  <aroben@apple.com>
 
         Add `git commit -v` support to commit-log-editor

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,13 +118,16 @@ void PropertyTable::finishCreation(VM& vm)
     vm.heap.reportExtraMemoryAllocated(dataSize());
 }
 
-void PropertyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void PropertyTable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     auto* thisObject = jsCast<PropertyTable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
     visitor.reportExtraMemoryVisited(thisObject->dataSize());
 }
+
+DEFINE_VISIT_CHILDREN(PropertyTable);
 
 void PropertyTable::destroy(JSCell* cell)
 {

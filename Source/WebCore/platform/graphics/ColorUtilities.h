@@ -52,18 +52,20 @@ template<typename T> T convertFloatAlphaTo(float);
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType&, Functor&&);
 
-template<typename ColorType> constexpr ColorType colorWithOverridenAlpha(const ColorType&, uint8_t overrideAlpha);
-template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType&, float overrideAlpha);
+template<typename ColorType> constexpr ColorType colorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
+template<typename ColorType> ColorType colorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
 
-template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType&, uint8_t overrideAlpha);
-template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType&, float overrideAlpha);
+template<typename ColorType> constexpr ColorType invertedcolorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
+template<typename ColorType> ColorType invertedcolorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
 
 template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr> constexpr bool isBlack(const ColorType&);
 template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>&);
+constexpr bool isBlack(const LCHA<float>&);
 constexpr bool isBlack(const Lab<float>&);
 
 template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr> constexpr bool isWhite(const ColorType&);
 template<WhitePoint W> constexpr bool isWhite(const XYZA<float, W>&);
+constexpr bool isWhite(const LCHA<float>&);
 constexpr bool isWhite(const Lab<float>&);
 
 constexpr uint16_t fastMultiplyBy255(uint16_t);
@@ -105,21 +107,21 @@ template<typename ColorType, typename Functor> ColorType colorByModifingEachNonA
     return { copy[0], copy[1], copy[2], copy[3] };
 }
 
-template<typename ColorType> constexpr ColorType colorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)
+template<typename ColorType> constexpr ColorType colorWithOverriddenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
     auto copy = color;
     copy.alpha = convertByteAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
     return copy;
 }
 
-template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType& color, float overrideAlpha)
+template<typename ColorType> ColorType colorWithOverriddenAlpha(const ColorType& color, float overrideAlpha)
 {
     auto copy = color;
     copy.alpha = convertFloatAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
     return copy;
 }
 
-template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)
+template<typename ColorType> constexpr ColorType invertedcolorWithOverriddenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
     static_assert(ColorType::Model::isInvertible);
 
@@ -133,7 +135,7 @@ template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha
     return makeFromComponents<ColorType>(copy);
 }
 
-template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType& color, float overrideAlpha)
+template<typename ColorType> ColorType invertedcolorWithOverriddenAlpha(const ColorType& color, float overrideAlpha)
 {
     static_assert(ColorType::Model::isInvertible);
 
@@ -152,6 +154,11 @@ template<WhitePoint W> constexpr bool isBlack(const XYZA<float, W>& color)
     return color.y == 0 && color.alpha == AlphaTraits<float>::opaque;
 }
 
+constexpr bool isBlack(const LCHA<float>& color)
+{
+    return color.lightness == 0 && color.alpha == AlphaTraits<float>::opaque;
+}
+
 constexpr bool isBlack(const Lab<float>& color)
 {
     return color.lightness == 0 && color.alpha == AlphaTraits<float>::opaque;
@@ -168,6 +175,11 @@ constexpr bool isBlack(const ColorType& color)
 template<WhitePoint W> constexpr bool isWhite(const XYZA<float, W>& color)
 {
     return color.y == 1 && color.alpha == AlphaTraits<float>::opaque;
+}
+
+constexpr bool isWhite(const LCHA<float>& color)
+{
+    return color.lightness == 100 && color.alpha == AlphaTraits<float>::opaque;
 }
 
 constexpr bool isWhite(const Lab<float>& color)

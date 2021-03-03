@@ -150,7 +150,7 @@ Notification* core(WebNotification *notification)
 - (WebSecurityOrigin *)origin
 {
 #if ENABLE(NOTIFICATIONS)
-    return [[[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:core(self)->scriptExecutionContext()->securityOrigin()] autorelease];
+    return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:core(self)->scriptExecutionContext()->securityOrigin()]).autorelease();
 #else
     return nil;
 #endif

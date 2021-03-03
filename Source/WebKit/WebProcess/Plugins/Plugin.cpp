@@ -127,4 +127,11 @@ const PluginController* Plugin::controller() const
     return m_pluginController.get();
 }
 
+#if PLATFORM(COCOA)
+WebCore::FloatSize Plugin::pdfDocumentSizeForPrinting() const
+{
+    return { };
+}
+#endif
+
 } // namespace WebKit

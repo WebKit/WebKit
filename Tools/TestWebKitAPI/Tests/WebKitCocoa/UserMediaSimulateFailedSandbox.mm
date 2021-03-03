@@ -59,18 +59,16 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @implementation SimulateFailedSandboxUIDelegate
 
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
+- (void)_webView:(WKWebView *)webView requestMediaCapturePermission:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision))decisionHandler
 {
     wasPrompted = true;
 
-    BOOL needsMicrophoneAuthorized = devices & _WKCaptureDeviceMicrophone;
-    BOOL needsCameraAuthorized = devices & _WKCaptureDeviceCamera;
-    if (!needsMicrophoneAuthorized && !needsCameraAuthorized) {
-        decisionHandler(NO);
+    if (!audio && !video) {
+        decisionHandler(_WKPermissionDecisionDeny);
         return;
     }
 
-    decisionHandler(YES);
+    decisionHandler(_WKPermissionDecisionGrant);
 }
 
 - (void)_webView:(WKWebView *)webView includeSensitiveMediaDeviceDetails:(void (^)(BOOL includeSensitiveDetails))decisionHandler

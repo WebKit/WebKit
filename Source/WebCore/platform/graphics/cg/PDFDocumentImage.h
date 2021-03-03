@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PDFDocumentImage_h
-#define PDFDocumentImage_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 #include "Image.h"
-#include "Settings.h"
+#include "PDFImageCachingPolicy.h"
+#include "RuntimeApplicationChecks.h"
 
 #if USE(CG)
 
@@ -50,6 +50,9 @@ class PDFDocumentImage final : public Image {
 public:
     static Ref<PDFDocumentImage> create(ImageObserver* observer)
     {
+#if ENABLE(GPU_PROCESS)
+        RELEASE_ASSERT(!isInGPUProcess());
+#endif
         return adoptRef(*new PDFDocumentImage(observer));
     }
 
@@ -115,10 +118,8 @@ private:
     bool m_hasPage { false };
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_IMAGE(PDFDocumentImage)
 
 #endif // USE(CG)
-
-#endif // PDFDocumentImage_h

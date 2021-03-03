@@ -301,10 +301,9 @@ void PlatformWebView::didInitializeClients()
 
 void PlatformWebView::addChromeInputField()
 {
-    UITextField* textField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 100, 20)];
-    textField.tag = 1;
-    [m_window addSubview:textField];
-    [textField release];
+    auto textField = adoptNS([[UITextField alloc] initWithFrame:CGRectMake(0, 0, 100, 20)]);
+    [textField setTag:1];
+    [m_window addSubview:textField.get()];
 }
 
 void PlatformWebView::removeChromeInputField()

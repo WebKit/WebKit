@@ -63,6 +63,7 @@ ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
     ServiceWorkerJobData result;
     result.m_identifier = identifier();
     result.sourceContext = sourceContext;
+    result.workerType = workerType;
     result.type = type;
 
     result.scriptURL = scriptURL.isolatedCopy();
@@ -85,7 +86,7 @@ bool ServiceWorkerJobData::isEquivalent(const ServiceWorkerJobData& job) const
     case ServiceWorkerJobType::Update:
         return scopeURL == job.scopeURL
             && scriptURL == job.scriptURL
-            && registrationOptions.type == job.registrationOptions.type
+            && workerType == job.workerType
             && registrationOptions.updateViaCache == job.registrationOptions.updateViaCache;
     case ServiceWorkerJobType::Unregister:
         return scopeURL == job.scopeURL;

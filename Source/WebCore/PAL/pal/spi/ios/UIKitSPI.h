@@ -41,6 +41,7 @@ WTF_EXTERN_C_END
 #import <UIKit/UIFocusRingStyle.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIInterface_Private.h>
+#import <UIKit/UIPasteboard_Private.h>
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/NSItemProvider+UIKitAdditions.h>

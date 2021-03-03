@@ -205,6 +205,10 @@ void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineId
 
 MediaPlayer::SupportsType RemoteMediaPlayerManager::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const MediaEngineSupportParameters& parameters)
 {
+#if ENABLE(MEDIA_STREAM)
+    if (parameters.isMediaStream)
+        return MediaPlayer::SupportsType::IsNotSupported;
+#endif
     return typeCache(remoteEngineIdentifier).supportsTypeAndCodecs(parameters);
 }
 

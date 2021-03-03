@@ -1,9 +1,8 @@
 This test checks that by default, if using JavaScript to focus an element triggers :focus-visible matching, then the element should show a focus ring with outline-style: auto.
 
-Your user-agent does not support :focus-visible pseudo-class, please SKIP this test.
-
+If the element below that says "Target" show a focus ring with outline-style: auto, then the test result is SUCCESS.
 Target
 
-FAIL ":focus-visible" should be a valid selector The string did not match the expected pattern.
+PASS ":focus-visible" should be a valid selector
 PASS By default initial programatic focus matches ':focus-visible', so the element shows a focus ring with 'outline-style: auto'
 

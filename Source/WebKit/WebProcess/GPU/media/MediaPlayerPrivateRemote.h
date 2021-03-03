@@ -281,7 +281,9 @@ private:
 
     void paint(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
+#if !USE(AVFOUNDATION)
     bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) final;
+#endif
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
 
     WebCore::MediaPlayerIdentifier identifier() const final;

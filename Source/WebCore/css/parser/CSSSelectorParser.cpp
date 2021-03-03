@@ -276,6 +276,7 @@ static bool isUserActionPseudoClass(CSSSelector::PseudoClassType pseudo)
     case CSSSelector::PseudoClassHover:
     case CSSSelector::PseudoClassFocus:
     case CSSSelector::PseudoClassActive:
+    case CSSSelector::PseudoClassFocusVisible:
     case CSSSelector::PseudoClassFocusWithin:
         return true;
     default:
@@ -580,6 +581,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return nullptr;
         if (selector->match() == CSSSelector::PseudoClass) {
             if (m_context.mode != UASheetMode && selector->pseudoClassType() == CSSSelector::PseudoClassDirectFocus)
+                return nullptr;
+            if (!m_context.focusVisibleEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassFocusVisible)
                 return nullptr;
 #if ENABLE(ATTACHMENT_ELEMENT)
             if (!m_context.attachmentEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassHasAttachment)

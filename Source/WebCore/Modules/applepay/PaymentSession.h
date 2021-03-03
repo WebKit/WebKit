@@ -27,7 +27,6 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
 #include "ExceptionOr.h"
 #include "PaymentSessionBase.h"
 
@@ -39,6 +38,7 @@ class PaymentContact;
 class PaymentMethod;
 class PaymentSessionError;
 class ScriptExecutionContext;
+struct ApplePayShippingMethod;
 
 class PaymentSession : public virtual PaymentSessionBase {
 public:
@@ -48,9 +48,12 @@ public:
     virtual unsigned version() const = 0;
     virtual void validateMerchant(URL&&) = 0;
     virtual void didAuthorizePayment(const Payment&) = 0;
-    virtual void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) = 0;
+    virtual void didSelectShippingMethod(const ApplePayShippingMethod&) = 0;
     virtual void didSelectShippingContact(const PaymentContact&) = 0;
     virtual void didSelectPaymentMethod(const PaymentMethod&) = 0;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    virtual void didChangePaymentMethodMode(String&& paymentMethodMode) = 0;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     virtual void didCancelPaymentSession(PaymentSessionError&&) = 0;
 };
 

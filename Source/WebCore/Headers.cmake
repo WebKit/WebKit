@@ -30,6 +30,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/fetch/FetchBodyConsumer.h
     Modules/fetch/FetchBodySource.h
+    Modules/fetch/FetchRequestCredentials.h
     Modules/fetch/FetchHeaders.h
     Modules/fetch/FetchIdentifier.h
     Modules/fetch/FetchLoader.h
@@ -47,6 +48,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/geolocation/PositionErrorCallback.h
     Modules/geolocation/PositionOptions.h
 
+    Modules/highlight/AppHighlight.h
     Modules/highlight/Highlight.h
     Modules/highlight/HighlightRegister.h
 
@@ -287,6 +289,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/WebCoreJITOperations.h
     bindings/js/WebCoreTypedArrayController.h
     bindings/js/WindowProxy.h
+    bindings/js/WorkerScriptFetcher.h
 
     bridge/Bridge.h
     bridge/IdentifierRep.h
@@ -488,6 +491,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/NodeTraversal.h
     dom/OverflowEvent.h
     dom/PointerEvent.h
+    dom/PointerEventTypeNames.h
     dom/Position.h
     dom/ProcessingInstruction.h
     dom/ProgressEvent.h
@@ -896,6 +900,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PageIdentifier.h
     page/PageOverlay.h
     page/PageOverlayController.h
+    page/PagePasteboardContext.h
     page/PerformanceLogging.h
     page/PerformanceLoggingClient.h
     page/PointerCaptureController.h
@@ -997,6 +1002,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/Cursor.h
     platform/DataListSuggestionPicker.h
     platform/DataListSuggestionsClient.h
+    platform/DataOwnerType.h
     platform/DateComponents.h
     platform/Decimal.h
     platform/DeferrableTask.h
@@ -1042,6 +1048,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/PODIntervalTree.h
     platform/PODRedBlackTree.h
     platform/Pasteboard.h
+    platform/PasteboardContext.h
     platform/PasteboardCustomData.h
     platform/PasteboardItemInfo.h
     platform/PasteboardStrategy.h
@@ -1412,6 +1419,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/NetworkingContext.h
     platform/network/ParsedContentRange.h
     platform/network/ParsedContentType.h
+    platform/network/ParsedRequestRange.h
     platform/network/ProtectionSpace.h
     platform/network/ProtectionSpaceBase.h
     platform/network/ProtectionSpaceHash.h
@@ -1506,6 +1514,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderLayerScrollableArea.h
     rendering/RenderLineBoxList.h
     rendering/RenderMedia.h
+    rendering/RenderModel.h
     rendering/RenderObject.h
     rendering/RenderObjectEnums.h
     rendering/RenderOverflow.h
@@ -1569,6 +1578,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/StyleRareInheritedData.h
     rendering/style/StyleRareNonInheritedData.h
     rendering/style/StyleReflection.h
+    rendering/style/StyleScrollSnapPoints.h
     rendering/style/StyleSelfAlignmentData.h
     rendering/style/StyleSurroundData.h
     rendering/style/StyleTransformData.h

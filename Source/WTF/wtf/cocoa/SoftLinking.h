@@ -42,6 +42,17 @@
         return dylib; \
     }
 
+#define SOFT_LINK_SYSTEM_LIBRARY(lib) \
+    static void* lib##Library() \
+    { \
+        static void* dylib = ^{ \
+            void *result = dlopen("/usr/lib/system/" #lib ".dylib", RTLD_NOW); \
+            RELEASE_ASSERT_WITH_MESSAGE(result, "%s", dlerror()); \
+            return result; \
+        }(); \
+        return dylib; \
+    }
+
 #define SOFT_LINK_LIBRARY_OPTIONAL(lib) \
 static void* lib##Library() \
 { \
@@ -109,6 +120,13 @@ static void* lib##Library() \
             RELEASE_ASSERT_WITH_MESSAGE(result, "%s", dlerror()); \
             return result; \
         }(); \
+        return frameworkLibrary; \
+    }
+
+#define SOFT_LINK_FRAMEWORK_IN_UMBRELLA_OPTIONAL(umbrella, framework) \
+    static void* framework##Library() \
+    { \
+        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
         return frameworkLibrary; \
     }
 

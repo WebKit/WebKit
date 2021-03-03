@@ -364,7 +364,7 @@ TEST(ResourceLoadDelegate, LoadInfo)
 
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[8] class]), "NSMutableURLRequest");
     EXPECT_WK_STREQ([otherParameters[8] URL].path, "/fetchTarget");
-    EXPECT_WK_STREQ([[[NSString alloc] initWithData:[otherParameters[8] HTTPBody] encoding:NSUTF8StringEncoding] autorelease], "a=b&c=d");
+    EXPECT_WK_STREQ(adoptNS([[NSString alloc] initWithData:[otherParameters[8] HTTPBody] encoding:NSUTF8StringEncoding]).get(), "a=b&c=d");
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[9] class]), "NSHTTPURLResponse");
     EXPECT_WK_STREQ([otherParameters[9] URL].path, "/fetchTarget");
     EXPECT_EQ(otherParameters[10], nil);

@@ -31,6 +31,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <CoreText/CoreTextPriv.h>
+#include <OTSVG/OTSVG.h>
 
 #else
 
@@ -81,6 +82,8 @@ enum {
     kCTFontTraitTightLeading = (1 << 15),
     kCTFontTraitEmphasized = kCTFontTraitBold,
 };
+
+typedef const struct __OTSVGTable * OTSVGTableRef;
 
 #endif
 

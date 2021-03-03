@@ -226,7 +226,7 @@ typedef NSUInteger NSTextTabType;
 @end
 
 #else
-static NSFileWrapper *fileWrapperForURL(DocumentLoader *, NSURL *);
+static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader *, NSURL *);
 static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement&);
 
 @interface NSTextAttachment (WebCoreNSTextAttachment)
@@ -764,7 +764,7 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
 
 static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
 {
-    NSShadow *shadow = nil;
+    RetainPtr<NSShadow> shadow;
     NSUInteger shadowStyleLength = [shadowStyle length];
     NSRange openParenRange = [shadowStyle rangeOfString:@"("];
     NSRange closeParenRange = [shadowStyle rangeOfString:@")"];
@@ -806,14 +806,14 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
                 if (!spaceRange.length)
                     spaceRange = NSMakeRange(0, 0);
                 shadowBlurRadius = [[shadowStyle substringWithRange:NSMakeRange(NSMaxRange(spaceRange), thirdRange.location - NSMaxRange(spaceRange))] floatValue];
-                shadow = [[(NSShadow *)[PlatformNSShadow alloc] init] autorelease];
+                shadow = adoptNS([(NSShadow *)[PlatformNSShadow alloc] init]);
                 [shadow setShadowColor:shadowColor];
                 [shadow setShadowOffset:shadowOffset];
                 [shadow setShadowBlurRadius:shadowBlurRadius];
             }
         }
     }
-    return shadow;
+    return shadow.autorelease();
 }
 
 bool HTMLConverterCaches::isBlockElement(Element& element)
@@ -1263,7 +1263,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
 {
     BOOL retval = NO;
     BOOL notFound = NO;
-    NSFileWrapper *fileWrapper = nil;
+    RetainPtr<NSFileWrapper> fileWrapper;
     Frame* frame = element.document().frame();
     DocumentLoader *dataSource = frame->loader().frameHasLoaded() ? frame->loader().documentLoader() : 0;
     BOOL ignoreOrientation = YES;
@@ -1271,7 +1271,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     if ([url isFileURL]) {
         NSString *path = [[url path] stringByStandardizingPath];
         if (path)
-            fileWrapper = [[[NSFileWrapper alloc] initWithURL:url options:0 error:NULL] autorelease];
+            fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:url options:0 error:NULL]);
     }
     if (!fileWrapper && dataSource) {
         RefPtr<ArchiveResource> resource = dataSource->subresource(url);
@@ -1282,7 +1282,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         if (usePlaceholder && resource && mimeType == "text/html")
             notFound = YES;
         if (resource && !notFound) {
-            fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()] autorelease];
+            fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()]);
             [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
         }
     }
@@ -1316,7 +1316,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     }
     if (fileWrapper || usePlaceholder) {
         NSUInteger textLength = [_attrStr length];
-        RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper]);
+        RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
 #if PLATFORM(IOS_FAMILY)
         float verticalAlign = 0.0;
         _caches->floatPropertyValueForNode(element, CSSPropertyVerticalAlign, verticalAlign);
@@ -1522,7 +1522,8 @@ static inline NSDate *_dateForString(NSString *string)
         return nil;
     [dateComponents setSecond:component];
     
-    return [[[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian] autorelease] dateFromComponents:dateComponents.get()];
+    auto calendar = adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]);
+    return [calendar dateFromComponents:dateComponents.get()];
 }
 
 static NSInteger _colCompare(id block1, id block2, void *)
@@ -2302,14 +2303,14 @@ Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& st
 
 #if !PLATFORM(IOS_FAMILY)
 
-static NSFileWrapper *fileWrapperForURL(DocumentLoader* dataSource, NSURL *URL)
+static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader* dataSource, NSURL *URL)
 {
     if ([URL isFileURL])
-        return [[[NSFileWrapper alloc] initWithURL:[URL URLByResolvingSymlinksInPath] options:0 error:nullptr] autorelease];
+        return adoptNS([[NSFileWrapper alloc] initWithURL:[URL URLByResolvingSymlinksInPath] options:0 error:nullptr]);
 
     if (dataSource) {
         if (RefPtr<ArchiveResource> resource = dataSource->subresource(URL)) {
-            NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()] autorelease];
+            auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()]);
             NSString *filename = resource->response().suggestedFilename();
             if (!filename || ![filename length])
                 filename = suggestedFilenameWithMIMEType(resource->url(), resource->mimeType());
@@ -2320,7 +2321,7 @@ static NSFileWrapper *fileWrapperForURL(DocumentLoader* dataSource, NSURL *URL)
 
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:adoptNS([[NSMutableURLRequest alloc] initWithURL:URL]).get()];
     if (cachedResponse) {
-        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
+        auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]]);
         [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
         return wrapper;
     }

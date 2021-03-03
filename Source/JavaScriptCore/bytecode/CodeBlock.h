@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -201,10 +201,10 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=123677
     CodeBlock* baselineVersion();
 
+    DECLARE_VISIT_CHILDREN;
+
     static size_t estimatedSize(JSCell*, VM&);
-    static void visitChildren(JSCell*, SlotVisitor&);
     static void destroy(JSCell*);
-    void visitChildren(SlotVisitor&);
     void finalizeUnconditionally(VM&);
 
     void notifyLexicalBindingUpdate();
@@ -869,6 +869,7 @@ public:
 
     bool m_hasLinkedOSRExit : 1;
     bool m_isEligibleForLLIntDowngrade : 1;
+    bool m_visitChildrenSkippedDueToOldAge { false };
 
     // Internal methods for use by validation code. It would be private if it wasn't
     // for the fact that we use it from anonymous namespaces.
@@ -943,6 +944,8 @@ private:
     friend class CodeBlockSet;
     friend class ExecutableToCodeBlockEdge;
 
+    template<typename Visitor> ALWAYS_INLINE void visitChildren(Visitor&);
+
     BytecodeLivenessAnalysis& livenessAnalysisSlow();
     
     CodeBlock* specialOSREntryBlockOrNull();
@@ -953,8 +956,6 @@ private:
 
     void updateAllValueProfilePredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 
-    void setConstantIdentifierSetRegisters(VM&, const RefCountedArray<ConstantIdentifierSetEntry>& constants);
-
     void setConstantRegisters(const RefCountedArray<WriteBarrier<Unknown>>& constants, const RefCountedArray<SourceCodeRepresentation>& constantsSourceCodeRepresentation, ScriptExecutable* topLevelExecutable);
 
     void replaceConstant(VirtualRegister reg, JSValue value)
@@ -963,16 +964,16 @@ private:
         m_constantRegisters[reg.toConstantIndex()].set(*m_vm, this, value);
     }
 
-    bool shouldVisitStrongly(const ConcurrentJSLocker&);
+    template<typename Visitor> bool shouldVisitStrongly(const ConcurrentJSLocker&, Visitor&);
     bool shouldJettisonDueToWeakReference(VM&);
-    bool shouldJettisonDueToOldAge(const ConcurrentJSLocker&);
+    template<typename Visitor> bool shouldJettisonDueToOldAge(const ConcurrentJSLocker&, Visitor&);
     
-    void propagateTransitions(const ConcurrentJSLocker&, SlotVisitor&);
-    void determineLiveness(const ConcurrentJSLocker&, SlotVisitor&);
+    template<typename Visitor> void propagateTransitions(const ConcurrentJSLocker&, Visitor&);
+    template<typename Visitor> void determineLiveness(const ConcurrentJSLocker&, Visitor&);
         
-    void stronglyVisitStrongReferences(const ConcurrentJSLocker&, SlotVisitor&);
-    void stronglyVisitWeakReferences(const ConcurrentJSLocker&, SlotVisitor&);
-    void visitOSRExitTargets(const ConcurrentJSLocker&, SlotVisitor&);
+    template<typename Visitor> void stronglyVisitStrongReferences(const ConcurrentJSLocker&, Visitor&);
+    template<typename Visitor> void stronglyVisitWeakReferences(const ConcurrentJSLocker&, Visitor&);
+    template<typename Visitor> void visitOSRExitTargets(const ConcurrentJSLocker&, Visitor&);
 
     unsigned numberOfNonArgumentValueProfiles() { return m_numberOfNonArgumentValueProfiles; }
     unsigned totalNumberOfValueProfiles() { return numberOfArgumentValueProfiles() + numberOfNonArgumentValueProfiles(); }

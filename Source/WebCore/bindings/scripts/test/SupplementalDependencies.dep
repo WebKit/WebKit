@@ -79,9 +79,15 @@ WebDOMTestDerivedDictionary.h:
 JSTestDerivedDictionary2.h: 
 DOMTestDerivedDictionary2.h: 
 WebDOMTestDerivedDictionary2.h: 
+JSTestDictionaryWithOnlyConditionalMembers.h: 
+DOMTestDictionaryWithOnlyConditionalMembers.h: 
+WebDOMTestDictionaryWithOnlyConditionalMembers.h: 
 JSTestDomainSecurity.h: 
 DOMTestDomainSecurity.h: 
 WebDOMTestDomainSecurity.h: 
+JSTestEmptyDictionary.h: 
+DOMTestEmptyDictionary.h: 
+WebDOMTestEmptyDictionary.h: 
 JSTestEnabledBySetting.h: TestEnabledBySettingSupplemental.idl
 DOMTestEnabledBySetting.h: TestEnabledBySettingSupplemental.idl
 WebDOMTestEnabledBySetting.h: TestEnabledBySettingSupplemental.idl

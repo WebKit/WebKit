@@ -34,6 +34,7 @@
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SharedMemory.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 
 namespace WebKit {
@@ -65,7 +66,7 @@ void RemoteRenderingBackendProxy::connectToGPUProcess()
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
     connection.addClient(*this);
     connection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
-    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier, m_resumeDisplayListSemaphore), 0);
+    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier, m_resumeDisplayListSemaphore), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
@@ -176,6 +177,18 @@ Vector<uint8_t> RemoteRenderingBackendProxy::getBGRADataForImageBuffer(Rendering
     Vector<uint8_t> data;
     sendSync(Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer(renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer::Reply(data), m_renderingBackendIdentifier, 1_s);
     return data;
+}
+
+RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
+{
+    sendDeferredWakeupMessageIfNeeded();
+
+    ShareableBitmap::Handle handle;
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution), Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer::Reply(handle), m_renderingBackendIdentifier, 1_s);
+    if (handle.isNull())
+        return { };
+    ASSERT_UNUSED(sendResult, sendResult);
+    return ShareableBitmap::create(handle);
 }
 
 void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)

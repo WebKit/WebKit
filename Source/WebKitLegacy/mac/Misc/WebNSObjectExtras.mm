@@ -29,11 +29,12 @@
 #import "WebNSObjectExtras.h"
 
 #import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
 
 @interface WebMainThreadInvoker : NSProxy
 {
     id target;
-    id exception;
+    RetainPtr<id> exception;
 }
 @end
 
@@ -61,15 +62,14 @@ static bool returnTypeIsObject(NSInvocation *invocation)
     [invocation setTarget:target];
     [invocation performSelectorOnMainThread:@selector(_webkit_invokeAndHandleException:) withObject:self waitUntilDone:YES];
     if (exception) {
-        id exceptionToThrow = [exception autorelease];
-        exception = nil;
-        @throw exceptionToThrow;
+        auto exceptionToThrow = std::exchange(exception, nil);
+        @throw exceptionToThrow.get();
     } else if (returnTypeIsObject(invocation)) {
         // _webkit_invokeAndHandleException retained the return value on the main thread.
         // Now autorelease it on the calling thread.
         id returnValue;
         [invocation getReturnValue:&returnValue];
-        [returnValue autorelease];
+        adoptNS(returnValue).autorelease();
     }
 }
 
@@ -81,7 +81,7 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 - (void)handleException:(id)passedException
 {
     ASSERT(!exception);
-    exception = [passedException retain];
+    exception = passedException;
 }
 
 @end
@@ -111,12 +111,12 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 
 + (id)_webkit_invokeOnMainThread
 {
-    return [[[WebMainThreadInvoker alloc] initWithTarget:self] autorelease];
+    return adoptNS([[WebMainThreadInvoker alloc] initWithTarget:self]).autorelease();
 }
 
 - (id)_webkit_invokeOnMainThread
 {
-    return [[[WebMainThreadInvoker alloc] initWithTarget:self] autorelease];
+    return adoptNS([[WebMainThreadInvoker alloc] initWithTarget:self]).autorelease();
 }
 
 @end

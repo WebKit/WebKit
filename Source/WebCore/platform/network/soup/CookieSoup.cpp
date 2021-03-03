@@ -65,14 +65,18 @@ static SoupSameSitePolicy soupSameSitePolicy(Cookie::SameSitePolicy policy)
 #endif
 
 Cookie::Cookie(SoupCookie* cookie)
-    : name(String::fromUTF8(cookie->name))
-    , value(String::fromUTF8(cookie->value))
-    , domain(String::fromUTF8(cookie->domain))
-    , path(String::fromUTF8(cookie->path))
-    , expires(cookie->expires ? makeOptional(static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000) : WTF::nullopt)
-    , httpOnly(cookie->http_only)
-    , secure(cookie->secure)
-    , session(!cookie->expires)
+    : name(String::fromUTF8(soup_cookie_get_name(cookie)))
+    , value(String::fromUTF8(soup_cookie_get_value(cookie)))
+    , domain(String::fromUTF8(soup_cookie_get_domain(cookie)))
+    , path(String::fromUTF8(soup_cookie_get_path(cookie)))
+#if USE(SOUP2)
+    , expires(soup_cookie_get_expires(cookie) ? makeOptional(static_cast<double>(soup_date_to_time_t(soup_cookie_get_expires(cookie))) * 1000) : WTF::nullopt)
+#else
+    , expires(soup_cookie_get_expires(cookie) ? makeOptional(static_cast<double>(g_date_time_to_unix(soup_cookie_get_expires(cookie))) * 1000) : WTF::nullopt)
+#endif
+    , httpOnly(soup_cookie_get_http_only(cookie))
+    , secure(soup_cookie_get_secure(cookie))
+    , session(!soup_cookie_get_expires(cookie))
 
 {
 #if SOUP_CHECK_VERSION(2, 69, 90)
@@ -80,6 +84,7 @@ Cookie::Cookie(SoupCookie* cookie)
 #endif
 }
 
+#if USE(SOUP2)
 static SoupDate* msToSoupDate(double ms)
 {
     int year = msToYear(ms);
@@ -90,6 +95,7 @@ static SoupDate* msToSoupDate(double ms)
     // a value in the [1,12] range, meaning we have to manually adjust the month value.
     return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear) + 1, dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int>(ms / 1000) % 60);
 }
+#endif
 
 SoupCookie* Cookie::toSoupCookie() const
 {
@@ -106,9 +112,14 @@ SoupCookie* Cookie::toSoupCookie() const
 #endif
 
     if (!session && expires) {
+#if USE(SOUP2)
         SoupDate* date = msToSoupDate(*expires);
         soup_cookie_set_expires(soupCookie, date);
         soup_date_free(date);
+#else
+        GRefPtr<GDateTime> date = adoptGRef(g_date_time_new_from_unix_utc(*expires));
+        soup_cookie_set_expires(soupCookie, date.get());
+#endif
     }
 
     return soupCookie;

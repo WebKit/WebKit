@@ -137,7 +137,6 @@ webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.htm
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
-
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 
@@ -709,10 +708,6 @@ editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
 editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
 
-# ENABLE(CSS_SCROLL_SNAP) is disabled.
-css3/scroll-snap [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap [ Skip ]
-
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 webkit.org/b/109570 media/track/w3c [ Skip ]
@@ -1105,8 +1100,6 @@ webkit.org/b/211887 webgl/1.0.3/conformance/textures/texture-size-limit.html [ F
 webkit.org/b/212223 compositing/tiling/perspective-on-scroller-tile-coverage.html [ Failure ]
 
 webkit.org/b/212233 fast/repaint/iframe-on-subpixel-position.html [ Failure ]
-
-webkit.org/b/213328 http/tests/inspector/network/intercept-request-properties.html [ Failure ]
 
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup.xht [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round.xht [ ImageOnlyFailure ]
@@ -2356,8 +2349,6 @@ webkit.org/b/168552 fast/text/hyphenate-locale.html [ Failure ]
 
 webkit.org/b/169075 editing/deleting/skip-virama-001.html [ Failure Pass ]
 
-webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
-
 webkit.org/b/171598 accessibility/gtk/menu-list-unfocused-notifications.html [ Failure ]
 
 webkit.org/b/172270 fast/text/font-interstitial-invisible-width-while-loading.html [ Failure ]
@@ -2433,13 +2424,8 @@ webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
 webkit.org/b/184776 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html [ Failure ]
 
-webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
-webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
 webkit.org/b/185254 http/tests/cache/network-error-during-revalidation.html [ Failure ]
-webkit.org/b/185254 http/tests/xmlhttprequest/XMLHttpRequestException.html [ Failure ]
-webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ Failure ]
-webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ Failure ]
 
 # Imported css-text test suite from WPT
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html [ ImageOnlyFailure ]

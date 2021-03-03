@@ -50,14 +50,13 @@ public:
 
     void setError(Error&&);
 
-    void load(Document&, const URL& rootURL);
-    void load(Document&, const ScriptSourceCode&);
-
     void notifyLoadCompleted(UniquedStringImpl&);
     void notifyLoadFailed(LoadableScript::Error&&);
     void notifyLoadWasCanceled();
 
     UniquedStringImpl* moduleKey() const { return m_moduleKey.get(); }
+
+    ModuleFetchParameters& parameters() { return m_parameters.get(); }
 
 private:
     LoadableModuleScript(const String& nonce, const String& integrity, ReferrerPolicy, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree);

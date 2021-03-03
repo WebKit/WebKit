@@ -163,9 +163,9 @@ TEST(TLSVersion, DefaultBehavior)
 
 RetainPtr<WKWebView> makeWebViewWith(WKWebsiteDataStore *store, RetainPtr<TestNavigationDelegate> delegate)
 {
-    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
-    configuration.websiteDataStore = store;
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:store];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
     [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
         EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
@@ -413,7 +413,7 @@ TEST(TLSVersion, DidNegotiateModernTLS)
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [dataStoreConfiguration setFastServerTrustEvaluationEnabled:YES];
-    [configuration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()] autorelease]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:server.request()];
@@ -470,18 +470,18 @@ TEST(TLSVersion, LegacySubresources)
         { "/", { makeString("<iframe src='https://127.0.0.1:", legacyServer.port(), "/frame'/>") }}
     }, HTTPServer::Protocol::Https);
 
-    auto dataStoreConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease];
-    dataStoreConfiguration.fastServerTrustEvaluationEnabled = YES;
-    auto webViewConfiguration = [[WKWebViewConfiguration new] autorelease];
-    webViewConfiguration.websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration] autorelease];
-    auto webView = [[[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration] autorelease];
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [dataStoreConfiguration setFastServerTrustEvaluationEnabled:YES];
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [webViewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
-    auto delegate = [[TestNavigationDelegate new] autorelease];
+    auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
         EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
         callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
     }];
-    [webView setNavigationDelegate:delegate];
+    [webView setNavigationDelegate:delegate.get()];
 
     [webView loadRequest:modernServer.request()];
     [delegate waitForDidFinishNavigation];
@@ -489,8 +489,8 @@ TEST(TLSVersion, LegacySubresources)
     EXPECT_EQ(legacyServer.totalRequests(), 0u);
     EXPECT_EQ(modernServer.totalRequests(), 1u);
 
-    auto defaultWebView = [[WKWebView new] autorelease];
-    [defaultWebView setNavigationDelegate:delegate];
+    auto defaultWebView = adoptNS([WKWebView new]);
+    [defaultWebView setNavigationDelegate:delegate.get()];
     [defaultWebView loadRequest:modernServer.request()];
     [delegate waitForDidFinishNavigation];
     EXPECT_EQ(legacyServer.totalRequests(), 1u);

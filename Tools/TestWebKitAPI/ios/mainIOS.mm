@@ -27,27 +27,27 @@
 #import "TestsController.h"
 
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <wtf/RetainPtr.h>
 
 int main(int argc, char** argv)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    bool passed = false;
+    @autoreleasepool {
+        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
 
-    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
+        // Set up user defaults.
+        auto argumentDomain = adoptNS([[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy]);
+        if (!argumentDomain)
+            argumentDomain = adoptNS([[NSMutableDictionary alloc] init]);
 
-    // Set up user defaults.
-    NSMutableDictionary *argumentDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy];
-    if (!argumentDomain)
-        argumentDomain = [[NSMutableDictionary alloc] init];
-
-    [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];
+        [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
 
 #ifndef BUILDING_TEST_WTF
-    [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+        [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
 #endif
 
-    bool passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
-
-    [pool drain];
+        passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
+    }
 
     return passed ? EXIT_SUCCESS : EXIT_FAILURE;
 }

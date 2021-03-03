@@ -267,7 +267,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 - (id <NSImmediateActionAnimationController>)_defaultAnimationController
 {
     if (_contentPreventsDefault)
-        return [[[WKAnimationController alloc] init] autorelease];
+        return adoptNS([[WKAnimationController alloc] init]).autorelease();
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
 

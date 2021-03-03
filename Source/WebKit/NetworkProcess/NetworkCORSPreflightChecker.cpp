@@ -137,7 +137,7 @@ void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceEr
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED("didComplete http_status_code: %d", m_response.httpStatusCode());
+    RELEASE_LOG_IF_ALLOWED("didComplete http_status_code=%d", m_response.httpStatusCode());
 
     auto result = validatePreflightResponse(m_parameters.originalRequest, m_response, m_parameters.storedCredentialsPolicy, m_parameters.sourceOrigin, m_networkResourceLoader.get());
     if (!result) {

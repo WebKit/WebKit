@@ -44,7 +44,8 @@ namespace WebCore {
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
     updatePlatformRequest(bodyPolicy);
-    return [[m_nsRequest.get() retain] autorelease];
+    auto requestCopy = m_nsRequest;
+    return requestCopy.autorelease();
 }
 
 CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
@@ -260,17 +261,17 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
     updatePlatformRequest();
-    m_nsRequest = adoptNS(copyRequestWithStorageSession(storageSession, m_nsRequest.get()));
+    m_nsRequest = copyRequestWithStorageSession(storageSession, m_nsRequest.get());
 }
 
-NSURLRequest *copyRequestWithStorageSession(CFURLStorageSessionRef storageSession, NSURLRequest *request)
+RetainPtr<NSURLRequest> copyRequestWithStorageSession(CFURLStorageSessionRef storageSession, NSURLRequest *request)
 {
     if (!storageSession || !request)
-        return [request copy];
+        return adoptNS([request copy]);
 
     auto cfRequest = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, [request _CFURLRequest]));
     _CFURLRequestSetStorageSession(cfRequest.get(), storageSession);
-    return [[NSURLRequest alloc] _initWithCFURLRequest:cfRequest.get()];
+    return adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:cfRequest.get()]);
 }
 
 NSCachedURLResponse *cachedResponseForRequest(CFURLStorageSessionRef storageSession, NSURLRequest *request)
@@ -283,7 +284,7 @@ NSCachedURLResponse *cachedResponseForRequest(CFURLStorageSessionRef storageSess
     if (!cachedResponse)
         return nil;
 
-    return [[[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse.get()] autorelease];
+    return adoptNS([[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse.get()]).autorelease();
 }
 
 } // namespace WebCore

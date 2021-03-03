@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
 #include "Logging.h"
+#include "RuntimeApplicationChecks.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 
@@ -190,6 +191,8 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         return;
 
     CGContextRef cgContext = context.platformContext();
+
+    RELEASE_ASSERT(!isInGPUProcess() || !font.findOTSVGGlyphs(glyphs, numGlyphs));
 
     bool shouldAntialias = true;
     bool shouldSmoothFonts = true;

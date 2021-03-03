@@ -268,6 +268,7 @@ http/tests/misc/image-checks-for-accept.html [ Skip ]
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]
+accessibility/embedded-image-description.html [ Skip ]
 
 # TODO Investigate why these mouse scroll tests are failing.
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
@@ -1423,6 +1424,7 @@ webkit.org/b/140798 [ Debug ] accessibility/aria-namefrom-author.html [ Skip ] #
 webkit.org/b/140798 [ Release ] accessibility/aria-sort.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-sort.html [ Skip ] # Debug assertion
 accessibility/aria-sort-changed-notification.html [ Skip ]
+accessibility/aria-errormessage.html [ Skip ]
 webkit.org/b/140798 [ Release ] accessibility/aria-tables.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-tables.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/aria-text-role.html [ Failure ]

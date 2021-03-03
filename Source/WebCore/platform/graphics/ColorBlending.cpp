@@ -86,7 +86,7 @@ Color blendWithWhite(const Color& color)
 
     // FIXME: Why is preserving the semantic bit desired and/or correct here?
     if (color.isSemantic())
-        return Color(result, Color::Semantic);
+        return { result, Color::Flags::Semantic };
     return result;
 }
 

@@ -120,6 +120,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << gpuIOKitExtensionHandles;
     encoder << gpuMachExtensionHandles;
 #endif
+#if HAVE(STATIC_FONT_REGISTRY)
+    encoder << fontMachExtensionHandle;
+#endif
 #if HAVE(APP_ACCENT_COLORS)
     encoder << accentColor;
 #endif
@@ -171,6 +174,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << needsInAppBrowserPrivacyQuirks;
     encoder << limitsNavigationsToAppBoundDomains;
 #endif
+    encoder << lastNavigationWasAppBound;
     encoder << shouldRelaxThirdPartyCookieBlocking;
     encoder << canUseCredentialStorage;
 
@@ -179,6 +183,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     
     encoder << textInteractionEnabled;
+    encoder << httpsUpgradeEnabled;
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -400,6 +405,14 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     parameters.gpuMachExtensionHandles = WTFMove(*gpuMachExtensionHandles);
 #endif
 
+#if HAVE(STATIC_FONT_REGISTRY)
+    Optional<Optional<SandboxExtension::Handle>> fontMachExtensionHandle;
+    decoder >> fontMachExtensionHandle;
+    if (!fontMachExtensionHandle)
+        return WTF::nullopt;
+    parameters.fontMachExtensionHandle = WTFMove(*fontMachExtensionHandle);
+#endif
+
 #if HAVE(APP_ACCENT_COLORS)
     if (!decoder.decode(parameters.accentColor))
         return WTF::nullopt;
@@ -558,6 +571,8 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.limitsNavigationsToAppBoundDomains))
         return WTF::nullopt;
 #endif
+    if (!decoder.decode(parameters.lastNavigationWasAppBound))
+        return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldRelaxThirdPartyCookieBlocking))
         return WTF::nullopt;
@@ -571,6 +586,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 #endif
     
     if (!decoder.decode(parameters.textInteractionEnabled))
+        return WTF::nullopt;
+
+    if (!decoder.decode(parameters.httpsUpgradeEnabled))
         return WTF::nullopt;
 
     return parameters;

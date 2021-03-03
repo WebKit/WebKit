@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,11 +59,11 @@ const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable
     &javaScriptRuntimeFlags,
     &queueMicrotaskToEventLoop,
     &shouldInterruptScriptBeforeTimeout,
-    nullptr, // moduleLoaderImportModule
-    nullptr, // moduleLoaderResolve
-    nullptr, // moduleLoaderFetch
-    nullptr, // moduleLoaderCreateImportMetaProperties
-    nullptr, // moduleLoaderEvaluate
+    &moduleLoaderImportModule,
+    &moduleLoaderResolve,
+    &moduleLoaderFetch,
+    &moduleLoaderCreateImportMetaProperties,
+    &moduleLoaderEvaluate,
     &promiseRejectionTracker,
     &reportUncaughtExceptionAtEventLoop,
     &currentScriptExecutionOwner,
@@ -92,13 +92,16 @@ void JSWorkerGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
     ASSERT(inherits(vm, info()));
 }
 
-void JSWorkerGlobalScopeBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSWorkerGlobalScopeBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSWorkerGlobalScopeBase* thisObject = jsCast<JSWorkerGlobalScopeBase*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_proxy);
 }
+
+DEFINE_VISIT_CHILDREN(JSWorkerGlobalScopeBase);
 
 void JSWorkerGlobalScopeBase::destroy(JSCell* cell)
 {

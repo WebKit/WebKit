@@ -139,7 +139,7 @@
 
         NSString *text = [[_inputTextView textStorage] string];
         if ([text length] > 0)
-            *string = [[text copy] autorelease];
+            *string = adoptNS([text copy]).autorelease();
     }
             
     [_inputTextView setString:@""];
@@ -164,11 +164,8 @@
 
 + (WKTextInputWindowController *)sharedTextInputWindowController
 {
-    static WKTextInputWindowController *textInputWindowController;
-    if (!textInputWindowController)
-        textInputWindowController = [[WKTextInputWindowController alloc] init];
-    
-    return textInputWindowController;
+    static NeverDestroyed<RetainPtr<WKTextInputWindowController>> textInputWindowController = adoptNS([[WKTextInputWindowController alloc] init]);
+    return textInputWindowController.get().get();
 }
 
 - (id)init

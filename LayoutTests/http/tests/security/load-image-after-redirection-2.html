@@ -9,7 +9,7 @@
 <body>
 <img id="image1" style="visibility:hidden"></img><img id="image2" crossorigin="use-credentials" style="visibility:hidden"></img>
 <script type="text/javascript">
-var imageURLAfterCORSInvalidRedirection = "http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/security/resources/allow-if-origin.php&allowCache";
+var imageURLAfterCORSInvalidRedirection = "http://localhost:8000/resources/redirect.py?url=http://127.0.0.1:8000/security/resources/allow-if-origin.php&allowCache";
 promise_test((test) => {
     return new Promise((resolve, reject) => {
         var image = document.getElementById("image1");

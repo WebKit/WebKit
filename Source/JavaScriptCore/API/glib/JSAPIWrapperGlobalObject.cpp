@@ -59,6 +59,8 @@ static JSC_DECLARE_HOST_FUNCTION(constructJSAPIWrapperGlobalObjectCallbackObject
 static JSC_DECLARE_CUSTOM_GETTER(callbackGetterJSAPIWrapperGlobalObjectCallbackObject);
 static JSC_DECLARE_CUSTOM_GETTER(staticFunctionGetterJSAPIWrapperGlobalObjectCallbackObject);
 
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<>, JSCallbackObject<JSAPIWrapperGlobalObject>);
+
 template <> const ClassInfo JSCallbackObject<JSAPIWrapperGlobalObject>::s_info = { "JSAPIWrapperGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 template<> const bool JSCallbackObject<JSAPIWrapperGlobalObject>::needsDestruction = true;
 
@@ -142,11 +144,6 @@ void JSAPIWrapperGlobalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     WeakSet::allocate(this, jsAPIWrapperGlobalObjectHandleOwner(), 0); // Balanced in JSAPIWrapperGlobalObjectHandleOwner::finalize.
-}
-
-void JSAPIWrapperGlobalObject::visitChildren(JSCell* cell, JSC::SlotVisitor& visitor)
-{
-    Base::visitChildren(cell, visitor);
 }
 
 } // namespace JSC

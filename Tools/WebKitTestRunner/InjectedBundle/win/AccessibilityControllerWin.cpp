@@ -28,6 +28,7 @@
 
 #if HAVE(ACCESSIBILITY)
 
+#include "AccessibilityUIElement.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WTR {

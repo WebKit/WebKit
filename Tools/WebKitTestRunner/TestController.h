@@ -346,8 +346,11 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     void simulateResourceLoadStatisticsSessionRestart();
-    void setPrivateClickMeasurementConversionURLForTesting(WKURLRef);
+    void setPrivateClickMeasurementTokenPublicKeyURLForTesting(WKURLRef);
+    void setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef);
+    void setPrivateClickMeasurementAttributionReportURLForTesting(WKURLRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
+    void setFraudPreventionValuesForTesting(WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID);
 
     void didSetAppBoundDomains() const;
 

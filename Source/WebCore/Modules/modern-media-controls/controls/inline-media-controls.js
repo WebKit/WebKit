@@ -166,6 +166,7 @@ class InlineMediaControls extends MediaControls
         this.rightContainer.children = this._rightContainerButtons();
         this.rightContainer.children.concat(this.leftContainer.children).forEach(button => delete button.dropped);
         this.muteButton.style = this.preferredMuteButtonStyle;
+        this.overflowButton.clearContextMenuOptions();
 
         for (let button of this._droppableButtons()) {
             // If the button is not enabled, we can skip it.
@@ -182,6 +183,9 @@ class InlineMediaControls extends MediaControls
 
             // This button must now be dropped.
             button.dropped = true;
+
+            if (button !== this.overflowButton)
+                this.overflowButton.addContextMenuOptions(button.contextMenuOptions);
         }
 
         // Update layouts once more.
@@ -255,24 +259,24 @@ class InlineMediaControls extends MediaControls
     _rightContainerButtons()
     {
         if (this._shouldUseAudioLayout)
-            return [this.muteButton, this.airplayButton];
+            return [this.muteButton, this.airplayButton, this.overflowButton];
 
         if (this._shouldUseSingleBarLayout)
-            return [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton];
+            return [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.overflowButton, this.fullscreenButton];
 
         const buttons = [];
         if (this.preferredMuteButtonStyle === Button.Styles.Bar)
             buttons.push(this.muteButton);
-        buttons.push(this.airplayButton, this.tracksButton);
+        buttons.push(this.airplayButton, this.tracksButton, this.overflowButton);
         return buttons;
     }
 
     _droppableButtons()
     {
         if (this._shouldUseSingleBarLayout)
-            return [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton, this.pipButton, this.fullscreenButton, this.muteButton];
+            return [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton, this.overflowButton, this.pipButton, this.fullscreenButton, this.muteButton];
 
-        const buttons = [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton];
+        const buttons = [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton, this.overflowButton];
         if (this.preferredMuteButtonStyle === Button.Styles.Bar)
             buttons.push(this.muteButton);
         return buttons;

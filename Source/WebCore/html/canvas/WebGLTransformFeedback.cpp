@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,7 @@
 
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
-#include <JavaScriptCore/SlotVisitor.h>
-#include <JavaScriptCore/SlotVisitorInlines.h>
+#include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 
@@ -93,7 +92,7 @@ bool WebGLTransformFeedback::hasEnoughBuffers(GCGLuint numRequired) const
     return true;
 }
 
-void WebGLTransformFeedback::addMembersToOpaqueRoots(const AbstractLocker& locker, JSC::SlotVisitor& visitor)
+void WebGLTransformFeedback::addMembersToOpaqueRoots(const AbstractLocker& locker, JSC::AbstractSlotVisitor& visitor)
 {
     for (auto& buffer : m_boundIndexedTransformFeedbackBuffers)
         visitor.addOpaqueRoot(buffer.get());

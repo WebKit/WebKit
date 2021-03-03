@@ -471,11 +471,11 @@ TEST(DocumentEditingContext, SpatialRequestInTextField)
         EXPECT_EQ(CGRectMake(26, 9, 6, 19), textRects[2].CGRectValue);
         EXPECT_EQ(CGRectMake(31, 9, 5, 19), textRects[3].CGRectValue);
         EXPECT_EQ(CGRectMake(35, 9, 9, 19), textRects[4].CGRectValue);
-        EXPECT_EQ(CGRectMake(184, 9, 13, 19), textRects[5].CGRectValue);
-        EXPECT_EQ(CGRectMake(196, 9, 9, 19), textRects[6].CGRectValue);
-        EXPECT_EQ(CGRectMake(204, 9, 6, 19), textRects[7].CGRectValue);
-        EXPECT_EQ(CGRectMake(209, 9, 6, 19), textRects[8].CGRectValue);
-        EXPECT_EQ(CGRectMake(214, 9, 9, 19), textRects[9].CGRectValue);
+        EXPECT_EQ(CGRectMake(202, 9, 12, 19), textRects[5].CGRectValue);
+        EXPECT_EQ(CGRectMake(213, 9, 9, 19), textRects[6].CGRectValue);
+        EXPECT_EQ(CGRectMake(221, 9, 7, 19), textRects[7].CGRectValue);
+        EXPECT_EQ(CGRectMake(227, 9, 5, 19), textRects[8].CGRectValue);
+        EXPECT_EQ(CGRectMake(231, 9, 9, 19), textRects[9].CGRectValue);
     }
 }
 

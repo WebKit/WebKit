@@ -64,6 +64,7 @@ public:
     bool globalOrSticky() const { return global() || sticky(); }
     bool unicode() const { return m_flags.contains(Yarr::Flags::Unicode); }
     bool dotAll() const { return m_flags.contains(Yarr::Flags::DotAll); }
+    bool hasIndices() const { return m_flags.contains(Yarr::Flags::HasIndices); }
 
     const String& pattern() const { return m_patternString; }
 

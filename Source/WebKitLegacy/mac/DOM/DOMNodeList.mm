@@ -70,12 +70,12 @@ DOMNodeList *kit(WebCore::NodeList* value)
     if (!value)
         return nil;
     if (DOMNodeList *wrapper = getDOMWrapper(value))
-        return [[wrapper retain] autorelease];
-    DOMNodeList *wrapper = [[DOMNodeList alloc] _init];
+        return retainPtr(wrapper).autorelease();
+    auto wrapper = adoptNS([[DOMNodeList alloc] _init]);
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();
-    addDOMWrapper(wrapper, value);
-    return [wrapper autorelease];
+    addDOMWrapper(wrapper.get(), value);
+    return wrapper.autorelease();
 }
 
 #undef IMPL

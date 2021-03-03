@@ -89,7 +89,7 @@ context_messages_template = (
     template_preamble
     + """#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
-messages -> RemoteGraphicsContextGL NotRefCounted {{
+messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void Reshape(int32_t width, int32_t height)
 #if PLATFORM(COCOA)
     void PrepareForDisplay() -> (MachSendRight displayBuffer) Synchronous
@@ -101,11 +101,13 @@ messages -> RemoteGraphicsContextGL NotRefCounted {{
     void NotifyMarkContextChanged()
     void SynthesizeGLError(uint32_t error)
     void GetError() -> (uint32_t returnValue) Synchronous
+    void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
+    void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
+    void CopyTextureFromMedia(WebCore::MediaPlayerIdentifier identifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous
 {}
 }}
 
 #endif
-
 """
 )
 

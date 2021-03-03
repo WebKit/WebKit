@@ -98,7 +98,7 @@ void WebAuthnProcess::initializeWebAuthnProcess(WebAuthnProcessCreationParameter
 
 void WebAuthnProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - WebAuthnProcess::prepareToSuspend(), isSuspensionImminent: %d", this, isSuspensionImminent);
+    RELEASE_LOG(ProcessSuspension, "%p - WebAuthnProcess::prepareToSuspend(), isSuspensionImminent=%d", this, isSuspensionImminent);
 
     lowMemoryHandler(Critical::Yes);
 }

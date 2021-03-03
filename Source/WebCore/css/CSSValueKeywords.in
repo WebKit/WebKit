@@ -969,6 +969,9 @@ paused
 //
 flat
 preserve-3d
+#if defined(ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D) && ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D
+optimized-3d
+#endif
 
 //
 // CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION
@@ -1266,6 +1269,25 @@ lab
 lch
 //color
 
+// relative color identifiers
+// from
+r
+g
+b
+h
+s
+l
+// h
+w
+// b
+// l
+a
+// b
+// l
+c
+// h
+// alpha
+
 // transform
 matrix
 matrix3d
@@ -1411,6 +1433,18 @@ prophoto-rgb
 // rec2020
 // sRGB
 xyz
+
+// color-mix()
+color-mix
+shorter
+longer
+increasing
+decreasing
+specified
+lightness
+chroma
+whiteness
+blackness
 
 // prefers-default-appearance
 prefers

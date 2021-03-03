@@ -1,0 +1,3 @@
+
+PASS Creating XRReferenceSpace origin offset off of `viewer` space works.
+

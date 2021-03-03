@@ -94,7 +94,7 @@ private:
     WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
 #if PLATFORM(IOS_FAMILY)
     UIViewController *presentingViewController() final;
-    UIViewController *createVideoFullscreenViewController(AVPlayerViewController*) final;
+    RetainPtr<UIViewController> createVideoFullscreenViewController(AVPlayerViewController*) final;
 #endif
     void willEnterPictureInPicture() final;
     void didEnterPictureInPicture() final;

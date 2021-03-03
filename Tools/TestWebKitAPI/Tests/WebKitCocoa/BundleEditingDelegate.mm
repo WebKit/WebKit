@@ -87,18 +87,18 @@ TEST(WebKit, WKWebProcessPlugInEditingDelegate)
 
     TestWebKitAPI::Util::run(&didWriteToPasteboard);
 
-    NSString *copiedString = nil;
+    RetainPtr<NSString> copiedString;
 #if PLATFORM(MAC)
     copiedString = [[NSPasteboard generalPasteboard] stringForType:@"org.webkit.data"];
 #elif PLATFORM(IOS_FAMILY)
-    copiedString = [[[NSString alloc] initWithData:[[UIPasteboard generalPasteboard] dataForPasteboardType:@"org.webkit.data"] encoding:NSUTF8StringEncoding] autorelease];
+    copiedString = adoptNS([[NSString alloc] initWithData:[[UIPasteboard generalPasteboard] dataForPasteboardType:@"org.webkit.data"] encoding:NSUTF8StringEncoding]);
 #endif
-    EXPECT_WK_STREQ("hello", copiedString);
+    EXPECT_WK_STREQ("hello", copiedString.get());
 
 #if PLATFORM(MAC)
-    [[NSPasteboard generalPasteboard] setString:copiedString forType:@"public.utf8-plain-text"];
+    [[NSPasteboard generalPasteboard] setString:copiedString.get() forType:@"public.utf8-plain-text"];
 #elif PLATFORM(IOS_FAMILY)
-    [[UIPasteboard generalPasteboard] setValue:copiedString forPasteboardType:@"public.utf8-plain-text"];
+    [[UIPasteboard generalPasteboard] setValue:copiedString.get() forPasteboardType:@"public.utf8-plain-text"];
 #endif
     [webView performSelector:@selector(paste:) withObject:nil];
 

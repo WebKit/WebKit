@@ -145,10 +145,15 @@ Platform/IPC/Decoder.cpp @no-unify
 Platform/IPC/Encoder.cpp @no-unify
 Platform/IPC/IPCSemaphore.cpp @no-unify
 Platform/IPC/JSIPCBinding.cpp @no-unify
+Platform/IPC/MessageReceiveQueueMap.cpp @no-unify
 Platform/IPC/MessageReceiverMap.cpp @no-unify
 Platform/IPC/MessageSender.cpp @no-unify
 Platform/IPC/SharedBufferCopy.cpp @no-unify
 Platform/IPC/SharedBufferDataReference.cpp @no-unify
+Platform/IPC/StreamClientConnection.cpp @no-unify
+Platform/IPC/StreamConnectionBuffer.cpp @no-unify
+Platform/IPC/StreamConnectionWorkQueue.cpp @no-unify
+Platform/IPC/StreamServerConnection.cpp @no-unify
 Platform/IPC/StringReference.cpp @no-unify
 
 PluginProcess/PluginControllerProxy.cpp @no-unify
@@ -665,6 +670,7 @@ WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 WebProcess/WebAuthentication/WebAuthnProcessConnection.cpp
 
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
+WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp
 WebProcess/WebCoreSupport/WebChromeClient.cpp
 WebProcess/WebCoreSupport/WebColorChooser.cpp
 WebProcess/WebCoreSupport/WebContextMenuClient.cpp

@@ -175,7 +175,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SESSION)
-    void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument& = WTF::nullopt) final;
+    void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument&) final;
 #endif
 
 private:
@@ -231,6 +231,10 @@ private:
 
 #if ENABLE(MEDIA_USAGE)
     bool m_haveAddedMediaUsageManagerSession { false };
+#endif
+    
+#if ENABLE(MEDIA_SESSION)
+    bool m_isScrubbing { false };
 #endif
 };
 

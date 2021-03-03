@@ -69,6 +69,8 @@ public:
     void setScriptResource(const URL&, ServiceWorkerContextData::ImportedScript&&);
 
     const CertificateInfo& certificateInfo() const { return m_contextData.certificateInfo; }
+
+    FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
     
 private:
     ServiceWorkerGlobalScope(const ServiceWorkerContextData&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);

@@ -32,6 +32,7 @@ cocoa/TestNavigationDelegate.mm
 cocoa/TestProtocol.mm
 cocoa/TestUIDelegate.mm
 cocoa/TestWKWebView.mm
+cocoa/UserMediaCaptureUIDelegate.mm
 
 Tests/WebKitCocoa/EventAttribution.mm
 Tests/WebKitCocoa/TLSDeprecation.mm

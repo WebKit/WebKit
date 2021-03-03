@@ -30,9 +30,12 @@
 
 namespace WebCore {
 
-void JSStaticRange::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSStaticRange::visitAdditionalChildren(Visitor& visitor)
 {
     wrapped().visitNodesConcurrently(visitor);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSStaticRange);
 
 } // namespace WebCore

@@ -72,6 +72,7 @@ public:
     String uti() const final;
     String filenameExtension() const final;
     Optional<IntPoint> hotSpot() const final { return WTF::nullopt; }
+    String accessibilityDescription() const final { return String(); }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
     bool frameIsCompleteAtIndex(size_t) const final;

@@ -28,6 +28,8 @@
 #if ENABLE(WEBXR)
 
 #include "DOMHighResTimeStamp.h"
+#include "ExceptionOr.h"
+#include "PlatformXR.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -35,6 +37,7 @@
 
 namespace WebCore {
 
+class Document;
 class WebXRPose;
 class WebXRReferenceSpace;
 class WebXRSession;
@@ -44,23 +47,37 @@ class WebXRViewerPose;
 class WebXRFrame : public RefCounted<WebXRFrame> {
     WTF_MAKE_ISO_ALLOCATED(WebXRFrame);
 public:
-    static Ref<WebXRFrame> create(Ref<WebXRSession>&&);
+    enum class IsAnimationFrame : bool { No, Yes };
+    static Ref<WebXRFrame> create(Ref<WebXRSession>&&, IsAnimationFrame);
     ~WebXRFrame();
 
     const WebXRSession& session() const { return m_session.get(); }
 
-    RefPtr<WebXRViewerPose> getViewerPose(const WebXRReferenceSpace&);
-    RefPtr<WebXRPose> getPose(const WebXRSpace&, const WebXRSpace&);
+    ExceptionOr<RefPtr<WebXRViewerPose>> getViewerPose(const Document&, const WebXRReferenceSpace&);
+    ExceptionOr<RefPtr<WebXRPose>> getPose(const Document&, const WebXRSpace&, const WebXRSpace&);
 
     void setTime(DOMHighResTimeStamp time) { m_time = time; }
+    void setFrameData(PlatformXR::Device::FrameData&& data) { m_data = WTFMove(data); }
+
     void setActive(bool active) { m_active = active; }
     bool isActive() const { return m_active; }
 
+    static TransformationMatrix matrixFromPose(const PlatformXR::Device::FrameData::Pose&);
+
 private:
-    explicit WebXRFrame(Ref<WebXRSession>&&);
+    WebXRFrame(Ref<WebXRSession>&&, IsAnimationFrame);
+
+    bool isOutsideNativeBoundsOfBoundedReferenceSpace(const WebXRSpace&, const WebXRSpace&) const;
+    bool isLocalReferenceSpace(const WebXRSpace&) const;
+    bool mustPosesBeLimited(const WebXRSpace&, const WebXRSpace&) const;
+
+    struct PopulatedPose;
+    ExceptionOr<Optional<PopulatedPose>> populatePose(const Document&, const WebXRSpace&, const WebXRSpace&);
 
     bool m_active { false };
-    DOMHighResTimeStamp m_time;
+    bool m_isAnimationFrame { false };
+    DOMHighResTimeStamp m_time { 0 };
+    PlatformXR::Device::FrameData m_data;
     Ref<WebXRSession> m_session;
 };
 

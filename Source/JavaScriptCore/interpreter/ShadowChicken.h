@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +35,13 @@
 
 namespace JSC {
 
+class AbstractSlotVisitor;
 class CallFrame;
 class CodeBlock;
 class JSArray;
 class JSObject;
 class JSScope;
 class LLIntOffsetsExtractor;
-class SlotVisitor;
 class VM;
 
 // ShadowChicken is a log that can be used to produce a shadow stack of CHICKEN-style stack frames.
@@ -196,7 +196,7 @@ public:
     template<typename Functor>
     void iterate(VM&, CallFrame*, const Functor&);
     
-    void visitChildren(SlotVisitor&);
+    void visitChildren(AbstractSlotVisitor&);
     void reset();
     
     // JIT support.

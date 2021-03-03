@@ -255,6 +255,9 @@ public:
     PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset);
     PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType, uint8_t flags);
 
+    // Saturated truncation.
+    PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type returnType, Type operandType);
+
     // Basic operators
     template<OpType>
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
@@ -1755,6 +1758,167 @@ auto B3IRGenerator::atomicNotify(ExtAtomicOpType, ExpressionType pointer, Expres
 auto B3IRGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
 {
     m_currentBlock->appendNew<FenceValue>(m_proc, origin());
+    return { };
+}
+
+auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, ExpressionType& result, Type returnType, Type) -> PartialResult
+{
+    Value* maxFloat = nullptr;
+    Value* minFloat = nullptr;
+    Value* signBitConstant = nullptr;
+    bool requiresMacroScratchRegisters = false;
+    switch (op) {
+    case Ext1OpType::I32TruncSatF32S:
+        maxFloat = constant(Float, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int32_t>::min())));
+        minFloat = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min())));
+        break;
+    case Ext1OpType::I32TruncSatF32U:
+        maxFloat = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min()) * static_cast<float>(-2.0)));
+        minFloat = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
+        break;
+    case Ext1OpType::I32TruncSatF64S:
+        maxFloat = constant(Double, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int32_t>::min())));
+        minFloat = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) - 1.0));
+        break;
+    case Ext1OpType::I32TruncSatF64U:
+        maxFloat = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0));
+        minFloat = constant(Double, bitwise_cast<uint64_t>(-1.0));
+        break;
+    case Ext1OpType::I64TruncSatF32S:
+        maxFloat = constant(Float, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int64_t>::min())));
+        minFloat = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min())));
+        break;
+    case Ext1OpType::I64TruncSatF32U:
+        maxFloat = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min()) * static_cast<float>(-2.0)));
+        minFloat = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
+        // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
+        // the numbers would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
+        // so we can pool them if needed.
+        if (isX86())
+            signBitConstant = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
+        requiresMacroScratchRegisters = true;
+        break;
+    case Ext1OpType::I64TruncSatF64S:
+        maxFloat = constant(Double, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int64_t>::min())));
+        minFloat = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min())));
+        break;
+    case Ext1OpType::I64TruncSatF64U:
+        maxFloat = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0));
+        minFloat = constant(Double, bitwise_cast<uint64_t>(-1.0));
+        // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
+        // the numbers are would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
+        // so we can pool them if needed.
+        if (isX86())
+            signBitConstant = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
+        requiresMacroScratchRegisters = true;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(returnType), origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    if (requiresMacroScratchRegisters) {
+        if (isX86()) {
+            ASSERT(signBitConstant);
+            patchpoint->append(signBitConstant, ValueRep::SomeRegister);
+            patchpoint->numFPScratchRegisters = 1;
+        }
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    }
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        switch (op) {
+        case Ext1OpType::I32TruncSatF32S:
+            jit.truncateFloatToInt32(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I32TruncSatF32U:
+            jit.truncateFloatToUint32(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I32TruncSatF64S:
+            jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I32TruncSatF64U:
+            jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I64TruncSatF32S:
+            jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I64TruncSatF32U: {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            ASSERT(requiresMacroScratchRegisters);
+            FPRReg scratch = InvalidFPRReg;
+            FPRReg constant = InvalidFPRReg;
+            if (isX86()) {
+                scratch = params.fpScratch(0);
+                constant = params[2].fpr();
+            }
+            jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+            break;
+        }
+        case Ext1OpType::I64TruncSatF64S:
+            jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I64TruncSatF64U: {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            ASSERT(requiresMacroScratchRegisters);
+            FPRReg scratch = InvalidFPRReg;
+            FPRReg constant = InvalidFPRReg;
+            if (isX86()) {
+                scratch = params.fpScratch(0);
+                constant = params[2].fpr();
+            }
+            jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    });
+    patchpoint->effects = Effects::none();
+
+    Value* maxResult = nullptr;
+    Value* minResult = nullptr;
+    Value* zero = nullptr;
+    bool requiresNaNCheck = false;
+    switch (op) {
+    case Ext1OpType::I32TruncSatF32S:
+    case Ext1OpType::I32TruncSatF64S:
+        maxResult = constant(Int32, bitwise_cast<uint32_t>(INT32_MAX));
+        minResult = constant(Int32, bitwise_cast<uint32_t>(INT32_MIN));
+        zero = constant(Int32, 0);
+        requiresNaNCheck = true;
+        break;
+    case Ext1OpType::I32TruncSatF32U:
+    case Ext1OpType::I32TruncSatF64U:
+        maxResult = constant(Int32, bitwise_cast<uint32_t>(UINT32_MAX));
+        minResult = constant(Int32, bitwise_cast<uint32_t>(0U));
+        break;
+    case Ext1OpType::I64TruncSatF32S:
+    case Ext1OpType::I64TruncSatF64S:
+        maxResult = constant(Int64, bitwise_cast<uint64_t>(INT64_MAX));
+        minResult = constant(Int64, bitwise_cast<uint64_t>(INT64_MIN));
+        zero = constant(Int64, 0);
+        requiresNaNCheck = true;
+        break;
+    case Ext1OpType::I64TruncSatF32U:
+    case Ext1OpType::I64TruncSatF64U:
+        maxResult = constant(Int64, bitwise_cast<uint64_t>(UINT64_MAX));
+        minResult = constant(Int64, bitwise_cast<uint64_t>(0ULL));
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    result = m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterThan, origin(), arg, minFloat),
+        m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, LessThan, origin(), arg, maxFloat),
+            patchpoint, maxResult),
+        requiresNaNCheck ? m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arg, arg), minResult, zero) : minResult);
+
     return { };
 }
 

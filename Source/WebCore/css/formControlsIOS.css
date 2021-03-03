@@ -36,7 +36,7 @@ input:matches([type="checkbox"], [type="radio"]) {
 }
 
 input::-webkit-list-button {
-    width: 12px;
+    width: 11px;
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71 42"><path fill="rgb(0, 122, 255)" d="M36.00979 41.8692c1.70898 0 3.17383-.63483 4.49219-2.00201L69.45706 10.6192c1.02539-1.07428 1.61133-2.39264 1.61133-3.95514C71.06839 3.49017 68.52933 1 65.40433 1c-1.51367 0-2.97852.63477-4.10156 1.75781L36.05863 28.4414 10.76566 2.75781C9.64261 1.63476 8.2266 1 6.61527 1c-3.125 0-5.61523 2.49017-5.61523 5.66406 0 1.5625.53711 2.88086 1.61133 3.95514l28.95508 29.24799c1.36719 1.36719 2.7832 2.00201 4.44336 2.00201z"/></svg>');
 }
 
@@ -61,20 +61,20 @@ input[type="search"]::-webkit-search-results-button {
 input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::file-selector-button, button {
     border: initial;
     font: 11px system-ui;
-    font-weight: bold;
 }
 
 /* FIXME: Use semantic colors once final specifications are obtained. */
 /* FIXME: Add styles for additional button states once final specifications are obtained. */
 
 input:matches([type="button"], [type="reset"]), input[type="file"]::file-selector-button, button {
-    background-color: rgb(235, 245, 255);
-    color: rgb(22, 122, 255);
+    background-color: rgb(238, 238, 238);
+    color: rgb(0, 122, 255);
 }
 
 input[type="submit"] {
     background-color: rgb(22, 122, 255);
     color: white;
+    font-weight: bold;
 }
 
 input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-slider-thumb:active {
@@ -86,6 +86,20 @@ input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-slider-t
 input[type="color"]::-webkit-color-swatch-wrapper,
 input[type="color"]::-webkit-color-swatch {
     border-radius: inherit;
+}
+
+input:matches([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
+    border: initial;
+    background-color: rgb(238, 238, 238);
+    font-family: system-ui;
+    color: rgb(0, 122, 255);
+    padding: 0.2em 0.5em;
+}
+
+input::-webkit-date-and-time-value {
+    margin: 0px;
+    text-align: center;
+    width: 100%;
 }
 
 select {

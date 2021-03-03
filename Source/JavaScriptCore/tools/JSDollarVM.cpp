@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -224,14 +224,7 @@ public:
 
     void finishCreation(VM&, Root*);
 
-    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
-    {
-        DollarVMAssertScope assertScope;
-        Element* thisObject = jsCast<Element*>(cell);
-        ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-        Base::visitChildren(thisObject, visitor);
-        visitor.append(thisObject->m_root);
-    }
+    DECLARE_VISIT_CHILDREN;
 
     static ElementHandleOwner* handleOwner();
 
@@ -247,10 +240,22 @@ private:
     WriteBarrier<Root> m_root;
 };
 
+template<typename Visitor>
+void Element::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    DollarVMAssertScope assertScope;
+    Element* thisObject = jsCast<Element*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_root);
+}
+
+DEFINE_VISIT_CHILDREN(Element);
+
 class ElementHandleOwner final : public WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason) final
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason) final
     {
         DollarVMAssertScope assertScope;
         if (UNLIKELY(reason))
@@ -304,17 +309,22 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static void visitChildren(JSCell* thisObject, SlotVisitor& visitor)
-    {
-        DollarVMAssertScope assertScope;
-        ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-        Base::visitChildren(thisObject, visitor);
-        visitor.addOpaqueRoot(thisObject);
-    }
+    DECLARE_VISIT_CHILDREN;
 
 private:
     Weak<Element> m_element;
 };
+
+template<typename Visitor>
+void Root::visitChildrenImpl(JSCell* thisObject, Visitor& visitor)
+{
+    DollarVMAssertScope assertScope;
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.addOpaqueRoot(thisObject);
+}
+
+DEFINE_VISIT_CHILDREN(Root);
 
 class SimpleObject : public JSNonFinalObject {
 public:
@@ -340,14 +350,7 @@ public:
         return simpleObject;
     }
 
-    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
-    {
-        DollarVMAssertScope assertScope;
-        SimpleObject* thisObject = jsCast<SimpleObject*>(cell);
-        ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-        Base::visitChildren(thisObject, visitor);
-        visitor.append(thisObject->m_hiddenValue);
-    }
+    DECLARE_VISIT_CHILDREN;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -379,6 +382,18 @@ public:
 private:
     WriteBarrier<JSC::Unknown> m_hiddenValue;
 };
+
+template<typename Visitor>
+void SimpleObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    DollarVMAssertScope assertScope;
+    SimpleObject* thisObject = jsCast<SimpleObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_hiddenValue);
+}
+
+DEFINE_VISIT_CHILDREN(SimpleObject);
 
 class ImpureGetter : public JSNonFinalObject {
 public:
@@ -436,14 +451,7 @@ public:
         return Base::getOwnPropertySlot(object, globalObject, name, slot);
     }
 
-    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
-    {
-        DollarVMAssertScope assertScope;
-        ASSERT_GC_OBJECT_INHERITS(cell, info());
-        Base::visitChildren(cell, visitor);
-        ImpureGetter* thisObject = jsCast<ImpureGetter*>(cell);
-        visitor.append(thisObject->m_delegate);
-    }
+    DECLARE_VISIT_CHILDREN;
 
     void setDelegate(VM& vm, JSObject* delegate)
     {
@@ -453,6 +461,18 @@ public:
 private:
     WriteBarrier<JSObject> m_delegate;
 };
+
+template<typename Visitor>
+void ImpureGetter::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    DollarVMAssertScope assertScope;
+    ASSERT_GC_OBJECT_INHERITS(cell, info());
+    Base::visitChildren(cell, visitor);
+    ImpureGetter* thisObject = jsCast<ImpureGetter*>(cell);
+    visitor.append(thisObject->m_delegate);
+}
+
+DEFINE_VISIT_CHILDREN(ImpureGetter);
 
 static JSC_DECLARE_CUSTOM_GETTER(customGetterValueGetter);
 static JSC_DECLARE_CUSTOM_GETTER(customGetterAcessorGetter);
@@ -1822,20 +1842,25 @@ public:
         putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "addBytes"), 0, functionWasmStreamingCompilerAddBytes, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
 
-    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
-    {
-        DollarVMAssertScope assertScope;
-        auto* thisObject = jsCast<WasmStreamingCompiler*>(cell);
-        ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-        Base::visitChildren(thisObject, visitor);
-        visitor.append(thisObject->m_promise);
-    }
+    DECLARE_VISIT_CHILDREN;
 
     DECLARE_INFO;
 
     WriteBarrier<JSPromise> m_promise;
     Ref<Wasm::StreamingCompiler> m_streamingCompiler;
 };
+
+template<typename Visitor>
+void WasmStreamingCompiler::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    DollarVMAssertScope assertScope;
+    auto* thisObject = jsCast<WasmStreamingCompiler*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_promise);
+}
+
+DEFINE_VISIT_CHILDREN(WasmStreamingCompiler);
 
 const ClassInfo WasmStreamingCompiler::s_info = { "WasmStreamingCompiler", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WasmStreamingCompiler) };
 
@@ -3699,12 +3724,15 @@ void JSDollarVM::addConstructibleFunction(VM& vm, JSGlobalObject* globalObject, 
     putDirect(vm, identifier, JSFunction::create(vm, globalObject, arguments, identifier.string(), function, NoIntrinsic, function), jsDollarVMPropertyAttributes);
 }
 
-void JSDollarVM::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSDollarVM::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSDollarVM* thisObject = jsCast<JSDollarVM*>(cell);
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure);
 }
+
+DEFINE_VISIT_CHILDREN(JSDollarVM);
 
 } // namespace JSC
 

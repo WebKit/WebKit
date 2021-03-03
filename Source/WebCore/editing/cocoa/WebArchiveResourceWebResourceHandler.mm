@@ -33,7 +33,7 @@
 
 - (id)resourceForData:(NSData *)data URL:(NSURL *)url MIMEType:(NSString *)mimeType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName
 {
-    return [[[WebArchiveResourceFromNSAttributedString alloc] initWithData:data URL:url MIMEType:mimeType textEncodingName:textEncodingName frameName:frameName] autorelease];
+    return adoptNS([[WebArchiveResourceFromNSAttributedString alloc] initWithData:data URL:url MIMEType:mimeType textEncodingName:textEncodingName frameName:frameName]).autorelease();
 }
 
 @end

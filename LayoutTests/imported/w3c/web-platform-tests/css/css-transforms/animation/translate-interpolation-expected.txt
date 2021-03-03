@@ -233,12 +233,12 @@ PASS CSS Animations: property <translate> from neutral to [20px] at (0.25) shoul
 PASS CSS Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px]
 PASS CSS Animations: property <translate> from neutral to [20px] at (1) should be [20px]
 PASS CSS Animations: property <translate> from neutral to [20px] at (2) should be [30px]
-FAIL Web Animations: property <translate> from neutral to [20px] at (-1) should be [0px] assert_equals: expected "none " but got "- 20px "
+PASS Web Animations: property <translate> from neutral to [20px] at (-1) should be [0px]
 PASS Web Animations: property <translate> from neutral to [20px] at (0) should be [10px]
-FAIL Web Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px] assert_equals: expected "12.5px " but got "14.38px "
-FAIL Web Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px] assert_equals: expected "17.5px " but got "19.38px "
+PASS Web Animations: property <translate> from neutral to [20px] at (0.25) should be [12.5px]
+PASS Web Animations: property <translate> from neutral to [20px] at (0.75) should be [17.5px]
 PASS Web Animations: property <translate> from neutral to [20px] at (1) should be [20px]
-FAIL Web Animations: property <translate> from neutral to [20px] at (2) should be [30px] assert_equals: expected "30px " but got "10px "
+PASS Web Animations: property <translate> from neutral to [20px] at (2) should be [30px]
 PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (-1) should be [-200px -100px -200px]
 PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0) should be [0px]
 PASS CSS Transitions: property <translate> from [initial] to [200px 100px 200px] at (0.25) should be [50px 25px 50px]
@@ -329,12 +329,12 @@ PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] 
 PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px]
 PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px]
 PASS CSS Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px]
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px] assert_equals: expected "0px 300px 400 " but got "- 180px - 100px - 200 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px] assert_equals: expected "100px 200px 300 " but got "- 180px - 100px - 200 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px] assert_equals: expected "125px 175px 275 " but got "- 85px - 50px - 100 "
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px] assert_equals: expected "175px 125px 225 " but got "128.75px 62.5px 125 "
+PASS Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (-1) should be [0px 300px 400px]
+PASS Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0) should be [100px 200px 300px]
+PASS Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.25) should be [125px 175px 275px]
+PASS Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (0.75) should be [175px 125px 225px]
 PASS Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (1) should be [200px 100px 200px]
-FAIL Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px] assert_equals: expected "300px 0px 100 " but got "200px 100px 200 "
+PASS Web Animations: property <translate> from [inherit] to [200px 100px 200px] at (2) should be [300px 0px 100px]
 PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px]
 PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px]
 PASS CSS Transitions: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px]
@@ -353,12 +353,12 @@ PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] 
 PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px]
 PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px]
 PASS CSS Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px]
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px] assert_equals: expected "300px 0px 100 " but got "390px 200px 400 "
+PASS Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (-1) should be [300px 0px 100px]
 PASS Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0) should be [200px 100px 200px]
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px] assert_equals: expected "175px 125px 225 " but got "200px 100px 200 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px] assert_equals: expected "125px 175px 275 " but got "200px 100px 200 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px] assert_equals: expected "100px 200px 300 " but got "200px 100px 200 "
-FAIL Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px] assert_equals: expected "0px 300px 400 " but got "200px 100px 200 "
+PASS Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.25) should be [175px 125px 225px]
+PASS Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (0.75) should be [125px 175px 275px]
+PASS Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (1) should be [100px 200px 300px]
+PASS Web Animations: property <translate> from [200px 100px 200px] to [inherit] at (2) should be [0px 300px 400px]
 PASS CSS Transitions: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px]
 PASS CSS Transitions: property <translate> from [initial] to [inherit] at (0) should be [0px]
 PASS CSS Transitions: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px]
@@ -377,12 +377,12 @@ PASS CSS Animations: property <translate> from [initial] to [inherit] at (0.25) 
 PASS CSS Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px]
 PASS CSS Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px]
 PASS CSS Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px]
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px] assert_equals: expected "- 100px - 200px - 300 " but got "- 10px "
+PASS Web Animations: property <translate> from [initial] to [inherit] at (-1) should be [-100px -200px -300px]
 PASS Web Animations: property <translate> from [initial] to [inherit] at (0) should be [0px]
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px] assert_equals: expected "25px 50px 75 " but got "none "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px] assert_equals: expected "75px 150px 225 " but got "none "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px] assert_equals: expected "100px 200px 300 " but got "none "
-FAIL Web Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px] assert_equals: expected "200px 400px 600 " but got "none "
+PASS Web Animations: property <translate> from [initial] to [inherit] at (0.25) should be [25px 50px 75px]
+PASS Web Animations: property <translate> from [initial] to [inherit] at (0.75) should be [75px 150px 225px]
+PASS Web Animations: property <translate> from [initial] to [inherit] at (1) should be [100px 200px 300px]
+PASS Web Animations: property <translate> from [initial] to [inherit] at (2) should be [200px 400px 600px]
 PASS CSS Transitions: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px]
 PASS CSS Transitions: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px]
 PASS CSS Transitions: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px]
@@ -401,10 +401,10 @@ PASS CSS Animations: property <translate> from [inherit] to [initial] at (0.25) 
 PASS CSS Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px]
 PASS CSS Animations: property <translate> from [inherit] to [initial] at (1) should be [0px]
 PASS CSS Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px]
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px] assert_equals: expected "200px 400px 600 " but got "20px "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px] assert_equals: expected "100px 200px 300 " but got "20px "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px] assert_equals: expected "75px 150px 225 " but got "15px "
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px] assert_equals: expected "25px 50px 75 " but got "3.75px "
+PASS Web Animations: property <translate> from [inherit] to [initial] at (-1) should be [200px 400px 600px]
+PASS Web Animations: property <translate> from [inherit] to [initial] at (0) should be [100px 200px 300px]
+PASS Web Animations: property <translate> from [inherit] to [initial] at (0.25) should be [75px 150px 225px]
+PASS Web Animations: property <translate> from [inherit] to [initial] at (0.75) should be [25px 50px 75px]
 PASS Web Animations: property <translate> from [inherit] to [initial] at (1) should be [0px]
-FAIL Web Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px] assert_equals: expected "- 100px - 200px - 300 " but got "none "
+PASS Web Animations: property <translate> from [inherit] to [initial] at (2) should be [-100px -200px -300px]
 

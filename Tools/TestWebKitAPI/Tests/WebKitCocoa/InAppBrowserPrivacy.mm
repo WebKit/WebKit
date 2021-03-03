@@ -43,6 +43,10 @@
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/InAppBrowserPrivacyAdditions.h>
+#endif
+
 #if ENABLE(APP_BOUND_DOMAINS)
 
 static bool isDone;
@@ -116,7 +120,7 @@ static bool subFrameReceivedScriptSource = false;
     else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-about-blank-subframe"])
         response = @"<body id = 'body'></body><iframe id='iframe'></iframe></body>";
 
-    [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil] autorelease]];
+    [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil]).get()];
     [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
     [task didFinish];
 }
@@ -539,18 +543,17 @@ static void setUpCookieTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     observerCallbacks = 0;
     globalCookieStore = dataStore.httpCookieStore;
 
-    NSArray<NSHTTPCookie *> *cookies = nil;
+    RetainPtr<NSArray<NSHTTPCookie *>> cookies;
     gotFlag = false;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
     // Make sure the cookie store starts out empty.
-    ASSERT_EQ(cookies.count, 0u);
-    [cookies release];
+    ASSERT_EQ([cookies count], 0u);
 
     gotFlag = false;
 }
@@ -604,20 +607,19 @@ TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
     gotFlag = false;
 
     // Check the cookie store to make sure only one cookie was set.
-    NSArray<NSHTTPCookie *> *cookies = nil;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    RetainPtr<NSArray<NSHTTPCookie *>> cookies;
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
-    ASSERT_EQ(cookies.count, 1u);
-    EXPECT_WK_STREQ(cookies[0].domain, @"www.webkit.org");
+    ASSERT_EQ([cookies count], 1u);
+    EXPECT_WK_STREQ(cookies.get()[0].domain, @"www.webkit.org");
     while (observerCallbacks != 1u)
         TestWebKitAPI::Util::spinRunLoop();
 
-    [cookies release];
     gotFlag = false;
     [globalCookieStore deleteCookie:appBoundCookie.get() completionHandler:[]() {
         gotFlag = true;
@@ -670,32 +672,30 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
     TestWebKitAPI::Util::run(&gotFlag);
 
     gotFlag = false;
-    NSArray<NSHTTPCookie *> *cookies = nil;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    RetainPtr<NSArray<NSHTTPCookie *>> cookies;
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
     // Confirm both cookies are in the store.
-    ASSERT_EQ(cookies.count, 2u);
+    ASSERT_EQ([cookies count], 2u);
 
     // Now enable protections and ensure we can only retrieve the app-bound cookies.
     initializeInAppBrowserPrivacyTestSettings();
 
     cookies = nil;
     gotFlag = false;
-    [globalCookieStore getAllCookies:[cookiesPtr = &cookies](NSArray<NSHTTPCookie *> *nsCookies) {
-        *cookiesPtr = [nsCookies retain];
+    [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *nsCookies) {
+        cookies = nsCookies;
         gotFlag = true;
     }];
 
     TestWebKitAPI::Util::run(&gotFlag);
 
-    ASSERT_EQ(cookies.count, 1u);
-
-    [cookies release];
+    ASSERT_EQ([cookies count], 1u);
 
     gotFlag = false;
     [globalCookieStore deleteCookie:nonAppBoundCookie.get() completionHandler:[]() {
@@ -1123,11 +1123,11 @@ TEST(InAppBrowserPrivacy, InjectScriptInNonAppBoundSubframeAppBoundMainframeFail
     cleanUpInAppBrowserPrivacyTestSettings();
 }
 
-static NSMutableSet<WKFrameInfo *> *allFrames;
+static RetainPtr<NSMutableSet<WKFrameInfo *>> allFrames;
 
 TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
 
     isDone = false;
     initializeInAppBrowserPrivacyTestSettings();
@@ -1164,12 +1164,12 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
 
     TestWebKitAPI::Util::run(&didFinishNavigation);
 
-    EXPECT_EQ(allFrames.count, 3u);
+    EXPECT_EQ([allFrames count], 3u);
 
     static size_t finishedFrames = 0;
     static bool isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         bool isMainFrame = frame.isMainFrame;
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
             if (isMainFrame) {
@@ -1181,7 +1181,7 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
                 EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
             }
 
-            if (++finishedFrames == allFrames.count * 2)
+            if (++finishedFrames == [allFrames count] * 2)
                 isDone = true;
         }];
 
@@ -1196,7 +1196,7 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
                 EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
             }
 
-            if (++finishedFrames == allFrames.count * 2)
+            if (++finishedFrames == [allFrames count] * 2)
                 isDone = true;
         }];
     }
@@ -1351,7 +1351,7 @@ static void loadRequest(RetainPtr<TestWKWebView> webView, NSString *url)
 
 TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
     initializeInAppBrowserPrivacyTestSettings();
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -1363,12 +1363,12 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
     NSString *url = @"in-app-browser://apple.com/in-app-browser-privacy-test-about-blank-subframe";
     loadRequest(webView, url);
     
-    EXPECT_EQ(allFrames.count, 2u);
+    EXPECT_EQ([allFrames count], 2u);
 
     static size_t finishedFrames = 0;
     static bool isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         bool isMainFrame = frame.isMainFrame;
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[isMainFrame] (id result, NSError *error) {
             EXPECT_TRUE([result isKindOfClass:[NSString class]]);
@@ -1380,7 +1380,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
             else
                 EXPECT_TRUE([result isEqualToString:@"about:blank"]);
 
-            if (++finishedFrames == allFrames.count)
+            if (++finishedFrames == [allFrames count])
                 isDone = true;
         }];
     }
@@ -1389,7 +1389,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
 
 TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
 {
-    allFrames = [[NSMutableSet<WKFrameInfo *> alloc] init];
+    allFrames = adoptNS([[NSMutableSet<WKFrameInfo *> alloc] init]);
     initializeInAppBrowserPrivacyTestSettings();
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -1400,15 +1400,15 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
     NSString *url = @"in-app-browser://apple.com/in-app-browser-privacy-test-about-blank-subframe";
     loadRequest(webView, url);
 
-    EXPECT_EQ(allFrames.count, 2u);
+    EXPECT_EQ([allFrames count], 2u);
 
     static size_t finishedFrames = 0;
     static bool isDone = false;
 
-    for (WKFrameInfo *frame in allFrames) {
+    for (WKFrameInfo *frame in allFrames.get()) {
         [webView callAsyncJavaScript:@"return location.href;" arguments:nil inFrame:frame inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[] (id result, NSError *error) {
             EXPECT_TRUE(!!error);
-            if (++finishedFrames == allFrames.count)
+            if (++finishedFrames == [allFrames count])
                 isDone = true;
         }];
     }
@@ -1416,3 +1416,55 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#if USE(APPLE_INTERNAL_SDK)
+TEST(InAppBrowserPrivacy, AppBoundRequest)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    NSString *url = @"https://webkit.org";
+
+    static bool isDone = false;
+    NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    APP_BOUND_REQUEST_ADDITIONS
+
+    [webView loadRequest:nonAppBoundRequest];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView lastNavigationWasAppBound:^(BOOL isAppBound) {
+        EXPECT_FALSE(isAppBound);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, AppBoundRequestWithNavigation)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    NSString *startingURL = @"https://www.webkit.org";
+    NSString *nonAppBoundURL = @"https://www.apple.com";
+
+    NSMutableURLRequest *startingRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:startingURL]];
+
+    [webView loadRequest:startingRequest];
+    [webView _test_waitForDidFinishNavigation];
+
+    static bool isDone = false;
+    NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:nonAppBoundURL]];
+    APP_BOUND_REQUEST_ADDITIONS
+
+    [webView loadRequest:nonAppBoundRequest];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView lastNavigationWasAppBound:^(BOOL isAppBound) {
+        EXPECT_FALSE(isAppBound);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+#endif

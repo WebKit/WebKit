@@ -42,9 +42,9 @@ TEST(Color, RGBToHSL_White)
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
-    EXPECT_FLOAT_EQ(1, hslaColor.lightness);
+    EXPECT_FLOAT_EQ(100, hslaColor.lightness);
     
-    EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
+    EXPECT_FLOAT_EQ(color.lightness() * 100, hslaColor.lightness);
     
     auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
@@ -60,7 +60,7 @@ TEST(Color, RGBToHSL_Black)
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
     EXPECT_FLOAT_EQ(0, hslaColor.lightness);
 
-    EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
+    EXPECT_FLOAT_EQ(color.lightness() * 100, hslaColor.lightness);
 
     auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
@@ -73,10 +73,10 @@ TEST(Color, RGBToHSL_Red)
     auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
-    EXPECT_FLOAT_EQ(1, hslaColor.saturation);
-    EXPECT_FLOAT_EQ(0.5, hslaColor.lightness);
+    EXPECT_FLOAT_EQ(100, hslaColor.saturation);
+    EXPECT_FLOAT_EQ(50, hslaColor.lightness);
 
-    EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
+    EXPECT_FLOAT_EQ(color.lightness() * 100, hslaColor.lightness);
 
     auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
@@ -88,11 +88,11 @@ TEST(Color, RGBToHSL_Green)
 
     auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
-    EXPECT_FLOAT_EQ(0.33333334, hslaColor.hue);
-    EXPECT_FLOAT_EQ(1, hslaColor.saturation);
-    EXPECT_FLOAT_EQ(0.5, hslaColor.lightness);
+    EXPECT_FLOAT_EQ(120, hslaColor.hue);
+    EXPECT_FLOAT_EQ(100, hslaColor.saturation);
+    EXPECT_FLOAT_EQ(50, hslaColor.lightness);
 
-    EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
+    EXPECT_FLOAT_EQ(color.lightness() * 100, hslaColor.lightness);
 
     auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
@@ -104,11 +104,11 @@ TEST(Color, RGBToHSL_Blue)
 
     auto hslaColor = color.toColorTypeLossy<HSLA<float>>();
 
-    EXPECT_FLOAT_EQ(0.66666669, hslaColor.hue);
-    EXPECT_FLOAT_EQ(1, hslaColor.saturation);
-    EXPECT_FLOAT_EQ(0.5, hslaColor.lightness);
+    EXPECT_FLOAT_EQ(240, hslaColor.hue);
+    EXPECT_FLOAT_EQ(100, hslaColor.saturation);
+    EXPECT_FLOAT_EQ(50, hslaColor.lightness);
 
-    EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
+    EXPECT_FLOAT_EQ(color.lightness() * 100, hslaColor.lightness);
 
     auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
@@ -122,9 +122,9 @@ TEST(Color, RGBToHSL_DarkGray)
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
-    EXPECT_FLOAT_EQ(0.50196078431372548, hslaColor.lightness);
+    EXPECT_FLOAT_EQ(50.196083, hslaColor.lightness);
     
-    EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
+    EXPECT_FLOAT_EQ(color.lightness() * 100, hslaColor.lightness);
 
     auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
@@ -138,9 +138,9 @@ TEST(Color, RGBToHSL_Gray)
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
-    EXPECT_FLOAT_EQ(0.62745098039215685, hslaColor.lightness);
+    EXPECT_FLOAT_EQ(62.745102, hslaColor.lightness);
 
-    EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
+    EXPECT_FLOAT_EQ(color.lightness() * 100, hslaColor.lightness);
 
     auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);
@@ -154,9 +154,9 @@ TEST(Color, RGBToHSL_LightGray)
 
     EXPECT_FLOAT_EQ(0, hslaColor.hue);
     EXPECT_FLOAT_EQ(0, hslaColor.saturation);
-    EXPECT_FLOAT_EQ(0.75294117647058822, hslaColor.lightness);
+    EXPECT_FLOAT_EQ(75.294121, hslaColor.lightness);
 
-    EXPECT_FLOAT_EQ(color.lightness(), hslaColor.lightness);
+    EXPECT_FLOAT_EQ(color.lightness() * 100, hslaColor.lightness);
 
     auto roundTrippedColor = convertColor<SRGBA<uint8_t>>(hslaColor);
     EXPECT_EQ(color, roundTrippedColor);

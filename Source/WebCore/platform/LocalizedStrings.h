@@ -350,6 +350,10 @@ namespace WebCore {
     WEBCORE_EXPORT String genericTouchIDPromptTitle();
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+    WEBCORE_EXPORT String contextMenuItemTagRevealImage();
+#endif
+
 #if USE(GLIB) && defined(GETTEXT_PACKAGE)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(_(string))
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(C_(key, string))

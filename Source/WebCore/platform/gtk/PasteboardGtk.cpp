@@ -43,45 +43,52 @@ enum ClipboardDataType {
     ClipboardDataTypeUnknown
 };
 
-std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
+std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>("CLIPBOARD");
+    return makeUnique<Pasteboard>(WTFMove(context), "CLIPBOARD");
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection()
+std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>("PRIMARY");
+    return makeUnique<Pasteboard>(WTFMove(context), "PRIMARY");
 }
 
 #if ENABLE(DRAG_SUPPORT)
-std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(SelectionData());
+    return makeUnique<Pasteboard>(WTFMove(context), SelectionData());
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)
 {
     ASSERT(dragData.platformData());
-    return makeUnique<Pasteboard>(*dragData.platformData());
+    return makeUnique<Pasteboard>(dragData.createPasteboardContext(), *dragData.platformData());
 }
 
-Pasteboard::Pasteboard(SelectionData&& selectionData)
-    : m_selectionData(WTFMove(selectionData))
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, SelectionData&& selectionData)
+    : m_context(WTFMove(context))
+    , m_selectionData(WTFMove(selectionData))
 {
 }
 #endif
 
-Pasteboard::Pasteboard(SelectionData& selectionData)
-    : m_selectionData(selectionData)
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, SelectionData& selectionData)
+    : m_context(WTFMove(context))
+    , m_selectionData(selectionData)
 {
 }
 
-Pasteboard::Pasteboard(const String& name)
-    : m_name(name)
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const String& name)
+    : m_context(WTFMove(context))
+    , m_name(name)
 {
 }
 
-Pasteboard::Pasteboard() = default;
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
+    : m_context(WTFMove(context))
+{
+}
+
 Pasteboard::~Pasteboard() = default;
 
 const SelectionData& Pasteboard::selectionData() const
@@ -348,7 +355,7 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
         return copyToVector(types);
     }
 
-    return platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_name, origin);
+    return platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_name, origin, context());
 }
 
 Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
@@ -469,7 +476,7 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
         return;
     }
 
-    platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_name);
+    platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_name, context());
 }
 
 void Pasteboard::write(const Color&)

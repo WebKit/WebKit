@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -137,7 +137,8 @@ inline void CacheableIdentifier::setUidBits(UniquedStringImpl* uid)
     m_bits = bitwise_cast<uintptr_t>(uid) | s_uidTag;
 }
 
-inline void CacheableIdentifier::visitAggregate(SlotVisitor& visitor) const
+template<typename Visitor>
+inline void CacheableIdentifier::visitAggregate(Visitor& visitor) const
 {
     if (m_bits && isCell())
         visitor.appendUnbarriered(cell());

@@ -413,13 +413,13 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
                 logicalRect = lineBox.logicalRectForRootInlineBox();
             } else if (inlineLevelBox.isAtomicInlineLevelBox()) {
                 stream << "Atomic inline level box";
-                logicalRect = lineBox.logicalMarginRectForAtomicInlineLevelBox(layoutBox);
+                logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, layoutState.geometryForBox(layoutBox));
             } else if (inlineLevelBox.isLineBreakBox()) {
                 stream << "Line break box";
                 logicalRect = lineBox.logicalRectForLineBreakBox(layoutBox);
             } else if (inlineLevelBox.isInlineBox()) {
                 stream << "Inline box";
-                logicalRect = lineBox.logicalRectForInlineBox(layoutBox, layoutState.geometryForBox(layoutBox));
+                logicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, layoutState.geometryForBox(layoutBox));
             } else
                 stream << "Generic inline level box";
             stream

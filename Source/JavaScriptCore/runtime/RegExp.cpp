@@ -55,6 +55,8 @@ void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, const String& 
             fputc('g', m_file);
         if (regExp->ignoreCase())
             fputc('i', m_file);
+        if (regExp->hasIndices())
+            fputc('d', m_file);
         if (regExp->multiline())
             fputc('m', m_file);
         if (regExp->dotAll())
@@ -488,6 +490,8 @@ static CString regexpToSourceString(const RegExp* regExp)
         postfix[index++] = 'g';
     if (regExp->ignoreCase())
         postfix[index++] = 'i';
+    if (regExp->hasIndices())
+        postfix[index] = 'd';
     if (regExp->multiline())
         postfix[index] = 'm';
     if (regExp->dotAll())

@@ -405,7 +405,7 @@ class ObjCGenerator(Generator):
             return var_name
         if category == ObjCTypeCategory.Object:
             objc_class = self.objc_class_for_type(var_type)
-            return '[[[%s alloc] initWithJSONObject:%s] autorelease]' % (objc_class, var_name)
+            return 'adoptNS([[%s alloc] initWithJSONObject:%s]).autorelease()' % (objc_class, var_name)
         if category == ObjCTypeCategory.Array:
             objc_class = self.objc_class_for_type(var_type.element_type)
             if objc_class == 'NSString':

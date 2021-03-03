@@ -30,6 +30,7 @@
 #include "APIWebsitePolicies.h"
 #include "DrawingAreaProxy.h"
 #include "FormDataReference.h"
+#include "HandleMessage.h"
 #include "Logging.h"
 #include "PageClient.h"
 #include "URLSchemeTaskParameters.h"
@@ -52,8 +53,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
-#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - ProvisionalPageProxy::" fmt, this, ##__VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - ProvisionalPageProxy::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i, navigationID=%" PRIu64 "] ProvisionalPageProxy::" fmt, this, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), m_navigationID, ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i, navigationID=%" PRIu64 "] ProvisionalPageProxy::" fmt, this, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), m_navigationID, ##__VA_ARGS__)
 
 ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy> suspendedPage, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest& request, ProcessSwapRequestedByClient processSwapRequestedByClient, API::WebsitePolicies* websitePolicies)
     : m_page(page)
@@ -70,7 +71,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_contextIDForVisibilityPropagation(suspendedPage ? suspendedPage->contextIDForVisibilityPropagation() : 0)
 #endif
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "ProvisionalPageProxy: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 " navigationID=%" PRIu64 " suspendedPage: %p", m_page.identifier().toUInt64(), m_webPageID.toUInt64(), navigationID, suspendedPage.get());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "ProvisionalPageProxy: suspendedPage=%p", suspendedPage.get());
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
     m_process->addProvisionalPageProxy(*this);
@@ -112,7 +113,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
 
 void ProvisionalPageProxy::processDidTerminate()
 {
-    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "processDidTerminate: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "processDidTerminate:");
     m_page.provisionalProcessDidTerminate();
 }
 
@@ -129,7 +130,7 @@ void ProvisionalPageProxy::cancel()
         
     ASSERT(m_process->state() == WebProcessProxy::State::Running);
 
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "cancel: Simulating a didFailProvisionalLoadForFrame for pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "cancel: Simulating a didFailProvisionalLoadForFrame");
     ASSERT(m_mainFrame);
     auto error = WebKit::cancelledError(m_request);
     error.setType(WebCore::ResourceError::Type::Cancellation);
@@ -158,14 +159,14 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
 
 void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, Optional<WebsitePoliciesData>&& websitePolicies)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadData: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadData:");
 
     m_page.loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, isNavigatingToAppBoundDomain, WTFMove(websitePolicies), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy);
 }
 
 void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, API::Object* userData, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, Optional<WebsitePoliciesData>&& websitePolicies)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadRequest: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadRequest:");
 
     // If this is a client-side redirect continuing in a new process, then the new process will overwrite the fromItem's URL. In this case,
     // we need to make sure we update fromItem's processIdentifier as we want future navigations to this BackForward item to happen in the
@@ -178,7 +179,7 @@ void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::Res
 
 void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebBackForwardListItem& item, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "goToBackForwardItem: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "goToBackForwardItem:");
 
     auto itemStates = m_page.backForwardList().filteredItemStates([this, targetItem = &item](auto& item) {
         if (auto* backForwardCacheEntry = item.backForwardCacheEntry()) {
@@ -208,7 +209,7 @@ inline bool ProvisionalPageProxy::validateInput(FrameIdentifier frameID, const O
 
 void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateMainFrame: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 ", frameID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateMainFrame: frameID=%" PRIu64, frameID.toUInt64());
     ASSERT(!m_mainFrame);
 
     m_mainFrame = WebFrameProxy::create(m_page, frameID);
@@ -246,7 +247,7 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
     if (!validateInput(frameID, navigationID))
         return;
 
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didStartProvisionalLoadForFrame: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 ", frameID=%" PRIu64 ", navigationID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didStartProvisionalLoadForFrame: frameID=%" PRIu64, frameID.toUInt64());
     ASSERT(m_provisionalLoadURL.isNull());
     m_provisionalLoadURL = url;
 
@@ -266,7 +267,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameI
     if (!validateInput(frameID, navigationID))
         return;
 
-    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "didFailProvisionalLoadForFrame: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 ", frameID=%" PRIu64 ", navigationID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
+    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "didFailProvisionalLoadForFrame: frameID=%" PRIu64, frameID.toUInt64());
     ASSERT(!m_provisionalLoadURL.isNull());
     m_provisionalLoadURL = { };
 
@@ -282,7 +283,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
     if (!validateInput(frameID, navigationID))
         return;
 
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCommitLoadForFrame: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 ", frameID=%" PRIu64 ", navigationID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCommitLoadForFrame: frameID=%" PRIu64, frameID.toUInt64());
     m_provisionalLoadURL = { };
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 
@@ -394,7 +395,7 @@ void ProvisionalPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::Cont
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 void ProvisionalPageProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateContextForVisibilityPropagation: contextID=%u pageProxyID=%" PRIu64 " webPageID=%" PRIu64, contextID, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateContextForVisibilityPropagation: contextID=%u", contextID);
     m_contextIDForVisibilityPropagation = contextID;
 }
 #endif

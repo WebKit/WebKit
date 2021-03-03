@@ -333,3 +333,8 @@ class Git(Scm):
                 self.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '{}:HEAD'.format(commit.revision),
             ], cwd=self.root_path).returncode
         return code
+
+    def clean(self):
+        return run([
+            self.executable(), 'reset', 'HEAD', '--hard',
+        ], cwd=self.root_path).returncode

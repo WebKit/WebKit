@@ -407,6 +407,15 @@ Optional<Decimal> HTMLInputElement::findClosestTickMarkValue(const Decimal& valu
 {
     return m_inputType->findClosestTickMarkValue(value);
 }
+
+Optional<double> HTMLInputElement::listOptionValueAsDouble(const HTMLOptionElement& optionElement)
+{
+    auto optionValue = optionElement.value();
+    if (!isValidValue(optionValue))
+        return WTF::nullopt;
+
+    return parseToDoubleForNumberType(sanitizeValue(optionValue));
+}
 #endif
 
 ExceptionOr<void> HTMLInputElement::stepUp(int n)
@@ -1661,6 +1670,11 @@ void HTMLInputElement::resetListAttributeTargetObserver()
 void HTMLInputElement::dataListMayHaveChanged()
 {
     m_inputType->dataListMayHaveChanged();
+}
+
+bool HTMLInputElement::isFocusingWithDataListDropdown() const
+{
+    return m_inputType->isFocusingWithDataListDropdown();
 }
 
 #endif // ENABLE(DATALIST_ELEMENT)

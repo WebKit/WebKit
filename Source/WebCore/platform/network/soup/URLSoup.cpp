@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+#if USE(SOUP2)
 URL soupURIToURL(SoupURI* soupURI)
 {
     if (!soupURI)
@@ -57,5 +58,18 @@ GUniquePtr<SoupURI> urlToSoupURI(const URL& url)
 
     return GUniquePtr<SoupURI>(soup_uri_new(url.string().utf8().data()));
 }
+
+#else // !USE(SOUP2)
+
+URL soupURIToURL(GUri* uri)
+{
+    return uri;
+}
+
+GRefPtr<GUri> urlToSoupURI(const URL& url)
+{
+    return url.createGUri();
+}
+#endif // USE(SOUP2)
 
 } // namespace WebCore

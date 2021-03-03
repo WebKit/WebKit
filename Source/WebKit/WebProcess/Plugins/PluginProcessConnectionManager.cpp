@@ -54,6 +54,7 @@ PluginProcessConnectionManager::PluginProcessConnectionManager()
 
 PluginProcessConnectionManager::~PluginProcessConnectionManager()
 {
+    ASSERT_NOT_REACHED();
 }
 
 void PluginProcessConnectionManager::initializeConnection(IPC::Connection* connection)

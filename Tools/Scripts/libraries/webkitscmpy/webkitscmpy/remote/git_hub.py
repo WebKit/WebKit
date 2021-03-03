@@ -150,6 +150,10 @@ class GitHub(Scm):
         )
         response = requests.get(url, params=params, headers=headers, auth=auth)
         if response.status_code != 200:
+            sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+            message = response.json().get('message')
+            if message:
+                sys.stderr.write('Message: {}\n'.format(message))
             return None
         result = response.json()
 

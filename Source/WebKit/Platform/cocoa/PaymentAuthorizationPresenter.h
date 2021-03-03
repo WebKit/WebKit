@@ -41,8 +41,14 @@ class Payment;
 class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
-class PaymentMethodUpdate;
 class PaymentSessionError;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayPaymentMethodModeUpdate;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayPaymentMethodUpdate;
+struct ApplePayShippingContactUpdate;
+struct ApplePayShippingMethod;
+struct ApplePayShippingMethodUpdate;
 }
 
 namespace WebKit {
@@ -58,7 +64,10 @@ public:
         virtual void presenterDidFinish(PaymentAuthorizationPresenter&, WebCore::PaymentSessionError&&) = 0;
         virtual void presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod&) = 0;
         virtual void presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact&) = 0;
-        virtual void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&) = 0;
+        virtual void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePayShippingMethod&) = 0;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+        virtual void presenterDidChangePaymentMethodMode(PaymentAuthorizationPresenter&, const String& paymentMethodMode) = 0;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
         virtual void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) = 0;
     };
 
@@ -67,10 +76,13 @@ public:
     Client& client() { return m_client; }
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
-    void completePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>&);
+    void completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&);
     void completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
-    void completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
-    void completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
+    void completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&);
+    void completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&);
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    void completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
     virtual void dismiss() = 0;
 #if PLATFORM(IOS_FAMILY)

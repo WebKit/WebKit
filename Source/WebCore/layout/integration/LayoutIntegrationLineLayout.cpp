@@ -119,6 +119,14 @@ bool LineLayout::canUseForAfterStyleChange(const RenderBlockFlow& flow, StyleDif
     return canUseForLineLayoutAfterStyleChange(flow, diff);
 }
 
+bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
+{
+    // FIXME: Support partial invalidation in LFC.
+    // This avoids O(n^2) when lots of boxes are being added dynamically while forcing layouts between.
+    constexpr size_t maximimumBoxTreeSizeForInvalidation = 128;
+    return m_boxTree.boxCount() > maximimumBoxTreeSizeForInvalidation;
+}
+
 void LineLayout::updateReplacedDimensions(const RenderBox& replaced)
 {
     updateLayoutBoxDimensions(replaced);
@@ -216,7 +224,7 @@ void LineLayout::constructContent()
 {
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
 
-    auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow() };
+    auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow(), m_boxTree };
     inlineContentBuilder.build(inlineFormattingContext, ensureInlineContent());
     ASSERT(m_inlineContent);
 

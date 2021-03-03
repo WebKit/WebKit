@@ -44,10 +44,8 @@ static Seconds changeTimeInterval { 10_min };
 
 + (WKStylusDeviceObserver *)sharedInstance
 {
-    static WKStylusDeviceObserver *instance;
-    if (!instance)
-        instance = [[WKStylusDeviceObserver alloc] init];
-    return instance;
+    static NeverDestroyed<RetainPtr<WKStylusDeviceObserver>> instance = adoptNS([[WKStylusDeviceObserver alloc] init]);
+    return instance.get().get();
 }
 
 - (instancetype)init

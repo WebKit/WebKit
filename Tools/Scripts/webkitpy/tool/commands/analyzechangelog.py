@@ -31,14 +31,16 @@ import json
 import re
 import time
 
-from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.checkout.changelog import ChangeLog
+from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.config.contributionareas import ContributionAreas
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.tool.multicommandtool import Command
 from webkitpy.tool import steps
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
+from webkitpy.tool.multicommandtool import Command
 
 
+@DeprecatedCommand
 class AnalyzeChangeLog(Command):
     name = "analyze-changelog"
     help_text = "Experimental command for analyzing change logs."

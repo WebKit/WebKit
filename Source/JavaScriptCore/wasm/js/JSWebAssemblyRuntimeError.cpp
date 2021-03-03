@@ -41,7 +41,7 @@ JSWebAssemblyRuntimeError* JSWebAssemblyRuntimeError::create(JSGlobalObject* glo
 }
 
 JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, ErrorType::Error)
 {
 }
 

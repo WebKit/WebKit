@@ -28,6 +28,8 @@
 #if ENABLE(PAYMENT_REQUEST)
 
 #include "PaymentCurrencyAmount.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,6 +39,10 @@ struct PaymentShippingOption {
     String label;
     PaymentCurrencyAmount amount;
     bool selected { false };
+    JSC::Strong<JSC::JSObject> data;
+
+    // Not from the IDL. Set by `data` when this is validated by `PaymentRequest`.
+    String serializedData;
 };
 
 } // namespace WebCore

@@ -58,7 +58,7 @@ inline EncodedJSValue NativeErrorConstructor<errorType>::constructImpl(JSGlobalO
     RETURN_IF_EXCEPTION(scope, { });
     ASSERT(errorStructure);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, errorType, false)));
 }
 
 template<ErrorType errorType>
@@ -66,7 +66,7 @@ inline EncodedJSValue NativeErrorConstructor<errorType>::callImpl(JSGlobalObject
 {
     JSValue message = callFrame->argument(0);
     Structure* errorStructure = globalObject->errorStructure(errorType);
-    return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false));
+    return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, errorType, false));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callEvalError, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'delay'
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT document.write in an imported module Test timed out
+PASS document.write in an imported module
 

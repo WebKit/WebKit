@@ -27,29 +27,12 @@
 #include "PointerEvent.h"
 
 #include "EventNames.h"
+#include "Node.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PointerEvent);
-
-const String& PointerEvent::mousePointerType()
-{
-    static NeverDestroyed<const String> mouseType(MAKE_STATIC_STRING_IMPL("mouse"));
-    return mouseType;
-}
-
-const String& PointerEvent::penPointerType()
-{
-    static NeverDestroyed<const String> penType(MAKE_STATIC_STRING_IMPL("pen"));
-    return penType;
-}
-
-const String& PointerEvent::touchPointerType()
-{
-    static NeverDestroyed<const String> touchType(MAKE_STATIC_STRING_IMPL("touch"));
-    return touchType;
-}
 
 static AtomString pointerEventType(const AtomString& mouseEventType)
 {

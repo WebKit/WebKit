@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -179,9 +179,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LoadRequest(struct WebKit::LoadParameters loadParameters)
     LoadRequestWaitingForProcessLaunch(struct WebKit::LoadParameters loadParameters, URL resourceDirectoryURL, WebKit::WebPageProxyIdentifier pageID, bool checkAssumedReadAccessToResourceURL)
     LoadData(struct WebKit::LoadParameters loadParameters)
+    LoadSimulatedRequestAndResponse(struct WebKit::LoadParameters loadParameters, WebCore::ResourceResponse simulatedResponse)
     LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)
 
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
+    GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size) Async
 
     Reload(uint64_t navigationID, uint32_t reloadOptions, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     StopLoading()
@@ -212,13 +214,13 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(MHTML)
     GetContentsAsMHTMLData() -> (IPC::SharedBufferDataReference data) Async
 #endif
-    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID) -> (IPC::SharedBufferDataReference dataReference) Async
-    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL) -> (IPC::SharedBufferDataReference dataReference) Async
+    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID) -> (Optional<IPC::SharedBufferDataReference> dataReference) Async
+    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL) -> (Optional<IPC::SharedBufferDataReference> dataReference) Async
     GetRenderTreeExternalRepresentation() -> (String string) Async
     GetSelectionOrContentsAsString() -> (String string) Async
-    GetSelectionAsWebArchiveData() -> (IPC::DataReference data) Async
+    GetSelectionAsWebArchiveData() -> (Optional<IPC::DataReference> data) Async
     GetSourceForFrame(WebCore::FrameIdentifier frameID) -> (String string) Async
-    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (IPC::DataReference dataReference) Async
+    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (Optional<IPC::DataReference> dataReference) Async
 
     RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, Optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world) -> (IPC::DataReference resultData, Optional<WebCore::ExceptionDetails> details) Async
 
@@ -624,9 +626,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetCanUseCredentialStorage(bool canUse)
 
 #if ENABLE(APP_HIGHLIGHTS)
-    CreateAppHighlightInSelectedRange(enum:bool WebKit::CreateNewGroupForHighlight createNewGroup)
-    RestoreAppHighlights(IPC::SharedBufferDataReference data)
+    CreateAppHighlightInSelectedRange(enum:bool WebCore::CreateNewGroupForHighlight createNewGroup)
+    RestoreAppHighlights(Vector<WebKit::SharedMemory::IPCHandle> memoryHandles)
 #endif
 
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async
+
+    LastNavigationWasAppBound() -> (bool wasAppBound) Async
 }

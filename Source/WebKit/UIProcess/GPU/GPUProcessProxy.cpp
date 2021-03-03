@@ -30,6 +30,7 @@
 
 #include "DrawingAreaProxy.h"
 #include "GPUProcessConnectionInfo.h"
+#include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxyMessages.h"
@@ -188,6 +189,27 @@ void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVide
 {
     sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTFMove(completionHandler));
 }
+
+
+void GPUProcessProxy::addMockMediaDevice(const WebCore::MockMediaDevice& device)
+{
+    send(Messages::GPUProcess::AddMockMediaDevice { device }, 0);
+}
+
+void GPUProcessProxy::clearMockMediaDevices()
+{
+    send(Messages::GPUProcess::ClearMockMediaDevices { }, 0);
+}
+
+void GPUProcessProxy::removeMockMediaDevice(const String& persistentId)
+{
+    send(Messages::GPUProcess::RemoveMockMediaDevice { persistentId }, 0);
+}
+
+void GPUProcessProxy::resetMockMediaDevices()
+{
+    send(Messages::GPUProcess::ResetMockMediaDevices { }, 0);
+}
 #endif
 
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -207,7 +229,7 @@ void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
         singleton() = nullptr;
 }
 
-void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
+void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, const GPUProcessConnectionParameters& parameters, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
     addSession(webProcessProxy.websiteDataStore());
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -218,7 +240,7 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
 #endif
 
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
-    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& identifier) mutable {
+    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& identifier) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "GPUProcessProxy::getGPUProcessConnection: GPUProcessProxy deallocated during connection establishment");
             return reply({ });

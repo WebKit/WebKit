@@ -69,16 +69,14 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, CloseNewWindowInNavigationPolicyDelegate)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        RetainPtr<WebView> webView = adoptNS([[WebView alloc] init]);
+        webView.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
+        webView.get().UIDelegate = [TestDelegate shared];
+        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"OpenNewWindow" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
 
-    RetainPtr<WebView> webView = adoptNS([[WebView alloc] init]);
-    webView.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
-    webView.get().UIDelegate = [TestDelegate shared];
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"OpenNewWindow" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    
-    Util::run(&testFinished);
-    
-    [pool drain];
+        Util::run(&testFinished);
+    }
 }
     
 } // namespace TestWebKitAPI

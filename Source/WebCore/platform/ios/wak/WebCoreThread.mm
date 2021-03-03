@@ -155,7 +155,11 @@ static void WebCoreObjCDeallocOnWebThreadImpl(id self, SEL _cmd);
 static void WebCoreObjCDeallocWithWebThreadLock(Class cls);
 static void WebCoreObjCDeallocWithWebThreadLockImpl(id self, SEL _cmd);
 
-static NSMutableArray* sAsyncDelegates = nil;
+static RetainPtr<NSMutableArray>& sAsyncDelegates()
+{
+    static NeverDestroyed<RetainPtr<NSMutableArray>> asyncDelegates;
+    return asyncDelegates;
+}
 
 WEBCORE_EXPORT volatile unsigned webThreadDelegateMessageScopeCount = 0;
 
@@ -280,18 +284,15 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
 
 static void MainThreadAdoptAndRelease(id obj)
 {
-    if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent()) {
-        [obj release];
+    auto adoptedObj = adoptNS(obj);
+    if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent())
         return;
-    }
 #if LOG_RELEASES
     NSLog(@"Release send [web thread] : %@", obj);
 #endif
     // We own obj at this point, so we don't need the block to implicitly
     // retain it.
-    RunLoop::main().dispatch([obj] {
-        [obj release];
-    });
+    RunLoop::main().dispatch([adoptedObj = WTFMove(adoptedObj)] { });
 }
 
 void WebThreadAdoptAndRelease(id obj)
@@ -402,11 +403,11 @@ static void HandleWebThreadReleaseSource(void*)
 {
     ASSERT(WebThreadIsCurrent());
 
-    CFMutableArrayRef objects = nullptr;
+    RetainPtr<CFMutableArrayRef> objects;
     {
         auto locker = holdLock(webThreadReleaseLock);
         if (CFArrayGetCount(WebThreadReleaseObjArray)) {
-            objects = CFArrayCreateMutableCopy(nullptr, 0, WebThreadReleaseObjArray);
+            objects = adoptCF(CFArrayCreateMutableCopy(nullptr, 0, WebThreadReleaseObjArray));
             CFArrayRemoveAllValues(WebThreadReleaseObjArray);
         }
     }
@@ -414,15 +415,12 @@ static void HandleWebThreadReleaseSource(void*)
     if (!objects)
         return;
 
-    for (unsigned i = 0, count = CFArrayGetCount(objects); i < count; ++i) {
-        id obj = (id)CFArrayGetValueAtIndex(objects, i);
+    for (unsigned i = 0, count = CFArrayGetCount(objects.get()); i < count; ++i) {
+        auto obj = adoptCF(CFArrayGetValueAtIndex(objects.get(), i));
 #if LOG_RELEASES
-        NSLog(@"Release recv [web thread] : %@", obj);
+        NSLog(@"Release recv [web thread] : %@", obj.get());
 #endif
-        [obj release];
     }
-
-    CFRelease(objects);
 }
 
 void WebThreadCallDelegate(NSInvocation* invocation)
@@ -446,7 +444,7 @@ void WebThreadCallDelegateAsync(NSInvocation* invocation)
 {
     ASSERT(invocation);
     if (WebThreadIsCurrent())
-        [sAsyncDelegates addObject:invocation];
+        [sAsyncDelegates() addObject:invocation];
     else
         WebThreadCallDelegate(invocation);
 }
@@ -504,11 +502,11 @@ static void WebRunLoopLockInternal(AutoreleasePoolOperation poolOperation)
 
 static void WebRunLoopUnlockInternal(AutoreleasePoolOperation poolOperation)
 {
-    ASSERT(sAsyncDelegates);
-    if ([sAsyncDelegates count]) {
-        for (NSInvocation* invocation in sAsyncDelegates)
+    ASSERT(sAsyncDelegates());
+    if ([sAsyncDelegates() count]) {
+        for (NSInvocation* invocation in sAsyncDelegates().get())
             SendDelegateMessage([invocation retain]);
-        [sAsyncDelegates removeAllObjects];
+        [sAsyncDelegates() removeAllObjects];
     }
 
     if (poolOperation == PushOrPopAutoreleasePool && !perCalloutAutoreleasepoolEnabled)
@@ -692,7 +690,7 @@ static void StartWebThread()
     // modes so we don't block the web thread while scrolling.
     CFRunLoopAddSource(runLoop, delegateSource, kCFRunLoopCommonModes);
 
-    sAsyncDelegates = [[NSMutableArray alloc] init];
+    sAsyncDelegates() = adoptNS([[NSMutableArray alloc] init]);
 
     mainRunLoopAutoUnlockObserver = CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeWaiting | kCFRunLoopExit, YES, 3000001, MainRunLoopAutoUnlock, nullptr);
 

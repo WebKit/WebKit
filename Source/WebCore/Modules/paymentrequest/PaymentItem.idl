@@ -29,4 +29,5 @@
     required DOMString label;
     required PaymentCurrencyAmount amount;
     boolean pending = false;
+    object data;
 };

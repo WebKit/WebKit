@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+class WebProcessPool;
 class WebURLSchemeHandler;
 }
 
@@ -43,9 +44,13 @@ public:
     
     void addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String& urlScheme);
     const Vector<URLSchemeHandlerPair>& urlSchemeHandlers() { return m_customURLSchemes; }
+    
+    WebKit::WebProcessPool* processPool();
+    void setProcessPool(WebKit::WebProcessPool*);
 
 private:
     Vector<URLSchemeHandlerPair> m_customURLSchemes;
+    RefPtr<WebKit::WebProcessPool> m_processPool;
 };
 
 } // namespace API

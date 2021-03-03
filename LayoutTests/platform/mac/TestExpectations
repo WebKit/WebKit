@@ -1848,8 +1848,6 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 
 webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 
-webkit.org/b/182571 [ Debug ] media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Timeout ]
-
 # Certain versions of macOS use different text security characters.
 webkit.org/b/209692 [ Mojave Catalina ] platform/mac/fast/text/text-security-disc-bullet-pua-mac.html [ ImageOnlyFailure ]
 
@@ -2275,3 +2273,30 @@ webkit.org/b/220332 [ BigSur+ ] imported/w3c/web-platform-tests/mimesniff/mime-t
 webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Pass Failure ]
 
 webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass Failure ]
+
+webkit.org/b/221973 [ BigSur ] platform/mac-bigsur/media/media-webm-no-duration.html [ Failure ]
+
+webkit.org/b/221935 media/webaudio-background-playback.html [ Pass Failure ]
+
+webkit.org/b/221218 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
+
+webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html [ Pass Failure ]
+
+# @counter-style WPT failures specific to Mac platforms
+imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-styles-123.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html [ ImageOnlyFailure ]
+
+webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html [ ImageOnlyFailure ]
+
+webkit.org/b/222117 media/modern-media-controls/volume-support/volume-support-drag.html [ Pass Failure ]
+webkit.org/b/222117 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
+
+webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
+
+webkit.org/b/222197 media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html [ Pass Timeout ]
+
+webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/222195 inspector/animation/lifecycle-css-transition.html [ Pass Timeout ]

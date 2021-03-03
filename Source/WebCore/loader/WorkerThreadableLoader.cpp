@@ -161,6 +161,8 @@ void WorkerThreadableLoader::MainThreadBridge::destroy()
     m_loaderProxy.postTaskToLoader([self = std::unique_ptr<WorkerThreadableLoader::MainThreadBridge>(this)] (ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
+        if (self->m_mainThreadLoader)
+            self->m_mainThreadLoader->clearClient();
     });
 }
 

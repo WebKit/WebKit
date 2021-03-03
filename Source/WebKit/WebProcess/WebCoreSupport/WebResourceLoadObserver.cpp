@@ -384,7 +384,7 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
     if (shouldLogUserInteraction) {
         auto counter = ++m_loggingCounter;
 #define LOCAL_LOG(str, ...) \
-        RELEASE_LOG(ResourceLoadStatistics, "ResourceLoadObserver::logUserInteraction: counter = %" PRIu64 ": " str, counter, ##__VA_ARGS__)
+        RELEASE_LOG(ResourceLoadStatistics, "ResourceLoadObserver::logUserInteraction: counter=%" PRIu64 ": " str, counter, ##__VA_ARGS__)
 
         auto escapeForJSON = [](String s) {
             s.replace('\\', "\\\\").replace('"', "\\\"");

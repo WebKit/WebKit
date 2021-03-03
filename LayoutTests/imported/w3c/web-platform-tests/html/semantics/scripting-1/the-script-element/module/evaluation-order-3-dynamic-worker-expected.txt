@@ -1,4 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
+PASS Test evaluation order of modules
 

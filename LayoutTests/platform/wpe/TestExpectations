@@ -168,6 +168,10 @@ webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transition
 webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Timeout ]
 webkit.org/b/221313 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html [ Timeout ]
 
+# CSS scroll-snap
+webkit.org/b/222259 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
+webkit.org/b/222259 css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
+
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure Pass ]
 
@@ -595,10 +599,6 @@ webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigati
 
 webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
 
-# Not yet supported on WPE
-Bug(WPE) css3/scroll-snap [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/css/css-scroll-snap [ Skip ]
-
 # Only enabled on Mac/iOS so far.
 Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) http/tests/contentfiltering [ Skip ]
@@ -638,26 +638,36 @@ webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSessio
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html [ Pass ]
-webkit.org/b/209859 webkit.org/b/215637 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass Failure ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_features_deviceSupport.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrFrame_getPose.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_viewer_availability.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/idlharness.https.window.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_isSessionSupported_immersive-ar.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrView_eyes.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrView_match.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrView_oneframeupdate.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_inverse.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_matrix.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_features_deviceSupport.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/render_state_update.https.html [ Pass ]
-imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
 http/wpt/webxr/xrSession_end_device_reports_shutdown.https.html [ Pass ]
 http/wpt/webxr/xrSession_ended_by_system.https.html [ Pass ]
 http/wpt/webxr/xrSession_reject_multiple_end.https.html [ Pass ]
@@ -875,9 +885,10 @@ webkit.org/b/208000 [ Release ] http/tests/inspector/network/contentextensions/b
 
 webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout Pass ]
 
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Timeout Crash ]
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Timeout ]
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout Crash ]
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Failure ]
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Failure ]
+# Flaky timeout.
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
 
 webkit.org/b/212078 webaudio/silent-audio-interrupted-in-background.html [ Timeout ]
 

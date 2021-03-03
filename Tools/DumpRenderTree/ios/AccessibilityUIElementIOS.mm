@@ -87,6 +87,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityTextualContext;
 - (BOOL)accessibilityHasPopup;
 - (NSString *)accessibilityPopupValue;
+- (NSString *)_accessibilityPhotoDescription;
 - (BOOL)accessibilityPerformEscape;
 
 // TextMarker related
@@ -901,6 +902,11 @@ bool AccessibilityUIElement::ariaIsGrabbed() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const
 {
     return WTR::createJSString();
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const
+{
+    return [[m_element _accessibilityPhotoDescription] createJSStringRef];
 }
 
 int AccessibilityUIElement::lineForIndex(int index)

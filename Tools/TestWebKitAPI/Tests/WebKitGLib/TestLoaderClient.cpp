@@ -24,6 +24,7 @@
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <WebCore/SoupVersioning.h>
 #include <libsoup/soup.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -48,7 +49,7 @@ static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
 
 static void testLoadingError(LoadTrackingTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/error").data());
+    test->loadURI("http://127.0.0.1:1234/error");
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
@@ -489,7 +490,7 @@ static void testWebViewIsLoading(ViewIsLoadingTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     g_assert_false(webkit_web_view_is_loading(test->m_webView));
 
-    test->loadURI(kServer->getURIForPath("/error").data());
+    test->loadURI("http://127.0.0.1:1234/error");
     test->waitUntilLoadFinished();
     g_assert_false(webkit_web_view_is_loading(test->m_webView));
 
@@ -737,7 +738,11 @@ static void testUserAgent(WebViewTest* test, gconstpointer)
     s_userAgentMap.clear();
 }
 
+#if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
     static const char* responseString = "<html><body>Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
@@ -748,48 +753,50 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!</body></html>";
 
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
-    soup_message_set_status(message, SOUP_STATUS_OK);
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+
+    auto* requestHeaders = soup_server_message_get_request_headers(message);
+    auto* responseHeaders = soup_server_message_get_response_headers(message);
+    auto* responseBody = soup_server_message_get_response_body(message);
 
     if (g_str_has_prefix(path, "/ua-"))
-        s_userAgentMap.add(path, soup_message_headers_get_one(message->request_headers, "User-Agent"));
+        s_userAgentMap.add(path, soup_message_headers_get_one(requestHeaders, "User-Agent"));
 
     if (g_str_has_prefix(path, "/normal") || g_str_has_prefix(path, "/http-get-method"))
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
-    else if (g_str_equal(path, "/error"))
-        soup_message_set_status(message, SOUP_STATUS_CANT_CONNECT);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
     else if (g_str_equal(path, "/redirect")) {
-        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
-        soup_message_headers_append(message->response_headers, "Location", "/normal");
+        soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
+        soup_message_headers_append(responseHeaders, "Location", "/normal");
     } else if (g_str_equal(path, "/redirect-to-change-request")) {
-        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
-        soup_message_headers_append(message->response_headers, "Location", "/normal-change-request");
+        soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
+        soup_message_headers_append(responseHeaders, "Location", "/normal-change-request");
     } else if (g_str_has_prefix(path, "/redirect-js/")) {
         static const char* redirectJSFormat = "<html><body><script>location = '%s';</script></body></html>";
         char* redirectJS = g_strdup_printf(redirectJSFormat, g_strrstr(path, "/"));
-        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, redirectJS, strlen(redirectJS));
+        soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, redirectJS, strlen(redirectJS));
     } else if (g_str_equal(path, "/cancelled")) {
-        soup_message_headers_set_encoding(message->response_headers, SOUP_ENCODING_CHUNKED);
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+        soup_message_headers_set_encoding(responseHeaders, SOUP_ENCODING_CHUNKED);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
         soup_server_unpause_message(server, message);
         return;
     } else if (g_str_equal(path, "/do-not-track-header") || g_str_equal(path, "/add-do-not-track-header")) {
-        const char* doNotTrack = soup_message_headers_get_one(message->request_headers, "DNT");
+        const char* doNotTrack = soup_message_headers_get_one(requestHeaders, "DNT");
         if (doNotTrack)
-            soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, doNotTrack, strlen(doNotTrack));
+            soup_message_body_append(responseBody, SOUP_MEMORY_COPY, doNotTrack, strlen(doNotTrack));
         else
-            soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kDNTHeaderNotPresent, strlen(kDNTHeaderNotPresent));
-        soup_message_set_status(message, SOUP_STATUS_OK);
+            soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, kDNTHeaderNotPresent, strlen(kDNTHeaderNotPresent));
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/headers")) {
-        soup_message_headers_append(message->response_headers, "Foo", "bar");
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+        soup_message_headers_append(responseHeaders, "Foo", "bar");
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
     } else if (g_str_equal(path, "/redirect-to-data")) {
-        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
-        soup_message_headers_append(message->response_headers, "Location", "data:text/plain;charset=utf-8,data-uri");
+        soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
+        soup_message_headers_append(responseHeaders, "Location", "data:text/plain;charset=utf-8,data-uri");
     } else if (g_str_equal(path, "/unfinished-subresource-load")) {
         static const char* unfinishedSubresourceLoadResponseString = "<html><body>"
             "<img src=\"/stall\"/>"
@@ -800,32 +807,32 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
             "  setInterval(run(), 50);"
             "</script>"
             "</body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, unfinishedSubresourceLoadResponseString, strlen(unfinishedSubresourceLoadResponseString));
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, unfinishedSubresourceLoadResponseString, strlen(unfinishedSubresourceLoadResponseString));
     } else if (g_str_equal(path, "/ua-main"))
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
     else if (g_str_equal(path, "/ua-main-redirect")) {
-        soup_message_headers_append(message->response_headers, "Location", "/ua-main");
-        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+        soup_message_headers_append(responseHeaders, "Location", "/ua-main");
+        soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
     } else if (g_str_equal(path, "/ua-style.css")) {
         static const char* style = "body { margin: 0px; padding: 0px; }";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, style, strlen(style));
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, style, strlen(style));
     } else if (g_str_equal(path, "/ua-redirected-style.css")) {
-        soup_message_headers_append(message->response_headers, "Location", "/ua-style.css");
-        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+        soup_message_headers_append(responseHeaders, "Location", "/ua-style.css");
+        soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
     } else if (g_str_equal(path, "/ua-css")) {
         static const char* cssHtml = "<html><head><link rel='stylesheet' href='/ua-style.css' type='text/css'></head><body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, cssHtml, strlen(cssHtml));
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, cssHtml, strlen(cssHtml));
     } else if (g_str_equal(path, "/ua-redirected-css")) {
         static const char* redirectedCSSHtml = "<html><head><link rel='stylesheet' href='/ua-redirected-style.css' type='text/css'></head><body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, redirectedCSSHtml, strlen(redirectedCSSHtml));
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, redirectedCSSHtml, strlen(redirectedCSSHtml));
     } else if (g_str_equal(path, "/stall")) {
         // This request is never unpaused and stalls forever.
         soup_server_pause_message(server, message);
         return;
     } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 
-    soup_message_body_complete(message->response_body);
+    soup_message_body_complete(responseBody);
 }
 
 void beforeAll()

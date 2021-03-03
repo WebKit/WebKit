@@ -61,15 +61,21 @@ public:
     void toString(CompletionHandler<void(String)>&&) const;
     void setPingLoadFunction(Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)>&& pingLoadFunction) { m_pingLoadFunction = WTFMove(pingLoadFunction); }
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
-    void setConversionURLForTesting(URL&&);
+    void setTokenPublicKeyURLForTesting(URL&&);
+    void setTokenSignatureURLForTesting(URL&&);
+    void setAttributionReportURLForTesting(URL&&);
     void markAllUnattributedAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
+    void setFraudPreventionValuesForTesting(String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID);
     void startTimer(Seconds);
 
 private:
+    void getTokenPublicKey(PrivateClickMeasurement&&, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
+    void getSignedSecretToken(PrivateClickMeasurement&&);
     void clearSentAttribution(PrivateClickMeasurement&&);
     void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
+    void fireConversionRequestImpl(const PrivateClickMeasurement&);
     void firePendingAttributionRequests();
     void clearExpired();
     bool featureEnabled() const;
@@ -77,11 +83,22 @@ private:
 
     WebCore::Timer m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
-    Optional<URL> m_attributionBaseURLForTesting;
+    Optional<URL> m_tokenPublicKeyURLForTesting;
+    Optional<URL> m_tokenSignatureURLForTesting;
+    Optional<URL> m_attributionReportBaseURLForTesting;
     WeakPtr<NetworkSession> m_networkSession;
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
     Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
+
+    struct TestingFraudPreventionValues {
+        String secretToken;
+        String unlinkableToken;
+        String signature;
+        String keyID;
+    };
+
+    Optional<TestingFraudPreventionValues> m_fraudPreventionValuesForTesting;
 };
     
 } // namespace WebKit

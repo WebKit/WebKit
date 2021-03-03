@@ -962,25 +962,6 @@ private:
     CachedVector<T> m_entries;
 };
 
-class CachedConstantIdentifierSetEntry : public VariableLengthObject<ConstantIdentifierSetEntry> {
-public:
-    void encode(Encoder& encoder, const ConstantIdentifierSetEntry& entry)
-    {
-        m_constant = entry.second;
-        m_set.encode(encoder, entry.first);
-    }
-
-    void decode(Decoder& decoder, ConstantIdentifierSetEntry& entry) const
-    {
-        entry.second = m_constant;
-        m_set.decode(decoder, entry.first);
-    }
-
-private:
-    unsigned m_constant;
-    CachedHashSet<CachedRefPtr<CachedUniquedStringImpl>, IdentifierRepHash> m_set;
-};
-
 class CachedCodeBlockRareData : public CachedObject<UnlinkedCodeBlock::RareData> {
 public:
     void encode(Encoder& encoder, const UnlinkedCodeBlock::RareData& rareData)
@@ -1021,7 +1002,7 @@ private:
     CachedHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     CachedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     CachedVector<CachedBitVector> m_bitVectors;
-    CachedVector<CachedConstantIdentifierSetEntry> m_constantIdentifierSets;
+    CachedVector<CachedHashSet<CachedRefPtr<CachedUniquedStringImpl>, IdentifierRepHash>> m_constantIdentifierSets;
     unsigned m_needsClassFieldInitializer : 1;
     unsigned m_privateBrandRequirement : 1;
 };

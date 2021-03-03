@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1455,7 +1455,8 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
     fireOnAbort();
 }
 
-void IDBTransaction::visitReferencedObjectStores(JSC::SlotVisitor& visitor) const
+template<typename Visitor>
+void IDBTransaction::visitReferencedObjectStores(Visitor& visitor) const
 {
     Locker<Lock> locker(m_referencedObjectStoreLock);
     for (auto& objectStore : m_referencedObjectStores.values())
@@ -1463,6 +1464,9 @@ void IDBTransaction::visitReferencedObjectStores(JSC::SlotVisitor& visitor) cons
     for (auto& objectStore : m_deletedObjectStores.values())
         visitor.addOpaqueRoot(objectStore.get());
 }
+
+template void IDBTransaction::visitReferencedObjectStores(JSC::AbstractSlotVisitor&) const;
+template void IDBTransaction::visitReferencedObjectStores(JSC::SlotVisitor&) const;
 
 void IDBTransaction::handlePendingOperations()
 {

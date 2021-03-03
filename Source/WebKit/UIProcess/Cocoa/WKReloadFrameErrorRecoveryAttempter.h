@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "_WKErrorRecoveryAttempting.h"
 #import <WebKit/WKFoundation.h>
-
 #import <wtf/Forward.h>
 
 @class WKWebView;
 @class _WKFrameHandle;
 
-@interface WKReloadFrameErrorRecoveryAttempter : NSObject
+@interface WKReloadFrameErrorRecoveryAttempter : NSObject<_WKErrorRecoveryAttempting, NSSecureCoding>
 
 - (id)initWithWebView:(WKWebView *)webView frameHandle:(_WKFrameHandle *)frameHandle urlString:(const String&)urlString;
 

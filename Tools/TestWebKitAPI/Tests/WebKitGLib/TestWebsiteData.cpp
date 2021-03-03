@@ -19,77 +19,85 @@
 
 #include "config.h"
 
-#include <WebCore/GUniquePtrSoup.h>
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <WebCore/GUniquePtrSoup.h>
+#include <WebCore/SoupVersioning.h>
 #include <glib/gstdio.h>
 
 static WebKitTestServer* kServer;
 
+#if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
+    auto* responseBody = soup_server_message_get_response_body(message);
+
     if (g_str_equal(path, "/")) {
         const char* html = "<html><body></body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, html, strlen(html));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, html, strlen(html));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/empty")) {
+        auto* responseHeaders = soup_server_message_get_response_headers(message);
+        soup_message_headers_replace(responseHeaders, "Set-Cookie", "foo=bar; Max-Age=60");
+        soup_message_headers_replace(responseHeaders, "Strict-Transport-Security", "max-age=3600");
         static const char* emptyHTML = "<html><body></body></html>";
-        soup_message_headers_replace(message->response_headers, "Set-Cookie", "foo=bar; Max-Age=60");
-        soup_message_headers_replace(message->response_headers, "Strict-Transport-Security", "max-age=3600");
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/appcache")) {
         static const char* appcacheHTML = "<html manifest=appcache.manifest><body></body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, appcacheHTML, strlen(appcacheHTML));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, appcacheHTML, strlen(appcacheHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/appcache.manifest")) {
         static const char* appcacheManifest = "CACHE MANIFEST\nCACHE:\nappcache/foo.txt\n";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, appcacheManifest, strlen(appcacheManifest));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, appcacheManifest, strlen(appcacheManifest));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/appcache/foo.txt")) {
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, "foo", 3);
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, "foo", 3);
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/sessionstorage")) {
         static const char* sessionStorageHTML = "<html><body onload=\"sessionStorage.foo = 'bar';\"></body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, sessionStorageHTML, strlen(sessionStorageHTML));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, sessionStorageHTML, strlen(sessionStorageHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/localstorage")) {
         static const char* localStorageHTML = "<html><body onload=\"localStorage.foo = 'bar';\"></body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, localStorageHTML, strlen(localStorageHTML));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, localStorageHTML, strlen(localStorageHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/enumeratedevices")) {
         static const char* enumerateDevicesHTML = "<html><body onload=\"navigator.mediaDevices.enumerateDevices().then(function(devices) { document.title = 'Finished'; })\"></body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, enumerateDevicesHTML, strlen(enumerateDevicesHTML));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, enumerateDevicesHTML, strlen(enumerateDevicesHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/service/register.html")) {
         static const char* swRegisterHTML = "<html><body><script src=\"/service/register.js\"></script></body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, swRegisterHTML, strlen(swRegisterHTML));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, swRegisterHTML, strlen(swRegisterHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/service/register.js")) {
         static const char* swRegisterJS =
             "async function test() { await navigator.serviceWorker.register(\"/service/empty-worker.js\"); } test();";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, swRegisterJS, strlen(swRegisterJS));
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, swRegisterJS, strlen(swRegisterJS));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/service/empty-worker.js")) {
-        soup_message_body_complete(message->response_body);
-        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 }
 
 class WebsiteDataTest : public WebViewTest {

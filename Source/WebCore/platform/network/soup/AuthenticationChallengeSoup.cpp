@@ -66,21 +66,29 @@ static ProtectionSpace protectionSpaceFromSoupAuthAndURL(SoupAuth* soupAuth, con
         String::fromUTF8(soup_auth_get_realm(soupAuth)), scheme);
 }
 
-AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, SoupAuth* soupAuth, bool retrying, AuthenticationClient* client)
+AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, SoupAuth* soupAuth, bool retrying)
     : AuthenticationChallengeBase(protectionSpaceFromSoupAuthAndURL(soupAuth, soupURIToURL(soup_message_get_uri(soupMessage)))
         , Credential() // proposedCredentials
         , retrying ? 1 : 0 // previousFailureCount
         , soupMessage // failureResponse
         , ResourceError::authenticationError(soupMessage))
+#if USE(SOUP2)
     , m_soupMessage(soupMessage)
+#endif
     , m_soupAuth(soupAuth)
-    , m_authenticationClient(client)
 {
 }
 
 bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
 {
-    return a.soupMessage() == b.soupMessage() && a.soupAuth() == b.soupAuth();
+    if (a.soupAuth() != b.soupAuth())
+        return false;
+
+#if USE(SOUP2)
+    return a.soupMessage() == b.soupMessage();
+#endif
+
+    return true;
 }
 
 } // namespace WebCore

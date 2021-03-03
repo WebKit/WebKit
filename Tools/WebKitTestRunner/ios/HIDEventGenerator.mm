@@ -160,11 +160,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 + (HIDEventGenerator *)sharedHIDEventGenerator
 {
-    static HIDEventGenerator *eventGenerator = nil;
-    if (!eventGenerator)
-        eventGenerator = [[HIDEventGenerator alloc] init];
-
-    return eventGenerator;
+    static NeverDestroyed<RetainPtr<HIDEventGenerator>> eventGenerator = adoptNS([[HIDEventGenerator alloc] init]);
+    return eventGenerator.get().get();
 }
 
 + (CFIndex)nextEventCallbackID
@@ -1143,12 +1140,12 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
     }
     
     NSDictionary* threadData = @{
-        @"eventInfo": [[eventInfo copy] autorelease],
-        @"completionBlock": [[completionBlock copy] autorelease]
+        @"eventInfo": adoptNS([eventInfo copy]).get(),
+        @"completionBlock": adoptNS([completionBlock copy]).get()
     };
     
-    NSThread *eventDispatchThread = [[[NSThread alloc] initWithTarget:self selector:@selector(eventDispatchThreadEntry:) object:threadData] autorelease];
-    eventDispatchThread.qualityOfService = NSQualityOfServiceUserInteractive;
+    auto eventDispatchThread = adoptNS([[NSThread alloc] initWithTarget:self selector:@selector(eventDispatchThreadEntry:) object:threadData]);
+    [eventDispatchThread setQualityOfService:NSQualityOfServiceUserInteractive];
     [eventDispatchThread start];
 }
 

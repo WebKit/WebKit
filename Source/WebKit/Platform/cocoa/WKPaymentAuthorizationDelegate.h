@@ -33,6 +33,10 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
 OBJC_CLASS UIViewController;
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditions.h>
+#endif
+
 namespace WebKit {
 
 class PaymentAuthorizationPresenter;
@@ -57,6 +61,9 @@ using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentRequestShipping
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors;
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate;
 - (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate;
+#if defined(WKPaymentAuthorizationDelegateAdditions_interface_public)
+WKPaymentAuthorizationDelegateAdditions_interface_public
+#endif
 - (void)invalidate;
 
 @end
@@ -72,6 +79,9 @@ using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentRequestShipping
 - (void)_didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod completion:(WebKit::DidSelectPaymentMethodCompletion::BlockType)completion;
 - (void)_didSelectShippingContact:(PKContact *)contact completion:(WebKit::DidSelectShippingContactCompletion::BlockType)completion;
 - (void)_didSelectShippingMethod:(PKShippingMethod *)shippingMethod completion:(WebKit::DidSelectShippingMethodCompletion::BlockType)completion;
+#if defined(WKPaymentAuthorizationDelegateAdditions_interface_protected)
+WKPaymentAuthorizationDelegateAdditions_interface_protected
+#endif
 - (void)_getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion;
 - (void)_willFinishWithError:(NSError *)error;
 

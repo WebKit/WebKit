@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,17 +45,16 @@ WEBCORE_EXPORT
     RetainPtr<AVValueTiming> _timing;
     NSTimeInterval _seekToTime;
     RetainPtr<NSArray> _seekableTimeRanges;
-    BOOL _hasEnabledAudio;
-    BOOL _hasEnabledVideo;
     RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _audioTouchBarMediaSelectionOptions;
     RetainPtr<AVTouchBarMediaSelectionOption> _currentAudioTouchBarMediaSelectionOption;
     RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _legibleTouchBarMediaSelectionOptions;
     RetainPtr<AVTouchBarMediaSelectionOption> _currentLegibleTouchBarMediaSelectionOption;
-    BOOL _playing;
-    float _rate;
-    BOOL _canTogglePlayback;
-
     RefPtr<WebCore::PlaybackSessionInterfaceMac> _playbackSessionInterfaceMac;
+    float _rate;
+    BOOL _playing;
+    BOOL _hasEnabledAudio;
+    BOOL _hasEnabledVideo;
+    BOOL _canTogglePlayback;
 }
 
 @property (assign) WebCore::PlaybackSessionInterfaceMac* playbackSessionInterfaceMac;

@@ -33,7 +33,6 @@
 #include "ScriptSourceCode.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
-#include "WorkerScriptLoaderClient.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/CompletionHandler.h>
@@ -54,7 +53,7 @@ struct WorkletParameters;
 enum WorkletGlobalScopeIdentifierType { };
 using WorkletGlobalScopeIdentifier = ObjectIdentifier<WorkletGlobalScopeIdentifierType>;
 
-class WorkletGlobalScope : public WorkerOrWorkletGlobalScope, public WorkerScriptLoaderClient {
+class WorkletGlobalScope : public WorkerOrWorkletGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(WorkletGlobalScope);
 public:
     virtual ~WorkletGlobalScope();
@@ -111,10 +110,6 @@ private:
     void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long) final;
     void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
 
-    // WorkerScriptLoaderClient.
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;
-    void notifyFinished() final;
-
     EventTarget* errorEventTarget() final { return this; }
 
 #if ENABLE(WEB_CRYPTO)
@@ -124,15 +119,6 @@ private:
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     String userAgent(const URL&) const final;
     const Settings::Values& settingsValues() const final { return m_settingsValues; }
-
-    struct ScriptFetchJob {
-        URL moduleURL;
-        FetchRequestCredentials credentials;
-        CompletionHandler<void(Optional<Exception>&&)> completionHandler;
-    };
-
-    void processNextScriptFetchJobIfNeeded();
-    void didCompleteScriptFetchJob(ScriptFetchJob&&, Optional<Exception>);
 
     WeakPtr<Document> m_document;
 
@@ -144,9 +130,6 @@ private:
 
     std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
 
-    RefPtr<WorkerScriptLoader> m_scriptLoader;
-    Deque<ScriptFetchJob> m_scriptFetchJobs;
-    HashSet<URL> m_evaluatedModules;
     Settings::Values m_settingsValues;
 };
 

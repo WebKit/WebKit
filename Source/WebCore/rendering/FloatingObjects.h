@@ -189,7 +189,7 @@ private:
     WeakPtr<const RenderBlockFlow> m_renderer;
 };
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 TextStream& operator<<(TextStream&, const FloatingObject&);
 #endif
 

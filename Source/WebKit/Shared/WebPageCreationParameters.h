@@ -179,6 +179,9 @@ struct WebPageCreationParameters {
     SandboxExtension::HandleArray gpuIOKitExtensionHandles;
     SandboxExtension::HandleArray gpuMachExtensionHandles;
 #endif
+#if HAVE(STATIC_FONT_REGISTRY)
+    Optional<SandboxExtension::Handle> fontMachExtensionHandle;
+#endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
 #endif
@@ -242,6 +245,7 @@ struct WebPageCreationParameters {
     bool needsInAppBrowserPrivacyQuirks { false };
     bool limitsNavigationsToAppBoundDomains { false };
 #endif
+    bool lastNavigationWasAppBound { false };
     bool canUseCredentialStorage { true };
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
@@ -251,6 +255,7 @@ struct WebPageCreationParameters {
 #endif
 
     bool textInteractionEnabled { true };
+    bool httpsUpgradeEnabled { true };
 };
 
 } // namespace WebKit

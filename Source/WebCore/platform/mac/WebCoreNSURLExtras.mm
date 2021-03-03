@@ -52,8 +52,7 @@ NSURL *URLByCanonicalizingURL(NSURL *URL)
     // (see 5315926). It might make sense to apply only the URL concept and not the NSURL
     // concept, but it's too risky to make that change for WebKit 3.0.
     NSURLRequest *newRequest = [concreteClass canonicalRequestForRequest:request.get()];
-    NSURL *newURL = [newRequest URL]; 
-    return [[newURL retain] autorelease];
+    return retainPtr([newRequest URL]).autorelease();
 }
 
 } // namespace WebCore

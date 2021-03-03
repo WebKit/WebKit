@@ -481,8 +481,7 @@ static bool isFlagsChangedEvent(const WebKeyboardEvent& keyboardEvent)
 
 static NPNSString *convertToNPNNString(const String& string)
 {
-    CFTypeRef releasedString = string.createCFString().autorelease();
-    return static_cast<NPNSString*>(const_cast<void*>(releasedString));
+    return static_cast<NPNSString*>(static_cast<NSString*>(string));
 }
 
 static NPCocoaEvent initializeKeyboardEvent(const WebKeyboardEvent& keyboardEvent)

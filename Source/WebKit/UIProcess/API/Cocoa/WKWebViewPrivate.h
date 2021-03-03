@@ -61,6 +61,12 @@ typedef NS_OPTIONS(NSUInteger, _WKCaptureDevices) {
     _WKCaptureDeviceDisplay = 1 << 2,
 } WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
+typedef NS_OPTIONS(NSUInteger, _WKPermissionDecision) {
+    _WKPermissionDecisionPrompt = 1 << 0,
+    _WKPermissionDecisionGrant = 1 << 1,
+    _WKPermissionDecisionDeny = 1 << 2,
+} WK_API_AVAILABLE(macos(12.00), ios(15.0));
+
 typedef NS_OPTIONS(NSUInteger, _WKSelectionAttributes) {
     _WKSelectionAttributeNoSelection = 0,
     _WKSelectionAttributeIsCaret = 1 << 0,
@@ -350,6 +356,7 @@ for this property.
 - (void)_closeAllMediaPresentations;
 
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *pdfSnapshotData, NSError *error))completionHandler WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
+- (void)_getPDFFirstPageSizeInFrame:(_WKFrameHandle *)frame completionHandler:(void(^)(CGSize))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_getProcessDisplayNameWithCompletionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
@@ -368,7 +375,8 @@ for this property.
 @property (nonatomic, setter=_setHasBlankOverlay:) BOOL _hasBlankOverlay WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, weak, setter=_setAppHighlightDelegate:) id <_WKAppHighlightDelegate> _appHighlightDelegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_restoreAppHighlights:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_restoreAppHighlights:(NSArray<NSData *> *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_addAppHighlight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract The theme color of the active page.
  @discussion This is the value of the most recently created or modified

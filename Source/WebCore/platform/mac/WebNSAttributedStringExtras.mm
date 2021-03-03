@@ -42,26 +42,20 @@ NSAttributedString *attributedStringByStrippingAttachmentCharacters(NSAttributed
 {
     NSRange attachmentRange;
     NSString *originalString = [attributedString string];
-    static NSString *attachmentCharString = nil;
+    static auto attachmentCharString = makeNeverDestroyed([] {
+        unichar chars[2] = { NSAttachmentCharacter, 0 };
+        return adoptNS([[NSString alloc] initWithCharacters:chars length:1]);
+    }());
     
-    if (!attachmentCharString) {
-        unichar chars[2];
-        if (!attachmentCharString) {
-            chars[0] = NSAttachmentCharacter;
-            chars[1] = 0;
-            attachmentCharString = [[NSString alloc] initWithCharacters:chars length:1];
-        }
-    }
-    
-    attachmentRange = [originalString rangeOfString:attachmentCharString];
+    attachmentRange = [originalString rangeOfString:attachmentCharString.get().get()];
     if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
-        NSMutableAttributedString *newAttributedString = [[attributedString mutableCopyWithZone:NULL] autorelease];
+        auto newAttributedString = adoptNS([attributedString mutableCopyWithZone:NULL]);
         
         while (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
             [newAttributedString replaceCharactersInRange:attachmentRange withString:@""];
-            attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString];
+            attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString.get().get()];
         }
-        return newAttributedString;
+        return newAttributedString.autorelease();
     }
     
     return attributedString;

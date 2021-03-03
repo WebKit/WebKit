@@ -25,13 +25,14 @@
 
 #import "config.h"
 #import <WebKit/WebViewPrivate.h>
+#import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, MemoryPressureHandler)
 {
     WebInstallMemoryPressureHandler();
-    [[[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil] autorelease];
+    auto webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
     // This test passes if it does not assert.
 }
 

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "EmptyClients.h"
 
+#include "AppHighlight.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
 #include "CacheStorageProvider.h"
@@ -364,9 +365,12 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable { completionHandler(false); }); }
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final { return false; }
     void completeMerchantValidation(const PaymentMerchantSession&) final { }
-    void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&) final { }
-    void completeShippingContactSelection(Optional<ShippingContactUpdate>&&) final { }
-    void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&) final { }
+    void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&) final { }
+    void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&) final { }
+    void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&) final { }
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    void completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&&) final { }
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     void completePaymentSession(Optional<PaymentAuthorizationResult>&&) final { }
     void cancelPaymentSession() final { }
     void abortPaymentSession() final { }
@@ -503,7 +507,7 @@ std::unique_ptr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTi
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void EmptyChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const
+void EmptyChromeClient::storeAppHighlight(const AppHighlight&) const
 {
 }
 #endif

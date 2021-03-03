@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,8 +54,8 @@ struct RecordedStatuses {
     CheckPrivateBrandStatus* addCheckPrivateBrandStatus(const CodeOrigin&, const CheckPrivateBrandStatus&);
     SetPrivateBrandStatus* addSetPrivateBrandStatus(const CodeOrigin&, const SetPrivateBrandStatus&);
     
-    void visitAggregate(SlotVisitor&);
-    void markIfCheap(SlotVisitor&);
+    DECLARE_VISIT_AGGREGATE;
+    template<typename Visitor> void markIfCheap(Visitor&);
     
     void finalizeWithoutDeleting(VM&);
     void finalize(VM&);

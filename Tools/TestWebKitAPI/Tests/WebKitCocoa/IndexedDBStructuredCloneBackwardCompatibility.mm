@@ -75,7 +75,7 @@ static WKScriptMessage *getNextMessage()
         TestWebKitAPI::Util::run(&receivedScriptMessage);
     }
 
-    return [[scriptMessages.takeFirst() retain] autorelease];
+    return scriptMessages.takeFirst().autorelease();
 }
 
 TEST(IndexedDB, StructuredCloneBackwardCompatibility)
@@ -96,7 +96,7 @@ TEST(IndexedDB, StructuredCloneBackwardCompatibility)
 
     RetainPtr<_WKWebsiteDataStoreConfiguration> websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbPath;
-    configuration.get().websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease];
+    configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get();
 
     idbPath = [idbPath URLByAppendingPathComponent:@"file__0"];
     idbPath = [idbPath URLByAppendingPathComponent:@"backward_compatibility"];

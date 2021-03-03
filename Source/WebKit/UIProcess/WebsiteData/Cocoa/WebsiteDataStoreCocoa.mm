@@ -309,6 +309,11 @@ WTF::String WebsiteDataStore::defaultMediaKeysStorageDirectory()
     return websiteDataDirectoryFileSystemRepresentation("MediaKeys");
 }
 
+WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("DeviceIdHashSalts");
+}
+
 WTF::String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("WebSQL");

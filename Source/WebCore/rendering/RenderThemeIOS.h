@@ -122,6 +122,10 @@ private:
     bool supportsMeter(ControlPart, const HTMLMeterElement&) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
+#if ENABLE(DATALIST_ELEMENT)
+    void paintSliderTicks(const RenderObject&, const PaintInfo&, const FloatRect&) final;
+#endif
+
 #if ENABLE(INPUT_TYPE_COLOR)
     String colorInputStyleSheet(const Settings&) const final;
 

@@ -51,14 +51,16 @@ class RunTestsTest(unittest.TestCase):
         if sys.platform != "cygwin":
             self.assertEqual(
                 captured.root.log.getvalue(),
-                '''Running run-webkit-tests
+                '''Running tests through webkit-patch is currently deprecated due to believed non-use; if it forms part of your workflow, please comment on https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the command you ran, even if others have already mentioned it
+Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--no-new-test-results', '--no-show-results', '--exit-after-n-failures=30', '--quiet', '--skip-failing-tests'], cwd=/mock-checkout
 ''',
             )
         else:
             self.assertEqual(
                 captured.root.log.getvalue(),
-                '''Running run-webkit-tests
+                '''Running tests through webkit-patch is currently deprecated due to believed non-use; if it forms part of your workflow, please comment on https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the command you ran, even if others have already mentioned it
+Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--no-new-test-results', '--no-show-results', '--exit-after-n-failures=30', '--no-build'], cwd=/mock-checkout
 ''',
             )

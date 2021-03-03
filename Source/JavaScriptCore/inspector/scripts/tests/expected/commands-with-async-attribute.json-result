@@ -1150,7 +1150,7 @@ using namespace Inspector;
 @implementation TestProtocolConfiguration
 {
     AugmentableInspectorController* _controller;
-    id<TestProtocolDatabaseDomainHandler> _databaseHandler;
+    RetainPtr<id<TestProtocolDatabaseDomainHandler>> _databaseHandler;
 }
 
 - (instancetype)initWithController:(AugmentableInspectorController*)controller
@@ -1163,19 +1163,12 @@ using namespace Inspector;
     return self;
 }
 
-- (void)dealloc
-{
-    [_databaseHandler release];
-    [super dealloc];
-}
-
 - (void)setDatabaseHandler:(id<TestProtocolDatabaseDomainHandler>)handler
 {
     if (handler == _databaseHandler)
         return;
 
-    [_databaseHandler release];
-    _databaseHandler = [handler retain];
+    _databaseHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorDatabaseBackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>("Database"_s, *_controller, WTFMove(alternateDispatcher));
@@ -1184,7 +1177,7 @@ using namespace Inspector;
 
 - (id<TestProtocolDatabaseDomainHandler>)databaseHandler
 {
-    return _databaseHandler;
+    return _databaseHandler.get();
 }
 
 @end

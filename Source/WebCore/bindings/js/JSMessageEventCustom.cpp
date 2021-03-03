@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -70,7 +70,8 @@ JSC::JSValue JSMessageEvent::data(JSC::JSGlobalObject& lexicalGlobalObject) cons
     });
 }
 
-void JSMessageEvent::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+void JSMessageEvent::visitAdditionalChildren(Visitor& visitor)
 {
     WTF::switchOn(wrapped().data(), [&visitor] (const JSValueInWrappedObject& data) {
         data.visit(visitor);
@@ -83,5 +84,7 @@ void JSMessageEvent::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     wrapped().cachedData().visit(visitor);
     wrapped().cachedPorts().visit(visitor);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMessageEvent);
 
 } // namespace WebCore

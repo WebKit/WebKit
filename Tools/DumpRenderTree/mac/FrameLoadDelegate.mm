@@ -326,7 +326,7 @@ IGNORE_WARNINGS_END
 #endif
 
     [windowObject setValue:adoptNS([[EventSendingController alloc] init]).get() forKey:@"eventSender"];
-    [windowObject setValue:gNavigationController forKey:@"navigationController"];
+    [windowObject setValue:gNavigationController.get() forKey:@"navigationController"];
     [windowObject setValue:adoptNS([[ObjCController alloc] init]).get() forKey:@"objCController"];
     [windowObject setValue:adoptNS([[ObjCPlugin alloc] init]).get() forKey:@"objCPlugin"];
     [windowObject setValue:adoptNS([[ObjCPluginFunction alloc] init]).get() forKey:@"objCPluginFunction"];

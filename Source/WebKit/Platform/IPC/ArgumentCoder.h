@@ -27,6 +27,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
 
 namespace IPC {
@@ -75,6 +76,7 @@ template<typename T, typename = void> struct ArgumentCoder {
 
 template<typename T>
 struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, T value)
     {
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&value), sizeof(T), alignof(T));
@@ -91,6 +93,7 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
 
 template<typename T>
 struct ArgumentCoder<T, typename std::enable_if_t<std::is_enum_v<T>>> {
+    template<typename Encoder>
     static void encode(Encoder& encoder, T value)
     {
         ASSERT(WTF::isValidEnum<T>(WTF::enumToUnderlyingType<T>(value)));

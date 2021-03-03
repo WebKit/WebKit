@@ -1,3 +1,216 @@
+2021-02-21  Keith Miller  <keith_miller@apple.com>
+
+        Implement the Top-level await proposal
+        https://bugs.webkit.org/show_bug.cgi?id=202484
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/config.yaml:
+
+2021-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Upgrade test262
+        https://bugs.webkit.org/show_bug.cgi?id=222243
+
+        Reviewed by Alexey Shvayka.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Object/assign/target-is-frozen-accessor-property-set-succeeds.js: Added.
+        (target1.set foo):
+        (target2.Object.freeze.set sym):
+        * test262/test/built-ins/Object/assign/target-is-frozen-data-property-set-throws.js: Added.
+        * test262/test/built-ins/Object/assign/target-is-non-extensible-existing-accessor-property.js: Added.
+        (target1.Object.preventExtensions.set foo):
+        (target2.set sym):
+        * test262/test/built-ins/Object/assign/target-is-non-extensible-existing-data-property.js: Added.
+        * test262/test/built-ins/Object/assign/target-is-non-extensible-property-creation-throws.js: Added.
+        (get bar):
+        * test262/test/built-ins/Object/assign/target-is-sealed-existing-accessor-property.js: Added.
+        (target1.Object.seal.set foo):
+        (target2.set sym):
+        * test262/test/built-ins/Object/assign/target-is-sealed-existing-data-property.js: Added.
+        * test262/test/built-ins/Object/assign/target-is-sealed-property-creation-throws.js: Added.
+        (get bar):
+        * test262/test/built-ins/Object/freeze/proxy-with-defineProperty-handler.js: Added.
+        (proxy.new.Proxy.get foo):
+        (proxy.new.Proxy.set foo):
+        (set foo.defineProperty):
+        (set foo):
+        * test262/test/built-ins/Object/seal/proxy-with-defineProperty-handler.js: Added.
+        (proxy.new.Proxy.get foo):
+        (proxy.new.Proxy.set foo):
+        (set foo.defineProperty):
+        (set foo):
+        * test262/test/built-ins/TypedArray/prototype/filter/BigInt/callbackfn-detachbuffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/findIndex/BigInt/predicate-may-detach-buffer.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/intl402/DateTimeFormat/constructor-no-instanceof.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/format/no-instanceof.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/no-instanceof.js: Added.
+        * test262/test/intl402/NumberFormat/constructor-no-instanceof.js: Added.
+        * test262/test/intl402/NumberFormat/prototype/format/no-instanceof.js: Added.
+        * test262/test/intl402/NumberFormat/prototype/resolvedOptions/no-instanceof.js: Added.
+        * test262/test262-Revision.txt:
+
+2021-02-19  Michael Saboff  <msaboff@apple.com>
+
+        Minor fixes to RegExp match indices after r273086
+        https://bugs.webkit.org/show_bug.cgi?id=222157
+
+        Reviewed by Yusuke Suzuki.
+
+        Added a new test to verify that all flag RegExp flag combinations work round tripping
+        from flags to flag proerties and back.
+        Added standalone versions of the updated regexp-match-indices from the PR
+        https://github.com/tc39/test262/pull/2934 as JSTest/stress test.
+        Disabled the regexp-match-indices feature test in test262 until the pull request
+        with updated tests land and we update the WebKit version.
+        This is tracked in https://bugs.webkit.org/show_bug.cgi?id=222142.
+
+        * stress/regexp-all-flags.js: Added.
+        (flagsFromVariation):
+        (setPropertiesForVariation):
+        (missingPropertiesForVariation):
+        (test.let.flagsSet.get call):
+        (test):
+        * stress/test262-indices-array-element.js: Added.
+        (assertSameValue):
+        * stress/test262-indices-array-matched.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        * stress/test262-indices-array-non-unicode-match.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        (assertDeepEqual):
+        (verifyProperty):
+        * stress/test262-indices-array-properties.js: Added.
+        (verifyProperty):
+        * stress/test262-indices-array-unicode-match.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        (assertDeepEqual):
+        (verifyProperty):
+        * stress/test262-indices-array-unicode-property-names.js: Added.
+        (assertCompareArray):
+        * stress/test262-indices-array-unmatched.js: Added.
+        (assertSameValue):
+        * stress/test262-indices-array.js: Added.
+        (assert):
+        (assertSameValue):
+        * stress/test262-indices-groups-object-undefined.js: Added.
+        (verifyProperty):
+        * stress/test262-indices-groups-object-unmatched.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        * stress/test262-indices-groups-object.js: Added.
+        (assertSameValue):
+        (assertCompareArray):
+        (verifyProperty):
+        * stress/test262-indices-groups-properties.js: Added.
+        (assertCompareArray):
+        (verifyProperty):
+        * stress/test262-indices-property.js: Added.
+        (assertSameValue):
+        (verifyProperty):
+        * test262/config.yaml:
+
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use toObject for options in new Intl constructors
+        https://bugs.webkit.org/show_bug.cgi?id=222164
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/intl-get-options-not-using-toobject.js: Added.
+        (shouldThrow):
+
+2021-02-19  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Fix Test262 expectations for static private methods
+        https://bugs.webkit.org/show_bug.cgi?id=222170
+
+        Unreviewed, update test262/expectations.yaml
+
+        * test262/expectations.yaml:
+
+2021-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Simplify excludedSet handling in object rest expression
+        https://bugs.webkit.org/show_bug.cgi?id=221668
+
+        Reviewed by Alexey Shvayka.
+
+        * microbenchmarks/object-rest-computed-destructuring.js: Added.
+        * stress/object-rest-computed-inlined-numbers.js: Added.
+        (inner):
+        (outer):
+        * stress/object-rest-computed-inlined.js: Added.
+        (inner):
+        (outer):
+
+2021-02-18  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Implement private static method
+        https://bugs.webkit.org/show_bug.cgi?id=219181
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/class-private-method-access.js: Added.
+        * stress/private-accessor-static-non-static.js: Added.
+        * stress/private-getter-inner-class.js:
+        * stress/static-private-methods-and-accessor-inner-class.js: Added.
+        * stress/static-private-methods-and-accessor-multiple-evaluation.js: Added.
+        * stress/static-private-methods-and-accessors-postfix-node.js: Added.
+        * stress/static-private-methods-and-accessors-prefix-node.js: Added.
+        * test262/config.yaml:
+
+2021-02-18  Michael Saboff  <msaboff@apple.com>
+
+        [JSC] Implement RegExp Match Indices proposal
+        https://bugs.webkit.org/show_bug.cgi?id=202475
+
+        Reviewed by Yusuke Suzuki.
+
+        Updated tests.
+
+        * es6/Proxy_internal_get_calls_RegExp.prototype.flags.js:
+        * stress/static-getter-in-names.js:
+        * test262/config.yaml:
+
+2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com> and Sergey Rubanov <chi187@gmail.com>
+
+        WebAssembly: implement non-trapping float to int conversion
+        https://bugs.webkit.org/show_bug.cgi?id=173471
+
+        Reviewed by Tadeu Zagallo.
+
+        * wasm/spec-tests/binary-leb128.wast.js:
+        * wasm/spec-tests/conversions.wast.js:
+        * wasm/wasm.json:
+
+2021-02-15  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Implement private accessors
+        https://bugs.webkit.org/show_bug.cgi?id=194435
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/private-accesor-duplicate-name-early-errors.js: Added.
+        * stress/private-getter-brand-check.js: Added.
+        * stress/private-getter-inner-class.js: Added.
+        * stress/private-members-get-and-set.js: Added.
+        * stress/private-methods-and-accessors-postfix-node.js: Added.
+        * stress/private-methods-and-accessors-prefix-node.js: Added.
+        * stress/private-names-available-on-direct-eval.js:
+        * stress/private-names-available-on-eval-during-field-initialization.js: Copied from JSTests/stress/private-names-available-on-direct-eval.js.
+        * stress/private-setter-brand-check.js: Added.
+        * stress/private-setter-inner-class.js: Added.
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
 2021-02-14  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         JSC stress test stress/copy-data-properties-fast-path.js.default fails on s390x and ppc64le

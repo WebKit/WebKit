@@ -78,8 +78,10 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(ClipOutToPath);
     case ItemType::ClipPath:
         return sizeof(ClipPath);
-    case ItemType::ClipToDrawingCommands:
-        return sizeof(ClipToDrawingCommands);
+    case ItemType::BeginClipToDrawingCommands:
+        return sizeof(BeginClipToDrawingCommands);
+    case ItemType::EndClipToDrawingCommands:
+        return sizeof(EndClipToDrawingCommands);
     case ItemType::DrawGlyphs:
         return sizeof(DrawGlyphs);
     case ItemType::DrawImageBuffer:
@@ -179,7 +181,8 @@ bool isDrawingItem(ItemType type)
     case ItemType::ClipToImageBuffer:
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
-    case ItemType::ClipToDrawingCommands:
+    case ItemType::BeginClipToDrawingCommands:
+    case ItemType::EndClipToDrawingCommands:
     case ItemType::ConcatenateCTM:
     case ItemType::FlushContext:
     case ItemType::MetaCommandChangeDestinationImageBuffer:
@@ -251,7 +254,6 @@ bool isInlineItem(ItemType type)
     switch (type) {
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
-    case ItemType::ClipToDrawingCommands:
     case ItemType::DrawFocusRingPath:
     case ItemType::DrawFocusRingRects:
     case ItemType::DrawGlyphs:
@@ -279,6 +281,8 @@ bool isInlineItem(ItemType type)
     case ItemType::Clip:
     case ItemType::ClipOut:
     case ItemType::ClipToImageBuffer:
+    case ItemType::BeginClipToDrawingCommands:
+    case ItemType::EndClipToDrawingCommands:
     case ItemType::ConcatenateCTM:
     case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:

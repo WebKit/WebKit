@@ -40,6 +40,7 @@ static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncExec);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncCompile);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterGlobal);
+static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterHasIndices);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterIgnoreCase);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterMultiline);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterDotAll);
@@ -64,6 +65,7 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, regExpProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->global, regExpProtoGetterGlobal, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->dotAll, regExpProtoGetterDotAll, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->hasIndices, regExpProtoGetterHasIndices, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->ignoreCase, regExpProtoGetterIgnoreCase, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->multiline, regExpProtoGetterMultiline, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->sticky, regExpProtoGetterSticky, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
@@ -160,7 +162,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
     return JSValue::encode(thisRegExp);
 }
 
-typedef std::array<char, 6 + 1> FlagsString; // 6 different flags and a null character terminator.
+typedef std::array<char, 7 + 1> FlagsString; // 6 different flags and a null character terminator.
 
 static inline FlagsString flagsString(JSGlobalObject* globalObject, JSObject* regexp)
 {
@@ -170,6 +172,8 @@ static inline FlagsString flagsString(JSGlobalObject* globalObject, JSObject* re
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    JSValue indicesValue = regexp->get(globalObject, vm.propertyNames->hasIndices);
+    RETURN_IF_EXCEPTION(scope, string);
     JSValue globalValue = regexp->get(globalObject, vm.propertyNames->global);
     RETURN_IF_EXCEPTION(scope, string);
     JSValue ignoreCaseValue = regexp->get(globalObject, vm.propertyNames->ignoreCase);
@@ -184,6 +188,8 @@ static inline FlagsString flagsString(JSGlobalObject* globalObject, JSObject* re
     RETURN_IF_EXCEPTION(scope, string);
 
     unsigned index = 0;
+    if (indicesValue.toBoolean(globalObject))
+        string[index++] = 'd';
     if (globalValue.toBoolean(globalObject))
         string[index++] = 'g';
     if (ignoreCaseValue.toBoolean(globalObject))
@@ -245,6 +251,22 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterGlobal, (JSGlobalObject* globalObject,
     }
 
     return JSValue::encode(jsBoolean(regexp->regExp()->global()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterHasIndices, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
+    if (UNLIKELY(!regexp)) {
+        if (thisValue == globalObject->regExpPrototype())
+            return JSValue::encode(jsUndefined());
+        return throwVMTypeError(globalObject, scope, "The RegExp.prototype.hasIndices getter can only be called on a RegExp object"_s);
+    }
+
+    return JSValue::encode(jsBoolean(regexp->regExp()->hasIndices()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterIgnoreCase, (JSGlobalObject* globalObject, CallFrame* callFrame))

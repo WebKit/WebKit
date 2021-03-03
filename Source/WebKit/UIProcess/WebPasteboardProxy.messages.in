@@ -22,42 +22,42 @@
 
 messages -> WebPasteboardProxy NotRefCounted {
 #if PLATFORM(IOS_FAMILY)
-    WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName) WantsConnection
-    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName) WantsConnection
-    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName) WantsConnection
-    WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName) WantsConnection
-    UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
+    WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) WantsConnection
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) WantsConnection
+    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) WantsConnection
+    WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) WantsConnection
+    UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName, Optional<WebCore::PageIdentifier> pageID)
 #endif
 
-    WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName) -> (int64_t changeCount) Synchronous WantsConnection
-    TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin) -> (Vector<String> types) Synchronous WantsConnection
-    AllPasteboardItemInfo(String pasteboardName, int64_t changeCount) -> (Optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous WantsConnection
-    InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount) -> (Optional<WebCore::PasteboardItemInfo> info) Synchronous WantsConnection
-    GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount) Synchronous WantsConnection
-    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string) Synchronous WantsConnection
-    ReadURLFromPasteboard(uint64_t index, String pasteboardName) -> (String url, String title) Synchronous WantsConnection
-    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous WantsConnection
-    ContainsStringSafeForDOMToReadForType(String type, String pasteboardName) -> (bool result) Synchronous WantsConnection
+    WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin, Optional<WebCore::PageIdentifier> pageID) -> (Vector<String> types) Synchronous WantsConnection
+    AllPasteboardItemInfo(String pasteboardName, int64_t changeCount, Optional<WebCore::PageIdentifier> pageID) -> (Optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous WantsConnection
+    InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount, Optional<WebCore::PageIdentifier> pageID) -> (Optional<WebCore::PasteboardItemInfo> info) Synchronous WantsConnection
+    GetPasteboardItemsCount(String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (uint64_t itemsCount) Synchronous WantsConnection
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (String string) Synchronous WantsConnection
+    ReadURLFromPasteboard(uint64_t index, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
+    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous WantsConnection
+    ContainsStringSafeForDOMToReadForType(String type, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (bool result) Synchronous WantsConnection
 
 #if PLATFORM(COCOA)
     # Pasteboard messages.
-    GetNumberOfFiles(String pasteboardName) -> (uint64_t numberOfFiles) Synchronous WantsConnection
-    GetPasteboardTypes(String pasteboardName) -> (Vector<String> types) Synchronous WantsConnection
-    GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType) -> (Vector<String> pathnames, WebKit::SandboxExtension::HandleArray sandboxExtensions) Synchronous WantsConnection
-    GetPasteboardStringForType(String pasteboardName, String pasteboardType) -> (String string) Synchronous WantsConnection
-    GetPasteboardStringsForType(String pasteboardName, String pasteboardType) -> (Vector<String> strings) Synchronous WantsConnection
-    GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous WantsConnection
-    GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
-    GetPasteboardColor(String pasteboardName) -> (WebCore::Color color) Synchronous WantsConnection
-    GetPasteboardURL(String pasteboardName) -> (String urlString) Synchronous WantsConnection
-    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (int64_t changeCount) Synchronous WantsConnection
-    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (int64_t changeCount) Synchronous WantsConnection
-    SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName) -> (int64_t changeCount) Synchronous WantsConnection
-    SetPasteboardColor(String pasteboardName, WebCore::Color color) -> (int64_t changeCount) Synchronous WantsConnection
-    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (int64_t changeCount) Synchronous WantsConnection
-    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::IPCHandle handle) -> (int64_t changeCount) Synchronous WantsConnection
-    ContainsURLStringSuitableForLoading(String pasteboardName) -> (bool result) Synchronous WantsConnection
-    URLStringSuitableForLoading(String pasteboardName) -> (String url, String title) Synchronous WantsConnection
+    GetNumberOfFiles(String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (uint64_t numberOfFiles) Synchronous WantsConnection
+    GetPasteboardTypes(String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (Vector<String> types) Synchronous WantsConnection
+    GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType, Optional<WebCore::PageIdentifier> pageID) -> (Vector<String> pathnames, WebKit::SandboxExtension::HandleArray sandboxExtensions) Synchronous WantsConnection
+    GetPasteboardStringForType(String pasteboardName, String pasteboardType, Optional<WebCore::PageIdentifier> pageID) -> (String string) Synchronous WantsConnection
+    GetPasteboardStringsForType(String pasteboardName, String pasteboardType, Optional<WebCore::PageIdentifier> pageID) -> (Vector<String> strings) Synchronous WantsConnection
+    GetPasteboardBufferForType(String pasteboardName, String pasteboardType, Optional<WebCore::PageIdentifier> pageID) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous WantsConnection
+    GetPasteboardChangeCount(String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    GetPasteboardColor(String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (WebCore::Color color) Synchronous WantsConnection
+    GetPasteboardURL(String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (String urlString) Synchronous WantsConnection
+    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, Optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, Optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardColor(String pasteboardName, WebCore::Color color, Optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string, Optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::IPCHandle handle, Optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    ContainsURLStringSuitableForLoading(String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (bool result) Synchronous WantsConnection
+    URLStringSuitableForLoading(String pasteboardName, Optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
 #endif
 
 #if PLATFORM(GTK)

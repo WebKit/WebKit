@@ -144,7 +144,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginDatabaseNameDisplayNameCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:databaseName:displayName:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded = [delegate respondsToSelector:@selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:)];
     m_delegateMethods.webViewPrintFrame = [delegate respondsToSelector:@selector(_webView:printFrame:)];
-    m_delegateMethods.webViewPrintFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:printFrame:completionHandler:)];
+    m_delegateMethods.webViewPrintFramePDFFirstPageSizeCompletionHandler = [delegate respondsToSelector:@selector(_webView:printFrame:pdfFirstPageSize:completionHandler:)];
     m_delegateMethods.webViewDidClose = [delegate respondsToSelector:@selector(webViewDidClose:)];
     m_delegateMethods.webViewClose = [delegate respondsToSelector:@selector(_webViewClose:)];
     m_delegateMethods.webViewFullscreenMayReturnToInline = [delegate respondsToSelector:@selector(_webViewFullscreenMayReturnToInline:)];
@@ -1062,15 +1062,55 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return;
     }
 
-    bool respondsToRequestMediaCaptureAuthorization = [delegate respondsToSelector:@selector(_webView:requestMediaCaptureAuthorization:decisionHandler:)];
+    bool respondsToRequestMediaCapturePermission = [delegate respondsToSelector:@selector(_webView:requestMediaCapturePermission:video:decisionHandler:)];
     bool respondsToRequestUserMediaAuthorizationForDevices = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
 
-    if (!respondsToRequestMediaCaptureAuthorization && !respondsToRequestUserMediaAuthorizationForDevices) {
+    if (!respondsToRequestMediaCapturePermission && !respondsToRequestUserMediaAuthorizationForDevices) {
         request.doDefaultAction();
         return;
     }
 
-    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestMediaCaptureAuthorization:decisionHandler:));
+    // FIXME: Provide a specific delegate for display capture.
+    if (!request.requiresDisplayCapture() && respondsToRequestMediaCapturePermission) {
+        auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestMediaCapturePermission:video:decisionHandler:));
+        auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](_WKPermissionDecision decision) {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+
+            switch (decision) {
+            case _WKPermissionDecisionPrompt:
+                protectedRequest->prompt();
+                break;
+            case _WKPermissionDecisionGrant: {
+                const String& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : String();
+                const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
+                protectedRequest->allow(audioDeviceUID, videoDeviceUID);
+                break;
+            }
+            case _WKPermissionDecisionDeny:
+                protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                break;
+            }
+        });
+        [delegate _webView:m_uiDelegate->m_webView.get().get() requestMediaCapturePermission:request.requiresAudioCapture() video:request.requiresVideoCapture() decisionHandler:decisionHandler.get()];
+        return;
+    }
+
+    URL requestFrameURL { frame.url() };
+    URL mainFrameURL { frame.page()->mainFrame()->url() };
+
+    _WKCaptureDevices devices = 0;
+    if (request.requiresAudioCapture())
+        devices |= _WKCaptureDeviceMicrophone;
+    if (request.requiresVideoCapture())
+        devices |= _WKCaptureDeviceCamera;
+    if (request.requiresDisplayCapture()) {
+        devices |= _WKCaptureDeviceDisplay;
+        ASSERT(!(devices & _WKCaptureDeviceCamera));
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:));
     auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](BOOL authorized) {
         if (checker->completionHandlerHasBeenCalled())
             return;
@@ -1084,26 +1124,6 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
         protectedRequest->allow(audioDeviceUID, videoDeviceUID);
     });
-
-    _WKCaptureDevices devices = 0;
-    if (request.requiresAudioCapture())
-        devices |= _WKCaptureDeviceMicrophone;
-    if (request.requiresVideoCapture())
-        devices |= _WKCaptureDeviceCamera;
-    if (request.requiresDisplayCapture()) {
-        devices |= _WKCaptureDeviceDisplay;
-        ASSERT(!(devices & _WKCaptureDeviceCamera));
-    }
-
-    // FIXME: Provide a specific delegate for display capture.
-    if (!request.requiresDisplayCapture() && respondsToRequestMediaCaptureAuthorization) {
-        [delegate _webView:m_uiDelegate->m_webView.get().get() requestMediaCaptureAuthorization:devices decisionHandler:decisionHandler.get()];
-        return;
-    }
-
-    URL requestFrameURL { frame.url() };
-    URL mainFrameURL { frame.page()->mainFrame()->url() };
-
     [delegate _webView:m_uiDelegate->m_webView.get().get() requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
 #endif
 }
@@ -1193,7 +1213,7 @@ void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, con
     }).get()];
 }
 
-void UIDelegate::UIClient::printFrame(WebPageProxy&, WebFrameProxy& webFrameProxy, CompletionHandler<void()>&& completionHandler)
+void UIDelegate::UIClient::printFrame(WebPageProxy&, WebFrameProxy& webFrameProxy, const WebCore::FloatSize& pdfFirstPageSize, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_uiDelegate)
         return completionHandler();
@@ -1203,9 +1223,9 @@ void UIDelegate::UIClient::printFrame(WebPageProxy&, WebFrameProxy& webFrameProx
         return completionHandler();
 
     auto handle = API::FrameHandle::create(webFrameProxy.frameID());
-    if (m_uiDelegate->m_delegateMethods.webViewPrintFrameCompletionHandler) {
-        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:printFrame:completionHandler:));
-        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() printFrame:wrapper(handle) completionHandler:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)] () mutable {
+    if (m_uiDelegate->m_delegateMethods.webViewPrintFramePDFFirstPageSizeCompletionHandler) {
+        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:printFrame:pdfFirstPageSize:completionHandler:));
+        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() printFrame:wrapper(handle) pdfFirstPageSize:static_cast<CGSize>(pdfFirstPageSize) completionHandler:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)] () mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();

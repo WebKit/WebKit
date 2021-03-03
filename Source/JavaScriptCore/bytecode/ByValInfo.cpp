@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,13 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
-void ByValInfo::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void ByValInfo::visitAggregateImpl(Visitor& visitor)
 {
     cachedId.visitAggregate(visitor);
 }
+
+DEFINE_VISIT_AGGREGATE(ByValInfo);
 
 #endif // ENABLE(JIT)
 

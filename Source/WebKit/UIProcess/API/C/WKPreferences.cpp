@@ -2046,6 +2046,16 @@ bool WKPreferencesGetCaptureVideoInGPUProcessEnabled(WKPreferencesRef preference
     return toImpl(preferencesRef)->captureVideoInGPUProcessEnabled();
 }
 
+void WKPreferencesSetVP9DecoderEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setVP9DecoderEnabled(flag);
+}
+
+bool WKPreferencesGetVP9DecoderEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->vp9DecoderEnabled();
+}
+
 void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setReferrerPolicyAttributeEnabled(flag);

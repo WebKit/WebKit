@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,7 +90,8 @@ void IntlDateTimeFormat::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-void IntlDateTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void IntlDateTimeFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     IntlDateTimeFormat* thisObject = jsCast<IntlDateTimeFormat*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -99,6 +100,8 @@ void IntlDateTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(thisObject->m_boundFormat);
 }
+
+DEFINE_VISIT_CHILDREN(IntlDateTimeFormat);
 
 void IntlDateTimeFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
 {
@@ -191,7 +194,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
     return keyLocaleData;
 }
 
-static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue originalOptions)
+static Optional<JSObject&> toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue originalOptions)
 {
     // 12.1.1 ToDateTimeOptions abstract operation (ECMA-402 2.0)
     VM& vm = globalObject->vm();
@@ -205,7 +208,7 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
         options = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     else {
         JSObject* originalToObject = originalOptions.toObject(globalObject);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
         options = constructEmptyObject(globalObject, originalToObject);
     }
 
@@ -221,22 +224,22 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
     // iii. ReturnIfAbrupt(value).
     // iv. If value is not undefined, then let needDefaults be false.
     JSValue weekday = options->get(globalObject, vm.propertyNames->weekday);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!weekday.isUndefined())
         needDefaults = false;
 
     JSValue year = options->get(globalObject, vm.propertyNames->year);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!year.isUndefined())
         needDefaults = false;
 
     JSValue month = options->get(globalObject, vm.propertyNames->month);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!month.isUndefined())
         needDefaults = false;
 
     JSValue day = options->get(globalObject, vm.propertyNames->day);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!day.isUndefined())
         needDefaults = false;
 
@@ -250,35 +253,35 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
     // iv. If value is not undefined, then let needDefaults be false.
     if (Options::useIntlDateTimeFormatDayPeriod()) {
         JSValue dayPeriod = options->get(globalObject, vm.propertyNames->dayPeriod);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
         if (!dayPeriod.isUndefined())
             needDefaults = false;
     }
 
     JSValue hour = options->get(globalObject, vm.propertyNames->hour);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!hour.isUndefined())
         needDefaults = false;
 
     JSValue minute = options->get(globalObject, vm.propertyNames->minute);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!minute.isUndefined())
         needDefaults = false;
 
     JSValue second = options->get(globalObject, vm.propertyNames->second);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!second.isUndefined())
         needDefaults = false;
 
     JSValue fractionalSecondDigits = options->get(globalObject, vm.propertyNames->fractionalSecondDigits);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (!fractionalSecondDigits.isUndefined())
         needDefaults = false;
 
     JSValue dateStyle = options->get(globalObject, vm.propertyNames->dateStyle);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     JSValue timeStyle = options->get(globalObject, vm.propertyNames->timeStyle);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (!dateStyle.isUndefined() || !timeStyle.isUndefined())
         needDefaults = false;
@@ -292,20 +295,20 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
         JSString* numeric = jsNontrivialString(vm, "numeric"_s);
 
         options->putDirect(vm, vm.propertyNames->year, numeric);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
 
         options->putDirect(vm, vm.propertyNames->month, numeric);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
 
         options->putDirect(vm, vm.propertyNames->day, numeric);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
     // 8. If needDefaults is true and defaults is either "time" or "all", then
     // Defaults is always "date". Ignore this branch.
 
     // 9. Return options.
-    return options;
+    return *options;
 }
 
 void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
@@ -522,7 +525,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSObject* options = toDateTimeOptionsAnyDate(globalObject, originalOptions);
+    Optional<JSObject&> options = toDateTimeOptionsAnyDate(globalObject, originalOptions);
     RETURN_IF_EXCEPTION(scope, void());
 
     ResolveLocaleOptions localeOptions;

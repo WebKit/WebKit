@@ -27,17 +27,56 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayShippingMethodData.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct ApplePayShippingMethod {
+struct ApplePayShippingMethod final : public ApplePayShippingMethodData {
     String label;
     String detail;
     String amount;
     String identifier;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<ApplePayShippingMethod> decode(Decoder&);
 };
 
+template<class Encoder>
+void ApplePayShippingMethod::encode(Encoder& encoder) const
+{
+    ApplePayShippingMethodData::encode(encoder);
+    encoder << label;
+    encoder << detail;
+    encoder << amount;
+    encoder << identifier;
 }
+
+template<class Decoder>
+Optional<ApplePayShippingMethod> ApplePayShippingMethod::decode(Decoder& decoder)
+{
+    ApplePayShippingMethod result;
+
+    if (!result.decodeData(decoder))
+        return WTF::nullopt;
+
+#define DECODE(name, type) \
+    Optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return WTF::nullopt; \
+    result.name = WTFMove(*name); \
+
+    DECODE(label, String)
+    DECODE(detail, String)
+    DECODE(amount, String)
+    DECODE(identifier, String)
+
+#undef DECODE
+
+    return result;
+}
+
+} // namespace WebCore
 
 #endif

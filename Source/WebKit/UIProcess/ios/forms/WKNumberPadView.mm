@@ -430,13 +430,13 @@ static WKNumberPadKey alternateKeyAtPosition(WKNumberPadButtonPosition position)
 
 - (WKNumberPadButton *)_buttonForPosition:(WKNumberPadButtonPosition)position
 {
-    WKNumberPadButton *button = [[[WKNumberPadButton alloc] init] autorelease];
-    button.defaultKey = defaultKeyAtPosition(position, [_controller inputMode]);
-    button.alternateKey = alternateKeyAtPosition(position);
-    button.buttonPosition = position;
-    button.titleLabel.font = [UIFont systemFontOfSize:numberPadLabelFontSize() weight:UIFontWeightSemibold design:(NSString *)kCTFontUIFontDesignRounded];
-    button.userInteractionEnabled = NO;
-    return button;
+    auto button = adoptNS([[WKNumberPadButton alloc] init]);
+    [button setDefaultKey:defaultKeyAtPosition(position, [_controller inputMode])];
+    [button setAlternateKey:alternateKeyAtPosition(position)];
+    [button setButtonPosition:position];
+    [button titleLabel].font = [UIFont systemFontOfSize:numberPadLabelFontSize() weight:UIFontWeightSemibold design:(NSString *)kCTFontUIFontDesignRounded];
+    [button setUserInteractionEnabled:NO];
+    return button.autorelease();
 }
 
 - (void)_initKeypad

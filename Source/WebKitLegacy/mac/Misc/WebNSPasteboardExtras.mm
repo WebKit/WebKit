@@ -71,17 +71,14 @@ NSString *WebURLNamePboardType = @"public.url-name";
     return types;
 }
 
-static inline NSArray *_createWritableTypesForImageWithoutArchive()
-{
-    NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:legacyTIFFPasteboardType(), nil];
-    [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
-    return types;
-}
-
 static NSArray *_writableTypesForImageWithoutArchive (void)
 {
-    static NSArray *types = _createWritableTypesForImageWithoutArchive();
-    return types;
+    static auto types = makeNeverDestroyed([] {
+        auto types = adoptNS([[NSMutableArray alloc] initWithObjects:legacyTIFFPasteboardType(), nil]);
+        [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
+        return types;
+    }());
+    return types.get().get();
 }
 
 static inline NSArray *_createWritableTypesForImageWithArchive()

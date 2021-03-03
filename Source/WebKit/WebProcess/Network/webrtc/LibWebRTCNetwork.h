@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "DataReference.h"
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCSocketFactory.h"
 #include "WebMDNSRegister.h"
@@ -38,7 +39,6 @@ namespace WebKit {
 class LibWebRTCNetwork : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LibWebRTCNetwork() = default;
     ~LibWebRTCNetwork();
 
     IPC::Connection* connection() { return m_connection.get(); }

@@ -16,7 +16,7 @@ Content type: application/json
 REQUEST_URI: /privateClickMeasurement/resources/conversionReport.php
 No cookies in attribution request.
 Request body:
-{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":3,"attributed_on_site":"localhost","trigger_data":12,"version":1}
+{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":3,"attributed_on_site":"localhost","trigger_data":12,"version":2}
 
 
 --------

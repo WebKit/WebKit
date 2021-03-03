@@ -84,9 +84,9 @@ static Class WKDOMNodeClass(WebCore::Node* impl)
     return nil;
 }
 
-static WKDOMNode *initWithImpl(WebCore::Node* impl)
+static RetainPtr<WKDOMNode> createWrapper(WebCore::Node* impl)
 {
-    return [[WKDOMNodeClass(impl) alloc] _initWithImpl:impl];
+    return adoptNS([[WKDOMNodeClass(impl) alloc] _initWithImpl:impl]);
 }
 
 WebCore::Node* toWebCoreNode(WKDOMNode *wrapper)
@@ -131,9 +131,9 @@ WKDOMText *toWKDOMText(WebCore::Text* impl)
 
 // -- Range. --
 
-static WKDOMRange *initWithImpl(WebCore::Range* impl)
+static RetainPtr<WKDOMRange> createWrapper(WebCore::Range* impl)
 {
-    return [[WKDOMRange alloc] _initWithImpl:impl];
+    return adoptNS([[WKDOMRange alloc] _initWithImpl:impl]);
 }
 
 WebCore::Range* toWebCoreRange(WKDOMRange * wrapper)
@@ -154,11 +154,11 @@ static WKDOMType toWKDOMType(WebCoreType impl, DOMCache<WebCoreType, WKDOMType>&
     if (!impl)
         return nil;
     if (WKDOMType wrapper = cache.get(impl))
-        return [[wrapper retain] autorelease];
-    WKDOMType wrapper = initWithImpl(impl);
+        return retainPtr(wrapper).autorelease();
+    auto wrapper = createWrapper(impl);
     if (!wrapper)
         return nil;
-    return [wrapper autorelease];
+    return wrapper.autorelease();
 }
 
 } // namespace WebKit

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,11 +110,14 @@ JSObject* IntlSegments::createSegmentIterator(JSGlobalObject* globalObject)
     return IntlSegmentIterator::create(vm, globalObject->segmentIteratorStructure(), WTFMove(segmenter), m_buffer, m_string.get(), m_granularity);
 }
 
-void IntlSegments::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void IntlSegments::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     auto* thisObject = jsCast<IntlSegments*>(cell);
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_string);
 }
+
+DEFINE_VISIT_CHILDREN(IntlSegments);
 
 } // namespace JSC

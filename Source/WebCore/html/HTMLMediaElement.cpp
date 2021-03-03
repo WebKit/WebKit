@@ -1435,7 +1435,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (auto documentLoader = makeRefPtr(frame->loader().documentLoader())) {
-        if (page->userContentProvider().processContentRuleListsForLoad(url, ContentExtensions::ResourceType::Media, *documentLoader).summary.blockedLoad) {
+        if (page->userContentProvider().processContentRuleListsForLoad(*page, url, ContentExtensions::ResourceType::Media, *documentLoader).summary.blockedLoad) {
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
             return;
         }
@@ -7517,7 +7517,7 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     ALWAYS_LOG(LOGIDENTIFIER, command);
 
     UserGestureIndicator remoteControlUserGesture(ProcessingUserGesture, &document());
-    double offset = 15;
+    const double defaultSkipAmount = 15;
     switch (command) {
     case PlatformMediaSession::PlayCommand:
         play();
@@ -7540,19 +7540,15 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
         endScanning();
         break;
     case PlatformMediaSession::SkipForwardCommand:
-        if (argument)
-            offset = *argument;
-        handleSeekToPlaybackPosition(offset);
+        handleSeekToPlaybackPosition(argument.time ? argument.time.value() : defaultSkipAmount);
         break;
     case PlatformMediaSession::SkipBackwardCommand:
-        if (argument)
-            offset = *argument;
-        handleSeekToPlaybackPosition(0 - offset);
+        handleSeekToPlaybackPosition(0 - (argument.time ? argument.time.value() : defaultSkipAmount));
         break;
     case PlatformMediaSession::SeekToPlaybackPositionCommand:
-        ASSERT(argument);
-        if (argument)
-            handleSeekToPlaybackPosition(*argument);
+        ASSERT(argument.time);
+        if (argument.time)
+            handleSeekToPlaybackPosition(argument.time.value());
         break;
     default:
         { } // Do nothing
@@ -7581,6 +7577,12 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
         if (((m_videoFullscreenMode == VideoFullscreenModeStandard) || m_videoFullscreenStandby) && supportsPictureInPicture() && isPlaying())
             return true;
 #endif
+#if ENABLE(MEDIA_STREAM)
+        if (hasMediaStreamSrcObject() && mediaState() & IsPlayingAudio && document().mediaState() & MediaProducer::HasActiveAudioCaptureDevice) {
+            INFO_LOG(LOGIDENTIFIER, "returning true because playing an audio MediaStreamTrack");
+            return true;
+        }
+#endif
     } else if (type == PlatformMediaSession::SuspendedUnderLock) {
         if (isPlayingToExternalTarget()) {
             INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToExternalTarget() is true");
@@ -7590,6 +7592,12 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToAutomotiveHeadUnit() is true");
             return true;
         }
+#if ENABLE(MEDIA_STREAM)
+        if (hasMediaStreamSrcObject() && mediaState() & IsPlayingAudio && document().mediaState() & MediaProducer::HasActiveAudioCaptureDevice) {
+            INFO_LOG(LOGIDENTIFIER, "returning true because playing an audio MediaStreamTrack");
+            return true;
+        }
+#endif
     }
     return false;
 }

@@ -31,6 +31,10 @@
 #include "PaymentCoordinator.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayRequestBaseAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 static bool requiresSupportedNetworks(unsigned version, const ApplePayRequestBase& request)
@@ -112,6 +116,10 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
             return installmentConfiguration.releaseException();
         result.setInstallmentConfiguration(installmentConfiguration.releaseReturnValue());
     }
+#endif
+
+#if defined(ApplePayRequestBaseAdditions_convertAndValidate_request)
+    ApplePayRequestBaseAdditions_convertAndValidate_request
 #endif
 
     return WTFMove(result);

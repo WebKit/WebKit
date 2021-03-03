@@ -33,6 +33,10 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include "ApplePayShippingMethod.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayPaymentRequestAdditions.h>
+#endif
+
 namespace WebCore {
 
 struct ApplePayPaymentRequest : ApplePayRequestBase {
@@ -45,6 +49,10 @@ struct ApplePayPaymentRequest : ApplePayRequestBase {
 
     ApplePayLineItem total;
     Optional<Vector<ApplePayLineItem>> lineItems;
+
+#if defined(ApplePayPaymentRequestAdditions_members)
+    ApplePayPaymentRequestAdditions_members
+#endif
 };
 
 }

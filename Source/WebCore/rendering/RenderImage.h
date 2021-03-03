@@ -79,6 +79,8 @@ public:
 
     bool hasNonBitmapImage() const;
 
+    String accessibilityDescription() const { return imageResource().image()->accessibilityDescription(); }
+
 protected:
     void willBeDestroyed() override;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -757,7 +757,8 @@ bool AccessCase::visitWeak(VM& vm) const
     return isValid;
 }
 
-bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
+template<typename Visitor>
+bool AccessCase::propagateTransitions(Visitor& visitor) const
 {
     bool result = true;
 
@@ -772,7 +773,7 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
     switch (m_type) {
     case Transition:
     case Delete:
-        if (visitor.vm().heap.isMarked(m_structure->previousID()))
+        if (visitor.isMarked(m_structure->previousID()))
             visitor.appendUnbarriered(m_structure.get());
         else
             result = false;
@@ -784,10 +785,17 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
     return result;
 }
 
-void AccessCase::visitAggregate(SlotVisitor& visitor) const
+template bool AccessCase::propagateTransitions(AbstractSlotVisitor&) const;
+template bool AccessCase::propagateTransitions(SlotVisitor&) const;
+
+
+template<typename Visitor>
+void AccessCase::visitAggregateImpl(Visitor& visitor) const
 {
     m_identifier.visitAggregate(visitor);
 }
+
+DEFINE_VISIT_AGGREGATE_WITH_MODIFIER(AccessCase, const);
 
 void AccessCase::generateWithGuard(
     AccessGenerationState& state, CCallHelpers::JumpList& fallThrough)

@@ -32,6 +32,8 @@ if (WIN32)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_FTL_JIT PRIVATE OFF)
     # FIXME: Port bmalloc to Windows. https://bugs.webkit.org/show_bug.cgi?id=143310
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSTEM_MALLOC PRIVATE ON)
+    # FIXME: Enable WASM on Windows https://bugs.webkit.org/show_bug.cgi?id=222315
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBASSEMBLY PRIVATE OFF)
 endif ()
 
 WEBKIT_OPTION_END()

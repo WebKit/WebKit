@@ -109,7 +109,7 @@ private:
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
-    void didReceiveRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, Optional<double>);
+    void didReceiveRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
     // The connection from the web process to the GPU process.
     Ref<IPC::Connection> m_connection;

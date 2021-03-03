@@ -423,7 +423,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 - (WKBrowsingContextHandle *)handle
 {
-    return [[[WKBrowsingContextHandle alloc] _initWithPage:*_page] autorelease];
+    return adoptNS([[WKBrowsingContextHandle alloc] _initWithPage:*_page]).autorelease();
 }
 
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle

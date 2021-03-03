@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ public:
     }
 
     void finishCreation(VM&, ProxyObject*);
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
     JSValue proxy() { return m_proxy.get(); }
     void setProxyToNull(VM& vm) { return m_proxy.set(vm, this, jsNull()); }
 

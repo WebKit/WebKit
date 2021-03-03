@@ -3112,8 +3112,11 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
         return false;
 #endif
 
+#if !PLATFORM(MAC)
+    // Ugly workaround for rdar://71881767. Undo when webkit.org/b/222092 and webkit.org/b/222132 are fixed.
     if (m_compositingPolicy == CompositingPolicy::Conservative)
         return false;
+#endif
 
     if (is<RenderBox>(renderer))
         return true;
@@ -3857,7 +3860,24 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
     return m_layerForFooter.get();
 }
 
-#endif
+void RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor()
+{
+    if (!m_layerForOverhangAreas)
+        return;
+
+    Color backgroundColor;
+    if (page().settings().useThemeColorForScrollAreaBackgroundColor())
+        backgroundColor = page().themeColor();
+    if (!backgroundColor.isValid())
+        backgroundColor = m_rootExtendedBackgroundColor;
+
+    m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
+
+    if (!backgroundColor.isValid())
+        m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
+}
+
+#endif // ENABLE(RUBBER_BANDING)
 
 bool RenderLayerCompositor::viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const
 {
@@ -3933,12 +3953,7 @@ void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
         page().chrome().client().pageExtendedBackgroundColorDidChange(m_rootExtendedBackgroundColor);
         
 #if ENABLE(RUBBER_BANDING)
-        if (m_layerForOverhangAreas) {
-            m_layerForOverhangAreas->setBackgroundColor(m_rootExtendedBackgroundColor);
-
-            if (!m_rootExtendedBackgroundColor.isValid())
-                m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
-        }
+        updateLayerForOverhangAreasBackgroundColor();
 #endif
     }
     

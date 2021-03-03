@@ -58,7 +58,7 @@
             adjustedContext.boundingRect = [strongSelf convertRect:adjustedContext.boundingRect fromView:strongSelf->_contentView.get()];
             [adjustedContexts addObject:adoptNS([[_WKTextInputContext alloc] _initWithTextInputContext:adjustedContext]).get()];
         }
-        completionHandler(adjustedContexts.autorelease());
+        completionHandler(adjustedContexts.get());
     }];
 }
 
@@ -165,6 +165,13 @@
 - (void)setSelectedColorForColorPicker:(UIColor *)color
 {
     [_contentView setSelectedColorForColorPicker:color];
+}
+
+- (void)_selectDataListOption:(int)optionIndex
+{
+#if ENABLE(DATALIST_ELEMENT)
+    [_contentView _selectDataListOption:optionIndex];
+#endif
 }
 
 - (NSString *)textContentTypeForTesting

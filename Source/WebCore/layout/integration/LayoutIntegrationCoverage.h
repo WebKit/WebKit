@@ -90,7 +90,8 @@ enum class AvoidanceReason : uint64_t {
     MultiColumnFlowIsFloating                    = 1LLU  << 50,
     FlowIncludesDocumentMarkers                  = 1LLU  << 51,
     FlowIncludesHighlights                       = 1LLU  << 52,
-    EndOfReasons                                 = 1LLU  << 53
+    FlowHasJustifiedNonBreakingSpace             = 1LLU  << 53,
+    EndOfReasons                                 = 1LLU  << 54
 };
 
 bool canUseForLineLayout(const RenderBlockFlow&);

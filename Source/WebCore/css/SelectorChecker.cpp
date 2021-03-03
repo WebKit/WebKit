@@ -958,6 +958,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return element.isBeingDragged();
         case CSSSelector::PseudoClassFocus:
             return matchesFocusPseudoClass(element);
+        case CSSSelector::PseudoClassFocusVisible:
+            return matchesFocusVisiblePseudoClass(element);
         case CSSSelector::PseudoClassFocusWithin:
             return element.hasFocusWithin();
         case CSSSelector::PseudoClassHover:

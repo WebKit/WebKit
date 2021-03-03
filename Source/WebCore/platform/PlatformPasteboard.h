@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformPasteboard_h
-#define PlatformPasteboard_h
+#pragma once
 
+#include "DataOwnerType.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
@@ -64,6 +64,8 @@ public:
 #endif
     WEBCORE_EXPORT Optional<PasteboardItemInfo> informationForItemAtIndex(size_t index, int64_t changeCount);
     WEBCORE_EXPORT Optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(int64_t changeCount);
+
+    WEBCORE_EXPORT static void performAsDataOwner(DataOwnerType, Function<void()>&&);
 
     enum class IncludeImageTypes : bool { No, Yes };
     static String platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes = IncludeImageTypes::No);
@@ -126,6 +128,4 @@ private:
 #endif
 };
 
-}
-
-#endif // !PlatformPasteboard_h
+} // namespace WebCore

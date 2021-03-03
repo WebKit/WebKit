@@ -8,6 +8,7 @@ function format_uploaded_file($file_row)
         'id' => $file_row['file_id'],
         'size' => $file_row['file_size'],
         'createdAt' => Database::to_js_time($file_row['file_created_at']),
+        'deletedAt' => Database::to_js_time($file_row['file_deleted_at']),
         'mime' => $file_row['file_mime'],
         'filename' => $file_row['file_filename'],
         'extension' => $file_row['file_extension'],

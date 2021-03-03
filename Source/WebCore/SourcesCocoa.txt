@@ -23,6 +23,8 @@
 
 JSApplePayCancelEvent.cpp
 JSApplePayContactField.cpp
+JSApplePayDetailsUpdateBase.cpp
+JSApplePayDetailsUpdateData.cpp
 JSApplePayError.cpp
 JSApplePayErrorCode.cpp
 JSApplePayErrorContactField.cpp
@@ -31,6 +33,7 @@ JSApplePayInstallmentItem.cpp
 JSApplePayInstallmentItemType.cpp
 JSApplePayInstallmentRetailChannel.cpp
 JSApplePayLineItem.cpp
+JSApplePayLineItemData.cpp
 JSApplePayMerchantCapability.cpp
 JSApplePayModifier.cpp
 JSApplePayPayment.cpp
@@ -38,6 +41,7 @@ JSApplePayPaymentAuthorizationResult.cpp
 JSApplePayPaymentAuthorizedEvent.cpp
 JSApplePayPaymentContact.cpp
 JSApplePayPaymentMethod.cpp
+JSApplePayPaymentMethodModeUpdate.cpp
 JSApplePayPaymentMethodSelectedEvent.cpp
 JSApplePayPaymentMethodType.cpp
 JSApplePayPaymentMethodUpdate.cpp
@@ -55,13 +59,13 @@ JSApplePaySetupFeatureType.cpp
 JSApplePayShippingContactSelectedEvent.cpp
 JSApplePayShippingContactUpdate.cpp
 JSApplePayShippingMethod.cpp
+JSApplePayShippingMethodData.cpp
 JSApplePayShippingMethodSelectedEvent.cpp
 JSApplePayShippingMethodUpdate.cpp
 JSApplePayValidateMerchantEvent.cpp
 Modules/airplay/WebMediaSessionManager.cpp
 Modules/applepay/ApplePayCancelEvent.cpp
 Modules/applepay/ApplePayContactField.cpp
-Modules/applepay/ApplePayError.cpp
 Modules/applepay/ApplePayMerchantCapability.cpp
 Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp
 Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp
@@ -83,7 +87,6 @@ Modules/applepay/cocoa/PaymentCocoa.mm
 Modules/applepay/cocoa/PaymentContactCocoa.mm
 Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm
 Modules/applepay/cocoa/PaymentMethodCocoa.mm
-Modules/applepay/cocoa/PaymentMethodUpdateCocoa.mm
 Modules/applepay/cocoa/PaymentSessionErrorCocoa.mm
 Modules/applepay/cocoa/PaymentSummaryItemsCocoa.mm
 Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
@@ -167,6 +170,7 @@ inspector/mac/PageDebuggerMac.mm
 loader/archive/cf/LegacyWebArchive.cpp
 loader/archive/cf/LegacyWebArchiveMac.mm
 loader/cocoa/DiskCacheMonitorCocoa.mm
+loader/cocoa/PrivateClickMeasurementCocoa.mm
 loader/cocoa/SubresourceLoaderCocoa.mm
 loader/ios/LegacyPreviewLoader.mm
 loader/mac/DocumentLoaderMac.cpp
@@ -190,7 +194,6 @@ page/mac/PageMac.mm
 page/mac/ServicesOverlayController.mm
 page/mac/TextIndicatorWindow.mm
 page/mac/WheelEventDeltaFilterMac.mm
-page/scrolling/ScrollingMomentumCalculator.cpp
 page/scrolling/cocoa/ScrollingStateNode.mm
 page/scrolling/cocoa/ScrollingTreeFixedNode.mm
 page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm
@@ -249,8 +252,6 @@ platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
-platform/cocoa/ScrollController.mm
-platform/cocoa/ScrollSnapAnimatorState.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/SharedBufferCocoa.mm
 platform/cocoa/SystemVersion.mm
@@ -502,6 +503,7 @@ platform/mac/PublicSuffixMac.mm
 platform/mac/RemoteCommandListenerMac.mm
 platform/mac/SSLKeyGeneratorMac.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
+platform/mac/ScrollController.mm
 platform/mac/ScrollViewMac.mm
 platform/mac/ScrollbarThemeMac.mm @no-unify
 platform/mac/SerializedPlatformDataCueMac.mm
@@ -571,6 +573,7 @@ platform/network/cocoa/CredentialCocoa.mm
 platform/network/cocoa/NetworkLoadMetrics.mm
 platform/network/cocoa/NetworkStorageSessionCocoa.mm
 platform/network/cocoa/ProtectionSpaceCocoa.mm
+platform/network/cocoa/RangeResponseGenerator.mm
 platform/network/cocoa/ResourceRequestCocoa.mm
 platform/network/cocoa/ResourceResponseCocoa.mm @no-unify // Unsafe to unify until rdar://problem/48853137 is resolved
 platform/network/cocoa/WebCoreNSURLSession.mm @no-unify

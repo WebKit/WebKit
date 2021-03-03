@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcess.h"
 
+#import "GPUProcessConnectionParameters.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
@@ -329,6 +330,15 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     updateProcessName(IsInProcessInitialization::Yes);
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+    // Disable relaunch on login. This is also done from -[NSApplication init] by dispatching -[NSApplication disableRelaunchOnLogin] on a non-main thread.
+    // This will be in a race with the closing of the Launch Services connection, so call it synchronously here.
+    // The cost of calling this should be small, and it is not expected to have any impact on performance.
+    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSPersistenceSuppressRelaunchAtLoginKey, kCFBooleanTrue, nullptr);
+    
+    // This is being called under WebPage::platformInitialize(), and may reach out to the Launch Services daemon once in the lifetime of the process.
+    // Call this synchronously here while a sandbox extension to Launch Services is being held.
+    [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:adoptNS([[WKAccessibilityWebPageObject alloc] init]).get()];
+
     auto method = class_getInstanceMethod([NSApplication class], @selector(_updateCanQuitQuietlyAndSafely));
     method_setImplementation(method, (IMP)preventAppKitFromContactingLaunchServices);
 
@@ -494,7 +504,7 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
     auto error = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
     ASSERT(!error);
     if (error) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Failed to set the display name of the WebContent process, error code: %ld", static_cast<long>(error));
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Failed to set the display name of the WebContent process, error code=%ld", static_cast<long>(error));
         return;
     }
 #if ASSERT_ENABLED
@@ -974,9 +984,9 @@ void WebProcess::updateFreezerStatus()
     bool isFreezable = shouldFreezeOnSuspension();
     auto result = memorystatus_control(MEMORYSTATUS_CMD_SET_PROCESS_IS_FREEZABLE, getpid(), isFreezable ? 1 : 0, nullptr, 0);
     if (result)
-        RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "updateFreezerStatus: isFreezable: %d, error: %d", isFreezable, result);
+        RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "updateFreezerStatus: isFreezable=%d, error=%d", isFreezable, result);
     else
-        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateFreezerStatus: isFreezable: %d, success", isFreezable);
+        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateFreezerStatus: isFreezable=%d, success", isFreezable);
 }
 #endif
 
@@ -1127,22 +1137,18 @@ void WebProcess::unblockPreferenceService(SandboxExtension::HandleArray&& handle
 #endif
 
 #if PLATFORM(IOS)
-void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetHandle,  WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
+void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
 {
-    if (m_assetServiceExtension && m_assetServiceV2Extension)
+    if (m_assetServiceV2Extension)
         return;
-    m_assetServiceExtension = SandboxExtension::create(WTFMove(mobileAssetHandle));
-    m_assetServiceExtension->consume();
     m_assetServiceV2Extension = SandboxExtension::create(WTFMove(mobileAssetV2Handle));
     m_assetServiceV2Extension->consume();
 }
 
 void WebProcess::revokeAccessToAssetServices()
 {
-    if (!m_assetServiceExtension || !m_assetServiceV2Extension)
+    if (!m_assetServiceV2Extension)
         return;
-    m_assetServiceExtension->revoke();
-    m_assetServiceExtension = nullptr;
     m_assetServiceV2Extension->revoke();
     m_assetServiceV2Extension = nullptr;
 }
@@ -1211,10 +1217,38 @@ void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboard
     }
 }
 
+#if ENABLE(GPU_PROCESS)
+void WebProcess::platformInitializeGPUProcessConnectionParameters(GPUProcessConnectionParameters& parameters)
+{
+#if HAVE(TASK_IDENTITY_TOKEN)
+    task_id_token_t identityToken;
+    kern_return_t kr = task_create_identity_token(mach_task_self(), &identityToken);
+    if (kr == KERN_SUCCESS)
+        parameters.webProcessIdentityToken = MachSendRight::adopt(identityToken);
+    else
+        RELEASE_LOG_ERROR(Process, "Call to task_create_identity_token() failed: %{private}s (%x)", mach_error_string(kr), kr);
+#else
+    UNUSED_PARAM(parameters);
+#endif
+}
+#endif
+
 #if PLATFORM(MAC)
 void WebProcess::systemWillPowerOn()
 {
     MainThreadSharedTimer::restartSharedTimer();
+}
+
+void WebProcess::systemWillSleep()
+{
+    if (PlatformMediaSessionManager::sharedManagerIfExists())
+        PlatformMediaSessionManager::sharedManager().processSystemWillSleep();
+}
+
+void WebProcess::systemDidWake()
+{
+    if (PlatformMediaSessionManager::sharedManagerIfExists())
+        PlatformMediaSessionManager::sharedManager().processSystemDidWake();
 }
 #endif
 

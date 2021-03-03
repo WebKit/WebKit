@@ -29,6 +29,7 @@
 #include "MIMETypeRegistry.h"
 #include "RegistrableDomain.h"
 #include "SharedBuffer.h"
+#include "SoupVersioning.h"
 #include "URLSoup.h"
 #include "WebKitFormDataInputStream.h"
 #include <wtf/text/CString.h>
@@ -64,11 +65,12 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
 
     soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(priority()));
 
-    updateSoupMessageHeaders(soupMessage->request_headers);
+    updateSoupMessageHeaders(soup_message_get_request_headers(soupMessage.get()));
 
-    auto firstParty = urlToSoupURI(firstPartyForCookies());
-    if (firstParty)
-        soup_message_set_first_party(soupMessage.get(), firstParty.get());
+    if (firstPartyForCookies().protocolIsInHTTPFamily()) {
+        if (auto firstParty = urlToSoupURI(firstPartyForCookies()))
+            soup_message_set_first_party(soupMessage.get(), firstParty.get());
+    }
 
 #if SOUP_CHECK_VERSION(2, 69, 90)
     if (!isSameSiteUnspecified()) {
@@ -100,7 +102,12 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
     auto& elements = formData->elements();
     if (elements.size() == 1 && !formData->alwaysStream()) {
         if (auto* vector = WTF::get_if<Vector<char>>(elements[0].data)) {
+#if USE(SOUP2)
             soup_message_body_append(soupMessage->request_body, SOUP_MEMORY_TEMPORARY, vector->data(), vector->size());
+#else
+            GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(vector->data(), vector->size()));
+            soup_message_set_request_body_from_bytes(soupMessage, nullptr, bytes.get());
+#endif
             return;
         }
     }
@@ -118,6 +125,7 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
         return;
 
     GRefPtr<GInputStream> stream = webkitFormDataInputStreamNew(WTFMove(resolvedFormData));
+#if USE(SOUP2)
     if (GBytes* data = webkitFormDataInputStreamReadAll(WEBKIT_FORM_DATA_INPUT_STREAM(stream.get()))) {
         soup_message_body_set_accumulate(soupMessage->request_body, FALSE);
         auto* soupBuffer = soup_buffer_new_with_owner(g_bytes_get_data(data, nullptr),
@@ -125,6 +133,9 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
         soup_message_body_append_buffer(soupMessage->request_body, soupBuffer);
         soup_buffer_free(soupBuffer);
     }
+#else
+    soup_message_set_request_body(soupMessage, nullptr, stream.get(), length);
+#endif
 
     ASSERT(length == static_cast<uint64_t>(soupMessage->request_body->length));
 }
@@ -158,6 +169,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return 10000;
 }
 
+#if USE(SOUP2)
 GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
 {
     // WebKit does not support fragment identifiers in data URLs, but soup does.
@@ -185,7 +197,13 @@ GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
 
     return soupURI;
 }
-
+#else
+GRefPtr<GUri> ResourceRequest::createSoupURI() const
+{
+    return m_url.createGUri();
 }
-
 #endif
+
+} // namespace WebCore
+
+#endif // USE(SOUP)

@@ -729,26 +729,26 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         case CSSValueActiveborder:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return { SRGBA<uint8_t> { 26, 169, 255 }, Color::Semantic };
-            return { SRGBA<uint8_t> { 0, 103, 244 }, Color::Semantic };
+                return { SRGBA<uint8_t> { 26, 169, 255 }, Color::Flags::Semantic };
+            return { SRGBA<uint8_t> { 0, 103, 244 }, Color::Flags::Semantic };
 
         case CSSValueAppleSystemControlAccent:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             // Same color in light and dark appearances.
-            return { SRGBA<uint8_t> { 0, 122, 255 }, Color::Semantic };
+            return { SRGBA<uint8_t> { 0, 122, 255 }, Color::Flags::Semantic };
 
         case CSSValueAppleSystemSelectedContentBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return { SRGBA<uint8_t> { 0, 88, 208 }, Color::Semantic };
-            return { SRGBA<uint8_t> { 0, 99, 225 }, Color::Semantic };
+                return { SRGBA<uint8_t> { 0, 88, 208 }, Color::Flags::Semantic };
+            return { SRGBA<uint8_t> { 0, 99, 225 }, Color::Flags::Semantic };
 
         case CSSValueHighlight:
         case CSSValueAppleSystemSelectedTextBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return { SRGBA<uint8_t> { 63, 99, 139, 204 }, Color::Semantic };
-            return { SRGBA<uint8_t> { 128, 188, 254, 153 }, Color::Semantic };
+                return { SRGBA<uint8_t> { 63, 99, 139, 204 }, Color::Flags::Semantic };
+            return { SRGBA<uint8_t> { 128, 188, 254, 153 }, Color::Flags::Semantic };
 
 #if !HAVE(OS_DARK_MODE_SUPPORT)
         case CSSValueAppleSystemContainerBorder:

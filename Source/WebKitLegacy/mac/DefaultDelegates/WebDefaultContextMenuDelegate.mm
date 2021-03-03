@@ -57,7 +57,7 @@
 
 - (NSMenuItem *)menuItemWithTag:(int)tag target:(id)target representedObject:(id)representedObject
 {
-    NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
+    auto menuItem = adoptNS([[NSMenuItem alloc] init]);
     [menuItem setTag:tag];
     [menuItem setTarget:target]; // can be nil
     [menuItem setRepresentedObject:representedObject];
@@ -114,7 +114,7 @@
 
     [menuItem setAction:action];
     
-    return menuItem;
+    return menuItem.autorelease();
 }
 
 - (void)appendDefaultItems:(NSArray *)defaultItems toArray:(NSMutableArray *)menuItems

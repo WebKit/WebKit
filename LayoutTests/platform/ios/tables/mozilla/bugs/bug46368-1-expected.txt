@@ -33,21 +33,21 @@ layer at (0,0) size 800x600
                 text run at (2,42) width 293: "Architecture, Bidi, Necko/Imglib, and more..."
       RenderBlock (anonymous) at (0,118) size 784x45
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,22) size 59x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-          RenderBlock (anonymous) at (12,3) size 35x14
-            RenderText at (0,0) size 35x14
-              text run at (0,0) width 35: "Reload"
-        RenderText {#text} at (62,21) size 9x19
-          text run at (62,21) width 9: "  "
-        RenderButton {INPUT} at (72,22) size 89x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-          RenderBlock (anonymous) at (12,3) size 64x14
-            RenderText at (0,0) size 64x14
-              text run at (0,0) width 64: "Change Font"
-        RenderText {#text} at (162,21) size 9x19
-          text run at (162,21) width 9: "  "
-        RenderTextControl {INPUT} at (172,22) size 138x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderButton {INPUT} at (2,22) size 61x20 [color=#FFFFFF] [bgcolor=#167AFF]
+          RenderBlock (anonymous) at (11,3) size 39x14
+            RenderText at (0,0) size 39x14
+              text run at (0,0) width 39: "Reload"
+        RenderText {#text} at (64,21) size 9x19
+          text run at (64,21) width 9: "  "
+        RenderButton {INPUT} at (74,22) size 93x20 [color=#FFFFFF] [bgcolor=#167AFF]
+          RenderBlock (anonymous) at (11,3) size 71x14
+            RenderText at (0,0) size 71x14
+              text run at (0,0) width 71: "Change Font"
+        RenderText {#text} at (168,21) size 9x19
+          text run at (168,21) width 9: "  "
+        RenderTextControl {INPUT} at (178,22) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #D9D9D9)]
         RenderText {#text} at (0,0) size 0x0
-layer at (187,151) size 124x14
-  RenderBlock {DIV} at (6,3) size 125x15
-    RenderText {#text} at (0,0) size 7x14
-      text run at (0,0) width 7: "6"
+layer at (193,151) size 141x14
+  RenderBlock {DIV} at (6,3) size 143x15
+    RenderText {#text} at (0,0) size 8x14
+      text run at (0,0) width 8: "6"

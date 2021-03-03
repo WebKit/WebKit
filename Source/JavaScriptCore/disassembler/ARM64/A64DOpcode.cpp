@@ -630,7 +630,7 @@ const char* A64OpcodeExceptionGeneration::format()
         return A64DOpcode::format();
 
     appendInstructionName(opname);
-    appendUnsignedImmediate(immediate16());
+    appendUnsignedHexImmediate(immediate16());
     return m_formatBuffer;
 }
 

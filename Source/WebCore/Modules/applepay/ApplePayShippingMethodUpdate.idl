@@ -25,7 +25,5 @@
 
 [
     Conditional=APPLE_PAY,
-] dictionary ApplePayShippingMethodUpdate {
-    required ApplePayLineItem newTotal;
-    sequence<ApplePayLineItem> newLineItems;
+] dictionary ApplePayShippingMethodUpdate : ApplePayDetailsUpdateBase {
 };

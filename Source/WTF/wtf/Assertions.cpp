@@ -610,7 +610,7 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
 
 #elif CPU(ARM64) // CPU(X86_64)
 
-#define CRASH_INST "brk #0"
+#define CRASH_INST "brk #0xc471"
 
 // See comment above on the ordering.
 #define CRASH_GPR0 "x16"

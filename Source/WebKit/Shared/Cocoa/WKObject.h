@@ -77,7 +77,7 @@ template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::Wrapp
 
 template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(Ref<ObjectClass>&& object)
 {
-    return [wrapper(object.leakRef()) autorelease];
+    return adoptNS(wrapper(object.leakRef())).autorelease();
 }
 
 template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(RefPtr<ObjectClass>&& object)

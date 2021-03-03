@@ -107,6 +107,13 @@ WebLoaderStrategy::~WebLoaderStrategy()
 
 void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
+    if (resource.type() != CachedResource::Type::MainResource) {
+        if (auto* document = frame.mainFrame().document()) {
+            if (document && document->loader())
+                request.setIsAppBound(document->loader()->lastNavigationWasAppBound());
+        }
+    }
+
     SubresourceLoader::create(frame, resource, WTFMove(request), options, [this, referrerPolicy = options.referrerPolicy, completionHandler = WTFMove(completionHandler), resource = CachedResourceHandle<CachedResource>(&resource), frame = makeRef(frame)] (RefPtr<SubresourceLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(*loader, resource.get(), referrerPolicy == ReferrerPolicy::NoReferrerWhenDowngrade);
@@ -760,6 +767,11 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
 
 void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
+    if (auto* document = webPage.mainFrame()->document()) {
+        if (document && document->loader())
+            request.setIsAppBound(document->loader()->lastNavigationWasAppBound());
+    }
+
     Optional<uint64_t> preconnectionIdentifier;
     if (completionHandler) {
         preconnectionIdentifier = WebLoaderStrategy::generateLoadIdentifier();

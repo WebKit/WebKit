@@ -84,6 +84,12 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
+
+#if ENABLE(DATALIST_ELEMENT)
+#include "HTMLDataListElement.h"
+#include "HTMLOptionElement.h"
+#endif
+
 #import <pal/ios/UIKitSoftLink.h>
 
 @interface WebCoreRenderThemeBundle : NSObject
@@ -93,6 +99,10 @@
 @end
 
 namespace WebCore {
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/RenderThemeIOSAdditions.cpp>
+#endif
 
 using namespace HTMLNames;
 
@@ -677,6 +687,10 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
     if (maximumWidth > 0) {
         int width = static_cast<int>(maximumWidth + MenuListButtonPaddingAfter);
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+        if (inputElement.document().settings().iOSFormControlRefreshEnabled())
+            width = static_cast<int>(std::ceil(maximumWidth));
+#endif
         style.setWidth(Length(width, LengthType::Fixed));
         style.setBoxSizing(BoxSizing::ContentBox);
     }
@@ -1285,9 +1299,12 @@ String RenderThemeIOS::mediaControlsScript()
             NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
 
             StringBuilder scriptBuilder;
-            scriptBuilder.append("window.isIOSFamily = true;");
+            scriptBuilder.append("window.isIOSFamily = true;\n");
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
+#if defined(RenderThemeIOSAdditions_mediaControlsScript)
+            RenderThemeIOSAdditions_mediaControlsScript
+#endif
             m_mediaControlsScript = scriptBuilder.toString();
         }
         return m_mediaControlsScript;
@@ -1374,7 +1391,7 @@ static const Vector<CSSValueIDAndSelector>& cssValueIDSelectorList()
 static inline Optional<Color> systemColorFromCSSValueIDSelector(CSSValueIDAndSelector idAndSelector)
 {
     if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), idAndSelector.selector))
-        return Color { color.CGColor, Color::Semantic };
+        return Color { color.CGColor, Color::Flags::Semantic };
     return WTF::nullopt;
 }
 
@@ -1392,7 +1409,7 @@ static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool use
 
     if (auto selector = cssColorToSelector()) {
         if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), selector))
-            return Color(color.CGColor, Color::Semantic);
+            return Color { color.CGColor, Color::Flags::Semantic };
     }
     return WTF::nullopt;
 }
@@ -2277,6 +2294,72 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
     return false;
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+
+void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    if (!box.settings().iOSFormControlRefreshEnabled()) {
+        RenderTheme::paintSliderTicks(box, paintInfo, rect);
+        return;
+    }
+
+    if (!is<HTMLInputElement>(box.node()))
+        return;
+
+    auto& input = downcast<HTMLInputElement>(*box.node());
+    if (!input.isRangeControl())
+        return;
+
+    auto dataList = input.dataList();
+    if (!dataList)
+        return;
+
+    double min = input.minimum();
+    double max = input.maximum();
+    if (min >= max)
+        return;
+
+    constexpr int tickWidth = 2;
+    constexpr int tickHeight = 8;
+    constexpr int tickCornerRadius = 1;
+
+    FloatRect tickRect;
+    FloatRoundedRect::Radii tickCornerRadii(tickCornerRadius);
+
+    bool isHorizontal = box.style().appearance() == SliderHorizontalPart;
+    if (isHorizontal) {
+        tickRect.setWidth(tickWidth);
+        tickRect.setHeight(tickHeight);
+        tickRect.setY(rect.center().y() - tickRect.height() / 2.0f);
+    } else {
+        tickRect.setWidth(tickHeight);
+        tickRect.setHeight(tickWidth);
+        tickRect.setX(rect.center().x() - tickRect.width() / 2.0f);
+    }
+
+    auto value = input.valueAsNumber();
+    auto deviceScaleFactor = box.document().deviceScaleFactor();
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    for (auto& optionElement : dataList->suggestions()) {
+        if (auto optionValue = input.listOptionValueAsDouble(optionElement)) {
+            auto tickFraction = (*optionValue - min) / (max - min);
+            auto tickRatio = isHorizontal && box.style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
+            if (isHorizontal)
+                tickRect.setX(rect.x() + tickRatio * (rect.width() - tickRect.width()));
+            else
+                tickRect.setY(rect.y() + tickRatio * (rect.height() - tickRect.height()));
+
+            FloatRoundedRect roundedTickRect(snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor), tickCornerRadii);
+            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlColor : controlBackgroundColor);
+        }
+    }
+}
+
+#endif // ENABLE(DATALIST_ELEMENT)
+
 bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!is<RenderSlider>(box))
@@ -2287,7 +2370,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     GraphicsContextStateSaver stateSaver(context);
 
     bool isHorizontal = true;
-    IntRect trackClip = rect;
+    FloatRect trackClip = rect;
 
     switch (box.style().appearance()) {
     case SliderHorizontalPart:
@@ -2408,6 +2491,9 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
 
 void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+    if (is<HTMLInputElement>(box.element()))
+        return;
+
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 

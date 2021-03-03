@@ -77,7 +77,7 @@ messages -> NetworkProcess LegacyReceiver {
     PrepareToSuspend(bool isSuspensionImminent) -> () Async
     ProcessDidResume()
 
-    PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, URL url, String userAgent, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool Optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain);
+    PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, URL url, String userAgent, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool Optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, enum:bool WebKit::LastNavigationWasAppBound lastNavigationWasAppBound);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
@@ -167,8 +167,11 @@ messages -> NetworkProcess LegacyReceiver {
     SetPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> () Async
     MarkAttributedPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
     SimulateResourceLoadStatisticsSessionRestart(PAL::SessionID sessionID) -> () Async
-    SetPrivateClickMeasurementConversionURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
+    SetPrivateClickMeasurementTokenPublicKeyURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
+    SetPrivateClickMeasurementTokenSignatureURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
+    SetPrivateClickMeasurementAttributionReportURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
     MarkPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
+    SetFraudPreventionValuesForTesting(PAL::SessionID sessionID, String secretToken, String unlinkableToken, String signature, String keyID) -> () Async
     GetLocalStorageOriginDetails(PAL::SessionID sessionID) -> (Vector<WebKit::LocalStorageDatabaseTracker::OriginDetails> details) Async
 
     SetServiceWorkerFetchTimeoutForTesting(Seconds seconds) -> () Synchronous

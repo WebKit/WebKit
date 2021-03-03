@@ -93,7 +93,7 @@ bool PointerLockManager::unlock()
 
 void PointerLockManager::handleMotion(FloatSize&& delta)
 {
-    m_webPage.handleMouseEvent(NativeWebMouseEvent(WebEvent::MouseMove, m_button, m_buttons, IntPoint(m_position), IntPoint(m_initialPoint), 0, m_modifiers, delta, mousePointerID, PointerEvent::mousePointerType()));
+    m_webPage.handleMouseEvent(NativeWebMouseEvent(WebEvent::MouseMove, m_button, m_buttons, IntPoint(m_position), IntPoint(m_initialPoint), 0, m_modifiers, delta, mousePointerID, mousePointerEventType()));
 }
 
 } // namespace WebKit

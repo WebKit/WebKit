@@ -20,6 +20,6 @@ async_test(t => {
         assert_equals(normalizeCookie(e.data.document), normalizeCookie(STRICT_BECAUSE_INVALID_SAMESITE_VALUE + "=1; " + IMPLICIT_STRICT_DOM + "=1; " + STRICT_DOM + "=1; " + LAX_DOM + "=1; " + NORMAL_DOM + "=1"));
     }));
 
-    var i = window.open("http://127.0.0.1:8000/resources/redirect.php?url=http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.php");
+    var i = window.open("http://127.0.0.1:8000/resources/redirect.py?url=http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.php");
 }, "'127.0.0.1' is same-site with itself, so samesite cookies are sent.");
 </script>

@@ -106,11 +106,11 @@ NPReason WebNetscapePluginStream::reasonForError(NSError *error)
 
 NSError *WebNetscapePluginStream::pluginCancelledConnectionError() const
 {
-    return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+    return adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
                                            contentURL:m_responseURL ? m_responseURL.get() : (NSURL *)m_requestURL
                                         pluginPageURL:nil
                                            pluginName:[[m_pluginView.get() pluginPackage] pluginInfo].name
-                                             MIMEType:(NSString *)String::fromUTF8(m_mimeType.data(), m_mimeType.length())] autorelease];
+                                             MIMEType:(NSString *)String::fromUTF8(m_mimeType.data(), m_mimeType.length())]).autorelease();
 }
 
 NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
@@ -548,10 +548,10 @@ void WebNetscapePluginStream::deliverData()
 
     if (totalBytesDelivered > 0) {
         if (totalBytesDelivered < totalBytes) {
-            NSMutableData *newDeliveryData = [[NSMutableData alloc] initWithCapacity:totalBytes - totalBytesDelivered];
+            auto newDeliveryData = adoptNS([[NSMutableData alloc] initWithCapacity:totalBytes - totalBytesDelivered]);
             [newDeliveryData appendBytes:static_cast<char*>(const_cast<void*>([m_deliveryData.get() bytes])) + totalBytesDelivered length:totalBytes - totalBytesDelivered];
             
-            m_deliveryData = adoptNS(newDeliveryData);
+            m_deliveryData = WTFMove(newDeliveryData);
         } else {
             [m_deliveryData.get() setLength:0];
             if (m_reason != WEB_REASON_NONE) 

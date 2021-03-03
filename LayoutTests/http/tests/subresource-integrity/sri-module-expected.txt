@@ -3,7 +3,6 @@ CONSOLE MESSAGE: TypeError: Cannot load script http://127.0.0.1:8000/subresource
 CONSOLE MESSAGE: TypeError: Cannot load script http://localhost:8000/subresource-integrity/resources/crossorigin-anon-script-module.js. Failed integrity metadata check. Content length: 37, Expected content length: 37, Expected metadata: sha256-deadbeefcSLlbFZCj1OACLxTxVck2TOrBTEdUbwz1yU=
 CONSOLE MESSAGE: TypeError: Cannot load script http://localhost:8000/subresource-integrity/resources/crossorigin-creds-script-module.js. Failed integrity metadata check. Content length: 38, Expected content length: 38, Expected metadata: sha256-deadbeef2S+pTRZgiw3DWrhC6JLDlt2zRyGpwH7unU8=
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
 CONSOLE MESSAGE: TypeError: Cannot load script http://127.0.0.1:8000/subresource-integrity/resources/matching-digest-module.js. Failed integrity metadata check. Content length: 29, Expected content length: 29, Expected metadata: sha256-cWh9nPfm7_mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU=
 CONSOLE MESSAGE: TypeError: Cannot load script http://127.0.0.1:8000/subresource-integrity/resources/matching-digest-module.js. Failed integrity metadata check. Content length: 29, Expected content length: 29, Expected metadata: sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9e=?foo=bar?spam=eggs
 

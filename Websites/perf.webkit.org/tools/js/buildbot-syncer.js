@@ -20,6 +20,7 @@ class BuildbotBuildEntry {
         this._isPending = 'claimed' in rawData && !rawData['claimed'];
         this._isInProgress = !this._isPending && !this._hasFinished;
         this._buildTag = rawData['number'];
+        this._result = rawData['results'];
         this._workerName = rawData['properties'] && rawData['properties']['workername'] ? rawData['properties']['workername'][0] : null;
         this._buildRequestId = rawData['properties'] && rawData['properties'][syncer._buildRequestPropertyName]
             ? rawData['properties'][syncer._buildRequestPropertyName][0] : null;
@@ -34,6 +35,7 @@ class BuildbotBuildEntry {
     isPending() { return this._isPending; }
     isInProgress() { return this._isInProgress; }
     hasFinished() { return this._hasFinished; }
+    result() { return this._result; }
     statusDescription() { return this._statusDescription; }
     url() { return this.isPending() ? this._syncer.urlForPendingBuild(this._buildbotBuildRequestId) : this._syncer.urlForBuildSerial(this._buildTag); }
 
@@ -72,11 +74,14 @@ class BuildbotSyncer {
         this._builderID = object.builderID;
         this._slaveList = object.slaveList;
         this._entryList = null;
+        this._lastCompletedBuild = null;
         this._slavesWithNewRequests = new Set;
     }
 
     builderName() { return this._builderName; }
     builderID() { return this._builderID; }
+    // Buildbot result codes: https://docs.buildbot.net/latest/developer/results.html
+    lastCompletedBuildSuccessful() { return !this._lastCompletedBuild || !this._lastCompletedBuild.result() }
 
     addTestConfiguration(test, platform, propertiesTemplate)
     {
@@ -183,9 +188,12 @@ class BuildbotSyncer {
                 for (let entry of pendingEntries)
                     entryByRequest[entry.buildRequestId()] = entry;
 
-                for (let entry of entries)
+                for (let entry of entries) {
                     entryByRequest[entry.buildRequestId()] = entry;
-
+                    if ((!this._lastCompletedBuild || this._lastCompletedBuild.buildTag() < entry.buildTag()) && entry.hasFinished())
+                        this._lastCompletedBuild = entry;
+                }
+                    
                 let entryList = [];
                 for (let id in entryByRequest)
                     entryList.push(entryByRequest[id]);

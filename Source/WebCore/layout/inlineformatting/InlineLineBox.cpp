@@ -152,20 +152,24 @@ InlineRect LineBox::logicalRectForInlineLevelBox(const Box& layoutBox) const
     return InlineRect { inlineBoxAbsolutelogicalTop, inlineBoxLogicalRect.left(), inlineBoxLogicalRect.width(), inlineBoxLogicalRect.height() };
 }
 
-InlineRect LineBox::logicalMarginRectForAtomicInlineLevelBox(const Box& layoutBox) const
+InlineRect LineBox::logicalBorderBoxForAtomicInlineLevelBox(const Box& layoutBox, const BoxGeometry& boxGeometry) const
 {
     ASSERT(layoutBox.isAtomicInlineLevelBox());
-    return logicalRectForInlineLevelBox(layoutBox);
+    auto logicalRect = logicalRectForInlineLevelBox(layoutBox);
+    // Inline level boxes use their margin box for vertical alignment. Let's covert them to border boxes.
+    logicalRect.moveVertically(boxGeometry.marginBefore());
+    auto verticalMargin = boxGeometry.marginBefore() + boxGeometry.marginAfter();
+    logicalRect.expandVertically(-verticalMargin);
+    return logicalRect;
 }
 
-InlineRect LineBox::logicalRectForInlineBox(const Box& layoutBox, const BoxGeometry& boxGeometry) const
+InlineRect LineBox::logicalBorderBoxForInlineBox(const Box& layoutBox, const BoxGeometry& boxGeometry) const
 {
     auto logicalRect = logicalRectForInlineLevelBox(layoutBox);
-    // This logical rect is as tall as the "text" content is. Let's adjust with vertical border and padding -vertical margin is ignored.
+    // This logical rect is as tall as the "text" content is. Let's adjust with vertical border and padding.
     auto verticalBorderAndPadding = boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu);
     logicalRect.expandVertically(verticalBorderAndPadding);
     logicalRect.moveVertically(-(boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0_lu)));
-    // This is essentially margin box rect without the vertical margins.
     return logicalRect;
 }
 

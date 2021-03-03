@@ -27,6 +27,8 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "CachedScriptFetcher.h"
+#include "ModuleScriptLoader.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -34,42 +36,29 @@
 
 namespace WebCore {
 
-class CachedModuleScriptLoaderClient;
+class ModuleScriptLoaderClient;
 class CachedScript;
-class CachedScriptFetcher;
 class DeferredPromise;
 class Document;
 class JSDOMGlobalObject;
 class ModuleFetchParameters;
 
-class CachedModuleScriptLoader final : public RefCounted<CachedModuleScriptLoader>, private CachedResourceClient {
+class CachedModuleScriptLoader final : public ModuleScriptLoader, private CachedResourceClient {
 public:
-    static Ref<CachedModuleScriptLoader> create(CachedModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
+    static Ref<CachedModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
 
     virtual ~CachedModuleScriptLoader();
 
-    bool load(Document&, const URL& sourceURL);
+    bool load(Document&, URL&& sourceURL);
 
-    CachedScriptFetcher& scriptFetcher() { return m_scriptFetcher.get(); }
     CachedScript* cachedScript() { return m_cachedScript.get(); }
-    ModuleFetchParameters* parameters() { return m_parameters.get(); }
-    const URL& sourceURL() const { return m_sourceURL; }
-
-    void clearClient()
-    {
-        ASSERT(m_client);
-        m_client = nullptr;
-    }
+    CachedScriptFetcher& scriptFetcher() { return static_cast<CachedScriptFetcher&>(ModuleScriptLoader::scriptFetcher()); }
 
 private:
-    CachedModuleScriptLoader(CachedModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
+    CachedModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
 
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
-    CachedModuleScriptLoaderClient* m_client { nullptr };
-    RefPtr<DeferredPromise> m_promise;
-    Ref<CachedScriptFetcher> m_scriptFetcher;
-    RefPtr<ModuleFetchParameters> m_parameters;
     CachedResourceHandle<CachedScript> m_cachedScript;
     URL m_sourceURL;
 };

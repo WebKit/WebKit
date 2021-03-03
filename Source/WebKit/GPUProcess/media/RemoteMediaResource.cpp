@@ -42,7 +42,7 @@ Ref<RemoteMediaResource> RemoteMediaResource::create(RemoteMediaResourceManager&
 }
 
 RemoteMediaResource::RemoteMediaResource(RemoteMediaResourceManager& remoteMediaResourceManager, RemoteMediaPlayerProxy& remoteMediaPlayerProxy, RemoteMediaResourceIdentifier identifier)
-    : m_remoteMediaResourceManager(remoteMediaResourceManager)
+    : m_remoteMediaResourceManager(makeWeakPtr(remoteMediaResourceManager))
     , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
     , m_id(identifier)
 {
@@ -52,7 +52,10 @@ RemoteMediaResource::~RemoteMediaResource()
 {
     ASSERT(isMainThread());
     stop();
-    m_remoteMediaResourceManager.removeMediaResource(m_id);
+    if (!m_remoteMediaResourceManager)
+        return;
+
+    m_remoteMediaResourceManager->removeMediaResource(m_id);
 }
 
 void RemoteMediaResource::stop()

@@ -200,7 +200,7 @@ static bool shouldConsiderAnimation(Element& element, const Animation& animation
     return false;
 }
 
-void AnimationTimeline::updateCSSAnimationsForStyleable(const Styleable& styleable, const RenderStyle* currentStyle, const RenderStyle& newStyle)
+void AnimationTimeline::updateCSSAnimationsForStyleable(const Styleable& styleable, const RenderStyle* currentStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle)
 {
     auto& keyframeEffectStack = styleable.ensureKeyframeEffectStack();
 
@@ -250,7 +250,7 @@ void AnimationTimeline::updateCSSAnimationsForStyleable(const Styleable& styleab
             }
 
             if (!foundMatchingAnimation)
-                newAnimations.add(CSSAnimation::create(styleable, currentAnimation, currentStyle, newStyle));
+                newAnimations.add(CSSAnimation::create(styleable, currentAnimation, currentStyle, newStyle, parentElementStyle));
         }
     }
 
@@ -377,7 +377,7 @@ void AnimationTimeline::updateCSSTransitionsForStyleableAndProperty(const Stylea
             // If a transition has not yet started or started when animations were last updated, use the timeline time at its creation
             // as its start time to ensure that it will produce a style with progress > 0.
             bool shouldUseTimelineTimeAtCreation = is<CSSTransition>(animation) && (!animation->startTime() || *animation->startTime() == currentTime());
-            animation->resolve(animatedStyle, shouldUseTimelineTimeAtCreation ? downcast<CSSTransition>(*animation).timelineTimeAtCreation() : WTF::nullopt);
+            animation->resolve(animatedStyle, nullptr, shouldUseTimelineTimeAtCreation ? downcast<CSSTransition>(*animation).timelineTimeAtCreation() : WTF::nullopt);
             return animatedStyle;
         }
 
@@ -397,7 +397,7 @@ void AnimationTimeline::updateCSSTransitionsForStyleableAndProperty(const Stylea
     auto afterChangeStyle = [&]() -> const RenderStyle {
         if (is<CSSAnimation>(animation) && animation->isRelevant()) {
             auto animatedStyle = RenderStyle::clone(newStyle);
-            animation->resolve(animatedStyle);
+            animation->resolve(animatedStyle, nullptr);
             return animatedStyle;
         }
 

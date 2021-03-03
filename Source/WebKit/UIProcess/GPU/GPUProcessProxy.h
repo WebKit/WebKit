@@ -41,10 +41,15 @@
 #include "LayerHostingContext.h"
 #endif
 
+namespace WebCore {
+struct MockMediaDevice;
+}
+
 namespace WebKit {
 
 class WebProcessProxy;
 class WebsiteDataStore;
+struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
 
 class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<GPUProcessProxy>, public RefCounted<GPUProcessProxy> {
@@ -56,7 +61,7 @@ public:
     static GPUProcessProxy* singletonIfCreated();
     ~GPUProcessProxy();
 
-    void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
+    void getGPUProcessConnection(WebProcessProxy&, const GPUProcessConnectionParameters&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();
@@ -65,6 +70,11 @@ public:
     void setUseMockCaptureDevices(bool);
     void setOrientationForMediaCapture(uint64_t orientation);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
+
+    void addMockMediaDevice(const WebCore::MockMediaDevice&);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(const String&);
+    void resetMockMediaDevices();
 #endif
 
     void removeSession(PAL::SessionID);

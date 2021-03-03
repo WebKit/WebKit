@@ -101,6 +101,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << focusedElementIdentifier;
 #if ENABLE(DATALIST_ELEMENT)
     encoder << hasSuggestions;
+    encoder << isFocusingWithDataListDropdown;
 #if ENABLE(INPUT_TYPE_COLOR)
     encoder << colorValue;
     encoder << suggestedColors;
@@ -226,6 +227,9 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
 
 #if ENABLE(DATALIST_ELEMENT)
     if (!decoder.decode(result.hasSuggestions))
+        return false;
+
+    if (!decoder.decode(result.isFocusingWithDataListDropdown))
         return false;
 
 #if ENABLE(INPUT_TYPE_COLOR)

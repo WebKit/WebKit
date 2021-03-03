@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Apple Inc. All rights reserved.
+# Copyright (c) 2020-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -113,6 +113,18 @@ CFNetworkNetworkLoaderEnabled:
     WebKit:
       default: false
 
+CSSColorMixEnabled:
+  type: bool
+  humanReadableName: "CSS color-mix()"
+  humanReadableDescription: "Enable support for CSS color-mix() defined in CSS Color 5"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
   humanReadableName: "CSS Custom Properties and Values API"
@@ -161,6 +173,18 @@ CSSPaintingAPIEnabled:
       default: false
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      default: false
+
+CSSRelativeColorSyntaxEnabled:
+  type: bool
+  humanReadableName: "CSS Relative Color Syntax"
+  humanReadableDescription: "Enable support for CSS Relative Color Syntax defined in CSS Color 5"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 CSSTypedOMEnabled:
@@ -281,6 +305,18 @@ FetchAPIKeepAliveEnabled:
       default: true
     WebKit:
       default: true
+
+FocusVisibleEnabled:
+  type: bool
+  humanReadableName: ":focus-visible pseudo-class"
+  humanReadableDescription: "Enable the focus-indicated pseudo-class :focus-visible"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 GenericCueAPIEnabled:
@@ -610,9 +646,9 @@ OpusDecoderEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
 
 OverscrollBehaviorEnabled:
   type: bool
@@ -695,6 +731,7 @@ PrivateClickMeasurementFraudPreventionEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKit:
+      "HAVE(RSA_BSSA)": true
       default: false
 
 ProcessSwapOnCrossSiteNavigationEnabled:

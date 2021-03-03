@@ -472,4 +472,9 @@ ALWAYS_INLINE bool matchesFocusPseudoClass(const Element& element)
     return (element.focused() || doesShadowTreeContainFocusedElement(element)) && isFrameFocused(element);
 }
 
+ALWAYS_INLINE bool matchesFocusVisiblePseudoClass(const Element& element)
+{
+    return InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocusVisible);
+}
+
 } // namespace WebCore

@@ -338,14 +338,30 @@ void NetworkSession::markAttributedPrivateClickMeasurementsAsExpiredForTesting(C
     privateClickMeasurement().markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
 }
 
-void NetworkSession::setPrivateClickMeasurementConversionURLForTesting(URL&& url)
+void NetworkSession::setPrivateClickMeasurementTokenPublicKeyURLForTesting(URL&& url)
 {
-    privateClickMeasurement().setConversionURLForTesting(WTFMove(url));
+    privateClickMeasurement().setTokenPublicKeyURLForTesting(WTFMove(url));
+}
+
+void NetworkSession::setPrivateClickMeasurementTokenSignatureURLForTesting(URL&& url)
+{
+    privateClickMeasurement().setTokenSignatureURLForTesting(WTFMove(url));
+}
+
+void NetworkSession::setPrivateClickMeasurementAttributionReportURLForTesting(URL&& url)
+{
+    privateClickMeasurement().setAttributionReportURLForTesting(WTFMove(url));
 }
 
 void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
 {
     privateClickMeasurement().markAllUnattributedAsExpiredForTesting();
+}
+
+// FIXME: Switch to non-mocked test data once the right cryptography library is available in open source.
+void NetworkSession::setFraudPreventionValuesForTesting(String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID)
+{
+    privateClickMeasurement().setFraudPreventionValuesForTesting(WTFMove(secretToken), WTFMove(unlinkableToken), WTFMove(signature), WTFMove(keyID));
 }
 
 void NetworkSession::firePrivateClickMeasurementTimerImmediately()

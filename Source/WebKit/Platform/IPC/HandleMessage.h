@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h"
 #include "DataReference.h"
+#include "StreamServerConnection.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/StdLibExtras.h>
 
@@ -165,6 +166,28 @@ void handleMessageSynchronousWantsConnection(Connection& connection, Decoder& de
 }
 
 template<typename T, typename C, typename MF>
+void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& decoder, C* object, MF function)
+{
+    uint64_t syncRequestID = 0;
+    if (!decoder.decode(syncRequestID) || !syncRequestID) {
+        decoder.markInvalid();
+        return;
+    }
+
+    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    decoder >> arguments;
+    if (!arguments) {
+        decoder.markInvalid();
+        return;
+    }
+
+    typename T::DelayedReply completionHandler = [syncRequestID, connection = makeRef(connection)] (auto&&... args) mutable {
+        connection->sendSyncReply(syncRequestID, args...);
+    };
+    callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), object, function);
+}
+
+template<typename T, typename C, typename MF>
 void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF function)
 {
     Optional<uint64_t> listenerID;
@@ -181,10 +204,10 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
         return;
     }
 
-    typename T::AsyncReply completionHandler = [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
+    typename T::AsyncReply completionHandler = { [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
         auto encoder = makeUnique<Encoder>(T::asyncMessageReplyName(), listenerID);
         T::send(WTFMove(encoder), WTFMove(connection), args...);
-    };
+    }, T::callbackThread };
     callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), object, function);
 }
 

@@ -29,11 +29,14 @@
 #if HAVE(CONTACTSUI)
 
 #import "ContactsUISPI.h"
+#import "WKWebView.h"
 #import <Contacts/Contacts.h>
 #import <WebCore/ContactInfo.h>
 #import <WebCore/ContactsRequestData.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -260,12 +263,12 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
         if (![jsContact isKindOfClass:[NSDictionary class]])
             continue;
 
-        CNMutableContact *contact = [[allocCNMutableContactInstance() init] autorelease];
+        auto contact = adoptNS([allocCNMutableContactInstance() init]);
 
         id names = [(NSDictionary *)jsContact objectForKey:@"name"];
         if ([names isKindOfClass:[NSArray class]]) {
             for (NSString *name in [names filteredArrayUsingPredicate:stringValuePredicate]) {
-                contact.givenName = name;
+                [contact setGivenName:name];
                 break;
             }
         }
@@ -277,7 +280,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
                 CNLabeledValue<NSString*> *labeledValue = [getCNLabeledValueClass() labeledValueWithLabel:nil value:email];
                 [emailAddresses addObject:labeledValue];
             }
-            contact.emailAddresses = emailAddresses;
+            [contact setEmailAddresses:emailAddresses];
         }
 
         id phoneNumbers = [(NSDictionary *)jsContact objectForKey:@"tel"];
@@ -288,10 +291,10 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
                 CNLabeledValue<CNPhoneNumber*> *labeledValue = [getCNLabeledValueClass() labeledValueWithLabel:nil value:cnPhoneNumber];
                 [numbers addObject:labeledValue];
             }
-            contact.phoneNumbers = numbers;
+            [contact setPhoneNumbers:numbers];
         }
 
-        [contacts addObject:contact];
+        [contacts addObject:contact.get()];
     }
 
     return contacts;

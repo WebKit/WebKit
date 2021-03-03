@@ -45,7 +45,14 @@ RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProce
 {
 }
 
-RemoteLegacyCDMFactoryProxy::~RemoteLegacyCDMFactoryProxy() = default;
+RemoteLegacyCDMFactoryProxy::~RemoteLegacyCDMFactoryProxy()
+{
+    for (auto const& session : m_sessions)
+        gpuConnectionToWebProcess().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), session.key.toUInt64());
+
+    for (auto const& proxy : m_proxies)
+        gpuConnectionToWebProcess().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), proxy.key.toUInt64());
+}
 
 void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, Optional<MediaPlayerIdentifier>&& optionalPlayerId, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&& completion)
 {

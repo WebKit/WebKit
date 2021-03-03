@@ -562,9 +562,9 @@ void platformCopyRichTextWithImage()
     auto richText = adoptNS([[NSMutableAttributedString alloc] init]);
     auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:(__bridge NSString *)kUTTypePNG]);
 
-    [richText appendAttributedString:[[[NSAttributedString alloc] initWithString:@"Lorem ipsum "] autorelease]];
+    [richText appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:@"Lorem ipsum "]).get()];
     [richText appendAttributedString:[NSAttributedString attributedStringWithAttachment:image.get()]];
-    [richText appendAttributedString:[[[NSAttributedString alloc] initWithString:@" dolor sit amet."] autorelease]];
+    [richText appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:@" dolor sit amet."]).get()];
 
 #if PLATFORM(MAC)
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
@@ -601,7 +601,7 @@ typedef UIImage PlatformImage;
 PlatformImage *platformImageWithData(NSData *data)
 {
 #if PLATFORM(MAC)
-    return [[[NSImage alloc] initWithData:data] autorelease];
+    return adoptNS([[NSImage alloc] initWithData:data]).autorelease();
 #else
     return [UIImage imageWithData:data];
 #endif
@@ -2082,7 +2082,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedContactAsAttachment)
 
 TEST(WKAttachmentTestsIOS, InsertPastedContactAsAttachment)
 {
-    UIPasteboard.generalPasteboard.itemProviders = @[ contactItemForTesting().autorelease() ];
+    UIPasteboard.generalPasteboard.itemProviders = @[ contactItemForTesting().get() ];
     auto webView = webViewForTestingAttachments();
     ObserveAttachmentUpdatesForScope observer(webView.get());
     [webView paste:nil];
@@ -2099,7 +2099,7 @@ TEST(WKAttachmentTestsIOS, InsertPastedContactAsAttachment)
 TEST(WKAttachmentTestsIOS, InsertPastedMapItemAsAttachment)
 {
     UIApplicationInitialize();
-    UIPasteboard.generalPasteboard.itemProviders = @[ mapItemForTesting().autorelease() ];
+    UIPasteboard.generalPasteboard.itemProviders = @[ mapItemForTesting().get() ];
     auto webView = webViewForTestingAttachments();
     ObserveAttachmentUpdatesForScope observer(webView.get());
     [webView paste:nil];

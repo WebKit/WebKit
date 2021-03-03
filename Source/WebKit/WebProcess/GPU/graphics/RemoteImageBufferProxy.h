@@ -172,6 +172,27 @@ protected:
 
         return m_remoteRenderingBackendProxy->getBGRADataForImageBuffer(m_renderingResourceIdentifier);
     }
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::BackingStoreCopy::CopyBackingStore) const override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return { };
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
+        auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, WebCore::PreserveResolution::Yes);
+        if (!bitmap)
+            return { };
+        return WebCore::NativeImage::create(bitmap->createPlatformImage());
+    }
+
+    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy = WebCore::BackingStoreCopy::CopyBackingStore, WebCore::PreserveResolution preserveResolution = WebCore::PreserveResolution::No) const override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return { };
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
+        auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, preserveResolution);
+        if (!bitmap)
+            return { };
+        return bitmap->createImage();
+    }
 
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
     {
@@ -280,8 +301,6 @@ protected:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipOutToPath>(item.get<WebCore::DisplayList::ClipOutToPath>());
         case WebCore::DisplayList::ItemType::ClipPath:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipPath>(item.get<WebCore::DisplayList::ClipPath>());
-        case WebCore::DisplayList::ItemType::ClipToDrawingCommands:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipToDrawingCommands>(item.get<WebCore::DisplayList::ClipToDrawingCommands>());
         case WebCore::DisplayList::ItemType::DrawFocusRingPath:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawFocusRingPath>(item.get<WebCore::DisplayList::DrawFocusRingPath>());
         case WebCore::DisplayList::ItemType::DrawFocusRingRects:
@@ -323,6 +342,8 @@ protected:
         case WebCore::DisplayList::ItemType::Clip:
         case WebCore::DisplayList::ItemType::ClipOut:
         case WebCore::DisplayList::ItemType::ClipToImageBuffer:
+        case WebCore::DisplayList::ItemType::BeginClipToDrawingCommands:
+        case WebCore::DisplayList::ItemType::EndClipToDrawingCommands:
         case WebCore::DisplayList::ItemType::ConcatenateCTM:
         case WebCore::DisplayList::ItemType::DrawDotsForDocumentMarker:
         case WebCore::DisplayList::ItemType::DrawEllipse:

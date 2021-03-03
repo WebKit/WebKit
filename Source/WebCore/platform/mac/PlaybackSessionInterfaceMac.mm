@@ -105,11 +105,16 @@ void PlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate
 #endif
 }
 
-void PlaybackSessionInterfaceMac::beginScrubbing()
+void PlaybackSessionInterfaceMac::willBeginScrubbing()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], 0, false);
 #endif
+}
+
+void PlaybackSessionInterfaceMac::beginScrubbing()
+{
+    willBeginScrubbing();
     if (auto* model = playbackSessionModel())
         model->beginScrubbing();
 }

@@ -1,7 +1,3 @@
 
-FAIL Event-isTrusted assert_equals: expected function "function isTrusted() {
-    [native code]
-}" but got function "function isTrusted() {
-    [native code]
-}"
+PASS Event-isTrusted
 

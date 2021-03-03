@@ -2544,11 +2544,12 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWin
         urlString = "about:blank"_s;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (firstFrame->document()
-        && firstFrame->page()
-        && firstFrame->mainFrame().document()
-        && firstFrame->mainFrame().document()->loader()) {
-        auto results = firstFrame->page()->userContentProvider().processContentRuleListsForLoad(firstFrame->document()->completeURL(urlString), ContentExtensions::ResourceType::Popup, *firstFrame->mainFrame().document()->loader());
+    auto* page = firstFrame->page();
+    auto* firstFrameDocument = firstFrame->document();
+    auto* mainFrameDocument = firstFrame->mainFrame().document();
+    auto* mainFrameDocumentLoader = mainFrameDocument ? mainFrameDocument->loader() : nullptr;
+    if (firstFrameDocument && page && mainFrameDocumentLoader) {
+        auto results = page->userContentProvider().processContentRuleListsForLoad(*page, firstFrameDocument->completeURL(urlString), ContentExtensions::ResourceType::Popup, *mainFrameDocumentLoader);
         if (results.summary.blockedLoad)
             return RefPtr<WindowProxy> { nullptr };
     }

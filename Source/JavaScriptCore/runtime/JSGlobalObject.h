@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- *  Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -86,6 +86,8 @@ class IntlCollator;
 class JSArrayBuffer;
 class JSArrayBufferPrototype;
 class JSCallee;
+class JSCustomGetterFunction;
+class JSCustomSetterFunction;
 class JSGlobalObjectDebuggable;
 class JSInternalPromise;
 class JSModuleLoader;
@@ -228,7 +230,7 @@ struct GlobalObjectMethodTable {
     typedef JSObject* (*ModuleLoaderCreateImportMetaPropertiesPtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
     ModuleLoaderCreateImportMetaPropertiesPtr moduleLoaderCreateImportMetaProperties;
 
-    typedef JSValue (*ModuleLoaderEvaluatePtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
+    typedef JSValue (*ModuleLoaderEvaluatePtr)(JSGlobalObject*, JSModuleLoader*, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher, JSValue awaitedValue, JSValue resumeMode);
     ModuleLoaderEvaluatePtr moduleLoaderEvaluate;
 
     typedef void (*PromiseRejectionTrackerPtr)(JSGlobalObject*, JSPromise*, JSPromiseRejectionOperation);
@@ -396,7 +398,8 @@ public:
     FunctionStructures m_ordinaryFunctions;
 
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
-    LazyProperty<JSGlobalObject, Structure> m_customGetterSetterFunctionStructure;
+    LazyProperty<JSGlobalObject, Structure> m_customGetterFunctionStructure;
+    LazyProperty<JSGlobalObject, Structure> m_customSetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_nativeStdFunctionStructure;
     PropertyOffset m_functionNameOffset;
     WriteBarrier<Structure> m_regExpStructure;
@@ -414,6 +417,8 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_dataPropertyDescriptorObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_accessorPropertyDescriptorObjectStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
+    WriteBarrier<Structure> m_regExpMatchesArrayWithIndicesStructure;
+    WriteBarrier<Structure> m_regExpMatchesIndicesArrayStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleRecordStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleNamespaceObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_proxyObjectStructure;
@@ -540,6 +545,9 @@ public:
     bool isMapPrototypeSetFastAndNonObservable();
     bool isSetPrototypeAddFastAndNonObservable();
 
+    WeakGCMap<GetValueFunc, JSCustomGetterFunction>& customGetterFunctionMap() { return m_customGetterFunctionMap; }
+    WeakGCMap<PutValueFunc, JSCustomSetterFunction>& customSetterFunctionMap() { return m_customSetterFunctionMap; }
+
 #if ENABLE(DFG_JIT)
     using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
     ReferencedGlobalPropertyWatchpointSets m_referencedGlobalPropertyWatchpointSets;
@@ -554,6 +562,8 @@ public:
     RuntimeFlags m_runtimeFlags;
     ConsoleClient* m_consoleClient { nullptr };
     Optional<unsigned> m_stackTraceLimit;
+    WeakGCMap<GetValueFunc, JSCustomGetterFunction> m_customGetterFunctionMap;
+    WeakGCMap<PutValueFunc, JSCustomSetterFunction> m_customSetterFunctionMap;
 
 #if ASSERT_ENABLED
     const JSGlobalObject* m_globalObjectAtDebuggerEntry { nullptr };
@@ -609,7 +619,7 @@ public:
     JS_EXPORT_PRIVATE ~JSGlobalObject();
     JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
-    JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
@@ -799,7 +809,8 @@ public:
     }
 
     Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(this); }
-    Structure* customGetterSetterFunctionStructure() const { return m_customGetterSetterFunctionStructure.get(this); }
+    Structure* customGetterFunctionStructure() const { return m_customGetterFunctionStructure.get(this); }
+    Structure* customSetterFunctionStructure() const { return m_customSetterFunctionStructure.get(this); }
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(this); }
     PropertyOffset functionNameOffset() const { return m_functionNameOffset; }
     Structure* numberObjectStructure() const { return m_numberObjectStructure.get(this); }
@@ -817,6 +828,8 @@ public:
     Structure* dataPropertyDescriptorObjectStructure() const { return m_dataPropertyDescriptorObjectStructure.get(this); }
     Structure* accessorPropertyDescriptorObjectStructure() const { return m_accessorPropertyDescriptorObjectStructure.get(this); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
+    Structure* regExpMatchesArrayWithIndicesStructure() const { return m_regExpMatchesArrayWithIndicesStructure.get(); }
+    Structure* regExpMatchesIndicesArrayStructure() const { return m_regExpMatchesIndicesArrayStructure.get(); }
     Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(this); }
     Structure* moduleNamespaceObjectStructure() const { return m_moduleNamespaceObjectStructure.get(this); }
     Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(this); }

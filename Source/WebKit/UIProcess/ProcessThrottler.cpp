@@ -126,7 +126,7 @@ void ProcessThrottler::setAssertionType(ProcessAssertionType newType)
     if (m_assertion && m_assertion->isValid() && m_assertion->type() == newType)
         return;
 
-    PROCESSTHROTTLER_RELEASE_LOG("setAssertionType: Updating process assertion type to %u (foregroundActivities: %u, backgroundActivities: %u)", newType, m_foregroundActivities.size(), m_backgroundActivities.size());
+    PROCESSTHROTTLER_RELEASE_LOG("setAssertionType: Updating process assertion type to %u (foregroundActivities=%u, backgroundActivities=%u)", newType, m_foregroundActivities.size(), m_backgroundActivities.size());
 
     // Keep the previous assertion around until after the new one has been created so that we always hold
     // a process assertion for the process.
@@ -156,7 +156,7 @@ void ProcessThrottler::updateAssertionIfNeeded()
             if (m_assertion->type() == ProcessAssertionType::Suspended)
                 PROCESSTHROTTLER_RELEASE_LOG("updateAssertionIfNeeded: sending ProcessDidResume IPC because the process was suspended");
             else
-                PROCESSTHROTTLER_RELEASE_LOG("updateAssertionIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend: %" PRIu64, *m_pendingRequestToSuspendID);
+                PROCESSTHROTTLER_RELEASE_LOG("updateAssertionIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64, *m_pendingRequestToSuspendID);
             m_process.sendProcessDidResume();
             clearPendingRequestToSuspend();
         }
@@ -210,14 +210,14 @@ void ProcessThrottler::clearPendingRequestToSuspend()
 
 void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspensionImminent)
 {
-    PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: isSuspensionImminent: %d", isSuspensionImminent == IsSuspensionImminent::Yes);
+    PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: isSuspensionImminent=%d", isSuspensionImminent == IsSuspensionImminent::Yes);
     if (m_pendingRequestToSuspendID) {
         // Do not send a new PrepareToSuspend IPC for imminent suspension if we've already sent a non-imminent PrepareToSuspend IPC.
         RELEASE_ASSERT(isSuspensionImminent == IsSuspensionImminent::Yes);
         PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Not sending PrepareToSuspend() IPC because there is already one in flight (%" PRIu64 ")", *m_pendingRequestToSuspendID);
     } else {
         m_pendingRequestToSuspendID = generatePrepareToSuspendRequestID();
-        PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Sending PrepareToSuspend(%" PRIu64 ", isSuspensionImminent: %d) IPC", *m_pendingRequestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes);
+        PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Sending PrepareToSuspend(%" PRIu64 ", isSuspensionImminent=%d) IPC", *m_pendingRequestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes);
         m_process.sendPrepareToSuspend(isSuspensionImminent, [this, weakThis = makeWeakPtr(*this), requestToSuspendID = *m_pendingRequestToSuspendID]() mutable {
             if (weakThis && m_pendingRequestToSuspendID && *m_pendingRequestToSuspendID == requestToSuspendID)
                 processReadyToSuspend();

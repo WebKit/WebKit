@@ -77,13 +77,13 @@ PASS CSS Animations: property <font-stretch> from [initial] to [inherit] at (0.3
 PASS CSS Animations: property <font-stretch> from [initial] to [inherit] at (0.6) should be [160%]
 PASS CSS Animations: property <font-stretch> from [initial] to [inherit] at (1) should be [200%]
 PASS CSS Animations: property <font-stretch> from [initial] to [inherit] at (1.5) should be [250%]
-PASS Web Animations: property <font-stretch> from [initial] to [inherit] at (-2) should be [0%]
-FAIL Web Animations: property <font-stretch> from [initial] to [inherit] at (-0.25) should be [75%] assert_equals: expected "condensed " but got "normal "
+FAIL Web Animations: property <font-stretch> from [initial] to [inherit] at (-2) should be [0%] assert_equals: expected "normal " but got "- 100 % "
+PASS Web Animations: property <font-stretch> from [initial] to [inherit] at (-0.25) should be [75%]
 PASS Web Animations: property <font-stretch> from [initial] to [inherit] at (0) should be [100%]
-FAIL Web Animations: property <font-stretch> from [initial] to [inherit] at (0.3) should be [130%] assert_equals: expected "130 % " but got "normal "
-FAIL Web Animations: property <font-stretch> from [initial] to [inherit] at (0.6) should be [160%] assert_equals: expected "160 % " but got "normal "
-FAIL Web Animations: property <font-stretch> from [initial] to [inherit] at (1) should be [200%] assert_equals: expected "ultra - expanded " but got "normal "
-FAIL Web Animations: property <font-stretch> from [initial] to [inherit] at (1.5) should be [250%] assert_equals: expected "250 % " but got "normal "
+PASS Web Animations: property <font-stretch> from [initial] to [inherit] at (0.3) should be [130%]
+PASS Web Animations: property <font-stretch> from [initial] to [inherit] at (0.6) should be [160%]
+PASS Web Animations: property <font-stretch> from [initial] to [inherit] at (1) should be [200%]
+PASS Web Animations: property <font-stretch> from [initial] to [inherit] at (1.5) should be [250%]
 PASS CSS Transitions: property <font-stretch> from [normal] to [ultra-expanded] at (-0.25) should be [condensed]
 PASS CSS Transitions: property <font-stretch> from [normal] to [ultra-expanded] at (0) should be [normal]
 PASS CSS Transitions: property <font-stretch> from [normal] to [ultra-expanded] at (0.125) should be [semi-expanded]
@@ -184,5 +184,5 @@ PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] a
 PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] at (0.25) should be [semi-expanded]
 PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] at (0.5) should be [expanded]
 PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] at (1) should be [extra-expanded]
-FAIL An interpolation to inherit updates correctly on a parent style change. assert_equals: expected "150%" but got "normal"
+FAIL An interpolation to inherit updates correctly on a parent style change. assert_equals: expected "150%" but got "extra-expanded"
 

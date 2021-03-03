@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "Connection.h"
+#include "DataReference.h"
 #include "DownloadID.h"
 #include "SandboxExtension.h"
 #include <WebCore/ResourceRequest.h>

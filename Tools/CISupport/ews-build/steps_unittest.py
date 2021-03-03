@@ -43,7 +43,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch, CompileWebKit,
                    CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
-                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults,
+                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
@@ -129,7 +129,7 @@ class BuildStepMixinAdditions(BuildStepMixin):
 
     @property
     def executedSteps(self):
-        return filter(lambda step: not step.stopped, self.previous_steps)
+        return [step for step in self.previous_steps if not step.stopped]
 
     def setProperty(self, name, value, source='Unknown'):
         self.properties.setProperty(name, value, source)
@@ -1506,14 +1506,14 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('jsc_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
         self.setProperty('jsc_rerun_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
-        self.expectOutcome(result=FAILURE, state_string='Found 30 new JSC stress test failures: test1, test0, test3, test2, test5, test4, test7, test6, test9, test8 ... (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 30 new JSC stress test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ... (failure)')
         return self.runStep()
 
     def test_multiple_new_binary_failure(self):
         self.configureStep()
         self.setProperty('jsc_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
         self.setProperty('jsc_rerun_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
-        self.expectOutcome(result=FAILURE, state_string='Found 5 new JSC binary failures: testb3, testmasm, testapi, testdfg, testair (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Found 5 new JSC binary failures: testair, testapi, testb3, testdfg, testmasm (failure)')
         return self.runStep()
 
     def test_new_stress_and_binary_failure(self):
@@ -1673,16 +1673,16 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         rc = self.runStep()
         self.assertEqual(self.getProperty(self.property_exceed_failure_limit), True)
         self.assertEqual(self.getProperty(self.property_failures),
-                            ["imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html",
-                             "imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html",
-                             "imported/blink/storage/indexeddb/blob-valid-before-commit.html"])
+                            ['imported/blink/storage/indexeddb/blob-valid-before-commit.html',
+                             'imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html',
+                             'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html'])
         return rc
 
     def test_parse_results_json_flakes(self):
@@ -2743,7 +2743,6 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        import steps
         self.setupStep(TransferToS3())
         self.setProperty('fullPlatform', 'mac-highsierra')
         self.setProperty('configuration', 'release')
@@ -2759,11 +2758,10 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Transferred archive to S3')
-        with current_hostname(steps.EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAME):
             return self.runStep()
 
     def test_failure(self):
-        import steps
         self.setupStep(TransferToS3())
         self.setProperty('fullPlatform', 'ios-simulator-12')
         self.setProperty('configuration', 'debug')
@@ -2779,7 +2777,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to transfer archive to S3')
-        with current_hostname(steps.EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAME):
             return self.runStep()
 
     def test_skipped(self):
@@ -3775,12 +3773,13 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
-        rc = self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
         self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729: <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
-    def test_failure(self):
+    def test_failure_retry(self):
         self.setupStep(PushCommitToWebKitRepo())
         self.setProperty('patch_id', '2345')
         self.expectRemoteCommands(
@@ -3792,7 +3791,28 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        rc = self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
+        self.assertEqual(self.getProperty('retry_count'), 1)
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        return rc
+
+    def test_failure(self):
+        self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
+        self.setProperty('patch_id', '2345')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'svn', 'dcommit', '--rmdir']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
         self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
         self.assertEqual(self.getProperty('bugzilla_comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
         return rc
@@ -3813,7 +3833,8 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', '51a6aec9f664']) +
+                        env={'GITHUB_COM_USERNAME': None, 'GITHUB_COM_ACCESS_TOKEN': None},
+                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', '51a6aec9f664']) +
             ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
             0,
         )
@@ -3828,7 +3849,8 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', 'HEAD']) +
+                        env={'GITHUB_COM_USERNAME': None, 'GITHUB_COM_ACCESS_TOKEN': None},
+                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', 'HEAD']) +
             ExpectShell.log('stdio', stdout='Unexpected failure') +
             2,
         )

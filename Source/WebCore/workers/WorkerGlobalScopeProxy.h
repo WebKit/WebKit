@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "FetchRequestCredentials.h"
 #include "MessageWithMessagePorts.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/Function.h>
@@ -42,13 +43,14 @@ class ContentSecurityPolicyResponseHeaders;
 class ScriptExecutionContext;
 class Worker;
 enum class ReferrerPolicy : uint8_t;
+enum class WorkerType : uint8_t;
 
 // A proxy to talk to the worker context.
 class WorkerGlobalScopeProxy {
 public:
     static WorkerGlobalScopeProxy& create(Worker&);
 
-    virtual void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, ReferrerPolicy, JSC::RuntimeFlags) = 0;
+    virtual void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) = 0;
     virtual void terminateWorkerGlobalScope() = 0;
     virtual void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) = 0;
     virtual void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&) = 0;

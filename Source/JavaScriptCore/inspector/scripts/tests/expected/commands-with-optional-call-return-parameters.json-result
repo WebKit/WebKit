@@ -852,16 +852,16 @@ void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long p
         o_in_opt_timestamp = *in_opt_timestamp;
     RWIProtocolJSONObject *o_in_opt_values;
     if (!!in_opt_values)
-        o_in_opt_values = [[[RWIProtocolJSONObject alloc] initWithJSONObject:in_opt_values.releaseNonNull()] autorelease];
+        o_in_opt_values = adoptNS([[RWIProtocolJSONObject alloc] initWithJSONObject:in_opt_values.releaseNonNull()]).autorelease();
     RWIProtocolJSONObject *o_in_opt_payload;
     if (!!in_opt_payload)
-        o_in_opt_payload = [[[RWIProtocolJSONObject alloc] initWithJSONObject:in_opt_payload.releaseNonNull()] autorelease];
+        o_in_opt_payload = adoptNS([[RWIProtocolJSONObject alloc] initWithJSONObject:in_opt_payload.releaseNonNull()]).autorelease();
     int o_in_opt_databaseId;
     if (!!in_opt_databaseId)
         o_in_opt_databaseId = *in_opt_databaseId;
     TestProtocolDatabaseError *o_in_opt_sqlError;
     if (!!in_opt_sqlError)
-        o_in_opt_sqlError = [[[TestProtocolDatabaseError alloc] initWithJSONObject:in_opt_sqlError.releaseNonNull()] autorelease];
+        o_in_opt_sqlError = adoptNS([[TestProtocolDatabaseError alloc] initWithJSONObject:in_opt_sqlError.releaseNonNull()]).autorelease();
     Optional<TestProtocolDatabasePrimaryColors> o_in_opt_screenColor;
     if (!!in_opt_screenColor)
         o_in_opt_screenColor = fromProtocolString<TestProtocolDatabasePrimaryColors>(in_opt_screenColor);
@@ -911,10 +911,10 @@ void ObjCInspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long pr
     NSArray/*<NSString>*/ *o_in_columnNames = toObjCStringArray(WTFMove(in_columnNames));
     NSString *o_in_notes = in_notes;
     double o_in_timestamp = in_timestamp;
-    RWIProtocolJSONObject *o_in_values = [[[RWIProtocolJSONObject alloc] initWithJSONObject:WTFMove(in_values)] autorelease];
-    RWIProtocolJSONObject *o_in_payload = [[[RWIProtocolJSONObject alloc] initWithJSONObject:WTFMove(in_payload)] autorelease];
+    RWIProtocolJSONObject *o_in_values = adoptNS([[RWIProtocolJSONObject alloc] initWithJSONObject:WTFMove(in_values)]).autorelease();
+    RWIProtocolJSONObject *o_in_payload = adoptNS([[RWIProtocolJSONObject alloc] initWithJSONObject:WTFMove(in_payload)]).autorelease();
     int o_in_databaseId = in_databaseId;
-    TestProtocolDatabaseError *o_in_sqlError = [[[TestProtocolDatabaseError alloc] initWithJSONObject:WTFMove(in_sqlError)] autorelease];
+    TestProtocolDatabaseError *o_in_sqlError = adoptNS([[TestProtocolDatabaseError alloc] initWithJSONObject:WTFMove(in_sqlError)]).autorelease();
     Optional<TestProtocolDatabasePrimaryColors> o_in_screenColor = fromProtocolString<TestProtocolDatabasePrimaryColors>(in_screenColor);
     if (!o_in_screenColor) {
         backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'screenColor' of method 'Database.executeNoOptionalParameters' cannot be processed"_s);
@@ -1017,7 +1017,7 @@ using namespace Inspector;
 @implementation TestProtocolConfiguration
 {
     AugmentableInspectorController* _controller;
-    id<TestProtocolDatabaseDomainHandler> _databaseHandler;
+    RetainPtr<id<TestProtocolDatabaseDomainHandler>> _databaseHandler;
 }
 
 - (instancetype)initWithController:(AugmentableInspectorController*)controller
@@ -1030,19 +1030,12 @@ using namespace Inspector;
     return self;
 }
 
-- (void)dealloc
-{
-    [_databaseHandler release];
-    [super dealloc];
-}
-
 - (void)setDatabaseHandler:(id<TestProtocolDatabaseDomainHandler>)handler
 {
     if (handler == _databaseHandler)
         return;
 
-    [_databaseHandler release];
-    _databaseHandler = [handler retain];
+    _databaseHandler = handler;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorDatabaseBackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>("Database"_s, *_controller, WTFMove(alternateDispatcher));
@@ -1051,7 +1044,7 @@ using namespace Inspector;
 
 - (id<TestProtocolDatabaseDomainHandler>)databaseHandler
 {
-    return _databaseHandler;
+    return _databaseHandler.get();
 }
 
 @end

@@ -66,6 +66,8 @@ public:
     static bool canUseFor(const RenderBlockFlow&);
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 
+    bool shouldSwitchToLegacyOnInvalidation() const;
+
     void updateReplacedDimensions(const RenderBox&);
     void updateInlineBlockDimensions(const RenderBlock&);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);

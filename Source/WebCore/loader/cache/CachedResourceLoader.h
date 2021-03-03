@@ -103,6 +103,9 @@ public:
 #if ENABLE(APPLICATION_MANIFEST)
     ResourceErrorOr<CachedResourceHandle<CachedApplicationManifest>> requestApplicationManifest(CachedResourceRequest&&);
 #endif
+#if ENABLE(MODEL_ELEMENT)
+    ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestModelResource(CachedResourceRequest&&);
+#endif
 
     // Called to load Web Worker main script, Service Worker main script, importScripts(), XHR,
     // EventSource, Fetch, and App Cache.

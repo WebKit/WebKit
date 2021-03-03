@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,12 @@
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 class JSManagedValueHandleOwner final : public JSC::WeakHandleOwner {
 public:
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
-    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**) final;
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, const char**) final;
 };
 
 static JSManagedValueHandleOwner& managedValueHandleOwner()
@@ -55,19 +56,19 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
     JSC::Weak<JSC::JSGlobalObject> m_globalObject;
     RefPtr<JSC::JSLock> m_lock;
     JSC::JSWeakValue m_weakValue;
-    NSMapTable *m_owners;
+    RetainPtr<NSMapTable> m_owners;
 }
 
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value
 {
-    return [[[self alloc] initWithValue:value] autorelease];
+    return adoptNS([[self alloc] initWithValue:value]).autorelease();
 }
 
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value andOwner:(id)owner
 {
-    JSManagedValue *managedValue = [[self alloc] initWithValue:value];
-    [value.context.virtualMachine addManagedReference:managedValue withOwner:owner];
-    return [managedValue autorelease];
+    auto managedValue = adoptNS([[self alloc] initWithValue:value]);
+    [value.context.virtualMachine addManagedReference:managedValue.get() withOwner:owner];
+    return managedValue.autorelease();
 }
 
 - (instancetype)init
@@ -93,7 +94,7 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 
     NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
-    m_owners = [[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1];
+    m_owners = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1]);
 
     JSC::JSValue jsValue = toJS(globalObject, [value JSValueRef]);
     if (jsValue.isObject())
@@ -109,39 +110,37 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 {
     JSVirtualMachine *virtualMachine = [[[self value] context] virtualMachine];
     if (virtualMachine) {
-        NSMapTable *copy = [m_owners copy];
+        auto copy = adoptNS([m_owners copy]);
         for (id owner in [copy keyEnumerator]) {
-            size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners, (__bridge void*)owner));
+            size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners.get(), (__bridge void*)owner));
             while (count--)
                 [virtualMachine removeManagedReference:self withOwner:owner];
         }
-        [copy release];
     }
 
     [self disconnectValue];
-    [m_owners release];
     [super dealloc];
 }
 
 - (void)didAddOwner:(id)owner
 {
-    size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners, (__bridge void*)owner));
-    NSMapInsert(m_owners, (__bridge void*)owner, reinterpret_cast<void*>(count + 1));
+    size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners.get(), (__bridge void*)owner));
+    NSMapInsert(m_owners.get(), (__bridge void*)owner, reinterpret_cast<void*>(count + 1));
 }
 
 - (void)didRemoveOwner:(id)owner
 {
-    size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners, (__bridge void*)owner));
+    size_t count = reinterpret_cast<size_t>(NSMapGet(m_owners.get(), (__bridge void*)owner));
 
     if (!count)
         return;
 
     if (count == 1) {
-        NSMapRemove(m_owners, (__bridge void*)owner);
+        NSMapRemove(m_owners.get(), (__bridge void*)owner);
         return;
     }
 
-    NSMapInsert(m_owners, (__bridge void*)owner, reinterpret_cast<void*>(count - 1));
+    NSMapInsert(m_owners.get(), (__bridge void*)owner, reinterpret_cast<void*>(count - 1));
 }
 
 - (JSValue *)value
@@ -180,7 +179,7 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 - (void)disconnectValue;
 @end
 
-bool JSManagedValueHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor& visitor, const char** reason)
+bool JSManagedValueHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor& visitor, const char** reason)
 {
     if (UNLIKELY(reason))
         *reason = "JSManagedValue is opaque root";

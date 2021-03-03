@@ -45,32 +45,32 @@ var tests = [
 
 // Request without credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=*.
 // The redirect response passes the access check.
-["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
+["../resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
   withoutCredentials, noCustomHeader, succeeds],
 
 // Request with credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=*.
 // The redirect response fails the access check because credentials were sent.
-["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
+["../resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
   withCredentials, noCustomHeader, fails],
 
 // Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin.
 // The redirect response passes the access check.
-["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi",
+["../resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi",
   withoutCredentials, noCustomHeader, succeeds],
 
 // Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin.
 // The redirect response passes the access check.
-["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi",
+["../resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi",
   withCredentials, noCustomHeader, succeeds],
 
 // Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin
 // forbidding credentials. The redirect response passes the access check.
-["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi",
+["../resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi",
   withoutCredentials, noCustomHeader, succeeds],
 
 // Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin
 // forbidding credentials. The redirect response fails the access check.
-["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi",
+["../resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi",
   withCredentials, noCustomHeader, fails],
 
 ]

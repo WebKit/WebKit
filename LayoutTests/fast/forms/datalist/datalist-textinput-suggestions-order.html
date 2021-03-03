@@ -41,14 +41,24 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
+function waitForDataListSuggestionsToChangeVisibility(visible)
+{
+    return new Promise(async resolve => {
+        while (visible != await UIHelper.isShowingDataListSuggestions())
+            continue;
+        resolve();
+    });
+}
+
 function focusInputFieldAndChooseFirstSuggestion()
 {
     return new Promise(async resolve => {
         await UIHelper.activateAndWaitForInputSessionAt(100, 25);
         if (UIHelper.isIOSFamily()) {
             await UIHelper.tapAt(290, 30);
+            await waitForDataListSuggestionsToChangeVisibility(true);
+            await UIHelper.activateDataListSuggestion(0);
             await UIHelper.resignFirstResponder();
-            await UIHelper.waitForKeyboardToHide();
         } else {
             await UIHelper.typeCharacter("downArrow");
             await UIHelper.typeCharacter("\r");

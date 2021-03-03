@@ -27,19 +27,24 @@
 #import "TestProtocol.h"
 
 #import <WebKit/WKBrowsingContextController.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-static NSString *testScheme;
+static RetainPtr<NSString>& testScheme()
+{
+    static NeverDestroyed<RetainPtr<NSString>> _testScheme;
+    return _testScheme;
+}
 
 @implementation TestProtocol
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    return [request.URL.scheme caseInsensitiveCompare:testScheme] == NSOrderedSame;
+    return [request.URL.scheme caseInsensitiveCompare:testScheme().get()] == NSOrderedSame;
 }
 
 + (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
@@ -54,40 +59,42 @@ static NSString *testScheme;
 
 + (NSString *)scheme
 {
-    return testScheme;
+    return testScheme().get();
 }
 
 + (void)registerWithScheme:(NSString *)scheme
 {
-    testScheme = [scheme retain];
+    testScheme() = scheme;
     [NSURLProtocol registerClass:[self class]];
-    [WKBrowsingContextController registerSchemeForCustomProtocol:testScheme];
+    [WKBrowsingContextController registerSchemeForCustomProtocol:scheme];
 }
 
 + (void)unregister
 {
-    [WKBrowsingContextController unregisterSchemeForCustomProtocol:testScheme];
+    [WKBrowsingContextController unregisterSchemeForCustomProtocol:testScheme().get()];
     [NSURLProtocol unregisterClass:[self class]];
-    [testScheme release];
-    testScheme = nil;
+    testScheme() = nil;
 }
 
-static NSDictionary<NSString *, NSString *> *additionalResponseHeaders;
+static RetainPtr<NSDictionary<NSString *, NSString *>>& additionalResponseHeaders()
+{
+    static NeverDestroyed<RetainPtr<NSDictionary<NSString *, NSString *>>> _additionalResponseHeaders;
+    return _additionalResponseHeaders;
+}
 
 + (NSDictionary<NSString *, NSString *> *)additionalResponseHeaders
 {
-    return additionalResponseHeaders;
+    return additionalResponseHeaders().get();
 }
 
 + (void)setAdditionalResponseHeaders:(NSDictionary<NSString *, NSString *> *)additionalHeaders
 {
-    [additionalResponseHeaders autorelease];
-    additionalResponseHeaders = [additionalHeaders copy];
+    additionalResponseHeaders() = adoptNS([additionalHeaders copy]);
 }
 
 static NSURL *createRedirectURL(NSString *query)
 {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", testScheme, query]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", testScheme().get(), query]];
 }
 
 static NSString *contentTypeForFileExtension(NSString *fileExtension)
@@ -100,7 +107,7 @@ static NSString *contentTypeForFileExtension(NSString *fileExtension)
 - (void)startLoading
 {
     NSURL *requestURL = self.request.URL;
-    EXPECT_TRUE([requestURL.scheme isEqualToString:testScheme]);
+    EXPECT_TRUE([requestURL.scheme isEqualToString:testScheme().get()]);
 
     if ([requestURL.host isEqualToString:@"307-redirect"]) {
         RetainPtr<NSHTTPURLResponse> response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:307 HTTPVersion:@"HTTP/1.1" headerFields:@{@"Content-Type" : @"text/html"}]);
@@ -132,8 +139,8 @@ static NSString *contentTypeForFileExtension(NSString *fileExtension)
     NSMutableDictionary *responseHeaders = [NSMutableDictionary dictionaryWithCapacity:2];
     responseHeaders[@"Content-Type"] = contentType;
     responseHeaders[@"Content-Length"] = [NSString stringWithFormat:@"%tu", data.length];
-    if (additionalResponseHeaders)
-        [responseHeaders addEntriesFromDictionary:additionalResponseHeaders];
+    if (auto& headers = additionalResponseHeaders())
+        [responseHeaders addEntriesFromDictionary:headers.get()];
 
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:responseHeaders]);
 

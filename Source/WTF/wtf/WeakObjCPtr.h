@@ -30,6 +30,12 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cocoa/objcSPI.h>
 
+// Because ARC enablement is a compile-time choice, and we compile this header
+// both ways, we need a separate copy of our code when ARC is enabled.
+#if __has_feature(objc_arc)
+#define WeakObjCPtr WeakObjCPtrArc
+#endif
+
 namespace WTF {
 
 template<typename T> class WeakObjCPtr {

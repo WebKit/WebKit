@@ -584,20 +584,48 @@ TransformationMatrix::TransformationMatrix(const AffineTransform& t)
 // FIXME: Once https://bugs.webkit.org/show_bug.cgi?id=220856 is addressed we can reuse this function in TransformationMatrix::recompose4().
 TransformationMatrix TransformationMatrix::fromQuaternion(double qx, double qy, double qz, double qw)
 {
-    const double xx = qx * qx;
-    const double yy = qy * qy;
-    const double zz = qz * qz;
-    const double xz = qx * qz;
-    const double xy = qx * qy; 
-    const double yz = qy * qz;
-    const double xw = qw * qx;
-    const double yw = qw * qy;
-    const double zw = qw * qz;
+    double xx = qx * qx;
+    double yy = qy * qy;
+    double zz = qz * qz;
+    double xz = qx * qz;
+    double xy = qx * qy; 
+    double yz = qy * qz;
+    double xw = qw * qx;
+    double yw = qw * qy;
+    double zw = qw * qz;
 
     return TransformationMatrix(1 - 2 * (yy + zz), 2 * (xy + zw), 2 * (xz - yw), 0,
         2 * (xy - zw), 1 - 2 * (xx + zz), 2 * (yz + xw), 0,
         2 * (xz + yw), 2 * (yz - xw), 1 - 2 * (xx + yy), 0,
         0, 0, 0, 1);
+}
+
+
+TransformationMatrix TransformationMatrix::fromProjection(double fovUp, double fovDown, double fovLeft, double fovRight, double depthNear, double depthFar)
+{
+    double upTan = tan(fovUp);
+    double downTan = tan(fovDown);
+    double leftTan = tan(fovLeft);
+    double rightTan = tan(fovRight);
+    double xScale = 2.0 / (leftTan + rightTan);
+    double yScale = 2.0 / (upTan + downTan);
+    double invDepth = 1.0 / (depthNear - depthFar);
+
+    return TransformationMatrix(xScale, 0.0f, 0.0f, 0.0f,
+        0.0f, yScale, 0.0f, 0.0f,
+        (leftTan - rightTan) * xScale * -0.5, (upTan - downTan) * yScale * 0.5, (depthNear + depthFar) * invDepth, -1.0f,
+        0.0f, 0.0f, (2.0f * depthFar * depthNear) * invDepth, 0.0f);
+}
+
+TransformationMatrix TransformationMatrix::fromProjection(double fovy, double aspect, double depthNear, double depthFar)
+{
+    double f = 1.0f / tanf(fovy / 2);
+    double invDepth = 1.0f / (depthNear - depthFar);
+
+    return TransformationMatrix(f / aspect, 0.0f, 0.0f, 0.0f,
+        0.0f, f, 0.0f, 0.0f,
+        0.0f, 0.0f, (depthFar + depthNear) * invDepth, -1.0f,
+        0.0f, 0.0f, (2.0f * depthFar * depthNear) * invDepth, 0.0f);
 }
 
 TransformationMatrix& TransformationMatrix::scale(double s)

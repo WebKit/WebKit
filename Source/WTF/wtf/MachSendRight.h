@@ -38,9 +38,11 @@ public:
     WTF_EXPORT_PRIVATE static MachSendRight create(mach_port_t);
 
     MachSendRight() = default;
+    WTF_EXPORT_PRIVATE MachSendRight(const MachSendRight&);
     WTF_EXPORT_PRIVATE MachSendRight(MachSendRight&&);
     WTF_EXPORT_PRIVATE ~MachSendRight();
 
+    WTF_EXPORT_PRIVATE MachSendRight& operator=(const MachSendRight&);
     WTF_EXPORT_PRIVATE MachSendRight& operator=(MachSendRight&&);
 
     explicit operator bool() const { return m_port != MACH_PORT_NULL; }

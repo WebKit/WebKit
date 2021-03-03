@@ -362,6 +362,12 @@ void PlaybackSessionModelMediaElement::setPlayingOnSecondScreen(bool value)
         m_mediaElement->setPlayingOnSecondScreen(value);
 }
 
+void PlaybackSessionModelMediaElement::sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
+{
+    if (m_mediaElement)
+        m_mediaElement->mediaSession().didReceiveRemoteControlCommand(command, argument);
+}
+
 void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
 {
     if (!m_mediaElement)
@@ -373,7 +379,7 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
     auto& captionPreferences = m_mediaElement->document().page()->group().captionPreferences();
     auto* textTracks = m_mediaElement->textTracks();
     if (textTracks && textTracks->length())
-        m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(textTracks);
+        m_legibleTracksForMenu = captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
     else
         m_legibleTracksForMenu.clear();
 

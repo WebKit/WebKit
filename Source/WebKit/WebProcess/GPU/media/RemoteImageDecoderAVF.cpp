@@ -185,7 +185,7 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
                 return;
             }
 
-            auto image = surface->createImage();
+            auto image = IOSurface::sinkIntoImage(WTFMove(surface));
             if (!image) {
                 decodeSemaphore.signal();
                 return;

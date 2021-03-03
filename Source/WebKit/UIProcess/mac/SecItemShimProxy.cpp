@@ -51,6 +51,11 @@ SecItemShimProxy::SecItemShimProxy()
 {
 }
 
+SecItemShimProxy::~SecItemShimProxy()
+{
+    ASSERT_NOT_REACHED();
+}
+
 void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
 {
     connection.addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), m_queue.get(), this);

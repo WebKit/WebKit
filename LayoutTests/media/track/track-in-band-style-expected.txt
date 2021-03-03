@@ -14,6 +14,6 @@ EVENT(cuechange)
 
 ** Test current cue colors
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
-EXPECTED (getComputedStyle(cueNode).backgroundColor == 'rgba(0, 0, 0, 0.8)') OK
+EXPECTED (getComputedStyle(cueNode).backgroundColor == 'rgba(0, 0, 0, 0.8)'), OBSERVED 'rgba(0, 0, 0, 0)' FAIL
 END OF TEST
 

@@ -114,8 +114,14 @@ public:
 
     virtual void suspendBuffering() { }
     virtual void resumeBuffering() { }
+    
+    struct RemoteCommandArgument {
+        Optional<double> time;
+        Optional<bool> fastSeek;
 
-    using RemoteCommandArgument = Optional<double>;
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static Optional<RemoteCommandArgument> decode(Decoder&);
+    };
 
     enum RemoteControlCommandType : uint8_t {
         NoCommand,
@@ -132,9 +138,11 @@ public:
         SkipBackwardCommand,
         NextTrackCommand,
         PreviousTrackCommand,
+        BeginScrubbing,
+        EndScrubbing,
     };
     bool canReceiveRemoteControlCommands() const;
-    virtual void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument& = WTF::nullopt);
+    virtual void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument&);
     bool supportsSeeking() const;
 
     enum DisplayType : uint8_t {
@@ -273,7 +281,29 @@ protected:
 String convertEnumerationToString(PlatformMediaSession::State);
 String convertEnumerationToString(PlatformMediaSession::InterruptionType);
 String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType);
+
+template<class Encoder> inline void PlatformMediaSession::RemoteCommandArgument::encode(Encoder& encoder) const
+{
+    encoder << time << fastSeek;
 }
+
+template<class Decoder> inline Optional<PlatformMediaSession::RemoteCommandArgument> PlatformMediaSession::RemoteCommandArgument::decode(Decoder& decoder)
+{
+#define DECODE(name, type) \
+    Optional<Optional<type>> name; \
+    decoder >> name; \
+    if (!name) \
+        return WTF::nullopt; \
+
+    DECODE(time, double);
+    DECODE(fastSeek, bool);
+
+#undef DECODE
+
+    return { { *time, *fastSeek } };
+}
+
+} // namespace WebCore
 
 namespace WTF {
 
@@ -360,7 +390,13 @@ template <> struct EnumTraits<WebCore::PlatformMediaSession::RemoteControlComman
     WebCore::PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand,
     WebCore::PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand,
     WebCore::PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand
+    WebCore::PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand,
+    WebCore::PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand,
+    WebCore::PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand,
+    WebCore::PlatformMediaSession::RemoteControlCommandType::NextTrackCommand,
+    WebCore::PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand,
+    WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbing,
+    WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbing
     >;
 };
 

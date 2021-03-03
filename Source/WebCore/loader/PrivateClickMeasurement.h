@@ -32,8 +32,19 @@
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if PLATFORM(COCOA)
+OBJC_CLASS RSABSSATokenReady;
+OBJC_CLASS RSABSSATokenWaitingActivation;
+OBJC_CLASS RSABSSATokenBlinder;
+#endif
 
 namespace WebCore {
 
@@ -251,8 +262,8 @@ public:
     WEBCORE_EXPORT static Expected<AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
     WEBCORE_EXPORT Optional<Seconds> attributeAndGetEarliestTimeToSend(AttributionTriggerData&&);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
-    WEBCORE_EXPORT URL reportURL() const;
-    WEBCORE_EXPORT Ref<JSON::Object> json() const;
+    WEBCORE_EXPORT URL attributionReportURL() const;
+    WEBCORE_EXPORT Ref<JSON::Object> attributionReportJSON() const;
     const SourceSite& sourceSite() const { return m_sourceSite; };
     const AttributeOnSite& attributeOnSite() const { return m_attributeOnSite; };
     WallTime timeOfAdClick() const { return m_timeOfAdClick; }
@@ -264,6 +275,42 @@ public:
 
     const String& sourceDescription() const { return m_sourceDescription; }
     const String& purchaser() const { return m_purchaser; }
+
+    // MARK: - Fraud Prevention
+    WEBCORE_EXPORT URL tokenPublicKeyURL() const;
+    WEBCORE_EXPORT URL tokenSignatureURL() const;
+
+    WEBCORE_EXPORT Ref<JSON::Object> tokenSignatureJSON() const;
+
+    struct EphemeralSourceNonce {
+        String nonce;
+
+        WEBCORE_EXPORT bool isValid() const;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static Optional<EphemeralSourceNonce> decode(Decoder&);
+    };
+
+    WEBCORE_EXPORT void setEphemeralSourceNonce(EphemeralSourceNonce&&);
+    Optional<EphemeralSourceNonce> ephemeralSourceNonce() const { return m_ephemeralSourceNonce; };
+    void clearEphemeralSourceNonce() { m_ephemeralSourceNonce.reset(); };
+
+    struct SourceUnlinkableToken {
+        String tokenBase64URL;
+        String signatureBase64URL;
+        String keyIDBase64URL;
+
+        bool isValid() const;
+    };
+
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT bool calculateAndUpdateSourceSecretToken(const String& serverPublicKeyBase64URL);
+    WEBCORE_EXPORT bool calculateAndUpdateSourceUnlinkableToken(const String& serverResponseBase64URL);
+#endif
+
+    void setSourceSecretTokenValue(const String& value) { m_sourceSecretToken.valueBase64URL = value; }
+    const Optional<SourceUnlinkableToken>& sourceUnlinkableToken() const { return m_sourceUnlinkableToken; }
+    WEBCORE_EXPORT void setSourceUnlinkableToken(SourceUnlinkableToken&&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<PrivateClickMeasurement> decode(Decoder&);
@@ -280,6 +327,19 @@ private:
 
     Optional<AttributionTriggerData> m_attributionTriggerData;
     Optional<WallTime> m_earliestTimeToSend;
+
+    struct SourceSecretToken {
+#if PLATFORM(COCOA)
+        RetainPtr<RSABSSATokenBlinder> blinder;
+        RetainPtr<RSABSSATokenWaitingActivation> waitingToken;
+        RetainPtr<RSABSSATokenReady> readyToken;
+#endif
+        String valueBase64URL;
+    };
+
+    Optional<EphemeralSourceNonce> m_ephemeralSourceNonce;
+    SourceSecretToken m_sourceSecretToken;
+    Optional<SourceUnlinkableToken> m_sourceUnlinkableToken;
 };
 
 template<class Encoder>
@@ -291,6 +351,7 @@ void PrivateClickMeasurement::encode(Encoder& encoder) const
         << m_sourceDescription
         << m_purchaser
         << m_timeOfAdClick
+        << m_ephemeralSourceNonce
         << m_attributionTriggerData
         << m_earliestTimeToSend;
 }
@@ -327,7 +388,12 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     decoder >> timeOfAdClick;
     if (!timeOfAdClick)
         return WTF::nullopt;
-    
+
+    Optional<Optional<EphemeralSourceNonce>> ephemeralSourceNonce;
+    decoder >> ephemeralSourceNonce;
+    if (!ephemeralSourceNonce)
+        return WTF::nullopt;
+
     Optional<Optional<AttributionTriggerData>> attributionTriggerData;
     decoder >> attributionTriggerData;
     if (!attributionTriggerData)
@@ -346,10 +412,28 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
         WTFMove(*purchaser),
         WTFMove(*timeOfAdClick)
     };
+    attribution.m_ephemeralSourceNonce = WTFMove(*ephemeralSourceNonce);
     attribution.m_attributionTriggerData = WTFMove(*attributionTriggerData);
     attribution.m_earliestTimeToSend = WTFMove(*earliestTimeToSend);
     
     return attribution;
+}
+
+template<class Encoder>
+void PrivateClickMeasurement::EphemeralSourceNonce::encode(Encoder& encoder) const
+{
+    encoder << nonce;
+}
+
+template<class Decoder>
+Optional<PrivateClickMeasurement::EphemeralSourceNonce> PrivateClickMeasurement::EphemeralSourceNonce::decode(Decoder& decoder)
+{
+    Optional<String> nonce;
+    decoder >> nonce;
+    if (!nonce)
+        return WTF::nullopt;
+    
+    return EphemeralSourceNonce { WTFMove(*nonce) };
 }
 
 template<class Encoder>

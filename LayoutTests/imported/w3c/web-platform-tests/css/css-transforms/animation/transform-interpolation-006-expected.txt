@@ -17,12 +17,12 @@ PASS CSS Animations: property <transform> from neutral to [translate(20px)] at (
 PASS CSS Animations: property <transform> from neutral to [translate(20px)] at (0.75) should be [translate(17.5px)]
 PASS CSS Animations: property <transform> from neutral to [translate(20px)] at (1) should be [translate(20px)]
 PASS CSS Animations: property <transform> from neutral to [translate(20px)] at (2) should be [translate(30px)]
-FAIL Web Animations: property <transform> from neutral to [translate(20px)] at (-1) should be [translate(0px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 0 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , - 20 , 0 ) "
+PASS Web Animations: property <transform> from neutral to [translate(20px)] at (-1) should be [translate(0px)]
 PASS Web Animations: property <transform> from neutral to [translate(20px)] at (0) should be [translate(10px)]
-FAIL Web Animations: property <transform> from neutral to [translate(20px)] at (0.25) should be [translate(12.5px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 12.5 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , 14.38 , 0 ) "
-FAIL Web Animations: property <transform> from neutral to [translate(20px)] at (0.75) should be [translate(17.5px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 17.5 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , 19.38 , 0 ) "
+PASS Web Animations: property <transform> from neutral to [translate(20px)] at (0.25) should be [translate(12.5px)]
+PASS Web Animations: property <transform> from neutral to [translate(20px)] at (0.75) should be [translate(17.5px)]
 PASS Web Animations: property <transform> from neutral to [translate(20px)] at (1) should be [translate(20px)]
-FAIL Web Animations: property <transform> from neutral to [translate(20px)] at (2) should be [translate(30px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 30 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , 10 , 0 ) "
+PASS Web Animations: property <transform> from neutral to [translate(20px)] at (2) should be [translate(30px)]
 PASS CSS Transitions: property <transform> from [initial] to [translate(20px)] at (-1) should be [translate(-20px)]
 PASS CSS Transitions: property <transform> from [initial] to [translate(20px)] at (0) should be [translate(0px)]
 PASS CSS Transitions: property <transform> from [initial] to [translate(20px)] at (0.25) should be [translate(5px)]
@@ -65,12 +65,12 @@ PASS CSS Animations: property <transform> from [inherit] to [translate(20px)] at
 PASS CSS Animations: property <transform> from [inherit] to [translate(20px)] at (0.75) should be [translate(22.5px)]
 PASS CSS Animations: property <transform> from [inherit] to [translate(20px)] at (1) should be [translate(20px)]
 PASS CSS Animations: property <transform> from [inherit] to [translate(20px)] at (2) should be [translate(10px)]
-FAIL Web Animations: property <transform> from [inherit] to [translate(20px)] at (-1) should be [translate(40px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 40 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , 0 , 0 ) "
-FAIL Web Animations: property <transform> from [inherit] to [translate(20px)] at (0) should be [translate(30px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 30 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , 0 , 0 ) "
-FAIL Web Animations: property <transform> from [inherit] to [translate(20px)] at (0.25) should be [translate(27.5px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 27.5 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , 5 , 0 ) "
-FAIL Web Animations: property <transform> from [inherit] to [translate(20px)] at (0.75) should be [translate(22.5px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 22.5 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , 16.25 , 0 ) "
+PASS Web Animations: property <transform> from [inherit] to [translate(20px)] at (-1) should be [translate(40px)]
+PASS Web Animations: property <transform> from [inherit] to [translate(20px)] at (0) should be [translate(30px)]
+PASS Web Animations: property <transform> from [inherit] to [translate(20px)] at (0.25) should be [translate(27.5px)]
+PASS Web Animations: property <transform> from [inherit] to [translate(20px)] at (0.75) should be [translate(22.5px)]
 PASS Web Animations: property <transform> from [inherit] to [translate(20px)] at (1) should be [translate(20px)]
-FAIL Web Animations: property <transform> from [inherit] to [translate(20px)] at (2) should be [translate(10px)] assert_equals: expected "matrix ( 1 , 0 , 0 , 1 , 10 , 0 ) " but got "matrix ( 1 , 0 , 0 , 1 , 20 , 0 ) "
+PASS Web Animations: property <transform> from [inherit] to [translate(20px)] at (2) should be [translate(10px)]
 PASS CSS Transitions: property <transform> from [unset] to [translate(20px)] at (-1) should be [translate(-20px)]
 PASS CSS Transitions: property <transform> from [unset] to [translate(20px)] at (0) should be [translate(0px)]
 PASS CSS Transitions: property <transform> from [unset] to [translate(20px)] at (0.25) should be [translate(5px)]

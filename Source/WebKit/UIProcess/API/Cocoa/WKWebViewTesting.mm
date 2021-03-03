@@ -302,9 +302,9 @@
     });
 }
 
-- (void)_setPrivateClickMeasurementConversionURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
+- (void)_setPrivateClickMeasurementAttributionReportURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
 {
-    _page->setPrivateClickMeasurementConversionURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->setPrivateClickMeasurementAttributionReportURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -324,6 +324,13 @@
 #if PLATFORM(IOS_FAMILY)
     [_contentView _dismissContactPickerWithContacts:contacts];
 #endif
+}
+
+- (void)_lastNavigationWasAppBound:(void(^)(BOOL))completionHandler
+{
+    _page->lastNavigationWasAppBound([completionHandler = makeBlockPtr(completionHandler)] (bool isAppBound) {
+        completionHandler(isAppBound);
+    });
 }
 
 @end

@@ -39,6 +39,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "Image.h"
+#include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -488,9 +489,9 @@ void DataTransfer::setDragImage(Element&, int, int)
 
 #else
 
-Ref<DataTransfer> DataTransfer::createForDrag()
+Ref<DataTransfer> DataTransfer::createForDrag(const Document& document)
 {
-    return adoptRef(*new DataTransfer(StoreMode::ReadWrite, Pasteboard::createForDragAndDrop(), Type::DragAndDropData));
+    return adoptRef(*new DataTransfer(StoreMode::ReadWrite, Pasteboard::createForDragAndDrop(PagePasteboardContext::create(document.pageID())), Type::DragAndDropData));
 }
 
 Ref<DataTransfer> DataTransfer::createForDragStartEvent(const Document& document)

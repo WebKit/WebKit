@@ -1,7 +1,7 @@
 /*
  * This file is part of the internal font implementation.
  *
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -42,6 +42,7 @@
 
 #if PLATFORM(COCOA)
 #include <CoreFoundation/CoreFoundation.h>
+#include <pal/cf/OTSVGTable.h>
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -219,6 +220,9 @@ public:
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
     void applyTransforms(GlyphBuffer&, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection) const;
 
+    // Returns nullopt if none of the glyphs are OT-SVG glyphs.
+    Optional<BitVector> findOTSVGGlyphs(const GlyphBufferGlyph*, unsigned count) const;
+
 #if PLATFORM(WIN)
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
@@ -293,6 +297,7 @@ private:
     mutable Optional<BitVector> m_glyphsSupportedByAllSmallCaps;
     mutable Optional<BitVector> m_glyphsSupportedByPetiteCaps;
     mutable Optional<BitVector> m_glyphsSupportedByAllPetiteCaps;
+    mutable Optional<PAL::OTSVGTable> m_otSVGTable;
 #endif
 
 #if PLATFORM(WIN)

@@ -78,7 +78,7 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
     loadPictureInPicture(webView);
 
     static bool isDone = false;
-    [webView closeAllMediaPresentations:^{
+    [webView closeAllMediaPresentationsWithCompletionHandler:^{
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
@@ -114,7 +114,7 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
     } while (true);
 
     static bool isDone = false;
-    [webView closeAllMediaPresentations:^{
+    [webView closeAllMediaPresentationsWithCompletionHandler:^{
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
@@ -142,7 +142,7 @@ TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
     [webView performAfterReceivingMessage:@"fullscreenchange" action:^{ fullscreenModeChanged = true; }];
 
     static bool isDone = false;
-    [webView closeAllMediaPresentations:^{
+    [webView closeAllMediaPresentationsWithCompletionHandler:^{
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
@@ -167,12 +167,12 @@ TEST(WKWebViewCloseAllMediaPresentations, MultipleSequentialCloseAllMediaPresent
     loadPictureInPicture(webView);
 
     static bool firstIsDone = false;
-    [webView closeAllMediaPresentations:^{
+    [webView closeAllMediaPresentationsWithCompletionHandler:^{
         firstIsDone = true;
     }];
 
     static bool secondIsDone = false;
-    [webView closeAllMediaPresentations:^{
+    [webView closeAllMediaPresentationsWithCompletionHandler:^{
         secondIsDone = true;
     }];
 

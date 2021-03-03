@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,10 @@ static constexpr auto lightenedBlack = SRGBA<uint8_t> { 84, 84, 84 };
 static constexpr auto darkenedWhite = SRGBA<uint8_t> { 171, 171, 171 };
 
 Color::Color(const Color& other)
-    : m_colorData(other.m_colorData)
+    : m_colorAndFlags(other.m_colorAndFlags)
 {
     if (isExtended())
-        m_colorData.extendedColor->ref();
+        asExtended().ref();
 }
 
 Color::Color(Color&& other)
@@ -54,12 +54,13 @@ Color& Color::operator=(const Color& other)
         return *this;
 
     if (isExtended())
-        m_colorData.extendedColor->deref();
+        asExtended().deref();
 
-    m_colorData = other.m_colorData;
+    m_colorAndFlags = other.m_colorAndFlags;
 
     if (isExtended())
-        m_colorData.extendedColor->ref();
+        asExtended().ref();
+
     return *this;
 }
 
@@ -69,10 +70,10 @@ Color& Color::operator=(Color&& other)
         return *this;
 
     if (isExtended())
-        m_colorData.extendedColor->deref();
+        asExtended().deref();
 
-    m_colorData = other.m_colorData;
-    other.m_colorData.inlineColorAndFlags = invalidInlineColor;
+    m_colorAndFlags = other.m_colorAndFlags;
+    other.m_colorAndFlags = invalidColorAndFlags;
 
     return *this;
 }
@@ -123,19 +124,15 @@ float Color::luminance() const
 
 Color Color::colorWithAlpha(float alpha) const
 {
-    return callOnUnderlyingType(WTF::makeVisitor(
-        [&] (const SRGBA<uint8_t>& underlyingColor) -> Color {
-            Color result = colorWithOverridenAlpha(underlyingColor, alpha);
+    return callOnUnderlyingType([&] (const auto& underlyingColor) -> Color {
+        auto result = colorWithOverriddenAlpha(underlyingColor, alpha);
 
-            // FIXME: Why is preserving the semantic bit desired and/or correct here?
-            if (isSemantic())
-                result.tagAsSemantic();
-            return result;
-        },
-        [&] (const auto& underlyingColor) -> Color {
-            return colorWithOverridenAlpha(underlyingColor, alpha);
-        }
-    ));
+        // FIXME: Why is preserving the semantic bit desired and/or correct here?
+        if (isSemantic())
+            return { result, Flags::Semantic };
+
+        return { result };
+    });
 }
 
 Color Color::invertedColorWithAlpha(float alpha) const
@@ -147,9 +144,9 @@ Color Color::invertedColorWithAlpha(float alpha) const
         // better for non-invertible color types like Lab or consider removing this in favor
         // of alternatives.
         if constexpr (ColorType::Model::isInvertible)
-            return invertedColorWithOverridenAlpha(underlyingColor, alpha);
+            return invertedcolorWithOverriddenAlpha(underlyingColor, alpha);
         else
-            return invertedColorWithOverridenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha);
+            return invertedcolorWithOverriddenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha);
     });
 }
 
@@ -157,8 +154,10 @@ Color Color::semanticColor() const
 {
     if (isSemantic())
         return *this;
-
-    return { toSRGBALossy<uint8_t>(), Semantic };
+    
+    if (isExtended())
+        return { asExtendedRef(), Flags::Semantic };
+    return { asInline(), Flags::Semantic };
 }
 
 std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() const

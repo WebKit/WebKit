@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "UserMediaCaptureUIDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -45,25 +46,6 @@
 #import <wtf/text/WTFString.h>
 
 static bool done;
-static bool wasPrompted;
-
-@interface GetUserMediaCaptureUIDelegate : NSObject<WKUIDelegate>
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
-@end
-
-@implementation GetUserMediaCaptureUIDelegate
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
-{
-    decisionHandler(YES);
-    wasPrompted = true;
-}
-
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
-{
-    decisionHandler(@"0x9876543210", YES);
-}
-@end
 
 @interface GUMMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -124,45 +106,45 @@ TEST(WebKit2, CaptureMute)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
 
-    webView._mediaCaptureReportingDelayForTesting = 0;
+    [webView _setMediaCaptureReportingDelayForTesting:0];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
 
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateMutedCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedCamera));
     [webView _setPageMuted: _WKMediaNoneMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
 
     [webView stringByEvaluatingJavaScript:@"captureAudio()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveMicrophone));
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateMutedMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedMicrophone));
     [webView _setPageMuted: _WKMediaNoneMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveMicrophone));
 
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateMutedMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedMicrophone));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
 
     [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera | _WKMediaCaptureStateActiveMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera | _WKMediaCaptureStateActiveMicrophone));
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateMutedCamera | _WKMediaCaptureStateMutedMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedCamera | _WKMediaCaptureStateMutedMicrophone));
     [webView _setPageMuted: _WKMediaNoneMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera | _WKMediaCaptureStateActiveMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera | _WKMediaCaptureStateActiveMicrophone));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
 }
 
 TEST(WebKit2, CaptureStop)
@@ -177,22 +159,19 @@ TEST(WebKit2, CaptureStop)
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
 
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
-
-    wasPrompted = false;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
 
-    TestWebKitAPI::Util::run(&wasPrompted);
-    wasPrompted = false;
+    [delegate waitUntilPrompted];
 
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateMutedCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedCamera));
     [webView _setPageMuted: _WKMediaNoneMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
 
     [webView stringByEvaluatingJavaScript:@"notifyEndedEvent()"];
     [webView _stopMediaCapture];
@@ -200,11 +179,10 @@ TEST(WebKit2, CaptureStop)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
 
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
-    TestWebKitAPI::Util::run(&wasPrompted);
-    wasPrompted = false;
+    [delegate waitUntilPrompted];
 }
 
 TEST(WebKit2, CaptureIndicatorDelay)
@@ -219,19 +197,16 @@ TEST(WebKit2, CaptureIndicatorDelay)
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
 
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
-    webView._mediaCaptureReportingDelayForTesting = 2;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    [webView _setMediaCaptureReportingDelayForTesting:2];
 
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
-
-    wasPrompted = false;
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
 
-    TestWebKitAPI::Util::run(&wasPrompted);
-    wasPrompted = false;
+    [delegate waitUntilPrompted];
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
 
@@ -240,7 +215,7 @@ TEST(WebKit2, CaptureIndicatorDelay)
     EXPECT_EQ([webView _mediaCaptureState], _WKMediaCaptureStateActiveCamera);
 
     // One additional second should allow us to go back to no capture being reported.
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
 }
 
 TEST(WebKit2, CaptureIndicatorDelayWhenClosed)
@@ -255,19 +230,16 @@ TEST(WebKit2, CaptureIndicatorDelayWhenClosed)
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
 
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
-    webView._mediaCaptureReportingDelayForTesting = 2;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    [webView _setMediaCaptureReportingDelayForTesting:2];
 
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
-
-    wasPrompted = false;
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
 
-    TestWebKitAPI::Util::run(&wasPrompted);
-    wasPrompted = false;
+    [delegate waitUntilPrompted];
 
     [webView _close];
 
@@ -286,16 +258,14 @@ TEST(WebKit2, GetCapabilities)
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
 
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
-
-    wasPrompted = false;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
 
-    TestWebKitAPI::Util::run(&wasPrompted);
+    [delegate waitUntilPrompted];
 
     done = false;
     [webView stringByEvaluatingJavaScript:@"checkGetCapabilities()"];
@@ -321,7 +291,7 @@ TEST(WebKit, InterruptionBetweenSameProcessPages)
 
     done = false;
     auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     webView1.get().UIDelegate = delegate.get();
     [webView1 loadTestPageNamed:@"getUserMedia2"];
     TestWebKitAPI::Util::run(&done);
@@ -361,10 +331,10 @@ TEST(WebKit, WebAudioAndGetUserMedia)
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
 
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
 
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
-    webView.UIDelegate = delegate.get();
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
 
     auto url = adoptWK(Util::createURLForResource("getUserMedia-webaudio", "html"));
     [webView loadTestPageNamed:@"getUserMedia-webaudio"];
@@ -398,7 +368,7 @@ TEST(WebKit2, CrashGPUProcessWhileCapturing)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
 
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     webView.get().UIDelegate = delegate.get();
 
     [webView loadTestPageNamed:@"getUserMedia"];
@@ -478,7 +448,7 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
 
-    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     webView.get().UIDelegate = delegate.get();
 
     [webView loadTestPageNamed:@"getUserMedia"];

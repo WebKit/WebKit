@@ -299,6 +299,28 @@ Device::ListOfEnabledFeatures OpenXRDevice::enumerateReferenceSpaces(XrSession& 
     return enabledFeatures;
 }
 
+XrSpace OpenXRDevice::createReferenceSpace(XrReferenceSpaceType type)
+{
+    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    ASSERT(m_session != XR_NULL_HANDLE);
+    ASSERT(m_instance != XR_NULL_HANDLE);
+
+    XrPosef identityPose {
+        .orientation = { .x = 0, .y = 0, .z = 0, .w = 1.0 },
+        .position = { .x = 0, .y = 0, .z = 0 }
+    };
+
+    auto spaceCreateInfo = createStructure<XrReferenceSpaceCreateInfo, XR_TYPE_REFERENCE_SPACE_CREATE_INFO>();
+    spaceCreateInfo.referenceSpaceType = type;
+    spaceCreateInfo.poseInReferenceSpace = identityPose;
+
+    XrSpace space;
+    auto result = xrCreateReferenceSpace(m_session, &spaceCreateInfo, &space);
+    RETURN_IF_FAILED(result, "xrCreateReferenceSpace", m_instance, XR_NULL_HANDLE);
+
+    return space;
+}
+
 void OpenXRDevice::collectSupportedSessionModes()
 {
     ASSERT(&RunLoop::current() == &m_queue.runLoop());
@@ -368,15 +390,6 @@ void OpenXRDevice::collectConfigurationViews()
     }
 }
 
-WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
-{
-    auto configType = mode == SessionMode::Inline ? XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO : XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
-    auto viewsIterator = m_configurationViews.find(configType);
-    if (viewsIterator != m_configurationViews.end())
-        return { static_cast<int>(viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
-    return Device::recommendedResolution(mode);
-}
-
 XrViewConfigurationType toXrViewConfigurationType(SessionMode mode)
 {
     switch (mode) {
@@ -400,6 +413,15 @@ static bool isSessionReady(XrSessionState state)
     return state >= XR_SESSION_STATE_READY  && state < XR_SESSION_STATE_STOPPING;
 }
 
+WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
+{
+    auto configType = toXrViewConfigurationType(mode);
+    auto viewsIterator = m_configurationViews.find(configType);
+    if (viewsIterator != m_configurationViews.end())
+        return { static_cast<int>(viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
+    return Device::recommendedResolution(mode);
+}
+
 void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
 {
     m_queue.dispatch([this, mode]() {
@@ -414,6 +436,9 @@ void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
         sessionCreateInfo.systemId = m_systemId;
         auto result = xrCreateSession(m_instance, &sessionCreateInfo, &m_session);
         RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties", m_instance);
+
+        m_localSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_LOCAL);
+        m_viewSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_VIEW);
     });
 }
 
@@ -455,6 +480,12 @@ void OpenXRDevice::shutDownTrackingAndRendering()
         // OpenXR needs to wait for the XR_SESSION_STATE_STOPPING state to properly end the session.
         waitUntilStopping();
     });
+}
+
+void OpenXRDevice::initializeReferenceSpace(PlatformXR::ReferenceSpaceType spaceType)
+{
+    if ((spaceType == ReferenceSpaceType::LocalFloor || spaceType == ReferenceSpaceType::BoundedFloor) && m_stageSpace == XR_NULL_HANDLE)
+        m_stageSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_STAGE);
 }
 
 void OpenXRDevice::waitUntilStopping()
@@ -526,14 +557,20 @@ void OpenXRDevice::endSession()
     });
 }
 
-
-Device::FrameData::ViewData xrViewToViewData(XrView view)
+static Device::FrameData::Pose XrPosefToPose(XrPosef pose)
 {
-    Device::FrameData::ViewData data;
-    data.fov = { view.fov.angleUp, view.fov.angleDown, view.fov.angleLeft, view.fov.angleRight };
-    data.pose.orientation = { view.pose.orientation.x, view.pose.orientation.y, view.pose.orientation.z, view.pose.orientation.w };
-    data.pose.position = { view.pose.position.x, view.pose.position.y, view.pose.position.z };
-    return data;
+    Device::FrameData::Pose result;
+    result.orientation = { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w };
+    result.position = { pose.position.x, pose.position.y, pose.position.z };
+    return result;
+}
+
+static Device::FrameData::View xrViewToPose(XrView view)
+{
+    Device::FrameData::View pose;
+    pose.projection = Device::FrameData::Fov { view.fov.angleUp, view.fov.angleDown, view.fov.angleLeft, view.fov.angleRight };
+    pose.offset = XrPosefToPose(view.pose);
+    return pose;
 }
 
 void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
@@ -562,13 +599,22 @@ void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
         frameData.predictedDisplayTime = frameState.predictedDisplayTime;
 
         if (isSessionActive(m_sessionState)) {
+            // Query head location
+            auto location = createStructure<XrSpaceLocation, XR_TYPE_SPACE_LOCATION>();
+            xrLocateSpace(m_viewSpace, m_localSpace, frameState.predictedDisplayTime, &location);
+            frameData.isTrackingValid = location.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT;
+            frameData.isPositionValid = location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
+            frameData.isPositionEmulated = location.locationFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT;
+
+            if (frameData.isTrackingValid)
+                frameData.origin = XrPosefToPose(location.pose);
+            
             ASSERT(m_configurationViews.contains(m_currentViewConfigurationType));
             const auto& configurationView = m_configurationViews.get(m_currentViewConfigurationType);
 
             auto viewLocateInfo = createStructure<XrViewLocateInfo, XR_TYPE_VIEW_LOCATE_INFO>();
             viewLocateInfo.displayTime = predictedTime;
-            // FIXME: use the current reference space.
-            // viewLocateInfo.space = m_localSpace;
+            viewLocateInfo.space = m_localSpace;
 
             uint32_t viewCount = configurationView.size();
             Vector<XrView> views(viewCount, [] {
@@ -583,7 +629,14 @@ void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
             result = xrLocateViews(m_session, &viewLocateInfo, &viewState, viewCount, &viewCountOutput, views.data());
             if (!XR_FAILED(result)) {
                 for (auto& view : views)
-                    frameData.viewPoses.append(xrViewToViewData(view));
+                    frameData.views.append(xrViewToPose(view));
+            }
+
+            // Query floor transform
+            if (m_stageSpace != XR_NULL_HANDLE) {
+                auto floorLocation = createStructure<XrSpaceLocation, XR_TYPE_SPACE_LOCATION>();
+                xrLocateSpace(m_stageSpace, m_localSpace, frameState.predictedDisplayTime, &floorLocation);
+                frameData.floorTransform = { XrPosefToPose(floorLocation.pose) };
             }
         }
 
@@ -598,6 +651,21 @@ void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
         result = xrEndFrame(m_session, &frameEndInfo);
         RETURN_IF_FAILED(result, "xrEndFrame", m_instance);
     });
+}
+
+Vector<Device::ViewData> OpenXRDevice::views(SessionMode mode) const
+{
+    Vector<Device::ViewData> views;
+    auto configurationType = toXrViewConfigurationType(mode);
+
+    if (configurationType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO)
+        views.append({ .active = true, .eye = Eye::None });
+    else {
+        ASSERT(configurationType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO);
+        views.append({ .active = true, Eye::Left });
+        views.append({ .active = true, Eye::Right });
+    }
+    return views;
 }
 
 } // namespace PlatformXR

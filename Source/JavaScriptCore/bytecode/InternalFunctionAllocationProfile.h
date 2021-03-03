@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ public:
     Structure* createAllocationStructureFromBase(VM&, JSGlobalObject*, JSCell* owner, JSObject* prototype, Structure* base);
 
     void clear() { m_structure.clear(); }
-    void visitAggregate(SlotVisitor& visitor) { visitor.append(m_structure); }
+    template<typename Visitor> void visitAggregate(Visitor& visitor) { visitor.append(m_structure); }
 
 private:
     WriteBarrier<Structure> m_structure;

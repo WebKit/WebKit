@@ -40,7 +40,7 @@ function runTest() {
     }
 
     var states = [];
-    var es = new EventSource("resources/status-codes.php?status-code=" + tests[count].code);
+    var es = new EventSource("resources/status-codes.py?status-code=" + tests[count].code);
     states[0] = es.readyState;
 
     es.onopen = function () {

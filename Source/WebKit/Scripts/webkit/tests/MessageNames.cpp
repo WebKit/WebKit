@@ -80,6 +80,12 @@ const char* description(MessageName name)
         return "TestWithSemaphore_ReceiveSemaphore";
     case MessageName::TestWithSemaphore_SendSemaphore:
         return "TestWithSemaphore_SendSemaphore";
+    case MessageName::TestWithStreamBuffer_SendStreamBuffer:
+        return "TestWithStreamBuffer_SendStreamBuffer";
+    case MessageName::TestWithStream_SendString:
+        return "TestWithStream_SendString";
+    case MessageName::TestWithStream_SendStringSynchronized:
+        return "TestWithStream_SendStringSynchronized";
     case MessageName::TestWithSuperclass_LoadURL:
         return "TestWithSuperclass_LoadURL";
     case MessageName::TestWithSuperclass_TestAsyncMessage:
@@ -134,6 +140,10 @@ const char* description(MessageName name)
         return "InitializeConnection";
     case MessageName::LegacySessionState:
         return "LegacySessionState";
+    case MessageName::ProcessOutOfStreamMessage:
+        return "ProcessOutOfStreamMessage";
+    case MessageName::SetStreamDestinationID:
+        return "SetStreamDestinationID";
     case MessageName::SyncMessageReply:
         return "SyncMessageReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
@@ -195,6 +205,11 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
     case MessageName::TestWithSemaphore_SendSemaphore:
         return ReceiverName::TestWithSemaphore;
+    case MessageName::TestWithStreamBuffer_SendStreamBuffer:
+        return ReceiverName::TestWithStreamBuffer;
+    case MessageName::TestWithStream_SendString:
+    case MessageName::TestWithStream_SendStringSynchronized:
+        return ReceiverName::TestWithStream;
     case MessageName::TestWithSuperclass_LoadURL:
     case MessageName::TestWithSuperclass_TestAsyncMessage:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
@@ -224,6 +239,8 @@ ReceiverName receiverName(MessageName messageName)
         return ReceiverName::TestWithoutAttributes;
     case MessageName::InitializeConnection:
     case MessageName::LegacySessionState:
+    case MessageName::ProcessOutOfStreamMessage:
+    case MessageName::SetStreamDestinationID:
     case MessageName::SyncMessageReply:
         return ReceiverName::IPC;
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
@@ -321,6 +338,12 @@ bool isValidMessageName(MessageName messageName)
         return true;
     if (messageName == IPC::MessageName::TestWithSemaphore_SendSemaphore)
         return true;
+    if (messageName == IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer)
+        return true;
+    if (messageName == IPC::MessageName::TestWithStream_SendString)
+        return true;
+    if (messageName == IPC::MessageName::TestWithStream_SendStringSynchronized)
+        return true;
     if (messageName == IPC::MessageName::TestWithSuperclass_LoadURL)
         return true;
 #if ENABLE(TEST_FEATURE)
@@ -400,6 +423,10 @@ bool isValidMessageName(MessageName messageName)
         return true;
 #endif
     if (messageName == IPC::MessageName::LegacySessionState)
+        return true;
+    if (messageName == IPC::MessageName::ProcessOutOfStreamMessage)
+        return true;
+    if (messageName == IPC::MessageName::SetStreamDestinationID)
         return true;
     if (messageName == IPC::MessageName::SyncMessageReply)
         return true;

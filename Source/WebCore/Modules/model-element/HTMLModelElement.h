@@ -27,11 +27,19 @@
 
 #if ENABLE(MODEL_ELEMENT)
 
+#include "CachedRawResource.h"
+#include "CachedRawResourceClient.h"
+#include "CachedResourceHandle.h"
 #include "HTMLElement.h"
+#include "IDLTypes.h"
+#include "SharedBuffer.h"
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
-class HTMLModelElement final : public HTMLElement {
+template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
+
+class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient {
     WTF_MAKE_ISO_ALLOCATED(HTMLModelElement);
 public:
     static Ref<HTMLModelElement> create(const QualifiedName&, Document&);
@@ -40,14 +48,32 @@ public:
     void sourcesChanged();
     const URL& currentSrc() const { return m_sourceURL; }
 
+    using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<HTMLModelElement>>;
+    ReadyPromise& ready() { return m_readyPromise.get(); }
+
+    RefPtr<SharedBuffer> modelData() const;
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 
+    void setSourceURL(const URL&);
+    HTMLModelElement& readyPromiseResolve();
+
+    // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    void setSourceURL(const URL&);
+    // Rendering overrides.
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+
+    // CachedRawResourceClient overrides.
+    void dataReceived(CachedResource&, const char* data, int dataLength) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     URL m_sourceURL;
+    CachedResourceHandle<CachedRawResource> m_resource;
+    RefPtr<SharedBuffer> m_data;
+    UniqueRef<ReadyPromise> m_readyPromise;
+    bool m_dataComplete { false };
 };
 
 } // namespace WebCore

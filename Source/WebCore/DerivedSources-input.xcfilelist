@@ -24,6 +24,8 @@ $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayCancelEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayContactField.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateBase.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateData.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorContactField.idl
@@ -32,12 +34,14 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentItem.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentItemType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentRetailChannel.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayLineItem.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayLineItemData.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayMerchantCapability.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPayment.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentAuthorizationResult.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentAuthorizedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentContact.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethod.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodModeUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodUpdate.idl
@@ -54,6 +58,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePaySetupFeatureType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethod.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodData.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayValidateMerchantEvent.idl

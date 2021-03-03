@@ -45,7 +45,7 @@ if (isset($_GET['endTest'])) {
     echo "if (window.testRunner) {";
     echo "    testRunner.notifyDone();";
     echo "    testRunner.setPrivateClickMeasurementOverrideTimerForTesting(false);";
-    echo "    testRunner.setPrivateClickMeasurementConversionURLForTesting('');";
+    echo "    testRunner.setPrivateClickMeasurementAttributionReportURLForTesting('');";
     echo "}";
     echo "</script>";
 }

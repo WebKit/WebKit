@@ -70,9 +70,7 @@ INTERNAL PROPERTY: details: {
           "value": "99.00"
         },
         "pending": false
-      },
-      "additionalDisplayItems": [],
-      "data": null
+      }
     }
   ]
 }

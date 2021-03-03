@@ -22,6 +22,7 @@
 
 #if HAVE(ACCESSIBILITY)
 
+#include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSWrapper.h"

@@ -249,12 +249,12 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     }
 
     PseudoIdToElementUpdateMap pseudoUpdates;
+    if (auto markerElementUpdate = resolvePseudoStyle(element, update, PseudoId::Marker))
+        pseudoUpdates.set(PseudoId::Marker, WTFMove(*markerElementUpdate));
     if (auto beforeElementUpdate = resolvePseudoStyle(element, update, PseudoId::Before))
         pseudoUpdates.set(PseudoId::Before, WTFMove(*beforeElementUpdate));
     if (auto afterElementUpdate = resolvePseudoStyle(element, update, PseudoId::After))
         pseudoUpdates.set(PseudoId::After, WTFMove(*afterElementUpdate));
-    if (auto markerElementUpdate = resolvePseudoStyle(element, update, PseudoId::Marker))
-        pseudoUpdates.set(PseudoId::Marker, WTFMove(*markerElementUpdate));
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // FIXME: Track this exactly.
@@ -332,14 +332,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
         // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
         // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
-        if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations()) {
-            // FIXME: Remove this hack and pass the parent style via updateCSSAnimationsForStyleable.
-            scope().resolver.setParentElementStyleForKeyframes(&parent().style);
-
-            m_document.timeline().updateCSSAnimationsForStyleable(styleable, oldStyle, *newStyle);
-
-            scope().resolver.setParentElementStyleForKeyframes(nullptr);
-        }
+        if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
+            m_document.timeline().updateCSSAnimationsForStyleable(styleable, oldStyle, *newStyle, &parent().style);
     }
 
     // Now we can update all Web animations, which will include CSS Animations as well
@@ -350,13 +344,13 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         styleable.setLastStyleChangeEventStyle(RenderStyle::clonePtr(*newStyle));
         // Apply all keyframe effects to the new style.
         auto animatedStyle = RenderStyle::clonePtr(*newStyle);
-        animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle);
+        animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle, &parent().style);
         newStyle = WTFMove(animatedStyle);
+
+        Adjuster adjuster(m_document, parent().style, parentBoxStyle(), styleable.pseudoId == PseudoId::None ? &element : nullptr);
+        adjuster.adjustAnimatedStyle(*newStyle, animationImpact);
     } else
         styleable.setLastStyleChangeEventStyle(nullptr);
-
-    if (animationImpact)
-        Adjuster::adjustAnimatedStyle(*newStyle, parentBoxStyle(), animationImpact);
 
     // Deduplication speeds up equality comparisons as the properties inherit to descendants.
     // FIXME: There should be a more general mechanism for this.

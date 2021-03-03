@@ -3633,14 +3633,21 @@ void RenderBlockFlow::invalidateLineLayoutPath()
     case LineBoxesPath:
         setLineLayoutPath(UndeterminedPath);
         return;
-    case ModernPath: // FIXME: Not all clients of invalidateLineLayoutPath() actually need to wipe the layout.
+    case ModernPath: {
+        // FIXME: Implement partial invalidation.
+        auto path = UndeterminedPath;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
+            path = ForceLineBoxesPath;
+#endif
         m_lineLayout = WTF::Monostate();
-        setLineLayoutPath(UndeterminedPath);
+        setLineLayoutPath(path);
         if (needsLayout())
             return;
         // FIXME: We should just kick off a subtree layout here (if needed at all) see webkit.org/b/172947.
         setNeedsLayout();
         return;
+    }
     }
     ASSERT_NOT_REACHED();
 }
@@ -3698,7 +3705,12 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     if (view().frameView().layoutContext().layoutState()->isPaginated())
         layoutFormattingContextLineLayout.adjustForPagination();
 
-    auto contentHeight = layoutFormattingContextLineLayout.contentLogicalHeight();
+    auto contentHeight = [&] {
+        if (!hasLines() && hasLineIfEmpty())
+            return lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+        
+        return layoutFormattingContextLineLayout.contentLogicalHeight();
+    }();
     auto contentBoxTop = borderAndPaddingBefore();
     auto contentBoxBottom = contentBoxTop + contentHeight;
     auto borderBoxBottom = contentBoxBottom + borderAndPaddingAfter();

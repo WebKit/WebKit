@@ -450,7 +450,19 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
         return WTF::nullopt;
     }
 
-    return PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(documentRegistrableDomain), AttributeOnSite(attributeOnURL) };
+    auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(documentRegistrableDomain), AttributeOnSite(attributeOnURL) };
+
+    auto attributionSourceNonceAttr = attributeWithoutSynchronization(attributionsourcenonceAttr);
+    if (!attributionSourceNonceAttr.isEmpty()) {
+        auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { attributionSourceNonceAttr };
+        if (!ephemeralNonce.isValid()) {
+            document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
+            return WTF::nullopt;
+        }
+        privateClickMeasurement.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
+    }
+
+    return privateClickMeasurement;
 }
 
 void HTMLAnchorElement::handleClick(Event& event)
@@ -515,7 +527,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     auto privateClickMeasurement = parsePrivateClickMeasurement();
     // A matching conversion event needs to happen before the complete private click measurement
     // URL can be created. Thus, it should be empty for now.
-    ASSERT(!privateClickMeasurement || privateClickMeasurement->reportURL().isNull());
+    ASSERT(!privateClickMeasurement || privateClickMeasurement->attributionReportURL().isNull());
     
     frame->loader().changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(privateClickMeasurement));
 

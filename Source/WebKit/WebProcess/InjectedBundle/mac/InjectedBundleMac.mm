@@ -29,6 +29,7 @@
 #import "APIArray.h"
 #import "APIData.h"
 #import "ObjCObjectGraph.h"
+#import "WKBrowsingContextHandle.h"
 #import "WKBundleAPICast.h"
 #import "WKBundleInitialize.h"
 #import "WKWebProcessBundleParameters.h"
@@ -202,14 +203,14 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         return false;
     }
 
-    id <WKWebProcessPlugIn> instance = (id <WKWebProcessPlugIn>)[(NSObject *)[principalClass alloc] init];
+    auto instance = adoptNS((id <WKWebProcessPlugIn>)[(NSObject *)[principalClass alloc] init]);
     if (!instance) {
         WTFLogAlways("InjectedBundle::load failed - Could not initialize an instance of the principal class.\n");
         return false;
     }
 
     WKWebProcessPlugInController* plugInController = WebKit::wrapper(*this);
-    [plugInController _setPrincipalClassInstance:instance];
+    [plugInController _setPrincipalClassInstance:instance.get()];
 
     if ([instance respondsToSelector:@selector(additionalClassesForParameterCoder)])
         [plugInController extendClassesForParameterCoder:[instance additionalClassesForParameterCoder]];
@@ -266,7 +267,7 @@ void InjectedBundle::extendClassesForParameterCoder(API::Array& classes)
 NSSet* InjectedBundle::classesForCoder()
 {
     if (!m_classesForCoder)
-        m_classesForCoder = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil];
+        m_classesForCoder = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], [WKBrowsingContextHandle class], nil];
 
     return m_classesForCoder.get();
 }

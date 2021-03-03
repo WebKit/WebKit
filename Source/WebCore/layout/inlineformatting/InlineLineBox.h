@@ -122,6 +122,7 @@ public:
 
     private:
         WeakPtr<const Box> m_layoutBox;
+        // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
         InlineRect m_logicalRect;
         LayoutBounds m_layoutBounds;
         InlineLayoutUnit m_baseline { 0 };
@@ -151,9 +152,9 @@ public:
 
     InlineRect logicalRectForTextRun(const Line::Run&) const;
     InlineRect logicalRectForLineBreakBox(const Box&) const;
-    InlineRect logicalMarginRectForAtomicInlineLevelBox(const Box&) const;
     InlineRect logicalRectForRootInlineBox() const { return m_rootInlineBox->logicalRect(); }
-    InlineRect logicalRectForInlineBox(const Box&, const BoxGeometry&) const;
+    InlineRect logicalBorderBoxForAtomicInlineLevelBox(const Box&, const BoxGeometry&) const;
+    InlineRect logicalBorderBoxForInlineBox(const Box&, const BoxGeometry&) const;
 
     const InlineLevelBox& rootInlineBox() const { return *m_rootInlineBox; }
     using InlineLevelBoxList = Vector<std::unique_ptr<InlineLevelBox>>;

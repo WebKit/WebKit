@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,9 @@
 
 namespace JSC {
 
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<>, HashMapBucket<HashMapBucketDataKey>);
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<>, HashMapBucket<HashMapBucketDataKeyValue>);
+
 template<>
 const ClassInfo HashMapBucket<HashMapBucketDataKey>::s_info =
     { "HashMapBucket", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(HashMapBucket<HashMapBucketDataKey>) };
@@ -38,8 +41,9 @@ template<>
 const ClassInfo HashMapBucket<HashMapBucketDataKeyValue>::s_info =
     { "HashMapBucket", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(HashMapBucket<HashMapBucketDataKeyValue>) };
 
-template <typename Data>
-void HashMapBucket<Data>::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Data>
+template<typename Visitor>
+void HashMapBucket<Data>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     HashMapBucket* thisObject = jsCast<HashMapBucket*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -52,8 +56,9 @@ void HashMapBucket<Data>::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendValues(bitwise_cast<WriteBarrier<Unknown>*>(&thisObject->m_data), sizeof(Data) / sizeof(WriteBarrier<Unknown>));
 }
 
-template <typename HashMapBucket>
-void HashMapImpl<HashMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename HashMapBucket>
+template<typename Visitor>
+void HashMapImpl<HashMapBucket>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     HashMapImpl* thisObject = jsCast<HashMapImpl*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -65,6 +70,8 @@ void HashMapImpl<HashMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visito
     if (HashMapBufferType* buffer = thisObject->m_buffer.get())
         visitor.markAuxiliary(buffer);
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<typename HashMapBucket>, HashMapImpl<HashMapBucket>);
 
 template <typename HashMapBucket>
 size_t HashMapImpl<HashMapBucket>::estimatedSize(JSCell* cell, VM& vm)

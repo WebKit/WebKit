@@ -49,8 +49,8 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
-extern DumpRenderTreeWindow *gDrtWindow;
-extern DumpRenderTreeBrowserView *gWebBrowserView;
+extern RetainPtr<DumpRenderTreeWindow> gDrtWindow;
+extern RetainPtr<DumpRenderTreeBrowserView> gWebBrowserView;
 
 RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {

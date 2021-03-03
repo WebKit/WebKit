@@ -893,74 +893,42 @@ Optional<ClipPath> ClipPath::decode(Decoder& decoder)
     return {{ WTFMove(*path), *windRule }};
 }
 
-class ClipToDrawingCommands {
+class BeginClipToDrawingCommands {
 public:
-    static constexpr ItemType itemType = ItemType::ClipToDrawingCommands;
-    static constexpr bool isInlineItem = false;
+    static constexpr ItemType itemType = ItemType::BeginClipToDrawingCommands;
+    static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    ClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace, DisplayList&& drawingCommands)
+    BeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace)
         : m_destination(destination)
         , m_colorSpace(colorSpace)
-        , m_drawingCommands(WTFMove(drawingCommands))
     {
-    }
-
-    ClipToDrawingCommands(const ClipToDrawingCommands& other)
-        : m_destination(other.m_destination)
-        , m_colorSpace(other.m_colorSpace)
-    {
-        // FIXME: Copy m_drawingCommands.
-    }
-
-    ClipToDrawingCommands& operator=(const ClipToDrawingCommands& other)
-    {
-        m_destination = other.m_destination;
-        m_colorSpace = other.m_colorSpace;
-        // FIXME: Copy m_drawingCommands.
-        return *this;
     }
 
     const FloatRect& destination() const { return m_destination; }
     DestinationColorSpace colorSpace() const { return m_colorSpace; }
-    const DisplayList& drawingCommands() const { return m_drawingCommands; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ClipToDrawingCommands> decode(Decoder&);
-
-    void apply(GraphicsContext&) const;
 
 private:
     FloatRect m_destination;
     DestinationColorSpace m_colorSpace;
-    DisplayList m_drawingCommands;
 };
 
-template<class Encoder>
-void ClipToDrawingCommands::encode(Encoder& encoder) const
-{
-    encoder << m_destination;
-    encoder << m_colorSpace;
-    // FIXME: Implement a way to encode in-memory display lists.
-}
+class EndClipToDrawingCommands {
+public:
+    static constexpr ItemType itemType = ItemType::EndClipToDrawingCommands;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = false;
 
-template<class Decoder>
-Optional<ClipToDrawingCommands> ClipToDrawingCommands::decode(Decoder& decoder)
-{
-    Optional<FloatRect> destination;
-    decoder >> destination;
-    if (!destination)
-        return WTF::nullopt;
+    EndClipToDrawingCommands(const FloatRect& destination)
+        : m_destination(destination)
+    {
+    }
 
-    Optional<DestinationColorSpace> colorSpace;
-    decoder >> colorSpace;
-    if (!colorSpace)
-        return WTF::nullopt;
+    const FloatRect& destination() const { return m_destination; }
 
-    // FIXME: Implement a way to decode in-memory display lists.
-    DisplayList drawingCommands;
-    return {{ *destination, *colorSpace, WTFMove(drawingCommands) }};
-}
+private:
+    FloatRect m_destination;
+};
 
 class DrawGlyphs {
 public:
@@ -2345,7 +2313,8 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::ClipToImageBuffer,
     WebCore::DisplayList::ItemType::ClipOutToPath,
     WebCore::DisplayList::ItemType::ClipPath,
-    WebCore::DisplayList::ItemType::ClipToDrawingCommands,
+    WebCore::DisplayList::ItemType::BeginClipToDrawingCommands,
+    WebCore::DisplayList::ItemType::EndClipToDrawingCommands,
     WebCore::DisplayList::ItemType::DrawGlyphs,
     WebCore::DisplayList::ItemType::DrawImageBuffer,
     WebCore::DisplayList::ItemType::DrawNativeImage,

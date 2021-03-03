@@ -362,7 +362,6 @@
   (literal "/private/etc/fstab"
            "/private/etc/hosts"
            "/private/etc/group"
-           "/private/etc/passwd"
            "/private/etc/protocols"
            "/private/etc/services"))
 
@@ -403,22 +402,6 @@
     ; UIKit-required IOKit nodes.
     (deny iokit-open (with telemetry-backtrace)
         (iokit-user-client-class "IOSurfaceSendRight")
-    )
-
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AppleJPEGDriverUserClient")
-        )
-        (when (defined? 'iokit-external-method)
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-async-external-method
-                    iokit-external-trap)
-                (allow
-                    iokit-external-method)
-            )
-        )
     )
 
     ; WebKit-required IOKit classes
@@ -657,7 +640,37 @@
 )
 
 (allow mach-lookup
-       (global-name "com.apple.system.notification_center"))
+    (global-name "com.apple.system.notification_center")
+    (apply-message-filter
+        (deny mach-message-send (with telemetry-backtrace))
+        (deny mach-message-send (with no-report) (message-number 1023))
+        (allow mach-message-send (with telemetry-backtrace) (message-number
+            1002
+            1003
+            1004
+            1005
+            1011
+            1012
+            1013
+            1014
+            1015
+            1016
+            1017
+            1018
+            1021
+            1025
+            1026
+            1027
+        ))
+        (allow mach-message-send (message-number
+            1028
+            1029
+            1030
+            1031
+            1032
+        ))
+    )
+)
 (allow ipc-posix-shm-read*
        (ipc-posix-name "apple.shm.notification_center"))
 
@@ -711,10 +724,6 @@
 
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
-
-;; FIXME(209309): Remove this telemetry once we have confirmed there are no more lookups.
-(deny mach-lookup (with telemetry-backtrace)
-       (global-name "com.apple.mobileassetd" "com.apple.mobileassetd.v2"))
 
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read
@@ -1007,16 +1016,36 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
-;; FIXME: This is just for logging. Remove when the GPU process is enabled by default.
-(allow iokit-open (with report) (with telemetry-backtrace)
+(allow iokit-open (with telemetry-backtrace)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
-            "AGXDeviceUserClient"
-            "AppleJPEGDriverUserClient"
-            "IOSurfaceAcceleratorClient"
             "IOSurfaceRootUserClient"
         )
+    )
+    (when (defined? 'iokit-external-method)
+        (apply-message-filter
+            (deny (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap)
+            (allow
+                iokit-external-method)
+        )
+    )
+)
+
+(deny iokit-open (with telemetry-backtrace)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class
+            "IOSurfaceAcceleratorClient"
+        )
+    )
+)
+
+(deny iokit-open (with no-log)
+    (iokit-user-client-class
+        "AppleJPEGDriverUserClient"
     )
 )
 
@@ -1068,7 +1097,6 @@
             "com.apple.frontboard.systemappservices"
             "com.apple.iconservices"
             "com.apple.lsd.open"
-            "com.apple.mobileassetd" 
         )
     )
 )
@@ -1291,16 +1319,18 @@
     (allow mach-bootstrap
         (apply-message-filter
             (deny xpc-message-send (with telemetry))
-            (allow xpc-message-send (message-number 206))
-            (allow xpc-message-send (message-number 207))
-            (allow xpc-message-send (message-number 711))
-            (allow xpc-message-send (message-number 712))
-            (allow xpc-message-send (message-number 718))
-            (allow xpc-message-send (message-number 800))
-            (allow xpc-message-send (message-number 802))
-            (allow xpc-message-send (message-number 803))
-            (allow xpc-message-send (message-number 804))
-            (allow xpc-message-send (message-number 805))
+            (allow xpc-message-send (message-number
+                206
+                207
+                711
+                712
+                718
+                800
+                802
+                803
+                804
+                805
+            ))
         )
     )
 )

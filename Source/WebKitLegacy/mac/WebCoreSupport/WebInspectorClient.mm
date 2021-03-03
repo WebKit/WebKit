@@ -798,7 +798,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
 - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
 {
-    NSMutableArray *menuItems = [[NSMutableArray alloc] init];
+    auto menuItems = adoptNS([[NSMutableArray alloc] init]);
 
     for (NSMenuItem *item in defaultMenuItems) {
         switch (item.tag) {
@@ -815,7 +815,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
         }
     }
 
-    return [menuItems autorelease];
+    return menuItems.autorelease();
 }
 
 // MARK: -

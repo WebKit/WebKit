@@ -30,6 +30,7 @@
 #include "AudioTrack.h"
 #include "TextTrack.h"
 #include "Timer.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -85,7 +86,7 @@ public:
 
     virtual String displayNameForTrack(TextTrack*) const;
     MediaSelectionOption mediaSelectionOptionForTrack(TextTrack*) const;
-    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*);
+    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>);
 
     virtual String displayNameForTrack(AudioTrack*) const;
     MediaSelectionOption mediaSelectionOptionForTrack(AudioTrack*) const;

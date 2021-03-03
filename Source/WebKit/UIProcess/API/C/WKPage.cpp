@@ -1971,7 +1971,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.drawFooter(toAPI(&page), toAPI(&frame), toAPI(rect), m_client.base.clientInfo);
         }
 
-        void printFrame(WebPageProxy& page, WebFrameProxy& frame, CompletionHandler<void()>&& completionHandler) final
+        void printFrame(WebPageProxy& page, WebFrameProxy& frame, const WebCore::FloatSize&, CompletionHandler<void()>&& completionHandler) final
         {
             if (m_client.printFrame)
                 m_client.printFrame(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
@@ -2945,9 +2945,23 @@ void WKPageSimulateResourceLoadStatisticsSessionRestart(WKPageRef page, WKPageSi
     });
 }
 
-void WKPageSetPrivateClickMeasurementConversionURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementConversionURLForTestingFunction callback, void* callbackContext)
+void WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTestingFunction callback, void* callbackContext)
 {
-    toImpl(page)->setPrivateClickMeasurementConversionURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+    toImpl(page)->setPrivateClickMeasurementTokenPublicKeyURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
+void WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementTokenSignatureURLForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->setPrivateClickMeasurementTokenSignatureURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
+void WKPageSetPrivateClickMeasurementAttributionReportURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementAttributionReportURLForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->setPrivateClickMeasurementAttributionReportURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
         callback(callbackContext);
     });
 }
@@ -2955,6 +2969,13 @@ void WKPageSetPrivateClickMeasurementConversionURLForTesting(WKPageRef page, WKU
 void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction callback, void* callbackContext)
 {
     toImpl(page)->markPrivateClickMeasurementsAsExpiredForTesting([callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
+void WKPageSetFraudPreventionValuesForTesting(WKPageRef page, WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID, WKPageSetFraudPreventionValuesForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->setFraudPreventionValuesForTesting(toWTFString(secretToken), toWTFString(unlinkableToken), toWTFString(signature), toWTFString(keyID), [callbackContext, callback] () {
         callback(callbackContext);
     });
 }

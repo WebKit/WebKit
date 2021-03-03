@@ -31,6 +31,8 @@
 
 namespace JSC {
 
+class JSCell;
+
 class JS_EXPORT_PRIVATE HeapAnalyzer {
 public:
     virtual ~HeapAnalyzer() = default;

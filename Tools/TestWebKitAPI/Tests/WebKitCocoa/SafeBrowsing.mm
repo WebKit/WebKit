@@ -77,7 +77,7 @@ static bool didCloseCalled;
 
 + (instancetype)resultWithProvider:(RetainPtr<NSString>&&)provider phishing:(BOOL)phishing malware:(BOOL)malware unwantedSoftware:(BOOL)unwantedSoftware
 {
-    TestServiceLookupResult *result = [[TestServiceLookupResult alloc] init];
+    auto result = adoptNS([[TestServiceLookupResult alloc] init]);
     if (!result)
         return nil;
 
@@ -86,7 +86,7 @@ static bool didCloseCalled;
     result->_isMalware = malware;
     result->_isUnwantedSoftware = unwantedSoftware;
 
-    return [result autorelease];
+    return result.autorelease();
 }
 
 - (NSString *)provider
@@ -120,13 +120,13 @@ static bool didCloseCalled;
 
 + (instancetype)resultWithResults:(RetainPtr<NSArray<TestServiceLookupResult *>>&&)results
 {
-    TestLookupResult *result = [[TestLookupResult alloc] init];
+    auto result = adoptNS([[TestLookupResult alloc] init]);
     if (!result)
         return nil;
     
     result->_results = WTFMove(results);
     
-    return [result autorelease];
+    return result.autorelease();
 }
 
 - (NSArray<TestServiceLookupResult *> *)serviceLookupResults
@@ -308,7 +308,7 @@ TEST(SafeBrowsing, ShowWarningSPI)
     auto webView = adoptNS([WKWebView new]);
     auto showWarning = ^{
         completionHandlerCalled = false;
-        [webView _showSafeBrowsingWarningWithURL:nil title:@"test title" warning:@"test warning" details:[[[NSAttributedString alloc] initWithString:@"test details"] autorelease] completionHandler:^(BOOL shouldContinue) {
+        [webView _showSafeBrowsingWarningWithURL:nil title:@"test title" warning:@"test warning" details:adoptNS([[NSAttributedString alloc] initWithString:@"test details"]).get() completionHandler:^(BOOL shouldContinue) {
             shouldContinueValue = shouldContinue;
             completionHandlerCalled = true;
         }];

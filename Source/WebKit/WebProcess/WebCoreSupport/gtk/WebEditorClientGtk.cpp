@@ -25,6 +25,7 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/PagePasteboardContext.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/TextIterator.h>
@@ -145,7 +146,7 @@ void WebEditorClient::updateGlobalSelection(Frame* frame)
     pasteboardContent.canSmartCopyOrDelete = false;
     pasteboardContent.text = plainText(*range);
     pasteboardContent.markup = serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy);
-    Pasteboard::createForGlobalSelection()->write(pasteboardContent);
+    Pasteboard::createForGlobalSelection(PagePasteboardContext::create(frame->pageID()))->write(pasteboardContent);
 }
 
 bool WebEditorClient::shouldShowUnicodeMenu()

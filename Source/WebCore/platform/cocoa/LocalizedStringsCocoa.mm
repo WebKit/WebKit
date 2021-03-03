@@ -306,4 +306,11 @@ String exitFullScreenButtonAccessibilityTitle()
 }
 #endif // PLATFORM(MAC)
 
+#if ENABLE(IMAGE_EXTRACTION)
+String contextMenuItemTagRevealImage()
+{
+    return localizedNSString(@"Reveal Image");
+}
+#endif
+
 } // namespace WebCore

@@ -715,7 +715,7 @@ std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTime
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void WebChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const
+void WebChromeClient::storeAppHighlight(const WebCore::AppHighlight&) const
 {
 }
 #endif
@@ -1034,9 +1034,8 @@ void WebChromeClient::enterFullScreenForElement(Element& element)
 {
     SEL selector = @selector(webView:enterFullScreenForElement:listener:);
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:&element];
-        CallUIDelegate(m_webView, selector, kit(&element), listener);
-        [listener release];
+        auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:&element]);
+        CallUIDelegate(m_webView, selector, kit(&element), listener.get());
     }
 #if !PLATFORM(IOS_FAMILY)
     else

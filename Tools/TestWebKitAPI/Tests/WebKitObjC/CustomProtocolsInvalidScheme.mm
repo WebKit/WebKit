@@ -60,7 +60,8 @@ TEST(WebKit2CustomProtocolsTest, LoadInvalidScheme)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("CustomProtocolInvalidSchemeTest"));
     PlatformWebView webView(context.get());
 
-    webView.platformView().browsingContextController.loadDelegate = [[LoadInvalidSchemeDelegate alloc] init];
+    auto loadDelegate = adoptNS([[LoadInvalidSchemeDelegate alloc] init]);
+    webView.platformView().browsingContextController.loadDelegate = loadDelegate.get();
     [webView.platformView().browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ht'tp://www.webkit.org"]]];
     
     Util::run(&testFinished);

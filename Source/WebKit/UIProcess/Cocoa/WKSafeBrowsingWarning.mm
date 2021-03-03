@@ -221,13 +221,13 @@ static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, 
     return [NSButton buttonWithTitle:title target:warning action:action];
 #else
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-    NSAttributedString *attributedTitle = [[[NSAttributedString alloc] initWithString:title attributes:@{
+    auto attributedTitle = adoptNS([[NSAttributedString alloc] initWithString:title attributes:@{
         NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle),
         NSUnderlineColorAttributeName:[UIColor whiteColor],
         NSForegroundColorAttributeName:colorForItem(item, warning),
         NSFontAttributeName:fontOfSize(WarningTextSize::Body)
-    }] autorelease];
-    [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
+    }]);
+    [button setAttributedTitle:attributedTitle.get() forState:UIControlStateNormal];
     [button addTarget:warning action:action forControlEvents:UIControlEventTouchUpInside];
     return button;
 #endif
@@ -244,16 +244,16 @@ static CGSize buttonSize(ButtonType *button)
 }
 #endif
 
-static ViewType *makeLabel(NSAttributedString *attributedString)
+static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 {
 #if PLATFORM(MAC)
     return [NSTextField labelWithAttributedString:attributedString];
 #else
-    auto label = [[UILabel new] autorelease];
-    label.attributedText = attributedString;
-    label.lineBreakMode = NSLineBreakByWordWrapping;
-    label.numberOfLines = 0;
-    label.accessibilityTraits = UIAccessibilityTraitHeader;
+    auto label = adoptNS([UILabel new]);
+    [label setAttributedText:attributedString];
+    [label setLineBreakMode:NSLineBreakByWordWrapping];
+    [label setNumberOfLines:0];
+    [label setAccessibilityTraits:UIAccessibilityTraitHeader];
     return label;
 #endif
 }
@@ -317,83 +317,83 @@ static ViewType *makeLabel(NSAttributedString *attributedString)
 
 - (void)addContent
 {
-    auto exclamationPoint = [[WKSafeBrowsingExclamationPoint new] autorelease];
-    auto title = makeLabel([[[NSAttributedString alloc] initWithString:_warning->title() attributes:@{
+    auto exclamationPoint = adoptNS([WKSafeBrowsingExclamationPoint new]);
+    auto title = makeLabel(adoptNS([[NSAttributedString alloc] initWithString:_warning->title() attributes:@{
         NSFontAttributeName:fontOfSize(WarningTextSize::Title),
         NSForegroundColorAttributeName:colorForItem(WarningItem::TitleText, self)
 #if PLATFORM(WATCHOS)
         , NSHyphenationFactorDocumentAttribute:@1
 #endif
-    }] autorelease]);
-    auto warning = makeLabel([[[NSAttributedString alloc] initWithString:_warning->warning() attributes:@{
+    }]).get());
+    auto warning = makeLabel(adoptNS([[NSAttributedString alloc] initWithString:_warning->warning() attributes:@{
         NSFontAttributeName:fontOfSize(WarningTextSize::Body),
         NSForegroundColorAttributeName:colorForItem(WarningItem::MessageText, self)
 #if PLATFORM(WATCHOS)
         , NSHyphenationFactorDocumentAttribute:@1
 #endif
-    }] autorelease]);
+    }]).get());
     auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
     auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
-    auto box = [[WKSafeBrowsingBox new] autorelease];
-    _box = box;
+    auto box = adoptNS([WKSafeBrowsingBox new]);
+    _box = box.get();
     [box setSafeBrowsingBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
-    box.layer.cornerRadius = boxCornerRadius;
+    [box layer].cornerRadius = boxCornerRadius;
 
-    for (ViewType *view in @[exclamationPoint, title, warning, goBack, showDetails]) {
+    for (ViewType *view in @[exclamationPoint.get(), title.get(), warning.get(), goBack, showDetails]) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
         [box addSubview:view];
     }
-    box.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:box];
+    [box setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self addSubview:box.get()];
 
 #if PLATFORM(WATCHOS)
     [NSLayoutConstraint activateConstraints:@[
-        [[box.leadingAnchor anchorWithOffsetToAnchor:exclamationPoint.leadingAnchor] constraintEqualToAnchor:[exclamationPoint.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor]],
-        [[box.leadingAnchor anchorWithOffsetToAnchor:title.leadingAnchor] constraintEqualToConstant:marginSize],
-        [[title.bottomAnchor anchorWithOffsetToAnchor:warning.topAnchor] constraintEqualToConstant:marginSize],
-        [[exclamationPoint.bottomAnchor anchorWithOffsetToAnchor:title.topAnchor] constraintEqualToConstant:marginSize],
-        [[box.topAnchor anchorWithOffsetToAnchor:exclamationPoint.topAnchor] constraintEqualToConstant:marginSize + self.frame.size.height / 2],
-        [[self.topAnchor anchorWithOffsetToAnchor:box.topAnchor] constraintEqualToAnchor:[box.bottomAnchor anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:0.2],
+        [[[box leadingAnchor] anchorWithOffsetToAnchor:[exclamationPoint leadingAnchor]] constraintEqualToAnchor:[[exclamationPoint trailingAnchor] anchorWithOffsetToAnchor:[box trailingAnchor]]],
+        [[[box leadingAnchor] anchorWithOffsetToAnchor:[title leadingAnchor]] constraintEqualToConstant:marginSize],
+        [[[title bottomAnchor] anchorWithOffsetToAnchor:[warning topAnchor]] constraintEqualToConstant:marginSize],
+        [[[exclamationPoint bottomAnchor] anchorWithOffsetToAnchor:[title topAnchor]] constraintEqualToConstant:marginSize],
+        [[[box topAnchor] anchorWithOffsetToAnchor:[exclamationPoint topAnchor]] constraintEqualToConstant:marginSize + self.frame.size.height / 2],
+        [[self.topAnchor anchorWithOffsetToAnchor:[box topAnchor]] constraintEqualToAnchor:[[box bottomAnchor] anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:0.2],
     ]];
 #elif HAVE(SAFE_BROWSING)
     [NSLayoutConstraint activateConstraints:@[
-        [[box.leadingAnchor anchorWithOffsetToAnchor:exclamationPoint.leadingAnchor] constraintEqualToConstant:marginSize],
-        [[box.leadingAnchor anchorWithOffsetToAnchor:title.leadingAnchor] constraintEqualToConstant:marginSize * 1.5 + exclamationPointSize],
-        [[title.topAnchor anchorWithOffsetToAnchor:exclamationPoint.topAnchor] constraintEqualToAnchor:[exclamationPoint.bottomAnchor anchorWithOffsetToAnchor:title.bottomAnchor]],
-        [[title.bottomAnchor anchorWithOffsetToAnchor:warning.topAnchor] constraintEqualToConstant:marginSize],
-        [[box.topAnchor anchorWithOffsetToAnchor:title.topAnchor] constraintEqualToConstant:marginSize],
-        [[self.topAnchor anchorWithOffsetToAnchor:box.topAnchor] constraintEqualToAnchor:[box.bottomAnchor anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:0.5],
+        [[[box leadingAnchor] anchorWithOffsetToAnchor:[exclamationPoint leadingAnchor]] constraintEqualToConstant:marginSize],
+        [[[box leadingAnchor] anchorWithOffsetToAnchor:[title leadingAnchor]] constraintEqualToConstant:marginSize * 1.5 + exclamationPointSize],
+        [[[title topAnchor] anchorWithOffsetToAnchor:[exclamationPoint topAnchor]] constraintEqualToAnchor:[[exclamationPoint bottomAnchor] anchorWithOffsetToAnchor:[title bottomAnchor]]],
+        [[[title bottomAnchor] anchorWithOffsetToAnchor:[warning topAnchor]] constraintEqualToConstant:marginSize],
+        [[[box topAnchor] anchorWithOffsetToAnchor:[title topAnchor]] constraintEqualToConstant:marginSize],
+        [[self.topAnchor anchorWithOffsetToAnchor:[box topAnchor]] constraintEqualToAnchor:[[box bottomAnchor] anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:0.5],
     ]];
 #endif
 
 #if HAVE(SAFE_BROWSING)
     [NSLayoutConstraint activateConstraints:@[
-        [[self.leftAnchor anchorWithOffsetToAnchor:box.leftAnchor] constraintEqualToAnchor:[box.rightAnchor anchorWithOffsetToAnchor:self.rightAnchor]],
+        [[self.leftAnchor anchorWithOffsetToAnchor:[box leftAnchor]] constraintEqualToAnchor:[[box rightAnchor] anchorWithOffsetToAnchor:self.rightAnchor]],
 
-        [box.widthAnchor constraintLessThanOrEqualToConstant:maxWidth],
-        [box.widthAnchor constraintLessThanOrEqualToAnchor:self.widthAnchor],
+        [[box widthAnchor] constraintLessThanOrEqualToConstant:maxWidth],
+        [[box widthAnchor] constraintLessThanOrEqualToAnchor:self.widthAnchor],
 
-        [[box.leadingAnchor anchorWithOffsetToAnchor:warning.leadingAnchor] constraintEqualToConstant:marginSize],
+        [[[box leadingAnchor] anchorWithOffsetToAnchor:[warning leadingAnchor]] constraintEqualToConstant:marginSize],
 
-        [[title.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintGreaterThanOrEqualToConstant:marginSize],
-        [[warning.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintGreaterThanOrEqualToConstant:marginSize],
-        [[goBack.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintEqualToConstant:marginSize],
+        [[[title trailingAnchor] anchorWithOffsetToAnchor:[box trailingAnchor]] constraintGreaterThanOrEqualToConstant:marginSize],
+        [[[warning trailingAnchor] anchorWithOffsetToAnchor:[box trailingAnchor]] constraintGreaterThanOrEqualToConstant:marginSize],
+        [[goBack.trailingAnchor anchorWithOffsetToAnchor:[box trailingAnchor]] constraintEqualToConstant:marginSize],
 
-        [[warning.bottomAnchor anchorWithOffsetToAnchor:goBack.topAnchor] constraintEqualToConstant:marginSize],
+        [[[warning bottomAnchor] anchorWithOffsetToAnchor:goBack.topAnchor] constraintEqualToConstant:marginSize],
     ]];
     
     bool needsVerticalButtonLayout = buttonSize(showDetails).width + buttonSize(goBack).width + 3 * marginSize > self.frame.size.width;
     if (needsVerticalButtonLayout) {
         [NSLayoutConstraint activateConstraints:@[
-            [[showDetails.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintEqualToConstant:marginSize],
+            [[showDetails.trailingAnchor anchorWithOffsetToAnchor:[box trailingAnchor]] constraintEqualToConstant:marginSize],
             [[goBack.bottomAnchor anchorWithOffsetToAnchor:showDetails.topAnchor] constraintEqualToConstant:marginSize],
-            [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize * 2 + buttonSize(showDetails).height],
+            [[goBack.bottomAnchor anchorWithOffsetToAnchor:[box bottomAnchor]] constraintEqualToConstant:marginSize * 2 + buttonSize(showDetails).height],
         ]];
     } else {
         [NSLayoutConstraint activateConstraints:@[
             [[showDetails.trailingAnchor anchorWithOffsetToAnchor:goBack.leadingAnchor] constraintEqualToConstant:marginSize],
             [goBack.topAnchor constraintEqualToAnchor:showDetails.topAnchor],
-            [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize],
+            [[goBack.bottomAnchor anchorWithOffsetToAnchor:[box bottomAnchor]] constraintEqualToConstant:marginSize],
         ]];
     }
 #if !PLATFORM(MAC)
@@ -413,47 +413,47 @@ static ViewType *makeLabel(NSAttributedString *attributedString)
     ButtonType *showDetails = box.subviews.lastObject;
     [showDetails removeFromSuperview];
 
-    NSMutableAttributedString *text = [[_warning->details() mutableCopy] autorelease];
-    [text addAttributes:@{ NSFontAttributeName:fontOfSize(WarningTextSize::Body) } range:NSMakeRange(0, text.length)];
-    WKSafeBrowsingTextView *details = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:text forWarning:self] autorelease];
-    _details = details;
-    WKSafeBrowsingBox *bottom = [[WKSafeBrowsingBox new] autorelease];
+    auto text = adoptNS([_warning->details() mutableCopy]);
+    [text addAttributes:@{ NSFontAttributeName:fontOfSize(WarningTextSize::Body) } range:NSMakeRange(0, [text length])];
+    auto details = adoptNS([[WKSafeBrowsingTextView alloc] initWithAttributedString:text.get() forWarning:self]);
+    _details = details.get();
+    auto bottom = adoptNS([WKSafeBrowsingBox new]);
     [bottom setSafeBrowsingBackgroundColor:colorForItem(WarningItem::BoxBackground, self)];
-    bottom.layer.cornerRadius = boxCornerRadius;
+    [bottom layer].cornerRadius = boxCornerRadius;
 
 #if HAVE(SAFE_BROWSING)
     constexpr auto maxY = kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
     constexpr auto minY = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
 #if PLATFORM(MAC)
     box.layer.maskedCorners = maxY;
-    bottom.layer.maskedCorners = minY;
+    [bottom layer].maskedCorners = minY;
 #else
     box.layer.maskedCorners = minY;
-    bottom.layer.maskedCorners = maxY;
+    [bottom layer].maskedCorners = maxY;
 #endif
 #endif
 
-    WKSafeBrowsingBox *line = [[WKSafeBrowsingBox new] autorelease];
+    auto line = adoptNS([WKSafeBrowsingBox new]);
     [line setSafeBrowsingBackgroundColor:[CocoaColor lightGrayColor]];
-    for (ViewType *view in @[details, bottom, line])
+    for (ViewType *view in @[details.get(), bottom.get(), line.get()])
         view.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self addSubview:bottom];
-    [bottom addSubview:line];
-    [bottom addSubview:details];
+    [self addSubview:bottom.get()];
+    [bottom addSubview:line.get()];
+    [bottom addSubview:details.get()];
 #if HAVE(SAFE_BROWSING)
     [NSLayoutConstraint activateConstraints:@[
-        [box.widthAnchor constraintEqualToAnchor:bottom.widthAnchor],
-        [box.bottomAnchor constraintEqualToAnchor:bottom.topAnchor],
-        [box.leadingAnchor constraintEqualToAnchor:bottom.leadingAnchor],
-        [line.widthAnchor constraintEqualToAnchor:bottom.widthAnchor],
-        [line.leadingAnchor constraintEqualToAnchor:bottom.leadingAnchor],
-        [line.topAnchor constraintEqualToAnchor:bottom.topAnchor],
-        [line.heightAnchor constraintEqualToConstant:1],
-        [[bottom.topAnchor anchorWithOffsetToAnchor:details.topAnchor] constraintEqualToConstant:marginSize],
-        [[details.bottomAnchor anchorWithOffsetToAnchor:bottom.bottomAnchor] constraintEqualToConstant:marginSize],
-        [[bottom.leadingAnchor anchorWithOffsetToAnchor:details.leadingAnchor] constraintEqualToConstant:marginSize],
-        [[details.trailingAnchor anchorWithOffsetToAnchor:bottom.trailingAnchor] constraintEqualToConstant:marginSize],
+        [box.widthAnchor constraintEqualToAnchor:[bottom widthAnchor]],
+        [box.bottomAnchor constraintEqualToAnchor:[bottom topAnchor]],
+        [box.leadingAnchor constraintEqualToAnchor:[bottom leadingAnchor]],
+        [[line widthAnchor] constraintEqualToAnchor:[bottom widthAnchor]],
+        [[line leadingAnchor] constraintEqualToAnchor:[bottom leadingAnchor]],
+        [[line topAnchor] constraintEqualToAnchor:[bottom topAnchor]],
+        [[line heightAnchor] constraintEqualToConstant:1],
+        [[[bottom topAnchor] anchorWithOffsetToAnchor:[details topAnchor]] constraintEqualToConstant:marginSize],
+        [[[details bottomAnchor] anchorWithOffsetToAnchor:[bottom bottomAnchor]] constraintEqualToConstant:marginSize],
+        [[[bottom leadingAnchor] anchorWithOffsetToAnchor:[details leadingAnchor]] constraintEqualToConstant:marginSize],
+        [[[details trailingAnchor] anchorWithOffsetToAnchor:[bottom trailingAnchor]] constraintEqualToConstant:marginSize],
     ]];
 #endif
     [self layoutText];
@@ -570,11 +570,11 @@ static ViewType *makeLabel(NSAttributedString *attributedString)
     self.delegate = warning;
 
     CocoaColor *foregroundColor = colorForItem(WarningItem::MessageText, warning);
-    NSMutableAttributedString *string = [[attributedString mutableCopy] autorelease];
-    [string addAttributes:@{ NSForegroundColorAttributeName : foregroundColor } range:NSMakeRange(0, string.length)];
+    auto string = adoptNS([attributedString mutableCopy]);
+    [string addAttributes:@{ NSForegroundColorAttributeName : foregroundColor } range:NSMakeRange(0, [string length])];
     [self setBackgroundColor:colorForItem(WarningItem::BoxBackground, warning)];
     [self setLinkTextAttributes:@{ NSForegroundColorAttributeName : foregroundColor }];
-    [self.textStorage appendAttributedString:string];
+    [self.textStorage appendAttributedString:string.get()];
     self.editable = NO;
 #if !PLATFORM(MAC)
     self.scrollEnabled = NO;

@@ -114,6 +114,7 @@ namespace WebCore {
             PseudoClassDirectFocus,
             PseudoClassDrag,
             PseudoClassFocus,
+            PseudoClassFocusVisible,
             PseudoClassFocusWithin,
             PseudoClassActive,
             PseudoClassChecked,

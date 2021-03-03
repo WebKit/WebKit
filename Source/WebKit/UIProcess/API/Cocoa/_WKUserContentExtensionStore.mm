@@ -60,27 +60,27 @@ static NSError *toUserContentRuleListStoreError(const NSError *error)
 
 + (instancetype)defaultStore
 {
-    return [[[_WKUserContentExtensionStore alloc] _initWithWKContentRuleListStore:[WKContentRuleListStore defaultStoreWithLegacyFilename]] autorelease];
+    return adoptNS([[_WKUserContentExtensionStore alloc] _initWithWKContentRuleListStore:[WKContentRuleListStore defaultStoreWithLegacyFilename]]).autorelease();
 }
 
 + (instancetype)storeWithURL:(NSURL *)url
 {
-    return [[[_WKUserContentExtensionStore alloc] _initWithWKContentRuleListStore:[WKContentRuleListStore storeWithURLAndLegacyFilename:url]] autorelease];
+    return adoptNS([[_WKUserContentExtensionStore alloc] _initWithWKContentRuleListStore:[WKContentRuleListStore storeWithURLAndLegacyFilename:url]]).autorelease();
 }
 
 - (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentRuleList completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
 {
     [_contentRuleListStore _compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentRuleList completionHandler:^(WKContentRuleList *contentRuleList, NSError *error) {
-        _WKUserContentFilter *contentFilter = contentRuleList ? [[[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList] autorelease] : nil;
-        completionHandler(contentFilter, toUserContentRuleListStoreError(error));
+        auto contentFilter = contentRuleList ? adoptNS([[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList]) : nil;
+        completionHandler(contentFilter.get(), toUserContentRuleListStoreError(error));
     }];
 }
 
 - (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
 {
     [_contentRuleListStore lookUpContentRuleListForIdentifier:identifier completionHandler:^(WKContentRuleList *contentRuleList, NSError *error) {
-        _WKUserContentFilter *contentFilter = contentRuleList ? [[[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList] autorelease] : nil;
-        completionHandler(contentFilter, toUserContentRuleListStoreError(error));
+        auto contentFilter = contentRuleList ? adoptNS([[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList]) : nil;
+        completionHandler(contentFilter.get(), toUserContentRuleListStoreError(error));
     }];
 }
 

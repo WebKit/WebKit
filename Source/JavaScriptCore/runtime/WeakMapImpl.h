@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -144,8 +144,8 @@ public:
         clearValue();
     }
 
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value>::type visitAggregate(SlotVisitor& visitor)
+    template <typename T = Data, typename Visitor>
+    ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucketDataKeyValue>::value>::type visitAggregate(Visitor& visitor)
     {
         visitor.append(m_data.value);
     }
@@ -202,7 +202,7 @@ public:
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
     static size_t estimatedSize(JSCell*, VM&);
 
@@ -311,10 +311,13 @@ public:
         return vm.weakSetSpace<mode>();
     }
 
-    static void visitOutputConstraints(JSCell*, SlotVisitor&);
+    template<typename Visitor> static void visitOutputConstraints(JSCell*, Visitor&);
     void finalizeUnconditionally(VM&);
 
 private:
+    template<typename Visitor>
+    ALWAYS_INLINE static void visitOutputConstraintsForDataKeyValue(JSCell*, Visitor&);
+
     ALWAYS_INLINE WeakMapBucketType* findBucket(JSObject* key)
     {
         return findBucket(key, jsWeakMapHash(key));

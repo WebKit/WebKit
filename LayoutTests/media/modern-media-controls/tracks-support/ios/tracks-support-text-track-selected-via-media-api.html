@@ -31,7 +31,10 @@ media.addEventListener("play", () => {
                 debug(JSON.stringify(contextmenu, null, 2));
 
                 debug("Selecting first text track...");
-                await UIHelper.chooseMenuAction(contextmenu[0].children[1].title);
+                let subtitlesMenu = contextmenu[0].children[0];
+                await UIHelper.chooseMenuAction(subtitlesMenu.title);
+                await UIHelper.delayFor(500); // give time for the UIMenu to animate
+                await UIHelper.chooseMenuAction(subtitlesMenu.children[1].title);
                 await UIHelper.waitForContextMenuToHide();
             }
 

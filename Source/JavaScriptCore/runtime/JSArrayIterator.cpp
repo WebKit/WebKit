@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,11 +68,14 @@ void JSArrayIterator::finishCreation(VM& vm)
         Base::internalField(index).set(vm, this, values[index]);
 }
 
-void JSArrayIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSArrayIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     auto* thisObject = jsCast<JSArrayIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }
+
+DEFINE_VISIT_CHILDREN(JSArrayIterator);
 
 } // namespace JSC

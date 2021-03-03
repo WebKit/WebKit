@@ -65,6 +65,7 @@ public:
     bool acceptEncoding() const { return m_acceptEncoding; }
     void setAcceptEncoding(bool acceptEncoding) { m_acceptEncoding = acceptEncoding; }
 
+    void updateSoupMessageBody(SoupMessage*, BlobRegistryImpl&) const;
     void updateSoupMessageHeaders(SoupMessageHeaders*) const;
     void updateFromSoupMessageHeaders(SoupMessageHeaders*);
 
@@ -74,10 +75,12 @@ public:
 private:
     friend class ResourceRequestBase;
 
+#if USE(SOUP2)
     GUniquePtr<SoupURI> createSoupURI() const;
+#else
+    GRefPtr<GUri> createSoupURI() const;
+#endif
 
-    void updateSoupMessageMembers(SoupMessage*) const;
-    void updateSoupMessageBody(SoupMessage*, BlobRegistryImpl&) const;
     void doUpdatePlatformRequest() { }
     void doUpdateResourceRequest() { }
     void doUpdatePlatformHTTPBody() { }

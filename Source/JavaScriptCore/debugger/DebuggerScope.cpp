@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,8 @@ void DebuggerScope::finishCreation(VM& vm)
     Base::finishCreation(vm);
 }
 
-void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void DebuggerScope::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -64,6 +65,8 @@ void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_scope);
     visitor.append(thisObject->m_next);
 }
+
+DEFINE_VISIT_CHILDREN(DebuggerScope);
 
 String DebuggerScope::className(const JSObject* object, VM& vm)
 {

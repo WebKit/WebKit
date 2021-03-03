@@ -41,12 +41,8 @@
 
 + (id)sharedInstance
 {
-    static WKWebInspectorPreferenceObserver *instance = nil;
-
-    if (!instance)
-        instance = [[[self class] alloc] init];
-
-    return instance;
+    static NeverDestroyed<RetainPtr<WKWebInspectorPreferenceObserver>> instance = adoptNS([[[self class] alloc] init]);
+    return instance.get().get();
 }
 
 - (instancetype)init

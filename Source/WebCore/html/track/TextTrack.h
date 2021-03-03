@@ -233,7 +233,10 @@ struct LogArgument<WebCore::TextTrack::Mode> {
     }
 };
 
-};
+template<> struct DefaultHash<WebCore::TextTrack::Kind> : IntHash<WebCore::TextTrack::Kind> { };
+template<> struct HashTraits<WebCore::TextTrack::Kind> : StrongEnumHashTraits<WebCore::TextTrack::Kind> { };
+
+} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrack)
     static bool isType(const WebCore::TrackBase& track) { return track.type() == WebCore::TrackBase::TextTrack; }

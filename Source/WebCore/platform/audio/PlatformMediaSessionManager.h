@@ -157,6 +157,9 @@ public:
     virtual void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) { };
     virtual void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) { };
 
+    WEBCORE_EXPORT void processSystemWillSleep();
+    WEBCORE_EXPORT void processSystemDidWake();
+
 protected:
     friend class PlatformMediaSession;
     PlatformMediaSessionManager();
@@ -183,9 +186,6 @@ protected:
     int countActiveAudioCaptureSources();
 
     bool computeSupportsSeeking() const;
-
-    WEBCORE_EXPORT void processSystemWillSleep();
-    WEBCORE_EXPORT void processSystemDidWake();
 
 private:
     friend class Internals;

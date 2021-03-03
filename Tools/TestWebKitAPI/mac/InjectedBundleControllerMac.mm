@@ -27,15 +27,16 @@
 #import "InjectedBundleController.h"
 
 #import <Foundation/Foundation.h>
+#import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 
 void InjectedBundleController::platformInitialize()
 {
     // Set up user defaults.
-    NSMutableDictionary *argumentDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy];
+    auto argumentDomain = adoptNS([[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy]);
     if (!argumentDomain)
-        argumentDomain = [[NSMutableDictionary alloc] init];
+        argumentDomain = adoptNS([[NSMutableDictionary alloc] init]);
 
     // FIXME: We should set these in the UI process and propagate them to the
     // Web Content process at process launch time, because most tests do not
@@ -47,9 +48,7 @@ void InjectedBundleController::platformInitialize()
     };
 
     [argumentDomain addEntriesFromDictionary:dict];
-    [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];
-
-    [argumentDomain release];
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
 }
 
 } // namespace TestWebKitAPI

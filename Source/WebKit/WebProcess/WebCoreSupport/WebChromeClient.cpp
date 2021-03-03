@@ -39,6 +39,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "PageBanner.h"
+#include "PluginView.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "SharedBufferCopy.h"
 #include "UserData.h"
@@ -60,6 +61,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
+#include <WebCore/AppHighlight.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
@@ -735,8 +737,16 @@ void WebChromeClient::print(Frame& frame, const StringWithDirection& title)
     }
 #endif
 
+    WebCore::FloatSize pdfFirstPageSize;
+#if PLATFORM(COCOA)
+    if (auto* pluginView = WebPage::pluginViewForFrame(&frame)) {
+        if (auto* plugin = pluginView->plugin())
+            pdfFirstPageSize = plugin->pdfDocumentSizeForPrinting();
+    }
+#endif
+
     auto truncatedTitle = truncateFromEnd(title, maxTitleLength);
-    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string), Messages::WebPageProxy::PrintFrame::Reply());
+    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string, pdfFirstPageSize), Messages::WebPageProxy::PrintFrame::Reply());
 }
 
 void WebChromeClient::exceededDatabaseQuota(Frame& frame, const String& databaseName, DatabaseDetails details)
@@ -928,7 +938,7 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
         return nullptr;
     UNUSED_VARIABLE(hostWindowDisplayID);
 #if PLATFORM(COCOA)
-    return RemoteGraphicsContextGLProxy::create(attributes);
+    return RemoteGraphicsContextGLProxy::create(attributes, m_page.ensureRemoteRenderingBackendProxy().renderingBackendIdentifier());
 #else
     return nullptr;
 #endif
@@ -1244,10 +1254,9 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void WebChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) const
+void WebChromeClient::storeAppHighlight(const WebCore::AppHighlight& highlight) const
 {
-    auto buffer = IPC::SharedBufferCopy(data);
-    m_page.send(Messages::WebPageProxy::UpdateAppHighlightsStorage(buffer));
+    m_page.send(Messages::WebPageProxy::StoreAppHighlight(highlight));
 }
 #endif
 

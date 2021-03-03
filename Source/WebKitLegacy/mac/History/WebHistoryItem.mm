@@ -161,13 +161,13 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 - (id)copyWithZone:(NSZone *)zone
 {
     WebCoreThreadViolationCheckRoundOne();
-    WebHistoryItem *copy = [[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()];
+    RetainPtr<WebHistoryItem> copy = adoptNS([[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()]);
 
     copy->_private->_lastVisitedTime = _private->_lastVisitedTime;
 
-    historyItemWrappers().set(core(copy->_private), copy);
+    historyItemWrappers().set(core(copy->_private), copy.get());
 
-    return copy;
+    return copy.leakRef();
 }
 
 // FIXME: Need to decide if this class ever returns URLs and decide on the name of this method
@@ -270,13 +270,13 @@ WebHistoryItem *kit(HistoryItem* item)
     if (!item)
         return nil;
     if (auto wrapper = historyItemWrappers().get(item))
-        return [[wrapper retain] autorelease];
-    return [[[WebHistoryItem alloc] initWithWebCoreHistoryItem:*item] autorelease];
+        return retainPtr(wrapper).autorelease();
+    return adoptNS([[WebHistoryItem alloc] initWithWebCoreHistoryItem:*item]).autorelease();
 }
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL
 {
-    return [[[self alloc] initWithURL:URL title:nil] autorelease];
+    return adoptNS([[self alloc] initWithURL:URL title:nil]).autorelease();
 }
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time

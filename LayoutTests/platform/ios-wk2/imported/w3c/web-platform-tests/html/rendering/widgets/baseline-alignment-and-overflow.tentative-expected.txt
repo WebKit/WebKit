@@ -35,35 +35,35 @@ FAIL <input type="password" value="x" style="overflow: scroll; appearance: auto;
 PASS <input type="password" value="x" style="overflow: visible; appearance: none;">
 PASS <input type="password" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="password" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 71
-FAIL <input type="date" value="2020-01-01" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
-FAIL <input type="date" value="2020-01-01" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
-FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 13
-FAIL <input type="date" value="2020-01-01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 20
-FAIL <input type="date" value="2020-01-01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 20
-FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 13
+PASS <input type="date" value="2020-01-01" style="overflow: visible; appearance: auto;">
+PASS <input type="date" value="2020-01-01" style="overflow: hidden; appearance: auto;">
+FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
+FAIL <input type="date" value="2020-01-01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
+FAIL <input type="date" value="2020-01-01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
+FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
 FAIL <input type="month" value="2020-01" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="month" value="2020-01" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="month" value="2020-01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
 FAIL <input type="month" value="2020-01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="month" value="2020-01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="month" value="2020-01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
-FAIL <input type="week" value="2020-W01" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
-FAIL <input type="week" value="2020-W01" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
+PASS <input type="week" value="2020-W01" style="overflow: visible; appearance: auto;">
+PASS <input type="week" value="2020-W01" style="overflow: hidden; appearance: auto;">
 FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
 FAIL <input type="week" value="2020-W01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="week" value="2020-W01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
-FAIL <input type="time" value="00:00" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
-FAIL <input type="time" value="00:00" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
+PASS <input type="time" value="00:00" style="overflow: visible; appearance: auto;">
+PASS <input type="time" value="00:00" style="overflow: hidden; appearance: auto;">
 FAIL <input type="time" value="00:00" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
 FAIL <input type="time" value="00:00" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="time" value="00:00" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="time" value="00:00" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 14
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 14
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 0
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 1
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 1
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 20
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 20
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 6
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 14
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 14
 FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 0
 PASS <input type="number" value="0" style="overflow: visible; appearance: auto;">
 PASS <input type="number" value="0" style="overflow: hidden; appearance: auto;">
@@ -77,12 +77,12 @@ FAIL <input type="range" style="overflow: scroll; appearance: auto;"> assert_app
 FAIL <input type="range" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 71 +/- 3 but got 61
 FAIL <input type="range" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 71 +/- 3 but got 61
 FAIL <input type="range" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 71 +/- 3 but got 61
-FAIL <input type="color" value="#000000" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 60 +/- 3 but got 50
-FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 60 +/- 3 but got 50
-FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 60 +/- 3 but got 71
-FAIL <input type="color" value="#000000" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 60 +/- 3 but got 50
-FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 60 +/- 3 but got 50
-FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 60 +/- 3 but got 71
+FAIL <input type="color" value="#000000" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 51
+FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 51
+FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 71
+FAIL <input type="color" value="#000000" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 51
+FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 51
+FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 71
 PASS <input type="checkbox" style="overflow: visible; appearance: auto;">
 PASS <input type="checkbox" style="overflow: hidden; appearance: auto;">
 PASS <input type="checkbox" style="overflow: scroll; appearance: auto;">

@@ -91,4 +91,8 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKPaymentErrorPostalAddr
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion), PAL_EXPORT)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/PassKitSoftLinkAdditions.mm>
+#endif
+
 #endif // USE(PASSKIT)

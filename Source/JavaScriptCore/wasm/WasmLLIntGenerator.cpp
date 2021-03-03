@@ -225,6 +225,9 @@ public:
     PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset);
     PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType, uint8_t flags);
 
+    // Saturated truncation.
+    PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type, Type);
+
     // Basic operators
     template<OpType>
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
@@ -1512,6 +1515,41 @@ auto LLIntGenerator::atomicNotify(ExtAtomicOpType op, ExpressionType pointer, Ex
 auto LLIntGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
 {
     WasmAtomicFence::emit(this);
+    return { };
+}
+
+auto LLIntGenerator::truncSaturated(Ext1OpType op, ExpressionType operand, ExpressionType& result, Type, Type) -> PartialResult
+{
+    result = push();
+    switch (op) {
+    case Ext1OpType::I32TruncSatF32S:
+        WasmI32TruncSatF32S::emit(this, result, operand);
+        break;
+    case Ext1OpType::I32TruncSatF32U:
+        WasmI32TruncSatF32U::emit(this, result, operand);
+        break;
+    case Ext1OpType::I32TruncSatF64S:
+        WasmI32TruncSatF64S::emit(this, result, operand);
+        break;
+    case Ext1OpType::I32TruncSatF64U:
+        WasmI32TruncSatF64U::emit(this, result, operand);
+        break;
+    case Ext1OpType::I64TruncSatF32S:
+        WasmI64TruncSatF32S::emit(this, result, operand);
+        break;
+    case Ext1OpType::I64TruncSatF32U:
+        WasmI64TruncSatF32U::emit(this, result, operand);
+        break;
+    case Ext1OpType::I64TruncSatF64S:
+        WasmI64TruncSatF64S::emit(this, result, operand);
+        break;
+    case Ext1OpType::I64TruncSatF64U:
+        WasmI64TruncSatF64U::emit(this, result, operand);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
     return { };
 }
 

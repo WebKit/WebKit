@@ -681,6 +681,8 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, O
     auto logicalMinHeight = styleToUse.logicalMinHeight();
     if (logicalMinHeight.isAuto() && shouldComputeLogicalHeightFromAspectRatio() && intrinsicContentHeight && styleToUse.overflowBlockDirection() == Overflow::Visible)
         logicalMinHeight = Length(*intrinsicContentHeight, LengthType::Fixed);
+    if (logicalMinHeight.isMinContent() || logicalMinHeight.isMaxContent())
+        logicalMinHeight = Length();
     if (Optional<LayoutUnit> computedLogicalHeight = computeLogicalHeightUsing(MinSize, logicalMinHeight, intrinsicContentHeight))
         return std::max(logicalHeight, computedLogicalHeight.value());
     return logicalHeight;
@@ -2862,7 +2864,7 @@ void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height)
     // FIXME: it should be enough with checking hasOverridingLogicalHeight() as this logic could be shared
     // by any layout system using overrides like grid or flex. However this causes a never ending sequence of calls
     // between layoutBlock() <-> relayoutToAvoidWidows().
-    if (isFloatingOrOutOfFlowPositioned() || !parent() || !parent()->isFlexibleBox() || hasOverridingLogicalHeight())
+    if (isFloatingOrOutOfFlowPositioned() || !parent() || !parent()->isFlexibleBox() || hasOverridingLogicalHeight() || shouldComputeLogicalHeightFromAspectRatio())
         return;
     downcast<RenderFlexibleBox>(parent())->setCachedChildIntrinsicContentLogicalHeight(*this, height);
 }
@@ -2943,7 +2945,11 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
 
         LayoutUnit heightResult;
         if (checkMinMaxHeight) {
-            LayoutUnit intrinsicHeight = computedValues.m_extent - borderAndPaddingLogicalHeight();
+            // Callers passing LayoutUnit::max() for logicalHeight means an indefinite height, so
+            // translate this to a nullopt intrinsic height for further logical height computations.
+            Optional<LayoutUnit> intrinsicHeight;
+            if (computedValues.m_extent != LayoutUnit::max())
+                intrinsicHeight = computedValues.m_extent - borderAndPaddingLogicalHeight();
             if (shouldComputeLogicalHeightFromAspectRatio())
                 heightResult = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit(style().logicalAspectRatio()), style().boxSizingForAspectRatio(), logicalWidth());
             else
@@ -5100,7 +5106,10 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
     if (!style().hasAspectRatio())
         return false;
 
-    if (!shouldComputeLogicalWidthFromAspectRatioAndInsets() && !style().logicalHeight().isFixed() && !style().logicalHeight().isPercentOrCalculated())
+    auto isResolvablePercentageHeight = [this] () {
+        return style().logicalHeight().isPercentOrCalculated() && (isOutOfFlowPositioned() || percentageLogicalHeightIsResolvable());
+    };
+    if (!hasOverridingLogicalHeight() && !shouldComputeLogicalWidthFromAspectRatioAndInsets() && !style().logicalHeight().isFixed() && !isResolvablePercentageHeight())
         return false;
 
     return true;
@@ -5173,21 +5182,6 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
 
     RenderBlock* containerBlock = containingBlock();
     return containerBlock->offsetFromLogicalTopOfFirstPage() + logicalTop();
-}
-
-const RenderBox* RenderBox::findEnclosingScrollableContainerForSnapping() const
-{
-    for (auto& candidate : lineageOfType<RenderBox>(*this)) {
-        if (candidate.hasOverflowClip())
-            return &candidate;
-    }
-
-    // If all parent elements are not overflow scrollable and the frame is, then return
-    // the root element.
-    if (document().documentElement() && frame().view() && frame().view()->isScrollable())
-        return document().documentElement()->renderBox();
-
-    return nullptr;
 }
 
 LayoutRect RenderBox::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const

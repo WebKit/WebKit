@@ -26,6 +26,10 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+#ifdef __cplusplus
+#include <wtf/Forward.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
 #import <UIKit/UIKit.h>
 #endif
@@ -43,24 +47,26 @@ extern CFMutableArrayRef openWindowsRef;
 extern CFMutableSetRef disallowedURLs;
 extern WebFrame* mainFrame;
 extern WebFrame* topLoadingFrame;
-extern DumpRenderTreeDraggingInfo *draggingInfo;
-extern NavigationController* gNavigationController;
-extern PolicyDelegate* policyDelegate;
-extern DefaultPolicyDelegate *defaultPolicyDelegate;
+#ifdef __cplusplus
+extern RetainPtr<DumpRenderTreeDraggingInfo> draggingInfo;
+extern RetainPtr<NavigationController> gNavigationController;
+extern RetainPtr<PolicyDelegate> policyDelegate;
+extern RetainPtr<DefaultPolicyDelegate> defaultPolicyDelegate;
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIWindow;
-extern UIWindow *mainWindow;
+extern RetainPtr<UIWindow> mainWindow;
 #else
 OBJC_CLASS NSWindow;
-extern NSWindow *mainWindow;
+extern RetainPtr<NSWindow> mainWindow;
+#endif
 #endif
 
 void setWaitToDumpWatchdog(CFRunLoopTimerRef);
 bool shouldSetWaitToDumpWatchdog(void);
 
-#ifdef __OBJC__
-WebView *createWebViewAndOffscreenWindow(void) NS_RETURNS_RETAINED;
+#ifdef __cplusplus
+RetainPtr<WebView> createWebViewAndOffscreenWindow(void);
 #endif
 
 void setPersistentUserStyleSheetLocation(CFStringRef);
@@ -77,8 +83,10 @@ unsigned worldIDForWorld(WebScriptWorld *);
 - (void)_waitForWebThread;
 @end
 
+#ifdef __cplusplus
 @class DumpRenderTreeBrowserView;
-extern DumpRenderTreeBrowserView *gWebBrowserView;
+extern RetainPtr<DumpRenderTreeBrowserView> gWebBrowserView;
+#endif
 #endif
 
 int DumpRenderTreeMain(int, const char *[]);

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: <https://webkit.org/b/152269> convert `WI.CSSGridSection` to be a subclass of `WI.DetailsSectionRow`
+
 WI.CSSGridSection = class CSSGridSection extends WI.View
 {
     constructor()
@@ -35,22 +37,26 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
         this._checkboxElementByNodeMap = new WeakMap;
     }
 
+    // Public
+
+    set gridNodeSet(value)
+    {
+        this._gridNodeSet = value;
+        this.needsLayout();
+    }
+
     // Protected
 
     attached()
     {
         super.attached();
 
-        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayStateChanged, this);
         WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._handleGridOverlayStateChanged, this);
-
-        this._refreshGridNodeSet();
     }
 
     detached()
     {
-        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayStateChanged, this);
         WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._handleGridOverlayStateChanged, this);
 
@@ -66,7 +72,7 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
         listHeading.textContent = WI.UIString("Grid Overlays", "Page Overlays @ Layout Sidebar Section Header", "Heading for list of grid nodes");
 
         this._listElement = this.element.appendChild(document.createElement("ul"));
-        this._listElement.classList.add("node-link-list");
+        this._listElement.classList.add("node-overlay-list");
 
         let settingsGroup = new WI.SettingsGroup(WI.UIString("Grid Overlay Settings", "Page Overlay Settings @ Layout Panel Section Header", "Heading for list of grid overlay settings"));
         this.element.append(settingsGroup.element);
@@ -88,7 +94,10 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
         for (let domNode of this._gridNodeSet) {
             let itemElement = this._listElement.appendChild(document.createElement("li"));
-            let labelElement = itemElement.appendChild(document.createElement("label"));
+            let itemContainerElement = itemElement.appendChild(document.createElement("span"));
+            itemContainerElement.classList.add("node-overlay-list-item-container");
+
+            let labelElement = itemContainerElement.appendChild(document.createElement("label"));
             let checkboxElement = labelElement.appendChild(document.createElement("input"));
             checkboxElement.type = "checkbox";
             checkboxElement.checked = nodesWithGridOverlay.includes(domNode);
@@ -103,8 +112,9 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
                     WI.overlayManager.hideGridOverlay(domNode);
             });
 
-            let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, WI.Color.fromString("magenta"));
-            itemElement.append(swatch.element);
+            let gridColor = WI.overlayManager.colorForNode(domNode);
+            let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, gridColor);
+            itemContainerElement.append(swatch.element);
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
                 if (checkboxElement.checked)
@@ -122,22 +132,5 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
             return;
 
         checkboxElement.checked = event.type === WI.OverlayManager.Event.GridOverlayShown;
-    }
-
-    _handleLayoutContextTypeChanged(event)
-    {
-        let domNode = event.target;
-        if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
-            this._gridNodeSet.add(domNode);
-        else
-            this._gridNodeSet.delete(domNode);
-
-        this.needsLayout();
-    }
-
-    _refreshGridNodeSet()
-    {
-        this._gridNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid));
-        this.needsLayout();
     }
 };

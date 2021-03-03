@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +27,7 @@
 #include "config.h"
 #include "IntlLocale.h"
 
-#include "IntlObject.h"
+#include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include <unicode/uloc.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -58,13 +59,16 @@ void IntlLocale::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-void IntlLocale::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void IntlLocale::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     auto* thisObject = jsCast<IntlLocale*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
 }
+
+DEFINE_VISIT_CHILDREN(IntlLocale);
 
 class LocaleIDBuilder final {
 public:
@@ -219,11 +223,8 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue options = optionsValue;
-    if (!optionsValue.isUndefined()) {
-        options = optionsValue.toObject(globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-    }
+    Optional<JSObject&> options = intlCoerceOptionsToObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, void());
 
     LocaleIDBuilder localeID;
     if (!localeID.initialize(tag)) {

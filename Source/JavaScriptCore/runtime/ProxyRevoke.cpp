@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,8 @@ JSC_DEFINE_HOST_FUNCTION(performProxyRevoke, (JSGlobalObject* globalObject, Call
     return JSValue::encode(jsUndefined());
 }
 
-void ProxyRevoke::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void ProxyRevoke::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     ProxyRevoke* thisObject = jsCast<ProxyRevoke*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -77,5 +78,7 @@ void ProxyRevoke::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(thisObject->m_proxy);
 }
+
+DEFINE_VISIT_CHILDREN(ProxyRevoke);
 
 } // namespace JSC

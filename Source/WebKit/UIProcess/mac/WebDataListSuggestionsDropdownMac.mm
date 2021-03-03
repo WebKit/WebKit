@@ -142,7 +142,7 @@ void WebDataListSuggestionsDropdownMac::close()
 
     self.hasShadow = YES;
 
-    _backdropView = [[NSVisualEffectView alloc] initWithFrame:contentRect];
+    _backdropView = adoptNS([[NSVisualEffectView alloc] initWithFrame:contentRect]);
     [_backdropView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [_backdropView setMaterial:NSVisualEffectMaterialMenu];
     [_backdropView setState:NSVisualEffectStateActive];
@@ -494,23 +494,23 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 
 - (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row
 {
-    return [[[WKDataListSuggestionTableRowView alloc] init] autorelease];
+    return adoptNS([[WKDataListSuggestionTableRowView alloc] init]).autorelease();
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    WKDataListSuggestionView *result = [tableView makeViewWithIdentifier:suggestionCellReuseIdentifier owner:self];
+    auto result = retainPtr([tableView makeViewWithIdentifier:suggestionCellReuseIdentifier owner:self]);
 
     if (!result) {
-        result = [[[WKDataListSuggestionView alloc] init] autorelease];
+        result = adoptNS([[WKDataListSuggestionView alloc] init]);
         [result setIdentifier:suggestionCellReuseIdentifier];
     }
 
     auto& suggestion = _suggestions.at(row);
-    result.shouldShowBottomDivider = _showDividersBetweenCells && row < static_cast<NSInteger>(_suggestions.size() - 1);
+    [result setShouldShowBottomDivider:_showDividersBetweenCells && row < static_cast<NSInteger>(_suggestions.size() - 1)];
     [result setValue:suggestion.value label:suggestion.label];
 
-    return result;
+    return result.autorelease();
 }
 
 @end

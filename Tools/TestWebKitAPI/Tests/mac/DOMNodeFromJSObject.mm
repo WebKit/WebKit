@@ -30,12 +30,13 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebScriptWorld.h>
 #import <objc/runtime.h>
+#import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, DOMNodeFromJSObject)
 {
-    WebView *webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil];
+    auto webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
 
     [webView stringByEvaluatingJavaScriptFromString:@"document.body.mainWorldProperty = true"];
 
@@ -54,8 +55,6 @@ TEST(WebKitLegacy, DOMNodeFromJSObject)
 
     // Verify that the Objective-C wrapper is for the main world JS wrapper.
     EXPECT_TRUE([[objcBody valueForKey:@"mainWorldProperty"] boolValue]);
-
-    [webView release];
 }
 
 } // namespace TestWebKitAPI

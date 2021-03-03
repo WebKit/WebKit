@@ -32,9 +32,12 @@ messages -> WebPaymentCoordinatorProxy NotRefCounted {
 
     ShowPaymentUI(WebCore::PageIdentifier destinationID, String originatingURLString, Vector<String> linkIconURLStrings, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) Synchronous
     CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession)
-    CompleteShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate> update)
-    CompleteShippingContactSelection(Optional<WebCore::ShippingContactUpdate> update)
-    CompletePaymentMethodSelection(Optional<WebCore::PaymentMethodUpdate> update)
+    CompleteShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate> update)
+    CompleteShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate> update)
+    CompletePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate> update)
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    CompletePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate> update)
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     CompletePaymentSession(Optional<WebCore::PaymentAuthorizationResult> result)
     AbortPaymentSession()
     CancelPaymentSession()

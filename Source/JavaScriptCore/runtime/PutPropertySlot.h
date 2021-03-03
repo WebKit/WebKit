@@ -38,8 +38,8 @@ class PutPropertySlot {
 public:
     enum Type : uint8_t { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomValue, CustomAccessor };
     enum Context { UnknownContext, PutById, PutByIdEval };
-    using PutValueFunc = bool (*)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value);
-    using PutValueFuncWithPtr = bool (*)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value, void*);
+    using PutValueFunc = JSC::PutValueFunc;
+    using PutValueFuncWithPtr = JSC::PutValueFuncWithPtr;
 
     PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext, bool isInitialization = false)
         : m_base(nullptr)

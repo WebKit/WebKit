@@ -28,6 +28,7 @@
 
 #if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
@@ -40,23 +41,17 @@ static const CGFloat suggestionsPopoverCellHeight = 44;
 static const CGFloat suggestionsPopoverWidth = 320;
 static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCell";
 
-@interface WKDataListSuggestionsControl : NSObject {
-    WeakPtr<WebKit::WebDataListSuggestionsDropdownIOS> _dropdown;
-    Vector<WebCore::DataListSuggestion> _suggestions;
-}
+@interface WKDataListSuggestionsControl ()
 
 @property (nonatomic, weak) WKContentView *view;
 
-- (instancetype)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(WKContentView *)view;
-- (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information;
 - (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS&)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType;
-- (void)didSelectOptionAtIndex:(NSInteger)index;
-- (void)invalidate;
 
 - (NSArray<WKDataListTextSuggestion *> *)textSuggestions;
 - (NSInteger)suggestionsCount;
 - (String)suggestionAtIndex:(NSInteger)index;
 - (NSTextAlignment)textAlignment;
+
 @end
 
 @interface WKDataListSuggestionsPicker : WKDataListSuggestionsControl <UIPickerViewDataSource, UIPickerViewDelegate>
@@ -74,6 +69,11 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 - (void)reloadData;
 @end
+
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+@interface WKDataListSuggestionsDropdown : WKDataListSuggestionsControl <UIPopoverPresentationControllerDelegate>
+@end
+#endif
 
 @implementation WKDataListTextSuggestion
 @end
@@ -101,6 +101,14 @@ void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformat
     }
 
     WebCore::DataListSuggestionActivationType type = information.activationType;
+
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if ([m_contentView _formControlRefreshEnabled]) {
+        m_suggestionsControl = adoptNS([[WKDataListSuggestionsDropdown alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
+        [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
+        return;
+    }
+#endif
 
     if (currentUserInterfaceIdiomIsPadOrMac())
         m_suggestionsControl = adoptNS([[WKDataListSuggestionsPopover alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
@@ -134,7 +142,10 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 #pragma mark - WKDataListSuggestionsControl
 
-@implementation WKDataListSuggestionsControl
+@implementation WKDataListSuggestionsControl {
+    WeakPtr<WebKit::WebDataListSuggestionsDropdownIOS> _dropdown;
+    Vector<WebCore::DataListSuggestion> _suggestions;
+}
 
 - (instancetype)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(WKContentView *)view
 {
@@ -143,6 +154,8 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
     _view = view;
     _suggestions = WTFMove(information.suggestions);
+
+    [_view _setDataListSuggestionsControl:self];
 
     return self;
 }
@@ -321,7 +334,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     self.view.dataListTextSuggestions = self.textSuggestions;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_popover setPopoverController:[[[UIPopoverController alloc] initWithContentViewController:_suggestionsViewController.get()] autorelease]];
+    [_popover setPopoverController:adoptNS([[UIPopoverController alloc] initWithContentViewController:_suggestionsViewController.get()]).get()];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     [_popover presentPopoverAnimated:NO];
@@ -346,7 +359,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)reloadData
 {
     [self.tableView reloadData];
-    [self setPreferredContentSize:CGSizeMake(suggestionsPopoverWidth, maxVisibleSuggestions * suggestionsPopoverCellHeight + suggestionsPopoverCellHeight / 2)];
+
+    NSInteger suggestionsCount = [self.control suggestionsCount];
+    if (suggestionsCount > maxVisibleSuggestions)
+        [self setPreferredContentSize:CGSizeMake(suggestionsPopoverWidth, maxVisibleSuggestions * suggestionsPopoverCellHeight + suggestionsPopoverCellHeight / 2)];
+    else
+        [self setPreferredContentSize:CGSizeMake(suggestionsPopoverWidth, suggestionsCount * suggestionsPopoverCellHeight)];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -356,15 +374,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:suggestionCellReuseIdentifier];
+    auto cell = retainPtr([tableView dequeueReusableCellWithIdentifier:suggestionCellReuseIdentifier]);
     if (!cell)
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:suggestionCellReuseIdentifier] autorelease];
+        cell = adoptNS([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:suggestionCellReuseIdentifier]);
 
-    cell.textLabel.text = [self.control suggestionAtIndex:indexPath.row];
-    cell.textLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    cell.textLabel.textAlignment = [self.control textAlignment];
+    [cell textLabel].text = [self.control suggestionAtIndex:indexPath.row];
+    [cell textLabel].lineBreakMode = NSLineBreakByTruncatingTail;
+    [cell textLabel].textAlignment = [self.control textAlignment];
 
-    return cell;
+    return cell.autorelease();
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -373,5 +391,144 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end
+
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+
+#pragma mark - WKDataListSuggestionsDropdown
+
+@implementation WKDataListSuggestionsDropdown {
+    RetainPtr<WKDataListSuggestionsViewController> _suggestionsViewController;
+    RetainPtr<NSObject> _keyboardDismissalObserver;
+}
+
+- (instancetype)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(WKContentView *)view
+{
+    if (!(self = [super initWithInformation:WTFMove(information) inView:view]))
+        return nil;
+
+    return self;
+}
+
+- (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information
+{
+    auto activationType = information.activationType;
+
+    [super updateWithInformation:WTFMove(information)];
+    [self _displayWithActivationType:activationType];
+}
+
+- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS&)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
+{
+    [super showSuggestionsDropdown:dropdown activationType:activationType];
+    [self _displayWithActivationType:activationType];
+}
+
+- (void)invalidate
+{
+    [[_suggestionsViewController presentingViewController] dismissViewControllerAnimated:NO completion:nil];
+    [_suggestionsViewController setControl:nil];
+}
+
+- (void)didSelectOptionAtIndex:(NSInteger)index
+{
+    [[_suggestionsViewController presentingViewController] dismissViewControllerAnimated:NO completion:nil];
+    [self.view updateFocusedElementFocusedWithDataListDropdown:NO];
+    [super didSelectOptionAtIndex:index];
+}
+
+- (void)dealloc
+{
+    [self _removeKeyboardDismissalObserver];
+    [super dealloc];
+}
+
+- (void)_displayWithActivationType:(WebCore::DataListSuggestionActivationType)activationType
+{
+    if (activationType == WebCore::DataListSuggestionActivationType::IndicatorClicked)
+        [self.view updateFocusedElementFocusedWithDataListDropdown:YES];
+    else if (activationType == WebCore::DataListSuggestionActivationType::ControlClicked)
+        [self.view updateFocusedElementFocusedWithDataListDropdown:NO];
+
+    [self _updateTextSuggestions];
+
+    if (![UIKeyboard isInHardwareKeyboardMode] && activationType != WebCore::DataListSuggestionActivationType::IndicatorClicked)
+        return;
+
+    [self _showSuggestions];
+}
+
+- (void)_showSuggestions
+{
+    if (!_suggestionsViewController) {
+        _suggestionsViewController = adoptNS([[WKDataListSuggestionsViewController alloc] initWithStyle:UITableViewStylePlain]);
+        [_suggestionsViewController setModalPresentationStyle:UIModalPresentationPopover];
+        [[_suggestionsViewController tableView] setSeparatorInset:UIEdgeInsetsZero];
+        [_suggestionsViewController setControl:self];
+    }
+
+    [_suggestionsViewController reloadData];
+
+    if ([_suggestionsViewController isBeingPresented] || [[_suggestionsViewController viewIfLoaded] window] != nil)
+        return;
+
+    UIPopoverPresentationController *presentationController = [_suggestionsViewController popoverPresentationController];
+    presentationController.sourceView = self.view;
+    presentationController.sourceRect = CGRectIntegral(self.view.focusedElementInformation.interactionRect);
+    presentationController.permittedArrowDirections = UIPopoverArrowDirectionUp;
+    presentationController.delegate = self;
+    [presentationController _setShouldHideArrow:YES];
+    [presentationController _setPreferredHorizontalAlignment:_UIPopoverPresentationHorizontalAlignmentLeading];
+
+    // When a hardware keyboard is not used, the suggestions dropdown and software keyboard cannot be
+    // displayed at the same time. We wait until the keyboard is dismissed prior to presenting the
+    // suggestions, to avoid the keyboard's dismissal repositioning the dropdown.
+
+    if ([UIKeyboard isOnScreen] && ![UIKeyboard isInHardwareKeyboardMode]) {
+        _keyboardDismissalObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardDidHideNotification object:nil queue:nil usingBlock:[weakSelf = WeakObjCPtr<WKDataListSuggestionsDropdown>(self)] (NSNotification *) {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            [strongSelf _presentSuggestionsViewController];
+            [strongSelf _removeKeyboardDismissalObserver];
+        }];
+    } else
+        [self _presentSuggestionsViewController];
+}
+
+- (void)_presentSuggestionsViewController
+{
+    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self.view];
+    [presentingViewController presentViewController:_suggestionsViewController.get() animated:NO completion:nil];
+}
+
+- (void)_updateTextSuggestions
+{
+    self.view.dataListTextSuggestions = self.textSuggestions;
+}
+
+- (void)_removeKeyboardDismissalObserver
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:_keyboardDismissalObserver.get()];
+    _keyboardDismissalObserver = nil;
+}
+
+#pragma mark UIPopoverPresentationControllerDelegate
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+    [self.view updateFocusedElementFocusedWithDataListDropdown:NO];
+    [self _updateTextSuggestions];
+}
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(UITraitCollection *)traitCollection
+{
+    // Forces a popover presentation.
+    return UIModalPresentationNone;
+}
+
+@end
+
+#endif // ENABLE(IOS_FORM_CONTROL_REFRESH)
 
 #endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)

@@ -50,7 +50,7 @@ dictionary RTCRtpSFrameTransformOptions {
 ] interface RTCRtpSFrameTransform {
     [CallWith=ScriptExecutionContext] constructor(optional RTCRtpSFrameTransformOptions options);
 
-    Promise<undefined> setEncryptionKey(CryptoKey key, optional unsigned long long keyID);
+    [Custom] Promise<undefined> setEncryptionKey(CryptoKey key, optional any keyID);
     // FIXME: Add support for missing methods.
     // Promise<undefined> ratchetEncryptionKey();
     // Promise<undefined> setSigningKey(CryptoKey key);

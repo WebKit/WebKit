@@ -127,7 +127,7 @@ public:
     explicit GuardedInternalBuiltinBuiltinFunctions(JSC::VM& vm) : m_vm(vm) { }
 
     void init(JSC::JSGlobalObject&);
-    void visit(JSC::SlotVisitor&);
+    template<typename Visitor> void visit(Visitor&);
 
 public:
     JSC::VM& m_vm;
@@ -146,12 +146,17 @@ inline void GuardedInternalBuiltinBuiltinFunctions::init(JSC::JSGlobalObject& gl
 #undef EXPORT_FUNCTION
 }
 
-inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
+template<typename Visitor>
+inline void GuardedInternalBuiltinBuiltinFunctions::visit(Visitor& visitor)
 {
 #define VISIT_FUNCTION(name) visitor.append(m_##name##Function);
     WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_FUNCTION_NAME(VISIT_FUNCTION)
 #undef VISIT_FUNCTION
 }
+
+template void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::AbstractSlotVisitor&);
+template void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor&);
+
 
 
 } // namespace WebCore

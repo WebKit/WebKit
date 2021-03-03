@@ -126,14 +126,14 @@ TEST(WKWebViewMacEditingTests, DoNotCrashWhenInterpretingKeyEventWhileDeallocati
     __block bool isDone = false;
 
     @autoreleasepool {
-        SlowInputWebView *webView = [[[SlowInputWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)] autorelease];
+        auto webView = adoptNS([[SlowInputWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
         [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<body contenteditable>Hello world</body>"]];
         [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
         [webView waitForNextPresentationUpdate];
         [webView removeFromSuperview];
         [webView typeCharacter:'a'];
 
-        webView._web_superInputContext.handledInputMethodEventBlock = ^() {
+        webView.get()._web_superInputContext.handledInputMethodEventBlock = ^() {
             isDone = true;
         };
     }

@@ -104,7 +104,7 @@ using namespace WTF;
 
 - (NSString *)_web_originalDataAsString
 {
-    return [[[NSString alloc] initWithData:originalURLData(self) encoding:NSISOLatin1StringEncoding] autorelease];
+    return adoptNS([[NSString alloc] initWithData:originalURLData(self) encoding:NSISOLatin1StringEncoding]).autorelease();
 }
 
 - (NSString *)_web_userVisibleString
@@ -202,7 +202,7 @@ using namespace WTF;
 
 - (NSString *)_web_hostString
 {
-    return [[[NSString alloc] initWithData:[self _web_hostData] encoding:NSUTF8StringEncoding] autorelease];
+    return adoptNS([[NSString alloc] initWithData:[self _web_hostData] encoding:NSUTF8StringEncoding]).autorelease();
 }
 
 - (NSString *)_webkit_suggestedFilenameWithMIMEType:(NSString *)MIMEType

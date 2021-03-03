@@ -5,7 +5,7 @@
         wkSetCookie("strict", "27", Array("SameSite" => "Strict", "Max-Age" => 100, "path" => "/"));
         wkSetCookie("lax", "27", Array("SameSite" => "Lax", "Max-Age" => 100, "path" => "/"));
         wkSetCookie("normal", "27", Array("Max-Age" => 100, "path" => "/"));
-        header("Location: http://localhost:8000/resources/redirect.php?url=" . urlencode("http://127.0.0.1:8000" . $_SERVER["REQUEST_URI"] . "?check-cookies"));
+        header("Location: http://localhost:8000/resources/redirect.py?url=" . urlencode("http://127.0.0.1:8000" . $_SERVER["REQUEST_URI"] . "?check-cookies"));
         exit(0);
     }
 ?>

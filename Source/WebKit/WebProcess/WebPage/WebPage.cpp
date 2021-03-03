@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -64,6 +64,7 @@
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "ShareableBitmap.h"
+#include "ShareableBitmapUtilities.h"
 #include "SharedBufferDataReference.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "ViewGestureGeometryCollector.h"
@@ -514,6 +515,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(APP_BOUND_DOMAINS)
     , m_limitsNavigationsToAppBoundDomains(parameters.limitsNavigationsToAppBoundDomains)
 #endif
+    , m_lastNavigationWasAppBound(parameters.lastNavigationWasAppBound)
 {
     ASSERT(m_identifier);
 
@@ -593,6 +595,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.loadsSubresources = parameters.loadsSubresources;
     pageConfiguration.loadsFromNetwork = parameters.loadsFromNetwork;
     pageConfiguration.shouldRelaxThirdPartyCookieBlocking = parameters.shouldRelaxThirdPartyCookieBlocking;
+    pageConfiguration.httpsUpgradeEnabled = parameters.httpsUpgradeEnabled;
 
     pageConfiguration.textInteractionEnabled = parameters.textInteractionEnabled;
     
@@ -616,6 +619,15 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         SandboxExtension::consumePermanently(parameters.gpuIOKitExtensionHandles);
         SandboxExtension::consumePermanently(parameters.gpuMachExtensionHandles);
         hasConsumedGPUExtensionHandles = true;
+    }
+#endif
+
+#if HAVE(STATIC_FONT_REGISTRY)
+    if (parameters.fontMachExtensionHandle) {
+        if ((m_fontExtension = SandboxExtension::create(WTFMove(*parameters.fontMachExtensionHandle)))) {
+            bool ok = m_fontExtension->consume();
+            ASSERT_UNUSED(ok, ok);
+        }
     }
 #endif
 
@@ -1001,6 +1013,11 @@ WebPage::~WebPage()
         if (completionHandler)
             completionHandler(WTF::nullopt);
     }
+#endif
+    
+#if HAVE(STATIC_FONT_REGISTRY)
+    if (m_fontExtension)
+        m_fontExtension->revoke();
 #endif
 }
 
@@ -1618,6 +1635,8 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 
 void WebPage::loadRequest(LoadParameters&& loadParameters)
 {
+    setLastNavigationWasAppBound(loadParameters.request.isAppBound());
+
 #if ENABLE(APP_BOUND_DOMAINS)
     setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
 #endif
@@ -1703,6 +1722,45 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
     m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);    
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, unreachableURL, loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain);
     m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL({ });
+}
+
+void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, ResourceResponse&& simulatedResponse)
+{
+    ASSERT(simulatedResponse.url() == loadParameters.request.url());
+    ASSERT(simulatedResponse.mimeType() == loadParameters.MIMEType);
+    ASSERT(simulatedResponse.textEncodingName() == loadParameters.encodingName);
+    ASSERT(static_cast<size_t>(simulatedResponse.expectedContentLength()) == loadParameters.data.size());
+
+    platformDidReceiveLoadParameters(loadParameters);
+
+    auto sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(loadParameters.data.data()), loadParameters.data.size());
+
+#if ENABLE(APP_BOUND_DOMAINS)
+    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
+#endif
+
+    SendStopResponsivenessTimer stopper;
+
+    m_pendingNavigationID = loadParameters.navigationID;
+    m_pendingWebsitePolicies = WTFMove(loadParameters.websitePolicies);
+
+    SubstituteData substituteData(WTFMove(sharedBuffer), loadParameters.request.url(), simulatedResponse, SubstituteData::SessionHistoryVisibility::Visible);
+
+    // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
+    // to all the client to set up any needed state.
+    m_loaderClient->willLoadDataRequest(*this, loadParameters.request, const_cast<SharedBuffer*>(substituteData.content()), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), WebProcess::singleton().transformHandlesToObjects(loadParameters.userData.object()).get());
+
+    // Initate the load in WebCore.
+    FrameLoadRequest frameLoadRequest(*m_mainFrame->coreFrame(), loadParameters.request, substituteData);
+    frameLoadRequest.setShouldOpenExternalURLsPolicy(loadParameters.shouldOpenExternalURLsPolicy);
+    frameLoadRequest.setShouldTreatAsContinuingLoad(loadParameters.shouldTreatAsContinuingLoad);
+    frameLoadRequest.setLockHistory(loadParameters.lockHistory);
+    frameLoadRequest.setLockBackForwardList(loadParameters.lockBackForwardList);
+    frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
+    frameLoadRequest.setIsRequestFromClientOrUserInput();
+
+    // FIXME: Should this be "corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));"?
+    m_mainFrame->coreFrame()->loader().load(WTFMove(frameLoadRequest));
 }
 
 void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
@@ -3406,7 +3464,7 @@ void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listene
     consumeNetworkExtensionSandboxExtensions(networkExtensionsHandles);
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    RELEASE_LOG_IF_ALLOWED(Loading, "didReceivePolicyDecision: policyAction: %u - frameID: %llu - webFrame: %p - mainFrame: %d", (unsigned)policyDecision.policyAction, frameID.toUInt64(), frame, frame ? frame->isMainFrame() : 0);
+    RELEASE_LOG_IF_ALLOWED(Loading, "didReceivePolicyDecision: policyAction=%u - frameID=%llu - webFrame=%p - mainFrame=%d", (unsigned)policyDecision.policyAction, frameID.toUInt64(), frame, frame ? frame->isMainFrame() : 0);
 
     if (!frame)
         return;
@@ -3655,7 +3713,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::DataReference&)>&& callback)
+void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const Optional<IPC::DataReference>&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -3689,7 +3747,7 @@ void WebPage::getSourceForFrame(FrameIdentifier frameID, CompletionHandler<void(
     callback(resultString);
 }
 
-void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
+void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHandler<void(const Optional<IPC::SharedBufferDataReference>&)>&& callback)
 {
     RefPtr<SharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3720,7 +3778,7 @@ static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resour
     return &subresource->data();
 }
 
-void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback)
+void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& resourceURLString, CompletionHandler<void(const Optional<IPC::SharedBufferDataReference>&)>&& callback)
 {
     RefPtr<SharedBuffer> buffer;
     if (auto* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -3734,7 +3792,7 @@ void WebPage::getResourceDataFromFrame(FrameIdentifier frameID, const String& re
     callback(dataReference);
 }
 
-void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const IPC::DataReference&)>&& callback)
+void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<void(const Optional<IPC::DataReference>&)>&& callback)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -4142,7 +4200,7 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Int
         return;
     }
 
-    DragData dragData(&selectionData, clientPosition, globalPosition, draggingSourceOperationMask, flags);
+    DragData dragData(&selectionData, clientPosition, globalPosition, draggingSourceOperationMask, flags, anyDragDestinationAction(), m_identifier);
     switch (action) {
     case DragControllerAction::Entered: {
         auto resolvedDragOperation = m_page->dragController().dragEntered(dragData);
@@ -6417,6 +6475,8 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
 {
     Ref<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
 
+    documentLoader->setlastNavigationWasAppBound(m_lastNavigationWasAppBound);
+
     if (frame.isMainFrame()) {
         if (m_pendingNavigationID) {
             documentLoader->setNavigationID(m_pendingNavigationID);
@@ -7087,6 +7147,11 @@ void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelSt
 }
 
 #if !PLATFORM(COCOA)
+void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
 void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
 {
     completionHandler({ });
@@ -7171,7 +7236,7 @@ void WebPage::requestImageExtraction(WebCore::Element& element)
 
     m_elementsWithExtractedImages.add(element);
 
-    auto bitmap = shareableBitmap(downcast<RenderImage>(*renderImage));
+    auto bitmap = createShareableBitmap(downcast<RenderImage>(*renderImage));
     if (!bitmap)
         return;
 
@@ -7249,7 +7314,7 @@ void WebPage::revokeSandboxExtensions(Vector<RefPtr<SandboxExtension>>& sandboxE
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-bool WebPage::createAppHighlightInSelectedRange(CreateNewGroupForHighlight createNewGroup)
+bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight createNewGroup)
 {
     auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
 
@@ -7262,16 +7327,21 @@ bool WebPage::createAppHighlightInSelectedRange(CreateNewGroupForHighlight creat
         return false;
 
     document->appHighlightRegister().addAppHighlight(StaticRange::create(selectionRange.value()));
-    document->appHighlightStorage().updateAppHighlightsStorage();
+    document->appHighlightStorage().storeAppHighlight(StaticRange::create(selectionRange.value()), createNewGroup);
 
     return true;
 }
 
-void WebPage::restoreAppHighlights(const IPC::DataReference& data)
+void WebPage::restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&& memoryHandles)
 {
     auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
 
-    document->appHighlightStorage().restoreAppHighlights(SharedBuffer::create(data.data(), data.size()));
+    for (const auto& ipcHandle : memoryHandles) {
+        auto sharedMemory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+        if (!sharedMemory)
+            continue;
+        document->appHighlightStorage().restoreAppHighlight(SharedBuffer::create(static_cast<const char*>(sharedMemory->data()), sharedMemory->size()));
+    }
 }
 #endif
 
@@ -7281,38 +7351,9 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::H
 }
 #endif
 
-RefPtr<ShareableBitmap> WebPage::shareableBitmap(RenderImage& renderImage, Optional<FloatSize> screenSizeInPixels) const
+void WebPage::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto* cachedImage = renderImage.cachedImage();
-    if (!cachedImage || cachedImage->errorOccurred())
-        return nullptr;
-
-    auto* image = cachedImage->imageForRenderer(&renderImage);
-    if (!image || image->width() <= 1 || image->height() <= 1)
-        return nullptr;
-
-    auto bitmapSize = cachedImage->imageSizeForRenderer(&renderImage);
-    if (screenSizeInPixels) {
-        auto scaledSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), *screenSizeInPixels }).size();
-        bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;
-    }
-
-    // FIXME: Only select ExtendedColor on images known to need wide gamut.
-    ShareableBitmap::Configuration bitmapConfiguration;
-#if USE(CG)
-    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(corePage()->mainFrame().view());
-#endif
-
-    auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration);
-    if (!sharedBitmap)
-        return nullptr;
-
-    auto graphicsContext = sharedBitmap->createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
-
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
-    return sharedBitmap;
+    completionHandler(mainFrame()->document()->loader()->lastNavigationWasAppBound());
 }
 
 } // namespace WebKit

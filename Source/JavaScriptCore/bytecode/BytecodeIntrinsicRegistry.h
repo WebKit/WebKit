@@ -47,6 +47,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getPromiseInternalField) \
     macro(getGeneratorInternalField) \
     macro(getAsyncGeneratorInternalField) \
+    macro(getAbstractModuleRecordInternalField) \
     macro(getArrayIteratorInternalField) \
     macro(getStringIteratorInternalField) \
     macro(getMapIteratorInternalField) \
@@ -152,6 +153,7 @@ enum class LinkTimeConstant : int32_t;
     macro(AsyncGeneratorSuspendReasonAwait) \
     macro(AsyncGeneratorSuspendReasonNone) \
     macro(useIntlDateTimeFormatDayPeriod) \
+    macro(abstractModuleRecordFieldState) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_CUSTOM_EACH_NAME(macro) \
     macro(sentinelMapBucket) \

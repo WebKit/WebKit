@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "Error.h"
 #include "JSCInlines.h"
+#include "JSInternalFieldObjectImplInlines.h"
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
@@ -53,6 +54,11 @@ void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 
+    auto values = initialValues();
+    ASSERT(values.size() == numberOfInternalFields);
+    for (unsigned index = 0; index < values.size(); ++index)
+        Base::internalField(index).set(vm, this, values[index]);
+
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSMap* map = JSMap::create(globalObject, vm, globalObject->mapStructure());
     scope.releaseAssertNoException();
@@ -60,7 +66,8 @@ void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
     putDirect(vm, Identifier::fromString(vm, "dependenciesMap"_s), m_dependenciesMap.get());
 }
 
-void AbstractModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void AbstractModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     AbstractModuleRecord* thisObject = jsCast<AbstractModuleRecord*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -69,6 +76,8 @@ void AbstractModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_moduleNamespaceObject);
     visitor.append(thisObject->m_dependenciesMap);
 }
+
+DEFINE_VISIT_CHILDREN(AbstractModuleRecord);
 
 void AbstractModuleRecord::appendRequestedModule(const Identifier& moduleName)
 {
@@ -805,7 +814,7 @@ void AbstractModuleRecord::setModuleEnvironment(JSGlobalObject* globalObject, JS
     m_moduleEnvironment.set(vm, this, moduleEnvironment);
 }
 
-void AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
+Synchronousness AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
     if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, this))
@@ -815,13 +824,14 @@ void AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetc
         return wasmModuleRecord->link(globalObject, scriptFetcher, nullptr, Wasm::CreationMode::FromModuleLoader);
 #endif
     RELEASE_ASSERT_NOT_REACHED();
+    return Synchronousness::Sync;
 }
 
-JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalObject)
+JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalObject, JSValue sentValue, JSValue resumeMode)
 {
     VM& vm = globalObject->vm();
     if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, this))
-        return jsModuleRecord->evaluate(globalObject);
+        return jsModuleRecord->evaluate(globalObject, sentValue, resumeMode);
 #if ENABLE(WEBASSEMBLY)
     if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(vm, this))
         return wasmModuleRecord->evaluate(globalObject);

@@ -34,6 +34,7 @@
 #include "GraphicsContextGLOpenGL.h"
 #include "Image.h"
 #include "ImageBufferUtilitiesCG.h"
+#include "ImageData.h"
 
 #if HAVE(ARM_NEON_INTRINSICS)
 #include "GraphicsContextGLNEON.h"
@@ -510,18 +511,17 @@ static void releaseImageData(void* imageData, const void*, size_t)
     reinterpret_cast<ImageData*>(imageData)->deref();
 }
 
-void GraphicsContextGLOpenGL::paintToCanvas(Ref<ImageData>&& imageData, const IntSize& canvasSize, GraphicsContext& context)
+void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<ImageData>&& imageData, const IntSize& canvasSize, GraphicsContext& context)
 {
     ASSERT(!imageData->size().isEmpty());
     if (canvasSize.isEmpty())
         return;
-    auto attrs = contextAttributes();
     // Input is GL_RGBA == kCGBitmapByteOrder32Big | kCGImageAlpha*Last.
     // GL_BGRA would be kCGBitmapByteOrder32Little | kCGImageAlpha*First.
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big;
-    if (!attrs.alpha)
+    if (!sourceContextAttributes.alpha)
         bitmapInfo |= kCGImageAlphaNoneSkipLast;
-    else if (attrs.premultipliedAlpha)
+    else if (sourceContextAttributes.premultipliedAlpha)
         bitmapInfo |= kCGImageAlphaPremultipliedLast;
     else
         bitmapInfo |= kCGImageAlphaLast;

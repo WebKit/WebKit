@@ -75,9 +75,38 @@ def main():
     if sys.platform.startswith('win'):
         tester.skip(('webkitpy.common.checkout', 'webkitpy.tool'), 'fail horribly on win32', 54526)
 
-    # Xcode tests are only relevant for Mac
-    if not (sys.platform.startswith('darwin')):
-        tester.skip(('webkitpy.xcode',), 'xcode is only valid on darwin', 221837)
+    # Tests that are platform specific
+    mac_only_tests = (
+        'webkitpy.xcode',
+        'webkitpy.port.ios_device_unittest',
+        'webkitpy.port.ios_simulator_unittest',
+        'webkitpy.port.mac_unittest',
+        'webkitpy.port.watch_simulator_unittest',
+    )
+    linux_only_tests = (
+        'webkitpy.port.gtk_unittest',
+        'webkitpy.port.headlessdriver_unittest',
+        'webkitpy.port.linux_get_crash_log_unittest',
+        'webkitpy.port.waylanddriver_unittest',
+        'webkitpy.port.westondriver_unittest',
+        'webkitpy.port.wpe_unittest',
+        'webkitpy.port.xorgdriver_unittest',
+        'webkitpy.port.xvfbdriver_unittest',
+    )
+    windows_only_tests = ('webkitpy.port.win_unittest',)
+
+    # Skip platform specific tests on Windows and Linux
+    # The webkitpy EWS is run on Mac so only skip tests that won't run on it
+    if sys.platform.startswith('darwin'):
+        skip_tests = None
+    elif sys.platform.startswith('win'):
+        skip_tests = mac_only_tests + linux_only_tests + \
+            ('webkitpy.port.leakdetector_unittest', 'webkitpy.port.leakdetector_valgrind_unittest')
+    else:
+        skip_tests = mac_only_tests + windows_only_tests
+
+    if skip_tests is not None:
+        tester.skip(skip_tests, 'are not relevant for the platform running tests', 222066)
 
     return not tester.run()
 

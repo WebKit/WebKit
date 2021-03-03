@@ -295,6 +295,9 @@ public:
     PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset);
     PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType, uint8_t flags);
 
+    // Saturated truncation.
+    PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type returnType, Type operandType);
+
     // Basic operators
     template<OpType>
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
@@ -2572,6 +2575,194 @@ auto AirIRGenerator::atomicNotify(ExtAtomicOpType, ExpressionType pointer, Expre
 auto AirIRGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
 {
     append(MemoryFence);
+    return { };
+}
+
+auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, ExpressionType& result, Type returnType, Type operandType) -> PartialResult
+{
+    TypedTmp maxFloat;
+    TypedTmp minFloat;
+    TypedTmp signBitConstant;
+    bool requiresMacroScratchRegisters = false;
+    switch (op) {
+    case Ext1OpType::I32TruncSatF32S:
+        maxFloat = addConstant(Type::F32, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int32_t>::min())));
+        minFloat = addConstant(Type::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min())));
+        break;
+    case Ext1OpType::I32TruncSatF32U:
+        maxFloat = addConstant(Type::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min()) * static_cast<float>(-2.0)));
+        minFloat = addConstant(Type::F32, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
+        break;
+    case Ext1OpType::I32TruncSatF64S:
+        maxFloat = addConstant(Type::F64, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int32_t>::min())));
+        minFloat = addConstant(Type::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) - 1.0));
+        break;
+    case Ext1OpType::I32TruncSatF64U:
+        maxFloat = addConstant(Type::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0));
+        minFloat = addConstant(Type::F64, bitwise_cast<uint64_t>(-1.0));
+        break;
+    case Ext1OpType::I64TruncSatF32S:
+        maxFloat = addConstant(Type::F32, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int64_t>::min())));
+        minFloat = addConstant(Type::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min())));
+        break;
+    case Ext1OpType::I64TruncSatF32U:
+        maxFloat = addConstant(Type::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min()) * static_cast<float>(-2.0)));
+        minFloat = addConstant(Type::F32, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
+        if (isX86())
+            signBitConstant = addConstant(Type::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
+        requiresMacroScratchRegisters = true;
+        break;
+    case Ext1OpType::I64TruncSatF64S:
+        maxFloat = addConstant(Type::F64, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int64_t>::min())));
+        minFloat = addConstant(Type::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min())));
+        break;
+    case Ext1OpType::I64TruncSatF64U:
+        maxFloat = addConstant(Type::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0));
+        minFloat = addConstant(Type::F64, bitwise_cast<uint64_t>(-1.0));
+        if (isX86())
+            signBitConstant = addConstant(Type::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
+        requiresMacroScratchRegisters = true;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    uint64_t minResult = 0;
+    uint64_t maxResult = 0;
+    switch (op) {
+    case Ext1OpType::I32TruncSatF32S:
+    case Ext1OpType::I32TruncSatF64S:
+        maxResult = bitwise_cast<uint32_t>(INT32_MAX);
+        minResult = bitwise_cast<uint32_t>(INT32_MIN);
+        break;
+    case Ext1OpType::I32TruncSatF32U:
+    case Ext1OpType::I32TruncSatF64U:
+        maxResult = bitwise_cast<uint32_t>(UINT32_MAX);
+        minResult = bitwise_cast<uint32_t>(0U);
+        break;
+    case Ext1OpType::I64TruncSatF32S:
+    case Ext1OpType::I64TruncSatF64S:
+        maxResult = bitwise_cast<uint64_t>(INT64_MAX);
+        minResult = bitwise_cast<uint64_t>(INT64_MIN);
+        break;
+    case Ext1OpType::I64TruncSatF32U:
+    case Ext1OpType::I64TruncSatF64U:
+        maxResult = bitwise_cast<uint64_t>(UINT64_MAX);
+        minResult = bitwise_cast<uint64_t>(0ULL);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    result = tmpForType(returnType);
+
+    BasicBlock* minCase = m_code.addBlock();
+    BasicBlock* maxCheckCase = m_code.addBlock();
+    BasicBlock* maxCase = m_code.addBlock();
+    BasicBlock* inBoundsCase = m_code.addBlock();
+    BasicBlock* continuation = m_code.addBlock();
+
+    auto branchOp = operandType == Type::F32 ? BranchFloat : BranchDouble;
+    append(m_currentBlock, branchOp, Arg::doubleCond(MacroAssembler::DoubleLessThanOrEqualOrUnordered), arg, minFloat);
+    m_currentBlock->setSuccessors(minCase, maxCheckCase);
+
+    append(maxCheckCase, branchOp, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, maxFloat);
+    maxCheckCase->setSuccessors(maxCase, inBoundsCase);
+
+    if (!minResult) {
+        append(minCase, Move, Arg::bigImm(minResult), result);
+        append(minCase, Jump);
+        minCase->setSuccessors(continuation);
+    } else {
+        BasicBlock* minMaterializeCase = m_code.addBlock();
+        BasicBlock* nanCase = m_code.addBlock();
+        append(minCase, branchOp, Arg::doubleCond(MacroAssembler::DoubleEqualAndOrdered), arg, arg);
+        minCase->setSuccessors(minMaterializeCase, nanCase);
+
+        append(minMaterializeCase, Move, Arg::bigImm(minResult), result);
+        append(minMaterializeCase, Jump);
+        minMaterializeCase->setSuccessors(continuation);
+
+        append(nanCase, Move, Arg::bigImm(0), result);
+        append(nanCase, Jump);
+        nanCase->setSuccessors(continuation);
+    }
+
+    append(maxCase, Move, Arg::bigImm(maxResult), result);
+    append(maxCase, Jump);
+    maxCase->setSuccessors(continuation);
+
+    Vector<ConstrainedTmp, 2> args;
+    auto* patchpoint = addPatchpoint(toB3Type(returnType));
+    patchpoint->effects = B3::Effects::none();
+    args.append(arg);
+    if (requiresMacroScratchRegisters) {
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        if (isX86()) {
+            args.append(signBitConstant);
+            patchpoint->numFPScratchRegisters = 1;
+        }
+    }
+
+    patchpoint->effects = B3::Effects::none();
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        switch (op) {
+        case Ext1OpType::I32TruncSatF32S:
+            jit.truncateFloatToInt32(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I32TruncSatF32U:
+            jit.truncateFloatToUint32(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I32TruncSatF64S:
+            jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I32TruncSatF64U:
+            jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I64TruncSatF32S:
+            jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I64TruncSatF32U: {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            ASSERT(requiresMacroScratchRegisters);
+            FPRReg scratch = InvalidFPRReg;
+            FPRReg constant = InvalidFPRReg;
+            if (isX86()) {
+                scratch = params.fpScratch(0);
+                constant = params[2].fpr();
+            }
+            jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+            break;
+        }
+        case Ext1OpType::I64TruncSatF64S:
+            jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
+            break;
+        case Ext1OpType::I64TruncSatF64U: {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            ASSERT(requiresMacroScratchRegisters);
+            FPRReg scratch = InvalidFPRReg;
+            FPRReg constant = InvalidFPRReg;
+            if (isX86()) {
+                scratch = params.fpScratch(0);
+                constant = params[2].fpr();
+            }
+            jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    });
+
+    emitPatchpoint(inBoundsCase, patchpoint, Vector<TypedTmp, 8> { result }, WTFMove(args));
+    append(inBoundsCase, Jump);
+    inBoundsCase->setSuccessors(continuation);
+
+    m_currentBlock = continuation;
+
     return { };
 }
 

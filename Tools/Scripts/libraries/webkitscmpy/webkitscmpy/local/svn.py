@@ -26,6 +26,7 @@ import json
 import logging
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -399,3 +400,21 @@ class Svn(Scm):
 
     def pull(self):
         return run([self.executable(), 'up'], cwd=self.root_path).returncode
+
+    def clean(self):
+        result = run([
+            self.executable(), 'revert', '-R', self.root_path,
+        ], cwd=self.root_path).returncode
+        if result:
+            return result
+
+        for line in reversed(run([self.executable(), 'status'], cwd=self.root_path, capture_output=True, encoding='utf-8').stdout.splitlines()):
+            candidate = line.split('       ')
+            if candidate[0] != '?':
+                continue
+            path = os.path.join(self.root_path, '       '.join(candidate[1:]))
+            if os.path.isdir(path):
+                shutil.rmtree(path, ignore_errors=True)
+            elif os.path.exists(path):
+                os.remove(path)
+        return 0

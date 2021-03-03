@@ -24,6 +24,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,6 +42,12 @@ enum class ReferenceSpaceType {
     LocalFloor,
     BoundedFloor,
     Unbounded
+};
+
+enum class Eye {
+    None,
+    Left,
+    Right,
 };
 
 #if ENABLE(WEBXR)
@@ -79,29 +86,51 @@ public:
     virtual void initializeReferenceSpace(ReferenceSpaceType) = 0;
 
     struct FrameData {
-        long predictedDisplayTime;
-        struct ViewData {
-            struct {
-                WebCore::FloatPoint3D position;
-                struct {
-                    float x;
-                    float y;
-                    float z;
-                    float w;
-                } orientation;
-            } pose;
-            struct {
-                float rUp;
-                float rDown;
-                float rLeft;
-                float rRight;
-            } fov;
+        struct FloatQuaternion {
+            float x { 0.0f };
+            float y { 0.0f };
+            float z { 0.0f };
+            float w { 1.0f };
         };
-        Vector<ViewData> viewPoses;
+
+        struct Pose {
+            WebCore::FloatPoint3D position;
+            FloatQuaternion orientation;
+        };
+
+        struct Fov {
+            // In radians
+            float up { 0.0f };
+            float down { 0.0f };
+            float left { 0.0f };
+            float right { 0.0f };
+        };
+
+        using Projection = Variant<Fov, std::array<float, 16>, std::nullptr_t>;
+
+        struct View {
+            Pose offset;
+            Projection projection = { nullptr };
+        };
+
+        bool isTrackingValid { false };
+        bool isPositionValid { false };
+        bool isPositionEmulated { false };
+        long predictedDisplayTime { 0 };
+        Pose origin;
+        Optional<Pose> floorTransform;
+        Vector<View> views;
     };
+
+    struct ViewData {
+        bool active { false };
+        Eye eye { Eye::None };
+    };
+
+    virtual Vector<ViewData> views(SessionMode) const = 0;
+
     using RequestFrameCallback = Function<void(FrameData&&)>;
     virtual void requestFrame(RequestFrameCallback&&) = 0;
-
 protected:
     Device() = default;
 

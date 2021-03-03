@@ -71,7 +71,7 @@ public:
 
     void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&, const Styleable&);
 
-    void updateCSSAnimationsForStyleable(const Styleable&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle);
+    void updateCSSAnimationsForStyleable(const Styleable&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const RenderStyle* parentElementStyle);
     void updateCSSTransitionsForStyleable(const Styleable&, const RenderStyle& currentStyle, const RenderStyle& newStyle);
 
 protected:

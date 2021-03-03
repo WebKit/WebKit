@@ -110,14 +110,14 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!validateBytecodeCachePath(cachePath, error))
         return nil;
 
-    JSScript *result = [[[JSScript alloc] init] autorelease];
+    auto result = adoptNS([[JSScript alloc] init]);
     result->m_virtualMachine = vm;
     result->m_type = type;
     result->m_source = source;
     result->m_sourceURL = sourceURL;
     result->m_cachePath = cachePath;
     [result readCache];
-    return result;
+    return result.autorelease();
 }
 
 + (instancetype)scriptOfType:(JSScriptType)type memoryMappedFromASCIIFile:(NSURL *)filePath withSourceURL:(NSURL *)sourceURL andBytecodeCache:(NSURL *)cachePath inVirtualMachine:(JSVirtualMachine *)vm error:(out NSError **)error
@@ -138,7 +138,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!charactersAreAllASCII(reinterpret_cast<const LChar*>(fileData.data()), fileData.size()))
         return createError([NSString stringWithFormat:@"Not all characters in file at %@ are ASCII.", static_cast<NSString *>(systemPath)], error);
 
-    JSScript *result = [[[JSScript alloc] init] autorelease];
+    auto result = adoptNS([[JSScript alloc] init]);
     result->m_virtualMachine = vm;
     result->m_type = type;
     result->m_source = String(StringImpl::createWithoutCopying(bitwise_cast<const LChar*>(fileData.data()), fileData.size()));
@@ -146,7 +146,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     result->m_sourceURL = sourceURL;
     result->m_cachePath = cachePath;
     [result readCache];
-    return result;
+    return result.autorelease();
 }
 
 - (void)readCache

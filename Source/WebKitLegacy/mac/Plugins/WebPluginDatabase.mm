@@ -61,27 +61,32 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
 
 @implementation WebPluginDatabase
 
-static WebPluginDatabase *sharedDatabase = nil;
+static RetainPtr<WebPluginDatabase>& sharedDatabase()
+{
+    static NeverDestroyed<RetainPtr<WebPluginDatabase>> sharedDatabase;
+    return sharedDatabase;
+}
 
 + (WebPluginDatabase *)sharedDatabase 
 {
-    if (!sharedDatabase) {
-        sharedDatabase = [[WebPluginDatabase alloc] init];
-        [sharedDatabase setPlugInPaths:[self _defaultPlugInPaths]];
-        [sharedDatabase refresh];
+    auto& database = sharedDatabase();
+    if (!database) {
+        database = adoptNS([[WebPluginDatabase alloc] init]);
+        [database setPlugInPaths:[self _defaultPlugInPaths]];
+        [database refresh];
     }
     
-    return sharedDatabase;
+    return database.get();
 }
 
 + (WebPluginDatabase *)sharedDatabaseIfExists
 {
-    return sharedDatabase;
+    return sharedDatabase().get();
 }
 
 + (void)closeSharedDatabase 
 {
-    [sharedDatabase close];
+    [sharedDatabase() close];
 }
 
 static void checkCandidate(WebBasePluginPackage * __strong *currentPlugin, WebBasePluginPackage * __strong *candidatePlugin)
@@ -185,15 +190,18 @@ struct PluginPackageCandidates {
     return [plugins allValues];
 }
 
-static NSArray *additionalWebPlugInPaths;
+static RetainPtr<NSArray>& additionalWebPlugInPaths()
+{
+    static NeverDestroyed<RetainPtr<NSArray>> _additionalWebPlugInPaths;
+    return _additionalWebPlugInPaths;
+}
 
 + (void)setAdditionalWebPlugInPaths:(NSArray *)additionalPaths
 {
-    if (additionalPaths == additionalWebPlugInPaths)
+    if (additionalPaths == additionalWebPlugInPaths())
         return;
     
-    [additionalWebPlugInPaths release];
-    additionalWebPlugInPaths = [additionalPaths copy];
+    additionalWebPlugInPaths() = adoptNS([additionalPaths copy]);
 
     // One might be tempted to add additionalWebPlugInPaths to the global WebPluginDatabase here.
     // For backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
@@ -315,7 +323,7 @@ static NSArray *additionalWebPlugInPaths;
                 continue;
             }
 
-            if (self == sharedDatabase)
+            if (self == sharedDatabase())
                 [WebView _registerPluginMIMEType:MIMEType];
         }
     }
@@ -411,16 +419,16 @@ static NSArray *additionalWebPlugInPaths;
 
 - (NSArray *)_plugInPaths
 {
-    if (self == sharedDatabase && additionalWebPlugInPaths) {
+    if (self == sharedDatabase() && additionalWebPlugInPaths()) {
         // Add additionalWebPlugInPaths to the global WebPluginDatabase.  We do this here for
         // backward compatibility with earlier versions of the +setAdditionalWebPlugInPaths: SPI,
         // which simply saved a copy of the additional paths and did not cause the plugin DB to 
         // refresh.  See Radars 4608487 and 4609047.
-        NSMutableArray *modifiedPlugInPaths = [[plugInPaths mutableCopy] autorelease];
-        [modifiedPlugInPaths addObjectsFromArray:additionalWebPlugInPaths];
-        return modifiedPlugInPaths;
-    } else
-        return plugInPaths;
+        auto modifiedPlugInPaths = adoptNS([plugInPaths mutableCopy]);
+        [modifiedPlugInPaths addObjectsFromArray:additionalWebPlugInPaths().get()];
+        return modifiedPlugInPaths.autorelease();
+    }
+    return plugInPaths;
 }
 
 - (void)_addPlugin:(WebBasePluginPackage *)plugin
@@ -442,7 +450,7 @@ static NSArray *additionalWebPlugInPaths;
         NSString *MIMEType = pluginInfo.mimes[i].type;
 
         if ([registeredMIMETypes containsObject:MIMEType]) {
-            if (self == sharedDatabase)
+            if (self == sharedDatabase())
                 [WebView _unregisterPluginMIMEType:MIMEType];
             [registeredMIMETypes removeObject:MIMEType];
         }

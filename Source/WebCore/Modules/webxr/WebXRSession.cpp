@@ -28,11 +28,13 @@
 
 #if ENABLE(WEBXR)
 
+#include "Document.h"
 #include "EventNames.h"
 #include "JSWebXRReferenceSpace.h"
 #include "WebXRBoundedReferenceSpace.h"
 #include "WebXRFrame.h"
 #include "WebXRSystem.h"
+#include "WebXRView.h"
 #include "XRFrameRequestCallback.h"
 #include "XRRenderStateInit.h"
 #include "XRSessionEvent.h"
@@ -55,7 +57,9 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_mode(mode)
     , m_device(makeWeakPtr(device))
     , m_activeRenderState(WebXRRenderState::create(mode))
+    , m_viewerReferenceSpace(makeUnique<WebXRViewerSpace>(document, *this))
     , m_timeOrigin(MonotonicTime::now())
+    , m_views(device.views(mode))
 {
     m_device->initializeTrackingAndRendering(mode);
     m_device->setTrackingAndRenderingClient(makeWeakPtr(*this));
@@ -478,13 +482,15 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
         return;
 
     // Queue a task to perform the following steps.
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, frameData = WTFMove(frameData)]() {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, frameData = WTFMove(frameData)]() mutable {
         if (m_ended)
             return;
+
+        m_frameData = frameData;
         //  1.Let now be the current high resolution time.
         auto now = (MonotonicTime::now() - m_timeOrigin).milliseconds();
 
-        auto frame = WebXRFrame::create(makeRef(*this));
+        auto frame = WebXRFrame::create(makeRef(*this), WebXRFrame::IsAnimationFrame::Yes);
         //  2.Let frame be session’s animation frame.
         //  3.Set frame’s time to frameTime.
         frame->setTime(static_cast<DOMHighResTimeStamp>(frameData.predictedDisplayTime));
@@ -508,7 +514,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
             frame->setActive(true);
 
             // 6.4.Apply frame updates for frame.
-            // FIXME: implement.
+            frame->setFrameData(WTFMove(frameData));
 
             // 6.5.For each entry in session’s list of currently running animation frame callbacks, in order:
             for (auto& callback : callbacks) {
@@ -535,6 +541,25 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
         }
 
     });
+}
+
+// https://immersive-web.github.io/webxr/#poses-may-be-reported
+bool WebXRSession::posesCanBeReported(const Document& document) const
+{
+    // 1. If session’s relevant global object is not the current global object, return false.
+    auto* sessionDocument = downcast<Document>(scriptExecutionContext());
+    if (!sessionDocument || sessionDocument->domWindow() != document.domWindow())
+        return false;
+
+    // 2. If session's visibilityState in not "visible", return false.
+    if (m_visibilityState != XRVisibilityState::Visible)
+        return false;
+
+    // 5. Determine if the pose data can be returned as follows:
+    // The procedure in the specs tries to ensure that we apply measures to
+    // prevent fingerprintint in pose data and return false in case we don't.
+    // We're going to apply them so let's just return true.
+    return true;
 }
 
 } // namespace WebCore

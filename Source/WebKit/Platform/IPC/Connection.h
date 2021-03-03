@@ -30,9 +30,9 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include "HandleMessage.h"
+#include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
-#include <atomic>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -214,11 +214,21 @@ public:
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
     void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
 
-    void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver*, uint64_t destinationID = 0);
-    void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
+    // Adds a message receive queue. The client should make sure the instance is removed before it goes
+    // out of scope.
+    void addMessageReceiveQueue(MessageReceiveQueue&, ReceiverName, uint64_t destinationID = 0);
 
+    void removeMessageReceiveQueue(ReceiverName, uint64_t destinationID = 0);
+
+    // Adds a message receieve queue that dispatches through WorkQueue to WorkQueueMessageReceiver.
+    // Keeps the WorkQueue and the WorkQueueMessageReceiver alive. Dispatched tasks keep WorkQueueMessageReceiver alive.
+    void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver*, uint64_t destinationID = 0);
+    void removeWorkQueueMessageReceiver(ReceiverName receiverName, uint64_t destinationID = 0) { removeMessageReceiveQueue(receiverName, destinationID); }
+
+    // Adds a message receieve queue that dispatches through ThreadMessageReceiver.
+    // Keeps the ThreadMessageReceiver alive. Dispatched tasks keep the ThreadMessageReceiver alive.
     void addThreadMessageReceiver(ReceiverName, ThreadMessageReceiver*, uint64_t destinationID = 0);
-    void removeThreadMessageReceiver(ReceiverName, uint64_t destinationID = 0);
+    void removeThreadMessageReceiver(ReceiverName receiverName, uint64_t destinationID = 0) { removeMessageReceiveQueue(receiverName, destinationID); }
 
     bool open();
     void invalidate();
@@ -300,6 +310,9 @@ public:
     bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
 #endif
 
+    void dispatchMessageReceiverMessage(MessageReceiver&, std::unique_ptr<Decoder>&&);
+    // Can be called from any thread.
+    void dispatchDidReceiveInvalidMessage(MessageName);
 private:
     Connection(Identifier, bool isServer, Client&);
     void platformInitialize(Identifier);
@@ -311,15 +324,9 @@ private:
     
     std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, MessageName, Seconds timeout, OptionSet<SendSyncOption>);
 
-    bool dispatchMessageToWorkQueueReceiver(std::unique_ptr<Decoder>&);
-    bool dispatchMessageToThreadReceiver(std::unique_ptr<Decoder>&);
-
     // Called on the connection work queue.
     void processIncomingMessage(std::unique_ptr<Decoder>);
     void processIncomingSyncReply(std::unique_ptr<Decoder>);
-
-    void dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver&, Decoder&);
-    void dispatchThreadMessageReceiverMessage(ThreadMessageReceiver&, Decoder&);
 
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
@@ -333,7 +340,6 @@ private:
     void dispatchMessage(std::unique_ptr<Decoder>);
     void dispatchMessage(Decoder&);
     void dispatchSyncMessage(Decoder&);
-    void dispatchDidReceiveInvalidMessage(MessageName);
     void didFailToSendSyncMessage();
 
     // Can be called on any thread.
@@ -365,9 +371,6 @@ private:
         unsigned m_throttlingLevel { 0 };
     };
 
-    RefPtr<ThreadMessageReceiver> threadMessageReceiver(std::unique_ptr<Decoder>&);
-    std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>> workQueueMessageReceiver(std::unique_ptr<Decoder>&);
-
     Client& m_client;
     UniqueID m_uniqueID;
     bool m_isServer;
@@ -381,14 +384,6 @@ private:
     bool m_isConnected;
     Ref<WorkQueue> m_connectionQueue;
 
-    Lock m_workQueueMessageReceiversMutex;
-    using WorkQueueMessageReceiverMap = HashMap<std::pair<uint8_t, uint64_t>, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>>;
-    WorkQueueMessageReceiverMap m_workQueueMessageReceivers;
-
-    Lock m_threadMessageReceiversLock;
-    using ThreadMessageReceiverMap = HashMap<std::pair<uint8_t, uint64_t>, RefPtr<ThreadMessageReceiver>>;
-    ThreadMessageReceiverMap m_threadMessageReceivers;
-
     unsigned m_inSendSyncCount;
     unsigned m_inDispatchMessageCount;
     unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
@@ -401,6 +396,7 @@ private:
     Lock m_incomingMessagesMutex;
     Deque<std::unique_ptr<Decoder>> m_incomingMessages;
     std::unique_ptr<MessagesThrottler> m_incomingMessagesThrottler;
+    MessageReceiveQueueMap m_receiveQueues;
 
     // Outgoing messages.
     Lock m_outgoingMessagesMutex;

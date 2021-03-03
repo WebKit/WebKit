@@ -83,14 +83,14 @@ PASS CSS Animations: property <perspective> from [inherit] to [20px] at (0.3) sh
 PASS CSS Animations: property <perspective> from [inherit] to [20px] at (0.6) should be [24px]
 PASS CSS Animations: property <perspective> from [inherit] to [20px] at (1) should be [20px]
 PASS CSS Animations: property <perspective> from [inherit] to [20px] at (1.5) should be [15px]
-FAIL Web Animations: property <perspective> from [inherit] to [20px] at (-20) should be [230px] assert_equals: expected "230px " but got "none "
-FAIL Web Animations: property <perspective> from [inherit] to [20px] at (-1) should be [40px] assert_equals: expected "40px " but got "none "
-FAIL Web Animations: property <perspective> from [inherit] to [20px] at (-0.3) should be [33px] assert_equals: expected "33px " but got "none "
-FAIL Web Animations: property <perspective> from [inherit] to [20px] at (0) should be [30px] assert_equals: expected "30px " but got "none "
-FAIL Web Animations: property <perspective> from [inherit] to [20px] at (0.3) should be [27px] assert_equals: expected "27px " but got "none "
-FAIL Web Animations: property <perspective> from [inherit] to [20px] at (0.6) should be [24px] assert_equals: expected "24px " but got "none "
+PASS Web Animations: property <perspective> from [inherit] to [20px] at (-20) should be [230px]
+PASS Web Animations: property <perspective> from [inherit] to [20px] at (-1) should be [40px]
+PASS Web Animations: property <perspective> from [inherit] to [20px] at (-0.3) should be [33px]
+PASS Web Animations: property <perspective> from [inherit] to [20px] at (0) should be [30px]
+PASS Web Animations: property <perspective> from [inherit] to [20px] at (0.3) should be [27px]
+PASS Web Animations: property <perspective> from [inherit] to [20px] at (0.6) should be [24px]
 PASS Web Animations: property <perspective> from [inherit] to [20px] at (1) should be [20px]
-FAIL Web Animations: property <perspective> from [inherit] to [20px] at (1.5) should be [15px] assert_equals: expected "15px " but got "20px "
+PASS Web Animations: property <perspective> from [inherit] to [20px] at (1.5) should be [15px]
 FAIL CSS Transitions: property <perspective> from [unset] to [20px] at (-0.3) should be [20px] assert_equals: expected "20px " but got "none "
 FAIL CSS Transitions: property <perspective> from [unset] to [20px] at (0) should be [20px] assert_equals: expected "20px " but got "none "
 FAIL CSS Transitions: property <perspective> from [unset] to [20px] at (0.3) should be [20px] assert_equals: expected "20px " but got "6px "

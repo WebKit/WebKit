@@ -29,6 +29,7 @@ messages -> RemoteRenderingBackend {
     GetDataURLForImageBuffer(String mimeType, Optional<double> quality, enum:uint8_t WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (String urlString) Synchronous
     GetDataForImageBuffer(String mimeType, Optional<double> quality, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (Vector<uint8_t> data) Synchronous
     GetBGRADataForImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (Vector<uint8_t> data) Synchronous
+    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:uint8_t WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous
     CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     CacheFont(IPC::FontReference font)
     DeleteAllFonts()

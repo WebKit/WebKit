@@ -117,7 +117,7 @@ Color CSSParser::parseColorWorkerSafe(const String& string)
     CSSParserTokenRange range(tokenizer.tokenRange());
     range.consumeWhitespace();
 
-    return CSSPropertyParserHelpers::consumeColorWorkerSafe(range, HTMLStandardMode);
+    return CSSPropertyParserHelpers::consumeColorWorkerSafe(range, CSSParserContext(HTMLStandardMode));
 }
 
 Color CSSParser::parseSystemColor(StringView string)

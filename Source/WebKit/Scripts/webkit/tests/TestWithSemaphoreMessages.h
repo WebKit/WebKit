@@ -26,14 +26,12 @@
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
+#include "IPCSemaphore.h"
 #include "MessageNames.h"
 #include "TestWithSemaphoreMessagesReplies.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace IPC {
-class Semaphore;
-}
 
 namespace Messages {
 namespace TestWithSemaphore {
@@ -71,6 +69,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphore; }
     static const bool isSync = true;
 
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<IPC::Semaphore&>;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
     const Arguments& arguments() const

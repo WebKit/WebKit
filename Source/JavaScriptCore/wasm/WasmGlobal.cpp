@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,7 +103,8 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
     }
 }
 
-void Global::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void Global::visitAggregateImpl(Visitor& visitor)
 {
     switch (m_type) {
     case Wasm::Type::Externref:
@@ -116,6 +117,8 @@ void Global::visitAggregate(SlotVisitor& visitor)
         break;
     }
 }
+
+DEFINE_VISIT_AGGREGATE(Global);
 
 } } // namespace JSC::Global
 

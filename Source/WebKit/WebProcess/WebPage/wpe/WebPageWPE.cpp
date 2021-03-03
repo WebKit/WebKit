@@ -69,12 +69,6 @@ bool WebPage::platformCanHandleRequest(const ResourceRequest&)
     return false;
 }
 
-String WebPage::platformUserAgent(const URL&) const
-{
-    notImplemented();
-    return String();
-}
-
 bool WebPage::hoverSupportedByPrimaryPointingDevice() const
 {
 #if ENABLE(TOUCH_EVENTS)

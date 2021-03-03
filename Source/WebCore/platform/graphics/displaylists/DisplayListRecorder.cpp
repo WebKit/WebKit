@@ -439,19 +439,9 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
 
 void Recorder::clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
 {
-    // The initial CTM matches ImageBuffer's initial CTM.
-    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-    FloatSize scaleFactor(transform.xScale(), transform.yScale());
-    auto scaledSize = expandedIntSize(destination.size() * scaleFactor);
-
-    AffineTransform initialCTM;
-    initialCTM.scale(1, -1);
-    initialCTM.translate(0, -scaledSize.height());
-    initialCTM.scale(scaledSize / destination.size());
-
-    auto recordingContext = makeUnique<DrawingContext>(destination.size(), initialCTM);
-    drawingFunction(recordingContext->context());
-    append<ClipToDrawingCommands>(destination, colorSpace, recordingContext->takeDisplayList());
+    append<BeginClipToDrawingCommands>(destination, colorSpace);
+    drawingFunction(graphicsContext());
+    append<EndClipToDrawingCommands>(destination);
 }
 
 bool Recorder::canPaintFrameForMedia(const MediaPlayer& player) const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,8 @@
 #pragma once
 
 #include "Identifier.h"
-#include "JSDestructibleObject.h"
+#include "JSGenerator.h"
+#include "JSInternalFieldObjectImpl.h"
 #include <wtf/ListHashSet.h>
 
 namespace JSC {
@@ -37,10 +38,10 @@ class JSMap;
 
 // Based on the Source Text Module Record
 // http://www.ecma-international.org/ecma-262/6.0/#sec-source-text-module-records
-class AbstractModuleRecord : public JSNonFinalObject {
+class AbstractModuleRecord : public JSInternalFieldObjectImpl<2> {
     friend class LLIntOffsetsExtractor;
 public:
-    using Base = JSNonFinalObject;
+    using Base = JSInternalFieldObjectImpl<2>;
 
     static constexpr bool needsDestruction = true;
 
@@ -48,6 +49,24 @@ public:
     static void subspaceFor(VM&)
     {
         RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    using Argument = JSGenerator::Argument;
+    using State = JSGenerator::State;
+    using ResumeMode = JSGenerator::ResumeMode;
+
+    enum class Field : uint32_t {
+        State,
+        Frame,
+    };
+
+    static_assert(numberOfInternalFields == 2);
+    static std::array<JSValue, numberOfInternalFields> initialValues()
+    {
+        return { {
+            jsNumber(static_cast<int32_t>(State::Init)),
+            jsUndefined(),
+        } };
     }
 
     // https://tc39.github.io/ecma262/#sec-source-text-module-records
@@ -129,14 +148,16 @@ public:
         return m_moduleEnvironment.get();
     }
 
-    void link(JSGlobalObject*, JSValue scriptFetcher);
-    JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
+    Synchronousness link(JSGlobalObject*, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*, JSValue sentValue, JSValue resumeMode);
+    WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
+    WriteBarrier<Unknown> internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
 
 protected:
     AbstractModuleRecord(VM&, Structure*, const Identifier&);
     void finishCreation(JSGlobalObject*, VM&);
 
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
     void setModuleEnvironment(JSGlobalObject*, JSModuleEnvironment*);
 

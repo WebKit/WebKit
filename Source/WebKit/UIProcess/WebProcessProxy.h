@@ -98,6 +98,7 @@ class WebUserContentControllerProxy;
 class WebsiteDataStore;
 enum class WebsiteDataType : uint32_t;
 struct BackForwardListItemState;
+struct GPUProcessConnectionParameters;
 struct UserMessage;
 struct WebNavigationDataStore;
 struct WebPageCreationParameters;
@@ -463,7 +464,7 @@ private:
     void getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
 
 #if ENABLE(GPU_PROCESS)
-    void getGPUProcessConnection(Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
+    void getGPUProcessConnection(GPUProcessConnectionParameters&&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 #endif
 
 #if ENABLE(WEB_AUTHN)

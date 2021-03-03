@@ -193,7 +193,7 @@ struct DragStartData {
     NSString *text { nil };
     NSString *url { nil };
     NSString *html { nil };
-    NSDictionary<NSString *, NSString *> *customData { nil };
+    RetainPtr<NSDictionary<NSString *, NSString *>> customData;
 };
 
 static DragStartData runDragStartDataTestCase(DragAndDropSimulator *simulator, NSString *elementID)
@@ -215,7 +215,7 @@ static DragStartData runDragStartDataTestCase(DragAndDropSimulator *simulator, N
     [allData removeObjectForKey:@"text/html"];
     [allData removeObjectForKey:@"Files"];
     if ([allData count])
-        result.customData = allData.autorelease();
+        result.customData = WTFMove(allData);
     return result;
 }
 
@@ -242,7 +242,7 @@ TEST(DragAndDropTests, DataTransferTypesOnDragStartForTextSelection)
     EXPECT_WK_STREQ("Regular text + custom data", result.text);
     EXPECT_NULL(result.url);
     EXPECT_TRUE([result.html containsString:@"Regular text + custom data"]);
-    EXPECT_WK_STREQ("Hello world", result.customData[@"text/foo"]);
+    EXPECT_WK_STREQ("Hello world", result.customData.get()[@"text/foo"]);
     EXPECT_FALSE(result.containsFile);
 
     result = runDragStartDataTestCase(simulator.get(), @"url");
@@ -256,7 +256,7 @@ TEST(DragAndDropTests, DataTransferTypesOnDragStartForTextSelection)
     EXPECT_NULL(result.text);
     EXPECT_NULL(result.url);
     EXPECT_NULL(result.html);
-    EXPECT_WK_STREQ("Hello world", result.customData[@"text/foo"]);
+    EXPECT_WK_STREQ("Hello world", result.customData.get()[@"text/foo"]);
     EXPECT_FALSE(result.containsFile);
 }
 
@@ -305,7 +305,7 @@ TEST(DragAndDropTests, DataTransferTypesOnDragStartForLink)
     EXPECT_NULL(result.text);
     EXPECT_WK_STREQ("https://www.apple.com/", result.url);
     EXPECT_NULL(result.html);
-    EXPECT_WK_STREQ("bar", result.customData[@"text/foo"]);
+    EXPECT_WK_STREQ("bar", result.customData.get()[@"text/foo"]);
     EXPECT_FALSE(result.containsFile);
 }
 

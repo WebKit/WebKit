@@ -18,16 +18,24 @@ function createAnotherPatch()
         size: 534611, sha256: '169463c8125e07c577110fe144ecd63942eb9472d438fc0014f474245e5dfaaa'});
 }
 
-function createRoot()
+function createRoot(deletedAt)
 {
-    return UploadedFile.ensureSingleton(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
-        size: 16452234, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656d58d'});
+    const data = {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
+        size: 16452234, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656d58d'};
+    if (deletedAt) {
+        console.log(deletedAt);
+        data['deletedAt'] = deletedAt;
+    }
+    return UploadedFile.ensureSingleton(456, data);
 }
 
-function createAnotherRoot()
+function createAnotherRoot(deletedAt)
 {
-    return UploadedFile.ensureSingleton(457, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
-        size: 16452111, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656dbbb'});
+    const data = {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
+        size: 16452111, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656dbbb'};
+    if (deletedAt)
+        data['deletedAt'] = deletedAt;
+    return UploadedFile.ensureSingleton(457, data);
 }
 
 function createSharedRoot()
@@ -216,6 +224,12 @@ describe('CommitSet', () => {
             revisionItems: [{ commit: webkitCommit(), requiresBuild: false, patch: createAnotherPatch() }],
             customRoots: []
         });
+    }
+
+    function commitSetWithRoots(builtRoot, customRoot) {
+        const revisionItems = builtRoot ? [{commit: webkitCommit(), requiredBuild: true, rootFile: builtRoot}] : [{commit: webkitCommit(), requiredBuild: false}];
+        const customRoots = customRoot ? [customRoot] : [];
+        return CommitSet.ensureSingleton(5, {revisionItems, customRoots});
     }
 
     function commitSetWithRoot()
@@ -444,6 +458,27 @@ describe('CommitSet', () => {
     describe('commits', () => {
         it('should return all commits in commit set', () => {
             assert.equal(commitSetWithTwoCommits().commits().length, 2);
+        });
+    });
+
+    describe('areAllRootsAvailable', () => {
+        it('should return false if any non-custom root is deleted', () => {
+            const deletedBuiltRoot = createRoot(new Date());
+            const commitSet = commitSetWithRoots(deletedBuiltRoot);
+            assert.ok(!commitSet.areAllRootsAvailable(0))
+        });
+
+        it('should return true if a custom root is deleted', () => {
+            const buildRoot = createRoot();
+            const deletedRoot = createAnotherRoot(new Date());
+            const commitSet = commitSetWithRoots(buildRoot, deletedRoot);
+            assert.ok(commitSet.areAllRootsAvailable(0))
+        });
+
+        it('should return false if root is created before the earliest creation time', () => {
+            const buildRoot = createRoot();
+            const commitSet = commitSetWithRoots(buildRoot);
+            assert.ok(!commitSet.areAllRootsAvailable(Date.now()))
         });
     });
 });

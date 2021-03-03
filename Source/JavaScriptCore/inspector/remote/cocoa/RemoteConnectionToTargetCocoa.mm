@@ -128,12 +128,12 @@ Optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
 
 NSString *RemoteConnectionToTarget::connectionIdentifier() const
 {
-    return [[m_connectionIdentifier copy] autorelease];
+    return adoptNS([m_connectionIdentifier copy]).autorelease();
 }
 
 NSString *RemoteConnectionToTarget::destination() const
 {
-    return [[m_destination copy] autorelease];
+    return adoptNS([m_destination copy]).autorelease();
 }
 
 void RemoteConnectionToTarget::dispatchAsyncOnTarget(Function<void ()>&& callback)

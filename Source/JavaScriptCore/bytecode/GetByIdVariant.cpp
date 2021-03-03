@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,15 +156,22 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
     return true;
 }
 
-void GetByIdVariant::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void GetByIdVariant::visitAggregateImpl(Visitor& visitor)
 {
     m_identifier.visitAggregate(visitor);
 }
 
-void GetByIdVariant::markIfCheap(SlotVisitor& visitor)
+DEFINE_VISIT_AGGREGATE(GetByIdVariant);
+
+template<typename Visitor>
+void GetByIdVariant::markIfCheap(Visitor& visitor)
 {
     m_structureSet.markIfCheap(visitor);
 }
+
+template void GetByIdVariant::markIfCheap(AbstractSlotVisitor&);
+template void GetByIdVariant::markIfCheap(SlotVisitor&);
 
 bool GetByIdVariant::finalize(VM& vm)
 {

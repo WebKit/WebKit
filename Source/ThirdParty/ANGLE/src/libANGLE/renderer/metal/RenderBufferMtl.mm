@@ -110,6 +110,7 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
         // For emulated channels that GL texture intends to not have,
         // we need to initialize their content.
         bool emulatedChannels = mtl::IsFormatEmulated(mFormat);
+        bool isDepthStencil = mFormat.hasDepthOrStencilBits();
         if (emulatedChannels)
         {
             gl::ImageIndex index;
@@ -130,6 +131,25 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
                                                          mtl::ImageNativeIndex(gl::ImageIndex::Make2DMultisample(), 0)));
             }
         }  // if (emulatedChannels)
+        if(isDepthStencil)
+        {
+            gl::ImageIndex index;
+
+            if (actualSamples > 1)
+            {
+                index = gl::ImageIndex::Make2DMultisample();
+            }
+            else
+            {
+                index = gl::ImageIndex::Make2D(0);
+            }
+            ANGLE_TRY(mtl::InitializeDepthStencilTextureContentsGPU(context, mTexture, mFormat, mtl::ImageNativeIndex(index, 0)));
+            if (mImplicitMSTexture)
+            {
+                ANGLE_TRY(mtl::InitializeDepthStencilTextureContentsGPU(context, mImplicitMSTexture, mFormat,
+                                                         mtl::ImageNativeIndex(gl::ImageIndex::Make2DMultisample(), 0)));
+            }
+        }
     }
 
     return angle::Result::Continue;
@@ -175,7 +195,11 @@ angle::Result RenderbufferMtl::getAttachmentRenderTarget(const gl::Context *cont
 angle::Result RenderbufferMtl::initializeContents(const gl::Context *context,
                                                   const gl::ImageIndex &imageIndex)
 {
-    return mtl::InitializeTextureContents(context, mTexture, mFormat,
+    if (imageIndex.valid())
+        return mtl::InitializeTextureContents(context, mTexture, mFormat,
                                           mtl::ImageNativeIndex::FromBaseZeroGLIndex(imageIndex));
+    else
+        return mtl::InitializeTextureContents(context, mTexture, mFormat,
+                                          mtl::ImageNativeIndex::FromBaseZeroGLIndex(gl::ImageIndex::Make2D(0)));
 }
 }

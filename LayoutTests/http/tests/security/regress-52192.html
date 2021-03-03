@@ -239,7 +239,7 @@
     logTitle("Test uncaught error from a script from another domain");
     incCaseIndex();
 </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
 
 <script>
     // Test loading a document from another domain that has a SyntaxError with 'name' getters installed.
@@ -247,7 +247,7 @@
     incCaseIndex();
     installNameGettersToCheckErrorMessageForSecrets();
 </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
 <script>
     resetNameGetters();
 </script>
@@ -258,7 +258,7 @@
     incCaseIndex();
     installToStringGettersToCheckErrorMessageForSecrets();
 </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
 <script>
     resetToStringGetters();
 </script>
@@ -267,38 +267,38 @@
     // Test throwing from other domain script with no getters installed.
 </script>
 <script> errorTypeIndexToTest = 0; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 1; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 2; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 3; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 4; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 5; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 6; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 
 <script>
     // Test throwing from other domain script when Error.prototype has a 'name' getter.
     installNameGettersToCheckErrorMessageForSecrets();
 </script>
 <script> errorTypeIndexToTest = 0; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 1; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 2; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 3; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 4; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 5; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 6; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> resetNameGetters(); </script>
 
 <script>
@@ -306,19 +306,19 @@
     installToStringGettersToCheckErrorMessageForSecrets();
 </script>
 <script> errorTypeIndexToTest = 0; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 1; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 2; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 3; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 4; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 5; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> errorTypeIndexToTest = 6; </script>
-<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script src="../../resources/redirect.py?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
 <script> resetToStringGetters(); </script>
 
 <script>

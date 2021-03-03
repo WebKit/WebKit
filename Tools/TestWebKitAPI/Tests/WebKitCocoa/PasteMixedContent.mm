@@ -152,8 +152,8 @@ TEST(PasteMixedContent, ImageFileAndRTF)
 {
     auto webView = setUpWebView();
     auto text = adoptNS([[NSMutableAttributedString alloc] init]);
-    [text appendAttributedString:[[NSAttributedString alloc] initWithString:@"link to "]];
-    [text appendAttributedString:[[NSAttributedString alloc] initWithString:@"apple" attributes:@{ NSLinkAttributeName: [NSURL URLWithString:@"https://www.apple.com/"] }]];
+    [text appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:@"link to "]).get()];
+    [text appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:@"apple" attributes:@{ NSLinkAttributeName: [NSURL URLWithString:@"https://www.apple.com/"] }]).get()];
     NSData *rtfData = [text RTFFromRange:NSMakeRange(0, [text length]) documentAttributes:@{ }];
     writeTypesAndDataToPasteboard(NSFilenamesPboardType, @[ imagePath() ], NSPasteboardTypeRTF, rtfData, nil);
     [webView paste:nil];

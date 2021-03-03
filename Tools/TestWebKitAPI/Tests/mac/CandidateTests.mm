@@ -89,9 +89,9 @@ namespace TestWebKitAPI {
 
 TEST(CandidateTests, DISABLED_DoNotLeakViewThatLoadsEditableArea)
 {
-    DoNotLeakWebView *webView = [[DoNotLeakWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    DoNotLeakFrameLoadDelegate *delegate = [[DoNotLeakFrameLoadDelegate alloc] init];
-    [webView setFrameLoadDelegate:delegate];
+    auto webView = adoptNS([[DoNotLeakWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    auto delegate = adoptNS([[DoNotLeakFrameLoadDelegate alloc] init]);
+    [webView setFrameLoadDelegate:delegate.get()];
     
     NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"autofocused-text-input" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:contentURL]];
@@ -99,16 +99,16 @@ TEST(CandidateTests, DISABLED_DoNotLeakViewThatLoadsEditableArea)
     TestWebKitAPI::Util::run(&didFinishLoad);
     TestWebKitAPI::Util::run(&didCallShowCandidates);
 
-    [webView release];
+    webView = nil;
     EXPECT_TRUE(webViewWasDeallocated);
 }
 
 TEST(CandidateTests, DISABLED_RequestCandidatesForTextInput)
 {
-    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView forceRequestCandidatesForTesting];
-    CandidateRequestFrameLoadDelegate *delegate = [[CandidateRequestFrameLoadDelegate alloc] init];
-    [webView setFrameLoadDelegate:delegate];
+    auto delegate = adoptNS([[CandidateRequestFrameLoadDelegate alloc] init]);
+    [webView setFrameLoadDelegate:delegate.get()];
     
     NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"focus-inputs" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:contentURL]];
@@ -120,7 +120,7 @@ TEST(CandidateTests, DISABLED_RequestCandidatesForTextInput)
     if ([webView shouldRequestCandidates])
         candidatesWereRequested = true;
 
-    [webView release];
+    webView = nil;
     EXPECT_TRUE(candidatesWereRequested);
 }
 

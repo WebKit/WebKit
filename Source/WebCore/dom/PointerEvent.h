@@ -27,7 +27,7 @@
 
 #include "EventNames.h"
 #include "MouseEvent.h"
-#include "Node.h"
+#include "PointerEventTypeNames.h"
 #include "PointerID.h"
 #include <wtf/text/WTFString.h>
 
@@ -36,6 +36,8 @@
 #endif
 
 namespace WebCore {
+
+class Node;
 
 class PointerEvent final : public MouseEvent {
     WTF_MAKE_ISO_ALLOCATED(PointerEvent);
@@ -49,7 +51,7 @@ public:
         long tiltX { 0 };
         long tiltY { 0 };
         long twist { 0 };
-        String pointerType { PointerEvent::mousePointerType() };
+        String pointerType { mousePointerEventType() };
         bool isPrimary { false };
     };
 
@@ -83,10 +85,6 @@ public:
     static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
     static Ref<PointerEvent> create(const String& type, const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
-
-    WEBCORE_EXPORT static const String& mousePointerType();
-    WEBCORE_EXPORT static const String& penPointerType();
-    static const String& touchPointerType();
 
     virtual ~PointerEvent();
 
@@ -135,7 +133,7 @@ private:
     long m_tiltX { 0 };
     long m_tiltY { 0 };
     long m_twist { 0 };
-    String m_pointerType { PointerEvent::mousePointerType() };
+    String m_pointerType { mousePointerEventType() };
     bool m_isPrimary { false };
 };
 

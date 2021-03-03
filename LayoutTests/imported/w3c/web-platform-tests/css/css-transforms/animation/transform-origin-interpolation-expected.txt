@@ -65,12 +65,12 @@ PASS CSS Animations: property <transform-origin> from [inherit] to [20px 20px] a
 PASS CSS Animations: property <transform-origin> from [inherit] to [20px 20px] at (0.6) should be [24px 16px]
 PASS CSS Animations: property <transform-origin> from [inherit] to [20px 20px] at (1) should be [20px 20px]
 PASS CSS Animations: property <transform-origin> from [inherit] to [20px 20px] at (1.5) should be [15px 25px]
-FAIL Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (-0.3) should be [33px 7px] assert_equals: expected "33px 7px " but got "7px 33px "
-FAIL Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (0) should be [30px 10px] assert_equals: expected "30px 10px " but got "7px 33px "
-FAIL Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (0.3) should be [27px 13px] assert_equals: expected "27px 13px " but got "10.89px 29.09px "
-FAIL Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (0.6) should be [24px 16px] assert_equals: expected "24px 16px " but got "16.36px 23.63px "
+PASS Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (-0.3) should be [33px 7px]
+PASS Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (0) should be [30px 10px]
+PASS Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (0.3) should be [27px 13px]
+PASS Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (0.6) should be [24px 16px]
 PASS Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (1) should be [20px 20px]
-FAIL Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (1.5) should be [15px 25px] assert_equals: expected "15px 25px " but got "20px 20px "
+PASS Web Animations: property <transform-origin> from [inherit] to [20px 20px] at (1.5) should be [15px 25px]
 FAIL CSS Transitions: property <transform-origin> from [unset] to [20px 20px] at (-0.3) should be [26.5px 26.5px] assert_equals: expected "26.5px 26.5px " but got "25px 25px "
 PASS CSS Transitions: property <transform-origin> from [unset] to [20px 20px] at (0) should be [25px 25px]
 PASS CSS Transitions: property <transform-origin> from [unset] to [20px 20px] at (0.3) should be [23.5px 23.5px]

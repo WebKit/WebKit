@@ -100,10 +100,10 @@ bool CSSFontFaceSource::shouldIgnoreFontLoadCompletions() const
     return m_face.shouldIgnoreFontLoadCompletions();
 }
 
-void CSSFontFaceSource::opportunisticallyStartFontDataURLLoading(Document* document)
+void CSSFontFaceSource::opportunisticallyStartFontDataURLLoading(CSSFontSelector& fontSelector)
 {
     if (status() == Status::Pending && m_font && m_font->url().protocolIsData() && m_familyNameOrURI.length() < MB)
-        load(document);
+        load(&fontSelector);
 }
 
 void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
@@ -132,12 +132,13 @@ void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
     m_face.fontLoaded(*this);
 }
 
-void CSSFontFaceSource::load(Document* document)
+void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
 {
     setStatus(Status::Loading);
 
     if (m_font) {
-        m_font->requestLoad();
+        ASSERT(fontSelector);
+        fontSelector->beginLoadingFontSoon(*m_font);
     } else {
         bool success = false;
         if (m_hasSVGFontFaceElement) {
@@ -166,8 +167,10 @@ void CSSFontFaceSource::load(Document* document)
             fontDescription.setComputedSize(1);
             fontDescription.setShouldAllowUserInstalledFonts(m_face.allowUserInstalledFonts());
             success = FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, nullptr, FontSelectionSpecifiedCapabilities(), true);
-            if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-                ResourceLoadObserver::shared().logFontLoad(*document, m_familyNameOrURI.string(), success);
+            if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+                if (auto* document = fontSelector->document())
+                    ResourceLoadObserver::shared().logFontLoad(*document, m_familyNameOrURI.string(), success);
+            }
         }
         setStatus(success ? Status::Success : Status::Failure);
     }

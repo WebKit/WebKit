@@ -46,7 +46,7 @@ class JSAudioWorkletProcessorConstructor;
 
 struct WorkletParameters;
 
-class AudioWorkletGlobalScope : public WorkletGlobalScope {
+class AudioWorkletGlobalScope final : public WorkletGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(AudioWorkletGlobalScope);
 public:
     static RefPtr<AudioWorkletGlobalScope> tryCreate(AudioWorkletThread&, const WorkletParameters&);
@@ -68,6 +68,8 @@ public:
 
     void handlePreRenderTasks();
     void handlePostRenderTasks(size_t currentFrame);
+
+    FetchOptions::Destination destination() const final { return FetchOptions::Destination::Audioworklet; }
 
 private:
     AudioWorkletGlobalScope(AudioWorkletThread&, Ref<JSC::VM>&&, const WorkletParameters&);

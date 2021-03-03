@@ -34,7 +34,7 @@
 #include "DOMTimer.h"
 #include "Database.h"
 #include "Document.h"
-#include "FontCascade.h"
+#include "FontCache.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -55,7 +55,7 @@ namespace WebCore {
 
 static void invalidateAfterGenericFamilyChange(Page* page)
 {
-    invalidateFontCascadeCache();
+    FontCache::singleton().invalidateFontCascadeCache();
     if (page)
         page->setNeedsRecalcStyleInAllFrames();
 }

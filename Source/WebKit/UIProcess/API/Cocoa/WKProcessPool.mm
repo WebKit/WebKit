@@ -65,7 +65,11 @@
 #import "WKGeolocationProviderIOS.h"
 #endif
 
-static WKProcessPool *sharedProcessPool;
+static RetainPtr<WKProcessPool>& sharedProcessPool()
+{
+    static NeverDestroyed<RetainPtr<WKProcessPool>> sharedProcessPool;
+    return sharedProcessPool;
+}
 
 @implementation WKProcessPool {
     WeakObjCPtr<id <_WKAutomationDelegate>> _automationDelegate;
@@ -107,7 +111,7 @@ static WKProcessPool *sharedProcessPool;
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    if (self == sharedProcessPool) {
+    if (self == sharedProcessPool()) {
         [coder encodeBool:YES forKey:@"isSharedProcessPool"];
         return;
     }
@@ -159,10 +163,10 @@ static WKProcessPool *sharedProcessPool;
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedProcessPool = [[WKProcessPool alloc] init];
+        sharedProcessPool() = adoptNS([[WKProcessPool alloc] init]);
     });
 
-    return sharedProcessPool;
+    return sharedProcessPool().get();
 }
 
 + (NSArray<WKProcessPool *> *)_allProcessPoolsForTesting

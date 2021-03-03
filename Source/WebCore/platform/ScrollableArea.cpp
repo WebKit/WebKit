@@ -143,10 +143,16 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     return scrollAnimator().scroll(orientation, granularity, step, multiplier, ScrollAnimator::ScrollBehavior::DoDirectionalSnapping);
 }
 
-void ScrollableArea::scrollToOffsetWithAnimation(const FloatPoint& offset, ScrollClamping)
+void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithAnimation " << offset);
-    scrollAnimator().scrollToOffset(offset);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithoutAnimation " << position);
+    scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
+}
+
+void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping)
+{
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
+    scrollAnimator().scrollToPositionWithAnimation(position);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
@@ -159,9 +165,9 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orienta
 {
     auto currentOffset = scrollOffsetFromPosition(IntPoint(scrollAnimator().currentPosition()));
     if (orientation == HorizontalScrollbar)
-        scrollToOffsetWithoutAnimation(FloatPoint(offset, currentOffset.y()));
+        scrollAnimator().scrollToOffsetWithoutAnimation(FloatPoint(offset, currentOffset.y()));
     else
-        scrollToOffsetWithoutAnimation(FloatPoint(currentOffset.x(), offset));
+        scrollAnimator().scrollToOffsetWithoutAnimation(FloatPoint(currentOffset.x(), offset));
 }
 
 void ScrollableArea::notifyScrollPositionChanged(const ScrollPosition& position)
@@ -230,13 +236,11 @@ bool ScrollableArea::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 // NOTE: Only called from Internals for testing.
 void ScrollableArea::setScrollOffsetFromInternals(const ScrollOffset& offset)
 {
-    setScrollOffsetFromAnimation(offset);
+    setScrollPositionFromAnimation(scrollPositionFromOffset(offset));
 }
 
-void ScrollableArea::setScrollOffsetFromAnimation(const ScrollOffset& offset)
+void ScrollableArea::setScrollPositionFromAnimation(const ScrollPosition& position)
 {
-    ScrollPosition position = scrollPositionFromOffset(offset);
-    
     auto scrollType = currentScrollType();
     auto clamping = scrollType == ScrollType::User ? ScrollClamping::Unclamped : ScrollClamping::Clamped;
     if (requestScrollPositionUpdate(position, scrollType, clamping))
@@ -550,7 +554,7 @@ void ScrollableArea::updateScrollSnapState()
 
     if (correctedPosition != currentPosition) {
         LOG_WITH_STREAM(ScrollSnap, stream << " adjusting position from " << currentPosition << " to " << correctedPosition);
-        scrollToOffsetWithoutAnimation(correctedPosition);
+        scrollToPositionWithoutAnimation(correctedPosition);
     }
 }
 #else

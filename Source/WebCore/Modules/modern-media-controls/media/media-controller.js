@@ -113,6 +113,29 @@ class MediaController
             this.media.pause();
     }
 
+    get canShowMediaControlsContextMenu()
+    {
+        return !!this.host?.showMediaControlsContextMenu;
+    }
+
+    showMediaControlsContextMenu(button)
+    {
+        if (!this.canShowMediaControlsContextMenu)
+            return false;
+
+        let autoHideController = this.controls.autoHideController;
+
+        let willShowContextMenu = this.host.showMediaControlsContextMenu(button.element, button.contextMenuOptions, () => {
+            button.on = false;
+            autoHideController.hasSecondaryUIAttached = false;
+        });
+        if (willShowContextMenu) {
+            button.on = true;
+            autoHideController.hasSecondaryUIAttached = true;
+        }
+        return willShowContextMenu;
+    }
+
     // Protected
 
     set pageScaleFactor(pageScaleFactor)
@@ -186,7 +209,7 @@ class MediaController
         if (this.layoutTraits & LayoutTraits.Compact)
             return [CompactMediaControlsSupport];
 
-        return [AirplaySupport, AudioSupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport, VolumeSupport];
+        return [AirplaySupport, AudioSupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, OverflowSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport, VolumeSupport];
     }
 
     _updateControlsIfNeeded()

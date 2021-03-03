@@ -100,6 +100,7 @@ function newRegistryEntry(key)
         linkSucceeded: true,
         evaluated: false,
         then: @undefined,
+        isAsync: false,
     };
 }
 
@@ -286,11 +287,15 @@ function link(entry, fetcher)
         // Since we already have the "dependencies" field,
         // we can call moduleDeclarationInstantiation with the correct order
         // without constructing the dependency graph by calling dependencyGraph.
+        var hasAsyncDependency = false;
         var dependencies = entry.dependencies;
-        for (var i = 0, length = dependencies.length; i < length; ++i)
-            this.link(dependencies[i], fetcher);
+        for (var i = 0, length = dependencies.length; i < length; ++i) {
+            var dependency = dependencies[i];
+            this.link(dependency, fetcher);
+            hasAsyncDependency ||= dependency.isAsync;
+        }
 
-        this.moduleDeclarationInstantiation(entry.module, fetcher);
+        entry.isAsync = this.moduleDeclarationInstantiation(entry.module, fetcher) || hasAsyncDependency;
     } catch (error) {
         entry.linkSucceeded = false;
         entry.linkError = error;
@@ -303,7 +308,6 @@ function link(entry, fetcher)
 function moduleEvaluation(entry, fetcher)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
-
     "use strict";
 
     if (entry.evaluated)
@@ -312,10 +316,41 @@ function moduleEvaluation(entry, fetcher)
 
     // The contents of the [[RequestedModules]] is cloned into entry.dependencies.
     var dependencies = entry.dependencies;
-    for (var i = 0, length = dependencies.length; i < length; ++i)
-        this.moduleEvaluation(dependencies[i], fetcher);
 
-    this.evaluate(entry.key, entry.module, fetcher);
+    if (!entry.isAsync) {
+        // Since linking sets isAsync for any strongly connected component with an async module we should only get here if all our dependencies are also sync.
+        for (var i = 0, length = dependencies.length; i < length; ++i) {
+            var dependency = dependencies[i];
+            @assert(!dependency.isAsync);
+            this.moduleEvaluation(dependency, fetcher);
+        }
+
+        this.evaluate(entry.key, entry.module, fetcher);
+    } else
+        return this.asyncModuleEvaluation(entry, fetcher, dependencies);
+}
+
+async function asyncModuleEvaluation(entry, fetcher, dependencies)
+{
+    "use strict";
+
+    for (var i = 0, length = dependencies.length; i < length; ++i)
+        await this.moduleEvaluation(dependencies[i], fetcher);
+
+    var resumeMode = @GeneratorResumeModeNormal;
+    while (true) {
+        var awaitedValue = this.evaluate(entry.key, entry.module, fetcher, awaitedValue, resumeMode);
+        if (@getAbstractModuleRecordInternalField(entry.module, @abstractModuleRecordFieldState) == @GeneratorStateExecuting)
+            return;
+
+        try {
+            awaitedValue = await awaitedValue;
+            resumeMode = @GeneratorResumeModeNormal;
+        } catch (e) {
+            awaitedValue = e;
+            resumeMode = @GeneratorResumeModeThrow;
+        }
+    }
 }
 
 // APIs to control the module loader.
@@ -364,25 +399,13 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
     return await this.linkAndEvaluateModule(key, fetcher);
 }
 
-function requestImportModule(key, parameters, fetcher)
+async function requestImportModule(key, parameters, fetcher)
 {
     "use strict";
 
-    var constructor = @InternalPromise;
-    var promise = @createPromise(constructor, /* isInternalPromise */ true);
-    @resolveWithoutPromise(this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set),
-        (entry) => {
-            try {
-                this.linkAndEvaluateModule(entry.key, fetcher);
-                @fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, this.getModuleNamespaceObject(entry.module));
-            } catch (error) {
-                @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
-            }
-        },
-        (reason) => {
-            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason);
-        });
-    return promise;
+    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    await this.linkAndEvaluateModule(entry.key, fetcher);
+    return this.getModuleNamespaceObject(entry.module);
 }
 
 function dependencyKeysIfEvaluated(key)

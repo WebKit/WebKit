@@ -2405,10 +2405,9 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
         if (m_currentState == GST_STATE_READY)
             m_readyState = MediaPlayer::ReadyState::HaveNothing;
-        else if (m_currentState == GST_STATE_PAUSED) {
-            m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
+        else if (m_currentState == GST_STATE_PAUSED)
             m_isPaused = true;
-        } else if (m_currentState == GST_STATE_PLAYING)
+        else if (m_currentState == GST_STATE_PLAYING)
             m_isPaused = false;
 
         if (!m_isPaused && m_playbackRate)
@@ -3081,6 +3080,15 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
             if (!weakThis)
                 return;
             updateVideoSizeAndOrientationFromCaps(caps.get());
+
+            // Live streams start without pre-rolling, that means they can reach PAUSED while sinks
+            // still haven't received a sample to render. So we need to notify the media element in
+            // such cases only after pre-rolling has completed. Otherwise the media element might
+            // emit a play event too early, before pre-rolling has been completed.
+            if (m_isLiveStream && m_readyState < MediaPlayer::ReadyState::HaveEnoughData) {
+                m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
+                m_player->readyStateChanged();
+            }
         });
     }
 

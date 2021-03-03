@@ -32,6 +32,7 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Settings.h"
+#include "WorkerOrWorkletGlobalScope.h"
 
 namespace WebCore {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple, Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSFinalizationRegistry.h"
 
+#include "AbstractSlotVisitor.h"
 #include "DeferredWorkTimer.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
@@ -60,7 +61,8 @@ void JSFinalizationRegistry::finishCreation(VM& vm, JSGlobalObject* globalObject
     globalObject->globalObjectMethodTable()->currentScriptExecutionOwner(globalObject);
 }
 
-void JSFinalizationRegistry::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSFinalizationRegistry::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
@@ -80,12 +82,14 @@ void JSFinalizationRegistry::visitChildren(JSCell* cell, SlotVisitor& visitor)
     for (auto& holdings : thisObject->m_noUnregistrationDead)
         visitor.append(holdings);
 
-    size_t totalBufferSizesInBytes = thisObject->m_deadRegistrations.capacity() * sizeof(decltype(thisObject->m_deadRegistrations)::KeyValuePairType);
-    totalBufferSizesInBytes += thisObject->m_liveRegistrations.capacity() * sizeof(decltype(thisObject->m_deadRegistrations)::KeyValuePairType);
+    size_t totalBufferSizesInBytes = thisObject->m_deadRegistrations.capacity() * sizeof(typename decltype(thisObject->m_deadRegistrations)::KeyValuePairType);
+    totalBufferSizesInBytes += thisObject->m_liveRegistrations.capacity() * sizeof(typename decltype(thisObject->m_deadRegistrations)::KeyValuePairType);
     totalBufferSizesInBytes += thisObject->m_noUnregistrationLive.capacity() * sizeof(decltype(thisObject->m_noUnregistrationLive.takeLast()));
     totalBufferSizesInBytes += thisObject->m_noUnregistrationDead.capacity() * sizeof(decltype(thisObject->m_noUnregistrationLive.takeLast()));
     visitor.vm().heap.reportExtraMemoryVisited(totalBufferSizesInBytes);
 }
+
+DEFINE_VISIT_CHILDREN(JSFinalizationRegistry);
 
 void JSFinalizationRegistry::destroy(JSCell* table)
 {

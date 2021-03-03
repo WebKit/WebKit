@@ -174,7 +174,10 @@ void RunLoop::suspendFunctionDispatchForCurrentCycle()
 void RunLoop::threadWillExit()
 {
     m_currentIteration.clear();
-    m_nextIteration.clear();
+    {
+        auto locker = holdLock(m_nextIterationLock);
+        m_nextIteration.clear();
+    }
 }
 
 } // namespace WTF

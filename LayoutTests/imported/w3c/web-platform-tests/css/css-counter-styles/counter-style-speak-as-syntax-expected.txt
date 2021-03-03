@@ -1,0 +1,14 @@
+
+FAIL @counter-style 'speak-as: auto' is valid assert_equals: expected (undefined) undefined but got (string) "auto"
+FAIL @counter-style 'speak-as: bullets' is valid assert_equals: expected (undefined) undefined but got (string) "bullets"
+FAIL @counter-style 'speak-as: numbers' is valid assert_equals: expected (undefined) undefined but got (string) "numbers"
+FAIL @counter-style 'speak-as: words' is valid assert_equals: expected (undefined) undefined but got (string) "words"
+FAIL @counter-style 'speak-as: spell-out' is valid assert_equals: expected (undefined) undefined but got (string) "spell-out"
+FAIL @counter-style 'speak-as: bar' is valid assert_equals: expected (undefined) undefined but got (string) "bar"
+FAIL @counter-style 'speak-as: spellout' is valid assert_equals: expected (undefined) undefined but got (string) "spellout"
+PASS @counter-style 'speak-as: bullets numbers' is invalid
+PASS @counter-style 'speak-as: none' is invalid
+PASS @counter-style 'speak-as: initial' is invalid
+PASS @counter-style 'speak-as: inherit' is invalid
+PASS @counter-style 'speak-as: unset' is invalid
+

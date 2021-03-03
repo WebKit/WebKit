@@ -36,6 +36,7 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
@@ -64,7 +65,9 @@ using namespace WebCore;
 
 Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
-    return adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, identifier, WTFMove(resumeDisplayListSemaphore)));
+    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, identifier, WTFMove(resumeDisplayListSemaphore)));
+    instance->startListeningForIPC();
+    return instance;
 }
 
 RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
@@ -74,7 +77,11 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     , m_resumeDisplayListSemaphore(WTFMove(resumeDisplayListSemaphore))
 {
     ASSERT(RunLoop::isMain());
-    gpuConnectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_workQueue, this, m_renderingBackendIdentifier.toUInt64());
+}
+
+void RemoteRenderingBackend::startListeningForIPC()
+{
+    m_gpuConnectionToWebProcess->connection().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_workQueue, this, m_renderingBackendIdentifier.toUInt64());
 }
 
 RemoteRenderingBackend::~RemoteRenderingBackend()
@@ -83,13 +90,18 @@ RemoteRenderingBackend::~RemoteRenderingBackend()
     m_workQueue->dispatch([remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
 }
 
-void RemoteRenderingBackend::disconnect()
+void RemoteRenderingBackend::stopListeningForIPC()
 {
     ASSERT(RunLoop::isMain());
 
     // The RemoteRenderingBackend destructor won't be called until disconnect() is called and we unregister ourselves as a WorkQueueMessageReceiver because
     // the IPC::Connection refs its WorkQueueMessageReceivers.
     m_gpuConnectionToWebProcess->connection().removeWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
+}
+
+void RemoteRenderingBackend::dispatch(Function<void()>&& task)
+{
+    m_workQueue->dispatch(WTFMove(task));
 }
 
 IPC::Connection* RemoteRenderingBackend::messageSenderConnection() const
@@ -190,6 +202,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
         auto result = submit(*displayList, *destination);
         MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::InvalidItem, nullptr, "Detected invalid display list item");
+        MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::OutOfMemory, nullptr, "Cound not allocate memory");
 
         auto advanceResult = handle.advance(result.numberOfBytesRead);
         MESSAGE_CHECK_WITH_RETURN_VALUE(advanceResult, nullptr, "Failed to advance display list reader handle");
@@ -336,6 +349,32 @@ void RemoteRenderingBackend::getBGRADataForImageBuffer(WebCore::RenderingResourc
     completionHandler(WTFMove(data));
 }
 
+void RemoteRenderingBackend::getShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier identifier, WebCore::PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    ShareableBitmap::Handle handle;
+    [&]() {
+        auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(identifier);
+        if (!imageBuffer)
+            return;
+        auto image = imageBuffer->copyNativeImage(WebCore::BackingStoreCopy::DontCopyBackingStore);
+        if (!image)
+            return;
+        auto backendSize = imageBuffer->backendSize();
+        auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : imageBuffer->logicalSize();
+        auto bitmap = ShareableBitmap::createShareable(resultSize, { });
+        if (!bitmap)
+            return;
+        auto context = bitmap->createGraphicsContext();
+        if (!context)
+            return;
+        context->drawNativeImage(*image, resultSize, FloatRect { { }, resultSize }, FloatRect { { }, backendSize }, { WebCore::CompositeOperator::Copy });
+        bitmap->createHandle(handle);
+    }();
+    completionHandler(WTFMove(handle));
+}
+
 void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
@@ -395,8 +434,6 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
         return decodeAndCreate<DisplayList::ClipOutToPath>(data, length, handleLocation);
     case DisplayList::ItemType::ClipPath:
         return decodeAndCreate<DisplayList::ClipPath>(data, length, handleLocation);
-    case DisplayList::ItemType::ClipToDrawingCommands:
-        return decodeAndCreate<DisplayList::ClipToDrawingCommands>(data, length, handleLocation);
     case DisplayList::ItemType::DrawFocusRingPath:
         return decodeAndCreate<DisplayList::DrawFocusRingPath>(data, length, handleLocation);
     case DisplayList::ItemType::DrawFocusRingRects:
@@ -438,6 +475,8 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::Clip:
     case DisplayList::ItemType::ClipOut:
     case DisplayList::ItemType::ClipToImageBuffer:
+    case DisplayList::ItemType::BeginClipToDrawingCommands:
+    case DisplayList::ItemType::EndClipToDrawingCommands:
     case DisplayList::ItemType::ConcatenateCTM:
     case DisplayList::ItemType::DrawDotsForDocumentMarker:
     case DisplayList::ItemType::DrawEllipse:

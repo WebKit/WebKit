@@ -35,6 +35,10 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePaySessionAdditions.h>
+#endif
+
 namespace JSC {
 class CallFrame;
 class JSGlobalObject;
@@ -54,6 +58,9 @@ struct ApplePayLineItem;
 struct ApplePayPaymentRequest;
 struct ApplePayShippingMethod;
 struct ApplePayPaymentAuthorizationResult;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayPaymentMethodModeUpdate;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 struct ApplePayPaymentMethodUpdate;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
@@ -115,9 +122,12 @@ private:
     unsigned version() const override;
     void validateMerchant(URL&&) override;
     void didAuthorizePayment(const Payment&) override;
-    void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) override;
+    void didSelectShippingMethod(const ApplePayShippingMethod&) override;
     void didSelectShippingContact(const PaymentContact&) override;
     void didSelectPaymentMethod(const PaymentMethod&) override;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    void didChangePaymentMethodMode(String&& paymentMethodMode) override;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     void didCancelPaymentSession(PaymentSessionError&&) override;
 
     PaymentCoordinator& paymentCoordinator() const;
@@ -129,6 +139,9 @@ private:
     bool canCompleteShippingMethodSelection() const;
     bool canCompleteShippingContactSelection() const;
     bool canCompletePaymentMethodSelection() const;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    bool canCompletePaymentMethodModeChange() const;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     bool canCompletePayment() const;
     bool canSuspendWithoutCanceling() const;
 
@@ -142,6 +155,9 @@ private:
         ShippingMethodSelected,
         ShippingContactSelected,
         PaymentMethodSelected,
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+        PaymentMethodModeChanged,
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
         CancelRequested,
         Authorized,
         Completed,
@@ -158,6 +174,10 @@ private:
 
     const ApplePaySessionPaymentRequest m_paymentRequest;
     unsigned m_version;
+
+#if defined(ApplePaySessionAdditions_declarations)
+    ApplePaySessionAdditions_declarations
+#endif
 };
 
 }

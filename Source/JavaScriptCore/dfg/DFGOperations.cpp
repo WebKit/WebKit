@@ -1753,14 +1753,21 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSize, char*, (JSGlobalObject* glob
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(size < 0))
-        return bitwise_cast<char*>(throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s)));
+    if (UNLIKELY(size < 0)) {
+        throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s));
+        return nullptr;
+    }
 
     JSArray* result;
     if (butterfly)
         result = JSArray::createWithButterfly(vm, nullptr, arrayStructure, butterfly);
-    else
-        result = JSArray::create(vm, arrayStructure, size);
+    else {
+        result = JSArray::tryCreate(vm, arrayStructure, size);
+        if (UNLIKELY(!result)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return nullptr;
+        }
+    }
     return bitwise_cast<char*>(result);
 }
 
@@ -1771,15 +1778,20 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSizeAndHint, char*, (JSGlobalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(size < 0))
-        return bitwise_cast<char*>(throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s)));
+    if (UNLIKELY(size < 0)) {
+        throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s));
+        return nullptr;
+    }
 
     JSArray* result;
     if (butterfly)
         result = JSArray::createWithButterfly(vm, nullptr, arrayStructure, butterfly);
     else {
         result = JSArray::tryCreate(vm, arrayStructure, size, vectorLengthHint);
-        RELEASE_ASSERT(result);
+        if (UNLIKELY(!result)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return nullptr;
+        }
     }
     return bitwise_cast<char*>(result);
 }

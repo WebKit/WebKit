@@ -232,37 +232,6 @@ void WebViewLayerFlushScheduler::layerFlushCallback()
     ASSERT(!fullscreenController);
 #endif
 
-    [applicationNameForUserAgent release];
-#if !PLATFORM(IOS_FAMILY)
-    [backgroundColor release];
-#else
-    CGColorRelease(backgroundColor);
-#endif
-    [inspector release];
-    [currentNodeHighlight release];
-#if PLATFORM(MAC)
-    [immediateActionController release];
-#endif
-    [hostWindow release];
-    [policyDelegateForwarder release];
-    [UIDelegateForwarder release];
-    [frameLoadDelegateForwarder release];
-    [editingDelegateForwarder release];
-    [mediaStyle release];
-
-#if ENABLE(REMOTE_INSPECTOR)
-#if PLATFORM(IOS_FAMILY)
-    [indicateLayer release];
-#endif
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    [UIKitDelegateForwarder release];
-    [formDelegateForwarder release];
-    [_caretChangeListeners release];
-    [_fixedPositionContent release];
-#endif
-
     [super dealloc];
 }
 

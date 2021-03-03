@@ -1,3 +1,375 @@
+2021-02-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Fix JSCOnly build on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=222316
+
+        Reviewed by Michael Catanzaro.
+
+        Update sources for the JSCOnly Windows build.
+
+        * wtf/PlatformJSCOnly.cmake:
+
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Prepare for memory ownership transfer in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222122
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformHave.h:
+        Add feature flag for TASK_IDENTITY_TOKEN as this API was only
+        introduced very recently.
+
+        * wtf/MachSendRight.h:
+        * wtf/cocoa/MachSendRight.cpp:
+        (WTF::MachSendRight::MachSendRight):
+        (WTF::MachSendRight::operator=):
+        Add a copy constructor to MachSendRight for convenience.
+
+2021-02-22  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for CSS Color 5 color-mix()
+        https://bugs.webkit.org/show_bug.cgi?id=222258
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Add new experimental preference for CSS Color 5 color-mix()
+        which is off by default.
+
+2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=222093
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/Platform.h:
+        * wtf/URL.h:
+        * wtf/glib/GRefPtr.cpp:
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * wtf/glib/GRefPtr.h:
+        * wtf/glib/URLGLib.cpp:
+        (WTF::URL::URL):
+        (WTF::URL::createGUri const):
+
+2021-02-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        RunLoop::threadWillExit is doing m_nextIteration.clear() without locking m_nextIterationLock
+        https://bugs.webkit.org/show_bug.cgi?id=221115
+
+        Reviewed by Yusuke Suzuki.
+
+        GKT and WPE ports were observing a random assertion failure in
+        Deque::append in RunLoop::dispatch.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::threadWillExit): Lock m_nextIterationLock before doing m_nextIteration.clear().
+
+2021-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Re-enable Paint Timing
+        https://bugs.webkit.org/show_bug.cgi?id=211736
+
+        Reviewed by Noam Rosenthal.
+
+        Now that bug 222245 is fixed in r273220, re-enable Paint Timing
+        (aka First Contentful Paint.)
+
+        * Scripts/Preferences/WebPreferencesEfxperimental.yaml:
+
+2021-02-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Turn the fraud prevention on by default
+        https://bugs.webkit.org/show_bug.cgi?id=222224
+        <rdar://problem/73588234>
+
+        Reviewed by John Wilander.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-02-20  Said Abou-Hallawa  <said@apple.com>
+
+        Make PaintTimingEnabled default to false
+        https://bugs.webkit.org/show_bug.cgi?id=222186
+
+        Reviewed by Simon Fraser.
+
+        PaintTiming causes about 4% regression in the MotionMark sub-tests:
+        Multiply and Focus. Do disable it for now.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=222072
+        <rdar://problem/74208576>
+
+        Reviewed by Devin Rousso.
+
+        * wtf/PlatformHave.h:
+
+        Turn several compile-time guards previously in `PlatformPasteboardIOS.mm` into `HAVE()`-s.
+
+2021-02-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Generate secret token and corresponding unlinkable token
+        https://bugs.webkit.org/show_bug.cgi?id=222019
+        <rdar://problem/73581412>
+
+        Reviewed by John Wilander.
+
+        * wtf/PlatformHave.h:
+        Adds a compile time flag for RSABSSA.
+
+2021-02-19  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Enable Opus decode support by default
+        https://bugs.webkit.org/show_bug.cgi?id=222131
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-02-19  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Enable the new appearance by default
+        https://bugs.webkit.org/show_bug.cgi?id=222015
+        <rdar://problem/74415537>
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+        Enable the iOS Form Control Refresh.
+
+2021-02-18  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for CSS Color 5 Relative Color Syntax
+        https://bugs.webkit.org/show_bug.cgi?id=221880
+
+        Reviewed by Darin Adler.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Add new experimental preference for CSS Color 5 Relative Color Syntax
+        which is off by default.
+
+2021-02-18  Youenn Fablet  <youenn@apple.com>
+
+        Set ENABLE_VP9 to 1 on IOS
+        https://bugs.webkit.org/show_bug.cgi?id=222042
+        <rdar://problem/74433523>
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-02-18  Devin Rousso  <drousso@apple.com>
+
+        Experiment with using the theme-color as the scroll area background if provided
+        https://bugs.webkit.org/show_bug.cgi?id=222078
+        <rdar://problem/74158818>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed tiny cleanup after r273056.
+
+        * wtf/Forward.h:
+
+2021-02-17  Sam Weinig  <weinig@apple.com>
+
+        Enable separated graphics layer experiments on internal variant
+        https://bugs.webkit.org/show_bug.cgi?id=222088
+
+        Reviewed by Dean Jackson.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-02-18  Antoine Quint  <graouts@webkit.org>
+
+        Page updates and rAF callbacks should run at a frequency close to 60Hz on high refresh-rate displays
+        https://bugs.webkit.org/show_bug.cgi?id=221673
+        <rdar://problem/72398605>
+
+        Reviewed by Simon Fraser.
+
+        Add a new internal preference to force the refresh rate for page rendering updates to 60fps
+        rather than use the display's refresh rate. This setting defaults to false.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address post-landing review comments from Darin Adler for r273046.
+
+        * wtf/Forward.h:
+
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        DumpRenderTree's createWebViewAndOffscreenWindow() should return a RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=222068
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Forward.h:
+
+2021-02-17  Dean Jackson  <dino@apple.com>
+
+        Use element fullscreen for video on some configurations
+        https://bugs.webkit.org/show_bug.cgi?id=222048
+        <rdar://problem/74439214>
+
+        Reviewed by Sam Weinig.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-02-17  Per Arne  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the fonts service
+        https://bugs.webkit.org/show_bug.cgi?id=221610
+        <rdar://problem/69168609>
+
+        Reviewed by Brent Fulgham.
+
+        Add HAVE define for platform static font registry.
+
+        * wtf/PlatformHave.h:
+
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Introduce a new context menu item to preview images
+        https://bugs.webkit.org/show_bug.cgi?id=221917
+        <rdar://problem/74363578>
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        Add a new soft-linking macro to optionally link against an umbrella framework.
+
+        * wtf/cocoa/SoftLinking.h:
+
+2021-02-16  Sam Weinig  <weinig@apple.com>
+
+        Add CSS property to enable separated bit on GraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=222010
+
+        Reviewed by Dean Jackson.
+
+        Add internal access to the separated bit on graphics layer via a 
+        new "optimized-3d" transform-style. This is all off by default and
+        is expected to change, but is useful and non-invasive for experimentation.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/PlatformEnable.h:
+
+2021-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Clients of ARC-dependent WTF functions may get incorrect/crashy behavior
+        https://bugs.webkit.org/show_bug.cgi?id=222004
+        <rdar://73620184>
+
+        Reviewed by Geoffrey Garen.
+
+        ARC is enabled in WTF but not in our other frameworks. This can lead to bad/crashy
+        behavior. To address the issue, renames functions like adoptNS() to adoptNSArc()
+        when ARC is enabled, via a #define.
+
+        This patch was written by Geoff Garen.
+
+        * wtf/BlockPtr.h:
+        * wtf/OSObjectPtr.h:
+        * wtf/RetainPtr.h:
+        * wtf/WeakObjCPtr.h:
+
+2021-02-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus-visible parsing and experimental flag
+        https://bugs.webkit.org/show_bug.cgi?id=221895
+
+        Reviewed by Darin Adler.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Add experimental feature flag.
+
+2021-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable JITCage on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=221805
+        <rdar://problem/74153806>
+
+        Reviewed by Mark Lam.
+
+        Enable JIT_CAGE when macOS is 120000 or higher with ARM64E.
+
+        * wtf/PlatformEnable.h:
+
+2021-02-15  Per Arne  <pvollan@apple.com>
+
+        [macOS] Close XPC connections before entering sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=221905
+        <rdar://problem/70359582>
+
+        Reviewed by Brent Fulgham.
+
+        Add softlinking macro for libraries in /usr/lib/system/.
+
+        * wtf/cocoa/SoftLinking.h:
+
+2021-02-15  Michael Saboff  <msaboff@apple.com>
+
+        [ARM64] Change break instruction comment to indicate possible security failure
+        https://bugs.webkit.org/show_bug.cgi?id=221936
+
+        Reviewed by Mark Lam.
+
+        Change the ASSERT break comment immediate to the same value the C++ compiler uses.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
+2021-02-15  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Ensure that no image decoders run in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=221885
+        <rdar://problem/74341122>
+
+        Reviewed by Simon Fraser.
+
+        CGImageSourceSetAllowableTypes() is available starting from macOS Big Sur
+        and iOS 14.0.
+
+        * wtf/PlatformHave.h:
+
+2021-02-15  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION r272823):  Crash in ARM64e Wasm tests
+        https://bugs.webkit.org/show_bug.cgi?id=221922
+
+        Reviewed by Mark Lam.
+
+        Updated to properly compute the size of thread_state_t as well as the offset of 
+        the PC found in thread_state_t.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::hashThreadState):
+
+2021-02-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r272831.
+        https://bugs.webkit.org/show_bug.cgi?id=221907
+
+        breaking internal build
+
+        Reverted changeset:
+
+        "[JSC] Enable JITCage on macOS"
+        https://bugs.webkit.org/show_bug.cgi?id=221805
+        https://trac.webkit.org/changeset/272831
+
 2021-02-15  Youenn Fablet  <youenn@apple.com>
 
         Move WebRTCPlatformCodecsInGPUProcessEnabled to Page Settings

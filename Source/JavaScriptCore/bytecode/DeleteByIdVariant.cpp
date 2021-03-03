@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,18 +88,25 @@ bool DeleteByIdVariant::writesStructures() const
     return !!newStructure();
 }
 
-void DeleteByIdVariant::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void DeleteByIdVariant::visitAggregateImpl(Visitor& visitor)
 {
     m_identifier.visitAggregate(visitor);
 }
 
-void DeleteByIdVariant::markIfCheap(SlotVisitor& visitor)
+DEFINE_VISIT_AGGREGATE(DeleteByIdVariant);
+
+template<typename Visitor>
+void DeleteByIdVariant::markIfCheap(Visitor& visitor)
 {
     if (m_oldStructure)
         m_oldStructure->markIfCheap(visitor);
     if (m_newStructure)
         m_newStructure->markIfCheap(visitor);
 }
+
+template void DeleteByIdVariant::markIfCheap(AbstractSlotVisitor&);
+template void DeleteByIdVariant::markIfCheap(SlotVisitor&);
 
 void DeleteByIdVariant::dump(PrintStream& out) const
 {

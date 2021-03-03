@@ -21,7 +21,7 @@ function shouldThrow(func, errorMessage) {
 
 if ($vm.icuVersion() >= 61) {
     shouldBe(Intl.DisplayNames.length, 2);
-    shouldThrow(() => new Intl.DisplayNames, `TypeError: undefined is not an object (evaluating 'new Intl.DisplayNames')`);
+    shouldThrow(() => new Intl.DisplayNames, `TypeError: type must not be undefined`);
 
     // Get display names of region in English
     var regionNames = new Intl.DisplayNames(['en'], {type: 'region'});

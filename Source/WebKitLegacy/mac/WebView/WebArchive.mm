@@ -335,7 +335,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 #endif
     LOG(Timing, "Serializing web archive to raw CFPropertyList data took %f seconds", duration);
         
-    return [[(NSData *)data.get() retain] autorelease];
+    return retainPtr((NSData *)data.get()).autorelease();
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,8 @@
 
 namespace JSC {
 
-void RegExpCachedResult::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void RegExpCachedResult::visitAggregateImpl(Visitor& visitor)
 {
     visitor.append(m_lastInput);
     visitor.append(m_lastRegExp);
@@ -42,6 +43,8 @@ void RegExpCachedResult::visitAggregate(SlotVisitor& visitor)
         visitor.append(m_reifiedRightContext);
     }
 }
+
+DEFINE_VISIT_AGGREGATE(RegExpCachedResult);
 
 JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* owner)
 {

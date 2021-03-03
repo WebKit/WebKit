@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,8 @@ MarkedJSValueRefArray::~MarkedJSValueRefArray()
         remove();
 }
 
-void MarkedJSValueRefArray::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void MarkedJSValueRefArray::visitAggregate(Visitor& visitor)
 {
     JSValueRef* buffer = data();
     for (unsigned index = 0; index < m_size; ++index) {
@@ -61,5 +62,8 @@ void MarkedJSValueRefArray::visitAggregate(SlotVisitor& visitor)
 #endif
     }
 }
+
+template void MarkedJSValueRefArray::visitAggregate(AbstractSlotVisitor&);
+template void MarkedJSValueRefArray::visitAggregate(SlotVisitor&);
 
 } // namespace JSC

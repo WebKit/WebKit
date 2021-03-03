@@ -1051,21 +1051,28 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
     case TogglePlayPauseCommand:
         actionDetails.action = m_element.paused() ? MediaSessionAction::Play : MediaSessionAction::Pause;
         break;
+    case BeginScrubbing:
+        m_isScrubbing = true;
+        return;
+    case EndScrubbing:
+        m_isScrubbing = false;
+        return;
     case SeekToPlaybackPositionCommand:
-        ASSERT(argument);
-        if (!argument)
+        ASSERT(argument.time);
+        if (!argument.time)
             return;
         actionDetails.action = MediaSessionAction::Seekto;
-        actionDetails.seekTime = *argument;
+        actionDetails.seekTime = argument.time.value();
+        actionDetails.fastSeek = m_isScrubbing;
         break;
     case SkipForwardCommand:
-        if (argument)
-            actionDetails.seekOffset = *argument;
+        if (argument.time)
+            actionDetails.seekOffset = argument.time.value();
         actionDetails.action = MediaSessionAction::Seekforward;
         break;
     case SkipBackwardCommand:
-        if (argument)
-            actionDetails.seekOffset = *argument;
+        if (argument.time)
+            actionDetails.seekOffset = argument.time.value();
         actionDetails.action = MediaSessionAction::Seekbackward;
         break;
     case NextTrackCommand:
@@ -1079,7 +1086,7 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
     case BeginSeekingForwardCommand:
     case EndSeekingForwardCommand:
         ASSERT_NOT_REACHED();
-        break;
+        return;
     }
     
     if (auto handler = session->handlerForAction(actionDetails.action))

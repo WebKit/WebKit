@@ -6,5 +6,5 @@ If the element that says "I will be focused programmatically." has a red outline
 Click me.
 I will be focused programmatically.
 
-FAIL Programmatic focus after click should not match :focus-visible assert_equals: backgroundColor for DIV#el should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+PASS Programmatic focus after click should not match :focus-visible
 

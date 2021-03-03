@@ -71,9 +71,9 @@
         return nil;
 
 #if USE(APPKIT)
-    return [[[NSImage alloc] initWithCGImage:image->bitmap().makeCGImage().get() size:NSZeroSize] autorelease];
+    return adoptNS([[NSImage alloc] initWithCGImage:image->bitmap().makeCGImage().get() size:NSZeroSize]).autorelease();
 #else
-    return [[[UIImage alloc] initWithCGImage:image->bitmap().makeCGImage().get()] autorelease];
+    return adoptNS([[UIImage alloc] initWithCGImage:image->bitmap().makeCGImage().get()]).autorelease();
 #endif
 }
 

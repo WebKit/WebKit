@@ -400,6 +400,7 @@ public:
     AwaitExprNode* createAwait(const JSTokenLocation& location, ExpressionNode* argument, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
         ASSERT(argument);
+        usesAwait();
         AwaitExprNode* node = new (m_parserArena) AwaitExprNode(location, argument);
         setExceptionLocation(node, start, divot, end);
         return node;
@@ -1099,6 +1100,7 @@ private:
         m_scope.m_features |= EvalFeature;
     }
     void usesNewTarget() { m_scope.m_features |= NewTargetFeature; }
+    void usesAwait() { m_scope.m_features |= AwaitFeature; }
     ExpressionNode* createIntegerLikeNumber(const JSTokenLocation& location, double d)
     {
         return new (m_parserArena) IntegerNode(location, d);

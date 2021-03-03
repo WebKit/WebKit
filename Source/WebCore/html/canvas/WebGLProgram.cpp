@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -206,7 +206,7 @@ bool WebGLProgram::detachShader(const AbstractLocker&, WebGLShader* shader)
     }
 }
 
-void WebGLProgram::addMembersToOpaqueRoots(const AbstractLocker&, JSC::SlotVisitor& visitor)
+void WebGLProgram::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(m_vertexShader.get());
     visitor.addOpaqueRoot(m_fragmentShader.get());

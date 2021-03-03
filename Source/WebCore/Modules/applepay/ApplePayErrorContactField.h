@@ -27,12 +27,49 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-using ApplePayErrorContactField = PaymentError::ContactField;
+enum class ApplePayErrorContactField {
+    PhoneNumber,
+    EmailAddress,
+    Name,
+    PhoneticName,
+    PostalAddress,
+    AddressLines,
+    SubLocality,
+    Locality,
+    PostalCode,
+    SubAdministrativeArea,
+    AdministrativeArea,
+    Country,
+    CountryCode,
+};
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ApplePayErrorContactField> {
+    using values = EnumValues<
+        WebCore::ApplePayErrorContactField,
+        WebCore::ApplePayErrorContactField::PhoneNumber,
+        WebCore::ApplePayErrorContactField::EmailAddress,
+        WebCore::ApplePayErrorContactField::Name,
+        WebCore::ApplePayErrorContactField::PhoneticName,
+        WebCore::ApplePayErrorContactField::PostalAddress,
+        WebCore::ApplePayErrorContactField::AddressLines,
+        WebCore::ApplePayErrorContactField::SubLocality,
+        WebCore::ApplePayErrorContactField::Locality,
+        WebCore::ApplePayErrorContactField::PostalCode,
+        WebCore::ApplePayErrorContactField::SubAdministrativeArea,
+        WebCore::ApplePayErrorContactField::AdministrativeArea,
+        WebCore::ApplePayErrorContactField::Country,
+        WebCore::ApplePayErrorContactField::CountryCode
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(APPLE_PAY)

@@ -27,15 +27,32 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayLineItem.h"
+#include "ApplePayDetailsUpdateBase.h"
 
 namespace WebCore {
 
-struct ApplePayShippingMethodUpdate {
-    ApplePayLineItem newTotal;
-    Vector<ApplePayLineItem> newLineItems;
+struct ApplePayShippingMethodUpdate final : public ApplePayDetailsUpdateBase {
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<ApplePayShippingMethodUpdate> decode(Decoder&);
 };
 
+template<class Encoder>
+void ApplePayShippingMethodUpdate::encode(Encoder& encoder) const
+{
+    ApplePayDetailsUpdateBase::encode(encoder);
 }
+
+template<class Decoder>
+Optional<ApplePayShippingMethodUpdate> ApplePayShippingMethodUpdate::decode(Decoder& decoder)
+{
+    ApplePayShippingMethodUpdate result;
+
+    if (!result.decodeBase(decoder))
+        return WTF::nullopt;
+
+    return result;
+}
+
+} // namespace WebCore
 
 #endif

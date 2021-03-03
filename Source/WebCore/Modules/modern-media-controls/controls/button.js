@@ -129,6 +129,12 @@ class Button extends LayoutItem
         this._updateImageMetrics();
     }
 
+    get contextMenuOptions()
+    {
+        // Implemented by subclasses.
+        return {};
+    }
+
     // Protected
 
     handleEvent(event)

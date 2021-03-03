@@ -89,10 +89,6 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
 
     if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsMacintoshPlatform));
-    else if (quirks.contains(UserAgentQuirks::NeedsWindowsPlatform))
-        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsWindowsPlatform));
-    else if (quirks.contains(UserAgentQuirks::NeedsLinuxDesktopPlatform))
-        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsLinuxDesktopPlatform));
     else {
         uaString.append(platformForUAString());
         uaString.appendLiteral("; ");
@@ -104,10 +100,6 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
 
     if (quirks.contains(UserAgentQuirks::NeedsFirefoxBrowser)) {
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsFirefoxBrowser));
-        return uaString.toString();
-    }
-    if (quirks.contains(UserAgentQuirks::NeedsInternetExplorerBrowser)) {
-        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsInternetExplorerBrowser));
         return uaString.toString();
     }
 

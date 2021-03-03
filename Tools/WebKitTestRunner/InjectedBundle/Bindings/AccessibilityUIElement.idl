@@ -109,6 +109,7 @@
     readonly attribute boolean ariaIsGrabbed;
     readonly attribute DOMString ariaDropEffects;
     readonly attribute DOMString classList;
+    readonly attribute DOMString embeddedImageDescription;
 
     readonly attribute long x;
     readonly attribute long y;
@@ -168,6 +169,7 @@
     object columnHeaders();
     object rowHeaders();
 
+    object errorMessageElements();
     AccessibilityUIElement ariaOwnsElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaOwnsReferencingElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaFlowToElementAtIndex(unsigned long index);
@@ -218,6 +220,7 @@
     AccessibilityTextMarkerRange misspellingTextMarkerRange(AccessibilityTextMarkerRange start, boolean forward);
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement element);
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
+    AccessibilityTextMarkerRange textMarkerRangeForRange(unsigned long location, unsigned long length);
     AccessibilityTextMarkerRange selectedTextMarkerRange();
     undefined resetSelectedTextMarkerRange();
     boolean replaceTextInRange(DOMString string, long position, long length);

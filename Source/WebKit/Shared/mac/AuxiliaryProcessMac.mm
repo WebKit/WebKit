@@ -62,6 +62,11 @@
 #import <rootless.h>
 #endif
 
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
+SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
+
 #if PLATFORM(MAC)
 #define USE_CACHE_COMPILED_SANDBOX 1
 #else
@@ -634,9 +639,13 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
     // Verify user directory suffix.
     if (sandboxParameters.userDirectorySuffix().isNull()) {
         auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
-        if (userDirectorySuffix != parameters.extraInitializationData.end())
-            sandboxParameters.setUserDirectorySuffix([makeString(userDirectorySuffix->value, '/', String([[NSBundle mainBundle] bundleIdentifier])) fileSystemRepresentation]);
-        else {
+        if (userDirectorySuffix != parameters.extraInitializationData.end()) {
+            String suffix = userDirectorySuffix->value;
+            auto firstPathSeparator = suffix.find("/");
+            if (firstPathSeparator != notFound)
+                suffix.truncate(firstPathSeparator);
+            sandboxParameters.setUserDirectorySuffix(suffix);
+        } else {
             String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
             if (clientIdentifier.isNull())
                 clientIdentifier = parameters.clientIdentifier;
@@ -655,7 +664,7 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
     // Use private temporary and cache directories.
-    _set_user_dir_suffix(FileSystem::fileSystemRepresentation(sandboxParameters.userDirectorySuffix()).data());
+    setenv("DIRHELPER_USER_DIR_SUFFIX", FileSystem::fileSystemRepresentation(sandboxParameters.userDirectorySuffix()).data(), 1);
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         WTFLogAlways("%s: couldn't retrieve private temporary directory path: %d\n", getprogname(), errno);
@@ -690,6 +699,8 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
 #else
 #error "Unknown architecture."
 #endif
+    if (mbr_close_connectionsPtr())
+        mbr_close_connectionsPtr()();
 }
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
@@ -699,10 +710,6 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 #if USE(CACHE_COMPILED_SANDBOX)
     // This must be called before initializeSandboxParameters so that the path does not include the user directory suffix.
     // We don't want the user directory suffix because we want all processes of the same type to use the same cache directory.
-    // First, make sure the user directory suffix is empty at this point. This is normally already the case, but some host
-    // processes are setting the user directory suffix, which we will inherit, and our sandbox datavault will then end up
-    // inside the host process' cache folder, which is undesirable.
-    _set_user_dir_suffix(nullptr);
     String dataVaultParentDirectory { sandboxDataVaultParentDirectory() };
 #else
     String dataVaultParentDirectory;

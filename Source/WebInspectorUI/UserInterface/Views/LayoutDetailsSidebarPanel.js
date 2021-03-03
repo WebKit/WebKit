@@ -29,6 +29,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         super("layout-details", WI.UIString("Layout", "Layout @ Styles Sidebar", "Title of the CSS style panel."));
 
+        this._gridNodeSet = new Set;
         this._nodeStyles = null;
         this.element.classList.add("layout-panel");
     }
@@ -75,25 +76,29 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 
+    // Protected
+
     attached()
     {
         super.attached();
 
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+
+        this._refreshGridNodeSet();
     }
 
     detached()
     {
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
 
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         super.detached();
     }
-
-    // Protected
 
     initialLayout()
     {
@@ -102,25 +107,50 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         let boxModelSection = new WI.DetailsSection("layout-box-model", WI.UIString("Box Model"), [boxModelGroup]);
         this.contentView.element.appendChild(boxModelSection.element);
 
-        let cssGridRow = new WI.DetailsSectionRow;
-        let gridGroup = new WI.DetailsSectionGroup([cssGridRow]);
-        let gridSection = new WI.DetailsSection("layout-css-grid", WI.UIString("Grid", "Grid @ Elements details sidebar", "CSS Grid layout section name"), [gridGroup]);
-        this.contentView.element.appendChild(gridSection.element);
+        this._gridDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Grid Contexts", "No CSS Grid Contexts @ Layout Details Sidebar Panel", "Message shown when there are no CSS Grid contexts on the inspected page."));
+        let gridGroup = new WI.DetailsSectionGroup([this._gridDetailsSectionRow]);
+        let gridDetailsSection = new WI.DetailsSection("layout-css-grid", WI.UIString("Grid", "Grid @ Elements details sidebar", "CSS Grid layout section name"), [gridGroup]);
+        this.contentView.element.appendChild(gridDetailsSection.element);
 
-        let cssGridSection = new WI.CSSGridSection;
-        cssGridRow.element.appendChild(cssGridSection.element);
-        this.addSubview(cssGridSection);
+        this._gridSection = new WI.CSSGridSection;
     }
 
     layout()
     {
         super.layout();
 
+        if (!this._gridNodeSet.size) {
+            this._gridDetailsSectionRow.showEmptyMessage();
+
+            if (this._gridSection.isAttached)
+                this.removeSubview(this._gridSection);
+
+        } else {
+            this._gridDetailsSectionRow.hideEmptyMessage();
+            this._gridDetailsSectionRow.element.appendChild(this._gridSection.element);
+
+            if (!this._gridSection.isAttached)
+                this.addSubview(this._gridSection);
+
+            this._gridSection.gridNodeSet = this._gridNodeSet;
+        }
+
         if (this._boxModelDiagramRow.nodeStyles !== this._nodeStyles)
             this._boxModelDiagramRow.nodeStyles = this._nodeStyles;
     }
 
     // Private
+
+    _handleLayoutContextTypeChanged(event)
+    {
+        let domNode = event.target;
+        if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
+            this._gridNodeSet.add(domNode);
+        else
+            this._gridNodeSet.delete(domNode);
+
+        this.needsLayout();
+    }
 
     _mainResourceDidChange(event)
     {
@@ -140,5 +170,10 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         if (this.isAttached)
             this._nodeStyles?.refresh();
+    }
+
+    _refreshGridNodeSet()
+    {
+        this._gridNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid));
     }
 };

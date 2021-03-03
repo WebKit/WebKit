@@ -3,5 +3,5 @@ If the button that says "I will be focused automatically" has a red background, 
 
 I will be focused automatically.
 
-FAIL Autofocus should match :focus-visible assert_equals: outlineColor for BUTTON#button should be green expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Autofocus should match :focus-visible assert_equals: outlineColor for BUTTON#button should be green expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

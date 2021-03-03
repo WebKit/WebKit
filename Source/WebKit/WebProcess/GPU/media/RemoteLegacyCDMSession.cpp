@@ -113,7 +113,7 @@ bool RemoteLegacyCDMSession::update(Uint8Array* keyData, RefPtr<Uint8Array>& nex
     if (ipcNextMessage)
         nextMessage = convertToUint8Array(WTFMove(*ipcNextMessage));
 
-    return false;
+    return succeeded;
 }
 
 RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyId) const

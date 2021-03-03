@@ -23,7 +23,7 @@
     xhr.onprogress = function() { log("onprogress") }
     xhr.onerror = function() { log("onerror") }
     try {
-        xhr.open("GET", "/resources/redirect.php?url=http://localhost:8000/resources/redirect.php?url=/xmlhttprequest/resources/reply.xml", false);
+        xhr.open("GET", "/resources/redirect.py?url=http://localhost:8000/resources/redirect.py?url=/xmlhttprequest/resources/reply.xml", false);
         xhr.send();
     } catch (ex) {
         log(ex);
@@ -42,7 +42,7 @@
     xhr.onprogress = function() { log("onprogress") }
     xhr.onerror = function() { log("onerror"); }
     try {
-        xhr.open("GET", "/resources/redirect.php?url=http://localhost:7/", false); // A port that will likely refuse the connection.
+        xhr.open("GET", "/resources/redirect.py?url=http://localhost:7/", false); // A port that will likely refuse the connection.
         xhr.send();
     } catch (ex) {
         log(ex);

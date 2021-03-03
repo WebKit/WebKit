@@ -172,7 +172,7 @@ TEST(UserContentWorld, IsolatedWorldPlugIn)
             EXPECT_WK_STREQ(task.request.URL.path, "/iframesrc");
             body = @"iframe content";
         }
-        [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:body.length textEncodingName:nil] autorelease]];
+        [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:body.length textEncodingName:nil]).get()];
         [task didReceiveData:[body dataUsingEncoding:NSUTF8StringEncoding]];
         [task didFinish];
     };

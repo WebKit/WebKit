@@ -135,7 +135,7 @@
 {
     auto range = makeSimpleRange(*_impl);
     auto newRange = rangeExpandedByCharactersInDirectionAtWordBoundary(makeDeprecatedLegacyPosition(direction == WKDOMRangeDirectionForward ? range.end : range.start), characters, direction == WKDOMRangeDirectionForward ? WebCore::SelectionDirection::Forward : WebCore::SelectionDirection::Backward);
-    return [[[WKDOMRange alloc] _initWithImpl:createLiveRange(newRange).get()] autorelease];
+    return adoptNS([[WKDOMRange alloc] _initWithImpl:createLiveRange(newRange).get()]).autorelease();
 }
 
 @end

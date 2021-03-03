@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +50,7 @@ enum class RelevantExtensionKey : uint8_t;
 
 enum class IntlRoundingType : uint8_t { FractionDigits, SignificantDigits, CompactRounding };
 enum class IntlNotation : uint8_t { Standard, Scientific, Engineering, Compact };
-template<typename IntlType> void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
+template<typename IntlType> void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, Optional<JSObject&>, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
 
 class IntlNumberFormat final : public JSNonFinalObject {
 public:
@@ -87,7 +88,7 @@ public:
     static void formatToPartsInternal(JSGlobalObject*, Style, double, const String& formatted, IntlFieldIterator&, JSArray*, JSString* unit = nullptr);
 
     template<typename IntlType>
-    friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
+    friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, Optional<JSObject&>, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
 
     static ASCIILiteral notationString(IntlNotation);
 
@@ -96,7 +97,7 @@ public:
 private:
     IntlNumberFormat(VM&, Structure*);
     void finishCreation(VM&);
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
     static Vector<String> localeData(const String&, RelevantExtensionKey);
 

@@ -72,7 +72,7 @@
         testRunner.waitUntilDone();
     }
 
-    var baseURL = "http://127.0.0.1:8000/resources/redirect.php";
+    var baseURL = "http://127.0.0.1:8000/resources/redirect.py";
     var redirectURL = "http://127.0.0.1:8000/dummy";
     var singleRedirect = baseURL + "?code=307&url=" + encodeURIComponent(redirectURL);
     var doubleRedirect = baseURL + "?code=307&url=" + encodeURIComponent(singleRedirect);

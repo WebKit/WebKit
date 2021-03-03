@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DragData.h"
+#include "PagePasteboardContext.h"
 #include "PlatformEvent.h"
 #include "PlatformKeyboardEvent.h"
 
@@ -32,26 +33,33 @@
 namespace WebCore {
 
 #if !PLATFORM(COCOA)
-DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask)
+DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, Optional<PageIdentifier> pageID)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(data)
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
     , m_dragDestinationActionMask(destinationActionMask)
+    , m_pageID(pageID)
 {  
 }
 
-DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask)
+DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask, Optional<PageIdentifier> pageID)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(0)
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
     , m_dragDestinationActionMask(destinationActionMask)
+    , m_pageID(pageID)
 {
 }
 #endif
+
+std::unique_ptr<PasteboardContext> DragData::createPasteboardContext() const
+{
+    return PagePasteboardContext::create(Optional<PageIdentifier> { m_pageID });
+}
 
 } // namespace WebCore
 

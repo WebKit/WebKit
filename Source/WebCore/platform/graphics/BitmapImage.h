@@ -86,6 +86,7 @@ public:
     RepetitionCount repetitionCount() const { return m_source->repetitionCount(); }
     String uti() const override { return m_source->uti(); }
     String filenameExtension() const override { return m_source->filenameExtension(); }
+    String accessibilityDescription() const override { return m_source->accessibilityDescription(); }
     Optional<IntPoint> hotSpot() const override { return m_source->hotSpot(); }
 
     // FloatSize due to override.

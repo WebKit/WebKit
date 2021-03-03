@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "Connection.h"
 #include "ContentAsStringIncludesChildFrames.h"
 #include "ContextMenuContextData.h"
-#include "CreateNewGroupForHighlight.h"
 #include "DataReference.h"
 #include "DownloadID.h"
 #include "DragControllerAction.h"
@@ -46,6 +45,7 @@
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PDFPluginIdentifier.h"
 #include "PageLoadState.h"
+#include "PasteboardAccessIntent.h"
 #include "PluginProcessAttributes.h"
 #include "PolicyDecision.h"
 #include "ProcessTerminationReason.h"
@@ -113,6 +113,7 @@
 #include <WebCore/ViewportArguments.h>
 #include <memory>
 #include <wtf/CompletionHandler.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
@@ -184,6 +185,10 @@ interface ID3D11Device1;
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPageProxyAdditionsBefore.h>
+#endif
+
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -235,6 +240,7 @@ class TextIndicator;
 class ValidationBubble;
 
 enum class AutoplayEvent : uint8_t;
+enum class CreateNewGroupForHighlight : bool;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class LockBackForwardList : bool;
@@ -247,6 +253,7 @@ enum class ShouldSample : bool;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class WritingDirection : uint8_t;
 
+struct AppHighlight;
 struct ApplicationManifest;
 struct AttributedString;
 struct BackForwardItemIdentifier;
@@ -277,6 +284,10 @@ struct WindowFeatures;
 
 #if ENABLE(IMAGE_EXTRACTION)
 struct ImageExtractionResult;
+#endif
+
+#if HAVE(PASTEBOARD_DATA_OWNER)
+enum class DataOwnerType : uint8_t;
 #endif
 
 template<typename> class RectEdges;
@@ -374,7 +385,6 @@ struct WebSpeechSynthesisVoice;
 struct URLSchemeTaskParameters;
 struct UserMessage;
 
-enum class CreateNewGroupForHighlight : bool;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
 enum class UndoOrRedo : bool;
@@ -588,6 +598,7 @@ public:
     RefPtr<API::Navigation> loadRequest(WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks, API::Object* userData = nullptr);
     RefPtr<API::Navigation> loadFile(const String& fileURL, const String& resourceDirectoryURL, API::Object* userData = nullptr);
     RefPtr<API::Navigation> loadData(const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    RefPtr<API::Navigation> loadSimulatedRequest(WebCore::ResourceRequest&&, WebCore::ResourceResponse&&, const IPC::DataReference&);
     void loadAlternateHTML(const IPC::DataReference&, const String& encoding, const URL& baseURL, const URL& unreachableURL, API::Object* userData = nullptr);
     void loadWebArchiveData(API::Data*, API::Object* userData = nullptr);
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
@@ -630,6 +641,8 @@ public:
     // from the UIProcess, or by didCommitLayerTree(). When PLATFORM(MAC) adopts UI side compositing, we should get rid of
     // the message entirely.
     WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
+
+    WebCore::Color scrollAreaBackgroundColor() const;
 
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
@@ -1071,6 +1084,10 @@ public:
     bool useDarkAppearance() const;
     bool useElevatedUserInterfaceLevel() const;
 
+#if HAVE(PASTEBOARD_DATA_OWNER)
+    WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const;
+#endif
+
 #if PLATFORM(COCOA)
     // Called by the web process through a message.
     void registerWebProcessAccessibilityToken(const IPC::DataReference&);
@@ -1176,7 +1193,7 @@ public:
 
     void processDidBecomeUnresponsive();
     void processDidBecomeResponsive();
-    void processDidTerminate(ProcessTerminationReason);
+    void resetStateAfterProcessTermination(ProcessTerminationReason);
     void provisionalProcessDidTerminate();
     void dispatchProcessDidTerminate(ProcessTerminationReason);
     void willChangeProcessIsResponsive();
@@ -1283,6 +1300,7 @@ public:
     void beginPrinting(WebFrameProxy*, const PrintInfo&);
     void endPrinting();
     uint64_t computePagesForPrinting(WebFrameProxy*, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
+    void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
 #if PLATFORM(COCOA)
     uint64_t drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&&);
     uint64_t drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&&);
@@ -1682,8 +1700,11 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value, CompletionHandler<void()>&&);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void simulateResourceLoadStatisticsSessionRestart(CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementConversionURLForTesting(const URL&, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementTokenPublicKeyURLForTesting(const URL&, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementTokenSignatureURLForTesting(const URL&, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementAttributionReportURLForTesting(const URL&, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
+    void setFraudPreventionValuesForTesting(const String& secretToken, const String& unlinkableToken, const String& signature, const String& keyID, CompletionHandler<void()>&&);
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&&);
@@ -1824,9 +1845,9 @@ public:
     void syncIfMockDevicesEnabledChanged();
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
-    void updateAppHighlightsStorage(const IPC::SharedBufferCopy&);
-    void restoreAppHighlights(Ref<WebCore::SharedBuffer>&& data);
+    void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight);
+    void storeAppHighlight(const WebCore::AppHighlight&);
+    void restoreAppHighlights(const Vector<Ref<WebKit::SharedMemory>>& highlights);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1838,6 +1859,16 @@ public:
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
+
+#if ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
+    void handleContextMenuRevealImage();
+    void resetImageExtractionPreview();
+#endif
+
+#if PLATFORM(COCOA)
+    void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
+    void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -1978,7 +2009,7 @@ private:
     bool didChooseFilesForOpenPanelWithImageTranscoding(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes);
     void showShareSheet(const WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void showContactPicker(const WebCore::ContactsRequestData&, CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&);
-    void printFrame(WebCore::FrameIdentifier, const String&, CompletionHandler<void()>&&);
+    void printFrame(WebCore::FrameIdentifier, const String&, const WebCore::FloatSize&,  CompletionHandler<void()>&&);
     void exceededDatabaseQuota(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuotaDelayedReply&&);
     void reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuotaDelayedReply&&);
 
@@ -2893,7 +2924,13 @@ private:
 
     size_t m_suspendMediaPlaybackCounter { 0 };
 
+    bool m_lastNavigationWasAppBound { false };
+
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPageProxyAdditionsAfter.h>
+#endif
 };
 
 } // namespace WebKit

@@ -71,13 +71,6 @@ void CachedFont::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& met
     checkNotify(metrics);
 }
 
-void CachedFont::requestLoad()
-{
-    CachedResourceClientWalker<CachedFontClient> walker(m_clients);
-    while (CachedFontClient* client = walker.next())
-        client->fontRequested(*this);
-}
-
 void CachedFont::beginLoadIfNeeded(CachedResourceLoader& loader)
 {
     if (!m_loadInitiated) {

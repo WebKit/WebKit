@@ -28,6 +28,7 @@
 #include "DataReference.h"
 #include "LayerTreeContext.h"
 #include "PDFPluginIdentifier.h"
+#include "PasteboardAccessIntent.h"
 #include "SameDocumentNavigationType.h"
 #include "ShareableBitmap.h"
 #include "WebColorPicker.h"
@@ -38,6 +39,7 @@
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/ContactInfo.h>
 #include <WebCore/ContactsRequestData.h>
+#include <WebCore/DataOwnerType.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/FocusDirection.h>
@@ -108,6 +110,7 @@ enum class TextIndicatorWindowLifetime : uint8_t;
 enum class TextIndicatorWindowDismissalAnimation : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 
+struct AppHighlight;
 struct DictionaryPopupInfo;
 struct TextIndicatorData;
 struct ViewportAttributes;
@@ -516,6 +519,10 @@ public:
 
     virtual void setHasBlankOverlay(bool) { }
 
+#if HAVE(PASTEBOARD_DATA_OWNER)
+    virtual WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const { return WebCore::DataOwnerType::Undefined; }
+#endif
+
 #if ENABLE(IMAGE_EXTRACTION)
     virtual void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
 #endif
@@ -575,7 +582,7 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    virtual void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) = 0;
+    virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
 
 #if PLATFORM(COCOA)

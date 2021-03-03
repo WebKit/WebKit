@@ -35,12 +35,13 @@
 
 namespace WebCore {
 
-std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
+std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>();
+    return makeUnique<Pasteboard>(WTFMove(context));
 }
 
-Pasteboard::Pasteboard()
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
+    : m_context(WTFMove(context))
 {
 }
 
@@ -73,7 +74,7 @@ String Pasteboard::readOrigin()
 
 String Pasteboard::readString(const String& type)
 {
-    return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, type, name());
+    return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, type, name(), context());
 }
 
 String Pasteboard::readStringInCustomData(const String&)
@@ -97,7 +98,7 @@ void Pasteboard::clear(const String&)
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Optional<size_t>)
 {
-    text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8", name());
+    text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8", name(), context());
 }
 
 void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, Optional<size_t>)

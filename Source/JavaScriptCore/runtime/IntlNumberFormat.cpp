@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2016 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,8 @@ void IntlNumberFormat::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-void IntlNumberFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void IntlNumberFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     IntlNumberFormat* thisObject = jsCast<IntlNumberFormat*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -82,6 +83,8 @@ void IntlNumberFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(thisObject->m_boundFormat);
 }
+
+DEFINE_VISIT_CHILDREN(IntlNumberFormat);
 
 Vector<String> IntlNumberFormat::localeData(const String& locale, RelevantExtensionKey key)
 {
@@ -271,13 +274,8 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     auto requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSObject* options;
-    if (optionsValue.isUndefined())
-        options = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
-    else {
-        options = optionsValue.toObject(globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-    }
+    Optional<JSObject&> options = intlCoerceOptionsToObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, void());
 
     ResolveLocaleOptions localeOptions;
 

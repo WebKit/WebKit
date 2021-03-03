@@ -172,9 +172,9 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
     preferences->setAllowTopNavigationToDataURLs(true);
     preferences->setJavaScriptRuntimeFlags({
     });
-    auto pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(inspectedPage()));
+    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage()));
     auto websiteDataStore = inspectorWebsiteDataStore();
-    auto& processPool = inspectorProcessPool(inspectionLevel());
+    auto& processPool = WebKit::defaultInspectorProcessPool(inspectionLevel());
 
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(&processPool);

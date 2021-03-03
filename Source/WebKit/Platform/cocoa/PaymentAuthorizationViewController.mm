@@ -31,6 +31,10 @@
 #import "WKPaymentAuthorizationDelegate.h"
 #import <pal/cocoa/PassKitSoftLink.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/PaymentAuthorizationViewControllerAdditions.mm>
+#endif
+
 @interface WKPaymentAuthorizationViewControllerDelegate : WKPaymentAuthorizationDelegate <PKPaymentAuthorizationViewControllerDelegate, PKPaymentAuthorizationViewControllerPrivateDelegate>
 
 - (instancetype)initWithRequest:(PKPaymentRequest *)request presenter:(WebKit::PaymentAuthorizationPresenter&)presenter;
@@ -78,6 +82,10 @@
 {
     [self _didSelectPaymentMethod:paymentMethod completion:completion];
 }
+
+#if defined(PaymentAuthorizationViewControllerAdditions_PKPaymentAuthorizationViewControllerDelegate)
+PaymentAuthorizationViewControllerAdditions_PKPaymentAuthorizationViewControllerDelegate
+#endif
 
 #pragma mark PKPaymentAuthorizationViewControllerDelegatePrivate
 

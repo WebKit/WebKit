@@ -66,6 +66,7 @@ public:
     String uti() const final;
     String filenameExtension() const final;
     Optional<WebCore::IntPoint> hotSpot() const final { return WTF::nullopt; }
+    String accessibilityDescription() const final { return String(); }
 
     WebCore::IntSize frameSizeAtIndex(size_t, WebCore::SubsamplingLevel = WebCore::SubsamplingLevel::Default) const final;
     bool frameIsCompleteAtIndex(size_t) const final;

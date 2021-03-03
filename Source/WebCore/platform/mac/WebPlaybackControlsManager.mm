@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,10 +98,11 @@ using WebCore::PlaybackSessionInterfaceMac;
 
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter
 {
-    UNUSED_PARAM(toleranceBefore);
-    UNUSED_PARAM(toleranceAfter);
+    if (!_playbackSessionInterfaceMac)
+        return;
+
     if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
-        model->seekToTime(time);
+        model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand, { time, toleranceBefore || toleranceAfter });
 }
 
 - (void)cancelThumbnailAndAudioAmplitudeSampleGeneration
@@ -133,12 +134,24 @@ using WebCore::PlaybackSessionInterfaceMac;
 
 - (void)beginTouchBarScrubbing
 {
-    _playbackSessionInterfaceMac->beginScrubbing();
+    if (!_playbackSessionInterfaceMac)
+        return;
+
+    auto* model = _playbackSessionInterfaceMac->playbackSessionModel();
+    if (!model)
+        return;
+        
+    _playbackSessionInterfaceMac->willBeginScrubbing();
+    model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbing, { });
 }
 
 - (void)endTouchBarScrubbing
 {
-    _playbackSessionInterfaceMac->endScrubbing();
+    if (!_playbackSessionInterfaceMac)
+        return;
+
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+        model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbing, { });
 }
 
 - (NSArray<AVTouchBarMediaSelectionOption *> *)audioTouchBarMediaSelectionOptions
@@ -282,8 +295,11 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
 
 - (void)togglePlayback
 {
-    if (_playbackSessionInterfaceMac && _playbackSessionInterfaceMac->playbackSessionModel())
-        _playbackSessionInterfaceMac->playbackSessionModel()->togglePlayState();
+    if (!_playbackSessionInterfaceMac)
+        return;
+
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+        model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand, { });
 }
 
 - (void)setPlaying:(BOOL)playing
@@ -300,9 +316,9 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
     if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel()) {
         BOOL isCurrentlyPlaying = model->isPlaying();
         if (!isCurrentlyPlaying && _playing)
-            model->play();
+            model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::PlayCommand, { });
         else if (isCurrentlyPlaying && !_playing)
-            model->pause();
+            model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::PauseCommand, { });
     }
 }
 
@@ -313,8 +329,8 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
 
 - (void)togglePictureInPicture
 {
-    if (_playbackSessionInterfaceMac && _playbackSessionInterfaceMac->playbackSessionModel())
-        _playbackSessionInterfaceMac->playbackSessionModel()->togglePictureInPicture();
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+        model->togglePictureInPicture();
 }
 
 IGNORE_WARNINGS_END

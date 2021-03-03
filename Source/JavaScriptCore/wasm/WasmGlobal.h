@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ public:
     JSValue get(JSGlobalObject*) const;
     uint64_t getPrimitive() const { return m_value.m_primitive; }
     void set(JSGlobalObject*, JSValue);
-    void visitAggregate(SlotVisitor&);
+    DECLARE_VISIT_AGGREGATE;
 
     template<typename T> T* owner() const { return reinterpret_cast<T*>(m_owner); }
     void setOwner(JSObject* owner)

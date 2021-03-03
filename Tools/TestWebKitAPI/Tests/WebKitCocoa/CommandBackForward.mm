@@ -102,7 +102,7 @@ public:
         WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());        
         WKPageConfigurationSetContext(configuration.get(), context.get());
 
-        webView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configurationRef:configuration.get()];
+        webView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configurationRef:configuration.get()]);
 
         WKPageNavigationClientV0 loaderClient;
         memset(&loaderClient, 0, sizeof(loaderClient));

@@ -1116,8 +1116,7 @@ void UIScriptControllerIOS::completeBackSwipe(JSValueRef callback)
 
 void UIScriptControllerIOS::activateDataListSuggestion(unsigned index, JSValueRef callback)
 {
-    // FIXME: Not implemented.
-    UNUSED_PARAM(index);
+    [webView() _selectDataListOption:index];
 
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
@@ -1129,6 +1128,13 @@ void UIScriptControllerIOS::activateDataListSuggestion(unsigned index, JSValueRe
 
 bool UIScriptControllerIOS::isShowingDataListSuggestions() const
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    UIViewController *presentedViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:webView()];
+    Class suggestionsViewControllerClass = NSClassFromString(@"WKDataListSuggestionsViewController");
+    if ([presentedViewController isKindOfClass:suggestionsViewControllerClass])
+        return true;
+#endif
+
     Class remoteKeyboardWindowClass = NSClassFromString(@"UIRemoteKeyboardWindow");
     Class suggestionsPickerViewClass = NSClassFromString(@"WKDataListSuggestionsPickerView");
     UIWindow *remoteInputHostingWindow = nil;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,11 +57,10 @@
 
 - (void)setDelegate:(id<_WKInspectorDelegate>)delegate
 {
-    if (!_delegate)
-        _delegate = makeUnique<WebKit::InspectorDelegate>(self);
+    if (!delegate && !_delegate)
+        return;
 
-    _inspector->setInspectorClient(_delegate->createInspectorClient());
-    _delegate->setDelegate(delegate);
+    _delegate = makeUnique<WebKit::InspectorDelegate>(self, delegate);
 }
 
 - (WKWebView *)webView
@@ -170,6 +169,11 @@
     _inspector->setDiagnosticLoggingAvailable(!!delegate);
 }
 
+- (WKBrowsingContextHandle *)handle
+{
+    return self.inspectorWebView._handle;
+}
+
 // MARK: _WKInspectorInternal methods
 
 - (API::Object&)_apiObject
@@ -184,11 +188,11 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
     _inspector->extensionController().registerExtension(extensionID, displayName, [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<bool, WebKit::InspectorExtensionError> result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: inspectorExtensionErrorToString(result.error())}], nil);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error())}], nil);
             return;
         }
 
-        capturedBlock(nil, [[wrapper(API::InspectorExtension::create(protectedExtensionID.get(), protectedSelf->_inspector->extensionController())) retain] autorelease]);
+        capturedBlock(nil, wrapper(API::InspectorExtension::create(protectedExtensionID.get(), protectedSelf->_inspector->extensionController())));
     });
 #else
     completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil], nil);
@@ -200,7 +204,7 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
     _inspector->extensionController().unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<bool, WebKit::InspectorExtensionError> result) mutable {
         if (!result) {
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: inspectorExtensionErrorToString(result.error())}]);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: WebKit::inspectorExtensionErrorToString(result.error())}]);
             return;
         }
 

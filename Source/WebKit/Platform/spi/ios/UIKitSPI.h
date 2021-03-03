@@ -54,6 +54,7 @@
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
 #import <UIKit/UIMenuController_Private.h>
+#import <UIKit/UIPasteboard_Private.h>
 #import <UIKit/UIPeripheralHost.h>
 #import <UIKit/UIPeripheralHost_Private.h>
 #import <UIKit/UIPickerContentView_Private.h>
@@ -305,6 +306,7 @@ typedef enum {
 - (void)geometryChangeDone:(BOOL)keyboardVisible;
 - (void)prepareForGeometryChange;
 + (BOOL)isInHardwareKeyboardMode;
++ (BOOL)isOnScreen;
 + (void)removeAllDynamicDictionaries;
 @end
 
@@ -1156,8 +1158,16 @@ typedef NSInteger UICompositingMode;
 + (UIBlurEffect *)effectWithBlurRadius:(CGFloat)blurRadius;
 @end
 
+typedef NS_ENUM(NSInteger, _UIPopoverPresentationHorizontalAlignment) {
+    _UIPopoverPresentationHorizontalAlignmentCenter,
+    _UIPopoverPresentationHorizontalAlignmentLeading,
+    _UIPopoverPresentationHorizontalAlignmentTrailing,
+};
+
 @interface UIPopoverPresentationController ()
 @property (assign, nonatomic, setter=_setCentersPopoverIfSourceViewNotSet:, getter=_centersPopoverIfSourceViewNotSet) BOOL _centersPopoverIfSourceViewNotSet;
+@property (assign, nonatomic, setter=_setShouldHideArrow:, getter=_shouldHideArrow) BOOL _shouldHideArrow;
+@property (assign, nonatomic, setter=_setPreferredHorizontalAlignment:) _UIPopoverPresentationHorizontalAlignment _preferredHorizontalAlignment;
 @end
 
 @interface UIWKDocumentContext : NSObject
@@ -1258,6 +1268,15 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
 #define UIWKDocumentRequestSpatialAndCurrentSelection (1 << 6)
+
+#if HAVE(PASTEBOARD_DATA_OWNER)
+
+@interface UIResponder (Staging_73852335)
+@property (nonatomic, setter=_setDataOwnerForCopy:) _UIDataOwner _dataOwnerForCopy;
+@property (nonatomic, setter=_setDataOwnerForPaste:) _UIDataOwner _dataOwnerForPaste;
+@end
+
+#endif
 
 @interface UITextInteractionAssistant (IPI)
 @property (nonatomic, readonly) BOOL inGesture;

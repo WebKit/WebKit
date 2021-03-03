@@ -3630,10 +3630,24 @@ void TestController::simulateResourceLoadStatisticsSessionRestart()
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::setPrivateClickMeasurementConversionURLForTesting(WKURLRef url)
+void TestController::setPrivateClickMeasurementTokenPublicKeyURLForTesting(WKURLRef url)
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSetPrivateClickMeasurementConversionURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
+    WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
+void TestController::setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef url)
+{
+    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
+    WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
+void TestController::setPrivateClickMeasurementAttributionReportURLForTesting(WKURLRef url)
+{
+    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
+    WKPageSetPrivateClickMeasurementAttributionReportURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 
@@ -3641,6 +3655,13 @@ void TestController::markPrivateClickMeasurementsAsExpiredForTesting()
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
     WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(m_mainWebView->page(), privateClickMeasurementVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
+void TestController::setFraudPreventionValuesForTesting(WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID)
+{
+    PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
+    WKPageSetFraudPreventionValuesForTesting(m_mainWebView->page(), secretToken, unlinkableToken, signature, keyID, privateClickMeasurementVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 

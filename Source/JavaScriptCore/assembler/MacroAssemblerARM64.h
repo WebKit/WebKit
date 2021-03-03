@@ -3695,7 +3695,7 @@ public:
 
     // Miscellaneous operations:
 
-    void breakpoint(uint16_t imm = 0)
+    void breakpoint(uint16_t imm = 0xc471)
     {
         m_assembler.brk(imm);
     }

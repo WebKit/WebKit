@@ -28,6 +28,11 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayPaymentMethodModeUpdate.h"
+#include "ApplePayPaymentMethodUpdate.h"
+#include "ApplePayShippingContactUpdate.h"
+#include "ApplePayShippingMethod.h"
+#include "ApplePayShippingMethodUpdate.h"
 #include "Document.h"
 #include "LinkIconCollector.h"
 #include "Logging.h"
@@ -128,26 +133,37 @@ void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession
     m_client.completeMerchantValidation(paymentMerchantSession);
 }
 
-void PaymentCoordinator::completeShippingMethodSelection(Optional<ShippingMethodUpdate>&& update)
+void PaymentCoordinator::completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
     RELEASE_LOG_IF_ALLOWED("completeShippingMethodSelection()");
     m_client.completeShippingMethodSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completeShippingContactSelection(Optional<ShippingContactUpdate>&& update)
+void PaymentCoordinator::completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&& update)
 {
     ASSERT(m_activeSession);
     RELEASE_LOG_IF_ALLOWED("completeShippingContactSelection()");
     m_client.completeShippingContactSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completePaymentMethodSelection(Optional<PaymentMethodUpdate>&& update)
+void PaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
     RELEASE_LOG_IF_ALLOWED("completePaymentMethodSelection()");
     m_client.completePaymentMethodSelection(WTFMove(update));
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void PaymentCoordinator::completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&& update)
+{
+    ASSERT(m_activeSession);
+    RELEASE_LOG_IF_ALLOWED("completePaymentMethodModeChange()");
+    m_client.completePaymentMethodModeChange(WTFMove(update));
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 void PaymentCoordinator::completePaymentSession(Optional<PaymentAuthorizationResult>&& result)
 {
@@ -211,7 +227,7 @@ void PaymentCoordinator::didSelectPaymentMethod(const PaymentMethod& paymentMeth
     m_activeSession->didSelectPaymentMethod(paymentMethod);
 }
 
-void PaymentCoordinator::didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+void PaymentCoordinator::didSelectShippingMethod(const ApplePayShippingMethod& shippingMethod)
 {
     if (!m_activeSession) {
         // It's possible that the payment has been aborted already.
@@ -232,6 +248,21 @@ void PaymentCoordinator::didSelectShippingContact(const PaymentContact& shipping
     RELEASE_LOG_IF_ALLOWED("didSelectShippingContact()");
     m_activeSession->didSelectShippingContact(shippingContact);
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void PaymentCoordinator::didChangePaymentMethodMode(String&& paymentMethodMode)
+{
+    if (!m_activeSession) {
+        // It's possible that the payment has been aborted already.
+        return;
+    }
+
+    RELEASE_LOG_IF_ALLOWED("didChangePaymentMethodMode()");
+    m_activeSession->didChangePaymentMethodMode(WTFMove(paymentMethodMode));
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 void PaymentCoordinator::didCancelPaymentSession(PaymentSessionError&& error)
 {

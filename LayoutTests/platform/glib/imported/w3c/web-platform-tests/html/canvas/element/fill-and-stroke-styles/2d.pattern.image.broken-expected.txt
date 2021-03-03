@@ -1,0 +1,5 @@
+2d.pattern.image.broken
+Actual output:
+
+FAIL Canvas test: 2d.pattern.image.broken The object is in an invalid state.
+

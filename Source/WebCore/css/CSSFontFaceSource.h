@@ -35,7 +35,6 @@ namespace WebCore {
 
 class CSSFontFace;
 class CSSFontSelector;
-class Document;
 class Font;
 struct FontCustomPlatformData;
 class FontDescription;
@@ -68,9 +67,9 @@ public:
 
     const AtomString& familyNameOrURI() const { return m_familyNameOrURI; }
 
-    void opportunisticallyStartFontDataURLLoading(Document*);
+    void opportunisticallyStartFontDataURLLoading(CSSFontSelector&);
 
-    void load(Document*);
+    void load(CSSFontSelector*);
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities);
 
     CachedFont* cachedFont() const { return m_font.get(); }

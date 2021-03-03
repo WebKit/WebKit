@@ -161,7 +161,11 @@ public:
     virtual void paint(GraphicsContext&, const FloatRect&) = 0;
 
     virtual void paintCurrentFrameInContext(GraphicsContext& c, const FloatRect& r) { paint(c, r); }
+#if !USE(AVFOUNDATION)
     virtual bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) { return false; }
+#else
+    virtual CVPixelBufferRef pixelBufferForCurrentTime() { return nullptr; }
+#endif
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
 
     virtual void setPreload(MediaPlayer::Preload) { }

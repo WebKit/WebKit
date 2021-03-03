@@ -84,7 +84,7 @@ TEST(WebKit, HTTPSProxy)
     [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
     [storeConfiguration setAllowsServerPreconnect:NO];
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    [viewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()] autorelease]];
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
     auto delegate = adoptNS([ProxyDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
@@ -131,7 +131,7 @@ TEST(WebKit, HTTPProxyAuthentication)
     [storeConfiguration setPreventsSystemHTTPProxyAuthentication:YES];
 
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    [viewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()] autorelease]];
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
     auto delegate = adoptNS([ProxyDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
@@ -174,7 +174,7 @@ TEST(WebKit, SecureProxyConnection)
     [storeConfiguration setRequiresSecureHTTPSProxyConnection:YES];
 
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    [viewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()] autorelease]];
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     while (!receivedValidClientHello)

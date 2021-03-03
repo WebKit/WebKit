@@ -23,7 +23,7 @@
 import json
 import unittest
 
-from webkitcorepy import string_utils, StringIO
+from webkitcorepy import string_utils, StringIO, unicode
 from webkitscmpy import Contributor
 
 
@@ -127,8 +127,8 @@ class TestContributor(unittest.TestCase):
 
     def test_unicode(self):
         self.assertEqual(
-            str(Contributor(u'Michael Br\u00fcning', ['michael.bruning@digia.com'])),
-            string_utils.encode(u'Michael Br\u00fcning <michael.bruning@digia.com>', target_type=str),
+            unicode(Contributor(u'Michael Br\u00fcning', ['michael.bruning@digia.com'])),
+            string_utils.encode(u'Michael Br\u00fcning <michael.bruning@digia.com>', target_type=unicode),
         )
 
     def test_json_encode(self):

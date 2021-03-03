@@ -159,7 +159,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
     PUICActionItem *languageSelectionActionItem = [self.languageController languageSelectionActionItemForViewController:self];
     auto actionGroup = adoptNS([[PUICActionGroup alloc] initWithActionItems:@[ languageSelectionActionItem ] actionStyle:PUICActionStyleAutomatic]);
-    return [[[PUICActionController alloc] initWithActionGroup:actionGroup.get()] autorelease];
+    return adoptNS([[PUICActionController alloc] initWithActionGroup:actionGroup.get()]).autorelease();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END

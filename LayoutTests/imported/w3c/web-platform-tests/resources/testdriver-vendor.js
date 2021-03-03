@@ -160,7 +160,7 @@ window.test_driver_internal.send_keys = function(element, keys)
         0XE004: { key: '\t' },
         0XE005: { key: 'clear' },
         0XE006: { key: '\r' },
-        0XE007: { key: 'enter' },
+        0XE007: { key: '\n' },
         0xE008: { key: 'leftShift', modifier: 'shiftKey' },
         0xE009: { key: 'leftControl', modifier: 'ctrlKey' },
         0xE00A: { key: 'leftAlt', modifier: 'altKey' },

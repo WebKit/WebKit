@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +24,6 @@
  */
 
 #import <WebKit/WKFoundation.h>
-
-#import <WebKit/WKMediaPlaybackState.h>
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
@@ -62,6 +60,13 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebView : NSView
 #endif
+
+typedef NS_ENUM(NSInteger, WKMediaPlaybackState) {
+    WKMediaPlaybackStateNone,
+    WKMediaPlaybackStatePlaying,
+    WKMediaPlaybackStatePaused,
+    WKMediaPlaybackStateSuspended
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract A copy of the configuration with which the web view was
  initialized. */
@@ -327,31 +332,27 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract Closes all out-of-window media presentations in a WKWebView.
  @discussion Includes picture-in-picture and fullscreen.
  */
-- (void)closeAllMediaPresentations:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)closeAllMediaPresentationsWithCompletionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Pauses media playback in WKWebView.
- @discussion Pauses media playback. Media in the page can be restarted by calling play() on a media element or resume() on an AudioContext.
+ @discussion Pauses media playback. Media in the page can be restarted by calling play() on a media element or resume() on an AudioContext in JavaScript. A user can also use media controls to play media content after it has been paused.
  */
-- (void)pauseAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)pauseAllMediaPlaybackWithCompletionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-/*! @abstract Suspends media playback in WKWebView.
- @discussion Pauses media playback and blocks all attempts by the page to resume until resumeAllMediaPlayback is called. This should always be called in pairs with resumeAllMediaPlayback.
- */
-- (void)suspendAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/*! @abstract Resumes media playback in WKWebView.
- @discussion This should always be called in pairs with suspendAllMediaPlayback.
- */
-- (void)resumeAllMediaPlayback:(void (^ _Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+/*! @abstract Suspends or resumes all media playback in WKWebView.
+  @param suspended Whether media playback should be suspended or resumed.
+  @discussion If suspended is true, this pauses media playback and blocks all attempts by the page or the user to resume until setAllMediaPlaybackSuspended is called again with suspended set to false. Media playback should always be suspended and resumed in pairs.
+*/
+- (void)setAllMediaPlaybackSuspended:(BOOL)suspended completionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Get the current media playback state of a WKWebView.
  @param completionHandler A block to invoke with the return value of the function call.
  @discussion If media playback exists, WKMediaPlaybackState will be one of three
  values: WKMediaPlaybackPaused, WKMediaPlaybackSuspended, or WKMediaPlaybackPlaying.
  If no media playback exists in the current WKWebView, WKMediaPlaybackState will equal
- WKNoMediaPlayback.
+ WKMediaPlaybackStateNone.
  */
-- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)requestMediaPlaybackStateWithCompletionHandler:(void (^)(WKMediaPlaybackState))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Get a snapshot for the visible viewport of WKWebView.
  @param snapshotConfiguration An object that specifies how the snapshot is configured.
@@ -472,6 +473,12 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 */
 @property (nonatomic, nullable, copy) NSString *mediaType WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
+/* @abstract The interaction state for the WKWebView
+ @discussion The interaction state (back-forward list, currently loaded page, scroll position, form data...) for the WKWebView, which
+ can be retrieved and set on another WKWebView to restore state.
+*/
+@property (nonatomic, nullable, copy) id interactionState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if !TARGET_OS_IPHONE
 /* @abstract Returns an NSPrintOperation object configured to print the contents of this WKWebView
 @param printInfo The print info object used to configure the resulting print operation.
@@ -524,6 +531,12 @@ WK_API_AVAILABLE(macos(10.15.4))
 @interface WKWebView (WKDeprecated)
 
 @property (nonatomic, readonly, copy) NSArray *certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("serverTrust", macos(10.11, 10.12), ios(9.0, 10.0));
+
+- (void)pauseAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("pauseAllMediaPlaybackWithCompletionHandler", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
+- (void)suspendAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:suspended", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
+- (void)resumeAllMediaPlayback:(void (^ _Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:suspended", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
+- (void)closeAllMediaPresentations:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("closeAllMediaPresentationsWithCompletionHandler", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
+- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("requestMediaPlaybackStateWithCompletionHandler", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
 
 @end
 

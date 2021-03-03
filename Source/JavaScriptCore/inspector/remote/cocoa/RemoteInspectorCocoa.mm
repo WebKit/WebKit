@@ -326,6 +326,8 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
         receivedDidCloseMessage(userInfo);
     else if ([messageName isEqualToString:WIRApplicationGetListingMessage])
         receivedGetListingMessage(userInfo);
+    else if ([messageName isEqualToString:WIRApplicationWakeUpDebuggablesMessage])
+        receivedWakeUpDebuggables(userInfo);
     else if ([messageName isEqualToString:WIRIndicateMessage])
         receivedIndicateMessage(userInfo);
     else if ([messageName isEqualToString:WIRProxyApplicationSetupMessage])
@@ -590,6 +592,12 @@ void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
 void RemoteInspector::receivedGetListingMessage(NSDictionary *)
 {
     pushListingsNow();
+}
+
+void RemoteInspector::receivedWakeUpDebuggables(NSDictionary *)
+{
+    if (m_client)
+        m_client->requestedDebuggablesToWakeUp();
 }
 
 void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)

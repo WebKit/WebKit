@@ -46,6 +46,8 @@ _test_receiver_names = [
     'TestWithIfMessage',
     'TestWithSemaphore',
     'TestWithImageData',
+    'TestWithStream',
+    'TestWithStreamBuffer'
 ]
 
 

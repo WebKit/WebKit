@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,15 +77,10 @@ static void validate(JSCell* cell)
 #endif
 
 SlotVisitor::SlotVisitor(Heap& heap, CString codeName)
-    : m_bytesVisited(0)
-    , m_visitCount(0)
-    , m_isInParallelMode(false)
+    : Base(heap, codeName, heap.m_opaqueRoots)
     , m_markingVersion(MarkedSpace::initialVersion)
-    , m_heap(heap)
-    , m_codeName(codeName)
 #if ASSERT_ENABLED
     , m_isCheckingForDefaultMarkViolation(false)
-    , m_isDraining(false)
 #endif
 {
 }
@@ -117,8 +112,8 @@ void SlotVisitor::didStartMarking()
 
 void SlotVisitor::reset()
 {
+    AbstractSlotVisitor::reset();
     m_bytesVisited = 0;
-    m_visitCount = 0;
     m_heapAnalyzer = nullptr;
     RELEASE_ASSERT(!m_currentCell);
 }
@@ -230,7 +225,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
 void SlotVisitor::appendSlow(JSCell* cell, Dependency dependency)
 {
     if (UNLIKELY(m_heapAnalyzer))
-        m_heapAnalyzer->analyzeEdge(m_currentCell, cell, m_rootMarkReason);
+        m_heapAnalyzer->analyzeEdge(m_currentCell, cell, rootMarkReason());
 
     appendHiddenSlowImpl(cell, dependency);
 }
@@ -807,12 +802,17 @@ MarkStackArray& SlotVisitor::correspondingGlobalStack(MarkStackArray& stack)
     return *m_heap.m_sharedMutatorMarkStack;
 }
 
+NO_RETURN_DUE_TO_CRASH void SlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(AbstractSlotVisitor&)>>)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void SlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)>> task)
 {
     RELEASE_ASSERT(m_currentSolver);
     RELEASE_ASSERT(m_currentConstraint);
     RELEASE_ASSERT(task);
-    
+
     m_currentSolver->addParallelTask(task, *m_currentConstraint);
 }
 

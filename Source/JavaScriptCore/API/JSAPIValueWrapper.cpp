@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "JSAPIValueWrapper.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

@@ -40,4 +40,7 @@ IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldCacheImmediately;
 
 WTF_EXTERN_C_BEGIN
 CFStringRef CGImageSourceGetTypeWithData(CFDataRef, CFStringRef, bool*);
+#if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
+OSStatus CGImageSourceSetAllowableTypes(CFArrayRef allowableTypes);
+#endif
 WTF_EXTERN_C_END

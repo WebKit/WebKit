@@ -174,9 +174,10 @@ namespace JSC {
     macro(webAssemblyInstantiateStreamingInternal) \
     macro(instanceFieldInitializer) \
     macro(privateBrand) \
+    macro(privateClassBrand) \
     macro(hasOwnPropertyFunction) \
     macro(createPrivateSymbol) \
-    macro(entries) \
+    macro(entries)
 
 
 namespace Symbols {

@@ -779,7 +779,7 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu
     return tracksForMenu;
 }
 
-Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(TextTrackList* trackList)
+Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(TextTrackList* trackList, HashSet<TextTrack::Kind> kinds)
 {
     ASSERT(trackList);
 
@@ -788,6 +788,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
     CaptionDisplayMode displayMode = captionDisplayMode();
     bool prefersAccessibilityTracks = userPrefersCaptions();
     bool filterTrackList = shouldFilterTrackMenu();
+    bool requestingCaptionsOrDescriptionsOrSubtitles = kinds.contains(TextTrack::Kind::Subtitles) || kinds.contains(TextTrack::Kind::Captions) || kinds.contains(TextTrack::Kind::Descriptions);
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
@@ -799,82 +800,85 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
             continue;
         }
 
-        auto kind = track->kind();
-        if (kind != TextTrack::Kind::Captions && kind != TextTrack::Kind::Descriptions && kind != TextTrack::Kind::Subtitles)
+        if (!kinds.contains(track->kind()))
             continue;
 
-        if (track->containsOnlyForcedSubtitles()) {
-            LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it contains only forced subtitles", track->kindKeyword().string().utf8().data(), language.utf8().data());
-            continue;
-        }
-        
-        if (track->isEasyToRead()) {
-            LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because it is 'easy to read'", track->kindKeyword().string().utf8().data(), language.utf8().data());
-            if (!language.isEmpty())
-                languagesIncluded.add(language);
-            tracksForMenu.append(track);
-            continue;
-        }
+        if (requestingCaptionsOrDescriptionsOrSubtitles) {
+            if (track->containsOnlyForcedSubtitles()) {
+                LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it contains only forced subtitles", track->kindKeyword().string().utf8().data(), language.utf8().data());
+                continue;
+            }
 
-        if (track->mode() == TextTrack::Mode::Showing) {
-            LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because it is already visible", track->kindKeyword().string().utf8().data(), language.utf8().data());
-            if (!language.isEmpty())
-                languagesIncluded.add(language);
-            tracksForMenu.append(track);
-            continue;
-        }
+            if (track->isEasyToRead()) {
+                LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because it is 'easy to read'", track->kindKeyword().string().utf8().data(), language.utf8().data());
+                if (!language.isEmpty())
+                    languagesIncluded.add(language);
+                tracksForMenu.append(track);
+                continue;
+            }
 
-        if (!language.isEmpty() && track->isMainProgramContent()) {
-            bool isAccessibilityTrack = track->kind() == TextTrack::Kind::Captions;
-            if (prefersAccessibilityTracks) {
-                // In the first pass, include only caption tracks if the user prefers accessibility tracks.
-                if (!isAccessibilityTrack && filterTrackList) {
-                    LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is NOT an accessibility track", track->kindKeyword().string().utf8().data(), language.utf8().data());
-                    continue;
-                }
-            } else {
-                // In the first pass, only include the first non-CC or SDH track with each language if the user prefers translation tracks.
-                if (isAccessibilityTrack && filterTrackList) {
-                    LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is an accessibility track", track->kindKeyword().string().utf8().data(), language.utf8().data());
-                    continue;
-                }
-                if (languagesIncluded.contains(language) && filterTrackList) {
-                    LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is not the first with this language", track->kindKeyword().string().utf8().data(), language.utf8().data());
-                    continue;
+            if (track->mode() == TextTrack::Mode::Showing) {
+                LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because it is already visible", track->kindKeyword().string().utf8().data(), language.utf8().data());
+                if (!language.isEmpty())
+                    languagesIncluded.add(language);
+                tracksForMenu.append(track);
+                continue;
+            }
+
+            if (!language.isEmpty() && track->isMainProgramContent()) {
+                bool isAccessibilityTrack = track->kind() == TextTrack::Kind::Captions;
+                if (prefersAccessibilityTracks) {
+                    // In the first pass, include only caption tracks if the user prefers accessibility tracks.
+                    if (!isAccessibilityTrack && filterTrackList) {
+                        LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is NOT an accessibility track", track->kindKeyword().string().utf8().data(), language.utf8().data());
+                        continue;
+                    }
+                } else {
+                    // In the first pass, only include the first non-CC or SDH track with each language if the user prefers translation tracks.
+                    if (isAccessibilityTrack && filterTrackList) {
+                        LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is an accessibility track", track->kindKeyword().string().utf8().data(), language.utf8().data());
+                        continue;
+                    }
+                    if (languagesIncluded.contains(language) && filterTrackList) {
+                        LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is not the first with this language", track->kindKeyword().string().utf8().data(), language.utf8().data());
+                        continue;
+                    }
                 }
             }
+
+            if (!language.isEmpty())
+                languagesIncluded.add(language);
         }
 
-        if (!language.isEmpty())
-            languagesIncluded.add(language);
         tracksForMenu.append(track);
 
         LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s', is%s main program content", track->kindKeyword().string().utf8().data(), language.utf8().data(), track->isMainProgramContent() ? "" : " NOT");
     }
 
-    // Now that we have filtered for the user's accessibility/translation preference, add  all tracks with a unique language without regard to track type.
-    for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        TextTrack* track = trackList->item(i);
-        String language = displayNameForLanguageLocale(track->language());
+    if (requestingCaptionsOrDescriptionsOrSubtitles) {
+        // Now that we have filtered for the user's accessibility/translation preference, add  all tracks with a unique language without regard to track type.
+        for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
+            TextTrack* track = trackList->item(i);
+            String language = displayNameForLanguageLocale(track->language());
 
-        if (tracksForMenu.contains(track))
-            continue;
+            if (tracksForMenu.contains(track))
+                continue;
 
-        auto kind = track->kind();
-        if (kind != TextTrack::Kind::Captions && kind != TextTrack::Kind::Descriptions && kind != TextTrack::Kind::Subtitles)
-            continue;
+            if (!kinds.contains(track->kind()))
+                continue;
 
-        // All candidates with no languge were added the first time through.
-        if (language.isEmpty())
-            continue;
+            // All candidates with no languge were added the first time through.
+            if (language.isEmpty())
+                continue;
 
-        if (track->containsOnlyForcedSubtitles())
-            continue;
+            if (track->containsOnlyForcedSubtitles())
+                continue;
 
-        if (!languagesIncluded.contains(language) && track->isMainProgramContent()) {
-            languagesIncluded.add(language);
-            tracksForMenu.append(track);
-            LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because it is the only track with this language", track->kindKeyword().string().utf8().data(), language.utf8().data());
+            if (!languagesIncluded.contains(language) && track->isMainProgramContent()) {
+                languagesIncluded.add(language);
+                tracksForMenu.append(track);
+                LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because it is the only track with this language", track->kindKeyword().string().utf8().data(), language.utf8().data());
+            }
         }
     }
 
@@ -883,8 +887,10 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 
     std::sort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
 
-    tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
-    tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
+    if (requestingCaptionsOrDescriptionsOrSubtitles) {
+        tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
+        tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
+    }
 
     return tracksForMenu;
 }

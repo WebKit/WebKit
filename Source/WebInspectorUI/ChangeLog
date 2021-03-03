@@ -1,3 +1,142 @@
+2021-02-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: CSS Grid Inspector: use a color palette for default grid overlay colors
+        https://bugs.webkit.org/show_bug.cgi?id=222161
+
+        Reviewed by Devin Rousso.
+
+        Define a 5-color palette.
+
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype.showGridOverlay):
+        (WI.OverlayManager.prototype.colorForNode):
+        (WI.OverlayManager.prototype._handleMainResourceDidChange):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.layout):
+
+2021-02-19  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Truncate long node display names in Grid Overlay list
+        https://bugs.webkit.org/show_bug.cgi?id=222057
+
+        Reviewed by BJ Burg.
+
+        Truncate long node display names for grid overlays in the Layout panel.
+
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .node-link,):
+        (.css-grid-section .node-overlay-list):
+        (.css-grid-section .node-overlay-list-item-container):
+        (.css-grid-section .node-overlay-list-item-container label):
+        (.css-grid-section .node-overlay-list-item-container .inline-swatch):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.initialLayout):
+        (WI.CSSGridSection.prototype.layout):
+        * UserInterface/Views/LayoutDetailsSidebarPanel.css:
+        (.details-section.layout-css-grid > .content > .group > .row > .css-grid-section):
+        (.details-section.layout-css-grid > .content,):
+        Resetting to `display: block` for .details-section and descendants that use `display: table-*`
+        otherwise it messes with the Flexbox layout of nested children.
+
+2021-02-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Elements: show badges for CSS Grid container elements
+        https://bugs.webkit.org/show_bug.cgi?id=221370
+
+        Reviewed by BJ Burg.
+
+        Clicking "grid" CSS badge shows/hides the grid overlay for the corresponding element.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager.prototype.isGridOverlayVisible):
+        (WI.OverlayManager.prototype.toggleGridOverlay):
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/DOMTreeElement.css: Added.
+        (.tree-outline.dom .badge-css-grid):
+        (.tree-outline.dom .badge-css-grid.activated):
+        (.tree-outline.dom li.selected .badge-css-grid):
+        (.tree-outline.dom li.selected .badge-css-grid.activated):
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid):
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid.activated):
+        (@media (prefers-color-scheme: dark) .tree-outline.dom .badge-css-grid):
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.onattach):
+        (WI.DOMTreeElement.prototype.ondetach):
+        (WI.DOMTreeElement.prototype.updateTitle):
+        (WI.DOMTreeElement.prototype._updateGridBadge):
+        (WI.DOMTreeElement.prototype._gridBadgeClicked):
+        (WI.DOMTreeElement.prototype._gridBadgeDoubleClicked):
+        (WI.DOMTreeElement.prototype._updateGridBadgeStatus):
+        (WI.DOMTreeElement.prototype._handleLayoutContextTypeChanged):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+2021-02-18  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Update .eslintrc to account for ECMAScript 2021
+        https://bugs.webkit.org/show_bug.cgi?id=222107
+
+        Reviewed by BJ Burg.
+
+        Add ES2021 parser option so ESLint-based linters don't throw errors
+        for newer JavaScript features, like logical assignment operators (??=, &&=, ||=)
+
+        Note: The linter in an editor must support ESLint v7.8.0 or newer to understand ES2021.
+
+        * .eslintrc:
+
+2021-02-16  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Grids with overlays that disappear and reappear remain checked in Layout pane, toggling hits assertion
+        https://bugs.webkit.org/show_bug.cgi?id=221919
+        <rdar://problem/74363006>
+
+        Reviewed by Devin Rousso.
+
+        When a DOMNode's grid layout context changes to something else,
+        its corresponding shown grid overlay is automatically hidden on the backend.
+        The frontend needs to update its mapping of nodes to overlays and notify listeners of the change in state.
+
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype._handleLayoutContextTypeChanged):
+
+2021-02-16  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Grid list in Layout panel missing empty message
+        https://bugs.webkit.org/show_bug.cgi?id=221763
+        <rdar://problem/74242610>
+
+        Reviewed by BJ Burg.
+
+        Show a message instead of an empty list in the Layout sidebar panel
+        when there are no CSS Grid contexts found on the inspected page.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.set gridNodeSet):
+        (WI.CSSGridSection.prototype.attached):
+        (WI.CSSGridSection.prototype.detached):
+        (WI.CSSGridSection.prototype._handleGridOverlayStateChanged):
+        (WI.CSSGridSection):
+        Move logic to update the `gridNodeSet` from `CSSGridSection` up to `LayoutDetailsSidebarPanel`
+        so the parent view can toggle between the empty message and the populated CSS grid section accordingly.
+
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel):
+        (WI.LayoutDetailsSidebarPanel.prototype.attached):
+        (WI.LayoutDetailsSidebarPanel.prototype.detached):
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayoutDetailsSidebarPanel.prototype.layout):
+        (WI.LayoutDetailsSidebarPanel.prototype._handleLayoutContextTypeChanged):
+        (WI.LayoutDetailsSidebarPanel.prototype._refreshGridNodeSet):
+
 2021-02-11  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Add settings UI for CSS Grid overlay

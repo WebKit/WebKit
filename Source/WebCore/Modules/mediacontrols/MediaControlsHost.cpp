@@ -44,11 +44,22 @@
 #include "RenderTheme.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
+#include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/JSONValues.h>
+#include <wtf/Scope.h>
 #include <wtf/UUID.h>
 #include <wtf/Variant.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MediaControlsHostAdditions.cpp>
+#endif
+
 namespace WebCore {
+
+#if defined(MediaControlsHostAdditions_members)
+MediaControlsHostAdditions_members
+#endif
 
 const AtomString& MediaControlsHost::automaticKeyword()
 {
@@ -84,7 +95,13 @@ MediaControlsHost::MediaControlsHost(HTMLMediaElement& mediaElement)
 {
 }
 
-MediaControlsHost::~MediaControlsHost() = default;
+MediaControlsHost::~MediaControlsHost()
+{
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    if (auto showMediaControlsContextMenuCallback = std::exchange(m_showMediaControlsContextMenuCallback, nullptr))
+        showMediaControlsContextMenuCallback->handleEvent();
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+}
 
 Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {
@@ -95,7 +112,7 @@ Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackLis
     if (!page)
         return { };
 
-    return page->group().captionPreferences().sortedTrackListForMenu(&trackList);
+    return page->group().captionPreferences().sortedTrackListForMenu(&trackList, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
 }
 
 Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList& trackList)
@@ -313,23 +330,53 @@ String MediaControlsHost::formattedStringForDuration(double durationInSeconds)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
-void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, ContextMenuOptions&& options)
+#if !defined(MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData)
+#define MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData
+#endif
+
+#if !defined(MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn)
+#define MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn
+#endif
+
+bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String&& optionsJSONString, Ref<VoidCallback>&& callback)
 {
+    if (m_showMediaControlsContextMenuCallback)
+        return false;
+
+    m_showMediaControlsContextMenuCallback = WTFMove(callback);
+
+    auto invokeCallbackAtScopeExit = makeScopeExit([&, protectedThis = makeRef(*this)] {
+        std::exchange(m_showMediaControlsContextMenuCallback, nullptr)->handleEvent();
+    });
+
     if (!m_mediaElement)
-        return;
+        return false;
 
     auto& mediaElement = *m_mediaElement;
 
     auto* page = mediaElement.document().page();
     if (!page)
-        return;
+        return false;
 
-    using MenuTrackItem = Variant<RefPtr<AudioTrack>, RefPtr<TextTrack>>;
-    HashMap<MediaControlsContextMenuItem::ID, MenuTrackItem> idMap;
+    auto optionsJSON = JSON::Value::parseJSON(optionsJSONString);
+    if (!optionsJSON)
+        return false;
+
+    auto optionsJSONObject = optionsJSON->asObject();
+    if (!optionsJSONObject)
+        return false;
+
+    using MenuData = Variant<RefPtr<AudioTrack>, RefPtr<TextTrack> MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData>;
+    HashMap<MediaControlsContextMenuItem::ID, MenuData> idMap;
+    auto generateID = [&] (MenuData data) {
+        auto id = idMap.size() + 1;
+        idMap.add(id, data);
+        return id;
+    };
 
     Vector<MediaControlsContextMenuItem> items;
 
-    if (options.includeAudioTracks) {
+    if (optionsJSONObject->getBoolean("includeAudioTracks"_s).valueOr(false)) {
         if (auto* audioTracks = mediaElement.audioTracks(); audioTracks && audioTracks->length() > 1) {
             MediaControlsContextMenuItem audioTracksItem;
             audioTracksItem.title = WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title");
@@ -340,12 +387,9 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
 
             for (auto& audioTrack : captionPreferences.sortedTrackListForMenu(audioTracks)) {
                 MediaControlsContextMenuItem audioTrackItem;
-                audioTrackItem.id = idMap.size() + 1;
+                audioTrackItem.id = generateID(audioTrack);
                 audioTrackItem.title = captionPreferences.displayNameForTrack(audioTrack.get());
                 audioTrackItem.isChecked = audioTrack->enabled();
-
-                idMap.add(audioTrackItem.id, audioTrack);
-
                 audioTracksItem.children.append(WTFMove(audioTrackItem));
             }
 
@@ -354,7 +398,7 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
         }
     }
 
-    if (options.includeTextTracks) {
+    if (optionsJSONObject->getBoolean("includeTextTracks"_s).valueOr(false)) {
         if (auto* textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
             MediaControlsContextMenuItem textTracksItem;
             textTracksItem.title = WEB_UI_STRING_KEY("Subtitles", "Subtitles (Media Controls Menu)", "Subtitles media controls context menu title");
@@ -362,7 +406,7 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
             textTracksItem.children.reserveCapacity(textTracks->length());
 
             auto& captionPreferences = page->group().captionPreferences();
-            auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks);
+            auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
             bool allTracksDisabled = notFound == sortedTextTracks.findMatching([] (const auto& textTrack) {
                 return textTrack->mode() == TextTrack::Mode::Showing;
             });
@@ -370,7 +414,7 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
 
             for (auto& textTrack : sortedTextTracks) {
                 MediaControlsContextMenuItem textTrackItem;
-                textTrackItem.id = idMap.size() + 1;
+                textTrackItem.id = generateID(textTrack);
                 textTrackItem.title = captionPreferences.displayNameForTrack(textTrack.get());
                 if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItem() && (captionPreferences.captionDisplayMode() == CaptionUserPreferences::ForcedOnly || captionPreferences.captionDisplayMode() == CaptionUserPreferences::Manual))
                     textTrackItem.isChecked = true;
@@ -380,9 +424,6 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
                     textTrackItem.isChecked = true;
                 else
                     textTrackItem.isChecked = false;
-
-                idMap.add(textTrackItem.id, textTrack);
-
                 textTracksItem.children.append(WTFMove(textTrackItem));
             }
 
@@ -391,13 +432,16 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
         }
     }
 
+#if defined(MediaControlsHostAdditions_showMediaControlsContextMenu_options)
+    MediaControlsHostAdditions_showMediaControlsContextMenu_options
+#endif
+
     if (items.isEmpty())
-        return;
+        return false;
 
     ASSERT(!idMap.isEmpty());
 
-    page->chrome().client().showMediaControlsContextMenu(target.boundsInRootViewSpace(), WTFMove(items), [weakMediaElement = makeWeakPtr(mediaElement), idMap = WTFMove(idMap)] (MediaControlsContextMenuItem::ID selectedItemID) {
-
+    page->chrome().client().showMediaControlsContextMenu(target.boundsInRootViewSpace(), WTFMove(items), [weakMediaElement = makeWeakPtr(mediaElement), idMap = WTFMove(idMap), invokeCallbackAtScopeExit = WTFMove(invokeCallbackAtScopeExit)] (MediaControlsContextMenuItem::ID selectedItemID) {
         if (selectedItemID == MediaControlsContextMenuItem::invalidID)
             return;
 
@@ -421,8 +465,11 @@ void MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, Contex
                 }
                 mediaElement.setSelectedTextTrack(selectedTextTrack.get());
             }
+            MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData_switchOn
         );
     });
+
+    return true;
 }
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

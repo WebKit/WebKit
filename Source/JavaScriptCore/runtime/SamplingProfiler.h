@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -171,7 +171,7 @@ public:
     void noticeJSLockAcquisition();
     void noticeVMEntry();
     void shutdown();
-    void visit(SlotVisitor&);
+    template<typename Visitor> void visit(Visitor&);
     Lock& getLock() { return m_lock; }
     void setTimingInterval(Seconds interval) { m_timingInterval = interval; }
     JS_EXPORT_PRIVATE void start();

@@ -32,10 +32,8 @@
 
 + (WebBackgroundTaskController *)sharedController
 {
-    static WebBackgroundTaskController *sharedController;
-    if (!sharedController)
-        sharedController = [[self alloc] init];
-    return sharedController;
+    static NeverDestroyed<RetainPtr<WebBackgroundTaskController>> sharedController = adoptNS([[self alloc] init]);
+    return sharedController.get().get();
 }
 
 - (void)dealloc

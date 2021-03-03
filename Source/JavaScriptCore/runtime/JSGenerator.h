@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,26 +46,27 @@ public:
         return vm.generatorSpace<mode>();
     }
 
-    enum class GeneratorResumeMode : int32_t {
+    enum class ResumeMode : int32_t {
         NormalMode = 0,
         ReturnMode = 1,
         ThrowMode = 2
     };
 
-    enum class GeneratorState : int32_t {
+    enum class State : int32_t {
         Completed = -1,
         Executing = -2,
         Init = 0,
     };
 
     // [this], @generator, @generatorState, @generatorValue, @generatorResumeMode, @generatorFrame.
-    enum class GeneratorArgument : int32_t {
+    enum class Argument : int32_t {
         ThisValue = 0,
         Generator = 1,
         State = 2,
         Value = 3,
         ResumeMode = 4,
         Frame = 5,
+        NumberOfArguments = Frame,
     };
 
     enum class Field : uint32_t {
@@ -82,7 +83,7 @@ public:
     {
         return { {
             jsNull(),
-            jsNumber(static_cast<int32_t>(GeneratorState::Init)),
+            jsNumber(static_cast<int32_t>(State::Init)),
             jsUndefined(),
             jsUndefined(),
             jsUndefined(),
@@ -94,11 +95,13 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
 private:
     JSGenerator(VM&, Structure*);
     void finishCreation(VM&);
 };
+
+OVERLOAD_RELATIONAL_OPERATORS_FOR_ENUM_CLASS_WITH_INTEGRALS(JSGenerator::Argument);
 
 } // namespace JSC

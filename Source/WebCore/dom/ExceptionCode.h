@@ -61,6 +61,7 @@ enum ExceptionCode {
     // Simple exceptions (https://heycam.github.io/webidl/#idl-exceptions).
     RangeError,
     TypeError,
+    JSSyntaxError, // Different from DOM SYNTAX_ERR.
 
     // Non-standard error.
     StackOverflowError,
@@ -111,6 +112,7 @@ template<> struct EnumTraits<WebCore::ExceptionCode> {
     WebCore::ExceptionCode::NotAllowedError,
     WebCore::ExceptionCode::RangeError,
     WebCore::ExceptionCode::TypeError,
+    WebCore::ExceptionCode::JSSyntaxError,
     WebCore::ExceptionCode::StackOverflowError,
     WebCore::ExceptionCode::ExistingExceptionError
     >;

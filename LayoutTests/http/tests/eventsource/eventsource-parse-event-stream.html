@@ -13,7 +13,7 @@ if (window.testRunner) {
 }
 
 var count = -1;
-var es = new EventSource("resources/event-stream.php");
+var es = new EventSource("resources/event-stream.py");
 
 es.onopen = function (evt) {
     if (!evt.data)

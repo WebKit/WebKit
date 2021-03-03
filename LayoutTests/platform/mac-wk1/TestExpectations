@@ -966,11 +966,13 @@ webkit.org/b/210134 media/track/track-css-user-override.html [ Pass Failure ]
 webkit.org/b/210198 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 
 webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
+accessibility/mac/textmarker-range-for-range.html [ Skip ]
 accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 accessibility/aria-current-state-changed-notification.html [ Skip ]
 accessibility/aria-current.html [ Skip ]
 accessibility/aria-sort-changed-notification.html [ Skip ]
 accessibility/aria-sort.html [ Skip ]
+accessibility/aria-errormessage.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
@@ -1243,3 +1245,5 @@ webkit.org/b/221369 [ BigSur+ ] media/media-source/media-source-webm-append-buff
 webkit.org/b/220552 [ BigSur+ ] media/media-source/media-source-webm-init-inside-segment.html [ Skip ]
 
 webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Pass Failure ]
+
+webkit.org/b/221368 [ BigSur ] media/video-multiple-concurrent-playback.html [ Pass Failure ]

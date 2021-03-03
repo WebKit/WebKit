@@ -45,7 +45,7 @@
 
 + (instancetype)listenerWithCompletionBlock:(dispatch_block_t)completionBlock
 {
-    return [[[FrameLoadCompletionListener alloc] initWithCompletionBlock:completionBlock] autorelease];
+    return adoptNS([[FrameLoadCompletionListener alloc] initWithCompletionBlock:completionBlock]).autorelease();
 }
 
 - (instancetype)initWithCompletionBlock:(dispatch_block_t)completionBlock
@@ -212,7 +212,7 @@ namespace TestWebKitAPI {
 
 static NSImage *getTestImage()
 {
-    return [[[NSImage alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]] autorelease];
+    return adoptNS([[NSImage alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]]).autorelease();
 }
 
 static WebView *webViewAfterPerformingDragOperation(NSPasteboard *pasteboard)

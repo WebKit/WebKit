@@ -50,7 +50,7 @@
 
 - (NSArray<UITextSelectionRect *> *)rects
 {
-    return @[ [[[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect] autorelease] ];
+    return @[ adoptNS([[WKTextSelectionRect alloc] initWithCGRect:_elementContext.boundingRect]).get() ];
 }
 
 @end

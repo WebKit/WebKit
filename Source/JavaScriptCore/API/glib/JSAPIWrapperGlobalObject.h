@@ -39,7 +39,6 @@ public:
     static void subspaceFor(VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     void finishCreation(VM&);
-    static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
     JSCGLibWrapperObject* wrappedObject() const { return m_wrappedObject; }
     void setWrappedObject(JSCGLibWrapperObject* wrappedObject) { m_wrappedObject = wrappedObject; }

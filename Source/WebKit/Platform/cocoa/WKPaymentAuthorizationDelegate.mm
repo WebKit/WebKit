@@ -28,9 +28,14 @@
 
 #if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
+#import <WebCore/ApplePayShippingMethod.h>
 #import <WebCore/Payment.h>
 #import <WebCore/PaymentMethod.h>
 #import <WebCore/PaymentSessionError.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditions.mm>
+#endif
 
 @implementation WKPaymentAuthorizationDelegate {
     RetainPtr<NSArray<PKPaymentSummaryItem *>> _summaryItems;
@@ -42,6 +47,9 @@
     WebKit::DidSelectPaymentMethodCompletion _didSelectPaymentMethodCompletion;
     WebKit::DidSelectShippingContactCompletion _didSelectShippingContactCompletion;
     WebKit::DidSelectShippingMethodCompletion _didSelectShippingMethodCompletion;
+#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_members)
+    WKPaymentAuthorizationDelegateAdditions_implementation_members
+#endif
 }
 
 - (NSArray<PKPaymentSummaryItem *> *)summaryItems
@@ -61,9 +69,9 @@
 
 - (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate
 {
-    PKPaymentRequestPaymentMethodUpdate *update = paymentMethodUpdate ?: [[PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()] autorelease];
-    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
-    std::exchange(_didSelectPaymentMethodCompletion, nil)(update);
+    auto update = paymentMethodUpdate ? retainPtr(paymentMethodUpdate) : adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
+    _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
+    std::exchange(_didSelectPaymentMethodCompletion, nil)(update.get());
 }
 
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors
@@ -73,18 +81,22 @@
 }
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate
 {
-    PKPaymentRequestShippingContactUpdate *update = shippingContactUpdate ?: [[PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()] autorelease];
-    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
-    _shippingMethods = adoptNS([update.shippingMethods copy]);
-    std::exchange(_didSelectShippingContactCompletion, nil)(update);
+    auto update = shippingContactUpdate ? retainPtr(shippingContactUpdate) : adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]);
+    _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
+    _shippingMethods = adoptNS([[update shippingMethods] copy]);
+    std::exchange(_didSelectShippingContactCompletion, nil)(update.get());
 }
 
 - (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate
 {
-    PKPaymentRequestShippingMethodUpdate *update = shippingMethodUpdate ?: [[PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()] autorelease];
-    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
-    std::exchange(_didSelectShippingMethodCompletion, nil)(update);
+    auto update = shippingMethodUpdate ? retainPtr(shippingMethodUpdate) : adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
+    _summaryItems = adoptNS([[update paymentSummaryItems] copy]);
+    std::exchange(_didSelectShippingMethodCompletion, nil)(update.get());
 }
+
+#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_public)
+    WKPaymentAuthorizationDelegateAdditions_implementation_public
+#endif
 
 - (void)invalidate
 {
@@ -173,16 +185,18 @@
     presenter->client().presenterDidSelectShippingContact(*presenter, WebCore::PaymentContact(contact));
 }
 
-static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
+static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
 {
     ASSERT(shippingMethod);
 
-    WebCore::ApplePaySessionPaymentRequest::ShippingMethod result;
+    WebCore::ApplePayShippingMethod result;
     result.amount = shippingMethod.amount.stringValue;
     result.detail = shippingMethod.detail;
     result.identifier = shippingMethod.identifier;
     result.label = shippingMethod.label;
-
+#if defined(WKPaymentAuthorizationDelegateAdditions_toShippingMethod)
+    WKPaymentAuthorizationDelegateAdditions_toShippingMethod
+#endif
     return result;
 }
 
@@ -197,6 +211,10 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
 
     presenter->client().presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod));
 }
+
+#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_protected)
+    WKPaymentAuthorizationDelegateAdditions_implementation_protected
+#endif
 
 - (void) NO_RETURN_DUE_TO_ASSERT _getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion
 {

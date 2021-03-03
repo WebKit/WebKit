@@ -37,8 +37,8 @@
 + (NSPasteboardType)_modernPasteboardType:(NSString *)type
 {
     if (UTTypeIsDynamic((__bridge CFStringRef)type)) {
-        if (auto legacyType = adoptNS((__bridge NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)type, kUTTagClassNSPboardType)))
-            type = legacyType.autorelease();
+        if (auto legacyType = adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)type, kUTTagClassNSPboardType)))
+            type = legacyType.bridgingAutorelease();
     }
 
     if ([type isEqualToString:WebCore::legacyStringPasteboardType()])

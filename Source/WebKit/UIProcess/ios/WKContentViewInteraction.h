@@ -35,8 +35,10 @@
 #import "EditorState.h"
 #import "FocusedElementInformation.h"
 #import "FrameInfoData.h"
+#import "GestureRecognizerConsistencyEnforcer.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
+#import "PasteboardAccessIntent.h"
 #import "SyntheticEditingCommandType.h"
 #import "TextCheckingController.h"
 #import "TransactionID.h"
@@ -57,6 +59,7 @@
 #import <UIKit/UIView.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/Color.h>
+#import <WebCore/DataOwnerType.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/MediaControlsContextMenuItem.h>
 #import <WebCore/PointerID.h>
@@ -106,6 +109,7 @@ class WebPageProxy;
 @class WebEvent;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
+@class WKDataListSuggestionsControl;
 @class WKDateTimeInputControl;
 @class WKFocusedFormControlView;
 @class WKFormInputSession;
@@ -252,14 +256,13 @@ private:
 @end
 
 @interface WKContentView () {
-#if ENABLE(IOS_TOUCH_EVENTS)
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForSyntheticTapGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForSyntheticTapGestures;
-#endif
+    std::unique_ptr<WebKit::GestureRecognizerConsistencyEnforcer> _gestureRecognizerConsistencyEnforcer;
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
     BOOL _touchEventsCanPreventNativeGestures;
@@ -389,6 +392,7 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     RetainPtr<UIView <WKFormControl>> _dataListTextSuggestionsInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _dataListTextSuggestions;
+    WeakObjCPtr<WKDataListSuggestionsControl> _dataListSuggestionsControl;
 #endif
 
     BOOL _isEditable;
@@ -483,7 +487,10 @@ private:
     CGRect _imageExtractionInteractionBounds;
     Vector<BlockPtr<void()>> _actionsToPerformAfterPendingImageExtraction;
     std::unique_ptr<WebKit::SuppressInteractionToken> _suppressImageExtractionToken;
-#endif
+#if USE(UICONTEXTMENU)
+    RetainPtr<UIMenu> _imageExtractionContextMenu;
+#endif // USE(UICONTEXTMENU)
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.h>
@@ -518,6 +525,9 @@ private:
 @property (nonatomic, readonly) UIView *inputAccessoryViewForWebView;
 @property (nonatomic, readonly) BOOL preventsPanningInXAxis;
 @property (nonatomic, readonly) BOOL preventsPanningInYAxis;
+@property (nonatomic, readonly) UIWebTouchEventsGestureRecognizer *touchEventGestureRecognizer;
+@property (nonatomic, readonly) NSArray<WKDeferringGestureRecognizer *> *deferringGestures;
+@property (nonatomic, readonly) WebKit::GestureRecognizerConsistencyEnforcer& gestureRecognizerConsistencyEnforcer;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;
@@ -632,6 +642,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)updateFocusedElementValueAsColor:(UIColor *)value;
 - (void)updateFocusedElementValueAsNumber:(double)value;
 - (void)updateFocusedElementValue:(NSString *)value;
+- (void)updateFocusedElementFocusedWithDataListDropdown:(BOOL)value;
 
 - (void)_requestDOMPasteAccessWithElementRect:(const WebCore::IntRect&)elementRect originIdentifier:(const String&)originIdentifier completionHandler:(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&)completionHandler;
 
@@ -694,6 +705,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (BOOL)_formControlRefreshEnabled;
 #endif
 
+#if HAVE(PASTEBOARD_DATA_OWNER)
+- (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent;
+#endif
+
 @end
 
 @interface WKContentView (WKTesting)
@@ -711,6 +726,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action;
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action;
 - (void)_dismissContactPickerWithContacts:(NSArray *)contacts;
+
+#if ENABLE(DATALIST_ELEMENT)
+- (void)_selectDataListOption:(NSInteger)optionIndex;
+- (void)_setDataListSuggestionsControl:(WKDataListSuggestionsControl *)control;
+#endif
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;

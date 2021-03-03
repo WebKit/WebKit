@@ -233,10 +233,10 @@ void DisplayList::append(ItemHandle item)
         return append<ClipOutToPath>(item.get<ClipOutToPath>());
     case ItemType::ClipPath:
         return append<ClipPath>(item.get<ClipPath>());
-    case ItemType::ClipToDrawingCommands: {
-        ASSERT_NOT_REACHED();
-        return; // FIXME: Support the ability to clone display lists (this is currently only used for display list tracking).
-    }
+    case ItemType::BeginClipToDrawingCommands:
+        return append<BeginClipToDrawingCommands>(item.get<BeginClipToDrawingCommands>());
+    case ItemType::EndClipToDrawingCommands:
+        return append<EndClipToDrawingCommands>(item.get<EndClipToDrawingCommands>());
     case ItemType::DrawGlyphs:
         return append<DrawGlyphs>(item.get<DrawGlyphs>());
     case ItemType::DrawImageBuffer:

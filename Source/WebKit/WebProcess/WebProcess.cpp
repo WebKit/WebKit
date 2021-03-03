@@ -33,6 +33,7 @@
 #include "AuxiliaryProcessMessages.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
+#include "GPUProcessConnectionParameters.h"
 #include "InjectedBundle.h"
 #include "LibWebRTCNetwork.h"
 #include "Logging.h"
@@ -508,7 +509,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     WebResourceLoadObserver::setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
 
-    RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Presenting process = %d", WebCore::presentingApplicationPID());
+    RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Presenting processPID=%d", WebCore::presentingApplicationPID());
 }
 
 void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -1142,13 +1143,22 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
 
 #if ENABLE(GPU_PROCESS)
 
-static GPUProcessConnectionInfo getGPUProcessConnection(IPC::Connection& connection)
+#if !PLATFORM(COCOA)
+void WebProcess::platformInitializeGPUProcessConnectionParameters(GPUProcessConnectionParameters&)
 {
+}
+#endif
+
+GPUProcessConnectionInfo WebProcess::getGPUProcessConnection(IPC::Connection& connection)
+{
+    GPUProcessConnectionParameters parameters;
+    platformInitializeGPUProcessConnectionParameters(parameters);
+
     GPUProcessConnectionInfo connectionInfo;
-    if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0)) {
+    if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(parameters), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0)) {
         // If we failed the first time, retry once. The attachment may have become invalid
         // before it was received by the web process if the network process crashed.
-        if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0))
+        if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(parameters), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0))
             CRASH();
     }
 
@@ -1193,7 +1203,7 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
 LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
 {
     if (!m_libWebRTCCodecs)
-        m_libWebRTCCodecs = makeUnique<LibWebRTCCodecs>();
+        m_libWebRTCCodecs = LibWebRTCCodecs::create();
     return *m_libWebRTCCodecs;
 }
 #endif
@@ -1379,7 +1389,7 @@ void WebProcess::resetAllGeolocationPermissions()
 
 void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "prepareToSuspend: isSuspensionImminent: %d", isSuspensionImminent);
+    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "prepareToSuspend: isSuspensionImminent=%d", isSuspensionImminent);
     SetForScope<bool> suspensionScope(m_isSuspending, true);
     m_processIsSuspended = true;
 

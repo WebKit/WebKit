@@ -30,6 +30,7 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
+#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,15 +42,19 @@ class PaymentCoordinatorClient;
 class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
-class PaymentMethodUpdate;
 class PaymentSession;
 class PaymentSessionError;
 enum class PaymentAuthorizationStatus;
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayPaymentMethodModeUpdate;
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayPaymentMethodUpdate;
 struct ApplePaySetupConfiguration;
+struct ApplePayShippingContactUpdate;
+struct ApplePayShippingMethod;
+struct ApplePayShippingMethodUpdate;
 struct ExceptionDetails;
 struct PaymentAuthorizationResult;
-struct ShippingContactUpdate;
-struct ShippingMethodUpdate;
 
 class PaymentCoordinator : public CanMakeWeakPtr<PaymentCoordinator> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -68,9 +73,12 @@ public:
 
     bool beginPaymentSession(Document&, PaymentSession&, const ApplePaySessionPaymentRequest&);
     void completeMerchantValidation(const PaymentMerchantSession&);
-    void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&);
-    void completeShippingContactSelection(Optional<ShippingContactUpdate>&&);
-    void completePaymentMethodSelection(Optional<PaymentMethodUpdate>&&);
+    void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&);
+    void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&);
+    void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&);
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    void completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&&);
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     void completePaymentSession(Optional<PaymentAuthorizationResult>&&);
     void abortPaymentSession();
     void cancelPaymentSession();
@@ -78,8 +86,11 @@ public:
     WEBCORE_EXPORT void validateMerchant(URL&& validationURL);
     WEBCORE_EXPORT void didAuthorizePayment(const Payment&);
     WEBCORE_EXPORT void didSelectPaymentMethod(const PaymentMethod&);
-    WEBCORE_EXPORT void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&);
+    WEBCORE_EXPORT void didSelectShippingMethod(const ApplePayShippingMethod&);
     WEBCORE_EXPORT void didSelectShippingContact(const PaymentContact&);
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+    WEBCORE_EXPORT void didChangePaymentMethodMode(String&& paymentMethodMode);
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
     WEBCORE_EXPORT void didCancelPaymentSession(PaymentSessionError&&);
 
     Optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;

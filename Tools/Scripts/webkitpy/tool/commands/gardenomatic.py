@@ -23,11 +23,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.port import builders
+from webkitpy.port import factory
+from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.commands.rebaseline import AbstractRebaseliningCommand
 from webkitpy.tool.servers.gardeningserver import GardeningHTTPServer
-from webkitpy.port import factory
 
 
+@DeprecatedCommand
 class GardenOMatic(AbstractRebaseliningCommand):
     name = "garden-o-matic"
     help_text = "Command for gardening the WebKit tree."

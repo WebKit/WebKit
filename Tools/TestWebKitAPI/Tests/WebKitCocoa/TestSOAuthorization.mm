@@ -184,7 +184,7 @@ static const char* samlResponse =
 {
     EXPECT_FALSE(newWindowCreated);
     newWindowCreated = true;
-    gNewWindow = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
+    gNewWindow = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     [gNewWindow setNavigationDelegate:self];
     return gNewWindow.get();
 }

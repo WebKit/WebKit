@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSScriptFetchParameters.h"
 
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 const ClassInfo JSScriptFetchParameters::s_info = { "JSScriptFetchParameters", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSScriptFetchParameters) };

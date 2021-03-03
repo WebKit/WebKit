@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(APPKIT)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSScrollView_Private.h>
@@ -38,3 +40,5 @@ CGFloat _NSElasticDeltaForTimeDelta(CGFloat initialPosition, CGFloat initialVelo
 CGFloat _NSReboundDeltaForElasticDelta(CGFloat delta);
 
 WTF_EXTERN_C_END
+
+#endif // USE(APPKIT)

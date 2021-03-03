@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include "DownloadID.h"
 #include "MessageSender.h"
 #include "NetworkLoadClient.h"

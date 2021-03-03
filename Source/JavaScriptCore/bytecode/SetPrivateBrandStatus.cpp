@@ -235,17 +235,24 @@ CacheableIdentifier SetPrivateBrandStatus::singleIdentifier() const
     return result;
 }
 
-void SetPrivateBrandStatus::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void SetPrivateBrandStatus::visitAggregateImpl(Visitor& visitor)
 {
     for (SetPrivateBrandVariant& variant : m_variants)
         variant.visitAggregate(visitor);
 }
 
-void SetPrivateBrandStatus::markIfCheap(SlotVisitor& visitor)
+DEFINE_VISIT_AGGREGATE(SetPrivateBrandStatus);
+
+template<typename Visitor>
+void SetPrivateBrandStatus::markIfCheap(Visitor& visitor)
 {
     for (SetPrivateBrandVariant& variant : m_variants)
         variant.markIfCheap(visitor);
 }
+
+template void SetPrivateBrandStatus::markIfCheap(AbstractSlotVisitor&);
+template void SetPrivateBrandStatus::markIfCheap(SlotVisitor&);
 
 bool SetPrivateBrandStatus::finalize(VM& vm)
 {

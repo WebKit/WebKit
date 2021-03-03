@@ -99,6 +99,7 @@
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
@@ -192,7 +193,7 @@ static void runTest(const std::string& testURL);
 
 volatile bool done;
 
-NavigationController* gNavigationController = nullptr;
+RetainPtr<NavigationController> gNavigationController;
 RefPtr<TestRunner> gTestRunner;
 
 Optional<WTR::TestOptions> mainFrameTestOptions;
@@ -204,22 +205,28 @@ WebFrame *mainFrame = nil;
 WebFrame *topLoadingFrame = nil; // !nil iff a load is in progress
 
 #if PLATFORM(MAC)
-NSWindow *mainWindow = nil;
+RetainPtr<NSWindow> mainWindow;
 #endif
 
 CFMutableSetRef disallowedURLs= nullptr;
 static CFRunLoopTimerRef waitToDumpWatchdog;
 
+static RetainPtr<WebView>& globalWebView()
+{
+    static NeverDestroyed<RetainPtr<WebView>> globalWebView;
+    return globalWebView;
+}
+
 // Delegates
-static FrameLoadDelegate *frameLoadDelegate;
-static UIDelegate *uiDelegate;
-static EditingDelegate *editingDelegate;
-static ResourceLoadDelegate *resourceLoadDelegate;
-static HistoryDelegate *historyDelegate;
-PolicyDelegate *policyDelegate = nullptr;
-DefaultPolicyDelegate *defaultPolicyDelegate = nullptr;
+static RetainPtr<FrameLoadDelegate> frameLoadDelegate;
+static RetainPtr<UIDelegate> uiDelegate;
+static RetainPtr<EditingDelegate> editingDelegate;
+static RetainPtr<ResourceLoadDelegate> resourceLoadDelegate;
+static RetainPtr<HistoryDelegate> historyDelegate;
+RetainPtr<PolicyDelegate> policyDelegate;
+RetainPtr<DefaultPolicyDelegate> defaultPolicyDelegate;
 #if PLATFORM(IOS_FAMILY)
-static ScrollViewResizerDelegate *scrollViewResizerDelegate;
+static RetainPtr<ScrollViewResizerDelegate> scrollViewResizerDelegate;
 #endif
 
 static int dumpPixelsForAllTests;
@@ -238,13 +245,17 @@ static BOOL printSeparators;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 static std::set<std::string> allowedHosts;
 
-static WebHistoryItem *prevTestBFItem; // current b/f item at the end of the previous test
+static RetainPtr<WebHistoryItem>& prevTestBFItem()
+{
+    static NeverDestroyed<RetainPtr<WebHistoryItem>> _prevTestBFItem; // current b/f item at the end of the previous test.
+    return _prevTestBFItem;
+}
 
 #if PLATFORM(IOS_FAMILY)
 const CGRect layoutTestViewportRect = { {0, 0}, {static_cast<CGFloat>(TestRunner::viewWidth), static_cast<CGFloat>(TestRunner::viewHeight)} };
-DumpRenderTreeBrowserView *gWebBrowserView = nil;
-DumpRenderTreeWebScrollView *gWebScrollView = nil;
-DumpRenderTreeWindow *gDrtWindow = nil;
+RetainPtr<DumpRenderTreeBrowserView> gWebBrowserView;
+RetainPtr<DumpRenderTreeWebScrollView> gWebScrollView;
+RetainPtr<DumpRenderTreeWindow> gDrtWindow;
 #endif
 
 void setPersistentUserStyleSheetLocation(CFStringRef url)
@@ -406,22 +417,19 @@ static NSSet *allowedFontFamilySet()
 
 static NSArray *fontAllowList()
 {
-    static NSArray *availableFonts;
-    if (availableFonts)
-        return availableFonts;
-
-    NSMutableArray *availableFontList = [[NSMutableArray alloc] init];
-    for (NSString *fontFamily in allowedFontFamilySet()) {
-        NSArray* fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
-        [availableFontList addObject:fontFamily];
-        for (NSArray* fontInfo in fontsForFamily) {
-            // Font name is the first entry in the array.
-            [availableFontList addObject:[fontInfo objectAtIndex:0]];
+    static RetainPtr<NSArray> availableFonts = [] {
+        auto availableFonts = adoptNS([[NSMutableArray alloc] init]);
+        for (NSString *fontFamily in allowedFontFamilySet()) {
+            NSArray* fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
+            [availableFonts addObject:fontFamily];
+            for (NSArray* fontInfo in fontsForFamily) {
+                // Font name is the first entry in the array.
+                [availableFonts addObject:[fontInfo objectAtIndex:0]];
+            }
         }
-    }
-
-    availableFonts = availableFontList;
-    return availableFonts;
+        return availableFonts;
+    }();
+    return availableFonts.get();
 }
 
 // Activating system copies of these fonts overrides any others that could be preferred, such as ones
@@ -565,7 +573,7 @@ static void adjustWebDocumentForFlexibleViewport(UIWebBrowserView *webBrowserVie
     // Adjust the viewport view and viewport to have similar behavior
     // as the browser.
     [(DumpRenderTreeBrowserView *)webBrowserView setScrollingUsesUIWebScrollView:YES];
-    [webBrowserView setDelegate:scrollViewResizerDelegate];
+    [webBrowserView setDelegate:scrollViewResizerDelegate.get()];
 
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     CGRect viewportRect = CGRectMake(0, 0, screenBounds.size.width, screenBounds.size.height);
@@ -664,22 +672,22 @@ static void registerMockScrollbars()
 }
 #endif
 
-WebView *createWebViewAndOffscreenWindow()
+RetainPtr<WebView> createWebViewAndOffscreenWindow()
 {
 #if !PLATFORM(IOS_FAMILY)
     NSRect rect = NSMakeRect(0, 0, TestRunner::viewWidth, TestRunner::viewHeight);
-    WebView *webView = [[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"];
+    auto webView = adoptNS([[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"]);
 #else
-    DumpRenderTreeBrowserView *webBrowserView = [[[DumpRenderTreeBrowserView alloc] initWithFrame:layoutTestViewportRect] autorelease];
+    auto webBrowserView = adoptNS([[DumpRenderTreeBrowserView alloc] initWithFrame:layoutTestViewportRect]);
     [webBrowserView setInputViewObeysDOMFocus:YES];
-    WebView *webView = [[webBrowserView webView] retain];
+    auto webView = retainPtr([webBrowserView webView]);
     [webView setGroupName:@"org.webkit.DumpRenderTree"];
 #endif
 
-    [webView setUIDelegate:uiDelegate];
-    [webView setFrameLoadDelegate:frameLoadDelegate];
-    [webView setEditingDelegate:editingDelegate];
-    [webView setResourceLoadDelegate:resourceLoadDelegate];
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView setFrameLoadDelegate:frameLoadDelegate.get()];
+    [webView setEditingDelegate:editingDelegate.get()];
+    [webView setResourceLoadDelegate:resourceLoadDelegate.get()];
     [webView _setGeolocationProvider:[MockGeolocationProvider shared]];
     [webView _setDeviceOrientationProvider:[WebDeviceOrientationProviderMock shared]];
     [webView _setNotificationProvider:[MockWebNotificationProvider shared]];
@@ -711,43 +719,42 @@ WebView *createWebViewAndOffscreenWindow()
     // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.
     NSScreen *firstScreen = [[NSScreen screens] firstObject];
     NSRect windowRect = (showWebView) ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
-    DumpRenderTreeWindow *window = [[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
-    mainWindow = window;
-
-    [window setColorSpace:[firstScreen colorSpace]];
-    [window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
-    [[window contentView] addSubview:webView];
+    mainWindow = adoptNS([[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    [mainWindow setReleasedWhenClosed:NO];
+    [mainWindow setColorSpace:[firstScreen colorSpace]];
+    [mainWindow setCollectionBehavior:NSWindowCollectionBehaviorStationary];
+    [[mainWindow contentView] addSubview:webView.get()];
     if (showWebView)
-        [window orderFront:nil];
+        [mainWindow orderFront:nil];
     else
-        [window orderBack:nil];
-    [window setAutodisplay:NO];
+        [mainWindow orderBack:nil];
+    [mainWindow setAutodisplay:NO];
 
-    [window startListeningForAcceleratedCompositingChanges];
+    [(DumpRenderTreeWindow *)mainWindow.get() startListeningForAcceleratedCompositingChanges];
 #else
-    DumpRenderTreeWindow *drtWindow = [[DumpRenderTreeWindow alloc] initWithLayer:[webBrowserView layer]];
-    [drtWindow setContentView:webView];
-    [webBrowserView setWAKWindow:drtWindow];
+    auto drtWindow = adoptNS([[DumpRenderTreeWindow alloc] initWithLayer:[webBrowserView layer]]);
+    [drtWindow setContentView:webView.get()];
+    [webBrowserView setWAKWindow:drtWindow.get()];
 
     [[webView window] makeFirstResponder:[[[webView mainFrame] frameView] documentView]];
 
     CGRect uiWindowRect = layoutTestViewportRect;
     uiWindowRect.origin.y += [UIApp statusBarHeight];
-    UIWindow *uiWindow = [[[UIWindow alloc] initWithFrame:uiWindowRect] autorelease];
+    auto uiWindow = adoptNS([[UIWindow alloc] initWithFrame:uiWindowRect]);
 
     auto viewController = adoptNS([[UIViewController alloc] init]);
     [uiWindow setRootViewController:viewController.get()];
 
     // The UIWindow and UIWebBrowserView are released when the DumpRenderTreeWindow is closed.
-    drtWindow.uiWindow = uiWindow;
-    drtWindow.browserView = webBrowserView;
+    drtWindow.get().uiWindow = uiWindow.get();
+    drtWindow.get().browserView = webBrowserView.get();
 
     auto scrollView = adoptNS([[DumpRenderTreeWebScrollView alloc] initWithFrame:layoutTestViewportRect]);
-    [scrollView addSubview:webBrowserView];
+    [scrollView addSubview:webBrowserView.get()];
 
     [[viewController view] addSubview:scrollView.get()];
 
-    adjustWebDocumentForStandardViewport(webBrowserView, scrollView.get());
+    adjustWebDocumentForStandardViewport(webBrowserView.get(), scrollView.get());
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -758,27 +765,31 @@ WebView *createWebViewAndOffscreenWindow()
 #else
     // Initialize the global UIViews, and set the key UIWindow to be painted.
     if (!gWebBrowserView) {
-        gWebBrowserView = [webBrowserView retain];
-        gWebScrollView = [scrollView retain];
-        gDrtWindow = [drtWindow retain];
+        gWebBrowserView = WTFMove(webBrowserView);
+        gWebScrollView = WTFMove(scrollView);
+        gDrtWindow = WTFMove(drtWindow);
         [uiWindow makeKeyAndVisible];
         [uiWindow retain];
     }
 #endif
 
     [webView setMediaVolume:0];
-
     return webView;
 }
 
-static void destroyWebViewAndOffscreenWindow(WebView *webView)
+static void destroyGlobalWebViewAndOffscreenWindow()
 {
-    ASSERT(webView == [mainFrame webView]);
+    if (!mainFrame && !globalWebView())
+        return;
+
+    ASSERT(globalWebView() == [mainFrame webView]);
+
 #if !PLATFORM(IOS_FAMILY)
-    NSWindow *window = [webView window];
+    NSWindow *window = [globalWebView() window];
 #endif
-    [webView close];
+    [globalWebView() close];
     mainFrame = nil;
+    globalWebView() = nil;
 
 #if !PLATFORM(IOS_FAMILY)
     // Work around problem where registering drag types leaves an outstanding
@@ -787,13 +798,19 @@ static void destroyWebViewAndOffscreenWindow(WebView *webView)
     // it probably won't cause any trouble (and this is just a test tool, after all).
     [NSObject cancelPreviousPerformRequestsWithTarget:window];
 
-    [window close]; // releases when closed
+    [window close];
+    mainWindow = nil;
 #else
     auto uiWindow = adoptNS([gWebBrowserView window]);
     [uiWindow removeFromSuperview];
 #endif
+}
 
-    [webView release];
+static void createGlobalWebViewAndOffscreenWindow()
+{
+    destroyGlobalWebViewAndOffscreenWindow();
+    globalWebView() = createWebViewAndOffscreenWindow();
+    mainFrame = [globalWebView() mainFrame];
 }
 
 static NSString *libraryPathForDumpRenderTree()
@@ -972,36 +989,31 @@ static void setDefaultsToConsistentValuesForTesting()
 static void allocateGlobalControllers()
 {
     // FIXME: We should remove these and move to the ObjC standard [Foo sharedInstance] model
-    gNavigationController = [[NavigationController alloc] init];
-    frameLoadDelegate = [[FrameLoadDelegate alloc] init];
-    uiDelegate = [[UIDelegate alloc] init];
-    editingDelegate = [[EditingDelegate alloc] init];
-    resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
-    policyDelegate = [[PolicyDelegate alloc] init];
-    historyDelegate = [[HistoryDelegate alloc] init];
-    defaultPolicyDelegate = [[DefaultPolicyDelegate alloc] init];
+    gNavigationController = adoptNS([[NavigationController alloc] init]);
+    frameLoadDelegate = adoptNS([[FrameLoadDelegate alloc] init]);
+    uiDelegate = adoptNS([[UIDelegate alloc] init]);
+    editingDelegate = adoptNS([[EditingDelegate alloc] init]);
+    resourceLoadDelegate = adoptNS([[ResourceLoadDelegate alloc] init]);
+    policyDelegate = adoptNS([[PolicyDelegate alloc] init]);
+    historyDelegate = adoptNS([[HistoryDelegate alloc] init]);
+    defaultPolicyDelegate = adoptNS([[DefaultPolicyDelegate alloc] init]);
 #if PLATFORM(IOS_FAMILY)
-    scrollViewResizerDelegate = [[ScrollViewResizerDelegate alloc] init];
+    scrollViewResizerDelegate = adoptNS([[ScrollViewResizerDelegate alloc] init]);
 #endif
-}
-
-// ObjC++ doens't seem to let me pass NSObject*& sadly.
-static inline void releaseAndZero(NSObject** object)
-{
-    [*object release];
-    *object = nil;
 }
 
 static void releaseGlobalControllers()
 {
-    releaseAndZero(&gNavigationController);
-    releaseAndZero(&frameLoadDelegate);
-    releaseAndZero(&editingDelegate);
-    releaseAndZero(&resourceLoadDelegate);
-    releaseAndZero(&uiDelegate);
-    releaseAndZero(&policyDelegate);
+    gNavigationController = nil;
+    frameLoadDelegate = nil;
+    editingDelegate = nil;
+    resourceLoadDelegate = nil;
+    uiDelegate = nil;
+    historyDelegate = nil;
+    policyDelegate = nil;
+    defaultPolicyDelegate = nil;
 #if PLATFORM(IOS_FAMILY)
-    releaseAndZero(&scrollViewResizerDelegate);
+    scrollViewResizerDelegate = nil;
 #endif
 }
 
@@ -1208,7 +1220,7 @@ void dumpRenderTree(int argc, const char *argv[])
     if (threaded)
         stopJavaScriptThreads();
 
-    destroyWebViewAndOffscreenWindow([mainFrame webView]);
+    destroyGlobalWebViewAndOffscreenWindow();
 
     releaseGlobalControllers();
 
@@ -1393,7 +1405,7 @@ static void dumpFrameScrollPosition(WebFrame *f)
     }
 }
 
-static NSString *dumpFramesAsText(WebFrame *frame)
+static RetainPtr<NSString> dumpFramesAsText(WebFrame *frame)
 {
     DOMDocument *document = [frame DOMDocument];
     DOMElement *documentElement = [document documentElement];
@@ -1401,11 +1413,13 @@ static NSString *dumpFramesAsText(WebFrame *frame)
     if (!documentElement)
         return @"";
 
-    NSMutableString *result = [[[NSMutableString alloc] init] autorelease];
+    RetainPtr<NSMutableString> result;
 
     // Add header for all but the main frame.
     if ([frame parentFrame])
-        result = [NSMutableString stringWithFormat:@"\n--------\nFrame: '%@'\n--------\n", [frame name]];
+        result = adoptNS([[NSMutableString alloc] initWithFormat:@"\n--------\nFrame: '%@'\n--------\n", [frame name]]);
+    else
+        result = adoptNS([[NSMutableString alloc] init]);
 
     NSString *innerText = [documentElement innerText];
     // We use WKStringGetUTF8CStringNonStrict() to convert innerText to a WK String since
@@ -1423,13 +1437,13 @@ static NSString *dumpFramesAsText(WebFrame *frame)
         NSArray *kids = [frame childFrames];
         if (kids) {
             for (unsigned i = 0; i < [kids count]; i++)
-                [result appendString:dumpFramesAsText([kids objectAtIndex:i])];
+                [result appendString:dumpFramesAsText([kids objectAtIndex:i]).get()];
         }
     }
 
     // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
-    [result replaceOccurrencesOfString:@" +\n" withString:@"\n" options:NSRegularExpressionSearch range:NSMakeRange(0, result.length)];
-    [result replaceOccurrencesOfString:@" +$" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, result.length)];
+    [result replaceOccurrencesOfString:@" +\n" withString:@"\n" options:NSRegularExpressionSearch range:NSMakeRange(0, [result length])];
+    [result replaceOccurrencesOfString:@" +$" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [result length])];
 
     return result;
 }
@@ -1480,17 +1494,17 @@ static void dumpBackForwardListForWebView(WebView *view)
     for (int i = [bfList forwardListCount]; i > 0; i--) {
         WebHistoryItem *item = [bfList itemAtIndex:i];
         // something is wrong if the item from the last test is in the forward part of the b/f list
-        assert(item != prevTestBFItem);
+        assert(item != prevTestBFItem());
         [itemsToPrint addObject:item];
     }
 
-    assert([bfList currentItem] != prevTestBFItem);
+    assert([bfList currentItem] != prevTestBFItem());
     [itemsToPrint addObject:[bfList currentItem]];
     int currentItemIndex = [itemsToPrint count] - 1;
 
     for (int i = -1; i >= -[bfList backListCount]; i--) {
         WebHistoryItem *item = [bfList itemAtIndex:i];
-        if (item == prevTestBFItem)
+        if (item == prevTestBFItem())
             break;
         [itemsToPrint addObject:item];
     }
@@ -1615,7 +1629,7 @@ void dump()
     ASSERT(!gTestRunner->hasPendingWebNotificationClick());
 
     if (dumpTree) {
-        NSString *resultString = nil;
+        RetainPtr<NSString> resultString;
         NSData *resultData = nil;
         NSString *resultMimeType = @"text/plain";
 
@@ -1736,7 +1750,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
     WebView *webView = [mainFrame webView];
 
 #if PLATFORM(IOS_FAMILY)
-    adjustWebDocumentForStandardViewport(gWebBrowserView, gWebScrollView);
+    adjustWebDocumentForStandardViewport(gWebBrowserView.get(), gWebScrollView.get());
     [webView _setAllowsMessaging:YES];
 #endif
     [webView setEditable:NO];
@@ -1748,7 +1762,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
     [webView _setCustomBackingScaleFactor:0];
 #endif
     [webView setTabKeyCyclesThroughElements:YES];
-    [webView setPolicyDelegate:defaultPolicyDelegate];
+    [webView setPolicyDelegate:defaultPolicyDelegate.get()];
     [policyDelegate setPermissive:NO];
     [policyDelegate setControllerToNotifyDone:0];
     [uiDelegate resetToConsistentStateBeforeTesting:options];
@@ -1901,12 +1915,9 @@ static void runTest(const std::string& inputLine)
 
     auto options = testOptionsForTest(command);
 
-    if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value())) {
-        if (mainFrame)
-            destroyWebViewAndOffscreenWindow([mainFrame webView]);
-        WebView *pristineWebView = createWebViewAndOffscreenWindow();
-        mainFrame = [pristineWebView mainFrame];
-    }
+    if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value()))
+        createGlobalWebViewAndOffscreenWindow();
+
     mainFrameTestOptions = options;
 
     const char* testURL([[url absoluteString] UTF8String]);
@@ -1924,7 +1935,7 @@ static void runTest(const std::string& inputLine)
     topLoadingFrame = nil;
 #if !PLATFORM(IOS_FAMILY)
     ASSERT(!draggingInfo); // the previous test should have called eventSender.mouseUp to drop!
-    releaseAndZero(&draggingInfo);
+    draggingInfo = nil;
 #endif
     done = NO;
 
@@ -1940,7 +1951,7 @@ static void runTest(const std::string& inputLine)
         gTestRunner->setDumpFrameLoadCallbacks(true);
 
     if (shouldLogHistoryDelegates(pathOrURL.c_str()))
-        [[mainFrame webView] setHistoryDelegate:historyDelegate];
+        [[mainFrame webView] setHistoryDelegate:historyDelegate.get()];
     else
         [[mainFrame webView] setHistoryDelegate:nil];
 
@@ -1951,7 +1962,7 @@ static void runTest(const std::string& inputLine)
 
 #if PLATFORM(IOS_FAMILY)
     if (shouldMakeViewportFlexible(pathOrURL.c_str()))
-        adjustWebDocumentForFlexibleViewport(gWebBrowserView, gWebScrollView);
+        adjustWebDocumentForFlexibleViewport(gWebBrowserView.get(), gWebScrollView.get());
 #endif
 
     if (shouldUseEphemeralSession(pathOrURL.c_str()))
@@ -1963,8 +1974,7 @@ static void runTest(const std::string& inputLine)
     lastMousePosition = NSZeroPoint;
     lastClickPosition = NSZeroPoint;
 
-    [prevTestBFItem release];
-    prevTestBFItem = [[[[mainFrame webView] backForwardList] currentItem] retain];
+    prevTestBFItem() = [[[mainFrame webView] backForwardList] currentItem];
 
     auto& workQueue = DRT::WorkQueue::singleton();
     workQueue.clear();

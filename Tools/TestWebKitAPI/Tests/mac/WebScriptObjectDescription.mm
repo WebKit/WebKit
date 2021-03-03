@@ -62,7 +62,7 @@ TEST(WebKitLegacy, WebScriptObjectDescription)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<WebScriptDescriptionTest> testController = adoptNS([WebScriptDescriptionTest new]);
-    NSObject *object = [[NSObject alloc] init];
+    auto object = adoptNS([[NSObject alloc] init]);
 
     webView.get().frameLoadDelegate = testController.get();
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle]
@@ -72,14 +72,13 @@ TEST(WebKitLegacy, WebScriptObjectDescription)
     didFinishLoad = false;
     failedObjCDescription = false;
 
-    std::thread thread1(nsObjectDescriptionTest, object);
+    std::thread thread1(nsObjectDescriptionTest, object.get());
 
-    CFBooleanRef result = (CFBooleanRef)([[webView.get() windowScriptObject] callWebScriptMethod:@"foo" withArguments:@[ object ]]);
+    CFBooleanRef result = (CFBooleanRef)([[webView.get() windowScriptObject] callWebScriptMethod:@"foo" withArguments:@[ object.get() ]]);
     EXPECT_EQ(CFBooleanGetValue(result), true);
 
     thread1.join();
     EXPECT_EQ(failedObjCDescription, false);
-    [object release];
 }
 
 } // namespace TestWebKitAPI

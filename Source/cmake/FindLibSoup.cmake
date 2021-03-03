@@ -28,21 +28,31 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+if (NOT DEFINED LibSoup_FIND_VERSION)
+    message(FATAL_ERROR "No LibSoup version specified")
+endif ()
+
+if (LibSoup_FIND_VERSION VERSION_LESS 2.91)
+    set(LIBSOUP_API_VERSION "2.4")
+else ()
+    set(LIBSOUP_API_VERSION "3.0")
+endif ()
+
 # LibSoup does not provide an easy way to retrieve its version other than its
 # .pc file, so we need to rely on PC_LIBSOUP_VERSION and REQUIRE the .pc file
 # to be found.
 find_package(PkgConfig QUIET)
-pkg_check_modules(PC_LIBSOUP REQUIRED QUIET libsoup-2.4)
+pkg_check_modules(PC_LIBSOUP REQUIRED QUIET "libsoup-${LIBSOUP_API_VERSION}")
 
 find_path(LIBSOUP_INCLUDE_DIRS
     NAMES libsoup/soup.h
     HINTS ${PC_LIBSOUP_INCLUDEDIR}
           ${PC_LIBSOUP_INCLUDE_DIRS}
-    PATH_SUFFIXES libsoup-2.4
+    PATH_SUFFIXES "libsoup-${LIBSOUP_API_VERSION}"
 )
 
 find_library(LIBSOUP_LIBRARIES
-    NAMES soup-2.4
+    NAMES "soup-${LIBSOUP_API_VERSION}"
     HINTS ${PC_LIBSOUP_LIBDIR}
           ${PC_LIBSOUP_LIBRARY_DIRS}
 )

@@ -14,6 +14,7 @@ depends:
 - sdk/ccls.bst
 - sdk/cmake-lsp.bst
 - sdk/clangd.bst
+- sdk/eigen.bst
 - sdk/enchant-2.bst
 - sdk/ffmpeg.bst
 - sdk/glib-networking.bst
@@ -47,6 +48,7 @@ depends:
 - sdk/libzstd.bst
 - sdk/lzo2.bst
 - sdk/mesa.bst
+- sdk/monado.bst
 - sdk/openjpeg.bst
 - sdk/openxr.bst
 - sdk/os-release.bst

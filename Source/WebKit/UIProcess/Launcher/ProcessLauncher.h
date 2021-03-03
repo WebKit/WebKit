@@ -76,7 +76,10 @@ public:
         GPU,
 #endif
 #if ENABLE(WEB_AUTHN)
-        WebAuthn
+        WebAuthn,
+#endif
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+        DBusProxy,
 #endif
     };
 

@@ -112,6 +112,8 @@ private:
     bool isLeftToRightFlow() const;
     bool isMultiline() const;
     Length flexBasisForChild(const RenderBox& child) const;
+    Length mainSizeLengthForChild(SizeType, const RenderBox&) const;
+    Length crossSizeLengthForChild(SizeType, const RenderBox&) const;
     bool shouldApplyMinSizeAutoForChild(const RenderBox&) const;
     LayoutUnit crossAxisExtentForChild(const RenderBox& child) const;
     LayoutUnit crossAxisIntrinsicExtentForChild(const RenderBox& child) const;
@@ -141,9 +143,10 @@ private:
     LayoutUnit crossAxisScrollbarExtentForChild(const RenderBox& child) const;
     LayoutPoint flowAwareLocationForChild(const RenderBox& child) const;
     bool useChildAspectRatio(const RenderBox& child) const;
+    bool childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const;
     LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const;
     void setFlowAwareLocationForChild(RenderBox& child, const LayoutPoint&);
-    LayoutUnit computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding, bool relayoutChildren);
+    LayoutUnit computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding);
     void adjustAlignmentForChild(RenderBox& child, LayoutUnit);
     ItemPosition alignmentForChild(const RenderBox& child) const;
     bool childMainSizeIsDefinite(const RenderBox&, const Length& flexBasis) const;

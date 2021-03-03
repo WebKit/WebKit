@@ -29,32 +29,98 @@
 #if ENABLE(WEBXR)
 
 #include "Document.h"
+#include "WebXRFrame.h"
+#include "WebXRRigidTransform.h"
 #include "WebXRSession.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
+static constexpr double DefaultUserHeightInMeters = 1.65;
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRReferenceSpace);
 
 Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, Ref<WebXRSession>&& session, XRReferenceSpaceType type)
 {
-    return adoptRef(*new WebXRReferenceSpace(document, WTFMove(session), type));
+    // https://immersive-web.github.io/webxr/#xrspace-native-origin
+    // The transform from the effective space to the native origin's space is
+    // defined by an origin offset, which is an XRRigidTransform initially set
+    // to an identity transform.
+    return adoptRef(*new WebXRReferenceSpace(document, WTFMove(session), WebXRRigidTransform::create(), type));
 }
 
-WebXRReferenceSpace::WebXRReferenceSpace(Document& document, Ref<WebXRSession>&& session, XRReferenceSpaceType type)
-    : WebXRSpace(document, WTFMove(session))
+Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, Ref<WebXRSession>&& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
+{
+    return adoptRef(*new WebXRReferenceSpace(document, WTFMove(session), WTFMove(offset), type));
+}
+
+WebXRReferenceSpace::WebXRReferenceSpace(Document& document, Ref<WebXRSession>&& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
+    : WebXRSpace(document, WTFMove(offset))
+    , m_session(WTFMove(session))
     , m_type(type)
 {
 }
 
 WebXRReferenceSpace::~WebXRReferenceSpace() = default;
 
-RefPtr<WebXRReferenceSpace> WebXRReferenceSpace::getOffsetReferenceSpace(const WebXRRigidTransform&)
+
+TransformationMatrix WebXRReferenceSpace::nativeOrigin() const
 {
-    if (!scriptExecutionContext())
+    TransformationMatrix identity;
+
+    // We assume that poses got from the devices are in local space.
+    // This will require more complex logic if we add ports with different default coordinates.
+    switch (m_type) {
+    case XRReferenceSpaceType::Viewer: {
+        // Return the current pose. Content rendered in viewer pose will stay in fixed point on HMDs.
+        auto& data = m_session->frameData();
+        return WebXRFrame::matrixFromPose(data.origin);
+    }
+    case XRReferenceSpaceType::Local:
+        // Data from the device is already in local, use the identity matrix.
+        return identity;
+    case XRReferenceSpaceType::Unbounded:
+        // Local and unbounded use the same device space, use the identity matrix.
+        return identity;
+    case XRReferenceSpaceType::LocalFloor: {
+        // Use the floor transform provided by the device or fallback to a default height.
+        return floorOriginTransform();
+    }
+    case XRReferenceSpaceType::BoundedFloor:
+    default:
+        // BoundedFloor is handled by WebXRBoundedReferenceSpace subclass
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    return identity;
+}
+
+RefPtr<WebXRReferenceSpace> WebXRReferenceSpace::getOffsetReferenceSpace(const WebXRRigidTransform& offsetTransform)
+{
+    auto* document = downcast<Document>(scriptExecutionContext());
+    if (!document)
         return nullptr;
-    ASSERT(is<Document>(scriptExecutionContext()));
-    return create(downcast<Document>(*scriptExecutionContext()), m_session.copyRef(), m_type);
+
+    // https://immersive-web.github.io/webxr/#dom-xrreferencespace-getoffsetreferencespace
+    // Set offsetSpace’s origin offset to the result of multiplying base’s origin offset by originOffset in the relevant realm of base.
+    auto offset = WebXRRigidTransform::create(originOffset().rawTransform() * offsetTransform.rawTransform());
+
+    return create(*document, m_session.copyRef(), WTFMove(offset), m_type);
+}
+
+TransformationMatrix WebXRReferenceSpace::floorOriginTransform() const
+{
+    auto& data = m_session->frameData();
+    if (!data.floorTransform) {
+        TransformationMatrix defautTransform;
+        defautTransform.translate3d(0.0, -DefaultUserHeightInMeters, 0.0);
+        return defautTransform;
+    }
+
+    // https://immersive-web.github.io/webxr/#dom-xrreferencespacetype-local-floor
+    // Get floor estimation from the device
+    // FIXME: Round to nearest 1cm to prevent fingerprinting
+    return WebXRFrame::matrixFromPose(*data.floorTransform);
 }
 
 } // namespace WebCore

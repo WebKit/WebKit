@@ -51,10 +51,14 @@ bool CheckPrivateBrandVariant::attemptToMerge(const CheckPrivateBrandVariant& ot
     return true;
 }
 
-void CheckPrivateBrandVariant::markIfCheap(SlotVisitor& visitor)
+template<typename Visitor>
+void CheckPrivateBrandVariant::markIfCheap(Visitor& visitor)
 {
     m_structureSet.markIfCheap(visitor);
 }
+
+template void CheckPrivateBrandVariant::markIfCheap(AbstractSlotVisitor&);
+template void CheckPrivateBrandVariant::markIfCheap(SlotVisitor&);
 
 bool CheckPrivateBrandVariant::finalize(VM& vm)
 {
@@ -63,10 +67,13 @@ bool CheckPrivateBrandVariant::finalize(VM& vm)
     return true;
 }
 
-void CheckPrivateBrandVariant::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void CheckPrivateBrandVariant::visitAggregateImpl(Visitor& visitor)
 {
     m_identifier.visitAggregate(visitor);
 }
+
+DEFINE_VISIT_AGGREGATE(CheckPrivateBrandVariant);
 
 void CheckPrivateBrandVariant::dump(PrintStream& out) const
 {

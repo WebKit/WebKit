@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,15 @@ Ref<API::Navigation> WebNavigationState::createReloadNavigation(WebBackForwardLi
 Ref<API::Navigation> WebNavigationState::createLoadDataNavigation(std::unique_ptr<API::SubstituteData>&& substituteData)
 {
     auto navigation = API::Navigation::create(*this, WTFMove(substituteData));
+
+    m_navigations.set(navigation->navigationID(), navigation.ptr());
+
+    return navigation;
+}
+
+Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(WebCore::ResourceRequest&& request, std::unique_ptr<API::SubstituteData>&& substituteData, WebBackForwardListItem* currentItem)
+{
+    auto navigation = API::Navigation::create(*this, WTFMove(request), WTFMove(substituteData), currentItem);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 

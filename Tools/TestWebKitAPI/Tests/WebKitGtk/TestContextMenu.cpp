@@ -21,6 +21,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <WebCore/SoupVersioning.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -1081,29 +1082,38 @@ static void testContextMenuWebExtensionNode(ContextMenuWebExtensionNodeTest* tes
     g_assert_cmpstr(test->m_node.parentName.data(), ==, "A");
 }
 
+#if USE(SOUP2)
 static void writeNextChunk(SoupMessage* message)
+#else
+static void writeNextChunk(SoupServerMessage* message)
+#endif
 {
+    auto* responseBody = soup_server_message_get_response_body(message);
     GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), "silence.webm", nullptr));
     char* contents;
     gsize contentsLength;
     if (!g_file_get_contents(filePath.get(), &contents, &contentsLength, nullptr)) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
-        soup_message_body_complete(message->response_body);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
+        soup_message_body_complete(responseBody);
         return;
     }
 
-    soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, contentsLength);
-    soup_message_body_complete(message->response_body);
+    soup_message_body_append(responseBody, SOUP_MEMORY_TAKE, contents, contentsLength);
+    soup_message_body_complete(responseBody);
 }
 
+#if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
-    soup_message_set_status(message, SOUP_STATUS_OK);
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
 
     if (g_str_equal(path, "/live-stream")) {
         static const char* html =
@@ -1112,15 +1122,15 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
             "  <source src='/live-stream.webm' type='video/webm' />"
             " </video>"
             "</body></html>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, html, strlen(html));
+        soup_message_body_append(soup_server_message_get_response_body(message), SOUP_MEMORY_STATIC, html, strlen(html));
     } else if (g_str_equal(path, "/live-stream.webm")) {
-        soup_message_headers_set_encoding(message->response_headers, SOUP_ENCODING_CHUNKED);
-        g_signal_connect(message, "wrote_headers", G_CALLBACK(writeNextChunk), nullptr);
-        g_signal_connect(message, "wrote_chunk", G_CALLBACK(writeNextChunk), nullptr);
+        soup_message_headers_set_encoding(soup_server_message_get_response_headers(message), SOUP_ENCODING_CHUNKED);
+        g_signal_connect(message, "wrote-headers", G_CALLBACK(writeNextChunk), nullptr);
+        g_signal_connect(message, "wrote-chunk", G_CALLBACK(writeNextChunk), nullptr);
         return;
     }
 
-    soup_message_body_complete(message->response_body);
+    soup_message_body_complete(soup_server_message_get_response_body(message));
 }
 
 static void testContextMenuLiveStream(ContextMenuDefaultTest* test, gconstpointer)

@@ -26,27 +26,29 @@
 
 #pragma once
 
+#include "FetchOptions.h"
 #include "WorkerThreadType.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
+#include <wtf/MessageQueue.h>
 #include <wtf/NakedPtr.h>
 
 namespace JSC {
-class VM;
-}
-
-namespace JSC {
+class Exception;
 class JSGlobalObject;
+class VM;
 }
 
 namespace WebCore {
 
+class Exception;
 class JSDOMGlobalObject;
 class ScriptSourceCode;
 class WorkerConsoleClient;
 class WorkerOrWorkletGlobalScope;
+class WorkerScriptFetcher;
 
 class WorkerOrWorkletScriptController {
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletScriptController);
@@ -93,6 +95,13 @@ public:
 
     void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
+
+    JSC::JSValue evaluateModule(JSC::JSModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
+
+    void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
+    MessageQueueWaitResult loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);
+
+    void loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials, CompletionHandler<void(Optional<Exception>&&)>&&);
 
 protected:
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope; }

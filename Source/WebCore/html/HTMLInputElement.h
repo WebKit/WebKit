@@ -36,6 +36,7 @@ class DragData;
 class FileList;
 class HTMLDataListElement;
 class HTMLImageLoader;
+class HTMLOptionElement;
 class Icon;
 class InputType;
 class ListAttributeTargetObserver;
@@ -85,6 +86,7 @@ public:
 
 #if ENABLE(DATALIST_ELEMENT)
     Optional<Decimal> findClosestTickMarkValue(const Decimal&);
+    Optional<double> listOptionValueAsDouble(const HTMLOptionElement&);
 #endif
 
     WEBCORE_EXPORT ExceptionOr<void> stepUp(int = 1);
@@ -270,6 +272,7 @@ public:
 
 #if ENABLE(DATALIST_ELEMENT)
     WEBCORE_EXPORT RefPtr<HTMLElement> list() const;
+    WEBCORE_EXPORT bool isFocusingWithDataListDropdown() const;
     RefPtr<HTMLDataListElement> dataList() const;
     void dataListMayHaveChanged();
 #endif

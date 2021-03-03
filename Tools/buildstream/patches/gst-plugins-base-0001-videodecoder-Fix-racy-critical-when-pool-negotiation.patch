@@ -1,0 +1,76 @@
+From b944a254cb9768ca158d0a25d5a3df33cc028986 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alicia=20Boya=20Garc=C3=ADa?= <ntrrgc@gmail.com>
+Date: Sat, 13 Feb 2021 00:27:04 +0100
+Subject: [PATCH] videodecoder: Fix racy critical when pool negotiation occurs
+ during flush
+
+I found a rather reproducible race in a WebKit LayoutTest when a player
+was intantiated and a VP8/9 video was loaded, then torn down after
+getting the video dimensions from the caps.
+
+The crash occurs during the handling of the first frame by gstvpxdec.
+The following actions happen sequentially leading to a crash.
+
+(MT=Main Thread, ST=Streaming Thread)
+
+MT: Sets pipeline state to NULL, which deactivates vpxdec's srcpad,
+    which in turn sets its FLUSHING flag.
+
+ST: gst_vpx_dec_handle_frame() -- which is still running -- calls
+    gst_video_decoder_allocate_output_frame(); this in turn calls
+    gst_video_decoder_negotiate_unlocked() which fails because the
+    srcpad is FLUSHING. As a direct consequence of the negotiation
+    failure, a pool is NOT set.
+
+    gst_video_decoder_negotiate_unlocked() still assumes there is a
+    pool, crashing in a critical in gst_buffer_pool_acquire_buffer()
+    a couple statements later.
+
+This patch fixes the bug by returning != GST_FLOW_OK when the
+negotiation fails. If the srcpad is FLUSHING, GST_FLOW_FLUSHING is
+returned, otherwise GST_FLOW_ERROR is used.
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/-/merge_requests/1037>
+---
+ gst-libs/gst/video/gstvideodecoder.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/gst-libs/gst/video/gstvideodecoder.c b/gst-libs/gst/video/gstvideodecoder.c
+index f687e3996b..935a2ff3a6 100644
+--- a/gst-libs/gst/video/gstvideodecoder.c
++++ b/gst-libs/gst/video/gstvideodecoder.c
+@@ -4258,8 +4258,19 @@ gst_video_decoder_allocate_output_frame_with_params (GstVideoDecoder *
+   needs_reconfigure = gst_pad_check_reconfigure (decoder->srcpad);
+   if (G_UNLIKELY (decoder->priv->output_state_changed || needs_reconfigure)) {
+     if (!gst_video_decoder_negotiate_unlocked (decoder)) {
+-      GST_DEBUG_OBJECT (decoder, "Failed to negotiate, fallback allocation");
+       gst_pad_mark_reconfigure (decoder->srcpad);
++      if (GST_PAD_IS_FLUSHING (decoder->srcpad)) {
++        GST_DEBUG_OBJECT (decoder,
++            "Failed to negotiate a pool: pad is flushing");
++        goto flushing;
++      } else if (!decoder->priv->pool || decoder->priv->output_state_changed) {
++        GST_DEBUG_OBJECT (decoder,
++            "Failed to negotiate a pool and no previous pool to reuse");
++        goto error;
++      } else {
++        GST_DEBUG_OBJECT (decoder,
++            "Failed to negotiate a pool, falling back to the previous pool");
++      }
+     }
+   }
+ 
+@@ -4272,6 +4283,10 @@ gst_video_decoder_allocate_output_frame_with_params (GstVideoDecoder *
+ 
+   return flow_ret;
+ 
++flushing:
++  GST_VIDEO_DECODER_STREAM_UNLOCK (decoder);
++  return GST_FLOW_FLUSHING;
++
+ error:
+   GST_VIDEO_DECODER_STREAM_UNLOCK (decoder);
+   return GST_FLOW_ERROR;
+-- 
+2.29.2
+

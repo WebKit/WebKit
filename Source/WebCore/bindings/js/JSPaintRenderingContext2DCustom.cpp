@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ inline void* root(CustomPaintCanvas* canvas)
     return canvas;
 }
 
-bool JSPaintRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)
+bool JSPaintRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
     if (UNLIKELY(reason))
         *reason = "Canvas is opaque root";
@@ -46,10 +46,13 @@ bool JSPaintRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC:
     return visitor.containsOpaqueRoot(root);
 }
 
-void JSPaintRenderingContext2D::visitAdditionalChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void JSPaintRenderingContext2D::visitAdditionalChildren(Visitor& visitor)
 {
     visitor.addOpaqueRoot(root(&wrapped().canvas()));
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSPaintRenderingContext2D);
 
 } // namespace WebCore
 #endif

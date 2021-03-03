@@ -65,12 +65,12 @@ PASS CSS Animations: property <letter-spacing> from [inherit] to [20px] at (0.3)
 PASS CSS Animations: property <letter-spacing> from [inherit] to [20px] at (0.6) should be [12.8px]
 PASS CSS Animations: property <letter-spacing> from [inherit] to [20px] at (1) should be [20px]
 PASS CSS Animations: property <letter-spacing> from [inherit] to [20px] at (1.5) should be [29px]
-FAIL Web Animations: property <letter-spacing> from [inherit] to [20px] at (-0.3) should be [-3.4px] assert_equals: expected "- 3.4px " but got "33px "
-FAIL Web Animations: property <letter-spacing> from [inherit] to [20px] at (0) should be [2px] assert_equals: expected "2px " but got "33px "
-FAIL Web Animations: property <letter-spacing> from [inherit] to [20px] at (0.3) should be [7.4px] assert_equals: expected "7.4px " but got "29.1px "
-FAIL Web Animations: property <letter-spacing> from [inherit] to [20px] at (0.6) should be [12.8px] assert_equals: expected "12.8px " but got "23.64px "
+PASS Web Animations: property <letter-spacing> from [inherit] to [20px] at (-0.3) should be [-3.4px]
+PASS Web Animations: property <letter-spacing> from [inherit] to [20px] at (0) should be [2px]
+PASS Web Animations: property <letter-spacing> from [inherit] to [20px] at (0.3) should be [7.4px]
+PASS Web Animations: property <letter-spacing> from [inherit] to [20px] at (0.6) should be [12.8px]
 PASS Web Animations: property <letter-spacing> from [inherit] to [20px] at (1) should be [20px]
-FAIL Web Animations: property <letter-spacing> from [inherit] to [20px] at (1.5) should be [29px] assert_equals: expected "29px " but got "20px "
+PASS Web Animations: property <letter-spacing> from [inherit] to [20px] at (1.5) should be [29px]
 PASS CSS Transitions: property <letter-spacing> from [unset] to [20px] at (-0.3) should be [-3.4px]
 PASS CSS Transitions: property <letter-spacing> from [unset] to [20px] at (0) should be [2px]
 PASS CSS Transitions: property <letter-spacing> from [unset] to [20px] at (0.3) should be [7.4px]
@@ -89,12 +89,12 @@ PASS CSS Animations: property <letter-spacing> from [unset] to [20px] at (0.3) s
 PASS CSS Animations: property <letter-spacing> from [unset] to [20px] at (0.6) should be [12.8px]
 PASS CSS Animations: property <letter-spacing> from [unset] to [20px] at (1) should be [20px]
 PASS CSS Animations: property <letter-spacing> from [unset] to [20px] at (1.5) should be [29px]
-FAIL Web Animations: property <letter-spacing> from [unset] to [20px] at (-0.3) should be [-3.4px] assert_equals: expected "- 3.4px " but got "33px "
-FAIL Web Animations: property <letter-spacing> from [unset] to [20px] at (0) should be [2px] assert_equals: expected "2px " but got "33px "
-FAIL Web Animations: property <letter-spacing> from [unset] to [20px] at (0.3) should be [7.4px] assert_equals: expected "7.4px " but got "29.1px "
-FAIL Web Animations: property <letter-spacing> from [unset] to [20px] at (0.6) should be [12.8px] assert_equals: expected "12.8px " but got "23.64px "
+PASS Web Animations: property <letter-spacing> from [unset] to [20px] at (-0.3) should be [-3.4px]
+PASS Web Animations: property <letter-spacing> from [unset] to [20px] at (0) should be [2px]
+PASS Web Animations: property <letter-spacing> from [unset] to [20px] at (0.3) should be [7.4px]
+PASS Web Animations: property <letter-spacing> from [unset] to [20px] at (0.6) should be [12.8px]
 PASS Web Animations: property <letter-spacing> from [unset] to [20px] at (1) should be [20px]
-FAIL Web Animations: property <letter-spacing> from [unset] to [20px] at (1.5) should be [29px] assert_equals: expected "29px " but got "20px "
+PASS Web Animations: property <letter-spacing> from [unset] to [20px] at (1.5) should be [29px]
 PASS CSS Transitions: property <letter-spacing> from [-10px] to [10px] at (-0.3) should be [-16px]
 PASS CSS Transitions: property <letter-spacing> from [-10px] to [10px] at (0) should be [-10px]
 PASS CSS Transitions: property <letter-spacing> from [-10px] to [10px] at (0.3) should be [-4px]

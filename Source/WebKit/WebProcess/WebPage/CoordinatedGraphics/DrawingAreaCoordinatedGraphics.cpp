@@ -356,7 +356,7 @@ void DrawingAreaCoordinatedGraphics::triggerRenderingUpdate()
     if (m_layerTreeHost)
         m_layerTreeHost->scheduleLayerFlush();
     else
-        scheduleDisplay();
+        setNeedsDisplay();
 }
 
 #if USE(COORDINATED_GRAPHICS)
@@ -683,6 +683,9 @@ void DrawingAreaCoordinatedGraphics::scheduleDisplay()
     if (m_isPaintingSuspended)
         return;
 
+    if (m_dirtyRegion.isEmpty())
+        return;
+
     if (m_displayTimer.isActive())
         return;
 
@@ -704,6 +707,9 @@ void DrawingAreaCoordinatedGraphics::display()
         return;
 
     if (m_isPaintingSuspended)
+        return;
+
+    if (m_dirtyRegion.isEmpty())
         return;
 
     if (m_shouldSendDidUpdateBackingStoreState) {
@@ -758,9 +764,6 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     // The layout may have put the page into accelerated compositing mode. If the LayerTreeHost is
     // in charge of displaying, we have nothing more to do.
     if (m_layerTreeHost)
-        return;
-
-    if (m_dirtyRegion.isEmpty())
         return;
 
     updateInfo.viewSize = m_webPage.size();

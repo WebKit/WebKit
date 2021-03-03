@@ -125,9 +125,9 @@ static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
     }
 }
 
-+ (instancetype)setUpWithFrame:(NSRect)frame testPage:(NSString *)testPageName
++ (RetainPtr<CandidateTestWebView>)setUpWithFrame:(NSRect)frame testPage:(NSString *)testPageName
 {
-    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:frame];
+    auto wkWebView = adoptNS([[CandidateTestWebView alloc] initWithFrame:frame]);
 
     [wkWebView loadTestPageNamed:testPageName];
     [wkWebView waitForMessage:@"focused"];
@@ -141,7 +141,7 @@ static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
 
 TEST(WKWebViewCandidateTests, SoftSpaceReplacementAfterCandidateInsertionWithoutReplacement)
 {
-    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
+    auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
     [wkWebView insertCandidatesAndWaitForResponse:@"apple " range:NSMakeRange(0, 0)];
     EXPECT_WK_STREQ("apple ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
@@ -156,7 +156,7 @@ TEST(WKWebViewCandidateTests, SoftSpaceReplacementAfterCandidateInsertionWithout
 
 TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpace)
 {
-    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
+    auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
     [wkWebView insertCandidatesAndWaitForResponse:@"foo " range:NSMakeRange(0, 0)];
     EXPECT_WK_STREQ("foo ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
@@ -167,7 +167,7 @@ TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpa
 
 TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
 {
-    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
+    auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
     [wkWebView typeString:@"hel" inputMessage:@"input"];
     [wkWebView insertCandidatesAndWaitForResponse:@"hello " range:NSMakeRange(0, 3)];
@@ -187,7 +187,7 @@ TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpa
 
 TEST(WKWebViewCandidateTests, ClickingInTextFieldDoesNotThrashCandidateVisibility)
 {
-    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"large-input-field-focus-onload"];
+    auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"large-input-field-focus-onload"];
 
     [wkWebView typeString:@"test" inputMessage:@"input"];
     [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
@@ -203,7 +203,7 @@ TEST(WKWebViewCandidateTests, ClickingInTextFieldDoesNotThrashCandidateVisibilit
 
 TEST(WKWebViewCandidateTests, ShouldNotRequestCandidatesInPasswordField)
 {
-    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    auto wkWebView = adoptNS([[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [wkWebView loadTestPageNamed:@"text-and-password-inputs"];
     [wkWebView waitForMessage:@"loaded"];
     [wkWebView _forceRequestCandidates];
@@ -225,7 +225,7 @@ TEST(WKWebViewCandidateTests, ShouldNotRequestCandidatesInPasswordField)
 
 TEST(WKWebViewCandidateTests, ShouldRequestCandidatesInTextField)
 {
-    CandidateTestWebView *wkWebView = [[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    auto wkWebView = adoptNS([[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [wkWebView loadTestPageNamed:@"text-and-password-inputs"];
     [wkWebView waitForMessage:@"loaded"];
     [wkWebView _forceRequestCandidates];
@@ -247,7 +247,7 @@ TEST(WKWebViewCandidateTests, ShouldRequestCandidatesInTextField)
 
 TEST(WKWebViewCandidateTests, CandidateRectForEmptyParagraph)
 {
-    CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
+    auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
     NSRect candidateRect = [wkWebView _candidateRect];
     EXPECT_NE(0, candidateRect.origin.y);
 }

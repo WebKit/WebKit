@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,9 +63,9 @@ void MarkingConstraintSet::didStartMarking()
     m_iteration = 1;
 }
 
-void MarkingConstraintSet::add(CString abbreviatedName, CString name, ::Function<void(SlotVisitor&)> function, ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
+void MarkingConstraintSet::add(CString abbreviatedName, CString name, MarkingConstraintExecutorPair&& executors, ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
 {
-    add(makeUnique<SimpleMarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(function), volatility, concurrency, parallelism));
+    add(makeUnique<SimpleMarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(executors), volatility, concurrency, parallelism));
 }
 
 void MarkingConstraintSet::add(
@@ -166,10 +166,10 @@ bool MarkingConstraintSet::executeConvergenceImpl(SlotVisitor& visitor)
     return !solver.didVisitSomething();
 }
 
-void MarkingConstraintSet::executeAll(SlotVisitor& visitor)
+void MarkingConstraintSet::executeAllSynchronously(AbstractSlotVisitor& visitor)
 {
     for (auto& constraint : m_set)
-        constraint->execute(visitor);
+        constraint->executeSynchronously(visitor);
     dataLogIf(Options::logGC(), " ");
 }
 

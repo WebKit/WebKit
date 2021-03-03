@@ -117,7 +117,7 @@ static Optional<unsigned> findFirstSnapStopOffsetBetweenOriginAndDestination(con
         return (difference > 0 && candidate > mark) || (difference < 0 && candidate < mark);
     };
 
-    for (size_t i = searchStartOffset; i >= 0 && i < snapOffsets.size(); i += iteration) {
+    for (int i = searchStartOffset; i >= 0 && static_cast<size_t>(i) < snapOffsets.size(); i += iteration) {
         auto offset = snapOffsets[i].offset;
         if (isPast(scrollDestinationOffset, offset))
             break;

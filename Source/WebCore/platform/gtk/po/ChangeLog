@@ -1,3 +1,12 @@
+2021-02-22  Yuri Chornoivan  <yurchor@ukr.net>
+
+        [GTK] [l10n] Updated Ukrainian translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=220992
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * uk.po:
+
 2021-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Stop using SoupRequest API to load files in preparation for libsoup3

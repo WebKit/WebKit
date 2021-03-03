@@ -96,7 +96,8 @@
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
 #include "JSCallee.h"
-#include "JSCustomGetterSetterFunction.h"
+#include "JSCustomGetterFunction.h"
+#include "JSCustomSetterFunction.h"
 #include "JSDestructibleObjectHeapCellType.h"
 #include "JSFinalizationRegistry.h"
 #include "JSFunction.h"
@@ -388,7 +389,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , propertyNames(nullptr)
     , emptyList(new ArgList)
     , machineCodeBytesPerBytecodeWordForBaselineJIT(makeUnique<SimpleStats>())
-    , customGetterSetterFunctionMap(*this)
     , stringCache(*this)
     , symbolImplToSymbolMap(*this)
     , structureCache(*this)
@@ -1482,7 +1482,8 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackConstructorSpace, callbackConstr
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackGlobalObjectSpace, callbackGlobalObjectHeapCellType.get(), JSCallbackObject<JSGlobalObject>)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, cellHeapCellType.get(), JSCallbackFunction) // Hash:0xe7648ebc
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackObjectSpace, callbackObjectHeapCellType.get(), JSCallbackObject<JSNonFinalObject>)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction) // Hash:0x18091000
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterFunction)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customSetterFunctionSpace, cellHeapCellType.get(), JSCustomSetterFunction)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(dataViewSpace, cellHeapCellType.get(), JSDataView)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(debuggerScopeSpace, cellHeapCellType.get(), DebuggerScope)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, errorInstanceHeapCellType.get(), ErrorInstance) // Hash:0x3f40d4a

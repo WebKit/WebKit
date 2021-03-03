@@ -115,6 +115,7 @@ public:
     virtual RepetitionCount repetitionCount() const = 0;
     virtual String uti() const { return emptyString(); }
     virtual String filenameExtension() const = 0;
+    virtual String accessibilityDescription() const { return emptyString(); };
     virtual Optional<IntPoint> hotSpot() const = 0;
 
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;

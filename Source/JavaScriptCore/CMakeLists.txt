@@ -613,6 +613,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     domjit/DOMJITHeapRange.h
     domjit/DOMJITSignature.h
 
+    heap/AbstractSlotVisitor.h
+    heap/AbstractSlotVisitorInlines.h
     heap/AlignedMemoryAllocator.h
     heap/AllocationFailureMode.h
     heap/Allocator.h
@@ -678,6 +680,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/MarkedBlockSet.h
     heap/MarkedSpace.h
     heap/MarkingConstraint.h
+    heap/MarkingConstraintExecutorPair.h
     heap/MutatorState.h
     heap/PackedCellPtr.h
     heap/PreciseAllocation.h
@@ -687,12 +690,14 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/SimpleMarkingConstraint.h
     heap/SlotVisitor.h
     heap/SlotVisitorInlines.h
+    heap/SlotVisitorMacros.h
     heap/Strong.h
     heap/StrongInlines.h
     heap/Subspace.h
     heap/SubspaceInlines.h
     heap/Synchronousness.h
     heap/TinyBloomFilter.h
+    heap/VerifierSlotVisitor.h
     heap/VisitRaceKey.h
     heap/Weak.h
     heap/WeakBlock.h
@@ -905,6 +910,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/GenericTypedArrayView.h
     runtime/GenericTypedArrayViewInlines.h
     runtime/GetPutInfo.h
+    runtime/GetterSetter.h
     runtime/GetVM.h
     runtime/GlobalExecutable.h
     runtime/HashMapImpl.h
@@ -940,6 +946,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCast.h
     runtime/JSCell.h
     runtime/JSCellInlines.h
+    runtime/JSCustomGetterFunction.h
+    runtime/JSCustomSetterFunction.h
     runtime/JSDataView.h
     runtime/JSDateMath.h
     runtime/JSDestructibleObject.h
@@ -947,6 +955,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSExportMacros.h
     runtime/JSFunction.h
     runtime/JSFunctionInlines.h
+    runtime/JSGenerator.h
     runtime/JSGenericTypedArrayView.h
     runtime/JSGenericTypedArrayViewInlines.h
     runtime/JSGenericTypedArrayViewPrototype.h
@@ -999,6 +1008,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ModuleProgramExecutable.h
     runtime/NativeExecutable.h
     runtime/NativeFunction.h
+    runtime/NullGetterFunction.h
+    runtime/NullSetterFunction.h
     runtime/NumberObject.h
     runtime/NumberPrototype.h
     runtime/NumericStrings.h

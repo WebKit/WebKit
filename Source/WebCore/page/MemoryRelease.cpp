@@ -67,8 +67,8 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     RenderTheme::singleton().purgeCaches();
 
     FontCache::singleton().purgeInactiveFontData();
+    FontCache::singleton().clearWidthCaches();
 
-    clearWidthCaches();
     TextPainter::clearGlyphDisplayLists();
 
     for (auto* document : Document::allDocuments()) {

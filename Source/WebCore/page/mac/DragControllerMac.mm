@@ -145,7 +145,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         break;
     }
 ALLOW_DEPRECATED_DECLARATIONS_END
-    platformStrategies()->pasteboardStrategy()->updateSupportedTypeIdentifiers(supportedTypes, dragData.pasteboardName());
+    auto context = dragData.createPasteboardContext();
+    platformStrategies()->pasteboardStrategy()->updateSupportedTypeIdentifiers(supportedTypes, dragData.pasteboardName(), context.get());
 }
 
 #endif // PLATFORM(IOS_FAMILY)

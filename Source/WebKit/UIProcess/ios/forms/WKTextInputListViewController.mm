@@ -97,7 +97,7 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
 
 - (void)enterText:(NSString *)text
 {
-    [self.delegate quickboard:self textEntered:[[[NSAttributedString alloc] initWithString:text] autorelease]];
+    [self.delegate quickboard:self textEntered:adoptNS([[NSAttributedString alloc] initWithString:text]).get()];
 }
 
 #pragma mark - Quickboard subclassing

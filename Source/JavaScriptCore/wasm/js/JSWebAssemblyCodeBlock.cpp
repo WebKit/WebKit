@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,13 +82,16 @@ void JSWebAssemblyCodeBlock::clearJSCallICs(VM& vm)
         (*iter)->unlink(vm);
 }
 
-void JSWebAssemblyCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSWebAssemblyCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSWebAssemblyCodeBlock* thisObject = jsCast<JSWebAssemblyCodeBlock*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
 }
+
+DEFINE_VISIT_CHILDREN(JSWebAssemblyCodeBlock);
 
 void JSWebAssemblyCodeBlock::finalizeUnconditionally(VM& vm)
 {

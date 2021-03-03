@@ -52,6 +52,7 @@ struct ServiceWorkerJobData {
     SecurityOriginData topOrigin;
     URL scopeURL;
     ServiceWorkerOrClientIdentifier sourceContext;
+    WorkerType workerType;
     ServiceWorkerJobType type;
 
     ServiceWorkerRegistrationOptions registrationOptions;
@@ -72,7 +73,7 @@ private:
 template<class Encoder>
 void ServiceWorkerJobData::encode(Encoder& encoder) const
 {
-    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL << sourceContext;
+    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL << sourceContext << workerType;
     encoder << type;
     switch (type) {
     case ServiceWorkerJobType::Register:
@@ -109,6 +110,8 @@ Optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
     if (!decoder.decode(jobData.scopeURL))
         return WTF::nullopt;
     if (!decoder.decode(jobData.sourceContext))
+        return WTF::nullopt;
+    if (!decoder.decode(jobData.workerType))
         return WTF::nullopt;
     if (!decoder.decode(jobData.type))
         return WTF::nullopt;

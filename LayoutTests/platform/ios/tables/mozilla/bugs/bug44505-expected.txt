@@ -108,10 +108,10 @@ layer at (167,205) size 138x24 clip at (168,206) size 136x22
 layer at (11,235) size 154x28 clip at (12,236) size 152x26 scrollWidth 201
   RenderTableCell {TD} at (2,2) size 154x28 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {FORM} at (2,2) size 150x24
-      RenderButton {BUTTON} at (0,2) size 200x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (12,3) size 176x14
-          RenderText {#text} at (72,0) size 32x14
-            text run at (72,0) width 32: "button"
+      RenderButton {BUTTON} at (0,2) size 200x20 [color=#007AFF] [bgcolor=#EEEEEE]
+        RenderBlock (anonymous) at (11,3) size 178x14
+          RenderText {#text} at (71,0) size 36x14
+            text run at (71,0) width 36: "button"
 layer at (167,235) size 138x28 clip at (168,236) size 136x26
   RenderTableCell {TD} at (158,4) size 138x24 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x19
@@ -127,10 +127,10 @@ layer at (167,265) size 138x24 clip at (168,266) size 136x22
 layer at (11,295) size 281x28 clip at (12,296) size 279x26
   RenderTableCell {TD} at (2,2) size 281x28 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {FORM} at (2,2) size 277x24
-      RenderButton {BUTTON} at (0,2) size 200x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (12,3) size 176x14
-          RenderText {#text} at (72,0) size 32x14
-            text run at (72,0) width 32: "button"
+      RenderButton {BUTTON} at (0,2) size 200x20 [color=#007AFF] [bgcolor=#EEEEEE]
+        RenderBlock (anonymous) at (11,3) size 178x14
+          RenderText {#text} at (71,0) size 36x14
+            text run at (71,0) width 36: "button"
 layer at (294,295) size 11x28 clip at (295,296) size 9x26
   RenderTableCell {TD} at (284,4) size 13x24 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x19

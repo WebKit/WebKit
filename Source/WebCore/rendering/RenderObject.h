@@ -222,6 +222,9 @@ public:
     virtual bool isRenderButton() const { return false; }
     virtual bool isRenderIFrame() const { return false; }
     virtual bool isRenderImage() const { return false; }
+#if ENABLE(MODEL_ELEMENT)
+    virtual bool isRenderModel() const { return false; }
+#endif
     virtual bool isRenderFragmentContainer() const { return false; }
     virtual bool isReplica() const { return false; }
 

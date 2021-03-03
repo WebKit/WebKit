@@ -149,6 +149,9 @@ http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.h
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Pass ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Pass ]
 
+# Custom GLIB baseline with different FAIL message from other ports
+webkit.org/b/222020 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.image.broken.html [ Pass ]
+
 imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-017.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013.html [ Pass ]
@@ -197,6 +200,38 @@ imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html [ Pass ]
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Pass ]
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Pass ]
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html [ Pass ]
+
+# These tests are expected to fail with GPU process and on Mac, but pass on GTK and WPE
+webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Pass ]
+webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Pass ]
+webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass ]
+webkit.org/b/221951 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass ]
+
+# These tests are expected to fail with GPU process and on Mac, but pass on GTK and WPE
+http/tests/media/hls/hls-progress.html [ Pass ]
+http/tests/media/media-document-referer.html [ Pass ]
+http/tests/media/media-document.html [ Pass ]
+http/tests/media/media-play-stream-chunked-icy.html [ Pass ]
+http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html [ Pass ]
+http/tests/media/video-auth.html [ Pass ]
+http/tests/media/video-no-content-length-stall.html [ Pass ]
+http/tests/media/video-query-url.html [ Pass ]
+http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Pass ]
+http/tests/security/canvas-remote-read-remote-video-redirect.html [ Pass ]
+http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Pass ]
+http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Pass ]
+http/tests/security/video-cross-origin-caching.html [ Pass ]
+media/media-can-play-webm.html [ Pass ]
+media/media-controller-time-constant.html [ Pass ]
+media/media-controller-time.html [ Pass ]
+media/media-controller-unpause.html [ Pass ]
+media/mediacapabilities/mediacapabilities-types.html [ Pass ]
+media/video-canvas-createPattern.html [ Pass ]
+media/video-canvas-drawing-output.html [ Pass ]
+media/video-controller-currentTime-rate.html [ Pass ]
+media/video-object-fit.html [ Pass ]
+webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Pass ]
+webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
@@ -262,6 +297,10 @@ webkit.org/b/221447 accessibility/aria-current-state-changed-notification.html [
 
 webkit.org/b/221645 accessibility/aria-sort.html [ Failure ]
 webkit.org/b/221645 accessibility/aria-sort-changed-notification.html [ Skip ]
+
+# Not supported
+accessibility/aria-errormessage.html [ Skip ]
+accessibility/embedded-image-description.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
@@ -438,6 +477,7 @@ webkit.org/b/221445 fast/text/system-font-width-7.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width-8.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width-9.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width.html [ Skip ]
+webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Fonts-related bugs
@@ -472,15 +512,11 @@ webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
 webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Missing Failure ]
 
-webkit.org/b/217829 media/video-orientation-canvas.html [ Failure ]
-
 webkit.org/b/217845 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering.html [ Failure ]
 webkit.org/b/218321 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Pass Timeout Failure ]
 # Needs to process results in order.
 webkit.org/b/218652 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html [ Failure Pass ]
 webkit.org/b/218653 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html [ Failure Pass ]
-
-webkit.org/b/218580 fast/mediastream/captureStream/canvas2d.html [ Failure Timeout ]
 
 webkit.org/b/220540 media/media-fullscreen-inline.html [ Timeout ]
 
@@ -708,23 +744,11 @@ webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Skip ]
 webkit.org/b/177940 workers/wasm-hashset-many.html [ Skip ]
 webkit.org/b/177940 workers/wasm-hashset.html [ Skip ]
 
-webkit.org/b/201981 http/tests/workers/service/basic-fetch.https.html [ Failure ]
-webkit.org/b/201981 http/tests/workers/service/Client-properties-subframe.html [ Timeout ]
-webkit.org/b/201981 http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html [ Timeout ]
-webkit.org/b/201981 http/tests/workers/service/registration-clear-redundant-worker.html [ Timeout ]
-webkit.org/b/201981 http/tests/workers/service/registration-updateViaCache-none-importScripts.html [ Failure ]
-webkit.org/b/201981 http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Failure Timeout ]
-webkit.org/b/201981 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure ]
-webkit.org/b/201981 http/tests/workers/service/ServiceWorkerGlobalScope_register.html [ Failure ]
-webkit.org/b/201981 http/tests/workers/service/service-worker-request-with-body.https.html [ Failure ]
-webkit.org/b/201981 http/tests/workers/service/shift-reload-navigation.html [ Failure ]
-webkit.org/b/201981 http/wpt/service-workers/navigation-redirect.https.html [ Failure ]
+webkit.org/b/201981 http/tests/workers/service/registration-clear-redundant-worker.html [ Pass Timeout ]
 webkit.org/b/201981 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
-webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html [ Failure ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/getregistration.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html [ Failure Pass ]
-webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/installing.https.html [ Failure ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/multi-globals/url-parsing.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/waiting.https.html [ Failure Pass ]
 
@@ -747,6 +771,12 @@ webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-message.htt
 
 webkit.org/b/221239 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-empty-location.any.html [ Skip ]
 webkit.org/b/221239 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-empty-location.any.worker.html [ Skip ]
+
+webkit.org/b/185254 http/tests/xmlhttprequest/XMLHttpRequestException.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ DumpJSConsoleLogInStdErr ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
@@ -980,6 +1010,7 @@ webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
 webkit.org/b/219825 webrtc/sframe-keys.html [ Failure ]
 
 webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute2.html  [ Failure ]
+webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute.html  [ Failure Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -1542,8 +1573,7 @@ webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
 # Fails because MutationObservers are not notified at end-of-task.
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 
-# The MediaStream implementation is still not completed,
-webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
+# The MediaStream implementation is almost completed
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
 
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]

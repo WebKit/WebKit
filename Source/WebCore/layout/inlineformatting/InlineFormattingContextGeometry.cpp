@@ -301,7 +301,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
                 ascent = downcast<ReplacedBox>(layoutBox).baseline().valueOr(marginBoxHeight);
             else
                 ascent = marginBoxHeight;
-            auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), marginBoxHeight });
+            logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
+            auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { inlineLevelBoxGeometry.borderBoxWidth(), marginBoxHeight });
             atomicInlineLevelBox->setBaseline(ascent);
             atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
             // Let's pre-compute the logical top so that we can avoid running the alignment on simple inline boxes.
@@ -335,8 +336,14 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // e.g. <div><span></span><span></span></div> is still okay.
         m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || lineHasContent;
         if (run.isInlineBoxStart()) {
+            // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
+            // and adjust it later if we come across an inlineBoxEnd run (see below).
             auto initialLogicalWidth = lineBox.contentLogicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
+            // Inline box run is based on margin box. Let's convert it to border box.
+            auto marginStart = std::max(0_lu, formattingContext().geometryForBox(layoutBox).marginStart());
+            logicalLeft += marginStart;
+            initialLogicalWidth -= marginStart;
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
@@ -346,7 +353,9 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             // Adjust the logical width when the inline level container closes on this line.
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(inlineBox.isInlineBox());
-            auto inlineBoxLogicalRight = logicalLeft + run.logicalWidth(); 
+            // Inline box run is based on margin box. Let's convert it to border box.
+            auto marginEnd = std::max(0_lu, formattingContext().geometryForBox(layoutBox).marginEnd());
+            auto inlineBoxLogicalRight = logicalLeft + run.logicalWidth() - marginEnd;
             inlineBox.setLogicalWidth(inlineBoxLogicalRight - inlineBox.logicalLeft());
             continue;
         }

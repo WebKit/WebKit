@@ -26,11 +26,14 @@
 #include "config.h"
 #include "WorkerOrWorkletGlobalScope.h"
 
+#include "ScriptModuleLoader.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "WorkerEventLoop.h"
 #include "WorkerInspectorController.h"
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
+#include "WorkletGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -39,6 +42,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 
 WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, Ref<JSC::VM>&& vm, WorkerOrWorkletThread* thread)
     : m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
+    , m_moduleLoader(makeUnique<ScriptModuleLoader>(*this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
     , m_thread(thread)
     , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
 {

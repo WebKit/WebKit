@@ -63,7 +63,7 @@ public:
 private:
     RemoteMediaResource(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
 
-    RemoteMediaResourceManager& m_remoteMediaResourceManager;
+    WeakPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
     RemoteMediaResourceIdentifier m_id;
     bool m_didPassAccessControlCheck { false };

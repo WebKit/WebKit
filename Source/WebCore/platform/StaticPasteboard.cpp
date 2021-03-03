@@ -30,7 +30,11 @@
 
 namespace WebCore {
 
-StaticPasteboard::StaticPasteboard() = default;
+StaticPasteboard::StaticPasteboard()
+    : Pasteboard({ })
+{
+}
+
 StaticPasteboard::~StaticPasteboard() = default;
 
 bool StaticPasteboard::hasData()

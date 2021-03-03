@@ -53,12 +53,12 @@
 {
     auto& data = _node->securityOrigin();
     auto apiOrigin = API::SecurityOrigin::create(data.protocol, data.host, data.port);
-    return [[wrapper(apiOrigin.get()) retain] autorelease];
+    return retainPtr(wrapper(apiOrigin.get())).autorelease();
 }
 
 - (WKWebView *)webView
 {
-    return [[fromWebPageProxy(_node->page()) retain] autorelease];
+    return retainPtr(fromWebPageProxy(_node->page())).autorelease();
 }
 
 - (NSArray<_WKFrameTreeNode *> *)childFrames
@@ -75,12 +75,12 @@
 
 - (_WKFrameHandle *)_handle
 {
-    return [[wrapper(_node->handle()) retain] autorelease];
+    return retainPtr(wrapper(_node->handle())).autorelease();
 }
 
 - (_WKFrameHandle *)_parentFrameHandle
 {
-    return [[wrapper(_node->parentFrameHandle()) retain] autorelease];
+    return retainPtr(wrapper(_node->parentFrameHandle())).autorelease();
 }
 
 - (API::Object&)_apiObject

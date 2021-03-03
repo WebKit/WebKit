@@ -35,20 +35,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayShippingMethodSelectedEvent);
 
-static inline ApplePayShippingMethod convert(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
-{
-    ApplePayShippingMethod convertedMethod;
-    convertedMethod.label = shippingMethod.label;
-    convertedMethod.detail = shippingMethod.detail;
-    convertedMethod.identifier = shippingMethod.identifier;
-    convertedMethod.amount = shippingMethod.amount;
-
-    return convertedMethod; 
-}
-
-ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const AtomString& type, const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const AtomString& type, const ApplePayShippingMethod& shippingMethod)
     : Event(type, CanBubble::No, IsCancelable::No)
-    , m_shippingMethod(convert(shippingMethod))
+    , m_shippingMethod(shippingMethod)
 {
 }
 

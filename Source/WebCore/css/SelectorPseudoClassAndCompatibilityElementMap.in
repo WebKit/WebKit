@@ -29,6 +29,7 @@ first-letter, PseudoClassUnknown, PseudoElementFirstLetter
 first-line, PseudoClassUnknown, PseudoElementFirstLine
 first-of-type
 focus
+focus-visible
 focus-within
 #if ENABLE(ATTACHMENT_ELEMENT)
 has-attachment

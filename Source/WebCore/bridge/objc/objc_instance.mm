@@ -55,7 +55,11 @@
 using namespace JSC::Bindings;
 using namespace JSC;
 
-static NSString *s_exception;
+static RetainPtr<NSString>& globalException()
+{
+    static NeverDestroyed<RetainPtr<NSString>> exception;
+    return exception;
+}
 static JSGlobalObject* s_exceptionEnvironment; // No need to protect this value, since we just use it for a pointer comparison.
 
 static HashMap<CFTypeRef, ObjcInstance*>& wrapperCache()
@@ -72,9 +76,7 @@ RuntimeObject* ObjcInstance::newRuntimeObject(JSGlobalObject* lexicalGlobalObjec
 
 void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)
 {
-    NSString *oldException = s_exception;
-    s_exception = [exception copy];
-    [oldException release];
+    globalException() = adoptNS([exception copy]);
 
     s_exceptionEnvironment = exceptionEnvironment;
 }
@@ -84,19 +86,18 @@ void ObjcInstance::moveGlobalExceptionToExecState(JSGlobalObject* lexicalGlobalO
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!s_exception) {
+    if (!globalException()) {
         ASSERT(!s_exceptionEnvironment);
         return;
     }
 
     if (!s_exceptionEnvironment || s_exceptionEnvironment == vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject)) {
         JSLockHolder lock(vm);
-        throwError(lexicalGlobalObject, scope, s_exception);
+        throwError(lexicalGlobalObject, scope, globalException().get());
     }
 
-    [s_exception release];
-    s_exception = nil;
-    s_exceptionEnvironment = 0;
+    globalException() = nil;
+    s_exceptionEnvironment = nullptr;
 }
 
 ObjcInstance::ObjcInstance(id instance, RefPtr<RootObject>&& rootObject) 

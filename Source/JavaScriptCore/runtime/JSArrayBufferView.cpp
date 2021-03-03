@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,7 +155,8 @@ void JSArrayBufferView::finishCreation(VM& vm)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSArrayBufferView::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -168,6 +169,8 @@ void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.addOpaqueRoot(buffer);
     }
 }
+
+DEFINE_VISIT_CHILDREN(JSArrayBufferView);
 
 bool JSArrayBufferView::put(
     JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value,

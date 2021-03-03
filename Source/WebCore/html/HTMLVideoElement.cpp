@@ -300,13 +300,6 @@ void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, cons
     context.paintFrameForMedia(*player, destRect);
 }
 
-bool HTMLVideoElement::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
-{
-    if (!player())
-        return false;
-    return player()->copyVideoTextureToPlatformTexture(context, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
-}
-
 bool HTMLVideoElement::hasAvailableVideoFrame() const
 {
     if (!player())

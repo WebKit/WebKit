@@ -32,6 +32,7 @@
 #include "RemoteMediaResourceIdentifier.h"
 #include <WebCore/PolicyChecker.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -48,7 +49,8 @@ namespace WebKit {
 class RemoteMediaResource;
 
 class RemoteMediaResourceManager
-    : public IPC::MessageReceiver {
+    : public IPC::MessageReceiver
+    , public CanMakeWeakPtr<RemoteMediaResourceManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteMediaResourceManager();

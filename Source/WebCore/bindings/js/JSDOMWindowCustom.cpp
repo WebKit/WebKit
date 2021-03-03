@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -48,9 +48,12 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/GetterSetter.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSCustomGetterFunction.h>
+#include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSMicrotask.h>
 #include <JavaScriptCore/Lookup.h>
@@ -116,7 +119,8 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_postMessageNonCaching, (JSG
     return nonCachingStaticFunctionGetterImpl<jsDOMWindowInstanceFunction_postMessage, 2>(globalObject, propertyName);
 }
 
-void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void JSDOMWindow::visitAdditionalChildren(Visitor& visitor)
 {
     if (Frame* frame = wrapped().frame())
         visitor.addOpaqueRoot(frame);
@@ -128,6 +132,8 @@ void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
     // to do this here.
     wrapped().visitJSEventListeners(visitor);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDOMWindow);
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_webkit, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
@@ -184,9 +190,10 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
             || propertyName == builtinNames.openerPublicName()
             || propertyName == builtinNames.parentPublicName()
             || propertyName == builtinNames.topPublicName()) {
-            bool shouldExposeSetter = propertyName == builtinNames.locationPublicName();
-            CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, entry->propertyGetter(), shouldExposeSetter ? entry->propertyPutter() : nullptr);
-            slot.setCustomGetterSetter(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum), customGetterSetter);
+            auto* getter = JSCustomGetterFunction::create(vm, &lexicalGlobalObject, propertyName, entry->propertyGetter());
+            auto* setter = propertyName == builtinNames.locationPublicName() ? JSCustomSetterFunction::create(vm, &lexicalGlobalObject, propertyName, entry->propertyPutter()) : nullptr;
+            auto* getterSetter = GetterSetter::create(vm, &lexicalGlobalObject, getter, setter);
+            slot.setGetterSlot(thisObject, PropertyAttribute::Accessor | PropertyAttribute::DontEnum, getterSetter);
             return true;
         }
     }

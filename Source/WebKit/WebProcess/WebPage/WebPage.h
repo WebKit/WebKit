@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 #include "APIObject.h"
 #include "CallbackID.h"
 #include "ContentAsStringIncludesChildFrames.h"
-#include "CreateNewGroupForHighlight.h"
 #include "DataReference.h"
 #include "DownloadID.h"
 #include "DrawingAreaInfo.h"
@@ -204,6 +203,7 @@ class TextCheckingRequest;
 class VisiblePosition;
 
 enum SyntheticClickType : int8_t;
+enum class CreateNewGroupForHighlight : bool;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class DragApplicationFlags : uint8_t;
 enum class DragHandlingMethod : uint8_t;
@@ -1396,8 +1396,8 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    bool createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
-    void restoreAppHighlights(const IPC::DataReference&);
+    bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight);
+    void restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&&);
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
@@ -1406,7 +1406,8 @@ public:
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
 #endif
 
-    RefPtr<ShareableBitmap> shareableBitmap(WebCore::RenderImage&, Optional<WebCore::FloatSize> screenSizeInPixels = WTF::nullopt) const;
+    void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }
+    void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -1508,7 +1509,9 @@ private:
     NO_RETURN void loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPageProxyIdentifier, bool);
     void loadData(LoadParameters&&);
     void loadAlternateHTML(LoadParameters&&);
+    void loadSimulatedRequestAndResponse(LoadParameters&&, WebCore::ResourceResponse&&);
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
+    void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
     void reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExtension::Handle&&);
     void goToBackForwardItem(uint64_t navigationID, const WebCore::BackForwardItemIdentifier&, WebCore::FrameLoadType, WebCore::ShouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&&);
     void tryRestoreScrollPosition();
@@ -1587,13 +1590,13 @@ private:
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& callback);
 #endif
-    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&&);
-    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&&);
+    void getMainResourceDataOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const Optional<IPC::SharedBufferDataReference>&)>&&);
+    void getResourceDataFromFrame(WebCore::FrameIdentifier, const String& resourceURL, CompletionHandler<void(const Optional<IPC::SharedBufferDataReference>&)>&&);
     void getRenderTreeExternalRepresentation(CompletionHandler<void(const String&)>&&);
     void getSelectionOrContentsAsString(CompletionHandler<void(const String&)>&&);
-    void getSelectionAsWebArchiveData(CompletionHandler<void(const IPC::DataReference&)>&&);
+    void getSelectionAsWebArchiveData(CompletionHandler<void(const Optional<IPC::DataReference>&)>&&);
     void getSourceForFrame(WebCore::FrameIdentifier, CompletionHandler<void(const String&)>&&);
-    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const IPC::DataReference&)>&&);
+    void getWebArchiveOfFrame(WebCore::FrameIdentifier, CompletionHandler<void(const Optional<IPC::DataReference>&)>&&);
     void runJavaScript(WebFrame*, WebCore::RunJavaScriptParameters&&, ContentWorldIdentifier, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&&);
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, Optional<WebCore::FrameIdentifier>, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);
@@ -2227,6 +2230,9 @@ private:
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_navigationHasOccured { false };
 #endif
+
+    bool m_lastNavigationWasAppBound { false };
+
     bool m_canUseCredentialStorage { true };
 
     Vector<String> m_corsDisablingPatterns;
@@ -2242,6 +2248,10 @@ private:
 
 #if ENABLE(IMAGE_EXTRACTION)
     WeakHashSet<WebCore::Element> m_elementsWithExtractedImages;
+#endif
+
+#if HAVE(STATIC_FONT_REGISTRY)
+    RefPtr<SandboxExtension> m_fontExtension;
 #endif
 };
 

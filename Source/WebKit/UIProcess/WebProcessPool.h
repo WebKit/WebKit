@@ -71,6 +71,7 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 
 #if PLATFORM(MAC)
 #import <WebCore/PowerObserverMac.h>
+#import <pal/system/SystemSleepListener.h>
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 #include "DisplayLink.h"
 #endif
@@ -108,6 +109,7 @@ class WebContextSupplement;
 class WebPageGroup;
 class WebPageProxy;
 class WebProcessCache;
+struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
 struct NetworkProcessCreationParameters;
 struct WebProcessCreationParameters;
@@ -123,7 +125,14 @@ int webProcessThroughputQOS();
 enum class CallDownloadDidStart : bool;
 enum class ProcessSwapRequestedByClient : bool;
 
-class WebProcessPool final : public API::ObjectImpl<API::Object::Type::ProcessPool>, public CanMakeWeakPtr<WebProcessPool>, private IPC::MessageReceiver {
+class WebProcessPool final
+    : public API::ObjectImpl<API::Object::Type::ProcessPool>
+    , public CanMakeWeakPtr<WebProcessPool>
+    , private IPC::MessageReceiver
+#if PLATFORM(MAC)
+    , private PAL::SystemSleepListener::Client
+#endif
+{
 public:
     static Ref<WebProcessPool> create(API::ProcessPoolConfiguration&);
 
@@ -350,7 +359,7 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessCrashed(ProcessID);
 
-    void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
+    void getGPUProcessConnection(WebProcessProxy&, GPUProcessConnectionParameters&&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
     GPUProcessProxy& ensureGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
@@ -578,6 +587,12 @@ private:
 
     static void registerHighDynamicRangeChangeCallback();
 
+#if PLATFORM(MAC)
+    // PAL::SystemSleepListener
+    void systemWillSleep() final;
+    void systemDidWake() final;
+#endif
+
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
     IPC::MessageReceiverMap m_messageReceiverMap;
@@ -778,6 +793,7 @@ private:
     
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::PowerObserver> m_powerObserver;
+    std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
 #endif
 };
 

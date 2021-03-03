@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2020 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,7 +65,8 @@ void IntlCollator::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-void IntlCollator::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void IntlCollator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     IntlCollator* thisObject = jsCast<IntlCollator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -74,6 +75,8 @@ void IntlCollator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(thisObject->m_boundCompare);
 }
+
+DEFINE_VISIT_CHILDREN(IntlCollator);
 
 Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtensionKey key)
 {
@@ -161,11 +164,8 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     auto requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue options = optionsValue;
-    if (!optionsValue.isUndefined()) {
-        options = optionsValue.toObject(globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-    }
+    Optional<JSObject&> options = intlCoerceOptionsToObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, void());
 
     m_usage = intlOption<Usage>(globalObject, options, vm.propertyNames->usage, { { "sort"_s, Usage::Sort }, { "search"_s, Usage::Search } }, "usage must be either \"sort\" or \"search\""_s, Usage::Sort);
     RETURN_IF_EXCEPTION(scope, void());

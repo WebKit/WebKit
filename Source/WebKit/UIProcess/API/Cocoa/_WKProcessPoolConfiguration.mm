@@ -69,11 +69,11 @@
     if (classes.isEmpty())
         return [NSSet set];
 
-    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:classes.size()];
+    auto result = adoptNS([[NSMutableSet alloc] initWithCapacity:classes.size()]);
     for (const auto& value : classes)
         [result addObject: objc_lookUpClass(value.utf8().data())];
 
-    return [result autorelease];
+    return result.autorelease();
 }
 
 - (void)setCustomClassesForParameterCoder:(NSSet<Class> *)classesForCoder

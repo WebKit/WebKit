@@ -48,6 +48,7 @@ ViewUpdateDispatcher::ViewUpdateDispatcher()
 
 ViewUpdateDispatcher::~ViewUpdateDispatcher()
 {
+    ASSERT_NOT_REACHED();
 }
 
 void ViewUpdateDispatcher::initializeConnection(IPC::Connection* connection)

@@ -38,6 +38,7 @@ namespace WebCore {
 enum class ColorSpace : uint8_t {
     A98RGB,
     DisplayP3,
+    LCH,
     Lab,
     LinearSRGB,
     ProPhotoRGB,
@@ -58,6 +59,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, DestinationColorSpa
 template<typename> struct ColorSpaceMapping;
 template<typename T> struct ColorSpaceMapping<A98RGB<T>> { static constexpr auto colorSpace { ColorSpace::A98RGB }; };
 template<typename T> struct ColorSpaceMapping<DisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::DisplayP3 }; };
+template<typename T> struct ColorSpaceMapping<LCHA<T>> { static constexpr auto colorSpace { ColorSpace::LCH }; };
 template<typename T> struct ColorSpaceMapping<Lab<T>> { static constexpr auto colorSpace { ColorSpace::Lab }; };
 template<typename T> struct ColorSpaceMapping<LinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::LinearSRGB }; };
 template<typename T> struct ColorSpaceMapping<ProPhotoRGB<T>> { static constexpr auto colorSpace { ColorSpace::ProPhotoRGB }; };
@@ -75,6 +77,8 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<A98RGB<T>>(components));
     case ColorSpace::DisplayP3:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
+    case ColorSpace::LCH:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LCHA<T>>(components));
     case ColorSpace::Lab:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
     case ColorSpace::LinearSRGB:
@@ -102,6 +106,7 @@ template<> struct EnumTraits<WebCore::ColorSpace> {
         WebCore::ColorSpace,
         WebCore::ColorSpace::A98RGB,
         WebCore::ColorSpace::DisplayP3,
+        WebCore::ColorSpace::LCH,
         WebCore::ColorSpace::Lab,
         WebCore::ColorSpace::LinearSRGB,
         WebCore::ColorSpace::ProPhotoRGB,

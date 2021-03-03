@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,9 +72,12 @@ std::unique_ptr<JSEventTargetWrapper> jsEventTargetCast(VM& vm, JSValue thisValu
     return nullptr;
 }
 
-void JSEventTarget::visitAdditionalChildren(SlotVisitor& visitor)
+template<typename Visitor>
+void JSEventTarget::visitAdditionalChildren(Visitor& visitor)
 {
     wrapped().visitJSEventListeners(visitor);
 }
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(JSEventTarget);
 
 } // namespace WebCore

@@ -48,7 +48,6 @@
 #include <WebCore/RenderTheme.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
-#include <WebCore/UserAgent.h>
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -121,14 +120,6 @@ bool WebPage::platformCanHandleRequest(const ResourceRequest&)
 {
     notImplemented();
     return false;
-}
-
-String WebPage::platformUserAgent(const URL& url) const
-{
-    if (url.isNull() || !m_page->settings().needsSiteSpecificQuirks())
-        return String();
-
-    return WebCore::standardUserAgentForURL(url);
 }
 
 bool WebPage::hoverSupportedByPrimaryPointingDevice() const

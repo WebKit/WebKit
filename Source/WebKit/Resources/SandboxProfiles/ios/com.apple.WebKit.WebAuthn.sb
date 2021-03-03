@@ -198,7 +198,6 @@
 
     ; UIKit-required IOKit nodes.
     (allow iokit-open
-        (iokit-user-client-class "AppleJPEGDriverUserClient")
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
         (iokit-user-client-class "IOSurfaceSendRight")
         ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
@@ -443,10 +442,6 @@
 ;; Access the keyboards
 (allow file-read*
     (home-subpath "/Library/Caches/com.apple.keyboards"))
-
-;; Power logging
-(allow mach-lookup
-    (global-name "com.apple.powerlog.plxpclogger.xpc")) ;;  <rdar://problem/36442803>
 
 ;; Silently deny unnecessary accesses caused by MessageUI framework.
 ;; This can be removed once <rdar://problem/47038102> is resolved.

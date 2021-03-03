@@ -45,6 +45,7 @@ WebInspectorInterruptDispatcher::WebInspectorInterruptDispatcher()
 
 WebInspectorInterruptDispatcher::~WebInspectorInterruptDispatcher()
 {
+    ASSERT_NOT_REACHED();
 }
 
 void WebInspectorInterruptDispatcher::initializeConnection(IPC::Connection* connection)

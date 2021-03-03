@@ -329,7 +329,7 @@ class TestRebaselineExpectations(_BaseTestCase):
             self.command.execute(self.options, [], self.tool)
 
         self.assertEqual(self.tool.filesystem.written_files, {})
-        self.assertEqual(captured.root.log.getvalue(), 'Did not find any tests marked Rebaseline.\n')
+        self.assertEqual(captured.root.log.getvalue(), "The 'rebaseline-expectations' command is currently deprecated due to believed non-use; if it forms part of your workflow, please comment on https://bugs.webkit.org/show_bug.cgi?id=221991 and please include the command you ran, even if others have already mentioned it\nDid not find any tests marked Rebaseline.\n")
 
     def disabled_test_overrides_are_included_correctly(self):
         # This tests that the any tests marked as REBASELINE in the overrides are found, but

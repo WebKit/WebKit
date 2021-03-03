@@ -29,6 +29,7 @@
 
 #include <CoreText/CoreText.h>
 #include <MediaAccessibility/MediaAccessibility.h>
+#include <pal/spi/cf/MediaAccessibilitySPI.h>
 #include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, MediaAccessibility)
@@ -71,6 +72,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaAccessibility, kMAXCaptionAppearance
 #define kMAXCaptionAppearanceSettingsChangedNotification get_MediaAccessibility_kMAXCaptionAppearanceSettingsChangedNotification()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, MediaAccessibility, kMAAudibleMediaSettingsChangedNotification, CFStringRef)
 #define kMAAudibleMediaSettingsChangedNotification get_MediaAccessibility_kMAAudibleMediaSettingsChangedNotification()
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, MediaAccessibility, MAImageCaptioningCopyCaptionWithSource, CFStringRef, (CGImageSourceRef imageSource, CFErrorRef * CF_RETURNS_RETAINED error), (imageSource, error))
+#define MAImageCaptioningCopyCaptionWithSource softLink_MediaAccessibility_MAImageCaptioningCopyCaptionWithSource
 
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 

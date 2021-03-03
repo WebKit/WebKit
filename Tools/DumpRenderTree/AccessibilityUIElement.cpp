@@ -1610,6 +1610,14 @@ static JSValueRef mathPrescriptsDescriptionCallback(JSContextRef context, JSObje
 
 #endif
 
+#if PLATFORM(COCOA)
+static JSValueRef getEmbeddedImageDescription(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    auto embeddedImageDescription = toAXElement(thisObject)->embeddedImageDescription();
+    return JSValueMakeString(context, embeddedImageDescription.get());
+}
+#endif
+
 // Implementation
 
 // Unsupported methods on various platforms.
@@ -1933,6 +1941,9 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "supportedActions", supportedActionsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "mathPostscriptsDescription", mathPostscriptsDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "mathPrescriptsDescription", mathPrescriptsDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#endif
+#if PLATFORM(COCOA)
+        { "embeddedImageDescription", getEmbeddedImageDescription, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif
         { 0, 0, 0, 0 }
     };

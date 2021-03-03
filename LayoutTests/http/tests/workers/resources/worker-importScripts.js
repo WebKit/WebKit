@@ -21,7 +21,7 @@ function runTests()
         var source1 = "worker-importScripts-source1.js";
         var source2 = "worker-importScripts-source2.js";
         var differentOrigin = "http://localhost:8000/workers/resources/worker-importScripts-differentOrigin.js";
-        var differentRedirectOrigin = "/resources/redirect.php?url=http://localhost:8000/workers/resources/worker-importScripts-differentOrigin.js";
+        var differentRedirectOrigin = "/resources/redirect.py?url=http://localhost:8000/workers/resources/worker-importScripts-differentOrigin.js";
         var syntaxErrorSource = "worker-importScripts-syntaxError.js";
         var fakeSource = "nonexistant";
         loadedSource1 = false;

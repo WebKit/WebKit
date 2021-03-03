@@ -82,16 +82,14 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return appLinks.firstObject;
 #else
     BinarySemaphore semaphore;
-    __block LSAppLink *syncAppLink = nil;
-    __block BinarySemaphore* semaphorePtr = &semaphore;
-
-    [LSAppLink getAppLinkWithURL:url completionHandler:^(LSAppLink *appLink, NSError *error) {
-        syncAppLink = [appLink retain];
-        semaphorePtr->signal();
+    RetainPtr<LSAppLink> syncAppLink;
+    [LSAppLink getAppLinkWithURL:url completionHandler:[&semaphore, &syncAppLink](LSAppLink *appLink, NSError *error) {
+        syncAppLink = retainPtr(appLink);
+        semaphore.signal();
     }];
     semaphore.wait();
 
-    return [syncAppLink autorelease];
+    return syncAppLink.autorelease();
 #endif
 }
 #endif
@@ -821,18 +819,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(!_mediaControlsContextMenu);
     ASSERT(!_mediaControlsContextMenuCallback);
 
-    String menuTitle;
-    if (items.size() == 1) {
-        menuTitle = WTFMove(items[0].title);
-        items = WTFMove(items[0].children);
-    }
-
     if (items.isEmpty()) {
         completionHandler(WebCore::MediaControlsContextMenuItem::invalidID);
         return;
     }
 
-    _mediaControlsContextMenu = [UIMenu menuWithTitle:WTFMove(menuTitle) image:nil identifier:nil options:0 children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(items)]];
+    _mediaControlsContextMenu = [UIMenu menuWithTitle:@"" children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(items)]];
     _mediaControlsContextMenuTargetFrame = WTFMove(targetFrame);
     _mediaControlsContextMenuCallback = WTFMove(completionHandler);
 

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -78,7 +78,8 @@ JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext&) const
     return nullptr;
 }
 
-void JSEventListener::visitJSFunction(SlotVisitor& visitor)
+template<typename Visitor>
+inline void JSEventListener::visitJSFunctionImpl(Visitor& visitor)
 {
     // If m_wrapper is null, we are not keeping m_jsFunction alive.
     if (!m_wrapper)
@@ -86,6 +87,9 @@ void JSEventListener::visitJSFunction(SlotVisitor& visitor)
 
     visitor.append(m_jsFunction);
 }
+
+void JSEventListener::visitJSFunction(AbstractSlotVisitor& visitor) { visitJSFunctionImpl(visitor); }
+void JSEventListener::visitJSFunction(SlotVisitor& visitor) { visitJSFunctionImpl(visitor); }
 
 static void handleBeforeUnloadEventReturnValue(BeforeUnloadEvent& event, const String& returnValue)
 {

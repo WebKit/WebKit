@@ -29,6 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #import "ApplePaySessionPaymentRequest.h"
+#import "ApplePayShippingMethod.h"
 #import <unicode/ucurr.h>
 #import <unicode/uloc.h>
 
@@ -38,8 +39,8 @@ static ExceptionOr<void> validateCountryCode(const String&);
 static ExceptionOr<void> validateCurrencyCode(const String&);
 static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPaymentRequest::MerchantCapabilities&);
 static ExceptionOr<void> validateSupportedNetworks(const Vector<String>&);
-static ExceptionOr<void> validateShippingMethods(const Vector<ApplePaySessionPaymentRequest::ShippingMethod>&);
-static ExceptionOr<void> validateShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&);
+static ExceptionOr<void> validateShippingMethods(const Vector<ApplePayShippingMethod>&);
+static ExceptionOr<void> validateShippingMethod(const ApplePayShippingMethod&);
 
 ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPaymentRequest& paymentRequest)
 {
@@ -76,7 +77,7 @@ ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPayment
     return { };
 }
 
-ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePaySessionPaymentRequest::LineItem& total)
+ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem& total)
 {
     if (!total.label)
         return Exception { TypeError, "Missing total label." };
@@ -141,7 +142,7 @@ static ExceptionOr<void> validateSupportedNetworks(const Vector<String>& support
     return { };
 }
 
-static ExceptionOr<void> validateShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+static ExceptionOr<void> validateShippingMethod(const ApplePayShippingMethod& shippingMethod)
 {
     NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:shippingMethod.amount locale:@{ NSLocaleDecimalSeparator : @"." }];
     if (amount.integerValue < 0)
@@ -150,7 +151,7 @@ static ExceptionOr<void> validateShippingMethod(const ApplePaySessionPaymentRequ
     return { };
 }
 
-static ExceptionOr<void> validateShippingMethods(const Vector<ApplePaySessionPaymentRequest::ShippingMethod>& shippingMethods)
+static ExceptionOr<void> validateShippingMethods(const Vector<ApplePayShippingMethod>& shippingMethods)
 {
     for (const auto& shippingMethod : shippingMethods) {
         auto validatedShippingMethod = validateShippingMethod(shippingMethod);

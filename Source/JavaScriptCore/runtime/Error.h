@@ -55,6 +55,7 @@ JS_EXPORT_PRIVATE JSObject* createEvalError(JSGlobalObject*, const String&);
 JS_EXPORT_PRIVATE JSObject* createRangeError(JSGlobalObject*, const String&);
 JS_EXPORT_PRIVATE JSObject* createReferenceError(JSGlobalObject*, const String&);
 JS_EXPORT_PRIVATE JSObject* createSyntaxError(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE JSObject* createSyntaxError(JSGlobalObject*);
 JS_EXPORT_PRIVATE JSObject* createTypeError(JSGlobalObject*);
 JS_EXPORT_PRIVATE JSObject* createTypeError(JSGlobalObject*, const String&);
 JS_EXPORT_PRIVATE JSObject* createNotEnoughArgumentsError(JSGlobalObject*);

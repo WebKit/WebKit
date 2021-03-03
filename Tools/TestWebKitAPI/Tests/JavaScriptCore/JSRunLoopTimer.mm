@@ -65,7 +65,7 @@ static void triggerGC(JSContext *context)
 {
     @autoreleasepool {
         for (size_t i = 0; i < 1000; ++i)
-            [JSValue valueWithObject:[[TestObject new] autorelease] inContext:context];
+            [JSValue valueWithObject:adoptNS([TestObject new]).get() inContext:context];
         JSGarbageCollect([context JSGlobalContextRef]);
     }
 }

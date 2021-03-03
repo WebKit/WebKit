@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,17 +59,18 @@ public:
     static WebAssemblyModuleRecord* create(JSGlobalObject*, VM&, Structure*, const Identifier&, const Wasm::ModuleInformation&);
 
     void prepareLink(VM&, JSWebAssemblyInstance*);
-    void link(JSGlobalObject*, JSValue scriptFetcher, JSObject* importObject, Wasm::CreationMode);
+    Synchronousness link(JSGlobalObject*, JSValue scriptFetcher, JSObject* importObject, Wasm::CreationMode);
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
     JSObject* exportsObject() const { return m_exportsObject.get(); }
 
 private:
+    void linkImpl(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
     WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
 
     void finishCreation(JSGlobalObject*, VM&, const Wasm::ModuleInformation&);
 
-    static void visitChildren(JSCell*, SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
     WriteBarrier<JSObject> m_startFunction;

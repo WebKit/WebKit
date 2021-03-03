@@ -97,6 +97,8 @@ String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType
         MAKE_STATIC_STRING_IMPL("SkipBackwardCommand"),
         MAKE_STATIC_STRING_IMPL("NextTrackCommand"),
         MAKE_STATIC_STRING_IMPL("PreviousTrackCommand"),
+        MAKE_STATIC_STRING_IMPL("BeginScrubbing"),
+        MAKE_STATIC_STRING_IMPL("EndScrubbing"),
     };
     static_assert(!static_cast<size_t>(PlatformMediaSession::NoCommand), "PlatformMediaSession::NoCommand is not 0 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::PlayCommand) == 1, "PlatformMediaSession::PlayCommand is not 1 as expected");
@@ -112,6 +114,9 @@ String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType
     static_assert(static_cast<size_t>(PlatformMediaSession::SkipBackwardCommand) == 11, "PlatformMediaSession::SkipBackwardCommand is not 11 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::NextTrackCommand) == 12, "PlatformMediaSession::NextTrackCommand is not 12 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::PreviousTrackCommand) == 13, "PlatformMediaSession::PreviousTrackCommand is not 13 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::BeginScrubbing) == 14, "PlatformMediaSession::BeginScrubbing is not 14 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::EndScrubbing) == 15, "PlatformMediaSession::EndScrubbing is not 15 as expected");
+
     ASSERT(static_cast<size_t>(command) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(command)];
 }

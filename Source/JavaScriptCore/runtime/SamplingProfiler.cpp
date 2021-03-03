@@ -652,12 +652,16 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
     m_unprocessedStackTraces.clear();
 }
 
-void SamplingProfiler::visit(SlotVisitor& visitor)
+template<typename Visitor>
+void SamplingProfiler::visit(Visitor& visitor)
 {
     RELEASE_ASSERT(m_lock.isLocked());
     for (JSCell* cell : m_liveCellPointers)
         visitor.appendUnbarriered(cell);
 }
+
+template void SamplingProfiler::visit(AbstractSlotVisitor&);
+template void SamplingProfiler::visit(SlotVisitor&);
 
 void SamplingProfiler::shutdown()
 {

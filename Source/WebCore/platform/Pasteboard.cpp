@@ -66,7 +66,7 @@ Optional<Vector<PasteboardItemInfo>> Pasteboard::allPasteboardItemInfo() const
 {
 #if PLATFORM(COCOA)
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
-        return strategy->allPasteboardItemInfo(name(), m_changeCount);
+        return strategy->allPasteboardItemInfo(name(), m_changeCount, context());
 #endif
     return WTF::nullopt;
 }
@@ -75,7 +75,7 @@ Optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
 {
 #if PLATFORM(COCOA)
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
-        return strategy->informationForItemAtIndex(index, name(), m_changeCount);
+        return strategy->informationForItemAtIndex(index, name(), m_changeCount, context());
 #else
     UNUSED_PARAM(index);
 #endif
@@ -85,21 +85,21 @@ Optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
 String Pasteboard::readString(size_t index, const String& type)
 {
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
-        return strategy->readStringFromPasteboard(index, type, name());
+        return strategy->readStringFromPasteboard(index, type, name(), context());
     return { };
 }
 
 RefPtr<WebCore::SharedBuffer> Pasteboard::readBuffer(size_t index, const String& type)
 {
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
-        return strategy->readBufferFromPasteboard(index, type, name());
+        return strategy->readBufferFromPasteboard(index, type, name(), context());
     return nullptr;
 }
 
 URL Pasteboard::readURL(size_t index, String& title)
 {
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
-        return strategy->readURLFromPasteboard(index, name(), title);
+        return strategy->readURLFromPasteboard(index, name(), title, context());
     return { };
 }
 

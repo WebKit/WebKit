@@ -181,7 +181,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
 
             double position = 0;
             CFNumberGetValue(positionRef, kCFNumberDoubleType, &position);
-            argument = position;
+            argument.time = position;
             platformCommand = PlatformMediaSession::SeekToPlaybackPositionCommand;
             break;
         }
@@ -195,7 +195,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
             if (auto positionRef = static_cast<CFNumberRef>(CFDictionaryGetValue(options, kMRMediaRemoteOptionSkipInterval))) {
                 double position = 0;
                 CFNumberGetValue(positionRef, kCFNumberDoubleType, &position);
-                argument = position;
+                argument.time = position;
             }
 
             platformCommand = (command == MRMediaRemoteCommandSkipForward) ? PlatformMediaSession::SkipForwardCommand : PlatformMediaSession::SkipBackwardCommand;

@@ -30,34 +30,23 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
-static bool hasRecievedCorrectCaptureState = false;
+static bool hasReceivedCorrectCaptureState = false;
 
-@interface MediaStreamTrackDetachedUIDelegate : NSObject<WKUIDelegate>
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
+@interface MediaStreamTrackDetachedUIDelegate : UserMediaCaptureUIDelegate
 - (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state;
 @end
 
 @implementation MediaStreamTrackDetachedUIDelegate
-- (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
-{
-    decisionHandler(YES);
-}
-
-- (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
-{
-    decisionHandler(@"0x987654321", YES);
-}
 - (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state
 {
     if (state == _WKMediaCaptureStateActiveMicrophone)
-        hasRecievedCorrectCaptureState = true;
+        hasReceivedCorrectCaptureState = true;
 }
 @end
 
@@ -75,10 +64,10 @@ TEST(WebKit, MediaStreamTrackDetached)
     auto delegate = adoptNS([[MediaStreamTrackDetachedUIDelegate alloc] init]);
     webView.get().UIDelegate = delegate.get();
 
-    hasRecievedCorrectCaptureState = false;
+    hasReceivedCorrectCaptureState = false;
     [webView loadTestPageNamed:@"mediastreamtrack-detached"];
 
-    TestWebKitAPI::Util::run(&hasRecievedCorrectCaptureState);
+    TestWebKitAPI::Util::run(&hasReceivedCorrectCaptureState);
 }
 
 } // namespace TestWebKitAPI

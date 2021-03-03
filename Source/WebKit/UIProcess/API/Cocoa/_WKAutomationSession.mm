@@ -41,7 +41,7 @@
 
 - (instancetype)init
 {
-    return [self initWithConfiguration:[[[_WKAutomationSessionConfiguration alloc] init] autorelease]];
+    return [self initWithConfiguration:adoptNS([[_WKAutomationSessionConfiguration alloc] init]).get()];
 }
 
 - (instancetype)initWithConfiguration:(_WKAutomationSessionConfiguration *)configuration
@@ -87,7 +87,7 @@
 
 - (_WKAutomationSessionConfiguration *)configuration
 {
-    return [[_configuration copy] autorelease];
+    return adoptNS([_configuration copy]).autorelease();
 }
 
 - (BOOL)isPaired

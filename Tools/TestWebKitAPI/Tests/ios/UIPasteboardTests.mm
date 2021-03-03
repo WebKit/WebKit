@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
@@ -47,6 +48,26 @@ static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
     if (!success)
         NSLog(@"Expected JSON: %@ to match values: %@", jsonString, expected);
 }
+
+#if HAVE(PASTEBOARD_DATA_OWNER)
+
+static _UIDataOwner gLastKnownDataOwner = _UIDataOwnerUndefined;
+
+@interface TestUIPasteboard : NSObject
++ (void)_performAsDataOwner:(_UIDataOwner)owner block:(dispatch_block_t)block;
+@end
+
+@implementation TestUIPasteboard
+
++ (void)_performAsDataOwner:(_UIDataOwner)owner block:(dispatch_block_t)block
+{
+    block();
+    gLastKnownDataOwner = owner;
+}
+
+@end
+
+#endif // HAVE(PASTEBOARD_DATA_OWNER)
 
 #endif // PLATFORM(IOS)
 
@@ -348,6 +369,50 @@ TEST(UIPasteboardTests, MissingPreferredPresentationSizeForImage)
     EXPECT_WK_STREQ("0", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').width"]);
     EXPECT_WK_STREQ("174", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').height"]);
 }
+
+#if HAVE(PASTEBOARD_DATA_OWNER)
+
+TEST(UIPasteboardTests, PerformAsDataOwnerWhenCopying)
+{
+    auto swizzler = ClassMethodSwizzler {
+        UIPasteboard.class,
+        @selector(_performAsDataOwner:block:),
+        [TestUIPasteboard methodForSelector:@selector(_performAsDataOwner:block:)]
+    };
+
+    auto webView = setUpWebViewForPasteboardTests(@"simple");
+    [webView _setDataOwnerForCopy:_UIDataOwnerShared];
+    [webView _setDataOwnerForPaste:_UIDataOwnerEnterprise];
+    [webView selectAll:nil];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerShared);
+    EXPECT_WK_STREQ(UIPasteboard.generalPasteboard.string, "Simple HTML file.");
+}
+
+TEST(UIPasteboardTests, PerformAsDataOwnerWhenPasting)
+{
+    auto swizzler = ClassMethodSwizzler {
+        UIPasteboard.class,
+        @selector(_performAsDataOwner:block:),
+        [TestUIPasteboard methodForSelector:@selector(_performAsDataOwner:block:)]
+    };
+
+    auto webView = setUpWebViewForPasteboardTests(@"autofocus-contenteditable");
+    [webView _setDataOwnerForCopy:_UIDataOwnerShared];
+    [webView _setDataOwnerForPaste:_UIDataOwnerEnterprise];
+
+    UIPasteboard.generalPasteboard.string = @"Foo bar";
+    [webView paste:nil];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerEnterprise);
+    EXPECT_WK_STREQ([webView contentsAsString], "Foo bar\n");
+}
+
+#endif // HAVE(PASTEBOARD_DATA_OWNER)
+
 #endif // PLATFORM(IOS)
 
 } // namespace TestWebKitAPI

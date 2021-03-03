@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2021 Igalia S.A. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,13 +54,17 @@ bool SetPrivateBrandVariant::attemptToMerge(const SetPrivateBrandVariant& other)
     return true;
 }
 
-void SetPrivateBrandVariant::markIfCheap(SlotVisitor& visitor)
+template<typename Visitor>
+void SetPrivateBrandVariant::markIfCheap(Visitor& visitor)
 {
     if (m_oldStructure)
         m_oldStructure->markIfCheap(visitor);
     if (m_newStructure)
         m_newStructure->markIfCheap(visitor);
 }
+
+template void SetPrivateBrandVariant::markIfCheap(AbstractSlotVisitor&);
+template void SetPrivateBrandVariant::markIfCheap(SlotVisitor&);
 
 bool SetPrivateBrandVariant::finalize(VM& vm)
 {
@@ -71,10 +75,13 @@ bool SetPrivateBrandVariant::finalize(VM& vm)
     return true;
 }
 
-void SetPrivateBrandVariant::visitAggregate(SlotVisitor& visitor)
+template<typename Visitor>
+void SetPrivateBrandVariant::visitAggregateImpl(Visitor& visitor)
 {
     m_identifier.visitAggregate(visitor);
 }
+
+DEFINE_VISIT_AGGREGATE(SetPrivateBrandVariant);
 
 void SetPrivateBrandVariant::dump(PrintStream& out) const
 {

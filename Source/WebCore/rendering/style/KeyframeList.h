@@ -95,7 +95,7 @@ public:
 
     void copyKeyframes(KeyframeList&);
     bool hasImplicitKeyframes() const;
-    void fillImplicitKeyframes(const Element&, Style::Resolver&, const RenderStyle*);
+    void fillImplicitKeyframes(const Element&, Style::Resolver&, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle);
 
 private:
     AtomString m_animationName;

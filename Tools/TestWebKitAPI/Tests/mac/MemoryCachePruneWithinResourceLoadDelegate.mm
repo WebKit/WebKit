@@ -77,23 +77,21 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, DISABLED_MemoryCachePruneWithinResourceLoadDelegate)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        auto webView1 = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+        auto webView2 = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
 
-    RetainPtr<WebView> webView1 = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<WebView> webView2 = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+        auto window = adoptNS([[NSWindow alloc] initWithContentRect:webView2.get().frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+        [[window contentView] addSubview:webView2.get()];
 
-    NSWindow* window = [[NSWindow alloc] initWithContentRect:webView2.get().frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
-    [window.contentView addSubview:webView2.get()];
+        auto resourceLoadDelegate = adoptNS([[MemoryCachePruneTestResourceLoadDelegate alloc] init]);
+        resourceLoadDelegate.get()->_window = window.get();
+        webView1.get().resourceLoadDelegate = resourceLoadDelegate.get();
 
-    RetainPtr<MemoryCachePruneTestResourceLoadDelegate> resourceLoadDelegate = adoptNS([[MemoryCachePruneTestResourceLoadDelegate alloc] init]);
-    resourceLoadDelegate.get()->_window = window;
-    webView1.get().resourceLoadDelegate = resourceLoadDelegate.get();
+        [[webView1.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"MemoryCachePruneWithinResourceLoadDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
 
-    [[webView1.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"MemoryCachePruneWithinResourceLoadDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-
-    Util::run(&didFinishLoad);
-    
-    [pool drain];
+        Util::run(&didFinishLoad);
+    }
     // If we finished without crashing, the test passed.
 }
 

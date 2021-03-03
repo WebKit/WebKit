@@ -37,21 +37,39 @@ namespace WebCore {
 class WebXRRigidTransform;
 class WebXRSession;
 
-class WebXRReferenceSpace : public WebXRSpace {
+class WebXRReferenceSpace : public RefCounted<WebXRReferenceSpace>, public WebXRSpace {
     WTF_MAKE_ISO_ALLOCATED(WebXRReferenceSpace);
 public:
     static Ref<WebXRReferenceSpace> create(Document&, Ref<WebXRSession>&&, XRReferenceSpaceType);
+    static Ref<WebXRReferenceSpace> create(Document&, Ref<WebXRSession>&&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);
 
     virtual ~WebXRReferenceSpace();
 
-    RefPtr<WebXRReferenceSpace> getOffsetReferenceSpace(const WebXRRigidTransform&);
+    using RefCounted<WebXRReferenceSpace>::ref;
+    using RefCounted<WebXRReferenceSpace>::deref;
+
+    WebXRSession& session() const final { return m_session.get(); }
+    TransformationMatrix nativeOrigin() const override;
+    virtual RefPtr<WebXRReferenceSpace> getOffsetReferenceSpace(const WebXRRigidTransform&);
+    XRReferenceSpaceType type() const { return m_type; }
 
 protected:
-    WebXRReferenceSpace(Document&, Ref<WebXRSession>&&, XRReferenceSpaceType);
+    WebXRReferenceSpace(Document&, Ref<WebXRSession>&&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);
 
+    bool isReferenceSpace() const final { return true; }
+
+    TransformationMatrix floorOriginTransform() const;
+
+    Ref<WebXRSession> m_session;
     XRReferenceSpaceType m_type;
+
+private:
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_WEBXRSPACE(WebXRReferenceSpace, isReferenceSpace())
 
 #endif // ENABLE(WEBXR)

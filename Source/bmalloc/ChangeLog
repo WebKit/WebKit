@@ -1,3 +1,14 @@
+2021-02-15  Michael Saboff  <msaboff@apple.com>
+
+        [ARM64] Change break instruction comment to indicate possible security failure
+        https://bugs.webkit.org/show_bug.cgi?id=221936
+
+        Reviewed by Mark Lam.
+
+        Change the ASSERT break comment immediate to the same value the C++ compiler uses.
+
+        * bmalloc/BAssert.h:
+
 2020-12-07  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Remove WEBKIT_WRAP_SOURCELIST

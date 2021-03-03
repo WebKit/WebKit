@@ -33,7 +33,7 @@ window.addEventListener("pagehide", function(event) {
 
 onload = () => {
     setTimeout(() => {
-       eventSource = new EventSource("resources/infinite-event-stream.php");
+       eventSource = new EventSource("resources/infinite-event-stream.py");
 
         eventSource.onerror = () => {
             testPassed("Received error event");

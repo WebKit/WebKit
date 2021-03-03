@@ -705,7 +705,7 @@ namespace JSC {
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, const Identifier&);
         RegisterID* emitLoad(RegisterID* dst, JSValue, SourceCodeRepresentation = SourceCodeRepresentation::Other);
-        RegisterID* emitLoad(RegisterID* dst, IdentifierSet& excludedList);
+        RegisterID* emitLoad(RegisterID* dst, IdentifierSet&& excludedList);
 
         template<typename UnaryOp, typename = std::enable_if_t<UnaryOp::opcodeID != op_negate>>
         RegisterID* emitUnaryOp(RegisterID* dst, RegisterID* src)
@@ -827,8 +827,10 @@ namespace JSC {
 
         void emitCreatePrivateBrand(RegisterID* dst, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         void emitInstallPrivateBrand(RegisterID* target);
-        RegisterID* emitGetPrivateBrand(RegisterID* dst, RegisterID* scope);
-        void emitCheckPrivateBrand(RegisterID* base, RegisterID* brand);
+        void emitInstallPrivateClassBrand(RegisterID* target);
+
+        RegisterID* emitGetPrivateBrand(RegisterID* dst, RegisterID* scope, bool isStatic);
+        void emitCheckPrivateBrand(RegisterID* base, RegisterID* brand, bool isStatic);
 
         void emitSuperSamplerBegin();
         void emitSuperSamplerEnd();
@@ -1056,10 +1058,10 @@ namespace JSC {
         void emitGeneratorStateChange(int32_t state);
         RegisterID* emitYield(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason = JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
         RegisterID* emitDelegateYield(RegisterID* argument, ThrowableExpressionData*);
-        RegisterID* generatorStateRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::State)]; }
-        RegisterID* generatorValueRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::Value)]; }
-        RegisterID* generatorResumeModeRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::ResumeMode)]; }
-        RegisterID* generatorFrameRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::Frame)]; }
+        RegisterID* generatorStateRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::State)]; }
+        RegisterID* generatorValueRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::Value)]; }
+        RegisterID* generatorResumeModeRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::ResumeMode)]; }
+        RegisterID* generatorFrameRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::Frame)]; }
 
         CodeType codeType() const { return m_codeType; }
 
@@ -1263,7 +1265,7 @@ namespace JSC {
             m_lastInstruction = prevLastInstruction;
         }
 
-        bool isPrivateMethod(const Identifier&);
+        PrivateNameEntry getPrivateTraits(const Identifier&);
 
         void pushPrivateAccessNames(const PrivateNameEnvironment*);
         void popPrivateAccessNames();
@@ -1325,6 +1327,7 @@ namespace JSC {
         Vector<Ref<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
         unsigned m_yieldPoints { 0 };
+        bool m_isAsync { false };
 
         Strong<SymbolTable> m_generatorFrameSymbolTable;
         int m_generatorFrameSymbolTableIndex { 0 };

@@ -33,14 +33,14 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 37x19
                 text run at (2,2) width 37: "row 3"
       RenderBlock (anonymous) at (0,242) size 784x24
-        RenderButton {INPUT} at (2,2) size 61x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-          RenderBlock (anonymous) at (12,3) size 37x14
-            RenderText at (0,0) size 37x14
-              text run at (0,0) width 37: "expand"
+        RenderButton {INPUT} at (2,2) size 61x20 [color=#007AFF] [bgcolor=#EEEEEE]
+          RenderBlock (anonymous) at (11,3) size 39x14
+            RenderText at (0,0) size 39x14
+              text run at (0,0) width 39: "expand"
         RenderText {#text} at (64,1) size 5x19
           text run at (64,1) width 5: " "
-        RenderButton {INPUT} at (70,2) size 50x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
-          RenderBlock (anonymous) at (12,3) size 26x14
-            RenderText at (0,0) size 26x14
-              text run at (0,0) width 26: "sizes"
+        RenderButton {INPUT} at (70,2) size 49x20 [color=#007AFF] [bgcolor=#EEEEEE]
+          RenderBlock (anonymous) at (11,3) size 27x14
+            RenderText at (0,0) size 27x14
+              text run at (0,0) width 27: "sizes"
         RenderText {#text} at (0,0) size 0x0

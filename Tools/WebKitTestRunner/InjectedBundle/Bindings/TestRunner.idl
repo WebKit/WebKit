@@ -403,8 +403,11 @@ interface TestRunner {
     undefined setPrivateClickMeasurementOverrideTimerForTesting(boolean value);
     undefined markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     undefined simulateResourceLoadStatisticsSessionRestart();
-    undefined setPrivateClickMeasurementConversionURLForTesting(DOMString url);
+    undefined setPrivateClickMeasurementTokenPublicKeyURLForTesting(DOMString url);
+    undefined setPrivateClickMeasurementTokenSignatureURLForTesting(DOMString url);
+    undefined setPrivateClickMeasurementAttributionReportURLForTesting(DOMString url);
     undefined markPrivateClickMeasurementsAsExpiredForTesting();
+    undefined setFraudPreventionValuesForTesting(DOMString secretToken, DOMString unlinkableToken, DOMString signature, DOMString keyID);
 
     // SpeechRecognition
     undefined setIsSpeechRecognitionPermissionGranted(boolean value);

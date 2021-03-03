@@ -848,11 +848,13 @@ void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext&, cons
     notImplemented();
 }
 
+#if !USE(AVFOUNDATION)
 bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
 {
     notImplemented();
     return false;
 }
+#endif
 
 RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 {
@@ -1180,7 +1182,7 @@ void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier rem
         return;
     }
     // PlatformMediaResource owns the PlatformMediaResourceClient
-    resource->setClient(makeUnique<RemoteMediaResourceProxy>(connection(), *resource, remoteMediaResourceIdentifier));
+    resource->setClient(adoptRef(*new RemoteMediaResourceProxy(connection(), *resource, remoteMediaResourceIdentifier)));
     m_mediaResources.add(remoteMediaResourceIdentifier, WTFMove(resource));
 
     completionHandler();

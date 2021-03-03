@@ -95,7 +95,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return cachedNames;
 #endif
 
-    id names = ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
+    auto names = ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
         auto page = protectedSelf->m_page;
         if (!page)
             return @[];
@@ -105,13 +105,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return @[];
 
         return createNSArray(corePage->pageOverlayController().copyAccessibilityAttributesNames(true));
-    }).autorelease();
+    });
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    self.cachedParameterizedAttributeNames = names;
+    self.cachedParameterizedAttributeNames = names.get();
 #endif
 
-    return names;
+    return names.autorelease();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

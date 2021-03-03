@@ -49,7 +49,7 @@ TEST(WebKit, JITEnabled)
     auto processPoolConfiguration = adoptNS([_WKProcessPoolConfiguration new]);
     [processPoolConfiguration setJITEnabled:NO];
     auto configuration = adoptNS([WKWebViewConfiguration new]);
-    [configuration setProcessPool:[[[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()] autorelease]];
+    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]).get()];
     auto webViewNoJIT = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     checkJITEnabled(WTFMove(webViewNoJIT), NO);
     checkJITEnabled(adoptNS([WKWebView new]), YES);

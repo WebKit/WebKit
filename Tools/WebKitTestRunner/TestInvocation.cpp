@@ -1338,15 +1338,38 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().simulateResourceLoadStatisticsSessionRestart();
         return nullptr;
     }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementConversionURLForTesting")) {
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementTokenPublicKeyURLForTesting")) {
         ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
-        TestController::singleton().setPrivateClickMeasurementConversionURLForTesting(static_cast<WKURLRef>(messageBody));
+        TestController::singleton().setPrivateClickMeasurementTokenPublicKeyURLForTesting(static_cast<WKURLRef>(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementTokenSignatureURLForTesting")) {
+        ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
+        TestController::singleton().setPrivateClickMeasurementTokenSignatureURLForTesting(static_cast<WKURLRef>(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementAttributionReportURLForTesting")) {
+        ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
+        TestController::singleton().setPrivateClickMeasurementAttributionReportURLForTesting(static_cast<WKURLRef>(messageBody));
         return nullptr;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "MarkPrivateClickMeasurementsAsExpiredForTesting")) {
         TestController::singleton().markPrivateClickMeasurementsAsExpiredForTesting();
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetFraudPreventionValuesForTesting")) {
+        auto testDictionary = dictionaryValue(messageBody);
+        auto secretToken = stringValue(testDictionary, "SecretToken");
+        auto unlinkableToken = stringValue(testDictionary, "UnlinkableToken");
+        auto signature = stringValue(testDictionary, "Signature");
+        auto keyID = stringValue(testDictionary, "KeyID");
+
+        TestController::singleton().setFraudPreventionValuesForTesting(secretToken, unlinkableToken, signature, keyID);
         return nullptr;
     }
 

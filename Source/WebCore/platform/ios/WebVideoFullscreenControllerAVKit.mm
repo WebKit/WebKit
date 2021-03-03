@@ -1062,7 +1062,7 @@ void VideoFullscreenControllerContext::requestHideAndExitFullscreen()
 {
     ASSERT(WebThreadIsCurrent());
     ASSERT_UNUSED(context, context == _context);
-    [[self retain] autorelease]; // retain self before breaking a retain cycle.
+    auto strongSelf = retainPtr(self); // retain self before breaking a retain cycle.
     _context->setController(nil);
     _context = nullptr;
     _videoElement = nullptr;

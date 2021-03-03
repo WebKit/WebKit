@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -118,7 +118,7 @@ public:
         return result;
     }
         
-    static void markLists(SlotVisitor&, ListSet&);
+    template<typename Visitor> static void markLists(Visitor&, ListSet&);
 
     void ensureCapacity(size_t requestedCapacity)
     {

@@ -12,7 +12,7 @@
 
     function loadFrame() {
         let iframeElement = document.createElement("iframe");
-        iframeElement.src = "http://127.0.0.1:8000/in-app-browser-privacy/resources/redirect.php?step=1";
+        iframeElement.src = "http://127.0.0.1:8000/in-app-browser-privacy/resources/redirect.py?step=1";
         document.body.appendChild(iframeElement);
         iframeElement.onload = checkForAppBound();
     }

@@ -23,8 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "RangeResponseGenerator.h"
 #import "SecurityOrigin.h"
 #import <Foundation/NSURLSession.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/OSObjectPtr.h>
@@ -41,12 +43,17 @@
 
 namespace WebCore {
 class CachedResourceRequest;
+class NetworkLoadMetrics;
 class PlatformMediaResource;
 class PlatformMediaResourceLoader;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
 class WebCoreNSURLSessionDataTaskClient;
+enum class ShouldContinuePolicyCheck : bool;
 }
 
-enum class WebCoreNSURLSessionCORSAccessCheckResults {
+enum class WebCoreNSURLSessionCORSAccessCheckResults : uint8_t {
     Unknown,
     Pass,
     Fail,
@@ -67,6 +74,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     NSUInteger _nextTaskIdentifier;
     OSObjectPtr<dispatch_queue_t> _internalQueue;
     WebCoreNSURLSessionCORSAccessCheckResults _corsResults;
+    RefPtr<WebCore::RangeResponseGenerator> _rangeResponseGenerator;
 }
 - (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
 @property (readonly, retain) NSOperationQueue *delegateQueue;
@@ -110,7 +118,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @end
 
 @interface WebCoreNSURLSessionDataTask : NSObject {
-    __unsafe_unretained WebCoreNSURLSession *_session;
+    WeakObjCPtr<WebCoreNSURLSession> _session;
     RefPtr<WebCore::PlatformMediaResource> _resource;
     RetainPtr<NSURLResponse> _response;
     NSUInteger _taskIdentifier;
@@ -141,6 +149,17 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 - (void)cancel;
 - (void)suspend;
 - (void)resume;
+@end
+
+@interface WebCoreNSURLSessionDataTask (WebKitInternal)
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource sentBytes:(unsigned long long)bytesSent totalBytesToBeSent:(unsigned long long)totalBytesToBeSent;
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedResponse:(const WebCore::ResourceResponse&)response completionHandler:(CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&)completionHandler;
+- (BOOL)resource:(nullable WebCore::PlatformMediaResource*)resource shouldCacheResponse:(const WebCore::ResourceResponse&)response;
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedData:(const char*)data length:(int)length;
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedRedirect:(const WebCore::ResourceResponse&)response request:(WebCore::ResourceRequest&&)request completionHandler:(CompletionHandler<void(WebCore::ResourceRequest&&)>&&)completionHandler;
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource accessControlCheckFailedWithError:(const WebCore::ResourceError&)error;
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource loadFailedWithError:(const WebCore::ResourceError&)error;
+- (void)resourceFinished:(nullable WebCore::PlatformMediaResource*)resource metrics:(const WebCore::NetworkLoadMetrics&)metrics;
 @end
 
 NS_ASSUME_NONNULL_END

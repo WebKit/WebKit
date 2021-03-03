@@ -615,7 +615,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_documentCreationTime(MonotonicTime::now())
 #endif
     , m_scriptRunner(makeUnique<ScriptRunner>(*this))
-    , m_moduleLoader(makeUnique<ScriptModuleLoader>(*this))
+    , m_moduleLoader(makeUnique<ScriptModuleLoader>(*this, ScriptModuleLoader::OwnerType::Document))
 #if ENABLE(XSLT)
     , m_applyPendingXSLTransformsTimer(*this, &Document::applyPendingXSLTransformsTimerFired)
 #endif
@@ -781,6 +781,7 @@ Document::~Document()
 
 void Document::removedLastRef()
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     ASSERT(!m_deletionHasBegun);
     if (m_referencingNodeCount) {
         // Node::removedLastRef doesn't set refCount() to zero because it's not observable.
@@ -810,6 +811,8 @@ void Document::removedLastRef()
         m_fontSelector->unregisterForInvalidationCallbacks(*this);
 
         detachParser();
+
+        RELEASE_ASSERT(m_selection->isNone());
 
         // removeDetachedChildren() doesn't always unregister IDs,
         // so tear down scope information up front to avoid having
@@ -2593,6 +2596,8 @@ void Document::willBeRemovedFromFrame()
     }
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_frame || !m_frame->tree().childCount());
 
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     if (m_domWindow && m_frame)
         m_domWindow->willDetachDocumentFromFrame();
 
@@ -3239,6 +3244,9 @@ void Document::enqueuePaintTimingEntryIfNeeded()
     if (!view()->isVisuallyNonEmpty() || view()->needsLayout())
         return;
 
+    if (!view()->hasContenfulDescendants())
+        return;
+
     if (!ContentfulPaintChecker::qualifiesForContentfulPaint(*view()))
         return;
 
@@ -3827,6 +3835,13 @@ void Document::processThemeColor(const String& themeColorString)
 
     if (auto* page = this->page())
         page->chrome().client().themeColorChanged(m_themeColor);
+
+#if ENABLE(RUBBER_BANDING)
+    if (auto* view = renderView()) {
+        if (view->usesCompositing())
+            view->compositor().updateLayerForOverhangAreasBackgroundColor();
+    }
+#endif // ENABLE(RUBBER_BANDING)
 }
 
 #if ENABLE(DARK_MODE_CSS)

@@ -459,6 +459,15 @@ void PageClientImpl::doneDeferringTouchEnd(bool preventNativeGestures)
 
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
+#if HAVE(PASTEBOARD_DATA_OWNER)
+
+WebCore::DataOwnerType PageClientImpl::dataOwnerForPasteboard(PasteboardAccessIntent intent) const
+{
+    return [m_contentView _dataOwnerForPasteboard:intent];
+}
+
+#endif
+
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&)
 {
     return nullptr;

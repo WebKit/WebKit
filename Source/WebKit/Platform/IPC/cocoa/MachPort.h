@@ -25,9 +25,8 @@
 
 #pragma once
 
+#include "ArgumentCoder.h"
 #include "Attachment.h"
-#include "Decoder.h"
-#include "Encoder.h"
 
 namespace IPC {
 

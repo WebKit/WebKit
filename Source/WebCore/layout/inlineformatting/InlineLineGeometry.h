@@ -37,8 +37,8 @@ class InlineLineGeometry {
 public:
     struct EnclosingTopAndBottom {
         // This values encloses the root inline box and any other inline level box's border box.
-        float top { 0 };
-        float bottom { 0 };
+        InlineLayoutUnit top { 0 };
+        InlineLayoutUnit bottom { 0 };
     };
     InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth);
 

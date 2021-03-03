@@ -30,6 +30,7 @@
 #include "config.h"
 #include "Interpreter.h"
 
+#include "AbstractModuleRecord.h"
 #include "BatchedTransitionOptimizer.h"
 #include "Bytecodes.h"
 #include "CallFrameClosure.h"
@@ -49,6 +50,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
+#include "JSModuleRecord.h"
 #include "JSString.h"
 #include "LLIntThunks.h"
 #include "LiteralParser.h"
@@ -1201,7 +1203,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
     return checkedReturn(result);
 }
 
-JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, JSGlobalObject* lexicalGlobalObject, JSModuleEnvironment* scope)
+JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramExecutable* executable, JSGlobalObject* lexicalGlobalObject, JSModuleEnvironment* scope, JSValue sentValue, JSValue resumeMode)
 {
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -1231,6 +1233,7 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, J
     if (scope->structure(vm)->isUncacheableDictionary())
         scope->flattenDictionaryObject(vm);
 
+    const unsigned numberOfArguments = static_cast<unsigned>(AbstractModuleRecord::Argument::NumberOfArguments);
     JSCallee* callee = JSCallee::create(vm, globalObject, scope);
     ModuleProgramCodeBlock* codeBlock;
     {
@@ -1240,7 +1243,7 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, J
         if (UNLIKELY(!!compileError))
             return checkedReturn(compileError);
         codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);
-        ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+        ASSERT(codeBlock->numParameters() == numberOfArguments + 1);
     }
 
     RefPtr<JITCode> jitCode;
@@ -1248,11 +1251,21 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, J
     {
         DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
         jitCode = executable->generatedJITCode();
+
+        JSValue args[numberOfArguments] = {
+            record,
+            record->internalField(JSModuleRecord::Field::State).get(),
+            sentValue,
+            resumeMode,
+            scope,
+        };
         // The |this| of the module is always `undefined`.
         // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
         // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding
-        protoCallFrame.init(codeBlock, globalObject, callee, jsUndefined(), 1);
+        protoCallFrame.init(codeBlock, globalObject, callee, jsUndefined(), numberOfArguments + 1, args);
     }
+
+    record->internalField(JSModuleRecord::Field::State).set(vm, record, jsNumber(static_cast<int>(JSModuleRecord::State::Executing)));
 
     // Execute the code:
     throwScope.release();

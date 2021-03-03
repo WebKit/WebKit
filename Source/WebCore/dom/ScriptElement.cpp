@@ -42,6 +42,7 @@
 #include "LoadableClassicScript.h"
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
+#include "ModuleFetchParameters.h"
 #include "PendingScript.h"
 #include "RuntimeApplicationChecks.h"
 #include "SVGScriptElement.h"
@@ -351,8 +352,11 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
             scriptCharset(),
             m_element.localName(),
             m_element.isInUserAgentShadowTree());
-        script->load(m_element.document(), moduleScriptRootURL);
         m_loadableScript = WTFMove(script);
+        if (auto* frame = m_element.document().frame()) {
+            auto& script = downcast<LoadableModuleScript>(*m_loadableScript.get());
+            frame->script().loadModuleScript(script, moduleScriptRootURL.string(), makeRef(script.parameters()));
+        }
         return true;
     }
 
@@ -367,8 +371,9 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source().toStringWithoutCopying(), hasKnownNonce))
         return false;
 
-    script->load(m_element.document(), sourceCode);
     m_loadableScript = WTFMove(script);
+    if (auto* frame = m_element.document().frame())
+        frame->script().loadModuleScript(downcast<LoadableModuleScript>(*m_loadableScript.get()), sourceCode);
     return true;
 }
 

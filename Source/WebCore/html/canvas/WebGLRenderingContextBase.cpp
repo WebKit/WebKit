@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1210,7 +1210,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
             auto& base = canvasBase();
             base.clearCopiedImage();
             m_markedCanvasDirty = false;
-            m_context->paintCompositedResultsToCanvas(base.buffer());
+            m_context->paintCompositedResultsToCanvas(*base.buffer());
         }
         return;
     }
@@ -1225,7 +1225,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
 
     m_markedCanvasDirty = false;
 
-    m_context->paintRenderingResultsToCanvas(base.buffer());
+    m_context->paintRenderingResultsToCanvas(*base.buffer());
 }
 
 RefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()
@@ -4881,7 +4881,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
             && type == GraphicsContextGL::UNSIGNED_BYTE
             && !level) {
-            if (video->copyVideoTextureToPlatformTexture(m_context.get(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+            if (video->player() && m_context->copyTextureFromMedia(*video->player(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
 #if !USE(ANGLE)
                 texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);
 #endif // !USE(ANGLE)
@@ -7931,7 +7931,7 @@ void WebGLRenderingContextBase::dispatchContextChangedNotification()
     queueTaskToDispatchEvent(*canvas, TaskSource::WebGL, WebGLContextEvent::create(eventNames().webglcontextchangedEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
 }
 
-void WebGLRenderingContextBase::addMembersToOpaqueRoots(JSC::SlotVisitor& visitor)
+void WebGLRenderingContextBase::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& visitor)
 {
     auto locker = holdLock(objectGraphLock());
 

@@ -329,7 +329,7 @@ private:
         gtk_widget_grab_focus(GTK_WIDGET(m_webView));
     }
 
-    void printFrame(WebPageProxy&, WebFrameProxy& frame, CompletionHandler<void()>&& completionHandler) final
+    void printFrame(WebPageProxy&, WebFrameProxy& frame, const WebCore::FloatSize&, CompletionHandler<void()>&& completionHandler) final
     {
         webkitWebViewPrintFrame(m_webView, &frame);
         completionHandler();

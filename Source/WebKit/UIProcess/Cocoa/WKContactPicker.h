@@ -27,6 +27,8 @@
 
 #if HAVE(CONTACTSUI)
 
+#include <wtf/Forward.h>
+
 @class WKWebView;
 @protocol WKContactPickerDelegate;
 

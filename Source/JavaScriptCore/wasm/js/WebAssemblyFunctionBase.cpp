@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,13 +41,16 @@ WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* execu
     : Base(vm, executable, globalObject, structure)
 { }
 
-void WebAssemblyFunctionBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void WebAssemblyFunctionBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     WebAssemblyFunctionBase* thisObject = jsCast<WebAssemblyFunctionBase*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_instance);
 }
+
+DEFINE_VISIT_CHILDREN(WebAssemblyFunctionBase);
 
 void WebAssemblyFunctionBase::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSWebAssemblyInstance* instance)
 {

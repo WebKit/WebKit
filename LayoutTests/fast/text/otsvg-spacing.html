@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Ahem-SVG.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<canvas id="canvas" width="800" height="800">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("2d");
+document.fonts.load("100px 'WebFont'").then(function() {
+    context.font = "100px 'WebFont'";
+    context.fillText("aABCa", 100, 100);
+    context.fillRect(200, 20, 300, 100);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

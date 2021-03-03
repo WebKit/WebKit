@@ -22,7 +22,7 @@ var base_url = location.href.substr(0, location.href.lastIndexOf('/')).replace("
 
 function create_es() {
     try {
-        var es = new EventSource(base_url + "/resources/es-cors-basic.php?count=" + count);
+        var es = new EventSource(base_url + "/resources/es-cors-basic.py?count=" + count);
     }
     catch (ex) {
         log("FAIL: EventSource constructor threw exception: " + ex);

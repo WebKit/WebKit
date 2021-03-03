@@ -70,8 +70,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, DeallocWebViewInEventListener)
 {
-    {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
         webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) frameName:nil groupName:nil]);
         auto loadDelegate = adoptNS([[DeallocWebViewInEventListenerLoadDelegate alloc] init]);
         webView.get().frameLoadDelegate = loadDelegate.get();
@@ -84,7 +83,6 @@ TEST(WebKitLegacy, DeallocWebViewInEventListener)
         [[[webView mainFrameDocument] body] addEventListener:@"keypress" listener:nullptr useCapture:NO];
         listener = nullptr;
         [webView close];
-        [pool drain];
     }
     Util::run(&didClose);
 }

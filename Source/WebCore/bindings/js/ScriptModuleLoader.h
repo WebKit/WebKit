@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CachedModuleScriptLoader.h"
-#include "CachedModuleScriptLoaderClient.h"
+#include "ModuleScriptLoader.h"
+#include "ModuleScriptLoaderClient.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -45,31 +45,34 @@ class SourceOrigin;
 
 namespace WebCore {
 
-class Document;
 class JSDOMGlobalObject;
+class ScriptExecutionContext;
 
-class ScriptModuleLoader final : private CachedModuleScriptLoaderClient {
+class ScriptModuleLoader final : private ModuleScriptLoaderClient {
     WTF_MAKE_NONCOPYABLE(ScriptModuleLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ScriptModuleLoader(Document&);
+    enum class OwnerType : uint8_t { Document, WorkerOrWorklet };
+    explicit ScriptModuleLoader(ScriptExecutionContext&, OwnerType);
     ~ScriptModuleLoader();
 
-    Document& document() { return m_document; }
+    ScriptExecutionContext& context() { return m_context; }
 
     JSC::Identifier resolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleName, JSC::JSValue importerModuleKey, JSC::JSValue scriptFetcher);
     JSC::JSInternalPromise* fetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, JSC::JSValue parameters, JSC::JSValue scriptFetcher);
-    JSC::JSValue evaluate(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, JSC::JSValue moduleRecord, JSC::JSValue scriptFetcher);
+    JSC::JSValue evaluate(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, JSC::JSValue moduleRecord, JSC::JSValue scriptFetcher, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
     JSC::JSInternalPromise* importModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, JSC::JSValue parameters, const JSC::SourceOrigin&);
     JSC::JSObject* createImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
 
 private:
-    void notifyFinished(CachedModuleScriptLoader&, RefPtr<DeferredPromise>) final;
+    void notifyFinished(ModuleScriptLoader&, URL&&, Ref<DeferredPromise>) final;
+
     URL moduleURL(JSC::JSGlobalObject&, JSC::JSValue);
     URL responseURLFromRequestURL(JSC::JSGlobalObject&, JSC::JSValue);
 
-    Document& m_document;
+    ScriptExecutionContext& m_context;
     HashMap<String, URL> m_requestURLToResponseURLMap;
-    HashSet<Ref<CachedModuleScriptLoader>> m_loaders;
+    HashSet<Ref<ModuleScriptLoader>> m_loaders;
+    OwnerType m_ownerType;
 };
 
 } // namespace WebCore

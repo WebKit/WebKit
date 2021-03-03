@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -33,7 +33,8 @@
 #include "HeapAnalyzer.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCInlines.h"
-#include "JSCustomGetterSetterFunction.h"
+#include "JSCustomGetterFunction.h"
+#include "JSCustomSetterFunction.h"
 #include "JSFunction.h"
 #include "JSImmutableButterfly.h"
 #include "Lookup.h"
@@ -72,7 +73,8 @@ const ClassInfo JSObject::s_info = { "Object", nullptr, nullptr, nullptr, CREATE
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalObject) };
 
-ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset maxOffset)
+template<typename Visitor>
+ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(Visitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset maxOffset)
 {
     // We call this when we found everything without races.
     ASSERT(structure);
@@ -103,7 +105,8 @@ ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisito
     visitor.appendValuesHidden(butterfly->propertyStorage() - outOfLineSize, outOfLineSize);
 }
 
-ALWAYS_INLINE Structure* JSObject::visitButterfly(SlotVisitor& visitor)
+template<typename Visitor>
+ALWAYS_INLINE Structure* JSObject::visitButterfly(Visitor& visitor)
 {
     static const char* const raceReason = "JSObject::visitButterfly";
     Structure* result = visitButterflyImpl(visitor);
@@ -112,7 +115,8 @@ ALWAYS_INLINE Structure* JSObject::visitButterfly(SlotVisitor& visitor)
     return result;
 }
 
-ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
+template<typename Visitor>
+ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
 {
     VM& vm = visitor.vm();
     
@@ -412,23 +416,19 @@ size_t JSObject::estimatedSize(JSCell* cell, VM& vm)
     return Base::estimatedSize(cell, vm) + butterflyOutOfLineSize;
 }
 
-void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-#if ASSERT_ENABLED
-    bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
-    visitor.m_isCheckingForDefaultMarkViolation = false;
-#endif
-    
+    typename Visitor::DefaultMarkingViolationAssertionScope assertionScope(visitor);
+
     JSCell::visitChildren(thisObject, visitor);
-    
+
     thisObject->visitButterfly(visitor);
-    
-#if ASSERT_ENABLED
-    visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
-#endif
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSObject);
 
 void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
@@ -468,14 +468,12 @@ void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     }
 }
 
-void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+template<typename Visitor>
+void JSFinalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSFinalObject* thisObject = jsCast<JSFinalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-#if ASSERT_ENABLED
-    bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
-    visitor.m_isCheckingForDefaultMarkViolation = false;
-#endif
+    typename Visitor::DefaultMarkingViolationAssertionScope assertionScope(visitor);
     
     JSCell::visitChildren(thisObject, visitor);
     
@@ -483,11 +481,9 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         if (unsigned storageSize = structure->inlineSize())
             visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
     }
-    
-#if ASSERT_ENABLED
-    visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
-#endif
 }
+
+DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSFinalObject);
 
 String JSObject::className(const JSObject* object, VM& vm)
 {
@@ -3525,16 +3521,24 @@ Butterfly* JSObject::allocateMoreOutOfLineStorage(VM& vm, size_t oldSize, size_t
     return Butterfly::createOrGrowPropertyStorage(butterfly(), vm, this, structure(vm), oldSize, newSize);
 }
 
-static JSCustomGetterSetterFunction* getCustomGetterSetterFunctionForGetterSetter(JSGlobalObject* globalObject, PropertyName propertyName, CustomGetterSetter* getterSetter, JSCustomGetterSetterFunction::Type type)
+static JSCustomGetterFunction* getCustomGetterFunction(JSGlobalObject* globalObject, PropertyName propertyName, GetValueFunc getValueFunc, Optional<DOMAttributeAnnotation> domAttribute)
 {
-    VM& vm = globalObject->vm();
-    auto key = std::make_pair(getterSetter, (int)type);
-    JSCustomGetterSetterFunction* customGetterSetterFunction = vm.customGetterSetterFunctionMap.get(key);
-    if (!customGetterSetterFunction) {
-        customGetterSetterFunction = JSCustomGetterSetterFunction::create(vm, globalObject, getterSetter, type, propertyName.publicName());
-        vm.customGetterSetterFunctionMap.set(key, customGetterSetterFunction);
+    JSCustomGetterFunction* customGetterFunction = globalObject->customGetterFunctionMap().get(getValueFunc);
+    if (!customGetterFunction) {
+        customGetterFunction = JSCustomGetterFunction::create(globalObject->vm(), globalObject, propertyName, getValueFunc, domAttribute);
+        globalObject->customGetterFunctionMap().set(getValueFunc, customGetterFunction);
     }
-    return customGetterSetterFunction;
+    return customGetterFunction;
+}
+
+static JSCustomSetterFunction* getCustomSetterFunction(JSGlobalObject* globalObject, PropertyName propertyName, PutValueFunc putValueFunc)
+{
+    JSCustomSetterFunction* customSetterFunction = globalObject->customSetterFunctionMap().get(putValueFunc);
+    if (!customSetterFunction) {
+        customSetterFunction = JSCustomSetterFunction::create(globalObject->vm(), globalObject, propertyName, putValueFunc);
+        globalObject->customSetterFunctionMap().set(putValueFunc, customSetterFunction);
+    }
+    return customSetterFunction;
 }
 
 bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -3551,31 +3555,13 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
     if (slot.isAccessor())
         descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
     else if (slot.attributes() & PropertyAttribute::CustomAccessor) {
-        CustomGetterSetter* getterSetter;
-        if (slot.isCustomAccessor())
-            getterSetter = slot.customGetterSetter();
-        else {
-            ASSERT(slot.slotBase());
-            JSObject* thisObject = slot.slotBase();
-
-            JSValue maybeGetterSetter = thisObject->getDirect(vm, propertyName);
-            if (!maybeGetterSetter) {
-                thisObject->reifyAllStaticProperties(globalObject);
-                maybeGetterSetter = thisObject->getDirect(vm, propertyName);
-            }
-
-            ASSERT(maybeGetterSetter);
-            getterSetter = jsDynamicCast<CustomGetterSetter*>(vm, maybeGetterSetter);
-        }
-        ASSERT(getterSetter);
-        if (!getterSetter)
-            return false;
-
-        descriptor.setCustomDescriptor(slot.attributes());
-        if (getterSetter->getter())
-            descriptor.setGetter(getCustomGetterSetterFunctionForGetterSetter(globalObject, propertyName, getterSetter, JSCustomGetterSetterFunction::Type::Getter));
-        if (getterSetter->setter())
-            descriptor.setSetter(getCustomGetterSetterFunctionForGetterSetter(globalObject, propertyName, getterSetter, JSCustomGetterSetterFunction::Type::Setter));
+        ASSERT_WITH_MESSAGE(slot.isCustom(), "PropertySlot::TypeCustom is required in case of PropertyAttribute::CustomAccessor");
+        descriptor.setAccessorDescriptor((slot.attributes() | PropertyAttribute::Accessor) & ~PropertyAttribute::CustomAccessor);
+        JSGlobalObject* slotBaseGlobalObject = slot.slotBase()->globalObject(vm);
+        if (slot.customGetter())
+            descriptor.setGetter(getCustomGetterFunction(slotBaseGlobalObject, propertyName, slot.customGetter(), slot.domAttribute()));
+        if (slot.customSetter())
+            descriptor.setSetter(getCustomSetterFunction(slotBaseGlobalObject, propertyName, slot.customSetter()));
     } else {
         JSValue value = slot.getValue(globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, false);
@@ -3669,8 +3655,6 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject* globalObject, JSObject* 
                 return typeError(globalObject, scope, throwException, "Attempting to change the setter of an unconfigurable property."_s);
             if (descriptor.getterPresent() && descriptor.getter() != current.getter())
                 return typeError(globalObject, scope, throwException, "Attempting to change the getter of an unconfigurable property."_s);
-            if (current.attributes() & PropertyAttribute::CustomAccessor)
-                return typeError(globalObject, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
 
             return true;
         }

@@ -161,7 +161,7 @@ static CGFloat inputLabelFontSize()
         [_inputText appendString:@"+"];
         break;
     case WKNumberPadKeyAccept:
-        [self.delegate quickboard:self textEntered:[[[NSAttributedString alloc] initWithString:_inputText.get()] autorelease]];
+        [self.delegate quickboard:self textEntered:adoptNS([[NSAttributedString alloc] initWithString:_inputText.get()]).get()];
         return;
     case WKNumberPadKey0:
         [_inputText appendString:@"0"];

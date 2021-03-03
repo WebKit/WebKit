@@ -33,6 +33,7 @@
 #include "TestMain.h"
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <WebCore/SoupVersioning.h>
 #include <wtf/glib/GRefPtr.h>
 
 static WebKitTestServer* gServer;
@@ -462,20 +463,25 @@ static void testWebKitSettingsJavaScriptMarkup(WebViewTest* test, gconstpointer)
     webkit_settings_set_enable_javascript_markup(webkit_web_view_get_settings(test->m_webView), TRUE);
 }
 
+#if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+#else
+static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+#endif
 {
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
         return;
     }
 
     if (g_str_equal(path, "/")) {
-        const char* userAgent = soup_message_headers_get_one(message->request_headers, "User-Agent");
-        soup_message_set_status(message, SOUP_STATUS_OK);
-        soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, userAgent, strlen(userAgent));
-        soup_message_body_complete(message->response_body);
+        const char* userAgent = soup_message_headers_get_one(soup_server_message_get_request_headers(message), "User-Agent");
+        auto* responseBody = soup_server_message_get_response_body(message);
+        soup_message_body_append(responseBody, SOUP_MEMORY_COPY, userAgent, strlen(userAgent));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 }
 
 void beforeAll()

@@ -32,6 +32,7 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcess.h"
 #include "GPUProcessConnectionMessages.h"
+#include "GPUProcessConnectionParameters.h"
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxyMessages.h"
 #include "LibWebRTCCodecsProxy.h"
@@ -162,15 +163,18 @@ private:
 };
 #endif
 
-Ref<GPUConnectionToWebProcess> GPUConnectionToWebProcess::create(GPUProcess& gpuProcess, WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Identifier connectionIdentifier, PAL::SessionID sessionID)
+Ref<GPUConnectionToWebProcess> GPUConnectionToWebProcess::create(GPUProcess& gpuProcess, WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Identifier connectionIdentifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters)
 {
-    return adoptRef(*new GPUConnectionToWebProcess(gpuProcess, webProcessIdentifier, connectionIdentifier, sessionID));
+    return adoptRef(*new GPUConnectionToWebProcess(gpuProcess, webProcessIdentifier, connectionIdentifier, sessionID, WTFMove(parameters)));
 }
 
-GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Identifier connectionIdentifier, PAL::SessionID sessionID)
+GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Identifier connectionIdentifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters)
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
     , m_gpuProcess(gpuProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
+#if HAVE(TASK_IDENTITY_TOKEN)
+    , m_webProcessIdentityToken(WTFMove(parameters.webProcessIdentityToken))
+#endif
     , m_remoteMediaPlayerManagerProxy(makeUnique<RemoteMediaPlayerManagerProxy>(*this))
     , m_sessionID(sessionID)
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -315,7 +319,7 @@ RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
 void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
 {
     auto addResult = m_remoteRenderingBackendMap.ensure(identifier, [&]() {
-        return makeUnique<RemoteRenderingBackendWrapper>(RemoteRenderingBackend::create(*this, identifier, WTFMove(resumeDisplayListSemaphore)));
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteRenderingBackend::create(*this, identifier, WTFMove(resumeDisplayListSemaphore)) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -326,21 +330,16 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
     ASSERT_UNUSED(found, found);
 }
 
-GPUConnectionToWebProcess::RemoteRenderingBackendWrapper::RemoteRenderingBackendWrapper(Ref<RemoteRenderingBackend>&& remoteRenderingBackend)
-    : m_remoteRenderingBackend(WTFMove(remoteRenderingBackend))
-{
-}
-
-GPUConnectionToWebProcess::RemoteRenderingBackendWrapper::~RemoteRenderingBackendWrapper()
-{
-    m_remoteRenderingBackend->disconnect();
-}
-
 #if ENABLE(WEBGL)
-void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier)
+void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer&& stream)
 {
+    auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
+    if (it == m_remoteRenderingBackendMap.end())
+        return;
+    auto* renderingBackend = it->value.get();
+
     auto addResult = m_remoteGraphicsContextGLMap.ensure(graphicsContextGLIdentifier, [&]() {
-        return RemoteGraphicsContextGL::create(attributes, *this, graphicsContextGLIdentifier);
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGraphicsContextGL::create(*this, WTFMove(attributes), graphicsContextGLIdentifier, *renderingBackend, WTFMove(stream)) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -361,9 +360,9 @@ void GPUConnectionToWebProcess::setNowPlayingInfo(bool setAsNowPlayingApplicatio
     gpuProcess().nowPlayingManager().setNowPlayingInfo(*this, WTFMove(nowPlayingInfo));
 }
 
-void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, Optional<double> argument)
+void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    connection().send(Messages::GPUProcessConnection::DidReceiveRemoteCommand { type, argument }, 0);
+    connection().send(Messages::GPUProcessConnection::DidReceiveRemoteCommand(type, argument), 0);
 }
 
 #if USE(AUDIO_SESSION)

@@ -1,3 +1,437 @@
+2021-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks
+        https://bugs.webkit.org/show_bug.cgi?id=222237
+
+        Reviewed by Darin Adler.
+
+        * DefaultDelegates/WebDefaultUIDelegate.mm:
+        (+[WebDefaultUIDelegate sharedUIDelegate]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem copyWithZone:]):
+        * Misc/WebIconDatabase.mm:
+        (+[WebIconDatabase sharedIconDatabase]):
+        * Misc/WebNSPasteboardExtras.mm:
+        (_writableTypesForImageWithoutArchive):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView cacheSnapshot]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::deliverData):
+        * Plugins/WebPluginController.mm:
+        (pluginViews):
+        (-[WebPluginController plugInViewWithArguments:fromPluginPackage:]):
+        (+[WebPluginController addPlugInView:]):
+        (+[WebPluginController isPlugInView:]):
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        * Plugins/WebPluginDatabase.mm:
+        (sharedDatabase):
+        (+[WebPluginDatabase sharedDatabase]):
+        (+[WebPluginDatabase sharedDatabaseIfExists]):
+        (+[WebPluginDatabase closeSharedDatabase]):
+        (-[WebPluginDatabase refresh]):
+        (-[WebPluginDatabase _plugInPaths]):
+        (-[WebPluginDatabase _removePlugin:]):
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalFeatures.mm.erb:
+        * WebView/WebDataSource.mm:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        * WebView/WebFrameView.mm:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        * WebView/WebFullScreenController.mm:
+        (createBackgroundFullscreenWindow):
+        * WebView/WebHTMLRepresentation.mm:
+        (regExpForLabels):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView _insertablePasteboardTypes]):
+        * WebView/WebPreferences.mm:
+        (standardPreferences):
+        (webPreferencesInstances):
+        (+[WebPreferences standardPreferences]):
+        (+[WebPreferences _getInstanceForIdentifier:]):
+        (+[WebPreferences _setInstance:forIdentifier:]):
+        (+[WebPreferences _checkLastReferenceForIdentifier:]):
+        * WebView/WebView.mm:
+        (schemesWithRepresentationsSet):
+        (outlookQuirksUserScriptContents):
+        (-[WebView _injectOutlookQuirksScript]):
+        (laBanquePostaleQuirksScript):
+        (-[WebView _injectLaBanquePostaleQuirks]):
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]):
+        (+[WebView _representationExistsForURLScheme:]):
+        (+[WebView automaticallyNotifiesObserversForKey:]):
+        (-[WebView _declaredKeys]):
+        (-[WebView addPluginInstanceView:]):
+        (-[WebView _enterFullScreenForElement:]):
+        * WebView/WebViewData.h:
+
+2021-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Review remaining usage of autorelease to make sure it is necessary
+        https://bugs.webkit.org/show_bug.cgi?id=222177
+
+        Reviewed by Geoffrey Garen.
+
+        * Misc/WebNSObjectExtras.mm:
+        (-[WebMainThreadInvoker forwardInvocation:]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController init]):
+
+2021-02-19  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] add support for Apple Pay payment method mode
+        https://bugs.webkit.org/show_bug.cgi?id=222128
+        <rdar://problem/72320278>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::completePaymentMethodModeChange):
+
+2021-02-19  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] add an `object data` to `PaymentDetailsBase` so that data specific to Apple Pay can be provided
+        https://bugs.webkit.org/show_bug.cgi?id=222002
+        <rdar://problem/72319946>
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::completeShippingMethodSelection):
+        (WebPaymentCoordinatorClient::completeShippingContactSelection):
+        (WebPaymentCoordinatorClient::completePaymentMethodSelection):
+        Use `ApplePay*Update` instead of duplicating its structure in another object (`ApplePaySessionPaymentRequest::*Update`).
+
+2021-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Plumb an Optional<PageIdentifier> through WebPasteboardProxy
+        https://bugs.webkit.org/show_bug.cgi?id=222071
+
+        Reviewed by Tim Horton.
+
+        Add `const PasteboardContext*` arguments to the `PasteboardStrategy` methods on `WebPlatformStrategies`.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getTypes):
+        (WebPlatformStrategies::bufferForType):
+        (WebPlatformStrategies::getPathnamesForType):
+        (WebPlatformStrategies::allStringsForType):
+        (WebPlatformStrategies::stringForType):
+        (WebPlatformStrategies::changeCount):
+        (WebPlatformStrategies::color):
+        (WebPlatformStrategies::url):
+        (WebPlatformStrategies::addTypes):
+        (WebPlatformStrategies::setTypes):
+        (WebPlatformStrategies::setBufferForType):
+        (WebPlatformStrategies::setURL):
+        (WebPlatformStrategies::setColor):
+        (WebPlatformStrategies::setStringForType):
+        (WebPlatformStrategies::getNumberOfFiles):
+        (WebPlatformStrategies::typesSafeForDOMToReadAndWrite):
+        (WebPlatformStrategies::writeCustomData):
+        (WebPlatformStrategies::containsStringSafeForDOMToReadForType):
+        (WebPlatformStrategies::informationForItemAtIndex):
+        (WebPlatformStrategies::allPasteboardItemInfo):
+        (WebPlatformStrategies::getPasteboardItemsCount):
+        (WebPlatformStrategies::readBufferFromPasteboard):
+        (WebPlatformStrategies::readURLFromPasteboard):
+        (WebPlatformStrategies::readStringFromPasteboard):
+        (WebPlatformStrategies::containsURLStringSuitableForLoading):
+        (WebPlatformStrategies::urlStringSuitableForLoading):
+        (WebPlatformStrategies::writeToPasteboard):
+        (WebPlatformStrategies::updateSupportedTypeIdentifiers):
+
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Plumb an Optional<PageIdentifier> through Pasteboard-related codepaths
+        https://bugs.webkit.org/show_bug.cgi?id=221987
+
+        Reviewed by Tim Horton.
+
+        Create and pass in a `PasteboardContext` when creating a `Pasteboard`. See WebCore ChangeLog for more details.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::declareAndWriteDragImage):
+
+2021-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC autorelease] in WebKit even further
+        https://bugs.webkit.org/show_bug.cgi?id=222060
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC autorelease] in WebKit further by using RetainPtr.
+
+        * DOM/DOM.mm:
+        (kit):
+        * DOM/DOMAbstractView.mm:
+        (kit):
+        * DOM/DOMBlob.mm:
+        (kit):
+        * DOM/DOMCSSRule.mm:
+        (kit):
+        * DOM/DOMCSSRuleList.mm:
+        (kit):
+        * DOM/DOMCSSStyleDeclaration.mm:
+        (kit):
+        * DOM/DOMCSSValue.mm:
+        (kit):
+        * DOM/DOMCounter.mm:
+        (kit):
+        * DOM/DOMEvent.mm:
+        (kit):
+        * DOM/DOMFileList.mm:
+        (kit):
+        * DOM/DOMHTMLCollection.mm:
+        (kit):
+        * DOM/DOMHTMLOptionsCollection.mm:
+        (kit):
+        * DOM/DOMImplementation.mm:
+        (kit):
+        * DOM/DOMMediaError.mm:
+        (kit):
+        * DOM/DOMMediaList.mm:
+        (kit):
+        * DOM/DOMNamedNodeMap.mm:
+        (kit):
+        * DOM/DOMNode.mm:
+        (kit):
+        * DOM/DOMNodeIterator.mm:
+        (kit):
+        * DOM/DOMNodeList.mm:
+        (kit):
+        * DOM/DOMRGBColor.mm:
+        (kit):
+        * DOM/DOMRange.mm:
+        (kit):
+        * DOM/DOMRect.mm:
+        (kit):
+        * DOM/DOMStyleSheet.mm:
+        (kit):
+        * DOM/DOMStyleSheetList.mm:
+        (kit):
+        * DOM/DOMTimeRanges.mm:
+        (kit):
+        * DOM/DOMTokenList.mm:
+        (kit):
+        * DOM/DOMTreeWalker.mm:
+        (kit):
+        * DOM/DOMXPath.mm:
+        (kit):
+        * DOM/DOMXPathExpression.mm:
+        (kit):
+        * DOM/DOMXPathResult.mm:
+        (kit):
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode webArchive]):
+        (-[DOMNode webArchiveByFilteringSubframes:]):
+        (-[DOMRange webArchive]):
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]):
+        * History/WebBackForwardList.mm:
+        (kit):
+        (-[WebBackForwardList addItem:]):
+        (-[WebBackForwardList backItem]):
+        (-[WebBackForwardList currentItem]):
+        (-[WebBackForwardList forwardItem]):
+        (-[WebBackForwardList itemAtIndex:]):
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate data]):
+        * History/WebHistoryItem.mm:
+        (kit):
+        (+[WebHistoryItem entryWithURL:]):
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _webkit_stringByTrimmingWhitespace]):
+        * Misc/WebNSDataExtras.mm:
+        (-[NSData _webkit_parseRFC822HeaderFields]):
+        * Misc/WebNSObjectExtras.mm:
+        (-[WebMainThreadInvoker forwardInvocation:]):
+        (-[WebMainThreadInvoker handleException:]):
+        (+[NSObject _webkit_invokeOnMainThread]):
+        (-[NSObject _webkit_invokeOnMainThread]):
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _web_originalDataAsString]):
+        (-[NSURL _web_hostString]):
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::pluginCancelledConnectionError const):
+        * Plugins/WebBasePluginPackage.mm:
+        (+[WebBasePluginPackage pluginWithPath:]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::pluginCancelledConnectionError const):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+        * Plugins/WebPluginContainerCheck.mm:
+        (+[WebPluginContainerCheck checkWithRequest:target:resultObject:selector:controller:contextInfo:]):
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase _plugInPaths]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (+[WebUndoStep stepWithUndoStep:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        (makeFormFieldValuesDictionary):
+        (WebFrameLoaderClient::pluginWillHandleLoadError const):
+        (WebFrameLoaderClient::createPlugin):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController webView:contextMenuItemsForElement:defaultMenuItems:]):
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        * WebView/WebArchive.mm:
+        (-[WebArchive data]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _fileWrapperForURL:]):
+        (-[WebDataSource webArchive]):
+        (-[WebDataSource mainResource]):
+        (-[WebDataSource subresourceForURL:]):
+        * WebView/WebDeviceOrientationProviderMock.mm:
+        (-[WebDeviceOrientationProviderMockInternal lastOrientation]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame elementAtPoint:]):
+        (-[WebFrame parentFrame]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView _setCustomScrollViewClass:]):
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation documentSource]):
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView _excludedElementsForAttributedStringConversion]):
+        (-[WebHTMLView _plainTextFromPasteboard:]):
+        (-[WebHTMLView view:stringForToolTip:point:userData:]):
+        (-[WebHTMLView rightMouseUp:]):
+        (-[WebHTMLView menuForEvent:]):
+        (-[WebHTMLView scrollWheel:]):
+        (-[WebHTMLView acceptsFirstMouse:]):
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]):
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView mouseDragged:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WebHTMLView mouseUp:]):
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView keyUp:]):
+        (-[WebHTMLView flagsChanged:]):
+        (-[WebHTMLView _fontAttributesFromFontPasteboard]):
+        (-[WebHTMLView performKeyEquivalent:]):
+        (-[WebHTMLView textStorage]):
+        (-[WebHTMLView pasteboardTypesForSelection]):
+        (-[WebHTMLView _legacyAttributedStringFrom:offset:to:offset:]):
+        (-[WebHTMLView attributedString]):
+        (-[WebHTMLView selectedAttributedString]):
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]):
+        * WebView/WebNotification.mm:
+        (-[WebNotification origin]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView selectionImageForcingBlackText:]):
+        (-[WebPDFView _scaledAttributedString:]):
+        * WebView/WebResource.mm:
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:]):
+        (-[WebResource _fileWrapperRepresentation]):
+        (-[WebResource _response]):
+        * WebView/WebScriptWorld.mm:
+        (+[WebScriptWorld world]):
+        (+[WebScriptWorld findOrCreateWorld:]):
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController init]):
+        * WebView/WebView.mm:
+        (-[WebView _menuForElement:defaultItems:]):
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]):
+        (-[WebView _displayURL]):
+        (-[WebView textIteratorForRect:]):
+        (+[WebView MIMETypesShownAsHTML]):
+
+2021-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Introduce a new context menu item to preview images
+        https://bugs.webkit.org/show_bug.cgi?id=221917
+        <rdar://problem/74363578>
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        Legacy WebKit won't be supporting this new context menu action; see other ChangeLog entries for more details.
+
+        * WebView/WebHTMLView.mm:
+        (toTag):
+
+2021-02-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Change App Highlights API to operate in terms of a single serialized highlight at a time
+        https://bugs.webkit.org/show_bug.cgi?id=221802
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::storeAppHighlight const):
+        (WebChromeClient::updateAppHighlightsStorage const): Deleted.
+
+2021-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC release] in WebKit even more
+        https://bugs.webkit.org/show_bug.cgi?id=221914
+
+        Reviewed by Alex Christensen.
+
+        * History/WebHistory.mm:
+        (+[WebHistory setOptionalSharedHistory:]):
+        * Plugins/WebPluginDatabase.mm:
+        (+[WebPluginDatabase setAdditionalWebPlugInPaths:]):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::enterFullScreenForElement):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (NetscapePluginWidget::getFormValue):
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView _attach:numLayers:]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _makeDocumentViewForDataSource:]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView _closePluginDatabases]):
+        (-[WebView _close]):
+        (-[WebView inspector]):
+        (-[WebView setShowingInspectorIndication:]):
+        (-[WebView _setFormDelegate:]):
+        (-[WebView _formDelegateForwarder]):
+        (-[WebView _UIKitDelegateForwarder]):
+        (-[WebView _policyDelegateForwarder]):
+        (-[WebView _UIDelegateForwarder]):
+        (-[WebView _editingDelegateForwarder]):
+        (-[WebView _setUIKitDelegate:]):
+        (-[WebView caretChangeListeners]):
+        (-[WebView addCaretChangeListener:]):
+        (-[WebView _setAdditionalWebPlugInPaths:]):
+        (-[WebView setBackgroundColor:]):
+        (-[WebView backgroundColor]):
+        (-[WebView _fixedPositionContent]):
+        (-[WebView setUIDelegate:]):
+        (-[WebView _resourceLoadDelegateForwarder]):
+        (-[WebView setResourceLoadDelegate:]):
+        (-[WebView setPolicyDelegate:]):
+        (-[WebView _frameLoadDelegateForwarder]):
+        (-[WebView setFrameLoadDelegate:]):
+        (-[WebView setApplicationNameForUserAgent:]):
+        (-[WebView applicationNameForUserAgent]):
+        (-[WebView setMediaStyle:]):
+        (-[WebView mediaStyle]):
+        (-[WebView _userAgentString]):
+        (-[WebView setHostWindow:]):
+        (-[WebView hostWindow]):
+        (-[WebView setCurrentNodeHighlight:]):
+        (-[WebView currentNodeHighlight]):
+        (-[WebView _allowsLinkPreview]):
+        (-[WebView _setAllowsLinkPreview:]):
+        (-[WebView setEditingDelegate:]):
+        (-[WebView _immediateActionController]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate dealloc]):
+
 2021-02-12  Chris Dumez  <cdumez@apple.com>
 
         Reduce explicit usage of [objC release] in WebKit

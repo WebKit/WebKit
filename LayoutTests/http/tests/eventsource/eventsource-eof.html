@@ -14,7 +14,7 @@ if (window.testRunner) {
 
 var count = 1;
 
-var es = new EventSource("resources/es-eof.php");
+var es = new EventSource("resources/es-eof.py");
 
 es.onerror = function () {
     if (count++ == 3) {

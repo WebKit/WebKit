@@ -173,7 +173,7 @@ void PointerCaptureController::reset()
     m_haveAnyCapturingElement = false;
 
     CapturingData capturingData;
-    capturingData.pointerType = PointerEvent::mousePointerType();
+    capturingData.pointerType = mousePointerEventType();
     m_activePointerIdsToCapturingData.add(mousePointerID, capturingData);
 }
 
@@ -327,7 +327,7 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
     // If we already have known touches then we cannot dispatch a mouse event,
     // for instance in the case of a long press to initiate a system drag.
     for (auto& capturingData : m_activePointerIdsToCapturingData.values()) {
-        if (capturingData.pointerType == PointerEvent::touchPointerType() && capturingData.pointerIsPressed && !capturingData.cancelled)
+        if (capturingData.pointerType == touchPointerEventType() && capturingData.pointerIsPressed && !capturingData.cancelled)
             return nullptr;
     }
 
@@ -376,7 +376,7 @@ void PointerCaptureController::dispatchEvent(PointerEvent& event, EventTarget* t
     // https://w3c.github.io/pointerevents/#firing-events-using-the-pointerevent-interface
     // If the event is not gotpointercapture or lostpointercapture, run Process Pending Pointer Capture steps for this PointerEvent.
     // We only need to do this for non-mouse type since for mouse events this method will be called in Document::prepareMouseEvent().
-    if (event.pointerType() != PointerEvent::mousePointerType())
+    if (event.pointerType() != mousePointerEventType())
         processPendingPointerCapture(event.pointerId());
 
     pointerEventWillBeDispatched(event, target);
@@ -396,7 +396,7 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
 
     auto pointerId = event.pointerId();
 
-    if (event.pointerType() != PointerEvent::touchPointerType()) {
+    if (event.pointerType() != touchPointerEventType()) {
         auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
         if (iterator != m_activePointerIdsToCapturingData.end())
             iterator->value.pointerIsPressed = isPointerdown;
@@ -450,7 +450,7 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
 
         // If a mouse pointer has moved while it isn't pressed, make sure we reset the preventsCompatibilityMouseEvents flag since
         // we could otherwise prevent compatibility mouse events while those are only supposed to be prevented while the pointer is pressed.
-        if (event.type() == eventNames().pointermoveEvent && capturingData.pointerType == PointerEvent::mousePointerType() && !capturingData.pointerIsPressed)
+        if (event.type() == eventNames().pointermoveEvent && capturingData.pointerType == mousePointerEventType() && !capturingData.pointerIsPressed)
             capturingData.preventsCompatibilityMouseEvents = false;
 
         // If the pointer event dispatched was pointerdown and the event was canceled, then set the PREVENT MOUSE EVENT flag for this pointerType.
@@ -536,7 +536,7 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
     if (capturingData.targetOverride && capturingData.targetOverride != pendingTargetOverride) {
         if (capturingData.targetOverride->isConnected())
             capturingData.targetOverride->dispatchEvent(PointerEvent::createForPointerCapture(eventNames().lostpointercaptureEvent, pointerId, capturingData.isPrimary, capturingData.pointerType));
-        if (capturingData.pointerType == PointerEvent::mousePointerType()) {
+        if (capturingData.pointerType == mousePointerEventType()) {
             if (auto* frame = capturingData.targetOverride->document().frame())
                 frame->eventHandler().pointerCaptureElementDidChange(nullptr);
         }
@@ -545,7 +545,7 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
     // 2. If the pending pointer capture target override for this pointer is set and is not equal to the pointer capture target override,
     // then fire a pointer event named gotpointercapture at the pending pointer capture target override.
     if (capturingData.pendingTargetOverride && capturingData.targetOverride != pendingTargetOverride) {
-        if (capturingData.pointerType == PointerEvent::mousePointerType()) {
+        if (capturingData.pointerType == mousePointerEventType()) {
             if (auto* frame = pendingTargetOverride->document().frame())
                 frame->eventHandler().pointerCaptureElementDidChange(pendingTargetOverride.get());
         }

@@ -27,12 +27,41 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
+#include <wtf/Forward.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayErrorCodeAdditions.h>
+#endif
 
 namespace WebCore {
 
-using ApplePayErrorCode = PaymentError::Code;
+enum class ApplePayErrorCode {
+    Unknown,
+    ShippingContactInvalid,
+    BillingContactInvalid,
+    AddressUnserviceable,
+#if defined(ApplePayErrorCodeAdditions_values)
+    ApplePayErrorCodeAdditions_values
+#endif
+};
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ApplePayErrorCode> {
+    using values = EnumValues<
+        WebCore::ApplePayErrorCode,
+        WebCore::ApplePayErrorCode::Unknown,
+        WebCore::ApplePayErrorCode::ShippingContactInvalid,
+        WebCore::ApplePayErrorCode::BillingContactInvalid,
+        WebCore::ApplePayErrorCode::AddressUnserviceable
+#if defined(ApplePayErrorCodeAdditions_EnumTraits)
+        ApplePayErrorCodeAdditions_EnumTraits
+#endif
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(APPLE_PAY)

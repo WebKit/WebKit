@@ -32,7 +32,7 @@
 #include "Logging.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
-#include <WebCore/PointerEvent.h>
+#include <WebCore/PointerEventTypeNames.h>
 #include <wtf/Variant.h>
 
 namespace WebKit {
@@ -286,7 +286,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                 return;
             }
 
-            const String& pointerType = inputSource == SimulatedInputSourceType::Mouse ? WebCore::PointerEvent::mousePointerType() : WebCore::PointerEvent::penPointerType();
+            const String& pointerType = inputSource == SimulatedInputSourceType::Mouse ? WebCore::mousePointerEventType() : WebCore::penPointerEventType();
 
             b.location = location;
             // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).

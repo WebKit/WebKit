@@ -81,6 +81,8 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 
     m_dataDetectionContext = parameters.dataDetectionContext;
 
+    consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);
+
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
@@ -414,6 +416,27 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::H
 #else
     UNUSED_PARAM(networkExtensionsHandles);
 #endif
+}
+
+void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
+{
+    auto* webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame)
+        return completionHandler({ });
+
+    auto* coreFrame = webFrame->coreFrame();
+    if (!coreFrame)
+        return completionHandler({ });
+
+    auto* pluginView = pluginViewForFrame(coreFrame);
+    if (!pluginView)
+        return completionHandler({ });
+    
+    auto* plugin = pluginView->plugin();
+    if (!plugin)
+        return completionHandler({ });
+
+    completionHandler(FloatSize(plugin->pdfDocumentSizeForPrinting()));
 }
 
 } // namespace WebKit

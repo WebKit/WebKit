@@ -133,7 +133,7 @@ bool Pasteboard::shouldTreatCocoaTypeAsFile(const String& cocoaType)
 
 Pasteboard::FileContentState Pasteboard::fileContentState()
 {
-    bool mayContainFilePaths = platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName);
+    bool mayContainFilePaths = platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName, context());
 
 #if PLATFORM(IOS_FAMILY)
     if (mayContainFilePaths) {
@@ -157,7 +157,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
 
     if (!mayContainFilePaths) {
         Vector<String> cocoaTypes;
-        platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName);
+        platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName, context());
         if (cocoaTypes.findMatching([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
             return FileContentState::NoFileOrImageData;
 
@@ -170,12 +170,12 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return cocoaType == String(kUTTypeURL);
 ALLOW_DEPRECATED_DECLARATIONS_END
         });
-        mayContainFilePaths = indexOfURL != notFound && !platformStrategies()->pasteboardStrategy()->containsStringSafeForDOMToReadForType(cocoaTypes[indexOfURL], m_pasteboardName);
+        mayContainFilePaths = indexOfURL != notFound && !platformStrategies()->pasteboardStrategy()->containsStringSafeForDOMToReadForType(cocoaTypes[indexOfURL], m_pasteboardName, context());
     }
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName, context()))
         return FileContentState::NoFileOrImageData;
 
     // Even when there's only image data in the pasteboard and no file representations, we still run the risk of exposing file paths
@@ -187,11 +187,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
 {
-    Vector<String> types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName, origin);
+    Vector<String> types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName, origin, context());
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName, context()))
         return { };
 
     return types;
@@ -295,22 +295,22 @@ const PasteboardCustomData& Pasteboard::readCustomData()
 
 void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
 {
-    m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, name());
+    m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, name(), context());
 }
 
 int64_t Pasteboard::changeCount() const
 {
-    return platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
+    return platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName, context());
 }
 
 Vector<String> Pasteboard::readTypesWithSecurityCheck()
 {
     Vector<String> cocoaTypes;
-    platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName);
+    platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName, context());
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName, context()))
         return { };
 
     return cocoaTypes;
@@ -318,11 +318,11 @@ Vector<String> Pasteboard::readTypesWithSecurityCheck()
 
 RefPtr<SharedBuffer> Pasteboard::readBufferForTypeWithSecurityCheck(const String& type)
 {
-    auto buffer = platformStrategies()->pasteboardStrategy()->bufferForType(type, m_pasteboardName);
+    auto buffer = platformStrategies()->pasteboardStrategy()->bufferForType(type, m_pasteboardName, context());
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName, context()))
         return nullptr;
 
     return buffer;

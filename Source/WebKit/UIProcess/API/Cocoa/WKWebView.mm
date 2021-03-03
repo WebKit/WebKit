@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,7 @@
 #import "RemoteObjectRegistryMessages.h"
 #import "ResourceLoadDelegate.h"
 #import "SafeBrowsingWarning.h"
+#import "SessionStateCoding.h"
 #import "SharedBufferCopy.h"
 #import "UIDelegate.h"
 #import "VideoFullscreenManagerProxy.h"
@@ -67,7 +68,6 @@
 #import "WKFrameInfoPrivate.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKLayoutMode.h"
-#import "WKMediaPlaybackState.h"
 #import "WKNSData.h"
 #import "WKNSURLExtras.h"
 #import "WKNavigationDelegate.h"
@@ -101,6 +101,7 @@
 #import "WebViewImpl.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKAppHighlightDelegate.h"
+#import "_WKAppHighlightInternal.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
@@ -119,6 +120,7 @@
 #import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
+#import <WebCore/AppHighlight.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
@@ -655,7 +657,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKWebViewConfiguration *)configuration
 {
-    return [[_configuration copy] autorelease];
+    return adoptNS([_configuration copy]).autorelease();
 }
 
 - (WKBackForwardList *)backForwardList
@@ -917,7 +919,7 @@ static bool validateArgument(id argument)
     return false;
 }
 
-- (void)closeAllMediaPresentations:(void (^)(void))completionHandler
+- (void)closeAllMediaPresentationsWithCompletionHandler:(void (^)(void))completionHandler
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
@@ -933,7 +935,7 @@ static bool validateArgument(id argument)
 #endif
 }
 
-- (void)pauseAllMediaPlayback:(void (^)(void))completionHandler
+- (void)pauseAllMediaPlaybackWithCompletionHandler:(void (^)(void))completionHandler
 {
     if (!completionHandler) {
         _page->pauseAllMediaPlayback([] { });
@@ -943,19 +945,13 @@ static bool validateArgument(id argument)
     _page->pauseAllMediaPlayback(makeBlockPtr(completionHandler));
 }
 
-- (void)suspendAllMediaPlayback:(void (^)(void))completionHandler
+- (void)setAllMediaPlaybackSuspended:(BOOL)suspended completionHandler:(void (^)(void))completionHandler
 {
-    if (!completionHandler) {
-        _page->suspendAllMediaPlayback([] { });
-        return;
-    }
-    _page->suspendAllMediaPlayback(makeBlockPtr(completionHandler));
-}
+    if (!completionHandler)
+        completionHandler = [] { };
 
-- (void)resumeAllMediaPlayback:(void (^)(void))completionHandler
-{
-    if (!completionHandler) {
-        _page->resumeAllMediaPlayback([] { });
+    if (suspended) {
+        _page->suspendAllMediaPlayback(makeBlockPtr(completionHandler));
         return;
     }
     _page->resumeAllMediaPlayback(makeBlockPtr(completionHandler));
@@ -966,12 +962,12 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     switch (mediaPlaybackState) {
     case WebKit::MediaPlaybackState::NoMediaPlayback:
         return WKMediaPlaybackStateNone;
+    case WebKit::MediaPlaybackState::MediaPlaybackPlaying:
+        return WKMediaPlaybackStatePlaying;
     case WebKit::MediaPlaybackState::MediaPlaybackPaused:
         return WKMediaPlaybackStatePaused;
     case WebKit::MediaPlaybackState::MediaPlaybackSuspended:
         return WKMediaPlaybackStateSuspended;
-    case WebKit::MediaPlaybackState::MediaPlaybackPlaying:
-        return WKMediaPlaybackStatePlaying;
     default:
         break;
     }
@@ -979,7 +975,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     return WKMediaPlaybackStateNone;
 }
 
-- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler
+- (void)requestMediaPlaybackStateWithCompletionHandler:(void (^)(WKMediaPlaybackState))completionHandler
 {
     if (!completionHandler)
         return;
@@ -1216,12 +1212,12 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler
 {
     if (!string.length) {
-        completionHandler([[[WKFindResult alloc] _initWithMatchFound:NO] autorelease]);
+        completionHandler(adoptNS([[WKFindResult alloc] _initWithMatchFound:NO]).get());
         return;
     }
 
     _page->findString(string, toFindOptions(configuration), 1, [handler = makeBlockPtr(completionHandler)](bool found) {
-        handler([[[WKFindResult alloc] _initWithMatchFound:found] autorelease]);
+        handler(adoptNS([[WKFindResult alloc] _initWithMatchFound:found]).get());
     });
 }
 
@@ -1238,6 +1234,22 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (NSString *)mediaType
 {
     return _page->overriddenMediaType().isNull() ? nil : (NSString *)_page->overriddenMediaType();
+}
+
+- (id)interactionState
+{
+    return WebKit::encodeSessionState(_page->sessionState()).autorelease();
+}
+
+- (void)setInteractionState:(id)interactionState
+{
+    if (![(id)interactionState isKindOfClass:[NSData class]])
+        return;
+
+    WebKit::SessionState sessionState;
+    if (!WebKit::decodeSessionState((NSData *)(interactionState), sessionState))
+        return;
+    _page->restoreFromSessionState(sessionState, true);
 }
 
 #pragma mark - iOS API
@@ -1423,14 +1435,23 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)_updateAppHighlightsStorage:(NSData *)data
+- (void)_storeAppHighlight:(const WebCore::AppHighlight&)highlight
 {
     auto delegate = self._appHighlightDelegate;
     if (!delegate)
         return;
 
-    if ([delegate respondsToSelector:@selector(_webView:updateAppHighlightsStorage:)])
-        [delegate _webView:self updateAppHighlightsStorage:data];
+    if (![delegate respondsToSelector:@selector(_webView:storeAppHighlight:inNewGroup:)])
+        return;
+
+    NSString *text = nil;
+
+    if (highlight.text)
+        text = highlight.text.value();
+
+    auto wkHighlight = adoptNS([[_WKAppHighlight alloc] initWithHighlight:highlight.highlight->createNSData().get() text:text image:nil]);
+
+    [delegate _webView:self storeAppHighlight:wkHighlight.get() inNewGroup:highlight.isNewGroup == WebCore::CreateNewGroupForHighlight::Yes ? YES : NO];
 }
 #endif
 
@@ -1709,8 +1730,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
     _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = makeRef(*_page.get())] (WebKit::FrameTreeNodeData&& data) {
-        _WKFrameTreeNode *node = [[wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())) retain] autorelease];
-        completionHandler(node);
+        completionHandler(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())));
     });
 }
 
@@ -1954,7 +1974,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (WKBrowsingContextHandle *)_handle
 {
-    return [[[WKBrowsingContextHandle alloc] _initWithPageProxy:*_page] autorelease];
+    return adoptNS([[WKBrowsingContextHandle alloc] _initWithPageProxy:*_page]).autorelease();
 }
 
 - (_WKRenderingProgressEvents)_observedRenderingProgressEvents
@@ -2012,7 +2032,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_closeAllMediaPresentations
 {
-    [self closeAllMediaPresentations:nil];
+    [self closeAllMediaPresentationsWithCompletionHandler:nil];
 }
 
 - (void)_stopMediaCapture
@@ -2022,25 +2042,41 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_stopAllMediaPlayback
 {
-    [self pauseAllMediaPlayback:nil];
+    [self pauseAllMediaPlaybackWithCompletionHandler:nil];
 }
 
 - (void)_suspendAllMediaPlayback
 {
-    [self suspendAllMediaPlayback:nil];
+    [self setAllMediaPlaybackSuspended:YES completionHandler:nil];
 }
 
 - (void)_resumeAllMediaPlayback
 {
-    [self resumeAllMediaPlayback:nil];
+    [self setAllMediaPlaybackSuspended:NO completionHandler:nil];
 }
 
-- (void)_restoreAppHighlights:(NSData *)data
+- (void)_restoreAppHighlights:(NSArray<NSData *> *)highlights
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    _page->restoreAppHighlights(WebCore::SharedBuffer::create(data));
+    Vector<Ref<WebKit::SharedMemory>> buffers;
+
+    for (NSData *highlight in highlights) {
+        auto sharedMemory = WebKit::SharedMemory::allocate(highlight.length);
+        if (sharedMemory) {
+            [highlight getBytes:sharedMemory->data() length:highlight.length];
+            buffers.append(*sharedMemory);
+        }
+    }
+    _page->restoreAppHighlights(buffers);
 #else
-    UNUSED_PARAM(data);
+    UNUSED_PARAM(highlights);
+#endif
+}
+
+- (void)_addAppHighlight
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No);
 #endif
 }
 
@@ -2092,15 +2128,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
 {
-    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, response.MIMEType, response.textEncodingName, request.URL.absoluteString));
+    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
 }
 
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
 {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"];
+    auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
 
-    return [self loadSimulatedRequest:request withResponse:response responseData:data];
+    return [self loadSimulatedRequest:request withResponse:response.get() responseData:data];
 }
 
 - (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
@@ -2230,13 +2266,20 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
-    WKPDFConfiguration *pdfConfiguration = nil;
+    RetainPtr<WKPDFConfiguration> pdfConfiguration;
     if (snapshotConfiguration) {
-        pdfConfiguration = [[[WKPDFConfiguration alloc] init] autorelease];
-        pdfConfiguration.rect = snapshotConfiguration.rect;
+        pdfConfiguration = adoptNS([[WKPDFConfiguration alloc] init]);
+        [pdfConfiguration setRect:snapshotConfiguration.rect];
     }
 
-    [self createPDFWithConfiguration:pdfConfiguration completionHandler:completionHandler];
+    [self createPDFWithConfiguration:pdfConfiguration.get() completionHandler:completionHandler];
+}
+
+- (void)_getPDFFirstPageSizeInFrame:(_WKFrameHandle *)frame completionHandler:(void(^)(CGSize))completionHandler
+{
+    _page->getPDFFirstPageSize(frame->_frameHandle->frameID(), [completionHandler = makeBlockPtr(completionHandler)](WebCore::FloatSize size) {
+        completionHandler(static_cast<CGSize>(size));
+    });
 }
 
 - (NSData *)_sessionStateData
@@ -2247,7 +2290,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (_WKSessionState *)_sessionState
 {
-    return [[[_WKSessionState alloc] _initWithSessionState:_page->sessionState()] autorelease];
+    return adoptNS([[_WKSessionState alloc] _initWithSessionState:_page->sessionState()]).autorelease();
 }
 
 - (_WKSessionState *)_sessionStateWithFilter:(BOOL (^)(WKBackForwardListItem *item))filter
@@ -2259,7 +2302,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         return (bool)filter(wrapper(item));
     });
 
-    return [[[_WKSessionState alloc] _initWithSessionState:sessionState] autorelease];
+    return adoptNS([[_WKSessionState alloc] _initWithSessionState:sessionState]).autorelease();
 }
 
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData
@@ -2550,7 +2593,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
     _page->getMainResourceDataOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
-        completionHandler(wrapper(*data), nil);
+        completionHandler(wrapper(data), nil);
     });
 }
 
@@ -2577,7 +2620,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     _page->getContentsAsAttributedString([handler = makeBlockPtr(completionHandler)](auto& attributedString) {
         if (attributedString.string)
-            handler([[attributedString.string.get() retain] autorelease], [[attributedString.documentAttributes.get() retain] autorelease], nil);
+            handler(attributedString.string.get(), attributedString.documentAttributes.get(), nil);
         else
             handler(nil, nil, createNSError(WKErrorUnknown).get());
     });
@@ -3219,6 +3262,31 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         return @[ ];
 
     return (__bridge NSArray *)certificateInfo->certificateInfo().certificateChain() ?: @[ ];
+}
+
+- (void)pauseAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self pauseAllMediaPlaybackWithCompletionHandler:completionHandler];
+}
+
+- (void)suspendAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self setAllMediaPlaybackSuspended:YES completionHandler:completionHandler];
+}
+
+- (void)resumeAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self setAllMediaPlaybackSuspended:NO completionHandler:completionHandler];
+}
+
+- (void)closeAllMediaPresentations:(void (^)(void))completionHandler
+{
+    [self closeAllMediaPresentationsWithCompletionHandler:completionHandler];
+}
+
+- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler
+{
+    [self requestMediaPlaybackStateWithCompletionHandler:completionHandler];
 }
 
 @end

@@ -31,7 +31,7 @@
 
 #include "WebEvent.h"
 #include <WebCore/IntPoint.h>
-#include <WebCore/PointerEvent.h>
+#include <WebCore/PointerEventTypeNames.h>
 #include <WebCore/PointerID.h>
 
 namespace WebKit {
@@ -52,7 +52,7 @@ public:
 #if PLATFORM(MAC)
     WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force, SyntheticClickType = NoTap, int eventNumber = -1, int menuType = 0);
 #else
-    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force = 0, SyntheticClickType = NoTap, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::PointerEvent::mousePointerType());
+    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force = 0, SyntheticClickType = NoTap, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::mousePointerEventType());
 #endif
 
     Button button() const { return static_cast<Button>(m_button); }
@@ -93,7 +93,7 @@ private:
     double m_force { 0 };
     uint32_t m_syntheticClickType { NoTap };
     WebCore::PointerID m_pointerId { WebCore::mousePointerID };
-    String m_pointerType { WebCore::PointerEvent::mousePointerType() };
+    String m_pointerType { WebCore::mousePointerEventType() };
 };
 
 } // namespace WebKit

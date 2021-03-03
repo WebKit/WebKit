@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CacheableIdentifier.h"
+#include "SlotVisitorMacros.h"
 #include <wtf/Box.h>
 
 namespace JSC {
@@ -45,8 +46,8 @@ public:
 
     bool attemptToMerge(const SetPrivateBrandVariant& other);
 
-    void visitAggregate(SlotVisitor&);
-    void markIfCheap(SlotVisitor&);
+    DECLARE_VISIT_AGGREGATE;
+    template<typename Visitor> void markIfCheap(Visitor&);
     bool finalize(VM&);
 
     void dump(PrintStream&) const;

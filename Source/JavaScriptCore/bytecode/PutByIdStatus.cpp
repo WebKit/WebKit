@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -396,11 +396,15 @@ PutByIdStatus PutByIdStatus::slowVersion() const
     return PutByIdStatus(makesCalls() ? MakesCalls : TakesSlowPath);
 }
 
-void PutByIdStatus::markIfCheap(SlotVisitor& visitor)
+template<typename Visitor>
+void PutByIdStatus::markIfCheap(Visitor& visitor)
 {
     for (PutByIdVariant& variant : m_variants)
         variant.markIfCheap(visitor);
 }
+
+template void PutByIdStatus::markIfCheap(AbstractSlotVisitor&);
+template void PutByIdStatus::markIfCheap(SlotVisitor&);
 
 bool PutByIdStatus::finalize(VM& vm)
 {

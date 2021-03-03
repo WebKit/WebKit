@@ -37,6 +37,8 @@
 namespace WebCore {
 
 static const char privateClickMeasurementTriggerAttributionPath[] = "/.well-known/private-click-measurement/trigger-attribution/";
+static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-secret-token/";
+static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/private-click-measurement/get-unlinkable-token-public-key/";
 static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
@@ -114,7 +116,7 @@ bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasuremen
     return m_attributionTriggerData->priority > other.m_attributionTriggerData->priority;
 }
 
-URL PrivateClickMeasurement::reportURL() const
+URL PrivateClickMeasurement::attributionReportURL() const
 {
     if (!isValid())
         return URL();
@@ -131,7 +133,7 @@ URL PrivateClickMeasurement::reportURL() const
     return URL();
 }
 
-Ref<JSON::Object> PrivateClickMeasurement::json() const
+Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
 {
     auto reportDetails = JSON::Object::create();
     if (!m_attributionTriggerData || !isValid())
@@ -142,8 +144,94 @@ Ref<JSON::Object> PrivateClickMeasurement::json() const
     reportDetails->setInteger("source_id"_s, m_sourceID.id);
     reportDetails->setString("attributed_on_site"_s, m_attributeOnSite.registrableDomain.string());
     reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
-    reportDetails->setInteger("version"_s, 1);
+    reportDetails->setInteger("version"_s, 2);
+
+    if (m_sourceUnlinkableToken) {
+        reportDetails->setString("source_unlinkable_token"_s, m_sourceUnlinkableToken->tokenBase64URL);
+        reportDetails->setString("source_unlinkable_token_signature"_s, m_sourceUnlinkableToken->signatureBase64URL);
+    }
+
     return reportDetails;
 }
 
+// MARK: - Fraud Prevention
+
+static constexpr uint32_t EphemeralSourceNonceRequiredNumberOfBytes = 16;
+
+bool PrivateClickMeasurement::EphemeralSourceNonce::isValid() const
+{
+    // FIXME: Investigate if we can do with a simple length check instead of decoding.
+    // https://bugs.webkit.org/show_bug.cgi?id=221945
+    Vector<uint8_t> digest;
+    if (!base64URLDecode(nonce, digest))
+        return false;
+    return digest.size() == EphemeralSourceNonceRequiredNumberOfBytes;
 }
+
+void PrivateClickMeasurement::setEphemeralSourceNonce(EphemeralSourceNonce&& nonce)
+{
+    if (!nonce.isValid())
+        return;
+    m_ephemeralSourceNonce = WTFMove(nonce);
+}
+
+URL PrivateClickMeasurement::tokenSignatureURL() const
+{
+    if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
+        return URL();
+
+    StringBuilder builder;
+    builder.appendLiteral("https://");
+    builder.append(m_sourceSite.registrableDomain.string());
+    builder.appendLiteral(privateClickMeasurementTokenSignaturePath);
+
+    URL url { URL(), builder.toString() };
+    if (url.isValid())
+        return url;
+
+    return URL();
+}
+
+URL PrivateClickMeasurement::tokenPublicKeyURL() const
+{
+    StringBuilder builder;
+    builder.appendLiteral("https://");
+    builder.append(m_sourceSite.registrableDomain.string());
+    builder.appendLiteral(privateClickMeasurementTokenPublicKeyPath);
+
+    URL url { URL(), builder.toString() };
+    if (url.isValid())
+        return url;
+
+    return URL();
+}
+
+Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
+{
+    auto reportDetails = JSON::Object::create();
+    if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
+        return reportDetails;
+
+    if (m_sourceSecretToken.valueBase64URL.isEmpty())
+        return reportDetails;
+
+    reportDetails->setString("source_engagement_type"_s, "click"_s);
+    reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
+    reportDetails->setString("source_secret_token"_s, m_sourceSecretToken.valueBase64URL);
+    reportDetails->setInteger("version"_s, 2);
+    return reportDetails;
+}
+
+void PrivateClickMeasurement::setSourceUnlinkableToken(SourceUnlinkableToken&& token)
+{
+    if (!token.isValid())
+        return;
+    m_sourceUnlinkableToken = WTFMove(token);
+}
+
+bool PrivateClickMeasurement::SourceUnlinkableToken::isValid() const
+{
+    return !(tokenBase64URL.isEmpty() || signatureBase64URL.isEmpty() || keyIDBase64URL.isEmpty());
+}
+
+} // namespace WebCore

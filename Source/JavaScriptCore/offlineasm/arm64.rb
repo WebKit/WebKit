@@ -1016,7 +1016,7 @@ class Instruction
                 emitARM64Unflipped("blr", operands, :quad)
             end
         when "break"
-            $asm.puts "brk \#0"
+            $asm.puts "brk \#0xc471"
         when "ret"
             $asm.puts "ret"
         when "cieq", "cbeq"

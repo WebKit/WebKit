@@ -483,7 +483,12 @@ class Executive(AbstractExecutive):
             # Must include proper interpreter
             if self._needs_interpreter_check(args[0]):
                 try:
-                    with open(args[0], 'r') as f:
+                    # On Python 2 'encoding' is an invalid keyword argument for this function
+                    open_kwargs = {}
+                    if sys.version_info.major >= 3:
+                        open_kwargs['encoding'] = 'cp437'
+
+                    with open(args[0], 'r', **open_kwargs) as f:
                         line = f.readline()
                         if "perl" in line:
                             args.insert(0, "perl")
@@ -503,8 +508,28 @@ class Executive(AbstractExecutive):
         else:
             string_args = self._stringify_args(args)
 
+        # Windows Python 3 throws a TypeError if the environment contains `bytes` instead of `str`
+        env = kwargs.pop('env', None)
+        if self._is_native_win and env is not None:
+            mod_env = {}
+            if sys.version_info.major >= 3:
+                for key, value in env.items():
+                    if not isinstance(key, str):
+                        key = key.decode('utf-8')
+                    if not isinstance(value, str):
+                        value = value.decode('utf-8')
+                    mod_env[key] = value
+            else:
+                for key, value in env.items():
+                    if not isinstance(key, bytes):
+                        key = key.encode('utf-8')
+                    if not isinstance(value, bytes):
+                        value = value.encode('utf-8')
+                    mod_env[key] = value
+            env = mod_env
+
         # Python 3 treats Popen as a context manager, we should allow this in Python 2
-        result = subprocess.Popen(string_args, **kwargs)
+        result = subprocess.Popen(string_args, env=env, **kwargs)
         if not callable(getattr(result, "__enter__", None)) and not callable(getattr(result, "__exit__", None)):
             return self.WrappedPopen(result)
         return result

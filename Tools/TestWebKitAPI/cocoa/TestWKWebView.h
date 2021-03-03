@@ -48,6 +48,7 @@
 @end
 
 @interface WKWebView (TestWebKitAPI)
+@property (nonatomic, readonly) NSString *contentsAsString;
 @property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;
 - (void)loadTestPageNamed:(NSString *)pageName;
 - (void)synchronouslyGoBack;
@@ -67,6 +68,7 @@
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut;
 - (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth;
+- (void)lastNavigationWasAppBound:(void(^)(BOOL))completionHandler;
 @end
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>

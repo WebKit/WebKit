@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-class SlotVisitor;
 class VM;
 
 namespace DFG {
@@ -66,9 +65,10 @@ public:
     void add(Scannable*);
     
     void begin();
-    
-    void checkLivenessAndVisitChildren(SlotVisitor&);
-    bool isKnownToBeLiveDuringGC();
+
+    template<typename Visitor> void checkLivenessAndVisitChildren(Visitor&);
+    template<typename Visitor> bool isKnownToBeLiveDuringGC(Visitor&);
+    bool isKnownToBeLiveAfterGC();
     void cancel();
     
     VM* vm() const; // May return null if we've been cancelled.

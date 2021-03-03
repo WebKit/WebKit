@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "PolicyDecision.h"

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: SyntaxError: Unexpected keyword 'new'
 
 PASS document.write in an imported module
 

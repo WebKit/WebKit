@@ -43,6 +43,7 @@ class MediaControls extends LayoutNode
         this.fullscreenButton = new FullscreenButton(this);
         this.muteButton = new MuteButton(this);
         this.tracksButton = new TracksButton(this);
+        this.overflowButton = new OverflowButton(this);
 
         this.statusLabel = new StatusLabel(this);
         this.timeControl = new TimeControl(this);

@@ -37,6 +37,12 @@ Optional<OptionSet<Flags>> parseFlags(StringView string)
     OptionSet<Flags> flags;
     for (auto character : string.codeUnits()) {
         switch (character) {
+        case 'd':
+            if (flags.contains(Flags::HasIndices))
+                return WTF::nullopt;
+            flags.add(Flags::HasIndices);
+            break;
+
         case 'g':
             if (flags.contains(Flags::Global))
                 return WTF::nullopt;

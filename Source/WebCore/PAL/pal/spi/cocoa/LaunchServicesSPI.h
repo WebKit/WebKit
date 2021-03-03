@@ -110,6 +110,7 @@ typedef struct ProcessSerialNumber ProcessSerialNumber;
 WTF_EXTERN_C_BEGIN
 
 extern const CFStringRef _kLSDisplayNameKey;
+extern const CFStringRef _kLSPersistenceSuppressRelaunchAtLoginKey;
 
 LSASNRef _LSGetCurrentApplicationASN();
 LSASNRef _LSCopyLSASNForAuditToken(LSSessionID, audit_token_t);

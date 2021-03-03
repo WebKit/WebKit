@@ -73,12 +73,12 @@ static void replace(NSMutableAttributedString *string, NSString *toReplace, NSSt
 
 static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith, NSURL *linkTarget)
 {
-    NSMutableAttributedString *stringWithLink = [[[NSMutableAttributedString alloc] initWithString:replaceWith] autorelease];
+    auto stringWithLink = adoptNS([[NSMutableAttributedString alloc] initWithString:replaceWith]);
     [stringWithLink addAttributes:@{
         NSLinkAttributeName: linkTarget,
         NSUnderlineStyleAttributeName: @1
     } range:NSMakeRange(0, replaceWith.length)];
-    [string replaceCharactersInRange:[string.string rangeOfString:toReplace] withAttributedString:stringWithLink];
+    [string replaceCharactersInRange:[string.string rangeOfString:toReplace] withAttributedString:stringWithLink.get()];
 }
 
 static NSURL *reportAnErrorURL(const URL& url, SSBServiceLookupResult *result)
@@ -121,26 +121,26 @@ static NSMutableAttributedString *safeBrowsingDetailsText(const URL& url, SSBSer
         NSString *reportAnError = WEB_UI_NSSTRING(@"report an error", "Action from safe browsing warning");
         NSString *visitUnsafeWebsite = WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning");
 
-        NSMutableAttributedString *attributedString = [[[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@\n\n%@", phishingDescription, learnMore, phishingActions]] autorelease];
-        addLinkAndReplace(attributedString, learnMore, learnMore, learnMoreURL(result));
-        addLinkAndReplace(attributedString, @"%report-an-error%", reportAnError, reportAnErrorURL(url, result));
-        addLinkAndReplace(attributedString, @"%bypass-link%", visitUnsafeWebsite, SafeBrowsingWarning::visitUnsafeWebsiteSentinel());
-        return attributedString;
+        auto attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@\n\n%@", phishingDescription, learnMore, phishingActions]]);
+        addLinkAndReplace(attributedString.get(), learnMore, learnMore, learnMoreURL(result));
+        addLinkAndReplace(attributedString.get(), @"%report-an-error%", reportAnError, reportAnErrorURL(url, result));
+        addLinkAndReplace(attributedString.get(), @"%bypass-link%", visitUnsafeWebsite, SafeBrowsingWarning::visitUnsafeWebsiteSentinel());
+        return attributedString.autorelease();
     }
 
     auto malwareOrUnwantedSoftwareDetails = [&] (NSString *description, NSString *statusStringToReplace, bool confirmMalware) {
-        NSMutableAttributedString *malwareDescription = [[[NSMutableAttributedString alloc] initWithString:description] autorelease];
-        replace(malwareDescription, @"%safeBrowsingProvider%", localizedProvider(result));
-        NSMutableAttributedString *statusLink = [[[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"the status of “%site%”", "Part of malware description")] autorelease];
-        replace(statusLink, @"%site%", url.host().toString());
-        addLinkAndReplace(malwareDescription, statusStringToReplace, statusLink.string, malwareDetailsURL(url, result));
+        auto malwareDescription = adoptNS([[NSMutableAttributedString alloc] initWithString:description]);
+        replace(malwareDescription.get(), @"%safeBrowsingProvider%", localizedProvider(result));
+        auto statusLink = adoptNS([[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"the status of “%site%”", "Part of malware description")]);
+        replace(statusLink.get(), @"%site%", url.host().toString());
+        addLinkAndReplace(malwareDescription.get(), statusStringToReplace, [statusLink string], malwareDetailsURL(url, result));
 
-        NSMutableAttributedString *ifYouUnderstand = [[[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"If you understand the risks involved, you can %visit-this-unsafe-site-link%.", "Action from safe browsing warning")] autorelease];
-        addLinkAndReplace(ifYouUnderstand, @"%visit-this-unsafe-site-link%", WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning"), confirmMalware ? SafeBrowsingWarning::confirmMalwareSentinel() : SafeBrowsingWarning::visitUnsafeWebsiteSentinel());
+        auto ifYouUnderstand = adoptNS([[NSMutableAttributedString alloc] initWithString:WEB_UI_NSSTRING(@"If you understand the risks involved, you can %visit-this-unsafe-site-link%.", "Action from safe browsing warning")]);
+        addLinkAndReplace(ifYouUnderstand.get(), @"%visit-this-unsafe-site-link%", WEB_UI_NSSTRING(@"visit this unsafe website", "Action from safe browsing warning"), confirmMalware ? SafeBrowsingWarning::confirmMalwareSentinel() : SafeBrowsingWarning::visitUnsafeWebsiteSentinel());
 
-        [malwareDescription appendAttributedString:[[[NSMutableAttributedString alloc] initWithString:@"\n\n"] autorelease]];
-        [malwareDescription appendAttributedString:ifYouUnderstand];
-        return malwareDescription;
+        [malwareDescription appendAttributedString:adoptNS([[NSMutableAttributedString alloc] initWithString:@"\n\n"]).get()];
+        [malwareDescription appendAttributedString:ifYouUnderstand.get()];
+        return malwareDescription.autorelease();
     };
 
     if (result.isMalware)

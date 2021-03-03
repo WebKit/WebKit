@@ -28,6 +28,7 @@ from webkitcorepy import arguments, log as webkitcorepy_log
 from webkitscmpy import local, log, remote
 
 from .canonicalize import Canonicalize
+from .clean import Clean
 from .command import Command
 from .checkout import Checkout
 from .find import Find
@@ -56,7 +57,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    programs = [Find, Checkout, Canonicalize, Pull]
+    programs = [Find, Checkout, Canonicalize, Pull, Clean]
     if subversion:
         programs.append(SetupGitSvn)
 

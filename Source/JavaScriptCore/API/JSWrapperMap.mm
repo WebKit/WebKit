@@ -163,9 +163,9 @@ static JSC::JSObject *constructorWithCustomBrand(JSContext *context, NSString *b
 
 // Look for @optional properties in the prototype containing a selector to property
 // name mapping, separated by a __JS_EXPORT_AS__ delimiter.
-static NSMutableDictionary *createRenameMap(Protocol *protocol, BOOL isInstanceMethod)
+static RetainPtr<NSMutableDictionary> createRenameMap(Protocol *protocol, BOOL isInstanceMethod)
 {
-    NSMutableDictionary *renameMap = [[NSMutableDictionary alloc] init];
+    auto renameMap = adoptNS([[NSMutableDictionary alloc] init]);
 
     forEachMethodInProtocol(protocol, NO, isInstanceMethod, ^(SEL sel, const char*){
         NSString *rename = @(sel_getName(sel));
@@ -176,7 +176,7 @@ static NSMutableDictionary *createRenameMap(Protocol *protocol, BOOL isInstanceM
         NSUInteger begin = range.location + range.length;
         NSUInteger length = [rename length] - begin - 1;
         NSString *name = [rename substringWithRange:(NSRange){ begin, length }];
-        renameMap[selector] = name;
+        renameMap.get()[selector] = name;
     });
 
     return renameMap;
@@ -253,7 +253,7 @@ static bool shouldSkipMethodWithName(NSString *name)
 //  * Otherwise, if the object doesn't already contain a property with name, create it.
 static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *protocol, BOOL isInstanceMethod, JSValue *object, NSMutableDictionary *accessorMethods = nil)
 {
-    NSMutableDictionary *renameMap = createRenameMap(protocol, isInstanceMethod);
+    auto renameMap = createRenameMap(protocol, isInstanceMethod);
 
     forEachMethodInProtocol(protocol, YES, isInstanceMethod, ^(SEL sel, const char* types){
         const char* nameCStr = sel_getName(sel);
@@ -268,7 +268,7 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
                 return;
             accessorMethods[name] = [JSValue valueWithJSValueRef:method inContext:context];
         } else {
-            name = renameMap[name];
+            name = renameMap.get()[name];
             if (!name)
                 name = selectorToPropertyName(nameCStr);
             JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
@@ -287,8 +287,6 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
                 putNonEnumerable(context, object, name, [JSValue valueWithJSValueRef:method inContext:context]);
         }
     });
-
-    [renameMap release];
 }
 
 struct Property {
@@ -593,9 +591,9 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 @end
 
 @implementation JSWrapperMap {
-    NSMutableDictionary *m_classMap;
+    RetainPtr<NSMutableDictionary> m_classMap;
     std::unique_ptr<JSC::WeakGCMap<__unsafe_unretained id, JSC::JSObject>> m_cachedJSWrappers;
-    NSMapTable *m_cachedObjCWrappers;
+    RetainPtr<NSMapTable> m_cachedObjCWrappers;
 }
 
 - (instancetype)initWithGlobalContextRef:(JSGlobalContextRef)context
@@ -606,21 +604,14 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 
     NSPointerFunctionsOptions keyOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsOpaquePersonality;
     NSPointerFunctionsOptions valueOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
-    m_cachedObjCWrappers = [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
+    m_cachedObjCWrappers = adoptNS([[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0]);
 
     m_cachedJSWrappers = makeUnique<JSC::WeakGCMap<__unsafe_unretained id, JSC::JSObject>>(toJS(context)->vm());
 
     ASSERT(!toJSGlobalObject(context)->wrapperMap());
     toJSGlobalObject(context)->setWrapperMap(self);
-    m_classMap = [[NSMutableDictionary alloc] init];
+    m_classMap = adoptNS([[NSMutableDictionary alloc] init]);
     return self;
-}
-
-- (void)dealloc
-{
-    [m_cachedObjCWrappers release];
-    [m_classMap release];
-    [super dealloc];
 }
 
 - (JSObjCClassInfo*)classInfoForClass:(Class)cls
@@ -629,7 +620,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         return nil;
 
     // Check if we've already created a JSObjCClassInfo for this Class.
-    if (JSObjCClassInfo* classInfo = (JSObjCClassInfo*)m_classMap[(id)cls])
+    if (JSObjCClassInfo* classInfo = (JSObjCClassInfo*)m_classMap.get()[(id)cls])
         return classInfo;
 
     // Skip internal classes beginning with '_' - just copy link to the parent class's info.
@@ -641,10 +632,10 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         });
 
         if (!conformsToExportProtocol)
-            return m_classMap[(id)cls] = [self classInfoForClass:class_getSuperclass(cls)];
+            return m_classMap.get()[(id)cls] = [self classInfoForClass:class_getSuperclass(cls)];
     }
 
-    return m_classMap[(id)cls] = [[[JSObjCClassInfo alloc] initForClass:cls] autorelease];
+    return m_classMap.get()[(id)cls] = adoptNS([[JSObjCClassInfo alloc] initForClass:cls]).get();
 }
 
 - (JSValue *)jsWrapperForObject:(id)object inContext:(JSContext *)context
@@ -673,12 +664,12 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 - (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value inContext:context
 {
     ASSERT(toJSGlobalObject([context JSGlobalContextRef])->wrapperMap() == self);
-    JSValue *wrapper = (__bridge JSValue *)NSMapGet(m_cachedObjCWrappers, value);
+    auto wrapper = retainPtr((__bridge JSValue *)NSMapGet(m_cachedObjCWrappers.get(), value));
     if (!wrapper) {
-        wrapper = [[[JSValue alloc] initWithValue:value inContext:context] autorelease];
-        NSMapInsert(m_cachedObjCWrappers, value, (__bridge void*)wrapper);
+        wrapper = adoptNS([[JSValue alloc] initWithValue:value inContext:context]);
+        NSMapInsert(m_cachedObjCWrappers.get(), value, (__bridge void*)wrapper.get());
     }
-    return wrapper;
+    return wrapper.autorelease();
 }
 
 @end

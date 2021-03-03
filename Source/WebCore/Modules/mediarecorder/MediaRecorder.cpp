@@ -313,7 +313,7 @@ void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder 
 
 void MediaRecorder::stopRecordingInternal(CompletionHandler<void()>&& completionHandler)
 {
-    if (state() != RecordingState::Recording) {
+    if (state() == RecordingState::Inactive) {
         completionHandler();
         return;
     }

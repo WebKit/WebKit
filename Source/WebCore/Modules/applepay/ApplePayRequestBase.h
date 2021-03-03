@@ -32,6 +32,10 @@
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayPaymentContact.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayRequestBaseAdditions.h>
+#endif
+
 namespace WebCore {
 
 class Document;
@@ -53,6 +57,10 @@ struct ApplePayRequestBase {
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     Optional<ApplePayInstallmentConfiguration> installmentConfiguration;
+#endif
+
+#if defined(ApplePayRequestBaseAdditions_members)
+    ApplePayRequestBaseAdditions_members
 #endif
 };
 

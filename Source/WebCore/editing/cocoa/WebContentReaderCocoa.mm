@@ -128,7 +128,7 @@ static NSDictionary *attributesForAttributedStringConversion()
         @"InterchangeNewline": @YES,
         @"CoalesceTabSpans": @YES,
         @"OutputBaseURL": baseURL,
-        @"WebResourceHandler": [[WebArchiveResourceWebResourceHandler new] autorelease],
+        @"WebResourceHandler": adoptNS([WebArchiveResourceWebResourceHandler new]).get(),
     };
 }
 

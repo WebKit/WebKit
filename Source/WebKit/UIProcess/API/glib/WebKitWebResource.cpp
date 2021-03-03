@@ -344,6 +344,11 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ResourceGetDataAsyncData)
 
 static void resourceDataCallback(API::Data* wkData, GTask* task)
 {
+    if (!wkData) {
+        g_task_return_new_error(task, G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
+        return;
+    }
+
     ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_task_get_task_data(task));
     data->webData = wkData;
     if (!wkData->bytes())

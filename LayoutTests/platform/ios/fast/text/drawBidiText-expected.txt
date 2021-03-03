@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 285x19
           text run at (0,0) width 285: "This tests GraphicsContext::drawBidiText()."
-      RenderMenuList {SELECT} at (2,36) size 341x32 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (10,5) size 321x22
-          RenderText at (0,0) size 0x22
+      RenderMenuList {SELECT} at (2,36) size 358x32 [color=#007AFF] [bgcolor=#EBF5FF]
+        RenderBlock (anonymous) at (9,4) size 340x24
+          RenderText at (0,0) size 0x23
             text run at (0,0) width 0: " "
-      RenderMenuList {SELECT} at (2,70) size 375x18 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-        RenderBlock (anonymous) at (5,1) size 364x16
-          RenderText at (0,0) size 40x15
-            text run at (0,0) width 40: "0 Items"
+      RenderMenuList {SELECT} at (2,70) size 406x18 [color=#007AFF] [bgcolor=#EBF5FF]
+        RenderBlock (anonymous) at (4,1) size 397x16
+          RenderText at (0,0) size 46x15
+            text run at (0,0) width 46: "0 Items"

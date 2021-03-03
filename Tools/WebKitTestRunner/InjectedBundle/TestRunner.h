@@ -512,9 +512,12 @@ public:
     void clearPrivateClickMeasurement();
     void clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
-    void setPrivateClickMeasurementConversionURLForTesting(JSStringRef);
+    void setPrivateClickMeasurementTokenPublicKeyURLForTesting(JSStringRef);
+    void setPrivateClickMeasurementTokenSignatureURLForTesting(JSStringRef);
+    void setPrivateClickMeasurementAttributionReportURLForTesting(JSStringRef);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+    void setFraudPreventionValuesForTesting(JSStringRef secretToken, JSStringRef unlinkableToken, JSStringRef signature, JSStringRef keyID);
     void simulateResourceLoadStatisticsSessionRestart();
 
     void setIsSpeechRecognitionPermissionGranted(bool);

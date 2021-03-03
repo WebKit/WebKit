@@ -15,18 +15,18 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (0,2) size 59x30 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
         RenderText {#text} at (58,7) size 5x19
           text run at (58,7) width 5: " "
-        RenderInline {SPAN} at (0,0) size 38x19
-          RenderText {#text} at (62,7) size 38x19
-            text run at (62,7) width 38: "world"
-        RenderText {#text} at (99,7) size 5x19
-          text run at (99,7) width 5: " "
-        RenderTextControl {INPUT} at (103,2) size 60x30 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
+        RenderInline {SPAN} at (0,0) size 39x19
+          RenderText {#text} at (62,7) size 39x19
+            text run at (62,7) width 39: "world"
+        RenderText {#text} at (100,7) size 5x19
+          text run at (100,7) width 5: " "
+        RenderTextControl {INPUT} at (104,2) size 60x30 [bgcolor=#FFFFFF] [border: (1px solid #BCBCBC)]
         RenderText {#text} at (0,0) size 0x0
 layer at (17,126) size 41x20
   RenderBlock {DIV} at (9,4) size 41x21
-    RenderText {#text} at (0,0) size 34x20
-      text run at (0,0) width 34: "hello"
-layer at (121,126) size 41x20 backgroundClip at (121,126) size 40x20 clip at (121,126) size 40x20 scrollWidth 51
+    RenderText {#text} at (0,0) size 35x20
+      text run at (0,0) width 35: "hello"
+layer at (121,126) size 41x20 scrollWidth 52
   RenderBlock {DIV} at (9,4) size 41x21
-    RenderText {#text} at (0,0) size 52x20
-      text run at (0,0) width 52: "WebKit"
+    RenderText {#text} at (0,0) size 53x20
+      text run at (0,0) width 53: "WebKit"

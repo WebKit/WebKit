@@ -64,8 +64,8 @@
 @interface MyFirstInterface : NSObject
 {
     int myInt;
-    MySecondInterface *mySecondInterface;
-    id jsobject;
+    RetainPtr<MySecondInterface> mySecondInterface;
+    RetainPtr<id> jsobject;
     NSString *string;
 }
 
@@ -128,15 +128,8 @@
 - init
 {
     LOG ("\n");
-    mySecondInterface = [[MySecondInterface alloc] init];
+    mySecondInterface = adoptNS([[MySecondInterface alloc] init]);
     return self;
-}
-
-- (void)dealloc
-{
-    LOG ("\n");
-    [mySecondInterface release];
-    [super dealloc];
 }
 
 - (int)getInt 
@@ -159,7 +152,7 @@
 - (MySecondInterface *)getMySecondInterface 
 {
     LOG ("\n");
-    return mySecondInterface;
+    return mySecondInterface.get();
 }
 
 - (void)logMessage:(NSString *)message
@@ -181,15 +174,14 @@
 
 - (void)setJSObject:(id)jso
 {
-    [jsobject autorelease];
-    jsobject = [jso retain];
+    jsobject = jso;
 }
 
 - (void)callJSObject:(int)arg1 :(int)arg2
 {
-    id foo1 = [jsobject callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:jsobject, [NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil]];
+    id foo1 = [jsobject callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:jsobject.get(), [NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil]];
     printf ("foo (via call) = %s\n", [[foo1 description] lossyCString] );
-    id foo2 = [jsobject callWebScriptMethod:@"apply" withArguments:[NSArray arrayWithObjects:jsobject, [NSArray arrayWithObjects:[NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil], nil]];
+    id foo2 = [jsobject callWebScriptMethod:@"apply" withArguments:[NSArray arrayWithObjects:jsobject.get(), [NSArray arrayWithObjects:[NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil], nil]];
     printf ("foo (via apply) = %s\n", [[foo2 description] lossyCString] );
 }
 
@@ -235,51 +227,49 @@ int main(int argc, char **argv)
     
     bool ret = true;
     {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        
-        JSLock lock;
-        
-        // create interpreter w/ global object
-        Object global(new GlobalImp());
-        Interpreter interp;
-        interp.setGlobalObject(global);
-        JSGlobalObject* lexicalGlobalObject = interp.globalObject();
-        
-        auto myInterface = adoptNS([[MyFirstInterface alloc] init]);
-        
-        global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)myInterface.get()));
-        
-        for (int i = 1; i < argc; i++) {
-            const char *code = readJavaScriptFromFile(argv[i]);
-            
-            if (code) {
-                // run
-                Completion comp(interp.evaluate(code));
-                
-                if (comp.complType() == Throw) {
-                    Value exVal = comp.value();
-                    char *msg = exVal.toString(lexicalGlobalObject).ascii();
-                    int lineno = -1;
-                    if (exVal.type() == ObjectType) {
-                        Value lineVal = Object::dynamicCast(exVal).get(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "line"));
-                        if (lineVal.type() == NumberType)
-                            lineno = int(lineVal.toNumber(lexicalGlobalObject));
+        @autoreleasepool {
+            JSLock lock;
+
+            // create interpreter w/ global object
+            Object global(new GlobalImp());
+            Interpreter interp;
+            interp.setGlobalObject(global);
+            JSGlobalObject* lexicalGlobalObject = interp.globalObject();
+
+            auto myInterface = adoptNS([[MyFirstInterface alloc] init]);
+
+            global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)myInterface.get()));
+
+            for (int i = 1; i < argc; i++) {
+                const char *code = readJavaScriptFromFile(argv[i]);
+
+                if (code) {
+                    // run
+                    Completion comp(interp.evaluate(code));
+
+                    if (comp.complType() == Throw) {
+                        Value exVal = comp.value();
+                        char *msg = exVal.toString(lexicalGlobalObject).ascii();
+                        int lineno = -1;
+                        if (exVal.type() == ObjectType) {
+                            Value lineVal = Object::dynamicCast(exVal).get(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "line"));
+                            if (lineVal.type() == NumberType)
+                                lineno = int(lineVal.toNumber(lexicalGlobalObject));
+                        }
+                        if (lineno != -1)
+                            fprintf(stderr, "Exception, line %d: %s\n", lineno, msg);
+                        else
+                            fprintf(stderr, "Exception: %s\n", msg);
+                        ret = false;
+                    } else if (comp.complType() == ReturnValue) {
+                        char *msg = comp.value().toString(interp.globalObject()).ascii();
+                        fprintf(stderr, "Return value: %s\n", msg);
                     }
-                    if (lineno != -1)
-                        fprintf(stderr,"Exception, line %d: %s\n",lineno,msg);
-                    else
-                        fprintf(stderr,"Exception: %s\n",msg);
-                    ret = false;
-                }
-                else if (comp.complType() == ReturnValue) {
-                    char *msg = comp.value().toString(interp.globalObject()).ascii();
-                    fprintf(stderr,"Return value: %s\n",msg);
                 }
             }
+
+            myInterface = nil;
         }
-        
-        myInterface = nil;
-        [pool drain];
     } // end block, so that Interpreter and global get deleted
     
     return ret ? 0 : 3;

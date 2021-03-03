@@ -1,0 +1,330 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSColorMixEnabled=true ] -->
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test the parsing of CSS Color 5 color-mix().");
+
+    function computedStyle(property, value)
+    {
+        var div = document.createElement("div");
+        document.body.appendChild(div);
+        div.style.setProperty(property, value);
+        var computedValue = getComputedStyle(div).getPropertyValue(property);
+        document.body.removeChild(div);
+        return computedValue;
+    }
+
+    function testComputedProperty(property, value, expected)
+    {
+        shouldBeEqualToString('computedStyle("' + property + '", "' + value + '")', expected);
+    }
+
+    function testComputed(value, expected)
+    {
+        testComputedProperty("background-color", value, expected);
+    }
+
+    debug('color-mix(hsl, ...)');
+
+    // Special case no adjusters or percentage is split 50-50.
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%))`, `rgb(84, 92, 61)`); // hsl(75deg 20% 30%)
+
+    // Test precentage without adjusters.
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%))`, `rgb(112, 106, 67)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%) 25%)`, `rgb(61, 73, 54)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%) 75%)`, `rgb(112, 106, 67)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) 50%, hsl(30deg 30% 40%) 150%)`, `rgb(112, 106, 67)`); // Scale down > 100% sum.
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) 12.5%, hsl(30deg 30% 40%) 37.5%)`, `rgb(112, 106, 67)`); // Scale up < 100% sum.
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) 0%, hsl(30deg 30% 40%))`, `rgb(133, 102, 71)`);
+
+    // Test per-channel adjusters.
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50%, hsl(30deg 30% 40%))`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%) hue 50%)`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50%, hsl(30deg 30% 40%) hue 50%)`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 100%, hsl(30deg 30% 40%))`, `rgb(46, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50%, hsl(30deg 30% 40%))`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50% saturation 100%, hsl(30deg 30% 40%))`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50% saturation 100% lightness 100%, hsl(30deg 30% 40%))`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50% saturation 100% lightness 100% alpha 100%, hsl(30deg 30% 40%))`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50%, hsl(30deg 30% 40%) saturation 0%)`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50%, hsl(30deg 30% 40%) saturation 0% lightness 0%)`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50%, hsl(30deg 30% 40%) saturation 0% lightness 0% alpha 0%)`, `rgb(53, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50% saturation 75%, hsl(30deg 30% 40%))`, `rgb(55, 59, 43)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50% saturation 75% lightness 15%, hsl(30deg 30% 40%))`, `rgb(101, 108, 80)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 50% saturation 75% lightness 15% alpha 10%, hsl(30deg 30% 40%))`, `rgb(101, 108, 80)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 60%, hsl(30deg 30% 40%))`, `rgb(52, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%) hue 40%)`, `rgb(52, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 60%, hsl(30deg 30% 40%) hue 40%)`, `rgb(52, 56, 46)`);
+
+    // FIXME: Test hue mixes with modifiers.
+
+    // Open questions.
+
+    // What should happen if you provide the same adjuster more than once? Currently, we do last one wins.
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 60% hue 40%, hsl(30deg 30% 40%))`, `rgb(55, 56, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 40%, hsl(30deg 30% 40%))`, `rgb(55, 56, 46)`);
+
+    // What should happen if you provide an adjuster without a paihue percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue, hsl(30deg 30% 40%))`, `rgb(56, 51, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 0%, hsl(30deg 30% 40%))`, `rgb(56, 51, 46)`);
+
+    // What should happen if you provide an adjuster without a negative percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) -10%, hsl(30deg 30% 40%))`, `rgb(133, 102, 71)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) 0%, hsl(30deg 30% 40%))`, `rgb(133, 102, 71)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue -10%, hsl(30deg 30% 40%))`, `rgb(56, 51, 46)`);
+    testComputed(`color-mix(hsl, hsl(120deg 10% 20%) hue 0%, hsl(30deg 30% 40%))`, `rgb(56, 51, 46)`);
+
+
+    debug('');
+    debug('color-mix(hwb, ...)');
+
+    // Special case no adjusters or percentage is split 50-50.
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%))`, `rgb(147, 179, 52)`); // hwb(75deg 20% 30%)
+
+    // Test precentage without adjusters.
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%))`, `rgb(166, 153, 64)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%) 25%)`, `rgb(96, 191, 39)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%) 75%)`, `rgb(166, 153, 64)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) 50%, hwb(30deg 30% 40%) 150%)`, `rgb(166, 153, 64)`); // Scale down > 100% sum.
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) 12.5%, hwb(30deg 30% 40%) 37.5%)`, `rgb(166, 153, 64)`); // Scale up < 100% sum.
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) 0%, hwb(30deg 30% 40%))`, `rgb(153, 115, 77)`);
+
+    // Test per-channel adjusters.
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50%, hwb(30deg 30% 40%))`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%) hue 50%)`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50%, hwb(30deg 30% 40%) hue 50%)`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 100%, hwb(30deg 30% 40%))`, `rgb(26, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50%, hwb(30deg 30% 40%))`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50% whiteness 100%, hwb(30deg 30% 40%))`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50% whiteness 100% blackness 100%, hwb(30deg 30% 40%))`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50% whiteness 100% blackness 100% alpha 100%, hwb(30deg 30% 40%))`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50%, hwb(30deg 30% 40%) whiteness 0%)`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50%, hwb(30deg 30% 40%) whiteness 0% blackness 0%)`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50%, hwb(30deg 30% 40%) whiteness 0% blackness 0% alpha 0%)`, `rgb(160, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50% whiteness 75%, hwb(30deg 30% 40%))`, `rgb(163, 204, 39)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50% whiteness 75% blackness 15%, hwb(30deg 30% 40%))`, `rgb(130, 161, 39)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 50% whiteness 75% blackness 15% alpha 10%, hwb(30deg 30% 40%))`, `rgb(130, 161, 39)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 60%, hwb(30deg 30% 40%))`, `rgb(133, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%) hue 40%)`, `rgb(133, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 60%, hwb(30deg 30% 40%) hue 40%)`, `rgb(133, 204, 26)`);
+
+    // Test mix that creates whiteness + blackness > 100%.
+    testComputed(`color-mix(hwb, hwb(120deg 75% 25%) whiteness 100%, hwb(120deg 25% 75%) blackness 100%)`, `rgb(128, 128, 128)`);
+
+    // FIXME: Test hue mixes with modifiers.
+
+
+    // Open questions.
+
+    // What should happen if you provide the same adjuster more than once? Currently, we do last one wins.
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 60% hue 40%, hwb(30deg 30% 40%))`, `rgb(186, 204, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 40%, hwb(30deg 30% 40%))`, `rgb(186, 204, 26)`);
+
+    // What should happen if you provide an adjuster without a paihue percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue, hwb(30deg 30% 40%))`, `rgb(204, 115, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 0%, hwb(30deg 30% 40%))`, `rgb(204, 115, 26)`);
+
+    // What should happen if you provide an adjuster without a negative percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) -10%, hwb(30deg 30% 40%))`, `rgb(153, 115, 77)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) 0%, hwb(30deg 30% 40%))`, `rgb(153, 115, 77)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue -10%, hwb(30deg 30% 40%))`, `rgb(204, 115, 26)`);
+    testComputed(`color-mix(hwb, hwb(120deg 10% 20%) hue 0%, hwb(30deg 30% 40%))`, `rgb(204, 115, 26)`);
+    
+
+    debug('');
+    debug('color-mix(lch, ...)');
+
+    // Special case no adjusters or percentage is split 50-50.
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4), lch(50% 60 70deg / .8))`, `lch(30% 40 50 / 0.6)`);
+
+    // Test precentage without adjusters.
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) 25%, lch(50% 60 70deg / .8))`, `lch(40% 50 60 / 0.7)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4), lch(50% 60 70deg / .8) 25%)`, `lch(20% 30 40 / 0.5)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) 25%, lch(50% 60 70deg / .8) 75%)`, `lch(40% 50 60 / 0.7)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) 50%, lch(50% 60 70deg / .8) 150%)`, `lch(40% 50 60 / 0.7)`); // Scale down > 100% sum.
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) 12.5%, lch(50% 60 70deg / .8) 37.5%)`, `lch(40% 50 60 / 0.7)`); // Scale up < 100% sum.
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) 0%, lch(50% 60 70deg / .8))`, `lch(50% 60 70 / 0.8)`);
+
+    // Test per-channel adjusters.
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50%, lch(50% 60 70deg / .8))`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4), lch(50% 60 70deg / .8) lightness 50%)`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50%, lch(50% 60 70deg / .8) lightness 50%)`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 100%, lch(50% 60 70deg / .8))`, `lch(10% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50%, lch(50% 60 70deg / .8))`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50% chroma 100%, lch(50% 60 70deg / .8))`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50% chroma 100% hue 100%, lch(50% 60 70deg / .8))`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50% chroma 100% hue 100% alpha 100%, lch(50% 60 70deg / .8))`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50%, lch(50% 60 70deg / .8) chroma 0%)`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50%, lch(50% 60 70deg / .8) chroma 0% hue 0%)`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50%, lch(50% 60 70deg / .8) chroma 0% hue 0% alpha 0%)`, `lch(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50% chroma 75%, lch(50% 60 70deg / .8))`, `lch(30% 30 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50% chroma 75% hue 15%, lch(50% 60 70deg / .8))`, `lch(30% 30 64 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 50% chroma 75% hue 15% alpha 10%, lch(50% 60 70deg / .8))`, `lch(30% 30 64 / 0.76)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 60%, lch(50% 60 70deg / .8))`, `lch(26% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4), lch(50% 60 70deg / .8) lightness 40%)`, `lch(26% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 60%, lch(50% 60 70deg / .8) lightness 40%)`, `lch(26% 20 30 / 0.4)`);
+
+    // FIXME: Test hue mixes with modifiers.
+
+    // Open questions.
+
+    // What should happen if you provide the same adjuster more than once? Currently, we do last one wins.
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 60% lightness 40%, lch(50% 60 70deg / .8))`, `lch(34% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 40%, lch(50% 60 70deg / .8))`, `lch(34% 20 30 / 0.4)`);
+
+    // What should happen if you provide an adjuster without a pailightness percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness, lch(50% 60 70deg / .8))`, `lch(50% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 0%, lch(50% 60 70deg / .8))`, `lch(50% 20 30 / 0.4)`);
+
+    // What should happen if you provide an adjuster without a negative percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) -10%, lch(50% 60 70deg / .8))`, `lch(50% 60 70 / 0.8)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) 0%, lch(50% 60 70deg / .8))`, `lch(50% 60 70 / 0.8)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness -10%, lch(50% 60 70deg / .8))`, `lch(50% 20 30 / 0.4)`);
+    testComputed(`color-mix(lch, lch(10% 20 30deg / .4) lightness 0%, lch(50% 60 70deg / .8))`, `lch(50% 20 30 / 0.4)`);
+
+
+    debug('');
+    debug('color-mix(lab, ...)');
+
+    // Special case no adjusters or percentage is split 50-50.
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4), lab(50% 60 70 / .8))`, `lab(30% 40 50 / 0.6)`);
+
+    // Test precentage without adjusters.
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) 25%, lab(50% 60 70 / .8))`, `lab(40% 50 60 / 0.7)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4), lab(50% 60 70 / .8) 25%)`, `lab(20% 30 40 / 0.5)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) 25%, lab(50% 60 70 / .8) 75%)`, `lab(40% 50 60 / 0.7)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) 50%, lab(50% 60 70 / .8) 150%)`, `lab(40% 50 60 / 0.7)`); // Scale down > 100% sum.
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) 12.5%, lab(50% 60 70 / .8) 37.5%)`, `lab(40% 50 60 / 0.7)`); // Scale up < 100% sum.
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) 0%, lab(50% 60 70 / .8))`, `lab(50% 60 70 / 0.8)`);
+
+    // Test per-channel adjusters.
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50%, lab(50% 60 70 / .8))`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4), lab(50% 60 70 / .8) lightness 50%)`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50%, lab(50% 60 70 / .8) lightness 50%)`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 100%, lab(50% 60 70 / .8))`, `lab(10% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50%, lab(50% 60 70 / .8))`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50% a 100%, lab(50% 60 70 / .8))`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50% a 100% b 100%, lab(50% 60 70 / .8))`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50% a 100% b 100% alpha 100%, lab(50% 60 70 / .8))`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50%, lab(50% 60 70 / .8) a 0%)`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50%, lab(50% 60 70 / .8) a 0% b 0%)`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50%, lab(50% 60 70 / .8) a 0% b 0% alpha 0%)`, `lab(30% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50% a 75%, lab(50% 60 70 / .8))`, `lab(30% 30 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50% a 75% b 15%, lab(50% 60 70 / .8))`, `lab(30% 30 64 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 50% a 75% b 15% alpha 10%, lab(50% 60 70 / .8))`, `lab(30% 30 64 / 0.76)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 60%, lab(50% 60 70 / .8))`, `lab(26% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4), lab(50% 60 70 / .8) lightness 40%)`, `lab(26% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 60%, lab(50% 60 70 / .8) lightness 40%)`, `lab(26% 20 30 / 0.4)`);
+
+    // Open questions.
+
+    // What should happen if you provide the same adjuster more than once? Currently, we do last one wins.
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 60% lightness 40%, lab(50% 60 70 / .8))`, `lab(34% 20 30 / 0.4)`);
+
+    // What should happen if you provide an adjuster without a pailightness percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness, lab(50% 60 70 / .8))`, `lab(50% 20 30 / 0.4)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness 0%, lab(50% 60 70 / .8))`, `lab(50% 20 30 / 0.4)`);
+
+    // What should happen if you provide an adjuster without a negative percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) -10%, lab(50% 60 70 / .8))`, `lab(50% 60 70 / 0.8)`);
+    testComputed(`color-mix(lab, lab(10% 20 30 / .4) lightness -10%, lab(50% 60 70 / .8))`, `lab(50% 20 30 / 0.4)`);
+ 
+    debug('');
+    debug('color-mix(srgb, ...)');
+
+    // Special case no adjusters or percentage is split 50-50.
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4), color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.4 0.5 / 0.6)`);
+
+    // Test precentage without adjusters.
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) 25%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.4 0.5 0.6 / 0.7)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4), color(srgb .5 .6 .7 / .8) 25%)`, `color(srgb 0.2 0.3 0.4 / 0.5)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) 25%, color(srgb .5 .6 .7 / .8) 75%)`, `color(srgb 0.4 0.5 0.6 / 0.7)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) 50%, color(srgb .5 .6 .7 / .8) 150%)`, `color(srgb 0.4 0.5 0.6 / 0.7)`); // Scale down > 100% sum.
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) 12.5%, color(srgb .5 .6 .7 / .8) 37.5%)`, `color(srgb 0.4 0.5 0.6 / 0.7)`); // Scale up < 100% sum.
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) 0%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.5 0.6 0.7 / 0.8)`);
+
+    // Test per-channel adjusters.
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4), color(srgb .5 .6 .7 / .8) red 50%)`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50%, color(srgb .5 .6 .7 / .8) red 50%)`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 100%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.1 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50% green 100%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50% green 100% blue 100%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50% green 100% blue 100% alpha 100%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50%, color(srgb .5 .6 .7 / .8) green 0%)`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50%, color(srgb .5 .6 .7 / .8) green 0% blue 0%)`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50%, color(srgb .5 .6 .7 / .8) green 0% blue 0% alpha 0%)`, `color(srgb 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50% green 75%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.3 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50% green 75% blue 15%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.3 0.64 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 50% green 75% blue 15% alpha 10%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.3 0.3 0.64 / 0.76)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 60%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.26 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4), color(srgb .5 .6 .7 / .8) red 40%)`, `color(srgb 0.26 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 60%, color(srgb .5 .6 .7 / .8) red 40%)`, `color(srgb 0.26 0.2 0.3 / 0.4)`);
+
+    // Open questions.
+
+    // What should happen if you provide the same adjuster more than once? Currently, we do last one wins.
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 60% red 40%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.34 0.2 0.3 / 0.4)`);
+
+    // What should happen if you provide an adjuster without a paired percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.5 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red 0%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.5 0.2 0.3 / 0.4)`);
+
+    // What should happen if you provide an adjuster without a negative percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) -10%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.5 0.6 0.7 / 0.8)`);
+    testComputed(`color-mix(srgb, color(srgb .1 .2 .3 / .4) red -10%, color(srgb .5 .6 .7 / .8))`, `color(srgb 0.5 0.2 0.3 / 0.4)`);
+
+
+    debug('');
+    debug('color-mix(xyz, ...)');
+
+    // Special case no adjusters or percentage is split 50-50.
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4), color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.4 0.5 / 0.6)`);
+
+    // Test precentage without adjusters.
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) 25%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.4 0.5 0.6 / 0.7)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4), color(xyz .5 .6 .7 / .8) 25%)`, `color(xyz 0.2 0.3 0.4 / 0.5)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) 25%, color(xyz .5 .6 .7 / .8) 75%)`, `color(xyz 0.4 0.5 0.6 / 0.7)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) 50%, color(xyz .5 .6 .7 / .8) 150%)`, `color(xyz 0.4 0.5 0.6 / 0.7)`); // Scale down > 100% sum.
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) 12.5%, color(xyz .5 .6 .7 / .8) 37.5%)`, `color(xyz 0.4 0.5 0.6 / 0.7)`); // Scale up < 100% sum.
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) 0%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.5 0.6 0.7 / 0.8)`);
+
+    // Test per-channel adjusters.
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4), color(xyz .5 .6 .7 / .8) x 50%)`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50%, color(xyz .5 .6 .7 / .8) x 50%)`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 100%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.1 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50% y 100%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50% y 100% z 100%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50% y 100% z 100% alpha 100%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50%, color(xyz .5 .6 .7 / .8) y 0%)`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50%, color(xyz .5 .6 .7 / .8) y 0% z 0%)`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50%, color(xyz .5 .6 .7 / .8) y 0% z 0% alpha 0%)`, `color(xyz 0.3 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50% y 75%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.3 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50% y 75% z 15%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.3 0.64 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 50% y 75% z 15% alpha 10%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.3 0.3 0.64 / 0.76)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 60%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.26 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4), color(xyz .5 .6 .7 / .8) x 40%)`, `color(xyz 0.26 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 60%, color(xyz .5 .6 .7 / .8) x 40%)`, `color(xyz 0.26 0.2 0.3 / 0.4)`);
+
+    // Open questions.
+
+    // What should happen if you provide the same adjuster more than once? Currently, we do last one wins.
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 60% x 40%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.34 0.2 0.3 / 0.4)`);
+
+    // What should happen if you provide an adjuster without a paix percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.5 0.2 0.3 / 0.4)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x 0%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.5 0.2 0.3 / 0.4)`);
+
+    // What should happen if you provide an adjuster without a negative percent? Currently, we treat that like having 0% for that adjuster.
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) -10%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.5 0.6 0.7 / 0.8)`);
+    testComputed(`color-mix(xyz, color(xyz .1 .2 .3 / .4) x -10%, color(xyz .5 .6 .7 / .8))`, `color(xyz 0.5 0.2 0.3 / 0.4)`);
+</script>
+    
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

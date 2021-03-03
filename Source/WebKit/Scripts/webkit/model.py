@@ -26,7 +26,10 @@ from collections import Counter, defaultdict
 
 BUILTIN_ATTRIBUTE = "Builtin"
 ASYNC_ATTRIBUTE = "Async"
+MAINTHREADCALLBACK_ATTRIBUTE = "MainThreadCallback"
 SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
+STREAM_ATTRIBUTE = "Stream"
+WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
 
 class MessageReceiver(object):
     def __init__(self, name, superclass, attributes, messages, condition):
@@ -72,7 +75,9 @@ ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_
     Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE], condition=None),
     Message('SyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('InitializeConnection', [], [], attributes=[BUILTIN_ATTRIBUTE], condition="PLATFORM(COCOA)"),
-    Message('LegacySessionState', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None)
+    Message('LegacySessionState', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
+    Message('SetStreamDestinationID', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
+    Message('ProcessOutOfStreamMessage', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None)
 ], condition=None)
 
 

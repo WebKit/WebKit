@@ -189,23 +189,20 @@ enum {
     if (!MIMEType)
         MIMEType = @"text/html";
     Class viewClass = [self _viewClassForMIMEType:MIMEType];
-    NSView <WebDocumentView> *documentView;
+    RetainPtr<NSView <WebDocumentView>> documentView;
     if (viewClass) {
         // If the dataSource's representation has already been created, and it is also the
         // same class as the desired documentView, then use it as the documentView instead
         // of creating another one (Radar 4340787).
         id <WebDocumentRepresentation> dataSourceRepresentation = [dataSource representation];
         if (dataSourceRepresentation && [dataSourceRepresentation class] == viewClass)
-            documentView = (NSView <WebDocumentView> *)[dataSourceRepresentation retain];
+            documentView = (NSView <WebDocumentView> *)dataSourceRepresentation;
         else
-            documentView = [(NSView <WebDocumentView> *)[viewClass alloc] init];
-    } else
-        documentView = nil;
+            documentView = adoptNS([(NSView <WebDocumentView> *)[viewClass alloc] init]);
+    }
     
-    [self _setDocumentView:documentView];
-    [documentView release];
-    
-    return documentView;
+    [self _setDocumentView:documentView.get()];
+    return documentView.autorelease();
 }
 
 - (void)_setWebFrame:(WebFrame *)webFrame
@@ -242,13 +239,10 @@ enum {
 
 + (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    static NSMutableDictionary *viewTypes = nil;
-    static BOOL addedImageTypes = NO;
-    
-    if (!viewTypes) {
-        viewTypes = [[NSMutableDictionary alloc] init];
-        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedNonImageMIMETypes]);
-        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedMediaMIMETypes]);
+    static auto viewTypes = makeNeverDestroyed([] {
+        auto types = adoptNS([[NSMutableDictionary alloc] init]);
+        addTypesFromClass(types.get(), [WebHTMLView class], [WebHTMLView supportedNonImageMIMETypes]);
+        addTypesFromClass(types.get(), [WebHTMLView class], [WebHTMLView supportedMediaMIMETypes]);
 
         // Since this is a "secret default" we don't bother registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
@@ -256,19 +250,20 @@ enum {
 #if PLATFORM(IOS_FAMILY)
 #define WebPDFView ([WebView _getPDFViewClass])
 #endif
-            addTypesFromClass(viewTypes, [WebPDFView class], [WebPDFView supportedMIMETypes]);
+            addTypesFromClass(types.get(), [WebPDFView class], [WebPDFView supportedMIMETypes]);
 #if PLATFORM(IOS_FAMILY)
 #undef WebPDFView
 #endif
         }
-    }
-    
+        return types;
+    }());
+    static BOOL addedImageTypes = NO;
     if (!addedImageTypes && !allowImageTypeOmission) {
-        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedImageMIMETypes]);
+        addTypesFromClass(viewTypes.get().get(), [WebHTMLView class], [WebHTMLView supportedImageMIMETypes]);
         addedImageTypes = YES;
     }
     
-    return viewTypes;
+    return viewTypes.get().get();
 }
 
 + (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType
@@ -372,7 +367,7 @@ enum {
 #if PLATFORM(IOS_FAMILY)
     [scrollView setDelegate:self];
 #else
-    [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
+    [scrollView setContentView:adoptNS([[WebClipView alloc] initWithFrame:[scrollView bounds]]).get()];
 #endif
     [scrollView setDrawsBackground:NO];
     [scrollView setHasVerticalScroller:NO];
@@ -1232,7 +1227,7 @@ enum {
     auto documentView = retainPtr([self documentView]);
 
     RetainPtr<WebDynamicScrollBarsView> scrollView  = adoptNS([[customClass alloc] initWithFrame:[oldScrollView frame]]);
-    [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
+    [scrollView setContentView:adoptNS([[WebClipView alloc] initWithFrame:[scrollView bounds]]).get()];
     [scrollView setDrawsBackground:[oldScrollView drawsBackground]];
     [scrollView setHasVerticalScroller:[oldScrollView hasVerticalScroller]];
     [scrollView setHasHorizontalScroller:[oldScrollView hasHorizontalScroller]];

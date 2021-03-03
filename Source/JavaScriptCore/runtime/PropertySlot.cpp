@@ -46,21 +46,6 @@ JSValue PropertySlot::customGetter(JSGlobalObject* globalObject, PropertyName pr
     return JSValue::decode(m_data.custom.getValue(globalObject, JSValue::encode(thisValue), propertyName));
 }
 
-JSValue PropertySlot::customAccessorGetter(JSGlobalObject* globalObject, PropertyName propertyName) const
-{
-    if (!m_data.customAccessor.getterSetter->getter())
-        return jsUndefined();
-
-    if (auto domAttribute = this->domAttribute()) {
-        VM& vm = globalObject->vm();
-        if (!m_thisValue.inherits(vm, domAttribute->classInfo)) {
-            auto scope = DECLARE_THROW_SCOPE(vm);
-            return throwDOMAttributeGetterTypeError(globalObject, scope, domAttribute->classInfo, propertyName);
-        }
-    }
-    return JSValue::decode(m_data.customAccessor.getterSetter->getter()(globalObject, JSValue::encode(m_thisValue), propertyName));
-}
-
 JSValue PropertySlot::getPureResult() const
 {
     JSValue result;

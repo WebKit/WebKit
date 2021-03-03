@@ -21,6 +21,7 @@
 
 #include "WebViewTest.h"
 #include <gio/gunixfdlist.h>
+#include <wtf/URL.h>
 #include <wtf/glib/GRefPtr.h>
 
 static GUniquePtr<char> scriptDialogResult;
@@ -493,10 +494,9 @@ static void testWebExtensionPageID(WebViewTest* test, gconstpointer)
     // Register a custom URI scheme to test history navigation.
     webkit_web_context_register_uri_scheme(test->m_webContext.get(), "foo",
         [](WebKitURISchemeRequest* request, gpointer) {
-            SoupURI* uri = soup_uri_new(webkit_uri_scheme_request_get_uri(request));
+            URL url = URL({ }, webkit_uri_scheme_request_get_uri(request));
             GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
-            char* html = g_strdup_printf("<html><head><title>%s</title></head><body></body></html>", !strcmp(uri->host, "host5") ? "Title5" : "Title6");
-            soup_uri_free(uri);
+            char* html = g_strdup_printf("<html><head><title>%s</title></head><body></body></html>", url.host() == "host5" ? "Title5" : "Title6");
             g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), html, strlen(html), g_free);
             webkit_uri_scheme_request_finish(request, inputStream.get(), strlen(html), "text/html");
         }, nullptr, nullptr);

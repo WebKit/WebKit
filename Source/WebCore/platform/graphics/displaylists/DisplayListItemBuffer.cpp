@@ -132,8 +132,12 @@ void ItemHandle::apply(GraphicsContext& context)
         get<ClipPath>().apply(context);
         return;
     }
-    case ItemType::ClipToDrawingCommands: {
-        get<ClipToDrawingCommands>().apply(context);
+    case ItemType::BeginClipToDrawingCommands: {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    case ItemType::EndClipToDrawingCommands: {
+        ASSERT_NOT_REACHED();
         return;
     }
     case ItemType::DrawGlyphs:
@@ -298,10 +302,6 @@ void ItemHandle::destroy()
         get<ClipPath>().~ClipPath();
         return;
     }
-    case ItemType::ClipToDrawingCommands: {
-        get<ClipToDrawingCommands>().~ClipToDrawingCommands();
-        return;
-    }
     case ItemType::DrawFocusRingPath: {
         get<DrawFocusRingPath>().~DrawFocusRingPath();
         return;
@@ -376,6 +376,10 @@ void ItemHandle::destroy()
         return;
     }
 #endif
+    case ItemType::BeginClipToDrawingCommands: {
+        static_assert(std::is_trivially_destructible<BeginClipToDrawingCommands>::value);
+        return;
+    }
     case ItemType::BeginTransparencyLayer: {
         static_assert(std::is_trivially_destructible<BeginTransparencyLayer>::value);
         return;
@@ -430,6 +434,10 @@ void ItemHandle::destroy()
     }
     case ItemType::DrawRect: {
         static_assert(std::is_trivially_destructible<DrawRect>::value);
+        return;
+    }
+    case ItemType::EndClipToDrawingCommands: {
+        static_assert(std::is_trivially_destructible<EndClipToDrawingCommands>::value);
         return;
     }
     case ItemType::EndTransparencyLayer: {
@@ -566,8 +574,6 @@ bool ItemHandle::safeCopy(ItemHandle destination) const
         return copyInto<ClipOutToPath>(*this, itemOffset);
     case ItemType::ClipPath:
         return copyInto<ClipPath>(*this, itemOffset);
-    case ItemType::ClipToDrawingCommands:
-        return copyInto<ClipToDrawingCommands>(*this, itemOffset);
     case ItemType::DrawFocusRingPath:
         return copyInto<DrawFocusRingPath>(*this, itemOffset);
     case ItemType::DrawFocusRingRects:
@@ -612,6 +618,8 @@ bool ItemHandle::safeCopy(ItemHandle destination) const
     case ItemType::ApplyStrokePattern:
         return copyInto<ApplyStrokePattern>(*this, itemOffset);
 #endif
+    case ItemType::BeginClipToDrawingCommands:
+        return copyInto<BeginClipToDrawingCommands>(*this, itemOffset);
     case ItemType::BeginTransparencyLayer:
         return copyInto<BeginTransparencyLayer>(*this, itemOffset);
     case ItemType::ClearRect:
@@ -634,6 +642,8 @@ bool ItemHandle::safeCopy(ItemHandle destination) const
         return copyInto<DrawLine>(*this, itemOffset);
     case ItemType::DrawRect:
         return copyInto<DrawRect>(*this, itemOffset);
+    case ItemType::EndClipToDrawingCommands:
+        return copyInto<EndClipToDrawingCommands>(*this, itemOffset);
     case ItemType::EndTransparencyLayer:
         return copyInto<EndTransparencyLayer>(*this, itemOffset);
     case ItemType::FillEllipse:

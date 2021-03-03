@@ -36,6 +36,12 @@
 #import "AppAttestInternalSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LocalConnectionAdditions.h>
+#else
+#define LOCAL_CONNECTION_ADDITIONS
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -133,6 +139,7 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
             (id)kSecAttrLabel: secAttrLabel,
             (id)kSecAttrApplicationTag: secAttrApplicationTag,
         }};
+    LOCAL_CONNECTION_ADDITIONS
     CFErrorRef errorRef = nullptr;
     auto credentialPrivateKey = adoptCF(SecKeyCreateRandomKey((__bridge CFDictionaryRef)attributes, &errorRef));
     auto retainError = adoptCF(errorRef);

@@ -54,16 +54,16 @@ namespace TestWebKitAPI {
 
 TEST(WKWebView, WKScrollViewDelegateCrash)
 {
-    WKWebView *webView = [[WKWebView alloc] init];
-    TestDelegateForScrollView *delegateForScrollView = [[TestDelegateForScrollView alloc] init];
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto delegateForScrollView = adoptNS([[TestDelegateForScrollView alloc] init]);
     @autoreleasepool {
-        webView.scrollView.delegate = delegateForScrollView;
+        [webView scrollView].delegate = delegateForScrollView.get();
     }
     delegateIsDeallocated = false;
-    [delegateForScrollView release];
+    delegateForScrollView = nil;
     TestWebKitAPI::Util::run(&delegateIsDeallocated);
 
-    EXPECT_NULL(webView.scrollView.delegate);
+    EXPECT_NULL([webView scrollView].delegate);
 }
 
 }
@@ -93,23 +93,23 @@ namespace TestWebKitAPI {
 
 TEST(WKWebView, WKScrollViewDelegateCannotOverrideViewForZooming)
 {
-    TestWKWebView *webView = [[TestWKWebView alloc] init];
-    WKScrollViewDelegateWithViewForZoomingOverridden *delegateForScrollView = [[WKScrollViewDelegateWithViewForZoomingOverridden alloc] init];
+    auto webView = adoptNS([[TestWKWebView alloc] init]);
+    auto delegateForScrollView = adoptNS([[WKScrollViewDelegateWithViewForZoomingOverridden alloc] init]);
     @autoreleasepool {
-        webView.scrollView.delegate = delegateForScrollView;
+        [webView scrollView].delegate = delegateForScrollView.get();
     }
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1'>"];
     [webView waitForNextPresentationUpdate];
 
     // Have WKScrollView's external delegate return a view with scale=2 from viewForZoomingInScrollView.
-    delegateForScrollView.overrideScale = 2;
+    [delegateForScrollView setOverrideScale:2];
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=2'>"];
     [webView waitForNextPresentationUpdate];
 
     @autoreleasepool {
-        webView.scrollView.delegate = nil;
+        [webView scrollView].delegate = nil;
     }
 
     EXPECT_FALSE(didCallViewForZoomingInScrollView);

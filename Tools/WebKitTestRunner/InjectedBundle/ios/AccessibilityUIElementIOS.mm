@@ -50,6 +50,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)accessibilityElementForRow:(NSInteger)row andColumn:(NSInteger)column;
 - (NSURL *)accessibilityURL;
 - (NSArray *)accessibilityHeaderElements;
+- (NSArray *)accessibilityErrorMessageElements;
 - (NSString *)accessibilityPlaceholderValue;
 - (NSString *)stringForRange:(NSRange)range;
 - (NSAttributedString *)attributedStringForRange:(NSRange)range;
@@ -98,6 +99,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)_accessibilityTableAncestor;
 - (id)_accessibilityLandmarkAncestor;
 - (id)_accessibilityListAncestor;
+- (id)_accessibilityPhotoDescription;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -240,21 +242,11 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int
     
     return AccessibilityUIElement::create(element);
 }
-    
-static JSValueRef convertElementsToObjectArray(JSContextRef context, const Vector<RefPtr<AccessibilityUIElement>>& elements)
-{
-    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
-    auto size = elements.size();
-    for (size_t i = 0; i < size; ++i)
-        JSObjectSetPropertyAtIndex(context, array, i, JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get()), nullptr);
-    return array;
-}
+
 JSValueRef AccessibilityUIElement::elementsForRange(unsigned location, unsigned length)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     NSArray *elementsForRange = [m_element elementsForRange:NSMakeRange(location, length)];
-    return convertElementsToObjectArray(context, makeVector<RefPtr<AccessibilityUIElement>>(elementsForRange));
+    return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>(elementsForRange));
 }
 
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
@@ -277,6 +269,14 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(un
     return nullptr;
 }
 
+JSValueRef AccessibilityUIElement::errorMessageElements() const
+{
+    NSArray *elements = [m_element accessibilityErrorMessageElements];
+    if ([elements isKindOfClass:NSArray.class])
+        return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>(elements));
+    return { };
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
 {
     return nullptr;
@@ -290,6 +290,22 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
     return 0;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)
+{
+    return nil;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAtIndex(unsigned index)
+{
+    NSArray *elements = [m_element accessibilityErrorMessageElements];
+    if (![elements isKindOfClass:NSArray.class])
+        return nullptr;
+
+    if (index < elements.count)
+        return create([elements objectAtIndex:index]);
+    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
@@ -1064,6 +1080,11 @@ bool AccessibilityUIElement::isVisible() const
 bool AccessibilityUIElement::isOffScreen() const
 {
     return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const
+{
+    return concatenateAttributeAndValue(@"AXEmbeddedImageDescription", [m_element _accessibilityPhotoDescription]);
 }
 
 bool AccessibilityUIElement::isCollapsed() const

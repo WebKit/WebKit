@@ -75,6 +75,7 @@ public:
     WEBCORE_EXPORT void setMuted(bool) final;
     WEBCORE_EXPORT void setVolume(double) final;
     WEBCORE_EXPORT void setPlayingOnSecondScreen(bool) final;
+    WEBCORE_EXPORT void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;
 
     double duration() const final;
     double currentTime() const final;

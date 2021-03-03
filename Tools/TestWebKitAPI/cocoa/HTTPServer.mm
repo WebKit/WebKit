@@ -38,8 +38,8 @@ namespace TestWebKitAPI {
 
 struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::DestructionThread::MainRunLoop> {
     RequestData(std::initializer_list<std::pair<String, HTTPResponse>> responses)
-    : requestMap([](std::initializer_list<std::pair<String, HTTPServer::HTTPResponse>> list) {
-        HashMap<String, HTTPServer::HTTPResponse> map;
+    : requestMap([](std::initializer_list<std::pair<String, HTTPResponse>> list) {
+        HashMap<String, HTTPResponse> map;
         for (auto& pair : list)
             map.add(pair.first, pair.second);
         return map;
@@ -212,6 +212,31 @@ static Vector<uint8_t> vectorFromData(dispatch_data_t content)
     return request;
 }
 
+static void appendUTF8ToVector(Vector<uint8_t>& vector, const String& string)
+{
+    auto utf8 = string.utf8();
+    vector.append(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
+}
+
+String HTTPServer::parsePath(const Vector<char>& request)
+{
+    if (!request.size())
+        return { };
+    const char* getPathPrefix = "GET ";
+    const char* postPathPrefix = "POST ";
+    const char* pathSuffix = " HTTP/1.1\r\n";
+    const char* pathEnd = strnstr(request.data(), pathSuffix, request.size());
+    ASSERT_WITH_MESSAGE(pathEnd, "HTTPServer assumes request is HTTP 1.1");
+    size_t pathPrefixLength = 0;
+    if (!memcmp(request.data(), getPathPrefix, strlen(getPathPrefix)))
+        pathPrefixLength = strlen(getPathPrefix);
+    else if (!memcmp(request.data(), postPathPrefix, strlen(postPathPrefix)))
+        pathPrefixLength = strlen(postPathPrefix);
+    ASSERT_WITH_MESSAGE(pathPrefixLength, "HTTPServer assumes request is GET or POST");
+    size_t pathLength = pathEnd - request.data() - pathPrefixLength;
+    return String(request.data() + pathPrefixLength, pathLength);
+}
+
 void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> requestData)
 {
     connection.receiveHTTPRequest([connection, requestData] (Vector<char>&& request) mutable {
@@ -219,32 +244,14 @@ void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> reque
             return;
         requestData->requestCount++;
 
-        const char* getPathPrefix = "GET ";
-        const char* postPathPrefix = "POST ";
-        const char* pathSuffix = " HTTP/1.1\r\n";
-        const char* pathEnd = strnstr(request.data(), pathSuffix, request.size());
-        ASSERT_WITH_MESSAGE(pathEnd, "HTTPServer assumes request is HTTP 1.1");
-        size_t pathPrefixLength = 0;
-        if (!memcmp(request.data(), getPathPrefix, strlen(getPathPrefix)))
-            pathPrefixLength = strlen(getPathPrefix);
-        else if (!memcmp(request.data(), postPathPrefix, strlen(postPathPrefix)))
-            pathPrefixLength = strlen(postPathPrefix);
-        ASSERT_WITH_MESSAGE(pathPrefixLength, "HTTPServer assumes request is GET or POST");
-        size_t pathLength = pathEnd - request.data() - pathPrefixLength;
-        String path(request.data() + pathPrefixLength, pathLength);
+        auto path = parsePath(request);
         ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());
 
         auto response = requestData->requestMap.get(path);
         if (response.terminateConnection == HTTPResponse::TerminateConnection::Yes)
             return connection.terminate();
-        StringBuilder responseBuilder;
-        responseBuilder.append("HTTP/1.1 ", response.statusCode, ' ', statusText(response.statusCode), "\r\n");
-        responseBuilder.append("Content-Length: ", response.body.length(), "\r\n");
-        for (auto& pair : response.headerFields)
-            responseBuilder.append(pair.key, ": ", pair.value, "\r\n");
-        responseBuilder.append("\r\n");
-        responseBuilder.append(response.body);
-        connection.send(responseBuilder.toString(), [connection, requestData] {
+
+        connection.send(response.serialize(), [connection, requestData] {
             respondToRequests(connection, requestData);
         });
     });
@@ -332,6 +339,29 @@ void Connection::cancel()
     nw_connection_cancel(m_connection.get());
     Util::run(&cancelled);
     m_connection = nullptr;
+}
+
+Vector<uint8_t> HTTPResponse::bodyFromString(const String& string)
+{
+    Vector<uint8_t> vector;
+    appendUTF8ToVector(vector, string);
+    return vector;
+}
+
+Vector<uint8_t> HTTPResponse::serialize(IncludeContentLength includeContentLength)
+{
+    StringBuilder responseBuilder;
+    responseBuilder.append("HTTP/1.1 ", statusCode, ' ', statusText(statusCode), "\r\n");
+    if (includeContentLength == IncludeContentLength::Yes)
+        responseBuilder.append("Content-Length: ", body.size(), "\r\n");
+    for (auto& pair : headerFields)
+        responseBuilder.append(pair.key, ": ", pair.value, "\r\n");
+    responseBuilder.append("\r\n");
+    
+    Vector<uint8_t> bytesToSend;
+    appendUTF8ToVector(bytesToSend, responseBuilder.toString());
+    bytesToSend.appendVector(body);
+    return bytesToSend;
 }
 
 void H2::Connection::send(Frame&& frame, CompletionHandler<void()>&& completionHandler) const

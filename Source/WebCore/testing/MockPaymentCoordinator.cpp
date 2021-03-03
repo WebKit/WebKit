@@ -28,14 +28,17 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayPaymentMethodModeUpdate.h"
+#include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
+#include "ApplePayShippingContactUpdate.h"
+#include "ApplePayShippingMethodUpdate.h"
 #include "MockApplePaySetupFeature.h"
 #include "MockPayment.h"
 #include "MockPaymentContact.h"
 #include "MockPaymentMethod.h"
 #include "Page.h"
 #include "PaymentCoordinator.h"
-#include "PaymentMethodUpdate.h"
 #include "PaymentSessionError.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
@@ -96,18 +99,11 @@ static void dispatchIfShowing(Function<void()>&& function)
     });
 }
 
-static Vector<ApplePayShippingMethod> convert(const Vector<ApplePaySessionPaymentRequest::ShippingMethod>& shippingMethods)
-{
-    return WTF::map(shippingMethods, [] (auto& shippingMethod) {
-        return ApplePayShippingMethod { shippingMethod.label, shippingMethod.detail, shippingMethod.amount, shippingMethod.identifier };
-    });
-}
-
 bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest& request)
 {
     if (request.shippingContact().pkContact())
         m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
-    m_shippingMethods = convert(request.shippingMethods());
+    m_shippingMethods = request.shippingMethods();
     m_requiredBillingContactFields = request.requiredBillingContactFields();
     m_requiredShippingContactFields = request.requiredShippingContactFields();
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
@@ -129,49 +125,64 @@ void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSes
     });
 }
 
-static ApplePayLineItem convert(const ApplePaySessionPaymentRequest::LineItem& lineItem)
+void MockPaymentCoordinator::completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&& shippingMethodUpdate)
 {
-    ApplePayLineItem result;
-    result.type = lineItem.type;
-    result.label = lineItem.label;
-    result.amount = lineItem.amount;
+    if (!shippingMethodUpdate)
+        return;
+
+    m_total = WTFMove(shippingMethodUpdate->newTotal);
+    m_lineItems = WTFMove(shippingMethodUpdate->newLineItems);
+}
+
+static Vector<MockPaymentError> convert(Vector<RefPtr<ApplePayError>>&& errors)
+{
+    Vector<MockPaymentError> result;
+    for (auto& error : errors) {
+        if (error)
+            result.append({ error->code(), error->message(), error->contactField() });
+    }
     return result;
 }
 
-void MockPaymentCoordinator::updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
-{
-    m_total = convert(totalAndLineItems.total);
-    m_lineItems.clear();
-    for (auto& lineItem : totalAndLineItems.lineItems)
-        m_lineItems.append(convert(lineItem));
-}
-
-void MockPaymentCoordinator::completeShippingMethodSelection(Optional<ShippingMethodUpdate>&& shippingMethodUpdate)
-{
-    if (shippingMethodUpdate)
-        updateTotalAndLineItems(shippingMethodUpdate->newTotalAndLineItems);
-}
-
-void MockPaymentCoordinator::completeShippingContactSelection(Optional<ShippingContactUpdate>&& shippingContactUpdate)
+void MockPaymentCoordinator::completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&& shippingContactUpdate)
 {
     if (!shippingContactUpdate)
         return;
 
-    m_shippingMethods = convert(shippingContactUpdate->newShippingMethods);
-    updateTotalAndLineItems(shippingContactUpdate->newTotalAndLineItems);
-    m_errors = WTFMove(shippingContactUpdate->errors);
+    m_total = WTFMove(shippingContactUpdate->newTotal);
+    m_lineItems = WTFMove(shippingContactUpdate->newLineItems);
+    m_errors = convert(WTFMove(shippingContactUpdate->errors));
+    m_shippingMethods = WTFMove(shippingContactUpdate->newShippingMethods);
 }
 
-void MockPaymentCoordinator::completePaymentMethodSelection(Optional<PaymentMethodUpdate>&& paymentMethodUpdate)
+void MockPaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&& paymentMethodUpdate)
 {
-    if (paymentMethodUpdate)
-        updateTotalAndLineItems(paymentMethodUpdate->totalAndLineItems());
+    if (!paymentMethodUpdate)
+        return;
+
+    m_total = WTFMove(paymentMethodUpdate->newTotal);
+    m_lineItems = WTFMove(paymentMethodUpdate->newLineItems);
 }
+
+#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+
+void MockPaymentCoordinator::completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&& paymentMethodModeUpdate)
+{
+    if (!paymentMethodModeUpdate)
+        return;
+
+    m_total = WTFMove(paymentMethodModeUpdate->newTotal);
+    m_lineItems = WTFMove(paymentMethodModeUpdate->newLineItems);
+    m_errors = convert(WTFMove(paymentMethodModeUpdate->errors));
+    m_shippingMethods = WTFMove(paymentMethodModeUpdate->newShippingMethods);
+}
+
+#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
 void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
 {
     dispatchIfShowing([page = &m_page, shippingOption = WTFMove(shippingOption)]() mutable {
-        ApplePaySessionPaymentRequest::ShippingMethod shippingMethod;
+        ApplePayShippingMethod shippingMethod;
         shippingMethod.identifier = WTFMove(shippingOption);
         page->paymentCoordinator().didSelectShippingMethod(shippingMethod);
     });
@@ -205,7 +216,7 @@ void MockPaymentCoordinator::cancelPayment()
 void MockPaymentCoordinator::completePaymentSession(Optional<PaymentAuthorizationResult>&& result)
 {
     auto isFinalState = isFinalStateResult(result);
-    m_errors = WTFMove(result->errors);
+    m_errors = convert(WTFMove(result->errors));
 
     if (!isFinalState)
         return;

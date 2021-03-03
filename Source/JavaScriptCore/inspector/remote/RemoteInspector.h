@@ -116,6 +116,7 @@ public:
         virtual String browserName() const { return { }; }
         virtual String browserVersion() const { return { }; }
         virtual void requestAutomationSession(const String& sessionIdentifier, const SessionCapabilities&) = 0;
+        virtual void requestedDebuggablesToWakeUp() { };
 #if USE(INSPECTOR_SOCKET_SERVER)
         virtual void closeAutomationSession() = 0;
 #endif
@@ -222,6 +223,7 @@ private:
     void receivedDataMessage(NSDictionary *userInfo);
     void receivedDidCloseMessage(NSDictionary *userInfo);
     void receivedGetListingMessage(NSDictionary *userInfo);
+    void receivedWakeUpDebuggables(NSDictionary *userInfo);
     void receivedIndicateMessage(NSDictionary *userInfo);
     void receivedProxyApplicationSetupMessage(NSDictionary *userInfo);
     void receivedConnectionDiedMessage(NSDictionary *userInfo);

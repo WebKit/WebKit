@@ -107,7 +107,7 @@ LayoutSize FloatingObject::translationOffsetToAncestor() const
     return locationOffsetOfBorderBox() - renderer().locationOffset();
 }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
 
 TextStream& operator<<(TextStream& stream, const FloatingObject& object)
 {

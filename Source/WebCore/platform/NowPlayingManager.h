@@ -45,7 +45,7 @@ public:
     class Client : public CanMakeWeakPtr<Client> {
     public:
         virtual ~Client() = default;
-        virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, Optional<double>) = 0;
+        virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) = 0;
     };
 
     void clearNowPlayingInfoClient(Client&);

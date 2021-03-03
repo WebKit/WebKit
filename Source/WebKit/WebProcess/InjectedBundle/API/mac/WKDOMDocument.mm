@@ -85,7 +85,7 @@
 
 - (id)parserYieldToken
 {
-    return [[[WKDOMDocumentParserYieldToken alloc] initWithDocument:downcast<WebCore::Document>(*_impl)] autorelease];
+    return adoptNS([[WKDOMDocumentParserYieldToken alloc] initWithDocument:downcast<WebCore::Document>(*_impl)]).autorelease();
 }
 
 @end

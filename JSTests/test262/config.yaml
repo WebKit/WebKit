@@ -4,14 +4,17 @@ flags:
   WeakRef: useWeakRefs
   FinalizationRegistry: useWeakRefs
   class-fields-private: usePrivateClassFields
+  class-methods-private: usePrivateMethods
   class-static-fields-public: usePublicStaticClassFields
   class-static-fields-private: usePrivateStaticClassFields
+  class-static-methods-private: usePrivateMethods
   Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
   Array.prototype.at: useAtMethod
   TypedArray.prototype.at: useAtMethod
   String.prototype.at: useAtMethod
+  top-level-await: useTopLevelAwait
 skip:
   features:
     - Atomics.waitAsync
@@ -19,13 +22,11 @@ skip:
     - regexp-lookbehind
     - legacy-regexp
 
-    - class-methods-private
-    - class-static-methods-private
     - cleanupSome
     - host-gc-required
-    # https://bugs.webkit.org/show_bug.cgi?id=202475
+
+    # FIXME: https://bugs.webkit.org/show_bug.cgi?id=222142
     - regexp-match-indices
-    - top-level-await
   paths:
   files:
     # Slightly different formatting. We should update test262 side.
@@ -59,6 +60,15 @@ skip:
 
     # New ICU (66~) raises a different failure
     - test/intl402/Locale/constructor-non-iana-canon.js
+    # New ICU (68~) raises a different failure
+    - test/intl402/Locale/likely-subtags.js
+    # Pass only in ICU 68~
+    - test/intl402/Locale/constructor-tag.js
+    - test/intl402/Intl/getCanonicalLocales/unicode-ext-key-with-digit.js
+
+    # ICU canonicalization bug
+    # https://unicode-org.atlassian.net/browse/ICU-21367
+    - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js
 
     # Failing because we are building WebKit with very old ICU headers
     - test/intl402/DateTimeFormat/prototype/formatRange/date-same-returns-single-date.js
@@ -195,3 +205,8 @@ skip:
     - test/intl402/NumberFormat/prototype/formatToParts/unit.js
     - test/intl402/NumberFormat/prototype/resolvedOptions/compactDisplay.js
     - test/intl402/NumberFormat/style-unit.js
+
+    # These tests become obsolete. Will be updated.
+    # https://github.com/tc39/test262/pull/2952
+    - test/intl402/Segmenter/constructor/constructor/options-toobject.js
+    - test/intl402/Segmenter/constructor/constructor/options-toobject-prototype.js

@@ -264,6 +264,7 @@ describe('/api/build-requests', function () {
         assert.deepEqual(content['commitSets'][0].revisionItems, [
             {commit: '87832', commitOwner: null, patch: null, requiresBuild: false, rootFile: null},
             {commit: '93116', commitOwner: null, patch: 100, requiresBuild: true, rootFile: 101}]);
+        assert.ok(content['uploadedFiles'][1].deletedAt);
         assert.deepEqual(content['commitSets'][2].revisionItems, [
             {commit: '87832', commitOwner: null, patch: null, requiresBuild: false, rootFile: null},
             {commit: '93116', commitOwner: null, patch: 100, requiresBuild: true, rootFile: null}]);
@@ -289,14 +290,14 @@ describe('/api/build-requests', function () {
 
     it('should fail request with "CannotReuseDeletedRoot" if any root to reuse is deleted while updating commit set items ', async () => {
         await MockData.addMockBuildRequestsWithRoots(TestServer.database());
-        await TestServer.database().query(`CREATE OR REPLACE FUNCTION emunlate_file_purge() RETURNS TRIGGER AS $emunlate_file_purge$
+        await TestServer.database().query(`CREATE OR REPLACE FUNCTION emulate_file_purge() RETURNS TRIGGER AS $emulate_file_purge$
             BEGIN
                 UPDATE uploaded_files SET file_deleted_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') WHERE file_id = NEW.commitset_root_file;
                 RETURN NULL;
             END;
-            $emunlate_file_purge$ LANGUAGE plpgsql;`);
-        await TestServer.database().query(`CREATE TRIGGER emunlate_file_purge AFTER UPDATE OF commitset_root_file ON commit_set_items
-            FOR EACH ROW EXECUTE PROCEDURE emunlate_file_purge();`);
+            $emulate_file_purge$ LANGUAGE plpgsql;`);
+        await TestServer.database().query(`CREATE TRIGGER emulate_file_purge AFTER UPDATE OF commitset_root_file ON commit_set_items
+            FOR EACH ROW EXECUTE PROCEDURE emulate_file_purge();`);
         const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
 
         assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);

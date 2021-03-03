@@ -37,9 +37,9 @@ TEST(WebCore, ContextMenuAction_IsValidEnum)
     EXPECT_TRUE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemTagNoAction));
     EXPECT_TRUE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemTagNoAction + 1));
 
-    EXPECT_TRUE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemTagToggleVideoEnhancedFullscreen - 1));
-    EXPECT_TRUE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemTagToggleVideoEnhancedFullscreen));
-    EXPECT_FALSE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemTagToggleVideoEnhancedFullscreen + 1));
+    EXPECT_TRUE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemTagRevealImage - 1));
+    EXPECT_TRUE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemTagRevealImage));
+    EXPECT_FALSE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemTagRevealImage + 1));
 
     EXPECT_FALSE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemBaseCustomTag - 1));
     EXPECT_TRUE(WTF::isValidEnum<WebCore::ContextMenuAction>(WebCore::ContextMenuAction::ContextMenuItemBaseCustomTag));

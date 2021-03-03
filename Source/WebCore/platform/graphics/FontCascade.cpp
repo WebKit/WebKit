@@ -146,125 +146,6 @@ bool FontCascade::operator==(const FontCascade& other) const
     return true;
 }
 
-struct FontCascadeCacheKey {
-    FontDescriptionKey fontDescriptionKey; // Shared with the lower level FontCache (caching Font objects)
-    Vector<AtomString, 3> families;
-    unsigned fontSelectorId;
-    unsigned fontSelectorVersion;
-};
-
-struct FontCascadeCacheEntry {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    FontCascadeCacheEntry(FontCascadeCacheKey&& key, Ref<FontCascadeFonts>&& fonts)
-        : key(WTFMove(key))
-        , fonts(WTFMove(fonts))
-    { }
-    FontCascadeCacheKey key;
-    Ref<FontCascadeFonts> fonts;
-};
-
-// FIXME: Should make hash traits for FontCascadeCacheKey instead of using a hash as the key (so we hash a hash).
-typedef HashMap<unsigned, std::unique_ptr<FontCascadeCacheEntry>, AlreadyHashed> FontCascadeCache;
-
-static bool keysMatch(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
-{
-    if (a.fontDescriptionKey != b.fontDescriptionKey)
-        return false;
-    if (a.fontSelectorId != b.fontSelectorId || a.fontSelectorVersion != b.fontSelectorVersion)
-        return false;
-    unsigned size = a.families.size();
-    if (size != b.families.size())
-        return false;
-    for (unsigned i = 0; i < size; ++i) {
-        if (!FontCascadeDescription::familyNamesAreEqual(a.families[i], b.families[i]))
-            return false;
-    }
-    return true;
-}
-
-static FontCascadeCache& fontCascadeCache()
-{
-    static NeverDestroyed<FontCascadeCache> cache;
-    return cache.get();
-}
-
-void invalidateFontCascadeCache()
-{
-    fontCascadeCache().clear();
-}
-
-void clearWidthCaches()
-{
-    for (auto& value : fontCascadeCache().values())
-        value->fonts.get().widthCache().clear();
-}
-
-static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
-{
-    FontCascadeCacheKey key;
-    key.fontDescriptionKey = FontDescriptionKey(description);
-    unsigned familyCount = description.familyCount();
-    key.families.reserveInitialCapacity(familyCount);
-    for (unsigned i = 0; i < familyCount; ++i)
-        key.families.uncheckedAppend(description.familyAt(i));
-    key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
-    key.fontSelectorVersion = fontSelector ? fontSelector->version() : 0;
-    return key;
-}
-
-static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
-{
-    // FIXME: Should hash the key and the family name characters rather than making a hash out of other hashes.
-    IntegerHasher hasher;
-    hasher.add(key.fontDescriptionKey.computeHash());
-    hasher.add(key.fontSelectorId);
-    hasher.add(key.fontSelectorVersion);
-    for (unsigned i = 0; i < key.families.size(); ++i) {
-        auto& family = key.families[i];
-        hasher.add(family.isNull() ? 0 : FontCascadeDescription::familyNameHash(family));
-    }
-    return hasher.hash();
-}
-
-void pruneUnreferencedEntriesFromFontCascadeCache()
-{
-    fontCascadeCache().removeIf([](auto& entry) {
-        return entry.value->fonts.get().hasOneRef();
-    });
-}
-
-void pruneSystemFallbackFonts()
-{
-    for (auto& entry : fontCascadeCache().values())
-        entry->fonts->pruneSystemFallbacks();
-}
-
-static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
-{
-    auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
-
-    unsigned hash = computeFontCascadeCacheHash(key);
-    auto addResult = fontCascadeCache().add(hash, nullptr);
-    if (!addResult.isNewEntry && keysMatch(addResult.iterator->value->key, key))
-        return addResult.iterator->value->fonts.get();
-
-    auto& newEntry = addResult.iterator->value;
-    newEntry = makeUnique<FontCascadeCacheEntry>(WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)));
-    Ref<FontCascadeFonts> glyphs = newEntry->fonts.get();
-
-    static const unsigned unreferencedPruneInterval = 50;
-    static const int maximumEntries = 400;
-    static unsigned pruneCounter;
-    // Referenced FontCascadeFonts would exist anyway so pruning them saves little memory.
-    if (!(++pruneCounter % unreferencedPruneInterval))
-        pruneUnreferencedEntriesFromFontCascadeCache();
-    // Prevent pathological growth.
-    if (fontCascadeCache().size() > maximumEntries)
-        fontCascadeCache().remove(fontCascadeCache().random());
-    return glyphs;
-}
-
 bool FontCascade::isCurrent(const FontSelector& fontSelector) const
 {
     if (!m_fonts)
@@ -277,12 +158,17 @@ bool FontCascade::isCurrent(const FontSelector& fontSelector) const
     return true;
 }
 
-void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
+void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 {
-    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, WTFMove(fontSelector));
+    m_fonts = WTFMove(fonts);
     m_useBackslashAsYenSymbol = useBackslashAsYenSignForFamily(firstFamily());
     m_enableKerning = computeEnableKerning();
     m_requiresShaping = computeRequiresShaping();
+}
+
+void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
+{
+    FontCache::singleton().updateFontCascade(*this, WTFMove(fontSelector));
 }
 
 GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const

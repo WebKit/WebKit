@@ -37,7 +37,7 @@
 #import "VideoConfiguration.h"
 #import <CoreMedia/CMFormatDescription.h>
 #import <JavaScriptCore/DataView.h>
-#import <common/vp9_header_parser.h>
+#import <webm/vp9_header_parser.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -123,9 +123,13 @@ void registerSupplementalVP9Decoder()
 
 bool isVP9DecoderAvailable()
 {
+#if PLATFORM(IOS)
+    return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
+#else
     if (!VideoToolboxLibrary(true))
         return false;
     return noErr == VTSelectAndCreateVideoDecoderInstance(kCMVideoCodecType_VP9, kCFAllocatorDefault, nullptr, nullptr);
+#endif
 }
 
 bool isVP8DecoderAvailable()

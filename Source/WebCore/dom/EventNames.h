@@ -32,6 +32,10 @@
 #include "RuntimeEnabledFeatures.h"
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/EventNamesAdditions.h>
+#endif
+
 namespace WebCore {
 
 #if !defined(ADDITIONAL_DOM_EVENT_NAMES_FOR_EACH)

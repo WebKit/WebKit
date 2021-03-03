@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,7 @@ protected:
     JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkerGlobalScope>&&);
     void finishCreation(JSC::VM&, JSC::JSProxy*);
 
-    static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
+    DECLARE_VISIT_CHILDREN;
 
 private:
     RefPtr<WorkerGlobalScope> m_wrapped;

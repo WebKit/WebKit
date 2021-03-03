@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1000,9 +1000,10 @@ public:
     bool canDoFastSpread(Node*, const AbstractValue&);
     
     void registerFrozenValues();
-    
+
+    void visitChildren(AbstractSlotVisitor&) final;
     void visitChildren(SlotVisitor&) final;
-    
+
     void logAssertionFailure(
         std::nullptr_t, const char* file, int line, const char* function,
         const char* assertion);
@@ -1184,6 +1185,8 @@ public:
     HashSet<Node*> m_slowGetByVal;
 
 private:
+    template<typename Visitor> void visitChildrenImpl(Visitor&);
+
     bool isStringPrototypeMethodSane(JSGlobalObject*, UniquedStringImpl*);
 
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);

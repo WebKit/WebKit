@@ -71,6 +71,7 @@ const TestFeatures& TestOptions::defaults()
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
             { "AspectRatioOfImgFromWidthAndHeightEnabled", false },
+            { "AspectRatioEnabled", true },
             { "AsyncClipboardAPIEnabled", false },
             { "AttachmentElementEnabled", false },
             { "CSSLogicalEnabled", false },

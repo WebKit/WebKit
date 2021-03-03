@@ -26,6 +26,7 @@
 #import "WebDeviceOrientationProviderMockInternal.h"
 
 #import "WebDeviceOrientationInternal.h"
+#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
 
@@ -62,7 +63,7 @@ using namespace WebCore;
 
 - (WebDeviceOrientation*)lastOrientation
 {
-    return [[[WebDeviceOrientation alloc] initWithCoreDeviceOrientation:m_core->lastOrientation()] autorelease];
+    return adoptNS([[WebDeviceOrientation alloc] initWithCoreDeviceOrientation:m_core->lastOrientation()]).autorelease();
 }
 
 @end

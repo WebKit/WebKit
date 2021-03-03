@@ -105,7 +105,7 @@ namespace JSC {
 #endif
 
         JSValue executeProgram(const SourceCode&, JSGlobalObject*, JSObject* thisObj);
-        JSValue executeModuleProgram(ModuleProgramExecutable*, JSGlobalObject*, JSModuleEnvironment*);
+        JSValue executeModuleProgram(JSModuleRecord*, ModuleProgramExecutable*, JSGlobalObject*, JSModuleEnvironment*, JSValue sentValue, JSValue resumeMode);
         JSValue executeCall(JSGlobalObject*, JSObject* function, const CallData&, JSValue thisValue, const ArgList&);
         JSObject* executeConstruct(JSGlobalObject*, JSObject* function, const CallData&, const ArgList&, JSValue newTarget);
         JSValue execute(EvalExecutable*, JSGlobalObject*, JSValue thisValue, JSScope*);

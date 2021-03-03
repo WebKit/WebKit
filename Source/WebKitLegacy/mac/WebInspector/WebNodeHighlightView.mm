@@ -115,10 +115,9 @@ using namespace WebCore;
     // Remove and create new layers.
     [self _removeAllLayers];
     for (NSUInteger i = 0; i < numLayers; ++i) {
-        CAShapeLayer *layer = [[CAShapeLayer alloc] init];
-        [_layers addObject:layer];
-        [parent addSublayer:layer];
-        [layer release];
+        auto layer = adoptNS([[CAShapeLayer alloc] init]);
+        [_layers addObject:layer.get()];
+        [parent addSublayer:layer.get()];
     }
 }
 

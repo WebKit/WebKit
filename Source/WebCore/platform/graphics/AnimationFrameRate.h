@@ -45,21 +45,42 @@ constexpr const Seconds FullSpeedAnimationInterval { 15_ms };
 // Allow a little more than 30fps to make sure we can at least hit that frame rate.
 constexpr const Seconds HalfSpeedThrottlingAnimationInterval { 30_ms };
 constexpr const Seconds AggressiveThrottlingAnimationInterval { 10_s };
+constexpr const int IntervalThrottlingFactor { 2 };
 
 constexpr const FramesPerSecond FullSpeedFramesPerSecond = 60;
 constexpr const FramesPerSecond HalfSpeedThrottlingFramesPerSecond = 30;
-constexpr const FramesPerSecond ZeroFramesPerSecond = 0;
 
-inline Seconds preferredFrameInterval(const OptionSet<ThrottlingReason>& reasons)
+inline FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond nominalFramesPerSecond)
 {
-    // FIXME: handle ThrottlingReason::VisuallyIdle
+    if (nominalFramesPerSecond <= FullSpeedFramesPerSecond)
+        return nominalFramesPerSecond;
+
+    float fullSpeedRatio = nominalFramesPerSecond / FullSpeedFramesPerSecond;
+    FramesPerSecond floorSpeed = nominalFramesPerSecond / std::floor(fullSpeedRatio);
+    FramesPerSecond ceilSpeed = nominalFramesPerSecond / std::ceil(fullSpeedRatio);
+
+    return fullSpeedRatio - std::floor(fullSpeedRatio) <= 0.5 ? floorSpeed : ceilSpeed;
+}
+
+inline Seconds preferredFrameInterval(const OptionSet<ThrottlingReason>& reasons, Optional<FramesPerSecond> nominalFramesPerSecond)
+{
     if (reasons.contains(ThrottlingReason::OutsideViewport))
         return AggressiveThrottlingAnimationInterval;
-    
-    if (reasons.containsAny({ ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame }))
-        return HalfSpeedThrottlingAnimationInterval;
 
-    return FullSpeedAnimationInterval;
+    if (!nominalFramesPerSecond || *nominalFramesPerSecond == FullSpeedFramesPerSecond) {
+        // FIXME: handle ThrottlingReason::VisuallyIdle
+        if (reasons.containsAny({ ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame }))
+            return HalfSpeedThrottlingAnimationInterval;
+        return FullSpeedAnimationInterval;
+    }
+
+    auto framesPerSecond = framesPerSecondNearestFullSpeed(*nominalFramesPerSecond);
+    auto interval = Seconds(1.0 / framesPerSecond);
+
+    if (reasons.containsAny({ ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame, ThrottlingReason::VisuallyIdle }))
+        interval *= IntervalThrottlingFactor;
+
+    return interval;
 }
 
 inline FramesPerSecond preferredFramesPerSecond(Seconds preferredFrameInterval)
@@ -70,8 +91,7 @@ inline FramesPerSecond preferredFramesPerSecond(Seconds preferredFrameInterval)
     if (preferredFrameInterval == HalfSpeedThrottlingAnimationInterval)
         return HalfSpeedThrottlingFramesPerSecond;
 
-    ASSERT_NOT_REACHED();
-    return ZeroFramesPerSecond;
+    return std::round(1 / preferredFrameInterval.seconds());
 }
 
 inline TextStream& operator<<(TextStream& ts, const OptionSet<ThrottlingReason>& reasons)

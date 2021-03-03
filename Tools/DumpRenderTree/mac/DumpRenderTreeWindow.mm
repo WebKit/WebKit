@@ -60,7 +60,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 + (NSArray *)openWindows
 {
-    return [[(NSArray *)openWindowsRef copy] autorelease];
+    return adoptNS([(NSArray *)openWindowsRef copy]).autorelease();
 }
 
 - (void)_addToOpenWindows

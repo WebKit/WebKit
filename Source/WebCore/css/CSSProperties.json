@@ -3886,7 +3886,7 @@
                 "-webkit-center",
                 {
                     "value": "-webkit-match-parent",
-                    "ur": "https://www.w3.org/TR/css-text-3/#text-align"
+                    "url": "https://www.w3.org/TR/css-text-3/#text-align"
                 },
                 {
                     "value": "start",
@@ -4556,7 +4556,8 @@
         },
         "aspect-ratio": {
             "codegen-properties": {
-                "custom": "All"
+                "custom": "All",
+                "settings-flag": "aspectRatio"
             },
             "status": {
                 "status": "experimental"
@@ -6542,7 +6543,11 @@
         "transform-style": {
             "values": [
                 "flat",
-                "preserve-3d"
+                "preserve-3d",
+                {
+                    "value": "optimized-3d",
+                    "status": "internal"
+                }
             ],
             "codegen-properties": {
                 "name-for-methods": "TransformStyle3D"
@@ -6555,7 +6560,11 @@
         "-webkit-transform-style": {
             "values": [
                 "flat",
-                "preserve-3d"
+                "preserve-3d",
+                {
+                    "value": "optimized-3d",
+                    "status": "internal"
+                }
             ],
             "codegen-properties": {
                 "name-for-methods": "TransformStyle3D",

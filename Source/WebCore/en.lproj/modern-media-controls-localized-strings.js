@@ -13,6 +13,7 @@ const UIStrings = {
     "Invalid": "Invalid",
     "Live Broadcast": "Live Broadcast",
     "Media Selection": "Media Selection",
+    "More...": "More...",
     "Mute": "Mute",
     "Pause": "Pause",
     "Picture in Picture": "Picture in Picture",

@@ -1,3 +1,102 @@
+2021-02-22  Per Arne  <pvollan@apple.com>
+
+        [macOS] Disabling relaunch on login for the WebContent process is racy
+        https://bugs.webkit.org/show_bug.cgi?id=222074
+        <rdar://problem/74230216>
+
+        Reviewed by Geoffrey Garen.
+
+        Declare Launch Services key to disable relaunch on login.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
+2021-02-20  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Image should report the embedded accessibility description if available
+        https://bugs.webkit.org/show_bug.cgi?id=221875
+        <rdar://problem/74320584>
+
+        Reviewed by Jer Noble.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/MediaAccessibilitySPI.h: Added.
+
+2021-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Specify a _UIDataOwner when reading or writing from the system pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=222072
+        <rdar://problem/74208576>
+
+        Reviewed by Devin Rousso.
+
+        Import `UIPasteboard_Private.h` so that `PlatformPasteboardIOS.mm` can use the new SPI.
+
+        * pal/spi/ios/UIKitSPI.h:
+
+2021-02-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Temporarily disable drawing OT-SVG glyphs in the GPU process until it can be implemented properly
+        https://bugs.webkit.org/show_bug.cgi?id=221744
+
+        Reviewed by Simon Fraser.
+
+        This patch soft-links the OTSVG framework because it's a private framework that doesn't exist on watchOS.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cf/CoreTextSoftLink.cpp: Added.
+        * pal/cf/CoreTextSoftLink.h: Added.
+        * pal/cf/OTSVGTable.cpp: Added.
+        (PAL::OTSVGTable::OTSVGTable):
+        (PAL::OTSVGTable::~OTSVGTable):
+        (PAL::OTSVGTable::operator=):
+        * pal/cf/OTSVGTable.h: Added.
+        * pal/spi/cf/CoreTextSPI.h:
+
+2021-02-18  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] add an `object data` to `PaymentItem` so that data specific to Apple Pay can be provided
+        https://bugs.webkit.org/show_bug.cgi?id=221970
+        <rdar://problem/69806999>
+
+        Reviewed by Alex Christensen.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/cocoa/PassKitSoftLink.mm:
+        * pal/spi/cocoa/PassKitSPI.h:
+
+2021-02-18  Per Arne  <pvollan@apple.com>
+
+        [macOS] Observe system sleep events in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=221996
+        <rdar://problem/74406570>
+
+        Reviewed by Chris Dumez.
+
+        Export symbols, since the system sleep listener will be instantiated in the UI process.
+
+        * pal/system/SystemSleepListener.h:
+
+2021-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the Apple internal iOS build after r272878
+
+        Wrap `NSScrollViewSPI.h` in a `USE(APPKIT)` guard, so that we don't attempt to import AppKit headers when
+        building for iOS using the internal SDK.
+
+        * pal/spi/mac/NSScrollViewSPI.h:
+
+2021-02-15  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Ensure that no image decoders run in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=221885
+        <rdar://problem/74341122>
+
+        Reviewed by Simon Fraser.
+
+        Add CGImageSourceSetAllowableTypes() to the ImageIO SPI header file.
+
+        * pal/spi/cg/ImageIOSPI.h:
+
 2021-02-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move pal/spi/cocoa/CoreTextSPI.h to pal/spi/cf/CoreTextSPI.h

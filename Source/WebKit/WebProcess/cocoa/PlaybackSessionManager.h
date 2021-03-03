@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformCALayer.h>
+#include <WebCore/PlatformMediaSession.h>
 #include <WebCore/PlaybackSessionModelMediaElement.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
@@ -161,6 +162,7 @@ protected:
     void setMuted(PlaybackSessionContextIdentifier, bool muted);
     void setVolume(PlaybackSessionContextIdentifier, double volume);
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
+    void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
     WebPage* m_page;
     HashMap<WebCore::HTMLMediaElement*, PlaybackSessionContextIdentifier> m_mediaElements;

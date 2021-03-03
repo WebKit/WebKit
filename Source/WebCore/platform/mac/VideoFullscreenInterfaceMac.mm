@@ -40,6 +40,7 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/PIPSPI.h>
+#import <wtf/RunLoop.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 

@@ -54,10 +54,10 @@ PASS CSS Animations: property <background-position> from [inherit] to [left 20px
 PASS CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.5) should be [50px 50px]
 PASS CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.75) should be [35px 35px]
 PASS CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (1) should be [20px 20px]
-FAIL Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0) should be [80px 80px] assert_equals: expected "80px 80px " but got "10px 10px "
-FAIL Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.25) should be [65px 65px] assert_equals: expected "65px 65px " but got "12.5px 12.5px "
-FAIL Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.5) should be [50px 50px] assert_equals: expected "50px 50px " but got "16.25px 16.25px "
-FAIL Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.75) should be [35px 35px] assert_equals: expected "35px 35px " but got "19.06px 19.06px "
+PASS Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0) should be [80px 80px]
+PASS Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.25) should be [65px 65px]
+PASS Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.5) should be [50px 50px]
+PASS Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.75) should be [35px 35px]
 PASS Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (1) should be [20px 20px]
 FAIL CSS Transitions: property <background-position> from [unset] to [left 20px top 20px] at (0) should be [0% 0%] assert_equals: expected "0 % 0 % " but got "left 0px top 0px "
 FAIL CSS Transitions: property <background-position> from [unset] to [left 20px top 20px] at (0.25) should be [5px 5px] assert_equals: expected "5px 5px " but got "left 5px top 5px "

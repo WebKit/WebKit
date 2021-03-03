@@ -27,7 +27,7 @@
     xhr.upload.onloadstart = function() { log("upload.onloadstart") }
     xhr.upload.onprogress = function() { log("upload.onprogress") }
     try {
-        xhr.open("POST", "/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/reply.xml", false);
+        xhr.open("POST", "/resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/reply.xml", false);
         xhr.send("Text");
     } catch (ex) {
         log(ex);
@@ -51,7 +51,7 @@
     xhr.upload.onloadstart = function() { log("upload.onloadstart") }
     xhr.upload.onprogress = function() { log("upload.onprogress") }
     try {
-        xhr.open("POST", "/resources/redirect.php?url=http://localhost:7/", false); // A port that will likely refuse the connection.
+        xhr.open("POST", "/resources/redirect.py?url=http://localhost:7/", false); // A port that will likely refuse the connection.
         xhr.send("Text");
     } catch (ex) {
         log(ex);

@@ -36,7 +36,8 @@ enum class Flags : uint8_t {
     Sticky = 1 << 3,
     Unicode = 1 << 4,
     DotAll = 1 << 5,
-    DeletedValue = 1 << 6
+    HasIndices = 1 << 6,
+    DeletedValue = 1 << 7
 };
 
 JS_EXPORT_PRIVATE Optional<OptionSet<Flags>> parseFlags(StringView);

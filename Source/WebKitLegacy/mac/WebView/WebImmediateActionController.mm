@@ -270,7 +270,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 - (id <NSImmediateActionAnimationController>)_defaultAnimationController
 {
     if (_contentPreventsDefault)
-        return [[[WebAnimationController alloc] init] autorelease];
+        return adoptNS([[WebAnimationController alloc] init]).autorelease();
 
     NSURL *url = _hitTestResult.absoluteLinkURL();
     String absoluteURLString = [url absoluteString];

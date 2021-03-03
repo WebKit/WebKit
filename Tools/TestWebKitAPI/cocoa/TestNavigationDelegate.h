@@ -42,7 +42,7 @@
 - (void)waitForDidStartProvisionalNavigation;
 - (void)waitForDidFinishNavigation;
 - (void)waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences;
-- (void)waitForDidFailProvisionalNavigation;
+- (NSError *)waitForDidFailProvisionalNavigation;
 
 @end
 

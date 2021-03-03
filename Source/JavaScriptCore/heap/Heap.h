@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -86,6 +86,7 @@ class SpaceTimeMutatorScheduler;
 class StopIfNecessaryTimer;
 class SweepingScope;
 class VM;
+class VerifierSlotVisitor;
 class WeakGCMapBase;
 struct CurrentThreadState;
 
@@ -183,8 +184,6 @@ public:
     bool isSafeToCollect() const { return m_isSafeToCollect; }
     
     bool isShuttingDown() const { return m_isShuttingDown; }
-
-    JS_EXPORT_PRIVATE bool isAnalyzingHeap() const;
 
     JS_EXPORT_PRIVATE void sweepSynchronously();
 
@@ -385,8 +384,6 @@ public:
     
     JS_EXPORT_PRIVATE void addMarkingConstraint(std::unique_ptr<MarkingConstraint>);
     
-    size_t numOpaqueRoots() const { return m_opaqueRoots.size(); }
-
     HeapVerifier* verifier() const { return m_verifier.get(); }
     
     void addHeapFinalizerCallback(const HeapFinalizerCallback&);
@@ -406,6 +403,8 @@ public:
     Seconds totalGCTime() const { return m_totalGCTime; }
 
     HashMap<JSImmutableButterfly*, JSString*> immutableButterflyToStringCache;
+
+    bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
 
 private:
     friend class AllocatingScope;
@@ -575,11 +574,11 @@ private:
 
     bool overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType = MemoryThresholdCallType::Cached);
     
-    template<typename Func>
-    void iterateExecutingAndCompilingCodeBlocks(const Func&);
+    template<typename Func, typename Visitor>
+    void iterateExecutingAndCompilingCodeBlocks(Visitor&, const Func&);
     
-    template<typename Func>
-    void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(const Func&);
+    template<typename Func, typename Visitor>
+    void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, const Func&);
     
     void assertMarkStacksEmpty();
 
@@ -590,6 +589,8 @@ private:
     static bool useGenerationalGC();
     static bool shouldSweepSynchronously();
     
+    void verifyGC();
+
     const HeapType m_heapType;
     MutatorState m_mutatorState { MutatorState::Running };
     const size_t m_ramSize;
@@ -636,6 +637,7 @@ private:
     std::unique_ptr<MarkStackArray> m_mutatorMarkStack;
     std::unique_ptr<MarkStackArray> m_raceMarkStack;
     std::unique_ptr<MarkingConstraintSet> m_constraintSet;
+    std::unique_ptr<VerifierSlotVisitor> m_verifierSlotVisitor;
 
     // We pool the slot visitors used by parallel marking threads. It's useful to be able to
     // enumerate over them, and it's useful to have them cache some small amount of memory from
@@ -654,6 +656,7 @@ private:
     bool m_isSafeToCollect { false };
     bool m_isShuttingDown { false };
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
+    bool m_isMarkingForGCVerifier { false };
 
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
 

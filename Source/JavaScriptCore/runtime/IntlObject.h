@@ -91,9 +91,9 @@ inline const HashSet<String>& intlPluralRulesAvailableLocales() { return intlAva
 inline const HashSet<String>& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlListFormatAvailableLocales() { return intlAvailableLocales(); }
 
-TriState intlBooleanOption(JSGlobalObject*, JSValue options, PropertyName);
-String intlStringOption(JSGlobalObject*, JSValue options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
-unsigned intlNumberOption(JSGlobalObject*, JSValue options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
+TriState intlBooleanOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName);
+String intlStringOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
+unsigned intlNumberOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 Vector<char, 32> localeIDBufferForLanguageTag(const CString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);

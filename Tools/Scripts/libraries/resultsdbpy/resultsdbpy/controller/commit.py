@@ -32,6 +32,9 @@ class Commit(object):
     TIMESTAMP_TO_UUID_MULTIPLIER = 100
     MAX_KEY_LENGTH = 128
 
+    REVISION_RE = re.compile(r'[0-9]+$')
+    HASH_RE = re.compile(r'[a-fA-F0-9]+$')
+
     @classmethod
     def from_json(cls, data):
         data = data if isinstance(data, dict) else json.loads(data)
@@ -39,13 +42,15 @@ class Commit(object):
             repository_id=data.get('repository_id'),
             branch=data.get('branch'),
             id=data.get('id'),
+            revision=data.get('revision'),
+            hash=data.get('hash'),
             timestamp=data.get('timestamp'),
             order=data.get('order'),
             committer=data.get('committer'),
             message=data.get('message'),
         )
 
-    def __init__(self, repository_id, branch, id, timestamp=None, order=None, committer=None, message=None):
+    def __init__(self, repository_id, branch, id, timestamp=None, order=None, committer=None, message=None, revision=None, hash=None):
         for argument in [('repository_id', repository_id), ('branch', branch), ('id', id), ('timestamp', timestamp)]:
             if argument[1] is None:
                 raise ValueError(f'{argument[0]} is not defined for commit')
@@ -62,6 +67,23 @@ class Commit(object):
         self.id = str(id)
         if not re.match(r'^[a-fA-F0-9?]+$', self.id) or len(self.id) > 40:
             raise ValueError(f"'{self.id}' is an invalid commit id")
+
+        self.revision = revision
+        self.hash = hash
+        if self.REVISION_RE.match(self.id):
+            if not self.revision:
+                self.revision = self.id
+        elif self.HASH_RE.match(self.id):
+            if not self.hash:
+                self.hash = self.id
+
+        if self.revision:
+            try:
+                self.revision = int(self.revision)
+            except ValueError:
+                raise ValueError(f"'{self.revision}' is not an integer")
+        if self.hash:
+            self.hash = self.hash.lower()
 
         if isinstance(timestamp, datetime):
             self.timestamp = timestamp

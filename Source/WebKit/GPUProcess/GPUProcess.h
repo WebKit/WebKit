@@ -37,11 +37,13 @@
 
 namespace WebCore {
 class NowPlayingManager;
+struct MockMediaDevice;
 }
 
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
+struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
 struct GPUProcessSessionParameters;
 class LayerHostingContext;
@@ -101,7 +103,7 @@ private:
 
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&);
-    void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, CompletionHandler<void(Optional<IPC::Attachment>&&)>&&);
+    void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, GPUProcessConnectionParameters&&, CompletionHandler<void(Optional<IPC::Attachment>&&)>&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
 
@@ -111,6 +113,10 @@ private:
     void setMockCaptureDevicesEnabled(bool);
     void setOrientationForMediaCapture(uint64_t orientation);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
+    void addMockMediaDevice(const WebCore::MockMediaDevice&);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(const String& persistentId);
+    void resetMockMediaDevices();
 #endif
 
     // Connections to WebProcesses.

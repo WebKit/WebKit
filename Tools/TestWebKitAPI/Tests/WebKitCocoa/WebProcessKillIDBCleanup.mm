@@ -61,7 +61,7 @@ static WKScriptMessage *getNextMessage()
         TestWebKitAPI::Util::run(&receivedScriptMessage);
     }
 
-    return [[scriptMessages.takeFirst() retain] autorelease];
+    return scriptMessages.takeFirst().autorelease();
 }
 
 TEST(IndexedDB, WebProcessKillIDBCleanup)

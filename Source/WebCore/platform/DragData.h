@@ -28,6 +28,7 @@
 #include "Color.h"
 #include "DragActions.h"
 #include "IntPoint.h"
+#include "PageIdentifier.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -68,6 +69,8 @@ enum class DragApplicationFlags : uint8_t {
     IsCopyKeyDown = 8
 };
 
+class PasteboardContext;
+
 #if PLATFORM(WIN)
 typedef HashMap<unsigned, Vector<String>> DragDataMap;
 #endif
@@ -78,13 +81,13 @@ public:
     enum class DraggingPurpose { ForEditing, ForFileUpload, ForColorControl };
 
     // clientPosition is taken to be the position of the drag event within the target window, with (0,0) at the top left
-    WEBCORE_EXPORT DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction());
-    WEBCORE_EXPORT DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction());
+    WEBCORE_EXPORT DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), Optional<PageIdentifier> pageID = WTF::nullopt);
+    WEBCORE_EXPORT DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation>, OptionSet<DragApplicationFlags> = { }, OptionSet<DragDestinationAction> = anyDragDestinationAction(), Optional<PageIdentifier> pageID = WTF::nullopt);
     // This constructor should used only by WebKit2 IPC because DragData
     // is initialized by the decoder and not in the constructor.
     DragData() = default;
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT DragData(const DragDataMap&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> = { });
+    WEBCORE_EXPORT DragData(const DragDataMap&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> = { }, Optional<PageIdentifier> pageID = WTF::nullopt);
     const DragDataMap& dragDataMap();
     void getDragFileDescriptorData(int& size, String& pathname);
     void getDragFileContentData(int size, void* dataBlob);
@@ -114,19 +117,28 @@ public:
     bool containsPromise() const;
 #endif
 
-#if PLATFORM(GTK)
+    Optional<PageIdentifier> pageID() const { return m_pageID; }
 
-    DragData& operator =(const DragData& data)
+    DragData& operator=(const DragData& data)
     {
         m_clientPosition = data.m_clientPosition;
         m_globalPosition = data.m_globalPosition;
         m_platformDragData = data.m_platformDragData;
         m_draggingSourceOperationMask = data.m_draggingSourceOperationMask;
         m_applicationFlags = data.m_applicationFlags;
+        m_fileNames = data.m_fileNames;
         m_dragDestinationActionMask = data.m_dragDestinationActionMask;
+        m_pageID = data.m_pageID;
+#if PLATFORM(COCOA)
+        m_pasteboardName = data.m_pasteboardName;
+#endif
+#if PLATFORM(WIN)
+        m_dragDataMap = data.m_dragDataMap;
+#endif
         return *this;
     }
-#endif
+
+    std::unique_ptr<PasteboardContext> createPasteboardContext() const;
 
 private:
     IntPoint m_clientPosition;
@@ -136,6 +148,7 @@ private:
     OptionSet<DragApplicationFlags> m_applicationFlags;
     Vector<String> m_fileNames;
     OptionSet<DragDestinationAction> m_dragDestinationActionMask;
+    Optional<PageIdentifier> m_pageID;
 #if PLATFORM(COCOA)
     String m_pasteboardName;
 #endif

@@ -4397,6 +4397,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TransformStyle3D e)
     case TransformStyle3D::Preserve3D:
         m_value.valueID = CSSValuePreserve3d;
         break;
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+    case TransformStyle3D::Optimized3D:
+        m_value.valueID = CSSValueOptimized3d;
+        break;
+#endif
     }
 }
 
@@ -4409,6 +4414,10 @@ template<> inline CSSPrimitiveValue::operator TransformStyle3D() const
         return TransformStyle3D::Flat;
     case CSSValuePreserve3d:
         return TransformStyle3D::Preserve3D;
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+    case CSSValueOptimized3d:
+        return TransformStyle3D::Optimized3D;
+#endif
     default:
         break;
     }

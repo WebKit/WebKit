@@ -51,12 +51,13 @@ private:
     void collectConfigurationViews();
 
     ListOfEnabledFeatures enumerateReferenceSpaces(XrSession&) const;
-    void initializeReferenceSpace(ReferenceSpaceType) final { };
+    XrSpace createReferenceSpace(XrReferenceSpaceType);
 
     WebCore::IntSize recommendedResolution(SessionMode) final;
 
     void initializeTrackingAndRendering(SessionMode) final;
     void shutDownTrackingAndRendering() final;
+    void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final;
     bool supportsSessionShutdownNotification() const final { return true; }
     void waitUntilStopping();
 
@@ -67,6 +68,8 @@ private:
     void handleSessionStateChange();
 
     void requestFrame(RequestFrameCallback&&) final;
+
+    Vector<ViewData> views(SessionMode) const final;
 
     using ViewConfigurationPropertiesMap = HashMap<XrViewConfigurationType, XrViewConfigurationProperties, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
     ViewConfigurationPropertiesMap m_viewConfigurationProperties;
@@ -81,6 +84,9 @@ private:
     WorkQueue& m_queue;
 
     XrViewConfigurationType m_currentViewConfigurationType;
+    XrSpace m_localSpace { XR_NULL_HANDLE };
+    XrSpace m_viewSpace { XR_NULL_HANDLE };
+    XrSpace m_stageSpace { XR_NULL_HANDLE };
 };
 
 } // namespace PlatformXR

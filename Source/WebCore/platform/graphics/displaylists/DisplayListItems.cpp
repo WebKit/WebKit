@@ -347,18 +347,16 @@ static TextStream& operator<<(TextStream& ts, const ClipPath& item)
     return ts;
 }
 
-void ClipToDrawingCommands::apply(GraphicsContext& context) const
-{
-    context.clipToDrawingCommands(m_destination, m_colorSpace, [&] (GraphicsContext& clippingContext) {
-        Replayer replayer { clippingContext, m_drawingCommands };
-        replayer.replay();
-    });
-}
-
-static TextStream& operator<<(TextStream& ts, const ClipToDrawingCommands& item)
+static TextStream& operator<<(TextStream& ts, const BeginClipToDrawingCommands& item)
 {
     ts.dumpProperty("destination", item.destination());
     ts.dumpProperty("color-space", item.colorSpace());
+    return ts;
+}
+
+static TextStream& operator<<(TextStream& ts, const EndClipToDrawingCommands& item)
+{
+    ts.dumpProperty("destination", item.destination());
     return ts;
 }
 
@@ -1035,7 +1033,8 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::ClipToImageBuffer: ts << "clip-to-image-buffer"; break;
     case ItemType::ClipOutToPath: ts << "clip-out-to-path"; break;
     case ItemType::ClipPath: ts << "clip-path"; break;
-    case ItemType::ClipToDrawingCommands: ts << "clip-to-image-buffer"; break;
+    case ItemType::BeginClipToDrawingCommands: ts << "begin-clip-to-drawing-commands:"; break;
+    case ItemType::EndClipToDrawingCommands: ts << "end-clip-to-drawing-commands"; break;
     case ItemType::DrawGlyphs: ts << "draw-glyphs"; break;
     case ItemType::DrawImageBuffer: ts << "draw-image-buffer"; break;
     case ItemType::DrawNativeImage: ts << "draw-native-image"; break;
@@ -1146,8 +1145,11 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
     case ItemType::ClipPath:
         ts << item.get<ClipPath>();
         break;
-    case ItemType::ClipToDrawingCommands:
-        ts << item.get<ClipToDrawingCommands>();
+    case ItemType::BeginClipToDrawingCommands:
+        ts << item.get<BeginClipToDrawingCommands>();
+        break;
+    case ItemType::EndClipToDrawingCommands:
+        ts << item.get<EndClipToDrawingCommands>();
         break;
     case ItemType::DrawGlyphs:
         ts << item.get<DrawGlyphs>();

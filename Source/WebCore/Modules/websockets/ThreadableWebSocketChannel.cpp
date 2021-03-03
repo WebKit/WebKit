@@ -93,7 +93,7 @@ Optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChannel::v
             return { };
 #if ENABLE(CONTENT_EXTENSIONS)
         if (auto* documentLoader = document.loader()) {
-            auto results = page->userContentProvider().processContentRuleListsForLoad(validatedURL.url, ContentExtensions::ResourceType::Raw, *documentLoader);
+            auto results = page->userContentProvider().processContentRuleListsForLoad(*page, validatedURL.url, ContentExtensions::ResourceType::Raw, *documentLoader);
             if (results.summary.blockedLoad)
                 return { };
             if (results.summary.madeHTTPS) {

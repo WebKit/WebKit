@@ -54,6 +54,7 @@
 #include "EmptyClients.h"
 #include "Event.h"
 #include "EventHandler.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "ExtensionStyleSheets.h"
 #include "FocusController.h"
@@ -305,6 +306,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_loadsFromNetwork(pageConfiguration.loadsFromNetwork)
     , m_shouldRelaxThirdPartyCookieBlocking(pageConfiguration.shouldRelaxThirdPartyCookieBlocking)
     , m_textInteractionEnabled(pageConfiguration.textInteractionEnabled)
+    , m_httpsUpgradeEnabled(pageConfiguration.httpsUpgradeEnabled)
 {
     updateTimerThrottlingState();
 
@@ -1742,7 +1744,9 @@ void Page::resumeScriptedAnimations()
 
 Seconds Page::preferredRenderingUpdateInterval() const
 {
-    return preferredFrameInterval(m_throttlingReasons);
+    if (settings().forcePageRenderingUpdatesAt60FPSEnabled())
+        return preferredFrameInterval(m_throttlingReasons, WTF::nullopt);
+    return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond);
 }
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
@@ -3333,10 +3337,15 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 
 void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
 {
-    auto protectedElement = makeRef(element);
-    if (auto frame = makeRefPtr(element.document().frame()))
+    element.document().eventLoop().queueTask(TaskSource::Networking, [element = makeRef(element)]() {
+        auto frame = makeRefPtr(element->document().frame());
+        if (!frame)
+            return;
+
         frame->editor().revealSelectionIfNeededAfterLoadingImageForElement(element);
-    chrome().client().didFinishLoadingImageForElement(element);
+        if (auto* page = frame->page(); element->document().frame() == frame)
+            page->chrome().client().didFinishLoadingImageForElement(element);
+    });
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

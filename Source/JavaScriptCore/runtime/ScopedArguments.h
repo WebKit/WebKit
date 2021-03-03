@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,9 +63,9 @@ public:
     
     // Creates an arguments object by copying the arguments from a well-defined stack location.
     static ScopedArguments* createByCopyingFrom(VM&, Structure*, Register* argumentsStart, unsigned totalLength, JSFunction* callee, ScopedArgumentsTable*, JSLexicalEnvironment*);
-    
-    static void visitChildren(JSCell*, SlotVisitor&);
-    
+
+    DECLARE_VISIT_CHILDREN;
+
     uint32_t internalLength() const
     {
         return m_totalLength;
