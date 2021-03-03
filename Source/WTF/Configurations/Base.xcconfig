@@ -128,6 +128,8 @@ STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 
 SDKROOT = macosx.internal;
 
+OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
+
 LLVM_LTO = $(WK_LLVM_LTO_$(WK_XCODE_SUPPORTS_LTO));
 WK_LLVM_LTO_NO = NO;
 WK_LLVM_LTO_YES = $(WK_USER_LTO_MODE);

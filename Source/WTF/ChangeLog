@@ -1,3 +1,16 @@
+2021-03-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add System.framework PrivateHeaders to header path of WTF
+        https://bugs.webkit.org/show_bug.cgi?id=222688
+
+        Reviewed by Tim Horton.
+
+        The other non-third-party components excluding WTF have System.framework PrivateHeaders in their header search path.
+        This causes the problem that we cannot use some system headers (e.g. `<machine/cpu_capabilities.h>`) in WTF while it is
+        usable in JavaScriptCore and the other components. This patch adds it as the other components did.
+
+        * Configurations/Base.xcconfig:
+
 2021-03-03  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         std::is_literal_type causes -Wdeprecated-declarations warning with GCC 11
