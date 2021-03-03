@@ -144,6 +144,7 @@ static WKWebsiteDataStore *persistentDataStore()
         configuration.preferences._developerExtrasEnabled = YES;
         configuration.preferences._mockCaptureDevicesEnabled = YES;
         configuration.preferences._accessibilityIsolatedTreeEnabled = YES;
+        configuration.preferences._logsPageMessagesToSystemConsoleEnabled = YES;
     }
 
     configuration.suppressesIncrementalRendering = _settingsController.incrementalRenderingSuppressed;

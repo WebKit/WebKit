@@ -1,3 +1,13 @@
+2021-03-03  Cameron McCormack  <heycam@apple.com>
+
+        Send console.log() etc. to stdout in MiniBrowser on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=222629
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate defaultConfiguration]):
+
 2021-03-03  Chris Dumez  <cdumez@apple.com>
 
         [macOS][WK2] Changing the system language does not update navigator.language
