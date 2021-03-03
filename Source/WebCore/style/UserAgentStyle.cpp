@@ -227,7 +227,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 #endif // ENABLE(FULLSCREEN_API)
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (!formControlsIOSStyleSheet && element.document().settings().iOSFormControlRefreshEnabled()) {
+    if (!formControlsIOSStyleSheet && !element.document().settings().iOSFormControlRefreshEnabled()) {
         formControlsIOSStyleSheet = parseUASheet(formControlsIOSUserAgentStyleSheet, sizeof(formControlsIOSUserAgentStyleSheet));
         addToDefaultStyle(*formControlsIOSStyleSheet);
     }

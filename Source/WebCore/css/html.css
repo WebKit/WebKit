@@ -414,8 +414,8 @@ input {
 #endif
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border-radius: 5px;
-    font: 11px Helvetica, -webkit-pictograph;
-    border: 1px solid #4c4c4c;
+    border: 1px solid rgb(217, 217, 217);
+    font: 11px system-ui;
     padding: 0.2em 0.5em 0.3em 0.5em;
 #else
     border: 2px inset;
@@ -437,6 +437,10 @@ input {
 input[type="search"] {
     -webkit-appearance: searchfield;
     box-sizing: border-box;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border: initial;
+    background-color: rgb(238, 238, 238);
+#endif
 }
 
 input::-webkit-textfield-decoration-container {
@@ -480,7 +484,25 @@ input[type="search"]::-webkit-search-results-button {
     -webkit-appearance: searchfield-results-button;
     display: block;
     flex: none;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    align-self: flex-start;
+    margin: auto 0;
+#endif
 }
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-results-decoration,
+input[type="search"]::-webkit-search-results-button {
+    background-color: darkgray;
+    height: 1em;
+    width: 1em;
+    margin-inline-end: 0.4em;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 73 73"><path fill="darkgray" d="M29.6875 59.375c6.2988 0 12.1094-1.953 16.9434-5.3222l17.334 17.334c.9277.9277 2.1484 1.3672 3.418 1.3672 2.7343 0 4.7362-2.0996 4.7362-4.7852 0-1.2695-.4394-2.4902-1.3672-3.418L53.5644 47.3145c3.6622-4.9316 5.8106-11.0352 5.8106-17.627C59.375 13.3301 46.045 0 29.6875 0 13.3301 0 0 13.3301 0 29.6875 0 46.045 13.33 59.375 29.6875 59.375zm0-7.2753c-12.2559 0-22.4121-10.1563-22.4121-22.4122 0-12.3046 10.1562-22.4121 22.4121-22.4121C41.9922 7.2754 52.1 17.3829 52.1 29.6875c0 12.256-10.1078 22.4122-22.4125 22.4122z"/></svg>');
+}
+
+#endif
 
 #if defined(ENABLE_DATE_AND_TIME_INPUT_TYPES) && ENABLE_DATE_AND_TIME_INPUT_TYPES
 input:matches([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
@@ -490,6 +512,11 @@ input:matches([type="date"], [type="time"], [type="datetime-local"], [type="mont
     overflow: hidden;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     -webkit-appearance: menulist-button;
+    border: initial;
+    background-color: rgb(238, 238, 238);
+    font-family: system-ui;
+    color: rgb(0, 122, 255);
+    padding: 0.2em 0.5em;
 #else
     -webkit-appearance: textfield;
     outline: none;
@@ -503,7 +530,9 @@ input:matches([type="date"], [type="time"], [type="datetime-local"], [type="mont
 
 input::-webkit-date-and-time-value {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    margin-right: 18px;
+    margin: 0px;
+    text-align: center;
+    width: 100%;
 #else
     margin: 1px 24px 1px 4px;
     white-space: pre;
@@ -678,13 +707,14 @@ input::-webkit-list-button {
     align-self: stretch;
     flex: none;
     -webkit-user-select: none;
-    width: 16px;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black" width="16" height="16"><polygon points="8 11.031, 4.5 4.969, 11.5 4.969"/></svg>');
+    width: 11px;
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71 42"><path fill="rgb(0, 122, 255)" d="M36.00979 41.8692c1.70898 0 3.17383-.63483 4.49219-2.00201L69.45706 10.6192c1.02539-1.07428 1.61133-2.39264 1.61133-3.95514C71.06839 3.49017 68.52933 1 65.40433 1c-1.51367 0-2.97852.63477-4.10156 1.75781L36.05863 28.4414 10.76566 2.75781C9.64261 1.63476 8.2266 1 6.61527 1c-3.125 0-5.61523 2.49017-5.61523 5.66406 0 1.5625.53711 2.88086 1.61133 3.95514l28.95508 29.24799c1.36719 1.36719 2.7832 2.00201 4.44336 2.00201z"/></svg>');
     /* Make it easier to hit the button on iOS */
     padding: 7px;
     margin: -7px;
 #else
+    width: 16px;
     height: 100%;
 #endif
 }
@@ -777,7 +807,7 @@ input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-au
 input:matches([type="radio"], [type="checkbox"]) {
     margin: 3px 2px;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    border: 1px solid #4c4c4c;
+    border: initial;
     box-sizing: border-box;
 #else
     padding: initial;
@@ -802,20 +832,30 @@ input:matches([type="button"], [type="submit"], [type="reset"]), input[type="fil
     align-items: flex-start;
     text-align: center;
     cursor: default;
-    color: ButtonText;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    color: ButtonText;
     padding: 2px 6px 3px 6px;
     border: 2px outset ButtonFace;
     background-color: ButtonFace;
 #else
     padding: 0 1.0em;
-    border: 1px solid #4c4c4c;
-    /* We want to be as close to background-color:transparent as possible without actually being transparent. */
-    background-color: rgba(255, 255, 255, 0.01);
-    font: 11px Helvetica;
+    border: initial;
+    font: 11px system-ui;
+    background-color: rgb(238, 238, 238);
+    color: rgb(0, 122, 255);
 #endif
     box-sizing: border-box;
 }
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+
+input[type="submit"] {
+    background-color: rgb(22, 122, 255);
+    color: white;
+    font-weight: bold;
+}
+
+#endif
 
 input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::file-selector-button:active, button:active {
     color: ActiveButtonText;
@@ -849,16 +889,19 @@ input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-sl
     -webkit-appearance: sliderthumb-horizontal;
     box-sizing: border-box;
     display: block;
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    background-color: white;
-    border: 1px solid rgb(66, 66, 66);
-    padding: 0px;
-#endif
 }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-input[type="range"]::-webkit-slider-thumb:active {
-    background-color: black;
+input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-slider-thumb:active {
+    background-color: white;
+    border: initial;
+    box-shadow: 0px 6px 13px rgba(0, 0, 0, 0.2), 0px 0.5px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-webkit-media-slider-thumb {
+    background-color: white;
+    border: 1px solid rgb(66, 66, 66);
+    padding: 0px;
 }
 
 input:disabled, textarea:disabled {
@@ -960,6 +1003,7 @@ input[type="color"] {
 input[type="color"]::-webkit-color-swatch-wrapper {
     display: flex;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-radius: inherit;
     padding: 0;
 #else
     padding: 4px 2px 5px;
@@ -971,7 +1015,11 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 
 input[type="color"]::-webkit-color-swatch {
     background-color: #000000;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-radius: inherit;
+#else
     border-radius: 2px;
+#endif
     flex: 1;
 }
 
@@ -984,11 +1032,13 @@ select {
     letter-spacing: normal;
     word-spacing: normal;
     line-height: normal;
-    border: 1px solid #4c4c4c;
-    /* We want to be as close to background:transparent as possible without actually being transparent */
-    background-color: rgba(255, 255, 255, 0.01);
-    font: 11px Helvetica;
     padding: 0 0.4em 0 0.4em;
+    color: rgb(0, 122, 255);
+    font: 11px system-ui;
+    font-weight: bold;
+    border: initial;
+    border-radius: initial;
+    background-color: rgb(235, 245, 255);
 #else
     -webkit-appearance: menulist;
     border: 1px solid;
