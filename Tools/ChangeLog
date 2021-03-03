@@ -1,3 +1,21 @@
+2021-03-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        Report the correct document uri in the case of a ContentSecurityPolicyClient
+        https://bugs.webkit.org/show_bug.cgi?id=222489
+        <rdar://problem/73774118>
+
+        Reviewed by Brent Fulgham.
+
+        Rename OverrideContentSecurityPolicy.mm to ContentSecurityPolicy.mm
+        so we can use it for more general purpose CSP testing.
+
+        Add a test for document-uri reporting for file:, data: and about: protocols.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentSecurityPolicy.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/OverrideContentSecurityPolicy.mm.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/csp-document-uri-report.html: Added.
+
 2021-03-03  Youenn Fablet  <youenn@apple.com>
 
         WebKitLegacy needs to keep JSDOMWindow even though it is used while its origin is not set
