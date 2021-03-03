@@ -744,6 +744,26 @@ void Element::setFocus(bool flag)
 
     for (auto* element = this; element; element = element->parentElementInComposedTree())
         element->setHasFocusWithin(flag);
+
+    auto computeHasFocusVisible = [&] {
+        if (!flag)
+            return false;
+        // Elements that support keyboard input (form inputs and contenteditable) always match :focus-visible when focused.
+        return hasFocusVisible() || isTextField() || isContentEditable();
+    };
+    setHasFocusVisible(computeHasFocusVisible());
+}
+
+void Element::setHasFocusVisible(bool flag)
+{
+    if (!document().settings().focusVisibleEnabled())
+        return;
+
+    if (hasFocusVisible() == flag)
+        return;
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusVisible);
+    setNodeFlag(NodeFlag::HasFocusVisible, flag);
 }
 
 void Element::setHasFocusWithin(bool flag)

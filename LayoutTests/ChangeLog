@@ -1,3 +1,14 @@
+2021-03-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus-visible implementation
+        https://bugs.webkit.org/show_bug.cgi?id=222028
+        <rdar://problem/74679243>
+
+        Reviewed by Darin Adler.
+
+        * platform/ios/TestExpectations: Skip focus-visible-008.html and focus-visible-011.html as they timeout in iOS.
+        * platform/mac/imported/w3c/web-platform-tests/css/selectors/focus-visible-008-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-008-expected.txt.
+
 2021-03-02  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Rebaseline and update expectations

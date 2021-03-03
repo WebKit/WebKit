@@ -8,7 +8,5 @@ If the element that says "Target" has a green outline, then the test result is a
 Initial
 Target
 
-Harness Error (TIMEOUT), message = null
-
-FAIL :focus-visible does not match after mouse click even if previous focused element was matching :focus-visible assert_equals: outlineColor for DIV#initial should be green expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS :focus-visible does not match after mouse click even if previous focused element was matching :focus-visible
 

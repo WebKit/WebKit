@@ -6,5 +6,7 @@ If the element that says "I will be focused programmatically." has a red backgro
 Tab to me and press ENTER.
 I will be focused programmatically.
 
-FAIL Programmatic focus after keypress should match :focus-visible assert_equals: outlineColor for DIV#el should be green expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Programmatic focus after keypress should match :focus-visible Test timed out
 

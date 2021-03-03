@@ -508,6 +508,7 @@ public:
     static int32_t flagIsShadowRoot() { return static_cast<int32_t>(NodeFlag::IsShadowRoot); }
     static int32_t flagIsHTML() { return static_cast<int32_t>(NodeFlag::IsHTMLElement); }
     static int32_t flagIsLink() { return static_cast<int32_t>(NodeFlag::IsLink); }
+    static int32_t flagHasFocusVisible() { return static_cast<int32_t>(NodeFlag::HasFocusVisible); }
     static int32_t flagHasFocusWithin() { return static_cast<int32_t>(NodeFlag::HasFocusWithin); }
     static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
@@ -549,6 +550,7 @@ protected:
 #endif
         IsComputedStyleInvalidFlag = 1 << 26,
 
+        HasFocusVisible = 1 << 27,
         // Bits 27-31 are free.
     };
 
