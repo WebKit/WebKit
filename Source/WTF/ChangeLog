@@ -1,3 +1,16 @@
+2021-03-03  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        std::is_literal_type causes -Wdeprecated-declarations warning with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=220662
+        <rdar://problem/73509470>
+
+        Reviewed by Darin Adler.
+
+        Ignore the warning. It would be better to not use the deprecated std::is_literal_type, but
+        this works for now.
+
+        * wtf/Variant.h:
+
 2021-03-03  Tim Horton  <timothy_horton@apple.com>
 
         Modernize WebKit2 PDFKit softlinking
@@ -6609,7 +6622,8 @@
 
         Reviewed by Carlos Garcia Campos.
 
-                                                                                       use the RunLoop. Let's match them for consistency, and to delete some
+        As of https://bugs.webkit.org/show_bug.cgi?id=213063, Darwin platforms
+        use the RunLoop. Let's match them for consistency, and to delete some
         code.
 
         * wtf/generic/MainThreadGeneric.cpp:
