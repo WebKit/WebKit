@@ -147,6 +147,8 @@ public:
     WEBCORE_EXPORT bool shouldBypassUserGestureRequirementForWebAuthn() const;
 #endif
 
+    static bool shouldOmitHTMLDocumentSupportedPropertyNames();
+
 private:
     bool needsQuirks() const;
 
