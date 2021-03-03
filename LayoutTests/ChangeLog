@@ -1,5 +1,54 @@
 2021-03-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273512. rdar://problem/74953022
+
+    REGRESSION(r269957): Empty font names passed to canvas2d cause all text routines to crash
+    https://bugs.webkit.org/show_bug.cgi?id=222402
+    <rdar://problem/72621268>
+    
+    Reviewed by Darin Adler and Chris Lord.
+    
+    Source/WebCore:
+    
+    It looks like it was simply an oversight from that patch. If the font name is empty,
+    CanvasRenderingContext2D::setFont() will set the font object to one that doesn't have
+    its internal FontCascadeFonts pointer set.
+    
+    Tests: fast/text/canvas-font-resolution-2.html
+           fast/text/canvas-font-resolution.html
+    
+    * html/canvas/CanvasRenderingContext2D.cpp:
+    (WebCore::CanvasRenderingContext2D::setFont):
+    * html/canvas/CanvasRenderingContext2DBase.h:
+    (WebCore::CanvasRenderingContext2DBase::FontProxy::isPopulated const):
+    * style/StyleResolveForFontRaw.cpp:
+    (WebCore::Style::resolveForFontRaw):
+    
+    LayoutTests:
+    
+    * fast/text/canvas-font-resolution-2-expected.html: Added.
+    * fast/text/canvas-font-resolution-2.html: Added.
+    * fast/text/canvas-font-resolution-expected.txt: Added.
+    * fast/text/canvas-font-resolution.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273512 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r269957): Empty font names passed to canvas2d cause all text routines to crash
+            https://bugs.webkit.org/show_bug.cgi?id=222402
+            <rdar://problem/72621268>
+
+            Reviewed by Darin Adler and Chris Lord.
+
+            * fast/text/canvas-font-resolution-2-expected.html: Added.
+            * fast/text/canvas-font-resolution-2.html: Added.
+            * fast/text/canvas-font-resolution-expected.txt: Added.
+            * fast/text/canvas-font-resolution.html: Added.
+
+2021-03-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273438. rdar://problem/74953033
 
     Regression(r268700) postMessage changes prototype of basic types

@@ -241,6 +241,10 @@ public:
         float width(const TextRun&, GlyphOverflow* = 0) const;
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
 
+#if ASSERT_ENABLED
+        bool isPopulated() const { return m_font.fonts(); }
+#endif
+
     private:
         void update(FontSelector&);
         void fontsNeedUpdate(FontSelector&) override;

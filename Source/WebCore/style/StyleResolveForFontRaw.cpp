@@ -73,8 +73,7 @@ Optional<RenderStyle> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
         bool isGenericFamily = false;
         switchOn(item, [&] (CSSValueID ident) {
             isGenericFamily = ident != CSSValueWebkitBody;
-            family = isGenericFamily ? CSSPropertyParserHelpers::genericFontFamilyFromValueID(ident)
-                : AtomString(document.settings().standardFontFamily());
+            family = isGenericFamily ? CSSPropertyParserHelpers::genericFontFamilyFromValueID(ident) : AtomString(document.settings().standardFontFamily());
         }, [&] (const String& familyString) {
             family = familyString;
         });
