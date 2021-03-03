@@ -109,8 +109,27 @@ class Manager(object):
     def _http_tests(self, test_names):
         return set(test for test in test_names if self._is_http_test(test))
 
+    def _skip_tests(self, all_tests_list, expectations, http_tests):
+        all_tests = set(all_tests_list)
+
+        tests_to_skip = expectations.model().get_tests_with_result_type(test_expectations.SKIP)
+        if self._options.skip_failing_tests:
+            tests_to_skip.update(expectations.model().get_tests_with_result_type(test_expectations.FAIL))
+            tests_to_skip.update(expectations.model().get_tests_with_result_type(test_expectations.FLAKY))
+
+        if self._options.skipped == 'only':
+            tests_to_skip = all_tests - tests_to_skip
+        elif self._options.skipped == 'ignore':
+            tests_to_skip = set()
+
+        # unless of course we don't want to run the HTTP tests :)
+        if not self._options.http:
+            tests_to_skip.update(set(http_tests))
+
+        return tests_to_skip
+
     def _prepare_lists(self, paths, test_names, device_type=None):
-        tests_to_skip = self._finder.skip_tests(paths, test_names, self._expectations[device_type], self._http_tests(test_names))
+        tests_to_skip = self._skip_tests(test_names, self._expectations[device_type], self._http_tests(test_names))
         tests_to_run = [test for test in test_names if test not in tests_to_skip]
 
         # Create a sorted list of test files so the subset chunk,

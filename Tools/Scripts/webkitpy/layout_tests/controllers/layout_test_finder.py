@@ -189,25 +189,6 @@ class LayoutTestFinder(object):
         else:
             return line
 
-    def skip_tests(self, paths, all_tests_list, expectations, http_tests):
-        all_tests = set(all_tests_list)
-
-        tests_to_skip = expectations.model().get_tests_with_result_type(test_expectations.SKIP)
-        if self._options.skip_failing_tests:
-            tests_to_skip.update(expectations.model().get_tests_with_result_type(test_expectations.FAIL))
-            tests_to_skip.update(expectations.model().get_tests_with_result_type(test_expectations.FLAKY))
-
-        if self._options.skipped == 'only':
-            tests_to_skip = all_tests - tests_to_skip
-        elif self._options.skipped == 'ignore':
-            tests_to_skip = set()
-
-        # unless of course we don't want to run the HTTP tests :)
-        if not self._options.http:
-            tests_to_skip.update(set(http_tests))
-
-        return tests_to_skip
-
     def split_into_chunks(self, test_names):
         """split into a list to run and a set to skip, based on --run-chunk and --run-part."""
         if not self._options.run_chunk and not self._options.run_part:

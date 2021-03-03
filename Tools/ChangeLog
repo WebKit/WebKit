@@ -1,3 +1,23 @@
+2021-03-03  Sam Sneddon  <gsnedders@apple.com>
+
+        Move LayoutTestFinder.skip_tests to Manager._skip_tests
+        https://bugs.webkit.org/show_bug.cgi?id=222661
+
+        Reviewed by Jonathan Bedard.
+
+        This has nothing to do with finding tests, and everything to do about
+        test selection depending on the CLI.
+
+        Additionally, this removes the unused LayoutTestFinder.skip_tests
+        all_tests_list argument.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder._skip_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._skip_tests):
+        (Manager._prepare_lists):
+
+
 2021-03-03  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add python 3 support - part 4
