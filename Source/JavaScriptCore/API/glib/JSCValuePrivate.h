@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "JSCValue.h"
+#include <jsc/JSCValue.h>
 
 JS_EXPORT_PRIVATE JSValueRef jscValueGetJSValue(JSCValue*);
 JSCValue* jscValueCreate(JSCContext*, JSValueRef);

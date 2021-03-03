@@ -1,3 +1,15 @@
+2021-03-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] JavaScriptCore GLib headers should be copies
+        https://bugs.webkit.org/show_bug.cgi?id=222625
+
+        Reviewed by Michael Catanzaro.
+
+        Specify the directories for JavaScriptCore GLib headers and derived sources.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-03-01  Per Arne  <pvollan@apple.com>
 
         [Win] Fix build failure

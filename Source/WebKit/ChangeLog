@@ -1,3 +1,17 @@
+2021-03-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] JavaScriptCore GLib headers should be copies
+        https://bugs.webkit.org/show_bug.cgi?id=222625
+
+        Reviewed by Michael Catanzaro.
+
+        Update the includes for the GLib ports.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMNode.cpp:
+        * WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp:
+
 2021-03-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r270691): It's impossible to use MobileAsset fonts on macOS

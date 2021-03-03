@@ -10,7 +10,6 @@ file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPE_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DOM_DIR})
-file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_JSC_DIR})
 
 configure_file(UIProcess/API/wpe/WebKitVersion.h.in ${DERIVED_SOURCES_WPE_API_DIR}/WebKitVersion.h)
 configure_file(wpe/wpe-webkit.pc.in ${WPE_PKGCONFIG_FILE} @ONLY)
@@ -56,18 +55,10 @@ add_custom_command(
     VERBATIM
 )
 
-add_custom_command(
-    OUTPUT ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
-    DEPENDS ${JAVASCRIPTCORE_DIR}/API/glib/
-    COMMAND ln -n -s -f ${JAVASCRIPTCORE_DIR}/API/glib ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
-    VERBATIM
-)
-
 add_custom_target(webkitwpe-fake-api-headers
     DEPENDS ${FORWARDING_HEADERS_WPE_DIR}/wpe
             ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe
             ${FORWARDING_HEADERS_WPE_DOM_DIR}/wpe
-            ${FORWARDING_HEADERS_WPE_JSC_DIR}/jsc
 )
 
 list(APPEND WebKit_DEPENDENCIES
@@ -255,14 +246,9 @@ add_custom_command(
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_JAVASCRIPCOREWPE_DIR}"
-    "${FORWARDING_HEADERS_DIR}"
-    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/"
-    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
     "${FORWARDING_HEADERS_WPE_DIR}"
     "${FORWARDING_HEADERS_WPE_EXTENSION_DIR}"
     "${FORWARDING_HEADERS_WPE_DOM_DIR}"
-    "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_WPE_API_DIR}"
     "${WEBKIT_DIR}/NetworkProcess/glib"
     "${WEBKIT_DIR}/NetworkProcess/soup"
@@ -298,9 +284,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/atk"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
     "${WEBKIT_DIR}/WebProcess/WebPage/wpe"
-    "${WTF_DIR}/wtf/gtk/"
-    "${WTF_DIR}/wtf/gobject"
-    "${WTF_DIR}"
 )
 
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
@@ -445,12 +428,13 @@ if (ENABLE_WPE_QT_API)
     set(qtwpe_INCLUDE_DIRECTORIES
         ${CMAKE_BINARY_DIR}
         ${GLIB_INCLUDE_DIRS}
-        ${Qt5_INCLUDE_DIRS}
-        ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+        ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
         ${LIBEPOXY_INCLUDE_DIRS}
         ${LIBSOUP_INCLUDE_DIRS}
-        ${WPE_INCLUDE_DIRS}
+        ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+        ${Qt5_INCLUDE_DIRS}
         ${WPEBACKEND_FDO_INCLUDE_DIRS}
+        ${WPE_INCLUDE_DIRS}
     )
 
     list(APPEND WPE_API_INSTALLED_HEADERS

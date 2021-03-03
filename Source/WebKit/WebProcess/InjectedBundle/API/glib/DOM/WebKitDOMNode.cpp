@@ -23,6 +23,7 @@
 #include "DOMObjectCache.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
+#include <JavaScriptCore/APICast.h>
 #include <WebCore/JSNode.h>
 #include <jsc/JSCContextPrivate.h>
 #include <jsc/JSCValuePrivate.h>

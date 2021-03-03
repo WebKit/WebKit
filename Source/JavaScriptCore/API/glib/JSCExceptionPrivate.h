@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "JSCContext.h"
-#include "JSCException.h"
+#include <jsc/JSCContext.h>
+#include <jsc/JSCException.h>
 #include <wtf/glib/GRefPtr.h>
 
 GRefPtr<JSCException> jscExceptionCreate(JSCContext*, JSValueRef);

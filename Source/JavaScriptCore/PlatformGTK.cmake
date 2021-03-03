@@ -3,10 +3,6 @@ include(inspector/remote/GLib.cmake)
 
 set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
 
-list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}"
-)
-
 configure_file(javascriptcoregtk.pc.in ${JavaScriptCore_PKGCONFIG_FILE} @ONLY)
 
 install(FILES "${CMAKE_BINARY_DIR}/Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc"
@@ -87,8 +83,8 @@ if (ENABLE_INTROSPECTION)
             -DJSC_COMPILATION
             -I${CMAKE_SOURCE_DIR}/Source
             -I${JAVASCRIPTCORE_DIR}
-            -I${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}
-            -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
+            -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
+            -I${JavaScriptCoreGLib_PRIVATE_FRAMEWORK_HEADERS_DIR}
             ${JavaScriptCore_INSTALLED_HEADERS}
             ${JAVASCRIPTCORE_DIR}/API/glib/*.cpp
     )
@@ -111,8 +107,8 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-jsc-glib.cfg
     "namespace=jsc\n"
     "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
     "       -I${JAVASCRIPTCORE_DIR}/API/glib\n"
-    "       -I${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}\n"
-    "       -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib\n"
+    "       -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}\n"
+    "       -I${JavaScriptCoreGLib_PRIVATE_FRAMEWORK_HEADERS_DIR}\n"
     "doc_dir=${JAVASCRIPTCORE_DIR}/API/glib/docs\n"
     "source_dirs=${JAVASCRIPTCORE_DIR}/API/glib\n"
     "headers=${JavaScriptCore_INSTALLED_HEADERS}\n"
