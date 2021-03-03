@@ -1,3 +1,21 @@
+2021-03-03  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Refine CSS Grid overlay options
+        https://bugs.webkit.org/show_bug.cgi?id=222428
+        <rdar://problem/74751569>
+
+        Reviewed by BJ Burg.
+
+        Move CSS Grid overlay settings above node list, simplify labels, reorder and set default values.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.initialLayout):
+        * UserInterface/Views/LayoutDetailsSidebarPanel.css:
+        (.details-section.layout-css-grid.collapsed > .content):
+        Drive-by: Fix a bug which prevented the contents from being hidden when the section is collapsed.
+
 2021-02-25  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: add support for receiving Web Extension events via _WKInspectorExtensionDelegate

@@ -28,7 +28,7 @@
     margin-bottom: 4px;
 }
 
-.details-section.layout-css-grid > .content,
+.details-section.layout-css-grid:not(.collapsed) > .content,
 .details-section.layout-css-grid > .content > .group {
     display: block;
 }
