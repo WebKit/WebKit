@@ -28,7 +28,6 @@
 #if ENABLE(PDFKIT_PLUGIN)
 
 #include "DataReference.h"
-#include "PDFKitImports.h"
 #include "PDFPluginIdentifier.h"
 #include "Plugin.h"
 #include "WebEvent.h"

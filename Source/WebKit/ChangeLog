@@ -1,3 +1,45 @@
+2021-03-03  Tim Horton  <timothy_horton@apple.com>
+
+        Modernize WebKit2 PDFKit softlinking
+        https://bugs.webkit.org/show_bug.cgi?id=222643
+
+        Reviewed by Alex Christensen.
+
+        WebKit2 has long had an unusual way of softlinking PDFKit, using NSBundle.
+        It has caused much trouble in the past, because it means that running
+        WebKit against a custom PDFKit requires either installing it into
+        the system, or changing the hardcoded path.
+
+        Instead of this, just use the normal softlinking macros that the rest
+        of WebKit uses.
+
+        * Shared/Cocoa/PDFKitSoftLink.h: Added.
+        * Shared/Cocoa/PDFKitSoftLink.mm: Added.
+        * Shared/mac/PDFKitImports.h: Removed.
+        * Shared/mac/PDFKitImports.mm: Removed.
+        * SourcesCocoa.txt:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]):
+        (-[WKPrintingView drawRect:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::receivedNonLinearizedPDFSentinel):
+        (WebKit::PDFPlugin::threadEntry):
+        (WebKit::PDFPlugin::documentDataDidFinishLoading):
+        (WebKit::PDFPlugin::setActiveAnnotation):
+        (WebKit::PDFPlugin::nextMatchForString):
+        (WebKit:: const):
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::create):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.mm:
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldUsePDFPlugin const):
+        (WebKit::drawPDFPage):
+
 2021-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Limit HashTable entry size to 500 bytes

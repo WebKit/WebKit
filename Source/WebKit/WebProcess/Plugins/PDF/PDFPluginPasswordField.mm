@@ -28,7 +28,6 @@
 
 #if ENABLE(PDFKIT_PLUGIN)
 
-#import "PDFKitImports.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
 #import <Quartz/Quartz.h>
