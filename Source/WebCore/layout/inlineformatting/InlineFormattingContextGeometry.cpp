@@ -48,7 +48,7 @@ private:
     struct SimplifiedVerticalAlignment {
         SimplifiedVerticalAlignment(const LineBox::InlineLevelBox& rootInlineBox);
 
-        static bool canUseSimplifiedAlignment(const LineBox::InlineLevelBox& rootInlineBox, const LineBox::InlineLevelBox&, const BoxGeometry& inlineLevelBoxGeometry);
+        static bool canUseSimplifiedAlignment(const LineBox::InlineLevelBox& rootInlineBox, const LineBox::InlineLevelBox&, Optional<const BoxGeometry> inlineLevelBoxGeometry);
 
         void align(LineBox::InlineLevelBox&);
 
@@ -227,6 +227,16 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
     // FIXME: Add fast path support for line-height content.
     simplifiedVerticalAlignment.setEnabled(layoutState().inStandardsMode() && rootBox().style().lineHeight().isNegative());
 
+    auto simplifiedAlignVerticallyIfApplicable = [&](auto& inlineLevelBox, Optional<const BoxGeometry> boxGeometry) {
+        if (!simplifiedVerticalAlignment.isEnabled())
+            return;
+        if (!SimplifiedVerticalAlignment::canUseSimplifiedAlignment(rootInlineBox, inlineLevelBox, boxGeometry)) {
+            simplifiedVerticalAlignment.setEnabled(false);
+            return;
+        }
+        simplifiedVerticalAlignment.align(inlineLevelBox);
+    };
+
     auto createWrappedInlineBoxes = [&] {
         if (runs.isEmpty())
             return;
@@ -258,6 +268,7 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
         for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(*layoutBox, rootInlineBox.logicalLeft(), lineBox.contentLogicalWidth());
             setVerticalGeometryForInlineBox(*inlineBox);
+            simplifiedAlignVerticallyIfApplicable(*inlineBox, { });
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
         }
     };
@@ -282,17 +293,6 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             return true;
         };
         lineHasContent = lineHasContent || runHasContent();
-
-        auto simplifiedAlignVerticallyIfApplicable = [&](auto& inlineLevelBox, const auto& boxGeometry) {
-            if (!simplifiedVerticalAlignment.isEnabled())
-                return;
-            if (!SimplifiedVerticalAlignment::canUseSimplifiedAlignment(rootInlineBox, inlineLevelBox, boxGeometry)) {
-                simplifiedVerticalAlignment.setEnabled(false);
-                return;
-            }
-            simplifiedVerticalAlignment.align(inlineLevelBox);
-        };
-
         auto logicalLeft = rootInlineBox.logicalLeft() + run.logicalLeft();
         if (run.isBox()) {
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
@@ -326,9 +326,6 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
             continue;
         }
-        // FIXME: Add support for simple inline boxes too.
-        // We can do simplified vertical alignment with non-atomic inline boxes as long as the line has no content.
-        // e.g. <div><span></span><span></span></div> is still okay.
         if (run.isInlineBoxStart()) {
             // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
             // and adjust it later if we come across an inlineBoxEnd run (see below).
@@ -340,6 +337,7 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             initialLogicalWidth -= marginStart;
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
             setVerticalGeometryForInlineBox(*inlineBox);
+            simplifiedAlignVerticallyIfApplicable(*inlineBox, { });
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
         }
@@ -348,23 +346,21 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(inlineBox.isInlineBox());
             // Inline box run is based on margin box. Let's convert it to border box.
-            auto& inlineBoxGeometry = formattingContext().geometryForBox(layoutBox);
-            auto marginEnd = std::max(0_lu, inlineBoxGeometry.marginEnd());
+            auto marginEnd = std::max(0_lu, formattingContext().geometryForBox(layoutBox).marginEnd());
             auto inlineBoxLogicalRight = logicalLeft + run.logicalWidth() - marginEnd;
             inlineBox.setLogicalWidth(inlineBoxLogicalRight - inlineBox.logicalLeft());
-            simplifiedAlignVerticallyIfApplicable(inlineBox, inlineBoxGeometry);
+            simplifiedAlignVerticallyIfApplicable(inlineBox, { });
             continue;
         }
         if (run.isText() || run.isSoftLineBreak()) {
             // FIXME: Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
             lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
-            simplifiedVerticalAlignment.setEnabled(simplifiedVerticalAlignment.isEnabled() && &layoutBox.parent() == &rootBox());
             continue;
         }
         if (run.isHardLineBreak()) {
             auto lineBreakBox = LineBox::InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
             setVerticalGeometryForInlineBox(*lineBreakBox);
-            simplifiedAlignVerticallyIfApplicable(*lineBreakBox, formattingContext().geometryForBox(layoutBox));
+            simplifiedAlignVerticallyIfApplicable(*lineBreakBox, { });
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
             continue;
         }
@@ -625,16 +621,17 @@ LineBoxBuilder::SimplifiedVerticalAlignment::SimplifiedVerticalAlignment(const L
     adjust(rootInlineBox);
 }
 
-bool LineBoxBuilder::SimplifiedVerticalAlignment::canUseSimplifiedAlignment(const LineBox::InlineLevelBox& rootInlineBox, const LineBox::InlineLevelBox& inlineLevelBox, const BoxGeometry& inlineLevelBoxGeometry)
+bool LineBoxBuilder::SimplifiedVerticalAlignment::canUseSimplifiedAlignment(const LineBox::InlineLevelBox& rootInlineBox, const LineBox::InlineLevelBox& inlineLevelBox, Optional<const BoxGeometry> inlineLevelBoxGeometry)
 {
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
+        ASSERT(inlineLevelBoxGeometry);
         // Baseline aligned, non-stretchy direct children are considered to be simple for now.
         auto& layoutBox = inlineLevelBox.layoutBox();
         return &layoutBox.parent() == &rootInlineBox.layoutBox()
             && layoutBox.style().verticalAlign() == VerticalAlign::Baseline
-            && !inlineLevelBoxGeometry.marginBefore()
-            && !inlineLevelBoxGeometry.marginAfter()
-            && inlineLevelBoxGeometry.marginBoxHeight() <= rootInlineBox.baseline();
+            && !inlineLevelBoxGeometry->marginBefore()
+            && !inlineLevelBoxGeometry->marginAfter()
+            && inlineLevelBoxGeometry->marginBoxHeight() <= rootInlineBox.baseline();
     }
     if (inlineLevelBox.isLineBreakBox()) {
         // Baseline aligned, non-stretchy line breaks e.g. <div><span><br></span></div> but not <div><span style="font-size: 100px;"><br></span></div>.
