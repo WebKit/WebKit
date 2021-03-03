@@ -1,5 +1,27 @@
 2021-03-02  Chris Gambrell  <cgambrell@apple.com>
 
+        [LayoutTests] Convert http/tests/download convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222618
+        <rdar://problem/74949253>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/download/anchor-download-attribute-content-disposition-no-extension-octet-stream.html:
+        * http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html:
+        * http/tests/download/anchor-download-attribute-content-disposition.html:
+        * http/tests/download/basic-ascii-expected.txt:
+        * http/tests/download/basic-ascii.html:
+        * http/tests/download/resources/basic-ascii.php: Removed.
+        * http/tests/download/resources/basic-ascii.py: Added.
+        * http/tests/download/resources/content-disposition-pass-no-extension-octet-stream.php: Removed.
+        * http/tests/download/resources/content-disposition-pass-no-extension-octet-stream.py: Added.
+        * http/tests/download/resources/content-disposition-pass-no-extension-text-plain.php: Removed.
+        * http/tests/download/resources/content-disposition-pass-no-extension-text-plain.py: Added.
+        * http/tests/download/resources/content-disposition-pass.php: Removed.
+        * http/tests/download/resources/content-disposition-pass.py: Added.
+
+2021-03-02  Chris Gambrell  <cgambrell@apple.com>
+
         [LayoutTests] Convert http/tests/history convert PHP to Python
         https://bugs.webkit.org/show_bug.cgi?id=222614
         <rdar://problem/74946423>
