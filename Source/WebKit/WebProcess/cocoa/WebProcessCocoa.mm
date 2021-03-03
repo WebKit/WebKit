@@ -329,6 +329,15 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     updateProcessName(IsInProcessInitialization::Yes);
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+    // Disable relaunch on login. This is also done from -[NSApplication init] by dispatching -[NSApplication disableRelaunchOnLogin] on a non-main thread.
+    // This will be in a race with the closing of the Launch Services connection, so call it synchronously here.
+    // The cost of calling this should be small, and it is not expected to have any impact on performance.
+    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSPersistenceSuppressRelaunchAtLoginKey, kCFBooleanTrue, nullptr);
+    
+    // This is being called under WebPage::platformInitialize(), and may reach out to the Launch Services daemon once in the lifetime of the process.
+    // Call this synchronously here while a sandbox extension to Launch Services is being held.
+    [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:adoptNS([[WKAccessibilityWebPageObject alloc] init]).get()];
+
     auto method = class_getInstanceMethod([NSApplication class], @selector(_updateCanQuitQuietlyAndSafely));
     method_setImplementation(method, (IMP)preventAppKitFromContactingLaunchServices);
 
