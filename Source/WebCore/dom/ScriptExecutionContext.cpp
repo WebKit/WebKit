@@ -512,7 +512,7 @@ bool ScriptExecutionContext::hasPendingActivity() const
 JSC::JSGlobalObject* ScriptExecutionContext::globalObject()
 {
     if (is<Document>(*this))
-        return WebCore::globalObject(mainThreadNormalWorld(), downcast<Document>(*this).page());
+        return WebCore::globalObject(mainThreadNormalWorld(), downcast<Document>(*this).frame());
 
     if (is<WorkerOrWorkletGlobalScope>(*this))
         return WebCore::globalObject(downcast<WorkerOrWorkletGlobalScope>(*this));
