@@ -1,3 +1,34 @@
+2021-03-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Preserve information about the origin of the app highlight request
+        https://bugs.webkit.org/show_bug.cgi?id=222223
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _storeAppHighlight:]):
+        (-[WKWebView _addAppHighlight]):
+        * UIProcess/API/Cocoa/_WKAppHighlightDelegate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createAppHighlightInSelectedRange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView createHighlightInCurrentGroupWithRange:]):
+        (-[WKContentView createHighlightInNewGroupWithRange:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::storeAppHighlight const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createAppHighlightInSelectedRange):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::highlightIsNewGroup const):
+        (WebKit::WebPage::highlightRequestOriginatedInApp const):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-03-03  Kate Cheney  <katherine_cheney@apple.com>
 
         Report the correct document uri in the case of a ContentSecurityPolicyClient

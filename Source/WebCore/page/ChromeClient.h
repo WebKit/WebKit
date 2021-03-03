@@ -305,7 +305,7 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    virtual void storeAppHighlight(const WebCore::AppHighlight&) const = 0;
+    virtual void storeAppHighlight(WebCore::AppHighlight&&) const = 0;
 #endif
 
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;

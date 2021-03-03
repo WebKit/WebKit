@@ -64,6 +64,7 @@
 #include "WebsitePoliciesData.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/ActivityState.h>
+#include <WebCore/AppHighlight.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DragActions.h>
@@ -208,6 +209,7 @@ enum class DOMPasteAccessResponse : uint8_t;
 enum class DragApplicationFlags : uint8_t;
 enum class DragHandlingMethod : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
+enum class HighlightRequestOriginatedInApp : bool;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class TextIndicatorPresentationTransition : uint8_t;
@@ -1397,7 +1399,10 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight);
+    WebCore::CreateNewGroupForHighlight highlightIsNewGroup() const { return m_highlightIsNewGroup; }
+    WebCore::HighlightRequestOriginatedInApp highlightRequestOriginatedInApp() const { return m_highlightRequestOriginatedInApp; }
+
+    bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
     void restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&&);
 #endif
 
@@ -1891,6 +1896,11 @@ private:
 
     // The layer hosting mode.
     LayerHostingMode m_layerHostingMode;
+
+#if ENABLE(APP_HIGHLIGHTS)
+    WebCore::CreateNewGroupForHighlight m_highlightIsNewGroup { WebCore::CreateNewGroupForHighlight::No };
+    WebCore::HighlightRequestOriginatedInApp m_highlightRequestOriginatedInApp { WebCore::HighlightRequestOriginatedInApp::No };
+#endif
 
 #if PLATFORM(COCOA)
     bool m_pdfPluginEnabled { false };

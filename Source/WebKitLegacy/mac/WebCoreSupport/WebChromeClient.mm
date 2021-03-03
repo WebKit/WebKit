@@ -715,7 +715,7 @@ std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTime
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void WebChromeClient::storeAppHighlight(const WebCore::AppHighlight&) const
+void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&&) const
 {
 }
 #endif

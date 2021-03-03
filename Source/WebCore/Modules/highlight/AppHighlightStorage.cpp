@@ -214,7 +214,7 @@ AppHighlightStorage::AppHighlightStorage(Document& document)
 {
 }
 
-void AppHighlightStorage::storeAppHighlight(StaticRange& range, CreateNewGroupForHighlight isNewGroup)
+void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range)
 {
     auto data = createAppHighlightRangeData(range);
     Optional<String> text;
@@ -222,9 +222,9 @@ void AppHighlightStorage::storeAppHighlight(StaticRange& range, CreateNewGroupFo
     if (!data.text().isEmpty())
         text = data.text();
 
-    AppHighlight highlight = {data.toSharedBuffer(), text, isNewGroup};
+    AppHighlight highlight = {data.toSharedBuffer(), text, CreateNewGroupForHighlight::No, HighlightRequestOriginatedInApp::No};
 
-    m_document->page()->chrome().storeAppHighlight(highlight);
+    m_document->page()->chrome().storeAppHighlight(WTFMove(highlight));
 }
 
 bool AppHighlightStorage::restoreAppHighlight(Ref<SharedBuffer>&& buffer)

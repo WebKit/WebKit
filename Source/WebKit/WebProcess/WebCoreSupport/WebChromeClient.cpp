@@ -1254,8 +1254,10 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void WebChromeClient::storeAppHighlight(const WebCore::AppHighlight& highlight) const
+void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&& highlight) const
 {
+    highlight.isNewGroup = m_page.highlightIsNewGroup();
+    highlight.requestOriginatedInApp = m_page.highlightRequestOriginatedInApp();
     m_page.send(Messages::WebPageProxy::StoreAppHighlight(highlight));
 }
 #endif

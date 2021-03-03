@@ -547,12 +547,12 @@ void WebPageProxy::addActivityStateUpdateCompletionHandler(CompletionHandler<voi
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-void WebPageProxy::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight createNewGroup)
+void WebPageProxy::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight createNewGroup, WebCore::HighlightRequestOriginatedInApp requestOriginatedInApp)
 {
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup));
+    send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup, requestOriginatedInApp));
 }
 
 void WebPageProxy::restoreAppHighlights(const Vector<Ref<SharedMemory>>& highlights)

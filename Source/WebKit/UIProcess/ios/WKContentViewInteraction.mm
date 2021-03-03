@@ -9030,12 +9030,12 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)createHighlightInCurrentGroupWithRange:(id)sender
 {
-    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No);
+    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::No);
 }
 
 - (void)createHighlightInNewGroupWithRange:(id)sender
 {
-    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes);
+    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes, WebCore::HighlightRequestOriginatedInApp::No);
 }
 
 #endif

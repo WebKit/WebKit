@@ -166,7 +166,7 @@ public:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void storeAppHighlight(const AppHighlight&) const;
+    void storeAppHighlight(AppHighlight&&) const;
 #endif
 
     void runOpenPanel(Frame&, FileChooser&);

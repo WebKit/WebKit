@@ -6701,11 +6701,11 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 
 #if ENABLE(APP_HIGHLIGHTS)
     case ContextMenuItemTagAddHighlightToNewGroup:
-        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes);
+        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes, HighlightRequestOriginatedInApp::No);
         return;
 
     case ContextMenuItemTagAddHighlightToCurrentGroup:
-        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No);
+        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No, HighlightRequestOriginatedInApp::No);
         return;
 #endif
 

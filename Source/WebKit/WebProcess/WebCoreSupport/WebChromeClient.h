@@ -347,7 +347,7 @@ private:
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void storeAppHighlight(const WebCore::AppHighlight&) const final;
+    void storeAppHighlight(WebCore::AppHighlight&&) const final;
 #endif
 
 #if ENABLE(WEB_CRYPTO)

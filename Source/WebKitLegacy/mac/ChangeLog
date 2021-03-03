@@ -1,3 +1,14 @@
+2021-03-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Preserve information about the origin of the app highlight request
+        https://bugs.webkit.org/show_bug.cgi?id=222223
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::storeAppHighlight const):
+
 2021-03-01  Peng Liu  <peng.liu6@apple.com>
 
         Rename the delegate property of WebAVPlayerView to webDelegate to fix a build failure with new SDKs
