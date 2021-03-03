@@ -1,3 +1,12 @@
+2021-03-03  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Private methods can't be named as '#constructor'
+        https://bugs.webkit.org/show_bug.cgi?id=222680
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/private-method-and-field-named-constructor.js: Added.
+
 2021-03-03  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Add JSModuleNamespaceObject::deletePropertyByIndex() method
