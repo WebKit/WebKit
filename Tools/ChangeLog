@@ -1,3 +1,17 @@
+2021-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() right away after calling [obj copy] / [obj mutableCopy]
+        https://bugs.webkit.org/show_bug.cgi?id=222634
+
+        Reviewed by Darin Adler.
+
+        Use adoptNS() right away after calling [obj copy] / [obj mutableCopy] to minimize the chance of leaks.
+
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuMouseEvents.mm:
+        (TestWebKitAPI::runTest):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (TEST):
+
 2021-03-03  Sam Sneddon  <gsnedders@apple.com>
 
         Move LayoutTestFinder.skip_tests to Manager._skip_tests
