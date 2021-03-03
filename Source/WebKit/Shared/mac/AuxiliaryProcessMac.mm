@@ -641,9 +641,13 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
         auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
         if (userDirectorySuffix != parameters.extraInitializationData.end()) {
             String suffix = userDirectorySuffix->value;
+            WTFLogAlways("WebKit client is requesting user directory suffix: %s", suffix.utf8().data());
+            // Make sure the user directory suffix is not a path, since confstr will fail when the path does not exist.
             auto firstPathSeparator = suffix.find("/");
-            if (firstPathSeparator != notFound)
+            if (firstPathSeparator != notFound) {
                 suffix.truncate(firstPathSeparator);
+                WTFLogAlways("User directory suffix is a path, which will be truncated: %s", suffix.utf8().data());
+            }
             sandboxParameters.setUserDirectorySuffix(suffix);
         } else {
             String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());

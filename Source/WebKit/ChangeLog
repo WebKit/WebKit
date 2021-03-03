@@ -1,5 +1,35 @@
 2021-03-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273304. rdar://problem/74953207
+
+    [macOS] Crash under AuxiliaryProcess::initializeSandbox
+    https://bugs.webkit.org/show_bug.cgi?id=222233
+    
+    Unreviewed, address additional review feedback.
+    
+    Add comment and logging when the WebKit client is setting the user directory suffix.
+    
+    
+    * Shared/mac/AuxiliaryProcessMac.mm:
+    (WebKit::initializeSandboxParameters):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273304 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-23  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Crash under AuxiliaryProcess::initializeSandbox
+            https://bugs.webkit.org/show_bug.cgi?id=222233
+
+            Unreviewed, address additional review feedback.
+
+            Add comment and logging when the WebKit client is setting the user directory suffix.
+
+            * Shared/mac/AuxiliaryProcessMac.mm:
+            (WebKit::initializeSandboxParameters):
+
+2021-03-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273289. rdar://problem/74953476
 
     UserMediaPermissionRequestManagerProxy may be released while computing capture device list
