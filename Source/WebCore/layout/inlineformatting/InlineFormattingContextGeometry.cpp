@@ -341,7 +341,6 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
-            simplifiedVerticalAlignment.setEnabled(!lineHasContent);
             continue;
         }
         if (run.isInlineBoxEnd()) {
@@ -349,10 +348,11 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(inlineBox.isInlineBox());
             // Inline box run is based on margin box. Let's convert it to border box.
-            auto marginEnd = std::max(0_lu, formattingContext().geometryForBox(layoutBox).marginEnd());
+            auto& inlineBoxGeometry = formattingContext().geometryForBox(layoutBox);
+            auto marginEnd = std::max(0_lu, inlineBoxGeometry.marginEnd());
             auto inlineBoxLogicalRight = logicalLeft + run.logicalWidth() - marginEnd;
             inlineBox.setLogicalWidth(inlineBoxLogicalRight - inlineBox.logicalLeft());
-            simplifiedVerticalAlignment.setEnabled(!lineHasContent);
+            simplifiedAlignVerticallyIfApplicable(inlineBox, inlineBoxGeometry);
             continue;
         }
         if (run.isText() || run.isSoftLineBreak()) {
@@ -638,16 +638,18 @@ bool LineBoxBuilder::SimplifiedVerticalAlignment::canUseSimplifiedAlignment(cons
     }
     if (inlineLevelBox.isLineBreakBox()) {
         // Baseline aligned, non-stretchy line breaks e.g. <div><span><br></span></div> but not <div><span style="font-size: 100px;"><br></span></div>.
-        auto& layoutBox = inlineLevelBox.layoutBox();
-        return layoutBox.style().verticalAlign() == VerticalAlign::Baseline
-            && inlineLevelBox.baseline() <= rootInlineBox.baseline();
+        return inlineLevelBox.layoutBox().style().verticalAlign() == VerticalAlign::Baseline && inlineLevelBox.baseline() <= rootInlineBox.baseline();
+    }
+    if (inlineLevelBox.isInlineBox()) {
+        // Baseline aligned, non-stretchy inline boxes e.g. <div><span></span></div> but not <div><span style="font-size: 100px;"></span></div>.
+        return inlineLevelBox.layoutBox().style().verticalAlign() == VerticalAlign::Baseline && inlineLevelBox.layoutBounds() == rootInlineBox.layoutBounds();
     }
     return false;
 }
 
 void LineBoxBuilder::SimplifiedVerticalAlignment::align(LineBox::InlineLevelBox& inlineLevelBox)
 {
-    if (inlineLevelBox.isAtomicInlineLevelBox() || inlineLevelBox.isLineBreakBox()) {
+    if (inlineLevelBox.isAtomicInlineLevelBox() || inlineLevelBox.isLineBreakBox() || inlineLevelBox.isInlineBox()) {
         // Only baseline alignment for now.
         inlineLevelBox.setLogicalTop(m_rootInlineBox.baseline() - inlineLevelBox.baseline());
         adjust(inlineLevelBox);

@@ -72,6 +72,7 @@ public:
         // See https://www.w3.org/TR/css-inline-3/#layout-bounds
         struct LayoutBounds {
             InlineLayoutUnit height() const { return ascent + descent; }
+            bool operator==(const LayoutBounds& other) const { return ascent == other.ascent && descent == other.descent; }
 
             InlineLayoutUnit ascent { 0 };
             InlineLayoutUnit descent { 0 };
