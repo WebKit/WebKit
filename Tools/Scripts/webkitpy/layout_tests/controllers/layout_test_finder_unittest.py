@@ -46,15 +46,6 @@ class LayoutTestFinderTests(unittest.TestCase):
         port = TestPort(host)
         return LayoutTestFinder(port, None)
 
-    def touched_files(self, touched_files, fs=None):
-        host = MockHost()
-        if fs:
-            host.filesystem = fs
-        else:
-            fs = host.filesystem
-        port = TestPort(host)
-        return (fs, MockLayoutTestFinder(port, optparse.Values({'skipped': 'always', 'skip_failing_tests': False, 'http': True})).find_touched_tests(touched_files))
-
     def test_supported_test_extensions(self):
         self.assertEqual(_supported_test_extensions & Port._supported_reference_extensions, Port._supported_reference_extensions)
 
@@ -139,45 +130,3 @@ class LayoutTestFinderTests(unittest.TestCase):
         self.assertFalse(finder._is_w3c_resource_file(finder._filesystem, finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/XMLHttpRequest", "xmlhttprequest-sync-block-defer-scripts-subframe.html.html"))
         self.assertTrue(finder._is_w3c_resource_file(finder._filesystem, finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/XMLHttpRequest", "xmlhttprequest-sync-block-defer-scripts-subframe.html"))
         self.assertTrue(finder._is_w3c_resource_file(finder._filesystem, finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests", "test.html"))
-
-    def test_touched_test(self):
-        paths = ['LayoutTests/test.html', 'LayoutTests/test', 'test2.html', 'Source/test1.html']
-        fs, touched_tests = self.touched_files(paths)
-        self.assertEqual(touched_tests, ['test.html'])
-
-    def test_expected_touched_test(self):
-        paths = ['LayoutTests/test-expected.txt', 'LayoutTests/no-test-expected.txt']
-        fs = MockFileSystem()
-        fs.write_text_file('/test.checkout/LayoutTests/test.html', 'This is a test')
-        fs, touched_tests = self.touched_files(paths, fs)
-        self.assertEqual(touched_tests, ['test.html'])
-
-    def test_platform_expected_touched_test(self):
-        paths = ['LayoutTests/platform/mock/test-expected.txt', 'LayoutTests/platform/mock/no-test-expected.txt']
-        fs = MockFileSystem()
-        fs.write_text_file('/test.checkout/LayoutTests/test.html', 'This is a test')
-        fs, touched_tests = self.touched_files(paths, fs)
-        self.assertEqual(touched_tests, ['test.html'])
-
-    def test_platform_duplicate_touched_test(self):
-        paths = ['LayoutTests/test1.html', 'LayoutTests/test1.html', 'LayoutTests/platform/mock1/test2-expected.txt', 'LayoutTests/platform/mock2/test2-expected.txt']
-        fs = MockFileSystem()
-        fs.write_text_file('/test.checkout/LayoutTests/test2.html', 'This is a test')
-        fs, touched_tests = self.touched_files(paths, fs)
-        self.assertEqual(sorted(touched_tests), sorted(['test1.html', 'test2.html']))
-
-    def test_touched_but_skipped_test(self):
-        host = MockHost()
-        port = TestPort(host)
-
-        expectations_dict = OrderedDict()
-        expectations_dict['expectations'] = 'test1.html [ Skip ]\ntest3.html [ Skip ]\n'
-        port.expectations_dict = lambda **kwargs: expectations_dict
-        port.test_exists = lambda test: True
-
-        paths = ['LayoutTests/test0.html', 'LayoutTests/test1.html', 'LayoutTests/test2-expected.txt', 'LayoutTests/test3-expected.txt']
-        host.filesystem.write_text_file('/test.checkout/LayoutTests/test2.html', 'This is a test to be runned')
-        host.filesystem.write_text_file('/test.checkout/LayoutTests/test3.html', 'This is a test to be skipped')
-
-        touched_tests = MockLayoutTestFinder(port, optparse.Values({'skipped': 'always', 'skip_failing_tests': False, 'http': True})).find_touched_tests(paths)
-        self.assertEqual(sorted(touched_tests), sorted(['test0.html', 'test2.html']))

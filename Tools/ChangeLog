@@ -1,3 +1,15 @@
+2021-03-03  Sam Sneddon  <gsnedders@apple.com>
+
+        Remove LayoutTestFinder.touched_tests, which is now dead code
+        https://bugs.webkit.org/show_bug.cgi?id=222660
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.find_touched_tests): Removed.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_unittest.py:
+        Remove related tests.
+
 2021-03-03  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Make testing compatible with Python 3.8

@@ -146,31 +146,6 @@ class LayoutTestFinder(object):
                 return True
         return False
 
-    def find_touched_tests(self, new_or_modified_paths, apply_skip_expectations=True):
-        potential_test_paths = []
-        for test_file in new_or_modified_paths:
-            if not test_file.startswith(self.LAYOUT_TESTS_DIRECTORY):
-                continue
-
-            test_file = self._strip_test_dir_prefix(test_file)
-            test_paths = self._port.potential_test_names_from_expected_file(test_file)
-            if test_paths:
-                potential_test_paths.extend(test_paths)
-            else:
-                potential_test_paths.append(test_file)
-
-        if not potential_test_paths:
-            return None
-
-        tests = self.find_tests_by_path(list(set(potential_test_paths)))
-        if not apply_skip_expectations:
-            return tests
-
-        expectations = test_expectations.TestExpectations(self._port, tests, force_expectations_pass=False)
-        expectations.parse_all_expectations()
-        tests_to_skip = self.skip_tests(potential_test_paths, tests, expectations, None)
-        return [test for test in tests if test not in tests_to_skip]
-
     def _strip_test_dir_prefixes(self, paths):
         return [self._strip_test_dir_prefix(path) for path in paths if path]
 
