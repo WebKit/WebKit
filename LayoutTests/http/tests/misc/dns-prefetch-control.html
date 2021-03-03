@@ -53,21 +53,21 @@ a manual test of DNS prefetch using a networking monitoring tool.</p>
   <script>emitFrameForScheme("https:")</script>
   <script>emitFrameForScheme("ftp:")</script>
   <script>emitFrameForHost("%")</script>
-  <iframe src="resources/dns-prefetch-control.php"></iframe>
-  <iframe src="resources/dns-prefetch-control.php?value=on"></iframe>
-  <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.php?value=on"></iframe>
+  <iframe src="resources/dns-prefetch-control.py"></iframe>
+  <iframe src="resources/dns-prefetch-control.py?value=on"></iframe>
+  <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.py?value=on"></iframe>
 </div>
 
 <p style='clear: left'>The following frames contain links that are not expected to cause a DNS prefetch.</p>
 
 <div>
-  <iframe src="resources/dns-prefetch-control.php?value=off"></iframe>
-  <iframe src="resources/dns-prefetch-control.php?value=foo"></iframe>
-  <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.php"></iframe>
-  <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.php?value=off"></iframe>
-  <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.php?value=foo"></iframe>
-  <iframe src="data:text/html,<meta http-equiv='x-dns-prefetch-control' value='off'><iframe src='http://127.0.0.1:8000/misc/resources/dns-prefetch-control.php'></iframe>"></iframe>
-  <iframe src="data:text/html,<meta http-equiv='x-dns-prefetch-control' value='on'><iframe src='https://127.0.0.1:8443/misc/resources/dns-prefetch-control.php'></iframe>"></iframe>
+  <iframe src="resources/dns-prefetch-control.py?value=off"></iframe>
+  <iframe src="resources/dns-prefetch-control.py?value=foo"></iframe>
+  <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.py"></iframe>
+  <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.py?value=off"></iframe>
+  <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.py?value=foo"></iframe>
+  <iframe src="data:text/html,<meta http-equiv='x-dns-prefetch-control' value='off'><iframe src='http://127.0.0.1:8000/misc/resources/dns-prefetch-control.py'></iframe>"></iframe>
+  <iframe src="data:text/html,<meta http-equiv='x-dns-prefetch-control' value='on'><iframe src='https://127.0.0.1:8443/misc/resources/dns-prefetch-control.py'></iframe>"></iframe>
 </div>
 
 </body>

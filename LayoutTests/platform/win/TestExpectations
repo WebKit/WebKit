@@ -398,7 +398,7 @@ webkit.org/b/42435 fast/dom/webtiming-navigate-within-document.html [ Skip ]
 webkit.org/b/42435 fast/dom/webtiming.html [ Skip ]
 webkit.org/b/42435 fast/performance/ [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-and-back1.html [ Skip ]
-webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-redirect.php [ Skip ]
+webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-redirect.py [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-no-origin.html [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-one-redirect.php [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-resolution.html [ Skip ]
@@ -2991,7 +2991,7 @@ fast/text/hangul-generic-font-families.html [ WontFix ]
 webkit.org/b/187700 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 
 # <rdar://problem/21816197> large-js-program.php crashes (crashes slower on Debug)
-http/tests/misc/large-js-program.php [ Crash Timeout ]
+http/tests/misc/large-js-program.py [ Crash Timeout ]
 
 # Slider thumb widget painting
 fast/repaint/block-inputrange-repaint.html [ Pass Failure ]

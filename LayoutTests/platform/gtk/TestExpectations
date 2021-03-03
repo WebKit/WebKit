@@ -1632,7 +1632,7 @@ webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Sl
 
 webkit.org/b/186781 inspector/view/asynchronous-layout.html [ Timeout Pass ]
 
-Bug(GTK) http/tests/misc/large-js-program.php [ Pass Slow ]
+Bug(GTK) http/tests/misc/large-js-program.py [ Pass Slow ]
 
 [ Debug ] editing/selection/move-by-character-brute-force.html [ Pass Timeout ]
 [ Debug ] editing/selection/move-by-word-visually-inline-block-positioned-element.html [ Pass Timeout ]

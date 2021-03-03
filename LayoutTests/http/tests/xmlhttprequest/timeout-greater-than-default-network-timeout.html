@@ -12,7 +12,7 @@ promise_test((test) => {
     return new Promise((resolve, reject) => {
         var xhr = new XMLHttpRequest();
         var startTime = new Date();
-        xhr.open('GET', "/misc/resources/delayed-log.php?delay=10000000", true);
+        xhr.open('GET', "/misc/resources/delayed-log.py?delay=10000000", true);
 
         xhr.timeout = 70000;
 

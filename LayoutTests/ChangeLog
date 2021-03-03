@@ -1,3 +1,199 @@
+2021-03-03  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/misc convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221981
+        <rdar://problem/74399686>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/fetch/fetch-in-worker.js:
+        * http/tests/misc/401-alternative-content-expected.txt:
+        * http/tests/misc/401-alternative-content.php: Removed.
+        * http/tests/misc/401-alternative-content.py: Added.
+        * http/tests/misc/async-script-removed.html:
+        * http/tests/misc/async-script.html:
+        * http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt:
+        * http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html:
+        * http/tests/misc/authentication-redirect-1/resources/auth-echo.php: Removed.
+        * http/tests/misc/authentication-redirect-1/resources/auth-echo.py: Added.
+        * http/tests/misc/authentication-redirect-1/resources/auth-then-redirect.php: Removed.
+        * http/tests/misc/authentication-redirect-1/resources/auth-then-redirect.py: Added.
+        * http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt:
+        * http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html:
+        * http/tests/misc/authentication-redirect-2/resources/auth-echo.php: Removed.
+        * http/tests/misc/authentication-redirect-2/resources/auth-echo.py: Added.
+        * http/tests/misc/authentication-redirect-2/resources/auth-then-redirect.php: Removed.
+        * http/tests/misc/authentication-redirect-2/resources/auth-then-redirect.py: Added.
+        * http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials-expected.txt:
+        * http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html:
+        * http/tests/misc/authentication-redirect-3/resources/auth-echo.php: Removed.
+        * http/tests/misc/authentication-redirect-3/resources/auth-echo.py: Added.
+        * http/tests/misc/authentication-redirect-3/resources/auth-then-redirect-with-url-credentials.php: Removed.
+        * http/tests/misc/authentication-redirect-3/resources/auth-then-redirect-with-url-credentials.py: Added.
+        * http/tests/misc/authentication-redirect-3/resources/auth-then-redirect.php: Removed.
+        * http/tests/misc/authentication-redirect-3/resources/auth-then-redirect.py: Added.
+        * http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt:
+        * http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html:
+        * http/tests/misc/authentication-redirect-4/resources/auth-echo.php: Removed.
+        * http/tests/misc/authentication-redirect-4/resources/auth-echo.py: Added.
+        * http/tests/misc/authentication-redirect-4/resources/auth-then-redirect.php: Removed.
+        * http/tests/misc/authentication-redirect-4/resources/auth-then-redirect.py: Added.
+        * http/tests/misc/bad-charset-alias.html:
+        * http/tests/misc/before-unload-load-image.html:
+        * http/tests/misc/char-encoding-bocu-1-blocklisted.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-default.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-with-Big5.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-with-EUC-JP.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-with-ISO-2022-JP.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-with-Shift_JIS.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-with-accept-charset.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-with-get-method.html:
+        * http/tests/misc/char-encoding-in-hidden-charset-field-with-one-field.html:
+        * http/tests/misc/char-encoding-in-text-charset-field-with-value.html:
+        * http/tests/misc/char-encoding-scsu-blocklisted.html:
+        * http/tests/misc/char-encoding-without-charset-field.html:
+        * http/tests/misc/charset-sniffer-end-sniffing.html:
+        * http/tests/misc/css-reject-any-type-in-strict-mode-expected.txt:
+        * http/tests/misc/css-reject-any-type-in-strict-mode.html:
+        * http/tests/misc/dns-prefetch-control.html:
+        * http/tests/misc/embed-image-load-outlives-gc-without-crashing.html:
+        * http/tests/misc/empty-file-formdata.html:
+        * http/tests/misc/extract-http-content-language-against-equiv.php: Removed.
+        * http/tests/misc/extract-http-content-language-against-equiv.py: Added.
+        * http/tests/misc/extract-http-content-language-malformed.php: Removed.
+        * http/tests/misc/extract-http-content-language-malformed.py: Added.
+        * http/tests/misc/extract-http-content-language-multiple.php: Removed.
+        * http/tests/misc/extract-http-content-language-multiple.py: Added.
+        * http/tests/misc/extract-http-content-language.php: Removed.
+        * http/tests/misc/extract-http-content-language.py: Added.
+        * http/tests/misc/form-blob-challenge.html:
+        * http/tests/misc/form-post-textplain-cross-site.html:
+        * http/tests/misc/form-post-textplain.html:
+        * http/tests/misc/form-submit-file-cross-site-redirect.html:
+        * http/tests/misc/form-submit-file-cross-site.html:
+        * http/tests/misc/image-checks-for-accept.html:
+        * http/tests/misc/image-error.html:
+        * http/tests/misc/image-input-type-outlives-gc-without-crashing.html:
+        * http/tests/misc/image-load-outlives-gc-without-crashing.html:
+        * http/tests/misc/javascript-url-stop-loaders.html:
+        * http/tests/misc/large-js-program.php: Removed.
+        * http/tests/misc/large-js-program.py: Added.
+        * http/tests/misc/location-with-space.php: Removed.
+        * http/tests/misc/location-with-space.py: Added.
+        * http/tests/misc/mask-image-accept.html:
+        * http/tests/misc/object-image-error.html:
+        * http/tests/misc/object-image-load-outlives-gc-without-crashing.html:
+        * http/tests/misc/redirect-to-about-blank.html:
+        * http/tests/misc/redirect-to-external-url-expected.txt:
+        * http/tests/misc/redirect-with-quotes.php: Removed.
+        * http/tests/misc/redirect-with-quotes.py: Added.
+        * http/tests/misc/redirect.php: Removed.
+        * http/tests/misc/redirect.py: Added.
+        * http/tests/misc/referrer.html:
+        * http/tests/misc/refresh-headers.php: Removed.
+        * http/tests/misc/refresh-headers.py: Added.
+        * http/tests/misc/resources/3rd-level-iframe-with-blocking-resource.php: Removed.
+        * http/tests/misc/resources/3rd-level-iframe-with-blocking-resource.py: Added.
+        * http/tests/misc/resources/404image.php: Removed.
+        * http/tests/misc/resources/404image.py: Added.
+        * http/tests/misc/resources/SVGFont-delayed-loader.svg:
+        * http/tests/misc/resources/bad-charset-alias.php: Removed.
+        * http/tests/misc/resources/bad-charset-alias.py: Added.
+        * http/tests/misc/resources/basic-echo-post.php: Removed.
+        * http/tests/misc/resources/basic-echo-post.py: Added.
+        * http/tests/misc/resources/bocu-1-cyrillic.php: Removed.
+        * http/tests/misc/resources/bocu-1-cyrillic.py: Added.
+        * http/tests/misc/resources/char-encoding-in-hidden-charset-field.php: Removed.
+        * http/tests/misc/resources/char-encoding-in-hidden-charset-field.py: Added.
+        * http/tests/misc/resources/charset-sniffer-end-sniffing.php: Removed.
+        * http/tests/misc/resources/charset-sniffer-end-sniffing.py: Added.
+        * http/tests/misc/resources/check-keygen-post.php: Removed.
+        * http/tests/misc/resources/check-keygen-post.py: Added.
+        * http/tests/misc/resources/check-test-file.php: Removed.
+        * http/tests/misc/resources/check-test-file.py: Added.
+        * http/tests/misc/resources/check-unnamed-file-included-in-formdata.php: Removed.
+        * http/tests/misc/resources/check-unnamed-file-included-in-formdata.py: Added.
+        * http/tests/misc/resources/delayed-log.php: Removed.
+        * http/tests/misc/resources/delayed-log.py: Added.
+        * http/tests/misc/resources/dns-prefetch-control.php: Removed.
+        * http/tests/misc/resources/dns-prefetch-control.py: Added.
+        * http/tests/misc/resources/echo-query-param.php: Removed.
+        * http/tests/misc/resources/echo-query-param.py: Added.
+        * http/tests/misc/resources/form-post-textplain.php: Removed.
+        * http/tests/misc/resources/form-post-textplain.py: Added.
+        * http/tests/misc/resources/hang-connection.php: Removed.
+        * http/tests/misc/resources/hang-connection.py: Added.
+        * http/tests/misc/resources/image-checks-for-accept.php: Removed.
+        * http/tests/misc/resources/image-checks-for-accept.py: Added.
+        * http/tests/misc/resources/nested-iframe-loading-another-iframe.html:
+        * http/tests/misc/resources/protected/protected-image.php: Removed.
+        * http/tests/misc/resources/protected/protected-image.py: Added.
+        * http/tests/misc/resources/random-no-store.php: Removed.
+        * http/tests/misc/resources/random-no-store.py: Added.
+        * http/tests/misc/resources/redirect-result.php: Removed.
+        * http/tests/misc/resources/redirect-result.py: Added.
+        * http/tests/misc/resources/redirect-step2.php: Removed.
+        * http/tests/misc/resources/redirect-step2.py: Added.
+        * http/tests/misc/resources/redirect-step3.php: Removed.
+        * http/tests/misc/resources/redirect-step3.py: Added.
+        * http/tests/misc/resources/redirect-step4.php: Removed.
+        * http/tests/misc/resources/redirect-step4.py: Added.
+        * http/tests/misc/resources/redirect-to-about-blank.php: Removed.
+        * http/tests/misc/resources/redirect-to-about-blank.py: Added.
+        * http/tests/misc/resources/redirect-to-external-url-iframe.html:
+        * http/tests/misc/resources/redirect-to-external-url.php: Removed.
+        * http/tests/misc/resources/redirect-to-external-url.py: Added.
+        * http/tests/misc/resources/referrer-main-resource.php: Removed.
+        * http/tests/misc/resources/referrer-main-resource.py: Added.
+        * http/tests/misc/resources/referrer-result.php: Removed.
+        * http/tests/misc/resources/referrer-result.py: Added.
+        * http/tests/misc/resources/script-500.php: Removed.
+        * http/tests/misc/resources/script-500.py: Added.
+        * http/tests/misc/resources/scsu-cyrillic.php: Removed.
+        * http/tests/misc/resources/scsu-cyrillic.py: Added.
+        * http/tests/misc/resources/send-async-xhr.html:
+        * http/tests/misc/resources/slowimage.php: Removed.
+        * http/tests/misc/resources/slowimage.py: Added.
+        * http/tests/misc/resources/stylesheet-bad-mime-type.php: Removed.
+        * http/tests/misc/resources/stylesheet-bad-mime-type.py: Added.
+        * http/tests/misc/resources/webtiming-cross-origin-and-back-redirect1.php: Removed.
+        * http/tests/misc/resources/webtiming-cross-origin-and-back-redirect1.py: Added.
+        * http/tests/misc/resources/webtiming-cross-origin-and-back-redirect2.php: Removed.
+        * http/tests/misc/resources/webtiming-cross-origin-and-back-redirect2.py: Added.
+        * http/tests/misc/script-500.html:
+        * http/tests/misc/script-no-store.html:
+        * http/tests/misc/submit-post-keygen.html:
+        * http/tests/misc/svg-image-load-outlives-gc-without-crashing.html:
+        * http/tests/misc/timer-vs-loading.html:
+        * http/tests/misc/url-in-utf16be.html:
+        * http/tests/misc/url-in-utf16le.html:
+        * http/tests/misc/video-poster-image-load-outlives-gc-without-crashing.html:
+        * http/tests/misc/webtiming-cross-origin-and-back1.html:
+        * http/tests/misc/webtiming-cross-origin-redirect.php: Removed.
+        * http/tests/misc/webtiming-cross-origin-redirect.py: Added.
+        * http/tests/misc/webtiming-one-redirect.php: Removed.
+        * http/tests/misc/webtiming-one-redirect.py: Added.
+        * http/tests/misc/webtiming-slow-load.php: Removed.
+        * http/tests/misc/webtiming-slow-load.py: Added.
+        * http/tests/misc/webtiming-ssl.php: Removed.
+        * http/tests/misc/webtiming-ssl.py: Added.
+        * http/tests/misc/webtiming-two-redirects.php: Removed.
+        * http/tests/misc/webtiming-two-redirects.py: Added.
+        * http/tests/misc/xhtml.php: Removed.
+        * http/tests/misc/xhtml.py: Added.
+        * http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html:
+        * http/tests/xmlhttprequest/resetting-timeout-to-zero.html:
+        * http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/win/http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt:
+        * platform/wk2/http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt:
+        * platform/wk2/http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt:
+        * platform/wk2/http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials-expected.txt:
+        * platform/wk2/http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt:
+
 2021-03-03  Youenn Fablet  <youenn@apple.com>
 
         [GPUP] imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html times out with GPU Process enabled

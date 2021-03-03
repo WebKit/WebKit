@@ -9,7 +9,7 @@
 <defs>
     <font-face font-family="name">
         <font-face-src>
-            <font-face-uri xlink:href="http://127.0.0.1:8000/misc/resources/hang-connection.php"/>
+            <font-face-uri xlink:href="http://127.0.0.1:8000/misc/resources/hang-connection.py"/>
         </font-face-src>
     </font-face>
 </defs>
