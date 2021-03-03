@@ -1,5 +1,57 @@
 2021-03-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273385. rdar://problem/74953186
+
+    Runtime-disabled CSS features still appear enabled via CSS.supports()
+    https://bugs.webkit.org/show_bug.cgi?id=222280
+    rdar://74595641
+    
+    Reviewed by Sam Weinig.
+    
+    Source/WebCore:
+    
+    When parsing CSS.supports() for a runtime-disabled property, we'd successfully
+    parse a CSS-wide keyword like "inherit" and report that the property is supported.
+    
+    We need to explicitly check for runtime-disabled properties.
+    
+    Tests: css3/color-filters/color-filter-exposed-if-disabled.html
+           fast/css/scroll-behavior-exposed-if-disabled.html
+    
+    * css/parser/CSSParserImpl.cpp:
+    (WebCore::CSSParserImpl::isPropertyRuntimeDisabled const):
+    (WebCore::CSSParserImpl::consumeDeclaration):
+    * css/parser/CSSParserImpl.h:
+    
+    LayoutTests:
+    
+    * css3/color-filters/color-filter-exposed-if-disabled-expected.txt: Added. Fails tracked in webkit.org/b/217626
+    * css3/color-filters/color-filter-exposed-if-disabled.html: Added.
+    * fast/css/overscroll-behavior-invalidate-if-disabled-expected.txt:
+    * fast/css/overscroll-behavior-invalidate-if-disabled.html:
+    * fast/css/scroll-behavior-exposed-if-disabled-expected.txt: Added.
+    * fast/css/scroll-behavior-exposed-if-disabled.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273385 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+            Runtime-disabled CSS features still appear enabled via CSS.supports()
+            https://bugs.webkit.org/show_bug.cgi?id=222280
+            rdar://74595641
+
+            Reviewed by Sam Weinig.
+
+            * css3/color-filters/color-filter-exposed-if-disabled-expected.txt: Added. Fails tracked in webkit.org/b/217626
+            * css3/color-filters/color-filter-exposed-if-disabled.html: Added.
+            * fast/css/overscroll-behavior-invalidate-if-disabled-expected.txt:
+            * fast/css/overscroll-behavior-invalidate-if-disabled.html:
+            * fast/css/scroll-behavior-exposed-if-disabled-expected.txt: Added.
+            * fast/css/scroll-behavior-exposed-if-disabled.html: Added.
+
+2021-03-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273314. rdar://problem/74953186
 
     aspect-ratio shows in computed style when disabled
