@@ -1,5 +1,18 @@
 2021-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Flaky JSC test: stress/shared-array-buffer-sort-while-different-thread-is-modifying.js.default
+        https://bugs.webkit.org/show_bug.cgi?id=221129
+
+        Reviewed by Saam Barati.
+
+        Speculative fix for JSC shell's termination handling change.
+
+        * jsc.cpp:
+        (CommandLine::CommandLine):
+        (jscmain):
+
+2021-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove ImpureProxyType
         https://bugs.webkit.org/show_bug.cgi?id=222626
 

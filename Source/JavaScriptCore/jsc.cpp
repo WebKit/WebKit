@@ -413,9 +413,7 @@ public:
     }
 
     enum CommandLineForWorkersTag { CommandLineForWorkers };
-    CommandLine(CommandLineForWorkersTag)
-    {
-    }
+    explicit CommandLine(CommandLineForWorkersTag);
 
     Vector<Script> m_scripts;
     Vector<String> m_arguments;
@@ -436,6 +434,7 @@ public:
 
     void parseArguments(int, char**);
 };
+static LazyNeverDestroyed<CommandLine> mainCommandLine;
 
 static const char interactivePrompt[] = ">>> ";
 
@@ -3381,6 +3380,11 @@ void CommandLine::parseArguments(int argc, char** argv)
         jscExit(EXIT_SUCCESS);
 }
 
+CommandLine::CommandLine(CommandLineForWorkersTag)
+    : m_treatWatchdogExceptionAsSuccess(mainCommandLine->m_treatWatchdogExceptionAsSuccess)
+{
+}
+
 template<typename Func>
 int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 {
@@ -3502,12 +3506,12 @@ int jscmain(int argc, char** argv)
 
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
-    CommandLine options(argc, argv);
+    mainCommandLine.construct(argc, argv);
 
     {
         Options::AllowUnfinalizedAccessScope scope;
         processConfigFile(Options::configFile(), "jsc");
-        if (options.m_dump)
+        if (mainCommandLine->m_dump)
             Options::dumpGeneratedBytecodes() = true;
     }
 
@@ -3574,18 +3578,18 @@ int jscmain(int argc, char** argv)
 #endif
 
     int result = runJSC(
-        options, false,
+        mainCommandLine.get(), false,
         [&] (VM& vm, GlobalObject* globalObject, bool& success) {
             UNUSED_PARAM(vm);
 #if PLATFORM(COCOA)
             vm.setOnEachMicrotaskTick(WTFMove(onEachMicrotaskTick));
 #endif
-            runWithOptions(globalObject, options, success);
+            runWithOptions(globalObject, mainCommandLine.get(), success);
         });
 
     printSuperSamplerState();
 
-    if (options.m_dumpMemoryFootprint) {
+    if (mainCommandLine->m_dumpMemoryFootprint) {
         MemoryFootprint footprint = MemoryFootprint::now();
 
         printf("Memory Footprint:\n    Current Footprint: %" PRIu64 "\n    Peak Footprint: %" PRIu64 "\n", footprint.current, footprint.peak);
