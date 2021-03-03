@@ -1,3 +1,19 @@
+2021-03-03  Kyle Piddington  <kpiddington@apple.com>
+
+        Support Depth24_Stencil8 simulation in the MTLSimulator
+
+        Reviewed by Dean Jackson.
+
+        Fixes the following tests:
+        fast/canvas/webgl/context-creation-attributes.html
+        fast/canvas/webgl/webgl-depth-texture.html
+        webgl/1.0.3/conformance/misc/webgl-specific.html
+        webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html
+
+        * src/libANGLE/renderer/metal/mtl_format_map.json:
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::init):
+
 2021-02-26  Kyle Piddington  <kpiddington@apple.com>
 
         Support  fast/canvas/webgl/copyBufferSubData.html, fix bugs in fast/canvas/webgl/getBufferSubData-webgl1.html in Metal ANGLE on Simulator

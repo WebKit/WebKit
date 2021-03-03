@@ -37,7 +37,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
     switch (this->intendedFormatId)
     {
         case angle::FormatID::A8_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatA8Unorm;
             this->actualFormatId = angle::FormatID::A8_UNORM;
             this->initFunction = nullptr;
@@ -47,7 +47,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::B8G8R8A8_UNORM:
-
+            
             if (metalDevice.depth24Stencil8PixelFormatSupported &&
                !display->getFeatures().forceD24S8AsUnsupported.enabled)
             {
@@ -67,7 +67,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 
 #else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::B8G8R8A8_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatBGRA8Unorm;
             this->actualFormatId = angle::FormatID::B8G8R8A8_UNORM;
             this->initFunction = nullptr;
@@ -77,7 +77,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 
 #endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::B8G8R8A8_UNORM_SRGB:
-
+            
             this->metalFormat = MTLPixelFormatBGRA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::B8G8R8A8_UNORM_SRGB;
             this->initFunction = nullptr;
@@ -86,7 +86,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::D16_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatDepth16Unorm;
             this->actualFormatId = angle::FormatID::D16_UNORM;
             this->initFunction = nullptr;
@@ -95,7 +95,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::D32_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatDepth32Float;
             this->actualFormatId = angle::FormatID::D32_FLOAT;
             this->initFunction = nullptr;
@@ -104,7 +104,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::D32_FLOAT_S8X24_UINT:
-
+            
             this->metalFormat = MTLPixelFormatDepth32Float_Stencil8;
             this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
             this->initFunction = nullptr;
@@ -113,7 +113,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::NONE:
-
+            
             this->metalFormat = MTLPixelFormatInvalid;
             this->actualFormatId = angle::FormatID::NONE;
             this->initFunction = nullptr;
@@ -122,7 +122,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R10G10B10A2_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRGB10A2Uint;
             this->actualFormatId = angle::FormatID::R10G10B10A2_UINT;
             this->initFunction = nullptr;
@@ -131,7 +131,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R10G10B10A2_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGB10A2Unorm;
             this->actualFormatId = angle::FormatID::R10G10B10A2_UNORM;
             this->initFunction = nullptr;
@@ -140,7 +140,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R11G11B10_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRG11B10Float;
             this->actualFormatId = angle::FormatID::R11G11B10_FLOAT;
             this->initFunction = nullptr;
@@ -149,7 +149,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16A16_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
             this->initFunction = nullptr;
@@ -158,7 +158,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16A16_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Sint;
             this->actualFormatId = angle::FormatID::R16G16B16A16_SINT;
             this->initFunction = nullptr;
@@ -167,7 +167,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16A16_SNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Snorm;
             this->actualFormatId = angle::FormatID::R16G16B16A16_SNORM;
             this->initFunction = nullptr;
@@ -176,7 +176,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16A16_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Uint;
             this->actualFormatId = angle::FormatID::R16G16B16A16_UINT;
             this->initFunction = nullptr;
@@ -185,7 +185,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16A16_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Unorm;
             this->actualFormatId = angle::FormatID::R16G16B16A16_UNORM;
             this->initFunction = nullptr;
@@ -194,7 +194,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRG16Float;
             this->actualFormatId = angle::FormatID::R16G16_FLOAT;
             this->initFunction = nullptr;
@@ -203,7 +203,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRG16Sint;
             this->actualFormatId = angle::FormatID::R16G16_SINT;
             this->initFunction = nullptr;
@@ -212,7 +212,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16_SNORM:
-
+            
             this->metalFormat = MTLPixelFormatRG16Snorm;
             this->actualFormatId = angle::FormatID::R16G16_SNORM;
             this->initFunction = nullptr;
@@ -221,7 +221,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRG16Uint;
             this->actualFormatId = angle::FormatID::R16G16_UINT;
             this->initFunction = nullptr;
@@ -230,7 +230,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRG16Unorm;
             this->actualFormatId = angle::FormatID::R16G16_UNORM;
             this->initFunction = nullptr;
@@ -239,7 +239,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatR16Float;
             this->actualFormatId = angle::FormatID::R16_FLOAT;
             this->initFunction = nullptr;
@@ -248,7 +248,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16_SINT:
-
+            
             this->metalFormat = MTLPixelFormatR16Sint;
             this->actualFormatId = angle::FormatID::R16_SINT;
             this->initFunction = nullptr;
@@ -257,7 +257,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16_SNORM:
-
+            
             this->metalFormat = MTLPixelFormatR16Snorm;
             this->actualFormatId = angle::FormatID::R16_SNORM;
             this->initFunction = nullptr;
@@ -266,7 +266,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16_UINT:
-
+            
             this->metalFormat = MTLPixelFormatR16Uint;
             this->actualFormatId = angle::FormatID::R16_UINT;
             this->initFunction = nullptr;
@@ -275,7 +275,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatR16Unorm;
             this->actualFormatId = angle::FormatID::R16_UNORM;
             this->initFunction = nullptr;
@@ -284,7 +284,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32B32A32_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
             this->initFunction = nullptr;
@@ -293,7 +293,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32B32A32_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Sint;
             this->actualFormatId = angle::FormatID::R32G32B32A32_SINT;
             this->initFunction = nullptr;
@@ -302,7 +302,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32B32A32_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Uint;
             this->actualFormatId = angle::FormatID::R32G32B32A32_UINT;
             this->initFunction = nullptr;
@@ -311,7 +311,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRG32Float;
             this->actualFormatId = angle::FormatID::R32G32_FLOAT;
             this->initFunction = nullptr;
@@ -320,7 +320,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRG32Sint;
             this->actualFormatId = angle::FormatID::R32G32_SINT;
             this->initFunction = nullptr;
@@ -329,7 +329,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRG32Uint;
             this->actualFormatId = angle::FormatID::R32G32_UINT;
             this->initFunction = nullptr;
@@ -338,7 +338,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatR32Float;
             this->actualFormatId = angle::FormatID::R32_FLOAT;
             this->initFunction = nullptr;
@@ -347,7 +347,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32_SINT:
-
+            
             this->metalFormat = MTLPixelFormatR32Sint;
             this->actualFormatId = angle::FormatID::R32_SINT;
             this->initFunction = nullptr;
@@ -356,7 +356,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32_UINT:
-
+            
             this->metalFormat = MTLPixelFormatR32Uint;
             this->actualFormatId = angle::FormatID::R32_UINT;
             this->initFunction = nullptr;
@@ -365,7 +365,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8A8_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Sint;
             this->actualFormatId = angle::FormatID::R8G8B8A8_SINT;
             this->initFunction = nullptr;
@@ -374,7 +374,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8A8_SNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Snorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_SNORM;
             this->initFunction = nullptr;
@@ -383,7 +383,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8A8_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Uint;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UINT;
             this->initFunction = nullptr;
@@ -392,7 +392,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8A8_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = nullptr;
@@ -401,7 +401,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8A8_UNORM_SRGB:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
             this->initFunction = nullptr;
@@ -410,7 +410,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRG8Sint;
             this->actualFormatId = angle::FormatID::R8G8_SINT;
             this->initFunction = nullptr;
@@ -419,7 +419,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8_SNORM:
-
+            
             this->metalFormat = MTLPixelFormatRG8Snorm;
             this->actualFormatId = angle::FormatID::R8G8_SNORM;
             this->initFunction = nullptr;
@@ -428,7 +428,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRG8Uint;
             this->actualFormatId = angle::FormatID::R8G8_UINT;
             this->initFunction = nullptr;
@@ -437,7 +437,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRG8Unorm;
             this->actualFormatId = angle::FormatID::R8G8_UNORM;
             this->initFunction = nullptr;
@@ -446,7 +446,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8_SINT:
-
+            
             this->metalFormat = MTLPixelFormatR8Sint;
             this->actualFormatId = angle::FormatID::R8_SINT;
             this->initFunction = nullptr;
@@ -455,7 +455,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8_SNORM:
-
+            
             this->metalFormat = MTLPixelFormatR8Snorm;
             this->actualFormatId = angle::FormatID::R8_SNORM;
             this->initFunction = nullptr;
@@ -464,7 +464,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8_UINT:
-
+            
             this->metalFormat = MTLPixelFormatR8Uint;
             this->actualFormatId = angle::FormatID::R8_UINT;
             this->initFunction = nullptr;
@@ -473,7 +473,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatR8Unorm;
             this->actualFormatId = angle::FormatID::R8_UNORM;
             this->initFunction = nullptr;
@@ -482,7 +482,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R9G9B9E5_SHAREDEXP:
-
+            
             this->metalFormat = MTLPixelFormatRGB9E5Float;
             this->actualFormatId = angle::FormatID::R9G9B9E5_SHAREDEXP;
             this->initFunction = nullptr;
@@ -491,7 +491,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::S8_UINT:
-
+            
             this->metalFormat = MTLPixelFormatStencil8;
             this->actualFormatId = angle::FormatID::S8_UINT;
             this->initFunction = nullptr;
@@ -500,7 +500,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::A16_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
             this->initFunction = nullptr;
@@ -509,7 +509,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::A32_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
             this->initFunction = nullptr;
@@ -518,7 +518,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::D24_UNORM_X8_UINT:
-
+            
             this->metalFormat = MTLPixelFormatDepth32Float;
             this->actualFormatId = angle::FormatID::D32_FLOAT;
             this->initFunction = nullptr;
@@ -527,7 +527,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::D32_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatDepth32Float;
             this->actualFormatId = angle::FormatID::D32_FLOAT;
             this->initFunction = nullptr;
@@ -536,7 +536,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::L16A16_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
             this->initFunction = nullptr;
@@ -545,7 +545,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::L16_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
             this->initFunction = Initialize4ComponentData<GLhalf, 0x0000, 0x0000, 0x0000, gl::Float16One>;
@@ -554,7 +554,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::L32A32_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
             this->initFunction = nullptr;
@@ -563,7 +563,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::L32_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
             this->initFunction = Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000, 0x00000000, gl::Float32One>;
@@ -572,7 +572,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::L8A8_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = nullptr;
@@ -581,7 +581,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::L8_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -590,7 +590,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Float;
             this->actualFormatId = angle::FormatID::R16G16B16A16_FLOAT;
             this->initFunction = Initialize4ComponentData<GLhalf, 0x0000, 0x0000, 0x0000, gl::Float16One>;
@@ -599,7 +599,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Sint;
             this->actualFormatId = angle::FormatID::R16G16B16A16_SINT;
             this->initFunction = Initialize4ComponentData<GLshort, 0x0000, 0x0000, 0x0000, 0x0001>;
@@ -608,7 +608,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16_SNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Snorm;
             this->actualFormatId = angle::FormatID::R16G16B16A16_SNORM;
             this->initFunction = Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0x7FFF>;
@@ -617,7 +617,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Uint;
             this->actualFormatId = angle::FormatID::R16G16B16A16_UINT;
             this->initFunction = Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0x0001>;
@@ -626,7 +626,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R16G16B16_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA16Unorm;
             this->actualFormatId = angle::FormatID::R16G16B16A16_UNORM;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x0000, 0x0000, 0x0000, 0xFFFF>;
@@ -635,7 +635,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32B32_FLOAT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Float;
             this->actualFormatId = angle::FormatID::R32G32B32A32_FLOAT;
             this->initFunction = Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000, 0x00000000, gl::Float32One>;
@@ -644,7 +644,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32B32_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Sint;
             this->actualFormatId = angle::FormatID::R32G32B32A32_SINT;
             this->initFunction = Initialize4ComponentData<GLint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>;
@@ -653,7 +653,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R32G32B32_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA32Uint;
             this->actualFormatId = angle::FormatID::R32G32B32A32_UINT;
             this->initFunction = Initialize4ComponentData<GLuint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>;
@@ -662,7 +662,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8_SINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Sint;
             this->actualFormatId = angle::FormatID::R8G8B8A8_SINT;
             this->initFunction = Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x01>;
@@ -671,7 +671,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8_SNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Snorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_SNORM;
             this->initFunction = Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x7F>;
@@ -680,7 +680,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8_UINT:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Uint;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UINT;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0x01>;
@@ -689,7 +689,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -698,7 +698,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R8G8B8_UNORM_SRGB:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -708,7 +708,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::BC1_RGBA_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC1_RGBA;
             this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -717,7 +717,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC1_RGBA_sRGB;
             this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -726,7 +726,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC2_RGBA_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC2_RGBA;
             this->actualFormatId = angle::FormatID::BC2_RGBA_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -735,7 +735,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC2_RGBA_UNORM_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC2_RGBA_sRGB;
             this->actualFormatId = angle::FormatID::BC2_RGBA_UNORM_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -744,7 +744,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC3_RGBA_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC3_RGBA;
             this->actualFormatId = angle::FormatID::BC3_RGBA_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -753,7 +753,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC3_RGBA_UNORM_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC3_RGBA_sRGB;
             this->actualFormatId = angle::FormatID::BC3_RGBA_UNORM_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -762,7 +762,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC4_RED_SNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC4_RSnorm;
             this->actualFormatId = angle::FormatID::BC4_RED_SNORM_BLOCK;
             this->initFunction = nullptr;
@@ -771,7 +771,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC4_RED_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC4_RUnorm;
             this->actualFormatId = angle::FormatID::BC4_RED_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -780,7 +780,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC5_RG_SNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC5_RGSnorm;
             this->actualFormatId = angle::FormatID::BC5_RG_SNORM_BLOCK;
             this->initFunction = nullptr;
@@ -789,7 +789,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BC5_RG_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC5_RGUnorm;
             this->actualFormatId = angle::FormatID::BC5_RG_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -798,7 +798,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BPTC_RGBA_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC7_RGBAUnorm;
             this->actualFormatId = angle::FormatID::BPTC_RGBA_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -807,7 +807,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BPTC_RGB_SIGNED_FLOAT_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC6H_RGBFloat;
             this->actualFormatId = angle::FormatID::BPTC_RGB_SIGNED_FLOAT_BLOCK;
             this->initFunction = nullptr;
@@ -816,7 +816,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BPTC_RGB_UNSIGNED_FLOAT_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC6H_RGBUfloat;
             this->actualFormatId = angle::FormatID::BPTC_RGB_UNSIGNED_FLOAT_BLOCK;
             this->initFunction = nullptr;
@@ -825,7 +825,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::BPTC_SRGB_ALPHA_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatBC7_RGBAUnorm_sRGB;
             this->actualFormatId = angle::FormatID::BPTC_SRGB_ALPHA_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -834,7 +834,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::D24_UNORM_S8_UINT:
-
+            
             if (metalDevice.depth24Stencil8PixelFormatSupported &&
                !display->getFeatures().forceD24S8AsUnsupported.enabled)
             {
@@ -856,7 +856,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
             if (display->getFeatures().hasTextureSwizzle.enabled)
             {
-
+                
             this->metalFormat = MTLPixelFormatBC1_RGBA;
             this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -867,7 +867,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             else
 #endif  // #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
             {
-
+                
             this->metalFormat = MTLPixelFormatBC1_RGBA;
             this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -880,7 +880,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
             if (display->getFeatures().hasTextureSwizzle.enabled)
             {
-
+                
             this->metalFormat = MTLPixelFormatBC1_RGBA_sRGB;
             this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -891,7 +891,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             else
 #endif  // #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
             {
-
+                
             this->metalFormat = MTLPixelFormatBC1_RGBA_sRGB;
             this->actualFormatId = angle::FormatID::BC1_RGBA_UNORM_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -901,7 +901,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11G11_SNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRG16Snorm;
             this->actualFormatId = angle::FormatID::R16G16_SNORM;
             this->initFunction = nullptr;
@@ -910,7 +910,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11G11_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRG16Unorm;
             this->actualFormatId = angle::FormatID::R16G16_UNORM;
             this->initFunction = nullptr;
@@ -919,7 +919,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11_SNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatR16Snorm;
             this->actualFormatId = angle::FormatID::R16_SNORM;
             this->initFunction = nullptr;
@@ -928,7 +928,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatR16Unorm;
             this->actualFormatId = angle::FormatID::R16_UNORM;
             this->initFunction = nullptr;
@@ -937,7 +937,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -946,7 +946,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
             this->initFunction = nullptr;
@@ -955,7 +955,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -964,7 +964,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
             this->initFunction = nullptr;
@@ -973,7 +973,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = nullptr;
@@ -982,7 +982,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM_SRGB;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -991,7 +991,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -1000,7 +1000,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R4G4B4A4_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = nullptr;
@@ -1009,7 +1009,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R5G5B5A1_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = nullptr;
@@ -1018,7 +1018,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R5G6B5_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -1028,7 +1028,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 
 #elif TARGET_OS_SIMULATOR
         case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x10_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_10x10_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1037,7 +1037,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x10_LDR;
             this->actualFormatId = angle::FormatID::ASTC_10x10_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1046,7 +1046,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x5_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x5_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_10x5_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1055,7 +1055,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x5_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x5_LDR;
             this->actualFormatId = angle::FormatID::ASTC_10x5_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1064,7 +1064,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x6_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x6_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_10x6_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1073,7 +1073,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x6_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x6_LDR;
             this->actualFormatId = angle::FormatID::ASTC_10x6_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1082,7 +1082,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x8_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_10x8_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1091,7 +1091,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x8_LDR;
             this->actualFormatId = angle::FormatID::ASTC_10x8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1100,7 +1100,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_12x10_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_12x10_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_12x10_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1109,7 +1109,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_12x10_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_12x10_LDR;
             this->actualFormatId = angle::FormatID::ASTC_12x10_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1118,7 +1118,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_12x12_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_12x12_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_12x12_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1127,7 +1127,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_12x12_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_12x12_LDR;
             this->actualFormatId = angle::FormatID::ASTC_12x12_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1136,7 +1136,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_4x4_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_4x4_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_4x4_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1145,7 +1145,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_4x4_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_4x4_LDR;
             this->actualFormatId = angle::FormatID::ASTC_4x4_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1154,7 +1154,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_5x4_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_5x4_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_5x4_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1163,7 +1163,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_5x4_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_5x4_LDR;
             this->actualFormatId = angle::FormatID::ASTC_5x4_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1172,7 +1172,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_5x5_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_5x5_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_5x5_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1181,7 +1181,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_5x5_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_5x5_LDR;
             this->actualFormatId = angle::FormatID::ASTC_5x5_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1190,7 +1190,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_6x5_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_6x5_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_6x5_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1199,7 +1199,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_6x5_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_6x5_LDR;
             this->actualFormatId = angle::FormatID::ASTC_6x5_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1208,7 +1208,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_6x6_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_6x6_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_6x6_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1217,7 +1217,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_6x6_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_6x6_LDR;
             this->actualFormatId = angle::FormatID::ASTC_6x6_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1226,7 +1226,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x5_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x5_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_8x5_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1235,7 +1235,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x5_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x5_LDR;
             this->actualFormatId = angle::FormatID::ASTC_8x5_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1244,7 +1244,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x6_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x6_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_8x6_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1253,7 +1253,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x6_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x6_LDR;
             this->actualFormatId = angle::FormatID::ASTC_8x6_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1262,7 +1262,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x8_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_8x8_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1271,7 +1271,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x8_LDR;
             this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1280,7 +1280,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11G11_SNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_RG11Snorm;
             this->actualFormatId = angle::FormatID::EAC_R11G11_SNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1289,7 +1289,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11G11_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_R11Unorm;
             this->actualFormatId = angle::FormatID::EAC_R11G11_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1298,7 +1298,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11_SNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_R11Snorm;
             this->actualFormatId = angle::FormatID::EAC_R11_SNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1307,7 +1307,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_R11Unorm;
             this->actualFormatId = angle::FormatID::EAC_R11_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1316,7 +1316,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8;
             this->actualFormatId = angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1325,7 +1325,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8A1_sRGB;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1334,7 +1334,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8A1;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -1343,7 +1343,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_RGBA8_sRGB;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1352,7 +1352,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_RGBA8;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1361,7 +1361,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8_sRGB;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1370,7 +1370,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1378,8 +1378,17 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-        case angle::FormatID::R4G4B4A4_UNORM:
+        case angle::FormatID::D24_UNORM_S8_UINT:
+            
+            this->metalFormat = MTLPixelFormatDepth32Float_Stencil8;
+            this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
+            this->initFunction = nullptr;
 
+            this->swizzled = false;
+            break;
+
+        case angle::FormatID::R4G4B4A4_UNORM:
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = nullptr;
@@ -1388,7 +1397,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R5G5B5A1_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = nullptr;
@@ -1397,7 +1406,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R5G6B5_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatRGBA8Unorm;
             this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -1407,7 +1416,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 
 #elif (TARGET_OS_IOS || TARGET_OS_TV) // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x10_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_10x10_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1416,7 +1425,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x10_LDR;
             this->actualFormatId = angle::FormatID::ASTC_10x10_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1425,7 +1434,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x5_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x5_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_10x5_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1434,7 +1443,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x5_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x5_LDR;
             this->actualFormatId = angle::FormatID::ASTC_10x5_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1443,7 +1452,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x6_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x6_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_10x6_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1452,7 +1461,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x6_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x6_LDR;
             this->actualFormatId = angle::FormatID::ASTC_10x6_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1461,7 +1470,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x8_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_10x8_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1470,7 +1479,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_10x8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_10x8_LDR;
             this->actualFormatId = angle::FormatID::ASTC_10x8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1479,7 +1488,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_12x10_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_12x10_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_12x10_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1488,7 +1497,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_12x10_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_12x10_LDR;
             this->actualFormatId = angle::FormatID::ASTC_12x10_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1497,7 +1506,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_12x12_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_12x12_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_12x12_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1506,7 +1515,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_12x12_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_12x12_LDR;
             this->actualFormatId = angle::FormatID::ASTC_12x12_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1515,7 +1524,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_4x4_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_4x4_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_4x4_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1524,7 +1533,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_4x4_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_4x4_LDR;
             this->actualFormatId = angle::FormatID::ASTC_4x4_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1533,7 +1542,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_5x4_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_5x4_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_5x4_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1542,7 +1551,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_5x4_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_5x4_LDR;
             this->actualFormatId = angle::FormatID::ASTC_5x4_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1551,7 +1560,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_5x5_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_5x5_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_5x5_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1560,7 +1569,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_5x5_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_5x5_LDR;
             this->actualFormatId = angle::FormatID::ASTC_5x5_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1569,7 +1578,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_6x5_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_6x5_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_6x5_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1578,7 +1587,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_6x5_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_6x5_LDR;
             this->actualFormatId = angle::FormatID::ASTC_6x5_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1587,7 +1596,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_6x6_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_6x6_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_6x6_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1596,7 +1605,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_6x6_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_6x6_LDR;
             this->actualFormatId = angle::FormatID::ASTC_6x6_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1605,7 +1614,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x5_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x5_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_8x5_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1614,7 +1623,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x5_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x5_LDR;
             this->actualFormatId = angle::FormatID::ASTC_8x5_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1623,7 +1632,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x6_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x6_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_8x6_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1632,7 +1641,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x6_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x6_LDR;
             this->actualFormatId = angle::FormatID::ASTC_8x6_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1641,7 +1650,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x8_sRGB;
             this->actualFormatId = angle::FormatID::ASTC_8x8_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1650,7 +1659,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ASTC_8x8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatASTC_8x8_LDR;
             this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1659,7 +1668,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11G11_SNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_RG11Snorm;
             this->actualFormatId = angle::FormatID::EAC_R11G11_SNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1668,7 +1677,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11G11_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_R11Unorm;
             this->actualFormatId = angle::FormatID::EAC_R11G11_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1677,7 +1686,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11_SNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_R11Snorm;
             this->actualFormatId = angle::FormatID::EAC_R11_SNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1686,7 +1695,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::EAC_R11_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_R11Unorm;
             this->actualFormatId = angle::FormatID::EAC_R11_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1695,7 +1704,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8;
             this->actualFormatId = angle::FormatID::ETC1_R8G8B8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1704,7 +1713,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8A1_sRGB;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8A1_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1713,7 +1722,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8A1;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8A1_UNORM_BLOCK;
             this->initFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
@@ -1722,7 +1731,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_RGBA8_sRGB;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8A8_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1731,7 +1740,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatEAC_RGBA8;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1740,7 +1749,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8_sRGB;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK;
             this->initFunction = nullptr;
@@ -1749,7 +1758,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK:
-
+            
             this->metalFormat = MTLPixelFormatETC2_RGB8;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
             this->initFunction = nullptr;
@@ -1758,7 +1767,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R4G4B4A4_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatABGR4Unorm;
             this->actualFormatId = angle::FormatID::R4G4B4A4_UNORM;
             this->initFunction = nullptr;
@@ -1767,7 +1776,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R5G5B5A1_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatA1BGR5Unorm;
             this->actualFormatId = angle::FormatID::R5G5B5A1_UNORM;
             this->initFunction = nullptr;
@@ -1776,7 +1785,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::R5G6B5_UNORM:
-
+            
             this->metalFormat = MTLPixelFormatB5G6R5Unorm;
             this->actualFormatId = angle::FormatID::R5G6B5_UNORM;
             this->initFunction = nullptr;
@@ -1785,7 +1794,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             break;
 
         case angle::FormatID::D24_UNORM_S8_UINT:
-
+            
             this->metalFormat = MTLPixelFormatDepth32Float_Stencil8;
             this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
             this->initFunction = nullptr;
