@@ -1,3 +1,12 @@
+2021-03-03  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Wk2 ] inspector/model/auditTestCase.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=222677
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass Timeout until test is fixed.
+
 2021-03-03  Truitt Savell  <tsavell@apple.com>
 
         imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html fails for mac wk1 debug

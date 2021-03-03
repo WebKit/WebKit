@@ -1363,3 +1363,5 @@ imported/w3c/web-platform-tests/mediacapture-record/idlharness.window.html [ Ski
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html [ Pass Failure ]
 
 webkit.org/b/222500 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Timeout ]
+
+webkit.org/b/222677 inspector/model/auditTestCase.html [ Pass Timeout ]
