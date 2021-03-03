@@ -1129,7 +1129,6 @@ void WebProcess::unblockPreferenceService(SandboxExtension::HandleArray&& handle
 }
 #endif
 
-#if PLATFORM(IOS)
 void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
 {
     if (m_assetServiceV2Extension)
@@ -1145,7 +1144,6 @@ void WebProcess::revokeAccessToAssetServices()
     m_assetServiceV2Extension->revoke();
     m_assetServiceV2Extension = nullptr;
 }
-#endif
 
 void WebProcess::setScreenProperties(const ScreenProperties& properties)
 {

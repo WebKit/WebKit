@@ -42,6 +42,7 @@
 #import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPasteboardProxy.h"
+#import "WebProcessMessages.h"
 #import "WebProcessProxy.h"
 #import "WebsiteDataStore.h"
 #import "WKErrorInternal.h"
@@ -616,6 +617,18 @@ void WebPageProxy::setLastNavigationWasAppBound(ResourceRequest& request)
 void WebPageProxy::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPage::LastNavigationWasAppBound(), WTFMove(completionHandler));
+}
+
+void WebPageProxy::grantAccessToAssetServices()
+{
+    SandboxExtension::Handle mobileAssetHandleV2;
+    SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, WTF::nullopt, mobileAssetHandleV2);
+    process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandleV2), 0);
+}
+
+void WebPageProxy::revokeAccessToAssetServices()
+{
+    process().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
 }
 
 } // namespace WebKit

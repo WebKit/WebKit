@@ -166,10 +166,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SendResourceLoadStatisticsDataImmediately() -> () Async
 #endif
 
-#if PLATFORM(IOS)
     GrantAccessToAssetServices(WebKit::SandboxExtension::Handle mobileAssetV2Handle)
     RevokeAccessToAssetServices()
-#endif
 
 #if PLATFORM(COCOA)
     UnblockServicesRequiredByAccessibility(WebKit::SandboxExtension::HandleArray handleArray)

@@ -1,3 +1,52 @@
+2021-03-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r270691): It's impossible to use MobileAsset fonts on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=222582
+        <rdar://problem/74877450>
+
+        Reviewed by Per Arne Vollan.
+
+        Simply apply the iOS codepath to macOS.
+
+        There is also an additional change here to the Mac sandbox.
+        On Big Sur and earlier, before this patch, com.apple.mobileassetd was allowed,
+        and com.apple.mobileassetd.v2 was disallowed. After this patch, they both are
+        allowed, but only with the com.apple.webkit.extension.mach extension.
+        On other OSes, before this patch, nothing was allowed, whereas after this patch,
+        only com.apple.mobileassetd.v2 is allowed with the com.apple.webkit.extension.mach
+        extension.
+
+        Test: WebKit.MobileAssetSandboxCheck
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _grantAccessToAssetServices]):
+        (-[WKWebView _revokeAccessToAssetServices]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _grantAccessToAssetServices]): Deleted.
+        (-[WKWebView _revokeAccessToAssetServices]): Deleted.
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::grantAccessToAssetServices):
+        (WebKit::WebPageProxy::revokeAccessToAssetServices):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::grantAccessToAssetServices): Deleted.
+        (WebKit::WebPageProxy::revokeAccessToAssetServices): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::revokeAccessToAssetServices):
+        * WebProcess/com.apple.WebProcess.sb.in:
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::grantAccessToAssetServices):
+        (WebKit::WebProcess::revokeAccessToAssetServices):
+        * WebProcess/playstation/WebProcessPlayStation.cpp:
+        (WebKit::WebProcess::grantAccessToAssetServices):
+        (WebKit::WebProcess::revokeAccessToAssetServices):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::grantAccessToAssetServices):
+        (WebKit::WebProcess::revokeAccessToAssetServices):
+
 2021-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Image extraction should install image overlay content

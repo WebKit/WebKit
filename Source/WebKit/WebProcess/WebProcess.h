@@ -339,10 +339,8 @@ public:
     bool removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
 #endif
 
-#if PLATFORM(IOS)
     void grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle);
     void revokeAccessToAssetServices();
-#endif
 
 #if PLATFORM(MAC)
     void updatePageScreenProperties();
@@ -702,9 +700,7 @@ private:
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
 #endif
 
-#if PLATFORM(IOS)
     RefPtr<SandboxExtension> m_assetServiceV2Extension;
-#endif
 
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;

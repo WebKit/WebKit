@@ -1,3 +1,15 @@
+2021-03-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r270691): It's impossible to use MobileAsset fonts on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=222582
+        <rdar://problem/74877450>
+
+        Reviewed by Per Arne Vollan.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/MobileAssetSandboxCheck.mm: Copied from Source/WebKit/WebProcess/win/WebProcessWin.cpp.
+        (TEST):
+
 2021-03-02  Sam Weinig  <weinig@apple.com>
 
         Reduce the size of extended colors by storing the color space in free bits of the owning Color

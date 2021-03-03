@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebProcess.h"
+#import "config.h"
 
-namespace WebKit {
+#if WK_HAVE_C_SPI
 
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&)
+#import "PlatformUtilities.h"
+#import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
+
+TEST(WebKit, MobileAssetSandboxCheck)
 {
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    auto sandboxAccess = [&] {
+        return [webView stringByEvaluatingJavaScript:@"window.internals.hasSandboxMachLookupAccessToXPCServiceName('com.apple.WebKit.WebContent', 'com.apple.mobileassetd.v2')"].boolValue;
+    };
+
+    ASSERT_FALSE(sandboxAccess());
+
+    [webView _grantAccessToAssetServices];
+
+    ASSERT_TRUE(sandboxAccess());
 }
 
-void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
-{
-}
-
-void WebProcess::platformTerminate()
-{
-}
-
-void WebProcess::platformSetCacheModel(CacheModel)
-{
-}
-
-void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&&)
-{
-}
-
-void WebProcess::revokeAccessToAssetServices()
-{
-}
-
-} // namespace WebKit
+#endif // WK_HAVE_C_SPI

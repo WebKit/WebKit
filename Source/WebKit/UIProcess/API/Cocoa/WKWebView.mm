@@ -2167,6 +2167,18 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
 }
 
+- (void)_grantAccessToAssetServices
+{
+    if (_page)
+        _page->grantAccessToAssetServices();
+}
+
+- (void)_revokeAccessToAssetServices
+{
+    if (_page)
+        _page->revokeAccessToAssetServices();
+}
+
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())

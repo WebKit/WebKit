@@ -118,6 +118,7 @@
 		1CB2F27E24F88A52000A5BC1 /* orthogonal-flow-available-size.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CB2F27D24F883BE000A5BC1 /* orthogonal-flow-available-size.html */; };
 		1CC80CEA2474F249004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */; };
 		1CE6FAC32320267C00E48F6E /* rich-color-filtered.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CE6FAC12320264F00E48F6E /* rich-color-filtered.html */; };
+		1CF087D825ED7F73004148CB /* MobileAssetSandboxCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF087D725ED7F73004148CB /* MobileAssetSandboxCheck.mm */; };
 		1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */; };
 		1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */; };
 		1CF59AE521E6977D006E37EC /* dark-mode.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CF59AE421E696FB006E37EC /* dark-mode.html */; };
@@ -1818,6 +1819,7 @@
 		1CB9BC371A67482300FE5678 /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "idempotent-mode-autosizing-only-honors-percentages.html"; sourceTree = "<group>"; };
 		1CE6FAC12320264F00E48F6E /* rich-color-filtered.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "rich-color-filtered.html"; sourceTree = "<group>"; };
+		1CF087D725ED7F73004148CB /* MobileAssetSandboxCheck.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MobileAssetSandboxCheck.mm; sourceTree = "<group>"; };
 		1CF0D3781BBF2F3D00B4EF54 /* WKRetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRetainPtr.cpp; sourceTree = "<group>"; };
 		1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle.mm; sourceTree = "<group>"; };
 		1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle_Bundle.mm; sourceTree = "<group>"; };
@@ -3214,6 +3216,7 @@
 				E394AE6E23F2303E005B4936 /* GrantAccessToMobileAssets.mm */,
 				E34A6D182412DE390012AB6E /* GrantAccessToPreferencesService.mm */,
 				E35B908123F60DD0000011FF /* LocalizedDeviceModel.mm */,
+				1CF087D725ED7F73004148CB /* MobileAssetSandboxCheck.mm */,
 				C104BC1E2547237100C078C9 /* OverrideAppleLanguagesPreference.mm */,
 				E325C90623E3870200BC7D3B /* PictureInPictureSupport.mm */,
 				C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */,
@@ -5429,6 +5432,7 @@
 				5165FE04201EE620009F7EC3 /* MessagePortProviders.mm in Sources */,
 				51EB126224CA6B66000CB030 /* MicrosoftXboxOne.mm in Sources */,
 				A5B149DE1F5A19EA00C6DAFF /* MIMETypeRegistry.cpp in Sources */,
+				1CF087D825ED7F73004148CB /* MobileAssetSandboxCheck.mm in Sources */,
 				51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */,
 				7C83E0B61D0A64B300FEBCF3 /* ModalAlertsSPI.cpp in Sources */,
 				7CCE7F011A411AE600447C4C /* MouseMoveAfterCrash.cpp in Sources */,

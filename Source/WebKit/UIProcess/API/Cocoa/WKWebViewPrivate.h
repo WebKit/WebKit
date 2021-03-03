@@ -432,6 +432,9 @@ for this property.
 */
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+- (void)_grantAccessToAssetServices WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(14.0));
+- (void)_revokeAccessToAssetServices WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(14.0));
+
 @end
 
 #if TARGET_OS_IPHONE
@@ -535,9 +538,6 @@ for this property.
 - (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content WK_API_AVAILABLE(ios(11.0));
 
 - (UIView *)_fullScreenPlaceholderView WK_API_AVAILABLE(ios(12.0));
-
-- (void)_grantAccessToAssetServices WK_API_AVAILABLE(ios(14.0));
-- (void)_revokeAccessToAssetServices WK_API_AVAILABLE(ios(14.0));
 
 - (void)_willOpenAppLink WK_API_AVAILABLE(ios(14.0));
 
