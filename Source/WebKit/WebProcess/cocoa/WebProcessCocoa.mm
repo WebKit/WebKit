@@ -81,7 +81,6 @@
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
-#import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -94,6 +93,7 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
 #import <wtf/FileSystem.h>
+#import <wtf/Language.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -144,6 +144,7 @@
 #endif
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 // FIXME: This is only for binary compatibility with versions of UIKit in macOS 11 that are missing the change in <rdar://problem/68524148>.
@@ -355,6 +356,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(MAC)
     // App nap must be manually enabled when not running the NSApplication run loop.
     __CFRunLoopSetOptionsReason(__CFRunLoopOptionsEnableAppNap, CFSTR("Finished checkin as application - enable app nap"));
+#endif
+
+#if !ENABLE(CFPREFS_DIRECT_MODE)
+    WTF::listenForLanguageChangeNotifications();
 #endif
 
 #if TARGET_OS_IPHONE
@@ -1093,13 +1098,16 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
 static void setPreferenceValue(const String& domain, const String& key, id value)
 {
     if (domain.isEmpty()) {
-        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+        CFPreferencesSetAppValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesCurrentApplication);
 #if ASSERT_ENABLED
         id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
         ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value]);
 #endif
     } else
-        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+        CFPreferencesSetAppValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get());
+
+    if (key == "AppleLanguages")
+        WTF::languageDidChange();
 }
 
 void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)

@@ -1,5 +1,34 @@
 2021-03-03  Chris Dumez  <cdumez@apple.com>
 
+        [macOS][WK2] Changing the system language does not update navigator.language
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+
+        Reviewed by Per Arne Vollan.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::setAppleLanguagesPreference):
+        - When ENABLE(CFPREFS_DIRECT_MODE), we don't need to set the AppleLanguages
+        in a volatile domain. This does not change behavior but I made this change
+        so that I don't need to set AppleLanguages in the volatile domain in
+        WebProcessCocoa when the preference changes.
+        - Also fix a memory leak for newArguments.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        If CFPREFS_DIRECT_MODE is not enabled, we need to listen for AppleLanguagePreferencesChangedNotification
+        inside the WebProcess. This used to happen implicitly inside WTF::platformUserPreferredLanguages() but
+        it is now explicit since we don't want/need it when using CFPREFS_DIRECT_MODE.
+
+        (WebKit::setPreferenceValue):
+        - Call CFPreferencesSetAppValue() instead of CFPreferencesSetValue(). Without this change
+        trying to set AppleLanguages here would have no effect and CFLocaleCopyPreferredLanguages()
+        would keep returning outdated languages.
+        - Call WTF::languageDidChange() when the AppleLanguages preference gets updated so that
+          language change listeners get notified of the language change (e.g. we fire a languagechange
+          event at the Window).
+
+2021-03-03  Chris Dumez  <cdumez@apple.com>
+
         Use adoptNS() right away after calling [obj copy] / [obj mutableCopy]
         https://bugs.webkit.org/show_bug.cgi?id=222634
 

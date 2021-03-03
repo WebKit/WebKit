@@ -29,6 +29,8 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/StringBuilder.h>
 
 TEST(WebKit, OverrideAppleLanguagesPreference)
 {
@@ -51,3 +53,74 @@ TEST(WebKit, OverrideAppleLanguagesPreference)
 }
 
 #endif // WK_HAVE_C_SPI
+
+// On older macOSes, CFPREFS_DIRECT_MODE is disabled and the WebProcess does not see the updated AppleLanguages
+// after the AppleLanguagePreferencesChangedNotification notification.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+class AppleLanguagesTest : public testing::Test {
+public:
+    AppleLanguagesTest()
+    {
+        // Save current system language to restore it later.
+        auto task = adoptNS([[NSTask alloc] init]);
+        [task setLaunchPath:@"/usr/bin/defaults"];
+        [task setArguments:@[@"read", @"NSGlobalDomain", @"AppleLanguages"]];
+        auto pipe = adoptNS([[NSPipe alloc] init]);
+        [task setStandardOutput:pipe.get()];
+        auto fileHandle = [pipe fileHandleForReading];
+        [task launch];
+        NSData *data = [fileHandle readDataToEndOfFile];
+        m_savedAppleLanguages = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        m_savedAppleLanguages.replace("\n", "");
+        m_savedAppleLanguages.replace(" ", "");
+    }
+
+    ~AppleLanguagesTest()
+    {
+        // Restore previous system language.
+        system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '%@'", (NSString *)m_savedAppleLanguages].UTF8String);
+    }
+
+private:
+    String m_savedAppleLanguages;
+};
+
+TEST_F(AppleLanguagesTest, UpdateAppleLanguages)
+{
+    // Tests uses "en-US" language initially.
+    system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '(\"en-US\")'"].UTF8String);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    // We only listen for preference changes when the application is active.
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSApplicationDidBecomeActiveNotification object:NSApp userInfo:nil];
+
+    auto preferredLanguage = [&] {
+        return [webView stringByEvaluatingJavaScript:@"navigator.language"];
+    };
+    EXPECT_WK_STREQ(@"en-us", preferredLanguage());
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"onlanguagechange = () => { webkit.messageHandlers.testHandler.postMessage(navigator.language); }; true;" completionHandler:^(id value, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    __block bool didChangeLanguage = false;
+    [webView performAfterReceivingMessage:@"en-gb" action:^{ didChangeLanguage = true; }];
+    [webView performAfterReceivingMessage:@"en-us" action:^{
+        EXPECT_TRUE(false); // navigator.language was wrong when the languagechange event fired.
+        didChangeLanguage = true;
+    }];
+
+    // Switch system language from "en-US" to "en-GB". Make sure that we fire a languagechange event at the Window and that navigator.language
+    // now reports "en-gb".
+    system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '(\"en-GB\")'"].UTF8String);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDistributedCenter(), CFSTR("AppleLanguagePreferencesChangedNotification"), nullptr, nullptr, true);
+
+    TestWebKitAPI::Util::run(&didChangeLanguage);
+}
+#endif
