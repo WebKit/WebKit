@@ -395,7 +395,7 @@ void ChromeClientHaiku::mouseDidMoveOverElement(const WebCore::HitTestResult& re
 	m_webView->UnlockLooper();
 }
 
-void ChromeClientHaiku::print(Frame&)
+void ChromeClientHaiku::print(Frame&, const WebCore::StringWithDirection&)
 {
     notImplemented();
 }

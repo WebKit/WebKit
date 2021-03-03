@@ -116,11 +116,11 @@ void RenderThemeHaiku::adjustSliderThumbSize(RenderStyle& style, const Element*)
 {
     ControlPart part = style.appearance();
     if (part == SliderThumbVerticalPart) {
-        style.setWidth(Length(sliderThumbHeight, Fixed));
-        style.setHeight(Length(sliderThumbWidth, Fixed));
+        style.setWidth(Length(sliderThumbHeight, LengthType::Fixed));
+        style.setHeight(Length(sliderThumbWidth, LengthType::Fixed));
     } else if (part == SliderThumbHorizontalPart) {
-        style.setWidth(Length(sliderThumbWidth, Fixed));
-        style.setHeight(Length(sliderThumbHeight, Fixed));
+        style.setWidth(Length(sliderThumbWidth, LengthType::Fixed));
+        style.setHeight(Length(sliderThumbHeight, LengthType::Fixed));
     }
 }
 
@@ -197,7 +197,7 @@ String RenderThemeHaiku::mediaControlsScript()
 #endif
 
 #if !USE(NEW_THEME)
-bool RenderThemeHaiku::paintCheckbox(const RenderObject& object, const PaintInfo& info, const IntRect& intRect)
+bool RenderThemeHaiku::paintCheckbox(const RenderObject& object, const PaintInfo& info, const FloatRect& floatRect)
 {
     if (info.context().paintingDisabled())
         return true;
@@ -206,13 +206,13 @@ bool RenderThemeHaiku::paintCheckbox(const RenderObject& object, const PaintInfo
         return true;
 
     rgb_color base = ui_color(B_PANEL_BACKGROUND_COLOR);
-    BRect rect = intRect;
+    BRect rect = floatRect;
     BView* view = info.context().platformContext();
     unsigned flags = flagsForObject(object);
 
-	view->PushState();
+    view->PushState();
     be_control_look->DrawCheckBox(view, rect, rect, base, flags);
-	view->PopState();
+    view->PopState();
     return false;
 }
 
@@ -226,14 +226,14 @@ void RenderThemeHaiku::setCheckboxSize(RenderStyle& style) const
 
     // FIXME: A hard-coded size of 'size' is used. This is wrong but necessary for now.
     if (style.width().isIntrinsicOrAuto())
-        style.setWidth(Length(size, Fixed));
+        style.setWidth(Length(size, LengthType::Fixed));
 
     if (style.height().isAuto())
-        style.setHeight(Length(size, Fixed));
+        style.setHeight(Length(size, LengthType::Fixed));
 }
 
 bool RenderThemeHaiku::paintRadio(const RenderObject& object, const PaintInfo& info,
-	const IntRect& intRect)
+	const FloatRect& floatRect)
 {
     if (info.context().paintingDisabled())
         return true;
@@ -242,7 +242,7 @@ bool RenderThemeHaiku::paintRadio(const RenderObject& object, const PaintInfo& i
         return true;
 
     rgb_color base = ui_color(B_PANEL_BACKGROUND_COLOR);
-    BRect rect = intRect;
+    BRect rect = floatRect;
     BView* view = info.context().platformContext();
     unsigned flags = flagsForObject(object);
 
@@ -332,20 +332,20 @@ void RenderThemeHaiku::adjustMenuListButtonStyle(RenderStyle& style, const Eleme
 
     int labelSpacing = be_control_look ? static_cast<int>(be_control_look->DefaultLabelSpacing()) : 3;
     // Position the text correctly within the select box and make the box wide enough to fit the dropdown button
-    style.setPaddingTop(Length(3, Fixed));
-    style.setPaddingLeft(Length(3 + labelSpacing, Fixed));
-    style.setPaddingRight(Length(22, Fixed));
-    style.setPaddingBottom(Length(3, Fixed));
+    style.setPaddingTop(Length(3, LengthType::Fixed));
+    style.setPaddingLeft(Length(3 + labelSpacing, LengthType::Fixed));
+    style.setPaddingRight(Length(22, LengthType::Fixed));
+    style.setPaddingBottom(Length(3, LengthType::Fixed));
 
     // Height is locked to auto
-    style.setHeight(Length(Auto));
+    style.setHeight(Length(LengthType::Auto));
 
     // Calculate our min-height
     const int menuListButtonMinHeight = 20;
     int minHeight = style.computedFontSize();
     minHeight = std::max(minHeight, menuListButtonMinHeight);
 
-    style.setMinHeight(Length(minHeight, Fixed));
+    style.setMinHeight(Length(minHeight, LengthType::Fixed));
 }
 
 void RenderThemeHaiku::paintMenuListButtonDecorations(const RenderBox& object, const PaintInfo& info, const FloatRect& floatRect)

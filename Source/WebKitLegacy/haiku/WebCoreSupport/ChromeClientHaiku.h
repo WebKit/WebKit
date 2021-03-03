@@ -133,7 +133,7 @@ namespace WebCore {
         OptionSet<PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const override { return WebCore::PointerCharacteristics::Fine; }
         void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned int, const WTF::String&, WebCore::TextDirection) override;
 
-        void print(Frame&) override;
+        void print(Frame&, const WebCore::StringWithDirection&) override;
 
         void exceededDatabaseQuota(Frame&, const String& databaseName, DatabaseDetails) override;
         void reachedMaxAppCacheSize(int64_t spaceNeeded) override;

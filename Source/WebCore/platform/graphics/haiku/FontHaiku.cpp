@@ -56,7 +56,7 @@ bool FontCascade::canReturnFallbackFontsForComplexText()
 }
 
 void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
-    const GlyphBuffer& glyphBuffer, unsigned from, unsigned numGlyphs,
+    const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs,
     const FloatPoint& point, WebCore::FontSmoothingMode smoothing)
 {
     BView* view = graphicsContext.platformContext();
@@ -82,9 +82,6 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         bfont.SetFlags(B_FORCE_ANTIALIASING);
     view->SetFont(&bfont);
 
-    const GlyphBufferGlyph* glyphs = glyphBuffer.glyphs(from);
-
-
     BPoint offsets[numGlyphs];
     char buffer[4];
     BString utf8;
@@ -92,7 +89,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     for (int i = 0; i < numGlyphs; i++) {
         offsets[i].x = offset;
         offsets[i].y = point.y();
-        offset += glyphBuffer.advanceAt(from + i).width();
+        offset += advances[i].width();
 
         char* tmp = buffer;
         BUnicodeChar::ToUTF8(glyphs[i], &tmp);
