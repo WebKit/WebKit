@@ -1,0 +1,20 @@
+
+RUN(audio.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Divide the first media segment in two.
+RUN(partial1 = loader.mediaSegment(0).slice(0, 280))
+RUN(partial2 = loader.mediaSegment(0).slice(280))
+Append a partial media segment.
+RUN(sourceBuffer.appendBuffer(partial1))
+EVENT(update)
+Complete the partial media segment.
+RUN(sourceBuffer.appendBuffer(partial2))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) > '1') OK
+END OF TEST
+

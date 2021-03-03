@@ -1,5 +1,56 @@
 2021-03-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273513. rdar://problem/74953307
+
+    [Cocoa] Appending a partial segment of a WebM audio file results in no additional samples
+    https://bugs.webkit.org/show_bug.cgi?id=222407
+    <rdar://74610383>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-webm-vorbis-partial.html
+    
+    When appending a partial WebM segment, it can occur that the parser is mid-way through
+    parsing a Block or SimpleBlock, and is waiting for enough data to be appended to construct a
+    full sample. However, previous appends are not accounted for when calculated the amount of
+    data to be requested from the reader, which both results in too much data read and a
+    miscalculation of the `bytesRemaining` out-param. This causes all subsequent appends to
+    generate no samples, leading to an apparent stall in playback.
+    
+    Add a new ivar to track the number of partial bytes read, and use that value to calculate
+    the number of bytes yet to be parsed.
+    
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    (WebCore::SourceBufferParserWebM::VideoTrackData::createSampleBuffer):
+    * platform/graphics/cocoa/SourceBufferParserWebM.h:
+    
+    LayoutTests:
+    
+    * platform/mac-bigsur/media/media-source/content/test-48kHz-vorbis-manifest.json: Added.
+    * platform/mac-bigsur/media/media-source/content/test-48kHz-vorbis.webm: Added.
+    * platform/mac-bigsur/media/media-source/media-source-webm-vorbis-partial-expected.txt: Added.
+    * platform/mac-bigsur/media/media-source/media-source-webm-vorbis-partial.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273513 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-25  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Appending a partial segment of a WebM audio file results in no additional samples
+            https://bugs.webkit.org/show_bug.cgi?id=222407
+            <rdar://74610383>
+
+            Reviewed by Eric Carlson.
+
+            * platform/mac-bigsur/media/media-source/content/test-48kHz-vorbis-manifest.json: Added.
+            * platform/mac-bigsur/media/media-source/content/test-48kHz-vorbis.webm: Added.
+            * platform/mac-bigsur/media/media-source/media-source-webm-vorbis-partial-expected.txt: Added.
+            * platform/mac-bigsur/media/media-source/media-source-webm-vorbis-partial.html: Added.
+
+2021-03-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273512. rdar://problem/74953022
 
     REGRESSION(r269957): Empty font names passed to canvas2d cause all text routines to crash
