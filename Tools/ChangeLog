@@ -1,3 +1,23 @@
+2021-03-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Make testing compatible with Python 3.8
+        https://bugs.webkit.org/show_bug.cgi?id=222678
+        <rdar://problem/74997936>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/flask_support/flask_test_context.py:
+        (FlaskTestContext):
+        (FlaskTestContext.start_webserver): Make function pickle able.
+        (FlaskTestContext.__init__): Pass class to owning webserver setup.
+        (FlaskTestContext.__enter__):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/flask_support/flask_testcase.py:
+        (FlaskTestCase.run_with_real_webserver.decorator.real_method):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/cassandra_context.py:
+        (filter_for_argument): Style fix.
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+
 2021-03-03  Kate Cheney  <katherine_cheney@apple.com>
 
         Report the correct document uri in the case of a ContentSecurityPolicyClient

@@ -89,7 +89,7 @@ class FlaskTestCase(unittest.TestCase):
     def run_with_real_webserver(cls):
         def decorator(method):
             def real_method(val, method=method, **kwargs):
-                with FlaskTestContext(lambda app: val.setup_webserver(app, **kwargs)):
+                with FlaskTestContext(type(val), **kwargs):
                     return method(val, client=requests, **kwargs)
             real_method.__name__ = method.__name__
             return real_method

@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='resultsdbpy',
-    version='1.1.2',
+    version='1.1.3',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
