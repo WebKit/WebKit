@@ -1,3 +1,59 @@
+2021-03-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273751. rdar://problem/74953144
+
+    [Cocoa] REGRESSION(r272752): fix some internal builds that use WTFString::WTFString(NSString *)
+    https://bugs.webkit.org/show_bug.cgi?id=222610
+    <rdar://74938249>
+    
+    Unreviewed build fix.
+    
+    Patch by BJ Burg <bburg@apple.com> on 2021-03-02
+    
+    * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+    (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_method_implementation):
+    Some builders seem to find the new version of the header (without the exported NSString constructor)
+    whereas others don't find the new version (expecting the symbol to be exported), causing a linker error later on.
+    
+    As a workaround, force usage of the CFStringRef constructor, which is always exported.
+    
+    * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+    * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+    * inspector/scripts/tests/expected/enum-values.json-result:
+    * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+    * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+    * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+    * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+    Rebaseline generator test results.
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273751 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-02  BJ Burg  <bburg@apple.com>
+
+            [Cocoa] REGRESSION(r272752): fix some internal builds that use WTFString::WTFString(NSString *)
+            https://bugs.webkit.org/show_bug.cgi?id=222610
+            <rdar://74938249>
+
+            Unreviewed build fix.
+
+            * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+            (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_method_implementation):
+            Some builders seem to find the new version of the header (without the exported NSString constructor)
+            whereas others don't find the new version (expecting the symbol to be exported), causing a linker error later on.
+
+            As a workaround, force usage of the CFStringRef constructor, which is always exported.
+
+            * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+            * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+            * inspector/scripts/tests/expected/enum-values.json-result:
+            * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+            * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+            * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+            * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+            Rebaseline generator test results.
+
 2021-02-21  Lauro Moura  <lmoura@igalia.com>
 
         Fix warning after r273225

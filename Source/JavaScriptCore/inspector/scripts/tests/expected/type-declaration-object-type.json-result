@@ -1704,7 +1704,7 @@ using namespace Inspector;
 + (void)_parseMouseButton:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolDatabaseMouseButton> result = Inspector::fromProtocolString<TestProtocolDatabaseMouseButton>(payload);
+    Optional<TestProtocolDatabaseMouseButton> result = Inspector::fromProtocolString<TestProtocolDatabaseMouseButton>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"MouseButton");
     *outValue = @(result.value());
 }
