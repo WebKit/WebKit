@@ -364,8 +364,8 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
         if (run.isHardLineBreak()) {
             auto lineBreakBox = LineBox::InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
             setVerticalGeometryForInlineBox(*lineBreakBox);
+            simplifiedAlignVerticallyIfApplicable(*lineBreakBox, formattingContext().geometryForBox(layoutBox));
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
-            simplifiedVerticalAlignment.setEnabled(false);
             continue;
         }
         if (run.isWordBreakOpportunity()) {
@@ -636,12 +636,18 @@ bool LineBoxBuilder::SimplifiedVerticalAlignment::canUseSimplifiedAlignment(cons
             && !inlineLevelBoxGeometry.marginAfter()
             && inlineLevelBoxGeometry.marginBoxHeight() <= rootInlineBox.baseline();
     }
+    if (inlineLevelBox.isLineBreakBox()) {
+        // Baseline aligned, non-stretchy line breaks e.g. <div><span><br></span></div> but not <div><span style="font-size: 100px;"><br></span></div>.
+        auto& layoutBox = inlineLevelBox.layoutBox();
+        return layoutBox.style().verticalAlign() == VerticalAlign::Baseline
+            && inlineLevelBox.baseline() <= rootInlineBox.baseline();
+    }
     return false;
 }
 
 void LineBoxBuilder::SimplifiedVerticalAlignment::align(LineBox::InlineLevelBox& inlineLevelBox)
 {
-    if (inlineLevelBox.isAtomicInlineLevelBox()) {
+    if (inlineLevelBox.isAtomicInlineLevelBox() || inlineLevelBox.isLineBreakBox()) {
         // Only baseline alignment for now.
         inlineLevelBox.setLogicalTop(m_rootInlineBox.baseline() - inlineLevelBox.baseline());
         adjust(inlineLevelBox);
