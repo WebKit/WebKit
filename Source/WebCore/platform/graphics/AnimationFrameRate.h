@@ -52,7 +52,7 @@ constexpr const FramesPerSecond HalfSpeedThrottlingFramesPerSecond = 30;
 
 WEBCORE_EXPORT FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond);
 WEBCORE_EXPORT Seconds preferredFrameInterval(const OptionSet<ThrottlingReason>&, Optional<FramesPerSecond> nominalFramesPerSecond);
-WEBCORE_EXPORT FramesPerSecond preferredFramesPerSecond(Seconds);
+WEBCORE_EXPORT FramesPerSecond preferredFramesPerSecondFromInterval(Seconds);
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const OptionSet<ThrottlingReason>&);
 

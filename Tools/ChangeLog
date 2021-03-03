@@ -1,3 +1,13 @@
+2021-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename ForcePageRenderingUpdatesAt60FPSEnabled preference to PreferPageRenderingUpdatesNear60FPSEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=222580.
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/AnimationFrameRate.cpp:
+        (TestWebKitAPI::TEST): Function rename.
+
 2021-03-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add UUID

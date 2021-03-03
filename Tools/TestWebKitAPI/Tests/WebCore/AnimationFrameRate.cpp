@@ -117,9 +117,9 @@ TEST(AnimationFrameRate, preferredFrameIntervalWith30FPSNominalFramesPerSecond)
 
 TEST(AnimationFrameRate, preferredFramesPerSecond)
 {
-    ASSERT_EQ(preferredFramesPerSecond(FullSpeedAnimationInterval), FullSpeedFramesPerSecond);
-    ASSERT_EQ(preferredFramesPerSecond(HalfSpeedThrottlingAnimationInterval), HalfSpeedThrottlingFramesPerSecond);
-    ASSERT_EQ(preferredFramesPerSecond(Seconds(1.0 / 60)), FramesPerSecond(60));
+    ASSERT_EQ(preferredFramesPerSecondFromInterval(FullSpeedAnimationInterval), FullSpeedFramesPerSecond);
+    ASSERT_EQ(preferredFramesPerSecondFromInterval(HalfSpeedThrottlingAnimationInterval), HalfSpeedThrottlingFramesPerSecond);
+    ASSERT_EQ(preferredFramesPerSecondFromInterval(Seconds(1.0 / 60)), FramesPerSecond(60));
 }
 
 }

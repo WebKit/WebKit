@@ -73,7 +73,7 @@ void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
 
     // PreferredFramesPerSecond is an integer and should be > 0.
     if (interval <= 1_s)
-        setPreferredFramesPerSecond(preferredFramesPerSecond(interval));
+        setPreferredFramesPerSecond(preferredFramesPerSecondFromInterval(interval));
 
     if (isScheduled()) {
         clearScheduled();
@@ -100,7 +100,7 @@ void RenderingUpdateScheduler::scheduleRenderingUpdate()
 
     // PreferredFramesPerSecond is an integer and should be > 0.
     if (interval <= 1_s)
-        m_scheduled = scheduleAnimation(preferredFramesPerSecond(interval));
+        m_scheduled = scheduleAnimation(preferredFramesPerSecondFromInterval(interval));
 
     if (!isScheduled())
         startTimer(interval);

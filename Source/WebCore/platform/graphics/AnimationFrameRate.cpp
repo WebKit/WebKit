@@ -62,7 +62,7 @@ Seconds preferredFrameInterval(const OptionSet<ThrottlingReason>& reasons, Optio
     return interval;
 }
 
-FramesPerSecond preferredFramesPerSecond(Seconds preferredFrameInterval)
+FramesPerSecond preferredFramesPerSecondFromInterval(Seconds preferredFrameInterval)
 {
     if (preferredFrameInterval == FullSpeedAnimationInterval)
         return FullSpeedFramesPerSecond;
