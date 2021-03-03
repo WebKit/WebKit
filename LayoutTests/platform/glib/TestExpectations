@@ -512,7 +512,7 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout Pass ]
-webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
+webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Release ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Pass Crash ]
@@ -1032,8 +1032,6 @@ webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
 
 webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure Crash ]
 
-webkit.org/b/216777 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Crash Timeout Pass ]
-
 webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache-long.html [ Failure Pass Timeout ]
 webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache.html [ Failure Pass Timeout ]
 
@@ -1313,6 +1311,8 @@ webkit.org/b/216740 imported/w3c/web-platform-tests/domparsing/insert_adjacent_h
 
 webkit.org/b/212146 http/tests/xmlhttprequest/logout.html [ Failure Pass ]
 
+webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of XHR-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1577,7 +1577,7 @@ webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-b
 
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/217363 js/throw-large-string-oom.html [ Pass Crash Timeout ]
+webkit.org/b/222638 js/throw-large-string-oom.html [ Pass Timeout ]
 
 # Fails when built with GCC but passes with Clang
 webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Pass Failure ]

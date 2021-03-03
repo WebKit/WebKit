@@ -167,7 +167,6 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/animation
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-invalid.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-invalid.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-ready.tentative.html [ Pass Crash ]
-webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-startTime.tentative.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/caret-color-interpolation.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/outline-color-interpolation.html  [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/outline-width-composition.html [ Pass Crash ]
@@ -2380,8 +2379,6 @@ webkit.org/b/188217 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
 webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]
 
 webkit.org/b/188436 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
-
-webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
 
 webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
 

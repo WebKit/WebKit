@@ -1,3 +1,17 @@
+2021-03-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Rebaseline and update expectations
+
+        Unreviewed test gardening.
+
+        Some tests are not crashing anymore.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css1/formatting_model/height_of_lines-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2021-03-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
