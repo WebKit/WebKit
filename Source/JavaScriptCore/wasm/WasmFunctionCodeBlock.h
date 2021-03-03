@@ -31,6 +31,7 @@
 #include "InstructionStream.h"
 #include "MacroAssemblerCodeRef.h"
 #include "WasmLLIntTierUpCounter.h"
+#include "WasmOps.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -46,7 +47,6 @@ namespace Wasm {
 
 class Signature;
 struct GeneratorTraits;
-enum Type : int8_t;
 
 // FIXME: Consider merging this with LLIntCallee
 // https://bugs.webkit.org/show_bug.cgi?id=203691

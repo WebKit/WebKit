@@ -1,3 +1,186 @@
+2021-03-03  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Extend wasm type with type index
+        https://bugs.webkit.org/show_bug.cgi?id=222351
+
+        Reviewed by Keith Miller.
+
+        Extend wasm type with type index to represent
+        new reference types from typed function references
+        proposal: https://github.com/WebAssembly/function-references/blob/master/proposals/function-references/Overview.md.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::Wasm::BytecodeDumper::dumpConstants):
+        (JSC::Wasm::BytecodeDumper::formatConstant const):
+        * bytecode/BytecodeDumper.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::TypedTmp::TypedTmp):
+        (JSC::Wasm::TypedTmp::dump const):
+        (JSC::Wasm::AirIRGenerator::g32):
+        (JSC::Wasm::AirIRGenerator::g64):
+        (JSC::Wasm::AirIRGenerator::gExternref):
+        (JSC::Wasm::AirIRGenerator::gFuncref):
+        (JSC::Wasm::AirIRGenerator::f32):
+        (JSC::Wasm::AirIRGenerator::f64):
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        (JSC::Wasm::AirIRGenerator::moveOpForValueType):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addLocal):
+        (JSC::Wasm::AirIRGenerator::addConstant):
+        (JSC::Wasm::AirIRGenerator::addRefIsNull):
+        (JSC::Wasm::AirIRGenerator::addRefFunc):
+        (JSC::Wasm::AirIRGenerator::addTableGet):
+        (JSC::Wasm::AirIRGenerator::addTableSet):
+        (JSC::Wasm::AirIRGenerator::addTableInit):
+        (JSC::Wasm::AirIRGenerator::addElemDrop):
+        (JSC::Wasm::AirIRGenerator::addTableSize):
+        (JSC::Wasm::AirIRGenerator::addTableGrow):
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        (JSC::Wasm::AirIRGenerator::addTableCopy):
+        (JSC::Wasm::AirIRGenerator::addGrowMemory):
+        (JSC::Wasm::AirIRGenerator::addCurrentMemory):
+        (JSC::Wasm::AirIRGenerator::addMemoryFill):
+        (JSC::Wasm::AirIRGenerator::addMemoryCopy):
+        (JSC::Wasm::AirIRGenerator::addMemoryInit):
+        (JSC::Wasm::AirIRGenerator::addDataDrop):
+        (JSC::Wasm::AirIRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::AirIRGenerator::sanitizeAtomicResult):
+        (JSC::Wasm::AirIRGenerator::appendGeneralAtomic):
+        (JSC::Wasm::AirIRGenerator::appendStrongCAS):
+        (JSC::Wasm::AirIRGenerator::emitAtomicLoadOp):
+        (JSC::Wasm::AirIRGenerator::atomicLoad):
+        (JSC::Wasm::AirIRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::AirIRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::AirIRGenerator::atomicBinaryRMW):
+        (JSC::Wasm::AirIRGenerator::emitAtomicCompareExchange):
+        (JSC::Wasm::AirIRGenerator::atomicCompareExchange):
+        (JSC::Wasm::AirIRGenerator::atomicWait):
+        (JSC::Wasm::AirIRGenerator::atomicNotify):
+        (JSC::Wasm::AirIRGenerator::truncSaturated):
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        (JSC::Wasm::AirIRGenerator::addSwitch):
+        (JSC::Wasm::AirIRGenerator::emitModOrDiv):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncUF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncSF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncSF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF32>):
+        (JSC::Wasm::AirIRGenerator::addShift):
+        (JSC::Wasm::AirIRGenerator::addFloatingPointBinOp):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Min>):
+        (JSC::Wasm::AirIRGenerator::addFloatingPointMinOrMax):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Max>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Mul>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Div>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Div>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Neg>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Rotr>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Rotl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32ShrU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32ShrS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Shl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Min>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Sub>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ShrS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ShrU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Shl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Rotl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Rotr>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Neg>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Max>):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addRefFunc):
+        (JSC::Wasm::B3IRGenerator::addTableInit):
+        (JSC::Wasm::B3IRGenerator::addTableSize):
+        (JSC::Wasm::B3IRGenerator::addTableGrow):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::addTableCopy):
+        (JSC::Wasm::B3IRGenerator::addMemoryFill):
+        (JSC::Wasm::B3IRGenerator::addMemoryInit):
+        (JSC::Wasm::B3IRGenerator::addMemoryCopy):
+        (JSC::Wasm::B3IRGenerator::sanitizeAtomicResult):
+        (JSC::Wasm::B3IRGenerator::atomicLoad):
+        (JSC::Wasm::B3IRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::B3IRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::B3IRGenerator::atomicBinaryRMW):
+        (JSC::Wasm::B3IRGenerator::emitAtomicCompareExchange):
+        (JSC::Wasm::B3IRGenerator::atomicCompareExchange):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::WasmCallingConvention::marshallLocation const):
+        (JSC::Wasm::WasmCallingConvention::callInformationFor const):
+        (JSC::Wasm::JSCallingConvention::marshallLocation const):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        (JSC::Wasm::isRefType):
+        (JSC::Wasm::TableInformation::wasmType const):
+        * wasm/WasmFunctionCodeBlock.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser::TypedExpression::TypedExpression):
+        (JSC::Wasm::FunctionParser<Context>::load):
+        (JSC::Wasm::FunctionParser<Context>::store):
+        (JSC::Wasm::FunctionParser<Context>::atomicLoad):
+        (JSC::Wasm::FunctionParser<Context>::atomicStore):
+        (JSC::Wasm::FunctionParser<Context>::atomicBinaryRMW):
+        (JSC::Wasm::FunctionParser<Context>::atomicCompareExchange):
+        (JSC::Wasm::FunctionParser<Context>::atomicWait):
+        (JSC::Wasm::FunctionParser<Context>::atomicNotify):
+        (JSC::Wasm::FunctionParser<Context>::checkBranchTarget):
+        (JSC::Wasm::FunctionParser<Context>::unify):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::get const):
+        (JSC::Wasm::Global::set):
+        (JSC::Wasm::Global::visitAggregateImpl):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::jsNullConstant):
+        (JSC::Wasm::LLIntGenerator::zeroConstant):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        (JSC::Wasm::LLIntGenerator::addLocal):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseBlockSignature):
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseType):
+        (JSC::Wasm::SectionParser::parseTableHelper):
+        (JSC::Wasm::SectionParser::parseGlobal):
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        (JSC::Wasm::SectionParser::parseI32InitExpr):
+        (JSC::Wasm::SectionParser::parseElementSegmentVectorOfExpressions):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::Signature::dump const):
+        (JSC::Wasm::computeHash):
+        (JSC::Wasm::SignatureInformation::SignatureInformation):
+        * wasm/WasmSignature.h:
+        (JSC::Wasm::SignatureInformation::thunkFor const):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::wasmType const):
+        * wasm/generateWasmOpsHeader.py:
+        (TypeKind):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::marshallJSResult):
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::defaultValueForReferenceType):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::linkImpl):
+
 2021-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Flaky JSC test: stress/shared-array-buffer-sort-while-different-thread-is-modifying.js.default

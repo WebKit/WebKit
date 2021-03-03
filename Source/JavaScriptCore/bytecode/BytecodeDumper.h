@@ -31,6 +31,7 @@
 #include "ICStatusMap.h"
 #include "InstructionStream.h"
 #include "StructureStubInfo.h"
+#include "WasmOps.h"
 
 namespace JSC {
 
@@ -130,7 +131,6 @@ namespace Wasm {
 
 class FunctionCodeBlock;
 struct ModuleInformation;
-enum Type : int8_t;
 
 class BytecodeDumper final : public JSC::BytecodeDumper<FunctionCodeBlock> {
 public:

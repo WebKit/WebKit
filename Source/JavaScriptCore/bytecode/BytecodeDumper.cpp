@@ -37,7 +37,6 @@
 #include "WasmFunctionCodeBlock.h"
 #include "WasmGeneratorTraits.h"
 #include "WasmModuleInformation.h"
-#include "WasmOps.h"
 #include "WasmSignatureInlines.h"
 
 namespace JSC {
@@ -362,7 +361,7 @@ void BytecodeDumper::dumpConstants()
         unsigned i = 0;
         for (const auto& constant : block->constants()) {
             Type type = block->constantTypes()[i];
-            this->m_out.print("   const", i, " : ", type, " = ", formatConstant(type, constant), "\n");
+            this->m_out.print("   const", i, " : ", type.kind, " = ", formatConstant(type, constant), "\n");
             ++i;
         }
     }
@@ -377,19 +376,19 @@ CString BytecodeDumper::constantName(VirtualRegister index) const
 
 CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
 {
-    switch (type) {
-    case Type::I32:
+    switch (type.kind) {
+    case TypeKind::I32:
         return toCString(static_cast<int32_t>(constant));
-    case Type::I64:
+    case TypeKind::I64:
         return toCString(constant);
-    case Type::F32:
+    case TypeKind::F32:
         return toCString(bitwise_cast<float>(static_cast<int32_t>(constant)));
         break;
-    case Type::F64:
+    case TypeKind::F64:
         return toCString(bitwise_cast<double>(constant));
         break;
-    case Type::Externref:
-    case Type::Funcref:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
         if (JSValue::decode(constant) == jsNull())
             return "null";
         return toCString(RawPointer(bitwise_cast<void*>(constant)));

@@ -102,14 +102,14 @@ private:
     ArgumentLocation marshallLocation(CallRole role, Type valueType, size_t& gpArgumentCount, size_t& fpArgumentCount, size_t& stackOffset) const
     {
         ASSERT(isValueType(valueType));
-        switch (valueType) {
-        case I32:
-        case I64:
-        case Funcref:
-        case Externref:
+        switch (valueType.kind) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Funcref:
+        case TypeKind::Externref:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
-        case F32:
-        case F64:
+        case TypeKind::F32:
+        case TypeKind::F64:
             return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset);
         default:
             break;
@@ -130,7 +130,7 @@ public:
 
         Vector<ArgumentLocation> params(signature.argumentCount());
         for (size_t i = 0; i < signature.argumentCount(); ++i) {
-            argumentsIncludeI64 |= signature.argument(i) == I64;
+            argumentsIncludeI64 |= signature.argument(i).isI64();
             params[i] = marshallLocation(role, signature.argument(i), gpArgumentCount, fpArgumentCount, argStackOffset);
         }
         gpArgumentCount = 0;
@@ -141,7 +141,7 @@ public:
 
         Vector<ArgumentLocation, 1> results(signature.returnCount());
         for (size_t i = 0; i < signature.returnCount(); ++i) {
-            resultsIncludeI64 |= signature.returnType(i) == I64;
+            resultsIncludeI64 |= signature.returnType(i).isI64();
             results[i] = marshallLocation(role, signature.returnType(i), gpArgumentCount, fpArgumentCount, resultStackOffset);
         }
 
@@ -190,14 +190,14 @@ private:
     ArgumentLocation marshallLocation(CallRole role, Type valueType, size_t& gpArgumentCount, size_t& fpArgumentCount, size_t& stackOffset) const
     {
         ASSERT(isValueType(valueType));
-        switch (valueType) {
-        case I32:
-        case I64:
-        case Funcref:
-        case Externref:
+        switch (valueType.kind) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Funcref:
+        case TypeKind::Externref:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
-        case F32:
-        case F64:
+        case TypeKind::F32:
+        case TypeKind::F64:
             return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset);
         default:
             break;

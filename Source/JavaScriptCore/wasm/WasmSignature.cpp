@@ -52,7 +52,7 @@ void Signature::dump(PrintStream& out) const
         out.print("(");
         CommaPrinter comma;
         for (SignatureArgCount arg = 0; arg < argumentCount(); ++arg)
-            out.print(comma, makeString(argument(arg)));
+            out.print(comma, makeString(argument(arg).kind));
         out.print(")");
     }
 
@@ -60,7 +60,7 @@ void Signature::dump(PrintStream& out) const
         CommaPrinter comma;
         out.print(" -> [");
         for (SignatureArgCount ret = 0; ret < returnCount(); ++ret)
-            out.print(comma, makeString(returnType(ret)));
+            out.print(comma, makeString(returnType(ret).kind));
         out.print("]");
     }
 }
@@ -68,10 +68,14 @@ void Signature::dump(PrintStream& out) const
 static unsigned computeHash(size_t returnCount, const Type* returnTypes, size_t argumentCount, const Type* argumentTypes)
 {
     unsigned accumulator = 0xa1bcedd8u;
-    for (uint32_t i = 0; i < argumentCount; ++i)
-        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(argumentTypes[i])));
-    for (uint32_t i = 0; i < returnCount; ++i)
-        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(returnTypes[i])));
+    for (uint32_t i = 0; i < argumentCount; ++i) {
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(argumentTypes[i].kind)));
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<unsigned>::hash(argumentTypes[i].index));
+    }
+    for (uint32_t i = 0; i < returnCount; ++i) {
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(returnTypes[i].kind)));
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<unsigned>::hash(returnTypes[i].index));
+    }
     return accumulator;
 }
 
@@ -95,11 +99,11 @@ SignatureInformation::SignatureInformation()
 {
 #define MAKE_THUNK_SIGNATURE(type, enc, str, val)                          \
     do {                                                                   \
-        if (type != Void) {                                                \
+        if (TypeKind::type != TypeKind::Void) {                            \
             RefPtr<Signature> sig = Signature::tryCreate(1, 0);            \
             sig->ref();                                                    \
-            sig->getReturnType(0) = type;                                  \
-            thunkSignatures[linearizeType(type)] = sig.get();              \
+            sig->getReturnType(0) = Types::type;                           \
+            thunkSignatures[linearizeType(TypeKind::type)] = sig.get();    \
             m_signatureSet.add(SignatureHash { sig.releaseNonNull() });    \
         }                                                                  \
     } while (false);
@@ -110,7 +114,7 @@ SignatureInformation::SignatureInformation()
     {
         RefPtr<Signature> sig = Signature::tryCreate(0, 0);
         sig->ref();
-        thunkSignatures[linearizeType(Void)] = sig.get();
+        thunkSignatures[linearizeType(TypeKind::Void)] = sig.get();
         m_signatureSet.add(SignatureHash { sig.releaseNonNull() });
     }
 }

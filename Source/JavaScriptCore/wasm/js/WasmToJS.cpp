@@ -101,14 +101,14 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         unsigned frOffset = CallFrame::headerSizeInRegisters * static_cast<int>(sizeof(Register));
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             Type argType = signature.argument(argNum);
-            switch (argType) {
-            case Void:
-            case Func:
+            switch (argType.kind) {
+            case TypeKind::Void:
+            case TypeKind::Func:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
-            case Externref:
-            case Funcref:
-            case I32:
-            case I64: {
+            case TypeKind::Externref:
+            case TypeKind::Funcref:
+            case TypeKind::I32:
+            case TypeKind::I64: {
                 GPRReg gprReg;
                 if (marshalledGPRs < wasmCC.gprArgs.size())
                     gprReg = wasmCC.gprArgs[marshalledGPRs].gpr();
@@ -119,7 +119,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                     frOffset += sizeof(Register);
                 }
                 ++marshalledGPRs;
-                if (argType == I32) {
+                if (argType.isI32()) {
                     jit.zeroExtend32ToWord(gprReg, gprReg); // Clear non-int32 and non-tag bits.
                     jit.boxInt32(gprReg, JSValueRegs(gprReg), DoNotHaveTagRegisters);
                 }
@@ -127,8 +127,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 calleeFrameOffset += sizeof(Register);
                 break;
             }
-            case F32:
-            case F64:
+            case TypeKind::F32:
+            case TypeKind::F64:
                 // Skipped: handled below.
                 if (marshalledFPRs >= wasmCC.fprArgs.size())
                     frOffset += sizeof(Register);
@@ -173,14 +173,14 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             Type argType = signature.argument(argNum);
-            switch (argType) {
-            case Void:
-            case Func:
+            switch (argType.kind) {
+            case TypeKind::Void:
+            case TypeKind::Func:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
-            case Externref:
-            case Funcref:
-            case I32:
-            case I64: {
+            case TypeKind::Externref:
+            case TypeKind::Funcref:
+            case TypeKind::I32:
+            case TypeKind::I64: {
                 // Skipped: handled above.
                 if (marshalledGPRs >= wasmCC.gprArgs.size())
                     frOffset += sizeof(Register);
@@ -188,7 +188,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 calleeFrameOffset += sizeof(Register);
                 break;
             }
-            case F32: {
+            case TypeKind::F32: {
                 FPRReg fprReg;
                 if (marshalledFPRs < wasmCC.fprArgs.size())
                     fprReg = wasmCC.fprArgs[marshalledFPRs].fpr();
@@ -202,7 +202,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 marshallFPR(fprReg);
                 break;
             }
-            case F64: {
+            case TypeKind::F64: {
                 FPRReg fprReg;
                 if (marshalledFPRs < wasmCC.fprArgs.size())
                     fprReg = wasmCC.fprArgs[marshalledFPRs].fpr();
@@ -226,7 +226,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         // We call functions to convert I64 to BigInt.
         unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
-            if (signature.argument(argNum) == I64) {
+            if (signature.argument(argNum).isI64()) {
                 jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
                 jit.load64(calleeFrame.withOffset(calleeFrameOffset), GPRInfo::argumentGPR1);
                 jit.setupArguments<decltype(operationConvertToBigInt)>(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
@@ -274,13 +274,13 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     done.link(&jit);
 
     if (signature.returnCount() == 1) {
-        switch (signature.returnType(0)) {
-        case Void:
-        case Func:
+        switch (signature.returnType(0).kind) {
+        case TypeKind::Void:
+        case TypeKind::Func:
             // For the JavaScript embedding, imports with these types in their signature return are a WebAssembly.Module validation error.
             RELEASE_ASSERT_NOT_REACHED();
             break;
-        case I64: {
+        case TypeKind::I64: {
             // FIXME: Optimize I64 extraction from BigInt.
             // https://bugs.webkit.org/show_bug.cgi?id=220053
             GPRReg dest = wasmCallInfo.results[0].gpr();
@@ -294,7 +294,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             });
             break;
         }
-        case I32: {
+        case TypeKind::I32: {
             CCallHelpers::JumpList done;
             CCallHelpers::JumpList slowPath;
             GPRReg dest = wasmCallInfo.results[0].gpr();
@@ -317,11 +317,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             done.link(&jit);
             break;
         }
-        case Funcref:
-        case Externref:
+        case TypeKind::Funcref:
+        case TypeKind::Externref:
             jit.move(GPRInfo::returnValueGPR, wasmCallInfo.results[0].gpr());
             break;
-        case F32: {
+        case TypeKind::F32: {
             CCallHelpers::JumpList done;
             FPRReg dest = wasmCallInfo.results[0].fpr();
 
@@ -352,7 +352,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             done.link(&jit);
             break;
         }
-        case F64: {
+        case TypeKind::F64: {
             CCallHelpers::JumpList done;
             FPRReg dest = wasmCallInfo.results[0].fpr();
 

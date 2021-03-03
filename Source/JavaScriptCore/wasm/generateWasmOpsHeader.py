@@ -207,14 +207,40 @@ static constexpr unsigned numTypes = """ + str(len(types)) + """;
 
 """ + type_definitions + """
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
-enum Type : int8_t {
+enum class TypeKind : int8_t {
     FOR_EACH_WASM_TYPE(CREATE_ENUM_VALUE)
 };
 #undef CREATE_ENUM_VALUE
 
+struct Type {
+    TypeKind kind;
+    unsigned index;
+
+    bool operator==(const Type& other) const
+    {
+        return other.kind == kind && other.index == index;
+    }
+
+    bool operator!=(const Type& other) const
+    {
+        return !(other == *this);
+    }
+
+    #define CREATE_PREDICATE(name, ...) bool is ## name() const { return kind == TypeKind::name; }
+    FOR_EACH_WASM_TYPE(CREATE_PREDICATE)
+    #undef CREATE_PREDICATE
+};
+
+namespace Types
+{
+#define CREATE_CONSTANT(name, id, ...) constexpr Type name = Type{TypeKind::name, 0u};
+FOR_EACH_WASM_TYPE(CREATE_CONSTANT)
+#undef CREATE_CONSTANT
+} // namespace Types
+
 #define CREATE_CASE(name, id, ...) case id: return true;
 template <typename Int>
-inline bool isValidType(Int i)
+inline bool isValidTypeKind(Int i)
 {
     switch (i) {
     default: return false;
@@ -226,10 +252,10 @@ inline bool isValidType(Int i)
 #undef CREATE_CASE
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-#define CREATE_CASE(name, id, b3type, ...) case name: return b3type;
+#define CREATE_CASE(name, id, b3type, ...) case TypeKind::name: return b3type;
 inline B3::Type toB3Type(Type type)
 {
-    switch (type) {
+    switch (type.kind) {
     FOR_EACH_WASM_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -238,10 +264,10 @@ inline B3::Type toB3Type(Type type)
 #undef CREATE_CASE
 #endif
 
-#define CREATE_CASE(name, ...) case name: return #name;
-inline const char* makeString(Type type)
+#define CREATE_CASE(name, ...) case TypeKind::name: return #name;
+inline const char* makeString(TypeKind kind)
 {
-    switch (type) {
+    switch (kind) {
     FOR_EACH_WASM_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -249,10 +275,10 @@ inline const char* makeString(Type type)
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3type, inc, ...) case id: return inc;
-inline int linearizeType(Type type)
+#define CREATE_CASE(name, id, b3type, inc, ...) case TypeKind::name: return inc;
+inline int linearizeType(TypeKind kind)
 {
-    switch (type) {
+    switch (kind) {
     FOR_EACH_WASM_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -260,14 +286,14 @@ inline int linearizeType(Type type)
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3type, inc, ...) case inc: return name;
-inline Type linearizedToType(int i)
+#define CREATE_CASE(name, id, b3type, inc, ...) case inc: return TypeKind::name;
+inline TypeKind linearizedToType(int i)
 {
     switch (i) {
     FOR_EACH_WASM_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return Void;
+    return TypeKind::Void;
 }
 #undef CREATE_CASE
 
@@ -404,9 +430,9 @@ inline const char* makeString(OpType op)
 
 namespace WTF {
 
-inline void printInternal(PrintStream& out, JSC::Wasm::Type type)
+inline void printInternal(PrintStream& out, JSC::Wasm::TypeKind kind)
 {
-    out.print(JSC::Wasm::makeString(type));
+    out.print(JSC::Wasm::makeString(kind));
 }
 
 inline void printInternal(PrintStream& out, JSC::Wasm::OpType op)

@@ -79,28 +79,28 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
 
     for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
         JSValue arg = callFrame->argument(argIndex);
-        switch (signature.argument(argIndex)) {
-        case Wasm::I32:
+        switch (signature.argument(argIndex).kind) {
+        case Wasm::TypeKind::I32:
             arg = JSValue::decode(arg.toInt32(globalObject));
             break;
-        case Wasm::Funcref: {
+        case Wasm::TypeKind::Funcref: {
             if (!isWebAssemblyHostFunction(vm, arg) && !arg.isNull())
                 return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function")));
             break;
         }
-        case Wasm::Externref:
+        case Wasm::TypeKind::Externref:
             break;
-        case Wasm::I64:
+        case Wasm::TypeKind::I64:
             arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toBigInt64(globalObject)));
             break;
-        case Wasm::F32:
+        case Wasm::TypeKind::F32:
             arg = JSValue::decode(bitwise_cast<uint32_t>(arg.toFloat(globalObject)));
             break;
-        case Wasm::F64:
+        case Wasm::TypeKind::F64:
             arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toNumber(globalObject)));
             break;
-        case Wasm::Void:
-        case Wasm::Func:
+        case Wasm::TypeKind::Void:
+        case Wasm::TypeKind::Func:
             RELEASE_ASSERT_NOT_REACHED();
         }
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -260,8 +260,8 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         bool isStack = wasmCallInfo.params[i].isStackArgument();
 
         auto type = signature.argument(i);
-        switch (type) {
-        case Wasm::I32: {
+        switch (type.kind) {
+        case Wasm::TypeKind::I32: {
             jit.load64(jsParam, scratchGPR);
             slowPath.append(jit.branchIfNotInt32(scratchGPR));
             if (isStack)
@@ -270,7 +270,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 jit.zeroExtend32ToWord(scratchGPR, wasmCallInfo.params[i].gpr());
             break;
         }
-        case Wasm::Funcref: {
+        case Wasm::TypeKind::Funcref: {
             // Ensure we have a WASM exported function.
             jit.load64(jsParam, scratchGPR);
             auto isNull = jit.branchIfNull(scratchGPR);
@@ -290,7 +290,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             isNull.link(&jit);
             FALLTHROUGH;
         }
-        case Wasm::Externref: {
+        case Wasm::TypeKind::Externref: {
             if (isStack) {
                 jit.load64(jsParam, scratchGPR);
                 jit.store64(scratchGPR, calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()));
@@ -298,13 +298,13 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 jit.load64(jsParam, wasmCallInfo.params[i].gpr());
             break;
         }
-        case Wasm::F32:
-        case Wasm::F64: {
+        case Wasm::TypeKind::F32:
+        case Wasm::TypeKind::F64: {
             if (!isStack)
                 scratchFPR = wasmCallInfo.params[i].fpr();
             auto moveToDestination = [&] () {
                 if (isStack) {
-                    if (signature.argument(i) == Wasm::F32)
+                    if (signature.argument(i).isF32())
                         jit.storeFloat(scratchFPR, calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()));
                     else
                         jit.storeDouble(scratchFPR, calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()));
@@ -316,13 +316,13 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             auto isInt32 = jit.branchIfInt32(scratchGPR);
 
             jit.unboxDouble(scratchGPR, scratchGPR, scratchFPR);
-            if (signature.argument(i) == Wasm::F32)
+            if (signature.argument(i).isF32())
                 jit.convertDoubleToFloat(scratchFPR, scratchFPR);
             moveToDestination();
             auto done = jit.jump();
 
             isInt32.link(&jit);
-            if (signature.argument(i) == Wasm::F32) {
+            if (signature.argument(i).isF32()) {
                 jit.convertInt32ToFloat(scratchGPR, scratchFPR);
                 moveToDestination();
             } else {

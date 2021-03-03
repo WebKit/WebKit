@@ -295,7 +295,7 @@ private:
             m_jsNullConstant = VirtualRegister(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
             m_codeBlock->m_constants.append(JSValue::encode(jsNull()));
             if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
-                m_codeBlock->m_constantTypes.append(Type::Externref);
+                m_codeBlock->m_constantTypes.append(Types::Externref);
         }
         return m_jsNullConstant;
     }
@@ -306,7 +306,7 @@ private:
             m_zeroConstant = VirtualRegister(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
             m_codeBlock->m_constants.append(0);
             if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
-                m_codeBlock->m_constantTypes.append(Type::I32);
+                m_codeBlock->m_constantTypes.append(Types::I32);
         }
         return m_zeroConstant;
     }
@@ -534,25 +534,25 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
     uint32_t stackIndex = 0;
 
     auto allocateStackRegister = [&](Type type) {
-        switch (type) {
-        case Type::I32:
-        case Type::I64:
-        case Type::Externref:
-        case Type::Funcref:
+        switch (type.kind) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Externref:
+        case TypeKind::Funcref:
             if (gprIndex < gprCount)
                 ++gprIndex;
             else if (stackIndex++ >= stackCount)
                 ++stackCount;
             break;
-        case Type::F32:
-        case Type::F64:
+        case TypeKind::F32:
+        case TypeKind::F64:
             if (fprIndex < fprCount)
                 ++fprIndex;
             else if (stackIndex++ >= stackCount)
                 ++stackCount;
             break;
-        case Void:
-        case Func:
+        case TypeKind::Void:
+        case TypeKind::Func:
             RELEASE_ASSERT_NOT_REACHED();
         }
     };
@@ -589,25 +589,25 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
     gprIndex = base - stackCount;
     fprIndex = gprIndex - gprCount;
     for (uint32_t i = 0; i < signature.argumentCount(); i++) {
-        switch (signature.argument(i)) {
-        case Type::I32:
-        case Type::I64:
-        case Type::Externref:
-        case Type::Funcref:
+        switch (signature.argument(i).kind) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Externref:
+        case TypeKind::Funcref:
             if (gprIndex > gprLimit)
                 arguments[i] = virtualRegisterForLocal(--gprIndex);
             else
                 arguments[i] = virtualRegisterForLocal(--stackIndex);
             break;
-        case Type::F32:
-        case Type::F64:
+        case TypeKind::F32:
+        case TypeKind::F64:
             if (fprIndex > fprLimit)
                 arguments[i] = virtualRegisterForLocal(--fprIndex);
             else
                 arguments[i] = virtualRegisterForLocal(--stackIndex);
             break;
-        case Void:
-        case Func:
+        case TypeKind::Void:
+        case TypeKind::Func:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -616,25 +616,25 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
     gprIndex = base - stackCount;
     fprIndex = gprIndex - gprCount;
     for (uint32_t i = 0; i < signature.returnCount(); i++) {
-        switch (signature.returnType(i)) {
-        case Type::I32:
-        case Type::I64:
-        case Type::Externref:
-        case Type::Funcref:
+        switch (signature.returnType(i).kind) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Externref:
+        case TypeKind::Funcref:
             if (gprIndex > gprLimit)
                 temporaryResults[i] = virtualRegisterForLocal(--gprIndex);
             else
                 temporaryResults[i] = virtualRegisterForLocal(--stackIndex);
             break;
-        case Type::F32:
-        case Type::F64:
+        case TypeKind::F32:
+        case TypeKind::F64:
             if (fprIndex > fprLimit)
                 temporaryResults[i] = virtualRegisterForLocal(--fprIndex);
             else
                 temporaryResults[i] = virtualRegisterForLocal(--stackIndex);
             break;
-        case Void:
-        case Func:
+        case TypeKind::Void:
+        case TypeKind::Func:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -671,25 +671,25 @@ auto LLIntGenerator::callInformationForCallee(const Signature& signature) -> Vec
     const uint32_t maxFPRIndex = maxGPRIndex + fprCount;
 
     for (uint32_t i = 0; i < signature.returnCount(); i++) {
-        switch (signature.returnType(i)) {
-        case Type::I32:
-        case Type::I64:
-        case Type::Externref:
-        case Type::Funcref:
+        switch (signature.returnType(i).kind) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Externref:
+        case TypeKind::Funcref:
             if (gprIndex < maxGPRIndex)
                 m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + gprIndex++));
             else
                 m_results.append(virtualRegisterForArgumentIncludingThis(stackIndex++));
             break;
-        case Type::F32:
-        case Type::F64:
+        case TypeKind::F32:
+        case TypeKind::F64:
             if (fprIndex < maxFPRIndex)
                 m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + fprIndex++));
             else
                 m_results.append(virtualRegisterForArgumentIncludingThis(stackIndex++));
             break;
-        case Void:
-        case Func:
+        case TypeKind::Void:
+        case TypeKind::Func:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -725,19 +725,19 @@ auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
     };
 
     for (uint32_t i = 0; i < signature.argumentCount(); i++) {
-        switch (signature.argument(i)) {
-        case Type::I32:
-        case Type::I64:
-        case Type::Externref:
-        case Type::Funcref:
+        switch (signature.argument(i).kind) {
+        case TypeKind::I32:
+        case TypeKind::I64:
+        case TypeKind::Externref:
+        case TypeKind::Funcref:
             addArgument(i, gprIndex, maxGPRIndex);
             break;
-        case Type::F32:
-        case Type::F64:
+        case TypeKind::F32:
+        case TypeKind::F64:
             addArgument(i, fprIndex, maxFPRIndex);
             break;
-        case Void:
-        case Func:
+        case TypeKind::Void:
+        case TypeKind::Func:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -752,9 +752,9 @@ auto LLIntGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     checkConsistency();
 
     m_codeBlock->m_numVars += count;
-    switch (type) {
-    case Type::Externref:
-    case Type::Funcref:
+    switch (type.kind) {
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
         while (count--)
             m_unitializedLocals.append(push(NoConsistencyCheck));
         break;

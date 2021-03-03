@@ -61,14 +61,14 @@ enum class TableElementType : uint8_t {
 
 inline bool isValueType(Type type)
 {
-    switch (type) {
-    case I32:
-    case I64:
-    case F32:
-    case F64:
+    switch (type.kind) {
+    case TypeKind::I32:
+    case TypeKind::I64:
+    case TypeKind::F32:
+    case TypeKind::F64:
         return true;
-    case Externref:
-    case Funcref:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
         return Options::useWebAssemblyReferences();
     default:
         break;
@@ -78,7 +78,7 @@ inline bool isValueType(Type type)
 
 inline bool isRefType(Type type)
 {
-    return type == Externref || type == Funcref;
+    return type.isFuncref() || type.isExternref();
 }
     
 enum class ExternalKind : uint8_t {
@@ -295,7 +295,7 @@ public:
     uint32_t initial() const { return m_initial; }
     Optional<uint32_t> maximum() const { return m_maximum; }
     TableElementType type() const { return m_type; }
-    Wasm::Type wasmType() const { return m_type == TableElementType::Funcref ? Type::Funcref : Type::Externref; }
+    Type wasmType() const { return m_type == TableElementType::Funcref ? Types::Funcref : Types::Externref; }
 
 private:
     uint32_t m_initial;

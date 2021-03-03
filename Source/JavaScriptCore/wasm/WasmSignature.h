@@ -142,7 +142,7 @@ public:
     static SignatureInformation& singleton();
 
     static RefPtr<Signature> signatureFor(const Vector<Type, 1>& returnTypes, const Vector<Type>& argumentTypes);
-    ALWAYS_INLINE const Signature* thunkFor(Type type) const { return thunkSignatures[linearizeType(type)]; }
+    ALWAYS_INLINE const Signature* thunkFor(Type type) const { return thunkSignatures[linearizeType(type.kind)]; }
 
     static const Signature& get(SignatureIndex);
     static SignatureIndex get(const Signature&);

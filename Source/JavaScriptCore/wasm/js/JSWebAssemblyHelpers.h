@@ -138,9 +138,9 @@ ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue object)
 ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
 {
     ASSERT(Wasm::isRefType(type));
-    if (type == Wasm::Type::Externref)
+    if (type.isExternref())
         return jsUndefined();
-    ASSERT(type == Wasm::Type::Funcref);
+    ASSERT(type.isFuncref());
     return jsNull();
 }
 

@@ -53,7 +53,7 @@ auto SectionParser::parseType() -> PartialResult
         Vector<Type> argumentTypes;
 
         WASM_PARSER_FAIL_IF(!parseInt7(type), "can't get ", i, "th Type's type");
-        WASM_PARSER_FAIL_IF(type != Func, i, "th Type is non-Func ", type);
+        WASM_PARSER_FAIL_IF(type != static_cast<int8_t>(TypeKind::Func), i, "th Type is non-Func ", type);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get ", i, "th Type's argument count");
         WASM_PARSER_FAIL_IF(argumentCount > maxFunctionParams, i, "th argument count is too big ", argumentCount, " maximum ", maxFunctionParams);
         Vector<Type> arguments;
@@ -206,7 +206,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     int8_t type;
     WASM_PARSER_FAIL_IF(!parseInt7(type), "can't parse Table type");
-    WASM_PARSER_FAIL_IF(type != Wasm::Funcref && type != Wasm::Externref, "Table type should be funcref or anyref, got ", type);
+    WASM_PARSER_FAIL_IF(type != static_cast<int8_t>(TypeKind::Funcref) && type != static_cast<int8_t>(TypeKind::Externref), "Table type should be funcref or anyref, got ", type);
 
     uint32_t initial;
     Optional<uint32_t> maximum;
@@ -218,7 +218,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     ASSERT(!maximum || *maximum >= initial);
 
-    TableElementType tableType = type == Wasm::Funcref ? TableElementType::Funcref : TableElementType::Externref;
+    TableElementType tableType = type == static_cast<int8_t>(TypeKind::Funcref) ? TableElementType::Funcref : TableElementType::Externref;
     m_info->tables.append(TableInformation(initial, maximum, isImport, tableType));
 
     return { };
@@ -304,7 +304,7 @@ auto SectionParser::parseGlobal() -> PartialResult
             global.initializationType = GlobalInformation::FromRefFunc;
         else
             global.initializationType = GlobalInformation::FromExpression;
-        WASM_PARSER_FAIL_IF(typeForInitOpcode != global.type, "Global init_expr opcode of type ", typeForInitOpcode, " doesn't match global's type ", global.type);
+        WASM_PARSER_FAIL_IF(typeForInitOpcode != global.type, "Global init_expr opcode of type ", typeForInitOpcode.kind, " doesn't match global's type ", global.type.kind);
 
         if (initOpcode == RefFunc)
             m_info->addDeclaredFunction(global.initialBitsOrImportNumber);
@@ -485,7 +485,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(refType), "can't parse reftype in elem section");
-            WASM_PARSER_FAIL_IF(refType != Funcref, "reftype in element section should be funcref");
+            WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -509,7 +509,7 @@ auto SectionParser::parseElement() -> PartialResult
 
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(refType), "can't parse reftype in elem section");
-            WASM_PARSER_FAIL_IF(refType != Funcref, "reftype in element section should be funcref");
+            WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -527,7 +527,7 @@ auto SectionParser::parseElement() -> PartialResult
 
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(refType), "can't parse reftype in elem section");
-            WASM_PARSER_FAIL_IF(refType != Funcref, "reftype in element section should be funcref");
+            WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -563,7 +563,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         int32_t constant;
         WASM_PARSER_FAIL_IF(!parseVarInt32(constant), "can't get constant value for init_expr's i32.const");
         bitsOrImportNumber = static_cast<uint64_t>(constant);
-        resultType = I32;
+        resultType = Types::I32;
         break;
     }
 
@@ -571,7 +571,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         int64_t constant;
         WASM_PARSER_FAIL_IF(!parseVarInt64(constant), "can't get constant value for init_expr's i64.const");
         bitsOrImportNumber = constant;
-        resultType = I64;
+        resultType = Types::I64;
         break;
     }
 
@@ -579,7 +579,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         uint32_t constant;
         WASM_PARSER_FAIL_IF(!parseUInt32(constant), "can't get constant value for init_expr's f32.const");
         bitsOrImportNumber = constant;
-        resultType = F32;
+        resultType = Types::F32;
         break;
     }
 
@@ -587,7 +587,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         uint64_t constant;
         WASM_PARSER_FAIL_IF(!parseUInt64(constant), "can't get constant value for init_expr's f64.const");
         bitsOrImportNumber = constant;
-        resultType = F64;
+        resultType = Types::F64;
         break;
     }
 
@@ -617,7 +617,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ref.func index");
         WASM_PARSER_FAIL_IF(index >= m_info->functions.size(), "ref.func index", index, " exceeds the number of functions ", m_info->functions.size());
 
-        resultType = Funcref;
+        resultType = Types::Funcref;
         bitsOrImportNumber = index;
         break;
     }
@@ -647,7 +647,7 @@ auto SectionParser::parseI32InitExpr(Optional<I32InitExpr>& initExpr, ASCIILiter
     uint64_t initExprBits;
     Type initExprType;
     WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
-    WASM_PARSER_FAIL_IF(initExprType != I32, failMessage);
+    WASM_PARSER_FAIL_IF(!initExprType.isI32(), failMessage);
     initExpr = makeI32InitExpr(initOpcode, initExprBits);
 
     return { };
@@ -693,7 +693,7 @@ auto SectionParser::parseElementSegmentVectorOfExpressions(Vector<uint32_t>& res
         } else {
             Type typeOfNull;
             WASM_PARSER_FAIL_IF(!parseRefType(typeOfNull), "ref.null type must be a func type in elem section");
-            WASM_PARSER_FAIL_IF(typeOfNull != Funcref, "ref.null extern is forbidden in element section's, ", elementNum, "th element's ", index, "th index");
+            WASM_PARSER_FAIL_IF(!typeOfNull.isFuncref(), "ref.null extern is forbidden in element section's, ", elementNum, "th element's ", index, "th index");
             functionIndex = Element::nullFuncIndex;
         }
 

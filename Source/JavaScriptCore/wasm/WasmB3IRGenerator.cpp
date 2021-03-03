@@ -712,7 +712,7 @@ auto B3IRGenerator::addRefIsNull(ExpressionType value, ExpressionType& result) -
 auto B3IRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, ExpressionType& result) -> PartialResult
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Externref), origin(),
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Externref), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationGetWasmTableElement)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), index);
 
@@ -753,7 +753,7 @@ auto B3IRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Partia
 
     result = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int64, origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmRefFunc)),
-        instanceValue(), addConstant(Type::I32, index));
+        instanceValue(), addConstant(Types::I32, index));
 
     return { };
 }
@@ -761,7 +761,7 @@ auto B3IRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Partia
 auto B3IRGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
 {
     auto result = m_currentBlock->appendNew<CCallValue>(
-        m_proc, toB3Type(I32), origin(),
+        m_proc, toB3Type(Types::I32), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmTableInit)),
         instanceValue(),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), elementIndex),
@@ -794,7 +794,7 @@ auto B3IRGenerator::addElemDrop(unsigned elementIndex) -> PartialResult
 auto B3IRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -> PartialResult
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::I32), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationGetWasmTableSize)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex));
 
@@ -803,7 +803,7 @@ auto B3IRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) ->
 
 auto B3IRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, ExpressionType delta, ExpressionType& result) -> PartialResult
 {
-    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::I32), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmTableGrow)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), fill, delta);
 
@@ -812,7 +812,7 @@ auto B3IRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, Expre
 
 auto B3IRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, ExpressionType fill, ExpressionType count) -> PartialResult
 {
-    auto result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
+    auto result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::I32), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmTableFill)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), offset, fill, count);
 
@@ -831,7 +831,7 @@ auto B3IRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, Exp
 auto B3IRGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length) -> PartialResult
 {
     auto result = m_currentBlock->appendNew<CCallValue>(
-        m_proc, toB3Type(I32), origin(),
+        m_proc, toB3Type(Types::I32), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmTableCopy)),
         instanceValue(),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), dstTableIndex),
@@ -898,7 +898,7 @@ auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 auto B3IRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType targetValue, ExpressionType count) -> PartialResult
 {
     auto result = m_currentBlock->appendNew<CCallValue>(
-        m_proc, toB3Type(I32), origin(),
+        m_proc, toB3Type(Types::I32), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmMemoryFill)),
         instanceValue(),
         dstAddress, targetValue, count);
@@ -918,7 +918,7 @@ auto B3IRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType targ
 auto B3IRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length) -> PartialResult
 {
     auto result = m_currentBlock->appendNew<CCallValue>(
-        m_proc, toB3Type(I32), origin(),
+        m_proc, toB3Type(Types::I32), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmMemoryInit)),
         instanceValue(),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), dataSegmentIndex),
@@ -939,7 +939,7 @@ auto B3IRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dstA
 auto B3IRGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType count) -> PartialResult
 {
     auto result = m_currentBlock->appendNew<CCallValue>(
-        m_proc, toB3Type(I32), origin(),
+        m_proc, toB3Type(Types::I32), origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmMemoryCopy)),
         instanceValue(),
         dstAddress, srcAddress, count);
@@ -1387,13 +1387,13 @@ inline Value* B3IRGenerator::sanitizeAtomicResult(ExtAtomicOpType op, Type value
         }
     };
 
-    switch (valueType) {
-    case Type::I64: {
+    switch (valueType.kind) {
+    case TypeKind::I64: {
         if (accessWidth(op) == B3::Width64)
             return result;
         return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), sanitize32(result));
     }
-    case Type::I32:
+    case TypeKind::I32:
         return sanitize32(result);
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -1445,11 +1445,11 @@ auto B3IRGenerator::atomicLoad(ExtAtomicOpType op, Type valueType, ExpressionTyp
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
 
-        switch (valueType) {
-        case Type::I32:
+        switch (valueType.kind) {
+        case TypeKind::I32:
             result = constant(Int32, 0);
             break;
-        case Type::I64:
+        case TypeKind::I64:
             result = constant(Int64, 0);
             break;
         default:
@@ -1466,7 +1466,7 @@ inline void B3IRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType,
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
-    if (valueType == Type::I64 && accessWidth(op) != B3::Width64)
+    if (valueType.isI64() && accessWidth(op) != B3::Width64)
         value = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
     m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicXchg), origin(), accessWidth(op), value, pointer);
 }
@@ -1553,7 +1553,7 @@ inline Value* B3IRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valu
         break;
     }
 
-    if (valueType == Type::I64 && accessWidth(op) != B3::Width64)
+    if (valueType.isI64() && accessWidth(op) != B3::Width64)
         value = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
 
     return sanitizeAtomicResult(op, valueType, m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(opcode), origin(), accessWidth(op), value, pointer));
@@ -1571,11 +1571,11 @@ auto B3IRGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type valueType, Expressi
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
 
-        switch (valueType) {
-        case Type::I32:
+        switch (valueType.kind) {
+        case TypeKind::I32:
             result = constant(Int32, 0);
             break;
-        case Type::I64:
+        case TypeKind::I64:
             result = constant(Int64, 0);
             break;
         default:
@@ -1598,8 +1598,8 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
         return sanitizeAtomicResult(op, valueType, m_currentBlock->appendNew<AtomicValue>(m_proc, memoryKind(AtomicStrongCAS), origin(), accessWidth, expected, value, pointer));
 
     Value* maximum = nullptr;
-    switch (valueType) {
-    case Type::I64: {
+    switch (valueType.kind) {
+    case TypeKind::I64: {
         switch (accessWidth) {
         case B3::Width8:
             maximum = constant(Int64, UINT8_MAX);
@@ -1615,7 +1615,7 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
         }
         break;
     }
-    case Type::I32:
+    case TypeKind::I32:
         switch (accessWidth) {
         case B3::Width8:
             maximum = constant(Int32, UINT8_MAX);
@@ -1646,7 +1646,7 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
     {
         auto truncatedExpected = expected;
         auto truncatedValue = value;
-        if (valueType == Type::I64) {
+        if (valueType.isI64()) {
             truncatedExpected = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), expected);
             truncatedValue = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), value);
         }
@@ -1696,11 +1696,11 @@ auto B3IRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, Ex
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
 
-        switch (valueType) {
-        case Type::I32:
+        switch (valueType.kind) {
+        case TypeKind::I32:
             result = constant(Int32, 0);
             break;
-        case Type::I64:
+        case TypeKind::I64:
             result = constant(Int64, 0);
             break;
         default:
