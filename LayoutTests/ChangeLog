@@ -1,3 +1,15 @@
+2021-03-04  Youenn Fablet  <youenn@apple.com>
+
+        In case of POST navigation redirected by a 302, the 'Origin' header is kept in the redirected request
+        https://bugs.webkit.org/show_bug.cgi?id=222653
+        <rdar://problem/74983521>
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/fetch/echo-origin.py: Added.
+        * http/wpt/fetch/navigation-post-to-get-origin-expected.txt: Added.
+        * http/wpt/fetch/navigation-post-to-get-origin.html: Added.
+
 2021-03-04  Said Abou-Hallawa  <said@apple.com>
 
         Followup (r273764): Use different container sizes in background-svg-image-loading.html
