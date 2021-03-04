@@ -645,13 +645,8 @@ public:
 
     void blend(const CSSPropertyBlendingClient*, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        // https://drafts.csswg.org/web-animations-1/#discrete
-        // The property’s values cannot be meaningfully combined, thus it is not additive and
-        // interpolation swaps from Va to Vb at 50% (p=0.5).
-        if (progress < 0.5)
-            (dst->*m_setter)((a->*PropertyWrapperGetter<T>::m_getter)());
-        else
-            (dst->*m_setter)((b->*PropertyWrapperGetter<T>::m_getter)());
+        ASSERT(!progress || progress == 1.0);
+        (dst->*m_setter)(this->value(progress ? b : a));
     }
 
 protected:
@@ -776,13 +771,9 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        if (!canInterpolate(a, b)) {
-            progress = progress < 0.5 ? 0 : 1;
-            if (m_flags.contains(Flags::UsesFillKeyword))
-                dst->setBorderImageSliceFill((progress ? b : a)->borderImage().fill());
-        } else if (m_flags.contains(Flags::UsesFillKeyword))
-            dst->setBorderImageSliceFill(a->borderImage().fill());
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const LengthBox&>::m_getter)(), (b->*PropertyWrapperGetter<const LengthBox&>::m_getter)(), progress));
+        if (m_flags.contains(Flags::UsesFillKeyword))
+            dst->setBorderImageSliceFill((!progress || canInterpolate(a, b) ? a : b)->borderImage().fill());
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
     }
 
 protected:
@@ -2156,6 +2147,11 @@ void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* anim
 
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(prop);
     if (wrapper) {
+        // https://drafts.csswg.org/web-animations-1/#discrete
+        // The property’s values cannot be meaningfully combined, thus it is not additive and
+        // interpolation swaps from Va to Vb at 50% (p=0.5).
+        if (!wrapper->canInterpolate(a, b))
+            progress = progress < 0.5 ? 0 : 1;
         wrapper->blend(anim, dst, a, b, progress);
 #if !LOG_DISABLED
         wrapper->logBlend(a, b, dst, progress);
