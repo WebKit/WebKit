@@ -1,3 +1,14 @@
+2021-03-04  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Some media tests are flaky when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=221693
+
+        Unreviewed test gardening.
+
+        Remove the tests which are consistently passing on bots from the test expectations.
+
+        * platform/wk2/TestExpectations:
+
 2021-03-04  Youenn Fablet  <youenn@apple.com>
 
         In case of POST navigation redirected by a 302, the 'Origin' header is kept in the redirected request

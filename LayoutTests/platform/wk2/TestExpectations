@@ -238,13 +238,8 @@ http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-ful
 media/picture-in-picture/picture-in-picture-api-pip-window.html [ Timeout Pass ]
 
 # webkit.org/b/221693
-media/audio-playback-restriction-removed-track-enabled.html [ Timeout Pass ]
-media/controls/inline-elements-dropoff-order.html [ Failure Pass ]
 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash ]
-media/media-can-play-webm.html [ Failure ]
 media/media-controller-unpause.html [ Timeout ]
-media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
-media/video-as-img-output-pts.html [ Timeout Pass ]
 media/video-controller-child-rate.html [ Failure Pass ]
 media/video-set-rate-from-pause.html [ Timeout Pass ]
 
