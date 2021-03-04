@@ -29,12 +29,14 @@
 #include "Pasteboard.h"
 
 #include "DocumentFragment.h"
+#include "DragData.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "wtf/URL.h"
 #include "NotImplemented.h"
 #include "TextResourceDecoder.h"
 #include "markup.h"
+
 #include <support/Locker.h>
 #include <app/Clipboard.h>
 #include <Message.h>
@@ -44,24 +46,24 @@
 
 namespace WebCore {
 
-    std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
+    std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return std::make_unique<Pasteboard>();
+    return std::make_unique<Pasteboard>(std::move(context));
 }
 
 #if ENABLE(DRAG_SUPPORT)
-std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
 {
-    return createForCopyAndPaste();
+    return createForCopyAndPaste(std::move(context));
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)
 {
-    return createForCopyAndPaste();
+    return createForCopyAndPaste(dragData.createPasteboardContext());
 }
 #endif
 
-Pasteboard::Pasteboard()
+Pasteboard::Pasteboard(std::unique_ptr<WebCore::PasteboardContext, std::default_delete<WebCore::PasteboardContext> >&&)
 {
 }
 
