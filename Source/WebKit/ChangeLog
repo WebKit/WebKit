@@ -1,3 +1,17 @@
+2021-03-04  Rob Buis  <rbuis@igalia.com>
+
+        Null check platformData when decoding
+        https://bugs.webkit.org/show_bug.cgi?id=221442
+
+        Reviewed by Ryosuke Niwa.
+
+        Null check platformData when decoding.
+
+        Test: ipc/pasteboard-write-custom-data.html
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PasteboardCustomData::Entry>::decode):
+
 2021-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         IPC stream feature should use client/server naming instead of sender/receiver
