@@ -1,5 +1,29 @@
 2021-03-03  Alex Christensen  <achristensen@webkit.org>
 
+        WKRemoteObjectCoder should be able to handle NSErrors from TLS failures
+        https://bugs.webkit.org/show_bug.cgi?id=222401
+        <rdar://problem/72103865>
+
+        Reviewed by Chris Dumez.
+
+        NSErrors from TLS failures contain values like a SecTrustRef or a SecCertificateRef,
+        which are not ObjC objects, and they don't like it when you call encodeWithCoder: on them.
+        Until r273141 it would crash when we do, but even after that we just decode a nil NSError.
+        Add a special case like we did in encodeNSError to successfully encode and decode these errors.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (decodeObjCObject):
+        (transformCertificatesToData):
+        (transformTrustToData):
+        (encodeError):
+        (transformDataToCertificates):
+        (transformDataToTrust):
+        (decodeError):
+        (encodeObject):
+        (decodeObject):
+
+2021-03-03  Alex Christensen  <achristensen@webkit.org>
+
         Limit HashTable entry size to 500 bytes
         https://bugs.webkit.org/show_bug.cgi?id=222658
 

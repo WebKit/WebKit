@@ -1,3 +1,16 @@
+2021-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        WKRemoteObjectCoder should be able to handle NSErrors from TLS failures
+        https://bugs.webkit.org/show_bug.cgi?id=222401
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+        (-[RemoteObjectRegistryPlugIn sendError:completionHandler:]):
+
 2021-03-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r273851.

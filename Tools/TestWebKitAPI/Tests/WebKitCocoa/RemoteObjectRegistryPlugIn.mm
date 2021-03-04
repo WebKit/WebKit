@@ -118,6 +118,11 @@
     completionHandler(request, response, challenge, error);
 }
 
+- (void)sendError:(NSError *)error completionHandler:(void (^)(NSError *))completionHandler
+{
+    completionHandler(error);
+}
+
 - (void)callUIProcessMethodWithReplyBlock
 {
     id <LocalObjectProtocol> localObject = [[_browserContextController _remoteObjectRegistry] remoteObjectProxyWithInterface:localObjectInterface()];
