@@ -1,3 +1,14 @@
+2021-03-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ENABLE(JIT_CAGE) requires HAVE(JIT_CAGE)
+        https://bugs.webkit.org/show_bug.cgi?id=222695
+
+        Reviewed by Saam Barati.
+
+        HAVE(JIT_CAGE) is internally defined. We use HAVE(JIT_CAGE) when defining ENABLE(JIT_CAGE).
+
+        * wtf/PlatformEnable.h:
+
 2021-03-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r273851.
