@@ -27,9 +27,10 @@
 #include "config.h"
 #include "ScrollingTreeScrollingNodeDelegateNicosia.h"
 
-#include "NicosiaPlatformLayer.h"
-
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
+
+#include "NicosiaPlatformLayer.h"
+#include "ScrollingTreeFrameScrollingNode.h"
 
 namespace WebCore {
 class ScrollAnimation;

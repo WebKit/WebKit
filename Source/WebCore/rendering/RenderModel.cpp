@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(MODEL_ELEMENT)
-
 #include "config.h"
 #include "RenderModel.h"
+
+#if ENABLE(MODEL_ELEMENT)
 
 #include "HTMLModelElement.h"
 #include "RenderStyle.h"
