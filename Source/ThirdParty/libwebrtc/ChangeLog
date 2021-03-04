@@ -1,3 +1,14 @@
+2021-03-04  Youenn Fablet  <youenn@apple.com>
+
+        Use NO_MAIN_THREAD_WRAPPING to compile libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=222717
+        <rdar://problem/74988599>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.xcconfig:
+        This prevents creating socket server in Web Process.
+
 2021-02-24  Youenn Fablet  <youenn@apple.com>
 
         Update fipsmodule cipher.c to handle EVP_CipherUpdate
