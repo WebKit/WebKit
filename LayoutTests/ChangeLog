@@ -1,3 +1,12 @@
+2021-03-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ Catalina wk1 ews ] media/remote-control-command-seek.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=215325
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Update test expectations since EWS moved to Catalina.
+
 2021-03-03  Andres Gonzalez  <andresg_22@apple.com>
 
         Replace the multiple WebAccessibilityObjectWrapperIOS postXXXNotification methods with a single postNotification method.

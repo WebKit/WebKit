@@ -1203,7 +1203,7 @@ webkit.org/b/216292 imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-
 
 webkit.org/b/217478 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/215325 [ Mojave ] media/remote-control-command-seek.html [ Pass Timeout ]
+webkit.org/b/215325 [ Catalina ] media/remote-control-command-seek.html [ Pass Timeout ]
 
 webkit.org/b/217934 inspector/debugger/breakpoint-resolve-when-script-added.html [ Skip ]
 
