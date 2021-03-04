@@ -255,7 +255,13 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
         // ReadableStreamSource
         void setActive() final { }
         void setInactive() final { }
-        void doStart() final { }
+        void doStart() final
+        {
+            m_isStarted = true;
+            if (m_exception)
+                controller().error(*m_exception);
+        }
+
         void doPull() final { }
         void doCancel() final
         {
@@ -282,13 +288,20 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
         {
             controller().close();
         }
-        void didFail(ExceptionCode exception) final
+        void didFail(ExceptionCode code) final
         {
-            controller().error(Exception { exception });
+            Exception exception { code };
+            if (!m_isStarted) {
+                m_exception = WTFMove(exception);
+                return;
+            }
+            controller().error(exception);
         }
 
         UniqueRef<FileReaderLoader> m_loader;
         size_t m_bytesRead { 0 };
+        bool m_isStarted { false };
+        Optional<Exception> m_exception;
     };
 
     auto* globalObject = scriptExecutionContext.globalObject();

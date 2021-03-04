@@ -1,3 +1,13 @@
+2021-03-04  Youenn Fablet  <youenn@apple.com>
+
+        Handle the case of synchronous failure in loading blob.
+        https://bugs.webkit.org/show_bug.cgi?id=222724
+
+        Reviewed by Carlos Garcia Campos.
+
+        * http/tests/fetch/blob-in-unload-event-handler-expected.txt: Added.
+        * http/tests/fetch/blob-in-unload-event-handler.html: Added.
+
 2021-03-04  Rob Buis  <rbuis@igalia.com>
 
         Null check platformData when decoding
