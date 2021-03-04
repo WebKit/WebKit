@@ -1275,8 +1275,6 @@ public:
     // error list. Return true if at least one error is moved.
     virtual bool moveErrorsToSyntheticErrorList() = 0;
 
-    virtual void setFailNextGPUStatusCheck() = 0;
-
     virtual void prepareForDisplay() = 0;
 
     // FIXME: should be removed, caller should keep track of changed state.
@@ -1301,7 +1299,11 @@ public:
     // on the content.
     virtual void markLayerComposited() = 0;
 
-    virtual void simulateContextChanged() = 0;
+    enum class SimulatedEventForTesting {
+        ContextChange,
+        GPUStatusFailure
+    };
+    virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     // Returns interface for CV interaction if the functionality is present.

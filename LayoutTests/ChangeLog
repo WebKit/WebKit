@@ -1,3 +1,18 @@
+2021-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Adding new test conditions for WebGL should be simpler
+        https://bugs.webkit.org/show_bug.cgi?id=222593
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/webglcontextchangedevent.html:
+        Replace internals.simulateContextChanged(context) with
+        internals.simulateEventForWebGLContext("ContextChange", context)
+
+        * fast/canvas/webgl/lose-context-on-status-failure.html:
+        Similarly replace internals.setFailNextGPUStatusCheck(context) with
+        internals.simulateEventForWebGLContext("GPUStatusFailure", context).
+
 2021-03-04  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: contentSize >= 0 in WefbCore::RenderFlexibleBox::adjustChildSizeForMinAndMax

@@ -69,7 +69,7 @@ async function runTest() {
 
     debug("Now force failure after the next drawArrays.")
     if (window.internals)
-        window.internals.failNextGPUStatusCheck(gl);
+        window.internals.simulateEventForWebGLContext("GPUStatusFailure", gl);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     await webGLContextLost(canvas);
     shouldBeTrue("gl.isContextLost()");
@@ -101,7 +101,7 @@ async function runTest() {
 
     debug("Now force failure after the next drawElements.")
     if (window.internals)
-        window.internals.failNextGPUStatusCheck(gl);
+        window.internals.simulateEventForWebGLContext("GPUStatusFailure", gl);
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     await webGLContextLost(canvas)
     shouldBeTrue("gl.isContextLost()");
@@ -128,7 +128,7 @@ async function runTest() {
 
     debug("Now force failure after the next drawArraysInstancedANGLE.")
     if (window.internals)
-        window.internals.failNextGPUStatusCheck(gl);
+        window.internals.simulateEventForWebGLContext("GPUStatusFailure", gl);
     ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, 10);
     await webGLContextLost(canvas);
     shouldBeTrue("gl.isContextLost()");
@@ -161,7 +161,7 @@ async function runTest() {
 
     debug("Now force failure after the next drawElementsInstancedANGLE.")
     if (window.internals)
-        window.internals.failNextGPUStatusCheck(gl);
+        window.internals.simulateEventForWebGLContext("GPUStatusFailure", gl);
     ext.drawElementsInstancedANGLE(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0, 8);
     await webGLContextLost(canvas);
     shouldBeTrue("gl.isContextLost()");

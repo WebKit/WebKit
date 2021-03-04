@@ -1023,6 +1023,14 @@ template <> struct EnumTraits<WebCore::GraphicsContextGLWebGLVersion> {
 #endif
     >;
 };
+
+template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesting> {
+    using values = EnumValues<
+    WebCore::GraphicsContextGL::SimulatedEventForTesting,
+    WebCore::GraphicsContextGL::SimulatedEventForTesting::ContextChange,
+    WebCore::GraphicsContextGL::SimulatedEventForTesting::GPUStatusFailure
+    >;
+};
 #endif
 
 } // namespace WTF

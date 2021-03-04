@@ -7564,10 +7564,10 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
 }
 
-void WebGLRenderingContextBase::simulateContextChanged()
+void WebGLRenderingContextBase::simulateEventForTesting(SimulatedEventForTesting event)
 {
     if (m_context)
-        m_context->simulateContextChanged();
+        m_context->simulateEventForTesting(event);
 }
 
 String WebGLRenderingContextBase::ensureNotNull(const String& text) const
@@ -7897,14 +7897,6 @@ void WebGLRenderingContextBase::activityStateDidChange(OptionSet<ActivityState::
     auto changed = oldActivityState ^ newActivityState;
     if (changed & ActivityState::IsVisible)
         m_context->setContextVisibility(newActivityState.contains(ActivityState::IsVisible));
-}
-
-void WebGLRenderingContextBase::setFailNextGPUStatusCheck()
-{
-    if (!m_context)
-        return;
-
-    m_context->setFailNextGPUStatusCheck();
 }
 
 void WebGLRenderingContextBase::didComposite()

@@ -99,6 +99,11 @@ enum TreeType {
     "ComposedTree"
 };
 
+[Conditional=WEBGL] enum SimulatedWebGLContextEvent {
+    "ContextChange",
+    "GPUStatusFailure"
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
@@ -791,8 +796,7 @@ enum TreeType {
     undefined disableTileSizeUpdateDelay();
     undefined setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
 
-    [Conditional=WEBGL] undefined simulateWebGLContextChanged(WebGLRenderingContext context);
-    [Conditional=WEBGL] undefined failNextGPUStatusCheck(WebGLRenderingContext context);
+    [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext context);
     [Conditional=WEBGL] boolean hasLowAndHighPowerGPUs();
 
     undefined setPageVisibility(boolean isVisible);

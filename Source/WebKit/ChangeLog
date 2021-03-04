@@ -1,3 +1,23 @@
+2021-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Adding new test conditions for WebGL should be simpler
+        https://bugs.webkit.org/show_bug.cgi?id=222593
+
+        Reviewed by Kenneth Russell.
+
+        Replace simulateContextChanged and
+        setFailNextGPUStatusCheck with simulateEventForTesting.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::simulateEventForTesting):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::simulateEventForTesting):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+
 2021-03-03  Alex Christensen  <achristensen@webkit.org>
 
         WKRemoteObjectCoder should be able to handle NSErrors from TLS failures

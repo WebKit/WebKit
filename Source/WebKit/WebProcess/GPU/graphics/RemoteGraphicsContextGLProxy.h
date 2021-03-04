@@ -64,16 +64,14 @@ public:
     using WebCore::RemoteGraphicsContextGLProxyBase::isEnabled;
     void ensureExtensionEnabled(const String& extension) final;
     void notifyMarkContextChanged() final;
-    void simulateContextChanged() final;
     void paintRenderingResultsToCanvas(WebCore::ImageBuffer&) final;
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&) final;
     void synthesizeGLError(GCGLenum error) final;
     GCGLenum getError() final;
-
     bool copyTextureFromMedia(WebCore::MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+    void simulateEventForTesting(SimulatedEventForTesting) final;
 
     // Functions with a generated implementation. This list is used by generate-gpup-webgl script.
-    void setFailNextGPUStatusCheck() final;
     bool moveErrorsToSyntheticErrorList() final;
     void activeTexture(GCGLenum texture) final;
     void attachShader(PlatformGLObject program, PlatformGLObject shader) final;

@@ -30,15 +30,6 @@
 
 namespace WebKit {
 
-void RemoteGraphicsContextGLProxy::setFailNextGPUStatusCheck()
-{
-    if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::SetFailNextGPUStatusCheck());
-        if (!sendResult)
-            markContextLost();
-    }
-}
-
 bool RemoteGraphicsContextGLProxy::moveErrorsToSyntheticErrorList()
 {
     bool returnValue = { };

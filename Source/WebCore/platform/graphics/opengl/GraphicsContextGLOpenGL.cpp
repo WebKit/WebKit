@@ -192,8 +192,10 @@ void GraphicsContextGLOpenGL::setContextVisibility(bool)
 {
 }
 
-void GraphicsContextGLOpenGL::simulateContextChanged()
+void GraphicsContextGLOpenGL::simulateEventForTesting(SimulatedEventForTesting event)
 {
+    if (event == SimulatedEventForTesting::GPUStatusFailure)
+        m_failNextStatusCheck = true;
 }
 
 void GraphicsContextGLOpenGL::prepareForDisplay()
