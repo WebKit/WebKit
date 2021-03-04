@@ -1,3 +1,16 @@
+2021-03-04  Said Abou-Hallawa  <said@apple.com>
+
+        Followup (r273764): Use different container sizes in background-svg-image-loading.html
+        https://bugs.webkit.org/show_bug.cgi?id=222679
+
+        Reviewed by Antti Koivisto.
+
+        This will force different SVGImageForContainers in SVGImageCache one for
+        each SVGImage client (<div> element in this test).
+
+        * fast/css/background-svg-image-loading-expected.html:
+        * fast/css/background-svg-image-loading.html:
+
 2021-03-04  Keith Miller  <keith_miller@apple.com>
 
         window proxy of detached iframe doesn't respect updates to global values
