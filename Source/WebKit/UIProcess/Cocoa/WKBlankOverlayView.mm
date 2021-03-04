@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKBlankOverlayView.mm"
+#import "WKBlankOverlayView.h"
 
 @implementation WKBlankOverlayView {
 }
