@@ -668,7 +668,10 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         }
         return adjustedLineLogicalRect;
     }();
-    auto availableWidth = lineLogicalRectForCandidateContent.width() - m_line.contentLogicalRight();
+    auto availableWidth = [&] {
+        auto availableWidthForContent = lineLogicalRectForCandidateContent.width() - m_line.contentLogicalRight();
+        return std::isnan(availableWidthForContent) ? maxInlineLayoutUnit() : availableWidthForContent;
+    }();
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto lineHasContent = !m_line.runs().isEmpty() || m_contentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineHasContent, !m_wrapOpportunityList.isEmpty() };

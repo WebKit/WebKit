@@ -1,3 +1,14 @@
+2021-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineStatus::availableWidth should always be a valid number
+        https://bugs.webkit.org/show_bug.cgi?id=222752
+        <rdar://problem/75028043>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/crash-when-negative-spacing-produce-nan-expected.txt: Added.
+        * fast/inline/crash-when-negative-spacing-produce-nan.html: Added.
+
 2021-03-04  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Some media tests are flaky when media in GPU Process is enabled

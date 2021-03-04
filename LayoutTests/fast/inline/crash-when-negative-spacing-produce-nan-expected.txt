@@ -1,0 +1,3 @@
+* { display: block; } html { zoom: 12345678901234567890; } style { letter-spacing: -1px; zoom: 12345678901234567890; }
+PASS if no crash or assert
+if (window.testRunner) testRunner.dumpAsText();

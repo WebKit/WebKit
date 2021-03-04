@@ -131,6 +131,7 @@ bool InlineContentBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent
 
 InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const ContinuousContent& candidateContent, const LineStatus& lineStatus)
 {
+    ASSERT(!std::isnan(lineStatus.availableWidth));
     auto processCandidateContent = [&] {
         if (candidateContent.logicalWidth() <= lineStatus.availableWidth)
             return Result { Result::Action::Keep };
