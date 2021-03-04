@@ -1,3 +1,54 @@
+2021-03-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273901. rdar://problem/75058982
+
+    window proxy of detached iframe doesn't respect updates to global values
+    https://bugs.webkit.org/show_bug.cgi?id=206445
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    According to the html spec the frame should only be needing for
+    COOP access violation reporting, which we don't support. This
+    patch removes our old behavior of blocking stores to windows that
+    have been detached.
+    
+    I also removed some stale caching code from
+    getOwnPropertySlotByIndex since it's only accessed once now.
+    
+    * bindings/js/JSDOMWindowCustom.cpp:
+    (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+    (WebCore::JSDOMWindow::doPutPropertySecurityCheck):
+    (WebCore::JSDOMWindow::put):
+    (WebCore::JSDOMWindow::putByIndex):
+    
+    LayoutTests:
+    
+    * fast/frames/iframe-detached-window-still-writable-eval-expected.txt: Added.
+    * fast/frames/iframe-detached-window-still-writable-eval.html: Added.
+    * fast/frames/iframe-detached-window-still-writable-expected.txt: Added.
+    * fast/frames/iframe-detached-window-still-writable.html: Added.
+    * http/tests/dom/cross-origin-detached-window-properties-expected.txt:
+    * http/tests/dom/cross-origin-detached-window-properties.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273901 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-04  Keith Miller  <keith_miller@apple.com>
+
+            window proxy of detached iframe doesn't respect updates to global values
+            https://bugs.webkit.org/show_bug.cgi?id=206445
+
+            Reviewed by Chris Dumez.
+
+            * fast/frames/iframe-detached-window-still-writable-eval-expected.txt: Added.
+            * fast/frames/iframe-detached-window-still-writable-eval.html: Added.
+            * fast/frames/iframe-detached-window-still-writable-expected.txt: Added.
+            * fast/frames/iframe-detached-window-still-writable.html: Added.
+            * http/tests/dom/cross-origin-detached-window-properties-expected.txt:
+            * http/tests/dom/cross-origin-detached-window-properties.html:
+
 2021-03-02  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r273656. rdar://problem/74883345
