@@ -200,7 +200,7 @@ private:
         RefPtr<StyleImage> image;
         LengthBox imageSlices { { 100, LengthType::Percent }, { 100, LengthType::Percent }, { 100, LengthType::Percent }, { 100, LengthType::Percent } };
         LengthBox borderSlices { { 1, LengthType::Relative }, { 1, LengthType::Relative }, { 1, LengthType::Relative }, { 1, LengthType::Relative } };
-        LengthBox outset { 0 };
+        LengthBox outset { LengthType::Relative };
 
     private:
         Data();

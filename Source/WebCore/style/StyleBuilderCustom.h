@@ -531,7 +531,7 @@ public:
         NinePieceImage image(getValue(builderState.style()));
         switch (modifier) {
         case Outset:
-            image.setOutset(LengthBox(0));
+            image.setOutset(LengthBox(LengthType::Relative));
             break;
         case Repeat:
             image.setHorizontalRule(NinePieceImageRule::Stretch);

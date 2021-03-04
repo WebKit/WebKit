@@ -1,3 +1,26 @@
+2021-03-04  Antoine Quint  <graouts@webkit.org>
+
+        initial value for border-image-outset should be 0
+        https://bugs.webkit.org/show_bug.cgi?id=222721
+
+        Reviewed by Antti Koivisto.
+
+        Update some tests to make the correct assumption on the border-image-ouset initial value.
+
+        * css3/calc/reflection-computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-border-image-expected.txt:
+        * fast/css/getComputedStyle/computed-style-border-image.html:
+        * fast/css/getComputedStyle/computed-style-with-zoom-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-border-image-expected.txt:
+        * fast/reflections/reflection-computed-style-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+
 2021-03-04  Youenn Fablet  <youenn@apple.com>
 
         FileReader::enqueueTask should validate that its context is not stopped before executing the task
