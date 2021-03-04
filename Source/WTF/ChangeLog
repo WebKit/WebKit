@@ -1,5 +1,40 @@
 2021-03-04  Chris Dumez  <cdumez@apple.com>
 
+        [macOS][WK2] Changing the system language does not update navigator.language
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+
+        Reviewed by Per Arne Vollan.
+
+        Update WTF::languageDidChange() to clear preferredLanguages() on Cocoa platforms
+        so that we get updated values from the system the next time
+        platformUserPreferredLanguages() is called.
+
+        platformUserPreferredLanguages() used to implicitly register a AppleLanguagePreferencesChangedNotification
+        listener. We've now made this registering opt-in by moving it to a separate
+        listenForLanguageChangeNotifications() function. This function is getting called
+        on Mac WK1 and WK2 when CFPREFS_DIRECT_MODE is disabled (legacy).
+        When CFPREFS_DIRECT_MODE is enabled in WK2, we don't want/need to listen for this
+        notification because the AppleLanguages preference gets pushed by the UIProcess
+        down to the WebProcesses. Even though we could listen for this notification,
+        the WebProcess would not have the latest AppleLanguages preference when receiving
+        the notification. This would cause us to fire the languagechange event at the
+        Window too early and navigator.language would keep returning the old language.
+        For WK2 with CFPREFS_DIRECT_MODE enabled, we now explicitly call
+        WTF::languageDidChange() when the "AppleLanguages" preference gets sync'd from
+        the UIProcess instead.
+
+        * wtf/Language.cpp:
+        (WTF::languageDidChange):
+        (WTF::platformLanguageDidChange):
+        * wtf/Language.h:
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::languagePreferencesDidChange):
+        (WTF::platformLanguageDidChange):
+        (WTF::listenForLanguageChangeNotifications):
+        (WTF::platformUserPreferredLanguages):
+
+2021-03-04  Chris Dumez  <cdumez@apple.com>
+
         Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=222391
         <rdar://74748353>

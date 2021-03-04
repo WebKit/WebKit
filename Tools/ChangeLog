@@ -1,3 +1,15 @@
+2021-03-04  Chris Dumez  <cdumez@apple.com>
+
+        [macOS][WK2] Changing the system language does not update navigator.language
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+
+        Reviewed by Per Arne Vollan.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKit/OverrideAppleLanguagesPreference.mm:
+        (TEST):
+
 2021-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Introduce "websocket", "fetch", and "other" resource types to WKContentRuleList

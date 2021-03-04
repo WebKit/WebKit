@@ -48,14 +48,14 @@ static void setAppleLanguagesPreference()
     if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
         @autoreleasepool {
             NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
-            NSMutableDictionary *newArguments = [existingArguments mutableCopy];
+            auto newArguments = adoptNS([existingArguments mutableCopy]);
             RetainPtr<NSMutableArray> newLanguages = adoptNS([[NSMutableArray alloc] init]);
             xpc_array_apply(languages, ^(size_t index, xpc_object_t value) {
                 [newLanguages addObject:[NSString stringWithCString:xpc_string_get_string_ptr(value) encoding:NSUTF8StringEncoding]];
                 return true;
             });
             [newArguments setValue:newLanguages.get() forKey:@"AppleLanguages"];
-            [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments forName:NSArgumentDomain];
+            [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
         }
     }
 }

@@ -40,6 +40,13 @@ namespace WTF {
 
 static Lock preferredLanguagesMutex;
 
+#if PLATFORM(MAC)
+static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+{
+    languageDidChange();
+}
+#endif
+
 static Vector<String>& preferredLanguages()
 {
     static LazyNeverDestroyed<Vector<String>> languages;
@@ -83,27 +90,26 @@ static String httpStyleLanguageCode(CFStringRef language)
 
 }
 
-#if PLATFORM(MAC)
-static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+void platformLanguageDidChange()
 {
     {
         auto locker = holdLock(preferredLanguagesMutex);
         preferredLanguages().clear();
     }
-    
-    languageDidChange();
 }
-#endif
 
-Vector<String> platformUserPreferredLanguages()
+void listenForLanguageChangeNotifications()
 {
 #if PLATFORM(MAC)
     static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^ {
+    dispatch_once(&onceToken, ^{
         CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), nullptr, &languagePreferencesDidChange, CFSTR("AppleLanguagePreferencesChangedNotification"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
     });
 #endif
+}
 
+Vector<String> platformUserPreferredLanguages()
+{
     auto locker = holdLock(preferredLanguagesMutex);
     Vector<String>& userPreferredLanguages = preferredLanguages();
 
