@@ -1,5 +1,25 @@
 2021-03-04  Youenn Fablet  <youenn@apple.com>
 
+        REGRESSION (r273732): ASSERTION FAILED: Completion handler should always be called under WebKit::RemoteRealtimeMediaSourceProxy::~RemoteRealtimeMediaSourceProxy
+        https://bugs.webkit.org/show_bug.cgi?id=222691
+        <rdar://problem/75006211>
+
+        Reviewed by Eric Carlson.
+
+        Make sure to return a ApplyConstraints completed message in all cases.
+        Call completion handler when source gets destroyed.
+        Covered by existing tests.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::applyConstraints):
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp:
+        (WebKit::RemoteRealtimeMediaSourceProxy::~RemoteRealtimeMediaSourceProxy):
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::gpuProcessConnectionDidClose):
+
+2021-03-04  Youenn Fablet  <youenn@apple.com>
+
         Update camera and microphone capture state control WKWebView API
         https://bugs.webkit.org/show_bug.cgi?id=222166
 

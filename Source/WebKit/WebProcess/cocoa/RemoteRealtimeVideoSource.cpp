@@ -214,6 +214,7 @@ void RemoteRealtimeVideoSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     m_proxy.resetReady();
     createRemoteMediaSource();
 
+    m_proxy.failApplyConstraintCallbacks("GPU Process terminated"_s);
     if (m_sizeConstraints)
         m_proxy.applyConstraints(*m_sizeConstraints, [](auto) { });
 
