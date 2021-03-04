@@ -1,3 +1,12 @@
+2021-03-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: contentSize >= 0 in WefbCore::RenderFlexibleBox::adjustChildSizeForMinAndMax
+        https://bugs.webkit.org/show_bug.cgi?id=222711
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Adding a test that is ASSERTing in Debug builds since it was imported.
+
 2021-03-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ Catalina wk1 ews ] media/remote-control-command-seek.html is a flaky timeout

@@ -4066,6 +4066,9 @@ webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-pain
 # Misc elements as flex items.
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001v.xhtml [ ImageOnlyFailure ]
 
+# Test ASSERTing in Debug.
+webkit.org/b/222711 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/frameset-crash.html [ Skip ]
+
 # Newly imported Canvas WPT tests that are failing.
 imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.broken.html [ Failure Pass ]
