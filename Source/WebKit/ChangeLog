@@ -1,3 +1,21 @@
+2021-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Limit HashTable entry size to 500 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=222658
+
+        Reviewed by Yusuke Suzuki.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::getNetworkLoadInformationResponse):
+        (WebKit::NetworkConnectionToWebProcess::getNetworkLoadIntermediateInformation):
+        (WebKit::NetworkConnectionToWebProcess::takeNetworkLoadInformationMetrics):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformation):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationMetrics):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::writeRecord):
+        (WebKit::CacheStorage::Caches::readRecord):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+
 2021-03-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r273851.
