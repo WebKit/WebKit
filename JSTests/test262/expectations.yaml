@@ -606,9 +606,6 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
-test/built-ins/Function/internals/Call/class-ctor-realm.js:
-  default: 'Test262Error: Expected a TypeError but got a TypeError'
-  strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
@@ -1724,6 +1721,9 @@ test/language/statements/class/elements/nested-direct-eval-err-contains-argument
 test/language/statements/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
+test/language/statements/class/subclass/default-constructor-spread-override.js:
+  default: 'RangeError: Maximum call stack size exceeded.'
+  strict mode: 'RangeError: Maximum call stack size exceeded.'
 test/language/statements/const/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'TypeError: Spread syntax requires ...iterable[Symbol.iterator] to be a function'
   strict mode: 'TypeError: Spread syntax requires ...iterable[Symbol.iterator] to be a function'

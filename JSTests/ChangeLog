@@ -1,3 +1,35 @@
+2021-03-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=222710
+
+        Reviewed by Ross Kirsling.
+
+        Update test262. New failure is due to the spec change, tracked in https://bugs.webkit.org/show_bug.cgi?id=222526.
+
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Array/prototype/sort/call-with-primitive.js: Added.
+        * test262/test/built-ins/Function/internals/Call/class-ctor-realm.js:
+        * test262/test/language/expressions/object/dstr/object-rest-proxy-get-not-called-on-dontenum-keys.js: Added.
+        (getOwnPropertyDescriptor):
+        (ownKeys):
+        * test262/test/language/expressions/object/dstr/object-rest-proxy-gopd-not-called-on-excluded-keys.js: Added.
+        (getOwnPropertyDescriptor):
+        (ownKeys):
+        * test262/test/language/expressions/object/object-spread-proxy-get-not-called-on-dontenum-keys.js: Added.
+        (getOwnPropertyDescriptor):
+        (ownKeys):
+        * test262/test/language/expressions/object/object-spread-proxy-no-excluded-keys.js: Copied from JSTests/test262/test/language/expressions/object/object-spread-proxy-ownkeys-returned-keys-order.js.
+        (getOwnPropertyDescriptor):
+        (ownKeys):
+        * test262/test/language/expressions/object/object-spread-proxy-ownkeys-returned-keys-order.js:
+        * test262/test/language/statements/class/constructor-inferred-observable-iteration.js: Removed.
+        * test262/test/language/statements/class/subclass/default-constructor-spread-override.js:
+        (Array.prototype.Symbol.iterator):
+        (Base):
+        * test262/test262-Revision.txt:
+
 2021-03-03  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext] Private methods can't be named as '#constructor'

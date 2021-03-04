@@ -3,17 +3,15 @@
 /*---
 esid: sec-ecmascript-function-objects-call-thisargument-argumentslist
 description: >
-  Error when invoking a class constructor (honoring the Realm of the current
-  execution context)
-info: |
-  [...]
-  2. If F's [[FunctionKind]] internal slot is "classConstructor", throw a
-     TypeError exception.
+  Error when invoking a default class constructor, honoring the Realm
+  that the class was defined in.
 features: [cross-realm, class]
 ---*/
 
-var C = $262.createRealm().global.eval('0, class {}');
+const realm = $262.createRealm();
+const C = realm.global.eval('(class {})');
+const TE = realm.global.eval('TypeError');
 
-assert.throws(TypeError, function() {
+assert.throws(TE, function() {
   C();
 });
