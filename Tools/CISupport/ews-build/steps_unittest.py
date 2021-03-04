@@ -2437,7 +2437,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     def test_relevant_windows_wk1_patch(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Source/WebKitLegacy'
+        CheckPatchRelevance._get_patch = lambda x: b'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckPatchRelevance())
         self.setProperty('buildername', 'Windows-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')

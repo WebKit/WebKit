@@ -406,6 +406,11 @@ class CheckPatchRelevance(buildstep.BuildStep):
 
         for change in patch.splitlines():
             for path in relevant_paths:
+                if sys.version_info > (3, 0):
+                    if type(path) == str:
+                        path = path.encode(encoding='utf-8', errors='replace')
+                    if type(change) == str:
+                        change = change.encode(encoding='utf-8', errors='replace')
                 if re.search(path, change, re.IGNORECASE):
                     return True
         return False
