@@ -1,5 +1,55 @@
 2021-03-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r273821. rdar://problem/75009461
+
+    REGRESSION (r266288): Web Inspector: ::marker shows on every element now
+    https://bugs.webkit.org/show_bug.cgi?id=222384
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebCore:
+    
+    Test: inspector/css/getMatchedStylesForNodeMarkerPseudoId.html
+    
+    Add filtering of the `::marker` CSS rule for elements that are not list items, as they do no apply to the
+    element.
+    
+    * inspector/agents/InspectorCSSAgent.cpp:
+    (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+    - Added filtering for `*::marker` rules on non-`display:list-item` elements.
+    (WebCore::InspectorCSSAgent::buildObjectForRule):
+    - Drive-by refactoring to reduce code duplication.
+    
+    LayoutTests:
+    
+    Added test for the filtering of `*::marker` selector from the rule results of `CSS.getMatchedStyleForNode` on
+    elements that don't support `::marker`.
+    
+    * inspector/css/getMatchedStylesForNode-expected.txt:
+    - Updated expectations to account for the abscence of the `::marker` rule on non-list elements.
+    * inspector/css/getMatchedStylesForNodeMarkerPseudoId-expected.txt: Added.
+    * inspector/css/getMatchedStylesForNodeMarkerPseudoId.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273821 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-03  Patrick Angle  <pangle@apple.com>
+
+            REGRESSION (r266288): Web Inspector: ::marker shows on every element now
+            https://bugs.webkit.org/show_bug.cgi?id=222384
+
+            Reviewed by Devin Rousso.
+
+            Added test for the filtering of `*::marker` selector from the rule results of `CSS.getMatchedStyleForNode` on
+            elements that don't support `::marker`.
+
+            * inspector/css/getMatchedStylesForNode-expected.txt:
+            - Updated expectations to account for the abscence of the `::marker` rule on non-list elements.
+            * inspector/css/getMatchedStylesForNodeMarkerPseudoId-expected.txt: Added.
+            * inspector/css/getMatchedStylesForNodeMarkerPseudoId.html: Added.
+
+2021-03-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273764. rdar://problem/75009398
 
     The layout of SVGImage should force the layout for its clients
