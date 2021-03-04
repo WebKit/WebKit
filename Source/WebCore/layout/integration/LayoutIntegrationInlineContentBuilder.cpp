@@ -369,8 +369,10 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
     auto inlineQuirks = inlineFormattingContext.quirks();
     for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
         auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
-        auto& lineBoxLogicalRect = lineBox.logicalRect();
+        if (!lineBox.hasInlineBox())
+            continue;
 
+        auto& lineBoxLogicalRect = lineBox.logicalRect();
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             if (!inlineLevelBox->isInlineBox())
                 continue;
