@@ -54,7 +54,6 @@ class CDMSessionMediaSourceAVFObjC;
 class EffectiveRateChangedListener;
 class MediaSourcePrivateAVFObjC;
 class PixelBufferConformerCV;
-class PlatformClockCM;
 class VideoLayerManagerObjC;
 class WebCoreDecompressionSession;
 

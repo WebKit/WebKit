@@ -73,8 +73,6 @@
 		0C5AF9211F43A4C7002EAC02 /* SQLite3SPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */; };
 		0C5AF9221F43A4C7002EAC02 /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */; };
 		0C5FFF0C1F78D990009EFF1A /* Clock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5FFF0B1F78D98F009EFF1A /* Clock.h */; };
-		0C5FFF0F1F78D9DA009EFF1A /* ClockCM.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5FFF0D1F78D9D8009EFF1A /* ClockCM.mm */; };
-		0C5FFF101F78D9DA009EFF1A /* ClockCM.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5FFF0E1F78D9DA009EFF1A /* ClockCM.h */; };
 		0C7785891F45130F00F4EBB6 /* AVFoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */; };
 		0C77858A1F45130F00F4EBB6 /* DataDetectorsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */; };
 		0C77858B1F45130F00F4EBB6 /* LookupSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785721F45130F00F4EBB6 /* LookupSPI.h */; };
@@ -115,6 +113,8 @@
 		1CCEE4F520D871930047B097 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCEE4F420D871930047B097 /* CoreUISPI.h */; };
 		1CCEE4F720D8743F0047B097 /* NSAppearanceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */; };
 		1D12CC4B2411BCAE00FDA0A3 /* FeatureFlagsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D12CC4A2411BCAE00FDA0A3 /* FeatureFlagsSPI.h */; };
+		1D2B413425F05E3500A3F70A /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D2B413225F05E3400A3F70A /* ClockGeneric.cpp */; };
+		1D2B413525F05E3500A3F70A /* ClockGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D2B413325F05E3500A3F70A /* ClockGeneric.h */; };
 		293EE4A824154F8F0047493D /* AccessibilitySupportSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */; };
 		293EE4A924154F8F0047493D /* AccessibilitySupportSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */; };
 		29C15F4825D75FDF001CE31C /* MediaAccessibilitySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 29C15F4725D75F63001CE31C /* MediaAccessibilitySPI.h */; };
@@ -271,8 +271,6 @@
 		0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLite3SPI.h; sourceTree = "<group>"; };
 		0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		0C5FFF0B1F78D98F009EFF1A /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
-		0C5FFF0D1F78D9D8009EFF1A /* ClockCM.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClockCM.mm; sourceTree = "<group>"; };
-		0C5FFF0E1F78D9DA009EFF1A /* ClockCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockCM.h; sourceTree = "<group>"; };
 		0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationSPI.h; sourceTree = "<group>"; };
 		0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsSPI.h; sourceTree = "<group>"; };
 		0C7785721F45130F00F4EBB6 /* LookupSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LookupSPI.h; sourceTree = "<group>"; };
@@ -320,6 +318,8 @@
 		1CCEE4F420D871930047B097 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreUISPI.h; sourceTree = "<group>"; };
 		1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAppearanceSPI.h; sourceTree = "<group>"; };
 		1D12CC4A2411BCAE00FDA0A3 /* FeatureFlagsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeatureFlagsSPI.h; sourceTree = "<group>"; };
+		1D2B413225F05E3400A3F70A /* ClockGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockGeneric.cpp; sourceTree = "<group>"; };
+		1D2B413325F05E3500A3F70A /* ClockGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockGeneric.h; sourceTree = "<group>"; };
 		293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySupportSoftLink.cpp; sourceTree = "<group>"; };
 		293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSoftLink.h; sourceTree = "<group>"; };
 		29C15F4725D75F63001CE31C /* MediaAccessibilitySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaAccessibilitySPI.h; sourceTree = "<group>"; };
@@ -766,6 +766,8 @@
 				A3AB6E5D1F3D1E28009C14B1 /* cocoa */,
 				A3788EA01F05B7E200679425 /* mac */,
 				0C5FFF0B1F78D98F009EFF1A /* Clock.h */,
+				1D2B413225F05E3400A3F70A /* ClockGeneric.cpp */,
+				1D2B413325F05E3500A3F70A /* ClockGeneric.h */,
 				A3AB6E511F3D1DC5009C14B1 /* SleepDisabler.cpp */,
 				A3AB6E531F3D1DDB009C14B1 /* SleepDisabler.h */,
 				A3788E9B1F05B78200679425 /* Sound.cpp */,
@@ -779,8 +781,6 @@
 		A3788EA01F05B7E200679425 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				0C5FFF0E1F78D9DA009EFF1A /* ClockCM.h */,
-				0C5FFF0D1F78D9D8009EFF1A /* ClockCM.mm */,
 				A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */,
 				A1175B551F6B470500C4B9F0 /* DefaultSearchProvider.h */,
 				A1175B4C1F6B337300C4B9F0 /* PopupMenu.h */,
@@ -829,7 +829,7 @@
 				0C2DA13F1F3BEB4900DBC317 /* CFNSURLConnectionSPI.h in Headers */,
 				0C2DA0701F33CA8400DBC317 /* CFUtilitiesSPI.h in Headers */,
 				0C5FFF0C1F78D990009EFF1A /* Clock.h in Headers */,
-				0C5FFF101F78D9DA009EFF1A /* ClockCM.h in Headers */,
+				1D2B413525F05E3500A3F70A /* ClockGeneric.h in Headers */,
 				7A36D0F9223AD9AB00B0522E /* CommonCryptoSPI.h in Headers */,
 				1C09D0581E31C57E00725F18 /* config.h in Headers */,
 				0C2DA0711F33CA8400DBC317 /* CoreAudioSPI.h in Headers */,
@@ -1048,7 +1048,7 @@
 				57FD318A22B3593E008D0E8B /* AppSSOSoftLink.mm in Sources */,
 				416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */,
 				077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */,
-				0C5FFF0F1F78D9DA009EFF1A /* ClockCM.mm in Sources */,
+				1D2B413425F05E3500A3F70A /* ClockGeneric.cpp in Sources */,
 				0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */,
 				1C77C8C925D7972000635E0C /* CoreTextSoftLink.cpp in Sources */,
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,

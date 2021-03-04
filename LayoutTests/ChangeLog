@@ -1,3 +1,12 @@
+2021-03-04  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUProcess] MediaController is using a ClockCM
+        https://bugs.webkit.org/show_bug.cgi?id=222094
+
+        Reviewed by Eric Carlson.
+
+        * platform/wk2/TestExpectations:
+
 2021-03-04  Youenn Fablet  <youenn@apple.com>
 
         Handle the case of synchronous failure in loading blob.
