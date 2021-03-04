@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "CallTracerTypes.h"
-#include "CanvasRenderingContext.h"
+#include "InspectorCanvasCallTracer.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallFrame.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <initializer_list>
 #include <wtf/HashSet.h>
+#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -86,7 +86,14 @@ public:
     void resetRecordingData();
     bool hasRecordingData() const;
     bool currentFrameHasData() const;
-    void recordAction(const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
+
+    // InspectorCanvasCallTracer
+#define PROCESS_ARGUMENT_DECLARATION(ArgumentType) \
+    Optional<InspectorCanvasCallTracer::ProcessedArgument> processArgument(ArgumentType); \
+// end of PROCESS_ARGUMENT_DECLARATION
+    FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DECLARATION)
+#undef PROCESS_ARGUMENT_DECLARATION
+    void recordAction(String&&, InspectorCanvasCallTracer::ProcessedArguments&& = { });
 
     Ref<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> releaseFrames() { return m_frames.releaseNonNull(); }
 
@@ -137,9 +144,10 @@ private:
     >;
 
     int indexForData(DuplicateDataVariant);
+    Ref<JSON::Value> valueIndexForData(DuplicateDataVariant);
     String stringIndexForKey(const String&);
     Ref<Inspector::Protocol::Recording::InitialState> buildInitialState();
-    Ref<JSON::ArrayOf<JSON::Value>> buildAction(const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
+    Ref<JSON::ArrayOf<JSON::Value>> buildAction(String&&, InspectorCanvasCallTracer::ProcessedArguments&& = { });
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
     Ref<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);

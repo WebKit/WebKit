@@ -103,7 +103,7 @@ public:
     virtual Image* copiedImage() const = 0;
     virtual void clearCopiedImage() const = 0;
 
-    bool callTracingActive() const;
+    bool hasActiveInspectorCanvasCallTracer() const;
 
 protected:
     explicit CanvasBase(IntSize);

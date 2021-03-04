@@ -65,6 +65,7 @@
 #include "FrameView.h"
 #include "FullscreenManager.h"
 #include "HTMLElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"

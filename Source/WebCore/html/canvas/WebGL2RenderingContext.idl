@@ -59,7 +59,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
     JSGenerateToJSObject,
     DoNotCheckConstants,
     Exposed=(Window,Worker),
-    CallTracingCallback=recordCanvasAction,
+    CallTracer=InspectorCanvasCallTracer,
 ] interface WebGL2RenderingContext {
 
     // The specification splits the API surface into a WebGL2RenderingContextBase

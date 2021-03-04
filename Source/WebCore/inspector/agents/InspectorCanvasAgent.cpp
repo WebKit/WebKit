@@ -26,56 +26,69 @@
 #include "config.h"
 #include "InspectorCanvasAgent.h"
 
+#include "CanvasBase.h"
+#include "CanvasGradient.h"
+#include "CanvasPattern.h"
 #include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
+#include "DOMMatrix2DInit.h"
 #include "Document.h"
 #include "Element.h"
 #include "EventLoop.h"
 #include "Frame.h"
+#include "GPUCanvasContext.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapRenderingContext.h"
+#include "ImageData.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorInstrumentation.h"
 #include "InspectorShaderProgram.h"
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
+#include "OffscreenCanvas.h"
+#include "Path2D.h"
 #include "ScriptState.h"
 #include "StringAdaptors.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
-#include <JavaScriptCore/InjectedScript.h>
-#include <JavaScriptCore/InjectedScriptManager.h>
-#include <JavaScriptCore/InspectorProtocolObjects.h>
-#include <JavaScriptCore/JSCInlines.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/Optional.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
-#if ENABLE(OFFSCREEN_CANVAS)
-#include "OffscreenCanvas.h"
-#endif
-
-#if ENABLE(WEBGL)
+#include "TypedOMCSSImageValue.h"
+#include "WebGL2RenderingContext.h"
+#include "WebGLBuffer.h"
+#include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
+#include "WebGLQuery.h"
+#include "WebGLRenderbuffer.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLRenderingContextBase.h"
-#endif
-
-#if ENABLE(WEBGL2)
-#include "WebGL2RenderingContext.h"
-#endif
-
-#if ENABLE(WEBGPU)
-#include "GPUCanvasContext.h"
+#include "WebGLSampler.h"
+#include "WebGLShader.h"
+#include "WebGLSync.h"
+#include "WebGLTexture.h"
+#include "WebGLTransformFeedback.h"
+#include "WebGLUniformLocation.h"
+#include "WebGLVertexArrayObject.h"
 #include "WebGPUComputePipeline.h"
 #include "WebGPUDevice.h"
 #include "WebGPUPipeline.h"
 #include "WebGPURenderPipeline.h"
 #include "WebGPUSwapChain.h"
-#endif
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBufferView.h>
+#include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/TypedArrays.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Lock.h>
+#include <wtf/Optional.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -289,7 +302,7 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::startRecording(const Protoco
     if (!context)
         return makeUnexpected("Not supported"_s);
 
-    if (context->callTracingActive())
+    if (context->hasActiveInspectorCanvasCallTracer())
         return makeUnexpected("Already recording canvas"_s);
 
     RecordingOptions recordingOptions;
@@ -316,7 +329,7 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::stopRecording(const Protocol
     if (!context)
         return makeUnexpected("Not supported"_s);
 
-    if (!context->callTracingActive())
+    if (!context->hasActiveInspectorCanvasCallTracer())
         return makeUnexpected("Not recording canvas"_s);
 
     didFinishRecordingCanvasFrame(*context, true);
@@ -462,53 +475,6 @@ void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context
         m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), node->memoryCost());
 }
 
-void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, std::initializer_list<RecordCanvasActionVariant>&& parameters)
-{
-    auto inspectorCanvas = findInspectorCanvas(canvasRenderingContext);
-    ASSERT(inspectorCanvas);
-    if (!inspectorCanvas)
-        return;
-
-    ASSERT(canvasRenderingContext.callTracingActive());
-    if (!canvasRenderingContext.callTracingActive())
-        return;
-
-    // Only enqueue one microtask for all actively recording canvases.
-    if (m_recordingCanvasIdentifiers.isEmpty()) {
-        if (auto* scriptExecutionContext = inspectorCanvas->scriptExecutionContext()) {
-            scriptExecutionContext->eventLoop().queueMicrotask([weakThis = makeWeakPtr(*this)] {
-                if (!weakThis)
-                    return;
-
-                auto& canvasAgent = *weakThis;
-
-                auto identifiers = copyToVector(canvasAgent.m_recordingCanvasIdentifiers);
-                for (auto& identifier : identifiers) {
-                    auto inspectorCanvas = canvasAgent.m_identifierToInspectorCanvas.get(identifier);
-                    if (!inspectorCanvas)
-                        continue;
-
-                    auto* canvasRenderingContext = inspectorCanvas->canvasContext();
-                    ASSERT(canvasRenderingContext);
-                    // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
-
-                    if (canvasRenderingContext->callTracingActive())
-                        canvasAgent.didFinishRecordingCanvasFrame(*canvasRenderingContext);
-                }
-
-                canvasAgent.m_recordingCanvasIdentifiers.clear();
-            });
-        }
-    }
-
-    m_recordingCanvasIdentifiers.add(inspectorCanvas->identifier());
-
-    inspectorCanvas->recordAction(name, WTFMove(parameters));
-
-    if (!inspectorCanvas->hasBufferSpace())
-        didFinishRecordingCanvasFrame(canvasRenderingContext, true);
-}
-
 void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const FloatRect&)
 {
     auto* context = canvasBase.renderingContext();
@@ -539,7 +505,7 @@ void InspectorCanvasAgent::canvasDestroyed(CanvasBase& canvasBase)
 
 void InspectorCanvasAgent::didFinishRecordingCanvasFrame(CanvasRenderingContext& context, bool forceDispatch)
 {
-    if (!context.callTracingActive())
+    if (!context.hasActiveInspectorCanvasCallTracer())
         return;
 
     auto inspectorCanvas = findInspectorCanvas(context);
@@ -715,6 +681,60 @@ void InspectorCanvasAgent::willDestroyWebGPUPipeline(WebGPUPipeline& pipeline)
 }
 #endif // ENABLE(WEBGPU)
 
+#define PROCESS_ARGUMENT_DEFINITION(ArgumentType) \
+Optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasAgent::processArgument(CanvasRenderingContext& canvasRenderingContext, ArgumentType argument) \
+{ \
+    auto inspectorCanvas = findInspectorCanvas(canvasRenderingContext); \
+    ASSERT(inspectorCanvas); \
+    return inspectorCanvas->processArgument(argument); \
+} \
+// end of PROCESS_ARGUMENT_DEFINITION
+    FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DEFINITION)
+#undef PROCESS_ARGUMENT_DEFINITION
+
+void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingContext, String&& name, InspectorCanvasCallTracer::ProcessedArguments&& arguments)
+{
+    ASSERT(canvasRenderingContext.hasActiveInspectorCanvasCallTracer());
+
+    auto inspectorCanvas = findInspectorCanvas(canvasRenderingContext);
+    ASSERT(inspectorCanvas);
+
+    // Only enqueue one microtask for all actively recording canvases.
+    if (m_recordingCanvasIdentifiers.isEmpty()) {
+        if (auto* scriptExecutionContext = inspectorCanvas->scriptExecutionContext()) {
+            scriptExecutionContext->eventLoop().queueMicrotask([weakThis = makeWeakPtr(*this)] {
+                if (!weakThis)
+                    return;
+
+                auto& canvasAgent = *weakThis;
+
+                auto identifiers = copyToVector(canvasAgent.m_recordingCanvasIdentifiers);
+                for (auto& identifier : identifiers) {
+                    auto inspectorCanvas = canvasAgent.m_identifierToInspectorCanvas.get(identifier);
+                    if (!inspectorCanvas)
+                        continue;
+
+                    auto* canvasRenderingContext = inspectorCanvas->canvasContext();
+                    ASSERT(canvasRenderingContext);
+                    // FIXME: <https://webkit.org/b/201651> Web Inspector: Canvas: support canvas recordings for WebGPUDevice
+
+                    if (canvasRenderingContext->hasActiveInspectorCanvasCallTracer())
+                        canvasAgent.didFinishRecordingCanvasFrame(*canvasRenderingContext);
+                }
+
+                canvasAgent.m_recordingCanvasIdentifiers.clear();
+            });
+        }
+    }
+
+    m_recordingCanvasIdentifiers.add(inspectorCanvas->identifier());
+
+    inspectorCanvas->recordAction(WTFMove(name), WTFMove(arguments));
+
+    if (!inspectorCanvas->hasBufferSpace())
+        didFinishRecordingCanvasFrame(canvasRenderingContext, true);
+}
+
 void InspectorCanvasAgent::startRecording(InspectorCanvas& inspectorCanvas, Protocol::Recording::Initiator initiator, RecordingOptions&& recordingOptions)
 {
     auto* context = inspectorCanvas.canvasContext();
@@ -732,7 +752,7 @@ void InspectorCanvasAgent::startRecording(InspectorCanvas& inspectorCanvas, Prot
     )
         return;
 
-    if (context->callTracingActive())
+    if (context->hasActiveInspectorCanvasCallTracer())
         return;
 
     inspectorCanvas.resetRecordingData();
@@ -742,7 +762,7 @@ void InspectorCanvasAgent::startRecording(InspectorCanvas& inspectorCanvas, Prot
         inspectorCanvas.setBufferLimit(recordingOptions.memoryLimit.value());
     if (recordingOptions.name)
         inspectorCanvas.setRecordingName(recordingOptions.name.value());
-    context->setCallTracingActive(true);
+    context->setHasActiveInspectorCanvasCallTracer(true);
 
     m_frontendDispatcher->recordingStarted(inspectorCanvas.identifier(), initiator);
 }

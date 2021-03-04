@@ -1,3 +1,18 @@
+2021-03-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: `RecordCanvasActionVariant` causes a huge symbol to be created in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=222639
+        <rdar://problem/73728057>
+
+        Reviewed by Tim Horton and Brian Burg.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        Don't use `||` for the fallback of `_payloadSnapshot` as it can be `0`.
+
+        * UserInterface/Models/Recording.js:
+        Drive-by: Rename `RecordingSwizzleTypes` to `RecordingSwizzleType`.
+
 2021-03-03  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Refine CSS Grid overlay options

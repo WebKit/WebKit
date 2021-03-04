@@ -45,8 +45,8 @@ typedef (
     ReportExternalMemoryCost,
     Exposed=Window
 ] interface HTMLCanvasElement : HTMLElement {
-    [CEReactions=NotNeeded, CallTracingCallback=recordCanvasAction] attribute unsigned long width;
-    [CEReactions=NotNeeded, CallTracingCallback=recordCanvasAction] attribute unsigned long height;
+    [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long width;
+    [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long height;
 
     [CallWith=GlobalObject, MayThrowException] RenderingContext? getContext(DOMString contextId, any... arguments);
 

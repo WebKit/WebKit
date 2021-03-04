@@ -32,7 +32,7 @@
             "type": "object",
             "description": "Container object for a single frame of the recording.",
             "properties": [
-                { "name": "actions", "type": "array", "items": { "type": "any" }, "description": "Information about an action made to the recorded object. Follows the structure [name, parameters, swizzleTypes, trace], where name is a string, parameters is an array, swizzleTypes is an array, and trace is an array."},
+                { "name": "actions", "type": "array", "items": { "type": "any" }, "description": "Information about an action made to the recorded object. Follows the structure [name, parameters, swizzleTypes, trace, snapshot], where name is a string, parameters is an array, swizzleTypes is an array, trace is an array, and snapshot is a data URL image of the current contents after this action."},
                 { "name": "duration", "type": "number", "optional": true, "description": "Total execution time of all actions recorded in this frame in milliseconds. " },
                 { "name": "incomplete", "type": "boolean", "optional": true, "description": "Flag indicating if the recording was stopped before this frame ended." }
             ]

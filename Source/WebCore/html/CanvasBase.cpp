@@ -30,6 +30,8 @@
 #include "CanvasRenderingContext.h"
 #include "Element.h"
 #include "FloatRect.h"
+#include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
@@ -176,10 +178,10 @@ HashSet<Element*> CanvasBase::cssCanvasClients() const
     return cssCanvasClients;
 }
 
-bool CanvasBase::callTracingActive() const
+bool CanvasBase::hasActiveInspectorCanvasCallTracer() const
 {
     auto* context = renderingContext();
-    return context && context->callTracingActive();
+    return context && context->hasActiveInspectorCanvasCallTracer();
 }
 
 RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) const

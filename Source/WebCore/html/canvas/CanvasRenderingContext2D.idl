@@ -27,7 +27,7 @@
     CustomIsReachable,
     JSGenerateToJSObject,
     JSCustomMarkFunction,
-    CallTracingCallback=recordCanvasAction,
+    CallTracer=InspectorCanvasCallTracer,
     Exposed=Window
 ] interface CanvasRenderingContext2D {
     // back-reference to the canvas

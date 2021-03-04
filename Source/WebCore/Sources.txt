@@ -491,7 +491,6 @@ animation/WebAnimation.cpp
 animation/WebAnimationUtilities.cpp
 bindings/js/CachedModuleScriptLoader.cpp
 bindings/js/CachedScriptFetcher.cpp
-bindings/js/CallTracer.cpp
 bindings/js/CommonVM.cpp
 bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/DOMWrapperWorld.cpp
@@ -1438,6 +1437,7 @@ inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorAuditDOMObject.cpp
 inspector/InspectorAuditResourcesObject.cpp
 inspector/InspectorCanvas.cpp
+inspector/InspectorCanvasCallTracer.cpp
 inspector/InspectorController.cpp
 inspector/InspectorDatabaseResource.cpp
 inspector/InspectorFrontendAPIDispatcher.cpp

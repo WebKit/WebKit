@@ -45,7 +45,7 @@
         "CachedAttribute": {
             "contextsAllowed": ["attribute"]
         },
-        "CallTracingCallback": {
+        "CallTracer": {
             "contextsAllowed": ["interface", "attribute", "operation"],
             "values": ["*"]
         },

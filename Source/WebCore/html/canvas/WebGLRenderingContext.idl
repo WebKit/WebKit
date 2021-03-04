@@ -42,7 +42,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
     DoNotCheckConstants,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
-    CallTracingCallback=recordCanvasAction,
+    CallTracer=InspectorCanvasCallTracer,
 ] interface WebGLRenderingContext {
 };
 
