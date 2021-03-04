@@ -62,7 +62,6 @@ void removeLanguageChangeObserver(void* context)
 
 void languageDidChange()
 {
-    platformLanguageDidChange();
     for (auto& observer : copyToVector(observerMap())) {
         if (observerMap().contains(observer.key))
             observer.value(observer.key);
@@ -183,11 +182,5 @@ String displayNameForLanguageLocale(const String& localeName)
 #endif
     return localeName;
 }
-
-#if !PLATFORM(COCOA)
-void platformLanguageDidChange()
-{
-}
-#endif
 
 }

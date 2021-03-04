@@ -248,7 +248,6 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
-#import <wtf/Language.h>
 #import <wtf/MainThread.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RAMSize.h>
@@ -1681,9 +1680,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
     [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WebView" deprecated:YES];
-
-    WTF::listenForLanguageChangeNotifications();
-#endif // PLATFORM(MAC)
+#endif
 }
 
 - (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
