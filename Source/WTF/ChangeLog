@@ -1,3 +1,15 @@
+2021-03-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r273832.
+
+        26 inspector tests failing a new assert added with this change
+
+        Reverted changeset:
+
+        "Limit HashTable entry size to 500 bytes"
+        https://bugs.webkit.org/show_bug.cgi?id=222658
+        https://commits.webkit.org/r273832
+
 2021-03-03  Chris Dumez  <cdumez@apple.com>
 
         [macOS][WK2] Changing the system language does not update navigator.language

@@ -109,7 +109,7 @@ private:
     Vector<Cache> m_caches;
     Vector<Cache> m_removedCaches;
     RefPtr<NetworkCache::Storage> m_storage;
-    HashMap<NetworkCache::Key, std::unique_ptr<WebCore::DOMCacheEngine::Record>> m_volatileStorage;
+    HashMap<NetworkCache::Key, WebCore::DOMCacheEngine::Record> m_volatileStorage;
     mutable Optional<NetworkCache::Salt> m_volatileSalt;
     Vector<WebCore::DOMCacheEngine::CompletionCallback> m_pendingInitializationCallbacks;
     bool m_isWritingCachesToDisk { false };

@@ -544,7 +544,7 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
     m_size -= previousRecordSize;
 
     if (!shouldPersist()) {
-        m_volatileStorage.set(recordInformation.key, makeUnique<Record>(WTFMove(record)));
+        m_volatileStorage.set(recordInformation.key, WTFMove(record));
         callback(WTF::nullopt);
         return;
     }
@@ -566,9 +566,13 @@ void Caches::readRecord(const NetworkCache::Key& key, WTF::Function<void(Expecte
     ASSERT(m_isInitialized);
 
     if (!shouldPersist()) {
-        if (auto* record = m_volatileStorage.get(key))
-            return callback(record->copy());
-        return callback(makeUnexpected(Error::Internal));
+        auto iterator = m_volatileStorage.find(key);
+        if (iterator == m_volatileStorage.end()) {
+            callback(makeUnexpected(Error::Internal));
+            return;
+        }
+        callback(iterator->value.copy());
+        return;
     }
 
     m_storage->retrieve(key, 4, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](std::unique_ptr<Storage::Record> storage, const Storage::Timings&) mutable {

@@ -61,7 +61,6 @@ ResponseBody isolatedResponseBody(const ResponseBody&);
 WEBCORE_EXPORT ResponseBody copyResponseBody(const ResponseBody&);
 
 struct Record {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     WEBCORE_EXPORT Record copy() const;
 
     uint64_t identifier;
