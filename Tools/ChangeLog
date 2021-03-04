@@ -1,3 +1,21 @@
+2021-03-04  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Detect unrecognized options in run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=221186
+
+        Reviewed by Keith Miller.
+
+        run-javascriptcore-tests saves unrecognized arguments to pass
+        through to build-jsc even when --no-build is used. However, when
+        we're not building, nothing will ever use or look at the extra
+        arguments. This means that those arguments are silently eaten
+        up and, consequently, typos in option names can go undetected.
+
+        Change the script to fail when --no-build has been passed and
+        there are unrecognized options.
+
+        * Scripts/run-javascriptcore-tests:
+
 2021-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Adding new test conditions for WebGL should be simpler
