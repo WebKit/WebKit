@@ -60,7 +60,7 @@ class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
 public:
     enum class LoadType : bool { MainFrame, Other };
 
-    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
+    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, WebCore::PreflightPolicy, String&& referrer, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
     ~NetworkLoadChecker();
 
     struct RedirectionTriplet {
@@ -127,8 +127,6 @@ private:
     void processContentRuleListsForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
 #endif
 
-    void applyHTTPSUpgradeIfNeeded(WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) const;
-
     WebCore::FetchOptions m_options;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy;
     PAL::SessionID m_sessionID;
@@ -156,10 +154,6 @@ private:
     String m_referrer;
     bool m_checkContentExtensions { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
-
-#if PLATFORM(COCOA)
-    bool m_isHTTPSUpgradeEnabled { false };
-#endif
 
     WebCore::NetworkLoadInformation m_loadInformation;
 

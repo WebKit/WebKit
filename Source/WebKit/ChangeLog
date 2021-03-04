@@ -1,3 +1,30 @@
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove the HTTPSUpgradeEnabled experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=222706
+
+        Reviewed by Simon Fraser.
+
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp: Removed.
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.h: Removed.
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::applyHTTPSUpgradeIfNeeded const): Deleted.
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::networkHTTPSUpgradeChecker): Deleted.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::addParametersShared):
+
 2021-03-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add support for a new image-extraction-related responder action

@@ -281,8 +281,6 @@ static void addParametersShared(const Frame* frame, NetworkResourceLoadParameter
     if (!frame)
         return;
 
-    parameters.isHTTPSUpgradeEnabled = frame->settings().HTTPSUpgradeEnabled();
-
     if (auto* page = frame->page()) {
         parameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
         parameters.shouldRelaxThirdPartyCookieBlocking = page->shouldRelaxThirdPartyCookieBlocking();

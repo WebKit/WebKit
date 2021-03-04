@@ -105,7 +105,6 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldEnableCrossOriginResourcePolicy;
 
     encoder << frameAncestorOrigins;
-    encoder << isHTTPSUpgradeEnabled;
     encoder << pageHasResourceLoadClient;
     encoder << parentFrameID;
     encoder << crossOriginAccessControlCheckEnabled;
@@ -252,12 +251,6 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
 
     if (!decoder.decode(result.frameAncestorOrigins))
         return WTF::nullopt;
-
-    Optional<bool> isHTTPSUpgradeEnabled;
-    decoder >> isHTTPSUpgradeEnabled;
-    if (!isHTTPSUpgradeEnabled)
-        return WTF::nullopt;
-    result.isHTTPSUpgradeEnabled = *isHTTPSUpgradeEnabled;
 
     Optional<bool> pageHasResourceLoadClient;
     decoder >> pageHasResourceLoadClient;

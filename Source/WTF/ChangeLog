@@ -1,3 +1,15 @@
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove the HTTPSUpgradeEnabled experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=222706
+
+        Reviewed by Simon Fraser.
+
+        It was a good experimental implementation, but the feature is now implemented in makeSecureIfNecessary
+        and turned on and off by WKWebViewConfiguration.upgradeKnownHostsToHTTPS.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-03-04  Chris Dumez  <cdumez@apple.com>
 
         [macOS][WK2] Changing the system language does not update navigator.language

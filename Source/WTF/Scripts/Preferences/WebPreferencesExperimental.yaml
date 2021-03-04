@@ -380,19 +380,6 @@ HTTP3Enabled:
     WebKit:
       default: false
 
-# FIXME: This is not implemented for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-HTTPSUpgradeEnabled:
-  type: bool
-  humanReadableName: "Automatic HTTPS upgrade"
-  humanReadableDescription: "Automatic HTTPS upgrade for known supported sites"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 HighlightAPIEnabled:
   type: bool
   humanReadableName: "Highlight API"

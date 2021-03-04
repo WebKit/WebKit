@@ -32,7 +32,6 @@
 #include "DownloadManager.h"
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkContentRuleListManager.h"
-#include "NetworkHTTPSUpgradeChecker.h"
 #include "SandboxExtension.h"
 #include "WebIDBServer.h"
 #include "WebPageProxyIdentifier.h"
@@ -322,10 +321,6 @@ public:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-#if PLATFORM(COCOA)
-    NetworkHTTPSUpgradeChecker& networkHTTPSUpgradeChecker();
-#endif
-
     const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
 
     void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
@@ -585,10 +580,6 @@ private:
     };
     HashMap<PAL::SessionID, ServiceWorkerInfo> m_serviceWorkerInfo;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
-#endif
-
-#if PLATFORM(COCOA)
-    std::unique_ptr<NetworkHTTPSUpgradeChecker> m_networkHTTPSUpgradeChecker;
 #endif
     
     Lock m_sessionStorageQuotaManagersLock;
