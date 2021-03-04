@@ -145,7 +145,12 @@ typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsM
 typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
 typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback> InteractionInformationRequestAndCallback;
 
+#if !defined(FOR_EACH_ADDITIONAL_WKCONTENTVIEW_ACTION)
+#define FOR_EACH_ADDITIONAL_WKCONTENTVIEW_ACTION(M)
+#endif
+
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
+    FOR_EACH_ADDITIONAL_WKCONTENTVIEW_ACTION(M) \
     M(_addShortcut) \
     M(_define) \
     M(_lookup) \

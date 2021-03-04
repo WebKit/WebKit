@@ -3698,6 +3698,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return baseWritingDirection != WebCore::WritingDirection::RightToLeft;
     }
 
+#if ENABLE(IMAGE_EXTRACTION)
+    if (action == WebKit::imageExtractionAction())
+        return editorState.isContentEditable;
+#endif
+
     return [super canPerformAction:action withSender:sender];
 }
 

@@ -1,3 +1,23 @@
+2021-03-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for a new image-extraction-related responder action
+        https://bugs.webkit.org/show_bug.cgi?id=222743
+        <rdar://problem/75001149>
+
+        Reviewed by Devin Rousso.
+
+        Add support for the new action, such that we return `YES` if and only if we're in an editable context, and also
+        such that we return a non-null target for the new action.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Add a fallback definition for `FOR_EACH_ADDITIONAL_WKCONTENTVIEW_ACTION`, which can be used by WebKitAdditions
+        to inject additional responder actions when generating selector forwarding code between `WKContentView` and
+        `WKWebView`.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
 2021-03-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r272629.
