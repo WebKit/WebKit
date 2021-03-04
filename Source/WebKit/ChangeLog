@@ -1,3 +1,13 @@
+2021-03-04  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build after r273904
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::setPreferenceValue):
+        auto's evilness rears its head again. -mutableCopy returns `id`, so
+        we infer RetainPtr<id>, so depending on what headers are included
+        we get ambiguous selector errors. De-auto to fix.
+
 2021-03-04  Chris Dumez  <cdumez@apple.com>
 
         Clean up API::ResourceLoadStatisticsThirdParty / API::ResourceLoadStatisticsFirstParty

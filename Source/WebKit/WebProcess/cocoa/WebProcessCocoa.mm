@@ -1109,7 +1109,7 @@ static void setPreferenceValue(const String& domain, const String& key, id value
     if (key == "AppleLanguages") {
         // We need to set AppleLanguages for the volatile domain, similarly to what we do in XPCServiceMain.mm.
         NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
-        auto newArguments = adoptNS([existingArguments mutableCopy]);
+        RetainPtr<NSMutableDictionary> newArguments = adoptNS([existingArguments mutableCopy]);
         [newArguments setValue:value forKey:@"AppleLanguages"];
         [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
 
