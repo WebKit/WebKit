@@ -48,6 +48,8 @@ function validateWindow(_w)
     shouldThrowErrorName("w.performance", "SecurityError");
 
     shouldThrowErrorName("w.foo", "SecurityError");
+    shouldThrowErrorName("w.foo = 1", "SecurityError");
+    shouldThrowErrorName("w[0] = 1", "SecurityError");
     shouldThrowErrorName("w.location.foo", "SecurityError");
 }
 
