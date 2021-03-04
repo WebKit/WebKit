@@ -36,13 +36,13 @@
 #include <wtf/Threading.h>
 namespace IPC {
 
-// A message stream is a half-duplex two-way stream of messages to a between a sender and the
-// destination receiver.
+// A message stream is a half-duplex two-way stream of messages to a between the client and the
+// server.
 //
 // StreamClientConnection can send messages and receive synchronous replies
 // through this message stream or through IPC::Connection.
 //
-// The destination receiver will receive messages in order _for the destination messages_.
+// The server will receive messages in order _for the destination messages_.
 // The whole IPC::Connection message order is not preserved.
 //
 // The StreamClientConnection trusts the StreamServerConnection.
@@ -71,12 +71,12 @@ private:
     void sendProcessOutOfStreamMessage(Span&&);
 
     Optional<Span> tryAcquire(Timeout);
-    enum class WakeUpReceiver : bool {
+    enum class WakeUpServer : bool {
         No,
         Yes
     };
-    WakeUpReceiver release(size_t writeSize);
-    void wakeUpReceiver();
+    WakeUpServer release(size_t writeSize);
+    void wakeUpServer();
 
     Span alignedSpan(size_t offset, size_t limit);
     size_t size(size_t offset, size_t limit);
@@ -84,15 +84,15 @@ private:
 
     size_t wrapOffset(size_t offset) const { return m_buffer.wrapOffset(offset); }
     size_t alignOffset(size_t offset) const { return m_buffer.alignOffset<messageAlignment>(offset, minimumMessageSize); }
-    Atomic<size_t>& sharedSenderOffset() { return m_buffer.senderOffset(); }
-    Atomic<size_t>& sharedReceiverOffset() { return m_buffer.receiverOffset(); }
+    Atomic<size_t>& sharedClientOffset() { return m_buffer.clientOffset(); }
+    Atomic<size_t>& sharedServerOffset() { return m_buffer.serverOffset(); }
     uint8_t* data() const { return m_buffer.data(); }
     size_t dataSize() const { return m_buffer.dataSize(); }
 
     Connection& m_connection;
     uint64_t m_currentDestinationID { 0 };
 
-    size_t m_senderOffset { 0 };
+    size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;
 #if PLATFORM(COCOA)
     Optional<Semaphore> m_wakeUpSemaphore;
@@ -112,8 +112,8 @@ bool StreamClientConnection::send(T&& message, ObjectIdentifier<U> destinationID
         StreamConnectionEncoder messageEncoder { T::name(), span->data, span->size };
         if (messageEncoder << message.arguments()) {
             auto wakeupResult = release(messageEncoder.size());
-            if (wakeupResult == StreamClientConnection::WakeUpReceiver::Yes)
-                wakeUpReceiver();
+            if (wakeupResult == StreamClientConnection::WakeUpServer::Yes)
+                wakeUpServer();
             return true;
         }
     }
@@ -153,8 +153,8 @@ inline bool StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destin
         return false;
     }
     auto wakeupResult = release(encoder.size());
-    if (wakeupResult == StreamClientConnection::WakeUpReceiver::Yes)
-        wakeUpReceiver();
+    if (wakeupResult == StreamClientConnection::WakeUpServer::Yes)
+        wakeUpServer();
     m_currentDestinationID = destinationID;
     return true;
 }
@@ -169,18 +169,18 @@ inline void StreamClientConnection::sendProcessOutOfStreamMessage(Span&& span)
 inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire(Timeout timeout)
 {
     for (;;) {
-        size_t senderLimit = clampedLimit(sharedReceiverOffset().load(std::memory_order_acquire));
-        auto result = alignedSpan(m_senderOffset, senderLimit);
+        size_t clientLimit = clampedLimit(sharedServerOffset().load(std::memory_order_acquire));
+        auto result = alignedSpan(m_clientOffset, clientLimit);
         if (result.size < minimumMessageSize) {
             if (timeout.didTimeOut())
                 break;
 #if PLATFORM(COCOA)
-            size_t oldSenderLimit = sharedReceiverOffset().compareExchangeStrong(senderLimit, StreamConnectionBuffer::receiverOffsetSenderIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
-            if (senderLimit == oldSenderLimit)
-                m_buffer.senderWaitSemaphore().waitFor(timeout);
+            size_t oldClientLimit = sharedServerOffset().compareExchangeStrong(clientLimit, StreamConnectionBuffer::serverOffsetClientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
+            if (clientLimit == oldClientLimit)
+                m_buffer.clientWaitSemaphore().waitFor(timeout);
             else {
-                senderLimit = clampedLimit(oldSenderLimit);
-                result = alignedSpan(m_senderOffset, senderLimit);
+                clientLimit = clampedLimit(oldClientLimit);
+                result = alignedSpan(m_clientOffset, clientLimit);
             }
 #else
             Thread::yield();
@@ -191,23 +191,23 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
         // The alignedSpan uses the minimumMessageSize to calculate the next beginning position in the buffer,
         // and not the size. The size might be more or less what is needed, depending on where the reader is.
         // If there is no capacity for minimum message size, wait until more is available.
-        // In the case where senderOffset < receiverOffset we can arrive to a situation where
+        // In the case where clientOffset < serverOffset we can arrive to a situation where
         // 0 < result.size < minimumMessageSize.
     }
     return WTF::nullopt;
 }
 
-inline StreamClientConnection::WakeUpReceiver StreamClientConnection::release(size_t size)
+inline StreamClientConnection::WakeUpServer StreamClientConnection::release(size_t size)
 {
     size = std::max(size, minimumMessageSize);
-    m_senderOffset = wrapOffset(alignOffset(m_senderOffset) + size);
-    ASSERT(m_senderOffset < dataSize());
-    // If the receiver wrote over the senderOffset with senderOffsetReceiverIsSleepingTag, we know it is sleeping.
-    size_t receiverLimit = sharedSenderOffset().exchange(m_senderOffset, std::memory_order_acq_rel);
-    if (receiverLimit == StreamConnectionBuffer::senderOffsetReceiverIsSleepingTag)
-        return WakeUpReceiver::Yes;
-    ASSERT(!(receiverLimit & StreamConnectionBuffer::senderOffsetReceiverIsSleepingTag));
-    return WakeUpReceiver::No;
+    m_clientOffset = wrapOffset(alignOffset(m_clientOffset) + size);
+    ASSERT(m_clientOffset < dataSize());
+    // If the server wrote over the clientOffset with clientOffsetServerIsSleepingTag, we know it is sleeping.
+    size_t serverLimit = sharedClientOffset().exchange(m_clientOffset, std::memory_order_acq_rel);
+    if (serverLimit == StreamConnectionBuffer::clientOffsetServerIsSleepingTag)
+        return WakeUpServer::Yes;
+    ASSERT(!(serverLimit & StreamConnectionBuffer::clientOffsetServerIsSleepingTag));
+    return WakeUpServer::No;
 }
 
 inline StreamClientConnection::Span StreamClientConnection::alignedSpan(size_t offset, size_t limit)

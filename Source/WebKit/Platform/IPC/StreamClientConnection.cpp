@@ -33,9 +33,9 @@ StreamClientConnection::StreamClientConnection(Connection& connection, size_t si
     , m_buffer(size)
 {
     // Read starts from 0 with limit of 0 and reader sleeping.
-    sharedSenderOffset().store(StreamConnectionBuffer::senderOffsetReceiverIsSleepingTag, std::memory_order_relaxed);
+    sharedClientOffset().store(StreamConnectionBuffer::clientOffsetServerIsSleepingTag, std::memory_order_relaxed);
     // Write starts from 0 with a limit of the whole buffer.
-    sharedReceiverOffset().store(0, std::memory_order_relaxed);
+    sharedServerOffset().store(0, std::memory_order_relaxed);
 }
 
 void StreamClientConnection::setWakeUpSemaphore(IPC::Semaphore&& semaphore)
@@ -43,10 +43,10 @@ void StreamClientConnection::setWakeUpSemaphore(IPC::Semaphore&& semaphore)
 #if PLATFORM(COCOA)
     m_wakeUpSemaphore = WTFMove(semaphore);
 #endif
-    wakeUpReceiver();
+    wakeUpServer();
 }
 
-void StreamClientConnection::wakeUpReceiver()
+void StreamClientConnection::wakeUpServer()
 {
 #if PLATFORM(COCOA)
     if (m_wakeUpSemaphore)

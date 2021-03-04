@@ -77,15 +77,15 @@ protected:
     size_t clampedLimit(size_t untrustedLimit) const;
     size_t wrapOffset(size_t offset) const { return m_buffer.wrapOffset(offset); }
     size_t alignOffset(size_t offset) const { return m_buffer.alignOffset<messageAlignment>(offset, minimumMessageSize); }
-    Atomic<size_t>& sharedSenderOffset() { return m_buffer.senderOffset(); }
-    Atomic<size_t>& sharedReceiverOffset() { return m_buffer.receiverOffset(); }
+    Atomic<size_t>& sharedClientOffset() { return m_buffer.clientOffset(); }
+    Atomic<size_t>& sharedServerOffset() { return m_buffer.serverOffset(); }
     uint8_t* data() const { return m_buffer.data(); }
     size_t dataSize() const { return m_buffer.dataSize(); }
 
     Ref<IPC::Connection> m_connection;
     StreamConnectionWorkQueue& m_workQueue;
 
-    size_t m_receiverOffset { 0 };
+    size_t m_serverOffset { 0 };
     StreamConnectionBuffer m_buffer;
 
     Lock m_outOfStreamMessagesLock;
@@ -103,10 +103,11 @@ void StreamServerConnectionBase::sendSyncReply(uint64_t syncRequestID, Arguments
     m_connection->sendSyncReply(WTFMove(encoder));
 }
 
-// StreamServerConnection represents the connection between stream sender and receiver, as used by the receiver.
+// StreamServerConnection represents the connection between stream client and server, as used by the server.
+//
 // StreamServerConnection:
-//  * Holds the messages towards the receiver.
-//  * Sends the replies back to the sender via the stream or normal Connection fallback.
+//  * Holds the messages towards the server.
+//  * Sends the replies back to the client via the stream or normal Connection fallback.
 //
 // Receiver template contract:
 //   void didReceiveStreamMessage(StreamServerConnectionBase&, Decoder&);

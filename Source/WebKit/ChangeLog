@@ -1,5 +1,46 @@
 2021-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        IPC stream feature should use client/server naming instead of sender/receiver
+        https://bugs.webkit.org/show_bug.cgi?id=222592
+
+        Reviewed by Antti Koivisto.
+
+        Attempt to simplify already complicated implementation of the stream
+        implementation. Uses of "sender" and "receiver" were a leftover from
+        early phase of the implementation.
+
+        Rename all remaining instances of "sender" with "client".
+        Rename all remaining instances of "receiver" with "server".
+
+        No new tests, a refactor.
+
+        * Platform/IPC/StreamClientConnection.cpp:
+        (IPC::StreamClientConnection::StreamClientConnection):
+        (IPC::StreamClientConnection::setWakeUpSemaphore):
+        (IPC::StreamClientConnection::wakeUpServer):
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::send):
+        (IPC::StreamClientConnection::trySendDestinationIDIfNeeded):
+        (IPC::StreamClientConnection::tryAcquire):
+        (IPC::StreamClientConnection::release):
+        * Platform/IPC/StreamConnectionBuffer.cpp:
+        (IPC::StreamConnectionBuffer::StreamConnectionBuffer):
+        (IPC::StreamConnectionBuffer::operator=):
+        (IPC::StreamConnectionBuffer::encode const):
+        * Platform/IPC/StreamConnectionBuffer.h:
+        (IPC::StreamConnectionBuffer::clientOffset):
+        (IPC::StreamConnectionBuffer::serverOffset):
+        (IPC::StreamConnectionBuffer::clientWaitSemaphore):
+        (IPC::StreamConnectionBuffer::maximumSize):
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnectionBase::tryAquire):
+        (IPC::StreamServerConnectionBase::release):
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnectionBase::sharedClientOffset):
+        (IPC::StreamServerConnectionBase::sharedServerOffset):
+
+2021-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Adding new test conditions for WebGL should be simpler
         https://bugs.webkit.org/show_bug.cgi?id=222593
 
