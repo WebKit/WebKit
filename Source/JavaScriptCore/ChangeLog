@@ -1,5 +1,18 @@
 2021-03-04  Alex Christensen  <achristensen@webkit.org>
 
+        Unreviewed, reverting r273906.
+
+        Broke internal build
+
+        Reverted changeset:
+
+        "[Cocoa] REGRESSION(r272752): fix some internal builds that
+        use WTFString::WTFString(NSString *)"
+        https://bugs.webkit.org/show_bug.cgi?id=222610
+        https://commits.webkit.org/r273906
+
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
         [Cocoa] REGRESSION(r272752): fix some internal builds that use WTFString::WTFString(NSString *)
         https://bugs.webkit.org/show_bug.cgi?id=222610
 
