@@ -1323,11 +1323,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 
 # webkit.org/b/221687
 platform/mac/media/encrypted-media/fps-clearkey-crash.html [ Timeout Crash ]
-platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Crash ]
-platform/mac/media/encrypted-media/fps-createSession.html [ Crash ]
-platform/mac/media/encrypted-media/fps-ephemeral-requestMediaKeySystemAccess.html [ Crash ]
-platform/mac/media/encrypted-media/fps-generateRequest.html [ Crash ]
-platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Crash ]
 
 # webkit.org/b/221826
 fast/mediastream/media-element-current-time.html [ Failure ]
