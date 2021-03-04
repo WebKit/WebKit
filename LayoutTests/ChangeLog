@@ -1,3 +1,17 @@
+2021-03-04  Youenn Fablet  <youenn@apple.com>
+
+        Can not read blobs in sandboxed iframes
+        https://bugs.webkit.org/show_bug.cgi?id=170075
+        <rdar://problem/31282427>
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/fetch/blob-of-opaque-origin-iframe-expected.txt: Added.
+        * http/wpt/fetch/blob-of-opaque-origin-iframe.html: Added.
+        * http/wpt/fetch/blob-of-opaque-origin-worker-expected.txt: Added.
+        * http/wpt/fetch/blob-of-opaque-origin-worker.html: Added.
+        * platform/win/TestExpectations:
+
 2021-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Adding new test conditions for WebGL should be simpler

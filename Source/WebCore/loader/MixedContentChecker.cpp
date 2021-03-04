@@ -37,6 +37,7 @@
 #include "FrameLoaderClient.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "ThreadableBlobRegistry.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,6 +48,22 @@ bool MixedContentChecker::isMixedContent(SecurityOrigin& securityOrigin, const U
 {
     if (securityOrigin.protocol() != "https")
         return false; // We only care about HTTPS security origins.
+
+    if (url.protocolIsBlob()) {
+        // As per https://github.com/w3c/webappsec-mixed-content/issues/41, Blob URL is secure if the document that created it is secure.
+        // This code path is specific to opaque origins.
+        if (auto origin = ThreadableBlobRegistry::getCachedOrigin(url)) {
+            const Document* blobDocument = nullptr;
+            for (const auto* document : Document::allDocuments()) {
+                if (&document->securityOrigin() == origin.get()) {
+                    blobDocument = document;
+                    break;
+                }
+            }
+            if (blobDocument && blobDocument->isSecureContext())
+                return false;
+        }
+    }
 
     // We're in a secure context, so |url| is mixed content if it's insecure.
     return !SecurityOrigin::isSecure(url);

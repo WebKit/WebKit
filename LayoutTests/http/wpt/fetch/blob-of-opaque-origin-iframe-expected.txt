@@ -1,0 +1,4 @@
+
+PASS Load opaque origin blobs for iframe
+PASS Check iframe secure context from a blob created in opaque origin but secure context
+
