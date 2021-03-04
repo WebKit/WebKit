@@ -1609,7 +1609,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     if (![self _prepareAccessibilityCall])
         return NO;
-    
+
     AccessibilityObject::ScrollByPageDirection scrollDirection;
     switch (direction) {
     case UIAccessibilityScrollDirectionRight:
@@ -1629,15 +1629,16 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     }
 
     BOOL result = self.axBackingObject->scrollByPage(scrollDirection);
-    
+
     if (result) {
-        [self postScrollStatusChangeNotification];
+        String notificationName = AXObjectCache::notificationPlatformName(AXObjectCache::AXNotification::AXPageScrolled);
+        [self postNotification:notificationName];
 
         CGPoint scrollPos = [self _accessibilityScrollPosition];
         NSString *testString = [NSString stringWithFormat:@"AXScroll [position: %.2f %.2f]", scrollPos.x, scrollPos.y];
-        [self accessibilityPostedNotification:@"AXScrollByPage" userInfo:@{ @"status" : testString }];
+        [self accessibilityPostedNotification:notificationName userInfo:@{ @"status" : testString }];
     }
-    
+
     // This means that this object handled the scroll and no other ancestor should attempt scrolling.
     return result;
 }
@@ -1983,66 +1984,6 @@ static RenderObject* rendererForView(WAKView* view)
     if (obj)
         return obj->parentObjectUnignored()->wrapper();
     return nil;
-}
-
-- (void)postFocusChangeNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.
-}
-
-- (void)postSelectedTextChangeNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.    
-}
-
-- (void)postLayoutChangeNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.        
-}
-
-- (void)postLiveRegionChangeNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.    
-}
-
-- (void)postLiveRegionCreatedNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.    
-}
-
-- (void)postLoadCompleteNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.    
-}
-
-- (void)postChildrenChangedNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.    
-}
-
-- (void)postInvalidStatusChangedNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.        
-}
-
-- (void)postValueChangedNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.
-}
-
-- (void)postExpandedChangedNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.
-}
-
-- (void)postScrollStatusChangeNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.
-}
-
-- (void)postCurrentStateChangedNotification
-{
-    // The UIKit accessibility wrapper will override and post appropriate notification.
 }
 
 - (void)postNotification:(NSString *)notificationName

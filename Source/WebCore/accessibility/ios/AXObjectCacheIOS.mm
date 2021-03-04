@@ -51,9 +51,25 @@ String AXObjectCache::notificationPlatformName(AXNotification notification)
     case AXFocusedUIElementChanged:
         name = "AXFocusChanged";
         break;
+    case AXPageScrolled:
+        name = "AXPageScrolled";
+        break;
+    case AXSelectedTextChanged:
+        name = "AXSelectedTextChanged";
+        break;
+    case AXLiveRegionChanged:
+    case AXLiveRegionCreated:
+        name = "AXLiveRegionChanged";
+        break;
+    case AXInvalidStatusChanged:
+        name = "AXInvalidStatusChanged";
+        break;
     case AXCheckedStateChanged:
     case AXValueChanged:
         name = "AXValueChanged";
+        break;
+    case AXExpandedChanged:
+        name = "AXExpandedChanged";
         break;
     case AXCurrentStateChanged:
         name = "AXCurrentStateChanged";
@@ -68,58 +84,23 @@ String AXObjectCache::notificationPlatformName(AXNotification notification)
     return name;
 }
 
-void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification notification)
+void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotification notification)
 {
-    if (!obj)
+    if (!object)
         return;
 
-    String notificationName = AXObjectCache::notificationPlatformName(notification);
-    switch (notification) {
-    case AXActiveDescendantChanged:
-    case AXFocusedUIElementChanged:
-        [obj->wrapper() postFocusChangeNotification];
-        break;
-    case AXSelectedTextChanged:
-        [obj->wrapper() postSelectedTextChangeNotification];
-        break;
-    case AXLayoutComplete:
-        [obj->wrapper() postLayoutChangeNotification];
-        break;
-    case AXLiveRegionChanged:
-        [obj->wrapper() postLiveRegionChangeNotification];
-        break;
-    case AXLiveRegionCreated:
-        [obj->wrapper() postLiveRegionCreatedNotification];
-        break;
-    case AXChildrenChanged:
-        [obj->wrapper() postChildrenChangedNotification];
-        break;
-    case AXLoadComplete:
-        [obj->wrapper() postLoadCompleteNotification];
-        break;
-    case AXInvalidStatusChanged:
-        [obj->wrapper() postInvalidStatusChangedNotification];
-        break;
-    case AXCheckedStateChanged:
-    case AXValueChanged:
-        [obj->wrapper() postValueChangedNotification];
-        break;
-    case AXExpandedChanged:
-        [obj->wrapper() postExpandedChangedNotification];
-        break;
-    case AXCurrentStateChanged:
-        [obj->wrapper() postCurrentStateChangedNotification];
-        break;
-    case AXSortDirectionChanged:
-        [obj->wrapper() postNotification:notificationName];
-        break;
-    default:
-        break;
-    }
+    // iOS notifications must ultimately call UIKit UIAccessibilityPostNotification.
+    // But WebCore is not linked with UIKit. So a workaround is to override the wrapper's
+    // postNotification method in the system WebKitAccessibility bundle that does link UIKit.
+    String notificationName = notificationPlatformName(notification);
+    if (notificationName.isEmpty())
+        return;
 
-    // Used by DRT to know when notifications are posted.
-    if (!notificationName.isEmpty())
-        [obj->wrapper() accessibilityPostedNotification:notificationName];
+    [object->wrapper() postNotification:notificationName];
+
+    // To simulate AX notifications for LayoutTests on the simulator, call
+    // the wrapper's accessibilityPostedNotification.
+    [object->wrapper() accessibilityPostedNotification:notificationName];
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)

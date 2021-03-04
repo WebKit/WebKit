@@ -55,18 +55,6 @@
 
 - (BOOL)isAttachment;
 
-- (void)postFocusChangeNotification;
-- (void)postSelectedTextChangeNotification;
-- (void)postLayoutChangeNotification;
-- (void)postLiveRegionChangeNotification;
-- (void)postLoadCompleteNotification;
-- (void)postChildrenChangedNotification;
-- (void)postInvalidStatusChangedNotification;
-- (void)postLiveRegionCreatedNotification;
-- (void)postScrollStatusChangeNotification;
-- (void)postValueChangedNotification;
-- (void)postExpandedChangedNotification;
-- (void)postCurrentStateChangedNotification;
 - (void)postNotification:(NSString *)notificationName;
 @end
 
