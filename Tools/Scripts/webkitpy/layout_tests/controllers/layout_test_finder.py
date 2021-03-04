@@ -33,6 +33,7 @@ import re
 
 from webkitpy.common import find_files
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models.test import Test
 from webkitpy.port.base import Port
 
 
@@ -84,13 +85,13 @@ class LayoutTestFinder(object):
         paths = self._strip_test_dir_prefixes(args)
         if options and options.test_list:
             paths += self._strip_test_dir_prefixes(self._read_test_names_from_file(options.test_list, self._port.TEST_PATH_SEPARATOR))
-        test_files = self.find_tests_by_path(paths, device_type=device_type)
-        return (paths, test_files)
+        tests = self.find_tests_by_path(paths, device_type=device_type)
+        return (paths, tests)
 
     def find_tests_by_path(self, paths, device_type=None):
         """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
         expanded_paths = self._expanded_paths(paths, device_type=device_type)
-        return self._real_tests(expanded_paths)
+        return [Test(test_file) for test_file in self._real_tests(expanded_paths)]
 
     def _expanded_paths(self, paths, device_type=None):
         expanded_paths = []

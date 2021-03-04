@@ -1,3 +1,33 @@
+2021-03-03  Sam Sneddon  <gsnedders@apple.com>
+
+        Make LayoutTestFinder.find_tests/find_tests_by_path return List[Test]
+        https://bugs.webkit.org/show_bug.cgi?id=222662
+
+        Reviewed by Jonathan Bedard.
+
+        This introduces a Test class, to later be able to migrate finding
+        expectations to LayoutTestFinder.
+
+        * Scripts/open-layout-test:
+        (main):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.find_tests):
+        (LayoutTestFinder.find_tests_by_path):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_unittest.py:
+        (LayoutTestFinderTests.test_find_with_skipped_directories):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+        (Manager.print_expectations):
+        * Scripts/webkitpy/layout_tests/models/test.py: Added.
+        (Test):
+        (Test.__init__):
+        (Test.__repr__):
+        (Test.__eq__):
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.execute):
+
 2021-03-03  Cameron McCormack  <heycam@apple.com>
 
         Send console.log() etc. to stdout in MiniBrowser on macOS

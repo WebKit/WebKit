@@ -208,10 +208,12 @@ class Manager(object):
             for_device_type = u'for {} '.format(device_type) if device_type else ''
             self._printer.write_update(u'Collecting tests {}...'.format(for_device_type))
             try:
-                paths, test_names = self._collect_tests(args, device_type=device_type)
+                paths, tests = self._collect_tests(args, device_type=device_type)
             except IOError:
                 # This is raised if --test-list doesn't exist
                 return test_run_results.RunDetails(exit_code=-1)
+
+            test_names = [test.test_path for test in tests]
 
             self._printer.write_update(u'Parsing expectations {}...'.format(for_device_type))
             self._expectations[device_type] = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force, device_type=device_type)
@@ -696,10 +698,12 @@ class Manager(object):
             for_device_type = 'for {} '.format(device_type) if device_type else ''
             self._printer.write_update('Collecting tests {}...'.format(for_device_type))
             try:
-                paths, test_names = self._collect_tests(args, device_type=device_type)
+                paths, tests = self._collect_tests(args, device_type=device_type)
             except IOError:
                 # This is raised if --test-list doesn't exist
                 return test_run_results.RunDetails(exit_code=-1)
+
+            test_names = [test.test_path for test in tests]
 
             self._printer.write_update('Parsing expectations {}...'.format(for_device_type))
             self._expectations[device_type] = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force, device_type=device_type)

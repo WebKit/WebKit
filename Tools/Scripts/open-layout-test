@@ -54,7 +54,8 @@ def main(argv, stdout, stderr):
     driver = port.create_driver(0)
     finder = LayoutTestFinder(port, {})
 
-    paths, test_files = finder.find_tests(None, [test_name])
+    paths, tests = finder.find_tests(None, [test_name])
+    test_files = [test.test_path for test in tests]
     test_name = paths[0]
 
     needs_server = False

@@ -79,7 +79,7 @@ class LayoutTestFinderTests(unittest.TestCase):
     def test_find_with_skipped_directories(self):
         finder = self.make_finder()
         tests = finder.find_tests_by_path(['userscripts'])
-        self.assertNotIn('userscripts/resources/iframe.html', tests)
+        self.assertNotIn('userscripts/resources/iframe.html', [test.test_path for test in tests])
 
     def test_find_with_skipped_directories_2(self):
         finder = self.make_finder()
