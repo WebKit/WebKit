@@ -45,6 +45,7 @@
 #include "PaymentMethodData.h"
 #include "PaymentOptions.h"
 #include "PaymentRequestUpdateEvent.h"
+#include "PaymentRequestUtilities.h"
 #include "PaymentValidationErrors.h"
 #include "ScriptController.h"
 #include <JavaScriptCore/JSONObject.h>
@@ -65,79 +66,6 @@ static bool isWellFormedCurrencyCode(const String& currency)
 {
     if (currency.length() == 3)
         return currency.isAllSpecialCharacters<isASCIIAlpha>();
-    return false;
-}
-
-// Implements the "valid decimal monetary value" validity checker
-// https://www.w3.org/TR/payment-request/#dfn-valid-decimal-monetary-value
-static bool isValidDecimalMonetaryValue(StringView value)
-{
-    enum class State {
-        Start,
-        Sign,
-        Digit,
-        Dot,
-        DotDigit,
-    };
-
-    auto state = State::Start;
-    for (auto character : value.codeUnits()) {
-        switch (state) {
-        case State::Start:
-            if (character == '-') {
-                state = State::Sign;
-                break;
-            }
-
-            if (isASCIIDigit(character)) {
-                state = State::Digit;
-                break;
-            }
-
-            return false;
-
-        case State::Sign:
-            if (isASCIIDigit(character)) {
-                state = State::Digit;
-                break;
-            }
-
-            return false;
-
-        case State::Digit:
-            if (character == '.') {
-                state = State::Dot;
-                break;
-            }
-
-            if (isASCIIDigit(character)) {
-                state = State::Digit;
-                break;
-            }
-
-            return false;
-
-        case State::Dot:
-            if (isASCIIDigit(character)) {
-                state = State::DotDigit;
-                break;
-            }
-
-            return false;
-
-        case State::DotDigit:
-            if (isASCIIDigit(character)) {
-                state = State::DotDigit;
-                break;
-            }
-
-            return false;
-        }
-    }
-
-    if (state == State::Digit || state == State::DotDigit)
-        return true;
-
     return false;
 }
 

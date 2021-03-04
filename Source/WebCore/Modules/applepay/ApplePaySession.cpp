@@ -59,6 +59,7 @@
 #include "PaymentCoordinator.h"
 #include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
+#include "PaymentRequestUtilities.h"
 #include "PaymentRequestValidator.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -74,76 +75,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePaySession);
 
-// The amount follows the regular expression -?[0-9]+(\.[0-9][0-9])?.
-static bool validateAmount(const String& amountString)
-{
-    enum class State {
-        Start,
-        Sign,
-        Digit,
-        Dot,
-        DotDigit,
-        End,
-    };
-
-    State state = State::Start;
-
-    for (unsigned i = 0; i < amountString.length(); ++i) {
-        UChar c = amountString[i];
-
-        switch (state) {
-        case State::Start:
-            if (c == '-') {
-                state = State::Sign;
-                break;
-            }
-
-            if (!isASCIIDigit(c))
-                return false;
-            state = State::Digit;
-            break;
-
-        case State::Sign:
-            if (!isASCIIDigit(c))
-                return false;
-            state = State::Digit;
-            break;
-
-        case State::Digit:
-            if (c == '.') {
-                state = State::Dot;
-                break;
-            }
-
-            if (!isASCIIDigit(c))
-                return false;
-            break;
-
-        case State::Dot:
-            if (!isASCIIDigit(c))
-                return false;
-
-            state = State::DotDigit;
-            break;
-
-        case State::DotDigit:
-            if (!isASCIIDigit(c))
-                return false;
-
-            state = State::End;
-            break;
-
-        case State::End:
-            return false;
-        }
-    }
-
-    return state == State::Digit || state == State::DotDigit || state == State::End;
-}
-
 static ExceptionOr<ApplePayLineItem> convertAndValidateTotal(ApplePayLineItem&& lineItem)
 {
-    if (!validateAmount(lineItem.amount))
+    if (!isValidDecimalMonetaryValue(lineItem.amount))
         return Exception { TypeError, makeString("\"" + lineItem.amount, "\" is not a valid amount.") };
 
     auto validatedTotal = PaymentRequestValidator::validateTotal(lineItem);
@@ -159,7 +93,7 @@ static ExceptionOr<ApplePayLineItem> convertAndValidate(ApplePayLineItem&& lineI
         // It is OK for pending types to not have an amount.
         lineItem.amount = nullString();
     } else {
-        if (!validateAmount(lineItem.amount))
+        if (!isValidDecimalMonetaryValue(lineItem.amount))
             return Exception { TypeError, makeString("\"" + lineItem.amount, "\" is not a valid amount.") };
     }
 
@@ -186,7 +120,7 @@ static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(Optional<Vector<
 
 static ExceptionOr<ApplePayShippingMethod> convertAndValidate(ApplePayShippingMethod&& shippingMethod)
 {
-    if (!validateAmount(shippingMethod.amount))
+    if (!isValidDecimalMonetaryValue(shippingMethod.amount))
         return Exception { TypeError, makeString("\"" + shippingMethod.amount, "\" is not a valid amount.") };
 
     return WTFMove(shippingMethod);
