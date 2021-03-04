@@ -153,7 +153,7 @@ public:
 
     InlineRect logicalRectForTextRun(const Line::Run&) const;
     InlineRect logicalRectForLineBreakBox(const Box&) const;
-    InlineRect logicalRectForRootInlineBox() const { return m_rootInlineBox->logicalRect(); }
+    InlineRect logicalRectForRootInlineBox() const { return m_rootInlineBox.logicalRect(); }
     InlineRect logicalBorderBoxForAtomicInlineLevelBox(const Box&, const BoxGeometry&) const;
     InlineRect logicalBorderBoxForInlineBox(const Box&, const BoxGeometry&) const;
 
@@ -161,7 +161,7 @@ public:
     using InlineLevelBoxList = Vector<std::unique_ptr<InlineLevelBox>>;
     const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
 
-    InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox->logicalTop() + m_rootInlineBox->baseline(); }
+    InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox.logicalTop() + m_rootInlineBox.baseline(); }
 
 private:
     friend class LineBoxBuilder;
@@ -172,7 +172,7 @@ private:
 
     InlineLevelBox& rootInlineBox() { return m_rootInlineBox; }
 
-    InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return &layoutBox == &m_rootInlineBox->layoutBox() ? m_rootInlineBox.get() : *m_nonRootInlineLevelBoxMap.get(&layoutBox); }
+    InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return &layoutBox == &m_rootInlineBox.layoutBox() ? m_rootInlineBox : *m_nonRootInlineLevelBoxMap.get(&layoutBox); }
     InlineRect logicalRectForInlineLevelBox(const Box& layoutBox) const;
 
     void setHasContent(bool hasContent) { m_hasContent = hasContent; }
@@ -183,7 +183,7 @@ private:
     bool m_hasContent { false };
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 
-    UniqueRef<InlineLevelBox> m_rootInlineBox;
+    InlineLevelBox m_rootInlineBox;
     InlineLevelBoxList m_nonRootInlineLevelBoxList;
 
     HashMap<const Box*, InlineLevelBox*> m_nonRootInlineLevelBoxMap;

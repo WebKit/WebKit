@@ -86,7 +86,7 @@ bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
 LineBox::LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t numberOfRuns)
     : m_logicalRect(logicalTopleft, InlineLayoutSize { lineLogicalWidth, { } })
     , m_contentLogicalWidth(contentLogicalWidth)
-    , m_rootInlineBox(makeUniqueRef<LineBox::InlineLevelBox>(rootLayoutBox, contentLogicalLeft, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox))
+    , m_rootInlineBox(rootLayoutBox, contentLogicalLeft, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox)
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(numberOfRuns);
     m_nonRootInlineLevelBoxMap.reserveInitialCapacity(numberOfRuns);
@@ -113,7 +113,7 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
         runlogicalTop += parentInlineBox->logicalTop();
     }
     InlineLayoutUnit logicalHeight = fontMetrics.height();
-    return { runlogicalTop, m_rootInlineBox->logicalLeft() + run.logicalLeft(), run.logicalWidth(), logicalHeight };
+    return { runlogicalTop, m_rootInlineBox.logicalLeft() + run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
 
 InlineRect LineBox::logicalRectForLineBreakBox(const Box& layoutBox) const
@@ -132,8 +132,8 @@ InlineRect LineBox::logicalRectForInlineLevelBox(const Box& layoutBox) const
         return inlineBoxLogicalRect;
 
     // Fast path for inline level boxes on the root inline box (e.g <div><img></div>).
-    if (&layoutBox.parent() == &m_rootInlineBox->layoutBox()) {
-        inlineBoxLogicalRect.moveVertically(m_rootInlineBox->logicalTop());
+    if (&layoutBox.parent() == &m_rootInlineBox.layoutBox()) {
+        inlineBoxLogicalRect.moveVertically(m_rootInlineBox.logicalTop());
         return inlineBoxLogicalRect;
     }
 
