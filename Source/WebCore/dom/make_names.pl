@@ -103,6 +103,8 @@ if (length($fontNamesIn)) {
 #include <wtf/text/AtomString.h>
 END
 
+    printMacros($F, "extern const StringImpl::StaticStringImpl", "Data", \%parameters);
+    print F "\n";
     printMacros($F, "extern MainThreadLazyNeverDestroyed<const WTF::AtomString>", "", \%parameters);
     print F "#endif\n\n";
 
