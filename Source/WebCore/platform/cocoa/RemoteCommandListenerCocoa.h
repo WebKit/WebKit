@@ -27,19 +27,19 @@
 
 #include "RemoteCommandListener.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class RemoteCommandListenerMac : public RemoteCommandListener, public CanMakeWeakPtr<RemoteCommandListenerMac> {
+class RemoteCommandListenerCocoa : public RemoteCommandListener, public CanMakeWeakPtr<RemoteCommandListenerCocoa> {
 public:
-    static std::unique_ptr<RemoteCommandListenerMac> create(RemoteCommandListenerClient&);
-    RemoteCommandListenerMac(RemoteCommandListenerClient&);
-    virtual ~RemoteCommandListenerMac();
+    static std::unique_ptr<RemoteCommandListenerCocoa> create(RemoteCommandListenerClient&);
+    RemoteCommandListenerCocoa(RemoteCommandListenerClient&);
+    virtual ~RemoteCommandListenerCocoa();
 
-protected:
+private:
     void updateSupportedCommands() final;
 
     void* m_commandHandler { nullptr };

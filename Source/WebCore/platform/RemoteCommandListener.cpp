@@ -26,12 +26,8 @@
 #include "config.h"
 #include "RemoteCommandListener.h"
 
-#if PLATFORM(MAC)
-#include "RemoteCommandListenerMac.h"
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-#include "RemoteCommandListenerIOS.h"
+#if PLATFORM(COCOA)
+#include "RemoteCommandListenerCocoa.h"
 #endif
 
 namespace WebCore {
@@ -50,10 +46,8 @@ void RemoteCommandListener::setCreationFunction(CreationFunction&& function)
 void RemoteCommandListener::resetCreationFunction()
 {
     remoteCommandListenerCreationFunction() = [] (RemoteCommandListenerClient& client) {
-#if PLATFORM(MAC)
-        return RemoteCommandListenerMac::create(client);
-#elif PLATFORM(IOS_FAMILY)
-        return RemoteCommandListenerIOS::create(client);
+#if PLATFORM(COCOA)
+        return RemoteCommandListenerCocoa::create(client);
 #else
         return RemoteCommandListener::create(client);
 #endif

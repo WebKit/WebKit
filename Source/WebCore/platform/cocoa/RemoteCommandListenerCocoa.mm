@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
-#import "RemoteCommandListenerMac.h"
+#import "RemoteCommandListenerCocoa.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #import "Logging.h"
 #import <wtf/MainThread.h>
@@ -64,12 +64,12 @@ static Optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(Platf
     return { };
 }
 
-std::unique_ptr<RemoteCommandListenerMac> RemoteCommandListenerMac::create(RemoteCommandListenerClient& client)
+std::unique_ptr<RemoteCommandListenerCocoa> RemoteCommandListenerCocoa::create(RemoteCommandListenerClient& client)
 {
-    return makeUnique<RemoteCommandListenerMac>(client);
+    return makeUnique<RemoteCommandListenerCocoa>(client);
 }
 
-const RemoteCommandListener::RemoteCommandsSet& RemoteCommandListenerMac::defaultCommands()
+const RemoteCommandListener::RemoteCommandsSet& RemoteCommandListenerCocoa::defaultCommands()
 {
     static NeverDestroyed<RemoteCommandsSet> commands(std::initializer_list<PlatformMediaSession::RemoteControlCommandType> {
         PlatformMediaSession::PlayCommand,
@@ -96,7 +96,7 @@ static bool isSeekCommand(PlatformMediaSession::RemoteControlCommandType command
         || command == PlatformMediaSession::BeginSeekingBackwardCommand;
 }
 
-void RemoteCommandListenerMac::updateSupportedCommands()
+void RemoteCommandListenerCocoa::updateSupportedCommands()
 {
     if (!isMediaRemoteFrameworkAvailable())
         return;
@@ -125,7 +125,7 @@ void RemoteCommandListenerMac::updateSupportedCommands()
     m_currentCommands = supportedCommands;
 }
 
-RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& client)
+RemoteCommandListenerCocoa::RemoteCommandListenerCocoa(RemoteCommandListenerClient& client)
     : RemoteCommandListener(client)
 {
     if (!isMediaRemoteFrameworkAvailable())
@@ -136,7 +136,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
     auto weakThis = makeWeakPtr(*this);
     m_commandHandler = MRMediaRemoteAddAsyncCommandHandlerBlock(^(MRMediaRemoteCommand command, CFDictionaryRef options, void(^completion)(CFArrayRef)) {
 
-        LOG(Media, "RemoteCommandListenerMac::RemoteCommandListenerMac - received command %u", command);
+        LOG(Media, "RemoteCommandListenerCocoa::RemoteCommandListenerCocoa - received command %u", command);
 
         PlatformMediaSession::RemoteControlCommandType platformCommand { PlatformMediaSession::NoCommand };
         PlatformMediaSession::RemoteCommandArgument argument;
@@ -207,7 +207,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
             platformCommand = PlatformMediaSession::PreviousTrackCommand;
             break;
         default:
-            LOG(Media, "RemoteCommandListenerMac::RemoteCommandListenerMac - command %u not supported!", command);
+            LOG(Media, "RemoteCommandListenerCocoa::RemoteCommandListenerCocoa - command %u not supported!", command);
             status = MRMediaRemoteCommandHandlerStatusCommandFailed;
         };
 
@@ -218,7 +218,7 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
     });
 }
 
-RemoteCommandListenerMac::~RemoteCommandListenerMac()
+RemoteCommandListenerCocoa::~RemoteCommandListenerCocoa()
 {
     if (m_commandHandler)
         MRMediaRemoteRemoveCommandHandlerBlock(m_commandHandler);
