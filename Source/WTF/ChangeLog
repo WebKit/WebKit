@@ -1,3 +1,16 @@
+2021-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        <rdar://74748353>
+
+        Reviewed by Simon Fraser.
+
+        Add HAVE_IOSURFACE_SET_OWNERSHIP_IDENTITY feature flag to protect uses of the
+        new IOSurfaceSetOwnershipIdentity() SPI.
+
+        * wtf/PlatformHave.h:
+
 2021-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Limit HashTable entry size to 500 bytes
