@@ -1770,10 +1770,8 @@ public:
     bool hasQueuedKeyEvent() const;
     const NativeWebKeyboardEvent& firstQueuedKeyEvent() const;
 
-#if PLATFORM(IOS)
     void grantAccessToAssetServices();
     void revokeAccessToAssetServices();
-#endif
 
 #if PLATFORM(COCOA)
     void grantAccessToPreferenceService();
