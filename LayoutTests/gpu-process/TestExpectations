@@ -1,52 +1,45 @@
-compositing/animation/repaint-after-clearing-shared-backing.html [ ImageOnlyFailure ]
+# webkit.org/b/222728
 compositing/canvas/accelerated-canvas-compositing.html [ Failure ]
 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
-
 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
+fast/images/ordered-animated-image-frames.html [ ImageOnlyFailure ]
+fast/repaint/canvas-object-fit.html [ Failure ]
+fast/repaint/canvas-putImageData.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
+inspector/canvas/memory.html [ Failure ]
+svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
 
 # webkit.org/b/220389
 fast/canvas/canvas-drawImage-composite-copy.html [ ImageOnlyFailure ]
 fast/canvas/canvas-render-layer.html [ Failure ]
 fast/canvas/hidpi-repaint-on-retina-leaves-bits-behind.html [ ImageOnlyFailure ]
 
-# webkit.org/b/220806
-fast/canvas/webgl/context-update-on-display-configuration.html [ Timeout ]
-fast/canvas/webgl/webglcontextchangedevent.html [ Timeout ]
-
-fast/canvas/webgl/uniform-samplers-test.html [ Slow ]
-webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
-webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Slow ]
-
-fast/dom/navigator-detached-no-crash.html [ Failure ]
-fast/images/ordered-animated-image-frames.html [ ImageOnlyFailure ]
-
-fast/repaint/canvas-object-fit.html [ Failure ]
-fast/repaint/canvas-putImageData.html [ Failure ]
-
+# webkit.org/b/222341
 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
 imported/blink/fast/canvas/canvas-state-persistence-no-dirty.html [ ImageOnlyFailure ]
 imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.angle.2.html [ Crash ]
-imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
+# webkit.org/b/220806
+fast/canvas/webgl/context-update-on-display-configuration.html [ Timeout ]
+fast/canvas/webgl/webglcontextchangedevent.html [ Timeout ]
 
-inspector/canvas/memory.html [ Failure ]
-inspector/canvas/recording-2d-frameCount.html [ Crash ]
-inspector/canvas/recording-2d-full.html [ Crash ]
-inspector/canvas/recording-2d-memoryLimit.html [ Crash ]
-inspector/canvas/recording-html-2d.html [ Crash ]
-
-svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
-
-# webkit.org/b/220333
-webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout ]
+# webkit.org/b/222726
+fast/canvas/webgl/uniform-samplers-test.html [ Slow ]
 webgl/1.0.3/conformance/uniforms/uniform-samplers-test.html [ Slow ]
-webgl/2.0.0/conformance/reading/read-pixels-test.html [ Failure ]
-webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Timeout ]
 webgl/2.0.0/conformance/uniforms/uniform-samplers-test.html [ Slow ]
-webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
+webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
+webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Slow ]
+
+# webkit.org/b/222722
+webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout ]
+webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Timeout ]
 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Timeout ]
+
+# webkit.org/b/222410
+webgl/2.0.0/conformance/reading/read-pixels-test.html [ Failure ]
+webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
+
+# webkit.org/b/222411
 webgl/many-contexts-access-after-loss.html [ Failure ]
 webgl/max-active-contexts-console-warning.html [ Failure ]
 webgl/max-active-contexts-gc.html [ Failure ]
