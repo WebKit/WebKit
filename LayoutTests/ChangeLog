@@ -1,5 +1,15 @@
 2021-03-04  Youenn Fablet  <youenn@apple.com>
 
+        FileReader::enqueueTask should validate that its context is not stopped before executing the task
+        https://bugs.webkit.org/show_bug.cgi?id=222472
+        <rdar://problem/74753571>
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/filereader/filereader-stop.html: Added.
+
+2021-03-04  Youenn Fablet  <youenn@apple.com>
+
         Can not read blobs in sandboxed iframes
         https://bugs.webkit.org/show_bug.cgi?id=170075
         <rdar://problem/31282427>

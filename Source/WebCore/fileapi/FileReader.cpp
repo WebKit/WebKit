@@ -217,7 +217,7 @@ void FileReader::didFail(ExceptionCode errorCode)
 
 void FileReader::fireEvent(const AtomString& type)
 {
-    RELEASE_ASSERT(isAllowedToRunScript());
+    ASSERT(isAllowedToRunScript());
     dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
 }
 
@@ -239,16 +239,15 @@ Optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> FileReader::result() const
 
 void FileReader::enqueueTask(Function<void()>&& task)
 {
-    auto* context = scriptExecutionContext();
-    if (!context)
+    if (!scriptExecutionContext())
         return;
 
     static uint64_t taskIdentifierSeed = 0;
     uint64_t taskIdentifier = ++taskIdentifierSeed;
     m_pendingTasks.add(taskIdentifier, WTFMove(task));
-    context->eventLoop().queueTask(TaskSource::FileReading, [this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this), taskIdentifier] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::FileReading, [this, pendingActivity = makePendingActivity(*this), taskIdentifier] {
         auto task = m_pendingTasks.take(taskIdentifier);
-        if (task)
+        if (task && !isContextStopped())
             task();
     });
 }
