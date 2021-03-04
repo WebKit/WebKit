@@ -1,3 +1,14 @@
+2021-03-04  Matt Lewis  <jlewis3@apple.com>
+
+        Add Apple Silicon Devices to Big Sur builders and testers.
+        https://bugs.webkit.org/show_bug.cgi?id=222616
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
 2021-03-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add python 3 support - part 5
