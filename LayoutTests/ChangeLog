@@ -1,3 +1,12 @@
+2021-03-04  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] inspector/page/empty-or-missing-resources.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=222692
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations until test flakiness can be resolved. 
+
 2021-03-04  Peng Liu  <peng.liu6@apple.com>
 
         [GPUProcess] MediaController is using a ClockCM
