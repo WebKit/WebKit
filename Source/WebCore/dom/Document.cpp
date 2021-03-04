@@ -8052,9 +8052,9 @@ void Document::orientationChanged(int orientation)
 
 #if ENABLE(MEDIA_STREAM)
 
-void Document::stopMediaCapture()
+void Document::stopMediaCapture(MediaProducer::MediaCaptureKind kind)
 {
-    MediaStreamTrack::endCapture(*this);
+    MediaStreamTrack::endCapture(*this, kind);
 }
 
 void Document::mediaStreamCaptureStateChanged()

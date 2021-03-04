@@ -150,5 +150,15 @@ NSTextAlternatives *PageClientImplCocoa::platformDictationAlternatives(WebCore::
 {
     return m_alternativeTextUIController->alternativesForContext(dictationContext);
 }
-    
+
+void PageClientImplCocoa::microphoneCaptureChanged()
+{
+    [m_webView didChangeValueForKey:@"_microphoneCaptureState"];
+}
+
+void PageClientImplCocoa::cameraCaptureChanged()
+{
+    [m_webView didChangeValueForKey:@"_cameraCaptureState"];
+}
+
 }

@@ -40,13 +40,19 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeBottomToTop,
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
+typedef NS_OPTIONS(NSUInteger, _WKMediaCaptureStateDeprecated) {
+    _WKMediaCaptureStateDeprecatedNone = 0,
+    _WKMediaCaptureStateDeprecatedActiveMicrophone = 1 << 0,
+    _WKMediaCaptureStateDeprecatedActiveCamera = 1 << 1,
+    _WKMediaCaptureStateDeprecatedMutedMicrophone = 1 << 2,
+    _WKMediaCaptureStateDeprecatedMutedCamera = 1 << 3,
+} WK_API_AVAILABLE(macos(10.13), ios(11.0));
+
 typedef NS_OPTIONS(NSUInteger, _WKMediaCaptureState) {
     _WKMediaCaptureStateNone = 0,
-    _WKMediaCaptureStateActiveMicrophone = 1 << 0,
-    _WKMediaCaptureStateActiveCamera = 1 << 1,
-    _WKMediaCaptureStateMutedMicrophone = 1 << 2,
-    _WKMediaCaptureStateMutedCamera = 1 << 3,
-} WK_API_AVAILABLE(macos(10.13), ios(11.0));
+    _WKMediaCaptureStateActive = 1 << 0,
+    _WKMediaCaptureStateMuted = 1 << 1,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 typedef NS_OPTIONS(NSUInteger, _WKMediaMutedState) {
     _WKMediaNoneMuted = 0,
@@ -186,6 +192,16 @@ has been loaded over a connection using TLS 1.0 or TLS 1.1.
 for this property.
 */
 @property (nonatomic, readonly) BOOL _negotiatedLegacyTLS WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
+
+/*! @abstract The state of media capture on a web page.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant
+ for this property.
+ */
+@property (nonatomic, readonly) _WKMediaCaptureState _cameraCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) _WKMediaCaptureState _microphoneCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+- (void)setMicrophoneCaptureState:(_WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)setCameraCaptureState:(_WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
@@ -338,7 +354,7 @@ for this property.
 @property (nonatomic, setter=_setFullscreenDelegate:) id<_WKFullscreenDelegate> _fullscreenDelegate WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nonatomic, readonly) BOOL _isInFullscreen WK_API_AVAILABLE(macos(10.12.3));
 
-@property (nonatomic, readonly) _WKMediaCaptureState _mediaCaptureState WK_API_AVAILABLE(macos(10.15), ios(13.0));
+@property (nonatomic, readonly) _WKMediaCaptureStateDeprecated _mediaCaptureState WK_API_AVAILABLE(macos(10.15), ios(13.0));
 @property (nonatomic, readonly) _WKMediaMutedState _mediaMutedState WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState WK_API_AVAILABLE(macos(10.13), ios(11.0));

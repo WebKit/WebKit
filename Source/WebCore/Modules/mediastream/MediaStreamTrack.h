@@ -69,7 +69,7 @@ public:
     static Ref<MediaStreamTrack> create(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
     virtual ~MediaStreamTrack();
 
-    static void endCapture(Document&);
+    static void endCapture(Document&, MediaProducer::MediaCaptureKind);
 
     static MediaProducer::MediaStateFlags captureState(Document&);
     static void updateCaptureAccordingToMutedState(Document&);

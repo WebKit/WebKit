@@ -537,6 +537,9 @@ public:
     virtual void didHandleAcceptedCandidate() = 0;
 #endif
 
+    virtual void microphoneCaptureChanged() { }
+    virtual void cameraCaptureChanged() { }
+
     virtual void videoControlsManagerDidChange() { }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

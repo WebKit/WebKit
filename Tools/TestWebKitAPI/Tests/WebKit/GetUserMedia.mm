@@ -60,29 +60,29 @@ static bool done;
 
 namespace TestWebKitAPI {
 
-static String wkMediaCaptureStateString(_WKMediaCaptureState flags)
+static String wkMediaCaptureStateString(_WKMediaCaptureStateDeprecated flags)
 {
     StringBuilder string;
-    if (flags & _WKMediaCaptureStateActiveMicrophone)
-        string.append("_WKMediaCaptureStateActiveMicrophone + ");
-    if (flags & _WKMediaCaptureStateActiveCamera)
-        string.append("_WKMediaCaptureStateActiveCamera + ");
-    if (flags & _WKMediaCaptureStateMutedMicrophone)
-        string.append("_WKMediaCaptureStateMutedMicrophone + ");
-    if (flags & _WKMediaCaptureStateMutedCamera)
-        string.append("_WKMediaCaptureStateMutedCamera + ");
+    if (flags & _WKMediaCaptureStateDeprecatedActiveMicrophone)
+        string.append("_WKMediaCaptureStateDeprecatedActiveMicrophone + ");
+    if (flags & _WKMediaCaptureStateDeprecatedActiveCamera)
+        string.append("_WKMediaCaptureStateDeprecatedActiveCamera + ");
+    if (flags & _WKMediaCaptureStateDeprecatedMutedMicrophone)
+        string.append("_WKMediaCaptureStateDeprecatedMutedMicrophone + ");
+    if (flags & _WKMediaCaptureStateDeprecatedMutedCamera)
+        string.append("_WKMediaCaptureStateDeprecatedMutedCamera + ");
     if (string.isEmpty())
-        string.append("_WKMediaCaptureStateNone");
+        string.append("_WKMediaCaptureStateDeprecatedNone");
     else
         string.resize(string.length() - 2);
 
     return string.toString();
 }
 
-bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureState expectedState)
+bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprecated expectedState)
 {
     NSTimeInterval end = [[NSDate date] timeIntervalSinceReferenceDate] + 10;
-    _WKMediaCaptureState state;
+    _WKMediaCaptureStateDeprecated state;
     do {
         state = [webView _mediaCaptureState];
         if (state == expectedState)
@@ -113,38 +113,38 @@ TEST(WebKit2, CaptureMute)
     [webView _setMediaCaptureReportingDelayForTesting:0];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedCamera));
     [webView _setPageMuted: _WKMediaNoneMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
 
     [webView stringByEvaluatingJavaScript:@"captureAudio()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveMicrophone));
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedMicrophone));
     [webView _setPageMuted: _WKMediaNoneMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveMicrophone));
 
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedMicrophone));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
 
     [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera | _WKMediaCaptureStateActiveMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera | _WKMediaCaptureStateDeprecatedActiveMicrophone));
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedCamera | _WKMediaCaptureStateMutedMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedCamera | _WKMediaCaptureStateDeprecatedMutedMicrophone));
     [webView _setPageMuted: _WKMediaNoneMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera | _WKMediaCaptureStateActiveMicrophone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera | _WKMediaCaptureStateDeprecatedActiveMicrophone));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
 }
 
 TEST(WebKit2, CaptureStop)
@@ -164,14 +164,14 @@ TEST(WebKit2, CaptureStop)
     [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     [delegate waitUntilPrompted];
 
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateMutedCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedCamera));
     [webView _setPageMuted: _WKMediaNoneMuted];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     [webView stringByEvaluatingJavaScript:@"notifyEndedEvent()"];
     [webView _stopMediaCapture];
@@ -179,7 +179,7 @@ TEST(WebKit2, CaptureStop)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
 
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
     [delegate waitUntilPrompted];
@@ -204,7 +204,7 @@ TEST(WebKit2, CaptureIndicatorDelay)
     [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     [delegate waitUntilPrompted];
 
@@ -212,10 +212,10 @@ TEST(WebKit2, CaptureIndicatorDelay)
 
     // We wait 1 second, we should still see camera be reported.
     sleep(1_s);
-    EXPECT_EQ([webView _mediaCaptureState], _WKMediaCaptureStateActiveCamera);
+    EXPECT_EQ([webView _mediaCaptureState], _WKMediaCaptureStateDeprecatedActiveCamera);
 
     // One additional second should allow us to go back to no capture being reported.
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
 }
 
 TEST(WebKit2, CaptureIndicatorDelayWhenClosed)
@@ -237,13 +237,13 @@ TEST(WebKit2, CaptureIndicatorDelayWhenClosed)
     [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     [delegate waitUntilPrompted];
 
     [webView _close];
 
-    EXPECT_EQ([webView _mediaCaptureState], _WKMediaCaptureStateNone);
+    EXPECT_EQ([webView _mediaCaptureState], _WKMediaCaptureStateDeprecatedNone);
 }
 
 TEST(WebKit2, GetCapabilities)
@@ -263,7 +263,7 @@ TEST(WebKit2, GetCapabilities)
     [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     [delegate waitUntilPrompted];
 
@@ -372,7 +372,7 @@ TEST(WebKit2, CrashGPUProcessWhileCapturing)
     webView.get().UIDelegate = delegate.get();
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     done = false;
     [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo(true)"];
@@ -451,7 +451,7 @@ TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
     webView.get().UIDelegate = delegate.get();
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     done = false;
     [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo(true)"];
@@ -527,7 +527,7 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
     webView.get().UIDelegate = delegate.get();
 
     [webView loadTestPageNamed:@"getUserMedia"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateActiveCamera));
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     done = false;
     [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo(true)"];

@@ -1742,6 +1742,62 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return _page->pageLoadState().hasNegotiatedLegacyTLS();
 }
 
+- (_WKMediaCaptureState)_cameraCaptureState
+{
+    auto state = _page->reportedMediaState();
+    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+        return _WKMediaCaptureStateActive;
+    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+        return _WKMediaCaptureStateMuted;
+    return _WKMediaCaptureStateNone;
+}
+
+- (_WKMediaCaptureState)_microphoneCaptureState
+{
+    auto state = _page->reportedMediaState();
+    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+        return _WKMediaCaptureStateActive;
+    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+        return _WKMediaCaptureStateMuted;
+    return _WKMediaCaptureStateNone;
+}
+
+- (void)setMicrophoneCaptureState:(_WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
+{
+    if (state == _WKMediaCaptureStateNone) {
+        _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::Audio, [completionHandler = makeBlockPtr(completionHandler)] {
+            completionHandler();
+        });
+        return;
+    }
+    auto mutedState = _page->mutedStateFlags();
+    if (state == _WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::AudioCaptureIsMuted)
+        mutedState ^= WebCore::MediaProducer::AudioCaptureIsMuted;
+    else if (state == _WKMediaCaptureStateMuted)
+        mutedState = WebCore::MediaProducer::AudioCaptureIsMuted;
+    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
+- (void)setCameraCaptureState:(_WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
+{
+    if (state == _WKMediaCaptureStateNone) {
+        _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::Video, [completionHandler = makeBlockPtr(completionHandler)] {
+            completionHandler();
+        });
+        return;
+    }
+    auto mutedState = _page->mutedStateFlags();
+    if (state == _WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::VideoCaptureIsMuted)
+        mutedState ^= WebCore::MediaProducer::VideoCaptureIsMuted;
+    else if (state == _WKMediaCaptureStateMuted)
+        mutedState = WebCore::MediaProducer::VideoCaptureIsMuted;
+    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
     _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = makeRef(*_page.get())] (WebKit::FrameTreeNodeData&& data) {
@@ -2052,7 +2108,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_stopMediaCapture
 {
-    _page->stopMediaCapture();
+    _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::AudioVideo);
 }
 
 - (void)_stopAllMediaPlayback
@@ -3224,9 +3280,9 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 #endif
 }
 
-- (_WKMediaCaptureState)_mediaCaptureState
+- (_WKMediaCaptureStateDeprecated)_mediaCaptureState
 {
-    return WebKit::toWKMediaCaptureState(_page->reportedMediaState());
+    return WebKit::toWKMediaCaptureStateDeprecated(_page->reportedMediaState());
 }
 
 - (void)_setMediaCaptureEnabled:(BOOL)enabled

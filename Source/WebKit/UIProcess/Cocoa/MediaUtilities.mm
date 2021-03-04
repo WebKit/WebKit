@@ -28,17 +28,17 @@
 
 namespace WebKit {
 
-_WKMediaCaptureState toWKMediaCaptureState(WebCore::MediaProducer::MediaStateFlags state)
+_WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducer::MediaStateFlags state)
 {
-    _WKMediaCaptureState mediaCaptureState = _WKMediaCaptureStateNone;
+    _WKMediaCaptureStateDeprecated mediaCaptureState = _WKMediaCaptureStateDeprecatedNone;
     if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
-        mediaCaptureState |= _WKMediaCaptureStateActiveMicrophone;
+        mediaCaptureState |= _WKMediaCaptureStateDeprecatedActiveMicrophone;
     if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
-        mediaCaptureState |= _WKMediaCaptureStateActiveCamera;
+        mediaCaptureState |= _WKMediaCaptureStateDeprecatedActiveCamera;
     if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
-        mediaCaptureState |= _WKMediaCaptureStateMutedMicrophone;
+        mediaCaptureState |= _WKMediaCaptureStateDeprecatedMutedMicrophone;
     if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
-        mediaCaptureState |= _WKMediaCaptureStateMutedCamera;
+        mediaCaptureState |= _WKMediaCaptureStateDeprecatedMutedCamera;
 
     return mediaCaptureState;
 }

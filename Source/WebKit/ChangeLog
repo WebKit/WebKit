@@ -1,3 +1,55 @@
+2021-03-04  Youenn Fablet  <youenn@apple.com>
+
+        Update camera and microphone capture state control WKWebView API
+        https://bugs.webkit.org/show_bug.cgi?id=222166
+
+        Reviewed by Eric Carlson.
+
+        Introduce KVO states for microphone and camera capture states.
+        Add two APIs to set microphone and camera state.
+        This allows to mute/unmute or stop microphone or camera state.
+        We needed to introduce muting of either microphone or camera since this was tied together before the patch.
+        These two APIs take a completion handler.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _cameraCaptureState]):
+        (-[WKWebView _microphoneCaptureState]):
+        (-[WKWebView setMicrophoneCaptureState:completionHandler:]):
+        (-[WKWebView setCameraCaptureState:completionHandler:]):
+        (-[WKWebView _stopMediaCapture]):
+        (-[WKWebView _mediaCaptureState]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/MediaUtilities.h:
+        * UIProcess/Cocoa/MediaUtilities.mm:
+        (WebKit::toWKMediaCaptureStateDeprecated):
+        (WebKit::toWKMediaCaptureState): Deleted.
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::microphoneCaptureChanged):
+        (WebKit::PageClientImplCocoa::cameraCaptureChanged):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::mediaCaptureStateDidChange):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::microphoneCaptureChanged):
+        (WebKit::PageClient::cameraCaptureChanged):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy):
+        (WebKit::UserMediaPermissionRequestManagerProxy::stopCapture):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMuted):
+        (WebKit::WebPageProxy::stopMediaCapture):
+        (WebKit::WebPageProxy::updateReportedMediaCaptureState):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setMuted):
+        (WebKit::WebPageProxy::stopMediaCapture):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+        (WebKit::WebPage::setMuted):
+        (WebKit::WebPage::stopMediaCapture):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-03-04  Rob Buis  <rbuis@igalia.com>
 
         Null check platformData when decoding

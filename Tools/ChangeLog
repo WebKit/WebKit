@@ -1,3 +1,25 @@
+2021-03-04  Youenn Fablet  <youenn@apple.com>
+
+        Update camera and microphone capture state control WKWebView API
+        https://bugs.webkit.org/show_bug.cgi?id=222166
+
+        Reviewed by Eric Carlson.
+
+        Updaed according renaming of _WKMediaCaptureState in _WKMediaCaptureStateDeprecated.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::wkMediaCaptureStateString):
+        (TestWebKitAPI::waitUntilCaptureState):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/MediaStreamTrackDetached.mm:
+        (-[MediaStreamTrackDetachedUIDelegate _webView:mediaCaptureStateDidChange:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[GetUserMediaUIDelegate _webView:mediaCaptureStateDidChange:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm:
+        (-[SpeechRecognitionUIDelegate _webView:mediaCaptureStateDidChange:]):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::isDoingMediaCapture const):
+
 2021-03-04  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Detect unrecognized options in run-javascriptcore-tests

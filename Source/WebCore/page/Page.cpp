@@ -2119,11 +2119,12 @@ void Page::setMuted(MediaProducer::MutedStateFlags muted)
     });
 }
 
-void Page::stopMediaCapture()
+void Page::stopMediaCapture(MediaProducer::MediaCaptureKind kind)
 {
+    UNUSED_PARAM(kind);
 #if ENABLE(MEDIA_STREAM)
-    forEachDocument([] (Document& document) {
-        document.stopMediaCapture();
+    forEachDocument([kind] (Document& document) {
+        document.stopMediaCapture(kind);
     });
 #endif
 }

@@ -6580,13 +6580,13 @@ TEST(ProcessSwap, LoadAlternativeHTML)
 static bool isCapturing = false;
 static bool isNotCapturing = false;
 @interface GetUserMediaUIDelegate : UserMediaCaptureUIDelegate
-- (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state;
+- (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureStateDeprecated)state;
 @end
 
 @implementation GetUserMediaUIDelegate
-- (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state
+- (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureStateDeprecated)state
 {
-    isCapturing = state == _WKMediaCaptureStateActiveCamera;
+    isCapturing = state == _WKMediaCaptureStateDeprecatedActiveCamera;
     isNotCapturing = !state;
 }
 @end

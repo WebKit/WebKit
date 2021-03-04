@@ -1437,7 +1437,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
     bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
-    void stopMediaCapture();
+    void stopMediaCapture(MediaProducer::MediaCaptureKind);
     void mediaStreamCaptureStateChanged();
 #endif
 

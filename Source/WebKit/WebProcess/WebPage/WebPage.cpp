@@ -760,7 +760,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     
     setMediaVolume(parameters.mediaVolume);
 
-    setMuted(parameters.muted);
+    setMuted(parameters.muted, [] { });
 
     // We use the DidFirstVisuallyNonEmptyLayout milestone to determine when to unfreeze the layer tree.
     m_page->addLayoutMilestones({ DidFirstLayout, DidFirstVisuallyNonEmptyLayout });
@@ -5369,16 +5369,18 @@ void WebPage::setMediaVolume(float volume)
     m_page->setMediaVolume(volume);
 }
 
-void WebPage::setMuted(MediaProducer::MutedStateFlags state)
+void WebPage::setMuted(MediaProducer::MutedStateFlags state, CompletionHandler<void()>&& completionHandler)
 {
     m_page->setMuted(state);
+    completionHandler();
 }
 
-void WebPage::stopMediaCapture()
+void WebPage::stopMediaCapture(MediaProducer::MediaCaptureKind kind, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(MEDIA_STREAM)
-    m_page->stopMediaCapture();
+    m_page->stopMediaCapture(kind);
 #endif
+    completionHandler();
 }
 
 void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)
