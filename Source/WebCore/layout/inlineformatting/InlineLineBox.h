@@ -149,7 +149,7 @@ public:
     bool hasNonInlineBox() const { return m_boxTypes.containsAny({ InlineLevelBox::Type::AtomicInlineLevelBox, InlineLevelBox::Type::LineBreakBox, InlineLevelBox::Type::GenericInlineLevelBox }); }
     bool hasAtomicInlineLevelBox() const { return m_boxTypes.contains(InlineLevelBox::Type::AtomicInlineLevelBox); }
 
-    const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
+    const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return const_cast<LineBox&>(*this).inlineLevelBoxForLayoutBox(layoutBox); }
 
     InlineRect logicalRectForTextRun(const Line::Run&) const;
     InlineRect logicalRectForLineBreakBox(const Box&) const;
@@ -172,7 +172,7 @@ private:
 
     InlineLevelBox& rootInlineBox() { return m_rootInlineBox; }
 
-    InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
+    InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return &layoutBox == &m_rootInlineBox->layoutBox() ? m_rootInlineBox.get() : *m_nonRootInlineLevelBoxMap.get(&layoutBox); }
     InlineRect logicalRectForInlineLevelBox(const Box& layoutBox) const;
 
     void setHasContent(bool hasContent) { m_hasContent = hasContent; }
@@ -186,7 +186,7 @@ private:
     UniqueRef<InlineLevelBox> m_rootInlineBox;
     InlineLevelBoxList m_nonRootInlineLevelBoxList;
 
-    HashMap<const Box*, InlineLevelBox*> m_inlineLevelBoxRectMap;
+    HashMap<const Box*, InlineLevelBox*> m_nonRootInlineLevelBoxMap;
 };
 
 inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize)
