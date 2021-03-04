@@ -31,6 +31,7 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "ScrollingTreeOverflowScrollingNode.h"
+#include "ScrollingTreeScrollingNodeDelegateNicosia.h"
 
 namespace WebCore {
 class ScrollAnimation;
@@ -45,29 +46,12 @@ private:
     ScrollingTreeOverflowScrollingNodeNicosia(ScrollingTree&, ScrollingNodeID);
 
     void commitStateAfterChildren(const ScrollingStateNode&) override;
-
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
-
     void repositionScrollingLayers() override;
-
-#if ENABLE(KINETIC_SCROLLING)
-    void ensureScrollAnimationKinetic();
-#endif
-#if ENABLE(SMOOTH_SCROLLING)
-    void ensureScrollAnimationSmooth();
-#endif
-
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
-
     void stopScrollAnimations() override;
 
-    bool m_scrollAnimatorEnabled { false };
-#if ENABLE(KINETIC_SCROLLING)
-    std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
-#endif
-#if ENABLE(SMOOTH_SCROLLING)
-    std::unique_ptr<ScrollAnimation> m_smoothAnimation;
-#endif
+    ScrollingTreeScrollingNodeDelegateNicosia m_delegate;
 };
 
 } // namespace WebCore

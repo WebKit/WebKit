@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ScrollingTreeScrollingNodeDelegate.h"
+#include "config.h"
+#include "ScrollingTreeScrollingNodeDelegate.h"
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#import "ScrollingTreeScrollingNode.h"
+#include "ScrollingTreeScrollingNode.h"
 
 namespace WebCore {
 

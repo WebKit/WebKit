@@ -172,8 +172,6 @@ list(APPEND WebCore_SOURCES
     page/mac/TextIndicatorWindow.mm
     page/mac/WheelEventDeltaFilterMac.mm
 
-    page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp
-
     page/scrolling/mac/ScrollingCoordinatorMac.mm
     page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
     page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
