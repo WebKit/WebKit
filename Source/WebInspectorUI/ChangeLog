@@ -1,5 +1,24 @@
 2021-03-04  Razvan Caliman  <rcaliman@apple.com>
 
+        Web Inspector: Persist CSS Grid overlay colors
+        https://bugs.webkit.org/show_bug.cgi?id=222319
+        <rdar://problem/74647242>
+
+        Reviewed by Devin Rousso.
+
+        Save and restore CSS Grid overlay colors edited by a user.
+
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype.showGridOverlay):
+        (WI.OverlayManager.prototype.getGridColorForNode):
+        (WI.OverlayManager.prototype.setGridColorForNode):
+        (WI.OverlayManager.prototype._handleMainResourceDidChange):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.layout):
+
+2021-03-04  Razvan Caliman  <rcaliman@apple.com>
+
         Web Inspector: Audits Tab: nothing happens when clicking "Start" button in the content area placeholder text
         https://bugs.webkit.org/show_bug.cgi?id=222740
         rdar://75008042

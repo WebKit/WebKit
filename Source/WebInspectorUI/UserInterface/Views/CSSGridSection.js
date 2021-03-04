@@ -112,13 +112,21 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
                     WI.overlayManager.hideGridOverlay(domNode);
             });
 
-            let gridColor = WI.overlayManager.colorForNode(domNode);
+            let gridColor = WI.overlayManager.getGridColorForNode(domNode);
             let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, gridColor);
             itemContainerElement.append(swatch.element);
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
                 if (checkboxElement.checked)
                     WI.overlayManager.showGridOverlay(domNode, {color: event.data.value});
+            }, swatch);
+
+            swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, (event) => {
+                if (event.target.value === gridColor)
+                    return;
+
+                gridColor = event.target.value;
+                WI.overlayManager.setGridColorForNode(domNode, gridColor);
             }, swatch);
         }
     }
