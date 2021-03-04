@@ -1,3 +1,17 @@
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce "websocket", "fetch", and "other" resource types to WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=222709
+        <rdar://problem/71552078>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+        (webSocketAcceptValue):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::statusText):
+
 2021-03-04  Youenn Fablet  <youenn@apple.com>
 
         Update camera and microphone capture state control WKWebView API

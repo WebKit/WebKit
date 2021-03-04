@@ -246,7 +246,7 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
 protected:
-    ContentExtensions::ResourceType m_resourceType { ContentExtensions::ResourceType::Invalid };
+    OptionSet<ContentExtensions::ResourceType> m_resourceType;
 #endif
 };
 

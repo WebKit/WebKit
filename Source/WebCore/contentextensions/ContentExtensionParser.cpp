@@ -94,7 +94,8 @@ static Expected<Vector<String>, std::error_code> getDomainList(JSGlobalObject& l
     return strings;
 }
 
-static std::error_code getTypeFlags(JSGlobalObject& lexicalGlobalObject, const JSValue& typeValue, ResourceFlags& flags, uint16_t (*stringToType)(const String&))
+template<typename T>
+static std::error_code getTypeFlags(JSGlobalObject& lexicalGlobalObject, const JSValue& typeValue, ResourceFlags& flags, Optional<OptionSet<T>> (*stringToType)(const String&))
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -116,11 +117,11 @@ static std::error_code getTypeFlags(JSGlobalObject& lexicalGlobalObject, const J
             return ContentExtensionError::JSONInvalidObjectInTriggerFlagsArray;
         
         String name = value.toWTFString(&lexicalGlobalObject);
-        uint16_t type = stringToType(name);
+        auto type = stringToType(name);
         if (!type)
             return ContentExtensionError::JSONInvalidStringInTriggerFlagsArray;
 
-        flags |= type;
+        flags |= static_cast<ResourceFlags>(type->toRaw());
     }
 
     return { };

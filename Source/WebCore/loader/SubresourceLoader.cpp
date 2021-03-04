@@ -100,7 +100,7 @@ SubresourceLoader::SubresourceLoader(Frame& frame, CachedResource& resource, con
     subresourceLoaderCounter.increment();
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
-    m_resourceType = ContentExtensions::toResourceType(resource.type());
+    m_resourceType = ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester());
 #endif
     m_canCrossOriginRequestsAskUserForCredentials = resource.type() == CachedResource::Type::MainResource || frame.settings().allowCrossOriginSubresourcesToAskForCredentials();
 }
