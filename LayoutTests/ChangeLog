@@ -1,3 +1,17 @@
+2021-03-04  Keith Miller  <keith_miller@apple.com>
+
+        window proxy of detached iframe doesn't respect updates to global values
+        https://bugs.webkit.org/show_bug.cgi?id=206445
+
+        Reviewed by Chris Dumez.
+
+        * fast/frames/iframe-detached-window-still-writable-eval-expected.txt: Added.
+        * fast/frames/iframe-detached-window-still-writable-eval.html: Added.
+        * fast/frames/iframe-detached-window-still-writable-expected.txt: Added.
+        * fast/frames/iframe-detached-window-still-writable.html: Added.
+        * http/tests/dom/cross-origin-detached-window-properties-expected.txt:
+        * http/tests/dom/cross-origin-detached-window-properties.html:
+
 2021-03-04  Jon Lee  <jonlee@apple.com>
 
         Garden GPU Process TestExpectations
