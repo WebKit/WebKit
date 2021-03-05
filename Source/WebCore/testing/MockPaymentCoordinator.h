@@ -105,6 +105,8 @@ private:
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&) final;
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
 
+    void dispatchIfShowing(Function<void()>&&);
+
     Page& m_page;
     bool m_canMakePayments { true };
     bool m_canMakePaymentsWithActiveCard { true };

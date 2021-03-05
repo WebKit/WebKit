@@ -94,7 +94,7 @@ void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, Comp
 static uint64_t showCount;
 static uint64_t hideCount;
 
-static void dispatchIfShowing(Function<void()>&& function)
+void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
 {
     ASSERT(showCount > hideCount);
     RunLoop::main().dispatch([currentShowCount = showCount, function = WTFMove(function)]() {
