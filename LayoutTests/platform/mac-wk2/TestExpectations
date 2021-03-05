@@ -1305,7 +1305,8 @@ fast/layoutformattingcontext/block-only/min-max-and-preferred-width-simple.html 
 webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse.html [ ImageOnlyFailure ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.html [ ImageOnlyFailure ]
-webkit.org/b/219905 fast/layoutformattingcontext/subframe-with-display-none-html.html [ Crash ImageOnlyFailure ]
+webkit.org/b/219905 [ Release ] fast/layoutformattingcontext/subframe-with-display-none-html.html [ ImageOnlyFailure ]
+webkit.org/b/219905 [ Debug ] fast/layoutformattingcontext/subframe-with-display-none-html.html [ Skip ]
 # This file should contain entries for expectations that are specific
 # to the Apple Mac port running the WebKit2 variant (--webkit-test-runner)
 
@@ -1363,3 +1364,4 @@ webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_
 webkit.org/b/222808 imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html [ Pass Failure ]
 
 webkit.org/b/221011 fast/selectors/selection-window-inactive-text-shadow.html [ Pass ImageOnlyFailure ]
+
