@@ -539,6 +539,7 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
+        case TypeKind::TypeIdx:
             if (gprIndex < gprCount)
                 ++gprIndex;
             else if (stackIndex++ >= stackCount)
@@ -594,6 +595,7 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
+        case TypeKind::TypeIdx:
             if (gprIndex > gprLimit)
                 arguments[i] = virtualRegisterForLocal(--gprIndex);
             else
@@ -621,6 +623,7 @@ auto LLIntGenerator::callInformationForCaller(const Signature& signature) -> LLI
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
+        case TypeKind::TypeIdx:
             if (gprIndex > gprLimit)
                 temporaryResults[i] = virtualRegisterForLocal(--gprIndex);
             else
@@ -676,6 +679,7 @@ auto LLIntGenerator::callInformationForCallee(const Signature& signature) -> Vec
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
+        case TypeKind::TypeIdx:
             if (gprIndex < maxGPRIndex)
                 m_results.append(virtualRegisterForLocal(numberOfLLIntCalleeSaveRegisters + gprIndex++));
             else
@@ -730,6 +734,7 @@ auto LLIntGenerator::addArguments(const Signature& signature) -> PartialResult
         case TypeKind::I64:
         case TypeKind::Externref:
         case TypeKind::Funcref:
+        case TypeKind::TypeIdx:
             addArgument(i, gprIndex, maxGPRIndex);
             break;
         case TypeKind::F32:

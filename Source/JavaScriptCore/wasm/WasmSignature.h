@@ -44,7 +44,6 @@ namespace JSC {
 namespace Wasm {
 
 using SignatureArgCount = uint32_t;
-using SignatureIndex = uintptr_t;
 
 class Signature : public ThreadSafeRefCounted<Signature> {
     WTF_MAKE_FAST_ALLOCATED;

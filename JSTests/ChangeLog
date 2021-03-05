@@ -1,3 +1,17 @@
+2021-03-05  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Update ref.func to produce (ref $t)
+        https://bugs.webkit.org/show_bug.cgi?id=222779
+
+        Reviewed by Yusuke Suzuki.
+
+        Make ref.func to produce non nullable reference type which
+        incorporates signature index. Since in JSC signature index represents
+        type of the function from Type section we use it instead of type_idx
+        for representing type of function references.
+
+        * wasm/wasm.json:
+
 2021-03-04  Saam Barati  <sbarati@apple.com>
 
         Don't trust parsing information to tell us if we've emitted op_call_eval

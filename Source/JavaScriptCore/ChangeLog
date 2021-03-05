@@ -1,3 +1,42 @@
+2021-03-05  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Update ref.func to produce (ref $t)
+        https://bugs.webkit.org/show_bug.cgi?id=222779
+
+        Reviewed by Yusuke Suzuki.
+
+        Make ref.func to produce non nullable reference type which
+        incorporates signature index. Since in JSC signature index represents
+        type of the function from Type section we use it instead of type_idx
+        for representing type of function references.
+
+
+        * runtime/OptionsList.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addTableGrow):
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        (JSC::Wasm::AirIRGenerator::unify):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        (JSC::Wasm::isSubtype):
+        (JSC::Wasm::isRefType):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::checkBranchTarget):
+        (JSC::Wasm::FunctionParser<Context>::unify):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseGlobal):
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/wasm.json:
+
 2021-03-04  Alex Christensen  <achristensen@webkit.org>
 
         [Cocoa] REGRESSION(r272752): fix some internal builds that use WTFString::WTFString(NSString *)

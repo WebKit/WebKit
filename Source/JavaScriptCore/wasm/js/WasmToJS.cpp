@@ -105,6 +105,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Void:
             case TypeKind::Func:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
+            case TypeKind::TypeIdx:
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::I32:
@@ -177,6 +178,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Void:
             case TypeKind::Func:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
+            case TypeKind::TypeIdx:
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::I32:
@@ -319,6 +321,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         }
         case TypeKind::Funcref:
         case TypeKind::Externref:
+        case TypeKind::TypeIdx:
             jit.move(GPRInfo::returnValueGPR, wasmCallInfo.results[0].gpr());
             break;
         case TypeKind::F32: {

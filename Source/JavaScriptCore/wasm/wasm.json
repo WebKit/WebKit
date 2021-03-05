@@ -7,18 +7,19 @@
         { "name": "version",      "type": "uint32", "value":          1, "description": "Version number" }
     ],
     "type" : {
-        "i32":       { "type": "varint7", "value":  -1, "b3type": "B3::Int32" },
-        "i64":       { "type": "varint7", "value":  -2, "b3type": "B3::Int64" },
-        "f32":       { "type": "varint7", "value":  -3, "b3type": "B3::Float" },
-        "f64":       { "type": "varint7", "value":  -4, "b3type": "B3::Double" },
-        "funcref":   { "type": "varint7", "value": -16, "b3type": "B3::Int64" },
-        "externref": { "type": "varint7", "value": -17, "b3type": "B3::Int64" },
-        "func":      { "type": "varint7", "value": -32, "b3type": "B3::Void" },
-        "void":      { "type": "varint7", "value": -64, "b3type": "B3::Void" }
+        "i32":       { "type": "varint7", "value":   -1, "b3type": "B3::Int32" },
+        "i64":       { "type": "varint7", "value":   -2, "b3type": "B3::Int64" },
+        "f32":       { "type": "varint7", "value":   -3, "b3type": "B3::Float" },
+        "f64":       { "type": "varint7", "value":   -4, "b3type": "B3::Double" },
+        "funcref":   { "type": "varint7", "value":  -16, "b3type": "B3::Int64" },
+        "externref": { "type": "varint7", "value":  -17, "b3type": "B3::Int64" },
+        "func":      { "type": "varint7", "value":  -32, "b3type": "B3::Void" },
+        "void":      { "type": "varint7", "value":  -64, "b3type": "B3::Void" },
+        "type_idx":  { "type": "varint7", "value": -128, "b3type": "B3::Int64" }
     },
     "value_type": ["i32", "i64", "f32", "f64", "externref", "funcref"],
     "block_type": ["i32", "i64", "f32", "f64", "void", "externref", "funcref"],
-    "ref_type": ["funcref","externref"],
+    "ref_type": ["funcref", "externref", "type_idx"],
     "external_kind": {
         "Function": { "type": "uint8", "value": 0 },
         "Table":    { "type": "uint8", "value": 1 },

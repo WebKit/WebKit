@@ -83,6 +83,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
         case Wasm::TypeKind::I32:
             arg = JSValue::decode(arg.toInt32(globalObject));
             break;
+        case Wasm::TypeKind::TypeIdx:
         case Wasm::TypeKind::Funcref: {
             if (!isWebAssemblyHostFunction(vm, arg) && !arg.isNull())
                 return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function")));

@@ -1176,7 +1176,7 @@ auto AirIRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) -
 auto AirIRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, ExpressionType delta, ExpressionType& result) -> PartialResult
 {
     ASSERT(fill.tmp());
-    ASSERT(fill.type() == m_info.tables[tableIndex].wasmType());
+    ASSERT(isSubtype(fill.type(), m_info.tables[tableIndex].wasmType()));
     ASSERT(delta.tmp());
     ASSERT(delta.type().isI32());
     result = tmpForType(Types::I32);
@@ -1189,7 +1189,7 @@ auto AirIRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, Expr
 auto AirIRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, ExpressionType fill, ExpressionType count) -> PartialResult
 {
     ASSERT(fill.tmp());
-    ASSERT(fill.type() == m_info.tables[tableIndex].wasmType());
+    ASSERT(isSubtype(fill.type(), m_info.tables[tableIndex].wasmType()));
     ASSERT(offset.tmp());
     ASSERT(offset.type().isI32());
     ASSERT(count.tmp());
@@ -3419,7 +3419,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
 
 void AirIRGenerator::unify(const ExpressionType dst, const ExpressionType source)
 {
-    ASSERT(source.type() == dst.type());
+    ASSERT(isSubtype(source.type(), dst.type()));
     append(moveOpForValueType(dst.type()), source, dst);
 }
 

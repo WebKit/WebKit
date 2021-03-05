@@ -699,7 +699,7 @@ auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> Pa
 
     unsigned offset = m_expressionStack.size() - target.branchTargetArity();
     for (unsigned i = 0; i < target.branchTargetArity(); ++i)
-        WASM_VALIDATOR_FAIL_IF(target.branchTargetType(i) != m_expressionStack[offset + i].type(), "branch's stack type is not a block's type branch target type. Stack value has type", m_expressionStack[offset + i].type().kind, " but branch target expects a value of ", target.branchTargetType(i).kind, " at index ", i);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(target.branchTargetType(i), m_expressionStack[offset + i].type()), "branch's stack type is not a block's type branch target type. Stack value has type", m_expressionStack[offset + i].type().kind, " but branch target expects a value of ", target.branchTargetType(i).kind, " at index ", i);
 
     return { };
 }
@@ -709,7 +709,7 @@ auto FunctionParser<Context>::unify(const ControlType& controlData) -> PartialRe
 {
     WASM_VALIDATOR_FAIL_IF(controlData.signature()->returnCount() != m_expressionStack.size(), " block with type: ", controlData.signature()->toString(), " returns: ", controlData.signature()->returnCount(), " but stack has: ", m_expressionStack.size(), " values");
     for (unsigned i = 0; i < controlData.signature()->returnCount(); ++i)
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack[i].type() != controlData.signature()->returnType(i), "control flow returns with unexpected type. ", m_expressionStack[i].type().kind, " is not a ", controlData.signature()->returnType(i).kind);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[i].type(), controlData.signature()->returnType(i)), "control flow returns with unexpected type. ", m_expressionStack[i].type().kind, " is not a ", controlData.signature()->returnType(i).kind);
 
     return { };
 }
@@ -836,7 +836,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "table.set");
         WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "table.set index to type ", index.type().kind, " expected ", TypeKind::I32);
         Type type = m_info.tables[tableIndex].wasmType();
-        WASM_VALIDATOR_FAIL_IF(value.type() != type, "table.set value to type ", value.type().kind, " expected ", type.kind);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), type), "table.set value to type ", value.type().kind, " expected ", type.kind);
         RELEASE_ASSERT(m_info.tables[tableIndex].type() == TableElementType::Externref || m_info.tables[tableIndex].type() == TableElementType::Funcref);
         WASM_TRY_ADD_TO_CONTEXT(addTableSet(tableIndex, index, value));
         return { };
@@ -899,7 +899,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "table.grow");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(fill, "table.grow");
 
-            WASM_VALIDATOR_FAIL_IF(fill.type() != m_info.tables[tableIndex].wasmType(), "table.grow expects fill value of type ", m_info.tables[tableIndex].wasmType().kind, " got ", fill.type().kind);
+            Type tableType = m_info.tables[tableIndex].wasmType();
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(fill.type(), tableType), "table.grow expects fill value of type ", tableType.kind, " got ", fill.type().kind);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != delta.type().kind, "table.grow expects an i32 delta value, got ", delta.type().kind);
 
             ExpressionType result;
@@ -918,7 +919,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(fill, "table.fill");
             WASM_TRY_POP_EXPRESSION_STACK_INTO(offset, "table.fill");
 
-            WASM_VALIDATOR_FAIL_IF(fill.type() != m_info.tables[tableIndex].wasmType(), "table.fill expects fill value of type ", m_info.tables[tableIndex].wasmType().kind, " got ", fill.type().kind);
+            Type tableType = m_info.tables[tableIndex].wasmType();
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(fill.type(), tableType), "table.fill expects fill value of type ", tableType.kind, " got ", fill.type().kind);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind, "table.fill expects an i32 offset value, got ", offset.type().kind);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != count.type().kind, "table.fill expects an i32 count value, got ", count.type().kind);
 
@@ -1104,6 +1106,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addRefFunc(index, result));
+
+        if (Options::useWebAssemblyTypedFunctionReferences()) {
+            SignatureIndex signatureIndex = m_info.signatureIndexFromFunctionIndexSpace(index);
+            m_expressionStack.constructAndAppend(Type {TypeKind::TypeIdx, signatureIndex}, result);
+            return { };
+        }
+
         m_expressionStack.constructAndAppend(Types::Funcref, result);
         return { };
     }
@@ -1125,7 +1134,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         TypedExpression value;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "set_local");
         WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to set unknown local ", index, " last one is ", m_locals.size());
-        WASM_VALIDATOR_FAIL_IF(value.type() != m_locals[index], "set_local to type ", value.type().kind, " expected ", m_locals[index].kind);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), m_locals[index]), "set_local to type ", value.type().kind, " expected ", m_locals[index].kind);
         WASM_TRY_ADD_TO_CONTEXT(setLocal(index, value));
         return { };
     }
@@ -1137,7 +1146,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't tee_local on empty expression stack");
         TypedExpression value = m_expressionStack.last();
         WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to tee unknown local ", index, " last one is ", m_locals.size());
-        WASM_VALIDATOR_FAIL_IF(value.type() != m_locals[index], "set_local to type ", value.type().kind, " expected ", m_locals[index].kind);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), m_locals[index]), "set_local to type ", value.type().kind, " expected ", m_locals[index].kind);
         WASM_TRY_ADD_TO_CONTEXT(setLocal(index, value));
         return { };
     }
@@ -1165,7 +1174,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         Type globalType = m_info.globals[index].type;
         ASSERT(isValueType(globalType));
-        WASM_VALIDATOR_FAIL_IF(globalType != value.type(), "set_global ", index, " with type ", globalType.kind, " with a variable of type ", value.type().kind);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), globalType), "set_global ", index, " with type ", globalType.kind, " with a variable of type ", value.type().kind);
 
         WASM_TRY_ADD_TO_CONTEXT(setGlobal(index, value));
         return { };
@@ -1184,7 +1193,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(calleeSignature.argumentCount()), "can't allocate enough memory for call's ", calleeSignature.argumentCount(), " arguments");
         for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
             TypedExpression arg = m_expressionStack.at(i);
-            WASM_VALIDATOR_FAIL_IF(arg.type() != calleeSignature.argument(i - firstArgumentIndex), "argument type mismatch in call, got ", arg.type().kind, ", expected ", calleeSignature.argument(i - firstArgumentIndex).kind);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), calleeSignature.argument(i - firstArgumentIndex)), "argument type mismatch in call, got ", arg.type().kind, ", expected ", calleeSignature.argument(i - firstArgumentIndex).kind);
             args.uncheckedAppend(arg);
             m_context.didPopValueFromStack();
         }
@@ -1225,7 +1234,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
             TypedExpression arg = m_expressionStack.at(i);
             if (i < m_expressionStack.size() - 1)
-                WASM_VALIDATOR_FAIL_IF(arg.type() != calleeSignature.argument(i - firstArgumentIndex), "argument type mismatch in call_indirect, got ", arg.type().kind, ", expected ", calleeSignature.argument(i - firstArgumentIndex).kind);
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), calleeSignature.argument(i - firstArgumentIndex)), "argument type mismatch in call_indirect, got ", arg.type().kind, ", expected ", calleeSignature.argument(i - firstArgumentIndex).kind);
             args.uncheckedAppend(arg);
             m_context.didPopValueFromStack();
         }

@@ -212,9 +212,11 @@ enum class TypeKind : int8_t {
 };
 #undef CREATE_ENUM_VALUE
 
+using SignatureIndex = uintptr_t;
+
 struct Type {
     TypeKind kind;
-    unsigned index;
+    SignatureIndex index;
 
     bool operator==(const Type& other) const
     {
