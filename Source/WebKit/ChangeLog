@@ -1,3 +1,22 @@
+2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Bubblewrap sandbox should not break X11 forwarding
+        https://bugs.webkit.org/show_bug.cgi?id=221990
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        If $DISPLAY points to a TCP socket, or a Unix socket on a different host, then we cannot
+        isolate the web process from the network and must grant access to the host network
+        namespace.
+
+        Also, clean up some related code by adding PLATFORM(X11) guards where appropriate and
+        removing a redundant display type check.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindWayland):
+        (WebKit::shouldUnshareNetwork):
+        (WebKit::bubblewrapSpawn):
+
 2021-03-05  Guido Günther  <agx@sigxcpu.org>
 
         Add support for gstreamer's h264 stateless codecs

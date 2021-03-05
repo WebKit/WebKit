@@ -327,6 +327,7 @@ static void bindDBusSession(Vector<CString>& args, XDGDBusProxyLauncher& proxy)
     }
 }
 
+#if PLATFORM(X11)
 static void bindX11(Vector<CString>& args)
 {
     const char* display = g_getenv("DISPLAY");
@@ -349,13 +350,11 @@ static void bindX11(Vector<CString>& args)
     } else
         bindIfExists(args, xauth);
 }
+#endif
 
 #if PLATFORM(WAYLAND) && USE(EGL)
 static void bindWayland(Vector<CString>& args)
 {
-    if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::Wayland)
-        return;
-
     const char* display = g_getenv("WAYLAND_DISPLAY");
     if (!display)
         display = "wayland-0";
@@ -718,6 +717,29 @@ static int setupSeccomp()
     return tmpfd;
 }
 
+static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType)
+{
+    // xdg-dbus-proxy needs access to host abstract sockets to connect to the a11y bus. Secure
+    // host services must not use abstract sockets.
+    if (processType == ProcessLauncher::ProcessType::DBusProxy)
+        return false;
+
+#if PLATFORM(X11)
+    // Also, the web process needs access to host networking if the X server is running over TCP or
+    // on a different host's Unix socket; this is likely the case if the first character of DISPLAY
+    // is not a colon.
+    if (processType == ProcessLauncher::ProcessType::Web && PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
+        const char* display = g_getenv("DISPLAY");
+        if (display && display[0] != ':')
+            return false;
+    }
+#endif
+
+    // Otherwise, only the network process should have network access. If we are the network
+    // process, then we are not sandboxed and have already bailed out before this point.
+    return true;
+}
+
 GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)
 {
     ASSERT(launcher);
@@ -776,14 +798,10 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
             // is where we mount our proxy socket.
             "--bind", runDir, runDir,
         }));
-    } else {
-        // xdg-dbus-proxy needs access to host abstract sockets to connect to the a11y bus. Secure
-        // host services must not use abstract sockets. Otherwise, only the network process should
-        // have network access, and the network process is not sandboxed at all.
-        sandboxArgs.appendVector(Vector<CString>({
-            "--unshare-net"
-        }));
     }
+
+    if (shouldUnshareNetwork(launchOptions.processType))
+        sandboxArgs.append("--unshare-net");
 
     // We would have to parse ld config files for more info.
     bindPathVar(sandboxArgs, "LD_LIBRARY_PATH");
@@ -817,14 +835,16 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
         static XDGDBusProxyLauncher proxy;
 
-        // If Wayland in use don't grant X11
 #if PLATFORM(WAYLAND) && USE(EGL)
         if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
             bindWayland(sandboxArgs);
             sandboxArgs.append("--unshare-ipc");
-        } else
+        }
 #endif
+#if PLATFORM(X11)
+        if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
             bindX11(sandboxArgs);
+#endif
 
         for (const auto& pathAndPermission : launchOptions.extraWebProcessSandboxPaths) {
             sandboxArgs.appendVector(Vector<CString>({
