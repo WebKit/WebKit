@@ -583,6 +583,8 @@ static void bindV4l(Vector<CString>& args)
         // Not pretty but a stop-gap for pipewire anyway.
         "--dev-bind-try", "/dev/video0", "/dev/video0",
         "--dev-bind-try", "/dev/video1", "/dev/video1",
+        "--dev-bind-try", "/dev/video2", "/dev/video2",
+        "--dev-bind-try", "/dev/media0", "/dev/media0",
     }));
 }
 

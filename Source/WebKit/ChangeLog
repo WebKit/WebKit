@@ -1,3 +1,15 @@
+2021-03-05  Guido Günther  <agx@sigxcpu.org>
+
+        Add support for gstreamer's h264 stateless codecs
+        https://bugs.webkit.org/show_bug.cgi?id=222787
+
+        Reviewed by Philippe Normand.
+
+        Manually tested, there is currently no automatic tests for it
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindV4l):
+
 2021-03-05  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] RemoteImageBuffer recording GraphicsContext should report its backend RenderingMode
