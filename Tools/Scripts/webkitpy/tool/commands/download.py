@@ -144,7 +144,6 @@ class LandCowboy(LandCowhand):
         LandCowhand._prepare_state(self, options, args, tool)
 
 
-@DeprecatedCommand
 class CheckStyleLocal(AbstractSequencedCommand):
     name = "check-style-local"
     help_text = "Run check-webkit-style on the current working directory diff"

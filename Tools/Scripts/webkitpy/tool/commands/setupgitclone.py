@@ -32,7 +32,6 @@ from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.multicommandtool import Command
 
 
-@DeprecatedCommand
 class SetupGitClone(Command):
     name = "setup-git-clone"
     help_text = "Configures a new Git clone for the WebKit development"

@@ -58,7 +58,6 @@ from webkitpy.tool.multicommandtool import Command
 _log = logging.getLogger(__name__)
 
 
-@DeprecatedCommand
 class SuggestReviewers(AbstractSequencedCommand):
     name = "suggest-reviewers"
     help_text = "Suggest reviewers for a patch based on recent changes to the modified files."

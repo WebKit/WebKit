@@ -1,3 +1,23 @@
+2021-03-04  Sam Sneddon  <gsnedders@apple.com>
+
+        Undeprecate many more webkit-patch commands
+        https://bugs.webkit.org/show_bug.cgi?id=222745
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (ChangeStyleLocal):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (SuggestReviewers):
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        (SetupGitClone):
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (SuggestNominations):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (Post):
+        (Prepare):
+        (MarkBugFixed):
+
 2021-03-04  Aakash Jain  <aakash_jain@apple.com>
 
         Reduce unnecessary logging in ews-app
