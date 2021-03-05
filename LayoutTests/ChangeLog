@@ -1,3 +1,12 @@
+2021-03-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        WPT test css/css-flexbox/flex-minimum-height-flex-items-023.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=214292
+
+        Reviewed by Javier Fernandez.
+
+        * TestExpectations: Unskipped the test that passes now.
+
 2021-03-05  Rob Buis  <rbuis@igalia.com>
 
         Fix flex-aspect-ratio-009.html

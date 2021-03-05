@@ -4126,8 +4126,6 @@ fast/text/text-styles/-apple-system [ ImageOnlyFailure ]
 # Artificial web socket delays are only supported on wk2. 
 http/tests/websocket/tests/hybi/closed-port-delay.html [ Skip ]
 
-webkit.org/b/214292 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-023.html [ ImageOnlyFailure ]
-
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-with-replaced-child.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-004.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-018.html [ ImageOnlyFailure ]

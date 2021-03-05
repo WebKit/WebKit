@@ -424,11 +424,14 @@ bool RenderFlexibleBox::isMultiline() const
     return style().flexWrap() != FlexWrap::NoWrap;
 }
 
+// https://drafts.csswg.org/css-flexbox/#min-size-auto
 bool RenderFlexibleBox::shouldApplyMinSizeAutoForChild(const RenderBox& child) const
 {
-    // css-flexbox section 4.5
     auto minSize = mainSizeLengthForChild(MinSize, child);
-    return minSize.isAuto() && mainAxisOverflowForChild(child) == Overflow::Visible;
+    // min, max and fit-content are equivalent to the automatic size for block sizes https://drafts.csswg.org/css-sizing-3/#valdef-width-min-content.
+    bool childBlockSizeIsEquivalentToAutomaticSize  = !mainAxisIsChildInlineAxis(child) && (minSize.isMinContent() || minSize.isMaxContent() || minSize.isFitContent());
+
+    return (minSize.isAuto() || childBlockSizeIsEquivalentToAutomaticSize) && (mainAxisOverflowForChild(child) == Overflow::Visible);
 }
 
 Length RenderFlexibleBox::flexBasisForChild(const RenderBox& child) const
@@ -1197,7 +1200,8 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     }
 
     Length min = mainSizeLengthForChild(MinSize, child);
-    if (min.isSpecifiedOrIntrinsic())
+    // Intrinsic sizes in child's block axis are handled by the min-size:auto code path.
+    if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsChildInlineAxis(child)))
         return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).valueOr(childSize)));
     
     if (shouldApplyMinSizeAutoForChild(child)) {
