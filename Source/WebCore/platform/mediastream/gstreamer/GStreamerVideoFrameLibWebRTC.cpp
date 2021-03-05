@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-WARN_UNUSED_RETURN GRefPtr<GstSample>&& GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::VideoFrame& frame)
+GRefPtr<GstSample> GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::VideoFrame& frame)
 {
     if (frame.video_frame_buffer()->type() == webrtc::VideoFrameBuffer::Type::kNative) {
         auto* framebuffer = static_cast<GStreamerVideoFrameLibWebRTC*>(frame.video_frame_buffer().get());
@@ -57,7 +57,7 @@ WARN_UNUSED_RETURN GRefPtr<GstSample>&& GStreamerSampleFromLibWebRTCVideoFrame(c
 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    return WTFMove(sample);
+    return sample;
 }
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::create(GRefPtr<GstSample>&& sample)
