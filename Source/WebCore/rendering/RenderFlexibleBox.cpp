@@ -849,16 +849,13 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
             return true;
         if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
             return false;
-        // Do not cache the definite height state when the child is perpendicular.
-        // The height of a perpendicular child is resolved against the containing block's width which is not the main axis.
-        if (child.isHorizontalWritingMode() != isHorizontalWritingMode())
-            return false;
-        bool definite = child.computePercentageLogicalHeight(flexBasis) != WTF::nullopt;
-        if (m_inLayout) {
-            // We can reach this code even while we're not laying ourselves out, such
-            // as from mainSizeForPercentageResolution.
+        bool definite = child.computePercentageLogicalHeight(flexBasis).hasValue();
+        // Do not cache the definite height state with orthogonal children as in that case the logical height
+        // of the child is not in the same axis as the logical height of the flex container. Also do not cache it
+        // outside the layout process (we can reach this code as from mainSizeForPercentageResolution()).
+        if (m_inLayout && (isHorizontalWritingMode() == child.isHorizontalWritingMode()))
             m_hasDefiniteHeight = definite ? SizeDefiniteness::Definite : SizeDefiniteness::Indefinite;
-        }
+
         return definite;
     }
     return true;

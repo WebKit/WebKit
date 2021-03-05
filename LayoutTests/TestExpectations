@@ -4063,9 +4063,6 @@ webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-coll
 # Painting order in flexbox
 webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002.xhtml [ ImageOnlyFailure ]
 
-# Misc elements as flex items.
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001v.xhtml [ ImageOnlyFailure ]
-
 # Test ASSERTing in Debug.
 webkit.org/b/222711 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/frameset-crash.html [ Skip ]
 
