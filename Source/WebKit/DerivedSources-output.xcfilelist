@@ -46,7 +46,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/GPUProcessProxyMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/HTTPSUpgradeList.db
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LegacyCustomProtocolManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LegacyCustomProtocolManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LegacyCustomProtocolManagerMessagesReplies.h

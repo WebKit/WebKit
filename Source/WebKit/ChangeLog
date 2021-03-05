@@ -1,5 +1,13 @@
 2021-03-04  Alex Christensen  <achristensen@webkit.org>
 
+        Fix clean build after r273946
+        https://bugs.webkit.org/show_bug.cgi?id=222706
+
+        * DerivedSources-output.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
         Remove the HTTPSUpgradeEnabled experimental feature
         https://bugs.webkit.org/show_bug.cgi?id=222706
 
