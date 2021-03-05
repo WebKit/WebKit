@@ -24,8 +24,6 @@
 
 #if defined(ENABLE_IOS_FORM_CONTROL_REFRESH) && ENABLE_IOS_FORM_CONTROL_REFRESH
 
-/* Legacy styles for iOS form controls. */
-
 textarea,
 input {
     border: 1px solid #4c4c4c;

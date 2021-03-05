@@ -83,7 +83,7 @@ StyleSheetContents* UserAgentStyle::dataListStyleSheet;
 StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
 #endif
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-StyleSheetContents* UserAgentStyle::formControlsIOSStyleSheet;
+StyleSheetContents* UserAgentStyle::legacyFormControlsIOSStyleSheet;
 #endif
 
 static const MediaQueryEvaluator& screenEval()
@@ -227,9 +227,9 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 #endif // ENABLE(FULLSCREEN_API)
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (!formControlsIOSStyleSheet && !element.document().settings().iOSFormControlRefreshEnabled()) {
-        formControlsIOSStyleSheet = parseUASheet(formControlsIOSUserAgentStyleSheet, sizeof(formControlsIOSUserAgentStyleSheet));
-        addToDefaultStyle(*formControlsIOSStyleSheet);
+    if (!legacyFormControlsIOSStyleSheet && !element.document().settings().iOSFormControlRefreshEnabled()) {
+        legacyFormControlsIOSStyleSheet = parseUASheet(legacyFormControlsIOSUserAgentStyleSheet, sizeof(legacyFormControlsIOSUserAgentStyleSheet));
+        addToDefaultStyle(*legacyFormControlsIOSStyleSheet);
     }
 #endif
 
