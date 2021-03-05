@@ -1,3 +1,22 @@
+2021-03-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: border color of "grid" badge should match color of corresponding outline
+        https://bugs.webkit.org/show_bug.cgi?id=222747
+        <rdar://problem/75042342>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/DOMTreeElement.css:
+        (.tree-outline.dom .badge-css-grid):
+        Drive-by: decrease the font size and align the badge in the middle of the selected tree element (i.e. keep 1px space
+        above and below the badge).
+
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid):
+        (@media (prefers-color-scheme: dark) .tree-outline.dom .badge-css-grid):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._updateGridBadgeStatus):
+        For text and background color, only use the hue of the selected color to keep "grid" text always readable.
+
 2021-03-04  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Persist CSS Grid overlay colors
