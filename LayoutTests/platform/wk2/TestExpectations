@@ -216,9 +216,6 @@ http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
 http/tests/media/hls/hls-progress.html [ Failure ]
 http/tests/media/video-play-stall.html [ Failure ]
 
-# webkit.org/b/221697
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress_noautoplay.html [ Failure ]
-
 # webkit.org/b/221685
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Timeout Failure Pass ]
 media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Timeout Pass ]
@@ -233,9 +230,6 @@ media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.h
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout Pass ]
 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Timeout Pass ]
 http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Timeout ]
-
-# webkit.org/b/221689
-media/picture-in-picture/picture-in-picture-api-pip-window.html [ Timeout Pass ]
 
 # webkit.org/b/221693
 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash ]
