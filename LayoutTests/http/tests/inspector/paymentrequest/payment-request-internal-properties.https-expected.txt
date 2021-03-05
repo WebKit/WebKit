@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
 Internal properties of a PaymentRequest.
 
 
@@ -78,7 +79,7 @@ INTERNAL PROPERTY: options: {
   "requestPayerName": false,
   "requestPayerEmail": false,
   "requestPayerPhone": false,
-  "requestShipping": false,
+  "requestShipping": true,
   "shippingType": "shipping"
 }
 
@@ -94,13 +95,14 @@ INTERNAL PROPERTY: details: {
     },
     "pending": false
   },
+  "shippingOptions": [],
   "modifiers": []
 }
 INTERNAL PROPERTY: options: {
   "requestPayerName": false,
   "requestPayerEmail": false,
   "requestPayerPhone": false,
-  "requestShipping": false,
+  "requestShipping": true,
   "shippingType": "shipping"
 }
 
@@ -116,13 +118,14 @@ INTERNAL PROPERTY: details: {
     },
     "pending": false
   },
+  "shippingOptions": [],
   "modifiers": []
 }
 INTERNAL PROPERTY: options: {
   "requestPayerName": false,
   "requestPayerEmail": false,
   "requestPayerPhone": false,
-  "requestShipping": false,
+  "requestShipping": true,
   "shippingType": "shipping"
 }
 
@@ -138,13 +141,14 @@ INTERNAL PROPERTY: details: {
     },
     "pending": false
   },
+  "shippingOptions": [],
   "modifiers": []
 }
 INTERNAL PROPERTY: options: {
   "requestPayerName": false,
   "requestPayerEmail": false,
   "requestPayerPhone": false,
-  "requestShipping": false,
+  "requestShipping": true,
   "shippingType": "shipping"
 }
 

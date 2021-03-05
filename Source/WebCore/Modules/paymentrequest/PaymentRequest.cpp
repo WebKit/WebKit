@@ -244,7 +244,8 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
             }
         } else if (isUpdate == IsUpdate::No)
             details.shippingOptions = { { } };
-    }
+    } else if (isUpdate == IsUpdate::No)
+        details.shippingOptions = WTF::nullopt;
 
     Vector<String> serializedModifierData;
     if (details.modifiers) {
