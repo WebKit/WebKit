@@ -754,6 +754,16 @@ UndoManagerAPIEnabled:
     WebCore:
       default: false
 
+UpgradeKnownHostsToHTTPSEnabled:
+  type: bool
+  humanReadableName: "Upgrade known hosts to HTTPS"
+  humanReadableDescription: "Upgrade known hosts to HTTPS"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
 UseGPUProcessForCanvasRenderingEnabled:
   type: bool
   humanReadableName: "GPU Process: Canvas Rendering"

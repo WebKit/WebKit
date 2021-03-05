@@ -1,5 +1,20 @@
 2021-03-04  Alex Christensen  <achristensen@webkit.org>
 
+        Add internal preference to disable HTTPS upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=222778
+
+        Reviewed by Simon Fraser.
+
+        This is needed for an internal performance benchmark, which serves canned content from a local http server
+        pretending to be from different domains that are in our internal HTTPS upgrade list because the real server
+        supports HTTPS.  That internal benchmark should eventually change, but that's not going to happen this year.
+        This is also likely going to be useful for QA purposes to be able to easily tell on an internal build
+        whether HTTPS upgrade is breaking something.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
         Remove the HTTPSUpgradeEnabled experimental feature
         https://bugs.webkit.org/show_bug.cgi?id=222706
 
