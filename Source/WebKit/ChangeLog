@@ -1,3 +1,10 @@
+2021-03-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the build with recent SDKs.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController loadView]):
+
 2021-03-05  Eric Carlson  <eric.carlson@apple.com>
 
         [GPU Process] Remote control command should only go to the current NowPlaying session
