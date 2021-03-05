@@ -642,7 +642,7 @@
 (allow mach-lookup
     (global-name "com.apple.system.notification_center")
     (apply-message-filter
-        (deny mach-message-send (with telemetry-backtrace))
+        (allow mach-message-send (with telemetry-backtrace))
         (deny mach-message-send (with no-report) (message-number 1023))
         (allow mach-message-send (with telemetry-backtrace) (message-number
             1002
