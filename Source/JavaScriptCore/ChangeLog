@@ -1,3 +1,70 @@
+2021-03-04  Saam Barati  <sbarati@apple.com>
+
+        Don't trust parsing information to tell us if we've emitted op_call_eval
+        https://bugs.webkit.org/show_bug.cgi?id=222694
+        rdar://74778016
+
+        Reviewed by Yusuke Suzuki.
+
+        In the DFG, op_call_eval can't be inlined. Not inlining is required for how
+        eval is currently implemented in the DFG. For CodeBlocks with eval in them,
+        the scope register is also alive everywhere.
+        
+        When doing spread of arguments in eval, we end up emitting a call varargs
+        instead of a direct eval. This seems like a spec bug:
+        https://bugs.webkit.org/show_bug.cgi?id=222671
+        
+        However, this leads to something that had eval textually in it leading to
+        us reporting the scope register is always alive, even if op_call_eval isn't
+        in the bytecode stream. This leads to a validation error, since the DFG
+        isn't actually keeping this scope register alive everywhere, because
+        op_call_eval isn't in the bytecode stream.
+        
+        This patch fixes this by having a bit indicating if op_call_eval is in
+        the bytecode stream or not.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeIndex):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::usesCallEval const):
+        (JSC::CodeBlock::usesEval const): Deleted.
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::usesEval const): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::usesCallEval const):
+        (JSC::UnlinkedCodeBlock::setUsesCallEval):
+        (JSC::UnlinkedCodeBlock::usesEval const): Deleted.
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::usesCallEval const):
+        (JSC::UnlinkedCodeBlockGenerator::setUsesCallEval):
+        (JSC::UnlinkedCodeBlockGenerator::usesEval const): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::isThisUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isNewTargetUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isSuperUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isSuperCallUsedInInnerArrowFunction):
+        * dfg/DFGGraph.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock::usesCallEval const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        (JSC::CachedCodeBlock::usesEval const): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::executableInfo const): Deleted.
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::usesEval const): Deleted.
+
 2021-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r273906.

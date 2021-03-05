@@ -1,3 +1,14 @@
+2021-03-04  Saam Barati  <sbarati@apple.com>
+
+        Don't trust parsing information to tell us if we've emitted op_call_eval
+        https://bugs.webkit.org/show_bug.cgi?id=222694
+        rdar://74778016
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/eval-liveness-should-not-come-from-parser.js: Added.
+        (foo):
+
 2021-03-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update test262

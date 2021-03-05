@@ -1036,8 +1036,8 @@ public:
     }
     bool willCatchExceptionInMachineFrame(CodeOrigin, CodeOrigin& opCatchOriginOut, HandlerInfo*& catchHandlerOut);
     
-    bool needsScopeRegister() const { return m_hasDebuggerEnabled || m_codeBlock->usesEval(); }
-    bool needsFlushedThis() const { return m_codeBlock->usesEval(); }
+    bool needsScopeRegister() const { return m_hasDebuggerEnabled || m_codeBlock->usesCallEval(); }
+    bool needsFlushedThis() const { return m_codeBlock->usesCallEval(); }
 
     void clearCPSCFGData();
 

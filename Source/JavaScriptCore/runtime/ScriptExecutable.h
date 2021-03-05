@@ -58,7 +58,6 @@ public:
     unsigned typeProfilingStartOffset(VM&) const;
     unsigned typeProfilingEndOffset(VM&) const;
 
-    bool usesEval() const { return m_features & EvalFeature; }
     bool usesArguments() const { return m_features & ArgumentsFeature; }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }

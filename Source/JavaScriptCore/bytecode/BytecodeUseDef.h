@@ -39,7 +39,7 @@ template<typename Block, typename Functor>
 void computeUsesForBytecodeIndex(Block* codeBlock, const Instruction* instruction, Checkpoint checkpoint, const Functor& functor)
 {
     OpcodeID opcodeID = instruction->opcodeID();
-    if (opcodeID != op_enter && (codeBlock->wasCompiledWithDebuggingOpcodes() || codeBlock->usesEval()) && codeBlock->scopeRegister().isValid())
+    if (opcodeID != op_enter && (codeBlock->wasCompiledWithDebuggingOpcodes() || codeBlock->usesCallEval()) && codeBlock->scopeRegister().isValid())
         functor(codeBlock->scopeRegister());
 
     computeUsesForBytecodeIndexImpl(codeBlock->scopeRegister(), instruction, checkpoint, scopedLambda<void(VirtualRegister)>(functor));
