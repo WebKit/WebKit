@@ -105,6 +105,7 @@ WEBKIT_OPTION_DEFINE(USE_SYSTEMD "Whether to enable journald logging" PUBLIC ON)
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PRIVATE OFF)
+WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PRIVATE OFF)
 
 WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
@@ -390,6 +391,13 @@ if (USE_WOFF2)
     find_package(WOFF2 1.0.2 COMPONENTS dec)
     if (NOT WOFF2_FOUND)
        message(FATAL_ERROR "libwoff2dec is needed for USE_WOFF2.")
+    endif ()
+endif ()
+
+if (USE_AVIF)
+    find_package(AVIF 0.7.3)
+    if (NOT AVIF_FOUND)
+        message(FATAL_ERROR "libavif 0.7.3 is required for USE_AVIF.")
     endif ()
 endif ()
 

@@ -140,6 +140,9 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedImag
 #if ENABLE(APNG)
         "image/apng"_s,
 #endif
+#if USE(AVIF)
+        "image/avif"_s,
+#endif
 #if USE(OPENJPEG)
         "image/jp2"_s,
         "image/jpeg2000"_s,

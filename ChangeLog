@@ -1,3 +1,20 @@
+2021-03-05  ChangSeok Oh  <changseok@webkit.org>
+
+        AVIF decoding support
+        https://bugs.webkit.org/show_bug.cgi?id=207750
+
+        Reviewed by Philippe Normand.
+
+        This patch brings an initial support of AVIF image format to the gtk port.
+        AVIF is a new royalty-free image format derived from the keyframes of AV1 video.
+        FireFox and Chromium-variant browsers already support it. Its specification can be found
+        at https://rawcdn.githack.com/AOMediaCodec/av1-avif/67a92add6cd642a8863e386fa4db87954a6735d1/index.html
+        This patch aims to land a build option for AVIF and a basic decoding ability
+        for still images by using libavif. Animated AVIF images will be covered later.
+
+        * Source/cmake/FindAVIF.cmake: Added to find libavif.
+        * Source/cmake/OptionsGTK.cmake: A build option, USE_AVIF is added.
+
 2021-03-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r273814.

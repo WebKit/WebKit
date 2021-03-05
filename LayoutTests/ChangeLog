@@ -1,3 +1,28 @@
+2021-03-05  ChangSeok Oh  <changseok@webkit.org>
+
+        AVIF decoding support
+        https://bugs.webkit.org/show_bug.cgi?id=207750
+
+        Reviewed by Philippe Normand.
+
+        This patch brings an initial support of AVIF image format to the gtk port.
+        AVIF is a new royalty-free image format derived from the keyframes of AV1 video.
+        FireFox and Chromium-variant browsers already support it. Its specification can be found
+        at https://rawcdn.githack.com/AOMediaCodec/av1-avif/67a92add6cd642a8863e386fa4db87954a6735d1/index.html
+        This patch aims to land a build option for AVIF and a basic decoding ability
+        for still images by using libavif. Animated AVIF images will be covered later.
+
+        The new tests verify if an avif image can be decoded and properly rendered.
+        Only the gtk port performs these tests for now.
+
+        * TestExpectations: Skip avif tests for non-gtk ports
+        * fast/images/avif-as-image-expected.html: Added.
+        * fast/images/avif-as-image.html: Added.
+        * fast/images/avif-image-decoding-expected.txt: Added.
+        * fast/images/avif-image-decoding.html: Added.
+        * fast/images/resources/green-313x313.avif: Added.
+        * platform/gtk/TestExpectations: The gtk port should pass the tests.
+
 2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
 
         XRFrame getViewerPose has emulatedPosition set properly

@@ -116,6 +116,10 @@ fast/forms/search/search-results-hidden-crash.html [ Skip ]
 # These tests don't have to be platform-specific, but they are only implemented on Mac now.
 fast/images/eps-as-image.html [ Skip ]
 
+# These tests don't have to be platform-specific, but they are only implemented on GTK now.
+fast/images/avif-image-decoding.html [ Skip ]
+fast/images/avif-as-image.html [ Skip ]
+
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
 fast/css/apple-system-control-colors.html [ Skip ]

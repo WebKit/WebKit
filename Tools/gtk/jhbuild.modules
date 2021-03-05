@@ -7,6 +7,7 @@
 
   <metamodule id="webkitgtk-testing-dependencies">
     <dependencies>
+      <dep package="avif"/>
       <dep package="cairo"/>
       <dep package="fonts"/>
       <dep package="dicts"/>
@@ -85,6 +86,8 @@
       href="https://www.gnupg.org/ftp/gcrypt/"/>
   <repository type="tarball" name="wpewebkit"
       href="https://wpewebkit.org/releases/"/>
+  <repository type="tarball" name="downloads.videolan.org"
+      href="https://downloads.videolan.org"/>
 
   <autotools id="cairo"
              autogen-sh="configure">
@@ -122,6 +125,25 @@
              skip-autogen="true">
     <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.8"/>
   </autotools>
+
+  <meson id="dav1d">
+    <branch repo="downloads.videolan.org"
+            module="/pub/videolan/dav1d/0.7.0/dav1d-0.7.0.tar.xz"
+            version="0.7.0"
+            hash="sha256:d3e2445006b9be4cf53625e7e37cf1693eca1aa361868e7ff5f309e2549e9e75">
+    </branch>
+  </meson>
+
+  <cmake id="avif" cmakeargs="-DCMAKE_BUILD_TYPE=Release -DAVIF_CODEC_DAV1D=ON">
+    <dependencies>
+      <dep package="dav1d"/>
+    </dependencies>
+    <branch repo="github-tarball"
+            module="AOMediaCodec/libavif/archive/v${version}.tar.gz"
+            checkoutdir="libavif-${version}"
+            version="0.7.3"
+            hash="sha256:a4ce03649c58ec9f3dc6ab2b7cf7d58474b149acf1e4c563be4081bad60ed2dd"/>
+  </cmake>
 
   <autotools id="dicts" supports-non-srcdir-builds="no"
              skip-autogen="true">
