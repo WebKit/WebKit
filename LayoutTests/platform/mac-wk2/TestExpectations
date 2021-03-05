@@ -1355,3 +1355,5 @@ imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html [ P
 webkit.org/b/222500 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Timeout ]
 
 webkit.org/b/222677 inspector/model/auditTestCase.html [ Pass Timeout ]
+
+webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]

@@ -1,3 +1,12 @@
+2021-03-05  Robert Jenner  <jenner@apple.com>
+
+        [ Big Sur Wk2 ] imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html is flakey text failing
+        https://bugs.webkit.org/show_bug.cgi?id=221487
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating flakey test expectations to Pass Failure until test can be fixed.
+
 2021-03-05  Jon Lee  <jonlee@apple.com>
 
         [GPUP] Test fast/mediastream/media-element-current-time.html fails when media in GPU Process is enabled
