@@ -1,3 +1,14 @@
+2021-03-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        OpGetPrivateName needs to be listed in FOR_EACH_OPCODE_WITH_VALUE_PROFILE
+        https://bugs.webkit.org/show_bug.cgi?id=222775
+        <rdar://74982634>
+
+        Reviewed by Michael Saboff.
+
+        * stress/private-name-assignment-in-constructor.js: Added.
+        (Foo):
+
 2021-03-05  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-Function-References] Update ref.func to produce (ref $t)
