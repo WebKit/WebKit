@@ -47,7 +47,7 @@ class RetryPatch(View):
             patch_id = request.POST.get('patch_id')
             patch_id = int(patch_id)
         except (ValueError, TypeError) as e:
-            return HttpResponse('Invalid patch id: {}'.format(request.POST.get('patch_id')))
+            return HttpResponse('Invalid patch id')
 
         builds_to_retry = StatusBubble().find_failed_builds_for_patch(patch_id)
         _log.info('Retrying patch: {}. Failed builds: {}'.format(patch_id, builds_to_retry))

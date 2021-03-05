@@ -1,3 +1,13 @@
+2021-03-04  Aakash Jain  <aakash_jain@apple.com>
+
+        Reduce unnecessary logging in ews-app
+        https://bugs.webkit.org/show_bug.cgi?id=222764
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-app/ews/views/retrypatch.py:
+        (RetryPatch.post):
+
 2021-03-04  Matt Lewis  <jlewis3@apple.com>
 
         Add Apple Silicon Devices to Big Sur builders and testers.
