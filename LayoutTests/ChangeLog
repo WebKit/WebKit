@@ -1,3 +1,9 @@
+2021-03-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreivewed test gardening, remove failure expectation for some tests that are consistently passing.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-03-04  Jon Lee  <jonlee@apple.com>
 
         [GPUP] Test platform/mac/media/encrypted-media/fps-encrypted-event.html times out when media in GPU Process is enabled
