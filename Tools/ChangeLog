@@ -1,3 +1,10 @@
+2021-03-05  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed Dashboard Fix.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
 2021-03-05  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Run ews unit-tests with Python 3
