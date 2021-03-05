@@ -1,3 +1,15 @@
+2021-03-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Bump cmake_minimum_required version to 3.12 or later
+        https://bugs.webkit.org/show_bug.cgi?id=221727
+        <rdar://problem/74454980>
+
+        Reviewed by Konstantin Tokarev.
+
+        Sync cmake_minimum_required version for AppleWin internal builds.
+
+        * CMakeLists.txt:
+
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit

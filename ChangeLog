@@ -1,3 +1,19 @@
+2021-03-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Bump cmake_minimum_required version to 3.12 or later
+        https://bugs.webkit.org/show_bug.cgi?id=221727
+        <rdar://problem/74454980>
+
+        Reviewed by Konstantin Tokarev.
+
+        Updates the minimum version to 3.12. In CMake 3.12 OBJECT library functionality was
+        expanded to the point where they can successfully be used as a replacement for
+        --whole-archive within WebKit. The check in JSCOnly for the minimum version before
+        using hidden visibility was removed accordingly.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2021-03-05  ChangSeok Oh  <changseok@webkit.org>
 
         AVIF decoding support

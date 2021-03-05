@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 include(WebKitCommon)
 set_property(DIRECTORY . PROPERTY FOLDER "WTF")
 
