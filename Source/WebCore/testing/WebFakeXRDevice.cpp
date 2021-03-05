@@ -59,6 +59,14 @@ SimulatedXRDevice::~SimulatedXRDevice()
     stopTimer();
 }
 
+void SimulatedXRDevice::setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>& geometry)
+{
+    m_stageParameters.id++;
+    m_stageParameters.bounds.clear();
+    for (auto& point : geometry)
+        m_stageParameters.bounds.append({ static_cast<float>(point.x), static_cast<float>(point.z) });
+}
+
 void SimulatedXRDevice::simulateShutdownCompleted()
 {
     if (m_trackingAndRenderingClient)
@@ -99,6 +107,8 @@ void SimulatedXRDevice::frameTimerFired()
 
     if (m_floorOrigin)
         data.floorTransform = { *m_floorOrigin };
+
+    data.stageParameters = m_stageParameters;
 
     for (auto& fakeView : m_views) {
         FrameData::View view;
@@ -182,9 +192,12 @@ void WebFakeXRDevice::simulateVisibilityChange(XRVisibilityState)
 {
 }
 
-void WebFakeXRDevice::setBoundsGeometry(Vector<FakeXRBoundsPoint>&&)
+void WebFakeXRDevice::setBoundsGeometry(Vector<FakeXRBoundsPoint>&& bounds)
 {
-}
+    m_device.scheduleOnNextFrame([this, bounds = WTFMove(bounds)]() {
+        m_device.setNativeBoundsGeometry(bounds);
+    });
+} 
 
 void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit origin)
 {

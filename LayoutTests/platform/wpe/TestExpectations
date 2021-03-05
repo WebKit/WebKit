@@ -606,6 +606,7 @@ webkit.org/b/213131 http/tests/misc/gamepads-insecure.html [ Skip ]
 
 # WebXR
 webkit.org/b/212897 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Failure ]
+imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https.html [ Pass ]

@@ -114,12 +114,18 @@ public:
             Projection projection = { nullptr };
         };
 
+        struct StageParameters {
+            int id { 0 };
+            Vector<WebCore::FloatPoint> bounds;
+        };
+
         bool isTrackingValid { false };
         bool isPositionValid { false };
         bool isPositionEmulated { false };
         long predictedDisplayTime { 0 };
         Pose origin;
         Optional<Pose> floorTransform;
+        StageParameters stageParameters;
         Vector<View> views;
     };
 

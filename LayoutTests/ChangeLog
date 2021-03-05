@@ -1,3 +1,14 @@
+2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXRBoundedReferenceSpace bounds geometry
+        https://bugs.webkit.org/show_bug.cgi?id=222737
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXRBoundedReferenceSpace test expectations.
+
+        * platform/wpe/TestExpectations:
+
 2021-03-05  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] RemoteImageBuffer recording GraphicsContext should report its backend RenderingMode

@@ -619,6 +619,8 @@ bindings/js/JSVideoTrackListCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWebGL2RenderingContextCustom.cpp
 bindings/js/JSWebGLRenderingContextCustom.cpp
+bindings/js/JSWebXRReferenceSpaceCustom.cpp
+bindings/js/JSWebXRSpaceCustom.cpp
 bindings/js/JSWindowProxy.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp

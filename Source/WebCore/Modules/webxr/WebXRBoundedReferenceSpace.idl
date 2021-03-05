@@ -27,6 +27,8 @@
     EnabledAtRuntime=WebXR,
     Conditional=WEBXR,
     SecureContext,
+    CustomToJSObject,
+    JSGenerateToNativeObject,
     Exposed=Window,
     InterfaceName=XRBoundedReferenceSpace
 ] interface WebXRBoundedReferenceSpace : WebXRReferenceSpace {

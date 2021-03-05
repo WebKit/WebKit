@@ -143,6 +143,8 @@ void OpenXRDevice::initializeReferenceSpace(PlatformXR::ReferenceSpaceType space
 {
     if ((spaceType == ReferenceSpaceType::LocalFloor || spaceType == ReferenceSpaceType::BoundedFloor) && m_stageSpace == XR_NULL_HANDLE)
         m_stageSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_STAGE);
+    if (spaceType == ReferenceSpaceType::BoundedFloor)
+        updateStageParameters();
 }
 
 void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
@@ -169,7 +171,7 @@ void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
 
         Device::FrameData frameData;
         frameData.predictedDisplayTime = frameState.predictedDisplayTime;
-
+        frameData.stageParameters = m_stageParameters;
 
         ASSERT(m_configurationViews.contains(m_currentViewConfigurationType));
         const auto& configurationView = m_configurationViews.get(m_currentViewConfigurationType);
@@ -256,8 +258,9 @@ Device::ListOfEnabledFeatures OpenXRDevice::collectEnabledFeatures()
     // The spec uses a estimated height if we don't provide a floor transform in frameData.
     features.append(ReferenceSpaceType::LocalFloor);
 
-    // FIXME: Enable BoundedFloor when we implement xrGetReferenceSpaceBoundsRect and the related bits in the DOM.
-    // enabledFeatures.append(ReferenceSpaceType::BoundedFloor);
+    // Mark BoundedFloor as supported regardless if XR_REFERENCE_SPACE_TYPE_STAGE is available.
+    // The spec allows reporting an empty array if xrGetReferenceSpaceBoundsRect fails.
+    features.append(ReferenceSpaceType::BoundedFloor);
 
     if (m_extensions.isExtensionSupported(XR_MSFT_UNBOUNDED_REFERENCE_SPACE_EXTENSION_NAME))
         features.append(ReferenceSpaceType::Unbounded);
@@ -354,14 +357,19 @@ void OpenXRDevice::pollEvents()
     while (xrPollEvent(m_instance, &runtimeEvent) == XR_SUCCESS) {
         switch (runtimeEvent.type) {
         case XR_TYPE_EVENT_DATA_SESSION_STATE_CHANGED: {
-            auto* event = (XrEventDataSessionStateChanged*)&runtimeEvent;
+            auto* event = reinterpret_cast<XrEventDataSessionStateChanged*>(&runtimeEvent);
             m_sessionState = event->state;
             handleSessionStateChange();
             break;
         }
         case XR_TYPE_EVENT_DATA_EVENTS_LOST:
         case XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING:
-        case XR_TYPE_EVENT_DATA_REFERENCE_SPACE_CHANGE_PENDING:
+        case XR_TYPE_EVENT_DATA_REFERENCE_SPACE_CHANGE_PENDING: {
+            auto* event = reinterpret_cast<XrEventDataReferenceSpaceChangePending*>(&runtimeEvent);
+            if (event->referenceSpaceType == XR_REFERENCE_SPACE_TYPE_STAGE)
+                updateStageParameters();
+            break;
+        }
         case XR_TYPE_EVENT_DATA_INTERACTION_PROFILE_CHANGED:
         case XR_TYPE_EVENT_DATA_MAIN_SESSION_VISIBILITY_CHANGED_EXTX:
         case XR_TYPE_EVENT_DATA_VISIBILITY_MASK_CHANGED_KHR:
@@ -413,6 +421,10 @@ void OpenXRDevice::resetSession()
         m_session = XR_NULL_HANDLE;
     }
     m_sessionState = XR_SESSION_STATE_UNKNOWN;
+    m_localSpace = XR_NULL_HANDLE;
+    m_viewSpace  = XR_NULL_HANDLE;
+    m_stageSpace = XR_NULL_HANDLE;
+    m_stageParameters = { };
 
     // deallocate graphic resources
     m_egl.reset();
@@ -430,7 +442,6 @@ void OpenXRDevice::handleSessionStateChange()
     }
 }
 
-
 void OpenXRDevice::waitUntilStopping()
 {
     ASSERT(&RunLoop::current() == &m_queue.runLoop());
@@ -440,6 +451,32 @@ void OpenXRDevice::waitUntilStopping()
     m_queue.dispatch([this]() {
         waitUntilStopping();
     });
+}
+
+void OpenXRDevice::updateStageParameters()
+{
+    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    if (m_stageSpace == XR_NULL_HANDLE)
+        return; // Stage space not requested.
+
+    m_stageParameters.id++;
+
+    XrExtent2Df bounds;
+    if (XR_SUCCEEDED(xrGetReferenceSpaceBoundsRect(m_session, XR_REFERENCE_SPACE_TYPE_STAGE, &bounds))) {
+        // https://immersive-web.github.io/webxr/#xrboundedreferencespace-native-bounds-geometry
+        // Points MUST be given in a clockwise order as viewed from above, looking towards the negative end of the Y axis.
+        m_stageParameters.bounds = Vector<WebCore::FloatPoint> {
+            { bounds.width * 0.5f, -bounds.height * 0.5f },
+            { bounds.width * 0.5f, bounds.height * 0.5f },
+            { -bounds.width * 0.5f, bounds.height * 0.5f },
+            { -bounds.width * 0.5f, -bounds.height * 0.5f }
+        };
+    } else {
+        // https://immersive-web.github.io/webxr/#dom-xrboundedreferencespace-boundsgeometry
+        // If the native bounds geometry is temporarily unavailable, which may occur for several reasons such as during XR device initialization,
+        // extended periods of tracking loss, or movement between pre-configured spaces, the boundsGeometry MUST report an empty array.
+        m_stageParameters.bounds.clear();
+    }
 }
 
 } // namespace PlatformXR

@@ -1,3 +1,14 @@
+2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXRBoundedReferenceSpace bounds geometry
+        https://bugs.webkit.org/show_bug.cgi?id=222737
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXRBoundedReferenceSpace test expectations.
+
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https-expected.txt: Added.
+
 2021-03-04  Antoine Quint  <graouts@webkit.org>
 
         initial value for border-image-outset should be 0

@@ -50,7 +50,7 @@ public:
 
     WebXRSession& session() const final { return m_session.get(); }
     TransformationMatrix nativeOrigin() const override;
-    virtual RefPtr<WebXRReferenceSpace> getOffsetReferenceSpace(const WebXRRigidTransform&);
+    virtual ExceptionOr<Ref<WebXRReferenceSpace>> getOffsetReferenceSpace(const WebXRRigidTransform&);
     XRReferenceSpaceType type() const { return m_type; }
 
 protected:

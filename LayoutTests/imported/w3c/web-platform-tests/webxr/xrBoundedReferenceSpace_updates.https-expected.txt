@@ -1,0 +1,3 @@
+
+PASS 'XRBoundedReferenceSpace updates properly when the changes are applied
+

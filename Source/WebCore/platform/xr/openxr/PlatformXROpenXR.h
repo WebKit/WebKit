@@ -69,6 +69,7 @@ private:
     void resetSession();
     void handleSessionStateChange();
     void waitUntilStopping();
+    void updateStageParameters();
 
     XrInstance m_instance;
     XrSystemId m_systemId;
@@ -87,6 +88,7 @@ private:
     XrSpace m_localSpace { XR_NULL_HANDLE };
     XrSpace m_viewSpace { XR_NULL_HANDLE };
     XrSpace m_stageSpace { XR_NULL_HANDLE };
+    Device::FrameData::StageParameters m_stageParameters;
 };
 
 } // namespace PlatformXR
