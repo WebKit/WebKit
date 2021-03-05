@@ -86,18 +86,24 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     GDIObject<HBITMAP> hbmp;
     auto image = adoptGDIObject(imageRef);
 
+    auto returnHbmp = [&hbmp, &image] {
+        if (!hbmp)
+            hbmp.swap(image);
+        return hbmp.leak();
+    };
+
     IntSize srcSize = dragImageSize(image.get());
     IntSize dstSize(static_cast<int>(srcSize.width() * scale.width()), static_cast<int>(srcSize.height() * scale.height()));
 
     HWndDC dc(0);
     auto dstDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (!dstDC)
-        goto exit;
+        return returnHbmp();
 
     CGContextRef targetContext;
     hbmp = allocImage(dstDC.get(), dstSize, &targetContext);
     if (!hbmp)
-        goto exit;
+        return returnHbmp();
 
     auto srcContext = createCgContextFromBitmap(image.get());
     auto srcImage = adoptCF(CGBitmapContextCreateImage(srcContext.get()));
@@ -108,10 +114,7 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     CGContextDrawImage(targetContext, rect, srcImage.get());
     CGContextRelease(targetContext);
 
-exit:
-    if (!hbmp)
-        hbmp.swap(image);
-    return hbmp.leak();
+    return returnHbmp();
 }
     
 DragImageRef createDragImageFromImage(Image* img, ImageOrientation)
