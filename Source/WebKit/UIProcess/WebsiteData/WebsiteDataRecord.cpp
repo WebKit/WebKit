@@ -29,6 +29,7 @@
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/CrossThreadCopier.h>
 
 #if PLATFORM(COCOA)
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -168,6 +169,25 @@ String WebsiteDataRecord::topPrivatelyControlledDomain()
 #endif // ENABLE(PUBLIC_SUFFIX_LIST)
     
     return emptyString();
+}
+
+WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const
+{
+    return WebsiteDataRecord {
+        crossThreadCopy(displayName),
+        types,
+        size,
+        crossThreadCopy(origins),
+        crossThreadCopy(cookieHostNames),
+#if ENABLE(NETSCAPE_PLUGIN_API)
+        crossThreadCopy(pluginDataHostNames),
+#endif
+        crossThreadCopy(HSTSCacheHostNames),
+        crossThreadCopy(alternativeServicesHostNames),
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        crossThreadCopy(resourceLoadStatisticsRegistrableDomains),
+#endif
+    };
 }
 
 }
