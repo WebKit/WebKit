@@ -672,7 +672,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'runUnittests.py', 'ews-build'],
+                        command=['python3', 'runUnittests.py', 'ews-build'],
                         )
             + 0,
         )
@@ -685,7 +685,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'runUnittests.py', 'ews-build'],
+                        command=['python3', 'runUnittests.py', 'ews-build'],
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,
