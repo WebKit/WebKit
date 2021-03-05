@@ -62,7 +62,7 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
             return true;
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             // Filter out empty inline boxes e.g. <div><span></span><span></span><br></div>
-            if (inlineLevelBox->isInlineBox() && inlineLevelBox->hasContent())
+            if (inlineLevelBox.isInlineBox() && inlineLevelBox.hasContent())
                 return false;
         }
         return true;
@@ -82,9 +82,9 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
                 if (!lineBox.hasInlineBox())
                     return false;
                 for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-                    if (!inlineLevelBox->isInlineBox())
+                    if (!inlineLevelBox.isInlineBox())
                         continue;
-                    if (inlineLevelBox->hasContent())
+                    if (inlineLevelBox.hasContent())
                         return true;
                 }
                 return false;

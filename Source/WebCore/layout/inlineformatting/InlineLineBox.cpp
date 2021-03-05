@@ -92,10 +92,10 @@ LineBox::LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTople
     m_nonRootInlineLevelBoxMap.reserveInitialCapacity(numberOfRuns);
 }
 
-void LineBox::addInlineLevelBox(std::unique_ptr<InlineLevelBox>&& inlineLevelBox)
+void LineBox::addInlineLevelBox(InlineLevelBox&& inlineLevelBox)
 {
-    m_boxTypes.add(inlineLevelBox->type());
-    m_nonRootInlineLevelBoxMap.set(&inlineLevelBox->layoutBox(), inlineLevelBox.get());
+    m_boxTypes.add(inlineLevelBox.type());
+    m_nonRootInlineLevelBoxMap.set(&inlineLevelBox.layoutBox(), m_nonRootInlineLevelBoxList.size());
     m_nonRootInlineLevelBoxList.append(WTFMove(inlineLevelBox));
 }
 

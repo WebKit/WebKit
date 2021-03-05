@@ -189,7 +189,7 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
             }
             // Text + <br> (or just <br> or text<span></span><br>) behaves like text.
             for (auto& inlineLevelBox : nonRootInlineLevelBoxList) {
-                if (inlineLevelBox->isAtomicInlineLevelBox()) {
+                if (inlineLevelBox.isAtomicInlineLevelBox()) {
                     // Content like text<img> prevents legacy snapping.
                     return false;
                 }
@@ -374,14 +374,14 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
 
         auto& lineBoxLogicalRect = lineBox.logicalRect();
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (!inlineLevelBox->isInlineBox())
+            if (!inlineLevelBox.isInlineBox())
                 continue;
-            auto& layoutBox = inlineLevelBox->layoutBox();
+            auto& layoutBox = inlineLevelBox.layoutBox();
             auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
             auto inlineBoxRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
 
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineQuirks.inlineLevelBoxAffectsLineBox(*inlineLevelBox, lineBox) });
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineQuirks.inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox) });
         }
     }
 }

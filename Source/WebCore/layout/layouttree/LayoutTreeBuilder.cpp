@@ -432,7 +432,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         };
         outputInlineLevelBox(lineBox.rootInlineBox());
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes())
-            outputInlineLevelBox(*inlineLevelBox);
+            outputInlineLevelBox(inlineLevelBox);
 
         addSpacing();
         stream << "  Runs:";
