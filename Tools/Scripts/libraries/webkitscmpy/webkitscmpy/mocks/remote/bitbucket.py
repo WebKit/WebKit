@@ -185,7 +185,7 @@ class BitBucket(mocks.Requests):
                     emailAddress=commit.author.email,
                     displayName=commit.author.name,
                 ),
-                committerTimestamp=commit.timestamp * 100,
+                committerTimestamp=commit.timestamp * 1000,
                 message=commit.message,
             ))
 

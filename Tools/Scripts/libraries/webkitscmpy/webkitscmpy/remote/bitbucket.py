@@ -226,13 +226,13 @@ class BitBucket(Scm):
         matches = self.GIT_SVN_REVISION.findall(commit_data['message'])
         revision = int(matches[-1].split('@')[0]) if matches else None
 
-        timestamp = int(commit_data['committerTimestamp'] / 100)
+        timestamp = int(commit_data['committerTimestamp'] / 1000)
         order = 0
         while not identifier or order + 1 < identifier + (branch_point or 0):
             response = self.request('commits/{}'.format('{}~{}'.format(commit_data['id'], order + 1)))
             if not response:
                 break
-            parent_timestamp = int(response['committerTimestamp'] / 100)
+            parent_timestamp = int(response['committerTimestamp'] / 1000)
             if parent_timestamp != timestamp:
                 break
             order += 1
