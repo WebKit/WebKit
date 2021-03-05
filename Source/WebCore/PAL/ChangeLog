@@ -1,3 +1,12 @@
+2021-03-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix my iOS Simulator build.
+        https://bugs.webkit.org/show_bug.cgi?id=222041
+
+        * pal/spi/cocoa/AVStreamDataParserSPI.h:
+        My build couldn't find what CMSampleBufferRef was supposed to mean, so I include CoreMedia.h.
+        I have no idea why all the bots build successfully.
+
 2021-03-04  Chris Dumez  <cdumez@apple.com>
 
         Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
