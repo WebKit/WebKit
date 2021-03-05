@@ -1,3 +1,14 @@
+2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
+
+        XRFrame getViewerPose has emulatedPosition set properly
+        https://bugs.webkit.org/show_bug.cgi?id=222785
+
+        Reviewed by Sergio Villar Senin.
+
+        Update getViewerPose_emulatedPosition test expectations.
+
+        * platform/wpe/TestExpectations:
+
 2021-03-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Fix mainAxisLengthIsDefinite for orthogonal items with percentage sizes

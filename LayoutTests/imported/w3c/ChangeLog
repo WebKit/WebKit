@@ -1,5 +1,16 @@
 2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
 
+        XRFrame getViewerPose has emulatedPosition set properly
+        https://bugs.webkit.org/show_bug.cgi?id=222785
+
+        Reviewed by Sergio Villar Senin.
+
+        Update getViewerPose_emulatedPosition test expectations.
+
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https-expected.txt: Added.
+
+2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
+
         Implement WebXRBoundedReferenceSpace bounds geometry
         https://bugs.webkit.org/show_bug.cgi?id=222737
 

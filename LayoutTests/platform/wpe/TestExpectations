@@ -619,6 +619,7 @@ webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSessio
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/getViewerPose_emulatedPosition.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrFrame_getPose.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html [ Pass ]

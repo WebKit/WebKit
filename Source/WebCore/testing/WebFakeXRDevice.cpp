@@ -103,6 +103,7 @@ void SimulatedXRDevice::frameTimerFired()
         data.origin = *m_viewerOrigin;
         data.isTrackingValid = true;
         data.isPositionValid = true;
+        data.isPositionEmulated = m_emulatedPosition;
     }
 
     if (m_floorOrigin)

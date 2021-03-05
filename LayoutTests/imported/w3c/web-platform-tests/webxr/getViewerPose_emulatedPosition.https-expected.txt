@@ -1,0 +1,3 @@
+
+PASS XRFrame getViewerPose has emulatedPosition set properly.
+
