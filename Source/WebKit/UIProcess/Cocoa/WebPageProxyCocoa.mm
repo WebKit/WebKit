@@ -166,6 +166,8 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 {
     loadParameters.dataDetectionContext = m_uiClient->dataDetectionContext();
 
+    loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);
+    
 #if PLATFORM(IOS)
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
         SandboxExtension::Handle handle;

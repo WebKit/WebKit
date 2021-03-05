@@ -74,6 +74,7 @@ struct LoadParameters {
 
 #if PLATFORM(COCOA)
     RetainPtr<NSDictionary> dataDetectionContext;
+    SandboxExtension::HandleArray networkExtensionSandboxExtensionHandles;
 #endif
 #if PLATFORM(IOS)
     Optional<SandboxExtension::Handle> contentFilterExtensionHandle;
