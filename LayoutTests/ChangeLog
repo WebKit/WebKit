@@ -1,3 +1,14 @@
+2021-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        sticky position incorrect behavior in table with dir=RTL
+        https://bugs.webkit.org/show_bug.cgi?id=221624
+        <rdar://problem/74403616>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/sticky/sticky-in-rtl-overflow-expected.html: Added.
+        * fast/css/sticky/sticky-in-rtl-overflow.html: Added.
+
 2021-03-05  Jon Lee  <jonlee@apple.com>
 
         [GPUP] Test fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html times out when media in GPU Process is enabled
