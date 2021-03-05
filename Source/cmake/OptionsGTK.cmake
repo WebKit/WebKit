@@ -453,25 +453,5 @@ macro(ADD_TYPELIB typelib)
     endif ()
 endmacro()
 
-# CMake does not automatically add --whole-archive when building shared objects from
-# a list of convenience libraries. This can lead to missing symbols in the final output.
-# We add --whole-archive to all libraries manually to prevent the linker from trimming
-# symbols that we actually need later. With ld64 on darwin, we use -all_load instead.
-macro(ADD_WHOLE_ARCHIVE_TO_LIBRARIES _list_name)
-    if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-        list(APPEND ${_list_name} -Wl,-all_load)
-    else ()
-        set(_tmp)
-        foreach (item IN LISTS ${_list_name})
-            if ("${item}" STREQUAL "PRIVATE" OR "${item}" STREQUAL "PUBLIC")
-                list(APPEND _tmp "${item}")
-            else ()
-                list(APPEND _tmp -Wl,--whole-archive "${item}" -Wl,--no-whole-archive)
-            endif ()
-        endforeach ()
-        set(${_list_name} ${_tmp})
-    endif ()
-endmacro()
-
 include(BubblewrapSandboxChecks)
 include(GStreamerChecks)

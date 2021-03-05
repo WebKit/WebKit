@@ -1,3 +1,14 @@
+2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Remove ADD_WHOLE_ARCHIVE_TO_LIBRARIES
+        https://bugs.webkit.org/show_bug.cgi?id=222826
+
+        Reviewed by Don Olmstead.
+
+        I don't know why it's no longer needed, but GTK links without it, so it can go away.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2021-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.12 or later
