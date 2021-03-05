@@ -37,6 +37,8 @@
     IBOutlet NSMenuItem *_newWebKit2WindowItem;
     IBOutlet NSMenuItem *_newWebKit1EditorItem;
     IBOutlet NSMenuItem *_newWebKit2EditorItem;
+
+    bool _openNewWindowAtStartup;
 }
 
 - (void)browserWindowWillClose:(NSWindow *)window;

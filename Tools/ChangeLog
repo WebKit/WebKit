@@ -1,3 +1,16 @@
+2021-03-05  Cameron McCormack  <heycam@apple.com>
+
+        Don't open a new window in MiniBrowser if already opening a file from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=222776
+
+        Reviewed by Dean Jackson.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate applicationDidFinishLaunching:]):
+        (-[BrowserAppDelegate application:openFile:]):
+
 2021-03-05  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add python 3 support in send_email

@@ -72,6 +72,7 @@ enum {
     if (self) {
         _browserWindowControllers = [[NSMutableSet alloc] init];
         _extensionManagerWindowController = [[ExtensionManagerWindowController alloc] init];
+        _openNewWindowAtStartup = true;
     }
 
     return self;
@@ -234,6 +235,9 @@ static WKWebsiteDataStore *persistentDataStore()
 
     [self _updateNewWindowKeyEquivalents];
 
+    if (!_openNewWindowAtStartup)
+        return;
+
     if (_settingsController.createEditorByDefault)
         [self newEditorWindow:self];
     else
@@ -264,6 +268,7 @@ static WKWebsiteDataStore *persistentDataStore()
 
     [controller.window makeKeyAndOrderFront:self];
     [controller loadURLString:[NSURL fileURLWithPath:filename].absoluteString];
+    _openNewWindowAtStartup = false;
     return YES;
 }
 
