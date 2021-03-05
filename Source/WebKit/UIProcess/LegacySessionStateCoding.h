@@ -34,7 +34,6 @@ class Data;
 
 namespace WebKit {
 
-struct FrameState;
 struct SessionState;
 
 RefPtr<API::Data> encodeLegacySessionState(const SessionState&);

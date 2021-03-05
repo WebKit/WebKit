@@ -1,3 +1,42 @@
+2021-03-04  Sihui Liu  <sihui_liu@appe.com>
+
+        Validate documentState of FrameState when setting and getting it
+        https://bugs.webkit.org/show_bug.cgi?id=222587
+
+        Reviewed by Geoffrey Garen.
+
+        In rdar://48634553, strings of documentState can be invalid when they are encoded in encodeFrameStateNode
+        in UI process. To get a better idea of when the strings become invalid, add checks for documentState when 
+        getting and setting it.
+
+        No test as no behavior change.
+
+        * Shared/SessionState.cpp:
+        (WebKit::FrameState::encode const):
+        (WebKit::FrameState::decode):
+        (WebKit::FrameState::validateDocumentState const):
+        (WebKit::FrameState::setDocumentState):
+        * Shared/SessionState.h:
+        (WebKit::FrameState::FrameState):
+        (WebKit::FrameState::~FrameState):
+        (WebKit::FrameState::documentState const):
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::create):
+        (WebKit::WebBackForwardListItem::~WebBackForwardListItem):
+        * UIProcess/API/glib/WebKitWebViewSessionState.cpp:
+        (encodeFrameState):
+        (decodeFrameState):
+        * UIProcess/Cocoa/SessionStateCoding.h:
+        * UIProcess/LegacySessionStateCoding.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sessionState const):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeFrameStateNode):
+        (WebKit::decodeBackForwardTreeNode):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+
 2021-03-04  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r273904

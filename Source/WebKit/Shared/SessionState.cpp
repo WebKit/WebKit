@@ -110,7 +110,7 @@ void FrameState::encode(IPC::Encoder& encoder) const
     encoder << referrer;
     encoder << target;
 
-    encoder << documentState;
+    encoder << m_documentState;
     encoder << stateObjectData;
 
     encoder << documentSequenceNumber;
@@ -146,8 +146,10 @@ Optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
     if (!decoder.decode(result.target))
         return WTF::nullopt;
 
-    if (!decoder.decode(result.documentState))
+    if (!decoder.decode(result.m_documentState))
         return WTF::nullopt;
+    result.validateDocumentState();
+
     if (!decoder.decode(result.stateObjectData))
         return WTF::nullopt;
 
@@ -268,6 +270,32 @@ Optional<BackForwardListState> BackForwardListState::decode(IPC::Decoder& decode
         return WTF::nullopt;
 
     return {{ WTFMove(*items), WTFMove(currentIndex) }};
+}
+
+void FrameState::validateDocumentState() const
+{
+    for (auto& stateString : m_documentState) {
+        if (stateString.isNull())
+            continue;
+
+        if (!stateString.is8Bit())
+            continue;
+
+        // rdar://48634553 indicates 8-bit string can be invalid.
+        const LChar* characters8 = stateString.characters8();
+        for (unsigned i = 0; i < stateString.length(); ++i) {
+            auto character = characters8[i];
+            RELEASE_ASSERT(isLatin1(character));
+        }
+    }
+}
+
+void FrameState::setDocumentState(const Vector<String>& documentState, ShouldValidate shouldValidate)
+{
+    m_documentState = documentState;
+
+    if (shouldValidate == ShouldValidate::Yes)
+        validateDocumentState();
 }
 
 } // namespace WebKit

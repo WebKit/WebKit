@@ -39,6 +39,7 @@ using namespace WebCore;
 
 Ref<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemState&& backForwardListItemState, WebPageProxyIdentifier pageID)
 {
+    RELEASE_ASSERT(RunLoop::isMain());
     return adoptRef(*new WebBackForwardListItem(WTFMove(backForwardListItemState), pageID));
 }
 
@@ -53,6 +54,7 @@ WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState&& backFo
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(allItems().get(m_itemState.identifier) == this);
     allItems().remove(m_itemState.identifier);
     removeFromBackForwardCache();

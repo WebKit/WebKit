@@ -30,7 +30,6 @@
 
 namespace WebKit {
 
-struct FrameState;
 struct SessionState;
 
 RetainPtr<NSData> encodeSessionState(const SessionState&);

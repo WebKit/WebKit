@@ -3582,6 +3582,7 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
 
 SessionState WebPageProxy::sessionState(WTF::Function<bool (WebBackForwardListItem&)>&& filter) const
 {
+    RELEASE_ASSERT(RunLoop::isMain());
     SessionState sessionState;
 
     sessionState.backForwardListState = m_backForwardList->backForwardListState(WTFMove(filter));

@@ -323,9 +323,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 {
     encoder << static_cast<uint64_t>(frameState.children.size());
 
-    RELEASE_ASSERT(!frameState.isDestructed);
     for (const auto& childFrameState : frameState.children) {
-        RELEASE_ASSERT(!childFrameState.isDestructed);
         encoder << childFrameState.originalURLString;
         encoder << childFrameState.urlString;
 
@@ -334,8 +332,9 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 
     encoder << frameState.documentSequenceNumber;
 
-    encoder << static_cast<uint64_t>(frameState.documentState.size());
-    for (const auto& documentState : frameState.documentState)
+    frameState.validateDocumentState();
+    encoder << static_cast<uint64_t>(frameState.documentState().size());
+    for (const auto& documentState : frameState.documentState())
         encoder << documentState;
 
     if (frameState.httpBody) {
@@ -899,6 +898,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     uint64_t documentStateVectorSize;
     decoder >> documentStateVectorSize;
 
+    Vector<String> documentState;
     for (uint64_t i = 0; i < documentStateVectorSize; ++i) {
         String state;
         decoder >> state;
@@ -906,8 +906,9 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
         if (!decoder.isValid())
             return;
 
-        frameState.documentState.append(WTFMove(state));
+        documentState.append(WTFMove(state));
     }
+    frameState.setDocumentState(documentState, FrameState::ShouldValidate::Yes);
 
     String formContentType;
     decoder >> formContentType;
