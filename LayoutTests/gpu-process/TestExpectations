@@ -1,18 +1,7 @@
 # webkit.org/b/222728
-compositing/canvas/accelerated-canvas-compositing.html [ Failure ]
-compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
-css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
-fast/images/ordered-animated-image-frames.html [ ImageOnlyFailure ]
-fast/repaint/canvas-object-fit.html [ Failure ]
-fast/repaint/canvas-putImageData.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
 inspector/canvas/memory.html [ Failure ]
 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
-
-# webkit.org/b/220389
-fast/canvas/canvas-drawImage-composite-copy.html [ ImageOnlyFailure ]
-fast/canvas/canvas-render-layer.html [ Failure ]
-fast/canvas/hidpi-repaint-on-retina-leaves-bits-behind.html [ ImageOnlyFailure ]
 
 # webkit.org/b/222341
 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]

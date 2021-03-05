@@ -1617,10 +1617,8 @@ void GraphicsContext::setIsCALayerContext(bool isLayerContext)
     if (paintingDisabled())
         return;
 
-    // FIXME
-    if (m_impl)
-        return;
-
+    // Should be called for CA Context.
+    ASSERT(m_data);
     if (isLayerContext)
         m_data->m_contextFlags |= IsLayerCGContext;
     else
@@ -1629,14 +1627,7 @@ void GraphicsContext::setIsCALayerContext(bool isLayerContext)
 
 bool GraphicsContext::isCALayerContext() const
 {
-    if (paintingDisabled())
-        return false;
-
-    // FIXME
-    if (m_impl)
-        return false;
-
-    return m_data->m_contextFlags & IsLayerCGContext;
+    return m_data && (m_data->m_contextFlags & IsLayerCGContext);
 }
 
 void GraphicsContext::setIsAcceleratedContext(bool isAccelerated)
@@ -1644,10 +1635,8 @@ void GraphicsContext::setIsAcceleratedContext(bool isAccelerated)
     if (paintingDisabled())
         return;
 
-    // FIXME
-    if (m_impl)
-        return;
-
+    // Should be called for CA Context.
+    ASSERT(m_data);
     if (isAccelerated)
         m_data->m_contextFlags |= IsAcceleratedCGContext;
     else
@@ -1659,9 +1648,8 @@ bool GraphicsContext::isAcceleratedContext() const
     if (paintingDisabled())
         return false;
 
-    // FIXME
     if (m_impl)
-        return false;
+        return m_impl->renderingMode() == RenderingMode::Accelerated;
 
     return m_data->m_contextFlags & IsAcceleratedCGContext;
 }

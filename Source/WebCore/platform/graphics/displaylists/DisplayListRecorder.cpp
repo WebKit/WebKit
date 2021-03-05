@@ -148,6 +148,11 @@ bool Recorder::canDrawImageBuffer(const ImageBuffer& imageBuffer) const
     return !m_delegate || m_delegate->isCachedImageBuffer(imageBuffer);
 }
 
+RenderingMode Recorder::renderingMode() const
+{
+    return m_delegate ? m_delegate->renderingMode() : RenderingMode::Unaccelerated;
+}
+
 void Recorder::clearShadow()
 {
     append<ClearShadow>();

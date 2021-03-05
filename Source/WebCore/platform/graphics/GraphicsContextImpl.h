@@ -41,6 +41,7 @@ public:
     virtual bool hasPlatformContext() const = 0;
     virtual bool canDrawImageBuffer(const ImageBuffer&) const { return true; }
     virtual PlatformGraphicsContext* platformContext() const = 0;
+    virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
 
     virtual void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) = 0;
     virtual void clearShadow() = 0;

@@ -104,6 +104,8 @@ protected:
         m_drawingContext.displayList().setTracksDrawingItemExtents(false);
     }
 
+    WebCore::RenderingMode renderingMode() const override { return BaseDisplayListImageBuffer::renderingMode(); }
+
     bool hasPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
 
     void didFlush(WebCore::DisplayList::FlushIdentifier flushIdentifier) override

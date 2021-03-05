@@ -1,3 +1,12 @@
+2021-03-05  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] RemoteImageBuffer recording GraphicsContext should report its backend RenderingMode
+        https://bugs.webkit.org/show_bug.cgi?id=222772
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2021-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Add internal preference to disable HTTPS upgrade
