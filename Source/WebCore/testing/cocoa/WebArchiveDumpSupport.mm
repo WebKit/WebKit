@@ -200,7 +200,7 @@ static CFComparisonResult compareResourceURLs(const void *val1, const void *val2
     return CFStringCompare(url1, url2, kCFCompareAnchored);
 }
 
-CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
+RetainPtr<CFStringRef> createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 {
     CFErrorRef error = 0;
     CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0;
@@ -208,8 +208,8 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 
     if (!propertyList) {
         if (error)
-            return CFErrorCopyDescription(error);
-        return static_cast<CFStringRef>(CFRetain(CFSTR("An unknown error occurred converting data to property list.")));
+            return adoptCF(CFErrorCopyDescription(error));
+        return CFSTR("An unknown error occurred converting data to property list.");
     }
 
     RetainPtr<CFMutableArrayRef> resources = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
@@ -250,8 +250,8 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 
     if (!xmlData) {
         if (error)
-            return CFErrorCopyDescription(error);
-        return static_cast<CFStringRef>(CFRetain(CFSTR("An unknown error occurred converting property list to data.")));
+            return adoptCF(CFErrorCopyDescription(error));
+        return CFSTR("An unknown error occurred converting property list to data.");
     }
 
     RetainPtr<CFStringRef> xmlString = adoptCF(CFStringCreateFromExternalRepresentation(kCFAllocatorDefault, xmlData.get(), kCFStringEncodingUTF8));
@@ -266,7 +266,7 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
     quickLookURLReplacements().clear();
 #endif
 
-    return string.leakRef();
+    return string;
 }
 
 } // namespace WebCoreTestSupport

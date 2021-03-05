@@ -2810,12 +2810,12 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayer *player)
     if (player.externalPlaybackType != AVPlayerExternalPlaybackTypeAirPlay)
         return nil;
 
-    NSArray *pickableRoutes = CFBridgingRelease(MRMediaRemoteCopyPickableRoutes());
-    if (!pickableRoutes.count)
+    auto pickableRoutes = adoptCF(MRMediaRemoteCopyPickableRoutes());
+    if (!pickableRoutes || !CFArrayGetCount(pickableRoutes.get()))
         return nil;
 
     NSString *displayName = nil;
-    for (NSDictionary *pickableRoute in pickableRoutes) {
+    for (NSDictionary *pickableRoute in (__bridge NSArray *)pickableRoutes.get()) {
         if (![pickableRoute[AVController_RouteDescriptionKey_RouteCurrentlyPicked] boolValue])
             continue;
 
@@ -2830,7 +2830,7 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayer *player)
 
         // In cases where a route with that name already exists, prefix the name with the model.
         BOOL includeLocalizedDeviceModelName = NO;
-        for (NSDictionary *otherRoute in pickableRoutes) {
+        for (NSDictionary *otherRoute in (__bridge NSArray *)pickableRoutes.get()) {
             if (otherRoute == pickableRoute)
                 continue;
 

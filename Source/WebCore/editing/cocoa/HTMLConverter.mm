@@ -2090,7 +2090,6 @@ void HTMLConverter::_processText(CharacterData& characterData)
     unichar lastChar = (textLength > 0) ? [[_attrStr string] characterAtIndex:textLength - 1] : '\n';
     BOOL suppressLeadingSpace = ((_flags.isSoft && lastChar == ' ') || lastChar == '\n' || lastChar == '\r' || lastChar == '\t' || lastChar == NSParagraphSeparatorCharacter || lastChar == NSLineSeparatorCharacter || lastChar == NSFormFeedCharacter || lastChar == WebNextLineCharacter);
     NSRange rangeToReplace = NSMakeRange(textLength, 0);
-    CFMutableStringRef mutstr = NULL;
 
     String originalString = characterData.data();
     unsigned startOffset = 0;
@@ -2160,8 +2159,6 @@ void HTMLConverter::_processText(CharacterData& characterData)
             [_attrStr setAttributes:aggregatedAttributesForAncestors(characterData) range:rangeToReplace];
         _flags.isSoft = wasSpace;
     }
-    if (mutstr)
-        CFRelease(mutstr);
 }
 
 void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)

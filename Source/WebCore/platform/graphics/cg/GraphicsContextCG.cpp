@@ -346,9 +346,7 @@ static void drawPatternCallback(void* info, CGContextRef context)
 
 static void patternReleaseCallback(void* info)
 {
-    callOnMainThread([image = static_cast<CGImageRef>(info)] {
-        CGImageRelease(image);
-    });
+    callOnMainThread([image = adoptCF(static_cast<CGImageRef>(info))] { });
 }
 
 void GraphicsContext::drawPlatformPattern(const PlatformImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -675,8 +673,8 @@ void GraphicsContext::fillPath(const Path& path)
             FloatRect rect = path.fastBoundingRect();
             FloatSize layerSize = getCTM().mapSize(rect.size());
 
-            CGLayerRef layer = CGLayerCreateWithContext(context, layerSize, 0);
-            CGContextRef layerContext = CGLayerGetContext(layer);
+            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
+            CGContextRef layerContext = CGLayerGetContext(layer.get());
 
             CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
             CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
@@ -690,8 +688,7 @@ void GraphicsContext::fillPath(const Path& path)
                 CGContextClip(layerContext);
 
             m_state.fillGradient->paint(layerContext);
-            CGContextDrawLayerInRect(context, rect, layer);
-            CGLayerRelease(layer);
+            CGContextDrawLayerInRect(context, rect, layer.get());
         } else {
             CGContextBeginPath(context);
             CGContextAddPath(context, path.platformPath());
@@ -745,8 +742,8 @@ void GraphicsContext::strokePath(const Path& path)
 
             FloatSize layerSize = getCTM().mapSize(FloatSize(adjustedWidth, adjustedHeight));
 
-            CGLayerRef layer = CGLayerCreateWithContext(context, layerSize, 0);
-            CGContextRef layerContext = CGLayerGetContext(layer);
+            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
+            CGContextRef layerContext = CGLayerGetContext(layer.get());
             CGContextSetLineWidth(layerContext, lineWidth);
 
             // Compensate for the line width, otherwise the layer's top-left corner would be
@@ -765,8 +762,7 @@ void GraphicsContext::strokePath(const Path& path)
 
             float destinationX = roundf(rect.x() - lineWidth);
             float destinationY = roundf(rect.y() - lineWidth);
-            CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer);
-            CGLayerRelease(layer);
+            CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
         } else {
             CGContextStateSaver stateSaver(context);
             CGContextBeginPath(context);
@@ -817,8 +813,8 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         if (hasShadow()) {
             FloatSize layerSize = getCTM().mapSize(rect.size());
 
-            CGLayerRef layer = CGLayerCreateWithContext(context, layerSize, 0);
-            CGContextRef layerContext = CGLayerGetContext(layer);
+            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
+            CGContextRef layerContext = CGLayerGetContext(layer.get());
 
             CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
             CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
@@ -827,8 +823,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
             CGContextConcatCTM(layerContext, m_state.fillGradientSpaceTransform);
             m_state.fillGradient->paint(layerContext);
-            CGContextDrawLayerInRect(context, rect, layer);
-            CGLayerRelease(layer);
+            CGContextDrawLayerInRect(context, rect, layer.get());
         } else {
             CGContextClipToRect(context, rect);
             CGContextConcatCTM(context, m_state.fillGradientSpaceTransform);
@@ -1226,9 +1221,9 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
             float adjustedHeight = ceilf(rect.height() + doubleLineWidth);
             FloatSize layerSize = getCTM().mapSize(FloatSize(adjustedWidth, adjustedHeight));
 
-            CGLayerRef layer = CGLayerCreateWithContext(context, layerSize, 0);
+            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
 
-            CGContextRef layerContext = CGLayerGetContext(layer);
+            CGContextRef layerContext = CGLayerGetContext(layer.get());
             m_state.strokeThickness = lineWidth;
             CGContextSetLineWidth(layerContext, lineWidth);
 
@@ -1248,8 +1243,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
 
             const float destinationX = roundf(rect.x() - lineWidth);
             const float destinationY = roundf(rect.y() - lineWidth);
-            CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer);
-            CGLayerRelease(layer);
+            CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
         } else {
             CGContextStateSaver stateSaver(context);
             setStrokeThickness(lineWidth);

@@ -50,7 +50,7 @@ private:
     void setupConnectionScheduling(CFURLConnectionRef) override;
     void releaseHandle() override;
 
-    CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef) override;
+    RetainPtr<CFURLRequestRef> willSendRequest(CFURLRequestRef, CFURLResponseRef) override;
     void didReceiveResponse(CFURLConnectionRef, CFURLResponseRef) override;
     void didReceiveData(CFDataRef, CFIndex originalLength) override;
     void didFinishLoading() override;

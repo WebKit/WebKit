@@ -107,16 +107,14 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
 
     ASSERT(pixelData.bitsPerPixel() == 32);
 
-    CGContextRef bitmapContext = CGBitmapContextCreate(pixelData.buffer(), pixelData.size().width(), pixelData.size().height(), 8,
+    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixelData.buffer(), pixelData.size().width(), pixelData.size().height(), 8,
                                                        pixelData.bytesPerRow(), sRGBColorSpaceRef(), kCGBitmapByteOrder32Little |
-                                                       (supportAlphaBlend ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst));
+                                                       (supportAlphaBlend ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst)));
 
-    CGImageRef image = CGBitmapContextCreateImage(bitmapContext);
-    CGContextDrawImage(m_data->m_cgContext.get(), dstRect, image);
+    auto image = adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
+    CGContextDrawImage(m_data->m_cgContext.get(), dstRect, image.get());
     
     // Delete all our junk.
-    CGImageRelease(image);
-    CGContextRelease(bitmapContext);
     ::DeleteDC(hdc);
 }
 
@@ -147,16 +145,16 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
     offset += radius;
     CGColorRef colorRef = color.isValid() ? cachedCGColor(color) : nullptr;
 
-    CGMutablePathRef focusRingPath = CGPathCreateMutable();
+    auto focusRingPath = adoptCF(CGPathCreateMutable());
     unsigned rectCount = rects.size();
     for (unsigned i = 0; i < rectCount; i++)
-        CGPathAddRect(focusRingPath, 0, CGRectInset(rects[i], -offset, -offset));
+        CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rects[i], -offset, -offset));
 
     CGContextRef context = platformContext();
     CGContextSaveGState(context);
 
     CGContextBeginPath(context);
-    CGContextAddPath(context, focusRingPath);
+    CGContextAddPath(context, focusRingPath.get());
 
     // FIXME: We clear the fill color here to avoid getting a black fill when drawing the focus ring.
     // Find out from CG if this is their bug.
@@ -164,8 +162,6 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
 
     CGContextSetFocusRingWithColor(context, radius, colorRef, 0, (CFDictionaryRef)0);
     CGContextFillPath(context);
-
-    CGPathRelease(focusRingPath);
 
     CGContextRestoreGState(context);
 }

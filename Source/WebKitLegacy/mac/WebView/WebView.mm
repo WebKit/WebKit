@@ -8403,13 +8403,13 @@ FORWARD(toggleUnderline)
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
         return;
 
-    NSString *nsurlCacheDirectory = CFBridgingRelease(_CFURLCacheCopyCacheDirectory([[NSURLCache sharedURLCache] _CFURLCache]));
+    auto nsurlCacheDirectory = adoptCF(_CFURLCacheCopyCacheDirectory([[NSURLCache sharedURLCache] _CFURLCache]));
     if (!nsurlCacheDirectory)
-        nsurlCacheDirectory = NSHomeDirectory();
+        nsurlCacheDirectory = (__bridge CFStringRef)NSHomeDirectory();
 
     static uint64_t memSize = ramSize() / 1024 / 1024;
 
-    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:nsurlCacheDirectory error:nullptr];
+    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:(__bridge NSString *)nsurlCacheDirectory.get() error:nullptr];
     unsigned long long diskFreeSize = [[fileSystemAttributesDictionary objectForKey:NSFileSystemFreeSize] unsignedLongLongValue] / 1024 / 1000;
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];

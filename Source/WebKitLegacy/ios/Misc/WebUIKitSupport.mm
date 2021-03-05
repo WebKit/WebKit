@@ -55,9 +55,8 @@ static void LoadWebLocalizedStringsTimerCallback(CFRunLoopTimerRef timer, void *
 
 static void LoadWebLocalizedStrings()
 {
-    CFRunLoopTimerRef timer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent(), 0, 0, 0, &LoadWebLocalizedStringsTimerCallback, NULL);
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, kCFRunLoopCommonModes);
-    CFRelease(timer);
+    auto timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent(), 0, 0, 0, &LoadWebLocalizedStringsTimerCallback, NULL));
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer.get(), kCFRunLoopCommonModes);
 }
 
 void WebKitInitialize(void)

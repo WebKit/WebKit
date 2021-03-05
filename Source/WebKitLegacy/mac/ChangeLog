@@ -1,3 +1,29 @@
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222760
+
+        Reviewed by Darin Adler.
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit by using RetainPtr<>.
+
+        * Misc/WebLocalizableStrings.mm:
+        * Misc/WebNSDataExtras.mm:
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::preferredBundleLocalizationName):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView status:]):
+        * WebCoreSupport/WebProgressTrackerClient.mm:
+        (WebProgressTrackerClient::progressEstimateChanged):
+        * WebInspector/WebNodeHighlightView.mm:
+        (layerPathWithHole):
+        (layerPath):
+        * WebView/WebFrame.mm:
+        (createUniqueWebDataURL):
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2021-03-04  Chris Dumez  <cdumez@apple.com>
 
         [macOS][WK2] Changing the system language does not update navigator.language

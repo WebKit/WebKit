@@ -236,28 +236,26 @@ static void layerPathWithHole(CAShapeLayer *layer, const FloatQuad& outerQuad, c
         innerHole = quadIntersection(outerQuad, holeQuad);
 
     // Clockwise inside rect (hole), Counter-Clockwise outside rect (fill).
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathMoveToPoint(path, 0, innerHole.p1().x(), innerHole.p1().y());
-    CGPathAddLineToPoint(path, 0, innerHole.p2().x(), innerHole.p2().y());
-    CGPathAddLineToPoint(path, 0, innerHole.p3().x(), innerHole.p3().y());
-    CGPathAddLineToPoint(path, 0, innerHole.p4().x(), innerHole.p4().y());
-    CGPathMoveToPoint(path, 0, outerQuad.p1().x(), outerQuad.p1().y());
-    CGPathAddLineToPoint(path, 0, outerQuad.p4().x(), outerQuad.p4().y());
-    CGPathAddLineToPoint(path, 0, outerQuad.p3().x(), outerQuad.p3().y());
-    CGPathAddLineToPoint(path, 0, outerQuad.p2().x(), outerQuad.p2().y());
-    layer.path = path;
-    CGPathRelease(path);
+    auto path = adoptCF(CGPathCreateMutable());
+    CGPathMoveToPoint(path.get(), 0, innerHole.p1().x(), innerHole.p1().y());
+    CGPathAddLineToPoint(path.get(), 0, innerHole.p2().x(), innerHole.p2().y());
+    CGPathAddLineToPoint(path.get(), 0, innerHole.p3().x(), innerHole.p3().y());
+    CGPathAddLineToPoint(path.get(), 0, innerHole.p4().x(), innerHole.p4().y());
+    CGPathMoveToPoint(path.get(), 0, outerQuad.p1().x(), outerQuad.p1().y());
+    CGPathAddLineToPoint(path.get(), 0, outerQuad.p4().x(), outerQuad.p4().y());
+    CGPathAddLineToPoint(path.get(), 0, outerQuad.p3().x(), outerQuad.p3().y());
+    CGPathAddLineToPoint(path.get(), 0, outerQuad.p2().x(), outerQuad.p2().y());
+    layer.path = path.get();
 }
 
 static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 {
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathMoveToPoint(path, 0, outerQuad.p1().x(), outerQuad.p1().y());
-    CGPathAddLineToPoint(path, 0, outerQuad.p4().x(), outerQuad.p4().y());
-    CGPathAddLineToPoint(path, 0, outerQuad.p3().x(), outerQuad.p3().y());
-    CGPathAddLineToPoint(path, 0, outerQuad.p2().x(), outerQuad.p2().y());
-    layer.path = path;
-    CGPathRelease(path);
+    auto path = adoptCF(CGPathCreateMutable());
+    CGPathMoveToPoint(path.get(), 0, outerQuad.p1().x(), outerQuad.p1().y());
+    CGPathAddLineToPoint(path.get(), 0, outerQuad.p4().x(), outerQuad.p4().y());
+    CGPathAddLineToPoint(path.get(), 0, outerQuad.p3().x(), outerQuad.p3().y());
+    CGPathAddLineToPoint(path.get(), 0, outerQuad.p2().x(), outerQuad.p2().y());
+    layer.path = path.get();
 }
 
 - (void)_layoutForNodeHighlight:(InspectorOverlay::Highlight*)highlight parent:(CALayer *)parentLayer

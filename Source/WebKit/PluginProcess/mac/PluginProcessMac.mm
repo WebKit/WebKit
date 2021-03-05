@@ -312,19 +312,16 @@ static void initializeCocoaOverrides()
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
 
     // Track when any Cocoa window is about to be be shown.
-    id orderOnScreenObserver = [defaultCenter addObserverForName:NSWindowWillOrderOnScreenNotification
-                                                          object:nil
-                                                           queue:nil
-                                                           usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowShown([notification object]); }];
+    [defaultCenter addObserverForName:NSWindowWillOrderOnScreenNotification
+                               object:nil
+                                queue:nil
+                           usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowShown([notification object]); }];
     // Track when any Cocoa window is about to be hidden.
-    id orderOffScreenObserver = [defaultCenter addObserverForName:NSWindowWillOrderOffScreenNotification
-                                                           object:nil
-                                                            queue:nil
-                                                       usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowHidden([notification object]); }];
+    [defaultCenter addObserverForName:NSWindowWillOrderOffScreenNotification
+                               object:nil
+                                queue:nil
+                           usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowHidden([notification object]); }];
 
-    // Leak the two observers so that they observe notifications for the lifetime of the process.
-    CFRetain((__bridge CFTypeRef)orderOnScreenObserver);
-    CFRetain((__bridge CFTypeRef)orderOffScreenObserver);
 }
 
 void PluginProcess::setModalWindowIsShowing(bool modalWindowIsShowing)

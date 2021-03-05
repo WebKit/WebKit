@@ -1,3 +1,54 @@
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222760
+
+        Reviewed by Darin Adler.
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit by using RetainPtr<>.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObjectMac.mm:
+        (createCoreAnimationLayer):
+        * DumpRenderTree/mac/AccessibilityCommonMac.mm:
+        (+[NSString stringWithJSStringRef:]):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateFontIOS):
+        (dumpRenderTree):
+        (invalidateAnyPreviousWaitToDumpWatchdog):
+        (setWaitToDumpWatchdog):
+        (dump):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:continuously:]):
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (takeWindowSnapshot):
+        (createBitmapContextFromWebView):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::addDisallowedURL):
+        (TestRunner::setWaitToDump):
+        * FontWithFeatures/FontWithFeatures/main.cpp:
+        (constructFontWithTrueTypeFeature):
+        (constructFontWithOpenTypeFeature):
+        (drawText):
+        (main):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (+[NSString stringWithJSStringRef:]):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.mm:
+        (+[NSString stringWithJSStringRef:]):
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator _createIOHIDEventWithInfo:]):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (-[EventSenderSyntheticEvent initPressureEventAtLocation:globalLocation:stage:pressure:stageTransition:phase:time:eventNumber:window:]):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::cfString):
+        (WTR::UIScriptControllerMac::replaceTextAtRange):
+
 2021-03-05  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Clang warnings in MiniBrowser build

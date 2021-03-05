@@ -53,39 +53,33 @@ BSTR MarshallingHelpers::URLToBSTR(const URL& url)
 }
 
 #if USE(CF)
-CFURLRef MarshallingHelpers::PathStringToFileCFURLRef(const String& string)
+RetainPtr<CFURLRef> MarshallingHelpers::PathStringToFileCFURLRef(const String& string)
 {
-    return CFURLCreateWithFileSystemPath(0, string.createCFString().get(), kCFURLWindowsPathStyle, false);
+    return adoptCF(CFURLCreateWithFileSystemPath(0, string.createCFString().get(), kCFURLWindowsPathStyle, false));
 }
 
 String MarshallingHelpers::FileCFURLRefToPathString(CFURLRef fileURL)
 {
-    CFStringRef string = CFURLCopyFileSystemPath(fileURL, kCFURLWindowsPathStyle);
-    String result(string);
-    CFRelease(string);
-    return result;
+    return adoptCF(CFURLCopyFileSystemPath(fileURL, kCFURLWindowsPathStyle)).get();
 }
 
-CFURLRef MarshallingHelpers::BSTRToCFURLRef(BSTR urlStr)
+RetainPtr<CFURLRef> MarshallingHelpers::BSTRToCFURLRef(BSTR urlStr)
 {
-    CFStringRef urlCFString = BSTRToCFStringRef(urlStr);
+    auto urlCFString = BSTRToCFStringRef(urlStr);
     if (!urlCFString)
-        return 0;
+        return nullptr;
 
-    CFURLRef urlRef = CFURLCreateWithString(0, urlCFString, 0);
-    CFRelease(urlCFString);
-
-    return urlRef;
+    return adoptCF(CFURLCreateWithString(nullptr, urlCFString.get(), nullptr));
 }
 
-CFStringRef MarshallingHelpers::BSTRToCFStringRef(BSTR str)
+RetainPtr<CFStringRef> MarshallingHelpers::BSTRToCFStringRef(BSTR str)
 {
-    return CFStringCreateWithCharacters(0, (const UniChar*)(str ? str : TEXT("")), SysStringLen(str));
+    return adoptCF(CFStringCreateWithCharacters(0, (const UniChar*)(str ? str : TEXT("")), SysStringLen(str)));
 }
 
-CFStringRef MarshallingHelpers::LPCOLESTRToCFStringRef(LPCOLESTR str)
+RetainPtr<CFStringRef> MarshallingHelpers::LPCOLESTRToCFStringRef(LPCOLESTR str)
 {
-    return CFStringCreateWithCharacters(0, (const UniChar*)(str ? str : TEXT("")), (CFIndex)(str ? wcslen(str) : 0));
+    return adoptCF(CFStringCreateWithCharacters(0, (const UniChar*)(str ? str : TEXT("")), (CFIndex)(str ? wcslen(str) : 0)));
 }
 
 BSTR MarshallingHelpers::CFStringRefToBSTR(CFStringRef str)
@@ -100,9 +94,9 @@ int MarshallingHelpers::CFNumberRefToInt(CFNumberRef num)
     return number;
 }
 
-CFNumberRef MarshallingHelpers::intToCFNumberRef(int num)
+RetainPtr<CFNumberRef> MarshallingHelpers::intToCFNumberRef(int num)
 {
-    return CFNumberCreate(0, kCFNumberSInt32Type, &num);
+    return adoptCF(CFNumberCreate(0, kCFNumberSInt32Type, &num));
 }
 #endif
 
@@ -244,7 +238,7 @@ SAFEARRAY* MarshallingHelpers::iunknownArrayToSafeArray(CFArrayRef inArray)
     return sa;
 }
 
-CFArrayRef MarshallingHelpers::safeArrayToStringArray(SAFEARRAY* inArray)
+RetainPtr<CFArrayRef> MarshallingHelpers::safeArrayToStringArray(SAFEARRAY* inArray)
 {
     long lBound=0, uBound=-1;
     HRESULT hr = ::SafeArrayGetLBound(inArray, 1, &lBound);
@@ -257,14 +251,13 @@ CFArrayRef MarshallingHelpers::safeArrayToStringArray(SAFEARRAY* inArray)
         for (; lBound <= uBound; lBound++) {
             BString str;
             hr = ::SafeArrayGetElement(inArray, &lBound, &str);
-            items[lBound] = BSTRToCFStringRef(str);
+            items[lBound] = BSTRToCFStringRef(str).leakRef();
         }
     }
-    CFArrayRef result = CFArrayCreate(0, (const void**)items.data(), len, &kCFTypeArrayCallBacks);
-    return result;
+    return adoptCF(CFArrayCreate(0, (const void**)items.data(), len, &kCFTypeArrayCallBacks));
 }
 
-CFArrayRef MarshallingHelpers::safeArrayToIntArray(SAFEARRAY* inArray)
+RetainPtr<CFArrayRef> MarshallingHelpers::safeArrayToIntArray(SAFEARRAY* inArray)
 {
     long lBound=0, uBound=-1;
     HRESULT hr = ::SafeArrayGetLBound(inArray, 1, &lBound);
@@ -277,14 +270,13 @@ CFArrayRef MarshallingHelpers::safeArrayToIntArray(SAFEARRAY* inArray)
         for (; lBound <= uBound; lBound++) {
             int num = 0;
             hr = ::SafeArrayGetElement(inArray, &lBound, &num);
-            items[lBound] = SUCCEEDED(hr) ? intToCFNumberRef(num) : kCFNumberNaN;
+            items[lBound] = SUCCEEDED(hr) ? intToCFNumberRef(num).leakRef() : kCFNumberNaN;
         }
     }
-    CFArrayRef result = CFArrayCreate(0, (const void**)items.data(), len, &kCFTypeArrayCallBacks);
-    return result;
+    return adoptCF(CFArrayCreate(0, (const void**)items.data(), len, &kCFTypeArrayCallBacks));
 }
 
-CFArrayRef MarshallingHelpers::safeArrayToIUnknownArray(SAFEARRAY* inArray)
+RetainPtr<CFArrayRef> MarshallingHelpers::safeArrayToIUnknownArray(SAFEARRAY* inArray)
 {
     long lBound=0, uBound=-1;
     HRESULT hr = ::SafeArrayGetLBound(inArray, 1, &lBound);
@@ -293,7 +285,7 @@ CFArrayRef MarshallingHelpers::safeArrayToIUnknownArray(SAFEARRAY* inArray)
     long len = (SUCCEEDED(hr)) ? (uBound-lBound+1) : 0;
     void* items = nullptr;
     hr = ::SafeArrayAccessData(inArray, &items);
-    CFArrayRef result = SUCCEEDED(hr) ? CFArrayCreate(0, (const void**) items, len, &kIUnknownArrayCallBacks) : nullptr;
+    auto result = SUCCEEDED(hr) ? adoptCF(CFArrayCreate(0, (const void**) items, len, &kIUnknownArrayCallBacks)) : nullptr;
     hr = ::SafeArrayUnaccessData(inArray);
     return result;
 }

@@ -282,10 +282,8 @@ void ResourceRequest::doUpdateResourceRequest()
         m_cachePolicy = fromPlatformRequestCachePolicy(CFURLRequestGetCachePolicy(m_cfRequest.get()));
     m_timeoutInterval = CFURLRequestGetTimeoutInterval(m_cfRequest.get());
     m_firstPartyForCookies = CFURLRequestGetMainDocumentURL(m_cfRequest.get());
-    if (CFStringRef method = CFURLRequestCopyHTTPRequestMethod(m_cfRequest.get())) {
-        m_httpMethod = method;
-        CFRelease(method);
-    }
+    if (auto method = adoptCF(CFURLRequestCopyHTTPRequestMethod(m_cfRequest.get())))
+        m_httpMethod = method.get();
     m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
 
     if (resourcePrioritiesEnabled())
@@ -306,14 +304,13 @@ void ResourceRequest::doUpdateResourceRequest()
 #endif
 
     m_httpHeaderFields.clear();
-    if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {
-        CFIndex headerCount = CFDictionaryGetCount(headers);
+    if (auto headers = adoptCF(CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get()))) {
+        CFIndex headerCount = CFDictionaryGetCount(headers.get());
         Vector<const void*, 128> keys(headerCount);
         Vector<const void*, 128> values(headerCount);
-        CFDictionaryGetKeysAndValues(headers, keys.data(), values.data());
+        CFDictionaryGetKeysAndValues(headers.get(), keys.data(), values.data());
         for (int i = 0; i < headerCount; ++i)
             m_httpHeaderFields.set((CFStringRef)keys[i], (CFStringRef)values[i]);
-        CFRelease(headers);
     }
 
     m_responseContentDispositionEncodingFallbackArray.clear();

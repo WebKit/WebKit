@@ -92,10 +92,10 @@ void loadIDNAllowedScriptList()
     
 static String decodePercentEscapes(const String& string)
 {
-    NSString *substring = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapes(nullptr, string.createCFString().get(), CFSTR("")));
+    auto substring = adoptCF(CFURLCreateStringByReplacingPercentEscapes(nullptr, string.createCFString().get(), CFSTR("")));
     if (!substring)
         return string;
-    return substring;
+    return substring.get();
 }
 
 NSString *decodeHostName(NSString *string)
@@ -138,11 +138,11 @@ NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *URL, CFURLComponentType
         CFURLGetBytes((__bridge CFURLRef)URL, urlBytes.data(), numBytes);
     }
 
-    CFURLRef result = CFURLCreateWithBytes(nullptr, urlBytes.data(), fragRg.location - 1, kCFStringEncodingUTF8, nullptr);
+    auto result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes.data(), fragRg.location - 1, kCFStringEncodingUTF8, nullptr));
     if (!result)
-        result = CFURLCreateWithBytes(nullptr, urlBytes.data(), fragRg.location - 1, kCFStringEncodingISOLatin1, nullptr);
+        result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes.data(), fragRg.location - 1, kCFStringEncodingISOLatin1, nullptr));
         
-    return result ? CFBridgingRelease(result) : URL;
+    return result ? result.bridgingAutorelease() : URL;
 }
 
 static NSURL *URLByRemovingResourceSpecifier(NSURL *URL)
@@ -155,7 +155,6 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
     if (!data)
         return nil;
     
-    NSURL *result = nil;
     size_t length = [data length];
     if (length > 0) {
         // work around <rdar://4470771>: CFURLCreateAbsoluteURLWithBytes(.., TRUE) doesn't remove non-path components.
@@ -171,13 +170,12 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
         // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
         // onto using ISO Latin 1 in those cases.
-        result = CFBridgingRelease(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, (__bridge CFURLRef)baseURL, YES));
+        auto result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, (__bridge CFURLRef)baseURL, YES));
         if (!result)
-            result = CFBridgingRelease(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingISOLatin1, (__bridge CFURLRef)baseURL, YES));
-    } else
-        result = [NSURL URLWithString:@""];
-
-    return result;
+            result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingISOLatin1, (__bridge CFURLRef)baseURL, YES));
+        return result.bridgingAutorelease();
+    }
+    return [NSURL URLWithString:@""];
 }
 static NSData *dataWithUserTypedString(NSString *string)
 {
@@ -336,11 +334,11 @@ static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComp
         
     memmove(urlBytes + range.location, urlBytes + range.location + range.length, numBytes - range.location + range.length);
     
-    CFURLRef result = CFURLCreateWithBytes(nullptr, urlBytes, numBytes - range.length, kCFStringEncodingUTF8, nullptr);
+    auto result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes, numBytes - range.length, kCFStringEncodingUTF8, nullptr));
     if (!result)
-        result = CFURLCreateWithBytes(nullptr, urlBytes, numBytes - range.length, kCFStringEncodingISOLatin1, nullptr);
+        result = adoptCF(CFURLCreateWithBytes(nullptr, urlBytes, numBytes - range.length, kCFStringEncodingISOLatin1, nullptr));
                 
-    return result ? CFBridgingRelease(result) : URL;
+    return result ? result.bridgingAutorelease() : URL;
 }
 
 NSURL *URLByRemovingUserInfo(NSURL *URL)

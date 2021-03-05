@@ -43,7 +43,7 @@
     if (!jsStringRef)
         return nil;
 
-    return CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsStringRef));
+    return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsStringRef)).bridgingAutorelease();
 }
 
 - (JSRetainPtr<JSStringRef>)createJSStringRef

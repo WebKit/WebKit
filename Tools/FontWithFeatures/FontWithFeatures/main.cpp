@@ -32,50 +32,39 @@
 #include <ImageIO/ImageIO.h>
 #include <fstream>
 
-static CTFontDescriptorRef constructFontWithTrueTypeFeature(CTFontDescriptorRef fontDescriptor, int type, int selector)
+static RetainPtr<CTFontDescriptorRef> constructFontWithTrueTypeFeature(CTFontDescriptorRef fontDescriptor, int type, int selector)
 {
-    CFNumberRef typeValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &type);
-    CFNumberRef selectorValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &selector);
+    auto typeValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &type));
+    auto selectorValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &selector));
     CFTypeRef featureDictionaryKeys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
-    CFTypeRef featureDictionaryValues[] = { typeValue, selectorValue };
-    CFDictionaryRef featureDictionary = CFDictionaryCreate(kCFAllocatorDefault, featureDictionaryKeys, featureDictionaryValues, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFRelease(typeValue);
-    CFRelease(selectorValue);
+    CFTypeRef featureDictionaryValues[] = { typeValue.get(), selectorValue.get() };
+    auto featureDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureDictionaryKeys, featureDictionaryValues, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    CFTypeRef featureSettingsValues[] = { featureDictionary };
-    CFArrayRef fontFeatureSettings = CFArrayCreate(kCFAllocatorDefault, featureSettingsValues, 1, &kCFTypeArrayCallBacks);
-    CFRelease(featureDictionary);
+    CFTypeRef featureSettingsValues[] = { featureDictionary.get() };
+    auto fontFeatureSettings = adoptCF(CFArrayCreate(kCFAllocatorDefault, featureSettingsValues, 1, &kCFTypeArrayCallBacks));
 
     CFTypeRef fontDescriptorKeys[] = { kCTFontFeatureSettingsAttribute };
-    CFTypeRef fontDescriptorValues[] = { fontFeatureSettings };
-    CFDictionaryRef fontDescriptorAttributes = CFDictionaryCreate(kCFAllocatorDefault, fontDescriptorKeys, fontDescriptorValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFRelease(fontFeatureSettings);
+    CFTypeRef fontDescriptorValues[] = { fontFeatureSettings.get() };
+    auto fontDescriptorAttributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, fontDescriptorKeys, fontDescriptorValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    CTFontDescriptorRef modifiedFontDescriptor = CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, fontDescriptorAttributes);
-    CFRelease(fontDescriptorAttributes);
-    return modifiedFontDescriptor;
+    return adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, fontDescriptorAttributes.get()));
 }
 
-static CTFontDescriptorRef constructFontWithOpenTypeFeature(CTFontDescriptorRef fontDescriptor, CFStringRef feature, int value)
+static RetainPtr<CTFontDescriptorRef> constructFontWithOpenTypeFeature(CTFontDescriptorRef fontDescriptor, CFStringRef feature, int value)
 {
-    CFNumberRef featureValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &value);
+    auto featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &value));
     CFTypeRef featureDictionaryKeys[] = { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
-    CFTypeRef featureDictionaryValues[] = { feature, featureValue };
-    CFDictionaryRef featureDictionary = CFDictionaryCreate(kCFAllocatorDefault, featureDictionaryKeys, featureDictionaryValues, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFRelease(featureValue);
+    CFTypeRef featureDictionaryValues[] = { feature, featureValue.get() };
+    auto featureDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureDictionaryKeys, featureDictionaryValues, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    CFTypeRef featureSettingsValues[] = { featureDictionary };
-    CFArrayRef fontFeatureSettings = CFArrayCreate(kCFAllocatorDefault, featureSettingsValues, 1, &kCFTypeArrayCallBacks);
-    CFRelease(featureDictionary);
+    CFTypeRef featureSettingsValues[] = { featureDictionary.get() };
+    auto fontFeatureSettings = adoptCF(CFArrayCreate(kCFAllocatorDefault, featureSettingsValues, 1, &kCFTypeArrayCallBacks));
 
     CFTypeRef fontDescriptorKeys[] = { kCTFontFeatureSettingsAttribute };
-    CFTypeRef fontDescriptorValues[] = { fontFeatureSettings };
-    CFDictionaryRef fontDescriptorAttributes = CFDictionaryCreate(kCFAllocatorDefault, fontDescriptorKeys, fontDescriptorValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFRelease(fontFeatureSettings);
+    CFTypeRef fontDescriptorValues[] = { fontFeatureSettings.get() };
+    auto fontDescriptorAttributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, fontDescriptorKeys, fontDescriptorValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    CTFontDescriptorRef modifiedFontDescriptor = CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, fontDescriptorAttributes);
-    CFRelease(fontDescriptorAttributes);
-    return modifiedFontDescriptor;
+    return adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, fontDescriptorAttributes.get()));
 }
 
 static void drawText(CGContextRef context, CTFontDescriptorRef fontDescriptor, CFStringRef prefix, CGPoint location)
@@ -84,37 +73,29 @@ static void drawText(CGContextRef context, CTFontDescriptorRef fontDescriptor, C
     CGContextSetTextPosition(context, location.x, location.y);
 
     CGFloat fontSize = 25;
-    CTFontRef font = CTFontCreateWithFontDescriptor(fontDescriptor, fontSize, nullptr);
+    auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, fontSize, nullptr));
 
-    CFMutableStringRef string = CFStringCreateMutable(kCFAllocatorDefault, 0);
-    CFStringAppend(string, prefix);
-    CFStringAppend(string, CFSTR("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
+    auto string = adoptCF(CFStringCreateMutable(kCFAllocatorDefault, 0));
+    CFStringAppend(string.get(), prefix);
+    CFStringAppend(string.get(), CFSTR("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
 
-    CGColorRef red = CGColorCreateGenericRGB(1, 0, 0, 1);
+    auto red = adoptCF(CGColorCreateGenericRGB(1, 0, 0, 1));
     CFTypeRef lineKeys[] = { kCTForegroundColorAttributeName };
-    CFTypeRef lineValues[] = { red };
-    CFDictionaryRef lineAttributes = CFDictionaryCreate(kCFAllocatorDefault, lineKeys, lineValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CGColorRelease(red);
+    CFTypeRef lineValues[] = { red.get() };
+    auto lineAttributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, lineKeys, lineValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    CFAttributedStringRef attributedString = CFAttributedStringCreate(kCFAllocatorDefault, string, lineAttributes);
-    CFRelease(lineAttributes);
+    auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), lineAttributes.get()));
 
-    CFMutableAttributedStringRef mutableAttributedString = CFAttributedStringCreateMutableCopy(kCFAllocatorDefault, 0, attributedString);
-    CFRelease(attributedString);
+    auto mutableAttributedString = adoptCF(CFAttributedStringCreateMutableCopy(kCFAllocatorDefault, 0, attributedString.get()));
 
-    CTFontRef monospaceFont = CTFontCreateWithName(CFSTR("Courier"), fontSize, nullptr);
-    CFAttributedStringSetAttribute(mutableAttributedString, CFRangeMake(0, CFStringGetLength(prefix)), kCTFontAttributeName, monospaceFont);
-    CFRelease(monospaceFont);
+    auto monospaceFont = adoptCF(CTFontCreateWithName(CFSTR("Courier"), fontSize, nullptr));
+    CFAttributedStringSetAttribute(mutableAttributedString.get(), CFRangeMake(0, CFStringGetLength(prefix)), kCTFontAttributeName, monospaceFont.get());
 
-    CFAttributedStringSetAttribute(mutableAttributedString, CFRangeMake(CFStringGetLength(prefix), CFStringGetLength(string) - CFStringGetLength(prefix)), kCTFontAttributeName, font);
-    CFRelease(string);
-    CFRelease(font);
+    CFAttributedStringSetAttribute(mutableAttributedString.get(), CFRangeMake(CFStringGetLength(prefix), CFStringGetLength(string.get()) - CFStringGetLength(prefix)), kCTFontAttributeName, font.get());
 
-    CTLineRef line = CTLineCreateWithAttributedString(mutableAttributedString);
-    CFRelease(mutableAttributedString);
+    auto line = adoptCF(CTLineCreateWithAttributedString(mutableAttributedString.get()));
 
-    CTLineDraw(line, context);
-    CFRelease(line);
+    CTLineDraw(line.get(), context);
 }
 
 int main(int argc, const char * argv[])
@@ -122,7 +103,7 @@ int main(int argc, const char * argv[])
     size_t width = 2500;
     size_t height = 2000;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(nullptr, width, height, 8, width * 4, colorSpace, kCGImageAlphaNoneSkipLast);
+    auto context = adoptCF(CGBitmapContextCreate(nullptr, width, height, 8, width * 4, colorSpace, kCGImageAlphaNoneSkipLast));
     CGColorSpaceRelease(colorSpace);
     Type type = Type::TrueType;
     const std::vector<uint8_t> fontVector = generateFont(type);
@@ -131,49 +112,40 @@ int main(int argc, const char * argv[])
         outputFile << b;
     outputFile.close();
     
-    CFDataRef fontData = CFDataCreate(kCFAllocatorDefault, fontVector.data(), fontVector.size());
-    CTFontDescriptorRef fontDescriptor = CTFontManagerCreateFontDescriptorFromData(fontData);
-    CFRelease(fontData);
+    auto fontData = adoptCF(CFDataCreate(kCFAllocatorDefault, fontVector.data(), fontVector.size()));
+    auto fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(fontData.get()));
 
     if (type == Type::OpenType) {
         CFTypeRef featureValuesOpenType[] = { CFSTR("liga"), CFSTR("clig"), CFSTR("dlig"), CFSTR("hlig"), CFSTR("calt"), CFSTR("subs"), CFSTR("sups"), CFSTR("smcp"), CFSTR("c2sc"), CFSTR("pcap"), CFSTR("c2pc"), CFSTR("unic"), CFSTR("titl"), CFSTR("onum"), CFSTR("pnum"), CFSTR("tnum"), CFSTR("frac"), CFSTR("afrc"), CFSTR("ordn"), CFSTR("zero"), CFSTR("hist"), CFSTR("jp78"), CFSTR("jp83"), CFSTR("jp90"), CFSTR("jp04"), CFSTR("smpl"), CFSTR("trad"), CFSTR("fwid"), CFSTR("pwid"), CFSTR("ruby") };
-        CFArrayRef features = CFArrayCreate(kCFAllocatorDefault, featureValuesOpenType, 30, &kCFTypeArrayCallBacks);
+        auto features = adoptCF(CFArrayCreate(kCFAllocatorDefault, featureValuesOpenType, 30, &kCFTypeArrayCallBacks));
 
-        for (CFIndex i = 0; i < CFArrayGetCount(features); ++i) {
-            CFStringRef feature = static_cast<CFStringRef>(CFArrayGetValueAtIndex(features, i));
-            CTFontDescriptorRef modifiedFontDescriptor = constructFontWithOpenTypeFeature(fontDescriptor, feature, 1);
-            CFMutableStringRef prefix = CFStringCreateMutable(kCFAllocatorDefault, 0);
-            CFStringAppend(prefix, feature);
-            CFStringAppend(prefix, CFSTR("  (on): "));
-            drawText(context, modifiedFontDescriptor, prefix, CGPointMake(25, 1950 - 50 * i));
-            CFRelease(prefix);
-            CFRelease(modifiedFontDescriptor);
+        for (CFIndex i = 0; i < CFArrayGetCount(features.get()); ++i) {
+            CFStringRef feature = static_cast<CFStringRef>(CFArrayGetValueAtIndex(features.get(), i));
+            auto modifiedFontDescriptor = constructFontWithOpenTypeFeature(fontDescriptor.get(), feature, 1);
+            auto prefix = adoptCF(CFStringCreateMutable(kCFAllocatorDefault, 0));
+            CFStringAppend(prefix.get(), feature);
+            CFStringAppend(prefix.get(), CFSTR("  (on): "));
+            drawText(context.get(), modifiedFontDescriptor.get(), prefix.get(), CGPointMake(25, 1950 - 50 * i));
 
-            modifiedFontDescriptor = constructFontWithOpenTypeFeature(fontDescriptor, feature, 0);
-            prefix = CFStringCreateMutable(kCFAllocatorDefault, 0);
-            CFStringAppend(prefix, feature);
-            CFStringAppend(prefix, CFSTR(" (off): "));
-            drawText(context, modifiedFontDescriptor, prefix, CGPointMake(25, 1925 - 50 * i));
-            CFRelease(prefix);
-            CFRelease(modifiedFontDescriptor);
+            modifiedFontDescriptor = constructFontWithOpenTypeFeature(fontDescriptor.get(), feature, 0);
+            prefix = adoptCF(CFStringCreateMutable(kCFAllocatorDefault, 0));
+            CFStringAppend(prefix.get(), feature);
+            CFStringAppend(prefix.get(), CFSTR(" (off): "));
+            drawText(context.get(), modifiedFontDescriptor.get(), prefix.get(), CGPointMake(25, 1925 - 50 * i));
         }
-
-        CFRelease(features);
     } else {
         __block int i = 0;
         void (^handler)(uint16_t type, CFStringRef typeString, uint16_t selector, CFStringRef selectorString) = ^(uint16_t type, CFStringRef typeString, uint16_t selector, CFStringRef selectorString)
         {
-            CTFontDescriptorRef modifiedFontDescriptor = constructFontWithTrueTypeFeature(fontDescriptor, type, selector);
-            CFMutableStringRef prefix = CFStringCreateMutable(kCFAllocatorDefault, 0);
-            CFStringAppend(prefix, typeString);
-            CFStringAppend(prefix, CFSTR(": "));
-            CFStringAppend(prefix, selectorString);
-            CFStringAppend(prefix, CFSTR(": "));
-            while (CFStringGetLength(prefix) < 65)
-                CFStringAppend(prefix, CFSTR(" "));
-            drawText(context, modifiedFontDescriptor, prefix, CGPointMake(25, 1950 - 40 * i));
-            CFRelease(prefix);
-            CFRelease(modifiedFontDescriptor);
+            auto modifiedFontDescriptor = constructFontWithTrueTypeFeature(fontDescriptor.get(), type, selector);
+            auto prefix = adoptCF(CFStringCreateMutable(kCFAllocatorDefault, 0));
+            CFStringAppend(prefix.get(), typeString);
+            CFStringAppend(prefix.get(), CFSTR(": "));
+            CFStringAppend(prefix.get(), selectorString);
+            CFStringAppend(prefix.get(), CFSTR(": "));
+            while (CFStringGetLength(prefix.get()) < 65)
+                CFStringAppend(prefix.get(), CFSTR(" "));
+            drawText(context.get(), modifiedFontDescriptor.get(), prefix.get(), CGPointMake(25, 1950 - 40 * i));
             ++i;
         };
         handler(kLigaturesType, CFSTR("kLigaturesType"), kCommonLigaturesOnSelector, CFSTR("kCommonLigaturesOnSelector"));
@@ -214,15 +186,10 @@ int main(int argc, const char * argv[])
         handler(kRubyKanaType, CFSTR("kRubyKanaType"), kRubyKanaOnSelector, CFSTR("kRubyKanaOnSelector"));
     }
 
-    CFRelease(fontDescriptor);
-    CGImageRef image = CGBitmapContextCreateImage(context);
-    CGContextRelease(context);
-    CFURLRef url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, CFSTR("/Volumes/Data/home/mmaxfield/tmp/output.png"), kCFURLPOSIXPathStyle, FALSE);
-    CGImageDestinationRef imageDestination = CGImageDestinationCreateWithURL(url, kUTTypePNG, 1, nullptr);
-    CFRelease(url);
-    CGImageDestinationAddImage(imageDestination, image, nullptr);
-    CGImageRelease(image);
-    CGImageDestinationFinalize(imageDestination);
-    CFRelease(imageDestination);
+    auto image = adoptCF(CGBitmapContextCreateImage(context.get()));
+    auto url = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, CFSTR("/Volumes/Data/home/mmaxfield/tmp/output.png"), kCFURLPOSIXPathStyle, FALSE));
+    auto imageDestination = adoptCF(CGImageDestinationCreateWithURL(url.get(), kUTTypePNG, 1, nullptr));
+    CGImageDestinationAddImage(imageDestination.get(), image.get(), nullptr);
+    CGImageDestinationFinalize(imageDestination.get());
     return 0;
 }

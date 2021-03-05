@@ -68,15 +68,14 @@ GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
         return hbmp;
 
     HGDIOBJ hbmpOld = SelectObject(hdc.get(), hbmp.get());
-    CGContextRef context = CGBitmapContextCreate(static_cast<void*>(bits), w, h,
-        8, w * sizeof(RGBQUAD), sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    CGContextSaveGState(context);
+    auto context = adoptCF(CGBitmapContextCreate(static_cast<void*>(bits), w, h,
+        8, w * sizeof(RGBQUAD), sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
+    CGContextSaveGState(context.get());
 
-    GraphicsContext gc(context);
+    GraphicsContext gc(context.get());
 
     drawRectIntoContext(ir, frame->view(), gc);
 
-    CGContextRelease(context);
     SelectObject(hdc.get(), hbmpOld);
 
     frame->view()->setPaintBehavior(oldPaintBehavior);

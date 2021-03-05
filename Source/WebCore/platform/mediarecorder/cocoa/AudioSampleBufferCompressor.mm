@@ -227,9 +227,8 @@ void AudioSampleBufferCompressor::attachPrimingTrimsIfNeeded(CMSampleBufferRef b
     if (CMTIME_COMPARE_INLINE(kCMTimeZero, <, m_remainingPrimeDuration)) {
         CMTime sampleDuration = CMSampleBufferGetDuration(buffer);
         CMTime trimDuration = CMTimeMinimum(sampleDuration, m_remainingPrimeDuration);
-        CFDictionaryRef trimAtStartDict = CMTimeCopyAsDictionary(trimDuration, kCFAllocatorDefault);
-        CMSetAttachment(buffer, kCMSampleBufferAttachmentKey_TrimDurationAtStart, trimAtStartDict, kCMAttachmentMode_ShouldPropagate);
-        CFRelease(trimAtStartDict);
+        auto trimAtStartDict = adoptCF(CMTimeCopyAsDictionary(trimDuration, kCFAllocatorDefault));
+        CMSetAttachment(buffer, kCMSampleBufferAttachmentKey_TrimDurationAtStart, trimAtStartDict.get(), kCMAttachmentMode_ShouldPropagate);
         m_remainingPrimeDuration = CMTimeSubtract(m_remainingPrimeDuration, trimDuration);
     }
 }
@@ -347,7 +346,7 @@ OSStatus AudioSampleBufferCompressor::provideSourceDataNumOutputPackets(UInt32* 
                     break;
 
                 auto sampleBuffer = adoptCF((CMSampleBufferRef)(const_cast<void*>(CMBufferQueueDequeueAndRetain(m_inputBufferQueue.get()))));
-                m_sampleBlockBuffer = adoptCF((CMBlockBufferRef)(const_cast<void*>(CFRetain(CMSampleBufferGetDataBuffer(sampleBuffer.get())))));
+                m_sampleBlockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer.get());
                 if (!m_sampleBlockBuffer) {
                     RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor CMSampleBufferGetDataBuffer failed");
                     m_sampleBlockBufferSize = 0;

@@ -409,50 +409,36 @@ void FontCascade::getPlatformGlyphAdvances(CGFontRef font, const CGAffineTransfo
 
     // <rdar://problem/7761165> The GDI back end in Core Graphics sometimes returns advances that
     // differ from what the font's hmtx table specifies. The following code corrects that.
-    CFDataRef hmtxTable = CGFontCopyTableForTag(font, 'hmtx');
+    auto hmtxTable = adoptCF(CGFontCopyTableForTag(font, 'hmtx'));
     if (!hmtxTable)
         return;
-    CFDataRef hheaTable = CGFontCopyTableForTag(font, 'hhea');
-    if (!hheaTable) {
-        CFRelease(hmtxTable);
+    auto hheaTable = adoptCF(CGFontCopyTableForTag(font, 'hhea'));
+    if (!hheaTable)
         return;
-    }
 
     const CFIndex hheaTableSize = 36;
     const ptrdiff_t hheaTableNumberOfHMetricsOffset = 34;
-    if (CFDataGetLength(hheaTable) < hheaTableSize) {
-        CFRelease(hmtxTable);
-        CFRelease(hheaTable);
+    if (CFDataGetLength(hheaTable.get()) < hheaTableSize)
         return;
-    }
 
-    unsigned short numberOfHMetrics = *reinterpret_cast<const unsigned short*>(CFDataGetBytePtr(hheaTable) + hheaTableNumberOfHMetricsOffset);
+    unsigned short numberOfHMetrics = *reinterpret_cast<const unsigned short*>(CFDataGetBytePtr(hheaTable.get()) + hheaTableNumberOfHMetricsOffset);
     numberOfHMetrics = ((numberOfHMetrics & 0xFF) << 8) | (numberOfHMetrics >> 8);
-    if (!numberOfHMetrics) {
-        CFRelease(hmtxTable);
-        CFRelease(hheaTable);
+    if (!numberOfHMetrics)
         return;
-    }
 
     if (glyph >= numberOfHMetrics)
         glyph = numberOfHMetrics - 1;
 
-    if (CFDataGetLength(hmtxTable) < 4 * (glyph + 1)) {
-        CFRelease(hmtxTable);
-        CFRelease(hheaTable);
+    if (CFDataGetLength(hmtxTable.get()) < 4 * (glyph + 1))
         return;
-    }
 
-    unsigned short advanceInDesignUnits = *reinterpret_cast<const unsigned short*>(CFDataGetBytePtr(hmtxTable) + 4 * glyph);
+    unsigned short advanceInDesignUnits = *reinterpret_cast<const unsigned short*>(CFDataGetBytePtr(hmtxTable.get()) + 4 * glyph);
     advanceInDesignUnits = ((advanceInDesignUnits & 0xFF) << 8) | (advanceInDesignUnits >> 8);
     CGSize horizontalAdvance = CGSizeMake(static_cast<CGFloat>(advanceInDesignUnits) / CGFontGetUnitsPerEm(font), 0);
     horizontalAdvance = CGSizeApplyAffineTransform(horizontalAdvance, m);
     advance.width = horizontalAdvance.width;
     if (!(style & kCGFontRenderingStyleSubpixelPositioning))
         advance.width = roundf(advance.width);
-
-    CFRelease(hheaTable);
-    CFRelease(hmtxTable);
 }
 
 }

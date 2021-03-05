@@ -89,11 +89,10 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
     // FIXME: We should deprecate and eventually remove this obsolete UA override;
     // see https://bugs.webkit.org/show_bug.cgi?id=217927 for details.
     // Check to see if there is a user agent override for all WebKit clients.
-    CFPropertyListRef override = CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"));
+    auto override = adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation")));
     if (override) {
-        if (CFGetTypeID(override) == CFStringGetTypeID())
-            return static_cast<NSString *>(CFBridgingRelease(override));
-        CFRelease(override);
+        if (CFGetTypeID(override.get()) == CFStringGetTypeID())
+            return (__bridge NSString *)override.get();
     }
 
     String osVersion = userAgentOSVersion.isEmpty()  ? systemMarketingVersionForUserAgentString() : userAgentOSVersion;

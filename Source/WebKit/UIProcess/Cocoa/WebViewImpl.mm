@@ -2259,8 +2259,7 @@ bool WebViewImpl::acceptsFirstMouse(NSEvent *event)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    CFRetain((__bridge CFTypeRef)event);
-    CFAutorelease((__bridge CFTypeRef)event);
+    retainPtr(event).autorelease();
 
     if (![m_view hitTest:event.locationInWindow])
         return false;
@@ -2279,8 +2278,7 @@ bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    CFRetain((__bridge CFTypeRef)event);
-    CFAutorelease((__bridge CFTypeRef)event);
+    retainPtr(event).autorelease();
 
     if (![m_view hitTest:event.locationInWindow])
         return false;
@@ -4811,24 +4809,20 @@ void WebViewImpl::doneWithKeyEvent(NSEvent *event, bool eventWasHandled)
 
 NSArray *WebViewImpl::validAttributesForMarkedText()
 {
-    static NSArray *validAttributes;
-    if (!validAttributes) {
-        validAttributes = @[
-            NSUnderlineStyleAttributeName,
-            NSUnderlineColorAttributeName,
-            NSMarkedClauseSegmentAttributeName,
-            NSTextAlternativesAttributeName,
-            NSTextInsertionUndoableAttributeName,
-        ];
-        // NSText also supports the following attributes, but it's
-        // hard to tell which are really required for text input to
-        // work well; I have not seen any input method make use of them yet.
-        //     NSFontAttributeName, NSForegroundColorAttributeName,
-        //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
-        CFRetain(validAttributes);
-    }
+    static NeverDestroyed<RetainPtr<NSArray>> validAttributes = @[
+        NSUnderlineStyleAttributeName,
+        NSUnderlineColorAttributeName,
+        NSMarkedClauseSegmentAttributeName,
+        NSTextAlternativesAttributeName,
+        NSTextInsertionUndoableAttributeName,
+    ];
+    // NSText also supports the following attributes, but it's
+    // hard to tell which are really required for text input to
+    // work well; I have not seen any input method make use of them yet.
+    //     NSFontAttributeName, NSForegroundColorAttributeName,
+    //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
     LOG(TextInput, "validAttributesForMarkedText -> (...)");
-    return validAttributes;
+    return validAttributes.get().get();
 }
 
 static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedString *string)
@@ -5202,8 +5196,7 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    CFRetain((__bridge CFTypeRef)event);
-    CFAutorelease((__bridge CFTypeRef)event);
+    retainPtr(event).autorelease();
 
     // We get Esc key here after processing either Esc or Cmd+period. The former starts as a keyDown, and the latter starts as a key equivalent,
     // but both get transformed to a cancelOperation: command, executing which passes an Esc key event to -performKeyEquivalent:.

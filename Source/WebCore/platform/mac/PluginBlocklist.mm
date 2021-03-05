@@ -69,8 +69,8 @@ bool PluginBlocklist::isPluginUpdateAvailable(NSString *bundleIdentifier)
 
 std::unique_ptr<PluginBlocklist> PluginBlocklist::create(NSDictionary *propertyList)
 {
-    CFDictionaryRef systemVersionDictionary = _CFCopySystemVersionDictionary();
-    CFStringRef osVersion = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary, _kCFSystemVersionProductVersionKey));
+    auto systemVersionDictionary = adoptCF(_CFCopySystemVersionDictionary());
+    CFStringRef osVersion = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary.get(), _kCFSystemVersionProductVersionKey));
 
     NSDictionary *dictionary = [propertyList objectForKey:@"PlugInBlocklist"];
 
@@ -111,8 +111,6 @@ std::unique_ptr<PluginBlocklist> PluginBlocklist::create(NSDictionary *propertyL
             }
         }
     }
-
-    CFRelease(systemVersionDictionary);
 
     return std::unique_ptr<PluginBlocklist>(new PluginBlocklist(bundleIDToMinimumSecureVersion, bundleIDToMinimumCompatibleVersion, bundleIDToBlockedVersions, bundleIDsWithAvailableUpdates));
 }

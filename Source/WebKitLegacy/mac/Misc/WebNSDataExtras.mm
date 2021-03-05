@@ -83,9 +83,9 @@
     }
     if (somethingChanged) {
         if (useUniCharPtr)
-            result = CFBridgingRelease(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, uniCharPtr, len, nullptr));
+            result = adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, uniCharPtr, len, nullptr)).bridgingAutorelease();
         else
-            result = CFBridgingRelease(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, charPtr, kCFStringEncodingISOLatin1, nullptr));
+            result = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, charPtr, kCFStringEncodingISOLatin1, nullptr)).bridgingAutorelease();
     } else
         result = self;
 

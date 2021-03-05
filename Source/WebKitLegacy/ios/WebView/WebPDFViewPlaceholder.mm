@@ -274,13 +274,11 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     [self dataSourceUpdated:dataSource];
 
     _didFinishLoad = YES;
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)[dataSource data]);
+    auto provider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)[dataSource data]));
     if (!provider)
         return;
 
-    _document = CGPDFDocumentCreateWithProvider(provider);
-
-    CGDataProviderRelease(provider);
+    _document = CGPDFDocumentCreateWithProvider(provider.get());
 
     [self _doPostLoadOrUnlockTasks];
 }

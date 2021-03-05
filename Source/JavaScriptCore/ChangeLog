@@ -1,3 +1,20 @@
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222760
+
+        Reviewed by Darin Adler.
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit by using RetainPtr<>.
+
+        * API/JSContext.mm:
+        (-[JSContext name]):
+        * API/JSValue.mm:
+        (valueToObjectWithoutCopy):
+        (valueToString):
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage):
+
 2021-03-05  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-Function-References] Update ref.func to produce (ref $t)

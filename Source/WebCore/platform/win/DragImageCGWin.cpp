@@ -67,15 +67,13 @@ GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
     return hbmp;
 }
 
-static CGContextRef createCgContextFromBitmap(HBITMAP bitmap)
+static RetainPtr<CGContextRef> createCgContextFromBitmap(HBITMAP bitmap)
 {
     BITMAP info;
     GetObject(bitmap, sizeof(info), &info);
     ASSERT(info.bmBitsPixel == 32);
 
-    CGContextRef bitmapContext = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
-                                                       info.bmWidthBytes, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
-    return bitmapContext;
+    return adoptCF(CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8, info.bmWidthBytes, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst));
 }
 
 DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
@@ -101,15 +99,13 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     if (!hbmp)
         goto exit;
 
-    CGContextRef srcContext = createCgContextFromBitmap(image.get());
-    CGImageRef srcImage = CGBitmapContextCreateImage(srcContext);
+    auto srcContext = createCgContextFromBitmap(image.get());
+    auto srcImage = adoptCF(CGBitmapContextCreateImage(srcContext));
     CGRect rect;
     rect.origin.x = 0;
     rect.origin.y = 0;
     rect.size = dstSize;
-    CGContextDrawImage(targetContext, rect, srcImage);
-    CGImageRelease(srcImage);
-    CGContextRelease(srcContext);
+    CGContextDrawImage(targetContext, rect, srcImage.get());
     CGContextRelease(targetContext);
 
 exit:

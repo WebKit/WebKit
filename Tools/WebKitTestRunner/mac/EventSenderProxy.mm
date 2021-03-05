@@ -95,17 +95,16 @@
         break;
     }
 
-    CGEventRef cgEvent = CGEventCreate(nullptr);
-    CGEventSetType(cgEvent, (CGEventType)kCGSEventGesture);
-    CGEventSetIntegerValueField(cgEvent, kCGEventGestureHIDType, 32);
-    CGEventSetIntegerValueField(cgEvent, kCGEventGesturePhase, gesturePhase);
-    CGEventSetDoubleValueField(cgEvent, kCGEventStagePressure, pressure);
-    CGEventSetDoubleValueField(cgEvent, kCGEventTransitionProgress, pressure);
-    CGEventSetIntegerValueField(cgEvent, kCGEventGestureStage, stageTransition);
-    CGEventSetIntegerValueField(cgEvent, kCGEventGestureBehavior, kCGSGestureBehaviorDeepPress);
+    auto cgEvent = adoptCF(CGEventCreate(nullptr));
+    CGEventSetType(cgEvent.get(), (CGEventType)kCGSEventGesture);
+    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureHIDType, 32);
+    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGesturePhase, gesturePhase);
+    CGEventSetDoubleValueField(cgEvent.get(), kCGEventStagePressure, pressure);
+    CGEventSetDoubleValueField(cgEvent.get(), kCGEventTransitionProgress, pressure);
+    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureStage, stageTransition);
+    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureBehavior, kCGSGestureBehaviorDeepPress);
 
-    self = [super _initWithCGEvent:cgEvent eventRef:nullptr];
-    CFRelease(cgEvent);
+    self = [super _initWithCGEvent:cgEvent.get() eventRef:nullptr];
 
     if (!self)
         return nil;

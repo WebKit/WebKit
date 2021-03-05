@@ -1,3 +1,39 @@
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222760
+
+        Reviewed by Darin Adler.
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit by using RetainPtr<>.
+
+        * Platform/mac/StringUtilities.mm:
+        (WebKit::nsStringFromWebCoreString):
+        (WebKit::formattedPhoneNumberString):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initializeCocoaOverrides):
+        * Shared/mac/PasteboardTypes.mm:
+        (WebKit::PasteboardTypes::forEditing):
+        (WebKit::PasteboardTypes::forURL):
+        (WebKit::PasteboardTypes::forImages):
+        (WebKit::PasteboardTypes::forImagesWithArchive):
+        (WebKit::PasteboardTypes::forSelection):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::acceptsFirstMouse):
+        (WebKit::WebViewImpl::shouldDelayWindowOrderingForEvent):
+        (WebKit::WebViewImpl::validAttributesForMarkedText):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.mm:
+        (layerPathWithHole):
+        (layerPath):
+        * UIProcess/_WKTouchEventGenerator.mm:
+        (-[_WKTouchEventGenerator dealloc]):
+        (-[_WKTouchEventGenerator _sendHIDEvent:]):
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _EVOrganizationName]):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::webProcessLoaderAccessibilityBundlePath):
+
 2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Bubblewrap sandbox should not break X11 forwarding

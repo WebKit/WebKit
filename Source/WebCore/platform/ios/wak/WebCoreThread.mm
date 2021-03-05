@@ -266,10 +266,8 @@ static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)
                 else
                     delegateInformation = NSStringFromSelector([delegateInvocation() selector]);
     
-                CFStringRef mode = CFRunLoopCopyCurrentMode(CFRunLoopGetMain());
-                NSLog(@"%s: delegate (%@) failed to return after waiting %f seconds. main run loop mode: %@", __PRETTY_FUNCTION__, delegateInformation, DelegateWaitInterval.seconds(), mode);
-                if (mode)
-                    CFRelease(mode);
+                auto mode = adoptCF(CFRunLoopCopyCurrentMode(CFRunLoopGetMain()));
+                NSLog(@"%s: delegate (%@) failed to return after waiting %f seconds. main run loop mode: %@", __PRETTY_FUNCTION__, delegateInformation, DelegateWaitInterval.seconds(), mode.get());
             }
         }
         delegateLock.unlock();
@@ -634,16 +632,14 @@ static void* RunWebThread(void*)
     webThreadRunLoop = CFRunLoopGetCurrent();
     webThreadNSRunLoop() = [NSRunLoop currentRunLoop];
 
-    CFRunLoopObserverRef webRunLoopLockObserverRef = CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeTimers | kCFRunLoopBeforeSources | kCFRunLoopAfterWaiting, YES, 0, WebRunLoopLock, nullptr);
-    CFRunLoopAddObserver(webThreadRunLoop, webRunLoopLockObserverRef, kCFRunLoopCommonModes);
-    CFRelease(webRunLoopLockObserverRef);
+    auto webRunLoopLockObserverRef = adoptCF(CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeTimers | kCFRunLoopBeforeSources | kCFRunLoopAfterWaiting, YES, 0, WebRunLoopLock, nullptr));
+    CFRunLoopAddObserver(webThreadRunLoop, webRunLoopLockObserverRef.get(), kCFRunLoopCommonModes);
     
     WebThreadInitRunQueue();
 
     // We must have the lock when CA paints in the web thread. CA commits at 2000000 so we use larger order number than that to free the lock.
-    CFRunLoopObserverRef webRunLoopUnlockObserverRef = CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeWaiting | kCFRunLoopExit, YES, 2500000, WebRunLoopUnlock, nullptr);    
-    CFRunLoopAddObserver(webThreadRunLoop, webRunLoopUnlockObserverRef, kCFRunLoopCommonModes);
-    CFRelease(webRunLoopUnlockObserverRef);    
+    auto webRunLoopUnlockObserverRef = adoptCF(CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeWaiting | kCFRunLoopExit, YES, 2500000, WebRunLoopUnlock, nullptr));
+    CFRunLoopAddObserver(webThreadRunLoop, webRunLoopUnlockObserverRef.get(), kCFRunLoopCommonModes);
 
     CFRunLoopSourceContext ReleaseSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, HandleWebThreadReleaseSource};
     WebThreadReleaseSource = CFRunLoopSourceCreate(nullptr, -1, &ReleaseSourceContext);
@@ -823,9 +819,8 @@ void WebThreadUnlockGuardForMail(void)
 {
     ASSERT(!WebThreadIsCurrent());
 
-    CFRunLoopObserverRef mainRunLoopUnlockGuardObserver = CFRunLoopObserverCreate(nullptr, kCFRunLoopEntry, YES, 0, MainRunLoopUnlockGuard, nullptr);
-    CFRunLoopAddObserver(CFRunLoopGetMain(), mainRunLoopUnlockGuardObserver, kCFRunLoopCommonModes);
-    CFRelease(mainRunLoopUnlockGuardObserver);
+    auto mainRunLoopUnlockGuardObserver = adoptCF(CFRunLoopObserverCreate(nullptr, kCFRunLoopEntry, YES, 0, MainRunLoopUnlockGuard, nullptr));
+    CFRunLoopAddObserver(CFRunLoopGetMain(), mainRunLoopUnlockGuardObserver.get(), kCFRunLoopCommonModes);
 }
 
 void _WebThreadUnlock()

@@ -29,6 +29,7 @@
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
 #endif
 
 namespace WebCore {
@@ -42,14 +43,14 @@ public:
     static BSTR URLToBSTR(const URL&);
 
 #if USE(CF)
-    static CFURLRef PathStringToFileCFURLRef(const WTF::String&);
+    static RetainPtr<CFURLRef> PathStringToFileCFURLRef(const WTF::String&);
     static WTF::String FileCFURLRefToPathString(CFURLRef fileURL);
-    static CFURLRef BSTRToCFURLRef(BSTR);
-    static CFStringRef BSTRToCFStringRef(BSTR);
-    static CFStringRef LPCOLESTRToCFStringRef(LPCOLESTR);
+    static RetainPtr<CFURLRef> BSTRToCFURLRef(BSTR);
+    static RetainPtr<CFStringRef> BSTRToCFStringRef(BSTR);
+    static RetainPtr<CFStringRef> LPCOLESTRToCFStringRef(LPCOLESTR);
     static BSTR CFStringRefToBSTR(CFStringRef);
     static int CFNumberRefToInt(CFNumberRef);
-    static CFNumberRef intToCFNumberRef(int);
+    static RetainPtr<CFNumberRef> intToCFNumberRef(int);
     static CFAbsoluteTime DATEToCFAbsoluteTime(DATE);
     static DATE CFAbsoluteTimeToDATE(CFAbsoluteTime);
     static SAFEARRAY* stringArrayToSafeArray(CFArrayRef);
@@ -63,9 +64,9 @@ public:
 
 #if USE(CF)
     static SAFEARRAY* iunknownArrayToSafeArray(CFArrayRef);
-    static CFArrayRef safeArrayToStringArray(SAFEARRAY*);
-    static CFArrayRef safeArrayToIntArray(SAFEARRAY*);
-    static CFArrayRef safeArrayToIUnknownArray(SAFEARRAY*);
+    static RetainPtr<CFArrayRef> safeArrayToStringArray(SAFEARRAY*);
+    static RetainPtr<CFArrayRef> safeArrayToIntArray(SAFEARRAY*);
+    static RetainPtr<CFArrayRef> safeArrayToIUnknownArray(SAFEARRAY*);
     static const void* IUnknownRetainCallback(CFAllocatorRef, const void*);
     static void IUnknownReleaseCallback(CFAllocatorRef, const void*);
     static CFArrayCallBacks kIUnknownArrayCallBacks;

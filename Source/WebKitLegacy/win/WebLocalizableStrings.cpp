@@ -95,19 +95,19 @@ LocalizedString::operator LPCTSTR() const
     return m_string.wideCharacters().data();
 }
 
-static CFBundleRef createWebKitBundle()
+static void createWebKitBundle()
 {
-    static CFBundleRef bundle;
+    static NeverDestroyed<RetainPtr<CFBundleRef>> bundle;
     static bool initialized;
 
     if (initialized)
-        return bundle;
+        return;
     initialized = true;
 
     WCHAR pathStr[MAX_PATH];
     DWORD length = ::GetModuleFileNameW(gInstance, pathStr, MAX_PATH);
     if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
-        return 0;
+        return;
 
     bool found = false;
     for (int i = length - 1; i >= 0; i--) {
@@ -122,22 +122,20 @@ static CFBundleRef createWebKitBundle()
         }
     }
     if (!found)
-        return 0;
+        return;
 
     if (wcscat_s(pathStr, MAX_PATH, L"\\WebKit.resources"))
-        return 0;
+        return;
 
     String bundlePathString(pathStr);
     if (!bundlePathString)
-        return 0;
+        return;
 
-    CFURLRef bundleURLRef = CFURLCreateWithFileSystemPath(0, bundlePathString.createCFString().get(), kCFURLWindowsPathStyle, true);
+    auto bundleURLRef = adoptCF(CFURLCreateWithFileSystemPath(0, bundlePathString.createCFString().get(), kCFURLWindowsPathStyle, true));
     if (!bundleURLRef)
-        return 0;
+        return;
 
-    bundle = CFBundleCreate(0, bundleURLRef);
-    CFRelease(bundleURLRef);
-    return bundle;
+    bundle.get() = adoptCF(CFBundleCreate(0, bundleURLRef.get()));
 }
 
 static CFBundleRef cfBundleForStringsBundle(WebLocalizableStringsBundle* stringsBundle)

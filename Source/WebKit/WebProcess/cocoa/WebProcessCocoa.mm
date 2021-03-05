@@ -528,7 +528,7 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
 static NSString *webProcessLoaderAccessibilityBundlePath()
 {
 #if HAVE(ACCESSIBILITY_BUNDLES_PATH)
-    return (__bridge NSString *)CFAutorelease(_AXSCopyPathForAccessibilityBundle(CFSTR("WebProcessLoader")));
+    return adoptCF(_AXSCopyPathForAccessibilityBundle(CFSTR("WebProcessLoader"))).bridgingAutorelease();
 #else
     NSString *path = (__bridge NSString *)GSSystemRootDirectory();
 #if PLATFORM(MACCATALYST)

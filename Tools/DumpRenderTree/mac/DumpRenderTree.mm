@@ -208,8 +208,8 @@ WebFrame *topLoadingFrame = nil; // !nil iff a load is in progress
 RetainPtr<NSWindow> mainWindow;
 #endif
 
-CFMutableSetRef disallowedURLs= nullptr;
-static CFRunLoopTimerRef waitToDumpWatchdog;
+RetainPtr<CFMutableSetRef> disallowedURLs = nullptr;
+static RetainPtr<CFRunLoopTimerRef> waitToDumpWatchdog;
 
 static RetainPtr<WebView>& globalWebView()
 {
@@ -550,26 +550,24 @@ static void adjustFonts()
 
 static void activateFontIOS(const uint8_t* fontData, unsigned long length, std::string sectionName)
 {
-    CGDataProviderRef data = CGDataProviderCreateWithData(nullptr, fontData, length, nullptr);
+    auto data = adoptCF(CGDataProviderCreateWithData(nullptr, fontData, length, nullptr));
     if (!data) {
         fprintf(stderr, "Failed to create CGDataProviderRef for the %s font.\n", sectionName.c_str());
         exit(1);
     }
 
-    CGFontRef cgFont = CGFontCreateWithDataProvider(data);
-    CGDataProviderRelease(data);
+    auto cgFont = adoptCF(CGFontCreateWithDataProvider(data.get()));
     if (!cgFont) {
         fprintf(stderr, "Failed to create CGFontRef for the %s font.\n", sectionName.c_str());
         exit(1);
     }
 
     CFErrorRef error = nullptr;
-    CTFontManagerRegisterGraphicsFont(cgFont, &error);
+    CTFontManagerRegisterGraphicsFont(cgFont.get(), &error);
     if (error) {
         fprintf(stderr, "Failed to add CGFont to CoreText for the %s font: %s.\n", sectionName.c_str(), CFStringGetCStringPtr(CFErrorCopyDescription(error), kCFStringEncodingUTF8));
         exit(1);
     }
-    CGFontRelease(cgFont);
 }
 
 static void activateFontsIOS()
@@ -1265,10 +1263,7 @@ void dumpRenderTree(int argc, const char *argv[])
 #endif
 
     // FIXME: This should be moved onto TestRunner and made into a HashSet
-    if (disallowedURLs) {
-        CFRelease(disallowedURLs);
-        disallowedURLs = 0;
-    }
+    disallowedURLs = nullptr;
 
 #if PLATFORM(IOS_FAMILY)
     tearDownIOSLayoutTestCommunication();
@@ -1615,18 +1610,17 @@ static void dumpBackForwardListForAllWindows()
 static void invalidateAnyPreviousWaitToDumpWatchdog()
 {
     if (waitToDumpWatchdog) {
-        CFRunLoopTimerInvalidate(waitToDumpWatchdog);
-        CFRelease(waitToDumpWatchdog);
-        waitToDumpWatchdog = NULL;
+        CFRunLoopTimerInvalidate(waitToDumpWatchdog.get());
+        waitToDumpWatchdog = nullptr;
     }
 }
 
-void setWaitToDumpWatchdog(CFRunLoopTimerRef timer)
+void setWaitToDumpWatchdog(RetainPtr<CFRunLoopTimerRef>&& timer)
 {
     ASSERT(timer);
     ASSERT(shouldSetWaitToDumpWatchdog());
-    waitToDumpWatchdog = timer;
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), waitToDumpWatchdog, kCFRunLoopCommonModes);
+    waitToDumpWatchdog = WTFMove(timer);
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), waitToDumpWatchdog.get(), kCFRunLoopCommonModes);
 }
 
 bool shouldSetWaitToDumpWatchdog()
@@ -1683,11 +1677,11 @@ void dump()
             resultMimeType = @"application/pdf";
         } else if (gTestRunner->dumpDOMAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
-            resultString = CFBridgingRelease(WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]));
+            resultString = WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]);
             resultMimeType = @"application/x-webarchive";
         } else if (gTestRunner->dumpSourceAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
-            resultString = CFBridgingRelease(WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]));
+            resultString = WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]);
             resultMimeType = @"application/x-webarchive";
         } else if (gTestRunner->isPrinting())
             resultString = [mainFrame renderTreeAsExternalRepresentationForPrinting];
@@ -1982,7 +1976,7 @@ static void runTest(const std::string& inputLine)
     gTestRunner->clearAllDatabases();
 
     if (disallowedURLs)
-        CFSetRemoveAllValues(disallowedURLs);
+        CFSetRemoveAllValues(disallowedURLs.get());
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gTestRunner->setDumpFrameLoadCallbacks(true);
 

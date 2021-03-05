@@ -1030,28 +1030,28 @@ private:
     if (!trust)
         return nil;
 
-    NSDictionary *infoDictionary = CFBridgingRelease(SecTrustCopyInfo(trust));
+    auto infoDictionary = adoptCF(SecTrustCopyInfo(trust));
     // If SecTrustCopyInfo returned NULL then it's likely that the SecTrustRef has not been evaluated
     // and the only way to get the information we need is to call SecTrustEvaluate ourselves.
     if (!infoDictionary) {
         if (!SecTrustEvaluateWithError(trust, nullptr))
             return nil;
-        infoDictionary = CFBridgingRelease(SecTrustCopyInfo(trust));
+        infoDictionary = adoptCF(SecTrustCopyInfo(trust));
         if (!infoDictionary)
             return nil;
     }
 
     // Make sure that the EV certificate is valid against our certificate chain.
-    id hasEV = [infoDictionary objectForKey:(__bridge NSString *)kSecTrustInfoExtendedValidationKey];
+    id hasEV = [(__bridge NSDictionary *)infoDictionary.get() objectForKey:(__bridge NSString *)kSecTrustInfoExtendedValidationKey];
     if (![hasEV isKindOfClass:[NSValue class]] || ![hasEV boolValue])
         return nil;
 
     // Make sure that we could contact revocation server and it is still valid.
-    id isNotRevoked = [infoDictionary objectForKey:(__bridge NSString *)kSecTrustInfoRevocationKey];
+    id isNotRevoked = [(__bridge NSDictionary *)infoDictionary.get() objectForKey:(__bridge NSString *)kSecTrustInfoRevocationKey];
     if (![isNotRevoked isKindOfClass:[NSValue class]] || ![isNotRevoked boolValue])
         return nil;
 
-    _EVOrganizationName = [infoDictionary objectForKey:(__bridge NSString *)kSecTrustInfoCompanyNameKey];
+    _EVOrganizationName = [(__bridge NSDictionary *)infoDictionary.get() objectForKey:(__bridge NSString *)kSecTrustInfoCompanyNameKey];
     return _EVOrganizationName.get();
 }
 

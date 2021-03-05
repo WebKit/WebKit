@@ -733,7 +733,7 @@ static std::pair<Optional<SimpleRange>, AccessibilitySearchDirection> accessibil
 
 #pragma mark Text Marker helpers
 
-static id nextTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset& characterOffset)
+static RetainPtr<AXTextMarkerRef> nextTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset& characterOffset)
 {
     if (!cache)
         return nil;
@@ -742,10 +742,10 @@ static id nextTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset
     cache->textMarkerDataForNextCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID)
         return nil;
-    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
 }
 
-static id previousTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset& characterOffset)
+static RetainPtr<AXTextMarkerRef> previousTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset& characterOffset)
 {
     if (!cache)
         return nil;
@@ -754,15 +754,15 @@ static id previousTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOf
     cache->textMarkerDataForPreviousCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID)
         return nil;
-    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
 }
 
-- (id)nextTextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
+- (RetainPtr<AXTextMarkerRef>)nextTextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
 {
     return nextTextMarkerForCharacterOffset(self.axBackingObject->axObjectCache(), characterOffset);
 }
 
-- (id)previousTextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
+- (RetainPtr<AXTextMarkerRef>)previousTextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
 {
     return previousTextMarkerForCharacterOffset(self.axBackingObject->axObjectCache(), characterOffset);
 }
@@ -776,7 +776,7 @@ static id previousTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOf
     return backingObject ? (id)textMarkerForVisiblePosition(backingObject->axObjectCache(), position) : nil;
 }
 
-- (id)textMarkerForFirstPositionInTextControl:(HTMLTextFormControlElement &)textControl
+- (RetainPtr<AXTextMarkerRef>)textMarkerForFirstPositionInTextControl:(HTMLTextFormControlElement &)textControl
 {
     ASSERT(isMainThread());
 
@@ -792,7 +792,7 @@ static id previousTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOf
     if (!textMarkerData)
         return nil;
 
-    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value())));
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value())));
 }
 
 // When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
@@ -1018,11 +1018,8 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
         if ([attribute isEqualToString:NSAccessibilityAttachmentTextAttribute] && object->isAttachment() && [objectWrapper attachmentView])
             objectWrapper = [objectWrapper attachmentView];
         
-        AXUIElementRef axElement = NSAccessibilityCreateAXUIElementRef(objectWrapper);
-        if (axElement) {
-            [attrString addAttribute:attribute value:(__bridge id)axElement range:range];
-            CFRelease(axElement);
-        }
+        if (auto axElement = adoptCF(NSAccessibilityCreateAXUIElementRef(objectWrapper)))
+            [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
     } else
         [attrString removeAttribute:attribute range:range];
 }
@@ -4099,7 +4096,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return nil;
 
             CharacterOffset characterOffset = characterOffsetForTextMarker(cache, textMarker);
-            return [protectedSelf nextTextMarkerForCharacterOffset:characterOffset];
+            return [protectedSelf nextTextMarkerForCharacterOffset:characterOffset].bridgingAutorelease();
         });
     }
 
@@ -4114,7 +4111,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return nil;
 
             CharacterOffset characterOffset = characterOffsetForTextMarker(cache, textMarker);
-            return [protectedSelf previousTextMarkerForCharacterOffset:characterOffset];
+            return [protectedSelf previousTextMarkerForCharacterOffset:characterOffset].bridgingAutorelease();
         });
     }
 

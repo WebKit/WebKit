@@ -262,7 +262,7 @@
     if (!name)
         return nil;
 
-    return CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, name));
+    return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name)).bridgingAutorelease();
 }
 
 - (void)setName:(NSString *)name
