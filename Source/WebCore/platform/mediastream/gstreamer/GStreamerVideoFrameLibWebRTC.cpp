@@ -57,7 +57,7 @@ WARN_UNUSED_RETURN GRefPtr<GstSample>&& GStreamerSampleFromLibWebRTCVideoFrame(c
 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    return sample;
+    return WTFMove(sample);
 }
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::create(GRefPtr<GstSample>&& sample)
