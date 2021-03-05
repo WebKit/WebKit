@@ -1324,6 +1324,8 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 # webkit.org/b/221687
 platform/mac/media/encrypted-media/fps-clearkey-crash.html [ Timeout Crash ]
 
+webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Pass Timeout ]
+
 webkit.org/b/221965 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-seekable.html  [ Pass Failure ]
 
 webkit.org/b/221857 fast/selectors/text-field-selection-window-inactive-text-shadow.html [ Pass ImageOnlyFailure ]
