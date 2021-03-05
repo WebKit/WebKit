@@ -1,3 +1,13 @@
+2021-03-05  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r273309) [GStreamer] webrtc/captureCanvas-webrtc-software-h264-baseline.html is flaky crashing inside libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=222451
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Update expectations for webrtc h264 tests that are
+        slightly less broken now.
+
 2021-03-04  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Some tests in imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements fail when media in GPU Process is enabled

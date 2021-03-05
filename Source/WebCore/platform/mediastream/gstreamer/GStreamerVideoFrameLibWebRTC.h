@@ -21,39 +21,39 @@
 #pragma once
 
 #if USE(GSTREAMER) && USE(LIBWEBRTC)
+
 #include "GStreamerCommon.h"
 #include "LibWebRTCMacros.h"
 #include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/api/video/video_frame.h"
-#include "webrtc/common_video/include/video_frame_buffer_pool.h"
 #include "webrtc/common_video/include/video_frame_buffer.h"
 #include "webrtc/rtc_base/ref_counted_object.h"
 
 namespace WebCore {
 
-const GRefPtr<GstSample> GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::VideoFrame&);
-std::unique_ptr<webrtc::VideoFrame> LibWebRTCVideoFrameFromGStreamerSample(GstSample*, webrtc::VideoRotation, int64_t timestamp, int64_t renderTimeMs);
+GRefPtr<GstSample> GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::VideoFrame&);
+
+std::unique_ptr<webrtc::VideoFrame> LibWebRTCVideoFrameFromGStreamerSample(GRefPtr<GstSample>&&, webrtc::VideoRotation, int64_t timestamp, int64_t renderTimeMs);
 
 class GStreamerVideoFrameLibWebRTC : public rtc::RefCountedObject<webrtc::VideoFrameBuffer> {
 public:
-    GStreamerVideoFrameLibWebRTC(GstSample* sample, GstVideoInfo info)
-        : m_sample(adoptGRef(sample))
+    GStreamerVideoFrameLibWebRTC(GRefPtr<GstSample>&& sample, GstVideoInfo info)
+        : m_sample(WTFMove(sample))
         , m_info(info) { }
 
-    static rtc::scoped_refptr<webrtc::VideoFrameBuffer> create(GstSample*);
+    static rtc::scoped_refptr<webrtc::VideoFrameBuffer> create(GRefPtr<GstSample>&&);
 
-    GRefPtr<GstSample> getSample();
+    GRefPtr<GstSample>&& takeSample() { return WTFMove(m_sample); }
     rtc::scoped_refptr<webrtc::I420BufferInterface> ToI420() final;
 
-    int width() const override { return GST_VIDEO_INFO_WIDTH(&m_info); }
-    int height() const override { return GST_VIDEO_INFO_HEIGHT(&m_info); }
+    int width() const final { return GST_VIDEO_INFO_WIDTH(&m_info); }
+    int height() const final { return GST_VIDEO_INFO_HEIGHT(&m_info); }
 
 private:
-    webrtc::VideoFrameBuffer::Type type() const override;
+    webrtc::VideoFrameBuffer::Type type() const final { return Type::kNative; }
 
     GRefPtr<GstSample> m_sample;
     GstVideoInfo m_info;
-    webrtc::VideoFrameBufferPool m_bufferPool;
 };
 }
 

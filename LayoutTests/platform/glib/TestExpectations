@@ -1015,9 +1015,7 @@ webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
-# Uncomment after 222451 is fixed
-# webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Failure ]
-webkit.org/b/222451 [ Release ] webrtc/video-h264.html [ Timeout ]
+webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Timeout Failure ]
 webkit.org/b/222585 [ Debug ] webrtc/video-h264.html [ Crash ]
 
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
@@ -1039,7 +1037,7 @@ webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failur
 
 webkit.org/b/209163 webrtc/audio-video-element-playing.html [ Crash Failure Pass ]
 
-webkit.org/b/216538 webkit.org/b/222451 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Failure Crash ]
+webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 
