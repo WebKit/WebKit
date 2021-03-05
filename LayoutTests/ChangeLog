@@ -1,3 +1,14 @@
+2021-03-05  Rob Buis  <rbuis@igalia.com>
+
+        Fix flex-aspect-ratio-009.html
+        https://bugs.webkit.org/show_bug.cgi?id=222780
+
+        Reviewed by Sergio Villar Senin.
+
+        Enable test that passes now.
+
+        * TestExpectations:
+
 2021-03-05  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r273309) [GStreamer] webrtc/captureCanvas-webrtc-software-h264-baseline.html is flaky crashing inside libwebrtc

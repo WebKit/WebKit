@@ -863,8 +863,12 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
 
 bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const
 {
-    if (!childHasAspectRatio(child) || !child.intrinsicSize().height())
+    if (!childHasAspectRatio(child))
         return false;
+    if (!child.intrinsicSize().height() && !child.style().hasAspectRatio()) {
+        // We can't compute a ratio in this case.
+        return false;
+    }
 
     // 9.8 https://drafts.csswg.org/css-flexbox/#definite-sizes
     // 1. If a single-line flex container has a definite cross size, the automatic preferred outer cross size of any
