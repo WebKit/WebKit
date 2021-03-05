@@ -1,3 +1,13 @@
+2021-03-05  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add python 3 support in send_email
+        https://bugs.webkit.org/show_bug.cgi?id=222806
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/send_email.py:
+        (send_email):
+
 2021-03-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed Dashboard Fix.
