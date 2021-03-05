@@ -1,3 +1,38 @@
+2021-03-05  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Delete old results server code
+        https://bugs.webkit.org/show_bug.cgi?id=222393
+        <rdar://problem/74722220>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._end_test_run): Remove upload code.
+        (Manager._save_json_files): Renamed from _upload_json_files.
+        (Manager._upload_json_files): Renamed to _save_json_files.
+        (Manager.upload_results): Deleted.
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator.__init__): Remove buildbot arguments.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGenerator):
+        (JSONResultsGenerator.__init__): Remove buildbot arguments.
+        (JSONResultsGenerator.get_json): Remove concept of builder.
+        (JSONResultsGenerator.upload_json_files): Deleted.
+        (JSONResultsGenerator._get_svn_revision): Deleted.
+        (JSONResultsGenerator._get_archived_json_results): Deleted.
+        (JSONResultsGenerator._insert_generic_metadata): Deleted.
+        (JSONResultsGenerator._convert_json_to_current_version): Deleted.
+        (JSONResultsGenerator._convert_tests_to_trie): Deleted.
+        (JSONResultsGenerator._remove_items_over_max_number_of_builds): Deleted.
+        (JSONResultsGenerator._normalize_results_json): Deleted.
+        (JSONResultsGenerator._is_results_all_of_type): Deleted.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        (JSONGeneratorTest.setUp):
+        (JSONGeneratorTest._test_json_generation):
+        (JSONGeneratorTest._verify_json_results):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Remove arguments used to upload to old results database.
+
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate
