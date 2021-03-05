@@ -1,3 +1,17 @@
+2021-03-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Clang warnings in MiniBrowser build
+        https://bugs.webkit.org/show_bug.cgi?id=222797
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix unused-value warnings.
+
+        * MiniBrowser/gtk/BrowserCellRendererVariant.c:
+        (browser_cell_renderer_variant_init):
+        * MiniBrowser/gtk/BrowserTab.c:
+        (runColorChooserCallback):
+
 2021-03-04  Sam Sneddon  <gsnedders@apple.com>
 
         Undeprecate many more webkit-patch commands

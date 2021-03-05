@@ -429,8 +429,7 @@ static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChoos
     gtk_widget_show(colorChooser);
 #endif
 
-    g_object_ref(request);
-    g_signal_connect_object(popover, "hide", G_CALLBACK(popoverColorClosed), request, 0);
+    g_signal_connect_object(popover, "hide", G_CALLBACK(popoverColorClosed), g_object_ref(request), 0);
     g_signal_connect_object(request, "finished", G_CALLBACK(colorChooserRequestFinished), popover, 0);
 
     gtk_widget_show(popover);
