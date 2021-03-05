@@ -1361,3 +1361,5 @@ webkit.org/b/222677 inspector/model/auditTestCase.html [ Pass Timeout ]
 webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
 
 webkit.org/b/222808 imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html [ Pass Failure ]
+
+webkit.org/b/221011 fast/selectors/selection-window-inactive-text-shadow.html [ Pass ImageOnlyFailure ]

@@ -1,5 +1,14 @@
 2021-03-05  Robert Jenner  <jenner@apple.com>
 
+        [ macOS wk2 ] fast/selectors/selection-window-inactive-text-shadow.html flakey image failure
+        https://bugs.webkit.org/show_bug.cgi?id=221011
+
+        Uneviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass ImageOnlyFailure until test is fixed.
+
+2021-03-05  Robert Jenner  <jenner@apple.com>
+
         [ iOS/macOS wk2 ] imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html is a flakey text failure
         https://bugs.webkit.org/show_bug.cgi?id=222808
 
