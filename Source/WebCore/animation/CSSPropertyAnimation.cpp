@@ -593,7 +593,7 @@ public:
             return true;
         if (!a || !b)
             return false;
-        return (a->*m_getter)() == (b->*m_getter)();
+        return this->value(a) == this->value(b);
     }
 
     T value(const RenderStyle* a) const
@@ -624,7 +624,7 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<T>::m_getter)(), (b->*PropertyWrapperGetter<T>::m_getter)(), progress));
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
     }
 
 protected:
@@ -665,7 +665,7 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<T*>::m_getter)(), (b->*PropertyWrapperGetter<T*>::m_getter)(), progress));
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
     }
 
 protected:
@@ -683,12 +683,12 @@ public:
 
     bool canInterpolate(const RenderStyle* a, const RenderStyle* b) const override
     {
-        return !(a->*PropertyWrapperGetter<const Length&>::m_getter)().isAuto() && !(b->*PropertyWrapperGetter<const Length&>::m_getter)().isAuto();
+        return !this->value(a).isAuto() && !this->value(b).isAuto();
     }
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const Length&>::m_getter)(), (b->*PropertyWrapperGetter<const Length&>::m_getter)(), progress));
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
     }
 
 protected:
@@ -705,7 +705,7 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const Length&>::m_getter)(), (b->*PropertyWrapperGetter<const Length&>::m_getter)(), progress, ValueRangeNonNegative));
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress, ValueRangeNonNegative));
     }
 };
 
@@ -721,7 +721,7 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const T&>::m_getter)(), (b->*PropertyWrapperGetter<const T&>::m_getter)(), progress));
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
     }
 
 protected:
@@ -761,8 +761,8 @@ public:
             return false;
         };
 
-        auto& aLengthBox = (a->*PropertyWrapperGetter<const LengthBox&>::m_getter)();
-        auto& bLengthBox = (b->*PropertyWrapperGetter<const LengthBox&>::m_getter)();
+        auto& aLengthBox = this->value(a);
+        auto& bLengthBox = this->value(b);
         return canInterpolateBetweenLengths(aLengthBox.top(), bLengthBox.top())
             && canInterpolateBetweenLengths(aLengthBox.right(), bLengthBox.right())
             && canInterpolateBetweenLengths(aLengthBox.bottom(), bLengthBox.bottom())
@@ -800,8 +800,8 @@ public:
         if (!a || !b)
             return false;
 
-        ClipPathOperation* clipPathA = (a->*m_getter)();
-        ClipPathOperation* clipPathB = (b->*m_getter)();
+        auto* clipPathA = this->value(a);
+        auto* clipPathB = this->value(b);
         if (clipPathA == clipPathB)
             return true;
         if (!clipPathA || !clipPathB)
@@ -827,10 +827,7 @@ public:
             return true;
         if (!a || !b)
             return false;
-
-        const FontVariationSettings& variationSettingsA = (a->*m_getter)();
-        const FontVariationSettings& variationSettingsB = (b->*m_getter)();
-        return variationSettingsA == variationSettingsB;
+        return this->value(a) == this->value(b);
     }
 };
 #endif
@@ -852,8 +849,8 @@ public:
         if (!a || !b)
             return false;
 
-        ShapeValue* shapeA = (a->*m_getter)();
-        ShapeValue* shapeB = (b->*m_getter)();
+        auto* shapeA = this->value(a);
+        auto* shapeB = this->value(b);
         if (shapeA == shapeB)
             return true;
         if (!shapeA || !shapeB)
@@ -877,67 +874,31 @@ public:
         if (!a || !b)
             return false;
 
-        StyleImage* imageA = (a->*m_getter)();
-        StyleImage* imageB = (b->*m_getter)();
+        auto* imageA = this->value(a);
+        auto* imageB = this->value(b);
         return arePointingToEqualData(imageA, imageB);
     }
 };
 
-class PropertyWrapperColor : public PropertyWrapperGetter<const Color&> {
+template <typename T>
+class AcceleratedPropertyWrapper : public PropertyWrapper<T> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperColor(CSSPropertyID prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
-        : PropertyWrapperGetter<const Color&>(prop, getter)
-        , m_setter(setter)
+    AcceleratedPropertyWrapper(CSSPropertyID prop, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
+        : PropertyWrapper<T>(prop, getter, setter)
     {
     }
 
-    void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
-    {
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const Color&>::m_getter)(), (b->*PropertyWrapperGetter<const Color&>::m_getter)(), progress));
-    }
-
-protected:
-    void (RenderStyle::*m_setter)(const Color&);
-};
-
-class PropertyWrapperAcceleratedOpacity : public PropertyWrapper<float> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    PropertyWrapperAcceleratedOpacity()
-        : PropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity)
-    {
-    }
-
+private:
     bool animationIsAccelerated() const override { return true; }
-
-    void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
-    {
-        dst->setOpacity(blendFunc(anim, a->opacity(), b->opacity(), progress));
-    }
 };
 
-class PropertyWrapperAcceleratedTransform : public PropertyWrapper<const TransformOperations&> {
+template <typename T>
+class AcceleratedIndividualTransformPropertyWrapper final : public RefCountedPropertyWrapper<T> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperAcceleratedTransform()
-        : PropertyWrapper<const TransformOperations&>(CSSPropertyTransform, &RenderStyle::transform, &RenderStyle::setTransform)
-    {
-    }
-
-    bool animationIsAccelerated() const override { return true; }
-
-    void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
-    {
-        dst->setTransform(blendFunc(anim, a->transform(), b->transform(), progress));
-    }
-};
-
-class PropertyWrapperScale final : public RefCountedPropertyWrapper<ScaleTransformOperation> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    PropertyWrapperScale()
-        : RefCountedPropertyWrapper<ScaleTransformOperation>(CSSPropertyScale, &RenderStyle::scale, &RenderStyle::setScale)
+    AcceleratedIndividualTransformPropertyWrapper(CSSPropertyID prop, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<T>&&))
+        : RefCountedPropertyWrapper<T>(prop, getter, setter)
     {
     }
 
@@ -946,41 +907,7 @@ private:
 
     bool equals(const RenderStyle* a, const RenderStyle* b) const final
     {
-        return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());
-    }
-};
-
-class PropertyWrapperRotate final : public RefCountedPropertyWrapper<RotateTransformOperation> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    PropertyWrapperRotate()
-        : RefCountedPropertyWrapper<RotateTransformOperation>(CSSPropertyRotate, &RenderStyle::rotate, &RenderStyle::setRotate)
-    {
-    }
-
-private:
-    bool animationIsAccelerated() const final { return true; }
-
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
-    {
-        return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());
-    }
-};
-
-class PropertyWrapperTranslate final : public RefCountedPropertyWrapper<TranslateTransformOperation> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    PropertyWrapperTranslate()
-        : RefCountedPropertyWrapper<TranslateTransformOperation>(CSSPropertyTranslate, &RenderStyle::translate, &RenderStyle::setTranslate)
-    {
-    }
-
-private:
-    bool animationIsAccelerated() const final { return true; }
-
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
-    {
-        return arePointingToEqualData((a->*m_getter)(), (b->*m_getter)());
+        return arePointingToEqualData(this->value(a), this->value(b));
     }
 };
 
@@ -1003,7 +930,7 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<const FilterOperations&>::m_getter)(), (b->*PropertyWrapperGetter<const FilterOperations&>::m_getter)(), progress, property()));
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress, property()));
     }
 };
 
@@ -1231,8 +1158,8 @@ class PropertyWrapperVisitedAffectedColor : public AnimationPropertyWrapperBase 
 public:
     PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : AnimationPropertyWrapperBase(prop)
-        , m_wrapper(makeUnique<PropertyWrapperColor>(prop, getter, setter))
-        , m_visitedWrapper(makeUnique<PropertyWrapperColor>(prop, visitedGetter, visitedSetter))
+        , m_wrapper(makeUnique<PropertyWrapper<const Color&>>(prop, getter, setter))
+        , m_visitedWrapper(makeUnique<PropertyWrapper<const Color&>>(prop, visitedGetter, visitedSetter))
     {
     }
     PropertyWrapperVisitedAffectedColor(CSSPropertyID prop, MaybeInvalidColorTag, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
@@ -1303,7 +1230,7 @@ public:
             return true;
         if (!a || !b)
             return false;
-        return (a->*m_getter)() == (b->*m_getter)();
+        return this->value(a) == this->value(b);
     }
 
     T value(const FillLayer* layer) const
@@ -1334,7 +1261,7 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, FillLayer* dst, const FillLayer* a, const FillLayer* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*FillLayerPropertyWrapperGetter<const T&>::m_getter)(), (b->*FillLayerPropertyWrapperGetter<const T&>::m_getter)(), progress));
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
     }
 
 #if !LOG_DISABLED
@@ -1370,8 +1297,8 @@ public:
         if (!a || !b)
             return false;
 
-        Length fromLength = (a->*FillLayerPropertyWrapperGetter<const Length&>::m_getter)();
-        Length toLength = (b->*FillLayerPropertyWrapperGetter<const Length&>::m_getter)();
+        auto fromLength = this->value(a);
+        auto toLength = this->value(b);
         
         Edge fromEdge = (a->*m_originGetter)();
         Edge toEdge = (b->*m_originGetter)();
@@ -1381,8 +1308,8 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, FillLayer* dst, const FillLayer* a, const FillLayer* b, double progress) const override
     {
-        Length fromLength = (a->*FillLayerPropertyWrapperGetter<const Length&>::m_getter)();
-        Length toLength = (b->*FillLayerPropertyWrapperGetter<const Length&>::m_getter)();
+        auto fromLength = this->value(a);
+        auto toLength = this->value(b);
         
         Edge fromEdge = (a->*m_originGetter)();
         Edge toEdge = (b->*m_originGetter)();
@@ -1426,7 +1353,7 @@ public:
 
     void blend(const CSSPropertyBlendingClient* anim, FillLayer* dst, const FillLayer* a, const FillLayer* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, (a->*FillLayerPropertyWrapperGetter<T*>::m_getter)(), (b->*FillLayerPropertyWrapperGetter<T*>::m_getter)(), progress));
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
     }
 
 #if !LOG_DISABLED
@@ -1457,10 +1384,7 @@ public:
             return true;
         if (!a || !b)
             return false;
-
-        StyleImage* imageA = (a->*m_getter)();
-        StyleImage* imageB = (b->*m_getter)();
-        return arePointingToEqualData(imageA, imageB);
+        return arePointingToEqualData(this->value(a), this->value(b));
     }
 
 #if !LOG_DISABLED
@@ -1893,12 +1817,12 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new LengthBoxPropertyWrapper(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip),
 
-        new PropertyWrapperAcceleratedOpacity(),
-        new PropertyWrapperAcceleratedTransform(),
+        new AcceleratedPropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity),
+        new AcceleratedPropertyWrapper<const TransformOperations&>(CSSPropertyTransform, &RenderStyle::transform, &RenderStyle::setTransform),
 
-        new PropertyWrapperScale,
-        new PropertyWrapperRotate,
-        new PropertyWrapperTranslate,
+        new AcceleratedIndividualTransformPropertyWrapper<ScaleTransformOperation>(CSSPropertyScale, &RenderStyle::scale, &RenderStyle::setScale),
+        new AcceleratedIndividualTransformPropertyWrapper<RotateTransformOperation>(CSSPropertyRotate, &RenderStyle::rotate, &RenderStyle::setRotate),
+        new AcceleratedIndividualTransformPropertyWrapper<TranslateTransformOperation>(CSSPropertyTranslate, &RenderStyle::translate, &RenderStyle::setTranslate),
 
         new PropertyWrapperFilter(CSSPropertyFilter, &RenderStyle::filter, &RenderStyle::setFilter),
 #if ENABLE(FILTERS_LEVEL_2)
