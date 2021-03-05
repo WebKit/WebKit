@@ -51,6 +51,7 @@
 #include "RemoteMediaResourceManager.h"
 #include "RemoteMediaResourceManagerMessages.h"
 #include "RemoteRemoteCommandListenerProxy.h"
+#include "RemoteRemoteCommandListenerProxyMessages.h"
 #include "RemoteRenderingBackend.h"
 #include "RemoteSampleBufferDisplayLayerManager.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
@@ -366,12 +367,24 @@ void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdenti
 #endif
 void GPUConnectionToWebProcess::clearNowPlayingInfo()
 {
+    m_isActiveNowPlayingProcess = false;
     gpuProcess().nowPlayingManager().clearNowPlayingInfoClient(*this);
 }
 
 void GPUConnectionToWebProcess::setNowPlayingInfo(bool setAsNowPlayingApplication, NowPlayingInfo&& nowPlayingInfo)
 {
+    m_isActiveNowPlayingProcess = true;
     gpuProcess().nowPlayingManager().setNowPlayingInfo(*this, WTFMove(nowPlayingInfo));
+    updateSupportedRemoteCommands();
+}
+
+void GPUConnectionToWebProcess::updateSupportedRemoteCommands()
+{
+    if (!m_isActiveNowPlayingProcess || !m_remoteRemoteCommandListener)
+        return;
+
+    gpuProcess().nowPlayingManager().setSupportedRemoteCommands(m_remoteRemoteCommandListener->supportedCommands(), m_remoteRemoteCommandListener->supportsSeeking());
+
 }
 
 void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
@@ -435,16 +448,13 @@ void GPUConnectionToWebProcess::releaseAudioHardwareListener(RemoteAudioHardware
 
 void GPUConnectionToWebProcess::createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier identifier)
 {
-    auto addResult = m_remoteRemoteCommandListenerMap.ensure(identifier, [&]() {
-        return makeUnique<RemoteRemoteCommandListenerProxy>(*this, WTFMove(identifier));
-    });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    m_remoteRemoteCommandListener = RemoteRemoteCommandListenerProxy::create(*this, WTFMove(identifier));
 }
 
 void GPUConnectionToWebProcess::releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier identifier)
 {
-    bool found = m_remoteRemoteCommandListenerMap.remove(identifier);
-    ASSERT_UNUSED(found, found);
+    if (m_remoteRemoteCommandListener && m_remoteRemoteCommandListener->identifier() == identifier)
+        m_remoteRemoteCommandListener = nullptr;
 }
 
 void GPUConnectionToWebProcess::setMediaOverridesForTesting(MediaOverridesForTesting overrides)
@@ -545,6 +555,11 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+
+    if (m_remoteRemoteCommandListener && decoder.messageReceiverName() == Messages::RemoteRemoteCommandListenerProxy::messageReceiverName()) {
+        m_remoteRemoteCommandListener->didReceiveMessage(connection, decoder);
+        return true;
+    }
 
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }

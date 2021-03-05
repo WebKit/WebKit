@@ -42,6 +42,25 @@ struct NowPlayingInfo {
     bool isPlaying { false };
     bool allowsNowPlayingControlsVisibility { false };
 
+    bool operator==(const NowPlayingInfo& other) const
+    {
+        return title == other.title
+            && artist == other.artist
+            && album == other.album
+            && sourceApplicationIdentifier == other.sourceApplicationIdentifier
+            && duration == other.duration
+            && currentTime == other.currentTime
+            && supportsSeeking == other.supportsSeeking
+            && uniqueIdentifier == other.uniqueIdentifier
+            && isPlaying == other.isPlaying
+            && allowsNowPlayingControlsVisibility == other.allowsNowPlayingControlsVisibility;
+    }
+
+    bool operator!=(const NowPlayingInfo other) const
+    {
+        return !(*this == other);
+    }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<NowPlayingInfo> decode(Decoder&);
 };

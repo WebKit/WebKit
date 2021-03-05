@@ -127,6 +127,8 @@ public:
     RemoteImageDecoderAVFProxy& imageDecoderAVFProxy();
 #endif
 
+    void updateSupportedRemoteCommands();
+
     void terminateWebProcess();
 
 private:
@@ -244,8 +246,9 @@ private:
 
     using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, std::unique_ptr<RemoteAudioHardwareListenerProxy>>;
     RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;
-    using RemoteRemoteCommandListenerMap = HashMap<RemoteRemoteCommandListenerIdentifier, std::unique_ptr<RemoteRemoteCommandListenerProxy>>;
-    RemoteRemoteCommandListenerMap m_remoteRemoteCommandListenerMap;
+
+    RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
+    bool m_isActiveNowPlayingProcess { false };
 };
 
 } // namespace WebKit

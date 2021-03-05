@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include <WebCore/RemoteCommandListener.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,27 +42,34 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 
-class RemoteRemoteCommandListenerProxy
-    : private WebCore::RemoteCommandListenerClient
-    , private IPC::MessageReceiver {
+class RemoteRemoteCommandListenerProxy : public RefCounted<RemoteRemoteCommandListenerProxy>, private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteRemoteCommandListenerProxy(GPUConnectionToWebProcess&, RemoteRemoteCommandListenerIdentifier&&);
+    static Ref<RemoteRemoteCommandListenerProxy> create(GPUConnectionToWebProcess& process, RemoteRemoteCommandListenerIdentifier&& identifier)
+    {
+        return adoptRef(*new RemoteRemoteCommandListenerProxy(process, WTFMove(identifier)));
+    }
+
     virtual ~RemoteRemoteCommandListenerProxy();
 
-private:
+    bool supportsSeeking() const { return m_supportsSeeking; }
+    const WebCore::RemoteCommandListener::RemoteCommandsSet& supportedCommands() const { return m_supportedCommands; }
+
+    RemoteRemoteCommandListenerIdentifier identifier() const { return m_identifier; }
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    // RemoteCommandListenerClient
-    void didReceiveRemoteControlCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
+private:
+    RemoteRemoteCommandListenerProxy(GPUConnectionToWebProcess&, RemoteRemoteCommandListenerIdentifier&&);
 
     // Messages
-    void updateSupportedCommands(bool supportsSeeking);
+    void updateSupportedCommands(Vector<WebCore::PlatformMediaSession::RemoteControlCommandType>&& commands, bool supportsSeeking);
 
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     RemoteRemoteCommandListenerIdentifier m_identifier;
-    std::unique_ptr<WebCore::RemoteCommandListener> m_listener;
+    WebCore::RemoteCommandListener::RemoteCommandsSet m_supportedCommands;
+    bool m_supportsSeeking { false };
 };
 
 }

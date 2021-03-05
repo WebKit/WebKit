@@ -1,3 +1,46 @@
+2021-03-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPU Process] Remote control command should only go to the current NowPlaying session
+        https://bugs.webkit.org/show_bug.cgi?id=222759
+        <rdar://problem/75053393>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::clearNowPlayingInfo): Track being the active
+        NowPlaying process.
+        (WebKit::GPUConnectionToWebProcess::setNowPlayingInfo): Ditto.
+        (WebKit::GPUConnectionToWebProcess::updateSupportedRemoteCommands): Pass supported
+        commands and seeking to NowPlayingManager so it can pass them to the remote command
+        listener.
+        (WebKit::GPUConnectionToWebProcess::createRemoteCommandListener): We only ever need
+        one listener.
+        (WebKit::GPUConnectionToWebProcess::releaseRemoteCommandListener): Ditto.
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage): Dispatch RemoteRemoteCommandListenerProxy
+        messages.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp:
+        (WebKit::RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy): Don't
+        create a remote command listener, we only need one for the GPU process.
+        (WebKit::RemoteRemoteCommandListenerProxy::updateSupportedCommands): New.
+        (WebKit::RemoteRemoteCommandListenerProxy::didReceiveRemoteControlCommand): Deleted.
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.h:
+        (WebKit::RemoteRemoteCommandListenerProxy::create):
+        (WebKit::RemoteRemoteCommandListenerProxy::supportsSeeking const):
+        (WebKit::RemoteRemoteCommandListenerProxy::supportedCommands const):
+        (WebKit::RemoteRemoteCommandListenerProxy::identifier const):
+        * GPUProcess/media/RemoteRemoteCommandListenerProxy.messages.in:
+
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.cpp:
+        (WebKit::RemoteRemoteCommandListener::RemoteRemoteCommandListener): Use m_process
+        instead of calling WebProcess::singleton().
+        (WebKit::RemoteRemoteCommandListener::~RemoteRemoteCommandListener): Ditto.
+        (WebKit::RemoteRemoteCommandListener::didReceiveRemoteControlCommand): Use client(),
+        m_client is now private.
+        (WebKit::RemoteRemoteCommandListener::updateSupportedCommands):
+        * WebProcess/GPU/media/RemoteRemoteCommandListener.h:
+
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit

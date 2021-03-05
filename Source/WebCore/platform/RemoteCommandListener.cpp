@@ -89,14 +89,35 @@ void RemoteCommandListener::setSupportsSeeking(bool supports)
 
 void RemoteCommandListener::addSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    m_registeredCommands.add(command);
+    m_supportedCommands.add(command);
     scheduleSupportedCommandsUpdate();
 }
 
 void RemoteCommandListener::removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    m_registeredCommands.remove(command);
+    m_supportedCommands.remove(command);
     scheduleSupportedCommandsUpdate();
+}
+
+void RemoteCommandListener::setSupportedCommands(const RemoteCommandsSet& commands)
+{
+    m_supportedCommands = commands;
+    scheduleSupportedCommandsUpdate();
+}
+
+void RemoteCommandListener::updateSupportedCommands()
+{
+    ASSERT_NOT_REACHED();
+}
+
+const RemoteCommandListener::RemoteCommandsSet& RemoteCommandListener::supportedCommands() const
+{
+    return m_supportedCommands;
+}
+
+bool RemoteCommandListener::supportsSeeking() const
+{
+    return m_supportsSeeking;
 }
 
 }

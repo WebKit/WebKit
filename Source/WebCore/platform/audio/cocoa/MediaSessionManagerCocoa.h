@@ -29,6 +29,7 @@
 
 #include "AudioHardwareListener.h"
 #include "GenericTaskQueue.h"
+#include "NowPlayingInfo.h"
 #include "PlatformMediaSessionManager.h"
 #include "RemoteCommandListener.h"
 
@@ -98,6 +99,7 @@ private:
     void audioHardwareDidBecomeInactive() final { }
     void audioOutputDeviceChanged() final;
 
+    Optional<NowPlayingInfo> m_nowPlayingInfo;
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };
     bool m_haveEverRegisteredAsNowPlayingApplication { false };

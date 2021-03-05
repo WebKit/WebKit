@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessProxy.h"
 #include "RemoteRemoteCommandListenerMessages.h"
+#include "RemoteRemoteCommandListenerProxyMessages.h"
 #include "WebProcess.h"
 
 namespace WebKit {
@@ -47,7 +48,7 @@ RemoteRemoteCommandListener::RemoteRemoteCommandListener(RemoteCommandListenerCl
     , m_process(webProcess)
     , m_identifier(RemoteRemoteCommandListenerIdentifier::generate())
 {
-    auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
+    auto& connection = m_process.ensureGPUProcessConnection();
     connection.addClient(*this);
     connection.messageReceiverMap().addMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), m_identifier.toUInt64(), *this);
     connection.connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteCommandListener(m_identifier), { });
@@ -55,7 +56,7 @@ RemoteRemoteCommandListener::RemoteRemoteCommandListener(RemoteCommandListenerCl
 
 RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
 {
-    auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
+    auto& connection = m_process.ensureGPUProcessConnection();
     connection.messageReceiverMap().removeMessageReceiver(*this);
     connection.connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteCommandListener(m_identifier), 0);
 }
@@ -66,7 +67,24 @@ void RemoteRemoteCommandListener::gpuProcessConnectionDidClose(GPUProcessConnect
 
 void RemoteRemoteCommandListener::didReceiveRemoteControlCommand(WebCore::PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    m_client.didReceiveRemoteControlCommand(type, argument);
+    client().didReceiveRemoteControlCommand(type, argument);
+}
+
+void RemoteRemoteCommandListener::updateSupportedCommands()
+{
+    auto& supportedCommands = this->supportedCommands();
+    if (m_currentCommands == supportedCommands && m_currentSupportSeeking == supportsSeeking())
+        return;
+
+    m_currentCommands = supportedCommands;
+    m_currentSupportSeeking = supportsSeeking();
+
+    Vector<PlatformMediaSession::RemoteControlCommandType> commands;
+    commands.reserveInitialCapacity(supportedCommands.size());
+    for (auto command : supportedCommands)
+        commands.uncheckedAppend(command);
+
+    m_process.ensureGPUProcessConnection().connection().send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { WTFMove(commands), m_currentSupportSeeking }, m_identifier);
 }
 
 }

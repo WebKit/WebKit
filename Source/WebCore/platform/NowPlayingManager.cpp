@@ -74,4 +74,13 @@ void NowPlayingManager::setNowPlayingInfo(Client& client, NowPlayingInfo&& nowPl
 #endif
 }
 
+void NowPlayingManager::setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet& commands, bool supportsSeeking)
+{
+    if (!m_remoteCommandListener)
+        return;
+
+    m_remoteCommandListener->setSupportsSeeking(supportsSeeking);
+    m_remoteCommandListener->setSupportedCommands(commands);
+}
+
 }

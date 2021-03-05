@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "RemoteRemoteCommandListenerMessages.h"
 
 namespace WebKit {
@@ -38,24 +39,19 @@ using namespace WebCore;
 RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy(GPUConnectionToWebProcess& gpuConnection, RemoteRemoteCommandListenerIdentifier&& identifier)
     : m_gpuConnection(makeWeakPtr(gpuConnection))
     , m_identifier(WTFMove(identifier))
-    , m_listener(WebCore::RemoteCommandListener::create(*this))
 {
 }
 
 RemoteRemoteCommandListenerProxy::~RemoteRemoteCommandListenerProxy() = default;
 
-void RemoteRemoteCommandListenerProxy::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
+void RemoteRemoteCommandListenerProxy::updateSupportedCommands(Vector<WebCore::PlatformMediaSession::RemoteControlCommandType>&& registeredCommands, bool supportsSeeking)
 {
-    if (!m_gpuConnection)
-        return;
+    m_supportedCommands.clear();
+    m_supportedCommands.add(registeredCommands.begin(), registeredCommands.end());
+    m_supportsSeeking = supportsSeeking;
 
-    m_gpuConnection->connection().send(Messages::RemoteRemoteCommandListener::DidReceiveRemoteControlCommand(command, argument), m_identifier);
-}
-
-void RemoteRemoteCommandListenerProxy::updateSupportedCommands(bool supportsSeeking)
-{
-    m_listener->setSupportsSeeking(supportsSeeking);
-    m_listener->updateSupportedCommands();
+    if (m_gpuConnection)
+        m_gpuConnection->updateSupportedRemoteCommands();
 }
 
 }

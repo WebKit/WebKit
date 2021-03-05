@@ -50,6 +50,7 @@ public:
 
     void clearNowPlayingInfoClient(Client&);
     void setNowPlayingInfo(Client&, NowPlayingInfo&&);
+    void setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet&, bool);
 
 private:
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;

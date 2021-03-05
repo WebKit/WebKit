@@ -101,13 +101,13 @@ void RemoteCommandListenerCocoa::updateSupportedCommands()
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
-    auto& supportedCommands = !m_registeredCommands.isEmpty() ? m_registeredCommands : defaultCommands();
-    if (m_currentCommands == supportedCommands)
+    auto& currentCommands = !supportedCommands().isEmpty() ? supportedCommands() : defaultCommands();
+    if (m_currentCommands == currentCommands)
         return;
 
-    auto commandInfoArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, supportedCommands.size(), &kCFTypeArrayCallBacks));
-    for (auto platformCommand : supportedCommands) {
-        if (isSeekCommand(platformCommand) && !m_supportsSeeking)
+    auto commandInfoArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, currentCommands.size(), &kCFTypeArrayCallBacks));
+    for (auto platformCommand : currentCommands) {
+        if (isSeekCommand(platformCommand) && !supportsSeeking())
             continue;
 
         auto command = mediaRemoteCommandForPlatformCommand(platformCommand);
@@ -118,11 +118,13 @@ void RemoteCommandListenerCocoa::updateSupportedCommands()
         auto commandInfo = adoptCF(MRMediaRemoteCommandInfoCreate(kCFAllocatorDefault));
         MRMediaRemoteCommandInfoSetCommand(commandInfo.get(), command.value());
         MRMediaRemoteCommandInfoSetEnabled(commandInfo.get(), true);
+        if (platformCommand == PlatformMediaSession::SkipForwardCommand || platformCommand == PlatformMediaSession::SkipBackwardCommand)
+            MRMediaRemoteCommandInfoSetOptions(commandInfo.get(), (__bridge CFDictionaryRef)(@{(__bridge NSString *)kMRMediaRemoteCommandInfoPreferredIntervalsKey : @[@(15.0)]}));
         CFArrayAppendValue(commandInfoArray.get(), commandInfo.get());
     }
 
     MRMediaRemoteSetSupportedCommands(commandInfoArray.get(), MRMediaRemoteGetLocalOrigin(), nullptr, nullptr);
-    m_currentCommands = supportedCommands;
+    m_currentCommands = currentCommands;
 }
 
 RemoteCommandListenerCocoa::RemoteCommandListenerCocoa(RemoteCommandListenerClient& client)
@@ -168,7 +170,7 @@ RemoteCommandListenerCocoa::RemoteCommandListenerCocoa(RemoteCommandListenerClie
             platformCommand = PlatformMediaSession::EndSeekingBackwardCommand;
             break;
         case MRMediaRemoteCommandSeekToPlaybackPosition: {
-            if (!m_supportsSeeking) {
+            if (!supportsSeeking()) {
                 status = MRMediaRemoteCommandHandlerStatusCommandFailed;
                 break;
             }
@@ -187,7 +189,7 @@ RemoteCommandListenerCocoa::RemoteCommandListenerCocoa(RemoteCommandListenerClie
         }
         case MRMediaRemoteCommandSkipForward:
         case MRMediaRemoteCommandSkipBackward:
-            if (!m_supportsSeeking) {
+            if (!supportsSeeking()) {
                 status = MRMediaRemoteCommandHandlerStatusCommandFailed;
                 break;
             }
@@ -212,7 +214,7 @@ RemoteCommandListenerCocoa::RemoteCommandListenerCocoa(RemoteCommandListenerClie
         };
 
         if (weakThis && status != MRMediaRemoteCommandHandlerStatusCommandFailed)
-            weakThis->m_client.didReceiveRemoteControlCommand(platformCommand, argument);
+            weakThis->client().didReceiveRemoteControlCommand(platformCommand, argument);
 
         completion((__bridge CFArrayRef)@[@(status)]);
     });

@@ -46,7 +46,6 @@ private:
 
     const RemoteCommandsSet& defaultCommands();
     RemoteCommandsSet m_currentCommands;
-    bool m_supportsSeeking { false };
 };
     
 }

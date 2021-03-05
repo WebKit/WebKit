@@ -7539,12 +7539,16 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     case PlatformMediaSession::EndSeekingForwardCommand:
         endScanning();
         break;
-    case PlatformMediaSession::SkipForwardCommand:
-        handleSeekToPlaybackPosition(argument.time ? argument.time.value() : defaultSkipAmount);
+    case PlatformMediaSession::SkipForwardCommand: {
+        auto delta = argument.time ? argument.time.value() : defaultSkipAmount;
+        handleSeekToPlaybackPosition(std::min(currentTime() + delta, duration()));
         break;
-    case PlatformMediaSession::SkipBackwardCommand:
-        handleSeekToPlaybackPosition(0 - (argument.time ? argument.time.value() : defaultSkipAmount));
+    }
+    case PlatformMediaSession::SkipBackwardCommand: {
+        auto delta = argument.time ? argument.time.value() : defaultSkipAmount;
+        handleSeekToPlaybackPosition(std::max(currentTime() - delta, 0.));
         break;
+    }
     case PlatformMediaSession::SeekToPlaybackPositionCommand:
         ASSERT(argument.time);
         if (argument.time)
