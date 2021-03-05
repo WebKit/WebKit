@@ -75,6 +75,8 @@ public:
     float zoom() const;
     bool computingFontSize() const { return m_propertyToCompute == CSSPropertyFontSize; }
     bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
+    CSSPropertyID propertyToCompute() const { return m_propertyToCompute.valueOr(CSSPropertyInvalid); }
+    const RenderView* renderView() const { return m_renderView; }
 
     double viewportWidthFactor() const;
     double viewportHeightFactor() const;

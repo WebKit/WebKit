@@ -126,15 +126,15 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
         fontDescription.setComputedSize(DefaultFontSize);
     }
 
-    auto fontStyle = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document);
-    if (!fontStyle)
+    auto fontCascade = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document);
+    if (!fontCascade)
         return;
 
     String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
 
-    modifiableState().font.initialize(document.fontSelector(), *fontStyle);
+    modifiableState().font.initialize(document.fontSelector(), *fontCascade);
     ASSERT(state().font.realized());
     ASSERT(state().font.isPopulated());
 }

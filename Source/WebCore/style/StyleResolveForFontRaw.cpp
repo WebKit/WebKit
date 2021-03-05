@@ -33,7 +33,6 @@
 
 #include "CSSFontSelector.h"
 #include "CSSPropertyParserHelpers.h"
-#include "CSSToLengthConversionData.h"
 #include "Document.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
@@ -47,17 +46,8 @@ namespace Style {
 
 using namespace CSSPropertyParserHelpers;
 
-Optional<RenderStyle> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescription&& fontDescription, Document& document)
+Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescription&& fontDescription, Document& document)
 {
-    auto fontStyle = RenderStyle::create();
-
-    auto getParentStyle = [&] () -> std::unique_ptr<RenderStyle> {
-        auto parentStyle = RenderStyle::clonePtr(fontStyle);
-        parentStyle->setFontDescription(FontCascadeDescription(fontDescription));
-        parentStyle->fontCascade().update(&document.fontSelector());
-        return parentStyle;
-    };
-
     // Map the font property longhands into the style.
     float parentSize = fontDescription.specifiedSize();
 
@@ -93,7 +83,7 @@ Optional<RenderStyle> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
         if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier()) {
             auto size = Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, document);
             fontDescription.setSpecifiedSize(size);
-            fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), false, &fontStyle, document));
+            fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), 1.0, MinimumFontSizeRule::None, document.settingsValues()));
         }
     }
 
@@ -196,9 +186,9 @@ Optional<RenderStyle> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
         }
     }, [&] (const CSSPropertyParserHelpers::LengthOrPercentRaw& lengthOrPercent) {
         return switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
-            auto parentStyle = getParentStyle();
-            CSSToLengthConversionData conversionData { parentStyle.get(), nullptr, parentStyle.get(), document.renderView(), 1.0f, CSSPropertyFontSize };
-            return static_cast<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, length.type, length.value));
+            auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
+            fontCascade.update(&document.fontSelector());
+            return static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(length.type, length.value, CSSPropertyFontSize, &fontCascade.fontMetrics(), &fontCascade.fontDescription(), &fontCascade.fontDescription(), document.renderView()));
         }, [&] (double percentage) {
             return static_cast<float>((parentSize * percentage) / 100.0);
         });
@@ -209,31 +199,12 @@ Optional<RenderStyle> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
         fontDescription.setComputedSize(size);
     }
 
-    if (fontRaw.lineHeight) {
-        Optional<Length> lineHeight = switchOn(*fontRaw.lineHeight, [&] (CSSValueID ident) {
-            if (ident == CSSValueNormal)
-                return Optional<Length>(RenderStyle::initialLineHeight());
-            return Optional<Length>(WTF::nullopt);
-        }, [&] (double number) {
-            return Optional<Length>(Length(number * 100.0, LengthType::Percent));
-        }, [&] (const CSSPropertyParserHelpers::LengthOrPercentRaw& lengthOrPercent) {
-            return switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
-                auto parentStyle = getParentStyle();
-                CSSToLengthConversionData conversionData { parentStyle.get(), nullptr, parentStyle.get(), document.renderView(), 1.0f, CSSPropertyLineHeight };
-                return Optional<Length>(Length(clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, length.type, length.value), minValueForCssLength, maxValueForCssLength), LengthType::Fixed));
-            }, [&] (double percentage) {
-                return Optional<Length>(Length((fontDescription.computedSize() * static_cast<int>(percentage)) / 100, LengthType::Fixed));
-            });
-        });
+    // As there is no line-height on FontCascade, there's no need to resolve
+    // it, even though there is line-height information on FontRaw.
 
-        if (lineHeight)
-            fontStyle.setLineHeight(WTFMove(lineHeight.value()));
-    }
-
-    fontStyle.setFontDescription(WTFMove(fontDescription));
-    fontStyle.fontCascade().update(&document.fontSelector());
-
-    return fontStyle;
+    auto fontCascade = FontCascade(WTFMove(fontDescription));
+    fontCascade.update(&document.fontSelector());
+    return fontCascade;
 }
 
 }

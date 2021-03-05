@@ -1,3 +1,12 @@
+2021-03-05  Chris Lord  <clord@igalia.com>
+
+        Allow CSS font-styling for canvas without RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=222665
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.draw.fontface.notinpage-expected.txt: Now passes
+
 2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
 
         XRFrame getViewerPose has emulatedPosition set properly

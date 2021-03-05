@@ -292,13 +292,13 @@ void CanvasRenderingContext2DBase::FontProxy::fontsNeedUpdate(FontSelector& sele
     update(selector);
 }
 
-void CanvasRenderingContext2DBase::FontProxy::initialize(FontSelector& fontSelector, const RenderStyle& newStyle)
+void CanvasRenderingContext2DBase::FontProxy::initialize(FontSelector& fontSelector, const FontCascade& fontCascade)
 {
     // Beware! m_font.fontSelector() might not point to document.fontSelector()!
-    ASSERT(newStyle.fontCascade().fontSelector() == &fontSelector);
+    ASSERT(fontCascade.fontSelector() == &fontSelector);
     if (realized())
         m_font.fontSelector()->unregisterForInvalidationCallbacks(*this);
-    m_font = newStyle.fontCascade();
+    m_font = fontCascade;
     m_font.update(&fontSelector);
     ASSERT(&fontSelector == m_font.fontSelector());
     m_font.fontSelector()->registerForInvalidationCallbacks(*this);
