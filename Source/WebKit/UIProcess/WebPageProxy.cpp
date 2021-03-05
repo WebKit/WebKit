@@ -7337,9 +7337,6 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
     }
 #endif
 
-    // There is a nested transaction in resetStateAfterProcessExited() that we don't want to commit before the client call.
-    PageLoadState::Transaction transaction = m_pageLoadState.transaction();
-
     resetStateAfterProcessExited(reason);
     stopAllURLSchemeTasks(m_process.ptr());
 #if ENABLE(UI_PROCESS_PDF_HUD)

@@ -890,8 +890,12 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     m_routingArbitrator->processDidTerminate();
 #endif
 
-    for (auto& page : pages)
+    // There is a nested transaction in WebPageProxy::resetStateAfterProcessExited() that we don't want to commit before the client call below (dispatchProcessDidTerminate).
+    Vector<PageLoadState::Transaction> pageLoadStateTransactions;
+    for (auto& page : pages) {
+        pageLoadStateTransactions.append(page->pageLoadState().transaction());
         page->resetStateAfterProcessTermination(reason);
+    }
 
     for (auto& provisionalPage : provisionalPages) {
         if (provisionalPage)

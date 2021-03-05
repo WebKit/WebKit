@@ -1,3 +1,15 @@
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate
+        https://bugs.webkit.org/show_bug.cgi?id=222809
+
+        Reviewed by Michael Catanzaro.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+        (TEST):
+
 2021-03-05  Cameron McCormack  <heycam@apple.com>
 
         Don't open a new window in MiniBrowser if already opening a file from the command line

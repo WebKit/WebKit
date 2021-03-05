@@ -1,5 +1,25 @@
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate
+        https://bugs.webkit.org/show_bug.cgi?id=222809
+
+        Reviewed by Michael Catanzaro.
+
+        There was a PageLoadState::Transaction in resetStateAfterProcessTermination() that
+        was previously making sure we would not clear the WebView's URL before calling the
+        processDidTerminate client delegate. Now that we call the client delegate in a
+        separate function (WebPageProxy::dispatchProcessDidTerminate), we need to make move
+        the PageLoadState::Transaction to the caller in
+        WebProcessProxy::processDidTerminateOrFailedToLaunch(), so that its scope covers
+        both resetStateAfterProcessTermination() & dispatchProcessDidTerminate() calls.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
         Fix potential thread-safety issue in WebsiteDataStore::fetchDataAndApply()
         https://bugs.webkit.org/show_bug.cgi?id=222807
 
