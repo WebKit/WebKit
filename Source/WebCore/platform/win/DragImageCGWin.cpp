@@ -100,7 +100,7 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
         goto exit;
 
     auto srcContext = createCgContextFromBitmap(image.get());
-    auto srcImage = adoptCF(CGBitmapContextCreateImage(srcContext));
+    auto srcImage = adoptCF(CGBitmapContextCreateImage(srcContext.get()));
     CGRect rect;
     rect.origin.x = 0;
     rect.origin.y = 0;
