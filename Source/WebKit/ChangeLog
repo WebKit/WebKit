@@ -1,5 +1,44 @@
 2021-03-05  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r273543. rdar://problem/75101709
+
+    REGRESSION (r269824): macCatalyst WKWebView shows chunks of other tiles in the middle of content
+    https://bugs.webkit.org/show_bug.cgi?id=222460
+    <rdar://problem/74102753>
+    
+    Reviewed by Simon Fraser.
+    
+    * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+    (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+    Reinstate some code that was accidentally deleted in r269824 that ensures
+    that we do not use an in-use IOSurface as our front buffer, so that
+    we don't paint into it while it's being composited in the render server.
+    
+    Also, add some comments, since this code is all a little confusing
+    with its fronts and backs.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273543 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r269824): macCatalyst WKWebView shows chunks of other tiles in the middle of content
+            https://bugs.webkit.org/show_bug.cgi?id=222460
+            <rdar://problem/74102753>
+
+            Reviewed by Simon Fraser.
+
+            * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+            (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+            Reinstate some code that was accidentally deleted in r269824 that ensures
+            that we do not use an in-use IOSurface as our front buffer, so that
+            we don't paint into it while it's being composited in the render server.
+
+            Also, add some comments, since this code is all a little confusing
+            with its fronts and backs.
+
+2021-03-05  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r273286. rdar://problem/75101889
 
     [Cocoa] Send sandbox extensions for Network Extension services in load parameters
