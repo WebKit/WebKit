@@ -141,10 +141,6 @@ static ExceptionOr<Vector<ApplePayShippingMethod>> convertAndValidate(Vector<App
     return WTFMove(result);
 }
 
-#if defined(ApplePaySessionAdditions_convertAndValidate)
-ApplePaySessionAdditions_convertAndValidate
-#endif
-
 static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document, unsigned version, ApplePayPaymentRequest&& paymentRequest, const PaymentCoordinator& paymentCoordinator)
 {
     auto convertedRequest = convertAndValidate(document, version, paymentRequest, paymentCoordinator);

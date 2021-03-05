@@ -61,10 +61,6 @@
 
 namespace WebKit {
 
-#if defined(WebPaymentCoordinatorProxyCocoaAdditions_members)
-WebPaymentCoordinatorProxyCocoaAdditions_members
-#endif
-
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)
     : m_client(client)
     , m_canMakePaymentsQueue(WorkQueue::create("com.apple.WebKit.CanMakePayments"))
