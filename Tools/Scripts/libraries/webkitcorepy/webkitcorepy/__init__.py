@@ -37,7 +37,7 @@ from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDupl
 from webkitcorepy.task_pool import TaskPool
 from webkitcorepy.credentials import credentials
 
-version = Version(0, 5, 4)
+version = Version(0, 5, 5)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -49,6 +49,7 @@ else:
 
 AutoInstall.register(Package('certifi', Version(2020, 6, 20)))
 AutoInstall.register(Package('chardet', Version(3, 0, 4)))
+AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
 AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('idna', Version(2, 10)))

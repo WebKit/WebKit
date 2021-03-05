@@ -46,7 +46,6 @@ AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'
 AutoInstall.register(Package('configparser', Version(4, 0, 2)))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
-AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
 AutoInstall.register(Package('genshi', Version(0, 7, 3), pypi_name='Genshi'))
