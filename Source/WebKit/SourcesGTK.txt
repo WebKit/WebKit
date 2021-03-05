@@ -107,8 +107,6 @@ UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebGrammarDetail.cpp
 UIProcess/WebMemoryPressureHandler.cpp
-UIProcess/WebTextChecker.cpp
-UIProcess/WebTextCheckerClient.cpp
 UIProcess/WebViewportAttributes.cpp
 
 UIProcess/API/C/WKGrammarDetail.cpp
@@ -268,6 +266,8 @@ UIProcess/gtk/WebPageProxyGtk.cpp @no-unify
 UIProcess/gtk/WebPasteboardProxyGtk.cpp
 UIProcess/gtk/WebPopupMenuProxyGtk.cpp
 UIProcess/gtk/WebPreferencesGtk.cpp
+UIProcess/gtk/WebTextChecker.cpp
+UIProcess/gtk/WebTextCheckerClient.cpp
 
 UIProcess/soup/WebCookieManagerProxySoup.cpp
 UIProcess/soup/WebProcessPoolSoup.cpp

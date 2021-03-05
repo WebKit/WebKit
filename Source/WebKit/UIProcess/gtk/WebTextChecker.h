@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTextChecker_h
-#define WebTextChecker_h
+#pragma once
 
 #include "APIObject.h"
-#include "WKTextChecker.h"
+#include "WKTextCheckerGtk.h"
 #include "WebTextCheckerClient.h"
 #include <wtf/Forward.h>
 
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebTextChecker_h

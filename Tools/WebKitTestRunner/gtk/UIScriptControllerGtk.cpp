@@ -29,9 +29,9 @@
 #include "EventSenderProxy.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include "TextChecker.h"
 #include "UIScriptContext.h"
 #include <JavaScriptCore/OpaqueJSString.h>
+#include <WebKit/WKTextCheckerGtk.h>
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
 #include <wtf/RunLoop.h>
@@ -77,7 +77,7 @@ void UIScriptControllerGtk::doAsyncTask(JSValueRef callback)
 
 void UIScriptControllerGtk::setContinuousSpellCheckingEnabled(bool enabled)
 {
-    WebKit::TextChecker::setContinuousSpellCheckingEnabled(enabled);
+    WKTextCheckerSetContinuousSpellCheckingEnabled(enabled);
 }
 
 void UIScriptControllerGtk::copyText(JSStringRef text)

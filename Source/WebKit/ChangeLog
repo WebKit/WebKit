@@ -1,3 +1,73 @@
+2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Clean up GTK-specific text checker stuff
+        https://bugs.webkit.org/show_bug.cgi?id=222818
+
+        Reviewed by Don Olmstead.
+
+        This moves the GTK-specific classes WebTextChecker and WebTextCheckerClient into
+        GTK-specific directories.
+
+        This also moves most of WKTextChecker, except for WKTextCheckerSetTestingMode, which is
+        cross-platform. This is not quite how we normally do it -- normally we try to have one
+        cross-platform header with platform-specific conditionals and only separate out platform-
+        specific source files -- but in this case the header is almost entirely GTK-specific, so it
+        makes sense to do it this way.
+
+        This also exposes WKTextCheckerSetContinuousSpellCheckingEnabled and uses it in
+        UIScriptControllerGtk, which is needed for bug #181916.
+
+        This code is all pretty messy, especially the WKTextCheckerClient (which actually has its
+        own WKTextCheckerSetContinuousSpellCheckingEnabled!), but now it's a *platform-specific*
+        mess, which is a small improvement.
+
+        * SourcesGTK.txt:
+        * UIProcess/API/C/WKTextChecker.cpp:
+        (WKTextCheckerSetTestingMode):
+        (WKTextCheckerSetClient): Deleted.
+        (WKTextCheckerContinuousSpellCheckingEnabledStateChanged): Deleted.
+        (WKTextCheckerGrammarCheckingEnabledStateChanged): Deleted.
+        (WKTextCheckerCheckSpelling): Deleted.
+        (WKTextCheckerChangeSpellingToWord): Deleted.
+        * UIProcess/API/C/WKTextChecker.h:
+        * UIProcess/API/C/gtk/WKTextCheckerGtk.cpp:
+        (WKTextCheckerSetClient):
+        (WKTextCheckerContinuousSpellCheckingEnabledStateChanged):
+        (WKTextCheckerGrammarCheckingEnabledStateChanged):
+        (WKTextCheckerCheckSpelling):
+        (WKTextCheckerChangeSpellingToWord):
+        (WKTextCheckerSetContinuousSpellCheckingEnabled):
+        * UIProcess/API/C/gtk/WKTextCheckerGtk.h:
+        * UIProcess/gtk/WebTextChecker.cpp: Renamed from Source/WebKit/UIProcess/WebTextChecker.cpp.
+        (WebKit::WebTextChecker::singleton):
+        (WebKit::WebTextChecker::WebTextChecker):
+        (WebKit::WebTextChecker::setClient):
+        (WebKit::updateStateForAllContexts):
+        (WebKit::WebTextChecker::continuousSpellCheckingEnabledStateChanged):
+        (WebKit::WebTextChecker::grammarCheckingEnabledStateChanged):
+        (WebKit::WebTextChecker::checkSpelling):
+        (WebKit::WebTextChecker::changeSpellingToWord):
+        * UIProcess/gtk/WebTextChecker.h: Renamed from Source/WebKit/UIProcess/WebTextChecker.h.
+        (WebKit::WebTextChecker::client):
+        * UIProcess/gtk/WebTextCheckerClient.cpp: Renamed from Source/WebKit/UIProcess/WebTextCheckerClient.cpp.
+        (WebKit::WebTextCheckerClient::continuousSpellCheckingAllowed):
+        (WebKit::WebTextCheckerClient::continuousSpellCheckingEnabled):
+        (WebKit::WebTextCheckerClient::setContinuousSpellCheckingEnabled):
+        (WebKit::WebTextCheckerClient::grammarCheckingEnabled):
+        (WebKit::WebTextCheckerClient::setGrammarCheckingEnabled):
+        (WebKit::WebTextCheckerClient::uniqueSpellDocumentTag):
+        (WebKit::WebTextCheckerClient::closeSpellDocumentWithTag):
+        (WebKit::WebTextCheckerClient::checkSpellingOfString):
+        (WebKit::WebTextCheckerClient::checkGrammarOfString):
+        (WebKit::WebTextCheckerClient::spellingUIIsShowing):
+        (WebKit::WebTextCheckerClient::toggleSpellingUIIsShowing):
+        (WebKit::WebTextCheckerClient::updateSpellingUIWithMisspelledWord):
+        (WebKit::WebTextCheckerClient::updateSpellingUIWithGrammarString):
+        (WebKit::WebTextCheckerClient::guessesForWord):
+        (WebKit::WebTextCheckerClient::learnWord):
+        (WebKit::WebTextCheckerClient::ignoreWord):
+        * UIProcess/gtk/WebTextCheckerClient.h: Renamed from Source/WebKit/UIProcess/WebTextCheckerClient.h.
+
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate

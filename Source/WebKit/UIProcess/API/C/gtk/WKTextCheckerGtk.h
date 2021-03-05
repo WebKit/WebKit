@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +27,71 @@
 #define WKTextCheckerGtk_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKTextChecker.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+WK_EXPORT void WKTextCheckerSetTestingMode(bool enabled);
+
+// TextChecker Client
+typedef bool (*WKTextCheckerContinousSpellCheckingAllowed)(const void *clientInfo);
+typedef bool (*WKTextCheckerContinousSpellCheckingEnabled)(const void *clientInfo);
+typedef void (*WKTextCheckerSetContinousSpellCheckingEnabled)(bool enabled, const void *clientInfo);
+typedef bool (*WKTextCheckerGrammarCheckingEnabled)(const void *clientInfo);
+typedef void (*WKTextCheckerSetGrammarCheckingEnabled)(bool enabled, const void *clientInfo);
+typedef uint64_t (*WKTextCheckerUniqueSpellDocumentTag)(WKPageRef page, const void *clientInfo);
+typedef void (*WKTextCheckerCloseSpellDocumentWithTag)(uint64_t tag, const void *clientInfo);
+typedef void (*WKTextCheckerCheckSpellingOfString)(uint64_t tag, WKStringRef text, int32_t* misspellingLocation, int32_t* misspellingLength, const void *clientInfo);
+typedef void (*WKTextCheckerCheckGrammarOfString)(uint64_t tag, WKStringRef text, WKArrayRef* grammarDetails, int32_t* badGrammarLocation, int32_t* badGrammarLength, const void *clientInfo);
+typedef bool (*WKTextCheckerSpellingUIIsShowing)(const void *clientInfo);
+typedef void (*WKTextCheckerToggleSpellingUIIsShowing)(const void *clientInfo);
+typedef void (*WKTextCheckerUpdateSpellingUIWithMisspelledWord)(uint64_t tag, WKStringRef misspelledWord, const void *clientInfo);
+typedef void (*WKTextCheckerUpdateSpellingUIWithGrammarString)(uint64_t tag, WKStringRef badGrammarPhrase, WKGrammarDetailRef grammarDetail, const void *clientInfo);
+typedef WKArrayRef (*WKTextCheckerGuessesForWord)(uint64_t tag, WKStringRef word, const void *clientInfo);
+typedef void (*WKTextCheckerLearnWord)(uint64_t tag, WKStringRef word, const void *clientInfo);
+typedef void (*WKTextCheckerIgnoreWord)(uint64_t tag, WKStringRef word, const void *clientInfo);
+
+typedef struct WKTextCheckerClientBase {
+    int                                                                     version;
+    const void *                                                            clientInfo;
+} WKTextCheckerClientBase;
+
+typedef struct WKTextCheckerClientV0 {
+    WKTextCheckerClientBase                                                 base;
+
+    WKTextCheckerContinousSpellCheckingAllowed                              continuousSpellCheckingAllowed;
+    WKTextCheckerContinousSpellCheckingEnabled                              continuousSpellCheckingEnabled;
+    WKTextCheckerSetContinousSpellCheckingEnabled                           setContinuousSpellCheckingEnabled;
+    WKTextCheckerGrammarCheckingEnabled                                     grammarCheckingEnabled;
+    WKTextCheckerSetGrammarCheckingEnabled                                  setGrammarCheckingEnabled;
+    WKTextCheckerUniqueSpellDocumentTag                                     uniqueSpellDocumentTag;
+    WKTextCheckerCloseSpellDocumentWithTag                                  closeSpellDocumentWithTag;
+    WKTextCheckerCheckSpellingOfString                                      checkSpellingOfString;
+    WKTextCheckerCheckGrammarOfString                                       checkGrammarOfString;
+    WKTextCheckerSpellingUIIsShowing                                        spellingUIIsShowing;
+    WKTextCheckerToggleSpellingUIIsShowing                                  toggleSpellingUIIsShowing;
+    WKTextCheckerUpdateSpellingUIWithMisspelledWord                         updateSpellingUIWithMisspelledWord;
+    WKTextCheckerUpdateSpellingUIWithGrammarString                          updateSpellingUIWithGrammarString;
+    WKTextCheckerGuessesForWord                                             guessesForWord;
+    WKTextCheckerLearnWord                                                  learnWord;
+    WKTextCheckerIgnoreWord                                                 ignoreWord;
+} WKTextCheckerClientV0;
+
+WK_EXPORT void WKTextCheckerSetClient(const WKTextCheckerClientBase* client);
+
+WK_EXPORT void WKTextCheckerContinuousSpellCheckingEnabledStateChanged(bool);
+WK_EXPORT void WKTextCheckerGrammarCheckingEnabledStateChanged(bool);
+
+WK_EXPORT void WKTextCheckerCheckSpelling(WKPageRef page, bool startBeforeSelection);
+WK_EXPORT void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word);
+
 WK_EXPORT void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages);
+WK_EXPORT void WKTextCheckerSetContinuousSpellCheckingEnabled(bool);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKTextCheckerGtk_h */
+#endif

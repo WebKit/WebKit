@@ -1,5 +1,16 @@
 2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        [GTK] Clean up GTK-specific text checker stuff
+        https://bugs.webkit.org/show_bug.cgi?id=222818
+
+        Reviewed by Don Olmstead.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.cpp:
+        (WTR::UIScriptControllerGtk::setContinuousSpellCheckingEnabled):
+
+2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         [GTK] Remove ADD_WHOLE_ARCHIVE_TO_LIBRARIES
         https://bugs.webkit.org/show_bug.cgi?id=222826
 
