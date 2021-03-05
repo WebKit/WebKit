@@ -1,3 +1,14 @@
+2021-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        word-wrap/overflow-wrap "overwrite" hyphens
+        https://bugs.webkit.org/show_bug.cgi?id=222548
+        <rdar://problem/75061741>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/hyphenation-when-overflow-wrap-is-break-word-expected.html: Added.
+        * fast/inline/hyphenation-when-overflow-wrap-is-break-word.html: Added.
+
 2021-03-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r269627?): ASSERTION FAILED: &layoutState().establishedFormattingState(layoutBox.formattingContextRoot()) == this in WebCore::Layout::FormattingState::boxGeometry

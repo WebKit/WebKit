@@ -124,11 +124,10 @@ private:
     Optional<PartialRun> tryBreakingTextRun(const ContinuousContent::Run& overflowRun, InlineLayoutUnit logicalLeft, Optional<InlineLayoutUnit> availableWidth, bool hasWrapOpportunityAtPreviousPosition) const;
 
     enum class WordBreakRule {
-        NoBreak,
-        AtArbitraryPosition,
-        OnlyHyphenationAllowed
+        AtArbitraryPosition        = 1 << 0,
+        AtHyphenationOpportunities = 1 << 1
     };
-    WordBreakRule wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
+    OptionSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
     bool shouldKeepEndOfLineWhitespace(const ContinuousContent&) const;
 
     bool n_hyphenationIsDisabled { false };
