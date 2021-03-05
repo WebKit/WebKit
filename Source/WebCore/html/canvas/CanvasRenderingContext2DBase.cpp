@@ -1687,12 +1687,14 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     if (!imageBitmap.width() || !imageBitmap.height())
         return Exception { InvalidStateError };
 
-    if (srcRect.isEmpty())
+    auto normalizedSrcRect = normalizeRect(srcRect);
+
+    if (normalizedSrcRect.isEmpty())
         return { };
 
     FloatRect srcBitmapRect = FloatRect(FloatPoint(), FloatSize(imageBitmap.width(), imageBitmap.height()));
 
-    if (!srcBitmapRect.contains(normalizeRect(srcRect)) || !dstRect.width() || !dstRect.height())
+    if (!srcBitmapRect.contains(normalizedSrcRect) || !dstRect.width() || !dstRect.height())
         return { };
 
     GraphicsContext* c = drawingContext();
