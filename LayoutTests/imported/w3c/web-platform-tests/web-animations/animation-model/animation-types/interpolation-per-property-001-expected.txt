@@ -143,9 +143,9 @@ PASS column-gap (type: length) has testInterpolation function
 PASS column-gap supports animating as a length
 PASS column-gap supports animating as a length of rem
 PASS column-gap (type: discrete) has testInterpolation function
-FAIL column-gap uses discrete animation when animating between "normal" and "200px" with linear easing assert_equals: The value should be normal at 0ms expected "normal" but got "200px"
-FAIL column-gap uses discrete animation when animating between "normal" and "200px" with effect easing assert_equals: The value should be normal at 0ms expected "normal" but got "200px"
-FAIL column-gap uses discrete animation when animating between "normal" and "200px" with keyframe easing assert_equals: The value should be normal at 0ms expected "normal" but got "200px"
+PASS column-gap uses discrete animation when animating between "normal" and "200px" with linear easing
+PASS column-gap uses discrete animation when animating between "normal" and "200px" with effect easing
+PASS column-gap uses discrete animation when animating between "normal" and "200px" with keyframe easing
 PASS column-rule-color (type: color) has testInterpolation function
 PASS column-rule-color supports animating as color of rgb()
 PASS column-rule-color supports animating as color of #RGB
@@ -197,10 +197,10 @@ PASS flex-basis (type: lengthPercentageOrCalc) has testInterpolation function
 PASS flex-basis supports animating as a length
 PASS flex-basis supports animating as a length of rem
 PASS flex-basis supports animating as a percentage
-FAIL flex-basis supports animating as combination units "px" and "%" assert_equals: The value should be calc(10% + 5px) at 500ms expected "calc(10% + 5px)" but got "calc((10px * 0.5) + (20% * 0.5))"
-FAIL flex-basis supports animating as combination units "%" and "em" assert_equals: The value should be calc(5% + 10px) at 500ms expected "calc(5% + 10px)" but got "calc((10% * 0.5) + (20px * 0.5))"
+FAIL flex-basis supports animating as combination units "px" and "%" assert_equals: The value should be calc(10% + 5px) at 500ms expected "calc(10% + 5px)" but got "20%"
+FAIL flex-basis supports animating as combination units "%" and "em" assert_equals: The value should be calc(5% + 10px) at 500ms expected "calc(5% + 10px)" but got "20px"
 PASS flex-basis supports animating as combination units "em" and "rem"
-FAIL flex-basis supports animating as combination units "px" and "calc" assert_equals: The value should be calc(10% + 10px) at 500ms expected "calc(10% + 10px)" but got "calc((10px * 0.5) + ((20% + 10px) * 0.5))"
+FAIL flex-basis supports animating as combination units "px" and "calc" assert_equals: The value should be calc(10% + 10px) at 500ms expected "calc(10% + 10px)" but got "calc(20% + 10px)"
 FAIL flex-basis supports animating as a calc assert_equals: The value should be calc(15% + 15px) at 500ms expected "calc(15% + 15px)" but got "calc(((10% + 10px) * 0.5) + ((20% + 10px + 10px) * 0.5))"
 PASS flex-basis (type: discrete) has testInterpolation function
 PASS flex-basis uses discrete animation when animating between "auto" and "10px" with linear easing

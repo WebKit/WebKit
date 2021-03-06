@@ -95,12 +95,15 @@ static inline Length blendFunc(const CSSPropertyBlendingClient*, const Length& f
 
 static inline GapLength blendFunc(const CSSPropertyBlendingClient*, const GapLength& from, const GapLength& to, double progress)
 {
-    return (from.isNormal() || to.isNormal()) ? to : blend(from.length(), to.length(), progress);
+    if (from.isNormal() || to.isNormal())
+        return progress < 0.5 ? from : to;
+    return blend(from.length(), to.length(), progress, ValueRangeNonNegative);
 }
 
 static inline LengthSize blendFunc(const CSSPropertyBlendingClient* anim, const LengthSize& from, const LengthSize& to, double progress)
 {
-    return { blendFunc(anim, from.width, to.width, progress), blendFunc(anim, from.height, to.height, progress) };
+    return { blendFunc(anim, from.width, to.width, progress, ValueRangeNonNegative),
+             blendFunc(anim, from.height, to.height, progress, ValueRangeNonNegative) };
 }
 
 static inline ShadowStyle blendFunc(const CSSPropertyBlendingClient* anim, ShadowStyle from, ShadowStyle to, double progress)
@@ -672,42 +675,70 @@ protected:
     void (RenderStyle::*m_setter)(RefPtr<T>&&);
 };
 
+static bool canInterpolateLengths(const Length& a, const Length& b, bool isLengthPercentage)
+{
+    if (a.type() == b.type())
+        return true;
+
+    // Some properties allow for <length-percentage> and <number> values. We must allow animating
+    // between a <length> and a <percentage>, but exclude animating between a <number> and either
+    // a <length> or <percentage>. We can use Length::isRelative() to determine whether we are
+    // dealing with a <number> as opposed to a <length> or <percentage>.
+    if (isLengthPercentage) {
+        return (a.isFixed() || a.isPercentOrCalculated() || a.isRelative())
+            && (b.isFixed() || b.isPercentOrCalculated() || b.isRelative())
+            && a.isRelative() == b.isRelative();
+    }
+
+    return false;
+}
+
 class LengthPropertyWrapper : public PropertyWrapperGetter<const Length&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LengthPropertyWrapper(CSSPropertyID prop, const Length& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(Length&&))
+    enum class Flags {
+        IsLengthPercentage          = 1 << 0,
+        NegativeLengthsAreInvalid   = 1 << 1,
+    };
+    LengthPropertyWrapper(CSSPropertyID prop, const Length& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(Length&&), OptionSet<Flags> flags = { })
         : PropertyWrapperGetter<const Length&>(prop, getter)
         , m_setter(setter)
+        , m_flags(flags)
     {
     }
 
     bool canInterpolate(const RenderStyle* a, const RenderStyle* b) const override
     {
-        return !this->value(a).isAuto() && !this->value(b).isAuto();
+        return canInterpolateLengths(this->value(a), this->value(b), m_flags.contains(Flags::IsLengthPercentage));
     }
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
+        auto valueRange = m_flags.contains(Flags::NegativeLengthsAreInvalid) ? ValueRangeNonNegative : ValueRangeAll;
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress, valueRange));
     }
 
 protected:
     void (RenderStyle::*m_setter)(Length&&);
+
+private:
+    OptionSet<Flags> m_flags;
 };
 
-class NonNegativeLengthPropertyWrapper : public LengthPropertyWrapper {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    NonNegativeLengthPropertyWrapper(CSSPropertyID prop, const Length& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(Length&&))
-        : LengthPropertyWrapper(prop, getter, setter)
-    {
-    }
+static bool canInterpolateLengthVariants(const LengthSize& a, const LengthSize& b)
+{
+    bool isLengthPercentage = true;
+    return canInterpolateLengths(a.width, b.width, isLengthPercentage)
+        && canInterpolateLengths(a.height, b.height, isLengthPercentage);
+}
 
-    void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
-    {
-        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress, ValueRangeNonNegative));
-    }
-};
+static bool canInterpolateLengthVariants(const GapLength& a, const GapLength& b)
+{
+    if (a.isNormal() || b.isNormal())
+        return false;
+    bool isLengthPercentage = true;
+    return canInterpolateLengths(a.length(), b.length(), isLengthPercentage);
+}
 
 template <typename T>
 class LengthVariantPropertyWrapper : public PropertyWrapperGetter<const T&> {
@@ -717,6 +748,11 @@ public:
         : PropertyWrapperGetter<const T&>(prop, getter)
         , m_setter(setter)
     {
+    }
+
+    bool canInterpolate(const RenderStyle* a, const RenderStyle* b) const override
+    {
+        return canInterpolateLengthVariants(this->value(a), this->value(b));
     }
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
@@ -747,26 +783,13 @@ public:
         if (m_flags.contains(Flags::UsesFillKeyword) && a->borderImage().fill() != b->borderImage().fill())
             return false;
 
-        auto canInterpolateBetweenLengths = [&](const Length& a, const Length& b) -> bool {
-            if (a.type() == b.type() || a.isZero() || b.isZero())
-                return true;
-
-            // Some property allow for <length-percentage> and <number> values. We must allow animating
-            // between a <length> and a <percentage>, but exclude animating between a <number> and either
-            // a <length> or <percentage>. We can use Length::isRelative() to determine whether we are
-            // dealing with a <number> as opposed to a <length> or <percentage>.
-            if (m_flags.contains(Flags::IsLengthPercentage))
-                return a.isRelative() == b.isRelative();
-
-            return false;
-        };
-
         auto& aLengthBox = this->value(a);
         auto& bLengthBox = this->value(b);
-        return canInterpolateBetweenLengths(aLengthBox.top(), bLengthBox.top())
-            && canInterpolateBetweenLengths(aLengthBox.right(), bLengthBox.right())
-            && canInterpolateBetweenLengths(aLengthBox.bottom(), bLengthBox.bottom())
-            && canInterpolateBetweenLengths(aLengthBox.left(), bLengthBox.left());
+        bool isLengthPercentage = m_flags.contains(Flags::IsLengthPercentage);
+        return canInterpolateLengths(aLengthBox.top(), bLengthBox.top(), isLengthPercentage)
+            && canInterpolateLengths(aLengthBox.right(), bLengthBox.right(), isLengthPercentage)
+            && canInterpolateLengths(aLengthBox.bottom(), bLengthBox.bottom(), isLengthPercentage)
+            && canInterpolateLengths(aLengthBox.left(), bLengthBox.left(), isLengthPercentage);
     }
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
@@ -1734,13 +1757,13 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyTop, &RenderStyle::top, &RenderStyle::setTop),
         new LengthPropertyWrapper(CSSPropertyBottom, &RenderStyle::bottom, &RenderStyle::setBottom),
 
-        new NonNegativeLengthPropertyWrapper(CSSPropertyWidth, &RenderStyle::width, &RenderStyle::setWidth),
-        new NonNegativeLengthPropertyWrapper(CSSPropertyMinWidth, &RenderStyle::minWidth, &RenderStyle::setMinWidth),
-        new LengthPropertyWrapper(CSSPropertyMaxWidth, &RenderStyle::maxWidth, &RenderStyle::setMaxWidth),
+        new LengthPropertyWrapper(CSSPropertyWidth, &RenderStyle::width, &RenderStyle::setWidth, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new LengthPropertyWrapper(CSSPropertyMinWidth, &RenderStyle::minWidth, &RenderStyle::setMinWidth, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new LengthPropertyWrapper(CSSPropertyMaxWidth, &RenderStyle::maxWidth, &RenderStyle::setMaxWidth, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
 
-        new NonNegativeLengthPropertyWrapper(CSSPropertyHeight, &RenderStyle::height, &RenderStyle::setHeight),
-        new NonNegativeLengthPropertyWrapper(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight),
-        new LengthPropertyWrapper(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight),
+        new LengthPropertyWrapper(CSSPropertyHeight, &RenderStyle::height, &RenderStyle::setHeight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new LengthPropertyWrapper(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new LengthPropertyWrapper(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
 
         new PropertyWrapperFlex(),
 
@@ -1752,10 +1775,10 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyMarginRight, &RenderStyle::marginRight, &RenderStyle::setMarginRight),
         new LengthPropertyWrapper(CSSPropertyMarginTop, &RenderStyle::marginTop, &RenderStyle::setMarginTop),
         new LengthPropertyWrapper(CSSPropertyMarginBottom, &RenderStyle::marginBottom, &RenderStyle::setMarginBottom),
-        new NonNegativeLengthPropertyWrapper(CSSPropertyPaddingLeft, &RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft),
-        new NonNegativeLengthPropertyWrapper(CSSPropertyPaddingRight, &RenderStyle::paddingRight, &RenderStyle::setPaddingRight),
-        new NonNegativeLengthPropertyWrapper(CSSPropertyPaddingTop, &RenderStyle::paddingTop, &RenderStyle::setPaddingTop),
-        new NonNegativeLengthPropertyWrapper(CSSPropertyPaddingBottom, &RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom),
+        new LengthPropertyWrapper(CSSPropertyPaddingLeft, &RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new LengthPropertyWrapper(CSSPropertyPaddingRight, &RenderStyle::paddingRight, &RenderStyle::setPaddingRight, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new LengthPropertyWrapper(CSSPropertyPaddingTop, &RenderStyle::paddingTop, &RenderStyle::setPaddingTop, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new LengthPropertyWrapper(CSSPropertyPaddingBottom, &RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
 
         new PropertyWrapperVisitedAffectedColor(CSSPropertyCaretColor, &RenderStyle::caretColor, &RenderStyle::setCaretColor, &RenderStyle::visitedLinkCaretColor, &RenderStyle::setVisitedLinkCaretColor),
 
@@ -1800,13 +1823,13 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<float>(CSSPropertyOutlineWidth, &RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth),
         new PropertyWrapper<float>(CSSPropertyLetterSpacing, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing),
         new LengthPropertyWrapper(CSSPropertyWordSpacing, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing),
-        new LengthPropertyWrapper(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent),
+        new LengthPropertyWrapper(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent, LengthPropertyWrapper::Flags::IsLengthPercentage),
 
         new PropertyWrapper<float>(CSSPropertyPerspective, &RenderStyle::perspective, &RenderStyle::setPerspective),
-        new LengthPropertyWrapper(CSSPropertyPerspectiveOriginX, &RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX),
-        new LengthPropertyWrapper(CSSPropertyPerspectiveOriginY, &RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY),
-        new LengthPropertyWrapper(CSSPropertyTransformOriginX, &RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX),
-        new LengthPropertyWrapper(CSSPropertyTransformOriginY, &RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY),
+        new LengthPropertyWrapper(CSSPropertyPerspectiveOriginX, &RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, LengthPropertyWrapper::Flags::IsLengthPercentage),
+        new LengthPropertyWrapper(CSSPropertyPerspectiveOriginY, &RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, LengthPropertyWrapper::Flags::IsLengthPercentage),
+        new LengthPropertyWrapper(CSSPropertyTransformOriginX, &RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX, LengthPropertyWrapper::Flags::IsLengthPercentage),
+        new LengthPropertyWrapper(CSSPropertyTransformOriginY, &RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY, LengthPropertyWrapper::Flags::IsLengthPercentage),
         new PropertyWrapper<float>(CSSPropertyTransformOriginZ, &RenderStyle::transformOriginZ, &RenderStyle::setTransformOriginZ),
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderTopLeftRadius, &RenderStyle::borderTopLeftRadius, &RenderStyle::setBorderTopLeftRadius),
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderTopRightRadius, &RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius),
@@ -1833,7 +1856,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperClipPath(CSSPropertyClipPath, &RenderStyle::clipPath, &RenderStyle::setClipPath),
 
         new PropertyWrapperShape(CSSPropertyShapeOutside, &RenderStyle::shapeOutside, &RenderStyle::setShapeOutside),
-        new NonNegativeLengthPropertyWrapper(CSSPropertyShapeMargin, &RenderStyle::shapeMargin, &RenderStyle::setShapeMargin),
+        new LengthPropertyWrapper(CSSPropertyShapeMargin, &RenderStyle::shapeMargin, &RenderStyle::setShapeMargin, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
         new PropertyWrapper<float>(CSSPropertyShapeImageThreshold, &RenderStyle::shapeImageThreshold, &RenderStyle::setShapeImageThreshold),
 
         new PropertyWrapperVisitedAffectedColor(CSSPropertyColumnRuleColor, MaybeInvalidColor, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::visitedLinkColumnRuleColor, &RenderStyle::setVisitedLinkColumnRuleColor),

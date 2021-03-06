@@ -1,3 +1,44 @@
+2021-03-06  Antoine Quint  <graouts@webkit.org>
+
+        Improve blending of Length and other Length-related types
+        https://bugs.webkit.org/show_bug.cgi?id=222816
+
+        Reviewed by Antti Koivisto.
+
+        Add an extra 153 PASS results. We now pass all the column-gap, row-gap, border-image-slice,
+        max-height and max-width interpolation tests.
+
+        * web-platform-tests/css/css-align/animation/column-gap-composition-expected.txt:
+        * web-platform-tests/css/css-align/animation/column-gap-interpolation-expected.txt:
+        * web-platform-tests/css/css-align/animation/row-gap-composition-expected.txt:
+        * web-platform-tests/css/css-align/animation/row-gap-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-size-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-bottom-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-left-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-right-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-top-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-bottom-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-left-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-right-composition-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-top-composition-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/bottom-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/left-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/right-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/top-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-values/animations/calc-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2021-03-05  Chris Lord  <clord@igalia.com>
 
         Allow CSS font-styling for canvas without RenderStyle
