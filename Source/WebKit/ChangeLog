@@ -1,5 +1,17 @@
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
+        Potential crash under NotificationPermissionRequestManagerProxy::invalidateRequests()
+        https://bugs.webkit.org/show_bug.cgi?id=222841
+
+        Reviewed by Darin Adler.
+
+        Make sure we copy the HashMap before iterating over it and calling deny() on the requests.
+
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp:
+        (WebKit::NotificationPermissionRequestManagerProxy::invalidateRequests):
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
         Update ApplicationCacheStorage::originsWithCache() to return a HashSet<SecurityOriginData> instead of a Vector<Ref<SecurityOrigin>>
         https://bugs.webkit.org/show_bug.cgi?id=222828
 
