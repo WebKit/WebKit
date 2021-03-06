@@ -1,3 +1,14 @@
+2021-03-06  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Invalidate beforeChild when parent changes to RubyBase
+        https://bugs.webkit.org/show_bug.cgi?id=222862
+        <rdar://problem/73659871>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/ruby/crash-when-attaching-to-base-expected.txt: Added.
+        * fast/ruby/crash-when-attaching-to-base.html: Added.
+
 2021-03-06  Antoine Quint  <graouts@webkit.org>
 
         Improve blending of Length and other Length-related types
