@@ -1,3 +1,14 @@
+2021-03-06  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Readjust the first child when it is the multicolumn container
+        https://bugs.webkit.org/show_bug.cgi?id=222851
+        <rdar://problem/73392642>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/readjust-first-child-on-attach-expected.txt: Added.
+        * fast/multicol/readjust-first-child-on-attach.html: Added.
+
 2021-03-06  Tim Horton  <timothy_horton@apple.com>
 
         <model> should create a model-owning compositing layer
