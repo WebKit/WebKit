@@ -554,12 +554,11 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
     if (dataTypes.contains(WebsiteDataType::WebSQLDatabases) && isPersistent()) {
         callbackAggregator->addPendingCallback();
 
-        m_queue->dispatch([webSQLDatabaseDirectory = m_configuration->webSQLDatabaseDirectory().isolatedCopy(), callbackAggregator] {
-            auto origins = WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory)->origins();
-            RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins)]() mutable {
-                WebsiteData websiteData;
-                for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::WebSQLDatabases, 0 });
+        m_queue->dispatch([webSQLDatabaseDirectory = m_configuration->webSQLDatabaseDirectory().isolatedCopy(), callbackAggregator]() {
+            WebsiteData websiteData;
+            for (auto& origin : WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory)->origins())
+                websiteData.entries.append(WebsiteData::Entry { crossThreadCopy(origin), WebsiteDataType::WebSQLDatabases, 0 });
+            RunLoop::main().dispatch([callbackAggregator, websiteData = WTFMove(websiteData)]() mutable {
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
@@ -569,13 +568,10 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
         callbackAggregator->addPendingCallback();
 
         m_queue->dispatch([mediaKeysStorageDirectory = m_configuration->mediaKeysStorageDirectory().isolatedCopy(), callbackAggregator] {
-            auto origins = mediaKeyOrigins(mediaKeysStorageDirectory);
-
-            RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins)]() mutable {
-                WebsiteData websiteData;
-                for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::MediaKeys, 0 });
-
+            WebsiteData websiteData;
+            for (auto& origin : mediaKeyOrigins(mediaKeysStorageDirectory))
+                websiteData.entries.append(WebsiteData::Entry { crossThreadCopy(origin), WebsiteDataType::MediaKeys, 0 });
+            RunLoop::main().dispatch([callbackAggregator, websiteData = WTFMove(websiteData)]() mutable {
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });

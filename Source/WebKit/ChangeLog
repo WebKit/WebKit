@@ -1,3 +1,22 @@
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Fix potential thread safety issue in WebsiteDataStore::fetchDataAndApply()
+        https://bugs.webkit.org/show_bug.cgi?id=222830
+
+        Reviewed by Geoffrey Garen.
+
+        The previous code was passing SecurityOriginData objects from the data store queue to the main
+        thread without isolated copy. This code would not be thread-safe if the function we got the
+        origins from would keep a copy of the origins (e.g. caching). To make this more robust from a
+        thread-safety standpoint, we now crossThreadCopy() to origins before passing them to the main
+        thread.
+
+        I also updated these to construct the WebsiteData on the data store queue instead of the main
+        thread for consistency with other cases inside WebsiteDataStore::fetchDataAndApply().
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+
 2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Clean up GTK-specific text checker stuff
