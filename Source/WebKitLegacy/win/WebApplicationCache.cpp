@@ -160,7 +160,7 @@ HRESULT WebApplicationCache::diskUsageForOrigin(IWebSecurityOrigin* origin, long
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    *size = storage().diskUsageForOrigin(*webSecurityOrigin->securityOrigin());
+    *size = storage().diskUsageForOrigin(webSecurityOrigin->securityOrigin()->data());
     return S_OK;
 }
 
@@ -180,7 +180,7 @@ HRESULT WebApplicationCache::deleteCacheForOrigin(IWebSecurityOrigin* origin)
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    storage().deleteCacheForOrigin(*webSecurityOrigin->securityOrigin());
+    storage().deleteCacheForOrigin(webSecurityOrigin->securityOrigin()->data());
     return S_OK;
 }
 
@@ -195,7 +195,7 @@ HRESULT WebApplicationCache::originsWithCache(IPropertyBag** origins)
     RetainPtr<CFMutableArrayRef> arrayItem = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, coreOrigins.size(), &MarshallingHelpers::kIUnknownArrayCallBacks));
 
     for (auto& coreOrigin : coreOrigins)
-        CFArrayAppendValue(arrayItem.get(), reinterpret_cast<void*>(WebSecurityOrigin::createInstance(coreOrigin.ptr())));
+        CFArrayAppendValue(arrayItem.get(), reinterpret_cast<void*>(WebSecurityOrigin::createInstance(coreOrigin.securityOrigin().ptr())));
 
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(
         CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

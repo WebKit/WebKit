@@ -1,5 +1,33 @@
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
+        Update ApplicationCacheStorage::originsWithCache() to return a HashSet<SecurityOriginData> instead of a Vector<Ref<SecurityOrigin>>
+        https://bugs.webkit.org/show_bug.cgi?id=222828
+
+        Reviewed by Darin Adler.
+
+        Update ApplicationCacheStorage::originsWithCache() to return a HashSet<SecurityOriginData> instead of a Vector<Ref<SecurityOrigin>>.
+        Using a HashSet makes sure we do not return duplicates (which do occur as per ApplicationCacheStorage implementation) and makes typing
+        more consistent with other similar storage functions. Using SecurityOriginData is more lightweight and sufficient for our use cases.
+        It also takes care of a FIXME comment in WebsiteDataStore::fetchDataAndApply about switching to SecurityOriginData.
+
+        This patch also updates WebsiteDataStore::fetchDataAndApply() to crossThreadCopy() the securityOriginData before sending them from
+        the data store queue to the main thread. The previous code as sending SecurityOrigins and WebsiteData to the main thread without
+        any isolated copy, which was fragile and would not have been thread-safe if ApplicationCacheStorage::originsWithCache() had cached
+        the origins it returned for example.
+
+        Also update WebsiteDataStore::removeData() to make sure we crossThreadCopy() the origins before sending them from the main thread
+        to the data store queue. This code did not look thread-safe.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageClearApplicationCacheForOrigin):
+        (WKBundlePageGetAppCacheUsageForOrigin):
+        (WKBundlePageCopyOriginsWithApplicationCache):
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
         Make HTMLMediaElement::clearMediaCacheForOrigins() take in SecurityOriginData objects
         https://bugs.webkit.org/show_bug.cgi?id=222832
 

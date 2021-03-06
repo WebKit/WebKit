@@ -1,5 +1,24 @@
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
+        Update ApplicationCacheStorage::originsWithCache() to return a HashSet<SecurityOriginData> instead of a Vector<Ref<SecurityOrigin>>
+        https://bugs.webkit.org/show_bug.cgi?id=222828
+
+        Reviewed by Darin Adler.
+
+        Update ApplicationCacheStorage::originsWithCache() to return a HashSet<SecurityOriginData> instead of a Vector<Ref<SecurityOrigin>>.
+        Using a HashSet makes sure we do not return duplicates (which do occur as per ApplicationCacheStorage implementation) and makes typing
+        more consistent with other similar storage functions. Using SecurityOriginData is more lightweight and sufficient for our use cases.
+        It also takes care of a FIXME comment in WebsiteDataStore::fetchDataAndApply about switching to SecurityOriginData.
+
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache diskUsageForOrigin:]):
+        (+[WebApplicationCache deleteCacheForOrigin:]):
+        (+[WebApplicationCache originsWithCache]):
+        * WebCoreSupport/WebApplicationCacheQuotaManager.mm:
+        (-[WebApplicationCacheQuotaManager usage]):
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
         Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=222760
 

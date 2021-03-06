@@ -526,20 +526,12 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 
         m_queue->dispatch([fetchOptions, applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
             auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
-
             WebsiteData websiteData;
-
-            // FIXME: getOriginsWithCache should return a collection of SecurityOriginDatas.
-            auto origins = storage->originsWithCache();
-
-            for (auto& origin : origins) {
+            for (auto& origin : storage->originsWithCache()) {
                 uint64_t size = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? storage->diskUsageForOrigin(origin) : 0;
-                WebsiteData::Entry entry { origin->data(), WebsiteDataType::OfflineWebApplicationCache, size };
-
-                websiteData.entries.append(WTFMove(entry));
+                websiteData.entries.append(WebsiteData::Entry { crossThreadCopy(origin), WebsiteDataType::OfflineWebApplicationCache, size });
             }
-
-            RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins), websiteData = WTFMove(websiteData)]() mutable {
+            RunLoop::main().dispatch([callbackAggregator, websiteData = WTFMove(websiteData)]() mutable {
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
@@ -974,7 +966,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         HashSet<WebCore::SecurityOriginData> origins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)
-                origins.add(origin);
+                origins.add(crossThreadCopy(origin));
         }
         
 #if ENABLE(VIDEO)
@@ -1063,16 +1055,14 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         HashSet<WebCore::SecurityOriginData> origins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)
-                origins.add(origin);
+                origins.add(crossThreadCopy(origin));
         }
 
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins = WTFMove(origins), applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
             auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
-
             for (const auto& origin : origins)
-                storage->deleteCacheForOrigin(origin.securityOrigin());
-
+                storage->deleteCacheForOrigin(origin);
             WTF::RunLoop::main().dispatch([callbackAggregator] {
                 callbackAggregator->removePendingCallback();
             });
@@ -1083,7 +1073,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         HashSet<WebCore::SecurityOriginData> origins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)
-                origins.add(origin);
+                origins.add(crossThreadCopy(origin));
         }
 
         callbackAggregator->addPendingCallback();
@@ -1101,7 +1091,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         HashSet<WebCore::SecurityOriginData> origins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)
-                origins.add(origin);
+                origins.add(crossThreadCopy(origin));
         }
 
         callbackAggregator->addPendingCallback();

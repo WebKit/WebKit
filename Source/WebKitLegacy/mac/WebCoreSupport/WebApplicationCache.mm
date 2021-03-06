@@ -111,7 +111,7 @@ static NSString *applicationCachePath()
 
 + (long long)diskUsageForOrigin:(WebSecurityOrigin *)origin
 {
-    return webApplicationCacheStorage().diskUsageForOrigin(*[origin _core]);
+    return webApplicationCacheStorage().diskUsageForOrigin([origin _core]->data());
 }
 
 + (void)deleteAllApplicationCaches
@@ -121,13 +121,13 @@ static NSString *applicationCachePath()
 
 + (void)deleteCacheForOrigin:(WebSecurityOrigin *)origin
 {
-    webApplicationCacheStorage().deleteCacheForOrigin(*[origin _core]);
+    webApplicationCacheStorage().deleteCacheForOrigin([origin _core]->data());
 }
 
 + (NSArray *)originsWithCache
 {
     return createNSArray(webApplicationCacheStorage().originsWithCache(), [] (auto& origin) {
-        return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.ptr()]);
+        return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
     }).autorelease();
 }
 
