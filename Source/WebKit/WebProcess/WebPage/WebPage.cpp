@@ -7270,9 +7270,19 @@ void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, co
     }
 
     downcast<HTMLElement>(*elementToUpdate).updateWithImageExtractionResult(WTFMove(result));
+    auto hitTestResult = corePage()->mainFrame().eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
+        HitTestRequest::ReadOnly,
+        HitTestRequest::Active,
+        HitTestRequest::AllowVisibleChildFrameContentOnly,
+    });
 
-    // FIXME: Hit-test with location and return whether or not there is overlay text at the given location.
-    completionHandler(true);
+    auto nodeAtLocation = makeRefPtr(hitTestResult.innerNonSharedNode());
+    if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate) {
+        completionHandler(false);
+        return;
+    }
+
+    completionHandler(HTMLElement::isImageOverlayText(*nodeAtLocation));
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)

@@ -1,3 +1,79 @@
+2021-03-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Implement additional accessibility support for image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=222811
+        <rdar://problem/73203775>
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Adds additional support for accessible image extraction. See below for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        (WebKit::SuppressInteractionToken::SuppressInteractionToken): Deleted.
+        (WebKit::SuppressInteractionToken::~SuppressInteractionToken): Deleted.
+
+        Remove `SuppressInteractionToken`, along with its only use as a member on `WKContentView`. This was used to
+        temporarily suppress the image extraction interaction when editing, but is now no longer necessary, since we're
+        removing all dependence on this interaction object.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setIsEditable:]):
+
+        Remove `_suppressImageExtractionToken`.
+
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        There's no need to cancel the regular text interaction in favor of the image extraction interaction after this
+        patch, since the former will be used for both. However, we do need to temporarily suppress regular text
+        interaction while image extraction is still pending, to avoid prematurely selecting the entire image element.
+
+        To do this, we keep track of the element pending image extraction (`_elementPendingImageExtraction`), and avoid
+        allowing text interactions to begin if we're over this exact element.
+
+        (-[WKContentView _singleTapIdentified:]):
+
+        We don't need to explicitly cancel the image extraction interaction on single tap anymore; this behavior will
+        automatically fall out of using default text interactions for image extraction.
+
+        (-[WKContentView _didStartProvisionalLoadForMainFrame]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+
+        Remove explicit image extraction cancellation here as well, and instead bail from the drag only if we're about
+        to proceed with the image extraction gesture (which is indicated by the argument to the completion handler).
+        See comment below.
+
+        (-[WKContentView _doAfterPendingImageExtraction:]):
+
+        Add an enum flag to the completion handler block here, to determine whether or not we'll want to immediately
+        proceed with image extraction. The value of this flag will be determined by the hit-test after updating the page
+        with image extraction results in `WebPage::updateWithImageExtractionResult`.
+
+        (-[WKContentView _invokeAllActionsToPerformAfterPendingImageExtraction:]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+        (-[WKContentView _invokeAllActionsToPerformAfterPendingImageExtraction]): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateWithImageExtractionResult):
+
+        Remove a FIXME and implement hit-testing logic, to return whether or not the given location hit-tests to the
+        image overlay we've just injected.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setFocusedFrameBeforeSelectingTextAtLocation):
+        (WebKit::elementPositionInformation):
+
+        Avoid extracting image data for a position information request, if the hit-tested node is actually a text node
+        in an image overlay, instead of an image.
+
+        (WebKit::selectionPositionInformation):
+        (WebKit::WebPage::positionInformation):
+
+        Allow text interactions to begin in user-agent shadow roots. This matches behavior on macOS, and was
+        (presumably) initially disallowed on iOS to avoid activating the editable text interaction
+        (`UIWKTextInteractionAssistant`), as opposed to block text selection interactions, when long pressing text
+        inside textareas and text fields. However, since we only use the normal text interaction assistant now for both
+        non-editable and editable text, this distinction no longer matters.
+
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] Protect against bad navigationID in WebPageProxy::didDestroyNavigation()

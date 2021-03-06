@@ -2117,7 +2117,7 @@ static inline bool rectIsTooBigForSelection(const IntRect& blockRect, const Fram
 
 void WebPage::setFocusedFrameBeforeSelectingTextAtLocation(const IntPoint& point)
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
     auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
     auto* hitNode = result.innerNode();
     if (hitNode && hitNode->renderer())
@@ -2696,7 +2696,7 @@ static void boundsPositionInformation(RenderObject& renderer, InteractionInforma
     }
 }
 
-static void elementPositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+static void elementPositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, const Node* innerNonSharedNode, InteractionInformationAtPosition& info)
 {
     Element* linkElement = nullptr;
     if (element.renderer() && element.renderer()->isRenderImage())
@@ -2732,7 +2732,14 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     }
 
     if (auto* renderer = element.renderer()) {
-        if (renderer->isRenderImage())
+        bool shouldCollectImagePositionInformation = renderer->isRenderImage();
+#if ENABLE(IMAGE_EXTRACTION)
+        if (HTMLElement::isImageOverlayText(*innerNonSharedNode))
+            shouldCollectImagePositionInformation = false;
+#else
+        UNUSED_PARAM(innerNonSharedNode);
+#endif
+        if (shouldCollectImagePositionInformation)
             imagePositionInformation(page, element, request, info);
         boundsPositionInformation(*renderer, info);
     }
@@ -2742,7 +2749,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     
 static void selectionPositionInformation(WebPage& page, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
     HitTestResult result = page.corePage()->mainFrame().eventHandler().hitTestResultAtPoint(request.point, hitType);
     Node* hitNode = result.innerNode();
 
@@ -2915,11 +2922,11 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
     auto& eventHandler = m_page->mainFrame().eventHandler();
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::AllowFrameScrollbars, HitTestRequest::AllowVisibleChildFrameContentOnly };
-    HitTestResult hitTestResultForCursor = eventHandler.hitTestResultAtPoint(request.point, hitType);
-    if (auto* hitFrame = hitTestResultForCursor.innerNodeFrame()) {
-        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResultForCursor, false);
+    auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitType);
+    if (auto* hitFrame = hitTestResult.innerNodeFrame()) {
+        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResult, false);
         if (request.includeCaretContext)
-            populateCaretContext(hitTestResultForCursor, request, info);
+            populateCaretContext(hitTestResult, request, info);
     }
 
     if (m_focusedElement)
@@ -2927,7 +2934,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
     if (is<Element>(nodeRespondingToClickEvents)) {
         auto& element = downcast<Element>(*nodeRespondingToClickEvents);
-        elementPositionInformation(*this, element, request, info);
+        elementPositionInformation(*this, element, request, hitTestResult.innerNonSharedNode(), info);
 
         if (info.isLink && !info.isImage && request.includeSnapshot)
             info.image = shareableBitmapSnapshotForNode(element);

@@ -1305,12 +1305,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         return NO;
 
     _isEditable = isEditable;
-
-#if ENABLE(IMAGE_EXTRACTION)
-    if (self._imageExtractionEnabled && (!_isBlurringFocusedElement || !_isChangingFocus))
-        _suppressImageExtractionToken = isEditable ? makeUnique<WebKit::SuppressInteractionToken>(self, _imageExtractionInteraction.get()) : nullptr;
-#endif
-
     return YES;
 }
 
@@ -2664,19 +2658,17 @@ static Class tapAndAHalfRecognizerClass()
     if (_suppressSelectionAssistantReasons)
         return NO;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if ([self _imageExtractionShouldPreventTextInteractionAtPoint:point])
-        return NO;
-
-    [self _cancelImageExtraction];
-#endif
-
     if (_inspectorNodeSearchEnabled)
         return NO;
 
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(point));
     if (![self ensurePositionInformationIsUpToDate:request])
         return NO;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (_elementPendingImageExtraction && _positionInformation.elementContext == _elementPendingImageExtraction)
+        return NO;
+#endif
 
     return _positionInformation.isSelectable;
 }
@@ -2716,13 +2708,6 @@ static Class tapAndAHalfRecognizerClass()
     if (_suppressSelectionAssistantReasons)
         return NO;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if ([self _imageExtractionShouldPreventTextInteractionAtPoint:point])
-        return NO;
-
-    [self _cancelImageExtraction];
-#endif
-
     if (!self.isFocusingElement) {
         if (gesture == UIWKGestureDoubleTap) {
             // Don't allow double tap text gestures in noneditable content.
@@ -2755,6 +2740,11 @@ static Class tapAndAHalfRecognizerClass()
 
 #if ENABLE(DATALIST_ELEMENT)
     if (_positionInformation.preventTextInteraction)
+        return NO;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (_elementPendingImageExtraction && _positionInformation.elementContext == _elementPendingImageExtraction)
         return NO;
 #endif
 
@@ -2890,10 +2880,6 @@ static Class tapAndAHalfRecognizerClass()
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = !_doubleTapGestureRecognizer.get().enabled;
-
-#if ENABLE(IMAGE_EXTRACTION)
-    [self _cancelImageExtractionIfNeededAfterTouchAt:gestureRecognizer.location];
-#endif
 }
 
 static void cancelPotentialTapIfNecessary(WKContentView* contentView)
@@ -4480,7 +4466,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self _setDoubleTapGesturesEnabled:NO];
     [_twoFingerDoubleTapGestureRecognizer _wk_cancel];
 #if ENABLE(IMAGE_EXTRACTION)
-    _suppressImageExtractionToken = nullptr;
     [self _cancelImageExtraction];
 #endif
 }
@@ -8491,21 +8476,12 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     [self cleanUpDragSourceSessionState];
 
-    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] {
+    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf)
+        if (!strongSelf || proceedWithImageExtraction == WebKit::ProceedWithImageExtraction::Yes)
             return;
 
         auto dragOrigin = [session locationInView:strongSelf.get()];
-#if ENABLE(IMAGE_EXTRACTION)
-        [strongSelf _cancelImageExtractionIfNeededAfterTouchAt:dragOrigin];
-        if (strongSelf->_imageExtractionState == WebKit::ImageExtractionState::Active) {
-            RELEASE_LOG(DragAndDrop, "Drag session failed: %p (deferring to active image extraction)", session.get());
-            completion();
-            return;
-        }
-#endif
-
         strongSelf->_dragDropInteractionState.prepareForDragSession(session.get(), completion.get());
         strongSelf->_page->requestDragStart(WebCore::roundedIntPoint(dragOrigin), WebCore::roundedIntPoint([strongSelf convertPoint:dragOrigin toView:[strongSelf window]]), [strongSelf _allowedDragSourceActions]);
         RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%.0f, %.0f}", session.get(), dragOrigin.x, dragOrigin.y);
@@ -8514,7 +8490,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #if ENABLE(IMAGE_EXTRACTION)
     [self _doAfterPendingImageExtraction:prepareForSession];
 #else
-    prepareForSession();
+    prepareForSession(WebKit::ProceedWithImageExtraction::No);
 #endif
 }
 
@@ -9428,18 +9404,20 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(IMAGE_EXTRACTION)
 
-- (void)_doAfterPendingImageExtraction:(dispatch_block_t)block
+- (void)_doAfterPendingImageExtraction:(void(^)(WebKit::ProceedWithImageExtraction proceedWithImageExtraction))block
 {
-    if (_imageExtractionState == WebKit::ImageExtractionState::Pending)
+    if (_hasPendingImageExtraction)
         _actionsToPerformAfterPendingImageExtraction.append(makeBlockPtr(block));
     else
-        block();
+        block(WebKit::ProceedWithImageExtraction::No);
 }
 
-- (void)_invokeAllActionsToPerformAfterPendingImageExtraction
+- (void)_invokeAllActionsToPerformAfterPendingImageExtraction:(WebKit::ProceedWithImageExtraction)proceedWithImageExtraction
 {
+    _hasPendingImageExtraction = NO;
+    _elementPendingImageExtraction = WTF::nullopt;
     for (auto block : std::exchange(_actionsToPerformAfterPendingImageExtraction, { }))
-        block();
+        block(proceedWithImageExtraction);
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
@@ -9936,19 +9914,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!self.webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
-    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion)] {
+    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion)] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-
-        auto position = [interaction locationInView:strongSelf.get()];
-#if ENABLE(IMAGE_EXTRACTION)
-        [strongSelf _cancelImageExtractionIfNeededAfterTouchAt:position];
-        if (strongSelf->_imageExtractionState == WebKit::ImageExtractionState::Active) {
+        if (!strongSelf || proceedWithImageExtraction == WebKit::ProceedWithImageExtraction::Yes) {
             completion(nil);
             return;
         }
-#endif
 
         [strongSelf->_webView _didShowContextMenu];
 
@@ -9956,7 +9927,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
             strongSelf->_showLinkPreviews = value.boolValue;
 
-        WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(position) };
+        WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([interaction locationInView:strongSelf.get()]) };
         request.includeSnapshot = true;
         request.includeLinkIndicator = true;
         request.linkIndicatorShouldHaveLegacyMargins = ![strongSelf _shouldUseContextMenus];
@@ -9972,7 +9943,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 #if ENABLE(IMAGE_EXTRACTION)
     [self _doAfterPendingImageExtraction:getConfigurationAndContinue];
 #else
-    getConfigurationAndContinue();
+    getConfigurationAndContinue(WebKit::ProceedWithImageExtraction::No);
 #endif
 }
 

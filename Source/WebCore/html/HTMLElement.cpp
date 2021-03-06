@@ -1234,6 +1234,29 @@ bool HTMLElement::hasImageOverlay() const
     return shadowRoot->hasElementWithId(*imageOverlayElementIdentifier().impl());
 }
 
+bool HTMLElement::isImageOverlayText(const Node& node)
+{
+    if (!is<Text>(node))
+        return false;
+
+    auto shadowHost = node.shadowHost();
+    if (!shadowHost)
+        return false;
+
+    auto userAgentShadowRoot = shadowHost->userAgentShadowRoot();
+    if (!userAgentShadowRoot) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    for (auto& child : childrenOfType<HTMLDivElement>(*userAgentShadowRoot)) {
+        if (child.getIdAttribute() == imageOverlayElementIdentifier())
+            return child.contains(&node);
+    }
+
+    return false;
+}
+
 #if ENABLE(IMAGE_EXTRACTION)
 
 void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result)

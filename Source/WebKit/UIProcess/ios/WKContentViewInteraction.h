@@ -221,30 +221,9 @@ struct WKAutoCorrectionData {
     CGRect textLastRect;
 };
 
-class SuppressInteractionToken {
-    WTF_MAKE_NONCOPYABLE(SuppressInteractionToken); WTF_MAKE_FAST_ALLOCATED;
-public:
-    SuppressInteractionToken(WKContentView *view, NSObject<UIInteraction> *interaction)
-        : m_view(view)
-        , m_interaction(interaction)
-    {
-        ASSERT(view);
-        ASSERT(interaction);
-        if (interaction)
-            [view removeInteraction:interaction];
-    }
-
-    ~SuppressInteractionToken()
-    {
-        if (!m_view || !m_interaction)
-            return;
-
-        [m_view addInteraction:m_interaction.get().get()];
-    }
-
-private:
-    WeakObjCPtr<WKContentView> m_view;
-    WeakObjCPtr<NSObject<UIInteraction>> m_interaction;
+enum class ProceedWithImageExtraction : bool {
+    No,
+    Yes
 };
 
 }
@@ -488,10 +467,9 @@ private:
 #if ENABLE(IMAGE_EXTRACTION)
     RetainPtr<WKImageExtractionGestureRecognizer> _imageExtractionGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _imageExtractionTimeoutGestureRecognizer;
-    WebKit::ImageExtractionState _imageExtractionState;
-    CGRect _imageExtractionInteractionBounds;
-    Vector<BlockPtr<void()>> _actionsToPerformAfterPendingImageExtraction;
-    std::unique_ptr<WebKit::SuppressInteractionToken> _suppressImageExtractionToken;
+    BOOL _hasPendingImageExtraction;
+    Optional<WebCore::ElementContext> _elementPendingImageExtraction;
+    Vector<BlockPtr<void(WebKit::ProceedWithImageExtraction)>> _actionsToPerformAfterPendingImageExtraction;
 #if USE(UICONTEXTMENU)
     RetainPtr<UIMenu> _imageExtractionContextMenu;
 #endif // USE(UICONTEXTMENU)
