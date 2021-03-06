@@ -1,3 +1,27 @@
+2021-03-06  Sam Weinig  <weinig@apple.com>
+
+        Simplify DumpRenderTree WebPreferences reset
+        https://bugs.webkit.org/show_bug.cgi?id=218024
+        <rdar://problem/70764568>
+
+        Reviewed by Simon Fraser.
+
+        Use new _batchUpdatePreferencesInBlock and _resetForTesting to simplify and
+        improve the performance of resetting preferences.
+   
+        _batchUpdatePreferencesInBlock makes it so we only trigger the recalculation
+        of WebCore::Settings once per test, rather than linearly with the number of
+        settings that we reset.
+
+        _resetForTesting will allow us to remove explicit resetting of preferences 
+        that use the existing default value (though this change does not utilize
+        that yet, to limit the number of changes in this commit).
+ 
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        (setWebPreferencesForTestOptions):
+        (resetWebViewToConsistentState):
+
 2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Clean up GTK-specific text checker stuff

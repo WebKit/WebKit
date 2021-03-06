@@ -54,6 +54,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Compiler.h>
 #import <wtf/MainThread.h>
+#import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -191,36 +192,32 @@ WebCacheModel TestWebPreferencesCacheModelForMainBundle(NSString *bundleIdentifi
 + (NSString *)_IBCreatorID;
 @end
 
+enum class UpdateAfterBatchType : uint8_t {
+    API         = 1 << 0,
+    Internal    = 1 << 1
+};
+
 struct WebPreferencesPrivate
 {
 public:
     WebPreferencesPrivate()
-    : inPrivateBrowsing(NO)
-    , autosaves(NO)
-    , automaticallyDetectsCacheModel(NO)
-    , numWebViews(0)
 #if PLATFORM(IOS_FAMILY)
-    , readWriteQueue(dispatch_queue_create("com.apple.WebPreferences.ReadWriteQueue", DISPATCH_QUEUE_CONCURRENT))
+        : readWriteQueue { adoptNS(dispatch_queue_create("com.apple.WebPreferences.ReadWriteQueue", DISPATCH_QUEUE_CONCURRENT)) }
 #endif
     {
     }
 
 #if PLATFORM(IOS_FAMILY)
-    ~WebPreferencesPrivate()
-    {
-        dispatch_release(readWriteQueue);
-    }
+    RetainPtr<dispatch_queue_t> readWriteQueue;
 #endif
-
     RetainPtr<NSMutableDictionary> values;
-    BOOL inPrivateBrowsing;
     RetainPtr<NSString> identifier;
-    BOOL autosaves;
-    BOOL automaticallyDetectsCacheModel;
-    unsigned numWebViews;
-#if PLATFORM(IOS_FAMILY)
-    dispatch_queue_t readWriteQueue;
-#endif
+    BOOL inPrivateBrowsing { NO };
+    BOOL autosaves { NO };
+    BOOL automaticallyDetectsCacheModel { NO };
+    unsigned numWebViews { 0 };
+    unsigned updateBatchCount { 0 };
+    OptionSet<UpdateAfterBatchType> updateAfterBatchType;
 };
 
 #if PLATFORM(IOS_FAMILY)
@@ -345,7 +342,7 @@ public:
     if ([encoder allowsKeyedCoding]){
         [encoder encodeObject:_private->identifier.get() forKey:@"Identifier"];
 #if PLATFORM(IOS_FAMILY)
-        dispatch_sync(_private->readWriteQueue, ^{
+        dispatch_sync(_private->readWriteQueue.get(), ^{
 #endif
         [encoder encodeObject:_private->values.get() forKey:@"Values"];
         LOG (Encoding, "Identifier = %@, Values = %@\n", _private->identifier.get(), _private->values.get());
@@ -358,7 +355,7 @@ public:
         [encoder encodeValueOfObjCType:@encode(int) at:&version];
         [encoder encodeObject:_private->identifier.get()];
 #if PLATFORM(IOS_FAMILY)
-        dispatch_sync(_private->readWriteQueue, ^{
+        dispatch_sync(_private->readWriteQueue.get(), ^{
 #endif
         [encoder encodeObject:_private->values.get()];
 #if PLATFORM(IOS_FAMILY)
@@ -467,7 +464,7 @@ public:
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
     __block id o = nil;
-    dispatch_sync(_private->readWriteQueue, ^{
+    dispatch_sync(_private->readWriteQueue.get(), ^{
         o = [_private->values.get() objectForKey:_key];
     });
 #else
@@ -493,7 +490,7 @@ public:
         return;
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
 #endif
     [_private->values.get() setObject:value forKey:_key];
 #if PLATFORM(IOS_FAMILY)
@@ -523,7 +520,7 @@ public:
 {
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
 #endif
         [_private->values.get() setObject:value forKey:_key];
 #if PLATFORM(IOS_FAMILY)
@@ -546,7 +543,7 @@ public:
         return;
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
 #endif
     [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS_FAMILY)
@@ -569,7 +566,7 @@ public:
         return;
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
 #endif
     [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS_FAMILY)
@@ -592,7 +589,7 @@ public:
         return;
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
 #endif
     [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS_FAMILY)
@@ -614,7 +611,7 @@ public:
         return;
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
 #endif
     [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS_FAMILY)
@@ -637,7 +634,7 @@ public:
         return;
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
 #endif
     [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS_FAMILY)
@@ -660,7 +657,7 @@ public:
         return;
     NSString *_key = KEY(key);
 #if PLATFORM(IOS_FAMILY)
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
 #endif
     [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS_FAMILY)
@@ -1620,6 +1617,44 @@ public:
         [self performSelector:@selector(_checkLastReferenceForIdentifier:) withObject:[self _concatenateKeyWithIBCreatorID:ident] afterDelay:0.1];
 }
 
+- (void)_startBatchingUpdates
+{
+    if (!_private->updateBatchCount)
+        _private->updateAfterBatchType = { };
+
+    _private->updateBatchCount++;
+}
+
+- (void)_stopBatchingUpdates
+{
+    ASSERT(_private->updateBatchCount > 0);
+    if (_private->updateBatchCount <= 0)
+        NSLog(@"ERROR: Unbalanced _startBatchingUpdates/_stopBatchingUpdates.");
+
+    _private->updateBatchCount--;
+    if (!_private->updateBatchCount) {
+        if (_private->updateAfterBatchType.contains(UpdateAfterBatchType::Internal)) {
+            if (_private->updateAfterBatchType.contains(UpdateAfterBatchType::API))
+                [self _postPreferencesChangedNotification];
+            else
+                [self _postPreferencesChangedAPINotification];
+        }
+    }
+}
+
+- (void)_batchUpdatePreferencesInBlock:(void (^)(WebPreferences *))block
+{
+    [self _startBatchingUpdates];
+    block(self);
+    [self _stopBatchingUpdates];
+}
+
+- (void)_resetForTesting
+{
+    _private->values = adoptNS([[NSMutableDictionary alloc] init]);
+    [self _postPreferencesChangedNotification];
+}
+
 - (void)_postPreferencesChangedNotification
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -1629,6 +1664,11 @@ public:
     }
 #endif
 
+    if (_private->updateBatchCount) {
+        _private->updateAfterBatchType.add({ UpdateAfterBatchType::API, UpdateAfterBatchType::Internal });
+        return;
+    }
+
     [[NSNotificationCenter defaultCenter] postNotificationName:WebPreferencesChangedInternalNotification object:self userInfo:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebPreferencesChangedNotification object:self userInfo:nil];
 }
@@ -1637,6 +1677,11 @@ public:
 {
     if (!pthread_main_np()) {
         [self performSelectorOnMainThread:_cmd withObject:nil waitUntilDone:NO];
+        return;
+    }
+
+    if (_private->updateBatchCount) {
+        _private->updateAfterBatchType.add({ UpdateAfterBatchType::Internal });
         return;
     }
 
@@ -2224,7 +2269,7 @@ static RetainPtr<NSString>& classIBCreatorID()
 #if PLATFORM(IOS_FAMILY)
 - (void)_invalidateCachedPreferences
 {
-    dispatch_barrier_sync(_private->readWriteQueue, ^{
+    dispatch_barrier_sync(_private->readWriteQueue.get(), ^{
         if (_private->values)
             _private->values = adoptNS([[NSMutableDictionary alloc] init]);
     });

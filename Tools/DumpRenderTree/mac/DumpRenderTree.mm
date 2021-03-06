@@ -859,6 +859,8 @@ static NSString *libraryPathForDumpRenderTree()
 // Called before each test.
 static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
 {
+    [preferences _resetForTesting];
+
     for (WebFeature *feature in [WebPreferences _experimentalFeatures])
         [preferences _setEnabled:YES forFeature:feature];
 
@@ -950,14 +952,18 @@ template<typename T> T webPreferenceFeatureValue(const std::string& key, const s
 
 static void setWebPreferencesForTestOptions(WebPreferences *preferences, const WTR::TestOptions& options)
 {
-    preferences.privateBrowsingEnabled = options.useEphemeralSession();
+    [preferences _batchUpdatePreferencesInBlock:^(WebPreferences *preferences) {
+        resetWebPreferencesToConsistentValues(preferences);
 
-    // FIXME: Remove these once there is a viable mechanism for reseting WebPreferences between tests,
-    // at which point, we will not need to manually reset every supported preference for each test.
-    for (const auto& key : options.supportedBoolWebPreferenceFeatures())
-        [preferences _setBoolPreferenceForTestingWithValue:webPreferenceFeatureValue(key, options.boolWebPreferenceFeatures()) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
-    for (const auto& key : options.supportedUInt32WebPreferenceFeatures())
-        [preferences _setUInt32PreferenceForTestingWithValue:webPreferenceFeatureValue(key, options.uint32WebPreferenceFeatures()) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+        preferences.privateBrowsingEnabled = options.useEphemeralSession();
+
+        // FIXME: Remove these once there is a viable mechanism for reseting WebPreferences between tests,
+        // at which point, we will not need to manually reset every supported preference for each test.
+        for (const auto& key : options.supportedBoolWebPreferenceFeatures())
+            [preferences _setBoolPreferenceForTestingWithValue:webPreferenceFeatureValue(key, options.boolWebPreferenceFeatures()) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+        for (const auto& key : options.supportedUInt32WebPreferenceFeatures())
+            [preferences _setUInt32PreferenceForTestingWithValue:webPreferenceFeatureValue(key, options.uint32WebPreferenceFeatures()) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+    }];
 }
 
 // Called once on DumpRenderTree startup.
@@ -1807,7 +1813,6 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
 
     [WebCache clearCachedCredentials];
 
-    resetWebPreferencesToConsistentValues(webView.preferences);
     setWebPreferencesForTestOptions(webView.preferences, options);
 #if PLATFORM(MAC)
     [webView setWantsLayer:options.layerBackedWebView()];
