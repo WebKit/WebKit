@@ -67,7 +67,7 @@ class ChangeLogEntry(object):
     # e.g. (ChangeLogEntry.touched_functions): Added.
     touched_functions_regexp = r'^\s*\((?P<function>[^)]*)\):'
 
-    radar_id_regexp = r'^\s*(<?rdar://problems?/)?(?P<radar_id>-?\d{7,})>?'
+    radar_id_regexp = r'^\s*(<?rdar://(problems?/)?)?(?P<radar_id>-?\d{7,})>?'
 
     # e.g. Reviewed by Darin Adler.
     # (Discard everything after the first period to match more invalid lines.)

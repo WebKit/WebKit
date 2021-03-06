@@ -1,3 +1,27 @@
+2021-03-06  David Kilzer  <ddkilzer@apple.com>
+
+        webkit-patch won't parse rdar://nnnnnnnn URLs in ChangeLogs
+        <https://webkit.org/b/222863>
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry):
+        - Update regex.
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_fuzzy_radar_match__none):
+        - Move test cases that used to fail into another test.
+        (test_fuzzy_radar_match_format_without_context): Add.
+        - Rename from test_fuzzy_radar_match_format_1().
+        (test_fuzzy_radar_match_format_1):
+        - Rename to test_fuzzy_radar_match_format_without_context().
+        (test_fuzzy_radar_match_format_2):
+        - Combine with test_fuzzy_radar_match_format_without_context().
+        (test_fuzzy_radar_match_format_with_context): Add.
+        - Rename from test_fuzzy_radar_match_format_3().
+        (test_fuzzy_radar_match_format_3):
+        - Rename to test_fuzzy_radar_match_format_with_context().
+
 2021-03-06  Sam Weinig  <weinig@apple.com>
 
         Simplify DumpRenderTree WebPreferences reset
