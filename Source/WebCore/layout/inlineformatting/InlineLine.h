@@ -131,8 +131,8 @@ public:
 private:
     void appendNonBreakableSpace(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     void appendTextContent(const InlineTextItem&, InlineLayoutUnit logicalWidth);
-    void appendNonReplacedInlineBox(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
-    void appendReplacedInlineBox(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
+    void appendNonReplacedInlineLevelBox(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
+    void appendReplacedInlineLevelBox(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
     void appendInlineBoxStart(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendInlineBoxEnd(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem&);

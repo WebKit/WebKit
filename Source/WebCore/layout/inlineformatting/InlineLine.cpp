@@ -184,9 +184,9 @@ void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
     else if (inlineItem.isInlineBoxEnd())
         appendInlineBoxEnd(inlineItem, logicalWidth);
     else if (inlineItem.layoutBox().isReplacedBox())
-        appendReplacedInlineBox(inlineItem, logicalWidth);
+        appendReplacedInlineLevelBox(inlineItem, logicalWidth);
     else if (inlineItem.isBox())
-        appendNonReplacedInlineBox(inlineItem, logicalWidth);
+        appendNonReplacedInlineLevelBox(inlineItem, logicalWidth);
     else
         ASSERT_NOT_REACHED();
 }
@@ -286,7 +286,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     m_trailingSoftHyphenWidth = inlineTextItem.hasTrailingSoftHyphen() ? makeOptional(style.fontCascade().width(TextRun { StringView { style.hyphenString() } })) : WTF::nullopt;
 }
 
-void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
+void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
 {
     m_trimmableTrailingContent.reset();
     m_trailingSoftHyphenWidth = { };
@@ -303,11 +303,11 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayout
     m_runs.append({ inlineItem, contentLogicalRight() + marginStart, marginBoxLogicalWidth - marginStart });
 }
 
-void Line::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
+void Line::appendReplacedInlineLevelBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
 {
     ASSERT(inlineItem.layoutBox().isReplacedBox());
     // FIXME: Surely replaced boxes behave differently.
-    appendNonReplacedInlineBox(inlineItem, marginBoxLogicalWidth);
+    appendNonReplacedInlineLevelBox(inlineItem, marginBoxLogicalWidth);
 }
 
 void Line::appendLineBreak(const InlineItem& inlineItem)
