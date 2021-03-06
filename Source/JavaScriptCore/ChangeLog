@@ -1,5 +1,13 @@
 2021-03-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, suppress warning as it is done in DFGOperations.cpp
+
+        We are intentionally using this feature to reduce size of JIT memory.
+
+        * dfg/DFGOSRExit.cpp:
+
+2021-03-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Simplify OSRExit side state materialization
         https://bugs.webkit.org/show_bug.cgi?id=222648
 

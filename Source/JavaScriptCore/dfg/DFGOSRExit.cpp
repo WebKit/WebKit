@@ -218,6 +218,8 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame))
     vm.osrExitJumpDestination = exit.m_code.code().executableAddress();
 }
 
+IGNORE_WARNINGS_BEGIN("frame-address")
+
 JSC_DEFINE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM* vmPointer, const OSRExitBase* exitPointer, EncodedJSValue* tmpScratch))
 {
     const OSRExitBase& exit = *exitPointer;
@@ -257,6 +259,8 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM* vmPoin
     if (BytecodeIndex bytecodeIndex = codeOrigin->bytecodeIndex(); bytecodeIndex.checkpoint())
         addSideState(callFrame, bytecodeIndex, 0);
 }
+
+IGNORE_WARNINGS_END
 
 void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
 {
