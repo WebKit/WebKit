@@ -1,3 +1,17 @@
+2021-03-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add leak tests for Range and StaticRange
+        https://bugs.webkit.org/show_bug.cgi?id=222786
+
+        Reviewed by Dean Jackson.
+
+        Added test cases for Range and StaticRange.
+
+        * fast/dom/reference-cycle-leaks-expected.txt
+        * fast/dom/reference-cycle-leaks.html:
+        * platform/ios-wk2/fast/dom/reference-cycle-leaks-expected.txt:
+        * platform/mac-wk2/fast/dom/reference-cycle-leaks-expected.txt:
+
 2021-03-05  Rob Buis  <rbuis@igalia.com>
 
         Change test to not ASSERT in Debug
