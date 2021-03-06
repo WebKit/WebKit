@@ -67,8 +67,10 @@ public:
         return ++m_navigationID;
     }
 
+    using NavigationMap = HashMap<uint64_t, RefPtr<API::Navigation>>;
+
 private:
-    HashMap<uint64_t, RefPtr<API::Navigation>> m_navigations;
+    NavigationMap m_navigations;
     uint64_t m_navigationID { 0 };
 };
 
