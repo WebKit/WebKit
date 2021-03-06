@@ -224,7 +224,10 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM* vmPoin
 {
     const OSRExitBase& exit = *exitPointer;
     VM& vm = *vmPointer;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wframe-address"
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+#pragma clang diagnostic pop
 
     Vector<std::unique_ptr<CheckpointOSRExitSideState>, VM::expectedMaxActiveSideStateCount> sideStates;
     sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());

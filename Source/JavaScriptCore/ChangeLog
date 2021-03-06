@@ -1,3 +1,12 @@
+2021-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the build
+
+        Unreviewed.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+
 2021-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         BooleanConstructor should be inlined in DFG / FTL
