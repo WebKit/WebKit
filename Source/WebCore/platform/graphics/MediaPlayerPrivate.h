@@ -218,7 +218,7 @@ public:
 
     HashSet<SecurityOriginData> originsInMediaCache(const String&) { return { }; }
     void clearMediaCache(const String&, WallTime) { }
-    void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&) { }
+    void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&) { }
 
     virtual void setPrivateBrowsingMode(bool) { }
 

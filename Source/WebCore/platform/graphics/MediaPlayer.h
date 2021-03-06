@@ -304,7 +304,7 @@ public:
     static bool isAvailable();
     static HashSet<SecurityOriginData> originsInMediaCache(const String& path);
     static void clearMediaCache(const String& path, WallTime modifiedSince);
-    static void clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>&);
+    static void clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
     bool supportsPictureInPicture() const;
@@ -711,7 +711,7 @@ public:
 
     virtual HashSet<SecurityOriginData> originsInMediaCache(const String&) const { return { }; }
     virtual void clearMediaCache(const String&, WallTime) const { }
-    virtual void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&) const { }
+    virtual void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&) const { }
     virtual bool supportsKeySystem(const String& /* keySystem */, const String& /* mimeType */) const { return false; }
 };
 

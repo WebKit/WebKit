@@ -454,7 +454,7 @@ public:
     WEBCORE_EXPORT static const String& mediaCacheDirectory();
     WEBCORE_EXPORT static HashSet<SecurityOriginData> originsInMediaCache(const String&);
     WEBCORE_EXPORT static void clearMediaCache(const String&, WallTime modifiedSince = { });
-    WEBCORE_EXPORT static void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&);
+    WEBCORE_EXPORT static void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&);
     static void resetMediaEngines();
 
     bool isPlaying() const { return m_playing; }

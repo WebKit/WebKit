@@ -6444,7 +6444,7 @@ void HTMLMediaElement::clearMediaCache(const String& path, WallTime modifiedSinc
     MediaPlayer::clearMediaCache(path, modifiedSince);
 }
 
-void HTMLMediaElement::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
+void HTMLMediaElement::clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins)
 {
     MediaPlayer::clearMediaCacheForOrigins(path, origins);
 }

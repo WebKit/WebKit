@@ -1,5 +1,29 @@
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
+        Make HTMLMediaElement::clearMediaCacheForOrigins() take in SecurityOriginData objects
+        https://bugs.webkit.org/show_bug.cgi?id=222832
+
+        Reviewed by Geoffrey Garen.
+
+        Make HTMLMediaElement::clearMediaCacheForOrigins() take in SecurityOriginData instead of
+        SecurityOrigin objects. The call site has SecurityOriginData objects and there was a FIXME
+        comment about switching clearMediaCacheForOrigins() to SecurityOriginData.
+
+        SecurityOriginData also has the benefits of being lighter weight, and it can be sent over
+        IPC, while being sufficient for our use cases here.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::clearMediaCacheForOrigins):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::clearMediaCacheForOrigins):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
         Update HTMLMediaElement::originsInMediaCache() to return SecurityOriginData instead of SecurityOrigin objects
         https://bugs.webkit.org/show_bug.cgi?id=222820
 

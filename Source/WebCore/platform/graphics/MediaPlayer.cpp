@@ -1230,7 +1230,7 @@ void MediaPlayer::clearMediaCache(const String& path, WallTime modifiedSince)
         engine->clearMediaCache(path, modifiedSince);
 }
 
-void MediaPlayer::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
+void MediaPlayer::clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins)
 {
     for (auto& engine : installedMediaEngines())
         engine->clearMediaCacheForOrigins(path, origins);

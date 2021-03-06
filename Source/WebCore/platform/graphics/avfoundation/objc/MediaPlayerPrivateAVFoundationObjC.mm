@@ -311,7 +311,7 @@ private:
         return MediaPlayerPrivateAVFoundationObjC::clearMediaCache(path, modifiedSince);
     }
 
-    void clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins) const final
+    void clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins) const final
     {
         return MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(path, origins);
     }
@@ -427,7 +427,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, Wal
         [fileManager removeItemAtURL:fileURL error:nil];
 }
 
-void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
+void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins)
 {
     AVAssetCache* assetCache = assetCacheForPath(path);
     if (!assetCache)
@@ -436,7 +436,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
     for (NSString *key in [assetCache allKeys]) {
         URL keyAsURL = URL(URL(), key);
         if (keyAsURL.isValid()) {
-            if (origins.contains(SecurityOrigin::create(keyAsURL)))
+            if (origins.contains(SecurityOriginData::fromURL(keyAsURL)))
                 [assetCache removeEntryForKey:key];
         }
     }

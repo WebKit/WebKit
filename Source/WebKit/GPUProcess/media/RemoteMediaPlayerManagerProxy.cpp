@@ -137,18 +137,13 @@ void RemoteMediaPlayerManagerProxy::clearMediaCache(MediaPlayerEnums::MediaEngin
     engine->clearMediaCache(path, modifiedSince);
 }
 
-void RemoteMediaPlayerManagerProxy::clearMediaCacheForOrigins(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& path, Vector<WebCore::SecurityOriginData>&& originData)
+void RemoteMediaPlayerManagerProxy::clearMediaCacheForOrigins(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& path, HashSet<WebCore::SecurityOriginData>&& origins)
 {
     auto engine = MediaPlayer::mediaEngine(engineIdentifier);
     if (!engine) {
         WTFLogAlways("Failed to find media engine.");
         return;
     }
-
-    HashSet<RefPtr<SecurityOrigin>> origins;
-    for (auto& data : originData)
-        origins.add(data.securityOrigin());
-
     engine->clearMediaCacheForOrigins(path, origins);
 }
 

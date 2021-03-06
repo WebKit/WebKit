@@ -980,14 +980,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 #if ENABLE(VIDEO)
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins = WTFMove(origins), mediaCacheDirectory = m_configuration->mediaCacheDirectory().isolatedCopy(), callbackAggregator] {
-
-            // FIXME: Move SecurityOrigin::toRawString to SecurityOriginData and
-            // make HTMLMediaElement::clearMediaCacheForOrigins take SecurityOriginData.
-            HashSet<RefPtr<WebCore::SecurityOrigin>> securityOrigins;
-            for (auto& origin : origins)
-                securityOrigins.add(origin.securityOrigin());
-            WebCore::HTMLMediaElement::clearMediaCacheForOrigins(mediaCacheDirectory, securityOrigins);
-            
+            WebCore::HTMLMediaElement::clearMediaCacheForOrigins(mediaCacheDirectory, origins);
             WTF::RunLoop::main().dispatch([callbackAggregator] {
                 callbackAggregator->removePendingCallback();
             });
