@@ -1,3 +1,46 @@
+2021-03-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Simplify OSRExit side state materialization
+        https://bugs.webkit.org/show_bug.cgi?id=222648
+
+        Reviewed by Keith Miller.
+
+        Currently, JIT probe with lambda function has memory leaking issue. So we must not use it in production code.
+        To avoid the future use, we rename probe to probeDebug.
+
+        And to avoid using probe function in OSR exit side state materialization, we simplify the OSRExit side state materialization code,
+        and making it just a function call. To achieve that, we materialize exit values into scratch buffer before restoring them to
+        the stack. This aligns DFG to what FTL is doing. And DFG and FTL can use the same materialization operation function.
+
+        Caio helped me to fix 32bit issue in DFG.
+
+        * assembler/MacroAssembler.cpp:
+        (JSC::MacroAssembler::probeDebug):
+        (JSC::MacroAssembler::probe): Deleted.
+        * assembler/MacroAssembler.h:
+        * assembler/testmasm.cpp:
+        (JSC::testClearBits64WithMask):
+        (JSC::testClearBits64WithMaskTernary):
+        (JSC::testShiftAndAdd):
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesProgramCounter):
+        (JSC::testProbeModifiesStackValues):
+        * b3/air/testair.cpp:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExit.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+
 2021-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.12 or later

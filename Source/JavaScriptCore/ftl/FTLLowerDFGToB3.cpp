@@ -646,7 +646,7 @@ private:
                     fpReg = params[0].fpr();
                 else
                     reg = params[0].gpr();
-                jit.probe([=] (Probe::Context& context) {
+                jit.probeDebug([=] (Probe::Context& context) {
                     JSValue input;
                     double doubleInput;
 

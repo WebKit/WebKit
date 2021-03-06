@@ -2145,7 +2145,7 @@ void testElideHandlesEarlyClobber()
     patch->clobber(RegisterSet(lastCalleeSave));
 
     patch->setGenerator([=] (CCallHelpers& jit, const JSC::B3::StackmapGenerationParams&) {
-        jit.probe([=] (Probe::Context& context) {
+        jit.probeDebug([=] (Probe::Context& context) {
             for (Reg reg : registers)
                 context.gpr(reg.gpr()) = 0;
         });

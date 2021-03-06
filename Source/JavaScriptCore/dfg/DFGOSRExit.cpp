@@ -218,6 +218,46 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame))
     vm.osrExitJumpDestination = exit.m_code.code().executableAddress();
 }
 
+JSC_DEFINE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM* vmPointer, const OSRExitBase* exitPointer, EncodedJSValue* tmpScratch))
+{
+    const OSRExitBase& exit = *exitPointer;
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+
+    Vector<std::unique_ptr<CheckpointOSRExitSideState>, VM::expectedMaxActiveSideStateCount> sideStates;
+    sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());
+    auto sideStateCommitter = makeScopeExit([&] {
+        for (size_t i = sideStates.size(); i--;)
+            vm.pushCheckpointOSRSideState(WTFMove(sideStates[i]));
+    });
+
+    auto addSideState = [&] (CallFrame* frame, BytecodeIndex index, size_t tmpOffset) {
+        std::unique_ptr<CheckpointOSRExitSideState> sideState = WTF::makeUnique<CheckpointOSRExitSideState>(frame);
+
+        sideState->bytecodeIndex = index;
+        for (size_t i = 0; i < maxNumCheckpointTmps; ++i)
+            sideState->tmps[i] = JSValue::decode(tmpScratch[i + tmpOffset]);
+
+        sideStates.append(WTFMove(sideState));
+    };
+
+    const CodeOrigin* codeOrigin;
+    for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame(); codeOrigin = codeOrigin->inlineCallFrame()->getCallerSkippingTailCalls()) {
+        BytecodeIndex callBytecodeIndex = codeOrigin->bytecodeIndex();
+        if (!callBytecodeIndex.checkpoint())
+            continue;
+
+        auto* inlineCallFrame = codeOrigin->inlineCallFrame();
+        addSideState(reinterpret_cast_ptr<CallFrame*>(reinterpret_cast<char*>(callFrame) + inlineCallFrame->returnPCOffset() - sizeof(CPURegister)), callBytecodeIndex, inlineCallFrame->tmpOffset);
+    }
+
+    if (!codeOrigin)
+        return;
+
+    if (BytecodeIndex bytecodeIndex = codeOrigin->bytecodeIndex(); bytecodeIndex.checkpoint())
+        addSideState(callFrame, bytecodeIndex, 0);
+}
+
 void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
 {
     jit.jitAssertTagsInPlace();
@@ -516,18 +556,17 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     // do this even for state that's already in the right place on the stack.
     // It makes things simpler later.
 
+    // The tag registers are needed to materialize recoveries below.
+    jit.emitMaterializeTagCheckRegisters();
+
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
 
         switch (recovery.technique()) {
         case DisplacedInJSStack:
+#if USE(JSVALUE64)
         case CellDisplacedInJSStack:
         case BooleanDisplacedInJSStack:
-        case Int32DisplacedInJSStack:
-        case DoubleDisplacedInJSStack:
-#if USE(JSVALUE64)
-        case Int52DisplacedInJSStack:
-        case StrictInt52DisplacedInJSStack:
             jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
             jit.store64(GPRInfo::regT0, scratch + index);
             break;
@@ -544,6 +583,143 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             jit.store32(
                 GPRInfo::regT1,
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
+            break;
+#endif
+
+        case Constant: {
+#if USE(JSVALUE64)
+            jit.move(AssemblyHelpers::TrustedImm64(JSValue::encode(recovery.constant())), GPRInfo::regT0);
+            jit.store64(GPRInfo::regT0, scratch + index);
+#else
+            jit.store32(
+                AssemblyHelpers::TrustedImm32(recovery.constant().tag()),
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+            jit.store32(
+                AssemblyHelpers::TrustedImm32(recovery.constant().payload()),
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
+#endif
+            break;
+        }
+
+        case UnboxedInt32InGPR:
+#if USE(JSVALUE64)
+            jit.load64(scratch + index, GPRInfo::regT0);
+            jit.zeroExtend32ToWord(GPRInfo::regT0, GPRInfo::regT0);
+            jit.or64(GPRInfo::numberTagRegister, GPRInfo::regT0);
+            jit.store64(GPRInfo::regT0, scratch + index);
+#else
+            jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::Int32Tag),
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+#endif
+            break;
+
+        case Int32DisplacedInJSStack:
+#if USE(JSVALUE64)
+            jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+            jit.zeroExtend32ToWord(GPRInfo::regT0, GPRInfo::regT0);
+            jit.or64(GPRInfo::numberTagRegister, GPRInfo::regT0);
+            jit.store64(GPRInfo::regT0, scratch + index);
+#else
+            jit.load32(
+                AssemblyHelpers::payloadFor(recovery.virtualRegister()),
+                GPRInfo::regT0);
+            jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::Int32Tag),
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+            jit.store32(
+                GPRInfo::regT0,
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
+#endif
+            break;
+
+#if USE(JSVALUE32_64)
+        case UnboxedBooleanInGPR:
+            jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::BooleanTag),
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+            break;
+
+        case BooleanDisplacedInJSStack:
+            jit.load32(
+                AssemblyHelpers::payloadFor(recovery.virtualRegister()),
+                GPRInfo::regT0);
+            jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::BooleanTag),
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+            jit.store32(
+                GPRInfo::regT0,
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
+            break;
+
+        case UnboxedCellInGPR:
+            jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::CellTag),
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+            break;
+
+        case CellDisplacedInJSStack:
+            jit.load32(
+                AssemblyHelpers::payloadFor(recovery.virtualRegister()),
+                GPRInfo::regT0);
+            jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::CellTag),
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+            jit.store32(
+                GPRInfo::regT0,
+                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
+            break;
+#endif
+
+        case UnboxedDoubleInFPR:
+            jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT1);
+            jit.loadDouble(MacroAssembler::Address(GPRInfo::regT1), FPRInfo::fpRegT0);
+            jit.purifyNaN(FPRInfo::fpRegT0);
+#if USE(JSVALUE64)
+            jit.boxDouble(FPRInfo::fpRegT0, GPRInfo::regT0);
+            jit.store64(GPRInfo::regT0, MacroAssembler::Address(GPRInfo::regT1));
+#else
+            jit.storeDouble(FPRInfo::fpRegT0, MacroAssembler::Address(GPRInfo::regT1));
+#endif
+            break;
+
+        case DoubleDisplacedInJSStack:
+            jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT1);
+            jit.loadDouble(AssemblyHelpers::addressFor(recovery.virtualRegister()), FPRInfo::fpRegT0);
+            jit.purifyNaN(FPRInfo::fpRegT0);
+#if USE(JSVALUE64)
+            jit.boxDouble(FPRInfo::fpRegT0, GPRInfo::regT0);
+            jit.store64(GPRInfo::regT0, MacroAssembler::Address(GPRInfo::regT1));
+#else
+            jit.storeDouble(FPRInfo::fpRegT0, MacroAssembler::Address(GPRInfo::regT1));
+#endif
+            break;
+
+#if USE(JSVALUE64)
+        case UnboxedInt52InGPR:
+            jit.load64(scratch + index, GPRInfo::regT0);
+            jit.rshift64(AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), GPRInfo::regT0);
+            jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
+            jit.store64(GPRInfo::regT0, scratch + index);
+            break;
+
+        case Int52DisplacedInJSStack:
+            jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+            jit.rshift64(AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), GPRInfo::regT0);
+            jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
+            jit.store64(GPRInfo::regT0, scratch + index);
+            break;
+
+        case UnboxedStrictInt52InGPR:
+            jit.load64(scratch + index, GPRInfo::regT0);
+            jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
+            jit.store64(GPRInfo::regT0, scratch + index);
+            break;
+
+        case StrictInt52DisplacedInJSStack:
+            jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+            jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
+            jit.store64(GPRInfo::regT0, scratch + index);
             break;
 #endif
 
@@ -585,101 +761,11 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
 
     if (exit.m_codeOrigin.inlineStackContainsActiveCheckpoint()) {
-        // FIXME: Maybe we shouldn't use a probe but filling all the side state objects is tricky otherwise...
-        Vector<ValueRecovery> values(operands.numberOfTmps());
-        for (size_t i = 0; i < operands.numberOfTmps(); ++i)
-            values[i] = operands.tmp(i);
-
-        VM* vmPtr = &vm;
-        auto* tmpScratch = scratch + operands.tmpIndex(0);
-        jit.probe([=, values = WTFMove(values)] (Probe::Context& context) {
-            Vector<std::unique_ptr<CheckpointOSRExitSideState>, VM::expectedMaxActiveSideStateCount> sideStates;
-            sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());
-            auto sideStateCommitter = makeScopeExit([&] {
-                for (size_t i = sideStates.size(); i--;)
-                    vmPtr->pushCheckpointOSRSideState(WTFMove(sideStates[i]));
-            });
-
-
-            auto addSideState = [&] (CallFrame* frame, BytecodeIndex index, size_t tmpOffset) {
-                std::unique_ptr<CheckpointOSRExitSideState> sideState = WTF::makeUnique<CheckpointOSRExitSideState>(frame);
-
-                sideState->bytecodeIndex = index;
-                for (size_t i = 0; i < maxNumCheckpointTmps; ++i) {
-                    auto& recovery = values[i + tmpOffset];
-                    // FIXME: We should do what the FTL does and materialize all the JSValues into the scratch buffer.
-                    switch (recovery.technique()) {
-
-                    case Constant:
-                        sideState->tmps[i] = recovery.constant();
-                        break;
-
-                    case UnboxedInt32InGPR:
-                    case Int32DisplacedInJSStack: {
-                        sideState->tmps[i] = jsNumber(static_cast<int32_t>(tmpScratch[i + tmpOffset]));
-                        break;
-                    }
-
-                    case UnboxedBooleanInGPR: {
-                        sideState->tmps[i] = jsBoolean(static_cast<bool>(tmpScratch[i + tmpOffset]));
-                        break;
-                    }
-
-#if USE(JSVALUE64)
-                    case BooleanDisplacedInJSStack:
-                    case CellDisplacedInJSStack:
-                    case UnboxedCellInGPR:
-                    case InGPR:
-                    case DisplacedInJSStack: {
-                        sideState->tmps[i] = reinterpret_cast<JSValue*>(tmpScratch)[i + tmpOffset];
-                        break;
-                    }
-#else // USE(JSVALUE32_64)
-                    case InPair:
-                    case DisplacedInJSStack: {
-                        sideState->tmps[i] = reinterpret_cast<JSValue*>(tmpScratch)[i + tmpOffset];
-                        break;
-                    }
-
-                    case CellDisplacedInJSStack:
-                    case UnboxedCellInGPR: {
-                        EncodedValueDescriptor* valueDescriptor = bitwise_cast<EncodedValueDescriptor*>(tmpScratch + i + tmpOffset);
-                        sideState->tmps[i] = JSValue(JSValue::CellTag, valueDescriptor->asBits.payload);
-                        break;
-                    }
-
-                    case BooleanDisplacedInJSStack: {
-                        sideState->tmps[i] = jsBoolean(static_cast<bool>(tmpScratch[i + tmpOffset]));
-                        break;
-                    }
-#endif // USE(JSVALUE64)
-
-                    default:
-                        RELEASE_ASSERT_NOT_REACHED();
-                        break;
-                    }
-                }
-
-                sideStates.append(WTFMove(sideState));
-            };
-
-            const CodeOrigin* codeOrigin;
-            CallFrame* callFrame = context.gpr<CallFrame*>(GPRInfo::callFrameRegister);
-            for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame(); codeOrigin = codeOrigin->inlineCallFrame()->getCallerSkippingTailCalls()) {
-                BytecodeIndex callBytecodeIndex = codeOrigin->bytecodeIndex();
-                if (!callBytecodeIndex.checkpoint())
-                    continue;
-
-                auto* inlineCallFrame = codeOrigin->inlineCallFrame();
-                addSideState(reinterpret_cast_ptr<CallFrame*>(reinterpret_cast<char*>(callFrame) + inlineCallFrame->returnPCOffset() - sizeof(CPURegister)), callBytecodeIndex, inlineCallFrame->tmpOffset);
-            }
-
-            if (!codeOrigin)
-                return;
-
-            if (BytecodeIndex bytecodeIndex = codeOrigin->bytecodeIndex(); bytecodeIndex.checkpoint())
-                addSideState(callFrame, bytecodeIndex, 0);
-        });
+        EncodedJSValue* tmpScratch = scratch + operands.tmpIndex(0);
+        jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(&vm, &exit, tmpScratch);
+        jit.prepareCallOperation(vm);
+        jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeOSRExitSideState)), GPRInfo::nonArgGPR0);
+        jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     }
 
     // Do all data format conversions and store the results into the stack.
@@ -695,12 +781,22 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
         switch (recovery.technique()) {
         case DisplacedInJSStack:
+        case BooleanDisplacedInJSStack:
+        case Int32DisplacedInJSStack:
+        case CellDisplacedInJSStack:
+        case DoubleDisplacedInJSStack:
+        case UnboxedBooleanInGPR:
+        case UnboxedInt32InGPR:
+        case UnboxedCellInGPR:
+        case UnboxedDoubleInFPR:
+        case Constant:
         case InFPR:
 #if USE(JSVALUE64)
         case InGPR:
-        case UnboxedCellInGPR:
-        case CellDisplacedInJSStack:
-        case BooleanDisplacedInJSStack:
+        case UnboxedInt52InGPR:
+        case Int52DisplacedInJSStack:
+        case UnboxedStrictInt52InGPR:
+        case StrictInt52DisplacedInJSStack:
             jit.load64(scratch + index, GPRInfo::regT0);
             jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
             break;
@@ -719,99 +815,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 GPRInfo::regT1,
                 AssemblyHelpers::payloadFor(operand));
             break;
-
-        case UnboxedCellInGPR:
-        case CellDisplacedInJSStack:
-            jit.load32(
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload,
-                GPRInfo::regT0);
-            jit.store32(
-                AssemblyHelpers::TrustedImm32(JSValue::CellTag),
-                AssemblyHelpers::tagFor(operand));
-            jit.store32(
-                GPRInfo::regT0,
-                AssemblyHelpers::payloadFor(operand));
-            break;
-
-        case UnboxedBooleanInGPR:
-        case BooleanDisplacedInJSStack:
-            jit.load32(
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload,
-                GPRInfo::regT0);
-            jit.store32(
-                AssemblyHelpers::TrustedImm32(JSValue::BooleanTag),
-                AssemblyHelpers::tagFor(operand));
-            jit.store32(
-                GPRInfo::regT0,
-                AssemblyHelpers::payloadFor(operand));
-            break;
 #endif // USE(JSVALUE64)
-
-        case UnboxedInt32InGPR:
-        case Int32DisplacedInJSStack:
-#if USE(JSVALUE64)
-            jit.load64(scratch + index, GPRInfo::regT0);
-            jit.zeroExtend32ToWord(GPRInfo::regT0, GPRInfo::regT0);
-            jit.or64(GPRInfo::numberTagRegister, GPRInfo::regT0);
-            jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
-#else
-            jit.load32(
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload,
-                GPRInfo::regT0);
-            jit.store32(
-                AssemblyHelpers::TrustedImm32(JSValue::Int32Tag),
-                AssemblyHelpers::tagFor(operand));
-            jit.store32(
-                GPRInfo::regT0,
-                AssemblyHelpers::payloadFor(operand));
-#endif
-            break;
-
-#if USE(JSVALUE64)
-        case UnboxedInt52InGPR:
-        case Int52DisplacedInJSStack:
-            jit.load64(scratch + index, GPRInfo::regT0);
-            jit.rshift64(
-                AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), GPRInfo::regT0);
-            jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
-            jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
-            break;
-
-        case UnboxedStrictInt52InGPR:
-        case StrictInt52DisplacedInJSStack:
-            jit.load64(scratch + index, GPRInfo::regT0);
-            jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
-            jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
-            break;
-#endif
-
-        case UnboxedDoubleInFPR:
-        case DoubleDisplacedInJSStack:
-            jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);
-            jit.loadDouble(MacroAssembler::Address(GPRInfo::regT0), FPRInfo::fpRegT0);
-            jit.purifyNaN(FPRInfo::fpRegT0);
-#if USE(JSVALUE64)
-            jit.boxDouble(FPRInfo::fpRegT0, GPRInfo::regT0);
-            jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
-#else
-            jit.storeDouble(FPRInfo::fpRegT0, AssemblyHelpers::addressFor(operand));
-#endif
-            break;
-
-        case Constant:
-#if USE(JSVALUE64)
-            jit.store64(
-                AssemblyHelpers::TrustedImm64(JSValue::encode(recovery.constant())),
-                AssemblyHelpers::addressFor(operand));
-#else
-            jit.store32(
-                AssemblyHelpers::TrustedImm32(recovery.constant().tag()),
-                AssemblyHelpers::tagFor(operand));
-            jit.store32(
-                AssemblyHelpers::TrustedImm32(recovery.constant().payload()),
-                AssemblyHelpers::payloadFor(operand));
-#endif
-            break;
 
         case DirectArgumentsThatWereNotCreated:
         case ClonedArgumentsThatWereNotCreated:

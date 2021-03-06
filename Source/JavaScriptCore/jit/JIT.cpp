@@ -272,7 +272,7 @@ void JIT::privateCompileMainPass()
 #if ENABLE(MASM_PROBE)
         if (UNLIKELY(Options::traceBaselineJITExecution())) {
             CodeBlock* codeBlock = m_codeBlock;
-            probe([=] (Probe::Context& ctx) {
+            probeDebug([=] (Probe::Context& ctx) {
                 dataLogLn("JIT [", bytecodeOffset, "] ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
             });
         }
@@ -543,7 +543,7 @@ void JIT::privateCompileSlowCases()
             OpcodeID opcodeID = currentInstruction->opcodeID();
             unsigned bytecodeOffset = m_bytecodeIndex.offset();
             CodeBlock* codeBlock = m_codeBlock;
-            probe([=] (Probe::Context& ctx) {
+            probeDebug([=] (Probe::Context& ctx) {
                 dataLogLn("JIT [", bytecodeOffset, "] SLOW ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
             });
         }

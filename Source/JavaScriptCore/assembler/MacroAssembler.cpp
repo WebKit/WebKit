@@ -54,7 +54,7 @@ static void stdFunctionCallback(Probe::Context& context)
     (*func)(context);
 }
     
-void MacroAssembler::probe(Function<void(Probe::Context&)> func)
+void MacroAssembler::probeDebug(Function<void(Probe::Context&)> func)
 {
     probe(tagCFunction<JITProbePtrTag>(stdFunctionCallback), new Function<void(Probe::Context&)>(WTFMove(func)));
 }
