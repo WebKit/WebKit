@@ -1,3 +1,15 @@
+2021-03-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Fix compile error
+        https://bugs.webkit.org/show_bug.cgi?id=222802
+        <rdar://problem/75052309>
+
+        Reviewed by Dean Jackson.
+
+        Declare CTFontTransformOptions if associated header file has not been included.
+
+        * pal/spi/win/CoreTextSPIWin.h:
+
 2021-03-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix my iOS Simulator build.
