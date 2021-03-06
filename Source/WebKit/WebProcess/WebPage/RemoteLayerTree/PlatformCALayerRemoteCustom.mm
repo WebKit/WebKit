@@ -100,6 +100,13 @@ uint32_t PlatformCALayerRemoteCustom::hostingContextID()
     return m_layerHostingContext->contextID();
 }
 
+void PlatformCALayerRemoteCustom::populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeContext& context, PlatformCALayer::LayerType type)
+{
+    PlatformCALayerRemote::populateCreationProperties(properties, context, type);
+    properties.hostingContextID = hostingContextID();
+    properties.hostingDeviceScaleFactor = context.deviceScaleFactor();
+}
+
 Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayerClient* owner) const
 {
     RetainPtr<CALayer> clonedLayer;

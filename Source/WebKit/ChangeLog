@@ -1,3 +1,47 @@
+2021-03-06  Tim Horton  <timothy_horton@apple.com>
+
+        <model> should create a model-owning compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=222798
+
+        Reviewed by Simon Fraser.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::encode const):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::description const):
+        * SourcesCocoa.txt:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::createPlatformCALayer):
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::create):
+        (WebKit::PlatformCALayerRemote::populateCreationProperties):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::populateCreationProperties):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.h: Added.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.mm: Added.
+        (WebKit::PlatformCALayerRemoteModelHosting::create):
+        (WebKit::PlatformCALayerRemoteModelHosting::PlatformCALayerRemoteModelHosting):
+        (WebKit::PlatformCALayerRemoteModelHosting::clone const):
+        (WebKit::PlatformCALayerRemoteModelHosting::populateCreationProperties):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerDidEnterContext):
+        Create a new PlatformCALayerRemote subclass that knows about Model, and
+        passes its model along in the layer creation properties.
+
+        For now, the special model layer type will just make a plain layer.
+        Future patches will replace it with model-specific rendering.
+
 2021-03-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Implement additional accessibility support for image overlays

@@ -1,3 +1,13 @@
+2021-03-06  Tim Horton  <timothy_horton@apple.com>
+
+        <model> should create a model-owning compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=222798
+
+        Reviewed by Simon Fraser.
+
+        * inspector/protocol/LayerTree.json:
+        Add a compositing reason for <model>.
+
 2021-03-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, suppress warning as it is done in DFGOperations.cpp

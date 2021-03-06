@@ -34,6 +34,8 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
+#include "JSEventTarget.h"
+#include "Model.h"
 #include "RenderModel.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
@@ -67,6 +69,13 @@ RefPtr<SharedBuffer> HTMLModelElement::modelData() const
         return nullptr;
 
     return m_data;
+}
+
+RefPtr<Model> HTMLModelElement::model() const
+{
+    if (auto modelData = this->modelData())
+        return Model::create(*modelData);
+    return nullptr;
 }
 
 void HTMLModelElement::sourcesChanged()

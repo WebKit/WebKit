@@ -1,3 +1,19 @@
+2021-03-06  Tim Horton  <timothy_horton@apple.com>
+
+        <model> should create a model-owning compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=222798
+
+        Reviewed by Simon Fraser.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WI.LayerTreeDetailsSidebarPanel.prototype._populateListOfCompositingReasons):
+        (WI.LayerTreeDetailsSidebarPanel):
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView.prototype._updateReasonsList):
+        (WI.Layers3DContentView):
+        Add a compositing reason for <model>.
+
 2021-03-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: border color of "grid" badge should match color of corresponding outline

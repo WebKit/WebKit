@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+class Model;
+
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
 class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient {
@@ -52,6 +54,8 @@ public:
     ReadyPromise& ready() { return m_readyPromise.get(); }
 
     RefPtr<SharedBuffer> modelData() const;
+    
+    RefPtr<Model> model() const;
 
 private:
     HTMLModelElement(const QualifiedName&, Document&);

@@ -33,6 +33,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/EventRegion.h>
 #import <WebCore/LengthFunctions.h>
+#import <WebCore/Model.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/TextStream.h>
@@ -54,8 +55,17 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& e
 {
     encoder << layerID;
     encoder << type;
+    
+    // PlatformCALayerRemoteCustom
     encoder << hostingContextID;
     encoder << hostingDeviceScaleFactor;
+    
+#if ENABLE(MODEL_ELEMENT)
+    // PlatformCALayerRemoteModelHosting
+    encoder << !!model;
+    if (model)
+        encoder << *model;
+#endif
 }
 
 auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& decoder) -> Optional<LayerCreationProperties>
@@ -66,12 +76,26 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
 
     if (!decoder.decode(result.type))
         return WTF::nullopt;
-
+    
+    // PlatformCALayerRemoteCustom
     if (!decoder.decode(result.hostingContextID))
         return WTF::nullopt;
 
     if (!decoder.decode(result.hostingDeviceScaleFactor))
         return WTF::nullopt;
+    
+#if ENABLE(MODEL_ELEMENT)
+    // PlatformCALayerRemoteModelHosting
+    bool hasModel;
+    if (!decoder.decode(hasModel))
+        return WTF::nullopt;
+    if (hasModel) {
+        auto model = WebCore::Model::decode(decoder);
+        if (!model)
+            return WTF::nullopt;
+        result.model = model;
+    }
+#endif
 
     return WTFMove(result);
 }
@@ -967,6 +991,11 @@ String RemoteLayerTreeTransaction::description() const
             case WebCore::PlatformCALayer::LayerTypeCustom:
                 ts << " (context-id " << createdLayer.hostingContextID << ")";
                 break;
+#if ENABLE(MODEL_ELEMENT)
+            case WebCore::PlatformCALayer::LayerTypeModelLayer:
+                ts << " (model " << *createdLayer.model << ")";
+                break;
+#endif
             default:
                 break;
             }

@@ -1,3 +1,17 @@
+2021-03-06  Tim Horton  <timothy_horton@apple.com>
+
+        <model> should create a model-owning compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=222798
+
+        Reviewed by Simon Fraser.
+
+        * model-element/model-element-graphics-layers-expected.txt: Added.
+        * model-element/model-element-graphics-layers.html: Added.
+        * model-element/model-element-renderer-expected.txt:
+        * model-element/model-element-renderer-no-source-expected.txt:
+        Add a test ensuring that we make a compositing layer via layer dump, and update
+        existing tests that also happen to reveal this via render tree dump as well.
+
 2021-03-05  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Tests under imported/blink/fast/canvas are now fixed by r273956

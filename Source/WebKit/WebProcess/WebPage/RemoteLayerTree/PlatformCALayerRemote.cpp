@@ -27,6 +27,7 @@
 #import "PlatformCALayerRemote.h"
 
 #import "PlatformCALayerRemoteCustom.h"
+#import "PlatformCALayerRemoteModelHosting.h"
 #import "PlatformCALayerRemoteTiledBacking.h"
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
@@ -62,6 +63,13 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platform
 {
     return PlatformCALayerRemoteCustom::create(platformLayer, owner, context);
 }
+
+#if ENABLE(MODEL_ELEMENT)
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(Ref<WebCore::Model> model, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+{
+    return PlatformCALayerRemoteModelHosting::create(model, owner, context);
+}
+#endif
 
 Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRemote& other, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
@@ -118,6 +126,12 @@ void PlatformCALayerRemote::moveToContext(RemoteLayerTreeContext& context)
     context.layerDidEnterContext(*this, layerType());
 
     m_properties.notePropertiesChanged(m_properties.everChangedProperties);
+}
+
+void PlatformCALayerRemote::populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeContext& context, PlatformCALayer::LayerType type)
+{
+    properties.layerID = layerID();
+    properties.type = type;
 }
 
 void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& clone, bool copyContents) const

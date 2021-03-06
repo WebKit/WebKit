@@ -59,6 +59,7 @@ class Animation;
 class GraphicsContext;
 class GraphicsLayerFactory;
 class Image;
+class Model;
 class TiledBacking;
 class TimingFunction;
 class TransformationMatrix;
@@ -509,12 +510,16 @@ public:
         Media,
         Canvas,
         BackgroundColor,
-        Plugin
+        Plugin,
+        Model
     };
 
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
+#if ENABLE(MODEL_ELEMENT)
+    virtual void setContentsToModel(RefPtr<Model>&&) { }
+#endif
     virtual bool usesContentsLayer() const { return false; }
 
     // Callback from the underlying graphics system to draw layer contents.
