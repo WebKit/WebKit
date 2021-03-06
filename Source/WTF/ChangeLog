@@ -1,3 +1,19 @@
+2021-03-06  Dean Jackson  <dino@apple.com>
+
+        dlopen_preflight is failing (temporarily) but obsolete
+        https://bugs.webkit.org/show_bug.cgi?id=222829
+
+        Reviewed by Jer Noble.
+
+        I hit a bug where dlopen_preflight was failing in a particular build.
+        That is now fixed, but as I was discussing it with the dyld team
+        they said we should stop using it. The rationale was that it only
+        made sense during the PowerPC to Intel transition, and it is as
+        expensive as dlopen now.
+
+        * wtf/PlatformUse.h: No need for preflight linking code.
+        * wtf/cocoa/SoftLinking.h:
+
 2021-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.12 or later

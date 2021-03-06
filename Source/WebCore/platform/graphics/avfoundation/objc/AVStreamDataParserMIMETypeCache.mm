@@ -36,10 +36,6 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-#if !PLATFORM(MACCATALYST)
-SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)
-#endif
-
 NS_ASSUME_NONNULL_BEGIN
 @interface AVStreamDataParser (AVStreamDataParserExtendedMIMETypes)
 + (BOOL)canParseExtendedMIMEType:(NSString *)extendedMIMEType;
@@ -57,15 +53,8 @@ AVStreamDataParserMIMETypeCache& AVStreamDataParserMIMETypeCache::singleton()
 bool AVStreamDataParserMIMETypeCache::isAvailable() const
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
-#if PLATFORM(MACCATALYST)
-    // FIXME: This should be using AVFoundationLibraryIsAvailable() instead, but doing so causes soft-linking
-    // to subsequently fail on certain symbols. See <rdar://problem/42224780> for more details.
     if (!PAL::AVFoundationLibrary())
         return false;
-#else
-    if (!AVFoundationLibraryIsAvailable())
-        return false;
-#endif
 
     return [PAL::getAVStreamDataParserClass() respondsToSelector:@selector(audiovisualMIMETypes)];
 #else

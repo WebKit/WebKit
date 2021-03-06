@@ -85,19 +85,6 @@ static void* lib##Library() \
         return frameworkLibrary; \
     }
 
-#if USE(REALPATH_FOR_DLOPEN_PREFLIGHT)
-#define DLOPEN_PREFLIGHT(path) dlopen_preflight(FileSystem::realPath(path##_s).utf8().data())
-#else
-#define DLOPEN_PREFLIGHT(path) dlopen_preflight(path)
-#endif
-
-#define SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(framework) \
-    static bool framework##LibraryIsAvailable() \
-    { \
-        static bool frameworkLibraryIsAvailable = DLOPEN_PREFLIGHT("/System/Library/Frameworks/" #framework ".framework/" #framework); \
-        return frameworkLibraryIsAvailable; \
-    }
-
 #define SOFT_LINK_FRAMEWORK_OPTIONAL(framework) \
     static void* framework##Library() \
     { \
