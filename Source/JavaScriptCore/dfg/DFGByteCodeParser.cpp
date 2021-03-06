@@ -31,6 +31,7 @@
 #include "ArithProfile.h"
 #include "ArrayConstructor.h"
 #include "ArrayPrototype.h"
+#include "BooleanConstructor.h"
 #include "BuiltinNames.h"
 #include "ByValInfo.h"
 #include "BytecodeGenerator.h"
@@ -4065,6 +4066,22 @@ bool ByteCodeParser::handleConstantInternalFunction(
         else
             set(result, addToGraph(CallNumberConstructor, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
 
+        return true;
+    }
+
+    if (function->classInfo(*m_vm) == BooleanConstructor::info()) {
+        if (kind == CodeForConstruct)
+            return false;
+
+        insertChecks();
+
+        Node* resultNode;
+        if (argumentCountIncludingThis <= 1)
+            resultNode = jsConstant(jsBoolean(false));
+        else
+            resultNode = addToGraph(ToBoolean, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
+
+        set(result, resultNode);
         return true;
     }
     

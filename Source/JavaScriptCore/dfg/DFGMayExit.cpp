@@ -93,6 +93,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:
     case ClearCatchLocals:
+    case ToBoolean:
     case LogicalNot:
     case NotifyWrite:
     case PutStructure:

@@ -415,6 +415,7 @@ namespace JSC { namespace DFG {
     macro(IsConstructor, NodeResultBoolean) \
     macro(IsTypedArrayView, NodeResultBoolean) \
     macro(TypeOf, NodeResultJS) \
+    macro(ToBoolean, NodeResultBoolean) \
     macro(LogicalNot, NodeResultBoolean) \
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate) \
     macro(ToPropertyKey, NodeResultJS | NodeMustGenerate) \

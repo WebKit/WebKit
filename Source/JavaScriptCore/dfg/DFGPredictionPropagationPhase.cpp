@@ -1025,6 +1025,7 @@ private:
         case DeleteByVal:
         case DeleteById:
         case MultiDeleteByOffset:
+        case ToBoolean:
         case LogicalNot:
         case CompareLess:
         case CompareLessEq:

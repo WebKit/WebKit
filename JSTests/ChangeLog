@@ -1,3 +1,20 @@
+2021-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        BooleanConstructor should be inlined in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=220322
+
+        Reviewed by Yusuke Suzuki.
+
+        Reorganize tests so the every UseKind / needsTypeCheck / invert combination is covered.
+
+        * microbenchmarks/array-filter-boolean-constructor.js: Added.
+        * stress/dfg-branch.js: Added.
+        * stress/dfg-to-boolean.js: Added.
+        * stress/logical-not-masquerades-as-undefined.js: Removed.
+        * stress/logical-not-masquerades.js: Removed.
+        * stress/logical-not.js: Removed.
+        * stress/value-to-boolean.js: Removed.
+
 2021-03-05  Tadeu Zagallo  <tzagallo@apple.com>
 
         OpGetPrivateName needs to be listed in FOR_EACH_OPCODE_WITH_VALUE_PROFILE

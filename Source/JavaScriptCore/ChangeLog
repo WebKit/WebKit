@@ -1,3 +1,68 @@
+2021-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        BooleanConstructor should be inlined in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=220322
+
+        Reviewed by Yusuke Suzuki.
+
+        `array.filter(Boolean)` is a rather popular idiom for removing falsy items from an array.
+        Also, `Boolean(X)` is sometimes used for explicit type casting.
+
+        This patch introduces ToBoolean DFG node and reorganizes compileLogicalNot(node) into
+        compileToBoolean(node, bool invert), leveraging already existing emitConvertValueToBoolean().
+
+        This approach is better than emitting LogicalNot<KnownBooleanUse>(LogicalNot(X)) as it results
+        in cleaner DFG node tree and is ~7% faster w/o FTL. Also, it enables adding a op_to_boolean
+        bytecode that will be generated for very common `!!X` patterns, reducing instruction count.
+
+        Just as LogicalNot, BooleanConstructor should handle masquerader objects, because Annex B
+        patches ToBoolean abstract op [1], preventing us from emitting simpler code.
+
+        This change advances provided microbenchmark by 110%, and is neutral for other ToBoolean cases.
+
+        [1]: https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-to-boolean
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToBooleanString):
+        (JSC::DFG::SpeculativeJIT::compileToBooleanStringOrOther):
+        (JSC::DFG::SpeculativeJIT::compileStringZeroLength): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLogicalNotStringOrOther): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToBooleanObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::compileToBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToBooleanObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::compileToBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot): Deleted.
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToBoolean):
+
 2021-03-06  Tim Horton  <timothy_horton@apple.com>
 
         <model> should create a model-owning compositing layer

@@ -833,6 +833,7 @@ private:
             break;
         }
             
+        case ToBoolean:
         case LogicalNot: {
             if (node->child1()->shouldSpeculateBoolean()) {
                 if (node->child1()->result() == NodeResultBoolean) {

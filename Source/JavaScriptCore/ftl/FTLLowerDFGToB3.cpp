@@ -1320,6 +1320,9 @@ private:
         case SameValue:
             compileSameValue();
             break;
+        case ToBoolean:
+            compileToBoolean();
+            break;
         case LogicalNot:
             compileLogicalNot();
             break;
@@ -9637,6 +9640,11 @@ private:
         setBoolean(vmCall(Int32, operationSameValue, weakPointer(globalObject), lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
     }
     
+    void compileToBoolean()
+    {
+        setBoolean(boolify(m_node->child1()));
+    }
+
     void compileLogicalNot()
     {
         setBoolean(m_out.logicalNot(boolify(m_node->child1())));

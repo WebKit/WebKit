@@ -156,6 +156,7 @@ bool doesGC(Graph& graph, Node* node)
     case IsCellWithType:
     case IsTypedArrayView:
     case TypeOf:
+    case ToBoolean:
     case LogicalNot:
     case Jump:
     case Branch:

@@ -7397,7 +7397,7 @@ void SpeculativeJIT::compileSameValue(Node* node)
     unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
 
-void SpeculativeJIT::compileStringZeroLength(Node* node)
+void SpeculativeJIT::compileToBooleanString(Node* node, bool invert)
 {
     SpeculateCellOperand str(this, node->child1());
     GPRReg strGPR = str.gpr();
@@ -7409,11 +7409,11 @@ void SpeculativeJIT::compileStringZeroLength(Node* node)
     GPRReg eqGPR = eq.gpr();
 
     m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), jsEmptyString(vm())), eqGPR);
-    m_jit.comparePtr(CCallHelpers::Equal, strGPR, eqGPR, eqGPR);
+    m_jit.comparePtr(invert ? CCallHelpers::Equal : CCallHelpers::NotEqual, strGPR, eqGPR, eqGPR);
     unblessedBooleanResult(eqGPR, node);
 }
 
-void SpeculativeJIT::compileLogicalNotStringOrOther(Node* node)
+void SpeculativeJIT::compileToBooleanStringOrOther(Node* node, bool invert)
 {
     JSValueOperand value(this, node->child1(), ManualOperandSpeculation);
     GPRTemporary temp(this);
@@ -7426,17 +7426,16 @@ void SpeculativeJIT::compileLogicalNotStringOrOther(Node* node)
         valueRegs, node->child1(), (~SpecCellCheck) | SpecString, m_jit.branchIfNotString(cellGPR));
 
     m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), jsEmptyString(vm())), tempGPR);
-    m_jit.comparePtr(CCallHelpers::Equal, cellGPR, tempGPR, tempGPR);
+    m_jit.comparePtr(invert ? CCallHelpers::Equal : CCallHelpers::NotEqual, cellGPR, tempGPR, tempGPR);
     auto done = m_jit.jump();
 
     notCell.link(&m_jit);
     DFG_TYPE_CHECK(
         valueRegs, node->child1(), SpecCellCheck | SpecOther, m_jit.branchIfNotOther(valueRegs, tempGPR));
-    m_jit.move(TrustedImm32(1), tempGPR);
+    m_jit.move(invert ? TrustedImm32(1) : TrustedImm32(0), tempGPR);
 
     done.link(&m_jit);
     unblessedBooleanResult(tempGPR, node);
-
 }
 
 void SpeculativeJIT::emitStringBranch(Edge nodeUse, BasicBlock* taken, BasicBlock* notTaken)
