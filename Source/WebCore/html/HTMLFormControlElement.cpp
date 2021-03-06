@@ -354,11 +354,6 @@ void HTMLFormControlElement::dispatchFormControlInputEvent()
     dispatchInputEvent();
 }
 
-bool HTMLFormControlElement::isDisabledFormControl() const
-{
-    return m_disabled || m_disabledByAncestorFieldset;
-}
-
 bool HTMLFormControlElement::isRequired() const
 {
     return m_isRequired;
