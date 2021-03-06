@@ -113,7 +113,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         return PrivilegedAPI.sendRequest('create-analysis-task', {}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'MissingName');
+            assert.strictEqual(error, 'MissingName');
         });
     });
 
@@ -121,7 +121,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', endRun: 1}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidStartRun');
+            assert.strictEqual(error, 'InvalidStartRun');
         });
     });
 
@@ -129,7 +129,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidEndRun');
+            assert.strictEqual(error, 'InvalidEndRun');
         });
     });
 
@@ -137,7 +137,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: "foo", endRun: 1}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidStartRun');
+            assert.strictEqual(error, 'InvalidStartRun');
         });
     });
 
@@ -145,7 +145,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1, endRun: "foo"}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidEndRun');
+            assert.strictEqual(error, 'InvalidEndRun');
         });
     });
 
@@ -156,7 +156,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 100, endRun: 1}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidStartRun');
+                assert.strictEqual(error, 'InvalidStartRun');
             });
         });
     });
@@ -168,7 +168,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1, endRun: 100}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidEndRun');
+                assert.strictEqual(error, 'InvalidEndRun');
             });
         });
     });
@@ -180,7 +180,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1, endRun: 1}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidTimeRange');
+                assert.strictEqual(error, 'InvalidTimeRange');
             });
         });
     });
@@ -192,7 +192,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: 1, endRun: 2}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'RunConfigMismatch');
+                assert.strictEqual(error, 'RunConfigMismatch');
             });
         });
     });
@@ -212,20 +212,20 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         }).then((configRow) => {
             return db.selectRows('test_runs', {config: configRow['id']});
         }).then((testRuns) => {
-            assert.equal(testRuns.length, 2);
+            assert.strictEqual(testRuns.length, 2);
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: testRuns[0]['id'], endRun: testRuns[1]['id']});
         }).then((content) => {
             return AnalysisTask.fetchById(content['taskId']);
         }).then((task) => {
-            assert.equal(task.name(), 'hi');
+            assert.strictEqual(task.name(), 'hi');
             assert(!task.hasResults());
             assert(!task.hasPendingRequests());
-            assert.deepEqual(task.bugs(), []);
-            assert.deepEqual(task.causes(), []);
-            assert.deepEqual(task.fixes(), []);
-            assert.equal(task.changeType(), null);
-            assert.equal(task.platform().label(), 'some platform');
-            assert.equal(task.metric().test().label(), 'test1');
+            assert.deepStrictEqual(task.bugs(), []);
+            assert.deepStrictEqual(task.causes(), []);
+            assert.deepStrictEqual(task.fixes(), []);
+            assert.strictEqual(task.changeType(), null);
+            assert.strictEqual(task.platform().label(), 'some platform');
+            assert.strictEqual(task.metric().test().label(), 'test1');
         });
     });
 
@@ -244,22 +244,22 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         }).then((configRow) => {
             return db.selectRows('test_runs', {config: configRow['id']});
         }).then((testRuns) => {
-            assert.equal(testRuns.length, 2);
+            assert.strictEqual(testRuns.length, 2);
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: testRuns[0]['id'], endRun: testRuns[1]['id']});
         }).then((content) => {
             return AnalysisTask.fetchById(content['taskId']);
         }).then((task) => {
-            assert.equal(task.name(), 'hi');
+            assert.strictEqual(task.name(), 'hi');
             assert(!task.hasResults());
             assert(!task.hasPendingRequests());
-            assert.deepEqual(task.bugs(), []);
-            assert.deepEqual(task.causes(), []);
-            assert.deepEqual(task.fixes(), []);
-            assert.equal(task.changeType(), null);
-            assert.equal(task.platform().label(), 'some platform');
-            assert.equal(task.metric().test().label(), 'test1');
-            assert.equal(task.startTime(), 1445960091000);
-            assert.equal(task.endTime(), 1445966861000);
+            assert.deepStrictEqual(task.bugs(), []);
+            assert.deepStrictEqual(task.causes(), []);
+            assert.deepStrictEqual(task.fixes(), []);
+            assert.strictEqual(task.changeType(), null);
+            assert.strictEqual(task.platform().label(), 'some platform');
+            assert.strictEqual(task.metric().test().label(), 'test1');
+            assert.strictEqual(task.startTime(), 1445960091000);
+            assert.strictEqual(task.endTime(), 1445966861000);
         });
     });
 
@@ -280,7 +280,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         }).then((configRow) => {
             return db.selectRows('test_runs', {config: configRow['id']});
         }).then((testRuns) => {
-            assert.equal(testRuns.length, 2);
+            assert.strictEqual(testRuns.length, 2);
             startId = testRuns[0]['id'];
             endId = testRuns[1]['id'];
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: startId, endRun: endId});
@@ -288,12 +288,12 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
             return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: startId, endRun: endId}).then(() => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'DuplicateAnalysisTask');
+                assert.strictEqual(error, 'DuplicateAnalysisTask');
             });
         }).then(() => {
             return db.selectAll('analysis_tasks');
         }).then((tasks) => {
-            assert.equal(tasks.length, 1);
+            assert.strictEqual(tasks.length, 1);
         });
     });
 
@@ -312,7 +312,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         }).then((configRow) => {
             return db.selectRows('test_runs', {config: configRow['id']});
         }).then((testRuns) => {
-            assert.equal(testRuns.length, 2);
+            assert.strictEqual(testRuns.length, 2);
             return PrivilegedAPI.sendRequest('create-analysis-task', {
                 name: 'hi',
                 startRun: testRuns[0]['id'],
@@ -330,8 +330,8 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
             for (let strategy of strategies)
                 strategyIdMap[strategy['id']] = strategy;
 
-            assert.equal(strategyIdMap[taskRow['segmentation']]['name'], "time series segmentation");
-            assert.equal(strategyIdMap[taskRow['test_range']]['name'], "student's t-test");
+            assert.strictEqual(strategyIdMap[taskRow['segmentation']]['name'], "time series segmentation");
+            assert.strictEqual(strategyIdMap[taskRow['test_range']]['name'], "student's t-test");
         });
     });
 
@@ -346,7 +346,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         const somePlatform = Platform.findByName('some platform');
         const configRow = await db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: somePlatform.id()});
         const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
-        assert.equal(testRuns.length, 2);
+        assert.strictEqual(testRuns.length, 2);
 
         const webkitRepositoryRow = await db.selectFirstRow('repositories', {name: 'WebKit'});
         const webkitId = webkitRepositoryRow.id;
@@ -371,7 +371,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         const platform = Platform.findByName('some platform');
         const configRow = await db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: platform.id()});
         const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
-        assert.equal(testRuns.length, 2);
+        assert.strictEqual(testRuns.length, 2);
 
         const webkitRepositoryRow = await db.selectFirstRow('repositories', {name: 'WebKit'});
         const webkitId = webkitRepositoryRow.id;
@@ -387,18 +387,18 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         await Manifest.fetch();
 
         const task = await AnalysisTask.fetchById(content['taskId']);
-        assert.equal(task.name(), 'confirm');
+        assert.strictEqual(task.name(), 'confirm');
         assert(!task.hasResults());
         assert(!task.hasPendingRequests());
-        assert.deepEqual(task.bugs(), []);
-        assert.deepEqual(task.causes(), []);
-        assert.deepEqual(task.fixes(), []);
-        assert.equal(task.changeType(), null);
-        assert.equal(task.platform().label(), 'some platform');
-        assert.equal(task.metric().test().label(), 'test1');
+        assert.deepStrictEqual(task.bugs(), []);
+        assert.deepStrictEqual(task.causes(), []);
+        assert.deepStrictEqual(task.fixes(), []);
+        assert.strictEqual(task.changeType(), null);
+        assert.strictEqual(task.platform().label(), 'some platform');
+        assert.strictEqual(task.metric().test().label(), 'test1');
 
         const testGroups = await TestGroup.fetchForTask(task.id());
-        assert.equal(testGroups.length, 0);
+        assert.strictEqual(testGroups.length, 0);
     });
 
     it('should create an analysis task with test group when commit set list and a positive repetition count is specified', async () => {
@@ -426,7 +426,7 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         let somePlatform = Platform.findById(platformId);
         const configRow = await db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: somePlatform.id()});
         const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
-        assert.equal(testRuns.length, 2);
+        assert.strictEqual(testRuns.length, 2);
 
         const oneRevisionSet = {[webkitId]: {revision: '191622'}};
         const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
@@ -436,38 +436,38 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
             startRun: testRuns[0]['id'], endRun: testRuns[1]['id']});
 
         const task = await AnalysisTask.fetchById(content['taskId']);
-        assert.equal(task.name(), 'confirm');
+        assert.strictEqual(task.name(), 'confirm');
         assert(!task.hasResults());
         assert(task.hasPendingRequests());
-        assert.deepEqual(task.bugs(), []);
-        assert.deepEqual(task.causes(), []);
-        assert.deepEqual(task.fixes(), []);
-        assert.equal(task.changeType(), null);
-        assert.equal(task.platform().label(), 'some platform');
-        assert.equal(task.metric().test().label(), 'test1');
+        assert.deepStrictEqual(task.bugs(), []);
+        assert.deepStrictEqual(task.causes(), []);
+        assert.deepStrictEqual(task.fixes(), []);
+        assert.strictEqual(task.changeType(), null);
+        assert.strictEqual(task.platform().label(), 'some platform');
+        assert.strictEqual(task.metric().test().label(), 'test1');
 
         const testGroups = await TestGroup.fetchForTask(task.id());
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const testGroup = testGroups[0];
-        assert.equal(testGroup.name(), 'Confirm');
+        assert.strictEqual(testGroup.name(), 'Confirm');
         assert.ok(!testGroup.needsNotification());
         const buildRequests = testGroup.buildRequests();
-        assert.equal(buildRequests.length, 2);
+        assert.strictEqual(buildRequests.length, 2);
 
-        assert.equal(buildRequests[0].triggerable().id(), triggerableId);
-        assert.equal(buildRequests[0].triggerable().id(), triggerableId);
+        assert.strictEqual(parseInt(buildRequests[0].triggerable().id()), triggerableId);
+        assert.strictEqual(parseInt(buildRequests[0].triggerable().id()), triggerableId);
 
-        assert.equal(buildRequests[0].testGroup(), testGroup);
-        assert.equal(buildRequests[1].testGroup(), testGroup);
+        assert.strictEqual(buildRequests[0].testGroup(), testGroup);
+        assert.strictEqual(buildRequests[1].testGroup(), testGroup);
 
-        assert.equal(buildRequests[0].platform(), task.platform());
-        assert.equal(buildRequests[1].platform(), task.platform());
+        assert.strictEqual(buildRequests[0].platform(), task.platform());
+        assert.strictEqual(buildRequests[1].platform(), task.platform());
 
-        assert.equal(buildRequests[0].analysisTaskId(), task.id());
-        assert.equal(buildRequests[1].analysisTaskId(), task.id());
+        assert.strictEqual(buildRequests[0].analysisTaskId(), task.id());
+        assert.strictEqual(buildRequests[1].analysisTaskId(), task.id());
 
-        assert.equal(buildRequests[0].test(), test1);
-        assert.equal(buildRequests[1].test(), test1);
+        assert.strictEqual(buildRequests[0].test(), test1);
+        assert.strictEqual(buildRequests[1].test(), test1);
 
         assert.ok(!buildRequests[0].isBuild());
         assert.ok(!buildRequests[1].isBuild());
@@ -477,8 +477,8 @@ describe('/privileged-api/create-analysis-task with browser privileged api', fun
         const firstCommitSet = buildRequests[0].commitSet();
         const secondCommitSet = buildRequests[1].commitSet();
         const webkitRepository = Repository.findById(webkitId);
-        assert.equal(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
-        assert.equal(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
+        assert.strictEqual(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
+        assert.strictEqual(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
     });
 });
 
@@ -500,7 +500,7 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         const somePlatform = Platform.findByName('some platform');
         const configRow = await db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: somePlatform.id()});
         const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
-        assert.equal(testRuns.length, 2);
+        assert.strictEqual(testRuns.length, 2);
 
         const webkitRepositoryRow = await db.selectFirstRow('repositories', {name: 'WebKit'});
         const webkitId = webkitRepositoryRow.id;
@@ -548,7 +548,7 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         let somePlatform = Platform.findById(platformId);
         const configRow = await db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: somePlatform.id()});
         const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
-        assert.equal(testRuns.length, 2);
+        assert.strictEqual(testRuns.length, 2);
 
         const oneRevisionSet = {[webkitId]: {revision: '191622'}};
         const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
@@ -558,38 +558,38 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
             startRun: testRuns[0]['id'], endRun: testRuns[1]['id']});
 
         const task = await AnalysisTask.fetchById(content['taskId']);
-        assert.equal(task.name(), 'confirm');
+        assert.strictEqual(task.name(), 'confirm');
         assert(!task.hasResults());
         assert(task.hasPendingRequests());
-        assert.deepEqual(task.bugs(), []);
-        assert.deepEqual(task.causes(), []);
-        assert.deepEqual(task.fixes(), []);
-        assert.equal(task.changeType(), null);
-        assert.equal(task.platform().label(), 'some platform');
-        assert.equal(task.metric().test().label(), 'test1');
+        assert.deepStrictEqual(task.bugs(), []);
+        assert.deepStrictEqual(task.causes(), []);
+        assert.deepStrictEqual(task.fixes(), []);
+        assert.strictEqual(task.changeType(), null);
+        assert.strictEqual(task.platform().label(), 'some platform');
+        assert.strictEqual(task.metric().test().label(), 'test1');
 
         const testGroups = await TestGroup.fetchForTask(task.id());
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const testGroup = testGroups[0];
-        assert.equal(testGroup.name(), 'Confirm');
+        assert.strictEqual(testGroup.name(), 'Confirm');
         assert.ok(!testGroup.needsNotification());
         const buildRequests = testGroup.buildRequests();
-        assert.equal(buildRequests.length, 2);
+        assert.strictEqual(buildRequests.length, 2);
 
-        assert.equal(buildRequests[0].triggerable().id(), triggerableId);
-        assert.equal(buildRequests[0].triggerable().id(), triggerableId);
+        assert.strictEqual(parseInt(buildRequests[0].triggerable().id()), triggerableId);
+        assert.strictEqual(parseInt(buildRequests[0].triggerable().id()), triggerableId);
 
-        assert.equal(buildRequests[0].testGroup(), testGroup);
-        assert.equal(buildRequests[1].testGroup(), testGroup);
+        assert.strictEqual(buildRequests[0].testGroup(), testGroup);
+        assert.strictEqual(buildRequests[1].testGroup(), testGroup);
 
-        assert.equal(buildRequests[0].platform(), task.platform());
-        assert.equal(buildRequests[1].platform(), task.platform());
+        assert.strictEqual(buildRequests[0].platform(), task.platform());
+        assert.strictEqual(buildRequests[1].platform(), task.platform());
 
-        assert.equal(buildRequests[0].analysisTaskId(), task.id());
-        assert.equal(buildRequests[1].analysisTaskId(), task.id());
+        assert.strictEqual(buildRequests[0].analysisTaskId(), task.id());
+        assert.strictEqual(buildRequests[1].analysisTaskId(), task.id());
 
-        assert.equal(buildRequests[0].test(), test1);
-        assert.equal(buildRequests[1].test(), test1);
+        assert.strictEqual(buildRequests[0].test(), test1);
+        assert.strictEqual(buildRequests[1].test(), test1);
 
         assert.ok(!buildRequests[0].isBuild());
         assert.ok(!buildRequests[1].isBuild());
@@ -599,8 +599,8 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         const firstCommitSet = buildRequests[0].commitSet();
         const secondCommitSet = buildRequests[1].commitSet();
         const webkitRepository = Repository.findById(webkitId);
-        assert.equal(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
-        assert.equal(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
+        assert.strictEqual(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
+        assert.strictEqual(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
     });
 
     it('should create an analysis task with test group and respect the "needsNotification" flag in the http request', async () => {
@@ -628,7 +628,7 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         let somePlatform = Platform.findById(platformId);
         const configRow = await db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: somePlatform.id()});
         const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
-        assert.equal(testRuns.length, 2);
+        assert.strictEqual(testRuns.length, 2);
 
         const oneRevisionSet = {[webkitId]: {revision: '191622'}};
         const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
@@ -638,38 +638,38 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
             startRun: testRuns[0]['id'], endRun: testRuns[1]['id'], needsNotification: true});
 
         const task = await AnalysisTask.fetchById(content['taskId']);
-        assert.equal(task.name(), 'confirm');
+        assert.strictEqual(task.name(), 'confirm');
         assert(!task.hasResults());
         assert(task.hasPendingRequests());
-        assert.deepEqual(task.bugs(), []);
-        assert.deepEqual(task.causes(), []);
-        assert.deepEqual(task.fixes(), []);
-        assert.equal(task.changeType(), null);
-        assert.equal(task.platform().label(), 'some platform');
-        assert.equal(task.metric().test().label(), 'test1');
+        assert.deepStrictEqual(task.bugs(), []);
+        assert.deepStrictEqual(task.causes(), []);
+        assert.deepStrictEqual(task.fixes(), []);
+        assert.strictEqual(task.changeType(), null);
+        assert.strictEqual(task.platform().label(), 'some platform');
+        assert.strictEqual(task.metric().test().label(), 'test1');
 
         const testGroups = await TestGroup.fetchForTask(task.id());
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const testGroup = testGroups[0];
-        assert.equal(testGroup.name(), 'Confirm');
+        assert.strictEqual(testGroup.name(), 'Confirm');
         assert.ok(testGroup.needsNotification());
         const buildRequests = testGroup.buildRequests();
-        assert.equal(buildRequests.length, 2);
+        assert.strictEqual(buildRequests.length, 2);
 
-        assert.equal(buildRequests[0].triggerable().id(), triggerableId);
-        assert.equal(buildRequests[0].triggerable().id(), triggerableId);
+        assert.strictEqual(parseInt(buildRequests[0].triggerable().id()), triggerableId);
+        assert.strictEqual(parseInt(buildRequests[0].triggerable().id()), triggerableId);
 
-        assert.equal(buildRequests[0].testGroup(), testGroup);
-        assert.equal(buildRequests[1].testGroup(), testGroup);
+        assert.strictEqual(buildRequests[0].testGroup(), testGroup);
+        assert.strictEqual(buildRequests[1].testGroup(), testGroup);
 
-        assert.equal(buildRequests[0].platform(), task.platform());
-        assert.equal(buildRequests[1].platform(), task.platform());
+        assert.strictEqual(buildRequests[0].platform(), task.platform());
+        assert.strictEqual(buildRequests[1].platform(), task.platform());
 
-        assert.equal(buildRequests[0].analysisTaskId(), task.id());
-        assert.equal(buildRequests[1].analysisTaskId(), task.id());
+        assert.strictEqual(buildRequests[0].analysisTaskId(), task.id());
+        assert.strictEqual(buildRequests[1].analysisTaskId(), task.id());
 
-        assert.equal(buildRequests[0].test(), test1);
-        assert.equal(buildRequests[1].test(), test1);
+        assert.strictEqual(buildRequests[0].test(), test1);
+        assert.strictEqual(buildRequests[1].test(), test1);
 
         assert.ok(!buildRequests[0].isBuild());
         assert.ok(!buildRequests[1].isBuild());
@@ -679,7 +679,7 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         const firstCommitSet = buildRequests[0].commitSet();
         const secondCommitSet = buildRequests[1].commitSet();
         const webkitRepository = Repository.findById(webkitId);
-        assert.equal(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
-        assert.equal(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
+        assert.strictEqual(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
+        assert.strictEqual(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
     });
 });

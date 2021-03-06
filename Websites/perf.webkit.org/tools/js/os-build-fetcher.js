@@ -121,7 +121,7 @@ class OSBuildFetcher {
                 this._logger.log(`Got ${Object.keys((ownedCommits)).length} owned commits for "${commit['revision']}"`);
                 for (let repositoryName in ownedCommits) {
                     const ownedCommit = ownedCommits[repositoryName];
-                    assert.deepEqual(Object.keys(ownedCommit), ['revision']);
+                    assert.deepStrictEqual(Object.keys(ownedCommit), ['revision']);
                     assert(typeof(ownedCommit['revision']) == 'string');
                 }
                 commit['ownedCommits'] = ownedCommits;

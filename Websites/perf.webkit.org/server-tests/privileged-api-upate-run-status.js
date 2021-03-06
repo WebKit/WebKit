@@ -39,13 +39,13 @@ describe("/privileged-api/update-run-status", function () {
         return addBuilderForReport(reportWithRevision[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return db.selectAll('test_runs');
         }).then((runRows) => {
-            assert.equal(runRows.length, 1);
-            assert.equal(runRows[0]['mean_cache'], 11);
-            assert.equal(runRows[0]['iteration_count_cache'], 1);
-            assert.equal(runRows[0]['marked_outlier'], false);
+            assert.strictEqual(runRows.length, 1);
+            assert.strictEqual(runRows[0]['mean_cache'], 11);
+            assert.strictEqual(runRows[0]['iteration_count_cache'], 1);
+            assert.strictEqual(runRows[0]['marked_outlier'], false);
             id = runRows[0]['id'];
             return PrivilegedAPI.requestCSRFToken();
         }).then(() => {
@@ -53,10 +53,10 @@ describe("/privileged-api/update-run-status", function () {
         }).then(() => {
             return db.selectAll('test_runs');
         }).then((runRows) => {
-            assert.equal(runRows.length, 1);
-            assert.equal(runRows[0]['mean_cache'], 11);
-            assert.equal(runRows[0]['iteration_count_cache'], 1);
-            assert.equal(runRows[0]['marked_outlier'], true);
+            assert.strictEqual(runRows.length, 1);
+            assert.strictEqual(runRows[0]['mean_cache'], 11);
+            assert.strictEqual(runRows[0]['iteration_count_cache'], 1);
+            assert.strictEqual(runRows[0]['marked_outlier'], true);
         });
     });
 
@@ -65,11 +65,11 @@ describe("/privileged-api/update-run-status", function () {
         return addBuilderForReport(reportWithRevision[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return db.selectAll('test_runs');
         }).then((runRows) => {
-            assert.equal(runRows.length, 1);
-            assert.equal(runRows[0]['marked_outlier'], false);
+            assert.strictEqual(runRows.length, 1);
+            assert.strictEqual(runRows[0]['marked_outlier'], false);
             return PrivilegedAPI.requestCSRFToken();
         }).then(() => {
             RemoteAPI.clearCookies();
@@ -77,7 +77,7 @@ describe("/privileged-api/update-run-status", function () {
         }).then(() => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidToken');
+            assert.strictEqual(error, 'InvalidToken');
         });
     });
 
@@ -85,18 +85,18 @@ describe("/privileged-api/update-run-status", function () {
         return addBuilderForReport(reportWithRevision[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return TestServer.database().selectAll('test_runs');
         }).then((runRows) => {
-            assert.equal(runRows.length, 1);
-            assert.equal(runRows[0]['marked_outlier'], false);
+            assert.strictEqual(runRows.length, 1);
+            assert.strictEqual(runRows[0]['marked_outlier'], false);
             return PrivilegedAPI.requestCSRFToken();
         }).then(() => {
             return RemoteAPI.postJSONWithStatus('/privileged-api/update-run-status', {token: 'bad'});
         }).then(() => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidToken');
+            assert.strictEqual(error, 'InvalidToken');
         });
     });
 
@@ -105,23 +105,23 @@ describe("/privileged-api/update-run-status", function () {
         return addBuilderForReport(reportWithRevision[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return db.selectAll('test_runs');
         }).then((runRows) => {
-            assert.equal(runRows.length, 1);
-            assert.equal(runRows[0]['marked_outlier'], false);
+            assert.strictEqual(runRows.length, 1);
+            assert.strictEqual(runRows[0]['marked_outlier'], false);
             return PrivilegedAPI.sendRequest('update-run-status', {'run': runRows[0]['id'], 'markedOutlier': true});
         }).then(() => {
             return db.selectAll('test_runs');
         }).then((runRows) => {
-            assert.equal(runRows.length, 1);
-            assert.equal(runRows[0]['marked_outlier'], true);
+            assert.strictEqual(runRows.length, 1);
+            assert.strictEqual(runRows[0]['marked_outlier'], true);
             return PrivilegedAPI.sendRequest('update-run-status', {'run': runRows[0]['id'], 'markedOutlier': false});
         }).then(() => {
             return db.selectAll('test_runs');
         }).then((runRows) => {
-            assert.equal(runRows.length, 1);
-            assert.equal(runRows[0]['marked_outlier'], false);
+            assert.strictEqual(runRows.length, 1);
+            assert.strictEqual(runRows[0]['marked_outlier'], false);
         });
     });
 });

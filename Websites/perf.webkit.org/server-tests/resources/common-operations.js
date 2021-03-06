@@ -56,7 +56,7 @@ async function assertThrows(expectedError, testFunction)
             await testFunction()
     } catch(error) {
         thrownException = true;
-        assert.equal(error, expectedError);
+        assert.strictEqual(error, expectedError);
     }
     assert.ok(thrownException);
 }

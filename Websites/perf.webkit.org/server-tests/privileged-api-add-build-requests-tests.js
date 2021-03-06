@@ -79,7 +79,7 @@ async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
     const configRow = await db.selectFirstRow('test_configurations', {metric: test.metrics()[0].id(), platform: platform.id()});
     const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
 
-    assert.equal(testRuns.length, 2);
+    assert.strictEqual(testRuns.length, 2);
     const content = await PrivilegedAPI.sendRequest('create-analysis-task', {
         name: name,
         startRun: testRuns[0]['id'],
@@ -140,23 +140,23 @@ describe('/privileged-api/add-build-requests', function() {
         await PrivilegedAPI.sendRequest('update-test-group', {'group': insertedGroupId, mayNeedMoreRequests: true});
 
         const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.mayNeedMoreRequests(), true);
-        assert.equal(group.repetitionCount(), 2);
-        assert.equal(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), true);
+        assert.strictEqual(parseInt(group.repetitionCount()), 2);
+        assert.strictEqual(parseInt(group.initialRepetitionCount()), 2);
 
         await PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2});
 
         const updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(updatedGroups.length, 1);
-        assert.equal(updatedGroups[0].repetitionCount(), 4);
-        assert.equal(updatedGroups[0].initialRepetitionCount(), 2);
-        assert.equal(group.mayNeedMoreRequests(), true);
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(parseInt(updatedGroups[0].repetitionCount()), 4);
+        assert.strictEqual(parseInt(updatedGroups[0].initialRepetitionCount()), 2);
+        assert.strictEqual(group.mayNeedMoreRequests(), true);
         for (const commitSet of updatedGroups[0].requestedCommitSets()) {
             const buildRequests = updatedGroups[0].requestsForCommitSet(commitSet);
-            assert.equal(buildRequests.length, 4);
+            assert.strictEqual(buildRequests.length, 4);
         }
     });
 
@@ -170,12 +170,12 @@ describe('/privileged-api/add-build-requests', function() {
         const insertedGroupId = result['testGroupId'];
 
         const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.mayNeedMoreRequests(), false);
-        assert.equal(group.repetitionCount(), 2);
-        assert.equal(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), false);
+        assert.strictEqual(parseInt(group.repetitionCount()), 2);
+        assert.strictEqual(parseInt(group.initialRepetitionCount()), 2);
         await group.updateHiddenFlag(true);
 
         await assertThrows('CannotAddToHiddenTestGroup', async () => await PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2}))

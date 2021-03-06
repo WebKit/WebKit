@@ -83,7 +83,7 @@ function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
     }).then((configRow) => {
         return db.selectRows('test_runs', {config: configRow['id']});
     }).then((testRuns) => {
-        assert.equal(testRuns.length, 2);
+        assert.strictEqual(testRuns.length, 2);
         return PrivilegedAPI.sendRequest('create-analysis-task', {
             name: name,
             startRun: testRuns[0]['id'],
@@ -137,7 +137,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidName');
+            assert.strictEqual(error, 'InvalidName');
         });
     });
 
@@ -145,7 +145,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', commitSets: [[1]]}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidTask');
+            assert.strictEqual(error, 'InvalidTask');
         });
     });
 
@@ -153,7 +153,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 'foo', commitSets: [[1]]}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidTask');
+            assert.strictEqual(error, 'InvalidTask');
         });
     });
 
@@ -161,7 +161,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: 1}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidCommitSets');
+            assert.strictEqual(error, 'InvalidCommitSets');
         });
     });
 
@@ -169,7 +169,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: 1, commitSets: {}}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidCommitSets');
+            assert.strictEqual(error, 'InvalidCommitSets');
         });
     });
 
@@ -177,7 +177,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: 1, commitSets: {'WebKit': []}}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidTask');
+            assert.strictEqual(error, 'InvalidTask');
         });
     });
 
@@ -185,7 +185,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: 'foo', commitSets: {'WebKit': []}}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidRepetitionCount');
+            assert.strictEqual(error, 'InvalidRepetitionCount');
         });
     });
 
@@ -193,7 +193,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, repetitionCount: -5, commitSets: {'WebKit': []}}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidRepetitionCount');
+            assert.strictEqual(error, 'InvalidRepetitionCount');
         });
     });
 
@@ -201,7 +201,7 @@ describe('/privileged-api/create-test-group', function () {
         return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: 1, commitSets: {'WebKit': []}}).then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidTask');
+            assert.strictEqual(error, 'InvalidTask');
         });
     });
 
@@ -210,7 +210,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': []}}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'TriggerableNotFoundForTask');
+                assert.strictEqual(error, 'TriggerableNotFoundForTask');
             });
         });
     });
@@ -220,7 +220,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': []}}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidCommitSets');
+                assert.strictEqual(error, 'InvalidCommitSets');
             });
         });
     });
@@ -231,7 +231,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets: [{[webkit.id()]: {revision: '191622'}}, {}]}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidRevisionSets');
+                assert.strictEqual(error, 'InvalidRevisionSets');
             });
         });
     });
@@ -242,7 +242,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets: [{[webkit.id()]: {revision: '191622'}}]}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidRevisionSets');
+                assert.strictEqual(error, 'InvalidRevisionSets');
             });
         });
     });
@@ -252,7 +252,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'Foo': []}}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'RepositoryNotFound');
+                assert.strictEqual(error, 'RepositoryNotFound');
             });
         });
     });
@@ -262,7 +262,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': ['1']}}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'RevisionNotFound');
+                assert.strictEqual(error, 'RevisionNotFound');
             });
         });
     });
@@ -274,7 +274,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'RevisionNotFound');
+                assert.strictEqual(error, 'RevisionNotFound');
             });
         });
     });
@@ -286,7 +286,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'AmbiguousRevision');
+                assert.strictEqual(error, 'AmbiguousRevision');
             });
         });
     });
@@ -298,7 +298,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'RevisionNotFound');
+                assert.strictEqual(error, 'RevisionNotFound');
             });
         });
     });
@@ -310,7 +310,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidUploadedFile');
+                assert.strictEqual(error, 'InvalidUploadedFile');
             });
         });
     });
@@ -321,7 +321,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidRepository');
+                assert.strictEqual(error, 'InvalidRepository');
             });
         });
     });
@@ -331,7 +331,7 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, commitSets: {'WebKit': ['191622', '191623'], 'macOS': ['15A284']}}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'InvalidCommitSets');
+                assert.strictEqual(error, 'InvalidCommitSets');
             });
         });
     });
@@ -345,7 +345,7 @@ describe('/privileged-api/create-test-group', function () {
             }).then(() => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'DuplicateTestGroupName');
+                assert.strictEqual(error, 'DuplicateTestGroupName');
             });
         });
     });
@@ -362,7 +362,7 @@ describe('/privileged-api/create-test-group', function () {
         }).then(() => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidOwnerRevision');
+            assert.strictEqual(error, 'InvalidOwnerRevision');
         });
     });
 
@@ -378,7 +378,7 @@ describe('/privileged-api/create-test-group', function () {
         }).then(() => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'InvalidCommitOwnership');
+            assert.strictEqual(error, 'InvalidCommitOwnership');
         });
     });
 
@@ -393,17 +393,17 @@ describe('/privileged-api/create-test-group', function () {
                 {[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [ownedJSC.id()]: {revision: 'owned-jsc-9191', ownerRevision: '192736'}}];
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 1, revisionSets});
         }).then((content) => {
-            assert.equal(content['status'], 'OK');
+            assert.strictEqual(content['status'], 'OK');
             groupId = content['testGroupId'];
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
-            assert.equal(testGroups.length, 1);
+            assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
-            assert.equal(group.id(), groupId);
-            assert.equal(group.repetitionCount(), 1);
+            assert.strictEqual(group.id(), groupId);
+            assert.strictEqual(group.repetitionCount(), 1);
             assert.ok(!group.needsNotification());
             const requests = group.buildRequests();
-            assert.equal(requests.length, 4);
+            assert.strictEqual(requests.length, 4);
             assert(requests[0].isBuild());
             assert(!requests[0].isTest());
             assert(requests[1].isBuild());
@@ -418,14 +418,14 @@ describe('/privileged-api/create-test-group', function () {
             const ownedJSC = Repository.findById(MockData.ownedJSCRepositoryId());
             const set0 = requests[0].commitSet();
             const set1 = requests[1].commitSet();
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [ownedJSC, webkit, macos]);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [ownedJSC, webkit, macos]);
-            assert.equal(set0.revisionForRepository(macos), '15A284');
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set0.revisionForRepository(ownedJSC), 'owned-jsc-6161');
-            assert.equal(set1.revisionForRepository(macos), '15A284');
-            assert.equal(set1.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [ownedJSC, webkit, macos]);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [ownedJSC, webkit, macos]);
+            assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set0.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+            assert.strictEqual(set1.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set1.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set1.revisionForRepository(ownedJSC), 'owned-jsc-9191');
         });
     });
 
@@ -440,17 +440,17 @@ describe('/privileged-api/create-test-group', function () {
                 {[macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-9191', ownerRevision: '192736'}}];
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 1, revisionSets});
         }).then((content) => {
-            assert.equal(content['status'], 'OK');
+            assert.strictEqual(content['status'], 'OK');
             groupId = content['testGroupId'];
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
-            assert.equal(testGroups.length, 1);
+            assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
-            assert.equal(group.id(), groupId);
-            assert.equal(group.repetitionCount(), 1);
+            assert.strictEqual(group.id(), groupId);
+            assert.strictEqual(group.repetitionCount(), 1);
             assert.ok(!group.needsNotification());
             const requests = group.buildRequests();
-            assert.equal(requests.length, 4);
+            assert.strictEqual(requests.length, 4);
             assert(requests[0].isBuild());
             assert(!requests[0].isTest());
             assert(requests[1].isBuild());
@@ -465,13 +465,13 @@ describe('/privileged-api/create-test-group', function () {
             const ownedJSC = Repository.findById(MockData.ownedJSCRepositoryId());
             const set0 = requests[0].commitSet();
             const set1 = requests[1].commitSet();
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [ownedJSC, webkit, macos]);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [ownedJSC, macos]);
-            assert.equal(set0.revisionForRepository(macos), '15A284');
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set0.revisionForRepository(ownedJSC), 'owned-jsc-6161');
-            assert.equal(set1.revisionForRepository(macos), '15A284');
-            assert.equal(set1.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [ownedJSC, webkit, macos]);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [ownedJSC, macos]);
+            assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set0.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+            assert.strictEqual(set1.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set1.revisionForRepository(ownedJSC), 'owned-jsc-9191');
         });
     });
 
@@ -482,28 +482,28 @@ describe('/privileged-api/create-test-group', function () {
                 insertedGroupId = content['testGroupId'];
                 return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
-                assert.equal(testGroups.length, 1);
+                assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
-                assert.equal(group.id(), insertedGroupId);
-                assert.equal(group.repetitionCount(), 1);
+                assert.strictEqual(group.id(), insertedGroupId);
+                assert.strictEqual(group.repetitionCount(), 1);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
-                assert.equal(requests.length, 2);
+                assert.strictEqual(requests.length, 2);
 
                 const macos = Repository.findById(MockData.macosRepositoryId());
                 const webkit = Repository.findById(MockData.webkitRepositoryId());
                 const set0 = requests[0].commitSet();
                 const set1 = requests[1].commitSet();
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
-                assert.equal(set0.revisionForRepository(macos), '15A284');
-                assert.equal(set0.revisionForRepository(webkit), '191622');
-                assert.equal(set1.revisionForRepository(macos), '15A284');
-                assert.equal(set1.revisionForRepository(webkit), '191623');
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
+                assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+                assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+                assert.strictEqual(set1.revisionForRepository(macos), '15A284');
+                assert.strictEqual(set1.revisionForRepository(webkit), '191623');
 
                 const repositoryGroup = requests[0].repositoryGroup();
-                assert.equal(repositoryGroup.name(), 'system-and-webkit');
-                assert.equal(requests[1].repositoryGroup(), repositoryGroup);
+                assert.strictEqual(repositoryGroup.name(), 'system-and-webkit');
+                assert.strictEqual(requests[1].repositoryGroup(), repositoryGroup);
                 assert(repositoryGroup.accepts(set0));
                 assert(repositoryGroup.accepts(set1));
             });
@@ -521,24 +521,24 @@ describe('/privileged-api/create-test-group', function () {
                 insertedGroupId = content['testGroupId'];
                 return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
-                assert.equal(testGroups.length, 1);
+                assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
-                assert.equal(group.id(), insertedGroupId);
-                assert.equal(group.repetitionCount(), 1);
+                assert.strictEqual(group.id(), insertedGroupId);
+                assert.strictEqual(group.repetitionCount(), 1);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
-                assert.equal(requests.length, 2);
+                assert.strictEqual(requests.length, 2);
 
                 const set0 = requests[0].commitSet();
                 const set1 = requests[1].commitSet();
-                assert.deepEqual(set0.repositories(), [webkit]);
-                assert.deepEqual(set1.repositories(), [webkit]);
-                assert.equal(set0.revisionForRepository(webkit), '191622');
-                assert.equal(set1.revisionForRepository(webkit), '191623');
+                assert.deepStrictEqual(set0.repositories(), [webkit]);
+                assert.deepStrictEqual(set1.repositories(), [webkit]);
+                assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+                assert.strictEqual(set1.revisionForRepository(webkit), '191623');
 
                 const repositoryGroup = requests[0].repositoryGroup();
-                assert.equal(repositoryGroup.name(), 'webkit-only');
-                assert.equal(repositoryGroup, requests[1].repositoryGroup());
+                assert.strictEqual(repositoryGroup.name(), 'webkit-only');
+                assert.strictEqual(repositoryGroup, requests[1].repositoryGroup());
                 assert(repositoryGroup.accepts(set0));
                 assert(repositoryGroup.accepts(set1));
             });
@@ -553,33 +553,33 @@ describe('/privileged-api/create-test-group', function () {
                 insertedGroupId = content['testGroupId'];
                 return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
-                assert.equal(testGroups.length, 1);
+                assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
-                assert.equal(group.id(), insertedGroupId);
-                assert.equal(group.repetitionCount(), 2);
+                assert.strictEqual(group.id(), insertedGroupId);
+                assert.strictEqual(group.repetitionCount(), 2);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
-                assert.equal(requests.length, 4);
+                assert.strictEqual(requests.length, 4);
                 const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
                 const macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
 
                 const set0 = requests[0].commitSet();
                 const set1 = requests[1].commitSet();
-                assert.equal(requests[2].commitSet(), set0);
-                assert.equal(requests[3].commitSet(), set1);
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
-                assert.equal(set0.revisionForRepository(webkit), '191622');
-                assert.equal(set0.revisionForRepository(macos), '15A284');
-                assert.equal(set1.revisionForRepository(webkit), '191623');
-                assert.equal(set1.revisionForRepository(macos), '15A284');
-                assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
+                assert.strictEqual(requests[2].commitSet(), set0);
+                assert.strictEqual(requests[3].commitSet(), set1);
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
+                assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+                assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+                assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+                assert.strictEqual(set1.revisionForRepository(macos), '15A284');
+                assert.strictEqual(set0.commitForRepository(macos), set1.commitForRepository(macos));
 
                 const repositoryGroup = requests[0].repositoryGroup();
-                assert.equal(repositoryGroup.name(), 'system-and-webkit');
-                assert.equal(requests[1].repositoryGroup(), repositoryGroup);
-                assert.equal(requests[2].repositoryGroup(), repositoryGroup);
-                assert.equal(requests[3].repositoryGroup(), repositoryGroup);
+                assert.strictEqual(repositoryGroup.name(), 'system-and-webkit');
+                assert.strictEqual(requests[1].repositoryGroup(), repositoryGroup);
+                assert.strictEqual(requests[2].repositoryGroup(), repositoryGroup);
+                assert.strictEqual(requests[3].repositoryGroup(), repositoryGroup);
                 assert(repositoryGroup.accepts(set0));
                 assert(repositoryGroup.accepts(set1));
             });
@@ -600,28 +600,28 @@ describe('/privileged-api/create-test-group', function () {
                 insertedGroupId = content['testGroupId'];
                 return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
-                assert.equal(testGroups.length, 1);
+                assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
-                assert.equal(group.id(), insertedGroupId);
-                assert.equal(group.repetitionCount(), 2);
+                assert.strictEqual(group.id(), insertedGroupId);
+                assert.strictEqual(group.repetitionCount(), 2);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
-                assert.equal(requests.length, 4);
+                assert.strictEqual(requests.length, 4);
 
                 const set0 = requests[0].commitSet();
                 const set1 = requests[1].commitSet();
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
-                assert.equal(set0.revisionForRepository(webkit), '2ceda45d3cd63cde58d0dbf5767714e03d902e43');
-                assert.equal(set0.revisionForRepository(macos), '15A284');
-                assert.equal(set1.revisionForRepository(webkit), '5471a8ddc1f661663ccfd1a29c633ba57e879533');
-                assert.equal(set1.revisionForRepository(macos), '15A284');
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
+                assert.strictEqual(set0.revisionForRepository(webkit), '2ceda45d3cd63cde58d0dbf5767714e03d902e43');
+                assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+                assert.strictEqual(set1.revisionForRepository(webkit), '5471a8ddc1f661663ccfd1a29c633ba57e879533');
+                assert.strictEqual(set1.revisionForRepository(macos), '15A284');
 
                 const repositoryGroup0 = requests[0].repositoryGroup();
-                assert.equal(repositoryGroup0.name(), 'system-and-webkit');
-                assert.equal(repositoryGroup0, requests[2].repositoryGroup());
+                assert.strictEqual(repositoryGroup0.name(), 'system-and-webkit');
+                assert.strictEqual(repositoryGroup0, requests[2].repositoryGroup());
                 const repositoryGroup1 = requests[1].repositoryGroup();
-                assert.equal(repositoryGroup1, repositoryGroup0);
+                assert.strictEqual(repositoryGroup1, repositoryGroup0);
                 assert(repositoryGroup0.accepts(set0));
                 assert(repositoryGroup0.accepts(set1));
             });
@@ -642,32 +642,32 @@ describe('/privileged-api/create-test-group', function () {
                 insertedGroupId = content['testGroupId'];
                 return TestGroup.fetchForTask(taskId, true);
             }).then((testGroups) => {
-                assert.equal(testGroups.length, 1);
+                assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
-                assert.equal(group.id(), insertedGroupId);
-                assert.equal(group.repetitionCount(), 2);
+                assert.strictEqual(group.id(), insertedGroupId);
+                assert.strictEqual(group.repetitionCount(), 2);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
-                assert.equal(requests.length, 4);
+                assert.strictEqual(requests.length, 4);
 
                 const set0 = requests[0].commitSet();
                 const set1 = requests[1].commitSet();
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
-                assert.deepEqual(set1.repositories(), [webkit]);
-                assert.equal(set0.revisionForRepository(webkit), '191622');
-                assert.equal(set0.revisionForRepository(macos), '15A284');
-                assert.equal(set1.revisionForRepository(webkit), '191623');
-                assert.equal(set1.revisionForRepository(macos), null);
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+                assert.deepStrictEqual(set1.repositories(), [webkit]);
+                assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+                assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+                assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+                assert.strictEqual(set1.revisionForRepository(macos), null);
 
                 const repositoryGroup0 = requests[0].repositoryGroup();
-                assert.equal(repositoryGroup0.name(), 'system-and-webkit');
-                assert.equal(repositoryGroup0, requests[2].repositoryGroup());
+                assert.strictEqual(repositoryGroup0.name(), 'system-and-webkit');
+                assert.strictEqual(repositoryGroup0, requests[2].repositoryGroup());
                 assert(repositoryGroup0.accepts(set0));
                 assert(!repositoryGroup0.accepts(set1));
 
                 const repositoryGroup1 = requests[1].repositoryGroup();
-                assert.equal(repositoryGroup1.name(), 'webkit-only');
-                assert.equal(repositoryGroup1, requests[3].repositoryGroup());
+                assert.strictEqual(repositoryGroup1.name(), 'webkit-only');
+                assert.strictEqual(repositoryGroup1, requests[3].repositoryGroup());
                 assert(!repositoryGroup1.accepts(set0));
                 assert(repositoryGroup1.accepts(set1));
             });
@@ -691,28 +691,28 @@ describe('/privileged-api/create-test-group', function () {
                     return TestGroup.fetchForTask(taskId, true);
                 });
             }).then((testGroups) => {
-                assert.equal(testGroups.length, 1);
+                assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
-                assert.equal(group.id(), insertedGroupId);
-                assert.equal(group.repetitionCount(), 2);
+                assert.strictEqual(group.id(), insertedGroupId);
+                assert.strictEqual(group.repetitionCount(), 2);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
-                assert.equal(requests.length, 4);
+                assert.strictEqual(requests.length, 4);
 
                 const set0 = requests[0].commitSet();
                 const set1 = requests[1].commitSet();
-                assert.equal(requests[2].commitSet(), set0);
-                assert.equal(requests[3].commitSet(), set1);
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
-                assert.deepEqual(set0.customRoots(), []);
-                assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
-                assert.deepEqual(set1.customRoots(), [UploadedFile.ensureSingleton(uploadedFile['id'], uploadedFile)]);
-                assert.equal(set0.revisionForRepository(webkit), '191622');
-                assert.equal(set0.revisionForRepository(webkit), set1.revisionForRepository(webkit));
-                assert.equal(set0.commitForRepository(webkit), set1.commitForRepository(webkit));
-                assert.equal(set0.revisionForRepository(macos), '15A284');
-                assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
-                assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+                assert.strictEqual(requests[2].commitSet(), set0);
+                assert.strictEqual(requests[3].commitSet(), set1);
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+                assert.deepStrictEqual(set0.customRoots(), []);
+                assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
+                assert.deepStrictEqual(set1.customRoots(), [UploadedFile.ensureSingleton(uploadedFile['id'], uploadedFile)]);
+                assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+                assert.strictEqual(set0.revisionForRepository(webkit), set1.revisionForRepository(webkit));
+                assert.strictEqual(set0.commitForRepository(webkit), set1.commitForRepository(webkit));
+                assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+                assert.strictEqual(set0.commitForRepository(macos), set1.commitForRepository(macos));
+                assert.strictEqual(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
                 assert(!set0.equals(set1));
             });
         });
@@ -740,50 +740,50 @@ describe('/privileged-api/create-test-group', function () {
             insertedGroupId = content['testGroupId'];
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
-            assert.equal(testGroups.length, 1);
+            assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
-            assert.equal(group.id(), insertedGroupId);
-            assert.equal(group.repetitionCount(), 2);
+            assert.strictEqual(group.id(), insertedGroupId);
+            assert.strictEqual(group.repetitionCount(), 2);
             assert.ok(!group.needsNotification());
-            assert.equal(group.test(), Test.findById(MockData.someTestId()));
-            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
+            assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
-            assert.equal(requests.length, 6);
+            assert.strictEqual(requests.length, 6);
 
-            assert.equal(requests[0].isBuild(), true);
-            assert.equal(requests[1].isBuild(), true);
-            assert.equal(requests[2].isBuild(), false);
-            assert.equal(requests[3].isBuild(), false);
-            assert.equal(requests[4].isBuild(), false);
-            assert.equal(requests[5].isBuild(), false);
+            assert.strictEqual(requests[0].isBuild(), true);
+            assert.strictEqual(requests[1].isBuild(), true);
+            assert.strictEqual(requests[2].isBuild(), false);
+            assert.strictEqual(requests[3].isBuild(), false);
+            assert.strictEqual(requests[4].isBuild(), false);
+            assert.strictEqual(requests[5].isBuild(), false);
 
-            assert.equal(requests[0].isTest(), false);
-            assert.equal(requests[1].isTest(), false);
-            assert.equal(requests[2].isTest(), true);
-            assert.equal(requests[3].isTest(), true);
-            assert.equal(requests[4].isTest(), true);
-            assert.equal(requests[5].isTest(), true);
+            assert.strictEqual(requests[0].isTest(), false);
+            assert.strictEqual(requests[1].isTest(), false);
+            assert.strictEqual(requests[2].isTest(), true);
+            assert.strictEqual(requests[3].isTest(), true);
+            assert.strictEqual(requests[4].isTest(), true);
+            assert.strictEqual(requests[5].isTest(), true);
 
             const set0 = requests[0].commitSet();
             const set1 = requests[1].commitSet();
-            assert.equal(requests[2].commitSet(), set0);
-            assert.equal(requests[3].commitSet(), set1);
-            assert.equal(requests[4].commitSet(), set0);
-            assert.equal(requests[5].commitSet(), set1);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
-            assert.deepEqual(set1.customRoots(), []);
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set0.revisionForRepository(webkit), set1.revisionForRepository(webkit));
-            assert.equal(set0.commitForRepository(webkit), set1.commitForRepository(webkit));
-            assert.equal(set0.patchForRepository(webkit), uploadedFile);
-            assert.equal(set1.patchForRepository(webkit), null);
-            assert.equal(set0.revisionForRepository(macos), '15A284');
-            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
-            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
-            assert.equal(set0.patchForRepository(macos), null);
-            assert.equal(set1.patchForRepository(macos), null);
+            assert.strictEqual(requests[2].commitSet(), set0);
+            assert.strictEqual(requests[3].commitSet(), set1);
+            assert.strictEqual(requests[4].commitSet(), set0);
+            assert.strictEqual(requests[5].commitSet(), set1);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+            assert.deepStrictEqual(set0.customRoots(), []);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [webkit, macos]);
+            assert.deepStrictEqual(set1.customRoots(), []);
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set0.revisionForRepository(webkit), set1.revisionForRepository(webkit));
+            assert.strictEqual(set0.commitForRepository(webkit), set1.commitForRepository(webkit));
+            assert.strictEqual(set0.patchForRepository(webkit), uploadedFile);
+            assert.strictEqual(set1.patchForRepository(webkit), null);
+            assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.strictEqual(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.strictEqual(set0.patchForRepository(macos), null);
+            assert.strictEqual(set1.patchForRepository(macos), null);
             assert(!set0.equals(set1));
         });
     });
@@ -805,60 +805,60 @@ describe('/privileged-api/create-test-group', function () {
             insertedGroupId = content['testGroupId'];
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
-            assert.equal(testGroups.length, 1);
+            assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
-            assert.equal(group.id(), insertedGroupId);
-            assert.equal(group.repetitionCount(), 2);
+            assert.strictEqual(group.id(), insertedGroupId);
+            assert.strictEqual(group.repetitionCount(), 2);
             assert.ok(!group.needsNotification());
-            assert.equal(group.test(), Test.findById(MockData.someTestId()));
-            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
+            assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
-            assert.equal(requests.length, 6);
+            assert.strictEqual(requests.length, 6);
 
-            assert.equal(requests[0].isBuild(), true);
-            assert.equal(requests[1].isBuild(), true);
-            assert.equal(requests[2].isBuild(), false);
-            assert.equal(requests[3].isBuild(), false);
-            assert.equal(requests[4].isBuild(), false);
-            assert.equal(requests[5].isBuild(), false);
+            assert.strictEqual(requests[0].isBuild(), true);
+            assert.strictEqual(requests[1].isBuild(), true);
+            assert.strictEqual(requests[2].isBuild(), false);
+            assert.strictEqual(requests[3].isBuild(), false);
+            assert.strictEqual(requests[4].isBuild(), false);
+            assert.strictEqual(requests[5].isBuild(), false);
 
-            assert.equal(requests[0].isTest(), false);
-            assert.equal(requests[1].isTest(), false);
-            assert.equal(requests[2].isTest(), true);
-            assert.equal(requests[3].isTest(), true);
-            assert.equal(requests[4].isTest(), true);
-            assert.equal(requests[5].isTest(), true);
+            assert.strictEqual(requests[0].isTest(), false);
+            assert.strictEqual(requests[1].isTest(), false);
+            assert.strictEqual(requests[2].isTest(), true);
+            assert.strictEqual(requests[3].isTest(), true);
+            assert.strictEqual(requests[4].isTest(), true);
+            assert.strictEqual(requests[5].isTest(), true);
 
             const set0 = requests[0].commitSet();
             const set1 = requests[1].commitSet();
-            assert.equal(requests[2].commitSet(), set0);
-            assert.equal(requests[3].commitSet(), set1);
-            assert.equal(requests[4].commitSet(), set0);
-            assert.equal(requests[5].commitSet(), set1);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
-            assert.deepEqual(set1.customRoots(), []);
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(webkit), '192736');
-            assert.equal(set0.patchForRepository(webkit), null);
-            assert.equal(set1.patchForRepository(webkit), null);
-            assert.equal(set0.requiresBuildForRepository(webkit), false);
-            assert.equal(set1.requiresBuildForRepository(webkit), false);
-            assert.equal(set0.revisionForRepository(macos), '15A284');
-            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
-            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
-            assert.equal(set0.patchForRepository(macos), null);
-            assert.equal(set1.patchForRepository(macos), null);
-            assert.equal(set0.requiresBuildForRepository(macos), false);
-            assert.equal(set1.requiresBuildForRepository(macos), false);
-            assert.equal(set0.revisionForRepository(jsc), null);
-            assert.equal(set1.revisionForRepository(jsc), 'owned-jsc-9191');
-            assert.equal(set0.patchForRepository(jsc), null);
-            assert.equal(set1.patchForRepository(jsc), null);
-            assert.equal(set0.ownerRevisionForRepository(jsc), null);
-            assert.equal(set1.ownerRevisionForRepository(jsc), '192736');
-            assert.equal(set1.requiresBuildForRepository(jsc), true);
+            assert.strictEqual(requests[2].commitSet(), set0);
+            assert.strictEqual(requests[3].commitSet(), set1);
+            assert.strictEqual(requests[4].commitSet(), set0);
+            assert.strictEqual(requests[5].commitSet(), set1);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+            assert.deepStrictEqual(set0.customRoots(), []);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
+            assert.deepStrictEqual(set1.customRoots(), []);
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set1.revisionForRepository(webkit), '192736');
+            assert.strictEqual(set0.patchForRepository(webkit), null);
+            assert.strictEqual(set1.patchForRepository(webkit), null);
+            assert.strictEqual(set0.requiresBuildForRepository(webkit), false);
+            assert.strictEqual(set1.requiresBuildForRepository(webkit), false);
+            assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.strictEqual(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.strictEqual(set0.patchForRepository(macos), null);
+            assert.strictEqual(set1.patchForRepository(macos), null);
+            assert.strictEqual(set0.requiresBuildForRepository(macos), false);
+            assert.strictEqual(set1.requiresBuildForRepository(macos), false);
+            assert.strictEqual(set0.revisionForRepository(jsc), null);
+            assert.strictEqual(set1.revisionForRepository(jsc), 'owned-jsc-9191');
+            assert.ok(!set0.patchForRepository(jsc));
+            assert.strictEqual(set1.patchForRepository(jsc), null);
+            assert.strictEqual(set0.ownerRevisionForRepository(jsc), null);
+            assert.strictEqual(set1.ownerRevisionForRepository(jsc), '192736');
+            assert.strictEqual(set1.requiresBuildForRepository(jsc), true);
             assert(!set0.equals(set1));
         });
     });
@@ -880,61 +880,61 @@ describe('/privileged-api/create-test-group', function () {
             insertedGroupId = content['testGroupId'];
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
-            assert.equal(testGroups.length, 1);
+            assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
-            assert.equal(group.id(), insertedGroupId);
-            assert.equal(group.repetitionCount(), 2);
+            assert.strictEqual(group.id(), insertedGroupId);
+            assert.strictEqual(group.repetitionCount(), 2);
             assert.ok(!group.needsNotification());
-            assert.equal(group.test(), Test.findById(MockData.someTestId()));
-            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
+            assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
-            assert.equal(requests.length, 6);
+            assert.strictEqual(requests.length, 6);
 
-            assert.equal(requests[0].isBuild(), true);
-            assert.equal(requests[1].isBuild(), true);
-            assert.equal(requests[2].isBuild(), false);
-            assert.equal(requests[3].isBuild(), false);
-            assert.equal(requests[4].isBuild(), false);
-            assert.equal(requests[5].isBuild(), false);
+            assert.strictEqual(requests[0].isBuild(), true);
+            assert.strictEqual(requests[1].isBuild(), true);
+            assert.strictEqual(requests[2].isBuild(), false);
+            assert.strictEqual(requests[3].isBuild(), false);
+            assert.strictEqual(requests[4].isBuild(), false);
+            assert.strictEqual(requests[5].isBuild(), false);
 
-            assert.equal(requests[0].isTest(), false);
-            assert.equal(requests[1].isTest(), false);
-            assert.equal(requests[2].isTest(), true);
-            assert.equal(requests[3].isTest(), true);
-            assert.equal(requests[4].isTest(), true);
-            assert.equal(requests[5].isTest(), true);
+            assert.strictEqual(requests[0].isTest(), false);
+            assert.strictEqual(requests[1].isTest(), false);
+            assert.strictEqual(requests[2].isTest(), true);
+            assert.strictEqual(requests[3].isTest(), true);
+            assert.strictEqual(requests[4].isTest(), true);
+            assert.strictEqual(requests[5].isTest(), true);
 
             const set0 = requests[0].commitSet();
             const set1 = requests[1].commitSet();
-            assert.equal(requests[2].commitSet(), set0);
-            assert.equal(requests[3].commitSet(), set1);
-            assert.equal(requests[4].commitSet(), set0);
-            assert.equal(requests[5].commitSet(), set1);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [jsc, webkit, macos]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
-            assert.deepEqual(set1.customRoots(), []);
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(webkit), '192736');
-            assert.equal(set0.patchForRepository(webkit), null);
-            assert.equal(set1.patchForRepository(webkit), null);
-            assert.equal(set0.requiresBuildForRepository(webkit), false);
-            assert.equal(set1.requiresBuildForRepository(webkit), false);
-            assert.equal(set0.revisionForRepository(macos), '15A284');
-            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
-            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
-            assert.equal(set0.patchForRepository(macos), null);
-            assert.equal(set1.patchForRepository(macos), null);
-            assert.equal(set0.requiresBuildForRepository(macos), false);
-            assert.equal(set1.requiresBuildForRepository(macos), false);
-            assert.equal(set0.revisionForRepository(jsc), 'owned-jsc-6161');
-            assert.equal(set1.revisionForRepository(jsc), 'owned-jsc-9191');
-            assert.equal(set0.patchForRepository(jsc), null);
-            assert.equal(set1.patchForRepository(jsc), null);
-            assert.equal(set0.ownerRevisionForRepository(jsc), '191622');
-            assert.equal(set1.ownerRevisionForRepository(jsc), '192736');
-            assert.equal(set0.requiresBuildForRepository(jsc), true);
-            assert.equal(set1.requiresBuildForRepository(jsc), true);
+            assert.strictEqual(requests[2].commitSet(), set0);
+            assert.strictEqual(requests[3].commitSet(), set1);
+            assert.strictEqual(requests[4].commitSet(), set0);
+            assert.strictEqual(requests[5].commitSet(), set1);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [jsc, webkit, macos]);
+            assert.deepStrictEqual(set0.customRoots(), []);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
+            assert.deepStrictEqual(set1.customRoots(), []);
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set1.revisionForRepository(webkit), '192736');
+            assert.strictEqual(set0.patchForRepository(webkit), null);
+            assert.strictEqual(set1.patchForRepository(webkit), null);
+            assert.strictEqual(set0.requiresBuildForRepository(webkit), false);
+            assert.strictEqual(set1.requiresBuildForRepository(webkit), false);
+            assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.strictEqual(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.strictEqual(set0.patchForRepository(macos), null);
+            assert.strictEqual(set1.patchForRepository(macos), null);
+            assert.strictEqual(set0.requiresBuildForRepository(macos), false);
+            assert.strictEqual(set1.requiresBuildForRepository(macos), false);
+            assert.strictEqual(set0.revisionForRepository(jsc), 'owned-jsc-6161');
+            assert.strictEqual(set1.revisionForRepository(jsc), 'owned-jsc-9191');
+            assert.strictEqual(set0.patchForRepository(jsc), null);
+            assert.strictEqual(set1.patchForRepository(jsc), null);
+            assert.strictEqual(set0.ownerRevisionForRepository(jsc), '191622');
+            assert.strictEqual(set1.ownerRevisionForRepository(jsc), '192736');
+            assert.strictEqual(set0.requiresBuildForRepository(jsc), true);
+            assert.strictEqual(set1.requiresBuildForRepository(jsc), true);
             assert(!set0.equals(set1));
         });
     });
@@ -963,68 +963,68 @@ describe('/privileged-api/create-test-group', function () {
             insertedGroupId = content['testGroupId'];
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
-            assert.equal(testGroups.length, 1);
+            assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
-            assert.equal(group.id(), insertedGroupId);
-            assert.equal(group.repetitionCount(), 2);
+            assert.strictEqual(group.id(), insertedGroupId);
+            assert.strictEqual(group.repetitionCount(), 2);
             assert.ok(!group.needsNotification());
-            assert.equal(group.test(), Test.findById(MockData.someTestId()));
-            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
+            assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
-            assert.equal(requests.length, 6);
+            assert.strictEqual(requests.length, 6);
 
-            assert.equal(requests[0].isBuild(), true);
-            assert.equal(requests[1].isBuild(), true);
-            assert.equal(requests[2].isBuild(), false);
-            assert.equal(requests[3].isBuild(), false);
-            assert.equal(requests[4].isBuild(), false);
-            assert.equal(requests[5].isBuild(), false);
+            assert.strictEqual(requests[0].isBuild(), true);
+            assert.strictEqual(requests[1].isBuild(), true);
+            assert.strictEqual(requests[2].isBuild(), false);
+            assert.strictEqual(requests[3].isBuild(), false);
+            assert.strictEqual(requests[4].isBuild(), false);
+            assert.strictEqual(requests[5].isBuild(), false);
 
-            assert.equal(requests[0].isTest(), false);
-            assert.equal(requests[1].isTest(), false);
-            assert.equal(requests[2].isTest(), true);
-            assert.equal(requests[3].isTest(), true);
-            assert.equal(requests[4].isTest(), true);
-            assert.equal(requests[5].isTest(), true);
+            assert.strictEqual(requests[0].isTest(), false);
+            assert.strictEqual(requests[1].isTest(), false);
+            assert.strictEqual(requests[2].isTest(), true);
+            assert.strictEqual(requests[3].isTest(), true);
+            assert.strictEqual(requests[4].isTest(), true);
+            assert.strictEqual(requests[5].isTest(), true);
 
             const set0 = requests[0].commitSet();
             const set1 = requests[1].commitSet();
-            assert.equal(requests[2].commitSet(), set0);
-            assert.equal(requests[3].commitSet(), set1);
-            assert.equal(requests[4].commitSet(), set0);
-            assert.equal(requests[5].commitSet(), set1);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [jsc, webkit, macos]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
-            assert.deepEqual(set1.customRoots(), []);
+            assert.strictEqual(requests[2].commitSet(), set0);
+            assert.strictEqual(requests[3].commitSet(), set1);
+            assert.strictEqual(requests[4].commitSet(), set0);
+            assert.strictEqual(requests[5].commitSet(), set1);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [jsc, webkit, macos]);
+            assert.deepStrictEqual(set0.customRoots(), []);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
+            assert.deepStrictEqual(set1.customRoots(), []);
 
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(webkit), '192736');
-            assert.equal(set0.patchForRepository(webkit), null);
-            assert.equal(set1.patchForRepository(webkit), uploadedFile);
-            assert.equal(set0.ownerRevisionForRepository(webkit), null);
-            assert.equal(set1.ownerRevisionForRepository(webkit), null);
-            assert.equal(set0.requiresBuildForRepository(webkit), true);
-            assert.equal(set1.requiresBuildForRepository(webkit), true);
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set1.revisionForRepository(webkit), '192736');
+            assert.strictEqual(set0.patchForRepository(webkit), null);
+            assert.strictEqual(set1.patchForRepository(webkit), uploadedFile);
+            assert.strictEqual(set0.ownerRevisionForRepository(webkit), null);
+            assert.strictEqual(set1.ownerRevisionForRepository(webkit), null);
+            assert.strictEqual(set0.requiresBuildForRepository(webkit), true);
+            assert.strictEqual(set1.requiresBuildForRepository(webkit), true);
 
-            assert.equal(set0.revisionForRepository(macos), '15A284');
-            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
-            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
-            assert.equal(set0.patchForRepository(macos), null);
-            assert.equal(set1.patchForRepository(macos), null);
-            assert.equal(set0.ownerRevisionForRepository(macos), null);
-            assert.equal(set1.ownerRevisionForRepository(macos), null);
-            assert.equal(set0.requiresBuildForRepository(macos), false);
-            assert.equal(set1.requiresBuildForRepository(macos), false);
+            assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.strictEqual(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.strictEqual(set0.patchForRepository(macos), null);
+            assert.strictEqual(set1.patchForRepository(macos), null);
+            assert.strictEqual(set0.ownerRevisionForRepository(macos), null);
+            assert.strictEqual(set1.ownerRevisionForRepository(macos), null);
+            assert.strictEqual(set0.requiresBuildForRepository(macos), false);
+            assert.strictEqual(set1.requiresBuildForRepository(macos), false);
 
-            assert.equal(set0.revisionForRepository(jsc), 'owned-jsc-6161');
-            assert.equal(set1.revisionForRepository(jsc), 'owned-jsc-9191');
-            assert.equal(set0.patchForRepository(jsc), null);
-            assert.equal(set1.patchForRepository(jsc), null);
-            assert.equal(set0.ownerRevisionForRepository(jsc), '191622');
-            assert.equal(set1.ownerRevisionForRepository(jsc), '192736');
-            assert.equal(set0.requiresBuildForRepository(jsc), true);
-            assert.equal(set1.requiresBuildForRepository(jsc), true);
+            assert.strictEqual(set0.revisionForRepository(jsc), 'owned-jsc-6161');
+            assert.strictEqual(set1.revisionForRepository(jsc), 'owned-jsc-9191');
+            assert.strictEqual(set0.patchForRepository(jsc), null);
+            assert.strictEqual(set1.patchForRepository(jsc), null);
+            assert.strictEqual(set0.ownerRevisionForRepository(jsc), '191622');
+            assert.strictEqual(set1.ownerRevisionForRepository(jsc), '192736');
+            assert.strictEqual(set0.requiresBuildForRepository(jsc), true);
+            assert.strictEqual(set1.requiresBuildForRepository(jsc), true);
             assert(!set0.equals(set1));
         });
     });
@@ -1057,77 +1057,77 @@ describe('/privileged-api/create-test-group', function () {
             insertedGroupId = content['testGroupId'];
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
-            assert.equal(testGroups.length, 1);
+            assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
-            assert.equal(group.id(), insertedGroupId);
-            assert.equal(group.repetitionCount(), 2);
-            assert.equal(group.test(), Test.findById(MockData.someTestId()));
+            assert.strictEqual(group.id(), insertedGroupId);
+            assert.strictEqual(group.repetitionCount(), 2);
+            assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
             assert.ok(!group.needsNotification());
-            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
-            assert.equal(requests.length, 6);
+            assert.strictEqual(requests.length, 6);
 
-            assert.equal(requests[0].isBuild(), true);
-            assert.equal(requests[1].isBuild(), true);
-            assert.equal(requests[2].isBuild(), false);
-            assert.equal(requests[3].isBuild(), false);
-            assert.equal(requests[4].isBuild(), false);
-            assert.equal(requests[5].isBuild(), false);
+            assert.strictEqual(requests[0].isBuild(), true);
+            assert.strictEqual(requests[1].isBuild(), true);
+            assert.strictEqual(requests[2].isBuild(), false);
+            assert.strictEqual(requests[3].isBuild(), false);
+            assert.strictEqual(requests[4].isBuild(), false);
+            assert.strictEqual(requests[5].isBuild(), false);
 
-            assert.equal(requests[0].isTest(), false);
-            assert.equal(requests[1].isTest(), false);
-            assert.equal(requests[2].isTest(), true);
-            assert.equal(requests[3].isTest(), true);
-            assert.equal(requests[4].isTest(), true);
-            assert.equal(requests[5].isTest(), true);
+            assert.strictEqual(requests[0].isTest(), false);
+            assert.strictEqual(requests[1].isTest(), false);
+            assert.strictEqual(requests[2].isTest(), true);
+            assert.strictEqual(requests[3].isTest(), true);
+            assert.strictEqual(requests[4].isTest(), true);
+            assert.strictEqual(requests[5].isTest(), true);
 
             const set0 = requests[0].commitSet();
             const set1 = requests[1].commitSet();
-            assert.equal(requests[2].commitSet(), set0);
-            assert.equal(requests[3].commitSet(), set1);
-            assert.equal(requests[4].commitSet(), set0);
-            assert.equal(requests[5].commitSet(), set1);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [jsc, ownedJSC, webkit, macos]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, ownedJSC, webkit, macos]);
-            assert.deepEqual(set1.customRoots(), []);
+            assert.strictEqual(requests[2].commitSet(), set0);
+            assert.strictEqual(requests[3].commitSet(), set1);
+            assert.strictEqual(requests[4].commitSet(), set0);
+            assert.strictEqual(requests[5].commitSet(), set1);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [ownedJSC, jsc, webkit, macos]);
+            assert.deepStrictEqual(set0.customRoots(), []);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [ownedJSC, jsc, webkit, macos]);
+            assert.deepStrictEqual(set1.customRoots(), []);
 
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(webkit), '192736');
-            assert.equal(set0.patchForRepository(webkit), null);
-            assert.equal(set1.patchForRepository(webkit), uploadedFile);
-            assert.equal(set0.ownerRevisionForRepository(webkit), null);
-            assert.equal(set1.ownerRevisionForRepository(webkit), null);
-            assert.equal(set0.requiresBuildForRepository(webkit), true);
-            assert.equal(set1.requiresBuildForRepository(webkit), true);
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set1.revisionForRepository(webkit), '192736');
+            assert.strictEqual(set0.patchForRepository(webkit), null);
+            assert.strictEqual(set1.patchForRepository(webkit), uploadedFile);
+            assert.strictEqual(set0.ownerRevisionForRepository(webkit), null);
+            assert.strictEqual(set1.ownerRevisionForRepository(webkit), null);
+            assert.strictEqual(set0.requiresBuildForRepository(webkit), true);
+            assert.strictEqual(set1.requiresBuildForRepository(webkit), true);
 
-            assert.equal(set0.revisionForRepository(macos), '15A284');
-            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
-            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
-            assert.equal(set0.patchForRepository(macos), null);
-            assert.equal(set1.patchForRepository(macos), null);
-            assert.equal(set0.ownerRevisionForRepository(macos), null);
-            assert.equal(set1.ownerRevisionForRepository(macos), null);
-            assert.equal(set0.requiresBuildForRepository(macos), false);
-            assert.equal(set1.requiresBuildForRepository(macos), false);
+            assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.strictEqual(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.strictEqual(set0.patchForRepository(macos), null);
+            assert.strictEqual(set1.patchForRepository(macos), null);
+            assert.strictEqual(set0.ownerRevisionForRepository(macos), null);
+            assert.strictEqual(set1.ownerRevisionForRepository(macos), null);
+            assert.strictEqual(set0.requiresBuildForRepository(macos), false);
+            assert.strictEqual(set1.requiresBuildForRepository(macos), false);
 
-            assert.equal(set0.revisionForRepository(ownedJSC), 'owned-jsc-6161');
-            assert.equal(set1.revisionForRepository(ownedJSC), 'owned-jsc-9191');
-            assert.equal(set0.patchForRepository(ownedJSC), null);
-            assert.equal(set1.patchForRepository(ownedJSC), null);
-            assert.equal(set0.ownerRevisionForRepository(ownedJSC), '191622');
-            assert.equal(set1.ownerRevisionForRepository(ownedJSC), '192736');
-            assert.equal(set0.requiresBuildForRepository(ownedJSC), true);
-            assert.equal(set1.requiresBuildForRepository(ownedJSC), true);
+            assert.strictEqual(set0.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+            assert.strictEqual(set1.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+            assert.strictEqual(set0.patchForRepository(ownedJSC), null);
+            assert.strictEqual(set1.patchForRepository(ownedJSC), null);
+            assert.strictEqual(set0.ownerRevisionForRepository(ownedJSC), '191622');
+            assert.strictEqual(set1.ownerRevisionForRepository(ownedJSC), '192736');
+            assert.strictEqual(set0.requiresBuildForRepository(ownedJSC), true);
+            assert.strictEqual(set1.requiresBuildForRepository(ownedJSC), true);
 
-            assert.equal(set0.revisionForRepository(jsc), 'jsc-6161');
-            assert.equal(set1.revisionForRepository(jsc), 'jsc-9191');
-            assert.equal(set0.patchForRepository(jsc), null);
-            assert.equal(set1.patchForRepository(jsc), null);
-            assert.equal(set0.ownerRevisionForRepository(jsc), null);
-            assert.equal(set1.ownerRevisionForRepository(jsc), null);
-            assert.equal(set0.requiresBuildForRepository(jsc), false);
-            assert.equal(set1.requiresBuildForRepository(jsc), false);
+            assert.strictEqual(set0.revisionForRepository(jsc), 'jsc-6161');
+            assert.strictEqual(set1.revisionForRepository(jsc), 'jsc-9191');
+            assert.strictEqual(set0.patchForRepository(jsc), null);
+            assert.strictEqual(set1.patchForRepository(jsc), null);
+            assert.strictEqual(set0.ownerRevisionForRepository(jsc), null);
+            assert.strictEqual(set1.ownerRevisionForRepository(jsc), null);
+            assert.strictEqual(set0.requiresBuildForRepository(jsc), false);
+            assert.strictEqual(set1.requiresBuildForRepository(jsc), false);
             assert(!set0.equals(set1));
         });
     });
@@ -1154,45 +1154,45 @@ describe('/privileged-api/create-test-group', function () {
             insertedGroupId = content['testGroupId'];
             return TestGroup.fetchForTask(taskId, true);
         }).then((testGroups) => {
-            assert.equal(testGroups.length, 1);
+            assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
-            assert.equal(group.id(), insertedGroupId);
-            assert.equal(group.repetitionCount(), 2);
+            assert.strictEqual(group.id(), insertedGroupId);
+            assert.strictEqual(group.repetitionCount(), 2);
             assert.ok(!group.needsNotification());
-            assert.equal(group.test(), Test.findById(MockData.someTestId()));
-            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
+            assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
             const requests = group.buildRequests();
-            assert.equal(requests.length, 5);
+            assert.strictEqual(requests.length, 5);
 
-            assert.equal(requests[0].isBuild(), true);
-            assert.equal(requests[1].isBuild(), false);
-            assert.equal(requests[2].isBuild(), false);
-            assert.equal(requests[3].isBuild(), false);
-            assert.equal(requests[4].isBuild(), false);
+            assert.strictEqual(requests[0].isBuild(), true);
+            assert.strictEqual(requests[1].isBuild(), false);
+            assert.strictEqual(requests[2].isBuild(), false);
+            assert.strictEqual(requests[3].isBuild(), false);
+            assert.strictEqual(requests[4].isBuild(), false);
 
-            assert.equal(requests[0].isTest(), false);
-            assert.equal(requests[1].isTest(), true);
-            assert.equal(requests[2].isTest(), true);
-            assert.equal(requests[3].isTest(), true);
-            assert.equal(requests[4].isTest(), true);
+            assert.strictEqual(requests[0].isTest(), false);
+            assert.strictEqual(requests[1].isTest(), true);
+            assert.strictEqual(requests[2].isTest(), true);
+            assert.strictEqual(requests[3].isTest(), true);
+            assert.strictEqual(requests[4].isTest(), true);
 
             const set0 = requests[0].commitSet();
             const set1 = requests[1].commitSet();
-            assert.equal(requests[2].commitSet(), set0);
-            assert.equal(requests[3].commitSet(), set1);
-            assert.equal(requests[4].commitSet(), set0);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [macos]);
-            assert.deepEqual(set1.customRoots(), []);
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(webkit), null);
-            assert.equal(set0.patchForRepository(webkit), uploadedFile);
-            assert.equal(set0.revisionForRepository(macos), '15A284');
-            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
-            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
-            assert.equal(set0.patchForRepository(macos), null);
-            assert.equal(set1.patchForRepository(macos), null);
+            assert.strictEqual(requests[2].commitSet(), set0);
+            assert.strictEqual(requests[3].commitSet(), set1);
+            assert.strictEqual(requests[4].commitSet(), set0);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+            assert.deepStrictEqual(set0.customRoots(), []);
+            assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [macos]);
+            assert.deepStrictEqual(set1.customRoots(), []);
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set1.revisionForRepository(webkit), null);
+            assert.strictEqual(set0.patchForRepository(webkit), uploadedFile);
+            assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+            assert.strictEqual(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.strictEqual(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.strictEqual(set0.patchForRepository(macos), null);
+            assert.strictEqual(set1.patchForRepository(macos), null);
             assert(!set0.equals(set1));
         });
     });
@@ -1217,7 +1217,7 @@ describe('/privileged-api/create-test-group', function () {
         }).then(() => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'PatchNotAccepted');
+            assert.strictEqual(error, 'PatchNotAccepted');
         });
     });
 
@@ -1230,24 +1230,24 @@ describe('/privileged-api/create-test-group', function () {
         const insertedGroupId = result['testGroupId'];
 
         const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
-        assert.equal(analysisTask.name(), 'other task');
+        assert.strictEqual(analysisTask.name(), 'other task');
 
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.repetitionCount(), 1);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.repetitionCount(), 1);
         assert.ok(group.needsNotification());
         const requests = group.buildRequests();
-        assert.equal(requests.length, 2);
+        assert.strictEqual(requests.length, 2);
 
         const set0 = requests[0].commitSet();
         const set1 = requests[1].commitSet();
-        assert.deepEqual(set0.repositories(), [webkit]);
-        assert.deepEqual(set0.customRoots(), []);
-        assert.deepEqual(set1.repositories(), [webkit]);
-        assert.deepEqual(set1.customRoots(), []);
-        assert.equal(set0.revisionForRepository(webkit), '191622');
-        assert.equal(set1.revisionForRepository(webkit), '191623');
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
     });
 
     it('should be able to create a test group with needs-notification flag unset', async () => {
@@ -1259,24 +1259,24 @@ describe('/privileged-api/create-test-group', function () {
         const insertedGroupId = result['testGroupId'];
 
         const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
-        assert.equal(analysisTask.name(), 'other task');
+        assert.strictEqual(analysisTask.name(), 'other task');
 
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.repetitionCount(), 1);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.repetitionCount(), 1);
         assert.ok(!group.needsNotification());
         const requests = group.buildRequests();
-        assert.equal(requests.length, 2);
+        assert.strictEqual(requests.length, 2);
 
         const set0 = requests[0].commitSet();
         const set1 = requests[1].commitSet();
-        assert.deepEqual(set0.repositories(), [webkit]);
-        assert.deepEqual(set0.customRoots(), []);
-        assert.deepEqual(set1.repositories(), [webkit]);
-        assert.deepEqual(set1.customRoots(), []);
-        assert.equal(set0.revisionForRepository(webkit), '191622');
-        assert.equal(set1.revisionForRepository(webkit), '191623');
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
     });
 
     it('should create a custom test group for an existing custom analysis task', () => {
@@ -1296,43 +1296,44 @@ describe('/privileged-api/create-test-group', function () {
                 {name: 'test2', task: result['taskId'], platform: MockData.otherPlatformId(), test, revisionSets, repetitionCount: 2});
         }).then((result) => {
             secondResult = result;
-            assert.equal(firstResult['taskId'], secondResult['taskId']);
+            // pg funtions will return all data as string, so we need make sure that we compare as int
+            assert.strictEqual(parseInt(firstResult['taskId']), parseInt(secondResult['taskId']));
             return Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
         }).then((result) => {
             const [analysisTask, testGroups] = result;
 
-            assert.equal(analysisTask.name(), 'other task');
+            assert.strictEqual(analysisTask.name(), 'other task');
 
-            assert.equal(testGroups.length, 2);
+            assert.strictEqual(testGroups.length, 2);
             TestGroup.sortByName(testGroups);
 
-            assert.equal(testGroups[0].name(), 'test1');
-            assert.equal(testGroups[0].repetitionCount(), 1);
+            assert.strictEqual(testGroups[0].name(), 'test1');
+            assert.strictEqual(testGroups[0].repetitionCount(), 1);
             let requests = testGroups[0].buildRequests();
-            assert.equal(requests.length, 2);
+            assert.strictEqual(requests.length, 2);
             let set0 = requests[0].commitSet();
             let set1 = requests[1].commitSet();
-            assert.deepEqual(set0.repositories(), [webkit]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(set1.repositories(), [webkit]);
-            assert.deepEqual(set1.customRoots(), []);
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(webkit), '191623');
+            assert.deepStrictEqual(set0.repositories(), [webkit]);
+            assert.deepStrictEqual(set0.customRoots(), []);
+            assert.deepStrictEqual(set1.repositories(), [webkit]);
+            assert.deepStrictEqual(set1.customRoots(), []);
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set1.revisionForRepository(webkit), '191623');
 
-            assert.equal(testGroups[1].name(), 'test2');
-            assert.equal(testGroups[1].repetitionCount(), 2);
+            assert.strictEqual(testGroups[1].name(), 'test2');
+            assert.strictEqual(testGroups[1].repetitionCount(), 2);
             requests = testGroups[1].buildRequests();
-            assert.equal(requests.length, 4);
+            assert.strictEqual(requests.length, 4);
             set0 = requests[0].commitSet();
             set1 = requests[1].commitSet();
-            assert.deepEqual(requests[2].commitSet(), set0);
-            assert.deepEqual(requests[3].commitSet(), set1);
-            assert.deepEqual(set0.repositories(), [webkit]);
-            assert.deepEqual(set0.customRoots(), []);
-            assert.deepEqual(set1.repositories(), [webkit]);
-            assert.deepEqual(set1.customRoots(), []);
-            assert.equal(set0.revisionForRepository(webkit), '191622');
-            assert.equal(set1.revisionForRepository(webkit), '192736');
+            assert.deepStrictEqual(requests[2].commitSet(), set0);
+            assert.deepStrictEqual(requests[3].commitSet(), set1);
+            assert.deepStrictEqual(set0.repositories(), [webkit]);
+            assert.deepStrictEqual(set0.customRoots(), []);
+            assert.deepStrictEqual(set1.repositories(), [webkit]);
+            assert.deepStrictEqual(set1.customRoots(), []);
+            assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+            assert.strictEqual(set1.revisionForRepository(webkit), '192736');
         });
     });
 });

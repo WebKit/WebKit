@@ -1,3 +1,90 @@
+2021-03-06  Zhifei Fang  <zhifei_fang@apple.com>
+        
+        Make server test run with new node version
+        https://bugs.webkit.org/show_bug.cgi?id=222463
+
+        Change assert.equal to assert.strictEqual since node deprecated this API
+        Add a new function console.assert to make sure it will throw an error
+
+        Reviewed by Ryosuke Niwa.
+
+        * public/v3/models/repository.js:
+        (Repository.sortByNamePreferringOnesWithURL):
+        (Repository):
+        * server-tests/admin-platforms-tests.js:
+        * server-tests/admin-reprocess-report-tests.js:
+        * server-tests/api-build-requests-tests.js:
+        (return.TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/api-commits-tests.js:
+        (assertCommitIsSameAsOneSubmitted):
+        (return.TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/api-manifest-tests.js:
+        (return.TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/api-measurement-set-tests.js:
+        * server-tests/api-report-commits-tests.js:
+        (emptyReport.then):
+        (async initialReportCommits):
+        (async setUpTestsWithExpectedStatus):
+        (async testWithExpectedFailure):
+        * server-tests/api-report-tests.js:
+        (emptyReport.then):
+        * server-tests/api-test-groups.js:
+        * server-tests/api-update-triggerable-tests.js:
+        (update.then):
+        (then.response.db.selectAll.string_appeared_here.then):
+        (then.db.selectAll.string_appeared_here.then):
+        (then.Manifest.fetch.then):
+        * server-tests/api-upload-root-tests.js:
+        * server-tests/api-uploaded-file-tests.js:
+        (return.TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/privileged-api-add-build-requests-tests.js:
+        (async createAnalysisTask):
+        (const.commitSet.of.updatedGroups.0.requestedCommitSets):
+        * server-tests/privileged-api-create-analysis-task-tests.js:
+        * server-tests/privileged-api-create-test-group-tests.js:
+        (createAnalysisTask):
+        (return.createAnalysisTask.string_appeared_here.then):
+        (return.addTriggerableAndCreateTask.string_appeared_here.then):
+        (string_appeared_here.then):
+        * server-tests/privileged-api-upate-run-status.js:
+        * server-tests/privileged-api-update-test-group-tests.js:
+        (async createAnalysisTask):
+        * server-tests/privileged-api-upload-file-tests.js:
+        (TestServer.testConfig.uploadFileLimitInMB.1.then):
+        * server-tests/resources/common-operations.js:
+        (async assertThrows):
+        * server-tests/resources/temporary-file.js:
+        (TemporaryFile.makeTemporaryFileOfSizeInMB):
+        * server-tests/tools-buildbot-triggerable-tests.js:
+        (assertRequestAndResolve):
+        (then.refetchManifest.then):
+        (getBuilderNameToIDMapPromise.then):
+        * server-tests/tools-os-build-fetcher-tests.js:
+        * server-tests/tools-sync-buildbot-integration-tests.js:
+        (assertAndResolveRequest):
+        * tools/js/assert-override.js: Added.
+        (makeConsoleAssertThrow):
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.prototype.initialize):
+        (BuildbotBuildEntry.prototype.buildRequestStatusIfUpdateIsNeeded):
+        (BuildbotBuildEntry):
+        (BuildbotSyncer.prototype.scheduleRequest):
+        (BuildbotSyncer._loadConfig):
+        (BuildbotSyncer._parseRepositoryGroup):
+        (BuildbotSyncer._validateAndMergeConfig):
+        (BuildbotSyncer):
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._validateRequests):
+        * tools/js/markup-component.js:
+        (const.MarkupDocument.new.MarkupDocument.prototype._idForClone):
+        (const.MarkupDocument.new.MarkupDocument.prototype.markup):
+        * tools/js/os-build-fetcher.js:
+        (prototype._addOwnedCommitsForBuild):
+        * tools/js/remote.js:
+        (NodeRemoteAPI.prototype.configure):
+        * tools/js/v3-models.js:
+        * unit-tests/commit-set-tests.js:
+
 2021-02-18  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix a bug that a syncing script may try to reuse a delete root.

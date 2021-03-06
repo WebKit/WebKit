@@ -22,10 +22,8 @@ function createRoot(deletedAt)
 {
     const data = {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
         size: 16452234, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656d58d'};
-    if (deletedAt) {
-        console.log(deletedAt);
+    if (deletedAt)
         data['deletedAt'] = deletedAt;
-    }
     return UploadedFile.ensureSingleton(456, data);
 }
 

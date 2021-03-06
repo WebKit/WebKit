@@ -12,7 +12,7 @@ class BuildbotBuildEntry {
 
     initialize(syncer, rawData)
     {
-        assert.equal(syncer.builderID(), rawData['builderid']);
+        assert.strictEqual(parseInt(syncer.builderID()), parseInt(rawData['builderid']));
 
         this._syncer = syncer;
         this._buildbotBuildRequestId = rawData['buildrequestid'];
@@ -41,7 +41,7 @@ class BuildbotBuildEntry {
 
     buildRequestStatusIfUpdateIsNeeded(request)
     {
-        assert.equal(request.id(), this._buildRequestId);
+        assert.strictEqual(request.id(), this._buildRequestId);
         if (!request)
             return null;
         if (this.isPending()) {
@@ -117,7 +117,7 @@ class BuildbotSyncer {
         let properties = this._propertiesForBuildRequest(newRequest, requestsInGroup);
 
         assert(properties['forcescheduler'], `forcescheduler was not specified in buildbot properties for build request ${newRequest.id()} on platform "${newRequest.platform().name()}" for builder "${this.builderName()}"`);
-        assert.equal(!this._slavePropertyName, !slaveName);
+        assert.strictEqual(!this._slavePropertyName, !slaveName);
         if (this._slavePropertyName)
             properties[this._slavePropertyName] = slaveName;
 
@@ -337,7 +337,7 @@ class BuildbotSyncer {
 
         assert(config.buildRequestArgument, 'buildRequestArgument must specify the name of the property used to store the build request ID');
 
-        assert.equal(typeof(config.repositoryGroups), 'object', 'repositoryGroups must specify a dictionary from the name to its definition');
+        assert.strictEqual(typeof(config.repositoryGroups), 'object', 'repositoryGroups must specify a dictionary from the name to its definition');
 
         const repositoryGroups = {};
         for (const name in config.repositoryGroups)
@@ -416,7 +416,7 @@ class BuildbotSyncer {
 
     static _parseRepositoryGroup(name, group)
     {
-        assert.equal(typeof(group.repositories), 'object',
+        assert.strictEqual(typeof(group.repositories), 'object',
             `Repository group "${name}" does not specify a dictionary of repositories`);
         assert(!('description' in group) || typeof(group['description']) == 'string',
             `Repository group "${name}" have an invalid description`);
@@ -431,7 +431,7 @@ class BuildbotSyncer {
             const repository = Repository.findTopLevelByName(repositoryName);
             assert(repository, `"${repositoryName}" is not a valid repository name`);
             repositoryByName[repositoryName] = repository;
-            assert.equal(typeof(options), 'object', `"${repositoryName}" specifies a non-dictionary value`);
+            assert.strictEqual(typeof(options), 'object', `"${repositoryName}" specifies a non-dictionary value`);
             assert([undefined, true, false].includes(options.acceptsPatch),
                 `"${repositoryName}" contains invalid acceptsPatch value: ${JSON.stringify(options.acceptsPatch)}`);
             if (options.acceptsPatch)
@@ -441,7 +441,7 @@ class BuildbotSyncer {
         }
         assert(parsedRepositoryList.length, `Repository group "${name}" does not specify any repository`);
 
-        assert.equal(typeof(group.testProperties), 'object', `Repository group "${name}" specifies the test configurations with an invalid type`);
+        assert.strictEqual(typeof(group.testProperties), 'object', `Repository group "${name}" specifies the test configurations with an invalid type`);
 
         const resolveRepository = (repositoryName) => {
             const repository = repositoryByName[repositoryName];
@@ -470,7 +470,7 @@ class BuildbotSyncer {
         });
         assert(!group.acceptsRoots == !specifiesRoots,
             `Repository group "${name}" accepts roots but does not specify roots in testProperties`);
-        assert.equal(parsedRepositoryList.length, testRepositories.size,
+        assert.strictEqual(parsedRepositoryList.length, testRepositories.size,
             `Repository group "${name}" does not use some of the repositories listed in testing`);
 
         let buildPropertiesTemplate = null;
@@ -504,7 +504,7 @@ class BuildbotSyncer {
             assert(patchAcceptingRepositoryList.size || hasOwnedRevisions, `Repository group "${name}" specifies the properties for building but does not accept any patches or need to build owned components`);
             for (const repository of patchRepositories)
                 assert(revisionRepositories.has(repository), `Repository group "${name}" specifies a patch for "${repository.name()}" but does not specify a revision`);
-            assert.equal(patchAcceptingRepositoryList.size, patchRepositories.size,
+            assert.strictEqual(patchAcceptingRepositoryList.size, patchRepositories.size,
                 `Repository group "${name}" does not use some of the repositories listed in building a patch`);
         }
 
@@ -564,12 +564,12 @@ class BuildbotSyncer {
 
             switch (name) {
             case 'properties': // Fallthrough
-                assert.equal(typeof(value), 'object', 'Build properties should be a dictionary');
+                assert.strictEqual(typeof(value), 'object', 'Build properties should be a dictionary');
                 if (!config['properties'])
                     config['properties'] = {};
                 const properties = config['properties'];
                 for (const name in value) {
-                    assert.equal(typeof(value[name]), 'string', `Build properties "${name}" specifies a non-string value of type "${typeof(value)}"`);
+                    assert.strictEqual(typeof(value[name]), 'string', `Build properties "${name}" specifies a non-string value of type "${typeof(value)}"`);
                     properties[name] = value[name];
                 }
                 break;
@@ -580,7 +580,7 @@ class BuildbotSyncer {
                 config[name] = value.slice();
                 break;
             case 'builder': // Fallthrough
-                assert.equal(typeof(value), 'string', `${name} should be of string type`);
+                assert.strictEqual(typeof(value), 'string', `${name} should be of string type`);
                 config[name] = value;
                 break;
             case 'builderID':

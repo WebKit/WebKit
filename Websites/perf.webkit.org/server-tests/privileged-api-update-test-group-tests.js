@@ -79,7 +79,7 @@ async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
     const configRow = await db.selectFirstRow('test_configurations', {metric: test.metrics()[0].id(), platform: platform.id()});
     const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
 
-    assert.equal(testRuns.length, 2);
+    assert.strictEqual(testRuns.length, 2);
     const content = await PrivilegedAPI.sendRequest('create-analysis-task', {
         name: name,
         startRun: testRuns[0]['id'],
@@ -165,20 +165,20 @@ describe('/privileged-api/update-test-group', function(){
         const insertedGroupId = result['testGroupId'];
 
         const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.repetitionCount(), 1);
-        assert.equal(group.needsNotification(), true);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.repetitionCount(), 1);
+        assert.strictEqual(group.needsNotification(), true);
         assert.ok(!group.notificationSentAt());
 
         const notificationSentAt = new Date;
         await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, needsNotification: false, notificationSentAt: notificationSentAt.toISOString()});
 
         const updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(updatedGroups.length, 1);
-        assert.equal(updatedGroups[0].needsNotification(), false);
-        assert.equal(updatedGroups[0].notificationSentAt().toISOString(), notificationSentAt.toISOString());
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(updatedGroups[0].needsNotification(), false);
+        assert.strictEqual(updatedGroups[0].notificationSentAt().toISOString(), notificationSentAt.toISOString());
     });
 
     it('should be able to update "needs_notification" field to true', async () => {
@@ -190,18 +190,18 @@ describe('/privileged-api/update-test-group', function(){
         const insertedGroupId = result['testGroupId'];
 
         const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.repetitionCount(), 1);
-        assert.equal(group.needsNotification(), false);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.repetitionCount(), 1);
+        assert.strictEqual(group.needsNotification(), false);
         assert.ok(!group.notificationSentAt());
 
         await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, needsNotification: true});
 
         const updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(updatedGroups.length, 1);
-        assert.equal(updatedGroups[0].needsNotification(), true);
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(updatedGroups[0].needsNotification(), true);
         assert.ok(!group.notificationSentAt());
     });
 
@@ -214,10 +214,10 @@ describe('/privileged-api/update-test-group', function(){
         const insertedGroupId = result['testGroupId'];
 
         const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.mayNeedMoreRequests(), false);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), false);
         assert.ok(!group.notificationSentAt());
 
     });
@@ -231,22 +231,22 @@ describe('/privileged-api/update-test-group', function(){
         const insertedGroupId = result['testGroupId'];
 
         const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.mayNeedMoreRequests(), false);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), false);
 
         await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, mayNeedMoreRequests: true});
 
         let updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(updatedGroups.length, 1);
-        assert.equal(updatedGroups[0].mayNeedMoreRequests(), true);
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(updatedGroups[0].mayNeedMoreRequests(), true);
 
         await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, mayNeedMoreRequests: false});
 
         updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(updatedGroups.length, 1);
-        assert.equal(updatedGroups[0].mayNeedMoreRequests(), false);
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(updatedGroups[0].mayNeedMoreRequests(), false);
     });
 
     it('should clear "may_need_more_requests" when hiding a test group', async () => {
@@ -258,22 +258,22 @@ describe('/privileged-api/update-test-group', function(){
         const insertedGroupId = result['testGroupId'];
 
         const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(testGroups.length, 1);
+        assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
-        assert.equal(group.id(), insertedGroupId);
-        assert.equal(group.mayNeedMoreRequests(), false);
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), false);
 
         await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, mayNeedMoreRequests: true});
 
         let updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(updatedGroups.length, 1);
-        assert.equal(updatedGroups[0].mayNeedMoreRequests(), true);
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(updatedGroups[0].mayNeedMoreRequests(), true);
 
         await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, hidden: true});
 
         updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
-        assert.equal(updatedGroups.length, 1);
-        assert.equal(updatedGroups[0].mayNeedMoreRequests(), false);
-        assert.equal(updatedGroups[0].isHidden(), true);
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(updatedGroups[0].mayNeedMoreRequests(), false);
+        assert.strictEqual(updatedGroups[0].isHidden(), true);
     });
 });
