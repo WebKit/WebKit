@@ -301,7 +301,7 @@ private:
         return MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCodecs(parameters);
     }
 
-    HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String& path) const final
+    HashSet<SecurityOriginData> originsInMediaCache(const String& path) const final
     {
         return MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(path);
     }
@@ -362,9 +362,9 @@ static AVAssetCache *ensureAssetCacheExistsForPath(const String& path)
     return assetCacheForPath(path);
 }
 
-HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(const String& path)
+HashSet<SecurityOriginData> MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(const String& path)
 {
-    HashSet<RefPtr<SecurityOrigin>> origins;
+    HashSet<SecurityOriginData> origins;
     AVAssetCache* assetCache = assetCacheForPath(path);
     if (!assetCache)
         return origins;
@@ -372,7 +372,7 @@ HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateAVFoundationObjC::originsInMed
     for (NSString *key in [assetCache allKeys]) {
         URL keyAsURL = URL(URL(), key);
         if (keyAsURL.isValid())
-            origins.add(SecurityOrigin::create(keyAsURL));
+            origins.add(SecurityOriginData::fromURL(keyAsURL));
     }
     return origins;
 }

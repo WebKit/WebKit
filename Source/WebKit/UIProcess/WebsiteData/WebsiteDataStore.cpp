@@ -455,16 +455,10 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([mediaCacheDirectory = m_configuration->mediaCacheDirectory().isolatedCopy(), callbackAggregator] {
-            // FIXME: Make HTMLMediaElement::originsInMediaCache return a collection of SecurityOriginDatas.
-            HashSet<RefPtr<WebCore::SecurityOrigin>> origins = WebCore::HTMLMediaElement::originsInMediaCache(mediaCacheDirectory);
             WebsiteData websiteData;
-            
-            for (auto& origin : origins) {
-                WebsiteData::Entry entry { origin->data(), WebsiteDataType::DiskCache, 0 };
-                websiteData.entries.append(WTFMove(entry));
-            }
-            
-            RunLoop::main().dispatch([callbackAggregator, origins = WTFMove(origins), websiteData = WTFMove(websiteData)]() mutable {
+            for (auto& origin : WebCore::HTMLMediaElement::originsInMediaCache(mediaCacheDirectory))
+                websiteData.entries.append(WebsiteData::Entry { crossThreadCopy(origin), WebsiteDataType::DiskCache, 0 });
+            RunLoop::main().dispatch([callbackAggregator, websiteData = WTFMove(websiteData)]() mutable {
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });

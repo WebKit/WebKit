@@ -114,7 +114,7 @@ void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::Medi
     completionHandler(result);
 }
 
-void RemoteMediaPlayerManagerProxy::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& path, CompletionHandler<void(Vector<WebCore::SecurityOriginData>&&)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& path, CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
 {
     auto engine = MediaPlayer::mediaEngine(engineIdentifier);
     if (!engine) {
@@ -123,13 +123,7 @@ void RemoteMediaPlayerManagerProxy::originsInMediaCache(MediaPlayerEnums::MediaE
         return;
     }
 
-    auto origins = engine->originsInMediaCache(path);
-
-    Vector<WebCore::SecurityOriginData> result;
-    for (auto& origin : origins)
-        result.append(origin->data());
-
-    completionHandler(WTFMove(result));
+    completionHandler(engine->originsInMediaCache(path));
 }
 
 void RemoteMediaPlayerManagerProxy::clearMediaCache(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&&path, WallTime modifiedSince)

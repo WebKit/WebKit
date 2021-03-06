@@ -70,7 +70,7 @@ public:
         return m_manager.supportsTypeAndCodecs(m_remoteEngineIdentifier, parameters);
     }
 
-    HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String& path) const final
+    HashSet<SecurityOriginData> originsInMediaCache(const String& path) const final
     {
         return m_manager.originsInMediaCache(m_remoteEngineIdentifier, path);
     }
@@ -217,17 +217,12 @@ bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineId
     return false;
 }
 
-HashSet<RefPtr<SecurityOrigin>> RemoteMediaPlayerManager::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path)
+HashSet<SecurityOriginData> RemoteMediaPlayerManager::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path)
 {
-    Vector<SecurityOriginData> originData;
+    HashSet<SecurityOriginData> originData;
     if (!gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache(remoteEngineIdentifier, path), Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache::Reply(originData), 0))
         return { };
-
-    HashSet<RefPtr<SecurityOrigin>> origins;
-    for (auto& data : originData)
-        origins.add(data.securityOrigin());
-
-    return origins;
+    return originData;
 }
 
 void RemoteMediaPlayerManager::clearMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path, WallTime modifiedSince)

@@ -6434,7 +6434,7 @@ const String& HTMLMediaElement::mediaCacheDirectory()
     return sharedMediaCacheDirectory();
 }
 
-HashSet<RefPtr<SecurityOrigin>> HTMLMediaElement::originsInMediaCache(const String& path)
+HashSet<SecurityOriginData> HTMLMediaElement::originsInMediaCache(const String& path)
 {
     return MediaPlayer::originsInMediaCache(path);
 }

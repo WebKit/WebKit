@@ -1,5 +1,33 @@
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
+        Update HTMLMediaElement::originsInMediaCache() to return SecurityOriginData instead of SecurityOrigin objects
+        https://bugs.webkit.org/show_bug.cgi?id=222820
+
+        Reviewed by Darin Adler.
+
+        Update HTMLMediaElement::originsInMediaCache() to return SecurityOriginData instead of SecurityOrigin
+        objects. The caller only needs SecurityOriginData objects and there was a FIXME comment about switching
+        to SecurityOriginData. SecurityOriginData is beneficial here because it is a smaller object and it
+        can be easily passed over IPC.
+
+        Also update the code at WebsiteDataStore::fetchDataAndApply() to crossThreadCopy() the originDatas
+        before sending them to the main thread. The previous code was passing both the SecurityOrigins
+        and the WebsiteDatas from the data store queue to the main thread without isolated copy, which was
+        fragile. For example, if HTMLMediaElement::originsInMediaCache() was caching the security origins
+        it returned, the code would not have been thread safe.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::originsInMediaCache):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::originsInMediaCache):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
         Use WTF::DestructionThread::MainRunLoop for CallbackAggregators in WebsiteDataStore
         https://bugs.webkit.org/show_bug.cgi?id=222831
 
