@@ -1,3 +1,14 @@
+2021-03-05  Rob Buis  <rbuis@igalia.com>
+
+        Change test to not ASSERT in Debug
+        https://bugs.webkit.org/show_bug.cgi?id=221442
+
+        Reviewed by Ryosuke Niwa.
+
+        Change test to not ASSERT in Debug.
+
+        * ipc/pasteboard-write-custom-data.html:
+
 2021-03-05  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] if `requestShipping: false` then we should not show any `PaymentShippingOption` in the Apple Pay sheet
