@@ -3,11 +3,6 @@ imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.
 inspector/canvas/memory.html [ Failure ]
 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
 
-# webkit.org/b/222341
-imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
-imported/blink/fast/canvas/canvas-state-persistence-no-dirty.html [ ImageOnlyFailure ]
-imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
-
 # webkit.org/b/220806
 fast/canvas/webgl/context-update-on-display-configuration.html [ Timeout ]
 fast/canvas/webgl/webglcontextchangedevent.html [ Timeout ]
