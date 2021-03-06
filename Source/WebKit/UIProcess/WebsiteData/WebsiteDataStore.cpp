@@ -688,7 +688,7 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<Web
 
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, Function<void()>&& completionHandler)
 {
-    struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
+    struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
         CallbackAggregator(WebsiteDataStore& dataStore, Function<void()>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
             , protectedDataStore(dataStore)
@@ -698,17 +698,18 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 
         ~CallbackAggregator()
         {
-            // Make sure the data store gets destroyed on the main thread even though the CallbackAggregator can get destroyed on a background queue.
-            RunLoop::main().dispatch([protectedDataStore = WTFMove(protectedDataStore)] { });
+            ASSERT(RunLoop::isMain());
         }
 
         void addPendingCallback()
         {
+            ASSERT(RunLoop::isMain());
             pendingCallbacks++;
         }
 
         void removePendingCallback()
         {
+            ASSERT(RunLoop::isMain());
             ASSERT(pendingCallbacks);
             --pendingCallbacks;
 
@@ -717,6 +718,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 
         void callIfNeeded()
         {
+            ASSERT(RunLoop::isMain());
             if (!pendingCallbacks)
                 RunLoop::main().dispatch(WTFMove(completionHandler));
         }
@@ -932,7 +934,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             origins.append(origin);
     }
 
-    struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
+    struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
         CallbackAggregator(WebsiteDataStore& dataStore, Function<void()>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
             , protectedDataStore(dataStore)
@@ -942,17 +944,18 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
         ~CallbackAggregator()
         {
-            // Make sure the data store gets destroyed on the main thread even though the CallbackAggregator can get destroyed on a background queue.
-            RunLoop::main().dispatch([protectedDataStore = WTFMove(protectedDataStore)] { });
+            ASSERT(RunLoop::isMain());
         }
 
         void addPendingCallback()
         {
+            ASSERT(RunLoop::isMain());
             pendingCallbacks++;
         }
 
         void removePendingCallback()
         {
+            ASSERT(RunLoop::isMain());
             ASSERT(pendingCallbacks);
             --pendingCallbacks;
 
@@ -961,6 +964,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
         void callIfNeeded()
         {
+            ASSERT(RunLoop::isMain());
             if (!pendingCallbacks)
                 RunLoop::main().dispatch(WTFMove(completionHandler));
         }

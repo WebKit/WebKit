@@ -1,5 +1,25 @@
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
+        Use WTF::DestructionThread::MainRunLoop for CallbackAggregators in WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=222831
+
+        Reviewed by Geoffrey Garen.
+
+        Use WTF::DestructionThread::MainRunLoop for CallbackAggregators in WebsiteDataStore to make sure
+        the CallbackAggregators get destroyed on the main thread. Previously, the code was letting the
+        CallbackAggregators get destroyed on any thread and then dispatching to the main thread in their
+        destructor their WebsiteDataStore data member to make sure it gets destroyed on the main thread.
+
+        It is simpler and safer to have the CallbackAggregators get destroyed on the main thread.
+
+        Also add threading assertions whenever the pendingCallbacks is used since this counter is not
+        atomic.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
         Fix potential thread safety issue in WebsiteDataStore::fetchDataAndApply()
         https://bugs.webkit.org/show_bug.cgi?id=222830
 
