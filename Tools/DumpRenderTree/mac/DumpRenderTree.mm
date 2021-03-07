@@ -856,114 +856,45 @@ static NSString *libraryPathForDumpRenderTree()
         return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
 }
 
-// Called before each test.
-static void resetWebPreferencesToConsistentValues(WebPreferences *preferences)
-{
-    [preferences _resetForTesting];
-
-    for (WebFeature *feature in [WebPreferences _experimentalFeatures])
-        [preferences _setEnabled:YES forFeature:feature];
-
-    // FIXME: These experimental features are currently the only ones not enabled for WebKitLegacy, we
-    // should either enable them or stop exposing them (as we do with with preferences like HTTP3Enabled).
-    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitGenericCueAPIEnabled"];
-    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitIsLoggedInAPIEnabled"];
-    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLazyIframeLoadingEnabled"];
-    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLazyImageLoadingEnabled"];
-    [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitWebAuthenticationEnabled"];
-
-    if (persistentUserStyleSheetLocation()) {
-        [preferences setUserStyleSheetLocation:[NSURL URLWithString:(__bridge NSString *)persistentUserStyleSheetLocation().get()]];
-        [preferences setUserStyleSheetEnabled:YES];
-    } else
-        [preferences setUserStyleSheetEnabled:NO];
-
-#if PLATFORM(IOS_FAMILY)
-    // Enable the tracker before creating the first WebView will
-    // cause initialization to use the correct database paths.
-    [preferences setStorageTrackerEnabled:YES];
-#else
-    [preferences setMockScrollbarsEnabled:YES];
-    [preferences setShouldPrintBackgrounds:YES];
-    [preferences setTextAreasAreResizable:YES];
-#endif
-
-    [preferences _setTextAutosizingEnabled:NO];
-    [preferences setAcceleratedCompositingEnabled:YES];
-    [preferences setAcceleratedDrawingEnabled:useAcceleratedDrawing];
-    [preferences setAsynchronousSpellCheckingEnabled:NO];
-    [preferences setAudioPlaybackRequiresUserGesture:NO];
-    [preferences setCacheModel:WebCacheModelDocumentBrowser];
-    [preferences setCanvasUsesAcceleratedDrawing:YES];
-    [preferences setColorFilterEnabled:YES];
-    [preferences setCursiveFontFamily:@"Apple Chancery"];
-    [preferences setCustomPasteboardDataEnabled:YES];
-    [preferences setDataTransferItemsEnabled:YES];
-    [preferences setDefaultFixedFontSize:13];
-    [preferences setDefaultFontSize:16];
-    [preferences setDefaultTextEncodingName:@"ISO-8859-1"];
-    [preferences setDirectoryUploadEnabled:YES];
-    [preferences setDownloadAttributeEnabled:YES];
-    [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
-    [preferences setEncryptedMediaAPIEnabled:YES];
-    [preferences setFantasyFontFamily:@"Papyrus"];
-    [preferences setFixedFontFamily:@"Courier"];
-    [preferences setFrameFlattening:WebKitFrameFlatteningDisabled];
-    [preferences setGamepadsEnabled:YES];
-    [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
-    [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
-    [preferences setInvisibleAutoplayNotPermitted:NO];
-    [preferences setJavaEnabled:NO];
-    [preferences setJavaScriptRuntimeFlags:WebKitJavaScriptRuntimeFlagsAllEnabled];
-    [preferences setLargeImageAsyncDecodingEnabled:NO];
-    [preferences setLinkPreloadEnabled:YES];
-    [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
-    [preferences setMediaCapabilitiesEnabled:YES];
-    [preferences setMediaDataLoadsAutomatically:YES];
-    [preferences setMediaDevicesEnabled:YES];
-    [preferences setMediaPlaybackAllowsInline:YES];
-    [preferences setMediaPlaybackRequiresUserGesture:NO];
-    [preferences setMediaPreloadingEnabled:YES];
-    [preferences setMediaSourceEnabled:YES];
-    [preferences setMetaRefreshEnabled:YES];
-    [preferences setModernMediaControlsEnabled:YES];
-    [preferences setOfflineWebApplicationCacheEnabled:YES];
-    [preferences setPictographFontFamily:@"Apple Color Emoji"];
-    [preferences setSansSerifFontFamily:@"Helvetica"];
-    [preferences setSelectionAcrossShadowBoundariesEnabled:YES];
-    [preferences setSerifFontFamily:@"Times"];
-    [preferences setSourceBufferChangeTypeEnabled:YES];
-    [preferences setStandardFontFamily:@"Times"];
-    [preferences setSubpixelAntialiasedLayerTextEnabled:NO];
-    [preferences setVideoPlaybackRequiresUserGesture:NO];
-    [preferences setWebAudioEnabled:YES];
-    [preferences setWebSQLEnabled:YES];
-
-    [WebPreferences _clearNetworkLoaderSession];
-    [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
-}
-
-template<typename T> T webPreferenceFeatureValue(const std::string& key, const std::unordered_map<std::string, T>& map)
-{
-    auto it = map.find(key);
-    ASSERT(it != map.end());
-    return it->second;
-}
-
 static void setWebPreferencesForTestOptions(WebPreferences *preferences, const WTR::TestOptions& options)
 {
     [preferences _batchUpdatePreferencesInBlock:^(WebPreferences *preferences) {
-        resetWebPreferencesToConsistentValues(preferences);
+        [preferences _resetForTesting];
+
+        for (WebFeature *feature in [WebPreferences _experimentalFeatures])
+            [preferences _setEnabled:YES forFeature:feature];
+
+        if (persistentUserStyleSheetLocation()) {
+            preferences.userStyleSheetLocation = [NSURL URLWithString:(__bridge NSString *)persistentUserStyleSheetLocation().get()];
+            preferences.userStyleSheetEnabled = YES;
+        } else
+            preferences.userStyleSheetEnabled = NO;
+
+        preferences.acceleratedDrawingEnabled = useAcceleratedDrawing;
+        preferences.editableLinkBehavior = WebKitEditableLinkOnlyLiveWithShiftKey;
+        preferences.frameFlattening = WebKitFrameFlatteningDisabled;
+        preferences.cacheModel = WebCacheModelDocumentBrowser;
 
         preferences.privateBrowsingEnabled = options.useEphemeralSession();
 
-        // FIXME: Remove these once there is a viable mechanism for reseting WebPreferences between tests,
-        // at which point, we will not need to manually reset every supported preference for each test.
-        for (const auto& key : options.supportedBoolWebPreferenceFeatures())
-            [preferences _setBoolPreferenceForTestingWithValue:webPreferenceFeatureValue(key, options.boolWebPreferenceFeatures()) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
-        for (const auto& key : options.supportedUInt32WebPreferenceFeatures())
-            [preferences _setUInt32PreferenceForTestingWithValue:webPreferenceFeatureValue(key, options.uint32WebPreferenceFeatures()) forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+        for (const auto& [key, value] : options.boolWebPreferenceFeatures())
+            [preferences _setBoolPreferenceForTestingWithValue:value forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+
+        for (const auto& [key, value] : options.doubleWebPreferenceFeatures())
+            [preferences _setDoublePreferenceForTestingWithValue:value forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+
+        for (const auto& [key, value] : options.uint32WebPreferenceFeatures())
+            [preferences _setUInt32PreferenceForTestingWithValue:value forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+
+        for (const auto& [key, value] : options.stringWebPreferenceFeatures())
+            [preferences _setStringPreferenceForTestingWithValue:toNS(value).get() forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
+
+        // FIXME: Tests currently expect this to always be false in WebKitLegacy testing - https://bugs.webkit.org/show_bug.cgi?id=222864.
+        [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLayoutFormattingContextEnabled"];
     }];
+
+    [WebPreferences _clearNetworkLoaderSession];
+    [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
 
 // Called once on DumpRenderTree startup.
@@ -987,9 +918,6 @@ static void setDefaultsToConsistentValuesForTesting()
         @"AppleOtherHighlightColor":@"0.500000 0.500000 0.500000",
         @"AppleLanguages": @[ @"en" ],
         WebKitEnableFullDocumentTeardownPreferenceKey: @YES,
-        WebKitFullScreenEnabledPreferenceKey: @YES,
-        WebKitAllowsInlineMediaPlaybackPreferenceKey: @YES,
-        WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey: @NO,
         @"UseWebKitWebInspector": @YES,
 #if !PLATFORM(IOS_FAMILY)
         @"NSPreferredSpellServerLanguage": @"en_US",
@@ -1158,7 +1086,7 @@ static BOOL overrideIsInHardwareKeyboardMode()
 
 static void prepareConsistentTestingEnvironment()
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     poseAsClass("DumpRenderTreePasteboard", "NSPasteboard");
     poseAsClass("DumpRenderTreeEvent", "NSEvent");
 #else
@@ -1173,7 +1101,7 @@ static void prepareConsistentTestingEnvironment()
 
     [WebPreferences _switchNetworkLoaderToNewTestingSession];
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     adjustFonts();
     registerMockScrollbars();
 
@@ -1181,6 +1109,9 @@ static void prepareConsistentTestingEnvironment()
     [[WebPreferences standardPreferences] setMockScrollbarsEnabled:YES];
 #else
     activateFontsIOS();
+
+    // Enable the tracker before creating the first WebView will cause initialization to use the correct database paths.
+    [[WebPreferences standardPreferences] setStorageTrackerEnabled:YES];
 #endif
 
     allocateGlobalControllers();

@@ -1,3 +1,32 @@
+2021-03-07  Sam Weinig  <weinig@apple.com>
+
+        Transition Cocoa DumpRenderTree to allow any preference keys, not just hard coded supported ones
+        https://bugs.webkit.org/show_bug.cgi?id=222868
+
+        Reviewed by Simon Fraser.
+
+        This allows any preference key in a WebPreference*.yaml to be used for Cocoa WebKitLegacy
+        tests in the comment header command, just like WebKitTestRunner.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        Update defaults to only the default values that don't match
+        defaults in WebPreference*.yaml files and experimental features
+        that are not supported in but still declare support in the file.
+
+        * DumpRenderTree/TestRunner.h:
+        Remove unimplemented function declaration.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+        (setDefaultsToConsistentValuesForTesting):
+        (prepareConsistentTestingEnvironment):
+        (resetWebPreferencesToConsistentValues): Deleted.
+        (webPreferenceFeatureValue): Deleted.
+        Replace most explicit reseting with the combination of _resetForTesting, automatic
+        enabling experimental features, and use of _set<type>PreferenceForTestingWithValue
+        from TestOptions.
+
 2021-03-06  David Kilzer  <ddkilzer@apple.com>
 
         webkit-patch won't parse rdar://nnnnnnnn URLs in ChangeLogs
