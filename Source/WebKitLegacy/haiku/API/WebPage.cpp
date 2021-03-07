@@ -235,7 +235,7 @@ class MediaRecorderProviderHaiku: public MediaRecorderProvider
 };
 
 
-BWebPage::BWebPage(BWebView* webView, BUrlContext* context)
+BWebPage::BWebPage(BWebView* webView, BPrivate::Network::BUrlContext* context)
     : BHandler("BWebPage")
     , fWebView(webView)
     , fMainFrame(NULL)
@@ -365,7 +365,7 @@ void BWebPage::SetDownloadListener(const BMessenger& listener)
     sDownloadListener = listener;
 }
 
-BUrlContext* BWebPage::GetContext()
+BPrivate::Network::BUrlContext* BWebPage::GetContext()
 {
     return fContext;
 }

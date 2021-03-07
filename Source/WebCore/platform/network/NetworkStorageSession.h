@@ -42,7 +42,7 @@
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
 #include <wtf/RetainPtr.h>
 #elif PLATFORM(HAIKU)
-class BUrlContext;
+#include <UrlContext.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -144,8 +144,8 @@ public:
     WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID);
     ~NetworkStorageSession();
 
-    BUrlContext& platformSession() const;
-    void setPlatformSession(BUrlContext*);
+    BPrivate::Network::BUrlContext& platformSession() const;
+    void setPlatformSession(BPrivate::Network::BUrlContext*);
 #elif USE(CURL)
     WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID);
     ~NetworkStorageSession();
@@ -265,7 +265,7 @@ private:
     GRefPtr<SoupCookieJar> m_cookieStorage;
     Function<void ()> m_cookieObserverHandler;
 #elif USE(HAIKU)
-    BUrlContext* m_context;
+    BPrivate::Network::BUrlContext* m_context;
 #elif USE(CURL)
     mutable UniqueRef<CookieJarDB> m_cookieDatabase;
 #else

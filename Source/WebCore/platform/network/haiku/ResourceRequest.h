@@ -29,8 +29,9 @@
 
 #include "ResourceRequestBase.h"
 
-#include <String.h>
 #include <Referenceable.h>
+#include <String.h>
+#include <UrlRequest.h>
 
 class BUrlContext;
 class BUrlRequest;
@@ -60,7 +61,7 @@ namespace WebCore {
         {
         }
 
-        BUrlRequest* toNetworkRequest(BUrlContext*);
+        BPrivate::Network::BUrlRequest* toNetworkRequest(BPrivate::Network::BUrlContext*);
 
         void setCredentials(const char* username, const char* password);
         void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }

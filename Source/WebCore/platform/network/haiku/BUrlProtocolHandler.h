@@ -25,7 +25,7 @@
 
 #include <support/Locker.h>
 #include <Messenger.h>
-#include <HttpRequest.h>
+#include <private/netservices/HttpRequest.h>
 #include <UrlProtocolAsynchronousListener.h>
 
 class BFile;
@@ -40,7 +40,7 @@ class ResourceResponse;
 class BUrlProtocolHandler;
 class BUrlRequestWrapper;
 
-class BUrlRequestWrapper : public ThreadSafeRefCounted<BUrlRequestWrapper>, public BUrlProtocolAsynchronousListener, public BDataIO {
+class BUrlRequestWrapper : public ThreadSafeRefCounted<BUrlRequestWrapper>, public BPrivate::Network::BUrlProtocolAsynchronousListener, public BDataIO {
 public:
     static RefPtr<BUrlRequestWrapper> create(BUrlProtocolHandler*, NetworkStorageSession*, ResourceRequest&);
     virtual ~BUrlRequestWrapper();
@@ -50,10 +50,10 @@ public:
     bool isValid() const { return m_request; };
 
     // BUrlProtocolListener hooks
-    void HeadersReceived(BUrlRequest* caller) override;
-    void UploadProgress(BUrlRequest* caller, ssize_t bytesSent, ssize_t bytesTotal) override;
-    void RequestCompleted(BUrlRequest* caller, bool success) override;
-    bool CertificateVerificationFailed(BUrlRequest* caller, BCertificate&, const char* message) override;
+    void HeadersReceived(BPrivate::Network::BUrlRequest* caller) override;
+    void UploadProgress(BPrivate::Network::BUrlRequest* caller, off_t bytesSent, off_t bytesTotal) override;
+    void RequestCompleted(BPrivate::Network::BUrlRequest* caller, bool success) override;
+    bool CertificateVerificationFailed(BPrivate::Network::BUrlRequest* caller, BCertificate&, const char* message) override;
 
     // BDataIO
     ssize_t Write(const void*, size_t) override;
@@ -63,7 +63,7 @@ private:
 
 private:
     BUrlProtocolHandler* m_handler { nullptr };
-    BUrlRequest* m_request { nullptr };
+    BPrivate::Network::BUrlRequest* m_request { nullptr };
 
     bool m_didReceiveData { false };
     bool m_didUnblockReceive { false };

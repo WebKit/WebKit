@@ -27,7 +27,7 @@
 
 #include <Locker.h>
 #include <ObjectList.h>
-#include <UrlProtocolAsynchronousListener.h>
+#include <private/netservices/UrlProtocolAsynchronousListener.h>
 
 class BBitmap;
 class BDataIO;

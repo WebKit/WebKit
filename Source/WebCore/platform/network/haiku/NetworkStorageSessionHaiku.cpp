@@ -63,19 +63,19 @@ static std::unique_ptr<NetworkStorageSession>& defaultSession()
 }
 
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty,
-	const SameSiteInfo& sameSiteInfo, const URL& url,
-	WTF::Optional<FrameIdentifier> frameID, WTF::Optional<PageIdentifier> pageID,
-	ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
+        const SameSiteInfo& sameSiteInfo, const URL& url,
+        WTF::Optional<FrameIdentifier> frameID, WTF::Optional<PageIdentifier> pageID,
+        ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
 {
-	BNetworkCookie* heapCookie
-		= new BNetworkCookie(value, BUrl(url));
+    BPrivate::Network::BNetworkCookie* heapCookie
+        = new BPrivate::Network::BNetworkCookie(value, BUrl(url));
 
 #if TRACE_COOKIE_JAR
-	printf("CookieJar: Add %s for %s\n", heapCookie->RawCookie(true).String(),
+    printf("CookieJar: Add %s for %s\n", heapCookie->RawCookie(true).String(),
         url.string().utf8().data());
-	printf("  from %s\n", value.utf8().data());
+    printf("  from %s\n", value.utf8().data());
 #endif
-	platformSession().GetCookieJar().AddCookie(heapCookie);
+    platformSession().GetCookieJar().AddCookie(heapCookie);
 }
 
 HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
@@ -84,10 +84,10 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 }
 
 std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty,
-	const SameSiteInfo& sameSiteInfo, const URL& url,
-	WTF::Optional<FrameIdentifier> frameID, WTF::Optional<PageIdentifier> pageID,
-	IncludeSecureCookies includeSecureCookies, ShouldAskITP,
-	ShouldRelaxThirdPartyCookieBlocking) const
+        const SameSiteInfo& sameSiteInfo, const URL& url,
+        WTF::Optional<FrameIdentifier> frameID, WTF::Optional<PageIdentifier> pageID,
+        IncludeSecureCookies includeSecureCookies, ShouldAskITP,
+        ShouldRelaxThirdPartyCookieBlocking) const
 {
 #if TRACE_COOKIE_JAR
 	printf("CookieJar: Request for %s\n", url.string().utf8().data());
@@ -97,8 +97,8 @@ std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstPar
 	BUrl hUrl(url);
 	bool secure = false;
 
-	const BNetworkCookie* c;
-	for (BNetworkCookieJar::UrlIterator it(
+	const BPrivate::Network::BNetworkCookie* c;
+	for (BPrivate::Network::BNetworkCookieJar::UrlIterator it(
             platformSession().GetCookieJar().GetUrlIterator(hUrl));
 		    (c = it.Next()); ) {
         // filter out httpOnly cookies,as this method is used to get cookies
@@ -207,8 +207,8 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
 	BUrl hUrl(url);
 	bool secure = false;
 
-	const BNetworkCookie* c;
-	for (BNetworkCookieJar::UrlIterator it(
+	const BPrivate::Network::BNetworkCookie* c;
+	for (BPrivate::Network::BNetworkCookieJar::UrlIterator it(
         	platformSession().GetCookieJar().GetUrlIterator(hUrl));
 		    (c = it.Next()); ) {
 		// filter out secure cookies if they should be
@@ -236,13 +236,13 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(
         ShouldRelaxThirdPartyCookieBlocking::No);
 }
 
-BUrlContext& NetworkStorageSession::platformSession() const
+BPrivate::Network::BUrlContext& NetworkStorageSession::platformSession() const
 {
-    static BUrlContext sDefaultContext;
+    static BPrivate::Network::BUrlContext sDefaultContext;
     return m_context ? *m_context : sDefaultContext;
 }
 
-void NetworkStorageSession::setPlatformSession(BUrlContext* context)
+void NetworkStorageSession::setPlatformSession(BPrivate::Network::BUrlContext* context)
 {
     m_context = context;
 }

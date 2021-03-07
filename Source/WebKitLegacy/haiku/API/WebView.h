@@ -31,10 +31,10 @@
 
 #include <String.h>
 #include <View.h>
+#include <UrlContext.h>
 
 #include <memory>
 
-class BUrlContext;
 class BWebPage;
 
 namespace WebCore {
@@ -53,7 +53,7 @@ public:
 	};
 
 public:
-								BWebView(const char* name, BUrlContext* context = nullptr);
+								BWebView(const char* name, BPrivate::Network::BUrlContext* context = nullptr);
 	virtual						~BWebView();
 
 	// The BWebView needs to be deleted by the BWebPage instance running

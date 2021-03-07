@@ -39,16 +39,16 @@ namespace WebCore {
 
 class FrameNetworkingContextHaiku : public WebCore::FrameNetworkingContext {
 public:
-    static Ref<FrameNetworkingContextHaiku> create(Frame*, BUrlContext* context);
+    static Ref<FrameNetworkingContextHaiku> create(Frame*, BPrivate::Network::BUrlContext* context);
     virtual ~FrameNetworkingContextHaiku();
 
     WebCore::Frame* coreFrame() const { return frame(); }
     virtual uint64_t initiatingPageID() const;
 
-    BUrlContext* context();
+    BPrivate::Network::BUrlContext* context();
 
 private:
-    FrameNetworkingContextHaiku(Frame*, BUrlContext* context);
+    FrameNetworkingContextHaiku(Frame*, BPrivate::Network::BUrlContext* context);
     WebCore::NetworkStorageSession* storageSession() const override;
 };
 

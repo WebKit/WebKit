@@ -47,12 +47,12 @@ static std::unique_ptr<NetworkStorageSession>& privateSession()
     return session;
 }
 
-Ref<FrameNetworkingContextHaiku> FrameNetworkingContextHaiku::create(Frame* frame, BUrlContext* context)
+Ref<FrameNetworkingContextHaiku> FrameNetworkingContextHaiku::create(Frame* frame, BPrivate::Network::BUrlContext* context)
 {
     return adoptRef(*new FrameNetworkingContextHaiku(frame, context));
 }
 
-FrameNetworkingContextHaiku::FrameNetworkingContextHaiku(Frame* frame, BUrlContext* context)
+FrameNetworkingContextHaiku::FrameNetworkingContextHaiku(Frame* frame, BPrivate::Network::BUrlContext* context)
     : FrameNetworkingContext(frame)
 {
     storageSession()->setPlatformSession(context);
@@ -62,7 +62,7 @@ FrameNetworkingContextHaiku::~FrameNetworkingContextHaiku()
 {
 }
 
-BUrlContext* FrameNetworkingContextHaiku::context()
+BPrivate::Network::BUrlContext* FrameNetworkingContextHaiku::context()
 {
     return &storageSession()->platformSession();
 }

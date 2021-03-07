@@ -9,10 +9,10 @@ list(APPEND WebKitLegacy_SOURCES ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitVersi
 LIST(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
-	"${WEBKITLEGACY_DIR}/Storage"
-	"${WEBKITLEGACY_DIR}/haiku"
-	"${WEBKITLEGACY_DIR}/haiku/API"
-	"${WEBKITLEGACY_DIR}/haiku/WebCoreSupport"
+    "${WEBKITLEGACY_DIR}/Storage"
+    "${WEBKITLEGACY_DIR}/haiku"
+    "${WEBKITLEGACY_DIR}/haiku/API"
+    "${WEBKITLEGACY_DIR}/haiku/WebCoreSupport"
     "${WEBCORE_DIR}/contentextensions"
     "${WEBCORE_DIR}/css/parser"
     "${WEBCORE_DIR}/html/forms"
@@ -47,7 +47,8 @@ LIST(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
     "${LIBXSLT_INCLUDE_DIR}"
     "${SQLITE_INCLUDE_DIR}"
     "${CMAKE_BINARY_DIR}"
-	"${FORWARDING_HEADERS_DIR}"
+    "${FORWARDING_HEADERS_DIR}"
+    /system/develop/headers/private/netservices
 )
 
 # These folders have includes with the same name as Haiku system ones. So we

@@ -86,7 +86,7 @@ BUrlRequestWrapper::BUrlRequestWrapper(BUrlProtocolHandler* handler, NetworkStor
     m_request->SetListener(SynchronousListener());
     m_request->SetOutput(this);
 
-    BHttpRequest* httpRequest = dynamic_cast<BHttpRequest*>(m_request);
+    BPrivate::Network::BHttpRequest* httpRequest = dynamic_cast<BPrivate::Network::BHttpRequest*>(m_request);
     if (httpRequest) {
         if (request.httpMethod() == "POST" || request.httpMethod() == "PUT") {
             if (request.httpBody()) {
@@ -155,20 +155,20 @@ void BUrlRequestWrapper::abort()
         m_request->Stop();
 }
 
-void BUrlRequestWrapper::HeadersReceived(BUrlRequest* caller)
+void BUrlRequestWrapper::HeadersReceived(BPrivate::Network::BUrlRequest* caller)
 {
     ASSERT(isMainThread());
 
     if (!m_handler)
         return;
 
-    const BUrlResult& result = caller->Result();
+    const BPrivate::Network::BUrlResult& result = caller->Result();
 
     ResourceResponse response(URL(caller->Url()),
         extractMIMETypeFromMediaType(result.ContentType()), result.Length(),
         extractCharsetFromMediaType(result.ContentType()));
 
-    const BHttpResult* httpResult = dynamic_cast<const BHttpResult*>(&result);
+    const BPrivate::Network::BHttpResult* httpResult = dynamic_cast<const BPrivate::Network::BHttpResult*>(&result);
     if (httpResult) {
         String suggestedFilename = filenameFromHTTPContentDisposition(
             httpResult->Headers()["Content-Disposition"]);
@@ -180,9 +180,9 @@ void BUrlRequestWrapper::HeadersReceived(BUrlRequest* caller)
         response.setHTTPStatusText(httpResult->StatusText());
 
         // Add remaining headers.
-        const BHttpHeaders& resultHeaders = httpResult->Headers();
+        const BPrivate::Network::BHttpHeaders& resultHeaders = httpResult->Headers();
         for (int i = 0; i < resultHeaders.CountHeaders(); i++) {
-            BHttpHeader& headerPair = resultHeaders.HeaderAt(i);
+            BPrivate::Network::BHttpHeader& headerPair = resultHeaders.HeaderAt(i);
             response.setHTTPHeaderField(headerPair.Name(), headerPair.Value());
         }
 
@@ -205,7 +205,7 @@ void BUrlRequestWrapper::HeadersReceived(BUrlRequest* caller)
     }
 }
 
-void BUrlRequestWrapper::UploadProgress(BUrlRequest*, ssize_t bytesSent, ssize_t bytesTotal)
+void BUrlRequestWrapper::UploadProgress(BPrivate::Network::BUrlRequest*, off_t bytesSent, off_t bytesTotal)
 {
     ASSERT(isMainThread());
 
@@ -215,7 +215,7 @@ void BUrlRequestWrapper::UploadProgress(BUrlRequest*, ssize_t bytesSent, ssize_t
     m_handler->didSendData(bytesSent, bytesTotal);
 }
 
-void BUrlRequestWrapper::RequestCompleted(BUrlRequest* caller, bool success)
+void BUrlRequestWrapper::RequestCompleted(BPrivate::Network::BUrlRequest* caller, bool success)
 {
     ASSERT(isMainThread());
 
@@ -229,13 +229,13 @@ void BUrlRequestWrapper::RequestCompleted(BUrlRequest* caller, bool success)
     if (!m_handler)
         return;
 
-    BHttpRequest* httpRequest = dynamic_cast<BHttpRequest*>(m_request);
+    BPrivate::Network::BHttpRequest* httpRequest = dynamic_cast<BPrivate::Network::BHttpRequest*>(m_request);
 
     if (success || (httpRequest && m_didReceiveData)) {
         m_handler->didFinishLoading();
         return;
     } else if (httpRequest) {
-        const BHttpResult& result = static_cast<const BHttpResult&>(httpRequest->Result());
+        const BPrivate::Network::BHttpResult& result = static_cast<const BPrivate::Network::BHttpResult&>(httpRequest->Result());
         int httpStatusCode = result.StatusCode();
 
         if (httpStatusCode != 0) {
@@ -253,7 +253,7 @@ void BUrlRequestWrapper::RequestCompleted(BUrlRequest* caller, bool success)
     m_handler->didFail(error);
 }
 
-bool BUrlRequestWrapper::CertificateVerificationFailed(BUrlRequest*,
+bool BUrlRequestWrapper::CertificateVerificationFailed(BPrivate::Network::BUrlRequest*,
     BCertificate& certificate, const char* message)
 {
     ASSERT(isMainThread());

@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-BUrlRequest* ResourceRequest::toNetworkRequest(BUrlContext* context)
+BPrivate::Network::BUrlRequest* ResourceRequest::toNetworkRequest(BPrivate::Network::BUrlContext* context)
 {
-    BUrlRequest* request = BUrlProtocolRoster::MakeRequest(url(), nullptr);
+    BPrivate::Network::BUrlRequest* request = BPrivate::Network::BUrlProtocolRoster::MakeRequest(url(), nullptr);
 
     if (!request) {
         m_url = WTF::aboutBlankURL(); // This tells the ResourceLoader we failed.
@@ -47,10 +47,10 @@ BUrlRequest* ResourceRequest::toNetworkRequest(BUrlContext* context)
     if (timeoutInterval() > 0)
         request->SetTimeout(timeoutInterval());
 
-    BHttpRequest* httpRequest = dynamic_cast<BHttpRequest*>(request);
+    BPrivate::Network::BHttpRequest* httpRequest = dynamic_cast<BPrivate::Network::BHttpRequest*>(request);
     if (httpRequest != NULL) {
         const HTTPHeaderMap &headers = httpHeaderFields();
-        BHttpHeaders* requestHeaders = new BHttpHeaders();
+        BPrivate::Network::BHttpHeaders* requestHeaders = new BPrivate::Network::BHttpHeaders();
 
         for (HTTPHeaderMap::const_iterator it = headers.begin(),
                 end = headers.end(); it != end; ++it)

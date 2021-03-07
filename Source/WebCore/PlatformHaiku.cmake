@@ -208,7 +208,7 @@ list(APPEND WebCore_LIBRARIES
   ${SQLITE_LIBRARIES}
   ${WEBP_LIBRARIES}
   ${ZLIB_LIBRARIES}
-  be bsd network bnetapi textencoding translation execinfo
+  be bsd network bnetapi netservices textencoding translation execinfo
 )
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
@@ -219,6 +219,7 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
   ${SQLITE_INCLUDE_DIR}
   ${WEBP_INCLUDE_DIRS}
   ${ZLIB_INCLUDE_DIRS}
+  /system/develop/headers/private/netservices
 )
 
 if (ENABLE_WEB_AUDIO)

@@ -27,7 +27,7 @@ NotificationClientHaiku::fromDescriptor(Notification* descriptor)
     // with some changes for an update.
     BUrl iconURL(descriptor->icon());
     BMallocIO buffer;
-    BUrlRequest* request = BUrlProtocolRoster::MakeRequest(iconURL, &buffer);
+    BPrivate::Network::BUrlRequest* request = BPrivate::Network::BUrlProtocolRoster::MakeRequest(iconURL, &buffer);
     if (request) {
         thread_id thread = request->Run();
         status_t dummy;
