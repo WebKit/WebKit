@@ -15,7 +15,8 @@
         var container = document.getElementById('container');
 
         img.onerror = function() { 
-            container.parentNode.removeChild(container);
+            if (container.parentNode)
+                container.parentNode.removeChild(container);
         }
         
         container.appendChild(img);

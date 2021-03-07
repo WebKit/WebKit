@@ -70,8 +70,8 @@ public:
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
-    bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
-    bool hasPendingActivity() const { return m_hasPendingLoadEvent || m_hasPendingErrorEvent; }
+    bool hasPendingBeforeLoadEvent() const { return m_pendingBeforeLoadEventCount; }
+    bool hasPendingActivity() const { return m_pendingLoadEventCount || m_pendingErrorEventCount; }
 
     void dispatchPendingEvent(ImageEventSender*);
 
@@ -123,9 +123,9 @@ private:
     RefPtr<Element> m_protectedElement;
     AtomString m_failedLoadURL;
     Vector<RefPtr<DeferredPromise>> m_decodingPromises;
-    bool m_hasPendingBeforeLoadEvent : 1;
-    bool m_hasPendingLoadEvent : 1;
-    bool m_hasPendingErrorEvent : 1;
+    unsigned m_pendingBeforeLoadEventCount { 0 };
+    unsigned m_pendingErrorEventCount { 0 };
+    unsigned m_pendingLoadEventCount { 0 };
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
     bool m_elementIsProtected : 1;

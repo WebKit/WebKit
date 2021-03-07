@@ -1,3 +1,16 @@
+2021-03-07  Rob Buis  <rbuis@igalia.com>
+
+        Use counters for pending events
+        https://bugs.webkit.org/show_bug.cgi?id=218556
+
+        Reviewed by Ryosuke Niwa.
+
+        The onerror can be called multiple times, after the first call
+        container will have no parent, so protect against that in
+        subsequent calls.
+
+        * fast/dom/modify-node-and-while-in-the-callback-too-crash.html:
+
 2021-03-06  Zalan Bujtas  <zalan@apple.com>
 
         Only positive integers are allowed as values of orphans and widows
