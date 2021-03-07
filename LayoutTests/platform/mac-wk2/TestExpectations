@@ -1310,8 +1310,6 @@ webkit.org/b/219905 [ Debug ] fast/layoutformattingcontext/subframe-with-display
 # This file should contain entries for expectations that are specific
 # to the Apple Mac port running the WebKit2 variant (--webkit-test-runner)
 
-webkit.org/b/220018 webanimations/accelerated-transform-related-animation-property-order.html [ ImageOnlyFailure ]
-
 webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html [ Pass Timeout ]
 
 webkit.org/b/219516 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]

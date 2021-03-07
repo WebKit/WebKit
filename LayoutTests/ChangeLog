@@ -1,3 +1,14 @@
+2021-03-06  Antoine Quint  <graouts@webkit.org>
+
+        [Mojave] webanimations/accelerated-transform-related-animation-property-order.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=220018
+
+        Reviewed by Sam Weinig.
+
+        Mojave is no longer supported on ToT and this test has been passing reliably on the bots.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-03-07  Antoine Quint  <graouts@webkit.org>
 
         Correctly handle "auto" values when blending z-index
