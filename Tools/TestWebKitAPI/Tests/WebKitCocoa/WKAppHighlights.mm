@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import "config.h"
+
+#if ENABLE(APP_HIGHLIGHTS)
+
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -35,7 +38,9 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-#if ENABLE(APP_HIGHLIGHTS)
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
+#endif
 
 @interface AppHighlightDelegate : NSObject <_WKAppHighlightDelegate>
 @property (nonatomic, copy) void (^storeAppHighlightCallback)(WKWebView *, _WKAppHighlight *, BOOL);
@@ -109,6 +114,21 @@ TEST(AppHighlights, AppHighlightRestoreFailure)
     TestWebKitAPI::Util::run(&finished);
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+TEST(AppHighlights, AvoidForcingCalloutBarInitialization)
+{
+    auto defaultConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:defaultConfiguration.get() addToWindow:NO]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_NULL(UICalloutBar.activeCalloutBar);
 }
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)
+
+} // namespace TestWebKitAPI
+
+#endif // ENABLE(APP_HIGHLIGHTS)

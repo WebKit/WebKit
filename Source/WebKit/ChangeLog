@@ -1,3 +1,33 @@
+2021-03-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] maild hits a simulated crash when ENABLE(APP_HIGHLIGHTS) is defined
+        https://bugs.webkit.org/show_bug.cgi?id=222893
+        <rdar://problem/74230060>
+
+        Reviewed by Tim Horton.
+
+        Fix the simulated crash by not initializing the shared callout bar and installing menu items for new app
+        highlight actions in the case where the web view is unparented. Additionally, avoid this work in the case where
+        the selection is not a range.
+
+        Test: AppHighlights.AvoidForcingCalloutBarInitialization
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView didMoveToWindow]):
+
+        Call `-setUpAppHighlightMenusIfNeeded` to ensure that we still add app highlight menu items in the case where
+        we avoided it previously, due to the web view being unparented. Note that if we're being unparented (i.e.
+        `self.window` has just become `nil`), we will return early from `-setUpAppHighlightMenusIfNeeded`.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _selectionChanged]):
+        (-[WKContentView setUpAppHighlightMenusIfNeeded]):
+        (-[WKContentView setUpAppHighlightMenus]): Deleted.
+
+        Rename `setUpAppHighlightMenus` to `setUpAppHighlightMenusIfNeeded`, and declare it in the header so that we
+        can call into it from `-didMoveToWindow` above.
+
 2021-03-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Expand WebAuthn Process's sandbox profile on iOS

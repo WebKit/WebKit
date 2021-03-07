@@ -1,3 +1,15 @@
+2021-03-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] maild hits a simulated crash when ENABLE(APP_HIGHLIGHTS) is defined
+        https://bugs.webkit.org/show_bug.cgi?id=222893
+        <rdar://problem/74230060>
+
+        Reviewed by Tim Horton.
+
+        Add an API test to verify that we don't attempt to initialize the platform callout bar.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAppHighlights.mm:
+
 2021-03-07  Sam Weinig  <weinig@apple.com>
 
         Transition Cocoa DumpRenderTree to allow any preference keys, not just hard coded supported ones

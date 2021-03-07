@@ -6859,7 +6859,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 - (void)_selectionChanged
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    [self setUpAppHighlightMenus];
+    [self setUpAppHighlightMenusIfNeeded];
 #endif
 
     [self _updateSelectionAssistantSuppressionState];
@@ -8996,17 +8996,15 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)setUpAppHighlightMenus
+- (void)setUpAppHighlightMenusIfNeeded
 {
-    if (_hasSetUpAppHighlightMenus)
+    if (_hasSetUpAppHighlightMenus || !_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange)
         return;
 
-    if (_page->preferences().appHighlightsEnabled()) {
-        auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
-        auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
-        [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
-        _hasSetUpAppHighlightMenus = YES;
-    }
+    auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
+    auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
+    [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
+    _hasSetUpAppHighlightMenus = YES;
 }
 
 - (void)createHighlightInCurrentGroupWithRange:(id)sender

@@ -692,6 +692,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent;
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+- (void)setUpAppHighlightMenusIfNeeded;
+#endif
+
 @end
 
 @interface WKContentView (WKTesting)
