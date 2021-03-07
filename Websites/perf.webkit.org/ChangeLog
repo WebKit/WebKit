@@ -1,3 +1,36 @@
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [perf dashboard] Modernize MeasurementSet
+        https://bugs.webkit.org/show_bug.cgi?id=222857
+
+        Reviewed by Dewei Zhu.
+
+        Modernized MeasurementSet by using new instance field syntax, let/const instead of var,
+        async/await instead of then/catch, and Map instead of an object as a dictionary.
+
+        * public/v3/models/measurement-set.js:
+        (Array.prototype.includes): Deleted this polyfill which was needed for an old node.js.
+        (MeasurementSet): Moved the initialization of instance variables here. Also use Map
+        for this._allFetches instead of using a regular object as a dictionary.
+        (MeasurementSet.findSet): Use Map for MeasurementSet mapping.
+        (MeasurementSet.prototype.findClusters): Use const and let instead of var.
+        (MeasurementSet.prototype.async fetchBetween): Use async & await instead of Promise.then.
+        (MeasurementSet.prototype._ensureClusterPromise): Use let/const instead of var.
+        (MeasurementSet.prototype._urlForCache): Renamed from _constructUrl and removed the argument
+        for useCache since this function is now only used for feteching JSON caches.
+        (MeasurementSet.async _fetchPrimaryCluster): Use async/await and let/const. Consolidated
+        the API call to re-generate new JSON files and inlined API path here.
+        (MeasurementSet.async _fetchSecondaryCluster): Use async/await.
+        (MeasurementSet._addFetchedCluster): Use let/const instead of var.
+        (MeasurementSet.async fetchSegmentation): Use async/await and let/const.
+        (MeasurementSet.async _cachedClusterSegmentation): Ditto.
+        (MeasurementSet.prototype.async _invokeSegmentationAlgorithm): Ditto.
+        * unit-tests/measurement-set-tests.js:
+        (beforeEach): Updated the logic to reset measurement sets since the static variable was
+        renamed in MeasurementSet.findSet above.
+        * unit-tests/resources/mock-v3-models.js:
+        (MockModels.inject): Ditto.
+
 2021-03-06  Zhifei Fang  <zhifei_fang@apple.com>
         
         Make server test run with new node version

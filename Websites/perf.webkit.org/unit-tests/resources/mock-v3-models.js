@@ -15,7 +15,7 @@ var MockModels = {
             BuildRequest.clearStaticMap();
             Triggerable.clearStaticMap();
             UploadedFile.clearStaticMap();
-            MeasurementSet._set = null;
+            MeasurementSet._setMap = null;
 
             MockModels.osx = Repository.ensureSingleton(9, {name: 'OS X'});
             MockModels.ios = Repository.ensureSingleton(22, {name: 'iOS'});

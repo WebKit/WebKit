@@ -13,7 +13,7 @@ describe('MeasurementSet', () => {
     const requests = MockRemoteAPI.inject(null, BrowserPrivilegedAPI);
 
     beforeEach(() => {
-        MeasurementSet._set = null;
+        MeasurementSet._setMap = null;
     });
 
     function waitForMeasurementSet()
