@@ -1,3 +1,20 @@
+2021-03-07  Antoine Quint  <graouts@webkit.org>
+
+        Correctly handle "auto" values when blending z-index
+        https://bugs.webkit.org/show_bug.cgi?id=222870
+
+        Reviewed by Dean Jackson.
+
+        Fix the test animations/stacking-context-unchanged-while-running.html which made the
+        wrong assumption about blending of z-index with auto values. We now make this test
+        expect an "auto" value and update the helper to know how to deal with "auto" values
+        for "z-index".
+
+        * animations/resources/animation-test-helpers.js:
+        (getPropertyValue):
+        (comparePropertyValue):
+        * animations/stacking-context-unchanged-while-running.html:
+
 2021-03-07  Rob Buis  <rbuis@igalia.com>
 
         Use counters for pending events

@@ -1698,6 +1698,36 @@ public:
     }
 };
 
+class ZIndexPropertyWrapper : public PropertyWrapper<int> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ZIndexPropertyWrapper()
+        : PropertyWrapper<int>(CSSPropertyZIndex, &RenderStyle::specifiedZIndex, &RenderStyle::setSpecifiedZIndex)
+    {
+    }
+
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const override
+    {
+        return !from->hasAutoSpecifiedZIndex() && !to->hasAutoSpecifiedZIndex();
+    }
+
+    void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* from, const RenderStyle* to, double progress) const override
+    {
+        PropertyWrapper::blend(anim, dst, from, to, progress);
+        if (canInterpolate(from, to))
+            return;
+
+        ASSERT(!progress || progress == 1.0);
+        if (!progress) {
+            if (from->hasAutoSpecifiedZIndex())
+                dst->setHasAutoSpecifiedZIndex();
+        } else {
+            if (to->hasAutoSpecifiedZIndex())
+                dst->setHasAutoSpecifiedZIndex();
+        }
+    }
+};
+
 class CSSPropertyAnimationWrapperMap {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -1815,7 +1845,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<float>(CSSPropertyColumnWidth, &RenderStyle::columnWidth, &RenderStyle::setColumnWidth),
         new PropertyWrapper<float>(CSSPropertyWebkitBorderHorizontalSpacing, &RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing),
         new PropertyWrapper<float>(CSSPropertyWebkitBorderVerticalSpacing, &RenderStyle::verticalBorderSpacing, &RenderStyle::setVerticalBorderSpacing),
-        new PropertyWrapper<int>(CSSPropertyZIndex, &RenderStyle::specifiedZIndex, &RenderStyle::setSpecifiedZIndex),
+        new ZIndexPropertyWrapper,
         new PropertyWrapper<unsigned short>(CSSPropertyOrphans, &RenderStyle::orphans, &RenderStyle::setOrphans),
         new PropertyWrapper<unsigned short>(CSSPropertyWidows, &RenderStyle::widows, &RenderStyle::setWidows),
         new LengthPropertyWrapper(CSSPropertyLineHeight, &RenderStyle::specifiedLineHeight, &RenderStyle::setLineHeight),

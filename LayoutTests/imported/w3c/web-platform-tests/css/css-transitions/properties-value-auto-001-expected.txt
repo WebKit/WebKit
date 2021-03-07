@@ -47,9 +47,9 @@ FAIL bottom auto(to) / values assert_not_equals: must not be target value after 
 FAIL bottom auto(to) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "bottom:2s" but got ""
 FAIL bottom auto(from) / values assert_not_equals: must not be target value after start got disallowed value "13.333333015441895px"
 FAIL bottom auto(from) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "bottom:2s" but got ""
-PASS z-index auto(to) / values
-PASS z-index auto(to) / events
-PASS z-index auto(from) / values
-PASS z-index auto(from) / events
+FAIL z-index auto(to) / values assert_not_equals: must not be target value after start got disallowed value "auto"
+FAIL z-index auto(to) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "z-index:2s" but got ""
+FAIL z-index auto(from) / values assert_not_equals: must not be target value after start got disallowed value "10"
+FAIL z-index auto(from) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "z-index:2s" but got ""
 Text sample
 

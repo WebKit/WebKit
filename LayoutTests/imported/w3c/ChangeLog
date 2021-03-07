@@ -1,3 +1,18 @@
+2021-03-07  Antoine Quint  <graouts@webkit.org>
+
+        Correctly handle "auto" values when blending z-index
+        https://bugs.webkit.org/show_bug.cgi?id=222870
+
+        Reviewed by Dean Jackson.
+
+        Add an extra 72 PASS results. We now pass all the z-index interpolation tests.
+
+        Another test has new failures, but this is expected, this test behaves the same way
+        across Firefox and Chrome as well.
+
+        * web-platform-tests/css/css-transitions/animations/z-index-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-auto-001-expected.txt:
+
 2021-03-06  Antoine Quint  <graouts@webkit.org>
 
         Improve blending of Length and other Length-related types
