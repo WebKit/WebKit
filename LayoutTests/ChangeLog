@@ -1,3 +1,12 @@
+2021-03-07  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Recording transparency layer should reset the alpha of lastDrawingState
+        https://bugs.webkit.org/show_bug.cgi?id=222855
+
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+
 2021-03-06  Antoine Quint  <graouts@webkit.org>
 
         [Mojave] webanimations/accelerated-transform-related-animation-property-order.html is failing
