@@ -59,6 +59,7 @@ public:
         InlineLayoutUnit lineLogicalWidth;
         InlineLayoutUnit contentLogicalWidth;
         bool isLastLineWithInlineContent { true };
+        size_t nonSpanningInlineLevelBoxCount { 0 };
         const Line::RunList& runs;
     };
     LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, Optional<InlineLayoutUnit> leadingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine);

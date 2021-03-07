@@ -48,6 +48,7 @@ public:
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     InlineLayoutUnit contentLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
+    size_t nonSpanningInlineLevelBoxCount() const { return m_nonSpanningInlineLevelBoxCount; }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
@@ -170,6 +171,7 @@ private:
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
     InlineLayoutUnit m_contentLogicalWidth { 0 };
+    size_t m_nonSpanningInlineLevelBoxCount { 0 };
     Optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
 };
 

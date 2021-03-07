@@ -179,7 +179,7 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
     auto lineLogicalWidth = lineContent.lineLogicalWidth;
     auto contentLogicalWidth = lineContent.contentLogicalWidth;
     auto horizontalAlignmentOffset = Layout::horizontalAlignmentOffset(runs, rootBox().style().textAlign(), lineLogicalWidth, contentLogicalWidth, lineContent.isLastLineWithInlineContent);
-    auto lineBox = LineBox { rootBox(), lineContent.logicalTopLeft, lineLogicalWidth, horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }), contentLogicalWidth, runs.size() };
+    auto lineBox = LineBox { rootBox(), lineContent.logicalTopLeft, lineLogicalWidth, horizontalAlignmentOffset.valueOr(InlineLayoutUnit { }), contentLogicalWidth, lineContent.nonSpanningInlineLevelBoxCount };
     constructAndAlignInlineLevelBoxes(lineBox, runs);
     return lineBox;
 }

@@ -133,7 +133,7 @@ public:
         Type m_type { Type::InlineBox };
     };
 
-    LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, size_t numberOfRuns);
+    LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount);
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalWidth() const { return logicalSize().width(); }

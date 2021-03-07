@@ -52,6 +52,7 @@ Line::~Line()
 
 void Line::initialize()
 {
+    m_nonSpanningInlineLevelBoxCount = 0;
     m_contentLogicalWidth = { };
     m_runs.clear();
     m_trailingSoftHyphenWidth = { };
@@ -202,6 +203,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, InlineLayoutUnit l
     // This is really just a placeholder to mark the start of the inline box <span>.
     auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
     auto adjustedRunStart = contentLogicalRight() + std::min(boxGeometry.marginStart(), 0_lu);
+    ++m_nonSpanningInlineLevelBoxCount;
     appendNonBreakableSpace(inlineItem, adjustedRunStart, logicalWidth);
 }
 
@@ -291,6 +293,7 @@ void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, InlineL
     m_trimmableTrailingContent.reset();
     m_trailingSoftHyphenWidth = { };
     m_contentLogicalWidth += marginBoxLogicalWidth;
+    ++m_nonSpanningInlineLevelBoxCount;
     auto marginStart = formattingContext().geometryForBox(inlineItem.layoutBox()).marginStart();
     if (marginStart >= 0) {
         m_runs.append({ inlineItem, contentLogicalRight(), marginBoxLogicalWidth });
@@ -313,8 +316,10 @@ void Line::appendReplacedInlineLevelBox(const InlineItem& inlineItem, InlineLayo
 void Line::appendLineBreak(const InlineItem& inlineItem)
 {
     m_trailingSoftHyphenWidth = { };
-    if (inlineItem.isHardLineBreak())
+    if (inlineItem.isHardLineBreak()) {
+        ++m_nonSpanningInlineLevelBoxCount;
         return m_runs.append({ inlineItem, contentLogicalRight(), 0_lu });
+    }
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
     ASSERT(inlineItem.isSoftLineBreak());
     m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalRight() });
