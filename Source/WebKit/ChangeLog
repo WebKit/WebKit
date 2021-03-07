@@ -1,3 +1,15 @@
+2021-03-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Expand WebAuthn Process's sandbox profile on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=222858
+        <rdar://problem/74772012>
+
+        Reviewed by Brent Fulgham.
+
+        Allows WebAuthn process to use AAA again.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+
 2021-03-06  Tim Horton  <timothy_horton@apple.com>
 
         <model> should create a model-owning compositing layer
