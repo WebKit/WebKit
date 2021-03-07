@@ -625,7 +625,7 @@ describe('TimeSeriesChart', () => {
                 let canvas;
                 let originalWidth;
                 let originalHeight;
-                return waitForComponentsToRender(context).then(() => {
+                return waitForComponentsToRender(context).then(async () => {
                     expect(dataChangeCount).to.be(1);
                     expect(chart.sampledTimeSeriesData('current')).to.not.be(null);
                     canvas = chart.content().querySelector('canvas');
@@ -643,7 +643,8 @@ describe('TimeSeriesChart', () => {
                     expect(canvas.offsetWidth).to.be(originalWidth);
                     expect(canvas.offsetHeight).to.be(originalHeight);
 
-                    return waitForComponentsToRender(context);
+                    await waitForElementResize(chart.element());
+                    await waitForComponentsToRender(context);
                 }).then(() => {
                     expect(dataChangeCount).to.be(2);
                     expect(canvas.offsetWidth).to.be.greaterThan(originalWidth);
@@ -770,7 +771,7 @@ describe('TimeSeriesChart', () => {
 
                 let canvasWithSampling;
                 let canvasWithoutSampling;
-                return waitForComponentsToRender(context).then(() => {
+                return waitForComponentsToRender(context).then(async () => {
                     canvasWithoutSampling = chartWithoutSampling.content().querySelector('canvas');
                     canvasWithSampling = chartWithSampling.content().querySelector('canvas');
 
@@ -779,11 +780,16 @@ describe('TimeSeriesChart', () => {
                     expect(CanvasTest.canvasContainsColor(canvasWithSampling, lineColor)).to.be(true);
 
                     const diff = ChartTest.sampleCluster.endTime - ChartTest.sampleCluster.startTime;
-                    chartWithoutSampling.setDomain(ChartTest.sampleCluster.startTime - 2 * diff, ChartTest.sampleCluster.endTime);
-                    chartWithSampling.setDomain(ChartTest.sampleCluster.startTime - 2 * diff, ChartTest.sampleCluster.endTime);
+                    const expandedStartTime = ChartTest.sampleCluster.startTime - 2 * diff;
+                    chartWithoutSampling.setDomain(expandedStartTime, ChartTest.sampleCluster.endTime);
+                    chartWithSampling.setDomain(expandedStartTime, ChartTest.sampleCluster.endTime);
 
                     CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithoutSampling);
                     CanvasTest.fillCanvasBeforeRedrawCheck(canvasWithSampling);
+
+                    for (const source of chartWithoutSampling.sourceList())
+                        await source.measurementSet.fetchBetween(expandedStartTime, ChartTest.sampleCluster.endTime);
+
                     return waitForComponentsToRender(context);
                 }).then(() => {
                     expect(CanvasTest.hasCanvasBeenRedrawn(canvasWithoutSampling)).to.be(true);

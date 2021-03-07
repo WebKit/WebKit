@@ -1,5 +1,26 @@
 2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        [perf dashboard] Some browser tests are flaky or failing
+        https://bugs.webkit.org/show_bug.cgi?id=222874
+
+        Reviewed by Dewei Zhu.
+
+        There were two tests in TimeSeriesChart tests that were intermittently failing due to the test
+        not reliably waiting for the iframe's resize to take effect and not waiting for the time series'
+        fetching logic to run 'til completion before waiting for canvas charts to be re-drawn. Fixing
+        these by adding code to wait for these conditons.
+
+        All browser tests for markup-component.js was broken in r274036 as `require` function is not
+        available in browsers. Added a workaround in BrowsingContext to add a make assert.ok function
+        using expect(~).to.be.true().
+
+        * browser-tests/index.html:
+        (BrowsingContext.prototype.constructor): 
+        (waitForElementResize): Added.
+        * browser-tests/time-series-chart-tests.js: Fixed bugs in the tests.
+
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         [perf dashboard] Modernize DataModelObject and LabeledObject
         https://bugs.webkit.org/show_bug.cgi?id=222871
 
