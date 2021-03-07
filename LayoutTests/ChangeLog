@@ -1,5 +1,16 @@
 2021-03-06  Zalan Bujtas  <zalan@apple.com>
 
+        Only positive integers are allowed as values of orphans and widows
+        https://bugs.webkit.org/show_bug.cgi?id=222875
+        <rdar://problem/72996948>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/multicol/negative-widow-value-crash-expected.txt: Added.
+        * fast/multicol/negative-widow-value-crash.html: Added.
+
+2021-03-06  Zalan Bujtas  <zalan@apple.com>
+
         [RenderTreeBuilder] Invalidate beforeChild when parent changes to RubyBase
         https://bugs.webkit.org/show_bug.cgi?id=222862
         <rdar://problem/73659871>

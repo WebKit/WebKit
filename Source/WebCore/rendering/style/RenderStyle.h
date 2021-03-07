@@ -484,8 +484,8 @@ public:
 
     bool insideDefaultButton() const { return m_inheritedFlags.insideDefaultButton; }
 
-    short widows() const { return m_rareInheritedData->widows; }
-    short orphans() const { return m_rareInheritedData->orphans; }
+    unsigned short widows() const { return m_rareInheritedData->widows; }
+    unsigned short orphans() const { return m_rareInheritedData->orphans; }
     bool hasAutoWidows() const { return m_rareInheritedData->hasAutoWidows; }
     bool hasAutoOrphans() const { return m_rareInheritedData->hasAutoOrphans; }
 
@@ -1092,10 +1092,10 @@ public:
     }
 
     void setHasAutoWidows() { SET_VAR(m_rareInheritedData, hasAutoWidows, true); SET_VAR(m_rareInheritedData, widows, initialWidows()); }
-    void setWidows(short w) { SET_VAR(m_rareInheritedData, hasAutoWidows, false); SET_VAR(m_rareInheritedData, widows, w); }
+    void setWidows(unsigned short w) { SET_VAR(m_rareInheritedData, hasAutoWidows, false); SET_VAR(m_rareInheritedData, widows, w); }
 
     void setHasAutoOrphans() { SET_VAR(m_rareInheritedData, hasAutoOrphans, true); SET_VAR(m_rareInheritedData, orphans, initialOrphans()); }
-    void setOrphans(short o) { SET_VAR(m_rareInheritedData, hasAutoOrphans, false); SET_VAR(m_rareInheritedData, orphans, o); }
+    void setOrphans(unsigned short o) { SET_VAR(m_rareInheritedData, hasAutoOrphans, false); SET_VAR(m_rareInheritedData, orphans, o); }
 
     // CSS3 Setters
     void setOutlineOffset(float v) { SET_VAR(m_backgroundData, outline.m_offset, v); }
@@ -1569,8 +1569,8 @@ public:
     static Length initialTextIndent() { return Length(LengthType::Fixed); }
     static Length initialZeroLength() { return Length(LengthType::Fixed); }
     static Length initialOneLength() { return Length(1, LengthType::Fixed); }
-    static short initialWidows() { return 2; }
-    static short initialOrphans() { return 2; }
+    static unsigned short initialWidows() { return 2; }
+    static unsigned short initialOrphans() { return 2; }
     // Returning -100% percent here means the line-height is not set.
     static Length initialLineHeight() { return Length(-100.0f, LengthType::Percent); }
     static TextAlignMode initialTextAlign() { return TextAlignMode::Start; }
