@@ -1175,6 +1175,10 @@ static Color parseRelativeHWBParameters(CSSParserTokenRange& args, const CSSPars
 static Color parseHWBParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueHwb);
+
+    if (!context.cssColor4)
+        return { };
+
     auto args = consumeFunction(range);
 
     if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
@@ -1250,6 +1254,10 @@ static Color parseRelativeLabParameters(CSSParserTokenRange& args, const CSSPars
 static Color parseLabParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueLab);
+
+    if (!context.cssColor4)
+        return { };
+
     auto args = consumeFunction(range);
 
     if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
@@ -1326,6 +1334,10 @@ static Color parseRelativeLCHParameters(CSSParserTokenRange& args, const CSSPars
 static Color parseLCHParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueLch);
+
+    if (!context.cssColor4)
+        return { };
+
     auto args = consumeFunction(range);
 
     if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
@@ -1357,9 +1369,14 @@ static Color parseLCHParameters(CSSParserTokenRange& range, const CSSParserConte
     return LCHA<float> { static_cast<float>(normalizedLightness), static_cast<float>(normalizedChroma), static_cast<float>(normalizedHue), static_cast<float>(*alpha) };
 }
 
-template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args)
+template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020 || args.peek().id() == CSSValueSRGB);
+
+    // Support sRGB and Display-P3 regardless of the setting as we have shipped support for them for a while.
+    if (!context.cssColor4 && (args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueProphotoRgb || args.peek().id() == CSSValueRec2020))
+        return { };
+
     consumeIdentRaw(args);
 
     double channels[3] = { 0, 0, 0 };
@@ -1377,9 +1394,13 @@ template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParse
     return { ColorType { clampTo<float>(channels[0], 0.0, 1.0), clampTo<float>(channels[1], 0.0, 1.0), clampTo<float>(channels[2], 0.0, 1.0), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
-static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
+static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     ASSERT(args.peek().id() == CSSValueLab);
+
+    if (!context.cssColor4)
+        return { };
+
     consumeIdentRaw(args);
 
     double channels[3] = { 0, 0, 0 };
@@ -1409,9 +1430,13 @@ static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
     return { Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
-static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)
+static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     ASSERT(args.peek().id() == CSSValueXyz);
+
+    if (!context.cssColor4)
+        return { };
+
     consumeIdentRaw(args);
 
     double channels[3] = { 0, 0, 0 };
@@ -1439,7 +1464,7 @@ static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args)
     return { XYZA<float, WhitePoint::D50> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
-static Color parseColorFunctionParameters(CSSParserTokenRange& range)
+static Color parseColorFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ASSERT(range.peek().functionId() == CSSValueColor);
     auto args = consumeFunction(range);
@@ -1447,25 +1472,25 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
     Color color;
     switch (args.peek().id()) {
     case CSSValueA98Rgb:
-        color = parseColorFunctionForRGBTypes<A98RGB<float>>(args);
+        color = parseColorFunctionForRGBTypes<A98RGB<float>>(args, context);
         break;
     case CSSValueDisplayP3:
-        color = parseColorFunctionForRGBTypes<DisplayP3<float>>(args);
+        color = parseColorFunctionForRGBTypes<DisplayP3<float>>(args, context);
         break;
     case CSSValueLab:
-        color = parseColorFunctionForLabParameters(args);
+        color = parseColorFunctionForLabParameters(args, context);
         break;
     case CSSValueProphotoRgb:
-        color = parseColorFunctionForRGBTypes<ProPhotoRGB<float>>(args);
+        color = parseColorFunctionForRGBTypes<ProPhotoRGB<float>>(args, context);
         break;
     case CSSValueRec2020:
-        color = parseColorFunctionForRGBTypes<Rec2020<float>>(args);
+        color = parseColorFunctionForRGBTypes<Rec2020<float>>(args, context);
         break;
     case CSSValueSRGB:
-        color = parseColorFunctionForRGBTypes<SRGBA<float>>(args);
+        color = parseColorFunctionForRGBTypes<SRGBA<float>>(args, context);
         break;
     case CSSValueXyz:
-        color = parseColorFunctionForXYZParameters(args);
+        color = parseColorFunctionForXYZParameters(args, context);
         break;
     default:
         return { };
@@ -1967,7 +1992,7 @@ static Color parseColorFunction(CSSParserTokenRange& range, const CSSParserConte
         color = parseLCHParameters(colorRange, context);
         break;
     case CSSValueColor:
-        color = parseColorFunctionParameters(colorRange);
+        color = parseColorFunctionParameters(colorRange, context);
         break;
     case CSSValueColorContrast:
         color = parseColorContrastFunctionParameters(colorRange, context);

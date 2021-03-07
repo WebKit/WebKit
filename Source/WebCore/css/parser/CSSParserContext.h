@@ -62,6 +62,7 @@ public:
     bool colorFilterEnabled { false };
     bool colorMixEnabled { false };
     bool constantPropertiesEnabled { false };
+    bool cssColor4 { false };
     bool deferredCSSParserEnabled { false };
     bool enforcesCSSMIMETypeInNoQuirksMode { true };
     bool individualTransformPropertiesEnabled { false };
@@ -114,28 +115,29 @@ struct CSSParserContextHash {
             & key.colorFilterEnabled                        << 6
             & key.colorMixEnabled                           << 7
             & key.constantPropertiesEnabled                 << 8
-            & key.deferredCSSParserEnabled                  << 9
-            & key.enforcesCSSMIMETypeInNoQuirksMode         << 10
-            & key.individualTransformPropertiesEnabled      << 11
+            & key.cssColor4                                 << 9
+            & key.deferredCSSParserEnabled                  << 10
+            & key.enforcesCSSMIMETypeInNoQuirksMode         << 11
+            & key.individualTransformPropertiesEnabled      << 12
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-            & key.legacyOverflowScrollingTouchEnabled       << 12
+            & key.legacyOverflowScrollingTouchEnabled       << 13
 #endif
-            & key.overscrollBehaviorEnabled                 << 13
-            & key.relativeColorSyntaxEnabled                << 14
-            & key.scrollBehaviorEnabled                     << 15
-            & key.springTimingFunctionEnabled               << 16
+            & key.overscrollBehaviorEnabled                 << 14
+            & key.relativeColorSyntaxEnabled                << 15
+            & key.scrollBehaviorEnabled                     << 16
+            & key.springTimingFunctionEnabled               << 17
 #if ENABLE(TEXT_AUTOSIZING)
-            & key.textAutosizingEnabled                     << 17
+            & key.textAutosizingEnabled                     << 18
 #endif
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-            & key.transformStyleOptimized3DEnabled          << 18
+            & key.transformStyleOptimized3DEnabled          << 19
 #endif
-            & key.useLegacyBackgroundSizeShorthandBehavior  << 19
-            & key.focusVisibleEnabled                       << 20
+            & key.useLegacyBackgroundSizeShorthandBehavior  << 20
+            & key.focusVisibleEnabled                       << 21
 #if ENABLE(ATTACHMENT_ELEMENT)
-            & key.attachmentEnabled                         << 21
+            & key.attachmentEnabled                         << 22
 #endif
-            & key.mode                                      << 22; // Keep this last.
+            & key.mode                                      << 23; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }

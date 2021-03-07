@@ -72,6 +72,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , colorFilterEnabled { document.settings().colorFilterEnabled() }
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
+    , cssColor4 { document.settings().cssColor4() }
     , deferredCSSParserEnabled { document.settings().deferredCSSParserEnabled() }
     , enforcesCSSMIMETypeInNoQuirksMode { document.settings().enforceCSSMIMETypeInNoQuirksMode() }
     , individualTransformPropertiesEnabled { document.settings().cssIndividualTransformPropertiesEnabled() }
@@ -111,6 +112,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.colorFilterEnabled == b.colorFilterEnabled
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
+        && a.cssColor4 == b.cssColor4
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
         && a.individualTransformPropertiesEnabled == b.individualTransformPropertiesEnabled

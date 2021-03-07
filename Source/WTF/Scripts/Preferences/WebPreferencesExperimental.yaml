@@ -113,6 +113,18 @@ CFNetworkNetworkLoaderEnabled:
     WebKit:
       default: false
 
+CSSColor4:
+  type: bool
+  humanReadableName: "CSS Color 4 Color Types"
+  humanReadableDescription: "Enable support for CSS Color 4 Color Types"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 CSSColorContrastEnabled:
   type: bool
   humanReadableName: "CSS color-contrast()"

@@ -1,3 +1,13 @@
+2021-03-07  Sam Weinig  <weinig@apple.com>
+
+        Move new color(), lab() and lch() color functions behind runtime settings.
+        https://bugs.webkit.org/show_bug.cgi?id=222869
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Add experimental feature flag for the new CSS Color 4 color types. 
+
 2021-03-06  Dean Jackson  <dino@apple.com>
 
         dlopen_preflight is failing (temporarily) but obsolete
