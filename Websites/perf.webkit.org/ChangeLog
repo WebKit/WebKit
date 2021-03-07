@@ -1,5 +1,46 @@
 2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        [perf dashboard] Modernize TimeSeries and TimeSeriesView
+        https://bugs.webkit.org/show_bug.cgi?id=222872
+
+        Reviewed by Dewei Zhu.
+
+        Declare instance fields in class declarations, use const/let instead of var, and use generators
+        for forward and backward iterations instead of manually implementing the iterator protocol.
+
+        This patch also splits FilteredTimeSeriesView out of TimeSeriesView.
+
+        * public/v3/models/time-series.js:
+        (TimeSeries): Moved the declaration of _data instance field to the class declaration.
+        (TimeSeries.prototype.constructor): Deleted.
+        (TimeSeries.prototype.extendToFuture):
+        (TimeSeries.prototype.valuesBetweenRange):
+        (TimeSeries.prototype.findById):
+        (TimeSeries.prototype.findPointAfterTime):
+        (TimeSeriesView): Declared the instance fields in the class declaration.
+        (TimeSeriesView.prototype.constructor): Removed filteredData from the argument since it's split
+        out to FilteredTimeSeriesView now.
+        (TimeSeriesView.prototype.get _data): Added. An abstraction needed for FilteredTimeSeriesView.
+        (TimeSeriesView.prototype._findIndexForPoint): Ditto. Moved out of the constructor.
+        (TimeSeriesView.prototype.filter): Return a FilteredTimeSeriesView.
+        (TimeSeriesView.prototype.viewTimeRange): Use _subRange to return either TimeSeriesView or
+        FilteredTimeSeriesView which ever is needed.
+        (TimeSeriesView.prototype._subRange): An abstraction needed for FilteredTimeSeriesView.
+        (TimeSeriesView.prototype.Symbol.iterator): Made this a generator instead of implementing
+        the iterator protocol directly.
+        (TimeSeriesView.prototype._reverse): Ditto.
+        (FilteredTimeSeriesView): Added.
+        (FilteredTimeSeriesView.prototype.constructor): Added. Assert that afterEndingIndex is less than
+        the length of the filtered data. This assertion was missing in TimeSeries prior to this patch
+        when filteredData is specified.
+        (FilteredTimeSeriesView.prototype.get _data): Added.
+        (FilteredTimeSeriesView.prototype._subRange): Added. Instantiate FilteredTimeSeriesView with
+        the same filtered data.
+        (FilteredTimeSeriesView.prototype._findIndexForPoint): Moved from TimeSeriesView's constructor.
+        (FilteredTimeSeriesView.prototype._buildPointIndexMap): Moved from TimeSeriesView.
+
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         [perf dashboard] Some browser tests are flaky or failing
         https://bugs.webkit.org/show_bug.cgi?id=222874
 
