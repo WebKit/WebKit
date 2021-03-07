@@ -1,5 +1,30 @@
 2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        [perf dashboard] Modernize DataModelObject and LabeledObject
+        https://bugs.webkit.org/show_bug.cgi?id=222871
+
+        Reviewed by Dewei Zhu.
+
+        Use const/let instead of var, async/await instead of Promise.then, and Map instead
+        of a regular object for a dictionary.
+
+        Also define instance fields in the class declaration instead of simply adding them
+        in the class constructors, and set the default parameter values instead of relying
+        on the unspecified argument being undefined.
+
+        * public/v3/models/data-model.js:
+        (DataModelObject.ensureSingleton):
+        (DataModelObject.namedStaticMap):
+        (DataModelObject.ensureNamedStaticMap):
+        (DataModelObject.findById):
+        (DataModelObject.listForStaticMap):
+        (DataModelObject.async cachedFetch):
+        (DataModelObject):
+        (LabeledObject.sortByName):
+        (DataModelObject.cachedFetch): Deleted.
+
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         [perf dashboard] Modernize MeasurementSet
         https://bugs.webkit.org/show_bug.cgi?id=222857
 
