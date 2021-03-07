@@ -197,20 +197,4 @@ TextStream& operator<<(TextStream& ts, const Color& color)
     return ts << serializationForRenderTreeAsText(color);
 }
 
-#ifdef __HAIKU__
-bool Color::isBlackColor(const Color& color)
-{
-    return color.callOnUnderlyingType([] (const auto& color) {
-        return WebCore::isBlack(color);
-    });
-}
-
-bool Color::isWhiteColor(const Color& color)
-{
-    return color.callOnUnderlyingType([] (const auto& color) {
-        return WebCore::isWhite(color);
-    });
-}
-#endif
-
 } // namespace WebCore
