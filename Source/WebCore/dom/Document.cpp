@@ -249,8 +249,10 @@
 #include "XPathExpression.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
+#include <JavaScriptCore/ConsoleClient.h>
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/VM.h>
 #include <ctime>
@@ -758,8 +760,7 @@ Document::~Document()
     extensionStyleSheets().detachFromDocument();
 
     styleScope().clearResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
-    m_fontSelector->clearDocument();
-    m_fontSelector->unregisterForInvalidationCallbacks(*this);
+    m_fontSelector->stopLoadingAndClearFonts();
 
     // It's possible for multiple Documents to end up referencing the same CachedResourceLoader (e.g., SVGImages
     // load the initial empty document and the SVGDocument with the same DocumentLoader).
@@ -806,9 +807,9 @@ void Document::removedLastRef()
         m_fullscreenManager->clear();
 #endif
         m_associatedFormControls.clear();
+        m_pendingRenderTreeTextUpdate = { };
 
-        m_fontSelector->clearDocument();
-        m_fontSelector->unregisterForInvalidationCallbacks(*this);
+        m_fontSelector->stopLoadingAndClearFonts();
 
         detachParser();
 
@@ -2052,7 +2053,7 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentElement->invalidateStyleForSubtree();
         }
 
-        Style::TreeResolver resolver(*this);
+        Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeTextUpdate));
         auto styleUpdate = resolver.resolve();
 
         m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
@@ -2100,10 +2101,12 @@ void Document::resolveStyle(ResolveStyleType type)
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
 {
-    auto textUpdate = makeUnique<Style::Update>(*this);
-    textUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, WTF::nullopt });
+    if (!m_pendingRenderTreeTextUpdate)
+        m_pendingRenderTreeTextUpdate = makeUnique<Style::Update>(*this);
 
-    updateRenderTree(WTFMove(textUpdate));
+    m_pendingRenderTreeTextUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, WTF::nullopt });
+
+    scheduleRenderingUpdate({ });
 }
 
 bool Document::needsStyleRecalc() const
@@ -2115,6 +2118,9 @@ bool Document::needsStyleRecalc() const
         return true;
 
     if (childNeedsStyleRecalc())
+        return true;
+
+    if (m_pendingRenderTreeTextUpdate)
         return true;
 
     if (styleScope().hasPendingUpdate())
@@ -2207,9 +2213,7 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     ASSERT(&element.document() == this);
     ASSERT(!element.isPseudoElement() || pseudoElementSpecifier == PseudoId::None);
     ASSERT(pseudoElementSpecifier == PseudoId::None || parentStyle);
-
-    // On iOS request delegates called during styleForElement may result in re-entering WebKit and killing the style resolver.
-    Style::PostResolutionCallbackDisabler disabler(*this, Style::PostResolutionCallbackDisabler::DrainCallbacks::No);
+    ASSERT(Style::postResolutionCallbacksAreSuspended());
 
     SetForScope<bool> change(m_ignorePendingStylesheets, true);
     auto& resolver = element.styleResolver();
@@ -8048,9 +8052,9 @@ void Document::orientationChanged(int orientation)
 
 #if ENABLE(MEDIA_STREAM)
 
-void Document::stopMediaCapture()
+void Document::stopMediaCapture(MediaProducer::MediaCaptureKind kind)
 {
-    MediaStreamTrack::endCapture(*this);
+    MediaStreamTrack::endCapture(*this, kind);
 }
 
 void Document::mediaStreamCaptureStateChanged()
@@ -8443,12 +8447,20 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
     if (messageSource == MessageSource::Other)
         return;
 
-    m_logMessageTaskQueue.enqueueTask([this, level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
+    auto messageLevel = messageLevelFromWTFLogLevel(level);
+    auto message = makeUnique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(frame()));
+
+    if (UNLIKELY(page->settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())) {
+        if (message->type() == MessageType::Image) {
+            ASSERT(message->arguments());
+            JSC::ConsoleClient::printConsoleMessageWithArguments(message->source(), message->type(), message->level(), message->arguments()->globalObject(), *message->arguments());
+        } else
+            JSC::ConsoleClient::printConsoleMessage(message->source(), message->type(), message->level(), message->toString(), message->url(), message->line(), message->column());
+    }
+
+    m_logMessageTaskQueue.enqueueTask([this, message = WTFMove(message)]() mutable {
         if (!this->page())
             return;
-
-        auto messageLevel = messageLevelFromWTFLogLevel(level);
-        auto message = makeUnique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(frame()));
 
         addConsoleMessage(WTFMove(message));
     });

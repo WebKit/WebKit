@@ -251,6 +251,7 @@ platform/cocoa/PasteboardCustomDataCocoa.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
+platform/cocoa/RemoteCommandListenerCocoa.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/SharedBufferCocoa.mm
@@ -452,7 +453,6 @@ platform/ios/PlatformSpeechSynthesizerIOS.mm @no-unify
 platform/ios/PlaybackSessionInterfaceAVKit.mm @no-unify
 platform/ios/PreviewConverterIOS.mm
 platform/ios/QuickLook.mm
-platform/ios/RemoteCommandListenerIOS.mm
 platform/ios/ScrollAnimatorIOS.mm
 platform/ios/ScrollViewIOS.mm
 platform/ios/ScrollbarThemeIOS.mm
@@ -500,7 +500,6 @@ platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/PluginBlocklist.mm
 platform/mac/PowerObserverMac.cpp
 platform/mac/PublicSuffixMac.mm
-platform/mac/RemoteCommandListenerMac.mm
 platform/mac/SSLKeyGeneratorMac.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
 platform/mac/ScrollController.mm

@@ -1038,21 +1038,21 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView& plugin
     if (!pluginView.pluginsPage().isNull()) {
         URL pluginPageURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginView.pluginsPage()));
         if (pluginPageURL.protocolIsInHTTPFamily()) {
-            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
-            CFDictionarySetValue(userInfo.get(), key, pluginPageURL.string().createCFString().get());
+            static NeverDestroyed<RetainPtr<CFStringRef>> key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
+            CFDictionarySetValue(userInfo.get(), key.get().get(), pluginPageURL.string().createCFString().get());
         }
     }
 
     if (!pluginView.mimeType().isNull()) {
-        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
-        CFDictionarySetValue(userInfo.get(), key, pluginView.mimeType().createCFString().get());
+        static NeverDestroyed<RetainPtr<CFStringRef>> key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
+        CFDictionarySetValue(userInfo.get(), key.get().get(), pluginView.mimeType().createCFString().get());
     }
 
     if (pluginView.plugin()) {
         String pluginName = pluginView.plugin()->name();
         if (!pluginName.isNull()) {
-            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
-            CFDictionarySetValue(userInfo.get(), key, pluginName.createCFString().get());
+            static NeverDestroyed<RetainPtr<CFStringRef>> key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
+            CFDictionarySetValue(userInfo.get(), key.get().get(), pluginName.createCFString().get());
         }
     }
 

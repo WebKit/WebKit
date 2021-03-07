@@ -3,7 +3,7 @@
 
 #
 #  Copyright (C) 2000, 2001 Eazel, Inc.
-#  Copyright (C) 2002-2020 Apple Inc.  All rights reserved.
+#  Copyright (C) 2002-2021 Apple Inc.  All rights reserved.
 #  Copyright (C) 2009 Torch Mobile, Inc.
 #  Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -1957,11 +1957,11 @@ sub get_function_line_ranges_for_swift($$)
     my @ranges;
 
     my $currentFunction = "";
-    my $currentClass = "";
+    my $currentType = "";
     my $functionStart = 0;
-    my $classStart = 0;
+    my $typeStart = 0;
     my $functionScopeDepth = 0;
-    my $classScopeDepth = 0;
+    my $typeScopeDepth = 0;
     my $scopeDepth = 0;
 
     while (<$fileHandle>) {
@@ -1973,14 +1973,14 @@ sub get_function_line_ranges_for_swift($$)
             if ($2) {
                 $currentFunction = "$currentFunction(". parseSwiftFunctionArgs($2) . ")";
             }
-            if ($currentClass) {
-                $currentFunction = "$currentClass.$currentFunction";
+            if ($currentType) {
+                $currentFunction = "$currentType.$currentFunction";
             }
             $functionStart = $.;
-        } elsif (/class\s+([\w_][\w\d_]*)/) {
-            $classScopeDepth = $scopeDepth;
-            $currentClass = $1;
-            $classStart = $.;
+        } elsif (/(?:class|struct|enum|protocol|extension)\s+([\w_][\w\d_]*)/) {
+            $typeScopeDepth = $scopeDepth;
+            $currentType = $1;
+            $typeStart = $.;
         }
         if (index($_, "{") > -1) {
             $scopeDepth++;
@@ -1993,10 +1993,10 @@ sub get_function_line_ranges_for_swift($$)
             push(@ranges, [$functionStart, $., $currentFunction]);
             $currentFunction = "";
             $functionStart = 0;
-        } elsif ($scopeDepth == $classScopeDepth) {
-            next unless $classStart;
-            $currentClass = "";
-            $classStart = 0;
+        } elsif ($scopeDepth == $typeScopeDepth) {
+            next unless $typeStart;
+            $currentType = "";
+            $typeStart = 0;
         }
     }
 

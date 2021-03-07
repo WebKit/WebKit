@@ -1,3 +1,268 @@
+2021-03-05  Chris Lord  <clord@igalia.com>
+
+        Allow CSS font-styling for canvas without RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=222665
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/2d.text.draw.fontface.notinpage-expected.txt: Now passes
+
+2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
+
+        XRFrame getViewerPose has emulatedPosition set properly
+        https://bugs.webkit.org/show_bug.cgi?id=222785
+
+        Reviewed by Sergio Villar Senin.
+
+        Update getViewerPose_emulatedPosition test expectations.
+
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https-expected.txt: Added.
+
+2021-03-05  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXRBoundedReferenceSpace bounds geometry
+        https://bugs.webkit.org/show_bug.cgi?id=222737
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXRBoundedReferenceSpace test expectations.
+
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https-expected.txt: Added.
+
+2021-03-04  Antoine Quint  <graouts@webkit.org>
+
+        initial value for border-image-outset should be 0
+        https://bugs.webkit.org/show_bug.cgi?id=222721
+
+        Reviewed by Antti Koivisto.
+
+        Pass one extra WPT test.
+
+        * web-platform-tests/css/css-backgrounds/inheritance.sub-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
+2021-03-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import latest WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=222651
+
+        Reviewed by Rob Buis.
+
+        Synced flex tests to 5b5efcee.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-flexbox/canvas-contain-size-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/canvas-contain-size.html: Added.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-reverse-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-reverse.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-reverse-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-reverse.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap.html: Removed.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column.html: Removed.
+        * web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001v-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001v.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-iframe-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-iframe-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-img-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-img-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-video-vert-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-basic-video-vert-001.xhtml:
+        * web-platform-tests/css/css-flexbox/frameset-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-1-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-1.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-1-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-1.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-narrow-content-2-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-narrow-content-2.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-height-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-height.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-width.html:
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-2-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-2.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-3-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-3.html: Added.
+        * web-platform-tests/css/css-flexbox/table-item-flex-percentage-min-width-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-item-flex-percentage-min-width.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
+2021-03-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus-visible implementation
+        https://bugs.webkit.org/show_bug.cgi?id=222028
+        <rdar://problem/74679243>
+
+        Reviewed by Darin Adler.
+
+        Update expectations, most of the :focus-visible tests are passing now.
+
+        * web-platform-tests/css/selectors/focus-in-focus-event-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-in-focusin-event-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-006-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-007-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-007.html: Import last changes on this test
+        * web-platform-tests/css/selectors/focus-visible-008-expected.txt:
+        (see https://github.com/web-platform-tests/wpt/pull/27656).
+        * web-platform-tests/css/selectors/focus-visible-011-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-011.html: Import last changes on this test
+        (see https://github.com/web-platform-tests/wpt/pull/27700).
+        * web-platform-tests/css/selectors/focus-visible-013-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-014-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-016-expected.txt:
+
+2021-03-02  Rob Buis  <rbuis@igalia.com>
+
+        Take box-sizing into account in replaced element intrinsic sizing
+        https://bugs.webkit.org/show_bug.cgi?id=221671
+
+        Reviewed by Simon Fraser.
+
+        Sync test.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-032.html:
+
+2021-02-28  Antoine Quint  <graouts@webkit.org>
+
+        Blending of border-image-width should be discrete between "auto" values and other types
+        https://bugs.webkit.org/show_bug.cgi?id=222516
+
+        Reviewed by Dean Jackson.
+
+        Pass an extra 22 WPT interpolation tests for border-image-width. We also get 3 new FAIL results
+        in css/css-transitions/properties-value-auto-001.html but that test seems incorrect in assuming
+        there can be a transition for "clip" between "auto" and a non-auto value, at least Chrome and
+        Firefox both fail the newly-failed tests.
+
+        Incidentally, we also get 50 new PASS results from css-grid tests.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-016-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-007-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-012-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-014-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-descendants-016-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-auto-001-expected.txt:
+
+2021-02-27  Antoine Quint  <graouts@webkit.org>
+
+        border-image-slice blending does not account for the fill keyword
+        https://bugs.webkit.org/show_bug.cgi?id=222513
+
+        Reviewed by Antti Koivisto.
+
+        Pass an extra 96 WPT tests for border-image-slice.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation-expected.txt:
+
+2021-02-27  Antoine Quint  <graouts@webkit.org>
+
+        Improve blending of LengthBox values
+        https://bugs.webkit.org/show_bug.cgi?id=222512
+
+        Reviewed by Antti Koivisto.
+
+        Pass an extra 238 WPT tests across border-image-outset, border-image-slice and border-image-width.
+        As of this patch, web-platform-tests/css/css-backgrounds/animations/border-image-outset-interpolation.html
+        only has PASS results.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-outset-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-outset-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+
+2021-02-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r273435.
+        https://bugs.webkit.org/show_bug.cgi?id=222503
+
+        Broke a test
+
+        Reverted changeset:
+
+        "[css-grid] Fix min/max widths of grid affected by ancestor"
+        https://bugs.webkit.org/show_bug.cgi?id=222100
+        https://trac.webkit.org/changeset/273435
+
+2021-02-26  Youenn Fablet  <youenn@apple.com>
+
+        Add support for WebRTC priority
+        https://bugs.webkit.org/show_bug.cgi?id=222416
+
+        Reviewed by Eric Carlson.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/webrtc-priority/META.yml: Added.
+        * web-platform-tests/webrtc-priority/RTCPeerConnection-ondatachannel-expected.txt: Added.
+        * web-platform-tests/webrtc-priority/RTCPeerConnection-ondatachannel.html: Added.
+        * web-platform-tests/webrtc-priority/RTCRtpParameters-encodings-expected.txt: Added.
+        * web-platform-tests/webrtc-priority/RTCRtpParameters-encodings.html: Added.
+        * web-platform-tests/webrtc-priority/w3c-import.log: Added.
+
+2021-02-25  Antoine Quint  <graouts@webkit.org>
+
+        border-image-outset doesn't handle float values
+        https://bugs.webkit.org/show_bug.cgi?id=222389
+
+        Reviewed by Antti Koivisto.
+
+        Pass an extra 28 WPT tests for border-image-outset.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-outset-interpolation-expected.txt:
+
+2021-02-24  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Set xrCompatible in WebGLRenderingContextBase::getContextAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=222360
+
+        Reviewed by Sam Weinig.
+
+        Update WebXR xrCompatible attribute test expectations.
+
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https-expected.txt: Added.
+
+2021-02-24  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Fix min/max widths of grid affected by ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=222100
+
+        Reviewed by Javier Fernandez.
+
+        Updated test expectation files.
+
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002-expected.txt:
+
+2021-02-24  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR getViewport
+        https://bugs.webkit.org/show_bug.cgi?id=222270
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXR Viewport test expectations.
+
+        * web-platform-tests/webxr/xrViewport_valid.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_viewports.https-expected.txt: Added.
+
 2021-02-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Implement the Top-level await proposal

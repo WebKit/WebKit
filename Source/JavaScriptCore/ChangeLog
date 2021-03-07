@@ -1,3 +1,1121 @@
+2021-03-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Bump cmake_minimum_required version to 3.12 or later
+        https://bugs.webkit.org/show_bug.cgi?id=221727
+        <rdar://problem/74454980>
+
+        Reviewed by Konstantin Tokarev.
+
+        Sync cmake_minimum_required version for AppleWin internal builds.
+
+        * CMakeLists.txt:
+
+2021-03-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        OpGetPrivateName needs to be listed in FOR_EACH_OPCODE_WITH_VALUE_PROFILE
+        https://bugs.webkit.org/show_bug.cgi?id=222775
+        <rdar://74982634>
+
+        Reviewed by Michael Saboff.
+
+        Right now valueProfileForBytecodeIndex incorrectly returns null for op_get_private_name.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::valueProfileForBytecodeIndex):
+        * bytecode/Opcode.h:
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222760
+
+        Reviewed by Darin Adler.
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit by using RetainPtr<>.
+
+        * API/JSContext.mm:
+        (-[JSContext name]):
+        * API/JSValue.mm:
+        (valueToObjectWithoutCopy):
+        (valueToString):
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage):
+
+2021-03-05  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Update ref.func to produce (ref $t)
+        https://bugs.webkit.org/show_bug.cgi?id=222779
+
+        Reviewed by Yusuke Suzuki.
+
+        Make ref.func to produce non nullable reference type which
+        incorporates signature index. Since in JSC signature index represents
+        type of the function from Type section we use it instead of type_idx
+        for representing type of function references.
+
+
+        * runtime/OptionsList.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addTableGrow):
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        (JSC::Wasm::AirIRGenerator::unify):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        (JSC::Wasm::isSubtype):
+        (JSC::Wasm::isRefType):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::checkBranchTarget):
+        (JSC::Wasm::FunctionParser<Context>::unify):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseGlobal):
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/wasm.json:
+
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        [Cocoa] REGRESSION(r272752): fix some internal builds that use WTFString::WTFString(NSString *)
+        https://bugs.webkit.org/show_bug.cgi?id=222610
+
+        Reviewed by Chris Dumez.
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.objc_protocol_import_expression_for_member):
+        (ObjCGenerator.objc_protocol_import_expression_for_parameter):
+        (ObjCGenerator.protocol_to_objc_expression_for_member):
+        (ObjCGenerator.payload_to_objc_expression_for_member):
+
+2021-03-04  Saam Barati  <sbarati@apple.com>
+
+        Don't trust parsing information to tell us if we've emitted op_call_eval
+        https://bugs.webkit.org/show_bug.cgi?id=222694
+        rdar://74778016
+
+        Reviewed by Yusuke Suzuki.
+
+        In the DFG, op_call_eval can't be inlined. Not inlining is required for how
+        eval is currently implemented in the DFG. For CodeBlocks with eval in them,
+        the scope register is also alive everywhere.
+        
+        When doing spread of arguments in eval, we end up emitting a call varargs
+        instead of a direct eval. This seems like a spec bug:
+        https://bugs.webkit.org/show_bug.cgi?id=222671
+        
+        However, this leads to something that had eval textually in it leading to
+        us reporting the scope register is always alive, even if op_call_eval isn't
+        in the bytecode stream. This leads to a validation error, since the DFG
+        isn't actually keeping this scope register alive everywhere, because
+        op_call_eval isn't in the bytecode stream.
+        
+        This patch fixes this by having a bit indicating if op_call_eval is in
+        the bytecode stream or not.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeIndex):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::usesCallEval const):
+        (JSC::CodeBlock::usesEval const): Deleted.
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::usesEval const): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::usesCallEval const):
+        (JSC::UnlinkedCodeBlock::setUsesCallEval):
+        (JSC::UnlinkedCodeBlock::usesEval const): Deleted.
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::usesCallEval const):
+        (JSC::UnlinkedCodeBlockGenerator::setUsesCallEval):
+        (JSC::UnlinkedCodeBlockGenerator::usesEval const): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::isThisUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isNewTargetUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isSuperUsedInInnerArrowFunction):
+        (JSC::BytecodeGenerator::isSuperCallUsedInInnerArrowFunction):
+        * dfg/DFGGraph.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock::usesCallEval const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        (JSC::CachedCodeBlock::usesEval const): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::executableInfo const): Deleted.
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::usesEval const): Deleted.
+
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r273906.
+
+        Broke internal build
+
+        Reverted changeset:
+
+        "[Cocoa] REGRESSION(r272752): fix some internal builds that
+        use WTFString::WTFString(NSString *)"
+        https://bugs.webkit.org/show_bug.cgi?id=222610
+        https://commits.webkit.org/r273906
+
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        [Cocoa] REGRESSION(r272752): fix some internal builds that use WTFString::WTFString(NSString *)
+        https://bugs.webkit.org/show_bug.cgi?id=222610
+
+        Reviewed by Chris Dumez.
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.objc_protocol_import_expression_for_member):
+        (ObjCGenerator.objc_protocol_import_expression_for_parameter):
+        (ObjCGenerator.protocol_to_objc_expression_for_member):
+        (ObjCGenerator.payload_to_objc_expression_for_member):
+
+2021-03-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: `RecordCanvasActionVariant` causes a huge symbol to be created in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=222639
+        <rdar://problem/73728057>
+
+        Reviewed by Tim Horton and Brian Burg.
+
+        * inspector/protocol/Recording.json:
+        Drive-by: Add info about `snapshot` to the `"description"` of `"actions"` in `"Frame"`.
+
+2021-03-03  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext] Private methods can't be named as '#constructor'
+        https://bugs.webkit.org/show_bug.cgi?id=222680
+
+        Reviewed by Yusuke Suzuki.
+
+        It's a `SyntaxError` when we try to use `#constructor` as private name
+        for methods, accessors, and fields. This patch is fixing such bug for
+        methods and accessors.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+
+2021-03-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r273814.
+        https://bugs.webkit.org/show_bug.cgi?id=222676
+
+        Unresolved types in JavaScriptCore-4.0.gir
+
+        Reverted changeset:
+
+        "[CMake] JavaScriptCore GLib headers should be copies"
+        https://bugs.webkit.org/show_bug.cgi?id=222625
+        https://trac.webkit.org/changeset/273814
+
+2021-03-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Add JSModuleNamespaceObject::deletePropertyByIndex() method
+        https://bugs.webkit.org/show_bug.cgi?id=222611
+
+        Reviewed by Yusuke Suzuki.
+
+        r270923 introduced arbitrary module namespace identifiers, enabling indexed identifiers
+        to be exported. While they were already handled by getOwnPropertySlotByIndex(), indexed
+        [[Delete]] override was absent, which prevented TypeError from being thrown.
+
+        This patch adds the missing method, aligning JSC with the spec [1].
+
+        [1]: https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-delete-p
+
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::deleteProperty):
+        (JSC::JSModuleNamespaceObject::deletePropertyByIndex):
+        * runtime/JSModuleNamespaceObject.h:
+
+2021-03-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] JavaScriptCore GLib headers should be copies
+        https://bugs.webkit.org/show_bug.cgi?id=222625
+
+        Reviewed by Michael Catanzaro.
+
+        Copy the headers rather than creating a symbolic link to structure the JavaScriptCore Glib
+        headers into a jsc directory. This follows the convention used in JavaScriptCore where
+        there are public and private headers.
+
+        The public JavaScriptCore GLib headers are copied before building JavaScriptCore. The
+        private JavaScriptCore were modified to include the public GLib headers through
+        <jsc/Header.h> rather than "Header.h" which is convention for the private C APIs in
+        JavaScriptCore.
+
+        APICast.h was being erroneously included in JSCClassPrivate.h because its not a
+        JavaScriptCore GLib header. Instead forward declarations were added to the private headers
+        and APICast.h was used as necessary in the .cpp files.
+
+        * API/glib/JSCClassPrivate.h:
+        * API/glib/JSCContext.cpp:
+        * API/glib/JSCContextPrivate.h:
+        * API/glib/JSCExceptionPrivate.h:
+        * API/glib/JSCValuePrivate.h:
+        * API/glib/JSCVirtualMachine.cpp:
+        * API/glib/JSCVirtualMachinePrivate.h:
+        * API/glib/JSCWrapperMap.cpp:
+        * GLib.cmake:
+        * PlatformGTK.cmake:
+
+2021-03-03  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Extend wasm type with type index
+        https://bugs.webkit.org/show_bug.cgi?id=222351
+
+        Reviewed by Keith Miller.
+
+        Extend wasm type with type index to represent
+        new reference types from typed function references
+        proposal: https://github.com/WebAssembly/function-references/blob/master/proposals/function-references/Overview.md.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::Wasm::BytecodeDumper::dumpConstants):
+        (JSC::Wasm::BytecodeDumper::formatConstant const):
+        * bytecode/BytecodeDumper.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::TypedTmp::TypedTmp):
+        (JSC::Wasm::TypedTmp::dump const):
+        (JSC::Wasm::AirIRGenerator::g32):
+        (JSC::Wasm::AirIRGenerator::g64):
+        (JSC::Wasm::AirIRGenerator::gExternref):
+        (JSC::Wasm::AirIRGenerator::gFuncref):
+        (JSC::Wasm::AirIRGenerator::f32):
+        (JSC::Wasm::AirIRGenerator::f64):
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        (JSC::Wasm::AirIRGenerator::moveOpForValueType):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addLocal):
+        (JSC::Wasm::AirIRGenerator::addConstant):
+        (JSC::Wasm::AirIRGenerator::addRefIsNull):
+        (JSC::Wasm::AirIRGenerator::addRefFunc):
+        (JSC::Wasm::AirIRGenerator::addTableGet):
+        (JSC::Wasm::AirIRGenerator::addTableSet):
+        (JSC::Wasm::AirIRGenerator::addTableInit):
+        (JSC::Wasm::AirIRGenerator::addElemDrop):
+        (JSC::Wasm::AirIRGenerator::addTableSize):
+        (JSC::Wasm::AirIRGenerator::addTableGrow):
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        (JSC::Wasm::AirIRGenerator::addTableCopy):
+        (JSC::Wasm::AirIRGenerator::addGrowMemory):
+        (JSC::Wasm::AirIRGenerator::addCurrentMemory):
+        (JSC::Wasm::AirIRGenerator::addMemoryFill):
+        (JSC::Wasm::AirIRGenerator::addMemoryCopy):
+        (JSC::Wasm::AirIRGenerator::addMemoryInit):
+        (JSC::Wasm::AirIRGenerator::addDataDrop):
+        (JSC::Wasm::AirIRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::AirIRGenerator::sanitizeAtomicResult):
+        (JSC::Wasm::AirIRGenerator::appendGeneralAtomic):
+        (JSC::Wasm::AirIRGenerator::appendStrongCAS):
+        (JSC::Wasm::AirIRGenerator::emitAtomicLoadOp):
+        (JSC::Wasm::AirIRGenerator::atomicLoad):
+        (JSC::Wasm::AirIRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::AirIRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::AirIRGenerator::atomicBinaryRMW):
+        (JSC::Wasm::AirIRGenerator::emitAtomicCompareExchange):
+        (JSC::Wasm::AirIRGenerator::atomicCompareExchange):
+        (JSC::Wasm::AirIRGenerator::atomicWait):
+        (JSC::Wasm::AirIRGenerator::atomicNotify):
+        (JSC::Wasm::AirIRGenerator::truncSaturated):
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        (JSC::Wasm::AirIRGenerator::addSwitch):
+        (JSC::Wasm::AirIRGenerator::emitModOrDiv):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncUF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncSF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncSF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF32>):
+        (JSC::Wasm::AirIRGenerator::addShift):
+        (JSC::Wasm::AirIRGenerator::addFloatingPointBinOp):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Min>):
+        (JSC::Wasm::AirIRGenerator::addFloatingPointMinOrMax):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Max>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Mul>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Div>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Div>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Neg>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Rotr>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Rotl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32ShrU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32ShrS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Shl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Min>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Sub>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ShrS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ShrU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Shl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Rotl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Rotr>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Neg>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Max>):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addRefFunc):
+        (JSC::Wasm::B3IRGenerator::addTableInit):
+        (JSC::Wasm::B3IRGenerator::addTableSize):
+        (JSC::Wasm::B3IRGenerator::addTableGrow):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::addTableCopy):
+        (JSC::Wasm::B3IRGenerator::addMemoryFill):
+        (JSC::Wasm::B3IRGenerator::addMemoryInit):
+        (JSC::Wasm::B3IRGenerator::addMemoryCopy):
+        (JSC::Wasm::B3IRGenerator::sanitizeAtomicResult):
+        (JSC::Wasm::B3IRGenerator::atomicLoad):
+        (JSC::Wasm::B3IRGenerator::emitAtomicStoreOp):
+        (JSC::Wasm::B3IRGenerator::emitAtomicBinaryRMWOp):
+        (JSC::Wasm::B3IRGenerator::atomicBinaryRMW):
+        (JSC::Wasm::B3IRGenerator::emitAtomicCompareExchange):
+        (JSC::Wasm::B3IRGenerator::atomicCompareExchange):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::WasmCallingConvention::marshallLocation const):
+        (JSC::Wasm::WasmCallingConvention::callInformationFor const):
+        (JSC::Wasm::JSCallingConvention::marshallLocation const):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        (JSC::Wasm::isRefType):
+        (JSC::Wasm::TableInformation::wasmType const):
+        * wasm/WasmFunctionCodeBlock.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser::TypedExpression::TypedExpression):
+        (JSC::Wasm::FunctionParser<Context>::load):
+        (JSC::Wasm::FunctionParser<Context>::store):
+        (JSC::Wasm::FunctionParser<Context>::atomicLoad):
+        (JSC::Wasm::FunctionParser<Context>::atomicStore):
+        (JSC::Wasm::FunctionParser<Context>::atomicBinaryRMW):
+        (JSC::Wasm::FunctionParser<Context>::atomicCompareExchange):
+        (JSC::Wasm::FunctionParser<Context>::atomicWait):
+        (JSC::Wasm::FunctionParser<Context>::atomicNotify):
+        (JSC::Wasm::FunctionParser<Context>::checkBranchTarget):
+        (JSC::Wasm::FunctionParser<Context>::unify):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::get const):
+        (JSC::Wasm::Global::set):
+        (JSC::Wasm::Global::visitAggregateImpl):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::jsNullConstant):
+        (JSC::Wasm::LLIntGenerator::zeroConstant):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        (JSC::Wasm::LLIntGenerator::addLocal):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseBlockSignature):
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseType):
+        (JSC::Wasm::SectionParser::parseTableHelper):
+        (JSC::Wasm::SectionParser::parseGlobal):
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        (JSC::Wasm::SectionParser::parseI32InitExpr):
+        (JSC::Wasm::SectionParser::parseElementSegmentVectorOfExpressions):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::Signature::dump const):
+        (JSC::Wasm::computeHash):
+        (JSC::Wasm::SignatureInformation::SignatureInformation):
+        * wasm/WasmSignature.h:
+        (JSC::Wasm::SignatureInformation::thunkFor const):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::wasmType const):
+        * wasm/generateWasmOpsHeader.py:
+        (TypeKind):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::marshallJSResult):
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::defaultValueForReferenceType):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::linkImpl):
+
+2021-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Flaky JSC test: stress/shared-array-buffer-sort-while-different-thread-is-modifying.js.default
+        https://bugs.webkit.org/show_bug.cgi?id=221129
+
+        Reviewed by Saam Barati.
+
+        Speculative fix for JSC shell's termination handling change.
+
+        * jsc.cpp:
+        (CommandLine::CommandLine):
+        (jscmain):
+
+2021-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove ImpureProxyType
+        https://bugs.webkit.org/show_bug.cgi?id=222626
+
+        Reviewed by Alexey Shvayka.
+
+        ImpureProxyType is no longer used. This patch just removes it.
+
+        * API/tests/JSObjectGetProxyTargetTest.cpp:
+        (testJSObjectGetProxyTarget):
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::tryAdd):
+        * runtime/JSCast.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isProxy const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::resetPrototype):
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::createStructure):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/Structure.h:
+        (JSC::Structure::isProxy const):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-03-02  Saam Barati  <sbarati@apple.com>
+
+        Improve logging of OSR availability analysis validation failures
+        https://bugs.webkit.org/show_bug.cgi?id=222612
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+
+2021-03-02  Devin Rousso  <drousso@apple.com>
+
+        Allow IDL `Date` to be parsed from a string in addition to a number and actual JS `Date`
+        https://bugs.webkit.org/show_bug.cgi?id=222605
+        <rdar://problem/74502335>
+
+        Reviewed by Yusuke Suzuki.
+
+        JS `Date` can be stringified into JSON, but cannot be parsed back into a JS `Date` without
+        additional logic since the stringified value is indistinguishable from a regular string.
+
+        * runtime/JSDateMath.h:
+        Export `DateCache::parseDate` so it can be used in WebCore bindings code.
+
+2021-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize getEnumerableLength
+        https://bugs.webkit.org/show_bug.cgi?id=222539
+
+        Reviewed by Alexey Shvayka.
+
+        Now getEnumerableLength is only overridden by JSProxy. And this is called in the critical path of propertyNameEnumerator.
+        We should not use indirect call for getEnumerableLength. We remove indirect functions for getEnumerableLength. For JSProxy,
+        any results is OK since anyway JSProxy does not utilize the result of this function since it cannot use fast index enumerator.
+
+        We also avoid calling holesMustForwardToPrototype in getEnumerableLength when it is meaningless. For example,
+        if the object is ALL_BLANK_INDEXING_TYPES, then regardless of the condition of holesMustForwardToPrototype, the result of
+        getEnumerableLength is zero.
+
+        * runtime/ClassInfo.h:
+        * runtime/JSCast.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getEnumerableLength): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getEnumerableLength):
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::getEnumerableLength): Deleted.
+        * runtime/JSProxy.h:
+
+2021-03-02  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] REGRESSION(r272752): fix some internal builds that use WTFString::WTFString(NSString *)
+        https://bugs.webkit.org/show_bug.cgi?id=222610
+        <rdar://74938249>
+
+        Unreviewed build fix.
+
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_method_implementation):
+        Some builders seem to find the new version of the header (without the exported NSString constructor)
+        whereas others don't find the new version (expecting the symbol to be exported), causing a linker error later on.
+
+        As a workaround, force usage of the CFStringRef constructor, which is always exported.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        Rebaseline generator test results.
+
+2021-03-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        TypedArray's [[DefineOwnProperty]] should throw in case of failure
+        https://bugs.webkit.org/show_bug.cgi?id=220492
+
+        Reviewed by Darin Adler.
+
+        While web reality [1] requires failures of the most TypeArray internal methods to be
+        silent, [[DefineOwnProperty]] can fail loudly if called via Object.defineProperty.
+
+        With this patch, TypeError is thrown for detached buffer, out-of-bounds index, and
+        non-index canonical numeric string key. Aligns JSC with the spec [2], V8, and SM.
+
+        [1]: https://github.com/tc39/ecma262/pull/2164
+        [2]: https://tc39.es/ecma262/#sec-integer-indexed-exotic-objects-defineownproperty-p-desc (step 3.b)
+
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+
+2021-03-01  Keith Miller  <keith_miller@apple.com>
+
+        Reduce promise reaction memory usage when there are multiple reactions
+        https://bugs.webkit.org/show_bug.cgi?id=222533
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, we would store each reaction in a linked list. This
+        meant each reaction required 8 bytes to point to the next
+        reaction.  Instead, this patch makes it so the first reaction is
+        store inline an object and any additional reactions are store into
+        index storage for that object. This doesn't save memory for the
+        first reaction since we now need to have a count of all the out of
+        line reactions but extra reactions use 8 bytes less each.
+
+        * builtins/BuiltinNames.h:
+        * builtins/PromiseOperations.js:
+        (globalPrivate.pushNewPromiseReaction):
+        (globalPrivate.triggerPromiseReactions):
+        (globalPrivate.newPromiseReaction): Deleted.
+        (globalPrivate.resolvePromise): Deleted.
+        (globalPrivate.rejectPromise): Deleted.
+        (globalPrivate.fulfillPromise): Deleted.
+        (globalPrivate.resolvePromiseWithFirstResolvingFunctionCallCheck): Deleted.
+        (globalPrivate.fulfillPromiseWithFirstResolvingFunctionCallCheck): Deleted.
+        (globalPrivate.rejectPromiseWithFirstResolvingFunctionCallCheck): Deleted.
+        (globalPrivate.createResolvingFunctions): Deleted.
+        (globalPrivate.promiseReactionJobWithoutPromise): Deleted.
+        (globalPrivate.resolveWithoutPromise): Deleted.
+        (globalPrivate.rejectWithoutPromise): Deleted.
+        (globalPrivate.fulfillWithoutPromise): Deleted.
+        (globalPrivate.createResolvingFunctionsWithoutPromise): Deleted.
+        (globalPrivate.promiseReactionJob): Deleted.
+        (globalPrivate.promiseResolveThenableJobFast): Deleted.
+        (globalPrivate.promiseResolveThenableJobWithoutPromiseFast): Deleted.
+        (globalPrivate.promiseResolveThenableJob): Deleted.
+        (globalPrivate.promiseResolveThenableJobWithDerivedPromise): Deleted.
+        (onFulfilled): Deleted.
+        (onRejected): Deleted.
+        (globalPrivate.performPromiseThen): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSMicrotask.cpp:
+        (JSC::createJSMicrotask):
+        * runtime/JSMicrotask.h:
+
+2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION: Object.defineProperties triggering a setter
+        https://bugs.webkit.org/show_bug.cgi?id=222538
+
+        Reviewed by Keith Miller.
+
+        DFG's compilePutByValForCellWithString and compilePutByValForCellWithSymbol do not care about "Direct" flag.
+        This patch fixes that to call appropriate function if node is PutByValDirect.
+        FTL does not have this issue.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithString):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithSymbol):
+
+2021-03-01  Xan Lopez  <xan@igalia.com>
+
+        [JSC] WebAssembly: make Wasm::Signature 32bit friendly
+        https://bugs.webkit.org/show_bug.cgi?id=222543
+
+        Reviewed by Yusuke Suzuki.
+
+        The Wasm code uses the address of a Signature object as its
+        index. To make this work in 32bit just change Wasm::SignatureIndex
+        to be a uintptr_t instead of uint64_t. Also, remove some
+        unnecessary includes while we are at it.
+
+        * wasm/WasmModule.h:
+        * wasm/WasmSignature.h:
+        * wasm/js/JSWebAssemblyModule.h:
+
+2021-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Throw TypeError when getFunctionRealm hits revoked Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=222523
+
+        Reviewed by Alexey Shvayka.
+
+        This patch throws TypeError when getFunctionRealm encounters revoked Proxy. However,
+        this makes derived structure creation code difficult to be written inlinely.
+        The fast path of derived structure creation must be inlined since this is critical
+        path of every builtin constructors.
+
+        So, this patch introduces JSC_GET_DERIVED_STRUCTURE macro which streamlines the derived
+        structure creation code while keeping the fast path inlined. And it inserts appropriate
+        error checks after this new getFunctionRealm call.
+
+        Then, we appropriately use getFunctionRealm in op_create_this implementation.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/FinalizationRegistryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/InternalFunction.cpp:
+        (JSC::getFunctionRealm):
+        * runtime/InternalFunction.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlListFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlLocaleConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlSegmenterConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::constructImpl):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructCustomArrayBufferIfNeeded):
+        (JSC::constructGenericTypedArrayViewImpl):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::errorStructureWithErrorType const):
+        (JSC::JSGlobalObject::arrayBufferStructureWithSharingMode const):
+        (JSC::JSGlobalObject::typedArrayStructureWithTypedArrayType const):
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::arrayStructureForIndexingTypeDuringAllocation const):
+        * runtime/MapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructImpl):
+        * runtime/NumberConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObjectWithNewTarget):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::create):
+        (JSC::ProxyConstructor::finishCreation):
+        * runtime/ProxyConstructor.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::getRegExpStructure):
+        * runtime/SetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/StringConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakObjectRefConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-03-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        BytecodeGenerator::fuseCompareAndJump() fails for some language constructs
+        https://bugs.webkit.org/show_bug.cgi?id=221927
+
+        Reviewed by Yusuke Suzuki.
+
+        For BytecodeGenerator::fuseCompareAndJump() to merge two ops into one, condition's `dst`
+        register should not be referenced from elsewhere. This change tracks down and eliminates
+        all such cases, which reduces bytecode size for a few language constructs:
+          -1 per every `case` of a `switch`;
+          -2 per generator function, -2 per every `yield` / `yield*`;
+          -2 per `class extends`;
+          -2 per `finally`, -1 per every `break` / `continue` / `return` inside;
+          -3 per Function.prototype.apply() with `...spread` as a single argument.
+
+        Instead of mixing RefPtr with raw C++ pointers, single-line branches were preferred.
+        To keep them cleaner, this patch introduces emitLoad() override for JSGenerator::ResumeMode
+        enum, and tweaks existing override for CompletionType.
+
+        A few drive-by improvements:
+          * to enable future optimizations, replaces emitBinaryOp() with emitEqualityOp()
+            for OpEq / OpStricteq (adds an assert), and vice-versa for other comparison ops;
+          * removes OperandTypes for comparison ops as it was ignored
+            (let's re-introduce them consistently once supported);
+          * inlines too specific BytecodeGenerator::emitJumpIf();
+          * replaces `eq` with `stricteq` in ApplyFunctionCallDotNode.
+
+        No behavior change, no callee registers count grow.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitFinallyCompletion):
+        (JSC::BytecodeGenerator::emitJumpIf): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        (JSC::BytecodeGenerator::emitLoad):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::CaseBlockNode::emitBytecodeForBlock):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+
+2021-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add gc and clearKeptObjects to $262
+        https://bugs.webkit.org/show_bug.cgi?id=222527
+
+        Reviewed by Ross Kirsling.
+
+        Add $262.gc and $262.clearKeptObjects functions. They are required for test262 host-gc-required.
+        Since all the tests using "host-gc-required" are currently also marked with cleanupSome, we are currently not running them.
+        But if some more tests are landed in test262 with "host-gc-required", we will run them with these functions.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+
+2021-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262 host environments
+        https://bugs.webkit.org/show_bug.cgi?id=222525
+
+        Reviewed by Ross Kirsling.
+
+        1. $262.global should be `globalThis` of the realm according to test/built-ins/Function/call-bind-this-realm-undef.js
+        2. $262.evalScript should uwrap JSProxy to get GlobalObject.
+
+        This fixes test262 test/built-ins/Function/call-bind-this-realm-undef.js, it was wrongly tested and failing.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+
+2021-02-27  Rob Buis  <rbuis@igalia.com>
+
+        Null check ArrayBufferView RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=221569
+
+        Reviewed by Ryosuke Niwa.
+
+        Null check ArrayBufferView RefPtr before using it.
+
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::unsharedImpl):
+
+2021-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Avoid creating functions unnecessarily in builtins
+        https://bugs.webkit.org/show_bug.cgi?id=222509
+
+        Reviewed by Ross Kirsling.
+
+        Avoid unnecessary function creation and make them @globalPrivate.
+
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.maxWithPositives):
+        (globalPrivate.minWithMaybeNegativeZeroAndPositive):
+        (copyWithin):
+        (maxWithPositives): Deleted.
+        (minWithMaybeNegativeZeroAndPositive): Deleted.
+        * builtins/DatePrototype.js:
+        (globalPrivate.toDateTimeOptionsAnyAll):
+        (toLocaleString):
+        (globalPrivate.toDateTimeOptionsDateDate):
+        (toLocaleDateString):
+        (globalPrivate.toDateTimeOptionsTimeTime):
+        (toLocaleTimeString):
+        (toLocaleString.toDateTimeOptionsAnyAll): Deleted.
+        (toLocaleDateString.toDateTimeOptionsDateDate): Deleted.
+        (toLocaleTimeString.toDateTimeOptionsTimeTime): Deleted.
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.getSubstitution):
+        (overriddenName.string_appeared_here.replace):
+        (getSubstitution): Deleted.
+
+2021-02-26  Saam Barati  <sbarati@apple.com>
+
+        Remove bad assertion of AI ArrayMode state in various "by val" opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=222494
+        <rdar://73613460>
+
+        Reviewed by Filip Pizlo.
+
+        It's invalid to ever assert that AI must have proved something. We've been
+        slowly removing these faulty asserts from the compiler, and this patch
+        removes some more of them. AI is conservative, and it's not guaranteed
+        that it will prove X, even if X must be true.
+        
+        In this particular test case, we are looking at a race between the concurrent
+        compiler thread and the main thread, and the compilation will be thrown away
+        because of a Structure transition.
+        
+        What happened in this particular program is we had a CheckStructure that was
+        proved to exit in an early run of AI, that is not shown to exit during a later
+        run of AI. Because of that, in the earlier AI run, we have some narrower type
+        info (because fewer predecessory type info). This narrower type info allowed
+        us to elide a CheckArray. The later runs don't have this narrower type info,
+        because the CheckStructure doesn't exit. The safety of all of this is
+        guaranteed by the compilation being thrown away because we fired the transition
+        watchpoint from the earlier Structure seen by AI.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+
+2021-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC retain] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222439
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC retain] in WebKit by using RetainPtr<>.
+
+        * API/JSContext.mm:
+        (+[JSContext currentArguments]):
+        (-[JSContext beginCallbackWithData:calleeValue:thisValue:argumentCount:arguments:]):
+        (-[JSContext endCallbackWithData:]):
+        * API/JSContextInternal.h:
+        * API/tests/testapi.mm:
+        (-[TinyDOMNode initWithVirtualMachine:]):
+
+2021-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Avoid function allocations for non-user-provided Promise then callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=222490
+
+        Reviewed by Keith Miller.
+
+        At @performPromiseThen point, callback function objects themselves are not accessible from users
+        if they are not passed from users. So, we can reuse functions if users do not pass functions.
+
+        * builtins/PromiseOperations.js:
+        (globalPrivate.promiseEmptyOnFulfilled):
+        (globalPrivate.promiseEmptyOnRejected):
+        (globalPrivate.performPromiseThen):
+        (onFulfilled): Deleted.
+        (onRejected): Deleted.
+
+2021-02-26  Michael Saboff  <msaboff@apple.com>
+
+        unexpected minimumInputSize in setupDisjunctionOffsets for regexp engine(yarr)
+        https://bugs.webkit.org/show_bug.cgi?id=220357
+
+        Reviewed by Saam Barati.
+
+        Removed an unnecessary ASSERT.
+        This assert checked that the minimum size wasn't UINT_MAX which I believe was
+        intended to make sure the minimum size was changed while computing the  
+        disjunction's size and offsets.  Those calculations involve checked arithmetic,
+        which would catch any overflow.
+
+        The other part of this patch adds a test that checks this condition as well
+        as the case where the pattern is one character longer, 2^32, which triggers
+        the arithmetic overflow.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::setupDisjunctionOffsets):
+
+2021-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Flaky JSC test: stress/atomic-increment-bigint64.js
+        https://bugs.webkit.org/show_bug.cgi?id=221904
+
+        Reviewed by Keith Miller.
+
+        bytecode-cache test assumes that code can be cached once it is executed. But this
+        is not correct for threading tests using JSC shell's agent feature: code is running
+        different VM in the different thread. And we have no guarantee that this thread destroys
+        VM when the main thread is finished. So this is possible that bytecode used in that thread
+        is not committed.
+
+        We use Options::forceDiskCache's RELEASE_ASSERT only if it is in main thread.
+
+        * runtime/CodeCache.h:
+
+2021-02-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix typo in wasm error message
+        https://bugs.webkit.org/show_bug.cgi?id=222444
+
+        Reviewed by Saam Barati.
+
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::parseModuleHeader):
+
+2021-02-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add stubs to enable SafariForWebKitDevelopment to launch
+        https://bugs.webkit.org/show_bug.cgi?id=222388
+
+        Reviewed by Myles Maxfield.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/SymbolStubsForSafariCompatibility.mm: Added.
+        (WTF::String::String):
+        (WTF::JSONImpl::ObjectBase::getArray const):
+        (WTF::JSONImpl::ObjectBase::getValue const):
+        (WTF::JSONImpl::ObjectBase::getObject const):
+        (Inspector::BackendDispatcher::sendResponse):
+
+2021-02-25  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: List of grid nodes is incomplete in Layout sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=222364
+        <rdar://problem/74700960>
+
+        Reviewed by Devin Rousso.
+
+        Update inspector protocol description for CSS domain to mention default value for
+        `layoutContextTypeChangedMode` ("observed") and clarify behavior of "all" value.
+
+        * inspector/protocol/CSS.json:
+
+2021-02-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r273469.
+        https://bugs.webkit.org/show_bug.cgi?id=222417
+
+        Broke 30+ debug layout tests
+
+        Reverted changeset:
+
+        "Add stubs to enable SafariForWebKitDevelopment to launch"
+        https://bugs.webkit.org/show_bug.cgi?id=222388
+        https://trac.webkit.org/changeset/273469
+
+2021-02-25  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        Fix signed vs unsigned comparision warning in JSBigInt
+        https://bugs.webkit.org/show_bug.cgi?id=222400
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix the warning about comparing uint64_t with int64_t in JSBigInt.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::parseInt):
+
+2021-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        Add stubs to enable SafariForWebKitDevelopment to launch
+        https://bugs.webkit.org/show_bug.cgi?id=222388
+
+        Reviewed by Myles Maxfield.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/SymbolStubsForSafariCompatibility.mm: Added.
+        (WTF::String::String):
+        (WTF::JSONImpl::ObjectBase::getArray const):
+        (WTF::JSONImpl::ObjectBase::getValue const):
+        (WTF::JSONImpl::ObjectBase::getObject const):
+        (Inspector::BackendDispatcher::sendResponse):
+
+2021-02-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r273373.
+
+        The test added with this change is frequently failing
+
+        Reverted changeset:
+
+        "Null check ArrayBufferView RefPtr"
+        https://bugs.webkit.org/show_bug.cgi?id=221569
+        https://commits.webkit.org/r273373
+
+2021-02-24  Rob Buis  <rbuis@igalia.com>
+
+        Null check ArrayBufferView RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=221569
+
+        Reviewed by Yusuke Suzuki.
+
+        Null check ArrayBufferView RefPtr before using it.
+
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::unsharedImpl):
+
+2021-02-23  Michael Saboff  <msaboff@apple.com>
+
+        [YARR JIT] Crash on overflow when compiling /(a{1000000000}b{1000000000}|c{1000000000}|)d{1000000000}e{1000000000}/.test();
+        https://bugs.webkit.org/show_bug.cgi?id=220130
+
+        Reviewed by Yusuke Suzuki.
+
+        Changed code to subtract out the offset of a current op before adding the offset
+        of the prior op when backtracking to avoid overflowing checked arithmetic.
+        It looks like the code had this wrong for some time.
+
+        * yarr/YarrJIT.cpp:
+
 2021-02-22  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes late February 2021 edition

@@ -35,6 +35,7 @@ struct RtpTransceiverInit;
 
 class RTCError;
 
+enum class Priority;
 enum class RTCErrorType;
 enum class RtpTransceiverDirection;
 }
@@ -47,6 +48,7 @@ struct RTCRtpParameters;
 struct RTCRtpSendParameters;
 struct RTCRtpTransceiverInit;
 
+enum class RTCPriorityType;
 enum class RTCRtpTransceiverDirection;
 
 RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters&);
@@ -60,6 +62,10 @@ webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit&);
 
 ExceptionCode toExceptionCode(webrtc::RTCErrorType);
 Exception toException(const webrtc::RTCError&);
+
+RTCPriorityType toRTCPriorityType(webrtc::Priority);
+webrtc::Priority fromRTCPriorityType(RTCPriorityType);
+
 
 inline String fromStdString(const std::string& value)
 {

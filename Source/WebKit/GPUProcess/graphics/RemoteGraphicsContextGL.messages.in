@@ -39,8 +39,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
     void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
     void CopyTextureFromMedia(WebCore::MediaPlayerIdentifier identifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous
+    void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
 
-    void SetFailNextGPUStatusCheck()
     void MoveErrorsToSyntheticErrorList() -> (bool returnValue) Synchronous
     void ActiveTexture(uint32_t texture)
     void AttachShader(uint32_t program, uint32_t shader)

@@ -80,12 +80,17 @@ private:
     void eventListenersDidChange() final;
     void fireProcessEvent(unsigned doubleBufferIndex);
 
+    RefPtr<AudioBuffer> createInputBufferForJS(AudioBuffer*) const;
+    RefPtr<AudioBuffer> createOutputBufferForJS(AudioBuffer&) const;
+
     // Double buffering
     unsigned doubleBufferIndex() const { return m_doubleBufferIndex; }
     void swapBuffers() { m_doubleBufferIndex = 1 - m_doubleBufferIndex; }
     unsigned m_doubleBufferIndex { 0 };
     Vector<RefPtr<AudioBuffer>> m_inputBuffers;
     Vector<RefPtr<AudioBuffer>> m_outputBuffers;
+    mutable RefPtr<AudioBuffer> m_cachedInputBufferForJS;
+    mutable RefPtr<AudioBuffer> m_cachedOutputBufferForJS;
 
     size_t m_bufferSize;
     unsigned m_bufferReadWriteIndex { 0 };

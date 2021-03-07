@@ -972,7 +972,7 @@ accessibility/aria-current-state-changed-notification.html [ Skip ]
 accessibility/aria-current.html [ Skip ]
 accessibility/aria-sort-changed-notification.html [ Skip ]
 accessibility/aria-sort.html [ Skip ]
-accessibility/aria-errormessage.html [ Skip ]
+accessibility/mac/aria-errormessage.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
@@ -1203,7 +1203,7 @@ webkit.org/b/216292 imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-
 
 webkit.org/b/217478 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/215325 [ Mojave ] media/remote-control-command-seek.html [ Pass Timeout ]
+webkit.org/b/215325 [ Catalina ] media/remote-control-command-seek.html [ Pass Timeout ]
 
 webkit.org/b/217934 inspector/debugger/breakpoint-resolve-when-script-added.html [ Skip ]
 
@@ -1247,3 +1247,15 @@ webkit.org/b/220552 [ BigSur+ ] media/media-source/media-source-webm-init-inside
 webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Pass Failure ]
 
 webkit.org/b/221368 [ BigSur ] media/video-multiple-concurrent-playback.html [ Pass Failure ]
+
+webkit.org/b/221717 [ BigSur ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
+
+webkit.org/b/221506 [ BigSur ] svg/clip-path/resource-clipper-multiple-repaints.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/221559 [ BigSur ] svg/canvas/canvas-global-alpha-svg.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/222493 [ BigSur ] platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
+
+webkit.org/b/221819 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Pass Failure ]
+
+webkit.org/b/222693 [ BigSur Release ] media/video-aspect-ratio.html [ Failure Timeout ]

@@ -695,7 +695,8 @@ public:
     void schedulePlaybackControlsManagerUpdate();
     void playbackControlsMediaEngineChanged();
     WEBCORE_EXPORT void setMuted(MediaProducer::MutedStateFlags);
-    WEBCORE_EXPORT void stopMediaCapture();
+
+    WEBCORE_EXPORT void stopMediaCapture(MediaProducer::MediaCaptureKind);
 
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const;
     WEBCORE_EXPORT bool mediaPlaybackExists();

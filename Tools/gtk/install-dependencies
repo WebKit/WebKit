@@ -147,6 +147,7 @@ function installDependenciesWithApt {
         libxtst-dev \
         libxslt1-dev \
         libwayland-dev \
+        nasm \
         ninja-build \
         patch \
         ruby \
@@ -513,6 +514,7 @@ function installDependenciesWithDnf {
         libwayland-client-devel \
         libwayland-server-devel \
         mesa-libGL-devel \
+        nasm \
         ninja-build \
         openjpeg2-devel \
         openssl-devel \

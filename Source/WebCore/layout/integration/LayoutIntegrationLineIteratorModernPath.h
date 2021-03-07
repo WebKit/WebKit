@@ -59,7 +59,7 @@ public:
     LayoutUnit selectionTopForHitTesting() const { return top(); }
     LayoutUnit selectionBottom() const { return bottom(); }
 
-    float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLeftOffset(); }
+    float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLeft(); }
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentWidth(); }
     float y() const { return lineBoxTop(); }
     float logicalHeight() const { return lineBoxBottom() - lineBoxTop(); }

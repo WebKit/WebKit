@@ -319,12 +319,14 @@ public:
     bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
     bool focused() const { return isUserActionElement() && isUserActionElementFocused(); }
     bool isBeingDragged() const { return isUserActionElement() && isUserActionElementDragged(); }
+    bool hasFocusVisible() const { return hasNodeFlag(NodeFlag::HasFocusVisible); };
     bool hasFocusWithin() const { return hasNodeFlag(NodeFlag::HasFocusWithin); };
 
     virtual void setActive(bool = true, bool pause = false, Style::InvalidationScope = Style::InvalidationScope::All);
     virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All);
     virtual void setFocus(bool);
     void setBeingDragged(bool);
+    void setHasFocusVisible(bool);
     void setHasFocusWithin(bool);
 
     Optional<int> tabIndexSetExplicitly() const;

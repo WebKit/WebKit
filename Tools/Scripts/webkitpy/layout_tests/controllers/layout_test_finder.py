@@ -33,6 +33,7 @@ import re
 
 from webkitpy.common import find_files
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models.test import Test
 from webkitpy.port.base import Port
 
 
@@ -84,13 +85,13 @@ class LayoutTestFinder(object):
         paths = self._strip_test_dir_prefixes(args)
         if options and options.test_list:
             paths += self._strip_test_dir_prefixes(self._read_test_names_from_file(options.test_list, self._port.TEST_PATH_SEPARATOR))
-        test_files = self.find_tests_by_path(paths, device_type=device_type)
-        return (paths, test_files)
+        tests = self.find_tests_by_path(paths, device_type=device_type)
+        return (paths, tests)
 
     def find_tests_by_path(self, paths, device_type=None):
         """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
         expanded_paths = self._expanded_paths(paths, device_type=device_type)
-        return self._real_tests(expanded_paths)
+        return [Test(test_file) for test_file in self._real_tests(expanded_paths)]
 
     def _expanded_paths(self, paths, device_type=None):
         expanded_paths = []
@@ -146,31 +147,6 @@ class LayoutTestFinder(object):
                 return True
         return False
 
-    def find_touched_tests(self, new_or_modified_paths, apply_skip_expectations=True):
-        potential_test_paths = []
-        for test_file in new_or_modified_paths:
-            if not test_file.startswith(self.LAYOUT_TESTS_DIRECTORY):
-                continue
-
-            test_file = self._strip_test_dir_prefix(test_file)
-            test_paths = self._port.potential_test_names_from_expected_file(test_file)
-            if test_paths:
-                potential_test_paths.extend(test_paths)
-            else:
-                potential_test_paths.append(test_file)
-
-        if not potential_test_paths:
-            return None
-
-        tests = self.find_tests_by_path(list(set(potential_test_paths)))
-        if not apply_skip_expectations:
-            return tests
-
-        expectations = test_expectations.TestExpectations(self._port, tests, force_expectations_pass=False)
-        expectations.parse_all_expectations()
-        tests_to_skip = self.skip_tests(potential_test_paths, tests, expectations, None)
-        return [test for test in tests if test not in tests_to_skip]
-
     def _strip_test_dir_prefixes(self, paths):
         return [self._strip_test_dir_prefix(path) for path in paths if path]
 
@@ -213,25 +189,6 @@ class LayoutTestFinder(object):
             return None
         else:
             return line
-
-    def skip_tests(self, paths, all_tests_list, expectations, http_tests):
-        all_tests = set(all_tests_list)
-
-        tests_to_skip = expectations.model().get_tests_with_result_type(test_expectations.SKIP)
-        if self._options.skip_failing_tests:
-            tests_to_skip.update(expectations.model().get_tests_with_result_type(test_expectations.FAIL))
-            tests_to_skip.update(expectations.model().get_tests_with_result_type(test_expectations.FLAKY))
-
-        if self._options.skipped == 'only':
-            tests_to_skip = all_tests - tests_to_skip
-        elif self._options.skipped == 'ignore':
-            tests_to_skip = set()
-
-        # unless of course we don't want to run the HTTP tests :)
-        if not self._options.http:
-            tests_to_skip.update(set(http_tests))
-
-        return tests_to_skip
 
     def split_into_chunks(self, test_names):
         """split into a list to run and a set to skip, based on --run-chunk and --run-part."""

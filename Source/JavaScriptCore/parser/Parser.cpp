@@ -3015,7 +3015,7 @@ parseMethod:
             next();
             if (Options::usePrivateMethods() && match(OPENPAREN)) {
                 semanticFailIfTrue(classScope->declarePrivateMethod(*ident, tag) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private method twice");
-                semanticFailIfTrue(tag == ClassElementTag::Static && *ident == propertyNames.constructorPrivateField, "Cannot declare a static private method named 'constructor'");
+                semanticFailIfTrue(*ident == propertyNames.constructorPrivateField, "Cannot declare a private method named '#constructor'");
 
                 if (tag == ClassElementTag::Static)
                     declaresStaticPrivateAccessor = true;
@@ -4482,6 +4482,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
             "Cannot declare a static method named 'prototype'");
         semanticFailIfTrue(tag == ClassElementTag::Instance && *stringPropertyName == m_vm.propertyNames->constructor,
             "Cannot declare a getter or setter named 'constructor'");
+        semanticFailIfTrue(*stringPropertyName == m_vm.propertyNames->constructorPrivateField, "Cannot declare a private accessor named '#constructor'");
 
         if (match(PRIVATENAME))
             semanticFailIfTrue(tag == ClassElementTag::No, "Cannot declare a private setter or getter outside a class");

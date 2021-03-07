@@ -1,3 +1,108 @@
+2021-03-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Bump cmake_minimum_required version to 3.12 or later
+        https://bugs.webkit.org/show_bug.cgi?id=221727
+        <rdar://problem/74454980>
+
+        Reviewed by Konstantin Tokarev.
+
+        Updates the minimum version to 3.12. In CMake 3.12 OBJECT library functionality was
+        expanded to the point where they can successfully be used as a replacement for
+        --whole-archive within WebKit. The check in JSCOnly for the minimum version before
+        using hidden visibility was removed accordingly.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsJSCOnly.cmake:
+
+2021-03-05  ChangSeok Oh  <changseok@webkit.org>
+
+        AVIF decoding support
+        https://bugs.webkit.org/show_bug.cgi?id=207750
+
+        Reviewed by Philippe Normand.
+
+        This patch brings an initial support of AVIF image format to the gtk port.
+        AVIF is a new royalty-free image format derived from the keyframes of AV1 video.
+        FireFox and Chromium-variant browsers already support it. Its specification can be found
+        at https://rawcdn.githack.com/AOMediaCodec/av1-avif/67a92add6cd642a8863e386fa4db87954a6735d1/index.html
+        This patch aims to land a build option for AVIF and a basic decoding ability
+        for still images by using libavif. Animated AVIF images will be covered later.
+
+        * Source/cmake/FindAVIF.cmake: Added to find libavif.
+        * Source/cmake/OptionsGTK.cmake: A build option, USE_AVIF is added.
+
+2021-03-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r273814.
+        https://bugs.webkit.org/show_bug.cgi?id=222676
+
+        Unresolved types in JavaScriptCore-4.0.gir
+
+        Reverted changeset:
+
+        "[CMake] JavaScriptCore GLib headers should be copies"
+        https://bugs.webkit.org/show_bug.cgi?id=222625
+        https://trac.webkit.org/changeset/273814
+
+2021-03-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] JavaScriptCore GLib headers should be copies
+        https://bugs.webkit.org/show_bug.cgi?id=222625
+
+        Reviewed by Michael Catanzaro.
+
+        Specify the directories for JavaScriptCore GLib headers and derived sources.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-03-01  Per Arne  <pvollan@apple.com>
+
+        [Win] Fix build failure
+        https://bugs.webkit.org/show_bug.cgi?id=222576
+        <rdar://problem/74590803>
+        Reviewed by Brent Fulgham.
+
+        It appears a recent change has unintentionally enabled WebInspectorUI on Apple Win. Address this by explicitly disabling it.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+
+2021-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Bump version numbers
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-02-26  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement OpenXR port graphics binding
+        https://bugs.webkit.org/show_bug.cgi?id=222173
+
+        Reviewed by Sergio Villar Senin.
+
+        Enable OpenXR defines required for EGL graphics binding.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump libsoup3 version to 2.99.1
+        https://bugs.webkit.org/show_bug.cgi?id=222413
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-02-24  Cameron McCormack  <heycam@apple.com>
+
+        Fix typo in Introduction.md.
+        https://bugs.webkit.org/show_bug.cgi?id=222387
+
+        Reviewed by Ryosuke Niwa.
+
+        * Introduction.md:
+
 2021-02-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Fix JSCOnly build on Windows

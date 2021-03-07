@@ -177,6 +177,8 @@ private:
 
 public:
     void* data() const;
+    size_t bytesPerRow() const { return calculateBytesPerRow(m_size, m_configuration).unsafeGet(); }
+    
 private:
     size_t sizeInBytes() const { return numBytesForSize(m_size, m_configuration).unsafeGet(); }
 

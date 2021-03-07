@@ -1542,20 +1542,6 @@ void WebPageProxy::isUserFacingChanged(bool isUserFacing)
 }
 #endif
 
-#if PLATFORM(IOS)
-void WebPageProxy::grantAccessToAssetServices()
-{
-    SandboxExtension::Handle mobileAssetHandleV2;
-    SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, WTF::nullopt, mobileAssetHandleV2);
-    process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandleV2), 0);
-}
-
-void WebPageProxy::revokeAccessToAssetServices()
-{
-    process().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
-}
-#endif
-
 void WebPageProxy::willPerformPasteCommand()
 {
     grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);

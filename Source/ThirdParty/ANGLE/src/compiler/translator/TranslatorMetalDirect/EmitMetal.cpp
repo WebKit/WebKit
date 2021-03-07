@@ -1287,7 +1287,7 @@ void GenMetalTraverser::emitStructDeclaration(const TType &type)
         mOut << ";\n";
     }
 
-    if (!mPipelineStructs.matches(structure, true, true))
+    if (!mPipelineStructs.matches(&structure, true, true))
     {
         MetalLayoutOfConfig layoutConfig;
         layoutConfig.treatSamplersAsTextureEnv = true;
@@ -1778,12 +1778,11 @@ void GenMetalTraverser::emitFunctionReturn(const TFunction &func)
     if (isMain)
     {
         const TStructure *structure = returnType.getStruct();
-        ASSERT(structure != nullptr);
-        if (mPipelineStructs.fragmentOut.matches(*structure))
+        if (mPipelineStructs.fragmentOut.matches(structure))
         {
             mOut << "fragment ";
         }
-        else if (mPipelineStructs.vertexOut.matches(*structure))
+        else if (mPipelineStructs.vertexOut.matches(structure))
         {
             mOut << "vertex ";
         }
@@ -1816,16 +1815,16 @@ void GenMetalTraverser::emitFunctionParameter(const TFunction &func, const TVari
             ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
         if (structure)
         {
-            if (mPipelineStructs.fragmentIn.matches(*structure) ||
-                mPipelineStructs.vertexIn.matches(*structure))
+            if (mPipelineStructs.fragmentIn.matches(structure) ||
+                mPipelineStructs.vertexIn.matches(structure))
             {
                 mOut << " [[stage_in]]";
             }
-            else if (mPipelineStructs.angleUniforms.matches(*structure))
+            else if (mPipelineStructs.angleUniforms.matches(structure))
             {
                 mOut << " [[buffer(" << rx::mtl::kDriverUniformsBindingIndex << ")]]";
             }
-            else if (mPipelineStructs.userUniforms.matches(*structure))
+            else if (mPipelineStructs.userUniforms.matches(structure))
             {
                 mOut << " [[buffer(" << mMainUniformBufferIndex << ")]]";
                 reflection->addUniformBufferBinding(param.name().data(), mMainUniformBufferIndex);

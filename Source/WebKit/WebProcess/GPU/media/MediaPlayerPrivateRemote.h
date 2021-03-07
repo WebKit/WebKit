@@ -283,6 +283,8 @@ private:
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
 #if !USE(AVFOUNDATION)
     bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) final;
+#else
+    RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() final;
 #endif
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
 

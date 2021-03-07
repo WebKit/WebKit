@@ -723,7 +723,7 @@ namespace JSC {
             && BinaryOp::opcodeID != op_sub
             && BinaryOp::opcodeID != op_div,
             RegisterID*>
-        emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes)
+        emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes = OperandTypes())
         {
             BinaryOp::emit(this, dst, src1, src2);
             return dst;
@@ -747,6 +747,7 @@ namespace JSC {
         template<typename EqOp>
         RegisterID* emitEqualityOp(RegisterID* dst, RegisterID* src1, RegisterID* src2)
         {
+            static_assert(EqOp::opcodeID == op_eq || EqOp::opcodeID == op_stricteq);
             if (!emitEqualityOpImpl(dst, src1, src2))
                 EqOp::emit(this, dst, src1, src2);
             return dst;
@@ -1020,13 +1021,8 @@ namespace JSC {
         void emitDebugHook(ExpressionNode*);
         void emitWillLeaveCallFrameDebugHook();
 
-        void emitLoad(RegisterID* completionTypeRegister, CompletionType type)
-        {
-            emitLoad(completionTypeRegister, JSValue(static_cast<int>(type)));
-        }
-
-        template<typename CompareOp>
-        void emitJumpIf(RegisterID* completionTypeRegister, CompletionType, Label& jumpTarget);
+        RegisterID* emitLoad(RegisterID* dst, CompletionType type) { return emitLoad(dst, jsNumber(static_cast<int32_t>(type))); }
+        RegisterID* emitLoad(RegisterID* dst, JSGenerator::ResumeMode mode) { return emitLoad(dst, jsNumber(static_cast<int32_t>(mode))); }
 
         bool emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, Label& jumpTarget);
         bool emitReturnViaFinallyIfNeeded(RegisterID* returnRegister);

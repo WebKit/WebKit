@@ -193,6 +193,11 @@ public:
     bool isSVGElement() const { return hasNodeFlag(NodeFlag::IsSVGElement); }
     bool isMathMLElement() const { return hasNodeFlag(NodeFlag::IsMathMLElement); }
 
+    bool isUnknownElement() const { return hasNodeFlag(NodeFlag::IsUnknownElement); }
+    bool isHTMLUnknownElement() const { return isHTMLElement() && isUnknownElement(); }
+    bool isSVGUnknownElement() const { return isSVGElement() && isUnknownElement(); }
+    bool isMathMLUnknownElement() const { return isMathMLElement() && isUnknownElement(); }
+
     bool isPseudoElement() const { return pseudoId() != PseudoId::None; }
     bool isBeforePseudoElement() const { return pseudoId() == PseudoId::Before; }
     bool isAfterPseudoElement() const { return pseudoId() == PseudoId::After; }
@@ -452,8 +457,6 @@ public:
 
     void dispatchScopedEvent(Event&);
 
-    virtual void handleLocalEvents(Event&, EventInvokePhase);
-
     void dispatchSubtreeModifiedEvent();
     void dispatchDOMActivateEvent(Event& underlyingClickEvent);
 
@@ -510,6 +513,7 @@ public:
     static int32_t flagIsShadowRoot() { return static_cast<int32_t>(NodeFlag::IsShadowRoot); }
     static int32_t flagIsHTML() { return static_cast<int32_t>(NodeFlag::IsHTMLElement); }
     static int32_t flagIsLink() { return static_cast<int32_t>(NodeFlag::IsLink); }
+    static int32_t flagHasFocusVisible() { return static_cast<int32_t>(NodeFlag::HasFocusVisible); }
     static int32_t flagHasFocusWithin() { return static_cast<int32_t>(NodeFlag::HasFocusWithin); }
     static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
@@ -528,8 +532,8 @@ protected:
         IsShadowRoot = 1 << 9,
         IsConnected = 1 << 10,
         IsInShadowTree = 1 << 11,
-        HasEventTargetData = 1 << 12,
-        // UnusedFlag = 1 << 13,
+        IsUnknownElement = 1 << 12,
+        HasEventTargetData = 1 << 13,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
@@ -551,6 +555,7 @@ protected:
 #endif
         IsComputedStyleInvalidFlag = 1 << 26,
 
+        HasFocusVisible = 1 << 27,
         // Bits 27-31 are free.
     };
 

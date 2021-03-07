@@ -100,7 +100,7 @@ SubresourceLoader::SubresourceLoader(Frame& frame, CachedResource& resource, con
     subresourceLoaderCounter.increment();
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
-    m_resourceType = ContentExtensions::toResourceType(resource.type());
+    m_resourceType = ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester());
 #endif
     m_canCrossOriginRequestsAskUserForCredentials = resource.type() == CachedResource::Type::MainResource || frame.settings().allowCrossOriginSubresourcesToAskForCredentials();
 }
@@ -845,10 +845,12 @@ void SubresourceLoader::notifyDone(LoadCompletionType type)
     if (m_state == CancelledWhileInitializing)
         shouldPerformPostLoadActions = false;
 #endif
-    m_documentLoader->cachedResourceLoader().loadDone(type, shouldPerformPostLoadActions);
+    if (m_documentLoader)
+        m_documentLoader->cachedResourceLoader().loadDone(type, shouldPerformPostLoadActions);
     if (reachedTerminalState())
         return;
-    m_documentLoader->removeSubresourceLoader(type, this);
+    if (m_documentLoader)
+        m_documentLoader->removeSubresourceLoader(type, this);
 }
 
 void SubresourceLoader::releaseResources()

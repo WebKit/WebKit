@@ -28,7 +28,7 @@
 
 #if ENABLE(PDFKIT_PLUGIN)
 
-#import "PDFKitImports.h"
+#import "PDFKitSoftLink.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
 #import "PDFPluginChoiceAnnotation.h"
@@ -53,9 +53,9 @@ using namespace HTMLNames;
 
 RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
 {
-    if ([annotation isKindOfClass:pdfAnnotationTextWidgetClass()])
+    if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()])
         return PDFPluginTextAnnotation::create(annotation, pdfLayerController, plugin);
-    if ([annotation isKindOfClass:pdfAnnotationChoiceWidgetClass()])
+    if ([annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()])
         return PDFPluginChoiceAnnotation::create(annotation, pdfLayerController, plugin);
 
     return nullptr;

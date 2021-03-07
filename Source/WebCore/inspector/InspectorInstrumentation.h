@@ -32,7 +32,6 @@
 #pragma once
 
 #include "CSSSelector.h"
-#include "CallTracerTypes.h"
 #include "CanvasBase.h"
 #include "CanvasRenderingContext.h"
 #include "Database.h"
@@ -295,7 +294,6 @@ public:
     static void didChangeCSSCanvasClientNodes(CanvasBase&);
     static void didCreateCanvasRenderingContext(CanvasRenderingContext&);
     static void didChangeCanvasMemory(CanvasRenderingContext&);
-    static void recordCanvasAction(CanvasRenderingContext&, const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     static void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
     static void didEnableExtension(WebGLRenderingContextBase&, const String&);
@@ -337,6 +335,7 @@ public:
     static bool timelineAgentTracking(ScriptExecutionContext*);
 
     static InstrumentingAgents* instrumentingAgents(Page*);
+    static InstrumentingAgents* instrumentingAgents(ScriptExecutionContext*);
 
     static void registerInstrumentingAgents(InstrumentingAgents&);
     static void unregisterInstrumentingAgents(InstrumentingAgents&);
@@ -504,7 +503,6 @@ private:
     static void didChangeCSSCanvasClientNodesImpl(InstrumentingAgents&, CanvasBase&);
     static void didCreateCanvasRenderingContextImpl(InstrumentingAgents&, CanvasRenderingContext&);
     static void didChangeCanvasMemoryImpl(InstrumentingAgents&, CanvasRenderingContext&);
-    static void recordCanvasActionImpl(InstrumentingAgents&, CanvasRenderingContext&, const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     static void didFinishRecordingCanvasFrameImpl(InstrumentingAgents&, CanvasRenderingContext&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
     static void didEnableExtensionImpl(InstrumentingAgents&, WebGLRenderingContextBase&, const String&);
@@ -538,7 +536,6 @@ private:
 
     static InstrumentingAgents* instrumentingAgents(const Frame&);
     static InstrumentingAgents* instrumentingAgents(const Frame*);
-    static InstrumentingAgents* instrumentingAgents(ScriptExecutionContext*);
     static InstrumentingAgents* instrumentingAgents(ScriptExecutionContext&);
     static InstrumentingAgents* instrumentingAgents(Document&);
     static InstrumentingAgents* instrumentingAgents(Document*);
@@ -1421,13 +1418,6 @@ inline void InspectorInstrumentation::didChangeCanvasMemory(CanvasRenderingConte
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context.canvasBase().scriptExecutionContext()))
         didChangeCanvasMemoryImpl(*agents, context);
-}
-
-inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& context, const String& name, std::initializer_list<RecordCanvasActionVariant>&& parameters)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(context.canvasBase().scriptExecutionContext()))
-        recordCanvasActionImpl(*agents, context, name, WTFMove(parameters));
 }
 
 inline void InspectorInstrumentation::didFinishRecordingCanvasFrame(CanvasRenderingContext& context, bool forceDispatch)

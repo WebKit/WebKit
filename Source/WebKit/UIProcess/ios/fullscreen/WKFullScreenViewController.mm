@@ -301,7 +301,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _cancelButton = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
     [_cancelButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_cancelButton setAdjustsImageWhenHighlighted:NO];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [_cancelButton setExtrinsicContentSize:CGSizeMake(60.0, 47.0)];
     NSBundle *bundle = [NSBundle bundleForClass:self.class];
     UIImage *doneImage = [UIImage imageNamed:@"Done" inBundle:bundle compatibleWithTraitCollection:nil];
@@ -312,7 +314,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _pipButton = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
     [_pipButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_pipButton setAdjustsImageWhenHighlighted:NO];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [_pipButton setExtrinsicContentSize:CGSizeMake(60.0, 47.0)];
     UIImage *startPiPImage = [UIImage imageNamed:@"StartPictureInPictureButton" inBundle:bundle compatibleWithTraitCollection:nil];
     UIImage *stopPiPImage = [UIImage imageNamed:@"StopPictureInPictureButton" inBundle:bundle compatibleWithTraitCollection:nil];

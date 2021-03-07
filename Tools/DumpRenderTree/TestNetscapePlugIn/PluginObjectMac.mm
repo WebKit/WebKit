@@ -64,23 +64,15 @@ CFTypeRef createCoreAnimationLayer()
     // Turn off default animations.
     [caLayer setStyle:@{ @"actions": actions }];
     [caLayer setNeedsDisplayOnBoundsChange:YES];
-
     [caLayer setBounds:CGRectMake(0, 0, 200, 100)];
     [caLayer setAnchorPoint:CGPointZero];
-    
-    CGColorRef color = CGColorCreateGenericRGB(0.5, 0.5, 1, 1);
-    [caLayer setBackgroundColor:color];
-    CGColorRelease(color);
-    
+    [caLayer setBackgroundColor:adoptCF(CGColorCreateGenericRGB(0.5, 0.5, 1, 1)).get()];
     [caLayer setLayoutManager:[CAConstraintLayoutManager layoutManager]];
 
     CALayer *sublayer = [CALayer layer];
     // Turn off default animations.
     [sublayer setStyle:@{ @"actions": actions }];
-
-    color = CGColorCreateGenericRGB(0, 0, 0, 0.75);
-    [sublayer setBackgroundColor:color];
-    CGColorRelease(color);
+    [sublayer setBackgroundColor:adoptCF(CGColorCreateGenericRGB(0, 0, 0, 0.75)).get()];
     [sublayer setBounds:CGRectMake(0, 0, 180, 20)];
 
     [sublayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinY

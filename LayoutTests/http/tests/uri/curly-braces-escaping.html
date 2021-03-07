@@ -12,9 +12,9 @@ description("Test that curly braces are not escaped in request queries (bug 1168
 jsTestIsAsync = true;
 
 var req = new XMLHttpRequest;
-req.open("GET",  "resources/echo-uri.php?q={}", true);
+req.open("GET",  "resources/echo-uri.py?q={}", true);
 req.onload = function() {
-    shouldBe("req.responseText", "'/uri/resources/echo-uri.php?q={}'");
+    shouldBe("req.responseText", "'/uri/resources/echo-uri.py?q={}'");
     finishJSTest();
 }
 req.send();

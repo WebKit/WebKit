@@ -40,7 +40,7 @@ public:
         InlineLayoutUnit top { 0 };
         InlineLayoutUnit bottom { 0 };
     };
-    InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth);
+    InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth);
 
     const InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
 
@@ -48,7 +48,7 @@ public:
 
     InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
 
-    InlineLayoutUnit contentLogicalLeftOffset() const { return m_contentLogicalLeftOffset; }
+    InlineLayoutUnit contentLogicalLeft() const { return m_contentLogicalLeft; }
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
     void moveVertically(InlineLayoutUnit offset) { m_lineBoxLogicalRect.moveVertically(offset); }
@@ -61,15 +61,15 @@ private:
     // the layout bounds of the inline level boxes which may be different when line-height is present.
     EnclosingTopAndBottom m_enclosingTopAndBottom;
     InlineLayoutUnit m_aligmentBaseline { 0 };
-    InlineLayoutUnit m_contentLogicalLeftOffset { 0 };
+    InlineLayoutUnit m_contentLogicalLeft { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
 };
 
-inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom enclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth)
+inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom enclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth)
     : m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_enclosingTopAndBottom(enclosingTopAndBottom)
     , m_aligmentBaseline(aligmentBaseline)
-    , m_contentLogicalLeftOffset(contentLogicalLeftOffset)
+    , m_contentLogicalLeft(contentLogicalLeft)
     , m_contentLogicalWidth(contentLogicalWidth)
 {
 }

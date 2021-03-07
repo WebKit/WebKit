@@ -26,12 +26,8 @@
 #include "config.h"
 #include "RemoteCommandListener.h"
 
-#if PLATFORM(MAC)
-#include "RemoteCommandListenerMac.h"
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-#include "RemoteCommandListenerIOS.h"
+#if PLATFORM(COCOA)
+#include "RemoteCommandListenerCocoa.h"
 #endif
 
 namespace WebCore {
@@ -50,10 +46,8 @@ void RemoteCommandListener::setCreationFunction(CreationFunction&& function)
 void RemoteCommandListener::resetCreationFunction()
 {
     remoteCommandListenerCreationFunction() = [] (RemoteCommandListenerClient& client) {
-#if PLATFORM(MAC)
-        return RemoteCommandListenerMac::create(client);
-#elif PLATFORM(IOS_FAMILY)
-        return RemoteCommandListenerIOS::create(client);
+#if PLATFORM(COCOA)
+        return RemoteCommandListenerCocoa::create(client);
 #else
         return RemoteCommandListener::create(client);
 #endif
@@ -95,14 +89,35 @@ void RemoteCommandListener::setSupportsSeeking(bool supports)
 
 void RemoteCommandListener::addSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    m_registeredCommands.add(command);
+    m_supportedCommands.add(command);
     scheduleSupportedCommandsUpdate();
 }
 
 void RemoteCommandListener::removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    m_registeredCommands.remove(command);
+    m_supportedCommands.remove(command);
     scheduleSupportedCommandsUpdate();
+}
+
+void RemoteCommandListener::setSupportedCommands(const RemoteCommandsSet& commands)
+{
+    m_supportedCommands = commands;
+    scheduleSupportedCommandsUpdate();
+}
+
+void RemoteCommandListener::updateSupportedCommands()
+{
+    ASSERT_NOT_REACHED();
+}
+
+const RemoteCommandListener::RemoteCommandsSet& RemoteCommandListener::supportedCommands() const
+{
+    return m_supportedCommands;
+}
+
+bool RemoteCommandListener::supportsSeeking() const
+{
+    return m_supportsSeeking;
 }
 
 }

@@ -1,0 +1,40 @@
+This tests that audio samples outside the appendWindow's interval are properly ignored.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = -(framesToBeDroppedBeginning * framesInAACPacket) / sampleRate)
+Append a media segment negative offset.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '0.896') OK
+RUN(sourceBuffer.remove(0, Infinity))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = 0)
+RUN(sourceBuffer.appendWindowStart = 0)
+RUN(sourceBuffer.appendWindowEnd = Infinity)
+RUN(sourceBuffer.appendWindowStart = (framesToBeDroppedBeginning * framesInAACPacket) / sampleRate)
+Append a media segment with appendWindowStart set.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0.10666666666666667') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '1.0026666666666666') OK
+RUN(sourceBuffer.remove(0, Infinity))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = 0)
+RUN(sourceBuffer.appendWindowStart = 0)
+RUN(sourceBuffer.appendWindowEnd = Infinity)
+RUN(sourceBuffer.appendWindowEnd = ((totalFramesInSegment - framesToBeDroppedEnd) * framesInAACPacket) / sampleRate)
+Append a media segment with appendWindowEnd set.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '0.896') OK
+END OF TEST
+

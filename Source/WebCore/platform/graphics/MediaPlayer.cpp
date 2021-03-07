@@ -330,7 +330,11 @@ const MediaPlayerFactory* MediaPlayer::mediaEngine(MediaPlayerEnums::MediaEngine
     });
 
     if (currentIndex == notFound) {
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+        ASSERT(identifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE);
+#else
         ASSERT_NOT_REACHED();
+#endif
         return nullptr;
     }
 
@@ -1020,7 +1024,7 @@ bool MediaPlayer::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, 
 
 #else
 
-CVPixelBufferRef MediaPlayer::pixelBufferForCurrentTime()
+RetainPtr<CVPixelBufferRef> MediaPlayer::pixelBufferForCurrentTime()
 {
     return m_private->pixelBufferForCurrentTime();
 }

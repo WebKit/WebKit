@@ -215,8 +215,13 @@ static BOOL resultIsURL(DDResultRef result)
     if (!result)
         return NO;
     
-    static NSSet *urlTypes = [[NSSet setWithObjects: (NSString *)get_DataDetectorsCore_DDBinderHttpURLKey(), (NSString *)get_DataDetectorsCore_DDBinderWebURLKey(), (NSString *)get_DataDetectorsCore_DDBinderMailURLKey(), (NSString *)get_DataDetectorsCore_DDBinderGenericURLKey(), (NSString *)get_DataDetectorsCore_DDBinderEmailKey(), nil] retain];
-    return [urlTypes containsObject:(NSString *)softLink_DataDetectorsCore_DDResultGetType(result)];
+    static NeverDestroyed<RetainPtr<NSSet>> urlTypes = [NSSet setWithObjects:
+        (NSString *)get_DataDetectorsCore_DDBinderHttpURLKey(),
+        (NSString *)get_DataDetectorsCore_DDBinderWebURLKey(),
+        (NSString *)get_DataDetectorsCore_DDBinderMailURLKey(),
+        (NSString *)get_DataDetectorsCore_DDBinderGenericURLKey(),
+        (NSString *)get_DataDetectorsCore_DDBinderEmailKey(), nil];
+    return [urlTypes.get() containsObject:(NSString *)softLink_DataDetectorsCore_DDResultGetType(result)];
 }
 
 static NSString *constructURLStringForResult(DDResultRef currentResult, NSString *resultIdentifier, NSDate *referenceDate, NSTimeZone *referenceTimeZone, OptionSet<DataDetectorType> detectionTypes)

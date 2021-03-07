@@ -32,7 +32,6 @@
 #include "DownloadManager.h"
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkContentRuleListManager.h"
-#include "NetworkHTTPSUpgradeChecker.h"
 #include "SandboxExtension.h"
 #include "WebIDBServer.h"
 #include "WebPageProxyIdentifier.h"
@@ -243,7 +242,7 @@ public:
     void setLastSeen(PAL::SessionID, const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
     void domainIDExistsInDatabase(PAL::SessionID, int domainID, CompletionHandler<void(bool)>&&);
     void mergeStatisticForTesting(PAL::SessionID, const RegistrableDomain&, const TopFrameDomain& topFrameDomain1, const TopFrameDomain& topFrameDomain2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&&);
-    void insertExpiredStatisticForTesting(PAL::SessionID, const RegistrableDomain&, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&&);
+    void insertExpiredStatisticForTesting(PAL::SessionID, const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&&);
     void setMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void setIsRunningResourceLoadStatisticsTest(PAL::SessionID, bool value, CompletionHandler<void()>&&);
@@ -322,10 +321,6 @@ public:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-#if PLATFORM(COCOA)
-    NetworkHTTPSUpgradeChecker& networkHTTPSUpgradeChecker();
-#endif
-
     const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
 
     void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
@@ -377,6 +372,11 @@ public:
 
     bool shouldDisableCORSForRequestTo(WebCore::PageIdentifier, const URL&) const;
     void setCORSDisablingPatterns(WebCore::PageIdentifier, Vector<String>&&);
+
+#if PLATFORM(COCOA)
+    void appBoundNavigationData(PAL::SessionID, CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
+    void clearAppBoundNavigationData(PAL::SessionID, CompletionHandler<void()>&&);
+#endif
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
@@ -580,10 +580,6 @@ private:
     };
     HashMap<PAL::SessionID, ServiceWorkerInfo> m_serviceWorkerInfo;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
-#endif
-
-#if PLATFORM(COCOA)
-    std::unique_ptr<NetworkHTTPSUpgradeChecker> m_networkHTTPSUpgradeChecker;
 #endif
     
     Lock m_sessionStorageQuotaManagersLock;

@@ -72,7 +72,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
     frameState.referrer = historyItem.referrer();
     frameState.target = historyItem.target();
 
-    frameState.documentState = historyItem.documentState();
+    frameState.setDocumentState(historyItem.documentState());
     if (RefPtr<SerializedScriptValue> stateObject = historyItem.stateObject())
         frameState.stateObjectData = stateObject->data();
 
@@ -148,7 +148,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
     historyItem.setReferrer(frameState.referrer);
     historyItem.setTarget(frameState.target);
 
-    historyItem.setDocumentState(frameState.documentState);
+    historyItem.setDocumentState(frameState.documentState());
 
     if (frameState.stateObjectData) {
         Vector<uint8_t> stateObjectData = frameState.stateObjectData.value();

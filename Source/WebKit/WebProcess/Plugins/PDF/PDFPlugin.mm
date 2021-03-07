@@ -34,6 +34,7 @@
 #import "Logging.h"
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFContextMenu.h"
+#import "PDFKitSoftLink.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPluginAnnotation.h"
 #import "PDFPluginPasswordField.h"
@@ -253,25 +254,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    static NSArray *attributeNames = 0;
+    static NeverDestroyed<RetainPtr<NSArray>> attributeNames = @[
+        NSAccessibilityParentAttribute,
+        NSAccessibilityWindowAttribute,
+        NSAccessibilityTopLevelUIElementAttribute,
+        NSAccessibilityRoleDescriptionAttribute,
+        NSAccessibilitySizeAttribute,
+        NSAccessibilityEnabledAttribute,
+        NSAccessibilityPositionAttribute,
+        NSAccessibilityFocusedAttribute,
+        // PDFLayerController has its own accessibilityChildren.
+        NSAccessibilityChildrenAttribute
+    ];
 
-    if (!attributeNames) {
-        attributeNames = @[
-            NSAccessibilityParentAttribute,
-            NSAccessibilityWindowAttribute,
-            NSAccessibilityTopLevelUIElementAttribute,
-            NSAccessibilityRoleDescriptionAttribute,
-            NSAccessibilitySizeAttribute,
-            NSAccessibilityEnabledAttribute,
-            NSAccessibilityPositionAttribute,
-            NSAccessibilityFocusedAttribute,
-            // PDFLayerController has its own accessibilityChildren.
-            NSAccessibilityChildrenAttribute
-            ];
-        [attributeNames retain];
-    }
-
-    return attributeNames;
+    return attributeNames.get().get();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -601,7 +597,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
     , m_contentLayer(adoptNS([[CALayer alloc] init]))
     , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this]))
-    , m_pdfLayerController(adoptNS([[pdfLayerControllerClass() alloc] init]))
+    , m_pdfLayerController(adoptNS([allocPDFLayerControllerInstance() init]))
     , m_pdfLayerControllerDelegate(adoptNS([[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this]))
 #if HAVE(INCREMENTAL_PDF_APIS)
     , m_streamLoaderClient(adoptRef(*new PDFPluginStreamLoaderClient(*this)))
@@ -633,12 +629,10 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)]) {
         auto view = frame.coreFrame()->view();
         [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view)];
     }
-#endif
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalPDFLoadingEnabled) {
@@ -745,7 +739,7 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
     if (!m_documentFinishedLoading || m_pdfDocument)
         return;
 
-    m_pdfDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:rawData()]);
+    m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
     installPDFDocument();
     tryRunScriptsInPDFDocument();
 }
@@ -885,7 +879,7 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
 
     RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateMultiRangeDirectAccess(this, kCGDataProviderIndeterminateSize, &dataProviderCallbacks));
     CGDataProviderSetProperty(dataProvider.get(), kCGDataProviderHasHighLatency, kCFBooleanTrue);
-    m_backgroundThreadDocument = adoptNS([[pdfDocumentClass() alloc] initWithProvider:dataProvider.get()]);
+    m_backgroundThreadDocument = adoptNS([allocPDFDocumentInstance() initWithProvider:dataProvider.get()]);
 
     // [PDFDocument initWithProvider:] will return nil in cases where the PDF is non-linearized.
     // In those cases we'll just keep buffering the entire PDF on the main thread.
@@ -1606,7 +1600,7 @@ void PDFPlugin::documentDataDidFinishLoading()
     } else
 #endif
     {
-        m_pdfDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:rawData()]);
+        m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
         installPDFDocument();
     }
 
@@ -2471,7 +2465,7 @@ void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
 
     if (annotation) {
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([annotation isKindOfClass:pdfAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
+        if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
             m_activeAnnotation = nullptr;
             return;
         }
@@ -2697,7 +2691,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchFor
         foundSelection = [m_pdfDocument findString:target fromSelection:initialSelection withOptions:options];
 
     if (!foundSelection && wrapSearch) {
-        auto emptySelection = adoptNS([[pdfSelectionClass() alloc] initWithDocument:m_pdfDocument.get()]);
+        auto emptySelection = adoptNS([allocPDFSelectionInstance() initWithDocument:m_pdfDocument.get()]);
         foundSelection = [m_pdfDocument findString:target fromSelection:emptySelection.get() withOptions:options];
     }
 
@@ -2857,7 +2851,7 @@ std::tuple<String, PDFSelection *, NSDictionary *> PDFPlugin::lookupTextAtLocati
     NSPoint pointInPageSpace = [[m_pdfLayerController layout] convertPoint:pointInLayoutSpace toPage:currentPage forScaleFactor:1.0];
 
     for (PDFAnnotation *annotation in currentPage.annotations) {
-        if (![annotation isKindOfClass:pdfAnnotationLinkClass()])
+        if (![annotation isKindOfClass:getPDFAnnotationLinkClass()])
             continue;
 
         NSRect bounds = annotation.bounds;

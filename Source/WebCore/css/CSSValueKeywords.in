@@ -1434,6 +1434,10 @@ prophoto-rgb
 // sRGB
 xyz
 
+// color-contast()
+color-contrast
+vs
+
 // color-mix()
 color-mix
 shorter

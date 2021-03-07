@@ -109,7 +109,6 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     system/cocoa/SleepDisablerCocoa.h
 
-    system/mac/ClockCM.h
     system/mac/DefaultSearchProvider.h
     system/mac/PopupMenu.h
     system/mac/SystemSleepListenerMac.h
@@ -137,7 +136,6 @@ list(APPEND PAL_SOURCES
 
     system/cocoa/SleepDisablerCocoa.cpp
 
-    system/mac/ClockCM.mm
     system/mac/DefaultSearchProvider.cpp
     system/mac/PopupMenu.mm
     system/mac/SoundMac.mm

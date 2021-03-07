@@ -297,7 +297,7 @@ public:
     void releaseHighPerformanceGPU();
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID);
     void stopDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID);
 #endif
@@ -479,7 +479,7 @@ private:
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     void updateBackgroundResponsivenessTimer();
 
-    void processDidTerminateOrFailedToLaunch();
+    void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
     bool isReleaseLoggingAllowed() const;
 

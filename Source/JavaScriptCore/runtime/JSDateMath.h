@@ -83,7 +83,7 @@ public:
 
     void msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime&);
     double gregorianDateTimeToMS(const GregorianDateTime&, double milliseconds, WTF::TimeType inputTimeType);
-    double parseDate(JSGlobalObject*, VM&, const WTF::String&);
+    JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, const WTF::String&);
 
 private:
     void timeZoneCacheSlow();

@@ -81,7 +81,7 @@ Seconds ScriptedAnimationController::preferredScriptedAnimationInterval() const
 {
     Optional<FramesPerSecond> preferredFPS;
     if (auto* page = this->page()) {
-        if (!page->settings().forcePageRenderingUpdatesAt60FPSEnabled())
+        if (page->settings().preferPageRenderingUpdatesNear60FPSEnabled())
             preferredFPS = page->displayNominalFramesPerSecond();
     }
     return preferredFrameInterval(m_throttlingReasons, preferredFPS);

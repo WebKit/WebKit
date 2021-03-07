@@ -31,7 +31,6 @@ import logging
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.unittestresults import UnitTestResults
 from webkitpy.tool.bot.abstracttestresultsreader import AbstractTestResultsReader
-from webkitpy.tool.steps.runtests import RunTests
 
 _log = logging.getLogger(__name__)
 

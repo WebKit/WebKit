@@ -2310,6 +2310,13 @@ void RenderStyle::setBorderImageSource(RefPtr<StyleImage>&& image)
     m_surroundData.access().border.m_image.setImage(WTFMove(image));
 }
 
+void RenderStyle::setBorderImageSliceFill(bool fill)
+{
+    if (m_surroundData->border.m_image.fill() == fill)
+        return;
+    m_surroundData.access().border.m_image.setFill(fill);
+}
+
 void RenderStyle::setBorderImageSlices(LengthBox&& slices)
 {
     if (m_surroundData->border.m_image.imageSlices() == slices)

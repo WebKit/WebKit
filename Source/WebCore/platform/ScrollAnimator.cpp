@@ -57,7 +57,7 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     , m_scrollController(*this)
 #endif
-    , m_animationProgrammaticScroll(makeUnique<ScrollAnimationSmooth>(
+    , m_scrollAnimation(makeUnique<ScrollAnimationSmooth>(
         [this]() -> ScrollExtents {
             return { m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition(), m_scrollableArea.visibleSize() };
         },
@@ -66,6 +66,7 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
             FloatSize delta = position - m_currentPosition;
             m_currentPosition = WTFMove(position);
             notifyPositionChanged(delta);
+            updateActiveScrollSnapIndexForOffset();
         },
         [this] {
             m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
@@ -98,6 +99,13 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     UNUSED_PARAM(behavior);
 #endif
 
+#if ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS_FAMILY)
+    if (m_scrollableArea.scrollAnimatorEnabled()) {
+        m_scrollAnimation->setCurrentPosition(m_currentPosition);
+        return m_scrollAnimation->scroll(orientation, granularity, step, multiplier);
+    }
+#endif
+
     return scrollToPositionWithoutAnimation(positionFromStep(orientation, step, multiplier));
 }
 
@@ -116,6 +124,7 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
     if (adjustedPosition == currentPosition && adjustedPosition == scrollableArea().scrollPosition() && !scrollableArea().scrollOriginChanged())
         return false;
 
+    m_scrollAnimation->setCurrentPosition(adjustedPosition);
     m_currentPosition = adjustedPosition;
     notifyPositionChanged(adjustedPosition - currentPosition);
     updateActiveScrollSnapIndexForOffset();
@@ -133,8 +142,8 @@ bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition
     if (!positionChanged && !scrollableArea().scrollOriginChanged())
         return false;
 
-    m_animationProgrammaticScroll->setCurrentPosition(m_currentPosition);
-    m_animationProgrammaticScroll->scroll(newPosition);
+    m_scrollAnimation->setCurrentPosition(m_currentPosition);
+    m_scrollAnimation->scroll(newPosition);
     scrollableArea().setScrollBehaviorStatus(ScrollBehaviorStatus::InNonNativeAnimation);
     return true;
 }
@@ -337,23 +346,23 @@ void ScrollAnimator::removeWheelEventTestCompletionDeferralForReason(WheelEventT
 void ScrollAnimator::cancelAnimations()
 {
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    m_animationProgrammaticScroll->stop();
+    m_scrollAnimation->stop();
 #endif
 }
 
 void ScrollAnimator::willEndLiveResize()
 {
-    m_animationProgrammaticScroll->updateVisibleLengths();
+    m_scrollAnimation->updateVisibleLengths();
 }
 
 void ScrollAnimator::didAddVerticalScrollbar(Scrollbar*)
 {
-    m_animationProgrammaticScroll->updateVisibleLengths();
+    m_scrollAnimation->updateVisibleLengths();
 }
 
 void ScrollAnimator::didAddHorizontalScrollbar(Scrollbar*)
 {
-    m_animationProgrammaticScroll->updateVisibleLengths();
+    m_scrollAnimation->updateVisibleLengths();
 }
 
 FloatPoint ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod method)
@@ -362,23 +371,36 @@ FloatPoint ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(const FloatPoin
     if (!m_scrollController.usesScrollSnap())
         return offset;
 
-    Optional<float> originalXOffset, originalYOffset;
-    FloatSize velocity;
-    if (method == ScrollSnapPointSelectionMethod::Directional) {
-        FloatSize scrollOrigin = toFloatSize(m_scrollableArea.scrollOrigin());
-        auto currentOffset = ScrollableArea::scrollOffsetFromPosition(this->currentPosition(), scrollOrigin);
-        originalXOffset = currentOffset.x();
-        originalYOffset = currentOffset.y();
-        velocity = { offset.x() - currentOffset.x(), offset.y() - currentOffset.y() };
-    }
-
     FloatPoint newOffset = offset;
-    newOffset.setX(m_scrollController.adjustScrollDestination(ScrollEventAxis::Horizontal, newOffset.x(), velocity.width(), originalXOffset));
-    newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newOffset.y(), velocity.height(), originalYOffset));
+    newOffset.setX(adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Horizontal, newOffset.x(), method));
+    newOffset.setY(adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Vertical, newOffset.y(), method));
     return newOffset;
 #else
     UNUSED_PARAM(method);
     return offset;
+#endif
+}
+
+float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis, float newOffset, ScrollSnapPointSelectionMethod method)
+{
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (!m_scrollController.usesScrollSnap())
+        return newOffset;
+
+    Optional<float> originalOffset;
+    float velocity = 0.;
+    if (method == ScrollSnapPointSelectionMethod::Directional) {
+        FloatSize scrollOrigin = toFloatSize(m_scrollableArea.scrollOrigin());
+        auto currentOffset = ScrollableArea::scrollOffsetFromPosition(this->currentPosition(), scrollOrigin);
+        originalOffset = axis == ScrollEventAxis::Horizontal ? currentOffset.x() : currentOffset.y();
+        velocity = newOffset - (axis == ScrollEventAxis::Horizontal ? currentOffset.x() : currentOffset.y());
+    }
+
+    return m_scrollController.adjustScrollDestination(axis, newOffset, velocity, originalOffset);
+#else
+    UNUSED_PARAM(method);
+    UNUSED_PARAM(axis);
+    return newOffset;
 #endif
 }
 

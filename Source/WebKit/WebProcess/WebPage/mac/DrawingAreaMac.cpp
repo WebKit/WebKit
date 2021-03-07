@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DrawingArea.h"
 
+#if PLATFORM(MAC)
+
 #include "WebProcess.h"
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
@@ -35,8 +37,6 @@
 
 namespace WebKit {
 using namespace WebCore;
-
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 class DisplayRefreshMonitorMac : public DisplayRefreshMonitor {
 public:
@@ -106,6 +106,7 @@ RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(
 {
     return DisplayRefreshMonitorMac::create(displayID);
 }
-#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 }
+
+#endif // PLATFORM(MAC)

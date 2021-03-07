@@ -91,10 +91,10 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     fontDescription.setComputedSize(DefaultFontSize);
 
     auto& document = downcast<Document>(context);
-    auto fontStyle = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document);
+    auto fontCascade = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document);
 
-    if (fontStyle)
-        modifiableState().font.initialize(document.fontSelector(), *fontStyle);
+    if (fontCascade)
+        modifiableState().font.initialize(document.fontSelector(), *fontCascade);
 }
 
 CanvasDirection OffscreenCanvasRenderingContext2D::direction() const

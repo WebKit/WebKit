@@ -42,6 +42,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "GeometryUtilities.h"
 #include "HTMLBDIElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLButtonElement.h"
@@ -1273,17 +1274,20 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         if (originalSize.isEmpty())
             continue;
 
-        auto targetRect = data.normalizedQuad.boundingBox();
-        targetRect.scale(containerSize);
+        auto targetQuad = data.normalizedQuad;
+        targetQuad.scale(containerSize.width(), containerSize.height());
 
-        IntPoint translationOffset {
-            static_cast<int>(targetRect.x() + (targetRect.width() - originalSize.width()) / 2),
-            static_cast<int>(targetRect.y() + (targetRect.height() - originalSize.height()) / 2)
-        };
+        auto rotatedRect = rotatedBoundingRect(targetQuad, 0.01);
+        auto scale = rotatedRect.size / originalSize;
+        String rotationTransformationAsText;
+        if (rotatedRect.angleInRadians)
+            rotationTransformationAsText = makeString("rotate(", rotatedRect.angleInRadians, "rad) "_s);
 
+        auto offset = roundedIntPoint(rotatedRect.center - (originalSize / 2));
         child->setInlineStyleProperty(CSSPropertyTransform, makeString(
-            "translate("_s, translationOffset.x(), "px, "_s, translationOffset.y(), "px) "_s
-            "scale("_s, targetRect.width() / originalSize.width(), ", "_s, targetRect.height() / originalSize.height(), ")"_s
+            "translate("_s, offset.x(), "px, "_s, offset.y(), "px) "_s,
+            rotationTransformationAsText,
+            "scale("_s, scale.width(), ", "_s, scale.height(), ") "_s
         ));
     }
 

@@ -3,7 +3,7 @@ onmessage = function(e) {
     if (e.data !== "start")
         return;
 
-    var promise1 = fetch("/misc/resources/delayed-log.php?delay=100").then(() => {
+    var promise1 = fetch("/misc/resources/delayed-log.py?delay=100").then(() => {
         postMessage("FAIL: promise 1 resolved");
     }, () => {
         postMessage("FAIL: promise 1 rejected");

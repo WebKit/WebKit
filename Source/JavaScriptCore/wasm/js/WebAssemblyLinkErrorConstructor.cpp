@@ -53,9 +53,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyLinkError, (JSGlobalObject* globa
     JSValue message = callFrame->argument(0);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = newTarget == callFrame->jsCallee()
-        ? globalObject->webAssemblyLinkErrorStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyLinkErrorStructure());
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyLinkErrorStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyLinkError::create(globalObject, vm, structure, message)));

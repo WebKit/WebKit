@@ -192,8 +192,10 @@ void GraphicsContextGLOpenGL::setContextVisibility(bool)
 {
 }
 
-void GraphicsContextGLOpenGL::simulateContextChanged()
+void GraphicsContextGLOpenGL::simulateEventForTesting(SimulatedEventForTesting event)
 {
+    if (event == SimulatedEventForTesting::GPUStatusFailure)
+        m_failNextStatusCheck = true;
 }
 
 void GraphicsContextGLOpenGL::prepareForDisplay()
@@ -271,7 +273,7 @@ bool GraphicsContextGLOpenGL::copyTextureFromMedia(MediaPlayer& player, Platform
 
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
-    return contextCV->copyPixelBufferToTexture(pixelBuffer, outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
+    return contextCV->copyPixelBufferToTexture(pixelBuffer.get(), outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
 #else
     return player.copyVideoTextureToPlatformTexture(this, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
 #endif

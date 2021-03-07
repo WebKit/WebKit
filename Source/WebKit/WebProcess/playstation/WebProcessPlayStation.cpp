@@ -44,4 +44,12 @@ void WebProcess::platformSetCacheModel(CacheModel)
 {
 }
 
+void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&&)
+{
+}
+
+void WebProcess::revokeAccessToAssetServices()
+{
+}
+
 } // namespace WebKit

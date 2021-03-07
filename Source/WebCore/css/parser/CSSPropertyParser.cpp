@@ -96,18 +96,6 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     return false;
 }
 
-#if PLATFORM(IOS_FAMILY)
-void cssPropertyNameIOSAliasing(const char* propertyName, const char*& propertyNameAlias, unsigned& newLength)
-{
-    if (!strcmp(propertyName, "-webkit-hyphenate-locale")) {
-        // Worked in iOS 4.2.
-        static const char webkitLocale[] = "-webkit-locale";
-        propertyNameAlias = webkitLocale;
-        newLength = strlen(webkitLocale);
-    }
-}
-#endif
-
 template <typename CharacterType>
 static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned length)
 {
@@ -121,15 +109,7 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
     }
     buffer[length] = '\0';
     
-    const char* name = buffer;
-    if (buffer[0] == '-') {
-#if PLATFORM(IOS_FAMILY)
-        cssPropertyNameIOSAliasing(buffer, name, length);
-#endif
-    }
-    
-    const Property* hashTableEntry = findProperty(name, length);
-    if (hashTableEntry) {
+    if (auto hashTableEntry = findProperty(buffer, length)) {
         auto propertyID = static_cast<CSSPropertyID>(hashTableEntry->id);
         // FIXME: Should take account for flags in settings().
         if (isEnabledCSSProperty(propertyID))
@@ -175,7 +155,7 @@ static CSSValueID cssValueKeywordID(const CharacterType* valueKeyword, unsigned 
         // This makes the string one character longer.
         // On iOS we don't want to change values starting with -apple-system to -webkit-system.
         // FIXME: Remove this mangling without breaking the web.
-        if (isAppleLegacyCssValueKeyword(buffer, length) || hasPrefix(buffer, length, "-khtml-")) {
+        if (isAppleLegacyCssValueKeyword(buffer, length)) {
             memmove(buffer + 7, buffer + 6, length + 1 - 6);
             memcpy(buffer, "-webkit", 7);
             ++length;

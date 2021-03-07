@@ -196,6 +196,7 @@ Modules/paymentrequest/PaymentHandler.cpp
 Modules/paymentrequest/PaymentMethodChangeEvent.cpp
 Modules/paymentrequest/PaymentRequest.cpp
 Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
+Modules/paymentrequest/PaymentRequestUtilities.cpp
 Modules/paymentrequest/PaymentResponse.cpp
 Modules/pictureinpicture/DocumentPictureInPicture.cpp
 Modules/pictureinpicture/EnterPictureInPictureEvent.cpp
@@ -491,7 +492,6 @@ animation/WebAnimation.cpp
 animation/WebAnimationUtilities.cpp
 bindings/js/CachedModuleScriptLoader.cpp
 bindings/js/CachedScriptFetcher.cpp
-bindings/js/CallTracer.cpp
 bindings/js/CommonVM.cpp
 bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/DOMWrapperWorld.cpp
@@ -619,6 +619,8 @@ bindings/js/JSVideoTrackListCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWebGL2RenderingContextCustom.cpp
 bindings/js/JSWebGLRenderingContextCustom.cpp
+bindings/js/JSWebXRReferenceSpaceCustom.cpp
+bindings/js/JSWebXRSpaceCustom.cpp
 bindings/js/JSWindowProxy.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
@@ -912,7 +914,6 @@ dom/DeviceOrientationAndMotionAccessController.cpp
 dom/DeviceOrientationController.cpp
 dom/DeviceOrientationData.cpp
 dom/DeviceOrientationEvent.cpp
-dom/DeviceOrientationOrMotionEvent.cpp
 dom/Document.cpp
 dom/DocumentFragment.cpp
 dom/DocumentMarkerController.cpp
@@ -1439,6 +1440,7 @@ inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorAuditDOMObject.cpp
 inspector/InspectorAuditResourcesObject.cpp
 inspector/InspectorCanvas.cpp
+inspector/InspectorCanvasCallTracer.cpp
 inspector/InspectorController.cpp
 inspector/InspectorDatabaseResource.cpp
 inspector/InspectorFrontendAPIDispatcher.cpp
@@ -1794,6 +1796,7 @@ page/scrolling/ScrollingTreeLatchingController.cpp
 page/scrolling/ScrollingTreeNode.cpp
 page/scrolling/ScrollingTreeOverflowScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNode.cpp
+page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp
 page/scrolling/ThreadedScrollingTree.cpp
 platform/CalculationValue.cpp
 platform/ContentType.cpp
@@ -1919,6 +1922,7 @@ platform/gamepad/EmptyGamepadProvider.cpp
 platform/gamepad/GamepadConstants.cpp
 platform/gamepad/GamepadProvider.cpp
 platform/graphics/ANGLEWebKitBridge.cpp
+platform/graphics/AnimationFrameRate.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
 platform/graphics/ColorBlending.cpp
@@ -2172,6 +2176,8 @@ platform/text/TextCodecUserDefined.cpp
 platform/text/TextEncoding.cpp
 platform/text/TextEncodingDetectorICU.cpp
 platform/text/TextEncodingRegistry.cpp
+platform/xr/openxr/OpenXRInstance.cpp @no-unify
+platform/xr/openxr/OpenXRExtensions.cpp @no-unify
 platform/xr/openxr/PlatformXROpenXR.cpp @no-unify
 plugins/DOMMimeType.cpp
 plugins/DOMMimeTypeArray.cpp

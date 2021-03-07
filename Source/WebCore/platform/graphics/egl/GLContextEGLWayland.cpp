@@ -29,10 +29,11 @@
 
 namespace WebCore {
 
-GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, WlUniquePtr<struct wl_surface>&& wlSurface, struct wl_egl_window* wlWindow)
+GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config, WlUniquePtr<struct wl_surface>&& wlSurface, struct wl_egl_window* wlWindow)
     : GLContext(display)
     , m_context(context)
     , m_surface(surface)
+    , m_config(config)
     , m_type(WindowSurface)
     , m_wlSurface(WTFMove(wlSurface))
     , m_wlWindow(wlWindow)
@@ -69,7 +70,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWaylandContext(PlatformDisplay
         return nullptr;
     }
 
-    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, WTFMove(wlSurface), window));
+    return std::unique_ptr<GLContextEGL>(new GLContextEGL(platformDisplay, context, surface, config, WTFMove(wlSurface), window));
 }
 
 void GLContextEGL::destroyWaylandWindow()

@@ -275,10 +275,10 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseVarUInt1(uint8_t& result)
 template<typename SuccessType>
 ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::parseBlockSignature(const ModuleInformation& info, BlockSignature& result)
 {
-    int8_t value;
-    if (peekInt7(value) && isValidType(value)) {
-        Type type = static_cast<Type>(value);
-        WASM_PARSER_FAIL_IF(!(isValueType(type) || type == Void), "result type of block: ", makeString(type), " is not a value type or Void");
+    int8_t typeKind;
+    if (peekInt7(typeKind) && isValidTypeKind(typeKind)) {
+        Type type = {static_cast<TypeKind>(typeKind), 0};
+        WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: ", makeString(type.kind), " is not a value type or Void");
         result = m_signatureInformation.thunkFor(type);
         m_offset++;
         return { };
@@ -298,12 +298,13 @@ ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::p
 template<typename SuccessType>
 ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(Type& result)
 {
-    int8_t value;
-    if (!parseInt7(value))
+    int8_t kind;
+    if (!parseInt7(kind))
         return false;
-    if (!isValidType(value) || !isValueType(static_cast<Type>(value)))
+    Type type = {static_cast<TypeKind>(kind), 0};
+    if (!isValidTypeKind(kind) || !isValueType(type))
         return false;
-    result = static_cast<Type>(value);
+    result = type;
     return true;
 }
 

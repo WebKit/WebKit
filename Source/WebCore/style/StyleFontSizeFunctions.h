@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -33,11 +34,15 @@ class RenderStyle;
 
 namespace Style {
 
+enum class MinimumFontSizeRule : uint8_t { None, Absolute, AbsoluteAndRelative };
+
+float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const Settings::Values&);
 float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle*, const Document&);
 float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
 
 // Given a CSS keyword id in the range (CSSValueXxSmall to CSSValueWebkitXxxLarge), this function will return
 // the correct font size scaled relative to the user's default (medium).
+float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Settings::Values&, bool inQuirksMode = false);
 float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Document&);
 
 // Given a font size in pixel, this function will return legacy font size between 1 and 7.

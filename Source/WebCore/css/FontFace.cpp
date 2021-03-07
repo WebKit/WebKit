@@ -50,7 +50,7 @@ namespace WebCore {
 
 static bool populateFontFaceWithArrayBuffer(CSSFontFace& fontFace, Ref<JSC::ArrayBufferView>&& arrayBufferView)
 {
-    auto source = makeUnique<CSSFontFaceSource>(fontFace, String(), nullptr, nullptr, WTFMove(arrayBufferView));
+    auto source = makeUnique<CSSFontFaceSource>(fontFace, String(), WTFMove(arrayBufferView));
     fontFace.adoptSource(WTFMove(source));
     return false;
 }
@@ -148,7 +148,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext* context, CSSFontFace& fac
 }
 
 FontFace::FontFace(CSSFontSelector& fontSelector)
-    : ActiveDOMObject(fontSelector.document())
+    : ActiveDOMObject(fontSelector.scriptExecutionContext())
     , m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
     , m_loadedPromise(makeUniqueRef<LoadedPromise>(*this, &FontFace::loadedPromiseResolve))
 {

@@ -55,9 +55,7 @@ JSC_DEFINE_HOST_FUNCTION(constructErrorConstructor, (JSGlobalObject* globalObjec
     JSValue message = callFrame->argument(0);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* errorStructure = newTarget == callFrame->jsCallee()
-        ? globalObject->errorStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->errorStructure());
+    Structure* errorStructure = JSC_GET_DERIVED_STRUCTURE(vm, errorStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, ErrorType::Error, false)));

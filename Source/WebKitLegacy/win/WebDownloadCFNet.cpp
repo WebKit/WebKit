@@ -178,7 +178,7 @@ HRESULT WebDownload::initToResumeWithBundle(_In_ BSTR bundlePath, _In_opt_ IWebD
                                   didReceiveResponseCallback, willResumeWithResponseCallback, didReceiveDataCallback, shouldDecodeDataOfMIMETypeCallback, 
                                   decideDestinationWithSuggestedObjectNameCallback, didCreateDestinationCallback, didFinishCallback, didFailCallback};
     
-    RetainPtr<CFURLRef> pathURL = adoptCF(MarshallingHelpers::PathStringToFileCFURLRef(String(bundlePath, SysStringLen(bundlePath))));
+    auto pathURL = MarshallingHelpers::PathStringToFileCFURLRef(String(bundlePath, SysStringLen(bundlePath)));
     ASSERT(pathURL);
 
     m_download = adoptCF(CFURLDownloadCreateWithResumeData(0, resumeData.get(), pathURL.get(), &client));
@@ -288,9 +288,8 @@ HRESULT WebDownload::setDestination(_In_ BSTR path, BOOL allowOverwrite)
     m_destination = String(path, SysStringLen(path));
     m_bundlePath = m_destination + DownloadBundle::fileExtension();
 
-    CFURLRef pathURL = MarshallingHelpers::PathStringToFileCFURLRef(m_bundlePath);
-    CFURLDownloadSetDestination(m_download.get(), pathURL, !!allowOverwrite);
-    CFRelease(pathURL);
+    auto pathURL = MarshallingHelpers::PathStringToFileCFURLRef(m_bundlePath);
+    CFURLDownloadSetDestination(m_download.get(), pathURL.get(), !!allowOverwrite);
 
     LOG(Download, "WebDownload - Set destination to %s", m_bundlePath.ascii().data());
 
@@ -368,9 +367,7 @@ CFURLRequestRef WebDownload::willSendRequest(CFURLRequestRef request, CFURLRespo
 
     COMPtr<WebMutableURLRequest> finalWebRequest(AdoptCOM, WebMutableURLRequest::createInstance(finalRequest.get()));
     m_request = finalWebRequest.get();
-    CFURLRequestRef result = finalWebRequest->resourceRequest().cfURLRequest(UpdateHTTPBody);
-    CFRetain(result);
-    return result;
+    return retainPtr(finalWebRequest->resourceRequest().cfURLRequest(UpdateHTTPBody)).leakRef();
 }
 
 void WebDownload::didReceiveAuthenticationChallenge(CFURLAuthChallengeRef challenge)

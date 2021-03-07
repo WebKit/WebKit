@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerNetworkAgent.h"
 
+#include "SharedBuffer.h"
 #include "WorkerDebuggerProxy.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerThread.h"

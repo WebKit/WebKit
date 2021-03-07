@@ -63,6 +63,7 @@
 #include "PaymentCoordinator.h"
 #include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
+#include "PaymentRequestUtilities.h"
 #include "PaymentRequestValidator.h"
 #include "PaymentResponse.h"
 #include "PaymentValidationErrors.h"

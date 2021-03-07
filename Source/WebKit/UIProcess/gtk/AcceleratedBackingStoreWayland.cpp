@@ -50,6 +50,7 @@
 #endif
 
 #if USE(WPE_RENDERER)
+#include <wpe/wpe.h>
 #include <wpe/fdo-egl.h>
 #if WPE_FDO_CHECK_VERSION(1, 7, 0)
 #include <wayland-server.h>

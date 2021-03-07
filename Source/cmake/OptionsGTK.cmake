@@ -4,7 +4,7 @@ include(VersioningUtils)
 WEBKIT_OPTION_BEGIN()
 WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC OFF)
 
-SET_PROJECT_VERSION(2 31 1)
+SET_PROJECT_VERSION(2 33 0)
 
 if (USE_GTK4)
     set(WEBKITGTK_API_VERSION 5.0)
@@ -13,10 +13,10 @@ if (USE_GTK4)
 else ()
     set(WEBKITGTK_API_VERSION 4.0)
     set(GTK_MINIMUM_VERSION 3.22.0)
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 88 0 51)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 90 0 53)
 endif ()
 
-CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 36 1 18)
+CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 37 0 19)
 
 # These are shared variables, but we special case their definition so that we can use the
 # CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
@@ -105,6 +105,7 @@ WEBKIT_OPTION_DEFINE(USE_SYSTEMD "Whether to enable journald logging" PUBLIC ON)
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PRIVATE OFF)
+WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PRIVATE OFF)
 
 WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
@@ -201,7 +202,7 @@ WEBKIT_OPTION_END()
 if (USE_SOUP2)
     set(SOUP_MINIMUM_VERSION 2.54.0)
 else ()
-    set(SOUP_MINIMUM_VERSION 2.91.0)
+    set(SOUP_MINIMUM_VERSION 2.99.1)
 endif ()
 find_package(LibSoup ${SOUP_MINIMUM_VERSION} REQUIRED)
 
@@ -390,6 +391,13 @@ if (USE_WOFF2)
     find_package(WOFF2 1.0.2 COMPONENTS dec)
     if (NOT WOFF2_FOUND)
        message(FATAL_ERROR "libwoff2dec is needed for USE_WOFF2.")
+    endif ()
+endif ()
+
+if (USE_AVIF)
+    find_package(AVIF 0.7.3)
+    if (NOT AVIF_FOUND)
+        message(FATAL_ERROR "libavif 0.7.3 is required for USE_AVIF.")
     endif ()
 endif ()
 

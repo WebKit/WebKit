@@ -124,31 +124,37 @@ public:
 
     void getNetworkLoadInformationResponse(ResourceLoadIdentifier identifier, CompletionHandler<void(const WebCore::ResourceResponse&)>&& completionHandler)
     {
-        completionHandler(m_networkLoadInformationByID.get(identifier).response);
+        if (auto* info = m_networkLoadInformationByID.get(identifier))
+            return completionHandler(info->response);
+        completionHandler({ });
     }
 
     void getNetworkLoadIntermediateInformation(ResourceLoadIdentifier identifier, CompletionHandler<void(const Vector<WebCore::NetworkTransactionInformation>&)>&& completionHandler)
     {
-        completionHandler(m_networkLoadInformationByID.get(identifier).transactions);
+        if (auto* info = m_networkLoadInformationByID.get(identifier))
+            return completionHandler(info->transactions);
+        completionHandler({ });
     }
 
     void takeNetworkLoadInformationMetrics(ResourceLoadIdentifier identifier, CompletionHandler<void(const WebCore::NetworkLoadMetrics&)>&& completionHandler)
     {
-        completionHandler(m_networkLoadInformationByID.take(identifier).metrics);
+        if (auto info = m_networkLoadInformationByID.take(identifier))
+            return completionHandler(info->metrics);
+        completionHandler({ });
     }
 
     void addNetworkLoadInformation(ResourceLoadIdentifier identifier, WebCore::NetworkLoadInformation&& information)
     {
         ASSERT(!m_networkLoadInformationByID.contains(identifier));
-        m_networkLoadInformationByID.add(identifier, WTFMove(information));
+        m_networkLoadInformationByID.add(identifier, makeUnique<WebCore::NetworkLoadInformation>(WTFMove(information)));
     }
 
     void addNetworkLoadInformationMetrics(ResourceLoadIdentifier identifier, const WebCore::NetworkLoadMetrics& metrics)
     {
         ASSERT(m_networkLoadInformationByID.contains(identifier));
         m_networkLoadInformationByID.ensure(identifier, [] {
-            return WebCore::NetworkLoadInformation { };
-        }).iterator->value.metrics = metrics;
+            return makeUnique<WebCore::NetworkLoadInformation>();
+        }).iterator->value->metrics = metrics;
     }
 
     void removeNetworkLoadInformation(ResourceLoadIdentifier identifier)
@@ -357,7 +363,7 @@ private:
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
 
-    HashMap<ResourceLoadIdentifier, WebCore::NetworkLoadInformation> m_networkLoadInformationByID;
+    HashMap<ResourceLoadIdentifier, std::unique_ptr<WebCore::NetworkLoadInformation>> m_networkLoadInformationByID;
 
 
 #if USE(LIBWEBRTC)

@@ -135,6 +135,12 @@ void RemoteRealtimeAudioSource::captureFailed()
     hasEnded();
 }
 
+void RemoteRealtimeAudioSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& callback)
+{
+    m_constraints = constraints;
+    m_proxy.applyConstraints(constraints, WTFMove(callback));
+}
+
 #if ENABLE(GPU_PROCESS)
 void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
@@ -153,11 +159,14 @@ void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
     m_proxy.resetReady();
     createRemoteMediaSource();
-    // FIXME: We should update the track according current settings.
+
+    m_proxy.failApplyConstraintCallbacks("GPU Process terminated"_s);
+    if (m_constraints)
+        m_proxy.applyConstraints(*m_constraints, [](auto) { });
+
     if (isProducingData())
         startProducingData();
 
-    m_proxy.failApplyConstraintCallbacks("GPU Process terminated"_s);
 }
 #endif
 

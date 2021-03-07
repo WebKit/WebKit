@@ -128,7 +128,7 @@ public:
     Vector<RegistrableDomain> allDomains() const final;
     bool domainIDExistsInDatabase(int);
     Optional<Vector<String>> checkForMissingTablesInSchema();
-    void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
+    void insertExpiredStatisticForTesting(const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
     void interrupt();
 
     // Private Click Measurement.
@@ -292,7 +292,8 @@ private:
     PAL::SessionID m_sessionID;
     bool m_isNewResourceLoadStatisticsDatabaseFile { false };
     unsigned m_operatingDatesSize { 0 };
-    OperatingDate m_leastRecentOperatingDate;
+    Optional<OperatingDate> m_longWindowOperatingDate;
+    Optional<OperatingDate> m_shortWindowOperatingDate;
     OperatingDate m_mostRecentOperatingDate;
 };
 

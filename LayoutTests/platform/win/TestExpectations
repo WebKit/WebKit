@@ -398,7 +398,7 @@ webkit.org/b/42435 fast/dom/webtiming-navigate-within-document.html [ Skip ]
 webkit.org/b/42435 fast/dom/webtiming.html [ Skip ]
 webkit.org/b/42435 fast/performance/ [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-and-back1.html [ Skip ]
-webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-redirect.php [ Skip ]
+webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-redirect.py [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-no-origin.html [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-one-redirect.php [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-resolution.html [ Skip ]
@@ -679,6 +679,7 @@ accessibility/aria-current-state-changed-notification.html [ Skip ]
 
 # TODO ARIA 1.1 table related attributes are not supported
 webkit.org/b/148967 accessibility/aria-table-attributes.html [ Skip ]
+accessibility/aria-grid-with-aria-owns-rows.html [ Skip ]
 
 # TODO webkit-font-smoothing is not supported.
 webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-001.html [ Skip ]
@@ -1424,7 +1425,6 @@ webkit.org/b/140798 [ Debug ] accessibility/aria-namefrom-author.html [ Skip ] #
 webkit.org/b/140798 [ Release ] accessibility/aria-sort.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-sort.html [ Skip ] # Debug assertion
 accessibility/aria-sort-changed-notification.html [ Skip ]
-accessibility/aria-errormessage.html [ Skip ]
 webkit.org/b/140798 [ Release ] accessibility/aria-tables.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-tables.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/aria-text-role.html [ Failure ]
@@ -2327,6 +2327,7 @@ http/tests/history/back-during-onload-triggered-by-back.html [ Skip ] # Timeout
 fast/frames/restoring-page-cache-should-not-run-scripts.html [ Skip ]
 http/tests/security/mixedContent/blob-url-in-iframe.html [ Skip ]
 http/tests/security/contentSecurityPolicy/navigate-self-to-blob.html [ Skip ]
+http/tests/security/contentSecurityPolicy/report-document-uri-blob.html [ Skip ]
 fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html [ Skip ]
 
 # Clear Key not implemented
@@ -2991,7 +2992,7 @@ fast/text/hangul-generic-font-families.html [ WontFix ]
 webkit.org/b/187700 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 
 # <rdar://problem/21816197> large-js-program.php crashes (crashes slower on Debug)
-http/tests/misc/large-js-program.php [ Crash Timeout ]
+http/tests/misc/large-js-program.py [ Crash Timeout ]
 
 # Slider thumb widget painting
 fast/repaint/block-inputrange-repaint.html [ Pass Failure ]
@@ -3150,9 +3151,9 @@ fast/events/menu-keydown-on-hidden-element.html [ Failure Pass ]
 fast/events/overflowchanged-inside-selection-collapse-crash.html [ Failure Pass ]
 http/tests/cache/network-error-during-revalidation.html [ Failure Crash Pass ]
 http/tests/cookies/single-quoted-value.html [ Failure Pass ]
-http/tests/loading/nested_bad_objects.php [ Failure Pass ]
+http/tests/loading/nested_bad_objects.py [ Failure Pass ]
 http/tests/loading/onload-vs-immediate-refresh.pl [ Failure Pass ]
-http/tests/loading/preload-append-scan.php [ Failure Pass ]
+http/tests/loading/preload-append-scan.py [ Failure Pass ]
 http/tests/loading/preload-css-test.html [ Failure Pass ]
 http/tests/loading/preload-img-src.html [ Failure Pass ]
 http/tests/loading/preload-img-srcset-sizes.html [ Failure Pass ]
@@ -3706,6 +3707,7 @@ fast/forms/file/entries-api/image-transcode-drag-drop.html [ Failure Timeout ]
 http/tests/multipart/multipart-async-image.html [ Failure ]
 http/tests/security/contentSecurityPolicy/allow-favicon.html [ Failure ]
 http/wpt/entries-api/interfaces.html [ Failure ]
+http/wpt/fetch/blob-of-opaque-origin-iframe.html [ Skip ]
 http/wpt/fetch/response-status-text.html [ Failure ]
 js/dom/builtin-getter-name.html [ Failure ]
 fast/forms/file/entries-api/webkitdirectory-open-panel.html [ Skip ]
@@ -4636,3 +4638,18 @@ fast/text/system-font-width-6.html [ ImageOnlyFailure ]
 fast/text/system-font-width-7.html [ ImageOnlyFailure ]
 fast/text/system-font-width-8.html [ ImageOnlyFailure ]
 fast/text/system-font-width-9.html [ ImageOnlyFailure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=222333
+http/tests/security/xss-DENIED-xsl-document-redirect.xml [ Skip ]
+http/tests/xmlhttprequest/access-control-and-redirects.html [ Skip ]
+http/tests/xmlhttprequest/redirect-cross-origin-sync.html [ Skip ]
+http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html [ Skip ]
+http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Skip ]
+http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html [ Skip ]
+editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
+fast/css/parsing-color-mix.html [ Failure ]
+fast/css/parsing-relative-color-syntax.html [ Failure ]
+fast/text/letter-spacing-produces-nan-width.html [ Timeout ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=221569
+crypto/crypto-random-values-oom.html [ Skip ]

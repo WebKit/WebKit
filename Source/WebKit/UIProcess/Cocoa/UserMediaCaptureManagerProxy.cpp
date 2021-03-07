@@ -325,8 +325,10 @@ void UserMediaCaptureManagerProxy::capabilities(RealtimeMediaSourceIdentifier id
 void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifier id, const WebCore::MediaConstraints& constraints)
 {
     auto* proxy = m_proxies.get(id);
-    if (!proxy)
+    if (!proxy) {
+        m_connectionProxy->connection().send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, { }, "Unknown source"_s), 0);
         return;
+    }
 
     auto& source = proxy->source();
     auto result = source.applyConstraints(constraints);

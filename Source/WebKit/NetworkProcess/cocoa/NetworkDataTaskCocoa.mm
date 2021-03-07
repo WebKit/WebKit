@@ -339,6 +339,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     NETWORK_DATA_TASK_COCOA_ADDITIONS
 
+    m_session->appBoundNavigationTestingData().updateAppBoundNavigationTestingData(request.isAppBound());
+
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
     m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest];

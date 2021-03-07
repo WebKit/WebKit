@@ -773,7 +773,7 @@ static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef co
         } else if (JSValueIsString(context, value)) {
             // Would be nice to unique strings, too.
             auto jsstring = adoptRef(JSValueToStringCopy(context, value, 0));
-            primitive = CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsstring.get()));
+            primitive = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsstring.get())).bridgingAutorelease();
         } else if (JSValueIsNull(context, value))
             primitive = [NSNull null];
         else {
@@ -881,7 +881,7 @@ id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
         return nil;
     }
 
-    return CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsstring.get()));
+    return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsstring.get())).bridgingAutorelease();
 }
 
 id valueToDate(JSGlobalContextRef context, JSValueRef value, JSValueRef* exception)

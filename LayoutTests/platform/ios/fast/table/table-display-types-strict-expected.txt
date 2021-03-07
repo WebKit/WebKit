@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x534
-  RenderBlock {HTML} at (0,0) size 800x534
-    RenderBody {BODY} at (8,10) size 784x516
+layer at (0,0) size 800x536
+  RenderBlock {HTML} at (0,0) size 800x536
+    RenderBody {BODY} at (8,10) size 784x518
       RenderBlock {TABLE} at (10,0) size 764x100 [border: (1px solid #000000)]
         RenderTable at (1,1) size 118x98
           RenderTableSection {THEAD} at (0,0) size 118x26
@@ -36,49 +36,49 @@ layer at (0,0) size 800x534
               RenderTableCell {TD} at (59,24) size 57x22 [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 39x19
                   text run at (1,1) width 39: "Cell 4"
-      RenderBlock {TABLE} at (10,110) size 764x54 [border: (1px solid #000000)]
-        RenderTable at (1,1) size 222x52
-          RenderTableSection (anonymous) at (0,0) size 222x29
-            RenderTableRow (anonymous) at (0,2) size 222x25
-              RenderTableCell {THEAD} at (2,2) size 100x25 [r=0 c=0 rs=1 cs=1]
-                RenderTable at (0,0) size 100x25
-                  RenderTableSection (anonymous) at (0,0) size 100x25
-                    RenderTableRow (anonymous) at (0,2) size 100x21
-                      RenderTableCell {TR} at (2,2) size 96x21 [r=0 c=0 rs=1 cs=1]
+      RenderBlock {TABLE} at (10,110) size 764x56 [border: (1px solid #000000)]
+        RenderTable at (1,1) size 222x54
+          RenderTableSection (anonymous) at (0,0) size 222x30
+            RenderTableRow (anonymous) at (0,2) size 222x26
+              RenderTableCell {THEAD} at (2,2) size 100x26 [r=0 c=0 rs=1 cs=1]
+                RenderTable at (0,0) size 100x26
+                  RenderTableSection (anonymous) at (0,0) size 100x26
+                    RenderTableRow (anonymous) at (0,2) size 100x22
+                      RenderTableCell {TR} at (2,2) size 96x22 [r=0 c=0 rs=1 cs=1]
                         RenderInline {TD} at (0,0) size 48x22
                           RenderText {#text} at (1,1) size 46x20
                             text run at (1,1) width 46: "Head 1"
                         RenderInline {TD} at (0,0) size 49x22
                           RenderText {#text} at (48,1) size 47x20
                             text run at (48,1) width 47: "Head 2"
-              RenderTableCell {TFOOT} at (103,2) size 117x25 [r=0 c=1 rs=1 cs=1]
-                RenderTable at (0,0) size 116x25
-                  RenderTableSection (anonymous) at (0,0) size 116x25
-                    RenderTableRow (anonymous) at (0,2) size 116x21
-                      RenderTableCell {TR} at (2,2) size 112x21 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TFOOT} at (103,2) size 117x26 [r=0 c=1 rs=1 cs=1]
+                RenderTable at (0,0) size 116x26
+                  RenderTableSection (anonymous) at (0,0) size 116x26
+                    RenderTableRow (anonymous) at (0,2) size 116x22
+                      RenderTableCell {TR} at (2,2) size 112x22 [r=0 c=0 rs=1 cs=1]
                         RenderInline {TD} at (0,0) size 56x22
                           RenderText {#text} at (1,1) size 54x20
                             text run at (1,1) width 54: "Footer 1"
                         RenderInline {TD} at (0,0) size 57x22
                           RenderText {#text} at (56,1) size 55x20
                             text run at (56,1) width 55: "Footer 2"
-          RenderTableSection {TBODY} at (0,29) size 222x23
-            RenderTableRow (anonymous) at (0,0) size 222x21
-              RenderTableCell {TR} at (2,0) size 100x21 [r=0 c=0 rs=1 cs=1]
+          RenderTableSection {TBODY} at (0,30) size 222x24
+            RenderTableRow (anonymous) at (0,0) size 222x22
+              RenderTableCell {TR} at (2,0) size 100x22 [r=0 c=0 rs=1 cs=1]
                 RenderInline {TD} at (0,0) size 41x22
                   RenderText {#text} at (1,1) size 39x20
                     text run at (1,1) width 39: "Cell 1"
                 RenderInline {TD} at (0,0) size 42x22
                   RenderText {#text} at (41,1) size 40x20
                     text run at (41,1) width 40: "Cell 2"
-              RenderTableCell {TR} at (103,0) size 117x21 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TR} at (103,0) size 117x22 [r=0 c=1 rs=1 cs=1]
                 RenderInline {TD} at (0,0) size 41x22
                   RenderText {#text} at (1,1) size 39x20
                     text run at (1,1) width 39: "Cell 3"
                 RenderInline {TD} at (0,0) size 42x22
                   RenderText {#text} at (41,1) size 40x20
                     text run at (41,1) width 40: "Cell 4"
-      RenderBlock {TABLE} at (10,174) size 764x110 [border: (1px solid #000000)]
+      RenderBlock {TABLE} at (10,176) size 764x110 [border: (1px solid #000000)]
         RenderBlock {THEAD} at (1,1) size 762x26
           RenderBlock {TR} at (0,0) size 762x26
             RenderTable at (0,0) size 102x26
@@ -125,7 +125,7 @@ layer at (0,0) size 800x534
                         RenderTableCell {TD} at (44,2) size 42x22 [r=0 c=1 rs=1 cs=1]
                           RenderText {#text} at (1,1) size 39x19
                             text run at (1,1) width 39: "Cell 4"
-      RenderTable at (0,294) size 302x222
+      RenderTable at (0,296) size 302x222
         RenderTableSection (anonymous) at (0,0) size 302x222
           RenderTableRow (anonymous) at (0,0) size 302x222
             RenderTableCell {P} at (0,0) size 302x222 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]

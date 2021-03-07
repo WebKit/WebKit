@@ -40,6 +40,8 @@
 #import <wtf/MathExtras.h>
 #import <wtf/text/TextStream.h>
 
+#import <WebCore/CoreVideoSoftLink.h>
+
 namespace WebCore {
 
 inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format pixelFormat)
@@ -100,6 +102,22 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
     CGContextFlush(surfaceContext);
     return surface;
+}
+
+std::unique_ptr<IOSurface> IOSurface::createFromPixelBuffer(CVPixelBufferRef pixelBuffer)
+{
+    if (!pixelBuffer)
+        return nullptr;
+
+    auto surface = CVPixelBufferGetIOSurface(pixelBuffer);
+    if (!surface)
+        return nullptr;
+
+    auto colorSpace = CVImageBufferGetColorSpace(pixelBuffer);
+    if (!colorSpace)
+        return nullptr;
+
+    return createFromSurface(surface, colorSpace);
 }
 
 void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface)
@@ -280,6 +298,16 @@ RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surfac
     return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
 }
 
+RetainPtr<CVPixelBufferRef> IOSurface::createPixelBuffer()
+{
+    CVPixelBufferRef rawBuffer = nullptr;
+    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, m_surface.get(), nullptr, &rawBuffer);
+    if (status == noErr && rawBuffer)
+        return adoptCF(rawBuffer);
+
+    return nullptr;
+}
+
 void IOSurface::setContextSize(IntSize contextSize)
 {
     if (contextSize == m_contextSize)
@@ -321,7 +349,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
     
     m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.get(), bitmapInfo));
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
         if (hostWindow && hostWindow->displayID())
             displayMask = displayMaskForDisplay(hostWindow->displayID());
@@ -476,19 +504,14 @@ void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format f
 
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
-void IOSurface::setOwnership(task_t newOwner)
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+void IOSurface::setOwnershipIdentity(task_id_token_t newOwner)
 {
-#if HAVE(IOSURFACE_SET_OWNERSHIP)
-    if (!m_surface)
-        return;
-
-    auto result = IOSurfaceSetOwnership(m_surface.get(), newOwner, kIOSurfaceMemoryLedgerTagGraphics, 0);
+    auto result = IOSurfaceSetOwnershipIdentity(m_surface.get(), newOwner, kIOSurfaceMemoryLedgerTagGraphics, 0);
     if (result != kIOReturnSuccess)
-        RELEASE_LOG_ERROR(IOSurface, "IOSurface::setOwnership: Failed to claim ownership of IOSurface %p. Error: %d", m_surface.get(), result);
-#else
-    UNUSED_PARAM(newOwner);
-#endif
+        RELEASE_LOG_ERROR(IOSurface, "IOSurface::setOwnershipIdentity: Failed to claim ownership of IOSurface %p, newOwner: %d, error: %d", m_surface.get(), (int)newOwner, result);
 }
+#endif
 
 void IOSurface::migrateColorSpaceToProperties()
 {

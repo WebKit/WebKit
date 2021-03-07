@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageBitmapRenderingContext.h"
 
+#include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: No device motion or orientation events will be fired until permission has been requested and granted.
+CONSOLE MESSAGE: No device orientation events will be fired, reason: Permission to use the API was not yet requested.
 Received device orientation & motion access request for security origin "".
 Basic testing for DeviceOrientationEvent.requestPermission().
 

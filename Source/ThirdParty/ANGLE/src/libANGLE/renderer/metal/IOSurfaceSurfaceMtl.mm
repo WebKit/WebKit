@@ -35,37 +35,37 @@ struct IOSurfaceFormatInfo
 {
     GLenum internalFormat;
     GLenum type;
-    angle::FormatID pixelFormat;
-    angle::FormatID internalPixelFormat;
+    size_t componentBytes;
+
+    angle::FormatID nativeAngleFormatId;
 };
 
-static const IOSurfaceFormatInfo kIOSurfaceFormats[] = {
-    {GL_RED, GL_UNSIGNED_BYTE, angle::FormatID::R8_UNORM, angle::FormatID::R8_UNORM},
-    {GL_R16UI, GL_UNSIGNED_SHORT, angle::FormatID::R16G16_UINT, angle::FormatID::R16G16_UINT},
-    {GL_RG, GL_UNSIGNED_BYTE, angle::FormatID::R8G8_UNORM, angle::FormatID::R8G8_UNORM},
-    {GL_RGB, GL_UNSIGNED_BYTE, angle::FormatID::R8G8B8A8_UNORM, angle::FormatID::B8G8R8A8_UNORM},
-    {GL_BGRA_EXT, GL_UNSIGNED_BYTE, angle::FormatID::B8G8R8A8_UNORM,
-     angle::FormatID::B8G8R8A8_UNORM},
-    {GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV, angle::FormatID::R10G10B10A2_UNORM,
-     angle::FormatID::R10G10B10A2_UNORM},
-    {GL_RGBA, GL_HALF_FLOAT, angle::FormatID::R16G16B16A16_FLOAT,
-     angle::FormatID::R16G16B16A16_FLOAT},
-};
+// clang-format off
+// NOTE(hqle): Support R16_UINT once GLES3 is complete.
+constexpr std::array<IOSurfaceFormatInfo, 8> kIOSurfaceFormats = {{
+    {GL_RED,      GL_UNSIGNED_BYTE,               1, angle::FormatID::R8_UNORM},
+    {GL_RED,      GL_UNSIGNED_SHORT,              2, angle::FormatID::R16_UNORM},
+    {GL_RG,       GL_UNSIGNED_BYTE,               2, angle::FormatID::R8G8_UNORM},
+    {GL_RG,       GL_UNSIGNED_SHORT,              4, angle::FormatID::R16G16_UNORM},
+    {GL_RGB,      GL_UNSIGNED_BYTE,               4, angle::FormatID::B8G8R8A8_UNORM},
+    {GL_BGRA_EXT, GL_UNSIGNED_BYTE,               4, angle::FormatID::B8G8R8A8_UNORM},
+    {GL_RGBA,     GL_HALF_FLOAT,                  8, angle::FormatID::R16G16B16A16_FLOAT},
+    {GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV, 4, angle::FormatID::B10G10R10A2_UNORM},
+}};
+// clang-format on
 
 int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
 {
-    for (size_t i = 0; i < static_cast<size_t>(ArraySize(kIOSurfaceFormats)); ++i)
+    for (int i = 0; i < static_cast<int>(kIOSurfaceFormats.size()); ++i)
     {
         const auto &formatInfo = kIOSurfaceFormats[i];
         if (formatInfo.internalFormat == internalFormat && formatInfo.type == type)
         {
-            return static_cast<int>(i);
+            return i;
         }
     }
     return -1;
 }
-
-// TODO(jcunningham) : refactor this and surfacemtl to reduce copy+pasted code
 
 ANGLE_MTL_UNUSED
 bool IsFrameCaptureEnabled()
@@ -230,42 +230,28 @@ void StopFrameCapture()
 
 }  // anonymous namespace
 
+// IOSurfaceSurfaceMtl implementation.
 IOSurfaceSurfaceMtl::IOSurfaceSurfaceMtl(DisplayMtl *display,
                                          const egl::SurfaceState &state,
                                          EGLClientBuffer buffer,
                                          const egl::AttributeMap &attribs)
-    : SurfaceMtlProtocol(state)
+    : OffscreenSurfaceMtl(display, state, attribs), mIOSurface((__bridge IOSurfaceRef)(buffer))
 {
-    // Keep reference to the IOSurface so it doesn't get deleted while the pbuffer exists.
-    mIOSurface = reinterpret_cast<IOSurfaceRef>(buffer);
     CFRetain(mIOSurface);
 
-    // Extract attribs useful for the call to EAGLTexImageIOSurface2D
-    mWidth  = static_cast<int>(attribs.get(EGL_WIDTH));
-    mHeight = static_cast<int>(attribs.get(EGL_HEIGHT));
-    mPlane  = static_cast<int>(attribs.get(EGL_IOSURFACE_PLANE_ANGLE));
-    // Hopefully the number of bytes per row is always an integer number of pixels. We use
-    // glReadPixels to fill the IOSurface in the simulator and it can only support strides that are
-    // an integer number of pixels.
-    ASSERT(IOSurfaceGetBytesPerRowOfPlane(mIOSurface, mPlane) %
-               IOSurfaceGetBytesPerElementOfPlane(mIOSurface, mPlane) ==
-           0);
-    mRowStrideInPixels = static_cast<int>(IOSurfaceGetBytesPerRowOfPlane(mIOSurface, mPlane) /
-                                          IOSurfaceGetBytesPerElementOfPlane(mIOSurface, mPlane));
+    mIOSurfacePlane = static_cast<int>(attribs.get(EGL_IOSURFACE_PLANE_ANGLE));
 
     EGLAttrib internalFormat = attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE);
     EGLAttrib type           = attribs.get(EGL_TEXTURE_TYPE_ANGLE);
-    mFormatIndex =
+    mIOSurfaceFormatIdx =
         FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type));
-    ASSERT(mFormatIndex >= 0);
-    mFormat         = display->getPixelFormat(kIOSurfaceFormats[mFormatIndex].pixelFormat);
-    mInternalFormat = display->getPixelFormat(kIOSurfaceFormats[mFormatIndex].internalPixelFormat);
-    mGLInternalFormat = kIOSurfaceFormats[mFormatIndex].internalFormat;
-}
+    ASSERT(mIOSurfaceFormatIdx >= 0);
 
+    mColorFormat =
+        display->getPixelFormat(kIOSurfaceFormats[mIOSurfaceFormatIdx].nativeAngleFormatId);
+}
 IOSurfaceSurfaceMtl::~IOSurfaceSurfaceMtl()
 {
-    StopFrameCapture();
     if (mIOSurface != nullptr)
     {
         CFRelease(mIOSurface);
@@ -273,133 +259,24 @@ IOSurfaceSurfaceMtl::~IOSurfaceSurfaceMtl()
     }
 }
 
-void IOSurfaceSurfaceMtl::destroy(const egl::Display *display) {}
-
-egl::Error IOSurfaceSurfaceMtl::initialize(const egl::Display *display)
-{
-    DisplayMtl *displayMtl    = mtl::GetImpl(display);
-    id<MTLDevice> metalDevice = displayMtl->getMetalDevice();
-
-    StartFrameCapture(metalDevice, displayMtl->cmdQueue().get());
-    return egl::NoError();
-}
-
-FramebufferImpl *IOSurfaceSurfaceMtl::createDefaultFramebuffer(const gl::Context *context,
-                                                               const gl::FramebufferState &state)
-{
-    auto fbo = new FramebufferMtl(state, /* flipY */ true, /* backbuffer */ this);
-    return fbo;
-}
-
-egl::Error IOSurfaceSurfaceMtl::makeCurrent(const gl::Context *context)
-{
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-    StartFrameCapture(contextMtl);
-    return egl::NoError();
-}
-
-egl::Error IOSurfaceSurfaceMtl::unMakeCurrent(const gl::Context *context)
-{
-    StopFrameCapture();
-    return egl::NoError();
-}
-
-egl::Error IOSurfaceSurfaceMtl::swap(const gl::Context *context)
-{
-    StopFrameCapture();
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-    StartFrameCapture(contextMtl);
-    return egl::NoError();
-}
-
-egl::Error IOSurfaceSurfaceMtl::postSubBuffer(const gl::Context *context,
-                                              EGLint x,
-                                              EGLint y,
-                                              EGLint width,
-                                              EGLint height)
-{
-    UNIMPLEMENTED();
-    return egl::EglBadAccess();
-}
-
-egl::Error IOSurfaceSurfaceMtl::querySurfacePointerANGLE(EGLint attribute, void **value)
-{
-    UNIMPLEMENTED();
-    return egl::EglBadAccess();
-}
-
 egl::Error IOSurfaceSurfaceMtl::bindTexImage(const gl::Context *context,
                                              gl::Texture *texture,
                                              EGLint buffer)
 {
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    StartFrameCapture(contextMtl);
 
-    angle::Result res = createBackingTexture(context);
-    if (res == angle::Result::Continue)
-        return egl::NoError();
-    else
-        return egl::EglBadAccess();
+    // Initialize offscreen texture if needed:
+    ANGLE_TO_EGL_TRY(ensureColorTextureCreated(context));
+
+    return OffscreenSurfaceMtl::bindTexImage(context, texture, buffer);
 }
 
 egl::Error IOSurfaceSurfaceMtl::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
-    // This will need implementation
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-    if (contextMtl->flush(context) == angle::Result::Continue)
-    {
-        mIOSurfaceTextureCreated = false;
-        return egl::NoError();
-    }
-    return egl::EglBadAccess();
-}
-
-egl::Error IOSurfaceSurfaceMtl::getSyncValues(EGLuint64KHR *ust,
-                                              EGLuint64KHR *msc,
-                                              EGLuint64KHR *sbc)
-{
-    UNIMPLEMENTED();
-    return egl::EglBadAccess();
-}
-
-egl::Error IOSurfaceSurfaceMtl::getMscRate(EGLint *numerator, EGLint *denominator)
-{
-    UNIMPLEMENTED();
-    return egl::EglBadAccess();
-}
-
-void IOSurfaceSurfaceMtl::setSwapInterval(EGLint interval)
-{
-    UNIMPLEMENTED();
-}
-
-void IOSurfaceSurfaceMtl::setFixedWidth(EGLint width)
-{
-    UNIMPLEMENTED();
-}
-
-void IOSurfaceSurfaceMtl::setFixedHeight(EGLint height)
-{
-    UNIMPLEMENTED();
-}
-
-// width and height can change with client window resizing
-EGLint IOSurfaceSurfaceMtl::getWidth() const
-{
-    return static_cast<EGLint>(mWidth);
-}
-
-EGLint IOSurfaceSurfaceMtl::getHeight() const
-{
-    return static_cast<EGLint>(mHeight);
-}
-
-EGLint IOSurfaceSurfaceMtl::isPostSubBufferSupported() const
-{
-    return EGL_FALSE;
-}
-
-EGLint IOSurfaceSurfaceMtl::getSwapBehavior() const
-{
-    return EGL_BUFFER_DESTROYED;
+    egl::Error re = OffscreenSurfaceMtl::releaseTexImage(context, buffer);
+    StopFrameCapture();
+    return re;
 }
 
 angle::Result IOSurfaceSurfaceMtl::getAttachmentRenderTarget(
@@ -409,69 +286,99 @@ angle::Result IOSurfaceSurfaceMtl::getAttachmentRenderTarget(
     GLsizei samples,
     FramebufferAttachmentRenderTarget **rtOut)
 {
-    ANGLE_TRY(ensureTextureCreated(context));
-    *rtOut = &mRenderTarget;
-    return angle::Result::Continue;
+    // Initialize offscreen texture if needed:
+    ANGLE_TRY(ensureColorTextureCreated(context));
+
+    return OffscreenSurfaceMtl::getAttachmentRenderTarget(context, binding, imageIndex, samples,
+                                                          rtOut);
 }
 
-angle::Result IOSurfaceSurfaceMtl::ensureCurrentDrawableObtained(const gl::Context *context, bool *newDrawableOut)
+angle::Result IOSurfaceSurfaceMtl::ensureColorTextureCreated(const gl::Context *context)
 {
-    return angle::Result::Continue;
-}
-angle::Result IOSurfaceSurfaceMtl::ensureCurrentDrawableObtained(const gl::Context *context)
-{
-    return angle::Result::Continue;
-}
-
-angle::Result IOSurfaceSurfaceMtl::createBackingTexture(const gl::Context *context)
-{
-    mtl::TextureRef mTemporarySurfaceRef;
-    ANGLE_TRY(createTexture(context, mFormat, mWidth, mHeight, false, &mTemporarySurfaceRef));
-    // Create texture view around the base format of the texture.
-    mIOSurfaceTexture =
-        mTemporarySurfaceRef->createViewWithDifferentFormat(MTLPixelFormatBGRA8Unorm);
-    mRenderTarget.set(mIOSurfaceTexture, mtl::kZeroNativeMipLevel, 0, mInternalFormat);
-
-    if (mGLInternalFormat == GL_RGB)
+    if (mColorTexture)
     {
-        // Disable subsequent rendering to alpha channel.
-        // TODO: Investigate if this allows the higher level alpha masks can
-        // be disabled once this backend is live.
-        mIOSurfaceTexture->setColorWritableMask(MTLColorWriteMaskAll & (~MTLColorWriteMaskAlpha));
+        return angle::Result::Continue;
     }
-
-    mIOSurfaceTextureCreated = true;
-    return angle::Result::Continue;
-}
-
-angle::Result IOSurfaceSurfaceMtl::ensureTextureCreated(const gl::Context *context)
-{
-    if (!mIOSurfaceTextureCreated)
-    {
-        return createBackingTexture(context);
-    }
-    return angle::Result::Continue;
-}
-
-mtl::TextureRef IOSurfaceSurfaceMtl::getTexture(const gl::Context *context)
-{
-    if (ensureCurrentDrawableObtained(context) == angle::Result::Continue)
-    {
-        return mIOSurfaceTexture;
-    }
-    return nullptr;
-}
-
-angle::Result IOSurfaceSurfaceMtl::createTexture(const gl::Context *context,
-                                                 const mtl::Format &format,
-                                                 uint32_t width,
-                                                 uint32_t height,
-                                                 bool renderTargetOnly,
-                                                 mtl::TextureRef *textureOut)
-{
     ContextMtl *contextMtl = mtl::GetImpl(context);
-    ANGLE_TRY(mtl::Texture::MakeIOSurfaceTexture(contextMtl, format, width, height, mIOSurface,
-                                                 mPlane, textureOut));
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        auto texDesc =
+            [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:mColorFormat.metalFormat
+                                                               width:mSize.width
+                                                              height:mSize.height
+                                                           mipmapped:NO];
+
+        texDesc.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
+
+        id<MTLTexture> texture =
+            [contextMtl->getMetalDevice() newTextureWithDescriptor:texDesc
+                                                         iosurface:mIOSurface
+                                                             plane:mIOSurfacePlane];
+
+        mColorTexture = mtl::Texture::MakeFromMetal([texture ANGLE_MTL_AUTORELEASE]);
+    }
+
+    mColorRenderTarget.set(mColorTexture, mtl::kZeroNativeMipLevel, 0, mColorFormat);
+
+    if (kIOSurfaceFormats[mIOSurfaceFormatIdx].internalFormat == GL_RGB)
+    {
+        // This format has emulated alpha channel. Initialize texture's alpha channel to 1.0.
+        const mtl::Format &rgbClearFormat =
+            contextMtl->getPixelFormat(angle::FormatID::R8G8B8_UNORM);
+        ANGLE_TRY(mtl::InitializeTextureContentsGPU(
+            context, mColorTexture, rgbClearFormat,
+            mtl::ImageNativeIndex::FromBaseZeroGLIndex(gl::ImageIndex::Make2D(0)),
+            MTLColorWriteMaskAlpha));
+
+        // Disable subsequent rendering to alpha channel.
+        mColorTexture->setColorWritableMask(MTLColorWriteMaskAll & (~MTLColorWriteMaskAlpha));
+    }
+
     return angle::Result::Continue;
 }
-}
+
+// static
+bool IOSurfaceSurfaceMtl::ValidateAttributes(EGLClientBuffer buffer,
+                                             const egl::AttributeMap &attribs)
+{
+    IOSurfaceRef ioSurface = (__bridge IOSurfaceRef)(buffer);
+
+    // The plane must exist for this IOSurface. IOSurfaceGetPlaneCount can return 0 for non-planar
+    // ioSurfaces but we will treat non-planar like it is a single plane.
+    size_t surfacePlaneCount = std::max(size_t(1), IOSurfaceGetPlaneCount(ioSurface));
+    EGLAttrib plane          = attribs.get(EGL_IOSURFACE_PLANE_ANGLE);
+    if (plane < 0 || static_cast<size_t>(plane) >= surfacePlaneCount)
+    {
+        return false;
+    }
+
+    // The width height specified must be at least (1, 1) and at most the plane size
+    EGLAttrib width  = attribs.get(EGL_WIDTH);
+    EGLAttrib height = attribs.get(EGL_HEIGHT);
+    if (width <= 0 || static_cast<size_t>(width) > IOSurfaceGetWidthOfPlane(ioSurface, plane) ||
+        height <= 0 || static_cast<size_t>(height) > IOSurfaceGetHeightOfPlane(ioSurface, plane))
+    {
+        return false;
+    }
+
+    // Find this IOSurface format
+    EGLAttrib internalFormat = attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE);
+    EGLAttrib type           = attribs.get(EGL_TEXTURE_TYPE_ANGLE);
+
+    int formatIndex =
+        FindIOSurfaceFormatIndex(static_cast<GLenum>(internalFormat), static_cast<GLenum>(type));
+
+    if (formatIndex < 0)
+    {
+        return false;
+    }
+
+    // Check that the format matches this IOSurface plane
+    if (IOSurfaceGetBytesPerElementOfPlane(ioSurface, plane) !=
+        kIOSurfaceFormats[formatIndex].componentBytes)
+    {
+        return false;
+    }
+
+    return true;
+}}

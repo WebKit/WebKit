@@ -524,7 +524,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    virtual void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
+    virtual void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -536,6 +536,9 @@ public:
     virtual NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>) = 0;
     virtual void didHandleAcceptedCandidate() = 0;
 #endif
+
+    virtual void microphoneCaptureChanged() { }
+    virtual void cameraCaptureChanged() { }
 
     virtual void videoControlsManagerDidChange() { }
 

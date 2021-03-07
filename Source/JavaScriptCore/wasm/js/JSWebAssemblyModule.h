@@ -30,6 +30,7 @@
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "WasmMemoryMode.h"
+#include "WasmOps.h"
 #include <wtf/Bag.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
@@ -42,7 +43,6 @@ namespace Wasm {
 class Module;
 struct ModuleInformation;
 class Plan;
-using SignatureIndex = uint64_t;
 }
 
 class SymbolTable;

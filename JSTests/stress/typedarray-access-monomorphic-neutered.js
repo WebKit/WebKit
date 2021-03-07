@@ -20,7 +20,6 @@ for (let constructor of typedArrays) {
     testNoException("Object.getOwnPropertyDescriptor(array, 0)", array);
     testNoException("array[0] = 1", array);
     testNoException("array[i] = 1", array);
-    testNoException("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: true, enumerable: true })", array);
 }
 
 function testFTLNoException(thunk, array, failArray) {
@@ -40,5 +39,4 @@ for (let constructor of typedArrays) {
     testFTLNoException("Object.getOwnPropertyDescriptor(array, 0)", array, failArray);
     testFTLNoException("array[0] = 1", array, failArray);
     testFTLNoException("array[i] = 1", array, failArray);
-    testFTLNoException("Object.defineProperty(array, 0, { value: 1, writable: true, configurable: true, enumerable: true })", array, failArray);
 }

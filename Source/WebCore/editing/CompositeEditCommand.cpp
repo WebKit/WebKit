@@ -1058,6 +1058,10 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
         int endOffset = textNode.ptr() == end.deprecatedNode() ? end.deprecatedEditingOffset() : static_cast<int>(textNode->length());
         deleteInsignificantText(textNode, startOffset, endOffset);
     }
+    if (!nodes.isEmpty()) {
+        // Callers expect render tree to be in sync.
+        document().updateLayoutIgnorePendingStylesheets();
+    }
 }
 
 void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& position)
@@ -1065,12 +1069,13 @@ void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& pos
     deleteInsignificantText(position, VisiblePosition(position).next().deepEquivalent().downstream());
 }
 
-Ref<Element> CompositeEditCommand::appendBlockPlaceholder(Ref<Element>&& container)
+RefPtr<Element> CompositeEditCommand::appendBlockPlaceholder(Ref<Element>&& container)
 {
     document().updateLayoutIgnorePendingStylesheets();
     
-    // Should assert isBlockFlow || isInlineFlow when deletion improves. See 4244964.
-    ASSERT(container->renderer());
+    // Should check isBlockFlow || isInlineFlow when deletion improves. See 4244964.
+    if (!container->renderer())
+        return nullptr;
 
     auto placeholder = createBlockPlaceholderElement(document());
     appendNode(placeholder.copyRef(), WTFMove(container));
@@ -1601,7 +1606,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     auto* brPtr = br.ptr();
     // We want to replace this quoted paragraph with an unquoted one, so insert a br
     // to hold the caret before the highest blockquote.
-    insertNodeBefore(WTFMove(br), *highestBlockquote);
+    insertNodeBefore(br.copyRef(), *highestBlockquote);
     VisiblePosition atBR(positionBeforeNode(brPtr));
     // If the br we inserted collapsed, for example foo<br><blockquote>...</blockquote>, insert
     // a second one.

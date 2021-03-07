@@ -26,8 +26,8 @@
 #include "config.h"
 #include "Color.h"
 
+#include "ColorLuminance.h"
 #include "ColorSerialization.h"
-#include "ColorUtilities.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/TextStream.h>
 
@@ -39,8 +39,8 @@ static constexpr auto darkenedWhite = SRGBA<uint8_t> { 171, 171, 171 };
 Color::Color(const Color& other)
     : m_colorAndFlags(other.m_colorAndFlags)
 {
-    if (isExtended())
-        asExtended().ref();
+    if (isOutOfLine())
+        asOutOfLine().ref();
 }
 
 Color::Color(Color&& other)
@@ -53,13 +53,13 @@ Color& Color::operator=(const Color& other)
     if (*this == other)
         return *this;
 
-    if (isExtended())
-        asExtended().deref();
+    if (isOutOfLine())
+        asOutOfLine().deref();
 
     m_colorAndFlags = other.m_colorAndFlags;
 
-    if (isExtended())
-        asExtended().ref();
+    if (isOutOfLine())
+        asOutOfLine().ref();
 
     return *this;
 }
@@ -69,8 +69,8 @@ Color& Color::operator=(Color&& other)
     if (*this == other)
         return *this;
 
-    if (isExtended())
-        asExtended().deref();
+    if (isOutOfLine())
+        asOutOfLine().deref();
 
     m_colorAndFlags = other.m_colorAndFlags;
     other.m_colorAndFlags = invalidColorAndFlags;
@@ -111,15 +111,26 @@ Color Color::darkened() const
 
 float Color::lightness() const
 {
-    // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for HSL.
-    return WebCore::lightness(toSRGBALossy<float>());
+    // FIXME: Replace remaining uses with luminance.
+    auto [r, g, b, a] = toSRGBALossy<float>();
+    auto [min, max] = std::minmax({ r, g, b });
+    return 0.5f * (max + min);
 }
 
 float Color::luminance() const
 {
-    // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms
-    // for luminance (e.g. convertToXYZ(c).yComponent()).
-    return WebCore::luminance(toSRGBALossy<float>());
+    return callOnUnderlyingType([&] (const auto& underlyingColor) {
+        return WebCore::relativeLuminance(underlyingColor);
+    });
+}
+
+float Color::contrastRatio(const Color& colorA, const Color& colorB)
+{
+    return colorA.callOnUnderlyingType([&] (const auto& underlyingColorA) {
+        return colorB.callOnUnderlyingType([&] (const auto& underlyingColorB) {
+            return WebCore::contrastRatio(underlyingColorA, underlyingColorB);
+        });
+    });
 }
 
 Color Color::colorWithAlpha(float alpha) const
@@ -144,9 +155,9 @@ Color Color::invertedColorWithAlpha(float alpha) const
         // better for non-invertible color types like Lab or consider removing this in favor
         // of alternatives.
         if constexpr (ColorType::Model::isInvertible)
-            return invertedcolorWithOverriddenAlpha(underlyingColor, alpha);
+            return invertedColorWithOverriddenAlpha(underlyingColor, alpha);
         else
-            return invertedcolorWithOverriddenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha);
+            return invertedColorWithOverriddenAlpha(convertColor<SRGBA<float>>(underlyingColor), alpha);
     });
 }
 
@@ -155,16 +166,30 @@ Color Color::semanticColor() const
     if (isSemantic())
         return *this;
     
-    if (isExtended())
-        return { asExtendedRef(), Flags::Semantic };
+    if (isOutOfLine())
+        return { asOutOfLineRef(), colorSpace(), Flags::Semantic };
     return { asInline(), Flags::Semantic };
 }
 
 std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() const
 {
-    if (isExtended())
-        return { asExtended().colorSpace(), asExtended().components() };
+    if (isOutOfLine())
+        return { colorSpace(), asOutOfLine().components() };
     return { ColorSpace::SRGB, asColorComponents(convertColor<SRGBA<float>>(asInline())) };
+}
+
+bool Color::isBlackColor(const Color& color)
+{
+    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
+        return WebCore::isBlack(underlyingColor);
+    });
+}
+
+bool Color::isWhiteColor(const Color& color)
+{
+    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
+        return WebCore::isWhite(underlyingColor);
+    });
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

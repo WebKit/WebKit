@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,6 @@
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
-
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -72,6 +71,7 @@ class RemoteGraphicsContextGL;
 class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
 struct GPUProcessConnectionParameters;
+struct MediaOverridesForTesting;
 struct RemoteAudioSessionConfiguration;
 
 class GPUConnectionToWebProcess
@@ -90,6 +90,7 @@ public:
     RemoteMediaResourceManager& remoteMediaResourceManager();
 
     Logger& logger();
+    bool isAlwaysOnLoggingAllowed() const;
 
     const String& mediaCacheDirectory() const;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -125,6 +126,8 @@ public:
 #if HAVE(AVASSETREADER)
     RemoteImageDecoderAVFProxy& imageDecoderAVFProxy();
 #endif
+
+    void updateSupportedRemoteCommands();
 
     void terminateWebProcess();
 
@@ -171,6 +174,7 @@ private:
     void releaseAudioHardwareListener(RemoteAudioHardwareListenerIdentifier);
     void createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
+    void setMediaOverridesForTesting(MediaOverridesForTesting);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
@@ -242,8 +246,9 @@ private:
 
     using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, std::unique_ptr<RemoteAudioHardwareListenerProxy>>;
     RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;
-    using RemoteRemoteCommandListenerMap = HashMap<RemoteRemoteCommandListenerIdentifier, std::unique_ptr<RemoteRemoteCommandListenerProxy>>;
-    RemoteRemoteCommandListenerMap m_remoteRemoteCommandListenerMap;
+
+    RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
+    bool m_isActiveNowPlayingProcess { false };
 };
 
 } // namespace WebKit

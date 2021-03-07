@@ -315,7 +315,7 @@ class TextureMtl : public TextureImpl
     angle::Result generateMipmapCPU(const gl::Context *context);
 
     mtl::Format mFormat;
-    SurfaceMtlProtocol *mBoundSurface = nil;
+    SurfaceMtl *mBoundSurface = nil;
     // The real texture used by Metal draw calls.
     mtl::TextureRef mNativeTexture         = nil;
     id<MTLSamplerState> mMetalSamplerState = nil;

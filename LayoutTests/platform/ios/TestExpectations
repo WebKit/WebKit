@@ -1917,7 +1917,7 @@ fast/events/message-port-inactive-document.html
 http/tests/misc/favicon-as-image.html [ Failure ]
 http/tests/misc/iframe404.html [ Failure ]
 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
-http/tests/uri/css-href.php [ Failure ]
+http/tests/uri/css-href.py [ Failure ]
 svg/hixie/intrinsic/003.html [ Failure ]
 svg/hixie/text/003.html [ Failure ]
 
@@ -2167,7 +2167,6 @@ fast/dom/linkify-phone-numbers.html [ Pass ]
 webkit.org/b/149297 accessibility/aria-current.html [ Pass ]
 accessibility/aria-current-state-changed-notification.html [ Pass ]
 accessibility/aria-sort-changed-notification.html [ Pass ]
-accessibility/aria-errormessage.html [ Pass ]
 
 # Enable "aria-table-attributes" test for iOS
 webkit.org/b/150366 accessibility/aria-table-attributes.html [ Pass ]
@@ -2237,7 +2236,7 @@ webkit.org/b/152992 http/tests/loading/preload-picture-nested.html [ Skip ]
 webkit.org/b/152992 http/tests/loading/preload-picture-sizes.html [ Skip ]
 webkit.org/b/152140 fast/picture/viewport-resize.html [ Skip ]
 
-webkit.org/b/152279 http/tests/misc/large-js-program.php [ Skip ]
+webkit.org/b/152279 http/tests/misc/large-js-program.py [ Skip ]
 webkit.org/b/152279 js/dom/line-column-numbers.html [ Skip ]
 
 webkit.org/b/152137 fast/media/mq-any-hover-matchMedia.html [ Failure ]
@@ -2349,6 +2348,7 @@ fast/dom/Window/child-window-focus.html
 
 # iOS does not allow you to scroll by dragging the scrollbar thumb.
 webkit.org/b/157201 fast/scrolling/rtl-drag-vertical-scroller.html [ Failure ]
+webkit.org/b/157201 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Failure ]
 
 # DumpRenderTree doesn't support logging calls to runOpenPanel and iOS's WebKitTestRunner doesn't support eventSender.mouseDown.
 fast/forms/file/open-file-panel.html [ Skip ]
@@ -3394,7 +3394,9 @@ webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.h
 
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-001.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-007.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-008.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-011.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-012.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-013.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/hover-002.html [ Skip ]
@@ -3507,3 +3509,6 @@ webkit.org/b/221486 imported/w3c/web-platform-tests/shadow-dom/nested-slot-remov
 
 webkit.org/b/221466 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys.html [ Skip ]
 webkit.org/b/221465 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-combinations.html [ Skip ]
+
+# Not all OSes support the same set of emoji.
+fast/text/mending-heart.html [ Failure ] 

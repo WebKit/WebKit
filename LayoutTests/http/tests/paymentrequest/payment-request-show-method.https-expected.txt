@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: payment request timed out while waiting for Promise given to show() or updateWith() to settle.
 
 PASS Must be possible to construct a payment request
 PASS Throws if the promise [[state]] is not "created"

@@ -73,7 +73,11 @@ public:
     virtual void setTimestamps(const MediaTime&, const MediaTime&) = 0;
     virtual bool isDivisable() const = 0;
     enum DivideFlags { BeforePresentationTime, AfterPresentationTime };
-    virtual std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) = 0;
+    enum class UseEndTime : bool {
+        DoNotUse,
+        Use,
+    };
+    virtual std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime, UseEndTime = UseEndTime::DoNotUse) = 0;
     virtual Ref<MediaSample> createNonDisplayingCopy() const = 0;
 
     virtual RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const { return nullptr; }

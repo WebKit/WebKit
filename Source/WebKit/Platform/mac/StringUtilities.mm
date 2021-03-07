@@ -36,7 +36,7 @@ namespace WebKit {
 
 NSString *nsStringFromWebCoreString(const String& string)
 {
-    return string.isEmpty() ? @"" : CFBridgingRelease(WKStringCopyCFString(0, toAPI(string.impl())));
+    return string.isEmpty() ? @"" : adoptCF(WKStringCopyCFString(0, toAPI(string.impl()))).bridgingAutorelease();
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
@@ -65,11 +65,11 @@ NSString *formattedPhoneNumberString(NSString *originalPhoneNumber)
     if (!phoneNumber)
         return originalPhoneNumber;
 
-    CFStringRef phoneNumberString = CFPhoneNumberCopyFormattedRepresentation(phoneNumber.get());
+    auto phoneNumberString = adoptCF(CFPhoneNumberCopyFormattedRepresentation(phoneNumber.get()));
     if (!phoneNumberString)
-        phoneNumberString = CFPhoneNumberCopyUnformattedRepresentation(phoneNumber.get());
+        phoneNumberString = adoptCF(CFPhoneNumberCopyUnformattedRepresentation(phoneNumber.get()));
 
-    return CFBridgingRelease(phoneNumberString);
+    return phoneNumberString.bridgingAutorelease();
 }
 
 #else

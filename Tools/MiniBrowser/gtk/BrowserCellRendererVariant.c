@@ -293,13 +293,13 @@ static void browser_cell_renderer_variant_init(BrowserCellRendererVariant *rende
 
     renderer->toggleRenderer = gtk_cell_renderer_toggle_new();
     g_object_set(G_OBJECT(renderer->toggleRenderer), "xalign", 0.0, NULL);
-    g_object_ref_sink(renderer->toggleRenderer);
+    renderer->toggleRenderer = g_object_ref_sink(renderer->toggleRenderer);
 
     renderer->textRenderer = gtk_cell_renderer_text_new();
     g_signal_connect_swapped(renderer->textRenderer, "edited",
                              G_CALLBACK(browserCellRendererVariantCellRendererTextEdited), renderer);
     g_object_set(G_OBJECT(renderer->textRenderer), "editable", TRUE, NULL);
-    g_object_ref_sink(renderer->textRenderer);
+    renderer->textRenderer = g_object_ref_sink(renderer->textRenderer);
 
     renderer->spinRenderer = gtk_cell_renderer_spin_new();
     g_signal_connect_swapped(renderer->spinRenderer, "edited",

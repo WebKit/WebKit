@@ -102,7 +102,7 @@ static ContainerNode* findRenderingRoot(ContainerNode& node)
 static ListHashSet<ContainerNode*> findRenderingRoots(const Style::Update& update)
 {
     ListHashSet<ContainerNode*> renderingRoots;
-    for (auto* root : update.roots()) {
+    for (auto& root : update.roots()) {
         auto* renderingRoot = findRenderingRoot(*root);
         if (!renderingRoot)
             continue;

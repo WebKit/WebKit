@@ -214,8 +214,10 @@ public:
     void playbin3SendSelectStreamsIfAppropriate();
 
     // Append pipeline interface
-    // FIXME: Use the client interface pattern, AppendPipeline does not need the full interface to this class just for these two functions.
-    bool handleSyncMessage(GstMessage*);
+    // FIXME: Use the client interface pattern, AppendPipeline does not need the full interface to this class just for this function.
+    bool handleNeedContextMessage(GstMessage*);
+
+    void handleStreamCollectionMessage(GstMessage*);
     void handleMessage(GstMessage*);
 
     void triggerRepaint(GstSample*);
@@ -443,7 +445,7 @@ private:
     void setPlaybinURL(const URL& urlString);
     void loadFull(const String& url, const String& pipelineName);
 
-    void updateTracks(GRefPtr<GstStreamCollection>&&);
+    void updateTracks(const GRefPtr<GstStreamCollection>&);
     void videoSinkCapsChanged(GstPad*);
     void updateVideoSizeAndOrientationFromCaps(const GstCaps*);
 

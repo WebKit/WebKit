@@ -61,7 +61,16 @@ static ProtectionSpace protectionSpaceFromSoupAuthAndURL(SoupAuth* soupAuth, con
     else
         scheme = ProtectionSpaceAuthenticationSchemeUnknown;
 
-    return ProtectionSpace(url.host().toString(), static_cast<int>(url.port().valueOr(0)),
+#if USE(SOUP2)
+    auto host = url.host();
+    auto port = url.port();
+#else
+    URL authURL({ }, makeString("http://", soup_auth_get_authority(soupAuth)));
+    auto host = authURL.host();
+    auto port = authURL.port();
+#endif
+
+    return ProtectionSpace(host.toString(), static_cast<int>(port.valueOr(0)),
         protectionSpaceServerTypeFromURL(url, soup_auth_is_for_proxy(soupAuth)),
         String::fromUTF8(soup_auth_get_realm(soupAuth)), scheme);
 }

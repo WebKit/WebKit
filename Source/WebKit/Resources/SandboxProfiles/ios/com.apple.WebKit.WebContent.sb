@@ -642,7 +642,7 @@
 (allow mach-lookup
     (global-name "com.apple.system.notification_center")
     (apply-message-filter
-        (deny mach-message-send (with telemetry-backtrace))
+        (allow mach-message-send (with telemetry-backtrace))
         (deny mach-message-send (with no-report) (message-number 1023))
         (allow mach-message-send (with telemetry-backtrace) (message-number
             1002
@@ -1427,6 +1427,7 @@
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy
+                task_create_identity_token
                 task_get_special_port_from_user
                 task_info_from_user
                 task_restartable_ranges_register

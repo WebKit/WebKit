@@ -137,13 +137,13 @@ void TestRunner::addDisallowedURL(JSStringRef url)
     RetainPtr<CFStringRef> urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, url));
 
     if (!disallowedURLs)
-        disallowedURLs = CFSetCreateMutable(kCFAllocatorDefault, 0, NULL);
+        disallowedURLs = adoptCF(CFSetCreateMutable(kCFAllocatorDefault, 0, NULL));
 
     // Canonicalize the URL
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:(__bridge NSString *)urlCF.get()]];
     request = [NSURLProtocol canonicalRequestForRequest:request];
 
-    CFSetAddValue(disallowedURLs, (__bridge CFURLRef)[request URL]);
+    CFSetAddValue(disallowedURLs.get(), (__bridge CFURLRef)[request URL]);
 }
 
 bool TestRunner::callShouldCloseOnWebView()
@@ -577,7 +577,7 @@ void TestRunner::setWaitToDump(bool waitUntilDone)
 {
     m_waitToDump = waitUntilDone;
     if (m_waitToDump && m_timeout && shouldSetWaitToDumpWatchdog())
-        setWaitToDumpWatchdog(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + m_timeout / 1000.0, 0, 0, 0, waitUntilDoneWatchdogFired, NULL));
+        setWaitToDumpWatchdog(adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + m_timeout / 1000.0, 0, 0, 0, waitUntilDoneWatchdogFired, NULL)));
 }
 
 int TestRunner::windowCount()

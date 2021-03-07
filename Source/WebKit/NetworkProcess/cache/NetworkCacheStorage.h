@@ -36,6 +36,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
+#include <wtf/PriorityQueue.h>
 #include <wtf/WallTime.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -160,6 +161,8 @@ private:
     void addToRecordFilter(const Key&);
     void deleteFiles(const Key&);
 
+    static bool isHigherPriority(const std::unique_ptr<ReadOperation>&, const std::unique_ptr<ReadOperation>&);
+
     const String m_basePath;
     const String m_recordsPath;
     
@@ -181,8 +184,7 @@ private:
     Vector<Key::HashType> m_recordFilterHashesAddedDuringSynchronization;
     Vector<Key::HashType> m_blobFilterHashesAddedDuringSynchronization;
 
-    static const int maximumRetrievePriority = 4;
-    Deque<std::unique_ptr<ReadOperation>> m_pendingReadOperationsByPriority[maximumRetrievePriority + 1];
+    PriorityQueue<std::unique_ptr<ReadOperation>, &isHigherPriority> m_pendingReadOperations;
     HashSet<std::unique_ptr<ReadOperation>> m_activeReadOperations;
     WebCore::Timer m_readOperationTimeoutTimer;
 

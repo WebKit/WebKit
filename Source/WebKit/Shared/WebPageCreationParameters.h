@@ -256,6 +256,10 @@ struct WebPageCreationParameters {
 
     bool textInteractionEnabled { true };
     bool httpsUpgradeEnabled { true };
+    
+#if PLATFORM(IOS)
+    bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload { false };
+#endif
 };
 
 } // namespace WebKit

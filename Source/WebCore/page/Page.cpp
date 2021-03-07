@@ -65,6 +65,7 @@
 #include "FrameView.h"
 #include "FullscreenManager.h"
 #include "HTMLElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
@@ -1744,9 +1745,9 @@ void Page::resumeScriptedAnimations()
 
 Seconds Page::preferredRenderingUpdateInterval() const
 {
-    if (settings().forcePageRenderingUpdatesAt60FPSEnabled())
-        return preferredFrameInterval(m_throttlingReasons, WTF::nullopt);
-    return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond);
+    if (!settings().preferPageRenderingUpdatesNear60FPSEnabled())
+        return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond);
+    return preferredFrameInterval(m_throttlingReasons, WTF::nullopt);
 }
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
@@ -2108,6 +2109,9 @@ void Page::playbackControlsMediaEngineChanged()
 
 void Page::setMuted(MediaProducer::MutedStateFlags muted)
 {
+    if (m_mutedState == muted)
+        return;
+
     m_mutedState = muted;
 
     forEachDocument([] (Document& document) {
@@ -2115,11 +2119,12 @@ void Page::setMuted(MediaProducer::MutedStateFlags muted)
     });
 }
 
-void Page::stopMediaCapture()
+void Page::stopMediaCapture(MediaProducer::MediaCaptureKind kind)
 {
+    UNUSED_PARAM(kind);
 #if ENABLE(MEDIA_STREAM)
-    forEachDocument([] (Document& document) {
-        document.stopMediaCapture();
+    forEachDocument([kind] (Document& document) {
+        document.stopMediaCapture(kind);
     });
 #endif
 }

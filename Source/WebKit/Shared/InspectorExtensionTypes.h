@@ -37,14 +37,14 @@ namespace WebCore {
 struct ExceptionDetails;
 }
 
-namespace WebKit {
-enum class InspectorExtensionError : uint8_t;
+namespace Inspector {
+enum class ExtensionError : uint8_t;
 
-using InspectorExtensionTabID = WTF::String;
-using InspectorExtensionID = WTF::String;
-using InspectorExtensionEvaluationResult = Expected<Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>, InspectorExtensionError>;
+using ExtensionTabID = WTF::String;
+using ExtensionID = WTF::String;
+using ExtensionEvaluationResult = Expected<Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>, ExtensionError>;
 
-enum class InspectorExtensionError : uint8_t {
+enum class ExtensionError : uint8_t {
     ContextDestroyed,
     InternalError,
     InvalidRequest,
@@ -52,20 +52,20 @@ enum class InspectorExtensionError : uint8_t {
     NotImplemented,
 };
 
-WTF::String inspectorExtensionErrorToString(InspectorExtensionError);
+WTF::String extensionErrorToString(ExtensionError);
 
-} // namespace WebKit
+} // namespace Inspector
 
 namespace WTF {
 
-template<> struct EnumTraits<WebKit::InspectorExtensionError> {
+template<> struct EnumTraits<Inspector::ExtensionError> {
     using values = EnumValues<
-        WebKit::InspectorExtensionError,
-        WebKit::InspectorExtensionError::ContextDestroyed,
-        WebKit::InspectorExtensionError::InternalError,
-        WebKit::InspectorExtensionError::InvalidRequest,
-        WebKit::InspectorExtensionError::RegistrationFailed,
-        WebKit::InspectorExtensionError::NotImplemented
+        Inspector::ExtensionError,
+        Inspector::ExtensionError::ContextDestroyed,
+        Inspector::ExtensionError::InternalError,
+        Inspector::ExtensionError::InvalidRequest,
+        Inspector::ExtensionError::RegistrationFailed,
+        Inspector::ExtensionError::NotImplemented
     >;
 };
 

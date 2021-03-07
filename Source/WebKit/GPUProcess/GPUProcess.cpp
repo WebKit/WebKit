@@ -97,6 +97,7 @@ void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, P
     // FIXME: We should refactor code to go from WebProcess -> GPUProcess -> UIProcess when getUserMedia is called instead of going from WebProcess -> UIProcess directly.
     auto access = m_mediaCaptureAccessMap.take(identifier);
     newConnection->updateCaptureAccess(access.allowAudioCapture, access.allowVideoCapture, access.allowDisplayCapture);
+    newConnection->setOrientationForMediaCapture(m_orientation);
 #endif
 
     ASSERT(!m_webProcessConnections.contains(identifier));
@@ -211,6 +212,7 @@ void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
 
 void GPUProcess::setOrientationForMediaCapture(uint64_t orientation)
 {
+    m_orientation = orientation;
     for (auto& connection : m_webProcessConnections.values())
         connection->setOrientationForMediaCapture(orientation);
 }

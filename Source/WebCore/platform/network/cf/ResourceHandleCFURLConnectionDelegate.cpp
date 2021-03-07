@@ -60,7 +60,7 @@ void ResourceHandleCFURLConnectionDelegate::release(const void* clientInfo)
 
 CFURLRequestRef ResourceHandleCFURLConnectionDelegate::willSendRequestCallback(CFURLConnectionRef, CFURLRequestRef cfRequest, CFURLResponseRef originalRedirectResponse, const void* clientInfo)
 {
-    return static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->willSendRequest(cfRequest, originalRedirectResponse);
+    return static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->willSendRequest(cfRequest, originalRedirectResponse).leakRef();
 }
 
 void ResourceHandleCFURLConnectionDelegate::didReceiveResponseCallback(CFURLConnectionRef connection, CFURLResponseRef cfResponse, const void* clientInfo)

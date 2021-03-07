@@ -29,7 +29,11 @@
 
 
 class TestInput(object):
-    """Groups information about a test for easy passing of data."""
+    """Information about a test needed to run it.
+
+    This differs from a Test object insofar as it contains metadata not specific to the test,
+    derived from TestExpectations/test execution options (e.g., timeout).
+    """
 
     def __init__(self, test_name, timeout=None, needs_servers=None, should_dump_jsconsolelog_in_stderr=None):
         # TestInput objects are normally constructed by the manager and passed

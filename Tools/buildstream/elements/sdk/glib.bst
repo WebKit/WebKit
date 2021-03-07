@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gnome_downloads:glib/2.66/glib-2.66.3.tar.xz
-  ref: 79f31365a99cb1cc9db028625635d1438890702acde9e2802eae0acebcf7b5b1
+  url: gnome_downloads:glib/2.67/glib-2.67.4.tar.xz
+  ref: 8d87b962032dadfcae8df62d248aa91fed2c7a43faf2c6d8b9107eb6c50e5b14
 depends:
 - filename: components/libffi.bst
   junction: freedesktop-sdk.bst

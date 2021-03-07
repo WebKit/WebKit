@@ -30,6 +30,7 @@
 #include "WasmCodeBlock.h"
 #include "WasmEmbedder.h"
 #include "WasmMemory.h"
+#include "WasmOps.h"
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/SharedTask.h>
@@ -40,8 +41,6 @@ namespace JSC { namespace Wasm {
 class LLIntPlan;
 struct Context;
 struct ModuleInformation;
-
-using SignatureIndex = uint64_t;
 
 class Module : public ThreadSafeRefCounted<Module> {
 public:

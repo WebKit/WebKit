@@ -1183,7 +1183,7 @@ void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducer::Me
     if (!delegate || !m_uiDelegate->m_delegateMethods.webViewMediaCaptureStateDidChange)
         return;
 
-    [(id <WKUIDelegatePrivate>)delegate _webView:webView.get().get() mediaCaptureStateDidChange:toWKMediaCaptureState(state)];
+    [(id <WKUIDelegatePrivate>)delegate _webView:webView.get().get() mediaCaptureStateDidChange:toWKMediaCaptureStateDeprecated(state)];
 }
 
 void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin& securityOrigin, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void (unsigned long long)>&& completionHandler)

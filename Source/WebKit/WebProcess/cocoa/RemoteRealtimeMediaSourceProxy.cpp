@@ -44,6 +44,11 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+RemoteRealtimeMediaSourceProxy::~RemoteRealtimeMediaSourceProxy()
+{
+    failApplyConstraintCallbacks("Source terminated"_s);
+}
+
 IPC::Connection* RemoteRealtimeMediaSourceProxy::connection()
 {
     ASSERT(isMainThread());

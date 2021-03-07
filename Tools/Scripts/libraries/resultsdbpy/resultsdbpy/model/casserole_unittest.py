@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,51 +20,47 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import mock
 import time
 import unittest
 
 from resultsdbpy.model.casserole import CasseroleNodes
-
-
-class MockRequest(object):
-
-    def __init__(self, text='', status_code=200):
-        time.sleep(.1)  # This split second acts like an actual request
-        self.text = text
-        self.status_code = status_code
+from webkitcorepy import mocks
 
 
 class CasseroleTest(unittest.TestCase):
     def test_synchronous(self):
-        with mock.patch('requests.get', new=lambda *args, **kwargs: MockRequest('start')):
-            nodes = CasseroleNodes('some-url', interval_seconds=10, asynchronous=False)
+        with mocks.Requests('casserole.webkit.org', **{
+            'api/cluster-endpoints': mocks.Response(text='start')
+        }), mocks.Time:
+            nodes = CasseroleNodes('https://casserole.webkit.org/api/cluster-endpoints', interval_seconds=10, asynchronous=False)
             self.assertEqual(['start'], nodes.nodes)
 
-            with mock.patch('requests.get', new=lambda *args, **kwargs: MockRequest('url1,url2')):
+            with mocks.Requests('casserole.webkit.org', **{
+                'api/cluster-endpoints': mocks.Response(text='url1,url2')
+            }):
                 self.assertEqual(['start'], nodes.nodes)
-                current_time = time.time()
-
-                with mock.patch('time.time', new=lambda: current_time + 15):
-                    self.assertEqual(['url1', 'url2'], nodes.nodes)
+                time.sleep(15)
+                self.assertEqual(['url1', 'url2'], nodes.nodes)
 
     def test_asynchronous(self):
-        with mock.patch('requests.get', new=lambda *args, **kwargs: MockRequest('start')):
-            nodes = CasseroleNodes('some-url', interval_seconds=10, asynchronous=True)
+        with mocks.Requests('casserole.webkit.org', **{
+            'api/cluster-endpoints': mocks.Response(text='start')
+        }), mocks.Time:
+            nodes = CasseroleNodes('https://casserole.webkit.org/api/cluster-endpoints', interval_seconds=10, asynchronous=True)
             self.assertEqual(['start'], nodes.nodes)
 
-            with mock.patch('requests.get', new=lambda *args, **kwargs: MockRequest('url1,url2')):
+            with mocks.Requests('casserole.webkit.org', **{
+                'api/cluster-endpoints': mocks.Response(text='url1,url2')
+            }):
                 self.assertEqual(['start'], nodes.nodes)
-                current_time = time.time()
-
-                with mock.patch('time.time', new=lambda: current_time + 15):
-                    self.assertEqual(['start'], nodes.nodes)
-                    time.sleep(.15)  # Wait for the asynchronous thread to finish
-                    self.assertEqual(['url1', 'url2'], nodes.nodes)
+                time.sleep(15)
+                self.assertEqual(['url1', 'url2'], nodes.nodes)
 
     def test_list_like(self):
-        with mock.patch('requests.get', new=lambda *args, **kwargs: MockRequest('url1,url2,url3')):
-            nodes = CasseroleNodes('some-url')
+        with mocks.Requests('casserole.webkit.org', **{
+            'api/cluster-endpoints': mocks.Response(text='url1,url2,url3')
+        }):
+            nodes = CasseroleNodes('https://casserole.webkit.org/api/cluster-endpoints')
             self.assertEqual(['url1', 'url2', 'url3'], [node for node in nodes])
             self.assertTrue(nodes)
             self.assertTrue('url1' in nodes)

@@ -65,6 +65,14 @@ public:
             context().restore();
     }
 
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+    void setProcessOwnership(task_id_token_t newOwner)
+    {
+        if (m_backend)
+            m_backend->setProcessOwnership(newOwner);
+    }
+#endif
+
 private:
     bool apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& context) override
     {

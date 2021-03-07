@@ -26,7 +26,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
 
-    PrewarmGlobally();
     PrewarmWithDomainInformation(struct WebCore::PrewarmInformation prewarmInformation)
 
     # Global preferences.
@@ -48,7 +47,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetShouldUseFontSmoothing(bool useFontSmoothing)
     SetResourceLoadStatisticsEnabled(bool resourceLoadStatisticsEnabled);
     ClearResourceLoadStatistics();
-    UserPreferredLanguagesChanged()
+    UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
@@ -78,9 +77,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () Async
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
-#if PLATFORM(COCOA)
-    SetQOS(int latencyQOS, int throughputQOS)
-#endif
 
     SetMemoryCacheDisabled(bool disabled);
 
@@ -115,7 +111,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if PLATFORM(COCOA)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 #endif
@@ -170,10 +166,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SendResourceLoadStatisticsDataImmediately() -> () Async
 #endif
 
-#if PLATFORM(IOS)
     GrantAccessToAssetServices(WebKit::SandboxExtension::Handle mobileAssetV2Handle)
     RevokeAccessToAssetServices()
-#endif
 
 #if PLATFORM(COCOA)
     UnblockServicesRequiredByAccessibility(WebKit::SandboxExtension::HandleArray handleArray)
@@ -192,7 +186,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DidWriteToPasteboardAsynchronously(String pasteboardName);
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     DisplayWasRefreshed(uint32_t displayID)
 #endif
 

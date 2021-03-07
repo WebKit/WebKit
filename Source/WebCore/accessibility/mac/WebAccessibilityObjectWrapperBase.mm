@@ -324,8 +324,7 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 {
     // Calling updateBackingStore() can invalidate this element so self must be retained.
     // If it does become invalidated, self.axBackingObject will be nil.
-    CFRetain((__bridge CFTypeRef)self);
-    CFAutorelease((__bridge CFTypeRef)self);
+    retainPtr(self).autorelease();
 
     auto* backingObject = self.axBackingObject;
     if (!backingObject)
@@ -433,12 +432,12 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 
 - (CGPathRef)convertPathToScreenSpace:(const Path&)path
 {
-    PathConversionInfo conversion = { self, CGPathCreateMutable() };
+    auto convertedPath = adoptCF(CGPathCreateMutable());
+    PathConversionInfo conversion = { self, convertedPath.get() };
     path.apply([&conversion](const PathElement& pathElement) {
         convertPathToScreenSpaceFunction(conversion, pathElement);
     });
-    CFAutorelease(conversion.path);
-    return conversion.path;
+    return convertedPath.autorelease();
 }
 
 - (id)_accessibilityWebDocumentView

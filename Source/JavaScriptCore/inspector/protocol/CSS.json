@@ -263,7 +263,7 @@
             "id": "LayoutContextTypeChangedMode",
             "type": "string",
             "enum": ["observed", "all"],
-            "description": "The mode for how layout context type changes are handled. <code>Observed</code> limits handling to those nodes already known to the frontend by other means (generally, this means the node is a visible item in the Elements tab). <code>All</code> informs the frontend of all layout context type changes and."
+            "description": "The mode for how layout context type changes are handled (default: <code>Observed</code>). <code>Observed</code> limits handling to those nodes already known to the frontend by other means (generally, this means the node is a visible item in the Elements tab). <code>All</code> informs the frontend of all layout context type changes and all nodes with a known layout context are sent to the frontend."
         }
     ],
     "commands": [

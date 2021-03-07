@@ -68,7 +68,6 @@
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut;
 - (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth;
-- (void)lastNavigationWasAppBound:(void(^)(BOOL))completionHandler;
 @end
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>

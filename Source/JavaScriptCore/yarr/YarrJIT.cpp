@@ -2795,11 +2795,11 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             case OpBodyAlternativeNext: {
                 PatternAlternative* alternative = op.m_alternative;
 
+                m_checkedOffset -= alternative->m_minimumSize;
                 if (op.m_op == OpBodyAlternativeNext) {
                     PatternAlternative* priorAlternative = m_ops[op.m_previousOp].m_alternative;
                     m_checkedOffset += priorAlternative->m_minimumSize;
                 }
-                m_checkedOffset -= alternative->m_minimumSize;
 
                 // Is this the last alternative? If not, then if we backtrack to this point we just
                 // need to jump to try to match the next alternative.
@@ -3101,11 +3101,11 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                     m_backtrackingState.append(endOp->m_jumps);
                 }
 
+                m_checkedOffset -= op.m_checkAdjust;
                 if (!isBegin) {
                     YarrOp& lastOp = m_ops[op.m_previousOp];
                     m_checkedOffset += lastOp.m_checkAdjust;
                 }
-                m_checkedOffset -= op.m_checkAdjust;
                 break;
             }
             case OpSimpleNestedAlternativeEnd:

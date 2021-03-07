@@ -146,7 +146,7 @@ class EmptyChromeClient : public ChromeClient {
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void storeAppHighlight(const AppHighlight&) const final;
+    void storeAppHighlight(AppHighlight&&) const final;
 #endif
 
     void runOpenPanel(Frame&, FileChooser&) final;

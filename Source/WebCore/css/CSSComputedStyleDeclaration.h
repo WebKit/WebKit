@@ -133,7 +133,7 @@ private:
     ExceptionOr<void> setCssText(const String&) final;
     RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) final;
     String getPropertyValueInternal(CSSPropertyID) final;
-    ExceptionOr<bool> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
+    ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
     Ref<MutableStyleProperties> copyProperties() const final;
 
     RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;

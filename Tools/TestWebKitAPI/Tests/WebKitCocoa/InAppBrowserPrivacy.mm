@@ -37,6 +37,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKUserContentWorld.h>
 #import <WebKit/_WKUserStyleSheet.h>
@@ -1425,15 +1426,24 @@ TEST(InAppBrowserPrivacy, AppBoundRequest)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     NSString *url = @"https://webkit.org";
 
-    static bool isDone = false;
+    __block bool isDone = false;
     NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     APP_BOUND_REQUEST_ADDITIONS
 
     [webView loadRequest:nonAppBoundRequest];
     [webView _test_waitForDidFinishNavigation];
 
-    [webView lastNavigationWasAppBound:^(BOOL isAppBound) {
+    [webView _lastNavigationWasAppBound:^(BOOL isAppBound) {
         EXPECT_FALSE(isAppBound);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    
+    isDone = false;
+    [webView _appBoundNavigationData:^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_FALSE(data.hasLoadedAppBoundRequestTesting);
+        EXPECT_TRUE(data.hasLoadedNonAppBoundRequestTesting);
         isDone = true;
     }];
 
@@ -1453,18 +1463,97 @@ TEST(InAppBrowserPrivacy, AppBoundRequestWithNavigation)
     [webView loadRequest:startingRequest];
     [webView _test_waitForDidFinishNavigation];
 
-    static bool isDone = false;
+    __block bool isDone = false;
+    [webView _lastNavigationWasAppBound:^(BOOL isAppBound) {
+        EXPECT_TRUE(isAppBound);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    
+    isDone = false;
+    [webView _appBoundNavigationData:^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_TRUE(data.hasLoadedAppBoundRequestTesting);
+        EXPECT_FALSE(data.hasLoadedNonAppBoundRequestTesting);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    
+    isDone = false;
     NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:nonAppBoundURL]];
     APP_BOUND_REQUEST_ADDITIONS
+    
+    isDone = false;
+    [webView _clearAppBoundNavigationData:^{
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
 
     [webView loadRequest:nonAppBoundRequest];
     [webView _test_waitForDidFinishNavigation];
 
-    [webView lastNavigationWasAppBound:^(BOOL isAppBound) {
+    [webView _lastNavigationWasAppBound:^(BOOL isAppBound) {
         EXPECT_FALSE(isAppBound);
         isDone = true;
     }];
 
     TestWebKitAPI::Util::run(&isDone);
+    
+    isDone = false;
+    [webView _appBoundNavigationData:^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_FALSE(data.hasLoadedAppBoundRequestTesting);
+        EXPECT_TRUE(data.hasLoadedNonAppBoundRequestTesting);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
 }
+
+TEST(InAppBrowserPrivacy, AppBoundRequestWithSubFrame)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setOverrideContentSecurityPolicy:@"script-src 'nonce-b'"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadTestPageNamed:@"page-with-csp"];
+
+    [webView waitForMessage:@"MainFrame: B"];
+    [webView waitForMessage:@"Subframe: B"];
+
+    __block bool isDone = false;
+    [webView _appBoundNavigationData:^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_TRUE(data.hasLoadedAppBoundRequestTesting);
+        EXPECT_FALSE(data.hasLoadedNonAppBoundRequestTesting);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+};
+
+TEST(InAppBrowserPrivacy, NonAppBoundRequestWithSubFrame)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setOverrideContentSecurityPolicy:@"script-src 'nonce-b'"];
+
+    __block bool isDone = false;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"page-with-csp" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    APP_BOUND_REQUEST_ADDITIONS
+
+    [webView loadRequest:nonAppBoundRequest];
+
+    [webView waitForMessage:@"MainFrame: B"];
+    [webView waitForMessage:@"Subframe: B"];
+
+    [webView _appBoundNavigationData: ^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_FALSE(data.hasLoadedAppBoundRequestTesting);
+        EXPECT_TRUE(data.hasLoadedNonAppBoundRequestTesting);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+};
+
 #endif

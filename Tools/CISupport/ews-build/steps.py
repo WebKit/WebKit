@@ -52,8 +52,6 @@ EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
-GITHUB_COM_USERNAME = 'GITHUB_COM_USERNAME'
-GITHUB_COM_ACCESS_TOKEN = 'GITHUB_COM_ACCESS_TOKEN'
 
 
 class ConfigureBuild(buildstep.BuildStep):
@@ -170,6 +168,20 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
 
+class FetchBranches(shell.ShellCommand):
+    name = 'fetch-branch-references'
+    descriptionDone = ['Updated branch information']
+    command = ['git', 'fetch']
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        super(FetchBranches, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS
+
+
 class ShowIdentifier(shell.ShellCommand):
     name = 'show-identifier'
     identifier_re = '^Identifier: (.*)$'
@@ -180,15 +192,12 @@ class ShowIdentifier(shell.ShellCommand):
         shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
 
     def start(self):
-        self.workerEnvironment[GITHUB_COM_USERNAME] = os.getenv(GITHUB_COM_USERNAME)
-        self.workerEnvironment[GITHUB_COM_ACCESS_TOKEN] = os.getenv(GITHUB_COM_ACCESS_TOKEN)
-
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
         revision = self.getProperty('ews_revision', self.getProperty('got_revision'))
         if not revision:
             revision = 'HEAD'
-        self.setCommand(['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', revision])
+        self.setCommand(['python', 'Tools/Scripts/git-webkit', 'find', revision])
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):
@@ -397,6 +406,11 @@ class CheckPatchRelevance(buildstep.BuildStep):
 
         for change in patch.splitlines():
             for path in relevant_paths:
+                if sys.version_info > (3, 0):
+                    if type(path) == str:
+                        path = path.encode(encoding='utf-8', errors='replace')
+                    if type(change) == str:
+                        change = change.encode(encoding='utf-8', errors='replace')
                 if re.search(path, change, re.IGNORECASE):
                     return True
         return False
@@ -803,7 +817,8 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
         tools_dir_path = os.path.dirname(os.path.dirname(cwd))
         contributors_path = os.path.join(tools_dir_path, 'Scripts/webkitpy/common/config/contributors.json')
         try:
-            return json.load(open(contributors_path))
+            with open(contributors_path, 'rb') as contributors_json:
+                return json.load(contributors_json)
         except Exception as e:
             self._addToLog('stdio', 'Failed to load {}\n'.format(contributors_path))
             return {}
@@ -1226,7 +1241,7 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
 class RunEWSUnitTests(shell.ShellCommand):
     name = 'ews-unit-tests'
     description = ['ews-unit-tests running']
-    command = ['python', 'runUnittests.py', 'ews-build']
+    command = ['python3', 'runUnittests.py', 'ews-build']
 
     def __init__(self, **kwargs):
         super(RunEWSUnitTests, self).__init__(workdir='build/Tools/CISupport', timeout=2 * 60, logEnviron=False, **kwargs)
@@ -2905,7 +2920,10 @@ class PrintConfiguration(steps.ShellSequence):
             command_list.extend(self.command_list_win)
 
         for command in command_list:
-            self.commands.append(util.ShellArg(command=command, logfile='stdio'))
+            if sys.version_info > (3, 0):
+                self.commands.append(util.ShellArg(command=command, logname='stdio'))
+            else:
+                self.commands.append(util.ShellArg(command=command, logfile='stdio'))
         return super(PrintConfiguration, self).run()
 
     def convert_build_to_os_name(self, build):

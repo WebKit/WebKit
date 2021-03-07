@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Content-Type: text/html\r\n\r\n'
+    '<html>\n'
+    '<head>\n'
+    '<script>\n'
+    '\n'
+    'function loaded()\n'
+    '{\n'
+    '    if (window.sessionStorage.getItem("postedForm")) {\n'
+    '        window.sessionStorage.removeItem("postedForm");\n'
+    '        if (window.testRunner) {\n'
+    '            testRunner.setCustomPolicyDelegate(false);\n'
+    '            testRunner.notifyDone();\n'
+    '        }\n'
+    '        return;\n'
+    '    }\n'
+    '\n'
+    '    window.sessionStorage.postedForm = "true";\n'
+    '    document.getElementById("testform").submit();\n'
+    '}\n'
+    '\n'
+    '</script>\n'
+    '</head>\n'
+    '<body onload="loaded();">\n'
+    '<form id="testform" action="goback-with-policydelegate.py" method="post">\n'
+    '<input id="somefield" type="text" value="form data">\n'
+    '</form>\n'
+    '\n'
+    'This page was reached via a form POST.  After navigating away, there should be no form resubmission nag when navigating back here.\n'
+    '</body>\n'
+    '</html>\n'
+)

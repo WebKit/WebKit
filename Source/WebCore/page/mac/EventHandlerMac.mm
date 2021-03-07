@@ -468,13 +468,11 @@ static void setNSScrollViewScrollWheelShouldRetainSelf(bool shouldRetain)
 
 static void selfRetainingNSScrollViewScrollWheel(NSScrollView *self, SEL selector, NSEvent *event)
 {
-    bool shouldRetainSelf = isMainThread() && nsScrollViewScrollWheelShouldRetainSelf();
+    RetainPtr<NSScrollView> retainedSelf;
+    if (isMainThread() && nsScrollViewScrollWheelShouldRetainSelf())
+        retainedSelf = self;
 
-    if (shouldRetainSelf)
-        CFRetain((__bridge CFTypeRef)self);
     wtfCallIMP<void>(originalNSScrollViewScrollWheel, self, selector, event);
-    if (shouldRetainSelf)
-        CFRelease((__bridge CFTypeRef)self);
 }
 
 bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, Widget& widget, OptionSet<WheelEventProcessingSteps> processingSteps)

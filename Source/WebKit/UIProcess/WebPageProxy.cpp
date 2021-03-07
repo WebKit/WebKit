@@ -224,6 +224,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#include "DisplayLink.h"
 #include <WebCore/ImageUtilities.h>
 #include <WebCore/UTIUtilities.h>
 #endif
@@ -294,10 +295,6 @@
 #include "WebDateTimePicker.h"
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-#include "DisplayLink.h"
-#endif
-
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -321,7 +318,7 @@ using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
 class ScrollingObserver {
     WTF_MAKE_NONCOPYABLE(ScrollingObserver);
     WTF_MAKE_FAST_ALLOCATED;
@@ -348,7 +345,7 @@ ScrollingObserver& ScrollingObserver::singleton()
     static NeverDestroyed<ScrollingObserver> detector;
     return detector;
 }
-#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#endif
 
 class StorageRequests {
     WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
@@ -2747,7 +2744,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     ScrollingObserver::singleton().willSendWheelEvent();
 #endif
 
@@ -3585,6 +3582,7 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
 
 SessionState WebPageProxy::sessionState(WTF::Function<bool (WebBackForwardListItem&)>&& filter) const
 {
+    RELEASE_ASSERT(RunLoop::isMain());
     SessionState sessionState;
 
     sessionState.backForwardListState = m_backForwardList->backForwardListState(WTFMove(filter));
@@ -5966,12 +5964,12 @@ void WebPageProxy::setMediaVolume(float volume)
     send(Messages::WebPage::SetMediaVolume(volume));
 }
 
-void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
+void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state, CompletionHandler<void()>&& completionHandler)
 {
     m_mutedState = state;
 
     if (!hasRunningProcess())
-        return;
+        return completionHandler();
 
 #if ENABLE(MEDIA_STREAM)
     bool hasMutedCaptureStreams = m_mediaState & WebCore::MediaProducer::MutedCaptureMask;
@@ -5981,7 +5979,7 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 
     m_process->pageMutedStateChanged(m_webPageID, state);
 
-    send(Messages::WebPage::SetMuted(state));
+    sendWithAsyncReply(Messages::WebPage::SetMuted(state), WTFMove(completionHandler));
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
 }
 
@@ -5997,15 +5995,15 @@ void WebPageProxy::setMediaCaptureEnabled(bool enabled)
 #endif
 }
 
-void WebPageProxy::stopMediaCapture()
+void WebPageProxy::stopMediaCapture(MediaProducer::MediaCaptureKind kind, CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess())
-        return;
+        return completionHandler();
 
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaPermissionRequestManager)
         m_userMediaPermissionRequestManager->resetAccess();
-    send(Messages::WebPage::StopMediaCapture());
+    sendWithAsyncReply(Messages::WebPage::StopMediaCapture(kind), WTFMove(completionHandler));
 #endif
 }
 
@@ -6704,11 +6702,11 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 
 #if ENABLE(APP_HIGHLIGHTS)
     case ContextMenuItemTagAddHighlightToNewGroup:
-        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes);
+        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes, HighlightRequestOriginatedInApp::No);
         return;
 
     case ContextMenuItemTagAddHighlightToCurrentGroup:
-        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No);
+        createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No, HighlightRequestOriginatedInApp::No);
         return;
 #endif
 
@@ -7338,9 +7336,6 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
             logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingJetsamKey(), domain, WebCore::ShouldSample::No);
     }
 #endif
-
-    // There is a nested transaction in resetStateAfterProcessExited() that we don't want to commit before the client call.
-    PageLoadState::Transaction transaction = m_pageLoadState.transaction();
 
     resetStateAfterProcessExited(reason);
     stopAllURLSchemeTasks(m_process.ptr());
@@ -7983,7 +7978,11 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
     
     parameters.textInteractionEnabled = preferences().textInteractionEnabled();
-    parameters.httpsUpgradeEnabled = m_configuration->httpsUpgradeEnabled();
+    parameters.httpsUpgradeEnabled = preferences().upgradeKnownHostsToHTTPSEnabled() ? m_configuration->httpsUpgradeEnabled() : false;
+
+#if PLATFORM(IOS)
+    parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload = allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
+#endif
 
     return parameters;
 }
@@ -8270,9 +8269,19 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 
 
 #if ENABLE(IMAGE_EXTRACTION)
-void WebPageProxy::requestImageExtraction(const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completionHandler)
+void WebPageProxy::requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completionHandler)
 {
-    pageClient().requestImageExtraction(imageData, WTFMove(completionHandler));
+    pageClient().requestImageExtraction(imageURL, imageData, WTFMove(completionHandler));
+}
+
+void WebPageProxy::updateWithImageExtractionResult(ImageExtractionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler(false);
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::UpdateWithImageExtractionResult(WTFMove(results), context, location), WTFMove(completionHandler));
 }
 #endif
 
@@ -9137,8 +9146,15 @@ void WebPageProxy::updateReportedMediaCaptureState()
 
     RELEASE_LOG_IF_ALLOWED(WebRTC, "updateReportedMediaCaptureState: from %d to %d", m_reportedMediaCaptureState, activeCaptureState);
 
+    bool microphoneCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::AudioCaptureMask) != (activeCaptureState & MediaProducer::AudioCaptureMask);
+    bool cameraCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::VideoCaptureMask) != (activeCaptureState & MediaProducer::VideoCaptureMask);
+
     m_reportedMediaCaptureState = activeCaptureState;
     m_uiClient->mediaCaptureStateDidChange(m_mediaState);
+    if (microphoneCaptureChanged)
+        pageClient().microphoneCaptureChanged();
+    if (cameraCaptureChanged)
+        pageClient().cameraCaptureChanged();
 }
 
 void WebPageProxy::videoControlsManagerDidChange()
@@ -9931,7 +9947,7 @@ void WebPageProxy::getIsViewVisible(bool& result)
 
 void WebPageProxy::updateCurrentModifierState()
 {
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
     send(Messages::WebPage::UpdateCurrentModifierState(modifiers));
 #endif
@@ -10392,6 +10408,18 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
     return SandboxExtension::HandleArray();
+}
+#endif
+
+#if PLATFORM(COCOA)
+void WebPageProxy::appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&& completionHandler)
+{
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AppBoundNavigationData(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+}
+
+void WebPageProxy::clearAppBoundNavigationData(CompletionHandler<void()>&& completionHandler)
+{
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::ClearAppBoundNavigationData(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 #endif
 

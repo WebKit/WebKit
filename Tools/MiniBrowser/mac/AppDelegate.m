@@ -72,6 +72,7 @@ enum {
     if (self) {
         _browserWindowControllers = [[NSMutableSet alloc] init];
         _extensionManagerWindowController = [[ExtensionManagerWindowController alloc] init];
+        _openNewWindowAtStartup = true;
     }
 
     return self;
@@ -144,6 +145,7 @@ static WKWebsiteDataStore *persistentDataStore()
         configuration.preferences._developerExtrasEnabled = YES;
         configuration.preferences._mockCaptureDevicesEnabled = YES;
         configuration.preferences._accessibilityIsolatedTreeEnabled = YES;
+        configuration.preferences._logsPageMessagesToSystemConsoleEnabled = YES;
     }
 
     configuration.suppressesIncrementalRendering = _settingsController.incrementalRenderingSuppressed;
@@ -233,6 +235,9 @@ static WKWebsiteDataStore *persistentDataStore()
 
     [self _updateNewWindowKeyEquivalents];
 
+    if (!_openNewWindowAtStartup)
+        return;
+
     if (_settingsController.createEditorByDefault)
         [self newEditorWindow:self];
     else
@@ -263,6 +268,7 @@ static WKWebsiteDataStore *persistentDataStore()
 
     [controller.window makeKeyAndOrderFront:self];
     [controller loadURLString:[NSURL fileURLWithPath:filename].absoluteString];
+    _openNewWindowAtStartup = false;
     return YES;
 }
 

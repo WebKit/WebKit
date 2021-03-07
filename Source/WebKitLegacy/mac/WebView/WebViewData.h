@@ -226,7 +226,7 @@ private:
     WTF::String userAgent;
     BOOL userAgentOverridden;
     
-    WebPreferences *preferences;
+    RetainPtr<WebPreferences> preferences;
 #if PLATFORM(IOS_FAMILY)
     NSURL *userStyleSheetLocation;
 #endif

@@ -159,9 +159,8 @@ void CACFLayerTreeHost::initialize()
     m_rootLayer->setGeometryFlipped(true);
 
 #ifndef NDEBUG
-    CGColorRef debugColor = CGColorCreateGenericRGB(1, 0, 0, 0.8);
-    m_rootLayer->setBackgroundColor(debugColor);
-    CGColorRelease(debugColor);
+    auto debugColor = adoptCF(CGColorCreateGenericRGB(1, 0, 0, 0.8));
+    m_rootLayer->setBackgroundColor(debugColor.get());
 #endif
 }
 

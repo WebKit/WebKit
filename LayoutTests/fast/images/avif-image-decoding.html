@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<body>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+window.onload = function() {
+  document.getElementById('results').innerHTML =
+    document.getElementsByTagName('img')[0].width + 'x' +
+    document.getElementsByTagName('img')[0].height;
+}
+</script>
+<img src="resources/green-313x313.avif">
+<div id="results"></div>
+</body>

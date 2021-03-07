@@ -77,8 +77,8 @@ public:
     virtual void paintRenderingResultsToCanvas() {}
     virtual PlatformLayer* platformLayer() const { return 0; }
 
-    bool callTracingActive() const { return m_callTracingActive; }
-    void setCallTracingActive(bool callTracingActive) { m_callTracingActive = callTracingActive; }
+    bool hasActiveInspectorCanvasCallTracer() const { return m_hasActiveInspectorCanvasCallTracer; }
+    void setHasActiveInspectorCanvasCallTracer(bool hasActiveInspectorCanvasCallTracer) { m_hasActiveInspectorCanvasCallTracer = hasActiveInspectorCanvasCallTracer; }
 
     virtual bool compositingResultsNeedUpdating() const { return false; }
     virtual bool needsPreparationForDisplay() const { return false; }
@@ -101,7 +101,7 @@ protected:
     void checkOrigin(const URL&);
     void checkOrigin(const TypedOMCSSImageValue&);
 
-    bool m_callTracingActive { false };
+    bool m_hasActiveInspectorCanvasCallTracer { false };
 
 private:
     CanvasBase& m_canvas;

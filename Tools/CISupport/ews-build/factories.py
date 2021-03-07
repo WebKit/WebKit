@@ -26,7 +26,7 @@ from buildbot.steps import trigger
 
 from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
-                   DownloadBuiltProduct, ExtractBuiltProduct, FindModifiedChangeLogs, InstallGtkDependencies,
+                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, InstallGtkDependencies,
                    InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
                    RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
@@ -47,6 +47,7 @@ class Factory(factory.BuildFactory):
         # automatically apply the patch to the repo, and that doesn't handle ChangeLogs well. See https://webkit.org/b/193138
         # Therefore we add CheckOutSpecificRevision step to checkout required revision.
         self.addStep(CheckOutSpecificRevision())
+        self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(ApplyPatch())
 
@@ -58,6 +59,7 @@ class StyleFactory(factory.BuildFactory):
         self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
@@ -71,6 +73,7 @@ class WatchListFactory(factory.BuildFactory):
         self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
@@ -259,6 +262,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(ValidateCommiterAndReviewer())
         self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
@@ -272,6 +276,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(RunWebKitTests())
         self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
         self.addStep(CheckOutSource())
+        self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
         self.addStep(CreateLocalGITCommit())

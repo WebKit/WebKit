@@ -287,6 +287,7 @@ public:
         AXLayoutComplete,
         AXLoadComplete,
         AXNewDocumentLoadComplete,
+        AXPageScrolled,
         AXSelectedChildrenChanged,
         AXSelectedTextChanged,
         AXValueChanged,
@@ -367,6 +368,8 @@ public:
 
     Optional<SimpleRange> rangeMatchesTextNearRange(const SimpleRange&, const String&);
 
+    static String notificationPlatformName(AXNotification);
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
     WEBCORE_EXPORT static bool usedOnAXThread();
@@ -383,7 +386,6 @@ private:
 #endif
 
 protected:
-    static String notificationPlatformName(AXNotification);
     void postPlatformNotification(AXCoreObject*, AXNotification);
     void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
 

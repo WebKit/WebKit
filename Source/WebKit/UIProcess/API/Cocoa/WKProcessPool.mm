@@ -387,6 +387,16 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 #endif
 }
 
+- (BOOL)_requestWebProcessTermination:(pid_t)pid
+{
+    for (auto& process : _processPool->processes()) {
+        if (process->processIdentifier() == pid)
+            process->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
+        return YES;
+    }
+    return NO;
+}
+
 - (void)_makeNextWebProcessLaunchFailForTesting
 {
     _processPool->setShouldMakeNextWebProcessLaunchFailForTesting(true);

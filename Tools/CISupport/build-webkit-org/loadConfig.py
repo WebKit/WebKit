@@ -20,24 +20,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 
-from buildbot.worker import Worker
+import json
+import operator
+import os
+import re
+
 from buildbot.scheduler import AnyBranchScheduler, Triggerable, Nightly
 from buildbot.schedulers.forcesched import FixedParameter, ForceScheduler, StringParameter, BooleanParameter
 from buildbot.schedulers.filter import ChangeFilter
 from buildbot.process import buildstep, factory, properties
+from buildbot.util import identifiers as buildbot_identifiers
+from buildbot.worker import Worker
 
 from factories import *
-
-import re
-import json
-import operator
-
 import wkbuild
 
 trunk_filter = ChangeFilter(branch=["trunk", None])
-buildbot_identifiers_re = re.compile('^[a-zA-Z_-][a-zA-Z0-9_-]*$')
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
@@ -47,17 +46,20 @@ def pickLatestBuild(builder, requests):
     return max(requests, key=operator.attrgetter("submittedAt"))
 
 
-def loadBuilderConfig(c, is_test_mode_enabled=False):
+def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     # FIXME: These file handles are leaked.
+    config = json.load(open(os.path.join(master_prefix_path, 'config.json')))
     if is_test_mode_enabled:
         passwords = {}
     else:
-        passwords = json.load(open('passwords.json'))
+        passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
     results_server_api_key = passwords.get('results-server-api-key')
     if results_server_api_key:
         os.environ['RESULTS_SERVER_API_KEY'] = results_server_api_key
 
-    config = json.load(open('config.json'))
+    checkWorkersAndBuildersForConsistency(config, config['workers'], config['builders'])
+    checkValidSchedulers(config, config['schedulers'])
+
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
 
     c['schedulers'] = []
@@ -77,37 +79,24 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
 
     c['builders'] = []
     for builder in config['builders']:
-        for workerName in builder['workernames']:
-            for worker in config['workers']:
-                if worker['name'] != workerName or worker['platform'] == '*':
-                    continue
-
-                if worker['platform'] != builder['platform']:
-                    raise Exception('Builder {} is for platform {} but has worker {} for platform {}!'.format(builder['name'], builder['platform'], worker['name'], worker['platform']))
-                break
-
+        builder['tags'] = getTagsForBuilder(builder)
         platform = builder['platform']
-
         factoryName = builder.pop('factory')
         factory = globals()[factoryName]
         factorykwargs = {}
-        for key in "platform", "configuration", "architectures", "triggers", "additionalArguments", "device_model":
+        for key in ['platform', 'configuration', 'architectures', 'triggers', 'additionalArguments', 'device_model']:
             value = builder.pop(key, None)
             if value:
                 factorykwargs[key] = value
 
-        builder["factory"] = factory(**factorykwargs)
+        builder['factory'] = factory(**factorykwargs)
 
         builder_name = builder['name']
-        if len(builder_name) > BUILDER_NAME_LENGTH_LIMIT:
-            raise Exception('Builder name "{}" is longer than maximum allowed by Buildbot ({} characters).'.format(builder_name, BUILDER_NAME_LENGTH_LIMIT))
-        if not buildbot_identifiers_re.match(builder_name):
-            raise Exception('Builder name "{}" is not a valid buildbot identifier.'.format(builder_name))
         for step in builder["factory"].steps:
             step_name = step.buildStep().name
             if len(step_name) > STEP_NAME_LENGTH_LIMIT:
                 raise Exception('step name "{}" is longer than maximum allowed by Buildbot ({} characters).'.format(step_name, STEP_NAME_LENGTH_LIMIT))
-            if not buildbot_identifiers_re.match(step_name):
+            if not buildbot_identifiers.ident_re.match(step_name):
                 raise Exception('step name "{}" is not a valid buildbot identifier.'.format(step_name))
 
         if platform.startswith('mac'):
@@ -130,7 +119,6 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
         if (category in ('AppleMac', 'AppleWin', 'iOS')) and factoryName != 'BuildFactory':
             builder['nextBuild'] = pickLatestBuild
 
-        builder['tags'] = getTagsForBuilder(builder)
         c['builders'].append(builder)
 
 
@@ -142,6 +130,91 @@ class PlatformSpecificScheduler(AnyBranchScheduler):
 
     def filter(self, change):
         return wkbuild.should_build(self.platform, change.files)
+
+
+def checkValidWorker(worker):
+    if not worker:
+        raise Exception('Worker is None or Empty.')
+
+    if not worker.get('name'):
+        raise Exception('Worker "{}" does not have name defined.'.format(worker))
+
+    if not worker.get('platform'):
+        raise Exception('Worker {} does not have platform defined.'.format(worker['name']))
+
+
+def checkValidBuilder(config, builder):
+    if not builder:
+        raise Exception('Builder is None or Empty.')
+
+    if not builder.get('name'):
+        raise Exception('Builder "{}" does not have name defined.'.format(builder))
+
+    if not buildbot_identifiers.ident_re.match(builder['name']):
+        raise Exception('Builder name {} is not a valid buildbot identifier.'.format(builder['name']))
+
+    if len(builder['name']) > BUILDER_NAME_LENGTH_LIMIT:
+        raise Exception('Builder name {} is longer than maximum allowed by Buildbot ({} characters).'.format(builder['name'], BUILDER_NAME_LENGTH_LIMIT))
+
+    if 'configuration' in builder and builder['configuration'] not in ['debug', 'production', 'release']:
+        raise Exception('Invalid configuration: {} for builder: {}'.format(builder.get('configuration'), builder.get('name')))
+
+    if not builder.get('factory'):
+        raise Exception('Builder {} does not have factory defined.'.format(builder['name']))
+
+    if not builder.get('platform'):
+        raise Exception('Builder {} does not have platform defined.'.format(builder['name']))
+
+    for trigger in builder.get('triggers') or []:
+        if not doesTriggerExist(config, trigger):
+            raise Exception('Trigger: {} in builder {} does not exist in list of Trigerrable schedulers.'.format(trigger, builder['name']))
+
+
+def checkValidSchedulers(config, schedulers):
+    for scheduler in config.get('schedulers') or []:
+        if scheduler.get('type') == 'Triggerable':
+            if not isTriggerUsedByAnyBuilder(config, scheduler['name']) and 'build' not in scheduler['name'].lower():
+                raise Exception('Trigger: {} is not used by any builder in config.json'.format(scheduler['name']))
+
+
+def doesTriggerExist(config, trigger):
+    for scheduler in config.get('schedulers') or []:
+        if scheduler.get('name') == trigger:
+            return True
+    return False
+
+
+def isTriggerUsedByAnyBuilder(config, trigger):
+    for builder in config.get('builders'):
+        if trigger in (builder.get('triggers') or []):
+            return True
+    return False
+
+
+def checkWorkersAndBuildersForConsistency(config, workers, builders):
+    def _find_worker_with_name(workers, worker_name):
+        result = None
+        for worker in workers:
+            if worker['name'] == worker_name:
+                if not result:
+                    result = worker
+                else:
+                    raise Exception('Duplicate worker entry found for {}.'.format(worker['name']))
+        return result
+
+    for worker in workers:
+        checkValidWorker(worker)
+
+    for builder in builders:
+        checkValidBuilder(config, builder)
+        for worker_name in builder['workernames']:
+            worker = _find_worker_with_name(workers, worker_name)
+            if worker is None:
+                raise Exception('Builder {} has worker {}, which is not defined in workers list!'.format(builder['name'], worker_name))
+
+            if worker['platform'] != builder['platform'] and worker['platform'] != '*' and builder['platform'] != '*':
+                raise Exception('Builder "{0}" is for platform "{1}", but has worker "{2}" for platform "{3}"!'.format(
+                    builder['name'], builder['platform'], worker['name'], worker['platform']))
 
 
 def getInvalidTags():

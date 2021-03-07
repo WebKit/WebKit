@@ -231,6 +231,11 @@ angle::Result BufferMtl::unmap(const gl::Context *context, GLboolean *result)
         }
     }
 
+    if (result)
+    {
+        *result = true;
+    }
+
     return angle::Result::Continue;
 }
 

@@ -65,6 +65,7 @@ enum class SDKVersion : uint32_t {
     FirstWithWKWebsiteDataStoreInitReturningNil = DYLD_IOS_VERSION_14_0,
     FirstVersionWithiOSAppsOnMacOS = DYLD_IOS_VERSION_FIRST_WITH_IOS_APPS_ON_MACOS,
     FirstWithDataURLFragmentRemoval = DYLD_IOS_VERSION_14_5,
+    FirstWithHTMLDocumentSupportedPropertyNames = DYLD_IOS_VERSION_14_5,
     FirstThatObservesClassProperty = DYLD_IOS_VERSION_14_5,
     FirstWithNullOriginForNonSpecialSchemedURLs = DYLD_IOS_VERSION_15_0,
     FirstWithoutWeChatScrollingQuirk = DYLD_IOS_VERSION_14_5,
@@ -86,6 +87,7 @@ enum class SDKVersion : uint32_t {
     FirstWithInitializeWebKit2MainThreadAssertion = DYLD_MACOSX_VERSION_10_16,
     FirstWithWKWebsiteDataStoreInitReturningNil = DYLD_MACOSX_VERSION_10_16,
     FirstWithDataURLFragmentRemoval = DYLD_MACOSX_VERSION_11_3,
+    FirstWithHTMLDocumentSupportedPropertyNames = DYLD_MACOSX_VERSION_11_3,
     FirstWithNullOriginForNonSpecialSchemedURLs = DYLD_MACOSX_VERSION_12_00,
 #endif
 };

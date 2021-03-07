@@ -270,8 +270,7 @@ SurfaceImpl *DisplayMtl::createWindowSurface(const egl::SurfaceState &state,
 SurfaceImpl *DisplayMtl::createPbufferSurface(const egl::SurfaceState &state,
                                               const egl::AttributeMap &attribs)
 {
-    UNIMPLEMENTED();
-    return static_cast<SurfaceImpl *>(0);
+    return new PBufferSurfaceMtl(this, state, attribs);
 }
 
 SurfaceImpl *DisplayMtl::createPbufferFromClientBuffer(const egl::SurfaceState &state,
@@ -279,7 +278,15 @@ SurfaceImpl *DisplayMtl::createPbufferFromClientBuffer(const egl::SurfaceState &
                                                        EGLClientBuffer clientBuffer,
                                                        const egl::AttributeMap &attribs)
 {
-    return new IOSurfaceSurfaceMtl(this, state, clientBuffer, attribs);
+    switch (buftype)
+    {
+        case EGL_IOSURFACE_ANGLE:
+            return new IOSurfaceSurfaceMtl(this, state, clientBuffer, attribs);
+            break;
+        default:
+            UNREACHABLE();
+            return nullptr;
+    }
 }
 
 SurfaceImpl *DisplayMtl::createPixmapSurface(const egl::SurfaceState &state,
@@ -318,12 +325,16 @@ StreamProducerImpl *DisplayMtl::createStreamProducerD3DTexture(
 
 gl::Version DisplayMtl::getMaxSupportedESVersion() const
 {
-    // NOTE(hqle): Supports GLES 3.0 on iOS GPU family 4+ for now.
+    // NOTE(hqle): Supports GLES 3.0 on iOS GPU Family 4+ for now.
+#if TARGET_OS_SIMULATOR // Simulator should be able to support ES3, despite not supporting iOS GPU Family 4 in its entirety.
+    return gl::Version(3, 0);
+#else
     if (supportsEitherGPUFamily(4, 1))
     {
         return gl::Version(3, 0);
     }
     return gl::Version(2, 0);
+#endif
 }
 
 gl::Version DisplayMtl::getMaxConformantESVersion() const

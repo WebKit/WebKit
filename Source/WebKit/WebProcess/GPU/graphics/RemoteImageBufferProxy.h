@@ -104,6 +104,8 @@ protected:
         m_drawingContext.displayList().setTracksDrawingItemExtents(false);
     }
 
+    WebCore::RenderingMode renderingMode() const override { return BaseDisplayListImageBuffer::renderingMode(); }
+
     bool hasPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
 
     void didFlush(WebCore::DisplayList::FlushIdentifier flushIdentifier) override
@@ -146,6 +148,7 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return nullptr;
 
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         return m_remoteRenderingBackendProxy->getImageData(outputFormat, srcRect, m_renderingResourceIdentifier);
     }
 

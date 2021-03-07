@@ -83,10 +83,7 @@ const char*  RemoteImageDecoderAVFManager::supplementName()
 
 GPUProcessConnection& RemoteImageDecoderAVFManager::gpuProcessConnection() const
 {
-    if (!m_gpuProcessConnection)
-        m_gpuProcessConnection = &m_process.ensureGPUProcessConnection();
-
-    return *m_gpuProcessConnection;
+    return m_process.ensureGPUProcessConnection();
 }
 
 void RemoteImageDecoderAVFManager::setUseGPUProcess(bool useGPUProcess)

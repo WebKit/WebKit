@@ -25,9 +25,11 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "RemoteObjectRegistry.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -38,7 +40,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-TEST(WebKit, RemoteObjectRegistry)
+TEST(RemoteObjectRegistry, Basic)
 {
     __block bool isDone = false;
 
@@ -196,7 +198,7 @@ TEST(WebKit, RemoteObjectRegistry)
 
 @end
 
-TEST(WebKit, RemoteObjectRegistry_CallReplyBlockAfterOriginatingWebViewDeallocates)
+TEST(RemoteObjectRegistry, CallReplyBlockAfterOriginatingWebViewDeallocates)
 {
     auto localObject = adoptNS([[LocalObject alloc] init]);
     WeakObjCPtr<WKWebView> weakWebViewPtr;
@@ -227,4 +229,29 @@ TEST(WebKit, RemoteObjectRegistry_CallReplyBlockAfterOriginatingWebViewDeallocat
     }
 
     localObject->completionHandlerFromWebProcess();
+}
+
+TEST(RemoteObjectRegistry, SerializeErrorWithCertificates)
+{
+    TestWebKitAPI::HTTPServer server({ }, TestWebKitAPI::HTTPServer::Protocol::Https);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"RemoteObjectRegistryPlugIn"]]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    webView.get().navigationDelegate = delegate.get();
+    [webView loadRequest:server.request()];
+    NSError *error = [delegate waitForDidFailProvisionalNavigation];
+    NSString *key = @"NSErrorPeerCertificateChainKey";
+    EXPECT_WK_STREQ(error.domain, "NSURLErrorDomain");
+    EXPECT_TRUE(error.userInfo[key]);
+    
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RemoteObjectProtocol)];
+    id <RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface];
+    __block bool roundTripComplete = false;
+    [object sendError:error completionHandler:^(NSError *deserializedError) {
+        EXPECT_WK_STREQ(deserializedError.domain, "NSURLErrorDomain");
+        NSArray *chain = deserializedError.userInfo[key];
+        EXPECT_TRUE(chain);
+        EXPECT_EQ(CFGetTypeID(chain[0]), SecCertificateGetTypeID());
+        roundTripComplete = true;
+    }];
+    TestWebKitAPI::Util::run(&roundTripComplete);
 }

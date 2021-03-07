@@ -168,10 +168,9 @@ static bool matchesBuildInfo(OSBuildInfo machineInfo, OSBuildInfo blockInfo, Web
 
 std::unique_ptr<WebGLBlocklist> WebGLBlocklist::create(NSDictionary *propertyList)
 {
-    CFDictionaryRef systemVersionDictionary = _CFCopySystemVersionDictionary();
-    CFStringRef osBuild = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary, _kCFSystemVersionBuildVersionKey));
+    auto systemVersionDictionary = adoptCF(_CFCopySystemVersionDictionary());
+    CFStringRef osBuild = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary.get(), _kCFSystemVersionBuildVersionKey));
     OSBuildInfo buildInfo = buildInfoFromOSBuildString((__bridge NSString *)osBuild);
-    CFRelease(systemVersionDictionary);
 
     if (!buildInfo.major)
         return nullptr;

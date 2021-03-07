@@ -81,7 +81,7 @@ public:
 
     static RegistrableDomain uncheckedCreateFromRegistrableDomainString(const String& domain)
     {
-        return RegistrableDomain { domain };
+        return RegistrableDomain { String { domain } };
     }
     
     static RegistrableDomain uncheckedCreateFromHost(const String& host)
@@ -90,7 +90,7 @@ public:
         auto registrableDomain = topPrivatelyControlledDomain(host);
         if (registrableDomain.isEmpty())
             return uncheckedCreateFromRegistrableDomainString(host);
-        return RegistrableDomain { registrableDomain };
+        return RegistrableDomain { WTFMove(registrableDomain) };
 #else
         return uncheckedCreateFromRegistrableDomainString(host);
 #endif
@@ -102,8 +102,8 @@ public:
 protected:
 
 private:
-    explicit RegistrableDomain(const String& domain)
-        : m_registrableDomain { domain.isEmpty() ? "nullOrigin"_s : domain }
+    explicit RegistrableDomain(String&& domain)
+        : m_registrableDomain { domain.isEmpty() ? "nullOrigin"_s : WTFMove(domain) }
     {
     }
 

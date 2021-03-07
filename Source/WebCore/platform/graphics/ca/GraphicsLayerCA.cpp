@@ -3063,22 +3063,29 @@ void GraphicsLayerCA::updateAnimations()
                 return;
             }
 
-            Seconds earliestBeginTime = 0_s;
+            LayerPropertyAnimation* earliestAnimation = nullptr;
             for (auto* animation : animations) {
                 if (auto beginTime = animation->computedBeginTime()) {
-                    if (!earliestBeginTime || earliestBeginTime > *beginTime)
-                        earliestBeginTime = *beginTime;
+                    if (!earliestAnimation || *earliestAnimation->computedBeginTime() > *beginTime)
+                        earliestAnimation = animation;
                 }
             }
 
-            if (earliestBeginTime)
-                earliestBeginTime += animationGroupBeginTime;
-
             Vector<RefPtr<PlatformCAAnimation>> caAnimations;
-            if (earliestBeginTime > currentTime) {
-                if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
-                    prepareAnimationForAddition(*baseValueTransformAnimation);
-                    caAnimations.append(baseValueTransformAnimation->m_animation);
+
+            // If we have an animation with an explicit begin time that does not fill backwards and starts with a delay,
+            // we must create a non-interpolating animation to set the current value for this transform-related property
+            // until that animation begins.
+            if (earliestAnimation) {
+                auto fillMode = earliestAnimation->m_animation->fillMode();
+                if (fillMode != PlatformCAAnimation::Backwards && fillMode != PlatformCAAnimation::Both) {
+                    Seconds earliestBeginTime = *earliestAnimation->computedBeginTime() + animationGroupBeginTime;
+                    if (earliestBeginTime > currentTime) {
+                        if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
+                            prepareAnimationForAddition(*baseValueTransformAnimation);
+                            caAnimations.append(baseValueTransformAnimation->m_animation);
+                        }
+                    }
                 }
             }
 
@@ -3101,24 +3108,30 @@ void GraphicsLayerCA::updateAnimations()
                 return;
             }
 
-            Seconds earliestBeginTime = 0_s;
+            LayerPropertyAnimation* earliestAnimation = nullptr;
             Vector<RefPtr<PlatformCAAnimation>> caAnimations;
             for (auto* animation : WTF::makeReversedRange(animations)) {
                 if (auto beginTime = animation->computedBeginTime()) {
-                    if (!earliestBeginTime || earliestBeginTime > *beginTime)
-                        earliestBeginTime = *beginTime;
+                    if (!earliestAnimation || *earliestAnimation->computedBeginTime() > *beginTime)
+                        earliestAnimation = animation;
                 }
                 prepareAnimationForAddition(*animation);
                 caAnimations.append(animation->m_animation);
             }
 
-            if (earliestBeginTime)
-                earliestBeginTime += animationGroupBeginTime;
-
-            if (earliestBeginTime > currentTime) {
-                if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
-                    prepareAnimationForAddition(*baseValueTransformAnimation);
-                    caAnimations.append(baseValueTransformAnimation->m_animation);
+            // If we have an animation with an explicit begin time that does not fill backwards and starts with a delay,
+            // we must create a non-interpolating animation to set the current value for this transform-related property
+            // until that animation begins.
+            if (earliestAnimation) {
+                auto fillMode = earliestAnimation->m_animation->fillMode();
+                if (fillMode != PlatformCAAnimation::Backwards && fillMode != PlatformCAAnimation::Both) {
+                    Seconds earliestBeginTime = *earliestAnimation->computedBeginTime() + animationGroupBeginTime;
+                    if (earliestBeginTime > currentTime) {
+                        if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
+                            prepareAnimationForAddition(*baseValueTransformAnimation);
+                            caAnimations.append(baseValueTransformAnimation->m_animation);
+                        }
+                    }
                 }
             }
 

@@ -96,7 +96,6 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <pal/SessionID.h>
 #include <wtf/CallbackAggregator.h>
-#include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
@@ -305,8 +304,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
     processPools().append(this);
 
-    addLanguageChangeObserver(this, languageChanged);
-
     resolvePathsForSandboxExtensions();
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
@@ -335,8 +332,6 @@ WebProcessPool::~WebProcessPool()
 
     bool removed = processPools().removeFirst(this);
     ASSERT_UNUSED(removed, removed);
-
-    removeLanguageChangeObserver(this);
 
     m_messageReceiverMap.invalidate();
 
@@ -417,16 +412,14 @@ void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& cu
     m_configuration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
 }
 
-void WebProcessPool::languageChanged(void* context)
+void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
 {
-    static_cast<WebProcessPool*>(context)->languageChanged();
-}
+    m_configuration->setOverrideLanguages(WTFMove(languages));
 
-void WebProcessPool::languageChanged()
-{
-    sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged());
+    sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()));
 #if USE(SOUP)
-    WebsiteDataStore::defaultDataStore()->networkProcess().send(Messages::NetworkProcess::UserPreferredLanguagesChanged(userPreferredLanguages()), 0);
+    for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()), 0);
 #endif
 }
 
@@ -636,7 +629,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
+Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
 #if PLATFORM(COCOA)
     m_tccPreferenceEnabled = doesAppHaveITPEnabled();
@@ -645,11 +638,10 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDa
 #endif
 
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, isPrewarmed);
-    auto& process = processProxy.get();
-    initializeNewWebProcess(process, websiteDataStore, isPrewarmed);
-    m_processes.append(WTFMove(processProxy));
+    initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed);
+    m_processes.append(processProxy.copyRef());
 
-    return process;
+    return processProxy;
 }
 
 RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore& websiteDataStore)
@@ -685,9 +677,7 @@ static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayC
     auto screenProperties = WebCore::collectScreenProperties();
     for (auto& processPool : WebProcessPool::allProcessPools()) {
         processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
         processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
-#endif
     }
 }
 
@@ -852,9 +842,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
         parameters.websiteDataStoreParameters = webProcessDataStoreParameters(process, *websiteDataStore);
 
     process.send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
-#if PLATFORM(COCOA)
-    process.send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
-#endif
 
     if (m_automationSession)
         process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
@@ -864,7 +851,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     if (isPrewarmed == WebProcessProxy::IsPrewarmed::Yes) {
         ASSERT(!m_prewarmedProcess);
         m_prewarmedProcess = &process;
-        process.send(Messages::WebProcess::PrewarmGlobally(), 0);
     }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -971,16 +957,19 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     removeProcessFromOriginCacheSet(*process);
 }
 
-WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, WebPageProxy* page, const RegistrableDomain& registrableDomain)
+Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, WebPageProxy* page, const RegistrableDomain& registrableDomain)
 {
     if (!registrableDomain.isEmpty()) {
-        if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore))
-            return *process;
+        if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore)) {
+            ASSERT(m_processes.contains(process.get()));
+            return process.releaseNonNull();
+        }
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
         if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processIdentifier());
-            return *process;
+            ASSERT(m_processes.contains(process.get()));
+            return process.releaseNonNull();
         }
     }
 
@@ -988,32 +977,33 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processIdentifier());
         if (!registrableDomain.isEmpty())
             tryPrewarmWithDomainInformation(*process, registrableDomain);
-        return *process;
+        ASSERT(m_processes.contains(process.get()));
+        return process.releaseNonNull();
     }
 
-    if (!usesSingleWebProcess())
-        return createNewWebProcess(&websiteDataStore);
-
+    if (usesSingleWebProcess()) {
 #if PLATFORM(COCOA)
-    bool mustMatchDataStore = WebKit::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != WebKit::WebsiteDataStore::defaultDataStore().ptr();
+        bool mustMatchDataStore = WebKit::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != WebKit::WebsiteDataStore::defaultDataStore().ptr();
 #else
-    bool mustMatchDataStore = false;
+        bool mustMatchDataStore = false;
 #endif
 
-    for (auto& process : m_processes) {
-        if (process == m_prewarmedProcess || process->isDummyProcessProxy())
-            continue;
+        for (auto& process : m_processes) {
+            if (process == m_prewarmedProcess || process->isDummyProcessProxy())
+                continue;
 #if ENABLE(SERVICE_WORKER)
-        if (process->isRunningServiceWorkers())
-            continue;
+            if (process->isRunningServiceWorkers())
+                continue;
 #endif
-        if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
-            continue;
-        return *process;
+            if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
+                continue;
+            return *process;
+        }
     }
     return createNewWebProcess(&websiteDataStore);
 }
 
+#if ENABLE(SERVICE_WORKER)
 UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierForServiceWorkers()
 {
     if (!m_userContentControllerForServiceWorker)
@@ -1021,6 +1011,7 @@ UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierF
 
     return m_userContentControllerForServiceWorker->identifier();
 }
+#endif
 
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
@@ -1056,7 +1047,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
             m_processes.append(process.copyRef());
         }
     } else
-        process = &processForRegistrableDomain(*pageConfiguration->websiteDataStore(), nullptr, { });
+        process = processForRegistrableDomain(*pageConfiguration->websiteDataStore(), nullptr, { });
 
     RefPtr<WebUserContentControllerProxy> userContentController = pageConfiguration->userContentController();
     
@@ -1952,7 +1943,7 @@ void WebProcessPool::resetMockMediaDevices()
 
 void WebProcessPool::sendDisplayConfigurationChangedMessageForTesting()
 {
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     auto display = CGSMainDisplayID();
 
     for (auto& processPool : WebProcessPool::allProcessPools()) {

@@ -1,3 +1,388 @@
+2021-03-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Bump cmake_minimum_required version to 3.12 or later
+        https://bugs.webkit.org/show_bug.cgi?id=221727
+        <rdar://problem/74454980>
+
+        Reviewed by Konstantin Tokarev.
+
+        Sync cmake_minimum_required version for AppleWin internal builds.
+
+        * CMakeLists.txt:
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222760
+
+        Reviewed by Darin Adler.
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit by using RetainPtr<>.
+
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::decodePercentEscapes):
+        (WTF::URLByTruncatingOneCharacterBeforeComponent):
+        (WTF::URLWithData):
+        (WTF::URLByRemovingComponentAndSubsequentCharacter):
+
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Add internal preference to disable HTTPS upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=222778
+
+        Reviewed by Simon Fraser.
+
+        This is needed for an internal performance benchmark, which serves canned content from a local http server
+        pretending to be from different domains that are in our internal HTTPS upgrade list because the real server
+        supports HTTPS.  That internal benchmark should eventually change, but that's not going to happen this year.
+        This is also likely going to be useful for QA purposes to be able to easily tell on an internal build
+        whether HTTPS upgrade is breaking something.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove the HTTPSUpgradeEnabled experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=222706
+
+        Reviewed by Simon Fraser.
+
+        It was a good experimental implementation, but the feature is now implemented in makeSecureIfNecessary
+        and turned on and off by WKWebViewConfiguration.upgradeKnownHostsToHTTPS.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-03-04  Chris Dumez  <cdumez@apple.com>
+
+        [macOS][WK2] Changing the system language does not update navigator.language
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+
+        Reviewed by Per Arne Vollan.
+
+        Update WTF::languageDidChange() to clear preferredLanguages() on Cocoa platforms
+        so that we get updated values from the system the next time
+        platformUserPreferredLanguages() is called.
+
+        platformUserPreferredLanguages() used to implicitly register a AppleLanguagePreferencesChangedNotification
+        listener. We've now made this registering opt-in by moving it to a separate
+        listenForLanguageChangeNotifications() function. This function is getting called
+        on Mac WK1 and WK2 when CFPREFS_DIRECT_MODE is disabled (legacy).
+        When CFPREFS_DIRECT_MODE is enabled in WK2, we don't want/need to listen for this
+        notification because the AppleLanguages preference gets pushed by the UIProcess
+        down to the WebProcesses. Even though we could listen for this notification,
+        the WebProcess would not have the latest AppleLanguages preference when receiving
+        the notification. This would cause us to fire the languagechange event at the
+        Window too early and navigator.language would keep returning the old language.
+        For WK2 with CFPREFS_DIRECT_MODE enabled, we now explicitly call
+        WTF::languageDidChange() when the "AppleLanguages" preference gets sync'd from
+        the UIProcess instead.
+
+        * wtf/Language.cpp:
+        (WTF::languageDidChange):
+        (WTF::platformLanguageDidChange):
+        * wtf/Language.h:
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::languagePreferencesDidChange):
+        (WTF::platformLanguageDidChange):
+        (WTF::listenForLanguageChangeNotifications):
+        (WTF::platformUserPreferredLanguages):
+
+2021-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        <rdar://74748353>
+
+        Reviewed by Simon Fraser.
+
+        Add HAVE_IOSURFACE_SET_OWNERSHIP_IDENTITY feature flag to protect uses of the
+        new IOSurfaceSetOwnershipIdentity() SPI.
+
+        * wtf/PlatformHave.h:
+
+2021-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Limit HashTable entry size to 500 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=222658
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-03-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ENABLE(JIT_CAGE) requires HAVE(JIT_CAGE)
+        https://bugs.webkit.org/show_bug.cgi?id=222695
+
+        Reviewed by Saam Barati.
+
+        HAVE(JIT_CAGE) is internally defined. We use HAVE(JIT_CAGE) when defining ENABLE(JIT_CAGE).
+
+        * wtf/PlatformEnable.h:
+
+2021-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r273851.
+
+        Caused some tests failures on macOS Big Sur
+
+        Reverted changeset:
+
+        "[macOS][WK2] Changing the system language does not update
+        navigator.language"
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+        https://commits.webkit.org/r273851
+
+2021-03-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r273832.
+
+        26 inspector tests failing a new assert added with this change
+
+        Reverted changeset:
+
+        "Limit HashTable entry size to 500 bytes"
+        https://bugs.webkit.org/show_bug.cgi?id=222658
+        https://commits.webkit.org/r273832
+
+2021-03-03  Chris Dumez  <cdumez@apple.com>
+
+        [macOS][WK2] Changing the system language does not update navigator.language
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+
+        Reviewed by Per Arne Vollan.
+
+        Update WTF::languageDidChange() to clear preferredLanguages() on Cocoa platforms
+        so that we get updated values from the system the next time
+        platformUserPreferredLanguages() is called.
+
+        platformUserPreferredLanguages() used to implicitly register a AppleLanguagePreferencesChangedNotification
+        listener. We've now made this registering opt-in by moving it to a separate
+        listenForLanguageChangeNotifications() function. This function is getting called
+        on Mac WK1 and WK2 when CFPREFS_DIRECT_MODE is disabled (legacy).
+        When CFPREFS_DIRECT_MODE is enabled in WK2, we don't want/need to listen for this
+        notification because the AppleLanguages preference gets pushed by the UIProcess
+        down to the WebProcesses. Even though we could listen for this notification,
+        the WebProcess would not have the latest AppleLanguages preference when receiving
+        the notification. This would cause us to fire the languagechange event at the
+        Window too early and navigator.language would keep returning the old language.
+        For WK2 with CFPREFS_DIRECT_MODE enabled, we now explicitly call
+        WTF::languageDidChange() when the "AppleLanguages" preference gets sync'd from
+        the UIProcess instead.
+
+        * wtf/Language.cpp:
+        (WTF::languageDidChange):
+        (WTF::platformLanguageDidChange):
+        * wtf/Language.h:
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::languagePreferencesDidChange):
+        (WTF::platformLanguageDidChange):
+        (WTF::listenForLanguageChangeNotifications):
+        (WTF::platformUserPreferredLanguages):
+
+2021-03-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add System.framework PrivateHeaders to header path of WTF
+        https://bugs.webkit.org/show_bug.cgi?id=222688
+
+        Reviewed by Tim Horton.
+
+        The other non-third-party components excluding WTF have System.framework PrivateHeaders in their header search path.
+        This causes the problem that we cannot use some system headers (e.g. `<machine/cpu_capabilities.h>`) in WTF while it is
+        usable in JavaScriptCore and the other components. This patch adds it as the other components did.
+
+        * Configurations/Base.xcconfig:
+
+2021-03-03  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        std::is_literal_type causes -Wdeprecated-declarations warning with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=220662
+        <rdar://problem/73509470>
+
+        Reviewed by Darin Adler.
+
+        Ignore the warning. It would be better to not use the deprecated std::is_literal_type, but
+        this works for now.
+
+        * wtf/Variant.h:
+
+2021-03-03  Tim Horton  <timothy_horton@apple.com>
+
+        Modernize WebKit2 PDFKit softlinking
+        https://bugs.webkit.org/show_bug.cgi?id=222643
+
+        Reviewed by Alex Christensen.
+
+        * wtf/PlatformHave.h:
+
+2021-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Limit HashTable entry size to 500 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=222658
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-03-03  Youenn Fablet  <youenn@apple.com>
+
+        WebKitLegacy needs to keep JSDOMWindow even though it is used while its origin is not set
+        https://bugs.webkit.org/show_bug.cgi?id=222589
+        <rdar://problem/74258258>
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        Introduce a flag, on for WebKit and off for WebKitLegacy.
+
+2021-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename ForcePageRenderingUpdatesAt60FPSEnabled preference to PreferPageRenderingUpdatesNear60FPSEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=222580.
+
+        Reviewed by Tim Horton.
+
+        PreferPageRenderingUpdatesNear60FPSEnabled is a better description of what the preference does.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Enable MEDIA_SOURCE in IOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222041
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Move this settings out of ENABLE(MEDIA_SOURCE) to allow existing binding code to compile.
+        * wtf/PlatformEnableCocoa.h:
+
+2021-03-01  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r273655.
+
+        Broke internal Mac
+
+        Reverted changeset:
+
+        "Set ownership of IOSurfaces from the GPUProcess instead of
+        the WebProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        https://commits.webkit.org/r273655
+
+2021-03-01  Sam Weinig  <weinig@apple.com>
+
+        Add alternate, non-named-getter based, implementation of CSSStyleDeclaration back into WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=222517
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformEnable.h:
+        Add new off by default ENABLE flag ENABLE(ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION) which indicates
+        that we should use the new attribute based implementation of property getter/setters of CSSStyleDeclaration.
+        Once we remove the compile time and binary size regressions, we can enable this and remove the macro.
+
+2021-03-01  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for CSS Color 5 color-contrast()
+        https://bugs.webkit.org/show_bug.cgi?id=222530
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Add new experimental preference for CSS Color 5 color-contrast()
+        which is off by default.
+
+2021-02-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING which is always true for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=222459
+
+        Reviewed by Sam Weinig.
+
+        ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING is always defined for PLATFORM(MAC), so remove it,
+        replacing with PLATFORM(MAC) in a few places. In order to reduce the number PLATFORM(MAC), define
+        HAVE(CVDISPLAYLINK) and use it in WK2 code that relates to DisplayLinks.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformHave.h:
+
+2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        <rdar://74748353>
+
+        Reviewed by Simon Fraser.
+
+        Add HAVE_IOSURFACE_SET_OWNERSHIP_IDENTITY feature flag to protect uses of the
+        new IOSurfaceSetOwnershipIdentity() SPI.
+
+        * wtf/PlatformHave.h:
+
+2021-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump libsoup3 version to 2.99.1
+        https://bugs.webkit.org/show_bug.cgi?id=222413
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/Platform.h: Set minimum required version to 2.99
+
+2021-02-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r273503.
+        https://bugs.webkit.org/show_bug.cgi?id=222442
+
+        Caused a blob loading failure
+
+        Reverted changeset:
+
+        "Serialize NSURLRequest (rather than CFURLRequest) in IPC"
+        https://bugs.webkit.org/show_bug.cgi?id=222145
+        https://trac.webkit.org/changeset/273503
+
+2021-02-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add stubs to enable SafariForWebKitDevelopment to launch
+        https://bugs.webkit.org/show_bug.cgi?id=222388
+
+        Reviewed by Myles Maxfield
+
+        * wtf/PlatformHave.h:
+        * wtf/text/WTFString.h:
+        * wtf/text/cocoa/StringCocoa.mm:
+        (WTF::String::String):
+
+2021-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Serialize NSURLRequest (rather than CFURLRequest) in IPC
+        https://bugs.webkit.org/show_bug.cgi?id=222145
+        <rdar://problem/74500963>
+
+        Reviewed by Darin Adler.
+
+        URLWithData does an early return when the leading character in the URL is '/',
+        signifying a file path. However, URLs of the form "//cdn.domain.com" are often
+        encountered, and RFC 3986 does not prohibit them. We should only do an early
+        return if the character after the initial '/' is not also '/'.
+
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::URLWithData):
+
+2021-02-24  Sam Weinig  <weinig@apple.com>
+
+        Add platform enable for separated model investigation
+        https://bugs.webkit.org/show_bug.cgi?id=222383
+
+        Reviewed by Dean Jackson.
+
+        * wtf/PlatformEnableCocoa.h:
+        Add define.
+
 2021-02-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Fix JSCOnly build on Windows
@@ -6433,7 +6818,8 @@
 
         Reviewed by Carlos Garcia Campos.
 
-                                                                                       use the RunLoop. Let's match them for consistency, and to delete some
+        As of https://bugs.webkit.org/show_bug.cgi?id=213063, Darwin platforms
+        use the RunLoop. Let's match them for consistency, and to delete some
         code.
 
         * wtf/generic/MainThreadGeneric.cpp:

@@ -2362,8 +2362,6 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
     }
 #endif
 
-    ASSERT(ArrayMode(Array::String, Array::Read).alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.child(node, 0))));
-
     // unsigned comparison so we can filter out negative indices and indices that are too large
     m_jit.loadPtr(MacroAssembler::Address(baseReg, JSString::offsetOfValue()), scratchReg);
     JITCompiler::Jump outOfBounds = m_jit.branch32(
@@ -3422,7 +3420,6 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
     StorageOperand storage(this, m_jit.graph().varArgChild(node, 3));
     GPRReg storageReg = storage.gpr();
     
-    Edge baseUse = m_jit.graph().varArgChild(node, 0);
     Edge valueUse = m_jit.graph().varArgChild(node, 2);
 
     SpeculateDoubleOperand valueOp(this, valueUse);
@@ -3430,8 +3427,6 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
     FPRReg valueFPR = valueOp.fpr();
     FPRReg scratchFPR = scratch.fpr();
 
-    ASSERT_UNUSED(baseUse, node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(baseUse)));
-    
     MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
     
     switch (elementSize(type)) {
@@ -3610,7 +3605,11 @@ void SpeculativeJIT::compilePutByValForCellWithString(Node* node, Edge& child1, 
     speculateString(child2, arg2GPR);
 
     flushRegisters();
-    callOperation(node->ecmaMode().isStrict() ? operationPutByValCellStringStrict : operationPutByValCellStringNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3Regs);
+    callOperation(
+        node->ecmaMode().isStrict()
+            ? (node->op() == PutByValDirect ? operationPutByValDirectCellStringStrict : operationPutByValCellStringStrict)
+            : (node->op() == PutByValDirect ? operationPutByValDirectCellStringNonStrict : operationPutByValCellStringNonStrict),
+        TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3Regs);
     m_jit.exceptionCheck();
 
     noResult(node);
@@ -3629,7 +3628,11 @@ void SpeculativeJIT::compilePutByValForCellWithSymbol(Node* node, Edge& child1, 
     speculateSymbol(child2, arg2GPR);
 
     flushRegisters();
-    callOperation(node->ecmaMode().isStrict() ? operationPutByValCellSymbolStrict : operationPutByValCellSymbolNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3Regs);
+    callOperation(
+        node->ecmaMode().isStrict()
+            ? (node->op() == PutByValDirect ? operationPutByValDirectCellSymbolStrict : operationPutByValCellSymbolStrict)
+            : (node->op() == PutByValDirect ? operationPutByValDirectCellSymbolNonStrict : operationPutByValCellSymbolNonStrict),
+        TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3Regs);
     m_jit.exceptionCheck();
 
     noResult(node);
@@ -7616,8 +7619,6 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
     if (!m_compileOkay)
         return;
     
-    ASSERT(ArrayMode(Array::DirectArguments, Array::Read).alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.varArgChild(node, 0))));
-    
     speculationCheck(
         ExoticObjectMode, JSValueSource(), nullptr,
         m_jit.branchTestPtr(
@@ -7660,8 +7661,6 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     
     if (!m_compileOkay)
         return;
-    
-    ASSERT(ArrayMode(Array::ScopedArguments, Array::Read).alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.varArgChild(node, 0))));
     
     m_jit.loadPtr(
         MacroAssembler::Address(baseReg, ScopedArguments::offsetOfStorage()), resultRegs.payloadGPR());
@@ -7827,8 +7826,6 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         if (!m_compileOkay)
             return;
         
-        ASSERT(ArrayMode(Array::DirectArguments, Array::Read).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
-        
         speculationCheck(
             ExoticObjectMode, JSValueSource(), nullptr,
             m_jit.branchTestPtr(
@@ -7850,8 +7847,6 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         
         if (!m_compileOkay)
             return;
-        
-        ASSERT(ArrayMode(Array::ScopedArguments, Array::Read).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
         
         speculationCheck(
             ExoticObjectMode, JSValueSource(), nullptr,

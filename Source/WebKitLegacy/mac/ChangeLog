@@ -1,3 +1,195 @@
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222760
+
+        Reviewed by Darin Adler.
+
+        Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit by using RetainPtr<>.
+
+        * Misc/WebLocalizableStrings.mm:
+        * Misc/WebNSDataExtras.mm:
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::preferredBundleLocalizationName):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView status:]):
+        * WebCoreSupport/WebProgressTrackerClient.mm:
+        (WebProgressTrackerClient::progressEstimateChanged):
+        * WebInspector/WebNodeHighlightView.mm:
+        (layerPathWithHole):
+        (layerPath):
+        * WebView/WebFrame.mm:
+        (createUniqueWebDataURL):
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
+2021-03-04  Chris Dumez  <cdumez@apple.com>
+
+        [macOS][WK2] Changing the system language does not update navigator.language
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+
+        Reviewed by Per Arne Vollan.
+
+        We need to listen for AppleLanguagePreferencesChangedNotification on mac WK1.
+        This used to happen implicitly inside WTF::platformUserPreferredLanguages() but
+        it is now explicit since we don't want/need it when using CFPREFS_DIRECT_MODE in WK2.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
+2021-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r273851.
+
+        Caused some tests failures on macOS Big Sur
+
+        Reverted changeset:
+
+        "[macOS][WK2] Changing the system language does not update
+        navigator.language"
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+        https://commits.webkit.org/r273851
+
+2021-03-03  Chris Dumez  <cdumez@apple.com>
+
+        [macOS][WK2] Changing the system language does not update navigator.language
+        https://bugs.webkit.org/show_bug.cgi?id=222619
+
+        Reviewed by Per Arne Vollan.
+
+        We need to listen for AppleLanguagePreferencesChangedNotification on mac WK1.
+        This used to happen implicitly inside WTF::platformUserPreferredLanguages() but
+        it is now explicit since we don't want/need it when using CFPREFS_DIRECT_MODE in WK2.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
+2021-03-03  Chris Dumez  <cdumez@apple.com>
+
+        Use adoptNS() right away after calling [obj copy] / [obj mutableCopy]
+        https://bugs.webkit.org/show_bug.cgi?id=222634
+
+        Reviewed by Darin Adler.
+
+        Use adoptNS() right away after calling [obj copy] / [obj mutableCopy] to minimize the chance of leaks.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (_writableTypesForImageWithArchive):
+        * WebCoreSupport/WebApplicationCache.mm:
+        (overrideBundleIdentifier):
+        (+[WebApplicationCache initializeWithBundleIdentifier:]):
+        (applicationCacheBundleIdentifier):
+        * WebView/WebPreferences.mm:
+        (classIBCreatorID):
+        (+[WebPreferences _setIBCreatorID:]):
+        (+[WebPreferences _IBCreatorID]):
+
+2021-03-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Preserve information about the origin of the app highlight request
+        https://bugs.webkit.org/show_bug.cgi?id=222223
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::storeAppHighlight const):
+
+2021-03-01  Peng Liu  <peng.liu6@apple.com>
+
+        Rename the delegate property of WebAVPlayerView to webDelegate to fix a build failure with new SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=222560
+
+        Reviewed by Jer Noble.
+
+        We have to rename the `delegate` property of `WebAVPlayerView` because AVKit adds
+        a `delegate` property to `AVPlayerView` which will conflict with the one in WebKit.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (WebAVPlayerView_webDelegate):
+        (WebAVPlayerView_setWebDelegate):
+        (WebAVPlayerView_isFullScreen):
+        (WebAVPlayerView_enterFullScreen):
+        (WebAVPlayerView_exitFullScreen):
+        (allocWebAVPlayerViewInstance):
+        (-[WebVideoFullscreenController dealloc]):
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (WebAVPlayerView_delegate): Deleted.
+        (WebAVPlayerView_setDelegate): Deleted.
+
+2021-02-28  Darin Adler  <darin@apple.com>
+
+        [iOS] Reduce use of retain/release in WAKWindow and remove unneeded methods from that class
+        https://bugs.webkit.org/show_bug.cgi?id=222330
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Call LegacyTileCache functions directly rather
+        than indirecting through WAKWindow methods.
+        (-[WebView viewDidMoveToWindow]): Ditto. Also tweaked conditionals a little for clarity.
+
+2021-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Reduce explicit usage of [objC retain] in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=222439
+
+        Reviewed by Darin Adler.
+
+        Reduce explicit usage of [objC retain] in WebKit by using RetainPtr<>.
+
+        * Misc/WebNSURLExtras.mm:
+        (-[NSString _webkit_rangeOfURLScheme]):
+        * Misc/WebStringTruncator.mm:
+        (+[WebStringTruncator centerTruncateString:toWidth:]):
+        * Storage/WebStorageManager.mm:
+        (+[WebStorageManager _storageDirectoryPath]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (_WebCreateFragment):
+        * WebView/WebHTMLRepresentation.mm:
+        (+[WebHTMLRepresentation supportedMIMETypes]):
+        (+[WebHTMLRepresentation supportedMediaMIMETypes]):
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]):
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::isFeatureFlagEnabled):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView _close]):
+        (-[WebView _checkDidPerformFirstNavigation]):
+        (-[WebView setPreferences:]):
+        (-[WebView preferences]):
+        (-[WebView setGroupName:]):
+        * WebView/WebViewData.h:
+
+2021-02-25  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r273462.
+
+        Caused API build failures
+
+        Reverted changeset:
+
+        "[iOS] Reduce use of retain/release in WAKWindow and remove
+        unneeded methods from that class"
+        https://bugs.webkit.org/show_bug.cgi?id=222330
+        https://commits.webkit.org/r273462
+
+2021-02-23  Darin Adler  <darin@apple.com>
+
+        [iOS] Reduce use of retain/release in WAKWindow and remove unneeded methods from that class
+        https://bugs.webkit.org/show_bug.cgi?id=222330
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Call LegacyTileCache functions directly rather
+        than indirecting through WAKWindow methods.
+        (-[WebView viewDidMoveToWindow]): Ditto. Also tweaked conditionals a little for clarity.
+
 2021-02-22  Chris Dumez  <cdumez@apple.com>
 
         Use adoptNS() as soon as we [[ObjcClass alloc] init] to avoid leaks

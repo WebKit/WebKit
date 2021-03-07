@@ -214,12 +214,12 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
     [m_platformSpeechWrapper.get() invalidate];
 }
 
-static NSArray *speechSynthesisGetVoiceIdentifiers()
+static RetainPtr<CFArrayRef> speechSynthesisGetVoiceIdentifiers()
 {
     // Get all the voices offered by TTS.
     // By default speech only returns "premium" voices, which does not include all the
     // international voices. This allows us to offer speech synthesis for all supported languages.
-    return CFBridgingRelease(CopySpeechSynthesisVoicesForMode((__bridge CFArrayRef)@[ @"VoiceGroupDefault", @"VoiceGroupCompact" ]));
+    return adoptCF(CopySpeechSynthesisVoicesForMode((__bridge CFArrayRef)@[ @"VoiceGroupDefault", @"VoiceGroupCompact" ]));
 }
 
 static NSString *speechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale *userLocale)
@@ -227,15 +227,15 @@ static NSString *speechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale *use
     if (!userLocale)
         return nil;
 
-    return (__bridge NSString *)GetIdentifierStringForPreferredVoiceInListWithLocale((__bridge CFArrayRef)speechSynthesisGetVoiceIdentifiers(), (__bridge CFLocaleRef)userLocale);
+    return (__bridge NSString *)GetIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale);
 }
 
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
-    NSArray *availableVoices = speechSynthesisGetVoiceIdentifiers();
-    NSUInteger count = [availableVoices count];
+    auto availableVoices = speechSynthesisGetVoiceIdentifiers();
+    NSUInteger count = [(__bridge NSArray *)availableVoices.get() count];
     for (NSUInteger k = 0; k < count; k++) {
-        NSString *voiceName = [availableVoices objectAtIndex:k];
+        NSString *voiceName = [(__bridge NSArray *)availableVoices.get() objectAtIndex:k];
         NSDictionary *attributes = [NSSpeechSynthesizer attributesForVoice:voiceName];
 
         NSString *voiceURI = [attributes objectForKey:NSVoiceIdentifier];

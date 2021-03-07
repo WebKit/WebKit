@@ -44,13 +44,16 @@
 
             function checkElementTrack(track)
             {
+                let properties = [];
                 enumerateProperties(track, function(property, value) {
                      if (property == "sourceBuffer")
                         return;
                      if (property == "id")
                         value = "&lt;UUID>";
-                    debug(`  track.${property} = ${value}`);
+                     properties.push({property:property, value:value});
                 });
+                properties.sort((a, b) => { return a.property.localeCompare(b.property); });
+                properties.forEach(item => debug(`  ${item.property} = ${item.value}`));
             }
 
             function checkVideoElement()

@@ -1167,7 +1167,7 @@ using namespace Inspector;
 + (void)_parseEnum:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolTypeDomainEnum> result = Inspector::fromProtocolString<TestProtocolTypeDomainEnum>(payload);
+    Optional<TestProtocolTypeDomainEnum> result = Inspector::fromProtocolString<TestProtocolTypeDomainEnum>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"Enum");
     *outValue = @(result.value());
 }

@@ -42,6 +42,7 @@
 #include <gtk/gtk.h>
 
 #if PLATFORM(WAYLAND) && USE(WPE_RENDERER)
+#include <wpe/wpe.h>
 #include <wpe/fdo.h>
 #endif
 #endif

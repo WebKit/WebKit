@@ -32,11 +32,5 @@
 
 @property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
 
-/**
- * @abstract The browsing context handle associated with Web Inspector's user interface.
- * @discussion This can be used to identify the inspector page and any associated subframes
- * from within the injected bundle.
- */
-@property (nonatomic, readonly) WKBrowsingContextHandle *handle;
-
+@property (nonatomic, readonly) WKWebView *extensionHostWebView;
 @end

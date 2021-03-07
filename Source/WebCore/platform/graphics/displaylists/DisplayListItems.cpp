@@ -124,7 +124,7 @@ SetInlineFillGradient::SetInlineFillGradient(const Gradient& gradient, const Aff
     RELEASE_ASSERT(m_colorStopCount <= maxColorStopCount);
     for (uint8_t i = 0; i < m_colorStopCount; ++i) {
         m_offsets[i] = gradient.stops()[i].offset;
-        m_colors[i] = gradient.stops()[i].color.asInline();
+        m_colors[i] = *gradient.stops()[i].color.tryGetAsSRGBABytes();
     }
 }
 
@@ -162,7 +162,7 @@ bool SetInlineFillGradient::isInline(const Gradient& gradient)
         return false;
 
     for (auto& colorStop : gradient.stops()) {
-        if (!colorStop.color.isInline())
+        if (!colorStop.color.tryGetAsSRGBABytes())
             return false;
     }
 

@@ -221,7 +221,7 @@ messages -> WebPageProxy {
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
 
 #if ENABLE(IMAGE_EXTRACTION)
-    RequestImageExtraction(WebKit::ShareableBitmap::Handle imageData) -> (struct WebCore::ImageExtractionResult result) Async
+    RequestImageExtraction(URL imageURL, WebKit::ShareableBitmap::Handle imageData) -> (struct WebCore::ImageExtractionResult result) Async
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

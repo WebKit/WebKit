@@ -30,23 +30,24 @@ from multiprocessing import Process, Semaphore
 class FlaskTestContext(object):
     PORT = 5001
 
-    @classmethod
-    def start_webserver(cls, method, semaphore):
+    @staticmethod
+    def start_webserver(cls, semaphore, **kwargs):
         try:
             app = Flask('testing')
-            method(app)
+            cls.setup_webserver(app, **kwargs)
             app.add_url_rule('/__health', 'health', lambda: 'ok', methods=('GET',))
         finally:
             semaphore.release()
-        return app.run(host='0.0.0.0', port=cls.PORT)
+        return app.run(host='0.0.0.0', port=FlaskTestContext.PORT)
 
-    def __init__(self, method):
-        self.method = method
+    def __init__(self, cls, **kwargs):
+        self.cls = cls
+        self.kwargs = kwargs
         self.process = None
 
     def __enter__(self):
         semaphore = Semaphore(0)
-        self.process = Process(target=self.start_webserver, args=(self.method, semaphore))
+        self.process = Process(target=self.start_webserver, args=(self.cls, semaphore), kwargs=self.kwargs)
         self.process.start()
 
         with semaphore:

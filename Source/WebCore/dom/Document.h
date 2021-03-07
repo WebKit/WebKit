@@ -1437,7 +1437,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
     bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
-    void stopMediaCapture();
+    void stopMediaCapture(MediaProducer::MediaCaptureKind);
     void mediaStreamCaptureStateChanged();
 #endif
 
@@ -1802,6 +1802,8 @@ private:
     const std::unique_ptr<DocumentMarkerController> m_markers;
     
     Timer m_styleRecalcTimer;
+
+    std::unique_ptr<Style::Update> m_pendingRenderTreeTextUpdate;
 
     Element* m_cssTarget { nullptr };
 

@@ -61,9 +61,7 @@ public:
     {
     }
 
-    static void decodebinPadAddedCb(GstElement*,
-        GstPad* srcpad,
-        GstPad* sinkpad)
+    static void decodebinPadAddedCb(GstElement*, GstPad* srcpad, GstPad* sinkpad)
     {
         GST_INFO_OBJECT(srcpad, "connecting pad with %" GST_PTR_FORMAT, sinkpad);
         if (gst_pad_link(srcpad, sinkpad) != GST_PAD_LINK_OK)
@@ -80,6 +78,14 @@ public:
         GUniquePtr<char> name(g_strdup_printf("%s_dec_%s_%p", Name(), factoryName, this));
 
         return gst_element_factory_make(factoryName, name.get());
+    }
+
+    void handleError(GError* error)
+    {
+        if (!g_error_matches(error, GST_STREAM_ERROR, GST_STREAM_ERROR_DECODE))
+            return;
+        GST_INFO_OBJECT(pipeline(), "--> needs keyframe (%s)", error->message);
+        m_needsKeyframe = true;
     }
 
     int32_t InitDecode(const webrtc::VideoCodec* codecSettings, int32_t) override
@@ -105,33 +111,19 @@ public:
         // happening in the main pipeline.
         if (m_requireParse) {
             caps = gst_caps_new_simple(Caps(), "parsed", G_TYPE_BOOLEAN, TRUE, nullptr);
-            GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
 
+            auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
             gst_bus_enable_sync_message_emission(bus.get());
-            g_signal_connect(bus.get(), "sync-message::warning",
-                G_CALLBACK(+[](GstBus*, GstMessage* message, GStreamerVideoDecoder* justThis) {
-                GUniqueOutPtr<GError> err;
-
-                switch (GST_MESSAGE_TYPE(message)) {
-                case GST_MESSAGE_WARNING: {
-                    gst_message_parse_warning(message, &err.outPtr(), nullptr);
-                    FALLTHROUGH;
-                }
-                case GST_MESSAGE_ERROR: {
-                    if (!err)
-                        gst_message_parse_error(message, &err.outPtr(), nullptr);
-
-                    if (g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_DECODE)) {
-                        GST_INFO_OBJECT(justThis->pipeline(), "--> needs keyframe (%s)",
-                            err->message);
-                        justThis->m_needsKeyframe = true;
-                    }
-                    break;
-                }
-                default:
-                    break;
-                }
-                }), this);
+            g_signal_connect_swapped(bus.get(), "sync-message::warning", G_CALLBACK(+[](GStreamerVideoDecoder* decoder, GstMessage* message) {
+                GUniqueOutPtr<GError> error;
+                gst_message_parse_warning(message, &error.outPtr(), nullptr);
+                decoder->handleError(error.get());
+            }), this);
+            g_signal_connect_swapped(bus.get(), "sync-message::error", G_CALLBACK(+[](GStreamerVideoDecoder* decoder, GstMessage* message) {
+                GUniqueOutPtr<GError> error;
+                gst_message_parse_error(message, &error.outPtr(), nullptr);
+                decoder->handleError(error.get());
+            }), this);
         } else {
             /* FIXME - How could we handle missing keyframes case we do not plug parsers ? */
             caps = gst_caps_new_empty_simple(Caps());
@@ -177,10 +169,10 @@ public:
 
     int32_t Release() final
     {
-        if (m_pipeline.get()) {
-            GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+        if (m_pipeline) {
+            disconnectSimpleBusMessageCallback(m_pipeline.get());
+            auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
             gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
-
             gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
             m_src = nullptr;
             m_sink = nullptr;
@@ -244,19 +236,19 @@ public:
 
     int32_t pullSample()
     {
-        auto sample = gst_app_sink_try_pull_sample(GST_APP_SINK(m_sink), GST_SECOND / 30);
+        auto sample = adoptGRef(gst_app_sink_try_pull_sample(GST_APP_SINK(m_sink), GST_SECOND / 30));
         if (!sample) {
             GST_ERROR("Needs more data");
             return WEBRTC_VIDEO_CODEC_OK;
         }
-        auto buffer = gst_sample_get_buffer(sample);
+        auto buffer = gst_sample_get_buffer(sample.get());
 
         // Make sure that the frame.timestamp == previsouly input_frame._timeStamp
         // as it is required by the VideoDecoder baseclass.
         auto timestamps = m_dtsPtsMap[GST_BUFFER_PTS(buffer)];
         m_dtsPtsMap.erase(GST_BUFFER_PTS(buffer));
 
-        auto frame(LibWebRTCVideoFrameFromGStreamerSample(sample, webrtc::kVideoRotation_0,
+        auto frame(LibWebRTCVideoFrameFromGStreamerSample(WTFMove(sample), webrtc::kVideoRotation_0,
             timestamps.timestamp, timestamps.renderTimeMs));
 
         GST_BUFFER_DTS(buffer) = GST_CLOCK_TIME_NONE;

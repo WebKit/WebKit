@@ -47,9 +47,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWithBooleanConstructor, (JSGlobalObject* globa
     JSValue boolean = jsBoolean(callFrame->argument(0).toBoolean(globalObject));
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* booleanStructure = newTarget == callFrame->jsCallee()
-        ? globalObject->booleanObjectStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->booleanObjectStructure());
+    Structure* booleanStructure = JSC_GET_DERIVED_STRUCTURE(vm, booleanObjectStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     BooleanObject* obj = BooleanObject::create(vm, booleanStructure);

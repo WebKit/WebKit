@@ -69,13 +69,13 @@ public:
     // This struct represents the amount of continuous content committed to content breaking at a time (no in-between wrap opportunities).
     // e.g.
     // <div>text content <span>span1</span>between<span>span2</span></div>
-    // [text][ ][content][ ][container start][span1][container end][between][container start][span2][container end]
+    // [text][ ][content][ ][inline box start][span1][inline box end][between][inline box start][span2][inline box end]
     // continuous candidate content at a time:
     // 1. [text]
     // 2. [ ]
     // 3. [content]
     // 4. [ ]
-    // 5. [container start][span1][container end][between][container start][span2][container end]
+    // 5. [inline box start][span1][inline box end][between][inline box start][span2][inline box end]
     // see https://drafts.csswg.org/css-text-3/#line-break-details
     struct ContinuousContent {
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }

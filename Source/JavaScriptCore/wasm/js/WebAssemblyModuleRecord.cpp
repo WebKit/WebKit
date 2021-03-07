@@ -246,23 +246,23 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same type")));
                     if (globalValue->global()->mutability() != Wasm::GlobalInformation::Immutable)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
-                    switch (moduleInformation.globals[import.kindIndex].type) {
-                    case Wasm::Funcref:
+                    switch (moduleInformation.globals[import.kindIndex].type.kind) {
+                    case Wasm::TypeKind::Funcref:
                         value = globalValue->global()->get(globalObject);
                         RETURN_IF_EXCEPTION(scope, void());
                         if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
                             return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
-                    case Wasm::Externref:
+                    case Wasm::TypeKind::Externref:
                         value = globalValue->global()->get(globalObject);
                         RETURN_IF_EXCEPTION(scope, void());
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
-                    case Wasm::I32:
-                    case Wasm::I64:
-                    case Wasm::F32:
-                    case Wasm::F64:
+                    case Wasm::TypeKind::I32:
+                    case Wasm::TypeKind::I64:
+                    case Wasm::TypeKind::F32:
+                    case Wasm::TypeKind::F64:
                         m_instance->instance().setGlobal(import.kindIndex, globalValue->global()->getPrimitive());
                         break;
                     default:
@@ -272,7 +272,7 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
                     const auto globalType = moduleInformation.globals[import.kindIndex].type;
                     if (!isRefType(globalType)) {
                         // ii. If the global_type of i is i64 or Type(v) is Number, throw a WebAssembly.LinkError.
-                        if (globalType == Wasm::I64) {
+                        if (globalType.isI64()) {
                             if (!value.isBigInt())
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a BigInt")));
                         } else {
@@ -282,28 +282,28 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
                     }
 
                     // iii. Append ToWebAssemblyValue(v) to imports.
-                    switch (globalType) {
-                    case Wasm::Funcref:
+                    switch (globalType.kind) {
+                    case Wasm::TypeKind::Funcref:
                         if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
                             return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
-                    case Wasm::Externref:
+                    case Wasm::TypeKind::Externref:
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
-                    case Wasm::I32:
+                    case Wasm::TypeKind::I32:
                         m_instance->instance().setGlobal(import.kindIndex, value.toInt32(globalObject));
                         break;
-                    case Wasm::I64: {
+                    case Wasm::TypeKind::I64: {
                         int64_t bits = value.toBigInt64(globalObject);
                         RETURN_IF_EXCEPTION(scope, void());
                         m_instance->instance().setGlobal(import.kindIndex, bits);
                         break;
                     }
-                    case Wasm::F32:
+                    case Wasm::TypeKind::F32:
                         m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
                         break;
-                    case Wasm::F64:
+                    case Wasm::TypeKind::F64:
                         m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint64_t>(value.asNumber()));
                         break;
                     default:
@@ -487,13 +487,13 @@ void WebAssemblyModuleRecord::linkImpl(JSGlobalObject* globalObject, JSObject* i
         }
         case Wasm::ExternalKind::Global: {
             const Wasm::GlobalInformation& global = moduleInformation.globals[exp.kindIndex];
-            switch (global.type) {
-            case Wasm::Externref:
-            case Wasm::Funcref:
-            case Wasm::I32:
-            case Wasm::I64:
-            case Wasm::F32:
-            case Wasm::F64: {
+            switch (global.type.kind) {
+            case Wasm::TypeKind::Externref:
+            case Wasm::TypeKind::Funcref:
+            case Wasm::TypeKind::I32:
+            case Wasm::TypeKind::I64:
+            case Wasm::TypeKind::F32:
+            case Wasm::TypeKind::F64: {
                 // If global is immutable, we are not creating a binding internally.
                 // But we need to create a binding just to export it. This binding is not actually connected. But this is OK since it is immutable.
                 if (global.bindingMode == Wasm::GlobalInformation::BindingMode::EmbeddedInInstance) {

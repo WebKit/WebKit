@@ -36,19 +36,19 @@
 namespace WebCore {
 
 class Document;
+class Page;
 
 class DeviceOrientationAndMotionAccessController : public CanMakeWeakPtr<DeviceOrientationAndMotionAccessController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DeviceOrientationAndMotionAccessController(Document&);
+    explicit DeviceOrientationAndMotionAccessController(Document& topDocument);
 
-
-    DeviceOrientationOrMotionPermissionState accessState() const { return m_accessState; }
-    void shouldAllowAccess(Function<void(DeviceOrientationOrMotionPermissionState)>&&);
+    DeviceOrientationOrMotionPermissionState accessState(const Document&) const;
+    void shouldAllowAccess(const Document&, Function<void(DeviceOrientationOrMotionPermissionState)>&&);
 
 private:
-    Document& m_document;
-    DeviceOrientationOrMotionPermissionState m_accessState { DeviceOrientationOrMotionPermissionState::Prompt };
+    Document& m_topDocument;
+    HashMap<SecurityOriginData, DeviceOrientationOrMotionPermissionState> m_accessStatePerOrigin;
 };
 
 } // namespace WebCore

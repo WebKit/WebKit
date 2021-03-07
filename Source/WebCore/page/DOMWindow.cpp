@@ -58,6 +58,7 @@
 #include "EventListener.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "FeaturePolicy.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -446,7 +447,7 @@ RefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)
     return document() ? document()->mediaQueryMatcher().matchMedia(media) : nullptr;
 }
 
-Page* DOMWindow::page()
+Page* DOMWindow::page() const
 {
     return frame() ? frame()->page() : nullptr;
 }
@@ -2005,9 +2006,9 @@ DeviceMotionController* DOMWindow::deviceMotionController() const
 #endif
 }
 
-bool DOMWindow::isAllowedToUseDeviceMotionOrientation(String& message) const
+bool DOMWindow::isAllowedToUseDeviceMotionOrOrientation(String& message) const
 {
-    if (!frame() || !frame()->settings().deviceOrientationEventEnabled()) {
+    if (!frame() || !document() || !frame()->settings().deviceOrientationEventEnabled()) {
         message = "API is disabled"_s;
         return false;
     }
@@ -2017,29 +2018,52 @@ bool DOMWindow::isAllowedToUseDeviceMotionOrientation(String& message) const
         return false;
     }
 
-    if (!isSameSecurityOriginAsMainFrame()) {
-        message = "Source frame did not have the same security origin as the main page"_s;
-        return false;
-    }
     return true;
 }
 
-bool DOMWindow::isAllowedToAddDeviceMotionOrientationListener(String& message) const
+bool DOMWindow::isAllowedToUseDeviceMotion(String& message) const
 {
-    String innerMessage;
-    if (!isAllowedToUseDeviceMotionOrientation(innerMessage)) {
-        message = makeString("Blocked attempt to add a device motion or orientation event listener, reason: ", innerMessage, ".");
+    if (!isAllowedToUseDeviceMotionOrOrientation(message))
+        return false;
+
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Gyroscope, *document(), LogFeaturePolicyFailure::No)
+        || !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Accelerometer, *document(), LogFeaturePolicyFailure::No)) {
+        message = "Third-party iframes are not allowed access to device motion unless explicitly allowed via Feature-Policy (gyroscope & accelerometer)"_s;
         return false;
     }
 
+    return true;
+}
+
+bool DOMWindow::isAllowedToUseDeviceOrientation(String& message) const
+{
+    if (!isAllowedToUseDeviceMotionOrOrientation(message))
+        return false;
+
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Gyroscope, *document(), LogFeaturePolicyFailure::No)
+        || !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Accelerometer, *document(), LogFeaturePolicyFailure::No)
+        || !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Magnetometer, *document(), LogFeaturePolicyFailure::No)) {
+        message = "Third-party iframes are not allowed access to device orientation unless explicitly allowed via Feature-Policy (gyroscope & accelerometer & magnetometer)"_s;
+        return false;
+    }
+
+    return true;
+}
+
+bool DOMWindow::hasPermissionToReceiveDeviceMotionOrOrientationEvents(String& message) const
+{
     if (frame()->settings().deviceOrientationPermissionAPIEnabled()) {
-        auto accessState = document()->deviceOrientationAndMotionAccessController().accessState();
+        if (!page()) {
+            message = "No browsing context"_s;
+            return false;
+        }
+        auto accessState = document()->deviceOrientationAndMotionAccessController().accessState(*document());
         switch (accessState) {
         case DeviceOrientationOrMotionPermissionState::Denied:
-            message = "No device motion or orientation events will be fired because permission to use the API was denied."_s;
+            message = "Permission to use the API was denied"_s;
             return false;
         case DeviceOrientationOrMotionPermissionState::Prompt:
-            message = "No device motion or orientation events will be fired until permission has been requested and granted."_s;
+            message = "Permission to use the API was not yet requested"_s;
             return false;
         case DeviceOrientationOrMotionPermissionState::Granted:
             break;
@@ -2058,10 +2082,10 @@ void DOMWindow::startListeningForDeviceOrientationIfNecessary()
     if (!deviceController || deviceController->hasDeviceEventListener(*this))
         return;
 
-    String errorMessage;
-    if (!isAllowedToAddDeviceMotionOrientationListener(errorMessage)) {
+    String innerMessage;
+    if (!isAllowedToUseDeviceOrientation(innerMessage) || !hasPermissionToReceiveDeviceMotionOrOrientationEvents(innerMessage)) {
         if (auto* document = this->document())
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, errorMessage);
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("No device orientation events will be fired, reason: ", innerMessage, "."));
         return;
     }
 
@@ -2086,11 +2110,11 @@ void DOMWindow::startListeningForDeviceMotionIfNecessary()
     if (!deviceController || deviceController->hasDeviceEventListener(*this))
         return;
 
-    String errorMessage;
-    if (!isAllowedToAddDeviceMotionOrientationListener(errorMessage)) {
+    String innerMessage;
+    if (!isAllowedToUseDeviceMotion(innerMessage) || !hasPermissionToReceiveDeviceMotionOrOrientationEvents(innerMessage)) {
         failedToRegisterDeviceMotionEventListener();
         if (auto* document = this->document())
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, errorMessage);
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("No device motion events will be fired, reason: ", innerMessage, "."));
         return;
     }
 

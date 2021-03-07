@@ -28,6 +28,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class WKWebView;
 @class _WKInspectorExtension;
 
 @protocol _WKInspectorExtensionHost <NSObject>
@@ -57,6 +58,12 @@ NS_ASSUME_NONNULL_BEGIN
  * registered _WKInspectorExtensions to be unregistered and invalidated.
  */
 - (void)close;
+
+/**
+ * @abstract The web view that is used to host extension tabs created via _WKInspectorExtension.
+ * @discussion Browsing contexts for extension tabs are loaded in subframes of this web view.
+ */
+@property (nonatomic, readonly) WKWebView *extensionHostWebView;
 @end
 
 NS_ASSUME_NONNULL_END

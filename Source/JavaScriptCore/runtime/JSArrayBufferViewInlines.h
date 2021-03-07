@@ -76,7 +76,7 @@ inline ArrayBuffer* JSArrayBufferView::existingBufferInButterfly()
 inline RefPtr<ArrayBufferView> JSArrayBufferView::unsharedImpl()
 {
     RefPtr<ArrayBufferView> result = possiblySharedImpl();
-    RELEASE_ASSERT(!result->isShared());
+    RELEASE_ASSERT(!result || !result->isShared());
     return result;
 }
 

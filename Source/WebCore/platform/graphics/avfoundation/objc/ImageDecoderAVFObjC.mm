@@ -225,13 +225,11 @@ static NSURL *customSchemeURL()
 
 static NSDictionary *imageDecoderAssetOptions()
 {
-    static NSDictionary *options = [] {
-        return [@{
-            AVURLAssetReferenceRestrictionsKey: @(AVAssetReferenceRestrictionForbidAll),
-            AVURLAssetUsesNoPersistentCacheKey: @YES,
-        } retain];
-    }();
-    return options;
+    static NeverDestroyed<RetainPtr<NSDictionary>> options = @{
+        AVURLAssetReferenceRestrictionsKey: @(AVAssetReferenceRestrictionForbidAll),
+        AVURLAssetUsesNoPersistentCacheKey: @YES,
+    };
+    return options.get().get();
 }
 
 class ImageDecoderAVFObjCSample : public MediaSampleAVFObjC {

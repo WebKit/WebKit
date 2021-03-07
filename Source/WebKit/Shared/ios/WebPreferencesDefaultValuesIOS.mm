@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebPreferencesDefaultValues.h"
+#import "WebPreferencesDefaultValuesIOS.h"
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -44,9 +44,22 @@ bool defaultTextAutosizingUsesIdempotentMode()
 #endif
 
 #if !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
+static Optional<bool>& cachedAllowsRequest()
+{
+    static NeverDestroyed<Optional<bool>> allowsRequest;
+    return allowsRequest;
+}
+
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload()
 {
-    return [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;
+    if (!cachedAllowsRequest())
+        cachedAllowsRequest() = [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;
+    return *cachedAllowsRequest();
+}
+
+void setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(bool allowsRequest)
+{
+    cachedAllowsRequest() = allowsRequest;
 }
 #endif
 

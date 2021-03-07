@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,10 +41,6 @@ namespace WebCore {
 struct MediaCapabilitiesInfo;
 struct VideoConfiguration;
 
-WEBCORE_EXPORT extern void setOverrideVP9HardwareDecoderDisabledForTesting(bool);
-WEBCORE_EXPORT extern void setOverrideVP9ScreenSizeAndScaleForTesting(float width, float height, float scale);
-WEBCORE_EXPORT extern void resetOverrideVP9ScreenSizeAndScaleForTesting();
-
 WEBCORE_EXPORT extern void registerWebKitVP9Decoder();
 WEBCORE_EXPORT extern void registerWebKitVP8Decoder();
 WEBCORE_EXPORT extern void registerSupplementalVP9Decoder();
@@ -70,6 +66,24 @@ struct VP8FrameHeader {
 
 Optional<VP8FrameHeader> parseVP8FrameHeader(uint8_t* frameData, size_t frameSize);
 RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP8Header(const VP8FrameHeader&, const webm::Element<webm::Colour>&);
+
+class WEBCORE_EXPORT VP9TestingOverrides {
+public:
+    static VP9TestingOverrides& singleton();
+
+    void setHardwareDecoderDisabled(Optional<bool>&&);
+    Optional<bool> hardwareDecoderDisabled() { return m_hardwareDecoderDisabled; }
+
+    void setVP9ScreenSizeAndScale(Optional<ScreenDataOverrides>&&);
+    Optional<ScreenDataOverrides> vp9ScreenSizeAndScale()  { return m_screenSizeAndScale; }
+
+    void setConfigurationChangedCallback(std::function<void()>&&);
+
+private:
+    Optional<bool> m_hardwareDecoderDisabled;
+    Optional<ScreenDataOverrides> m_screenSizeAndScale;
+    WTF::Function<void()> m_configurationChangedCallback;
+};
 
 }
 

@@ -3223,7 +3223,9 @@ SpeculatedType CodeBlock::valueProfilePredictionForBytecodeIndex(const Concurren
 
 ValueProfile& CodeBlock::valueProfileForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
-    return *tryGetValueProfileForBytecodeIndex(bytecodeIndex);
+    ValueProfile* profile = tryGetValueProfileForBytecodeIndex(bytecodeIndex);
+    ASSERT(profile);
+    return *profile;
 }
 
 void CodeBlock::validate()

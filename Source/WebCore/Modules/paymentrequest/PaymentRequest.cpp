@@ -45,6 +45,7 @@
 #include "PaymentMethodData.h"
 #include "PaymentOptions.h"
 #include "PaymentRequestUpdateEvent.h"
+#include "PaymentRequestUtilities.h"
 #include "PaymentValidationErrors.h"
 #include "ScriptController.h"
 #include <JavaScriptCore/JSONObject.h>
@@ -65,79 +66,6 @@ static bool isWellFormedCurrencyCode(const String& currency)
 {
     if (currency.length() == 3)
         return currency.isAllSpecialCharacters<isASCIIAlpha>();
-    return false;
-}
-
-// Implements the "valid decimal monetary value" validity checker
-// https://www.w3.org/TR/payment-request/#dfn-valid-decimal-monetary-value
-static bool isValidDecimalMonetaryValue(StringView value)
-{
-    enum class State {
-        Start,
-        Sign,
-        Digit,
-        Dot,
-        DotDigit,
-    };
-
-    auto state = State::Start;
-    for (auto character : value.codeUnits()) {
-        switch (state) {
-        case State::Start:
-            if (character == '-') {
-                state = State::Sign;
-                break;
-            }
-
-            if (isASCIIDigit(character)) {
-                state = State::Digit;
-                break;
-            }
-
-            return false;
-
-        case State::Sign:
-            if (isASCIIDigit(character)) {
-                state = State::Digit;
-                break;
-            }
-
-            return false;
-
-        case State::Digit:
-            if (character == '.') {
-                state = State::Dot;
-                break;
-            }
-
-            if (isASCIIDigit(character)) {
-                state = State::Digit;
-                break;
-            }
-
-            return false;
-
-        case State::Dot:
-            if (isASCIIDigit(character)) {
-                state = State::DotDigit;
-                break;
-            }
-
-            return false;
-
-        case State::DotDigit:
-            if (isASCIIDigit(character)) {
-                state = State::DotDigit;
-                break;
-            }
-
-            return false;
-        }
-    }
-
-    if (state == State::Digit || state == State::DotDigit)
-        return true;
-
     return false;
 }
 
@@ -630,7 +558,7 @@ void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddres
 {
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingAddress = makeRefPtr(shippingAddress.get())]() mutable {
         m_shippingAddress = WTFMove(shippingAddress);
-        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent));
+        dispatchAndCheckUpdateEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent));
     });
 }
 
@@ -638,7 +566,7 @@ void PaymentRequest::shippingOptionChanged(const String& shippingOption)
 {
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingOption]() mutable {
         m_shippingOption = shippingOption;
-        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent));
+        dispatchAndCheckUpdateEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent));
     });
 }
 
@@ -647,7 +575,7 @@ void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMetho
     whenDetailsSettled([this, protectedThis = makeRefPtr(this), methodName, methodDetailsFunction = WTFMove(methodDetailsFunction)]() mutable {
         auto& eventName = eventNames().paymentmethodchangeEvent;
         if (hasEventListeners(eventName))
-            dispatchEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
+            dispatchAndCheckUpdateEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
         else
             activePaymentHandler()->detailsUpdated(UpdateReason::PaymentMethodChanged, { }, { }, { }, { });
     });
@@ -698,6 +626,16 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
     });
 
     return { };
+}
+
+void PaymentRequest::dispatchAndCheckUpdateEvent(Ref<PaymentRequestUpdateEvent>&& event)
+{
+    dispatchEvent(event);
+
+    if (event->didCallUpdateWith())
+        return;
+
+    scriptExecutionContext()->addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Warning, makeString("updateWith() should be called synchronously when handling \""_s, event->type(), "\"."_s));
 }
 
 void PaymentRequest::settleDetailsPromise(UpdateReason reason)
@@ -839,6 +777,7 @@ void PaymentRequest::cancel()
 
     if (m_isUpdating) {
         m_isCancelPending = true;
+        scriptExecutionContext()->addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Error, "payment request timed out while waiting for Promise given to show() or updateWith() to settle."_s);
         return;
     }
 

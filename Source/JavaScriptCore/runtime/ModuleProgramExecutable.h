@@ -63,8 +63,6 @@ public:
 
     DECLARE_INFO;
 
-    ExecutableInfo executableInfo() const { return ExecutableInfo(usesEval(), false, PrivateBrandRequirement::None, false, ConstructorKind::None, JSParserScriptMode::Module, SuperBinding::NotNeeded, SourceParseMode::ModuleEvaluateMode, derivedContextType(), NeedsClassFieldInitializer::No, isArrowFunctionContext(), false, EvalContextType::None); }
-
     UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock() { return m_unlinkedModuleProgramCodeBlock.get(); }
     bool isAsync() const { return features() & AwaitFeature; }
 

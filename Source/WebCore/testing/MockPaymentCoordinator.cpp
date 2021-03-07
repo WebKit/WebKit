@@ -44,6 +44,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MockPaymentCoordinatorAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
@@ -109,6 +113,9 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     m_installmentConfiguration = request.installmentConfiguration().applePayInstallmentConfiguration();
 #endif
+#if defined(MockPaymentCoordinatorAdditions_showPaymentUI)
+    MockPaymentCoordinatorAdditions_showPaymentUI
+#endif
 
     ASSERT(showCount == hideCount);
     ++showCount;
@@ -132,6 +139,9 @@ void MockPaymentCoordinator::completeShippingMethodSelection(Optional<ApplePaySh
 
     m_total = WTFMove(shippingMethodUpdate->newTotal);
     m_lineItems = WTFMove(shippingMethodUpdate->newLineItems);
+#if defined(MockPaymentCoordinatorAdditions_completeShippingMethodSelection)
+    MockPaymentCoordinatorAdditions_completeShippingMethodSelection
+#endif
 }
 
 static Vector<MockPaymentError> convert(Vector<RefPtr<ApplePayError>>&& errors)
@@ -153,6 +163,9 @@ void MockPaymentCoordinator::completeShippingContactSelection(Optional<ApplePayS
     m_lineItems = WTFMove(shippingContactUpdate->newLineItems);
     m_errors = convert(WTFMove(shippingContactUpdate->errors));
     m_shippingMethods = WTFMove(shippingContactUpdate->newShippingMethods);
+#if defined(MockPaymentCoordinatorAdditions_completeShippingContactSelection)
+    MockPaymentCoordinatorAdditions_completeShippingContactSelection
+#endif
 }
 
 void MockPaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&& paymentMethodUpdate)
@@ -162,6 +175,9 @@ void MockPaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPay
 
     m_total = WTFMove(paymentMethodUpdate->newTotal);
     m_lineItems = WTFMove(paymentMethodUpdate->newLineItems);
+#if defined(MockPaymentCoordinatorAdditions_completePaymentMethodSelection)
+    MockPaymentCoordinatorAdditions_completePaymentMethodSelection
+#endif
 }
 
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
@@ -175,6 +191,9 @@ void MockPaymentCoordinator::completePaymentMethodModeChange(Optional<ApplePayPa
     m_lineItems = WTFMove(paymentMethodModeUpdate->newLineItems);
     m_errors = convert(WTFMove(paymentMethodModeUpdate->errors));
     m_shippingMethods = WTFMove(paymentMethodModeUpdate->newShippingMethods);
+#if defined(MockPaymentCoordinatorAdditions_completePaymentMethodModeChange)
+    MockPaymentCoordinatorAdditions_completePaymentMethodModeChange
+#endif
 }
 
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)

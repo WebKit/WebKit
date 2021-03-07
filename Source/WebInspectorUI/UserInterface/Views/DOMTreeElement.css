@@ -27,14 +27,15 @@
     /* Using sans-serif San Francisco font here creates a badge 1px taller than the selected
     area. Use the same monospace font as the rest of the DOM tree outline. */
 
-    font-size: 10px;
-    line-height: 10px;
+    font-size: 8px;
+    vertical-align: 1px;
     color: var(--text-color);
-    background: hsla(0, 0%, 0%, 0.05);
+    background: hsla(0, 0%, 95%, 0.8);
     border: 1px solid hsla(0, 0%, var(--foreground-lightness), 0.1);
     border-radius: 3px;
     margin-left: 3px;
     padding: 0 2px;
+    box-shadow: 0 0 1px hsla(0, 0%, 0%, 0.5);
 }
 
 .tree-outline.dom .badge-css-grid.activated {
@@ -42,27 +43,15 @@
     color: white;
 }
 
-.tree-outline.dom li.selected .badge-css-grid {
-    color: hsla(0, 0%, var(--foreground-lightness), 0.5);
-    background-color: transparent;
-}
-
-.tree-outline.dom li.selected .badge-css-grid.activated {
-    background: var(--glyph-color-disabled);
-    color: white;
-}
-
 body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid {
-    border-color: hsla(0, 0%, 100%, 0.2);
+    /* Override `li.selected * {color: inherited}` from DOMTreeOutline.css */
+    color: var(--text-color);
 }
 
-body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid.activated {
-    background: hsla(0, 0%, 100%, 0.3);
-}
 
 @media (prefers-color-scheme: dark) {
     .tree-outline.dom .badge-css-grid {
-        background: hsla(0, 0%, 100%, 0.05);
+        background: hsla(0, 0%, 30%, 0.8);
         border-color: hsla(0, 0%, 100%, 0.1);
     }
 }

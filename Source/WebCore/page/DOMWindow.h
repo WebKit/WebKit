@@ -366,8 +366,8 @@ public:
     void startListeningForDeviceMotionIfNecessary();
     void stopListeningForDeviceMotionIfNecessary();
 
-    bool isAllowedToUseDeviceMotionOrientation(String& message) const;
-    bool isAllowedToAddDeviceMotionOrientationListener(String& message) const;
+    bool isAllowedToUseDeviceOrientation(String& message) const;
+    bool isAllowedToUseDeviceMotion(String& message) const;
 
     DeviceOrientationController* deviceOrientationController() const;
     DeviceMotionController* deviceMotionController() const;
@@ -410,13 +410,15 @@ private:
     bool isLocalDOMWindow() const final { return true; }
     bool isRemoteDOMWindow() const final { return false; }
 
-    Page* page();
+    Page* page() const;
     bool allowedToChangeWindowGeometry() const;
 
     static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const WTF::Function<void(DOMWindow&)>& prepareDialogFunction = nullptr);
     bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
 
 #if ENABLE(DEVICE_ORIENTATION)
+    bool isAllowedToUseDeviceMotionOrOrientation(String& message) const;
+    bool hasPermissionToReceiveDeviceMotionOrOrientationEvents(String& message) const;
     void failedToRegisterDeviceMotionEventListener();
 #endif
 

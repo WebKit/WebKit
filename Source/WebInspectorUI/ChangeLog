@@ -1,3 +1,140 @@
+2021-03-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: border color of "grid" badge should match color of corresponding outline
+        https://bugs.webkit.org/show_bug.cgi?id=222747
+        <rdar://problem/75042342>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/DOMTreeElement.css:
+        (.tree-outline.dom .badge-css-grid):
+        Drive-by: decrease the font size and align the badge in the middle of the selected tree element (i.e. keep 1px space
+        above and below the badge).
+
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid):
+        (@media (prefers-color-scheme: dark) .tree-outline.dom .badge-css-grid):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._updateGridBadgeStatus):
+        For text and background color, only use the hue of the selected color to keep "grid" text always readable.
+
+2021-03-04  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Persist CSS Grid overlay colors
+        https://bugs.webkit.org/show_bug.cgi?id=222319
+        <rdar://problem/74647242>
+
+        Reviewed by Devin Rousso.
+
+        Save and restore CSS Grid overlay colors edited by a user.
+
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager):
+        (WI.OverlayManager.prototype.showGridOverlay):
+        (WI.OverlayManager.prototype.getGridColorForNode):
+        (WI.OverlayManager.prototype.setGridColorForNode):
+        (WI.OverlayManager.prototype._handleMainResourceDidChange):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.layout):
+
+2021-03-04  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Audits Tab: nothing happens when clicking "Start" button in the content area placeholder text
+        https://bugs.webkit.org/show_bug.cgi?id=222740
+        rdar://75008042
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView.prototype.showNoResultPlaceholder):
+
+2021-03-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: `RecordCanvasActionVariant` causes a huge symbol to be created in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=222639
+        <rdar://problem/73728057>
+
+        Reviewed by Tim Horton and Brian Burg.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        Don't use `||` for the fallback of `_payloadSnapshot` as it can be `0`.
+
+        * UserInterface/Models/Recording.js:
+        Drive-by: Rename `RecordingSwizzleTypes` to `RecordingSwizzleType`.
+
+2021-03-03  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Refine CSS Grid overlay options
+        https://bugs.webkit.org/show_bug.cgi?id=222428
+        <rdar://problem/74751569>
+
+        Reviewed by BJ Burg.
+
+        Move CSS Grid overlay settings above node list, simplify labels, reorder and set default values.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.initialLayout):
+        * UserInterface/Views/LayoutDetailsSidebarPanel.css:
+        (.details-section.layout-css-grid.collapsed > .content):
+        Drive-by: Fix a bug which prevented the contents from being hidden when the section is collapsed.
+
+2021-02-25  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: add support for receiving Web Extension events via _WKInspectorExtensionDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=222252
+        <rdar://problem/71206685>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/WebInspectorExtension.js: Update comment for namespace change.
+
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView.prototype.attached):
+        (WI.WebInspectorExtensionTabContentView.prototype.detached):
+        When an extension tab is shown or hidden, notify the frontend host about the event.
+
+2021-02-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r269359): Sources: the Images folder does not load most images in the main content area
+        https://bugs.webkit.org/show_bug.cgi?id=222431
+        <rdar://problem/74498289>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WI.MultipleScopeBarItem.prototype.set scopeBarItems):
+        (WI.MultipleScopeBarItem.prototype._itemSelectionDidChange):
+        (WI.MultipleScopeBarItem.prototype.get _visibleScopeBarItems): Deleted.
+        r269359 made it so that `removeEventListener` actually throws an error if `this` doesn't
+        have any event listeners (it also `console.assert` if the event/listener is missing).
+        `WI.MultipleScopeBarItem.prototype.set scopeBarItems` iterates over all `_scopeBarItems`
+        when calling `removeEventListener`, but only iterates over `_visibleScopeBarItems` when
+        adding them, meaning that `removeEventListener` will be called on objects that did not
+        have a corresponding `addEventListener`. Instead, iterate over all `_scopeBarItems` in
+        both cases and progressively build up `_visibleScopeBarItems` (which also avoids the
+        extra work of `filter` at the other callsites), ensuring that all items have both an
+        `addEventListener` and `removeEventListener`.
+
+2021-02-23  Patrick Angle  <pangle@apple.com>
+
+        [Cocoa] Web Inspector: Add support for reloading the inspected page via _WKInspectorExtension
+        https://bugs.webkit.org/show_bug.cgi?id=222296
+
+        Reviewed by BJ Burg.
+
+        Added support for reloading the inspected page, including ignoring the cache if desired, via
+        _WKInspectorExtension.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.evaluateScriptForExtension):
+        (WI.WebInspectorExtensionController.prototype.reloadForExtension):
+        (WI.WebInspectorExtensionController):
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.evaluateScriptForExtension):
+        (InspectorFrontendAPI.reloadForExtension):
+
 2021-02-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: CSS Grid Inspector: use a color palette for default grid overlay colors

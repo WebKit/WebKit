@@ -75,6 +75,7 @@ public:
     virtual WebCore::IntSize recommendedResolution(SessionMode) { return { 1, 1 }; }
 
     bool supportsOrientationTracking() const { return m_supportsOrientationTracking; }
+    bool supportsViewportScaling() const { return m_supportsViewportScaling; }
 
     virtual void initializeTrackingAndRendering(SessionMode) = 0;
     virtual void shutDownTrackingAndRendering() = 0;
@@ -113,12 +114,18 @@ public:
             Projection projection = { nullptr };
         };
 
+        struct StageParameters {
+            int id { 0 };
+            Vector<WebCore::FloatPoint> bounds;
+        };
+
         bool isTrackingValid { false };
         bool isPositionValid { false };
         bool isPositionEmulated { false };
         long predictedDisplayTime { 0 };
         Pose origin;
         Optional<Pose> floorTransform;
+        StageParameters stageParameters;
         Vector<View> views;
     };
 
@@ -141,6 +148,7 @@ protected:
     EnabledFeaturesPerModeMap m_enabledFeaturesMap;
 
     bool m_supportsOrientationTracking { false };
+    bool m_supportsViewportScaling { false };
     WeakPtr<TrackingAndRenderingClient> m_trackingAndRenderingClient;
 };
 

@@ -25,16 +25,18 @@
 
 #pragma once
 
-#include "CallTracerTypes.h"
 #include "CanvasBase.h"
 #include "InspectorCanvas.h"
+#include "InspectorCanvasCallTracer.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <initializer_list>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 class InjectedScriptManager;
@@ -98,7 +100,6 @@ public:
     void didChangeCSSCanvasClientNodes(CanvasBase&);
     void didCreateCanvasRenderingContext(CanvasRenderingContext&);
     void didChangeCanvasMemory(CanvasRenderingContext&);
-    void recordCanvasAction(CanvasRenderingContext&, const String&, std::initializer_list<RecordCanvasActionVariant>&& = { });
     void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
     void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
     void consoleStopRecordingCanvas(CanvasRenderingContext&);
@@ -116,6 +117,14 @@ public:
     void didCreateWebGPUPipeline(WebGPUDevice&, WebGPUPipeline&);
     void willDestroyWebGPUPipeline(WebGPUPipeline&);
 #endif // ENABLE(WEBGPU)
+
+    // InspectorCanvasCallTracer
+#define PROCESS_ARGUMENT_DECLARATION(ArgumentType) \
+    Optional<InspectorCanvasCallTracer::ProcessedArgument> processArgument(CanvasRenderingContext&, ArgumentType); \
+// end of PROCESS_ARGUMENT_DECLARATION
+    FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DECLARATION)
+#undef PROCESS_ARGUMENT_DECLARATION
+    void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasCallTracer::ProcessedArguments&& = { });
 
 private:
     struct RecordingOptions {

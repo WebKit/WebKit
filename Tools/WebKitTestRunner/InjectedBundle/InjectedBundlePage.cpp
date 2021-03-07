@@ -796,7 +796,7 @@ void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuild
 #if USE(CF) && !PLATFORM(WIN_CAIRO) && !USE(DIRECT2D)
     auto wkData = adoptWK(WKBundleFrameCopyWebArchive(frame));
     auto cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData.get()), WKDataGetSize(wkData.get())));
-    auto cfString = adoptCF(WebCoreTestSupport::createXMLStringFromWebArchiveData(cfData.get()));
+    auto cfString = WebCoreTestSupport::createXMLStringFromWebArchiveData(cfData.get());
     stringBuilder.append(cfString.get());
 #endif
 }

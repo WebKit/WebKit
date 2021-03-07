@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Timeout.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
 #include <wtf/Seconds.h>
@@ -56,7 +57,7 @@ public:
 
     void signal();
     void wait();
-    void waitFor(Seconds);
+    void waitFor(Timeout);
     MachSendRight createSendRight() const;
     explicit operator bool() const { return m_sendRight || m_semaphore != SEMAPHORE_NULL; }
 #else

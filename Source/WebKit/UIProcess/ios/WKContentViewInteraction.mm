@@ -3698,6 +3698,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return baseWritingDirection != WebCore::WritingDirection::RightToLeft;
     }
 
+#if ENABLE(IMAGE_EXTRACTION)
+    if (action == WebKit::imageExtractionAction())
+        return editorState.isContentEditable;
+#endif
+
     return [super canPerformAction:action withSender:sender];
 }
 
@@ -4503,11 +4508,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (!_page->editorState().isContentEditable)
         return nil;
 
-    static NSArray* editableKeyCommands = [@[
+    static NeverDestroyed<RetainPtr<NSArray>> editableKeyCommands = @[
         [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
         [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_previousAccessoryTab:)]
-    ] retain];
-    return editableKeyCommands;
+    ];
+    return editableKeyCommands.get().get();
 }
 #endif
 
@@ -8129,18 +8134,23 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (NSDictionary *)_autofillContext
 {
-    BOOL provideStrongPasswordAssistance = _focusRequiresStrongPasswordAssistance && _focusedElementInformation.elementType == WebKit::InputType::Password;
-    if (!self._hasFocusedElement || (!_focusedElementInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
+    if (!self._hasFocusedElement)
         return nil;
 
-    if (provideStrongPasswordAssistance)
-        return @{ @"_automaticPasswordKeyboard" : @YES, @"strongPasswordAdditionalContext" : _additionalContextForStrongPasswordAssistance.get() };
+    auto context = adoptNS([[NSMutableDictionary alloc] init]);
+    context.get()[@"_WKAutofillContextVersion"] = @(2);
+
+    if (_focusRequiresStrongPasswordAssistance && _focusedElementInformation.elementType == WebKit::InputType::Password) {
+        context.get()[@"_automaticPasswordKeyboard"] = @YES;
+        context.get()[@"strongPasswordAdditionalContext"] = _additionalContextForStrongPasswordAssistance.get();
+    } else if (_focusedElementInformation.acceptsAutofilledLoginCredentials)
+        context.get()[@"_acceptsLoginCredentials"] = @YES;
 
     NSURL *platformURL = _focusedElementInformation.representingPageURL;
     if (platformURL)
-        return @{ @"_WebViewURL" : platformURL };
+        context.get()[@"_WebViewURL"] = platformURL;
 
-    return nil;
+    return context.autorelease();
 }
 
 - (BOOL)supportsImagePaste
@@ -9025,12 +9035,12 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)createHighlightInCurrentGroupWithRange:(id)sender
 {
-    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No);
+    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::No);
 }
 
 - (void)createHighlightInNewGroupWithRange:(id)sender
 {
-    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes);
+    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes, WebCore::HighlightRequestOriginatedInApp::No);
 }
 
 #endif

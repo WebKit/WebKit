@@ -2364,18 +2364,6 @@ void Node::notifyMutationObserversNodeWillDetach()
     }
 }
 
-void Node::handleLocalEvents(Event& event, EventInvokePhase phase)
-{
-    if (!hasEventTargetData())
-        return;
-
-    // FIXME: Should we deliver wheel events to disabled form controls or not?
-    if (is<Element>(*this) && downcast<Element>(*this).isDisabledFormControl() && event.isTrusted() && event.isMouseEvent() && !event.isWheelEvent())
-        return;
-
-    fireEventListeners(event, phase);
-}
-
 void Node::dispatchScopedEvent(Event& event)
 {
     EventDispatcher::dispatchScopedEvent(*this, event);

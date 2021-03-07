@@ -426,7 +426,7 @@ void WebInspectorProxy::createFrontendPage()
     m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = makeUnique<WebInspectorUIExtensionControllerProxy>(*m_inspectorPage);
+    m_extensionController = WebInspectorUIExtensionControllerProxy::create(*m_inspectorPage);
 #endif
 }
 
@@ -554,6 +554,9 @@ void WebInspectorProxy::closeFrontendPageAndWindow()
         platformDetach();
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
+    // This extension controller may be kept alive by the IPC dispatcher beyond the point
+    // when m_inspectorPage is cleared below. Notify the controller so it can clean up before then.
+    m_extensionController->inspectorFrontendWillClose();
     m_extensionController = nullptr;
 #endif
     

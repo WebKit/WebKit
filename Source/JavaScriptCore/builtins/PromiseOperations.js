@@ -27,16 +27,26 @@
 // @internal
 
 @globalPrivate
-function newPromiseReaction(promiseOrCapability, onFulfilled, onRejected)
+function pushNewPromiseReaction(thenable, existingReactions, promiseOrCapability, onFulfilled, onRejected)
 {
     "use strict";
 
-    return {
-        @promiseOrCapability: promiseOrCapability,
-        @onFulfilled: onFulfilled,
-        @onRejected: onRejected,
-        @next: @undefined,
-    };
+    if (!existingReactions) {
+        existingReactions = {
+            @promiseOrCapability: promiseOrCapability,
+            @onFulfilled: onFulfilled,
+            @onRejected: onRejected,
+            // This is 3x then number of out of line reactions (promise, fulfill callback, reject callback).
+            @outOfLineReactionCounts: 0,
+        };
+        @putPromiseInternalField(thenable, @promiseFieldReactionsOrResult, existingReactions);
+    } else {
+        var outOfLineReactionCounts = existingReactions.@outOfLineReactionCounts;
+        @putByValDirect(existingReactions, outOfLineReactionCounts++, promiseOrCapability);
+        @putByValDirect(existingReactions, outOfLineReactionCounts++, onFulfilled);
+        @putByValDirect(existingReactions, outOfLineReactionCounts++, onRejected);
+        existingReactions.@outOfLineReactionCounts = outOfLineReactionCounts;
+    }
 }
 
 @globalPrivate
@@ -137,22 +147,19 @@ function triggerPromiseReactions(state, reactions, argument)
 {
     "use strict";
 
-    // Reverse the order of singly-linked-list.
-    var previous = @undefined;
-    var current = reactions;
-    while (current) {
-        var next = current.@next;
-        current.@next = previous;
-        previous = current;
-        current = next;
-    }
-    reactions = previous;
+    if (!reactions)
+        return;
 
-    current = reactions;
-    while (current) {
-        @enqueueJob(@promiseReactionJob, state, current, argument);
-        current = current.@next;
+    var isResolved = state === @promiseStateFulfilled;
+
+    @enqueueJob(@promiseReactionJob, state, reactions.@promiseOrCapability, isResolved ? reactions.@onFulfilled : reactions.@onRejected, argument);
+
+    for (var i = 0, count = reactions.@outOfLineReactionCounts; i < count; i += 3) {
+        var promise = reactions[i];
+        var handler = isResolved ? reactions[i + 1] : reactions[i + 2];
+        @enqueueJob(@promiseReactionJob, state, promise, handler, argument);
     }
+    @assert(i === count);
 }
 
 @globalPrivate
@@ -372,7 +379,7 @@ function createResolvingFunctionsWithoutPromise(onFulfilled, onRejected)
 }
 
 @globalPrivate
-function promiseReactionJob(state, reaction, argument)
+function promiseReactionJob(state, promiseOrCapability, handler, argument)
 {
     // Promise Reaction has four types.
     // 1. @promiseOrCapability is PromiseCapability, and having handlers.
@@ -385,11 +392,8 @@ function promiseReactionJob(state, reaction, argument)
     //     It does not have promise capability. Just handlers are passed.
     "use strict";
 
-    var promiseOrCapability = reaction.@promiseOrCapability;
-
     // Case (3).
-    if (@isUndefinedOrNull(reaction.@onRejected)) {
-        @assert(@isUndefinedOrNull(reaction.@onFulfilled));
+    if (@isUndefinedOrNull(handler)) {
         try {
             @assert(@isPromise(promiseOrCapability));
             if (state === @promiseStateFulfilled)
@@ -401,8 +405,6 @@ function promiseReactionJob(state, reaction, argument)
         }
         return;
     }
-
-    var handler = (state === @promiseStateFulfilled) ? reaction.@onFulfilled: reaction.@onRejected;
 
     // Case (4).
     if (!promiseOrCapability) {
@@ -448,14 +450,13 @@ function promiseResolveThenableJobFast(thenable, promiseToResolve)
 
     var flags = @getPromiseInternalField(thenable, @promiseFieldFlags);
     var state = flags & @promiseStateMask;
-    var reaction = @newPromiseReaction(promiseToResolve, @undefined, @undefined);
-    if (state === @promiseStatePending) {
-        reaction.@next = @getPromiseInternalField(thenable, @promiseFieldReactionsOrResult);
-        @putPromiseInternalField(thenable, @promiseFieldReactionsOrResult, reaction);
-    } else {
+    var reactionsOrResult = @getPromiseInternalField(thenable, @promiseFieldReactionsOrResult);
+    if (state === @promiseStatePending)
+        @pushNewPromiseReaction(thenable, reactionsOrResult, promiseToResolve, @undefined, @undefined);
+    else {
         if (state === @promiseStateRejected && !(flags & @promiseFlagsIsHandled))
             @hostPromiseRejectionTracker(thenable, @promiseRejectionHandle);
-        @enqueueJob(@promiseReactionJob, state, reaction, @getPromiseInternalField(thenable, @promiseFieldReactionsOrResult));
+        @enqueueJob(@promiseReactionJob, state, promiseToResolve, @undefined, reactionsOrResult);
     }
     @putPromiseInternalField(thenable, @promiseFieldFlags, @getPromiseInternalField(thenable, @promiseFieldFlags) | @promiseFlagsIsHandled);
 }
@@ -477,18 +478,16 @@ function promiseResolveThenableJobWithoutPromiseFast(thenable, onFulfilled, onRe
 
     var flags = @getPromiseInternalField(thenable, @promiseFieldFlags);
     var state = flags & @promiseStateMask;
-    if (state === @promiseStatePending) {
-        var reaction = @newPromiseReaction(@undefined, onFulfilled, onRejected);
-        reaction.@next = @getPromiseInternalField(thenable, @promiseFieldReactionsOrResult);
-        @putPromiseInternalField(thenable, @promiseFieldReactionsOrResult, reaction);
-    } else {
-        var result = @getPromiseInternalField(thenable, @promiseFieldReactionsOrResult);
+    var reactionsOrResult = @getPromiseInternalField(thenable, @promiseFieldReactionsOrResult);
+    if (state === @promiseStatePending)
+        @pushNewPromiseReaction(thenable, reactionsOrResult, @undefined, onFulfilled, onRejected);
+    else {
         if (state === @promiseStateRejected) {
             if (!(flags & @promiseFlagsIsHandled))
                 @hostPromiseRejectionTracker(thenable, @promiseRejectionHandle);
-            @rejectWithoutPromise(result, onFulfilled, onRejected);
+            @rejectWithoutPromise(reactionsOrResult, onFulfilled, onRejected);
         } else
-            @fulfillWithoutPromise(result, onFulfilled, onRejected);
+            @fulfillWithoutPromise(reactionsOrResult, onFulfilled, onRejected);
     }
     @putPromiseInternalField(thenable, @promiseFieldFlags, @getPromiseInternalField(thenable, @promiseFieldFlags) | @promiseFlagsIsHandled);
 }
@@ -520,27 +519,47 @@ function promiseResolveThenableJobWithDerivedPromise(thenable, constructor, reso
 }
 
 @globalPrivate
+function promiseEmptyOnFulfilled(argument)
+{
+    "use strict";
+
+    return argument;
+}
+
+@globalPrivate
+function promiseEmptyOnRejected(argument)
+{
+    "use strict";
+
+    throw argument;
+}
+
+@globalPrivate
 function performPromiseThen(promise, onFulfilled, onRejected, promiseOrCapability)
 {
     "use strict";
 
     if (!@isCallable(onFulfilled))
-        onFulfilled = function (argument) { return argument; };
+        onFulfilled = @promiseEmptyOnFulfilled;
 
     if (!@isCallable(onRejected))
-        onRejected = function (argument) { throw argument; };
+        onRejected = @promiseEmptyOnRejected;
 
-    var reaction = @newPromiseReaction(promiseOrCapability, onFulfilled, onRejected);
-
+    var reactionsOrResult = @getPromiseInternalField(promise, @promiseFieldReactionsOrResult);
     var flags = @getPromiseInternalField(promise, @promiseFieldFlags);
     var state = flags & @promiseStateMask;
-    if (state === @promiseStatePending) {
-        reaction.@next = @getPromiseInternalField(promise, @promiseFieldReactionsOrResult);
-        @putPromiseInternalField(promise, @promiseFieldReactionsOrResult, reaction);
-    } else {
-        if (state === @promiseStateRejected && !(flags & @promiseFlagsIsHandled))
-            @hostPromiseRejectionTracker(promise, @promiseRejectionHandle);
-        @enqueueJob(@promiseReactionJob, state, reaction, @getPromiseInternalField(promise, @promiseFieldReactionsOrResult));
+    if (state === @promiseStatePending)
+        @pushNewPromiseReaction(promise, reactionsOrResult, promiseOrCapability, onFulfilled, onRejected);
+    else {
+        var handler;
+
+        if (state === @promiseStateRejected) {
+            handler = onRejected;
+            if (!(flags & @promiseFlagsIsHandled))
+                @hostPromiseRejectionTracker(promise, @promiseRejectionHandle);
+        } else
+            handler = onFulfilled;
+        @enqueueJob(@promiseReactionJob, state, promiseOrCapability, handler, reactionsOrResult);
     }
     @putPromiseInternalField(promise, @promiseFieldFlags, @getPromiseInternalField(promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
 }

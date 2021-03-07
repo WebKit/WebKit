@@ -122,7 +122,8 @@ public:
     enum { CallFunction, ApplyFunction };
 
     bool isConstructor() const { return m_isConstructor; }
-    bool usesEval() const { return m_usesEval; }
+    bool usesCallEval() const { return m_usesCallEval; }
+    void setUsesCallEval() { m_usesCallEval = true; }
     SourceParseMode parseMode() const { return m_parseMode; }
     bool isArrowFunction() const { return isArrowFunctionParseMode(parseMode()); }
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
@@ -339,7 +340,7 @@ private:
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
 
-    unsigned m_usesEval : 1;
+    unsigned m_usesCallEval : 1;
     unsigned m_isConstructor : 1;
     unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;

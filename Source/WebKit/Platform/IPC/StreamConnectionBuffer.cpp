@@ -45,10 +45,10 @@ StreamConnectionBuffer::StreamConnectionBuffer(size_t memorySize)
     ASSERT(m_dataSize <= maximumSize());
 }
 
-StreamConnectionBuffer::StreamConnectionBuffer(Ref<WebKit::SharedMemory>&& memory, size_t memorySize, Semaphore&& senderWaitSemaphore)
+StreamConnectionBuffer::StreamConnectionBuffer(Ref<WebKit::SharedMemory>&& memory, size_t memorySize, Semaphore&& clientWaitSemaphore)
     : m_dataSize(memorySize - headerSize())
     , m_sharedMemory(WTFMove(memory))
-    , m_senderWaitSemaphore(WTFMove(senderWaitSemaphore))
+    , m_clientWaitSemaphore(WTFMove(clientWaitSemaphore))
 {
     ASSERT(m_dataSize <= maximumSize());
 }
@@ -62,7 +62,7 @@ StreamConnectionBuffer& StreamConnectionBuffer::operator=(StreamConnectionBuffer
     if (this != &other) {
         m_dataSize = other.m_dataSize;
         m_sharedMemory = WTFMove(other.m_sharedMemory);
-        m_senderWaitSemaphore = WTFMove(other.m_senderWaitSemaphore);
+        m_clientWaitSemaphore = WTFMove(other.m_clientWaitSemaphore);
     }
     return *this;
 }
@@ -74,7 +74,7 @@ void StreamConnectionBuffer::encode(Encoder& encoder) const
         CRASH();
     WebKit::SharedMemory::IPCHandle ipcHandle { WTFMove(handle), m_sharedMemory->size() };
     encoder << ipcHandle;
-    encoder << m_senderWaitSemaphore;
+    encoder << m_clientWaitSemaphore;
 }
 
 Optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& decoder)

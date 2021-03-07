@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCPriorityType.h"
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +40,7 @@ struct RTCDataChannelInit {
     String protocol;
     Optional<bool> negotiated;
     Optional<unsigned short> id;
+    RTCPriorityType priority { RTCPriorityType::Low };
 };
 
 class RTCDataChannelHandlerClient;

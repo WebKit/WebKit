@@ -126,6 +126,11 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     CreateAudioSourceProvider()
     SetShouldEnableAudioSourceProvider(bool shouldEnable)
 #endif
+
+#if PLATFORM(COCOA)
+    NativeImageForCurrentTime() -> (Optional<MachSendRight> sendRight) Synchronous
+    PixelBufferForCurrentTime() -> (Optional<MachSendRight> sendRight) Synchronous
+#endif
 }
 
 #endif

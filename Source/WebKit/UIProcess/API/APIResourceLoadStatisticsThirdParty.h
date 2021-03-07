@@ -35,18 +35,24 @@ class ResourceLoadStatisticsThirdParty final : public ObjectImpl<Object::Type::R
 public:
     static Ref<ResourceLoadStatisticsThirdParty> create(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&& thirdPartyData)
     {
+        RELEASE_ASSERT(RunLoop::isMain());
         return adoptRef(*new ResourceLoadStatisticsThirdParty(WTFMove(thirdPartyData)));
     }
 
-    ResourceLoadStatisticsThirdParty(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&& thirdPartyData)
-        : m_thirdPartyData(WTFMove(thirdPartyData))
+    ~ResourceLoadStatisticsThirdParty()
     {
+        RELEASE_ASSERT(RunLoop::isMain());
     }
 
     const WTF::String& thirdPartyDomain() const { return m_thirdPartyData.thirdPartyDomain.string(); }
     const Vector<WebKit::WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty>& underFirstParties() const { return m_thirdPartyData.underFirstParties; }
 
 private:
+    explicit ResourceLoadStatisticsThirdParty(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&& thirdPartyData)
+        : m_thirdPartyData(WTFMove(thirdPartyData))
+    {
+    }
+
     const WebKit::WebResourceLoadStatisticsStore::ThirdPartyData m_thirdPartyData;
 };
 

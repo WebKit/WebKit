@@ -87,8 +87,7 @@ public:
     void encodedDataStatusChanged(size_t frameCount, const WebCore::IntSize&, bool hasTrack);
 
 private:
-    GPUProcessConnection& gpuProcessConnection() const;
-
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteImageDecoderAVFManager& m_manager;
     WebCore::ImageDecoderIdentifier m_identifier;
 

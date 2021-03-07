@@ -35,6 +35,7 @@ namespace WebCore {
 
 class CSSFontFace;
 class CSSFontSelector;
+class Document;
 class Font;
 struct FontCustomPlatformData;
 class FontDescription;
@@ -49,7 +50,10 @@ typedef FontTaggedSettings<int> FontFeatureSettings;
 class CSSFontFaceSource final : public CachedFontClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CachedFont* = nullptr, SVGFontFaceElement* = nullptr, RefPtr<JSC::ArrayBufferView>&& = nullptr);
+    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI);
+    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CSSFontSelector&, CachedFont&);
+    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, SVGFontFaceElement&);
+    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, Ref<JSC::ArrayBufferView>&&);
     virtual ~CSSFontFaceSource();
 
     //                      => Success
@@ -67,9 +71,9 @@ public:
 
     const AtomString& familyNameOrURI() const { return m_familyNameOrURI; }
 
-    void opportunisticallyStartFontDataURLLoading(CSSFontSelector&);
+    void opportunisticallyStartFontDataURLLoading();
 
-    void load(CSSFontSelector*);
+    void load(Document* = nullptr);
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities);
 
     CachedFont* cachedFont() const { return m_font.get(); }
@@ -85,8 +89,9 @@ private:
     void setStatus(Status);
 
     AtomString m_familyNameOrURI; // URI for remote, built-in font name for local.
-    CachedResourceHandle<CachedFont> m_font; // For remote fonts, a pointer to our cached resource.
     CSSFontFace& m_face; // Our owning font face.
+    WeakPtr<CSSFontSelector> m_fontSelector; // For remote fonts, to orchestrate loading.
+    CachedResourceHandle<CachedFont> m_font; // Also for remote fonts, a pointer to our cached resource.
 
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
     RefPtr<JSC::ArrayBufferView> m_immediateSource;
@@ -96,7 +101,7 @@ private:
     std::unique_ptr<FontCustomPlatformData> m_inDocumentCustomPlatformData;
 
     Status m_status { Status::Pending };
-    bool m_hasSVGFontFaceElement;
+    bool m_hasSVGFontFaceElement { false };
 };
 
 } // namespace WebCore

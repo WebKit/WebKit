@@ -59,10 +59,24 @@ SimulatedXRDevice::~SimulatedXRDevice()
     stopTimer();
 }
 
+void SimulatedXRDevice::setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>& geometry)
+{
+    m_stageParameters.id++;
+    m_stageParameters.bounds.clear();
+    for (auto& point : geometry)
+        m_stageParameters.bounds.append({ static_cast<float>(point.x), static_cast<float>(point.z) });
+}
+
 void SimulatedXRDevice::simulateShutdownCompleted()
 {
     if (m_trackingAndRenderingClient)
         m_trackingAndRenderingClient->sessionDidEnd();
+}
+
+WebCore::IntSize SimulatedXRDevice::recommendedResolution(PlatformXR::SessionMode)
+{
+    // Return at least a 2 pixel size so we can have different viewports for left and right eyes
+    return IntSize(2, 2);
 }
 
 void SimulatedXRDevice::shutDownTrackingAndRendering()
@@ -89,10 +103,13 @@ void SimulatedXRDevice::frameTimerFired()
         data.origin = *m_viewerOrigin;
         data.isTrackingValid = true;
         data.isPositionValid = true;
+        data.isPositionEmulated = m_emulatedPosition;
     }
 
     if (m_floorOrigin)
         data.floorTransform = { *m_floorOrigin };
+
+    data.stageParameters = m_stageParameters;
 
     for (auto& fakeView : m_views) {
         FrameData::View view;
@@ -119,9 +136,9 @@ void SimulatedXRDevice::requestFrame(RequestFrameCallback&& callback)
 Vector<PlatformXR::Device::ViewData> SimulatedXRDevice::views(PlatformXR::SessionMode mode) const
 {
     if (mode == PlatformXR::SessionMode::ImmersiveVr)
-        return { { .active = true, PlatformXR::Eye::Left }, { .active = true, PlatformXR::Eye::Right } };
+        return { { .active = true, .eye = PlatformXR::Eye::Left }, { .active = true, .eye = PlatformXR::Eye::Right } };
 
-    return { { .active = true, PlatformXR::Eye::None } };
+    return { { .active = true, .eye = PlatformXR::Eye::None } };
 }
 
 void SimulatedXRDevice::scheduleOnNextFrame(Function<void()>&& func)
@@ -176,9 +193,12 @@ void WebFakeXRDevice::simulateVisibilityChange(XRVisibilityState)
 {
 }
 
-void WebFakeXRDevice::setBoundsGeometry(Vector<FakeXRBoundsPoint>&&)
+void WebFakeXRDevice::setBoundsGeometry(Vector<FakeXRBoundsPoint>&& bounds)
 {
-}
+    m_device.scheduleOnNextFrame([this, bounds = WTFMove(bounds)]() {
+        m_device.setNativeBoundsGeometry(bounds);
+    });
+} 
 
 void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit origin)
 {

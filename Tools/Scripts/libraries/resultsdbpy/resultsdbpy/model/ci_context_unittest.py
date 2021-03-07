@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -36,17 +36,10 @@ from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.mock_repository import MockSVNRepository
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 
+from webkitcorepy import mocks
+
 
 class URLFactoryTest(WaitForDockerTestCase):
-
-    class MockRequest(object):
-
-        def __init__(self, text='', status_code=200):
-            self.text = text
-            self.status_code = status_code
-
-        def json(self):
-            return json.loads(self.text)
 
     BUILD_MASTER = 'build.webkit.org'
 
@@ -214,17 +207,14 @@ class URLFactoryTest(WaitForDockerTestCase):
     )
 
     @classmethod
-    def get(cls, url, *args, **kwargs):
-        if url == f'https://{cls.BUILD_MASTER}/api/v2/builders':
-            return cls.MockRequest(text=json.dumps(cls.BUILDERS))
-        if url == f'https://{cls.BUILD_MASTER}/api/v2/workers':
-            return cls.MockRequest(text=json.dumps(cls.WORKERS))
-        return cls.MockRequest(status_code=500)
-
-    @classmethod
     @contextlib.contextmanager
     def mock(cls):
-        with mock.patch('requests.get', new=cls.get):
+        with mocks.Requests(
+            cls.BUILD_MASTER, **{
+                'api/v2/builders': mocks.Response.fromJson(cls.BUILDERS),
+                'api/v2/workers': mocks.Response.fromJson(cls.WORKERS),
+            },
+        ):
             yield
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis)

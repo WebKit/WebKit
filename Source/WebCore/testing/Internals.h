@@ -772,8 +772,11 @@ public:
 #endif
 
 #if ENABLE(WEBGL)
-    void simulateWebGLContextChanged(WebGLRenderingContext&);
-    void failNextGPUStatusCheck(WebGLRenderingContext&);
+    enum class SimulatedWebGLContextEvent {
+        ContextChange,
+        GPUStatusFailure
+    };
+    void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContext&);
     bool hasLowAndHighPowerGPUs();
 #endif
 
@@ -1047,6 +1050,10 @@ public:
 
     unsigned createSleepDisabler(const String& reason, bool display);
     bool destroySleepDisabler(unsigned identifier);
+        
+#if ENABLE(APP_HIGHLIGHTS)
+    unsigned numberOfAppHighlights();
+#endif
 
 #if ENABLE(WEBXR)
     ExceptionOr<RefPtr<WebXRTest>> xrTest();

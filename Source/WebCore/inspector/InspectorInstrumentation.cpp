@@ -1074,12 +1074,6 @@ void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents& in
         canvasAgent->didChangeCanvasMemory(context);
 }
 
-void InspectorInstrumentation::recordCanvasActionImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& canvasRenderingContext, const String& name, std::initializer_list<RecordCanvasActionVariant>&& parameters)
-{
-    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
-        canvasAgent->recordCanvasAction(canvasRenderingContext, name, WTFMove(parameters));
-}
-
 void InspectorInstrumentation::didFinishRecordingCanvasFrameImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context, bool forceDispatch)
 {
     if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())

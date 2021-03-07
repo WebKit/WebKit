@@ -55,7 +55,9 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
     ASSERT(context->isDocument());
 
     auto* newTarget = callFrame.newTarget().getObject();
-    auto* newTargetGlobalObject = jsCast<JSDOMGlobalObject*>(getFunctionRealm(vm, newTarget));
+    auto* functionGlobalObject = getFunctionRealm(lexicalGlobalObject, newTarget);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto* newTargetGlobalObject = jsCast<JSDOMGlobalObject*>(functionGlobalObject);
     JSValue htmlElementConstructorValue = JSHTMLElement::getConstructor(vm, newTargetGlobalObject);
     if (newTarget == htmlElementConstructorValue)
         return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);

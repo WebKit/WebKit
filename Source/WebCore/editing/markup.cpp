@@ -1199,6 +1199,8 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
     bool useClonesOfEnclosingBlock = block
         && !block->hasTagName(bodyTag)
         && !block->hasTagName(htmlTag)
+        // Avoid using table as paragraphs due to its special treatment in Position::upstream/downstream.
+        && !block->hasTagName(tableTag)
         && block != editableRootForPosition(start);
     bool useLineBreak = enclosingTextFormControl(start);
 
@@ -1383,7 +1385,6 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<Docu
     auto* containerChild = containerNode->firstChild();
     if (containerChild && !containerChild->nextSibling()) {
         if (is<Text>(*containerChild) && hasOneTextChild(fragment) && canUseSetDataOptimization(downcast<Text>(*containerChild), mutation)) {
-            ASSERT(!fragment->firstChild()->refCount());
             downcast<Text>(*containerChild).setData(downcast<Text>(*fragment->firstChild()).data());
             return { };
         }

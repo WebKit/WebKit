@@ -147,6 +147,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ProfilerDatabase.h>
 #include <JavaScriptCore/SamplingProfiler.h>
+#include <WebCore/AppHighlight.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/BackForwardCache.h>
@@ -355,6 +356,10 @@
 
 #if ENABLE(IMAGE_EXTRACTION)
 #include <WebCore/ImageExtractionResult.h>
+#endif
+
+#if PLATFORM(IOS)
+#include "WebPreferencesDefaultValuesIOS.h"
 #endif
 
 namespace WebKit {
@@ -633,6 +638,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
+#if PLATFORM(IOS)
+    setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload);
+#endif
+
     updatePreferences(parameters.store);
 
 #if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
@@ -751,7 +760,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     
     setMediaVolume(parameters.mediaVolume);
 
-    setMuted(parameters.muted);
+    setMuted(parameters.muted, [] { });
 
     // We use the DidFirstVisuallyNonEmptyLayout milestone to determine when to unfreeze the layer tree.
     m_page->addLayoutMilestones({ DidFirstLayout, DidFirstVisuallyNonEmptyLayout });
@@ -853,14 +862,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if ENABLE(VP9)
-    if (parameters.shouldEnableVP9Decoder)
-        WebProcess::singleton().enableVP9Decoder();
-
-    if (parameters.shouldEnableVP8Decoder)
-        WebProcess::singleton().enableVP8SWDecoder();
-
-    if (parameters.shouldEnableVP9SWDecoder)
-        WebProcess::singleton().enableVP9SWDecoder();
+    PlatformMediaSessionManager::setShouldEnableVP9Decoder(parameters.shouldEnableVP9Decoder);
+    PlatformMediaSessionManager::setShouldEnableVP8Decoder(parameters.shouldEnableVP8Decoder);
+    PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(parameters.shouldEnableVP9SWDecoder);
 #endif
 
     m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
@@ -5365,16 +5369,18 @@ void WebPage::setMediaVolume(float volume)
     m_page->setMediaVolume(volume);
 }
 
-void WebPage::setMuted(MediaProducer::MutedStateFlags state)
+void WebPage::setMuted(MediaProducer::MutedStateFlags state, CompletionHandler<void()>&& completionHandler)
 {
     m_page->setMuted(state);
+    completionHandler();
 }
 
-void WebPage::stopMediaCapture()
+void WebPage::stopMediaCapture(MediaProducer::MediaCaptureKind kind, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(MEDIA_STREAM)
-    m_page->stopMediaCapture();
+    m_page->stopMediaCapture(kind);
 #endif
+    completionHandler();
 }
 
 void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)
@@ -7230,13 +7236,15 @@ void WebPage::requestImageExtraction(WebCore::Element& element)
     if (m_elementsWithExtractedImages.contains(element))
         return;
 
-    auto* renderImage = element.renderer();
-    if (!is<RenderImage>(renderImage))
+    auto* renderer = element.renderer();
+    if (!is<RenderImage>(renderer))
         return;
+
+    auto& renderImage = downcast<RenderImage>(*renderer);
 
     m_elementsWithExtractedImages.add(element);
 
-    auto bitmap = createShareableBitmap(downcast<RenderImage>(*renderImage));
+    auto bitmap = createShareableBitmap(renderImage);
     if (!bitmap)
         return;
 
@@ -7245,10 +7253,26 @@ void WebPage::requestImageExtraction(WebCore::Element& element)
     if (bitmapHandle.isNull())
         return;
 
-    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(bitmapHandle)), [weakElement = makeWeakPtr(element)] (ImageExtractionResult&& result) {
+    auto imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+
+    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(imageURL), WTFMove(bitmapHandle)), [weakElement = makeWeakPtr(element)] (ImageExtractionResult&& result) {
         if (auto element = weakElement.get(); is<HTMLElement>(element))
             downcast<HTMLElement>(*element).updateWithImageExtractionResult(WTFMove(result));
     });
+}
+
+void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto elementToUpdate = elementForContext(context);
+    if (!is<HTMLElement>(elementToUpdate)) {
+        completionHandler(false);
+        return;
+    }
+
+    downcast<HTMLElement>(*elementToUpdate).updateWithImageExtractionResult(WTFMove(result));
+
+    // FIXME: Hit-test with location and return whether or not there is overlay text at the given location.
+    completionHandler(true);
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
@@ -7314,8 +7338,11 @@ void WebPage::revokeSandboxExtensions(Vector<RefPtr<SandboxExtension>>& sandboxE
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight createNewGroup)
+bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight createNewGroup, WebCore::HighlightRequestOriginatedInApp requestOriginatedInApp)
 {
+    SetForScope<WebCore::CreateNewGroupForHighlight> highlightIsNewGroupScope { m_highlightIsNewGroup, createNewGroup };
+    SetForScope<WebCore::HighlightRequestOriginatedInApp> highlightRequestOriginScope { m_highlightRequestOriginatedInApp, requestOriginatedInApp };
+
     auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
 
     auto frame = makeRefPtr(document->frame());
@@ -7327,7 +7354,7 @@ bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighli
         return false;
 
     document->appHighlightRegister().addAppHighlight(StaticRange::create(selectionRange.value()));
-    document->appHighlightStorage().storeAppHighlight(StaticRange::create(selectionRange.value()), createNewGroup);
+    document->appHighlightStorage().storeAppHighlight(StaticRange::create(selectionRange.value()));
 
     return true;
 }

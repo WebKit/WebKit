@@ -107,7 +107,7 @@ WebLoaderStrategy::~WebLoaderStrategy()
 
 void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
-    if (resource.type() != CachedResource::Type::MainResource) {
+    if (resource.type() != CachedResource::Type::MainResource || !frame.isMainFrame()) {
         if (auto* document = frame.mainFrame().document()) {
             if (document && document->loader())
                 request.setIsAppBound(document->loader()->lastNavigationWasAppBound());
@@ -281,8 +281,6 @@ static void addParametersShared(const Frame* frame, NetworkResourceLoadParameter
     if (!frame)
         return;
 
-    parameters.isHTTPSUpgradeEnabled = frame->settings().HTTPSUpgradeEnabled();
-
     if (auto* page = frame->page()) {
         parameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
         parameters.shouldRelaxThirdPartyCookieBlocking = page->shouldRelaxThirdPartyCookieBlocking();
@@ -378,8 +376,10 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         if (!origin.isNull())
             loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
     }
-    if (document)
+    if (document) {
         loadParameters.topOrigin = &document->topOrigin();
+        loadParameters.documentURL = document->url();
+    }
 
     if (loadParameters.options.mode != FetchOptions::Mode::Navigate) {
         ASSERT(loadParameters.sourceOrigin);

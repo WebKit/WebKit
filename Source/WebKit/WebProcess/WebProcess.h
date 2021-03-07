@@ -339,10 +339,8 @@ public:
     bool removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
 #endif
 
-#if PLATFORM(IOS)
     void grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle);
     void revokeAccessToAssetServices();
-#endif
 
 #if PLATFORM(MAC)
     void updatePageScreenProperties();
@@ -357,12 +355,6 @@ public:
     void setUseGPUProcessForWebGL(bool);
     bool shouldUseRemoteRenderingForWebGL() const;
 #endif
-#endif
-
-#if ENABLE(VP9)
-    void enableVP9Decoder();
-    void enableVP8SWDecoder();
-    void enableVP9SWDecoder();
 #endif
 
 #if PLATFORM(COCOA)
@@ -424,7 +416,7 @@ private:
     void clearResourceLoadStatistics();
     void flushResourceLoadStatistics();
     void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);
-    void userPreferredLanguagesChanged() const;
+    void userPreferredLanguagesChanged(const Vector<String>&) const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 
     void platformSetCacheModel(CacheModel);
@@ -509,7 +501,7 @@ private:
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 #endif
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     void displayWasRefreshed(uint32_t displayID);
 #endif
 
@@ -529,7 +521,7 @@ private:
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(IPC::Connection&, IPC::Decoder&);
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
@@ -708,9 +700,7 @@ private:
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
 #endif
 
-#if PLATFORM(IOS)
     RefPtr<SandboxExtension> m_assetServiceV2Extension;
-#endif
 
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;
@@ -723,12 +713,6 @@ private:
 #if ENABLE(WEBGL)
     bool m_useGPUProcessForWebGL { false };
 #endif
-#endif
-
-#if ENABLE(VP9)
-    bool m_vp9DecoderEnabled { false };
-    bool m_vp8SWDecoderEnabled { false };
-    bool m_vp9SWDecoderEnabled { false };
 #endif
 
 #if ENABLE(MEDIA_STREAM)

@@ -59,7 +59,7 @@ namespace ContentExtensions {
 #else
 static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& url)
 {
-    if (url.protocolIs("http") && url.host() == "www.opengl.org")
+    if (url.protocolIs("http") && (url.host() == "www.opengl.org" || url.host() == "download"))
         results.summary.madeHTTPS = true;
 }
 #endif

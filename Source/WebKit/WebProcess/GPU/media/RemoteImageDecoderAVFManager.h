@@ -66,7 +66,6 @@ private:
     HashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders;
 
     WebProcess& m_process;
-    mutable GPUProcessConnection* m_gpuProcessConnection { nullptr };
     bool m_messageReceiverInitialized { false };
 };
 

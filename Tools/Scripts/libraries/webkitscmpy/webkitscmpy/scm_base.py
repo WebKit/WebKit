@@ -66,7 +66,7 @@ class ScmBase(object):
     def tags(self):
         raise NotImplementedError()
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
         raise NotImplementedError()
 
     def prioritize_branches(self, branches):
@@ -88,7 +88,7 @@ class ScmBase(object):
             filtered_candidates = branches
         return sorted(filtered_candidates)[0]
 
-    def find(self, argument, include_log=True):
+    def find(self, argument, include_log=True, include_identifier=True):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -104,13 +104,13 @@ class ScmBase(object):
             argument = self.default_branch
 
         if argument == 'HEAD':
-            result = self.commit(include_log=include_log)
+            result = self.commit(include_log=include_log, include_identifier=include_identifier)
 
         elif argument in self.branches:
-            result = self.commit(branch=argument, include_log=include_log)
+            result = self.commit(branch=argument, include_log=include_log, include_identifier=include_identifier)
 
         elif argument in self.tags:
-            result = self.commit(tag=argument, include_log=include_log)
+            result = self.commit(tag=argument, include_log=include_log, include_identifier=include_identifier)
 
         else:
             if offset:
@@ -126,6 +126,7 @@ class ScmBase(object):
                 identifier=parsed_commit.identifier,
                 branch=parsed_commit.branch,
                 include_log=include_log,
+                include_identifier=include_identifier,
             )
 
         if not offset:
@@ -135,6 +136,7 @@ class ScmBase(object):
             identifier=result.identifier - offset,
             branch=result.branch,
             include_log=include_log,
+            include_identifier=include_identifier,
         )
 
     @classmethod

@@ -41,7 +41,11 @@
 #import <AVFoundation/AVPlayerLayer_Private.h>
 
 #if ENABLE(MEDIA_SOURCE)
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+#import "AVStreamDataParserSPI.h"
+#else
 #import <AVFoundation/AVStreamDataParser.h>
+#endif
 #endif
 
 #if PLATFORM(IOS_FAMILY)

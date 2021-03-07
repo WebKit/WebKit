@@ -38,8 +38,6 @@ struct IOSurfaceFormatInfo
     GLenum internalFormat;
     GLenum type;
 
-    size_t componentBytes;
-
     GLenum nativeInternalFormat;
     GLenum nativeFormat;
     GLenum nativeType;
@@ -48,12 +46,12 @@ struct IOSurfaceFormatInfo
 // clang-format off
 
 static const IOSurfaceFormatInfo kIOSurfaceFormats[] = {
-    {GL_RED,      GL_UNSIGNED_BYTE,  1, GL_R8,  GL_RED,  GL_UNSIGNED_BYTE },
-    {GL_R16UI,    GL_UNSIGNED_SHORT, 2, GL_R16UI, GL_RED_INTEGER,  GL_UNSIGNED_SHORT},
-    {GL_RG,       GL_UNSIGNED_BYTE,  2, GL_RG8,  GL_RG,   GL_UNSIGNED_BYTE },
-    {GL_RGB,      GL_UNSIGNED_BYTE,  4, GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE },
-    {GL_BGRA_EXT, GL_UNSIGNED_BYTE,  4, GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE },
-    {GL_RGBA,     GL_HALF_FLOAT,     8, GL_RGBA, GL_RGBA, GL_HALF_FLOAT    },
+    {GL_RED,      GL_UNSIGNED_BYTE,  GL_R8,   GL_RED,  GL_UNSIGNED_BYTE },
+    {GL_R16UI,    GL_UNSIGNED_SHORT, GL_R16UI, GL_RED_INTEGER,  GL_UNSIGNED_SHORT},
+    {GL_RG,       GL_UNSIGNED_BYTE,  GL_RG8,  GL_RG,   GL_UNSIGNED_BYTE },
+    {GL_RGB,      GL_UNSIGNED_BYTE,  GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE },
+    {GL_BGRA_EXT, GL_UNSIGNED_BYTE,  GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE },
+    {GL_RGBA,     GL_HALF_FLOAT,     GL_RGBA, GL_RGBA, GL_HALF_FLOAT    },
 };
 
 // clang-format on
@@ -318,13 +316,10 @@ bool IOSurfaceSurfaceEAGL::validateAttributes(EGLClientBuffer buffer,
     {
         return false;
     }
-
-    // Check that the format matches this IOSurface plane
-    if (IOSurfaceGetBytesPerElementOfPlane(ioSurface, plane) !=
-        kIOSurfaceFormats[formatIndex].componentBytes)
-    {
-        return false;
-    }
+    // FIXME: Check that the format matches this IOSurface plane for pixel formats that we know of.
+    // We could map IOSurfaceGetPixelFormat to expected type plane and format type.
+    // However, the caller might supply us non-public pixel format, which makes exhaustive checks
+    // problematic.
 
     return true;
 }

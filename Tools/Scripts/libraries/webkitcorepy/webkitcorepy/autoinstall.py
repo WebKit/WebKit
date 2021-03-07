@@ -290,6 +290,11 @@ class Package(object):
                             PATHEXT=os.environ.get('PATHEXT', ''),
                             PYTHONPATH=install_location,
                             SYSTEMROOT=os.environ.get('SYSTEMROOT', ''),
+                        ) if not sys.platform.startswith('win')
+                        else dict(
+                            # Windows setuptools needs environment from vcvars
+                            os.environ,
+                            PYTHONPATH=install_location,
                         ),
                         stdout=devnull,
                         stderr=devnull,

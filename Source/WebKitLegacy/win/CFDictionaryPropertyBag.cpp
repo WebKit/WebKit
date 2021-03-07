@@ -138,20 +138,20 @@ static bool ConvertVariantToCFType(VARIANT* pVar, void** cfObj)
     else {
         // if caller expects a string, retrieve BSTR from CFStringRef
         if (V_VT(pVar) == VT_BSTR) {
-            *cfObj = (void*) MarshallingHelpers::BSTRToCFStringRef(V_BSTR(pVar));
+            *cfObj = (void*) MarshallingHelpers::BSTRToCFStringRef(V_BSTR(pVar)).leakRef();
             return true;
         } else if (V_VT(pVar) == VT_I4) {
-            *cfObj = (void*) MarshallingHelpers::intToCFNumberRef(V_I4(pVar));
+            *cfObj = (void*) MarshallingHelpers::intToCFNumberRef(V_I4(pVar)).leakRef();
             return true;
         } else if (!!(V_VT(pVar)&VT_ARRAY)) {
             if ((V_VT(pVar)&~VT_ARRAY) == VT_BSTR) {
-                *cfObj = (void*) MarshallingHelpers::safeArrayToStringArray(V_ARRAY(pVar));
+                *cfObj = (void*) MarshallingHelpers::safeArrayToStringArray(V_ARRAY(pVar)).leakRef();
                 return true;
             } else if ((V_VT(pVar)&~VT_ARRAY) == VT_I4) {
-                *cfObj = (void*) MarshallingHelpers::safeArrayToIntArray(V_ARRAY(pVar));
+                *cfObj = (void*) MarshallingHelpers::safeArrayToIntArray(V_ARRAY(pVar)).leakRef();
                 return true;
             } else if ((V_VT(pVar)&~VT_ARRAY) == VT_UNKNOWN) {
-                *cfObj = (void*) MarshallingHelpers::safeArrayToIUnknownArray(V_ARRAY(pVar));
+                *cfObj = (void*) MarshallingHelpers::safeArrayToIUnknownArray(V_ARRAY(pVar)).leakRef();
                 return true;
             }
         }
@@ -167,14 +167,13 @@ HRESULT CFDictionaryPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErr
 #if USE(CF)
     if (m_dictionary) {
         void* value;
-        CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(pszPropName);
+        auto key = MarshallingHelpers::LPCOLESTRToCFStringRef(pszPropName);
         HRESULT hr = E_FAIL;
-        if (CFDictionaryGetValueIfPresent(m_dictionary.get(), key, (const void**) &value)) {
+        if (CFDictionaryGetValueIfPresent(m_dictionary.get(), key.get(), (const void**) &value)) {
             if (ConvertCFTypeToVariant(pVar, value))
                 hr = S_OK;
         } else
             hr = E_INVALIDARG;
-        CFRelease(key);
         return hr;
     }
 #endif
@@ -191,10 +190,9 @@ HRESULT CFDictionaryPropertyBag::Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT*
     }
     void* cfObj;
     if (ConvertVariantToCFType(pVar, &cfObj)) {
-        CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(pszPropName);
-        CFDictionaryAddValue(m_dictionary.get(), key, cfObj);
+        auto key = MarshallingHelpers::LPCOLESTRToCFStringRef(pszPropName);
+        CFDictionaryAddValue(m_dictionary.get(), key.get(), cfObj);
         // CFDictionaryAddValue should automatically retain the CF objects passed in, so release them here
-        CFRelease(key);
         CFRelease(cfObj);
         return S_OK;
     }

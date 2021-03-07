@@ -72,10 +72,10 @@ static bool containsOnlyInlineStateChanges(const GraphicsContextStateChange& cha
     if (changeFlags != (changeFlags & inlineStateChangeFlags))
         return false;
 
-    if (changeFlags.contains(GraphicsContextState::StrokeColorChange) && !changes.m_state.strokeColor.isInline())
+    if (changeFlags.contains(GraphicsContextState::StrokeColorChange) && !changes.m_state.strokeColor.tryGetAsSRGBABytes())
         return false;
 
-    if (changeFlags.contains(GraphicsContextState::FillColorChange) && !changes.m_state.fillColor.isInline())
+    if (changeFlags.contains(GraphicsContextState::FillColorChange) && !changes.m_state.fillColor.tryGetAsSRGBABytes())
         return false;
 
     if (changeFlags.contains(GraphicsContextState::FillGradientChange)
@@ -104,13 +104,13 @@ void Recorder::appendStateChangeItem(const GraphicsContextStateChange& changes, 
     }
 
     if (changeFlags.contains(GraphicsContextState::StrokeColorChange))
-        append<SetInlineStrokeColor>(changes.m_state.strokeColor.asInline());
+        append<SetInlineStrokeColor>(*changes.m_state.strokeColor.tryGetAsSRGBABytes());
 
     if (changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
         append<SetStrokeThickness>(changes.m_state.strokeThickness);
 
     if (changeFlags.contains(GraphicsContextState::FillColorChange))
-        append<SetInlineFillColor>(changes.m_state.fillColor.asInline());
+        append<SetInlineFillColor>(*changes.m_state.fillColor.tryGetAsSRGBABytes());
 
     if (changeFlags.contains(GraphicsContextState::FillGradientChange))
         append<SetInlineFillGradient>(*changes.m_state.fillGradient, changes.m_state.fillGradientSpaceTransform);
@@ -146,6 +146,11 @@ void Recorder::updateState(const GraphicsContextState& state, GraphicsContextSta
 bool Recorder::canDrawImageBuffer(const ImageBuffer& imageBuffer) const
 {
     return !m_delegate || m_delegate->isCachedImageBuffer(imageBuffer);
+}
+
+RenderingMode Recorder::renderingMode() const
+{
+    return m_delegate ? m_delegate->renderingMode() : RenderingMode::Unaccelerated;
 }
 
 void Recorder::clearShadow()

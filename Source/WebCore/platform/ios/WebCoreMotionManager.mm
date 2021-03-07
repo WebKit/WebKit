@@ -178,13 +178,8 @@ static const double kGravity = 9.80665;
         if (m_headingAvailable)
             [m_locationManager startUpdatingHeading];
 
-        if (!m_updateTimer) {
-            m_updateTimer = [[NSTimer scheduledTimerWithTimeInterval:kMotionUpdateInterval
-                                                              target:self
-                                                            selector:@selector(update)
-                                                            userInfo:nil
-                                                             repeats:YES] retain];
-        }
+        if (!m_updateTimer)
+            m_updateTimer = [NSTimer scheduledTimerWithTimeInterval:kMotionUpdateInterval target:self selector:@selector(update) userInfo:nil repeats:YES];
     } else {
         [m_updateTimer invalidate];
         m_updateTimer = nil;

@@ -26,9 +26,10 @@
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCoreTestSupport {
 
-CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData) WTF_EXPORT_PRIVATE;
+RetainPtr<CFStringRef> createXMLStringFromWebArchiveData(CFDataRef webArchiveData) WTF_EXPORT_PRIVATE;
 
 } // namespace WebCoreTestSupport

@@ -20,8 +20,8 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/FrameBufferMtl.h"
-#include "libANGLE/renderer/metal/IOSurfaceSurfaceMtl.h"
 #include "libANGLE/renderer/metal/SamplerMtl.h"
+#include "libANGLE/renderer/metal/SurfaceMtl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
@@ -534,10 +534,6 @@ void TextureMtl::releaseTexture(bool releaseImages, bool releaseTextureObjectsOn
 
 angle::Result TextureMtl::ensureTextureCreated(const gl::Context *context)
 {
-    if (mBoundSurface)
-    {
-        return angle::Result::Continue;
-    }
     if (mNativeTexture)
     {
         return angle::Result::Continue;
@@ -668,7 +664,14 @@ angle::Result TextureMtl::ensureSamplerStateCreated(const gl::Context *context)
 
         samplerDesc.maxAnisotropy = 1;
     }
-
+    if(mState.getType() == gl::TextureType::Rectangle)
+    {
+        samplerDesc.normalizedCoordinates = NO;
+    }
+    else
+    {
+        samplerDesc.normalizedCoordinates = YES;
+    }
     mMetalSamplerState =
         displayMtl->getStateCache().getSamplerState(displayMtl->getMetalDevice(), samplerDesc);
 
@@ -1211,15 +1214,25 @@ angle::Result TextureMtl::setBaseLevel(const gl::Context *context, GLuint baseLe
 
 angle::Result TextureMtl::bindTexImage(const gl::Context *context, egl::Surface *surface)
 {
-    IOSurfaceSurfaceMtl *surfaceMtl = (IOSurfaceSurfaceMtl *)mtl::GetImpl(surface);
-    mBoundSurface                   = surfaceMtl;
+    releaseTexture(true);
+
+    auto pBuffer     = GetImplAs<OffscreenSurfaceMtl>(surface);
+    mNativeTexture   = pBuffer->getColorTexture();
+    mFormat          = pBuffer->getColorFormat();
+    gl::Extents size = mNativeTexture->sizeAt0();
+    mIsPow2          = gl::isPow2(size.width) && gl::isPow2(size.height) && gl::isPow2(size.depth);
+    ANGLE_TRY(ensureSamplerStateCreated(context));
+
+    // Tell context to rebind textures
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    contextMtl->invalidateCurrentTextures();
+
     return angle::Result::Continue;
 }
 
 angle::Result TextureMtl::releaseTexImage(const gl::Context *context)
 {
-    mBoundSurface = nil;
-
+    releaseTexture(true);
     return angle::Result::Continue;
 }
 
@@ -1229,12 +1242,6 @@ angle::Result TextureMtl::getAttachmentRenderTarget(const gl::Context *context,
                                                     GLsizei samples,
                                                     FramebufferAttachmentRenderTarget **rtOut)
 {
-    if (mBoundSurface)
-    {
-        ANGLE_TRY(
-            mBoundSurface->getAttachmentRenderTarget(context, binding, imageIndex, samples, rtOut));
-        return angle::Result::Continue;
-    }
     ANGLE_TRY(ensureTextureCreated(context));
 
     ContextMtl *contextMtl = mtl::GetImpl(context);
@@ -1370,7 +1377,6 @@ angle::Result TextureMtl::redefineImage(const gl::Context *context,
                                         const gl::Extents &size)
 {
     bool imageWithinLevelRange = false;
-
     if (isIndexWithinMinMaxLevels(index) && mNativeTexture && mNativeTexture->valid())
     {
         imageWithinLevelRange              = true;
@@ -1604,6 +1610,7 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
                                               const mtl::TextureRef &image)
 {
     // If source pixels are luminance or RGB8, we need to convert them to RGBA
+   
     if (mFormat.needConversion(pixelsAngleFormat.id))
     {
         return convertAndSetPerSliceSubImage(context, slice, mtlArea, internalFormat, type,
@@ -1873,6 +1880,10 @@ angle::Result TextureMtl::initializeContents(const gl::Context *context,
     const mtl::TextureRef &image = imageDef.image;
     const mtl::Format &format    = contextMtl->getPixelFormat(imageDef.formatID);
     // For Texture's image definition, we always use zero mip level.
+    if(format.metalFormat == MTLPixelFormatInvalid)
+    {
+        return angle::Result::Stop;
+    }
     return mtl::InitializeTextureContents(
         context, image, format,
         mtl::ImageNativeIndex::FromBaseZeroGLIndex(

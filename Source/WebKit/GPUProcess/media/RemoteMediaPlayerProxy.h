@@ -189,7 +189,7 @@ public:
     void wouldTaintOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(Optional<bool>)>&&);
     void setShouldUpdatePlaybackMetrics(bool);
 
-    Ref<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
+    RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void removeResource(RemoteMediaResourceIdentifier);
 
@@ -286,6 +286,11 @@ private:
     void createAudioSourceProvider();
     void setShouldEnableAudioSourceProvider(bool);
 
+#if PLATFORM(COCOA)
+    void nativeImageForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&&);
+    void pixelBufferForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&&);
+#endif
+
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
@@ -303,7 +308,7 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     std::unique_ptr<LayerHostingContext> m_fullscreenLayerHostingContext;
 #endif
-    RemoteMediaPlayerManagerProxy& m_manager;
+    WeakPtr<RemoteMediaPlayerManagerProxy> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
     RunLoop::Timer<RemoteMediaPlayerProxy> m_updateCachedStateMessageTimer;

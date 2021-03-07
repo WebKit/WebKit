@@ -30,10 +30,10 @@ class Scm(ScmBase):
     def from_url(cls, url, contributors=None):
         from webkitscmpy import remote
 
-        if remote.Svn.is_webserver(url):
-            return remote.Svn(url, contributors=contributors)
-        if remote.GitHub.is_webserver(url):
-            return remote.GitHub(url, contributors=contributors)
+        for candidate in [remote.Svn, remote.GitHub, remote.BitBucket]:
+            if candidate.is_webserver(url):
+                return candidate(url, contributors=contributors)
+
         raise OSError("'{}' is not a known SCM server".format(url))
 
     def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None):

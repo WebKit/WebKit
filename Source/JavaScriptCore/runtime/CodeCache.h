@@ -38,6 +38,7 @@
 #include "UnlinkedFunctionCodeBlock.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
+#include <wtf/MainThread.h>
 
 namespace JSC {
 
@@ -163,8 +164,10 @@ private:
     fetchFromDisk(VM& vm, const SourceCodeKey& key)
     {
         UnlinkedCodeBlockType* codeBlock = fetchFromDiskImpl<UnlinkedCodeBlockType>(vm, key);
-        if (UNLIKELY(Options::forceDiskCache()))
-            RELEASE_ASSERT(codeBlock);
+        if (UNLIKELY(Options::forceDiskCache())) {
+            if (isMainThread())
+                RELEASE_ASSERT(codeBlock);
+        }
         return codeBlock;
     }
 

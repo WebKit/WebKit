@@ -351,6 +351,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionIsRope);
 static JSC_DECLARE_HOST_FUNCTION(functionCallerSourceOrigin);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarCreateRealm);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarEvalScript);
+static JSC_DECLARE_HOST_FUNCTION(functionDollarGC);
+static JSC_DECLARE_HOST_FUNCTION(functionDollarClearKeptObjects);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentStart);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentReport);
@@ -411,9 +413,7 @@ public:
     }
 
     enum CommandLineForWorkersTag { CommandLineForWorkers };
-    CommandLine(CommandLineForWorkersTag)
-    {
-    }
+    explicit CommandLine(CommandLineForWorkersTag);
 
     Vector<Script> m_scripts;
     Vector<String> m_arguments;
@@ -434,6 +434,7 @@ public:
 
     void parseArguments(int, char**);
 };
+static LazyNeverDestroyed<CommandLine> mainCommandLine;
 
 static const char interactivePrompt[] = ">>> ";
 
@@ -628,8 +629,10 @@ private:
         addFunction(vm, dollar, "createRealm", functionDollarCreateRealm, 0);
         addFunction(vm, dollar, "detachArrayBuffer", functionTransferArrayBuffer, 1);
         addFunction(vm, dollar, "evalScript", functionDollarEvalScript, 1);
+        addFunction(vm, dollar, "gc", functionDollarGC, 0);
+        addFunction(vm, dollar, "clearKeptObjects", functionDollarClearKeptObjects, 0);
         
-        dollar->putDirect(vm, Identifier::fromString(vm, "global"), this, DontEnum);
+        dollar->putDirect(vm, Identifier::fromString(vm, "global"), globalThis(), DontEnum);
         dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"),
             CustomGetterSetter::create(vm, accessorMakeMasquerader, nullptr),
             static_cast<unsigned>(PropertyAttribute::CustomValue)
@@ -1908,16 +1911,31 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarEvalScript, (JSGlobalObject* globalObject
     
     JSValue global = callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global"));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    while (global.inherits<JSProxy>(vm))
+        global = jsCast<JSProxy*>(global)->target();
     GlobalObject* realm = jsDynamicCast<GlobalObject*>(vm, global);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (!realm)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected global to point to a global object"_s)));
-    
+
     NakedPtr<Exception> evaluationException;
     JSValue result = evaluate(realm, jscSource(sourceCode, callFrame->callerSourceOrigin(vm)), JSValue(), evaluationException);
     if (evaluationException)
         throwException(globalObject, scope, evaluationException);
     return JSValue::encode(result);
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionDollarGC, (JSGlobalObject* globalObject, CallFrame*))
+{
+    VM& vm = globalObject->vm();
+    vm.heap.collectNow(Sync, CollectionScope::Full);
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionDollarClearKeptObjects, (JSGlobalObject* globalObject, CallFrame*))
+{
+    VM& vm = globalObject->vm();
+    vm.finalizeSynchronousJSExecution();
+    return JSValue::encode(jsUndefined());
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -3362,6 +3380,11 @@ void CommandLine::parseArguments(int argc, char** argv)
         jscExit(EXIT_SUCCESS);
 }
 
+CommandLine::CommandLine(CommandLineForWorkersTag)
+    : m_treatWatchdogExceptionAsSuccess(mainCommandLine->m_treatWatchdogExceptionAsSuccess)
+{
+}
+
 template<typename Func>
 int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 {
@@ -3483,12 +3506,12 @@ int jscmain(int argc, char** argv)
 
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
-    CommandLine options(argc, argv);
+    mainCommandLine.construct(argc, argv);
 
     {
         Options::AllowUnfinalizedAccessScope scope;
         processConfigFile(Options::configFile(), "jsc");
-        if (options.m_dump)
+        if (mainCommandLine->m_dump)
             Options::dumpGeneratedBytecodes() = true;
     }
 
@@ -3555,18 +3578,18 @@ int jscmain(int argc, char** argv)
 #endif
 
     int result = runJSC(
-        options, false,
+        mainCommandLine.get(), false,
         [&] (VM& vm, GlobalObject* globalObject, bool& success) {
             UNUSED_PARAM(vm);
 #if PLATFORM(COCOA)
             vm.setOnEachMicrotaskTick(WTFMove(onEachMicrotaskTick));
 #endif
-            runWithOptions(globalObject, options, success);
+            runWithOptions(globalObject, mainCommandLine.get(), success);
         });
 
     printSuperSamplerState();
 
-    if (options.m_dumpMemoryFootprint) {
+    if (mainCommandLine->m_dumpMemoryFootprint) {
         MemoryFootprint footprint = MemoryFootprint::now();
 
         printf("Memory Footprint:\n    Current Footprint: %" PRIu64 "\n    Peak Footprint: %" PRIu64 "\n", footprint.current, footprint.peak);

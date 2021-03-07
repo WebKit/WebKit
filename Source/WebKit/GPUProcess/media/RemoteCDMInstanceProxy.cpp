@@ -66,8 +66,15 @@ void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String&
     if (!m_cdm)
         return;
 
-    if (auto* factory = m_cdm->factory())
-        factory->gpuConnectionToWebProcess().connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
+    auto* factory = m_cdm->factory();
+    if (!factory)
+        return;
+
+    auto* gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
+    if (!gpuConnectionToWebProcess)
+        return;
+
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
 }
 
 void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue)>&& completion)

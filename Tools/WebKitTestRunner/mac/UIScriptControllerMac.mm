@@ -53,14 +53,14 @@ Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
     return adoptRef(*new UIScriptControllerMac(context));
 }
 
-static NSString *nsString(JSStringRef string)
+static RetainPtr<CFStringRef> cfString(JSStringRef string)
 {
-    return CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, string));
+    return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, string));
 }
 
 void UIScriptControllerMac::replaceTextAtRange(JSStringRef text, int location, int length)
 {
-    [webView() _insertText:nsString(text) replacementRange:NSMakeRange(location == -1 ? NSNotFound : location, length)];
+    [webView() _insertText:(__bridge NSString *)cfString(text).get() replacementRange:NSMakeRange(location == -1 ? NSNotFound : location, length)];
 }
 
 void UIScriptControllerMac::zoomToScale(double scale, JSValueRef callback)

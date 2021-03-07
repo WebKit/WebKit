@@ -105,6 +105,8 @@ if (length($fontNamesIn)) {
 #include <wtf/text/AtomString.h>
 END
 
+    printMacros($F, "extern const StringImpl::StaticStringImpl", "Data", \%parameters);
+    print F "\n";
     printMacros($F, "extern MainThreadLazyNeverDestroyed<const WTF::AtomString>", "", \%parameters);
     print F "#endif\n\n";
 
@@ -1279,8 +1281,15 @@ END
 
     if ($parameters{customElementInterfaceName}) {
         print F <<END
-    if (element->isCustomElementUpgradeCandidate())
+    if (!element->isUnknownElement())
         return createWrapper<$parameters{customElementInterfaceName}>(globalObject, WTFMove(element));
+END
+;
+    }
+
+    if ("$parameters{namespace}Element" eq $parameters{fallbackJSInterfaceName}) {
+        print F <<END
+    ASSERT(element->is$parameters{fallbackJSInterfaceName}());
 END
 ;
     }

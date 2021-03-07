@@ -71,7 +71,7 @@ public:
     SimulatedXRDevice();
     ~SimulatedXRDevice();
     void setViews(Vector<Ref<FakeXRView>>&& views) { m_views = WTFMove(views); }
-    void setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>& geometry) { m_nativeBoundsGeometry = geometry; }
+    void setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&);
     void setViewerOrigin(Optional<FrameData::Pose>&& origin) { m_viewerOrigin = WTFMove(origin); }
     void setFloorOrigin(Optional<FrameData::Pose>&& origin) { m_floorOrigin = WTFMove(origin); }
     void setEmulatedPosition(bool emulated) { m_emulatedPosition = emulated; }
@@ -80,6 +80,7 @@ public:
     void simulateShutdownCompleted();
     void scheduleOnNextFrame(Function<void()>&&);
 private:
+    WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final;
     void initializeTrackingAndRendering(PlatformXR::SessionMode) final { }
     void shutDownTrackingAndRendering() final;
     bool supportsSessionShutdownNotification() const final { return m_supportsShutdownNotification; }
@@ -99,6 +100,7 @@ private:
     Timer m_frameTimer;
     RequestFrameCallback m_FrameCallback;
     Vector<Function<void()>> m_pendingUpdates;
+    FrameData::StageParameters m_stageParameters;
 };
 
 class WebFakeXRDevice final : public RefCounted<WebFakeXRDevice> {

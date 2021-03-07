@@ -1,3 +1,79 @@
+2021-03-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix my iOS Simulator build.
+        https://bugs.webkit.org/show_bug.cgi?id=222041
+
+        * pal/spi/cocoa/AVStreamDataParserSPI.h:
+        My build couldn't find what CMSampleBufferRef was supposed to mean, so I include CoreMedia.h.
+        I have no idea why all the bots build successfully.
+
+2021-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        <rdar://74748353>
+
+        Reviewed by Simon Fraser.
+
+        Add declaration for new IOSurfaceSetOwnershipIdentity() SPI, for the open source
+        SDK.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+
+2021-03-04  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUProcess] MediaController is using a ClockCM
+        https://bugs.webkit.org/show_bug.cgi?id=222094
+
+        Reviewed by Eric Carlson.
+
+        Remove `ClockCM` and use `ClockGeneric` instead because `ClockCM::currentTime()`
+        always returns NaN when "Media in GPU Process" is enabled.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/system/mac/ClockCM.h: Removed.
+        * pal/system/mac/ClockCM.mm: Removed.
+
+2021-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Enable MEDIA_SOURCE in IOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222041
+
+        Reviewed by Eric Carlson.
+
+        Add missing header declarations in AVStreamDataParserSPI.h and use it for simulator.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/AVFoundationSPI.h:
+        * pal/spi/cocoa/AVStreamDataParserSPI.h: Added.
+
+2021-03-01  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r273655.
+
+        Broke internal Mac
+
+        Reverted changeset:
+
+        "Set ownership of IOSurfaces from the GPUProcess instead of
+        the WebProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        https://commits.webkit.org/r273655
+
+2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Set ownership of IOSurfaces from the GPUProcess instead of the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222391
+        <rdar://74748353>
+
+        Reviewed by Simon Fraser.
+
+        Add declaration for new IOSurfaceSetOwnershipIdentity() SPI, for the open source
+        SDK.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+
 2021-02-22  Per Arne  <pvollan@apple.com>
 
         [macOS] Disabling relaunch on login for the WebContent process is racy

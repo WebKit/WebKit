@@ -81,7 +81,6 @@
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
-#import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -94,6 +93,7 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
 #import <wtf/FileSystem.h>
+#import <wtf/Language.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -144,6 +144,7 @@
 #endif
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 // FIXME: This is only for binary compatibility with versions of UIKit in macOS 11 that are missing the change in <rdar://problem/68524148>.
@@ -207,6 +208,8 @@ static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    setQOS(parameters.latencyQOS, parameters.throughputQOS);
+    
     SandboxExtension::consumePermanently(parameters.diagnosticsExtensionHandles);
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
@@ -350,9 +353,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         launchServicesExtension->revoke();
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     // App nap must be manually enabled when not running the NSApplication run loop.
     __CFRunLoopSetOptionsReason(__CFRunLoopOptionsEnableAppNap, CFSTR("Finished checkin as application - enable app nap"));
+#endif
+
+#if !ENABLE(CFPREFS_DIRECT_MODE)
+    WTF::listenForLanguageChangeNotifications();
 #endif
 
 #if TARGET_OS_IPHONE
@@ -386,7 +393,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     WebCore::setScreenProperties(parameters.screenProperties);
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
 #endif
 
@@ -521,7 +528,7 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
 static NSString *webProcessLoaderAccessibilityBundlePath()
 {
 #if HAVE(ACCESSIBILITY_BUNDLES_PATH)
-    return (__bridge NSString *)CFAutorelease(_AXSCopyPathForAccessibilityBundle(CFSTR("WebProcessLoader")));
+    return adoptCF(_AXSCopyPathForAccessibilityBundle(CFSTR("WebProcessLoader"))).bridgingAutorelease();
 #else
     NSString *path = (__bridge NSString *)GSSystemRootDirectory();
 #if PLATFORM(MACCATALYST)
@@ -631,21 +638,12 @@ void WebProcess::registerWithStateDumper()
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if PLATFORM(MAC)
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // Deny the WebContent process access to the WindowServer.
     // This call will not succeed if there are open WindowServer connections at this point.
     auto retval = CGSSetDenyWindowServerConnections(true);
     RELEASE_ASSERT(retval == kCGErrorSuccess);
     // Make sure that we close any WindowServer connections after checking in with Launch Services.
     CGSShutdownServerConnections();
-#else
-
-    if (![NSApp isRunning]) {
-        // This call is needed when the WebProcess is not running the NSApplication event loop.
-        // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
-        launchServicesCheckIn();
-    }
-#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
     SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
     MainThreadSharedTimer::shouldSetupPowerObserver() = false;
@@ -990,7 +988,7 @@ void WebProcess::updateFreezerStatus()
 }
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
 void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
 {
     ScrollerStyle::setUseOverlayScrollbars(useOverlayScrollbars);
@@ -1103,10 +1101,20 @@ static void setPreferenceValue(const String& domain, const String& key, id value
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 #if ASSERT_ENABLED
         id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value]);
+        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages");
 #endif
     } else
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+
+    if (key == "AppleLanguages") {
+        // We need to set AppleLanguages for the volatile domain, similarly to what we do in XPCServiceMain.mm.
+        NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
+        RetainPtr<NSMutableDictionary> newArguments = adoptNS([existingArguments mutableCopy]);
+        [newArguments setValue:value forKey:@"AppleLanguages"];
+        [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
+
+        WTF::languageDidChange();
+    }
 }
 
 void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
@@ -1136,7 +1144,6 @@ void WebProcess::unblockPreferenceService(SandboxExtension::HandleArray&& handle
 }
 #endif
 
-#if PLATFORM(IOS)
 void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
 {
     if (m_assetServiceV2Extension)
@@ -1152,7 +1159,6 @@ void WebProcess::revokeAccessToAssetServices()
     m_assetServiceV2Extension->revoke();
     m_assetServiceV2Extension = nullptr;
 }
-#endif
 
 void WebProcess::setScreenProperties(const ScreenProperties& properties)
 {

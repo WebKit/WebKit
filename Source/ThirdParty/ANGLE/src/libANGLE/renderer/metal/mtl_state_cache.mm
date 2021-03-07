@@ -76,6 +76,7 @@ MTLSamplerDescriptor *ToObjC(const SamplerDesc &desc)
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, mipFilter);
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, maxAnisotropy);
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, compareFunction);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, normalizedCoordinates);
 
     return [objCDesc ANGLE_MTL_AUTORELEASE];
 }
@@ -463,6 +464,8 @@ SamplerDesc::SamplerDesc(const gl::SamplerState &glState) : SamplerDesc()
     maxAnisotropy = static_cast<uint32_t>(glState.getMaxAnisotropy());
 
     compareFunction = GetCompareFunc(glState.getCompareFunc());
+    
+    normalizedCoordinates = YES;
 }
 
 SamplerDesc &SamplerDesc::operator=(const SamplerDesc &src)
@@ -480,10 +483,12 @@ void SamplerDesc::reset()
     minFilter = MTLSamplerMinMagFilterNearest;
     magFilter = MTLSamplerMinMagFilterNearest;
     mipFilter = MTLSamplerMipFilterNearest;
-
+    
     maxAnisotropy = 1;
 
     compareFunction = MTLCompareFunctionNever;
+    
+    normalizedCoordinates = YES;
 }
 
 bool SamplerDesc::operator==(const SamplerDesc &rhs) const

@@ -35,6 +35,7 @@
 #include "CachedTextTrack.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
+#include "HTMLMediaElement.h"
 #include "HTMLTrackElement.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"

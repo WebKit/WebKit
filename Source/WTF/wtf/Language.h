@@ -41,6 +41,8 @@ WTF_EXPORT_PRIVATE Vector<String> userPreferredLanguagesOverride();
 WTF_EXPORT_PRIVATE void overrideUserPreferredLanguages(const Vector<String>&);
 WTF_EXPORT_PRIVATE size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
 WTF_EXPORT_PRIVATE Vector<String> platformUserPreferredLanguages();
+WTF_EXPORT_PRIVATE void platformLanguageDidChange();
+
 // Called from platform specific code when the user's preferred language(s) change.
 WTF_EXPORT_PRIVATE void languageDidChange();
 
@@ -52,6 +54,7 @@ WTF_EXPORT_PRIVATE String displayNameForLanguageLocale(const String&);
 
 #if PLATFORM(COCOA)
 bool canMinimizeLanguages();
+WTF_EXPORT_PRIVATE void listenForLanguageChangeNotifications();
 RetainPtr<CFArrayRef> minimizedLanguagesFromLanguages(CFArrayRef);
 #endif
 

@@ -245,6 +245,7 @@ enum class DOMPasteAccessResponse : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class LockBackForwardList : bool;
 enum class HasInsecureContent : bool;
+enum class HighlightRequestOriginatedInApp : bool;
 enum class MouseEventPolicy : uint8_t;
 enum class NotificationDirection : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
@@ -311,6 +312,7 @@ typedef HWND PlatformViewWidget;
 #endif
 
 namespace WebKit {
+struct AppBoundNavigationTestingData;
 class AudioSessionRoutingArbitratorProxy;
 class DrawingAreaProxy;
 class GamepadData;
@@ -1335,13 +1337,13 @@ public:
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
 
     void setMediaVolume(float);
-    void setMuted(WebCore::MediaProducer::MutedStateFlags);
+    void setMuted(WebCore::MediaProducer::MutedStateFlags, CompletionHandler<void()>&& = [] { });
     bool isAudioMuted() const { return m_mutedState & WebCore::MediaProducer::AudioIsMuted; };
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
     void setMediaCaptureEnabled(bool);
     bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
-    void stopMediaCapture();
+    void stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind, CompletionHandler<void()>&& = [] { });
 
     void pauseAllMediaPlayback(CompletionHandler<void()>&&);
     void suspendAllMediaPlayback(CompletionHandler<void()>&&);
@@ -1620,7 +1622,8 @@ public:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(const ShareableBitmap::Handle&, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
+    void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
+    void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&&);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -1770,10 +1773,8 @@ public:
     bool hasQueuedKeyEvent() const;
     const NativeWebKeyboardEvent& firstQueuedKeyEvent() const;
 
-#if PLATFORM(IOS)
     void grantAccessToAssetServices();
     void revokeAccessToAssetServices();
-#endif
 
 #if PLATFORM(COCOA)
     void grantAccessToPreferenceService();
@@ -1845,7 +1846,7 @@ public:
     void syncIfMockDevicesEnabledChanged();
 
 #if ENABLE(APP_HIGHLIGHTS)
-    void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight);
+    void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
     void storeAppHighlight(const WebCore::AppHighlight&);
     void restoreAppHighlights(const Vector<Ref<WebKit::SharedMemory>>& highlights);
 #endif
@@ -1868,6 +1869,8 @@ public:
 #if PLATFORM(COCOA)
     void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
+    void appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
+    void clearAppBoundNavigationData(CompletionHandler<void()>&&);
 #endif
 
 private:

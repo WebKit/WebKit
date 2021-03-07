@@ -483,9 +483,9 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 
 #if ENABLE(IMAGE_EXTRACTION)
 
-void PageClientImpl::requestImageExtraction(const ShareableBitmap::Handle& imageData, CompletionHandler<void(ImageExtractionResult&&)>&& completion)
+void PageClientImpl::requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(ImageExtractionResult&&)>&& completion)
 {
-    m_impl->requestImageExtraction(imageData, WTFMove(completion));
+    m_impl->requestImageExtraction(imageURL, imageData, WTFMove(completion));
 }
 
 #endif

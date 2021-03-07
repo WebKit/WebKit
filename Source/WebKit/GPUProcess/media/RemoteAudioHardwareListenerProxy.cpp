@@ -34,7 +34,7 @@
 namespace WebKit {
 
 RemoteAudioHardwareListenerProxy::RemoteAudioHardwareListenerProxy(GPUConnectionToWebProcess& gpuConnection, RemoteAudioHardwareListenerIdentifier&& identifier)
-    : m_gpuConnection(gpuConnection)
+    : m_gpuConnection(makeWeakPtr(gpuConnection))
     , m_identifier(WTFMove(identifier))
     , m_listener(WebCore::AudioHardwareListener::create(*this))
 {
@@ -44,18 +44,27 @@ RemoteAudioHardwareListenerProxy::~RemoteAudioHardwareListenerProxy() = default;
 
 void RemoteAudioHardwareListenerProxy::audioHardwareDidBecomeActive()
 {
-    m_gpuConnection.connection().send(Messages::RemoteAudioHardwareListener::AudioHardwareDidBecomeActive(), m_identifier);
+    if (!m_gpuConnection)
+        return;
+
+    m_gpuConnection->connection().send(Messages::RemoteAudioHardwareListener::AudioHardwareDidBecomeActive(), m_identifier);
 }
 
 void RemoteAudioHardwareListenerProxy::audioHardwareDidBecomeInactive()
 {
-    m_gpuConnection.connection().send(Messages::RemoteAudioHardwareListener::AudioHardwareDidBecomeInactive(), m_identifier);
+    if (!m_gpuConnection)
+        return;
+
+    m_gpuConnection->connection().send(Messages::RemoteAudioHardwareListener::AudioHardwareDidBecomeInactive(), m_identifier);
 }
 
 void RemoteAudioHardwareListenerProxy::audioOutputDeviceChanged()
 {
+    if (!m_gpuConnection)
+        return;
+
     auto supportedBufferSizes = m_listener->supportedBufferSizes();
-    m_gpuConnection.connection().send(Messages::RemoteAudioHardwareListener::AudioOutputDeviceChanged(supportedBufferSizes.minimum, supportedBufferSizes.maximum), m_identifier);
+    m_gpuConnection->connection().send(Messages::RemoteAudioHardwareListener::AudioOutputDeviceChanged(supportedBufferSizes.minimum, supportedBufferSizes.maximum), m_identifier);
 }
 
 }

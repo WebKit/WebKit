@@ -32,6 +32,11 @@ typedef enum {
     WKWebViewAudioRoutingArbitrationStatusActive,
 } WKWebViewAudioRoutingArbitrationStatus;
 
+struct WKAppBoundNavigationTestingData {
+    BOOL hasLoadedAppBoundRequestTesting;
+    BOOL hasLoadedNonAppBoundRequestTesting;
+};
+
 @interface WKWebView (WKTesting)
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin;
@@ -88,5 +93,7 @@ typedef enum {
 - (void)_setPrivateClickMeasurementAttributionReportURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_lastNavigationWasAppBound:(void(^)(BOOL))completionHandler;
+- (void)_appBoundNavigationData:(void(^)(struct WKAppBoundNavigationTestingData data))completionHandler;
+- (void)_clearAppBoundNavigationData:(void(^)(void))completionHandler;
 
 @end

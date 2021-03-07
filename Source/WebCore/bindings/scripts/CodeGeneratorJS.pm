@@ -1152,7 +1152,6 @@ sub GenerateInvokeIndexedPropertySetter
     my $argument = @{$indexedSetterOperation->arguments}[1];
     my $nativeValue = JSValueToNative($interface, $argument, $value, $indexedSetterOperation->extendedAttributes->{Conditional}, "lexicalGlobalObject", "*lexicalGlobalObject", "thisObject", "", "");
     
-    push(@$outputArray, $indent . "auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));\n");
     push(@$outputArray, $indent . "auto nativeValue = ${nativeValue};\n");
     push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, true);\n");
     
@@ -1170,7 +1169,6 @@ sub GenerateInvokeNamedPropertySetter
     my $argument = @{$namedSetterOperation->arguments}[1];
     my $nativeValue = JSValueToNative($interface, $argument, $value, $namedSetterOperation->extendedAttributes->{Conditional}, "lexicalGlobalObject", "*lexicalGlobalObject", "thisObject", "", "");
     
-    push(@$outputArray, $indent . "auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));\n");
     push(@$outputArray, $indent . "auto nativeValue = ${nativeValue};\n");
     push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, true);\n");
 
@@ -1202,6 +1200,8 @@ sub GeneratePut
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
 
+    push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());\n\n");
+
     assert("CEReactions is not supported on having both named setters and indexed setters") if $namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}
         && $indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions};
     if ($namedSetterOperation) {
@@ -1232,6 +1232,7 @@ sub GeneratePut
             push(@$outputArray, "        JSValue prototype = thisObject->getPrototypeDirect(JSC::getVM(lexicalGlobalObject));\n");
             push(@$outputArray, "        bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
             push(@$outputArray, "        slot.disallowVMEntry.reset();\n");
+            push(@$outputArray, "        throwScope.assertNoException();\n");
             push(@$outputArray, "        if (!found) {\n");
             $additionalIndent .= "    ";
         }
@@ -1239,7 +1240,7 @@ sub GeneratePut
         GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "        ", $interface, $namedSetterOperation, "value");
         if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
             push(@$outputArray, $additionalIndent . "        if (!isPropertySupported)\n");
-            push(@$outputArray, $additionalIndent . "            return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);\n");
+            push(@$outputArray, $additionalIndent . "            RELEASE_AND_RETURN(throwScope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot));\n");
         }
         push(@$outputArray, $additionalIndent . "        return true;\n");
 
@@ -1255,11 +1256,14 @@ sub GeneratePut
         AddToImplIncludes("JSPluginElementFunctions.h");
 
         push(@$outputArray, "    bool putResult = false;\n");
-        push(@$outputArray, "    if (pluginElementCustomPut(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot, putResult))\n");
+        push(@$outputArray, "    bool success = pluginElementCustomPut(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot, putResult);\n");
+        push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+        push(@$outputArray, "    if (success)\n");
         push(@$outputArray, "        return putResult;\n\n");
     }
 
-    push(@$outputArray, "    return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);\n");
+    push(@$outputArray, "    throwScope.assertNoException();\n");
+    push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot));\n");
     push(@$outputArray, "}\n\n");
 }
 
@@ -1277,11 +1281,11 @@ sub GeneratePutByIndex
     
     push(@$outputArray, "bool ${className}::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool" . (!$ellidesCallsToBase ? " shouldThrow" : "") . ")\n");
     push(@$outputArray, "{\n");
-    if ($namedSetterOperation || $interface->extendedAttributes->{Plugin}) {
-        push(@$outputArray, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
-    }
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
+
+    push(@$outputArray, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
+    push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n\n");
 
     assert("CEReactions is not supported on having both named setters and indexed setters") if $namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}
         && $indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions};
@@ -1310,6 +1314,7 @@ sub GeneratePutByIndex
             push(@$outputArray, "    JSValue prototype = thisObject->getPrototypeDirect(vm);\n");
             push(@$outputArray, "    bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
             push(@$outputArray, "    slot.disallowVMEntry.reset();\n");
+            push(@$outputArray, "    throwScope.assertNoException();\n");
             push(@$outputArray, "    if (!found) {\n");
             $additionalIndent .= "    ";
         }
@@ -1317,7 +1322,7 @@ sub GeneratePutByIndex
         GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "    ", $interface, $namedSetterOperation, "value");
         if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
             push(@$outputArray, $additionalIndent . "    if (!isPropertySupported)\n");
-            push(@$outputArray, $additionalIndent . "        return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);\n");
+            push(@$outputArray, $additionalIndent . "        RELEASE_AND_RETURN(throwScope, JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow));\n");
         }
         push(@$outputArray, $additionalIndent . "    return true;\n");
         
@@ -1332,12 +1337,15 @@ sub GeneratePutByIndex
         push(@$outputArray, "    auto propertyName = Identifier::from(vm, index);\n");
         push(@$outputArray, "    PutPropertySlot putPropertySlot(thisObject, shouldThrow);\n");
         push(@$outputArray, "    bool putResult = false;\n");
-        push(@$outputArray, "    if (pluginElementCustomPut(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot, putResult))\n");
+        push(@$outputArray, "    bool success = pluginElementCustomPut(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot, putResult);\n");
+        push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+        push(@$outputArray, "    if (success)\n");
         push(@$outputArray, "        return putResult;\n\n");
     }
 
     if (!$ellidesCallsToBase) {
-        push(@$outputArray, "    return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);\n");
+        push(@$outputArray, "    throwScope.assertNoException();\n");
+        push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow));\n");
     }
     
     push(@$outputArray, "}\n\n");
@@ -1384,6 +1392,8 @@ sub GenerateDefineOwnProperty
     push(@$outputArray, "{\n");
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(object);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
+
+    push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());\n\n");
 
     assert("CEReactions is not supported on having both named setters and indexed setters") if $namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}
         && $indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions};
@@ -1446,6 +1456,7 @@ sub GenerateDefineOwnProperty
             push(@$outputArray, $additionalIndent. "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };\n");
             push(@$outputArray, $additionalIndent. "        bool found = JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot);\n");
             push(@$outputArray, $additionalIndent. "        slot.disallowVMEntry.reset();\n");
+            push(@$outputArray, $additionalIndent. "        throwScope.assertNoException();\n");
             push(@$outputArray, $additionalIndent. "        if (!found) {\n");
             $additionalIndent .= "    ";
         }
@@ -1464,7 +1475,7 @@ sub GenerateDefineOwnProperty
             GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "        ", $interface, $namedSetterOperation, "propertyDescriptor.value()");
             if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
                 push(@$outputArray, $additionalIndent . "    if (!isPropertySupported)\n");
-                push(@$outputArray, $additionalIndent . "        return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, propertyDescriptor, shouldThrow);\n");
+                push(@$outputArray, $additionalIndent . "        RELEASE_AND_RETURN(throwScope, JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, propertyDescriptor, shouldThrow));\n");
             }
             # 2.2.3. Return true.
             push(@$outputArray, $additionalIndent . "        return true;\n");
@@ -1491,6 +1502,7 @@ sub GenerateDefineOwnProperty
     }
     
     # 4. Return OrdinaryDefineOwnProperty(O, P, Desc).
+    push(@$outputArray, "    throwScope.release();\n");
     push(@$outputArray, "    return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, newPropertyDescriptor, shouldThrow);\n");
     
     push(@$outputArray, "}\n\n");
@@ -3985,6 +3997,9 @@ sub GetSkipVTableValidationForInterface
 sub ToMethodName
 {
     my $param = shift;
+
+    return $param if $param =~ /^CSSOM/;
+
     my $ret = lcfirst($param);
     $ret =~ s/cSS/css/ if $ret =~ /^cSS/;
     $ret =~ s/dOM/dom/ if $ret =~ /^dOM/;
@@ -5318,6 +5333,13 @@ sub GenerateAttributeGetterBodyDefinition
             AddToImplIncludes("JS" . $constructorType . ".h", $conditional);
             push(@$outputArray, "    return JS" . $constructorType . "::${constructorGetter}(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());\n");
         }
+    } elsif ($attribute->extendedAttributes->{CSSProperty}) {
+        $implIncludes{"CSSPropertyNames.h"} = 1;
+        my $propertyID = $attribute->extendedAttributes->{CSSProperty};
+
+        my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "impl.getPropertyValueInternal(CSSProperty${propertyID})", "*thisObject.globalObject()");
+        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+        push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, (${toJSExpression}));\n");
     } else {
         if ($attribute->extendedAttributes->{CachedAttribute}) {
             push(@$outputArray, "    if (JSValue cachedValue = thisObject.m_" . $attribute->name . ".get())\n");
@@ -5337,10 +5359,10 @@ sub GenerateAttributeGetterBodyDefinition
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->extendedAttributes->{ForwardToMapLike} or $attribute->extendedAttributes->{ForwardToSetLike};
 
         if (!IsReadonly($attribute)) {
-            my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
-            if ($callTracingCallback) {
+            my $callTracer = $attribute->extendedAttributes->{CallTracer} || $interface->extendedAttributes->{CallTracer};
+            if ($callTracer) {
                 my @callTracerArguments = ();
-                GenerateCallTracer($outputArray, $callTracingCallback, $attribute->name, \@callTracerArguments, "    ");
+                GenerateCallTracer($outputArray, $callTracer, $attribute->name, \@callTracerArguments, "    ");
             }
         }
 
@@ -5462,6 +5484,21 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    vm.heap.writeBarrier(&thisObject, value);\n");
         push(@$outputArray, "    ensureStillAliveHere(value);\n\n");
         push(@$outputArray, "    return true;\n");
+    } elsif ($attribute->extendedAttributes->{CSSProperty}) {
+        $implIncludes{"CSSPropertyNames.h"} = 1;
+
+        my $propertyID = $attribute->extendedAttributes->{CSSProperty};
+
+        my $exceptionThrower = GetAttributeExceptionThrower($interface, $attribute);
+        my $toNativeExpression = JSValueToNative($interface, $attribute, "value", $attribute->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "thisObject", "*thisObject.globalObject()", $exceptionThrower);
+
+        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+        push(@$outputArray, "    auto nativeValue = ${toNativeExpression};\n");
+        push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
+        push(@$outputArray, "    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {\n");
+        push(@$outputArray, "        return impl.setPropertyValueInternal(CSSProperty${propertyID}, WTFMove(nativeValue));\n");
+        push(@$outputArray, "    });\n");
+        push(@$outputArray, "    return true;\n");
     } elsif ($isConstructor) {
         my $constructorType = $attribute->type->name;
         $constructorType =~ s/Constructor$//;
@@ -5537,11 +5574,11 @@ sub GenerateAttributeSetterBodyDefinition
         unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{SetterCallWith}, $outputArray, "false", "thisObject"));
         unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, $outputArray, "false", "thisObject"));
 
-        my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
-        if ($callTracingCallback) {
+        my $callTracer = $attribute->extendedAttributes->{CallTracer} || $interface->extendedAttributes->{CallTracer};
+        if ($callTracer) {
             my $indent = "    ";
             my @callTracerArguments = ("nativeValue");
-            GenerateCallTracer($outputArray, $callTracingCallback, $attribute->name, \@callTracerArguments, $indent);
+            GenerateCallTracer($outputArray, $callTracer, $attribute->name, \@callTracerArguments, $indent);
         }
 
         my $functionString = "${functionName}(" . join(", ", @arguments) . ")";
@@ -6681,10 +6718,10 @@ sub GenerateImplementationFunctionCall
 {
     my ($outputArray, $operation, $interface, $functionString, $indent, $hasThrowScope) = @_;
 
-    my $callTracingCallback = $operation->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
-    if ($callTracingCallback) {
+    my $callTracer = $operation->extendedAttributes->{CallTracer} || $interface->extendedAttributes->{CallTracer};
+    if ($callTracer) {
         my @callTracerArguments = map { $_->name } @{$operation->arguments};
-        GenerateCallTracer($outputArray, $callTracingCallback, $operation->name, \@callTracerArguments, $indent);
+        GenerateCallTracer($outputArray, $callTracer, $operation->name, \@callTracerArguments, $indent);
     }
 
     my $dryRun = 1;
@@ -8069,14 +8106,14 @@ sub AddJSBuiltinIncludesIfNeeded()
 
 sub GenerateCallTracer()
 {
-    my ($outputArray, $callTracingCallback, $name, $arguments, $indent) = @_;
+    my ($outputArray, $callTracer, $name, $arguments, $indent) = @_;
 
-    AddToImplIncludes("CallTracer.h");
+    AddToImplIncludes($callTracer . ".h");
 
-    push(@$outputArray, $indent . "if (UNLIKELY(impl.callTracingActive()))\n");
-    push(@$outputArray, $indent . "    CallTracer::" . $callTracingCallback . "(impl, \"" . $name . "\"_s");
+    push(@$outputArray, $indent . "if (UNLIKELY(impl.hasActive" . $callTracer . "()))\n");
+    push(@$outputArray, $indent . "    " . $callTracer . "::recordAction(impl, \"" . $name . "\"_s");
     if (scalar(@$arguments)) {
-        push(@$outputArray, ", { " . join(", ", @$arguments) . " }");
+        push(@$outputArray, ", { " . join(", ", map { $callTracer . "::processArgument(impl, " . $_ . ")" } @$arguments) . " }");
     }
     push(@$outputArray, ");\n");
 }

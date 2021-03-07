@@ -34,6 +34,7 @@ class Commit(object):
     IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d+)\.)?(?P<identifier>-?\d+)(@(?P<branch>\S*))?$')
     NUMBER_RE = re.compile(r'^-?\d*$')
     HASH_LABEL_SIZE = 12
+    UUID_MULTIPLIER = 100
 
     class Encoder(json.JSONEncoder):
 
@@ -42,7 +43,7 @@ class Commit(object):
                 return super(Commit.Encoder, self).default(obj)
 
             result = dict()
-            for attribute in ['hash', 'revision', 'branch', 'timestamp', 'message']:
+            for attribute in ['hash', 'revision', 'branch', 'timestamp', 'order', 'message']:
                 value = getattr(obj, attribute, None)
                 if value is not None:
                     result[attribute] = value
@@ -150,7 +151,7 @@ class Commit(object):
         hash=None,
         revision=None,
         identifier=None, branch=None, branch_point=None,
-        timestamp=None, author=None, message=None,
+        timestamp=None, author=None, message=None, order=None,
     ):
         self.hash = self._parse_hash(hash, do_assert=True)
         self.revision = self._parse_revision(revision, do_assert=True)
@@ -186,6 +187,10 @@ class Commit(object):
         if timestamp and not isinstance(timestamp, int):
             raise TypeError("Expected 'timestamp' to be of type int, got '{}'".format(timestamp))
         self.timestamp = timestamp
+
+        if order and not isinstance(order, int):
+            raise TypeError("Expected 'order' to be of type int, got '{}'".format(order))
+        self.order = order or 0
 
         if author and isinstance(author, dict) and author.get('name'):
             self.author = Contributor(author.get('name'), author.get('emails'))
@@ -232,6 +237,12 @@ class Commit(object):
 
         return result
 
+    @property
+    def uuid(self):
+        if not self.timestamp:
+            return None
+        return self.timestamp * self.UUID_MULTIPLIER + self.order
+
     def __repr__(self):
         if self.branch_point and self.identifier is not None and self.branch:
             return '{}.{}@{}'.format(self.branch_point, self.identifier, self.branch)
@@ -259,8 +270,8 @@ class Commit(object):
     def __cmp__(self, other):
         if not isinstance(other, Commit):
             raise ValueError('Cannot compare commit and {}'.format(type(other)))
-        if self.timestamp and other.timestamp and self.timestamp != other.timestamp:
-            return self.timestamp - other.timestamp
+        if self.uuid and other.uuid and self.uuid != other.uuid:
+            return self.uuid - other.uuid
         if self.revision and other.revision:
             return self.revision - other.revision
         if self.identifier and other.identifier and self.branch == other.branch:

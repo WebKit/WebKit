@@ -95,11 +95,11 @@ TransformationMatrix WebXRReferenceSpace::nativeOrigin() const
     return identity;
 }
 
-RefPtr<WebXRReferenceSpace> WebXRReferenceSpace::getOffsetReferenceSpace(const WebXRRigidTransform& offsetTransform)
+ExceptionOr<Ref<WebXRReferenceSpace>> WebXRReferenceSpace::getOffsetReferenceSpace(const WebXRRigidTransform& offsetTransform)
 {
     auto* document = downcast<Document>(scriptExecutionContext());
     if (!document)
-        return nullptr;
+        return Exception { InvalidStateError };
 
     // https://immersive-web.github.io/webxr/#dom-xrreferencespace-getoffsetreferencespace
     // Set offsetSpace’s origin offset to the result of multiplying base’s origin offset by originOffset in the relevant realm of base.

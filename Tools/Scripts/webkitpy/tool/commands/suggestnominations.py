@@ -145,7 +145,6 @@ class AbstractCommitLogCommand(Command):
         }
 
 
-@DeprecatedCommand
 class SuggestNominations(AbstractCommitLogCommand):
     name = "suggest-nominations"
     help_text = "Suggest contributors for committer/reviewer nominations"

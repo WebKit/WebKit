@@ -84,9 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(constructIntlListFormat, (JSGlobalObject* globalObject,
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = newTarget == callFrame->jsCallee()
-        ? globalObject->listFormatStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->listFormatStructure());
+    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, listFormatStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
     IntlListFormat* listFormat = IntlListFormat::create(vm, structure);

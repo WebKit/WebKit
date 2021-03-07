@@ -610,19 +610,23 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
             // setMaxDescent booleans are used to ensure that we're willing to initially set maxAscent/Descent to negative
             // values.
             ascent -= floorf(child->logicalTop());
-            descent += child->logicalTop();
+            auto isMaxAscent = false;
             if (affectsAscent) {
                 if (maxAscent < ascent || !setMaxAscent) {
                     maxAscent = ascent;
                     setMaxAscent = true;
                     maxAscentInlineBoxList.clear();
                 }
-                if (maxAscent == ascent) {
+                isMaxAscent = maxAscent == ascent;
+                if (isMaxAscent) {
                     // A line can have multiple inline boxes with the same max ascent.
                     maxAscentInlineBoxList.append(child);
+
                 }
             }
-
+            // In order to make sure the inline level box is fully enclosed, we should always ceil the descent (containing block's height is max ascent + max descent).
+            // However when the box's logical top is floored (see below), the descent value should also be adjusted in the same direction. 
+            descent += isMaxAscent ? floorf(child->logicalTop()) : ceilf(child->logicalTop());
             if (affectsDescent && (maxDescent < descent || !setMaxDescent)) {
                 maxDescent = descent;
                 setMaxDescent = true;

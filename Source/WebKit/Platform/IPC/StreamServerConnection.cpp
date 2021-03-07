@@ -61,15 +61,15 @@ void StreamServerConnectionBase::enqueueMessage(Connection&, std::unique_ptr<Dec
 
 Optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAquire()
 {
-    size_t receiverLimit = sharedSenderOffset().load(std::memory_order_acquire);
-    if (receiverLimit == StreamConnectionBuffer::senderOffsetReceiverIsSleepingTag)
+    size_t serverLimit = sharedClientOffset().load(std::memory_order_acquire);
+    if (serverLimit == StreamConnectionBuffer::clientOffsetServerIsSleepingTag)
         return WTF::nullopt;
-    auto result = alignedSpan(m_receiverOffset, receiverLimit);
+    auto result = alignedSpan(m_serverOffset, serverLimit);
     if (result.size < minimumMessageSize) {
-        receiverLimit = sharedSenderOffset().compareExchangeStrong(receiverLimit, StreamConnectionBuffer::senderOffsetReceiverIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
-        ASSERT(!(receiverLimit & StreamConnectionBuffer::senderOffsetReceiverIsSleepingTag));
-        receiverLimit = clampedLimit(receiverLimit);
-        result = alignedSpan(m_receiverOffset, receiverLimit);
+        serverLimit = sharedClientOffset().compareExchangeStrong(serverLimit, StreamConnectionBuffer::clientOffsetServerIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
+        ASSERT(!(serverLimit & StreamConnectionBuffer::clientOffsetServerIsSleepingTag));
+        serverLimit = clampedLimit(serverLimit);
+        result = alignedSpan(m_serverOffset, serverLimit);
     }
 
     if (result.size >= minimumMessageSize)
@@ -81,21 +81,21 @@ void StreamServerConnectionBase::release(size_t readSize)
 {
     ASSERT(readSize);
     readSize = std::max(readSize, minimumMessageSize);
-    size_t receiverOffset = wrapOffset(alignOffset(m_receiverOffset) + readSize);
+    size_t serverOffset = wrapOffset(alignOffset(m_serverOffset) + readSize);
 
 #if PLATFORM(COCOA)
-    size_t oldReceiverOffset = sharedReceiverOffset().exchange(receiverOffset, std::memory_order_acq_rel);
-    // If the sender wrote over receiverOffset, it means the sender is waiting.
-    if (oldReceiverOffset == StreamConnectionBuffer::receiverOffsetSenderIsWaitingTag)
-        m_buffer.senderWaitSemaphore().signal();
+    size_t oldServerOffset = sharedServerOffset().exchange(serverOffset, std::memory_order_acq_rel);
+    // If the client wrote over serverOffset, it means the client is waiting.
+    if (oldServerOffset == StreamConnectionBuffer::serverOffsetClientIsWaitingTag)
+        m_buffer.clientWaitSemaphore().signal();
     else
-        ASSERT(!(oldReceiverOffset & StreamConnectionBuffer::receiverOffsetSenderIsWaitingTag));
+        ASSERT(!(oldServerOffset & StreamConnectionBuffer::serverOffsetClientIsWaitingTag));
 #else
-    sharedReceiverOffset().store(receiverOffset, std::memory_order_release);
+    sharedServerOffset().store(serverOffset, std::memory_order_release);
     // IPC::Semaphore not implemented for the platform. Client will poll and yield.
 #endif
 
-    m_receiverOffset = receiverOffset;
+    m_serverOffset = serverOffset;
 }
 
 StreamServerConnectionBase::Span StreamServerConnectionBase::alignedSpan(size_t offset, size_t limit)

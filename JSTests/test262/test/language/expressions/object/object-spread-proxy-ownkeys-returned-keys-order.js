@@ -8,6 +8,7 @@ info: |
   PropertyDefinition : ... AssignmentExpression
 
   [...]
+  3. Let excludedNames be a new empty List.
   4. Return ? CopyDataProperties(object, fromValue, excludedNames).
 
   CopyDataProperties ( target, source, excludedItems )

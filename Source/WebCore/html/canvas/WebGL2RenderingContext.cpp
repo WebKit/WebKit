@@ -48,6 +48,7 @@
 #include "RenderBox.h"
 #include "RuntimeEnabledFeatures.h"
 #include "WebGLActiveInfo.h"
+#include "WebGLBuffer.h"
 #include "WebGLCompressedTextureASTC.h"
 #include "WebGLCompressedTextureATC.h"
 #include "WebGLCompressedTextureETC.h"
@@ -57,14 +58,19 @@
 #include "WebGLCompressedTextureS3TCsRGB.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
+#include "WebGLFramebuffer.h"
 #include "WebGLLoseContext.h"
 #include "WebGLMultiDraw.h"
+#include "WebGLProgram.h"
 #include "WebGLQuery.h"
+#include "WebGLRenderbuffer.h"
 #include "WebGLSampler.h"
 #include "WebGLSync.h"
 #include "WebGLTexture.h"
 #include "WebGLTransformFeedback.h"
+#include "WebGLUniformLocation.h"
 #include "WebGLVertexArrayObject.h"
+#include "WebGLVertexArrayObjectOES.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>

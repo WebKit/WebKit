@@ -30,6 +30,7 @@
 #include "InlineLine.h"
 #include "InlineRect.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace Layout {
 class BoxGeometry;
 class InlineFormattingContext;
 class LineBoxBuilder;
+struct SimplifiedVerticalAlignment;
 
 //   ____________________________________________________________ Line Box
 // |                                    --------------------
@@ -58,19 +60,18 @@ class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct InlineLevelBox {
-        WTF_MAKE_ISO_ALLOCATED_INLINE(InlineLevelBox);
     public:
-        static std::unique_ptr<LineBox::InlineLevelBox> createRootInlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-        static std::unique_ptr<LineBox::InlineLevelBox> createInlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-        static std::unique_ptr<LineBox::InlineLevelBox> createAtomicInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize);
-        static std::unique_ptr<LineBox::InlineLevelBox> createLineBreakBox(const Box&, InlineLayoutUnit logicalLeft);
-        static std::unique_ptr<LineBox::InlineLevelBox> createGenericInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft);
+        static LineBox::InlineLevelBox createInlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        static LineBox::InlineLevelBox createAtomicInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize);
+        static LineBox::InlineLevelBox createLineBreakBox(const Box&, InlineLayoutUnit logicalLeft);
+        static LineBox::InlineLevelBox createGenericInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft);
 
         InlineLayoutUnit baseline() const { return m_baseline; }
         Optional<InlineLayoutUnit> descent() const { return m_descent; }
         // See https://www.w3.org/TR/css-inline-3/#layout-bounds
         struct LayoutBounds {
             InlineLayoutUnit height() const { return ascent + descent; }
+            bool operator==(const LayoutBounds& other) const { return ascent == other.ascent && descent == other.descent; }
 
             InlineLayoutUnit ascent { 0 };
             InlineLayoutUnit descent { 0 };
@@ -103,6 +104,7 @@ public:
         InlineLevelBox() = default;
 
     private:
+        friend struct SimplifiedVerticalAlignment;
         friend class LineBoxBuilder;
         friend class LineBox;
 
@@ -131,7 +133,7 @@ public:
         Type m_type { Type::InlineBox };
     };
 
-    LineBox(const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, size_t numberOfRuns);
+    LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, size_t numberOfRuns);
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalWidth() const { return logicalSize().width(); }
@@ -140,40 +142,37 @@ public:
     InlineLayoutSize logicalSize() const { return logicalRect().size(); }
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
-    Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
-
     // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
     bool hasContent() const { return m_hasContent; }
     bool hasInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::InlineBox); }
     bool hasNonInlineBox() const { return m_boxTypes.containsAny({ InlineLevelBox::Type::AtomicInlineLevelBox, InlineLevelBox::Type::LineBreakBox, InlineLevelBox::Type::GenericInlineLevelBox }); }
     bool hasAtomicInlineLevelBox() const { return m_boxTypes.contains(InlineLevelBox::Type::AtomicInlineLevelBox); }
 
-    const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
+    const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return const_cast<LineBox&>(*this).inlineLevelBoxForLayoutBox(layoutBox); }
 
     InlineRect logicalRectForTextRun(const Line::Run&) const;
     InlineRect logicalRectForLineBreakBox(const Box&) const;
-    InlineRect logicalRectForRootInlineBox() const { return m_rootInlineBox->logicalRect(); }
+    InlineRect logicalRectForRootInlineBox() const { return m_rootInlineBox.logicalRect(); }
     InlineRect logicalBorderBoxForAtomicInlineLevelBox(const Box&, const BoxGeometry&) const;
     InlineRect logicalBorderBoxForInlineBox(const Box&, const BoxGeometry&) const;
 
-    const InlineLevelBox& rootInlineBox() const { return *m_rootInlineBox; }
-    using InlineLevelBoxList = Vector<std::unique_ptr<InlineLevelBox>>;
+    const InlineLevelBox& rootInlineBox() const { return m_rootInlineBox; }
+    using InlineLevelBoxList = Vector<InlineLevelBox>;
     const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
 
-    InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox->logicalTop() + m_rootInlineBox->baseline(); }
+    InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox.logicalTop() + m_rootInlineBox.baseline(); }
 
 private:
     friend class LineBoxBuilder;
 
     void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
-    void setHorizontalAlignmentOffset(InlineLayoutUnit horizontalAlignmentOffset) { m_horizontalAlignmentOffset = horizontalAlignmentOffset; }
 
-    void addRootInlineBox(std::unique_ptr<InlineLevelBox>&&);
-    void addInlineLevelBox(std::unique_ptr<InlineLevelBox>&&);
+    void addInlineLevelBox(InlineLevelBox&&);
+    InlineLevelBoxList& nonRootInlineLevelBoxes() { return m_nonRootInlineLevelBoxList; }
 
-    InlineLevelBox& rootInlineBox() { return *m_rootInlineBox; }
+    InlineLevelBox& rootInlineBox() { return m_rootInlineBox; }
 
-    InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
+    InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return &layoutBox == &m_rootInlineBox.layoutBox() ? m_rootInlineBox : m_nonRootInlineLevelBoxList[m_nonRootInlineLevelBoxMap.get(&layoutBox)]; }
     InlineRect logicalRectForInlineLevelBox(const Box& layoutBox) const;
 
     void setHasContent(bool hasContent) { m_hasContent = hasContent; }
@@ -182,38 +181,32 @@ private:
     InlineRect m_logicalRect;
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     bool m_hasContent { false };
-    Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 
-    std::unique_ptr<InlineLevelBox> m_rootInlineBox;
+    InlineLevelBox m_rootInlineBox;
     InlineLevelBoxList m_nonRootInlineLevelBoxList;
 
-    HashMap<const Box*, InlineLevelBox*> m_inlineLevelBoxRectMap;
+    HashMap<const Box*, size_t> m_nonRootInlineLevelBoxMap;
 };
 
-inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createRootInlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+inline LineBox::InlineLevelBox LineBox::InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize)
 {
-    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { logicalWidth, { } }, Type::RootInlineBox);
+    return LineBox::InlineLevelBox { layoutBox, logicalLeft, logicalSize, Type::AtomicInlineLevelBox };
 }
 
-inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize)
+inline LineBox::InlineLevelBox LineBox::InlineLevelBox::createInlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
-    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, logicalSize, Type::AtomicInlineLevelBox);
+    return LineBox::InlineLevelBox { layoutBox, logicalLeft, InlineLayoutSize { logicalWidth, { } }, Type::InlineBox };
 }
 
-inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createInlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+inline LineBox::InlineLevelBox LineBox::InlineLevelBox::createLineBreakBox(const Box& layoutBox, InlineLayoutUnit logicalLeft)
 {
-    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { logicalWidth, { } }, Type::InlineBox);
+    return LineBox::InlineLevelBox { layoutBox, logicalLeft, InlineLayoutSize { }, Type::LineBreakBox };
 }
 
-inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createLineBreakBox(const Box& layoutBox, InlineLayoutUnit logicalLeft)
+inline LineBox::InlineLevelBox LineBox::InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft)
 {
-    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { }, Type::LineBreakBox);
-}
-
-inline std::unique_ptr<LineBox::InlineLevelBox> LineBox::InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft)
-{
-    return makeUnique<LineBox::InlineLevelBox>(layoutBox, logicalLeft, InlineLayoutSize { }, Type::GenericInlineLevelBox);
+    return LineBox::InlineLevelBox { layoutBox, logicalLeft, InlineLayoutSize { }, Type::GenericInlineLevelBox };
 }
 
 }

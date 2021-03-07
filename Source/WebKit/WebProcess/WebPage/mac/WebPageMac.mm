@@ -35,7 +35,7 @@
 #import "FontInfo.h"
 #import "FrameInfoData.h"
 #import "InjectedBundleHitTestResult.h"
-#import "PDFKitImports.h"
+#import "PDFKitSoftLink.h"
 #import "PDFPlugin.h"
 #import "PageBanner.h"
 #import "PluginView.h"
@@ -199,7 +199,7 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) const
 {
     return pdfPluginEnabled()
-        && classFromPDFKit(@"PDFLayerController")
+        && getPDFLayerControllerClass()
         && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType)
             || (contentType.isEmpty()
                 && (path.endsWithIgnoringASCIICase(".pdf") || path.endsWithIgnoringASCIICase(".ps"))));
@@ -733,7 +733,7 @@ static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRe
     CGAffineTransform transform = CGContextGetCTM(context);
 
     for (PDFAnnotation *annotation in [pdfPage annotations]) {
-        if (![annotation isKindOfClass:pdfAnnotationLinkClass()])
+        if (![annotation isKindOfClass:getPDFAnnotationLinkClass()])
             continue;
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN

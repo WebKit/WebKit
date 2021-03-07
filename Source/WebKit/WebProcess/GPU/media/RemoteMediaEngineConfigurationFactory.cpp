@@ -50,24 +50,30 @@ RemoteMediaEngineConfigurationFactory::~RemoteMediaEngineConfigurationFactory() 
 void RemoteMediaEngineConfigurationFactory::registerFactory()
 {
     MediaEngineConfigurationFactory::clearFactories();
-    MediaEngineConfigurationFactory::installFactory({
-        [weakThis = makeWeakPtr(this)] (MediaDecodingConfiguration&& configuration, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback) {
-            if (!weakThis) {
-                callback({{ }, WTFMove(configuration)});
-                return;
-            }
 
-            weakThis->createDecodingConfiguration(WTFMove(configuration), WTFMove(callback));
-        },
-        [weakThis = makeWeakPtr(this)] (MediaEncodingConfiguration&& configuration, MediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback) {
-            if (!weakThis) {
-                callback({{ }, WTFMove(configuration)});
-                return;
-            }
+    auto createDecodingConfiguration = [weakThis = makeWeakPtr(this)] (MediaDecodingConfiguration&& configuration, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback) {
+        if (!weakThis) {
+            callback({{ }, WTFMove(configuration)});
+            return;
+        }
 
-            weakThis->createEncodingConfiguration(WTFMove(configuration), WTFMove(callback));
-        },
-    });
+        weakThis->createDecodingConfiguration(WTFMove(configuration), WTFMove(callback));
+    };
+
+#if PLATFORM(COCOA)
+    MediaEngineConfigurationFactory::CreateEncodingConfiguration createEncodingConfiguration = nullptr;
+#else
+    auto createEncodingConfiguration = [weakThis = makeWeakPtr(this)] (MediaEncodingConfiguration&& configuration, MediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback) {
+        if (!weakThis) {
+            callback({{ }, WTFMove(configuration)});
+            return;
+        }
+
+        weakThis->createEncodingConfiguration(WTFMove(configuration), WTFMove(callback));
+    };
+#endif
+
+    MediaEngineConfigurationFactory::installFactory({ WTFMove(createDecodingConfiguration), WTFMove(createEncodingConfiguration) });
 }
 
 const char* RemoteMediaEngineConfigurationFactory::supplementName()

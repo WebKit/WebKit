@@ -30,6 +30,8 @@
 
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit", 0 };
 
@@ -45,13 +47,9 @@ NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const c
 
     NSBundle *bundle;
     if (stringsBundle == NULL) {
-        static NSBundle *mainBundle;
-        if (mainBundle == nil) {
-            mainBundle = [NSBundle mainBundle];
-            ASSERT(mainBundle);
-            CFRetain(mainBundle);
-        }
-        bundle = mainBundle;
+        static NeverDestroyed<RetainPtr<NSBundle>> mainBundle = [NSBundle mainBundle];
+        ASSERT(mainBundle.get());
+        bundle = mainBundle.get().get();
     } else {
         bundle = stringsBundle->bundle;
         if (bundle == nil) {
@@ -61,9 +59,8 @@ NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const c
         }
     }
     NSString *notFound = @"localized string not found";
-    CFStringRef keyString = CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull);
-    NSString *result = [bundle localizedStringForKey:(__bridge NSString *)keyString value:notFound table:nil];
-    CFRelease(keyString);
+    auto keyString = adoptCF(CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
+    NSString *result = [bundle localizedStringForKey:(__bridge NSString *)keyString.get() value:notFound table:nil];
     ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key);
     return result;
 }

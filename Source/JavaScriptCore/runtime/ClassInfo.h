@@ -81,9 +81,6 @@ struct MethodTable {
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnPropertyNames);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnSpecialPropertyNames);
 
-    using GetEnumerableLengthFunctionPtr = uint32_t (*)(JSGlobalObject*, JSObject*);
-    GetEnumerableLengthFunctionPtr METHOD_TABLE_ENTRY(getEnumerableLength);
-
     using ClassNameFunctionPtr = String (*)(const JSObject*, VM&);
     ClassNameFunctionPtr METHOD_TABLE_ENTRY(className);
 
@@ -172,7 +169,6 @@ struct MethodTable {
         &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
         &ClassName::getOwnSpecialPropertyNames, \
-        &ClassName::getEnumerableLength, \
         &ClassName::className, \
         &ClassName::toStringName, \
         &ClassName::customHasInstance, \

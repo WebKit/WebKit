@@ -227,6 +227,8 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
     if (candidateElement.focused() != element.focused())
         return false;
+    if (candidateElement.hasFocusVisible() != element.hasFocusVisible())
+        return false;
     if (candidateElement.hasFocusWithin() != element.hasFocusWithin())
         return false;
     if (candidateElement.isBeingDragged() != element.isBeingDragged())

@@ -934,7 +934,6 @@ public:
                 m_pattern.m_containsUnsignedLengthPattern = true;
         }
         
-        ASSERT(minimumInputSize != UINT_MAX);
         ASSERT(maximumCallFrameSize >= initialCallFrameSize);
 
         disjunction->m_hasFixedSize = hasFixedSize;

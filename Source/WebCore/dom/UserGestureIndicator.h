@@ -102,7 +102,7 @@ public:
 
     MonotonicTime startTime() const { return m_startTime; }
 
-    bool isValidForDocument(Document&) const;
+    bool isValidForDocument(const Document&) const;
 
 private:
     UserGestureToken(ProcessingUserGestureState, UserGestureType, Document*);
@@ -123,7 +123,7 @@ class UserGestureIndicator {
 public:
     WEBCORE_EXPORT static RefPtr<UserGestureToken> currentUserGesture();
 
-    WEBCORE_EXPORT static bool processingUserGesture(Document* = nullptr);
+    WEBCORE_EXPORT static bool processingUserGesture(const Document* = nullptr);
     WEBCORE_EXPORT static bool processingUserGestureForMedia();
 
     // If a document is provided, its last known user gesture timestamp is updated.

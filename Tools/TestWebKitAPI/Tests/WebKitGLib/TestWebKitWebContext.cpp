@@ -379,12 +379,14 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     locale.reset(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(locale.get(), ==, expectedDefaultLanguage);
 
-    // An invalid locale should throw an exception.
+    // An invalid locale should not be used.
     const char* invalidLanguage[] = { "A", nullptr };
     webkit_web_context_set_preferred_languages(test->m_webContext.get(), invalidLanguage);
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
     g_assert_nonnull(javascriptResult);
-    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_no_error(error.get());
+    locale.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(locale.get(), !=, "A");
 }
 
 #if USE(SOUP2)

@@ -1694,6 +1694,14 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
 
 void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& result)
 {
+    // If the element specifies its tree rows through aria-owns, return that first.
+    AccessibilityChildrenVector ariaOwns;
+    ariaOwnsElements(ariaOwns);
+    if (ariaOwns.size()) {
+        result.appendVector(ariaOwns);
+        return;
+    }
+    
     for (const auto& child : children()) {
         // Add tree items as the rows.
         if (child->roleValue() == AccessibilityRole::TreeItem)

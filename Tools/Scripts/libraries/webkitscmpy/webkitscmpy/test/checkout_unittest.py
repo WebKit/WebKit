@@ -32,7 +32,7 @@ class TestCheckout(unittest.TestCase):
 
     def test_checkout_git(self):
         with OutputCapture(), mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
-            self.assertEqual('bae5d1e90999d4f916a8a15810ccfa43f37a2fd6', local.Git(self.path).commit().hash)
+            self.assertEqual('d8bce26fa65c6fc8f39c17927abb77f69fab82fc', local.Git(self.path).commit().hash)
 
             self.assertEqual(0, program.main(
                 args=('checkout', '2@main'),
@@ -43,7 +43,7 @@ class TestCheckout(unittest.TestCase):
 
     def test_checkout_git_svn(self):
         with OutputCapture(), mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
-            self.assertEqual('bae5d1e90999d4f916a8a15810ccfa43f37a2fd6', local.Git(self.path).commit().hash)
+            self.assertEqual('d8bce26fa65c6fc8f39c17927abb77f69fab82fc', local.Git(self.path).commit().hash)
 
             self.assertEqual(0, program.main(
                 args=('checkout', '2.2@branch-a'),

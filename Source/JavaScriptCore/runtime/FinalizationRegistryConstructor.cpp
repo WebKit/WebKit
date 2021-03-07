@@ -69,9 +69,7 @@ JSC_DEFINE_HOST_FUNCTION(constructFinalizationRegistry, (JSGlobalObject* globalO
         return throwVMTypeError(globalObject, scope, "First argument to FinalizationRegistry should be a function"_s);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* finalizationRegistryStructure = callFrame->jsCallee() == newTarget
-        ? globalObject->finalizationRegistryStructure()
-        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->finalizationRegistryStructure());
+    Structure* finalizationRegistryStructure = JSC_GET_DERIVED_STRUCTURE(vm, finalizationRegistryStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     RELEASE_AND_RETURN(scope, JSValue::encode(JSFinalizationRegistry::create(vm, finalizationRegistryStructure, callFrame->uncheckedArgument(0).getObject())));
 }

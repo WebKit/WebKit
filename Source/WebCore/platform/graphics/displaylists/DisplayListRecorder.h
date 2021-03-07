@@ -68,6 +68,7 @@ public:
         virtual void cacheNativeImage(NativeImage&) { }
         virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
         virtual void cacheFont(Font&) { }
+        virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
     };
 
     void flushContext(FlushIdentifier identifier) { append<FlushContext>(identifier); }
@@ -77,6 +78,7 @@ private:
     bool hasPlatformContext() const override { return false; }
     bool canDrawImageBuffer(const ImageBuffer&) const override;
     PlatformGraphicsContext* platformContext() const override { return nullptr; }
+    RenderingMode renderingMode() const override;
 
     void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) override;
     void clearShadow() override;

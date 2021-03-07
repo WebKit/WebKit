@@ -52,8 +52,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-
+#if PLATFORM(MAC)
 static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
 {
     auto currentModifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
@@ -72,7 +71,6 @@ static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
     
     return modifiers;
 }
-
 #endif
 
 static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const unsigned char* bytes, NSUInteger length)
@@ -177,7 +175,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if (additionalClassesForParameterCoderFunction)
         additionalClassesForParameterCoderFunction(toAPI(this), toAPI(initializationUserData));
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC)
     // Swizzle [NSEvent modiferFlags], since it always returns 0 when the WindowServer is blocked.
     Method method = class_getClassMethod([NSEvent class], @selector(modifierFlags));
     method_setImplementation(method, reinterpret_cast<IMP>(currentModifierFlags));

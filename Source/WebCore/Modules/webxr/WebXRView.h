@@ -39,23 +39,36 @@ namespace WebCore {
 
 class WebXRFrame;
 class WebXRRigidTransform;
+class WebXRSession;
 
 class WebXRView : public RefCounted<WebXRView> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(WebXRView, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<WebXRView> create(XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
+    WEBCORE_EXPORT static Ref<WebXRView> create(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
     WEBCORE_EXPORT ~WebXRView();
 
+    const WebXRFrame& frame() const { return m_frame.get(); }
     XREye eye() const { return m_eye; }
     const Float32Array& projectionMatrix() const { return m_projection.get(); }
     const WebXRRigidTransform& transform() const { return m_transform.get(); }
 
-private:
-    WebXRView(XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
+    Optional<double> recommendedViewportScale() const;
+    void requestViewportScale(Optional<double>);
 
+    double requestedViewportScale() const { return m_requestedViewportScale; }
+    bool isViewportModifiable() const { return m_viewportModifiable; }
+    void setViewportModifiable(bool modifiable) { m_viewportModifiable = modifiable; }
+
+private:
+    WebXRView(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
+
+    Ref<WebXRFrame> m_frame;
     XREye m_eye;
     Ref<WebXRRigidTransform> m_transform;
     Ref<Float32Array> m_projection;
+    bool m_viewportModifiable { false };
+    double m_requestedViewportScale { 1.0 };
+
 };
 
 } // namespace WebCore

@@ -79,6 +79,9 @@ public:
     void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
+    void microphoneCaptureChanged() final;
+    void cameraCaptureChanged() final;
+
 protected:
     WeakObjCPtr<WKWebView> m_webView;
     std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;

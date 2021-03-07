@@ -1279,8 +1279,7 @@ static void autoActivateFont(const String& name, CGFloat size)
     CFTypeRef values[] = { fontName.get() };
     auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-    if (auto newFont = CTFontCreateWithFontDescriptor(descriptor.get(), size, nullptr))
-        CFRelease(newFont);
+    auto newFont = adoptCF(CTFontCreateWithFontDescriptor(descriptor.get(), size, nullptr));
 }
 #endif
 

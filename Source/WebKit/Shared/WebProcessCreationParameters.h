@@ -141,6 +141,8 @@ struct WebProcessCreationParameters {
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;
     uint32_t uiProcessSDKVersion { 0 };
+    int latencyQOS { 0 };
+    int throughputQOS { 0 };
 #endif
 
     ProcessID presentingApplicationPID { 0 };

@@ -133,6 +133,7 @@ private:
     RefPtr<WorkQueue> m_audioMediaStreamTrackRendererQueue;
     RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
 #endif
+    uint64_t m_orientation { 0 };
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     RefPtr<WorkQueue> m_libWebRTCCodecsQueue;

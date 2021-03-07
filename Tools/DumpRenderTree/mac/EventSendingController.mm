@@ -809,16 +809,15 @@ static NSUInteger swizzledEventPressedMouseButtons()
 {
 #if !PLATFORM(IOS_FAMILY)
     CGScrollEventUnit unit = continuously ? kCGScrollEventUnitPixel : kCGScrollEventUnitLine;
-    CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent2(NULL, unit, 2, y, x, 0);
+    auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(NULL, unit, 2, y, x, 0));
     
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
     CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - lastMousePosition.y);
-    CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
+    CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
-    NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent];
-    CFRelease(cgScrollEvent);
+    NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
 
     NSView *subView = [[mainFrame webView] hitTest:[scrollEvent locationInWindow]];
     if (subView) {
@@ -875,19 +874,18 @@ static NSUInteger swizzledEventPressedMouseButtons()
     if (momentum == kCGMomentumScrollPhaseEnd)
         _sentMomentumPhaseEnd = YES;
 
-    CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent2(NULL, kCGScrollEventUnitLine, 2, y, x, 0);
+    auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(NULL, kCGScrollEventUnitLine, 2, y, x, 0));
 
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
     CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - lastMousePosition.y);
-    CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
-    CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventIsContinuous, 1);
-    CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventScrollPhase, phase);
-    CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventMomentumPhase, momentum);
+    CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, phase);
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, momentum);
     
-    NSEvent* scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent];
-    CFRelease(cgScrollEvent);
+    NSEvent* scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
 
     if (NSView* targetView = [[mainFrame webView] hitTest:[scrollEvent locationInWindow]]) {
         [NSApp _setCurrentEvent:scrollEvent];

@@ -101,20 +101,6 @@
 #undef GST_USE_UNSTABLE_API
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_MPEGTS)
 
-#define CREATE_TRACK(type, Type) G_STMT_START {                         \
-        m_has##Type = true;                                             \
-        if (!useMediaSource) {                                          \
-            RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), type##TrackIndex++, stream); \
-            if (!track->trackIndex()) {                                 \
-                track->setActive(true);                                 \
-                m_wanted##Type##StreamId = track->id();                 \
-                m_requested##Type##StreamId = track->id();              \
-            }                                                           \
-            m_##type##Tracks.add(track->id(), track);                   \
-            m_player->add##Type##Track(*track);                         \
-        }                                                               \
-    } G_STMT_END
-
 #if USE(GSTREAMER_GL)
 #include "GLVideoSinkGStreamer.h"
 #include "VideoTextureCopierGStreamer.h"
@@ -147,11 +133,6 @@ using namespace std;
 #if USE(GSTREAMER_HOLEPUNCH)
 static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
 #endif
-
-static void busMessageCallback(GstBus*, GstMessage* message, MediaPlayerPrivateGStreamer* player)
-{
-    player->handleMessage(message);
-}
 
 static void initializeDebugCategory()
 {
@@ -244,11 +225,10 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     }
 
     if (m_pipeline) {
-        GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+        auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
         ASSERT(bus);
-        g_signal_handlers_disconnect_by_func(bus.get(), gpointer(busMessageCallback), this);
+        g_signal_handlers_disconnect_matched(bus.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
         gst_bus_remove_signal_watch(bus.get());
-        gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
         g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     }
 
@@ -1482,16 +1462,7 @@ void MediaPlayerPrivateGStreamer::playbin3SendSelectStreamsIfAppropriate()
     g_list_free_full(streams, reinterpret_cast<GDestroyNotify>(g_free));
 }
 
-template<typename K, typename V>
-HashSet<K> hashSetFromHashMapKeys(const HashMap<K, V>& hashMap)
-{
-    HashSet<K> keys;
-    for (auto& key : hashMap.keys())
-        keys.add(key);
-    return keys;
-}
-
-void MediaPlayerPrivateGStreamer::updateTracks(GRefPtr<GstStreamCollection>&& streamCollection)
+void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection>& streamCollection)
 {
     ASSERT(!m_isLegacyPlaybin);
 
@@ -1502,29 +1473,46 @@ void MediaPlayerPrivateGStreamer::updateTracks(GRefPtr<GstStreamCollection>&& st
     bool oldHasAudio = m_hasAudio;
     bool oldHasVideo = m_hasVideo;
 
-    // New stream collections override previous ones.
+    // New stream collections override previous ones so in order to keep our internal tracks
+    // consistent with the collection contents, we can't reuse our old tracks.
+#define REMOVE_OLD_TRACKS(type, Type) G_STMT_START {             \
+        for (const auto& trackId : m_##type##Tracks.keys()) {    \
+            auto track = m_##type##Tracks.get(trackId);          \
+            m_player->remove##Type##Track(*track);               \
+        }                                                        \
+        m_##type##Tracks.clear();                                \
+    } G_STMT_END
+
+    REMOVE_OLD_TRACKS(audio, Audio);
+    REMOVE_OLD_TRACKS(video, Video);
+    REMOVE_OLD_TRACKS(text, Text);
+
     unsigned audioTrackIndex = 0;
     unsigned videoTrackIndex = 0;
     unsigned textTrackIndex = 0;
-    HashSet<AtomString> orphanedAudioTrackIds = hashSetFromHashMapKeys(m_audioTracks);
-    HashSet<AtomString> orphanedVideoTrackIds = hashSetFromHashMapKeys(m_videoTracks);
-    HashSet<AtomString> orphanedTextTrackIds = hashSetFromHashMapKeys(m_textTracks);
-    for (unsigned i = 0; i < length; i++) {
-        GRefPtr<GstStream> stream = gst_stream_collection_get_stream(streamCollection.get(), i);
-        String streamId(gst_stream_get_stream_id(stream.get()));
-        GstStreamType type = gst_stream_get_stream_type(stream.get());
 
-        orphanedAudioTrackIds.remove(streamId);
-        orphanedVideoTrackIds.remove(streamId);
-        orphanedTextTrackIds.remove(streamId);
+#define CREATE_TRACK(type, Type) G_STMT_START {                         \
+        m_has##Type = true;                                             \
+        if (!useMediaSource) {                                          \
+            RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), type##TrackIndex, stream); \
+            auto trackId = track->id();                                 \
+            if (!type##TrackIndex) {                                    \
+                m_wanted##Type##StreamId = trackId;                     \
+                m_requested##Type##StreamId = trackId;                  \
+                track->setActive(true);                                 \
+            }                                                           \
+            type##TrackIndex++;                                         \
+            m_##type##Tracks.add(trackId, track);                       \
+            m_player->add##Type##Track(*track);                         \
+        }                                                               \
+    } G_STMT_END
+
+    for (unsigned i = 0; i < length; i++) {
+        auto* stream = gst_stream_collection_get_stream(streamCollection.get(), i);
+        String streamId(gst_stream_get_stream_id(stream));
+        auto type = gst_stream_get_stream_type(stream);
 
         GST_DEBUG_OBJECT(pipeline(), "Inspecting %s track with ID %s", gst_stream_type_get_name(type), streamId.utf8().data());
-        if ((type & GST_STREAM_TYPE_AUDIO && m_audioTracks.contains(streamId)) || (type & GST_STREAM_TYPE_VIDEO && m_videoTracks.contains(streamId))
-            || (type & GST_STREAM_TYPE_TEXT && m_textTracks.contains(streamId)))
-        {
-            GST_DEBUG_OBJECT(pipeline(), "%s track with ID %s already exists, skipping", gst_stream_type_get_name(type), streamId.utf8().data());
-            continue;
-        }
 
         if (type & GST_STREAM_TYPE_AUDIO)
             CREATE_TRACK(audio, Audio);
@@ -1537,17 +1525,6 @@ void MediaPlayerPrivateGStreamer::updateTracks(GRefPtr<GstStreamCollection>&& st
         } else
             GST_WARNING("Unknown track type found for stream %s", streamId.utf8().data());
     }
-
-#define REMOVE_ORPHANED_TRACKS(type, Type)            \
-    for (auto& trackId : orphaned##Type##TrackIds) {  \
-        auto iter = m_##type##Tracks.find(trackId);   \
-        m_player->remove##Type##Track(*iter->value);  \
-        m_##type##Tracks.remove(iter->key);           \
-    }
-
-    REMOVE_ORPHANED_TRACKS(audio, Audio);
-    REMOVE_ORPHANED_TRACKS(video, Video);
-    REMOVE_ORPHANED_TRACKS(text, Text);
 
     if (oldHasVideo != m_hasVideo || oldHasAudio != m_hasAudio)
         m_player->characteristicChanged();
@@ -1574,52 +1551,37 @@ void MediaPlayerPrivateGStreamer::setPipeline(GstElement* pipeline)
     }
 
     m_pipeline = pipeline;
-
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
-    gst_bus_set_sync_handler(bus.get(), [](GstBus*, GstMessage* message, gpointer userData) {
-        auto& player = *static_cast<MediaPlayerPrivateGStreamer*>(userData);
-
-        if (player.handleSyncMessage(message)) {
-            gst_message_unref(message);
-            return GST_BUS_DROP;
-        }
-
-        return GST_BUS_PASS;
-    }, this, nullptr);
 }
 
-bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
+void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* message)
 {
-    if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION && !m_isLegacyPlaybin) {
-        GRefPtr<GstStreamCollection> collection;
-        gst_message_parse_stream_collection(message, &collection.outPtr());
-#ifndef GST_DISABLE_DEBUG
-        GST_DEBUG_OBJECT(pipeline(), "Received STREAM_COLLECTION message with upstream id \"%s\" defining the following streams:", gst_stream_collection_get_upstream_id(collection.get()));
-        unsigned numStreams = gst_stream_collection_get_size(collection.get());
-        for (unsigned i = 0; i < numStreams; i++) {
-            GstStream* stream = gst_stream_collection_get_stream(collection.get(), i);
-            GST_DEBUG_OBJECT(pipeline(), "#%u %s %s", i, gst_stream_type_get_name(gst_stream_get_stream_type(stream)), gst_stream_get_stream_id(stream));
-        }
-#endif
+    if (m_isLegacyPlaybin)
+        return;
 
-        if (collection) {
-            m_notifier->notify(MainThreadNotification::StreamCollectionChanged, [this, collection = WTFMove(collection)]() mutable {
-                this->updateTracks(WTFMove(collection));
-            });
-        }
+    ASSERT(GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION);
+    GRefPtr<GstStreamCollection> collection;
+    gst_message_parse_stream_collection(message, &collection.outPtr());
 #ifndef GST_DISABLE_DEBUG
-    } else if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAMS_SELECTED && !m_isLegacyPlaybin) {
-        GST_DEBUG_OBJECT(pipeline(), "Received STREAMS_SELECTED message selecting the following streams:");
-        unsigned numStreams = gst_message_streams_selected_get_size(message);
-        for (unsigned i = 0; i < numStreams; i++) {
-            GstStream* stream = gst_message_streams_selected_get_stream(message, i);
-            GST_DEBUG_OBJECT(pipeline(), "#%u %s %s", i, gst_stream_type_get_name(gst_stream_get_stream_type(stream)), gst_stream_get_stream_id(stream));
-        }
-#endif
+    GST_DEBUG_OBJECT(pipeline(), "Received STREAM_COLLECTION message with upstream id \"%s\" defining the following streams:", gst_stream_collection_get_upstream_id(collection.get()));
+    unsigned numStreams = gst_stream_collection_get_size(collection.get());
+    for (unsigned i = 0; i < numStreams; i++) {
+        GstStream* stream = gst_stream_collection_get_stream(collection.get(), i);
+        GST_DEBUG_OBJECT(pipeline(), "#%u %s %s", i, gst_stream_type_get_name(gst_stream_get_stream_type(stream)), gst_stream_get_stream_id(stream));
     }
+#endif
 
-    if (GST_MESSAGE_TYPE(message) != GST_MESSAGE_NEED_CONTEXT)
-        return false;
+    if (!collection)
+        return;
+
+    callOnMainThreadAndWait([player = makeWeakPtr(*this), collection = WTFMove(collection)] {
+        if (player)
+            player->updateTracks(collection);
+    });
+}
+
+bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
+{
+    ASSERT(GST_MESSAGE_TYPE(message) == GST_MESSAGE_NEED_CONTEXT);
 
     const gchar* contextType;
     if (!gst_message_parse_context_type(message, &contextType))
@@ -1846,7 +1808,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_STATE_CHANGED: {
         if (!messageSourceIsPlaybin || m_isDelayingLoad)
             break;
-        updateStates();
 
         // Construct a filename for the graphviz dot file output.
         GstState newState;
@@ -1857,6 +1818,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
         if (!m_isLegacyPlaybin && currentState == GST_STATE_PAUSED && newState == GST_STATE_PLAYING)
             playbin3SendSelectStreamsIfAppropriate();
+        updateStates();
 
         break;
     }
@@ -1989,7 +1951,15 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         if (m_isLegacyPlaybin)
             break;
 
-        GST_DEBUG_OBJECT(m_pipeline.get(), "Received STREAMS_SELECTED, setting m_waitingForStreamsSelectedEvent to false.");
+#ifndef GST_DISABLE_DEBUG
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Received STREAMS_SELECTED message selecting the following streams:");
+        unsigned numStreams = gst_message_streams_selected_get_size(message);
+        for (unsigned i = 0; i < numStreams; i++) {
+            GstStream* stream = gst_message_streams_selected_get_stream(message, i);
+            GST_DEBUG_OBJECT(pipeline(), "#%u %s %s", i, gst_stream_type_get_name(gst_stream_get_stream_type(stream)), gst_stream_get_stream_id(stream));
+        }
+#endif
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Setting m_waitingForStreamsSelectedEvent to false.");
         m_waitingForStreamsSelectedEvent = false;
 
         // Unfortunately, STREAMS_SELECTED messages from playbin3 are highly unreliable, often only including the audio
@@ -2004,6 +1974,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         playbin3SendSelectStreamsIfAppropriate();
         break;
     }
+    case GST_MESSAGE_STREAM_COLLECTION:
+        handleStreamCollectionMessage(message);
+        break;
     default:
         GST_DEBUG_OBJECT(pipeline(), "Unhandled GStreamer message type: %s", GST_MESSAGE_TYPE_NAME(message));
         break;
@@ -2730,9 +2703,15 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
     setPlaybackFlags(pipeline());
 
     // Let also other listeners subscribe to (application) messages in this bus.
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+    auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+    gst_bus_enable_sync_message_emission(bus.get());
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
-    g_signal_connect(bus.get(), "message", G_CALLBACK(busMessageCallback), this);
+    g_signal_connect_swapped(bus.get(), "message", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
+        player->handleMessage(message);
+    }), this);
+    g_signal_connect_swapped(bus.get(), "sync-message::need-context", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
+        player->handleNeedContextMessage(message);
+    }), this);
 
     g_object_set(m_pipeline.get(), "mute", m_player->muted(), nullptr);
 

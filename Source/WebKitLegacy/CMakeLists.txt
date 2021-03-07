@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
+
 include(WebKitCommon)
 include(target/TargetWTF)
 include(target/TargetJavaScriptCore)
 include(target/PAL)
 include(target/WebCore)
+
 set_property(DIRECTORY . PROPERTY FOLDER "WebKitLegacy")
 
 set(WebKitLegacy_SOURCES

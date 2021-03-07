@@ -241,7 +241,7 @@ void StopFrameCapture()
 SurfaceMtl::SurfaceMtl(DisplayMtl *display,
                        const egl::SurfaceState &state,
                        const egl::AttributeMap &attribs)
-    : SurfaceMtlProtocol(state)
+    : SurfaceImpl(state)
 {
     mRobustResourceInit =
         attribs.get(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE, EGL_FALSE) == EGL_TRUE;

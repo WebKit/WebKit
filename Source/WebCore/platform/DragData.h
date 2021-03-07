@@ -119,25 +119,6 @@ public:
 
     Optional<PageIdentifier> pageID() const { return m_pageID; }
 
-    DragData& operator=(const DragData& data)
-    {
-        m_clientPosition = data.m_clientPosition;
-        m_globalPosition = data.m_globalPosition;
-        m_platformDragData = data.m_platformDragData;
-        m_draggingSourceOperationMask = data.m_draggingSourceOperationMask;
-        m_applicationFlags = data.m_applicationFlags;
-        m_fileNames = data.m_fileNames;
-        m_dragDestinationActionMask = data.m_dragDestinationActionMask;
-        m_pageID = data.m_pageID;
-#if PLATFORM(COCOA)
-        m_pasteboardName = data.m_pasteboardName;
-#endif
-#if PLATFORM(WIN)
-        m_dragDataMap = data.m_dragDataMap;
-#endif
-        return *this;
-    }
-
     std::unique_ptr<PasteboardContext> createPasteboardContext() const;
 
 private:

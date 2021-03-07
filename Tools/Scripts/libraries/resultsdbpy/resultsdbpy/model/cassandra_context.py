@@ -272,7 +272,7 @@ class CassandraContext(object):
 
             return regex_filter
 
-        elif operator is None or operator is 'in':
+        elif operator is None or operator == 'in':
             return lambda v, key_value=key_value, value=value: getattr(v, key_value) == value
 
         raise self.SelectException('Unrecognized operator {}'.format(operator))

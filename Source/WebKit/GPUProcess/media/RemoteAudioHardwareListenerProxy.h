@@ -31,6 +31,7 @@
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include <WebCore/AudioHardwareListener.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -52,7 +53,7 @@ private:
     void audioHardwareDidBecomeInactive() final;
     void audioOutputDeviceChanged() final;
 
-    GPUConnectionToWebProcess& m_gpuConnection;
+    WeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     RemoteAudioHardwareListenerIdentifier m_identifier;
     Ref<WebCore::AudioHardwareListener> m_listener;
 };

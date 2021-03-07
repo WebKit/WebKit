@@ -424,11 +424,14 @@ bool RenderFlexibleBox::isMultiline() const
     return style().flexWrap() != FlexWrap::NoWrap;
 }
 
+// https://drafts.csswg.org/css-flexbox/#min-size-auto
 bool RenderFlexibleBox::shouldApplyMinSizeAutoForChild(const RenderBox& child) const
 {
-    // css-flexbox section 4.5
     auto minSize = mainSizeLengthForChild(MinSize, child);
-    return minSize.isAuto() && mainAxisOverflowForChild(child) == Overflow::Visible;
+    // min, max and fit-content are equivalent to the automatic size for block sizes https://drafts.csswg.org/css-sizing-3/#valdef-width-min-content.
+    bool childBlockSizeIsEquivalentToAutomaticSize  = !mainAxisIsChildInlineAxis(child) && (minSize.isMinContent() || minSize.isMaxContent() || minSize.isFitContent());
+
+    return (minSize.isAuto() || childBlockSizeIsEquivalentToAutomaticSize) && (mainAxisOverflowForChild(child) == Overflow::Visible);
 }
 
 Length RenderFlexibleBox::flexBasisForChild(const RenderBox& child) const
@@ -846,16 +849,13 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
             return true;
         if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
             return false;
-        // Do not cache the definite height state when the child is perpendicular.
-        // The height of a perpendicular child is resolved against the containing block's width which is not the main axis.
-        if (child.isHorizontalWritingMode() != isHorizontalWritingMode())
-            return false;
-        bool definite = child.computePercentageLogicalHeight(flexBasis) != WTF::nullopt;
-        if (m_inLayout) {
-            // We can reach this code even while we're not laying ourselves out, such
-            // as from mainSizeForPercentageResolution.
+        bool definite = child.computePercentageLogicalHeight(flexBasis).hasValue();
+        // Do not cache the definite height state with orthogonal children as in that case the logical height
+        // of the child is not in the same axis as the logical height of the flex container. Also do not cache it
+        // outside the layout process (we can reach this code as from mainSizeForPercentageResolution()).
+        if (m_inLayout && (isHorizontalWritingMode() == child.isHorizontalWritingMode()))
             m_hasDefiniteHeight = definite ? SizeDefiniteness::Definite : SizeDefiniteness::Indefinite;
-        }
+
         return definite;
     }
     return true;
@@ -863,8 +863,12 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
 
 bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const
 {
-    if (!childHasAspectRatio(child) || !child.intrinsicSize().height())
+    if (!childHasAspectRatio(child))
         return false;
+    if (!child.intrinsicSize().height() && !child.style().hasAspectRatio()) {
+        // We can't compute a ratio in this case.
+        return false;
+    }
 
     // 9.8 https://drafts.csswg.org/css-flexbox/#definite-sizes
     // 1. If a single-line flex container has a definite cross size, the automatic preferred outer cross size of any
@@ -1193,7 +1197,8 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     }
 
     Length min = mainSizeLengthForChild(MinSize, child);
-    if (min.isSpecifiedOrIntrinsic())
+    // Intrinsic sizes in child's block axis are handled by the min-size:auto code path.
+    if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsChildInlineAxis(child)))
         return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).valueOr(childSize)));
     
     if (shouldApplyMinSizeAutoForChild(child)) {

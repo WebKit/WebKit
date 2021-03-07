@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebScriptWorld.h>
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSRetainPtr.h>
@@ -93,6 +94,29 @@ TEST(WebKitLegacy, JSWrapperForNode)
     EXPECT_TRUE(JSValueIsBoolean(normalCtx, JSObjectGetProperty(normalCtx, normalNodeJSObject, normalPropertyJSString.get(), 0)));
     // Test for failed retrieval of the second property in the isolated script world
     EXPECT_TRUE(JSValueIsUndefined(isolatedCtx, JSObjectGetProperty(isolatedCtx, isolatedNodeJSObject, normalPropertyJSString.get(), 0)));
+}
+
+TEST(WebKitLegacy, JSDOMWindowWrapperBeforeOriginInitialization)
+{
+    auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+    auto frameLoadDelegate = adoptNS([[JSWrapperForNodeFrameLoadDelegate alloc] init]);
+
+    webView.get().frameLoadDelegate = frameLoadDelegate.get();
+    auto *mainFrame = webView.get().mainFrame;
+    [mainFrame loadHTMLString:@"<div id=\"target\"</div>" baseURL:[NSURL URLWithString:@"http://localhost"]];
+
+    auto *normalWorld = [WebScriptWorld standardWorld];
+    auto normalCtx = [mainFrame _globalContextForScriptWorld:normalWorld];
+
+    [mainFrame _stringByEvaluatingJavaScriptFromString:@"window.caches = 1" withGlobalObject:JSContextGetGlobalObject(normalCtx) inScriptWorld:normalWorld];
+
+    auto result = [mainFrame _stringByEvaluatingJavaScriptFromString:@"window.caches" withGlobalObject:JSContextGetGlobalObject(normalCtx) inScriptWorld:normalWorld];
+    EXPECT_WK_STREQ(result, @"1");
+
+    Util::run(&didFinishLoad);
+
+    result = [mainFrame _stringByEvaluatingJavaScriptFromString:@"window.caches" withGlobalObject:JSContextGetGlobalObject(normalCtx) inScriptWorld:normalWorld];
+    EXPECT_WK_STREQ(result, @"1");
 }
 
 } // namespace TestWebKitAPI

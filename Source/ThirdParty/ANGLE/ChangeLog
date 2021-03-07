@@ -1,3 +1,139 @@
+2021-03-03  Kyle Piddington  <kpiddington@apple.com>
+
+        Support Depth24_Stencil8 simulation in the MTLSimulator
+        https://bugs.webkit.org/show_bug.cgi?id=222624
+
+        Reviewed by Dean Jackson.
+
+        Fixes the following tests:
+        fast/canvas/webgl/context-creation-attributes.html
+        fast/canvas/webgl/webgl-depth-texture.html
+        webgl/1.0.3/conformance/misc/webgl-specific.html
+        webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html
+
+        * src/libANGLE/renderer/metal/mtl_format_map.json:
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::init):
+
+2021-02-26  Kyle Piddington  <kpiddington@apple.com>
+
+        Support  fast/canvas/webgl/copyBufferSubData.html, fix bugs in fast/canvas/webgl/getBufferSubData-webgl1.html in Metal ANGLE on Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222508
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::BufferMtl::unmap):
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::getMaxSupportedESVersion const):
+
+2021-02-26  Kyle Piddington  <kpiddington@apple.com>
+
+        Fix iOS simulator crashes due to unsupported simulator pixel formats: r8Unorm_srgb, a1bgr5Unorm, b5g6r5Unorm, abgr4Unorm, bgr5A1Unorm, and program generation asserts.
+
+        iOS Simulator doesn't support the following packed 16 bit formats natively. While some of these can be emulated, we should fix up the crashing cases first.
+
+        Also fix up program generation issues for void fragment shaders
+
+        Disable support for PVRTC temporarily, as Non-square / NPOT PVRTC textures are not supported nativley on metal.
+
+        https://bugs.webkit.org/show_bug.cgi?id=222458
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitStructDeclaration):
+        (GenMetalTraverser::emitFunctionReturn):
+        (GenMetalTraverser::emitFunctionParameter):
+        * src/compiler/translator/TranslatorMetalDirect/Pipeline.cpp:
+        (PipelineStructs::matches const):
+        * src/compiler/translator/TranslatorMetalDirect/Pipeline.h:
+        (sh::PipelineScoped::matches const):
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::setPerSliceSubImage):
+        * src/libANGLE/renderer/metal/gen_mtl_format_table.py:
+        * src/libANGLE/renderer/metal/mtl_format_map.json:
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::init):
+        (rx::mtl::VertexFormat::init):
+        (rx::mtl::FormatTable::initNativeFormatCapsAutogen):
+        * src/libANGLE/renderer/metal/mtl_format_utils.mm:
+        (rx::mtl::FormatTable::initialize):
+        * src/libANGLE/renderer/metal/mtl_resources.mm:
+        (rx::mtl::Texture::Make2DTexture):
+        (rx::mtl::Texture::MakeTexture):
+
+2021-02-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Textures Fail to Render in WebGL from HLS Stream on iPhone 12 [iOS 14.2]
+        https://bugs.webkit.org/show_bug.cgi?id=218637
+        <rdar://problem/71102126>
+
+        Reviewed by Kenneth Russell.
+
+        Remove incorrect validation that IOSurface pixel format matches
+        the pixel format of the texture image being specified.
+
+        The "Element" in IOSurface is a block of pixels, while the validation assumed
+        it means one pixel. The validation failed for a compressed format.
+
+        Currently we map non-public YUV formats, to which there is no elequent way
+        of implementing the validation.
+        Most likely this started to reproduce if IOSurfaceGetBytesPerElementOfPlane
+        was changed to produce correct results for the above YUV format.
+
+        Later commits could add the validation back for formats that we know the
+        pixel format type.
+
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm:
+        (rx::IOSurfaceSurfaceEAGL::validateAttributes):
+
+2021-02-25  Kyle Piddington  <kpiddington@apple.com>
+
+        Fix crashes in fast/canvas/webgl/texImage video tests
+        Refactor IOSurfaceSurfaceMtl to match open source implementation.
+        Additional cleanup
+
+        https://bugs.webkit.org/show_bug.cgi?id=222331
+
+        Reviewed by Dean Jackson.
+
+
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::onBackbufferResized):
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::createPbufferSurface):
+        (rx::DisplayMtl::createPbufferFromClientBuffer):
+        * src/libANGLE/renderer/metal/FrameBufferMtl.h:
+        (rx::FramebufferMtl::getAttachedBackbuffer const):
+        * src/libANGLE/renderer/metal/FrameBufferMtl.mm:
+        (rx::FramebufferMtl::FramebufferMtl):
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.h:
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm:
+        (rx::IOSurfaceSurfaceMtl::IOSurfaceSurfaceMtl):
+        (rx::IOSurfaceSurfaceMtl::~IOSurfaceSurfaceMtl):
+        (rx::IOSurfaceSurfaceMtl::bindTexImage):
+        (rx::IOSurfaceSurfaceMtl::releaseTexImage):
+        (rx::IOSurfaceSurfaceMtl::getAttachmentRenderTarget):
+        (rx::IOSurfaceSurfaceMtl::ensureColorTextureCreated):
+        (rx::IOSurfaceSurfaceMtl::ValidateAttributes):
+        * src/libANGLE/renderer/metal/SurfaceMtl.h:
+        (rx::SurfaceMtl::getColorTexture):
+        (rx::SurfaceMtl::getSamples const):
+        (rx::SurfaceMtl::hasRobustResourceInit const):
+        (rx::WindowSurfaceMtl::preserveBuffer const):
+        * src/libANGLE/renderer/metal/SurfaceMtl.mm:
+        (rx::SurfaceMtl::SurfaceMtl):
+        * src/libANGLE/renderer/metal/TextureMtl.h:
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::ensureTextureCreated):
+        (rx::TextureMtl::ensureSamplerStateCreated):
+        (rx::TextureMtl::bindTexImage):
+        (rx::TextureMtl::releaseTexImage):
+        (rx::TextureMtl::getAttachmentRenderTarget):
+        * src/libANGLE/renderer/metal/mtl_common.h:
+
 2021-02-19  Kyle Piddington  <kpiddington@apple.com>
 
         Fix a number of functional regressions caused by enabling the Metal ANGLE backend by default.

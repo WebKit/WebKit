@@ -25,10 +25,6 @@
 // This file should be included in the private section of the
 // RemoteGraphicsContextGL implementations.
 #pragma once
-    void setFailNextGPUStatusCheck()
-    {
-        m_context->setFailNextGPUStatusCheck();
-    }
     void moveErrorsToSyntheticErrorList(CompletionHandler<void(bool)>&& completionHandler)
     {
         bool returnValue = { };

@@ -34,10 +34,6 @@
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 
-namespace IPC {
-class Connection;
-}
-
 namespace WebCore {
 class InbandGenericCue;
 class ISOWebVTTCue;
@@ -45,15 +41,16 @@ class ISOWebVTTCue;
 
 namespace WebKit {
 
+class GPUProcessConnection;
 class MediaPlayerPrivateRemote;
 
 class TextTrackPrivateRemote final : public WebCore::InbandTextTrackPrivate {
     WTF_MAKE_NONCOPYABLE(TextTrackPrivateRemote)
 public:
 
-    static Ref<TextTrackPrivateRemote> create(IPC::Connection& connection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
+    static Ref<TextTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new TextTrackPrivateRemote(connection, playerIdentifier, idendifier, WTFMove(configuration)));
+        return adoptRef(*new TextTrackPrivateRemote(gpuProcessConnection, playerIdentifier, idendifier, WTFMove(configuration)));
     }
 
     void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
@@ -100,9 +97,9 @@ public:
     bool isDefault() const final { return m_isDefault; }
 
 private:
-    TextTrackPrivateRemote(IPC::Connection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
+    TextTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
 
-    IPC::Connection& m_connection;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     AtomString m_id;
     AtomString m_label;
     AtomString m_language;

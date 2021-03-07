@@ -415,7 +415,7 @@
         "CISupport": [ "aakash_jain@apple.com" ],
         "CMake": [ "gyuyoung.kim@webkit.org", "ryuan.choi@navercorp.com", "sergio@correia.cc", "annulen@yandex.ru" ],
         "CoordinatedGraphics" : [ "zeno@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org", "ryuan.choi@navercorp.com", "sergio@correia.cc", "gyuyoung.kim@webkit.org" ],
-        "ConsoleUsage" : [ "mkwst@chromium.org" ],
+        "ConsoleUsage" : [ "mkwst@chromium.org", "drousso@apple.com" ],
         "ContentSecurityPolicyFiles|ContentSecurityPolicyUsage" : [ "mkwst@chromium.org" ],
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "menard@kde.org", "macpherson@chromium.org", "esprehn+autocc@chromium.org", "glenn@skynav.com", "gyuyoung.kim@webkit.org" ],

@@ -28,15 +28,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import sys
 
 from webkitpy.layout_tests.servers.run_webkit_httpd import parse_args, run_server
 
-
-top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 if sys.platform.startswith('linux'):
+    import os
+    top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
     sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
+
     import flatpakutils
     flatpakutils.run_in_sandbox_if_available(sys.argv)
 

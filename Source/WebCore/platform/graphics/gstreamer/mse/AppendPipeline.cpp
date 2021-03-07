@@ -329,12 +329,8 @@ GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo*
 
 void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
 {
-    const gchar* contextType = nullptr;
-    gst_message_parse_context_type(message, &contextType);
-    GST_TRACE("context type: %s", contextType);
-
     // MediaPlayerPrivateGStreamerBase will take care of setting up encryption.
-    m_playerPrivate->handleSyncMessage(message);
+    m_playerPrivate->handleNeedContextMessage(message);
 }
 
 void AppendPipeline::handleStateChangeMessage(GstMessage* message)

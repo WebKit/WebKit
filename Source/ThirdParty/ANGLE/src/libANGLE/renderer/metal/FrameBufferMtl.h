@@ -23,14 +23,14 @@ namespace mtl
 class RenderCommandEncoder;
 }  // namespace mtl
 class ContextMtl;
-class SurfaceMtl;
+class WindowSurfaceMtl;
 
 class FramebufferMtl : public FramebufferImpl
 {
   public:
     explicit FramebufferMtl(const gl::FramebufferState &state,
                             bool flipY,
-                            SurfaceMtlProtocol *backbuffer);
+                            WindowSurfaceMtl *backbuffer);
     ~FramebufferMtl() override;
     void destroy(const gl::Context *context) override;
 
@@ -99,7 +99,7 @@ class FramebufferMtl : public FramebufferImpl
 
     gl::Rectangle getCompleteRenderArea() const;
     int getSamples() const;
-    SurfaceMtlProtocol *getAttachedBackbuffer() const { return mBackbuffer; }
+    WindowSurfaceMtl *getAttachedBackbuffer() const { return mBackbuffer; }
 
     bool renderPassHasStarted(ContextMtl *contextMtl) const;
     mtl::RenderCommandEncoder *ensureRenderPassStarted(const gl::Context *context);
@@ -221,7 +221,7 @@ class FramebufferMtl : public FramebufferImpl
     // as by a compute pass.
     bool mRenderPassCleanStart = false;
 
-    SurfaceMtlProtocol *mBackbuffer = nullptr;
+    WindowSurfaceMtl *mBackbuffer = nullptr;
     const bool mFlipY               = false;
 
     mtl::BufferRef mReadPixelBuffer;

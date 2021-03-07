@@ -52,7 +52,7 @@ Filing a new bug, fixing a bug, or adding a new feature.
 
 There are three different kinds of contributors in the WebKit project.
 
- * Contributor - This category emcompasses everyone. Anyone who files a bug or contributes a code change or reviews a code change is considered as a contributor
+ * Contributor - This category encompasses everyone. Anyone who files a bug or contributes a code change or reviews a code change is considered as a contributor
  * Committer - A committer is someone who has write access to [WebKit's subversion repository](https://svn.webkit.org/repository/webkit/).
  * Reviewer - A reviewer is someone who has the right to review and approve code changes other contributors proposed.
 

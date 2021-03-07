@@ -35,24 +35,25 @@ namespace WebCore {
 namespace ContentExtensions {
 
 enum class ResourceType : uint16_t {
-    Invalid = 0x0000,
     Document = 0x0001,
     Image = 0x0002,
     StyleSheet = 0x0004,
     Script = 0x0008,
     Font = 0x0010,
-    Raw = 0x0020,
+    Raw = 0x0020, // This bit can be reused next time we increment CurrentContentRuleListFileVersion. It is equivalent to using Fetch | WebSocket | Other.
     SVGDocument = 0x0040,
     Media = 0x0080,
     PlugInStream = 0x0100,
     Popup = 0x0200,
     // 0x0400 and 0x0800 are used by LoadType.
     Ping = 0x1000,
+    Fetch = 0x2000,
+    WebSocket = 0x4000,
+    Other = 0x8000,
 };
-const uint16_t ResourceTypeMask = 0x13FF;
+const uint16_t ResourceTypeMask = 0xF3FF;
 
 enum class LoadType : uint16_t {
-    Invalid = 0x0000,
     FirstParty = 0x0400,
     ThirdParty = 0x0800,
 };
@@ -72,9 +73,9 @@ typedef uint16_t ResourceFlags;
 const uint64_t ActionFlagMask = 0x0000FFFF00000000;
 const uint64_t IfConditionFlag = 0x0001000000000000;
 
-ResourceType toResourceType(CachedResource::Type);
-uint16_t readResourceType(const String&);
-uint16_t readLoadType(const String&);
+OptionSet<ResourceType> toResourceType(CachedResource::Type, ResourceRequestBase::Requester);
+Optional<OptionSet<ResourceType>> readResourceType(const String&);
+Optional<OptionSet<LoadType>> readLoadType(const String&);
 
 struct ResourceLoadInfo {
     URL resourceURL;

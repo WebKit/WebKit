@@ -308,22 +308,22 @@ String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID pr
     if (!relatedValue.isEmpty())
         return relatedValue;
     
-    return String();
+    return { };
 }
 
-ExceptionOr<bool> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important)
+ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important)
 { 
-    StyleAttributeMutationScope mutationScope(this);
+    StyleAttributeMutationScope mutationScope { this };
     if (!willMutate())
-        return false;
+        return { };
 
-    bool changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
-
-    didMutate(changed ? PropertyChanged : NoChanges);
-
-    if (changed)
+    if (m_propertySet->setProperty(propertyID, value, important, cssParserContext())) {
+        didMutate(PropertyChanged);
         mutationScope.enqueueMutationRecord();
-    return changed;
+    } else
+        didMutate(NoChanges);
+        
+    return { };
 }
 
 RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM(CSSValue* internalValue)

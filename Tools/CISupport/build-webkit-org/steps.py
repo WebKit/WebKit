@@ -21,10 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from buildbot.process import buildstep, factory, logobserver, properties
-from buildbot.process.results import Results
+from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source.svn import SVN
-from buildbot.status.builder import SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION
 
 from twisted.internet import defer
 
@@ -255,8 +254,7 @@ class CompileWebKit(shell.Compile):
             self.setCommand(self.command + additionalArguments)
         if platform in ('mac', 'ios', 'tvos', 'watchos') and architecture:
             self.setCommand(self.command + ['ARCHS=' + architecture])
-            if platform in ['ios', 'tvos', 'watchos']:
-                self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
+            self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
         if platform in ('mac', 'ios', 'tvos', 'watchos') and buildOnly:
             # For build-only bots, the expectation is that tests will be run on separate machines,
             # so we need to package debug info as dSYMs. Only generating line tables makes
@@ -501,7 +499,6 @@ class RunWebKitTests(shell.Test):
                "--builder-name", WithProperties("%(buildername)s"),
                "--build-number", WithProperties("%(buildnumber)s"),
                "--buildbot-worker", WithProperties("%(workername)s"),
-               "--master-name", "webkit.org",
                "--buildbot-master", CURRENT_HOSTNAME,
                "--report", RESULTS_WEBKIT_URL,
                "--exit-after-n-crashes-or-timeouts", "50",
@@ -747,7 +744,7 @@ class RunLLINTCLoopTests(TestWithFailureCount):
     jsonFileName = "jsc_cloop.json"
     command = [
         "perl", "./Tools/Scripts/run-javascriptcore-tests",
-        "--cloop", "--no-build",
+        "--no-build",
         "--no-jsc-stress", "--no-fail-fast",
         "--json-output={0}".format(jsonFileName),
         WithProperties("--%(configuration)s"),

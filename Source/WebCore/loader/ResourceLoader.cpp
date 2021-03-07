@@ -341,7 +341,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
     ASSERT(!m_reachedTerminalState);
 #if ENABLE(CONTENT_EXTENSIONS)
-    ASSERT(m_resourceType != ContentExtensions::ResourceType::Invalid);
+    ASSERT(!m_resourceType.isEmpty());
 #endif
 
     // We need a resource identifier for all requests, even if FrameLoader is never going to see it (such as with CORS preflight requests).

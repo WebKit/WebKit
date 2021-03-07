@@ -461,7 +461,6 @@ public:
     void enablePreserveDrawingBuffer() final;
 
     void dispatchContextChangedNotification();
-    void simulateContextChanged() final;
 
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
     RefPtr<ImageData> paintRenderingResultsToImageData() final;
@@ -511,7 +510,7 @@ public:
     ExtensionsGL& getExtensions() final;
 #endif
 
-    void setFailNextGPUStatusCheck() final { m_failNextStatusCheck = true; }
+    void simulateEventForTesting(SimulatedEventForTesting) override;
 
     unsigned textureSeed(GCGLuint texture) { return m_state.textureSeedCount.count(texture); }
 

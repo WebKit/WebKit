@@ -40,7 +40,7 @@ const ClassInfo ProxyConstructor::s_info = { "Proxy", &Base::s_info, nullptr, nu
 ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
 {
     ProxyConstructor* constructor = new (NotNull, allocateCell<ProxyConstructor>(vm.heap)) ProxyConstructor(vm, structure);
-    constructor->finishCreation(vm, "Proxy", structure->globalObject());
+    constructor->finishCreation(vm, structure->globalObject());
     return constructor;
 }
 
@@ -74,10 +74,10 @@ JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, Call
     return JSValue::encode(result);
 }
 
-void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* globalObject)
+void ProxyConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
-    Base::finishCreation(vm, 2, name, PropertyAdditionMode::WithStructureTransition);
-    putDirect(vm, makeIdentifier(vm, "revocable"), JSFunction::create(vm, globalObject, 2, "revocable"_s, makeRevocableProxy));
+    Base::finishCreation(vm, 2, "Proxy", PropertyAdditionMode::WithoutStructureTransition);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("revocable", makeRevocableProxy, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructProxyObject, (JSGlobalObject* globalObject, CallFrame* callFrame))

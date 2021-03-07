@@ -3532,6 +3532,11 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         keydown->preventDefault();
     keydown->setTarget(element);
 
+    // If the user interacts with the page via the keyboard, the currently focused element should match :focus-visible.
+    // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
+    if (keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty()))
+        element->setHasFocusVisible(true);
+
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
         element->dispatchEvent(keydown);
         // If frame changed as a result of keydown dispatch, then return true to avoid sending a subsequent keypress message to the new frame.

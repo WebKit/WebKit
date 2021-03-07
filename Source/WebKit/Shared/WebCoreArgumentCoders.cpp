@@ -1571,7 +1571,7 @@ bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, Pasteb
 
     if (hasBuffer) {
         RefPtr<SharedBuffer> value;
-        if (!decodeSharedBuffer(decoder, value))
+        if (!decodeSharedBuffer(decoder, value) || !value)
             return false;
         data.platformData = { value.releaseNonNull() };
     }

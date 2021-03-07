@@ -335,6 +335,14 @@ Length blend(const Length& from, const Length& to, double progress)
     return Length(WebCore::blend(fromValue, toValue, progress), resultType);
 }
 
+Length blend(const Length& from, const Length& to, double progress, ValueRange valueRange)
+{
+    auto blended = blend(from, to, progress);
+    if (valueRange == ValueRangeNonNegative && blended.isNegative())
+        return { 0, from.isZero () ? to.type() : from.type() };
+    return blended;
+}
+
 struct SameSizeAsLength {
     int32_t value;
     int32_t metaData;

@@ -65,6 +65,7 @@ protected:
     AccessibilityTableRow* parentRow() const;
     virtual AccessibilityTable* parentTable() const;
     AccessibilityRole determineAccessibilityRole() final;
+    AXCoreObject* parentObjectUnignored() const override;
 
     int m_rowIndex;
     int m_axColIndexFromRow;
@@ -76,6 +77,7 @@ private:
     bool computeAccessibilityIsIgnored() const final;
     String expandedTextValue() const final;
     bool supportsExpandedTextValue() const final;
+    AccessibilityTableRow* ariaOwnedByParent() const;
 
     bool isTableCellInSameRowGroup(AXCoreObject*);
     bool isTableCellInSameColGroup(AXCoreObject*);

@@ -78,6 +78,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfo
 #define kMRMediaRemoteNowPlayingInfoUniqueIdentifier get_MediaRemote_kMRMediaRemoteNowPlayingInfoUniqueIdentifier()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteOptionSkipInterval, CFStringRef);
 #define kMRMediaRemoteOptionSkipInterval get_MediaRemote_kMRMediaRemoteOptionSkipInterval()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteCommandInfoPreferredIntervalsKey, CFStringRef);
+#define kMRMediaRemoteCommandInfoPreferredIntervalsKey get_MediaRemote_kMRMediaRemoteOptionSkipInterval()
 
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ())

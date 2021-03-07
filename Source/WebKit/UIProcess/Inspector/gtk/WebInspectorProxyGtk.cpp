@@ -172,6 +172,8 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
     preferences->setAllowTopNavigationToDataURLs(true);
     preferences->setJavaScriptRuntimeFlags({
     });
+    if (m_underTest)
+        preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
     auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage()));
     auto websiteDataStore = inspectorWebsiteDataStore();
     auto& processPool = WebKit::defaultInspectorProcessPool(inspectionLevel());

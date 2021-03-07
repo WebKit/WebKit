@@ -259,13 +259,12 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 
 OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // s_currentModifiers is only set in the WebContent process, not in the UI process.
     if (s_currentModifiers) {
         ASSERT(isMainThread());
         return *s_currentModifiers;
     }
-#endif
+
     UInt32 currentModifiers = GetCurrentKeyModifiers();
 
     OptionSet<PlatformEvent::Modifier> modifiers;

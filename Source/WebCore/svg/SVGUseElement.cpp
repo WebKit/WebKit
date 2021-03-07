@@ -309,14 +309,14 @@ RenderElement* SVGUseElement::rendererClipChild() const
     return targetClone->renderer();
 }
 
-static inline void disassociateAndRemoveClones(const Vector<Element*>& clones)
+static inline void disassociateAndRemoveClones(const Vector<Ref<Element>>& clones)
 {
     for (auto& clone : clones) {
-        for (auto& descendant : descendantsOfType<SVGElement>(*clone))
+        for (auto& descendant : descendantsOfType<SVGElement>(clone.get()))
             descendant.setCorrespondingElement(nullptr);
         if (is<SVGElement>(clone))
-            downcast<SVGElement>(*clone).setCorrespondingElement(nullptr);
-        clone->parentNode()->removeChild(*clone);
+            downcast<SVGElement>(clone.get()).setCorrespondingElement(nullptr);
+        clone->remove();
     }
 }
 
@@ -330,10 +330,10 @@ static void removeDisallowedElementsFromSubtree(SVGElement& subtree)
     // Assert that it's not in a document to make sure callers are still using it this way.
     ASSERT(!subtree.isConnected());
 
-    Vector<Element*> disallowedElements;
+    Vector<Ref<Element>> disallowedElements;
     for (auto it = descendantsOfType<Element>(subtree).begin(); it; ) {
         if (isDisallowedElement(*it)) {
-            disallowedElements.append(&*it);
+            disallowedElements.append(*it);
             it.traverseNextSkippingChildren();
             continue;
         }
@@ -349,9 +349,15 @@ static void removeSymbolElementsFromSubtree(SVGElement& subtree)
     // don't need to be cloned to get correct rendering. 2) expandSymbolElementsInShadowTree will turn them
     // into <svg> elements, which is correct for symbol elements directly referenced by use elements,
     // but incorrect for ones that just happen to be in a subtree.
-    Vector<Element*> symbolElements;
-    for (auto& descendant : descendantsOfType<SVGSymbolElement>(subtree))
-        symbolElements.append(&descendant);
+    Vector<Ref<Element>> symbolElements;
+    for (auto it = descendantsOfType<Element>(subtree).begin(); it; ) {
+        if (is<SVGSymbolElement>(*it)) {
+            symbolElements.append(*it);
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+        ++it;
+    }
     disassociateAndRemoveClones(symbolElements);
 }
 

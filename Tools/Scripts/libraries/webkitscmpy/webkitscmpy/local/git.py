@@ -150,7 +150,7 @@ class Git(Scm):
         result = [branch.lstrip(' *') for branch in filter(lambda branch: '->' not in branch, branch.stdout.splitlines())]
         return sorted(set(['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]))
 
-    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True):
+    def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
         if revision and not self.is_svn:
             raise self.Exception('This git checkout does not support SVN revisions')
         elif revision:
@@ -241,9 +241,9 @@ class Git(Scm):
 
         branch = self.prioritize_branches(self._branches_for(hash))
 
-        if not identifier:
+        if not identifier and include_identifier:
             identifier = self._commit_count(hash if branch == default_branch else '{}..{}'.format(default_branch, hash))
-        branch_point = None if branch == default_branch else self._commit_count(hash) - identifier
+        branch_point = None if not include_identifier or branch == default_branch else self._commit_count(hash) - identifier
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 
@@ -256,19 +256,33 @@ class Git(Scm):
         )
         if commit_time.returncode:
             raise self.Exception('Failed to retrieve commit time for {}'.format(hash))
+        timestamp = int(commit_time.stdout.lstrip())
+
+        order = 0
+        while not identifier or order + 1 < identifier + (branch_point or 0):
+            commit_time = run(
+                [self.executable(), 'show', '-s', '--format=%ct', '{}~{}'.format(hash, order + 1)],
+                cwd=self.root_path, capture_output=True, encoding='utf-8',
+            )
+            if commit_time.returncode:
+                break
+            if int(commit_time.stdout.lstrip()) != timestamp:
+                break
+            order += 1
 
         return Commit(
             hash=hash,
             revision=revision,
-            identifier=identifier,
+            identifier=identifier if include_identifier else None,
             branch_point=branch_point,
             branch=branch,
-            timestamp=int(commit_time.stdout.lstrip()),
+            timestamp=timestamp,
+            order=order,
             author=Contributor.from_scm_log(log.stdout.splitlines()[1], self.contributors),
             message='\n'.join(line[4:] for line in log.stdout.splitlines()[4:]) if include_log else None,
         )
 
-    def find(self, argument, include_log=True):
+    def find(self, argument, include_log=True, include_identifier=True):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
@@ -286,6 +300,7 @@ class Git(Scm):
                 identifier=parsed_commit.identifier,
                 branch=parsed_commit.branch,
                 include_log=include_log,
+                include_identifier=include_identifier,
             )
 
         output = run(
@@ -294,7 +309,7 @@ class Git(Scm):
         )
         if output.returncode:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
-        return self.commit(hash=output.stdout.rstrip(), include_log=include_log)
+        return self.commit(hash=output.stdout.rstrip(), include_log=include_log, include_identifier=include_identifier)
 
     def checkout(self, argument):
         if not isinstance(argument, six.string_types):

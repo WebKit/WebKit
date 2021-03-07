@@ -22,7 +22,6 @@
 #include "JSTestCallTracer.h"
 
 #include "ActiveDOMObject.h"
-#include "CallTracer.h"
 #include "DOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -39,6 +38,9 @@
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
 #include "ScriptExecutionContext.h"
+#include "TestAttributeCallTracer.h"
+#include "TestInterfaceCallTracer.h"
+#include "TestOperationCallTracer.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
@@ -227,8 +229,8 @@ static inline JSValue jsTestCallTracer_testAttributeInterfaceGetter(JSGlobalObje
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testAttributeInterface"_s);
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testAttributeInterface"_s);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testAttributeInterface())));
 }
 
@@ -244,8 +246,8 @@ static inline bool setJSTestCallTracer_testAttributeInterfaceSetter(JSGlobalObje
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testAttributeInterface"_s, { nativeValue });
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testAttributeInterface"_s, { TestInterfaceCallTracer::processArgument(impl, nativeValue) });
     AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return impl.setTestAttributeInterface(WTFMove(nativeValue));
     });
@@ -262,8 +264,8 @@ static inline JSValue jsTestCallTracer_testAttributeSpecifiedGetter(JSGlobalObje
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerAttribute(impl, "testAttributeSpecified"_s);
+    if (UNLIKELY(impl.hasActiveTestAttributeCallTracer()))
+        TestAttributeCallTracer::recordAction(impl, "testAttributeSpecified"_s);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testAttributeSpecified())));
 }
 
@@ -279,8 +281,8 @@ static inline bool setJSTestCallTracer_testAttributeSpecifiedSetter(JSGlobalObje
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerAttribute(impl, "testAttributeSpecified"_s, { nativeValue });
+    if (UNLIKELY(impl.hasActiveTestAttributeCallTracer()))
+        TestAttributeCallTracer::recordAction(impl, "testAttributeSpecified"_s, { TestAttributeCallTracer::processArgument(impl, nativeValue) });
     AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return impl.setTestAttributeSpecified(WTFMove(nativeValue));
     });
@@ -297,8 +299,8 @@ static inline JSValue jsTestCallTracer_testAttributeWithVariantGetter(JSGlobalOb
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testAttributeWithVariant"_s);
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testAttributeWithVariant"_s);
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testAttributeWithVariant())));
 }
 
@@ -314,8 +316,8 @@ static inline bool setJSTestCallTracer_testAttributeWithVariantSetter(JSGlobalOb
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testAttributeWithVariant"_s, { nativeValue });
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testAttributeWithVariant"_s, { TestInterfaceCallTracer::processArgument(impl, nativeValue) });
     AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return impl.setTestAttributeWithVariant(WTFMove(nativeValue));
     });
@@ -347,8 +349,8 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testOperationInterface"_s);
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testOperationInterface"_s);
     throwScope.release();
     impl.testOperationInterface();
     return JSValue::encode(jsUndefined());
@@ -366,8 +368,8 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerOperation(impl, "testOperationSpecified"_s);
+    if (UNLIKELY(impl.hasActiveTestOperationCallTracer()))
+        TestOperationCallTracer::recordAction(impl, "testOperationSpecified"_s);
     throwScope.release();
     impl.testOperationSpecified();
     return JSValue::encode(jsUndefined());
@@ -396,8 +398,8 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     EnsureStillAliveScope argument2 = callFrame->uncheckedArgument(2);
     auto c = convert<IDLDOMString>(*lexicalGlobalObject, argument2.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testOperationWithArguments"_s, { a, b, c });
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithArguments"_s, { TestInterfaceCallTracer::processArgument(impl, a), TestInterfaceCallTracer::processArgument(impl, b), TestInterfaceCallTracer::processArgument(impl, c) });
     throwScope.release();
     impl.testOperationWithArguments(WTFMove(a), WTFMove(b), WTFMove(c));
     return JSValue::encode(jsUndefined());
@@ -420,8 +422,8 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto nodeNullableArg = convert<IDLNullable<IDLInterface<Node>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "nodeNullableArg", "TestCallTracer", "testOperationWithNullableArgument", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testOperationWithNullableArgument"_s, { nodeNullableArg });
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableArgument"_s, { TestInterfaceCallTracer::processArgument(impl, nodeNullableArg) });
     throwScope.release();
     impl.testOperationWithNullableArgument(WTFMove(nodeNullableArg));
     return JSValue::encode(jsUndefined());
@@ -444,8 +446,8 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto variantArg = convert<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testOperationWithVariantArgument"_s, { variantArg });
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithVariantArgument"_s, { TestInterfaceCallTracer::processArgument(impl, variantArg) });
     throwScope.release();
     impl.testOperationWithVariantArgument(WTFMove(variantArg));
     return JSValue::encode(jsUndefined());
@@ -468,8 +470,8 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto variantNullableArg = convert<IDLNullable<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testOperationWithNullableVariantArgument"_s, { variantNullableArg });
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableVariantArgument"_s, { TestInterfaceCallTracer::processArgument(impl, variantNullableArg) });
     throwScope.release();
     impl.testOperationWithNullableVariantArgument(WTFMove(variantNullableArg));
     return JSValue::encode(jsUndefined());
@@ -490,8 +492,8 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     EnsureStillAliveScope argument0 = callFrame->argument(0);
     auto variantOptionalArg = argument0.value().isUndefined() ? Optional<Converter<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>::ReturnType>() : Optional<Converter<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>::ReturnType>(convert<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value()));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testOperationWithOptionalVariantArgument"_s, { variantOptionalArg });
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithOptionalVariantArgument"_s, { TestInterfaceCallTracer::processArgument(impl, variantOptionalArg) });
     throwScope.release();
     impl.testOperationWithOptionalVariantArgument(WTFMove(variantOptionalArg));
     return JSValue::encode(jsUndefined());
@@ -512,8 +514,8 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     EnsureStillAliveScope argument0 = callFrame->argument(0);
     auto variantDefaultArg = argument0.value().isUndefined() ? emptyString() : convert<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    if (UNLIKELY(impl.callTracingActive()))
-        CallTracer::testCallTracerInterface(impl, "testOperationWithDefaultVariantArgument"_s, { variantDefaultArg });
+    if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithDefaultVariantArgument"_s, { TestInterfaceCallTracer::processArgument(impl, variantDefaultArg) });
     throwScope.release();
     impl.testOperationWithDefaultVariantArgument(WTFMove(variantDefaultArg));
     return JSValue::encode(jsUndefined());

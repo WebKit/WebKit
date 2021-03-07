@@ -50,6 +50,7 @@ fast/forms/ios [ Skip ]
 fast/viewport/ios [ Skip ]
 fast/visual-viewport/ios/ [ Skip ]
 fast/device-orientation [ Skip ]
+http/tests/device-orientation [ Skip ]
 fast/events/cursors [ Skip ]
 fast/events/ios [ Skip ]
 fast/events/watchos [ Skip ]
@@ -115,6 +116,10 @@ fast/forms/search/search-results-hidden-crash.html [ Skip ]
 # These tests don't have to be platform-specific, but they are only implemented on Mac now.
 fast/images/eps-as-image.html [ Skip ]
 
+# These tests don't have to be platform-specific, but they are only implemented on GTK now.
+fast/images/avif-image-decoding.html [ Skip ]
+fast/images/avif-as-image.html [ Skip ]
+
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
 fast/css/apple-system-control-colors.html [ Skip ]
@@ -173,7 +178,7 @@ http/tests/resourceLoadStatistics/ [ Skip ]
 http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html [ Skip ]
 http/tests/storageAccess/ [ Skip ]
 http/tests/navigation/process-swap-window-open.html [ Skip ]
-http/tests/navigation/useragent-reload.php [ Skip ]
+http/tests/navigation/useragent-reload.py [ Skip ]
 storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Skip ]
 storage/indexeddb/IDBObject-leak.html [ Skip ]
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Skip ]
@@ -3984,6 +3989,12 @@ webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-ite
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-percent-width-cell-001.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-specified-width.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-1.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-narrow-content-2.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-specified-height.html [ ImageOnlyFailure ]
+webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-2.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-item-flex-percentage-width.html [ ImageOnlyFailure ]
 
 # SVGs as flex items.
@@ -4056,13 +4067,8 @@ webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-coll
 # Painting order in flexbox
 webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002.xhtml [ ImageOnlyFailure ]
 
-# Misc elements as flex items.
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001.xhtml [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-canvas-vert-001v.xhtml [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-iframe-vert-001.xhtml [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-img-vert-001.xhtml [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001.xhtml [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-video-vert-001.xhtml [ ImageOnlyFailure ]
+# Test ASSERTing in Debug.
+webkit.org/b/222711 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/frameset-crash.html [ Skip ]
 
 # Newly imported Canvas WPT tests that are failing.
 imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure Pass ]
@@ -4120,8 +4126,6 @@ fast/text/text-styles/-apple-system [ ImageOnlyFailure ]
 
 # Artificial web socket delays are only supported on wk2. 
 http/tests/websocket/tests/hybi/closed-port-delay.html [ Skip ]
-
-webkit.org/b/214292 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-023.html [ ImageOnlyFailure ]
 
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-with-replaced-child.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-004.html [ ImageOnlyFailure ]
@@ -4549,7 +4553,6 @@ webkit.org/b/214462 imported/w3c/web-platform-tests/css/css-scoping/slotted-plac
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-014.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-024.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-028.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-009.html [ ImageOnlyFailure ]
 # flex-basis:content
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-021.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-022.html [ ImageOnlyFailure ]
@@ -4570,9 +4573,6 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-013.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-014.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-015.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-031.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-032.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-033.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/table-element-001.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-002.html [ ImageOnlyFailure ]

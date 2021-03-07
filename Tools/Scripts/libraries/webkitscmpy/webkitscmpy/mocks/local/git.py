@@ -64,7 +64,7 @@ class Git(mocks.Subprocess):
         self.tags = {}
 
         # If the directory provided actually exists, populate it
-        if os.path.isdir(self.path):
+        if self.path != '/' and os.path.isdir(self.path):
             if not os.path.isdir(os.path.join(self.path, '.git')):
                 os.mkdir(os.path.join(self.path, '.git'))
             with open(os.path.join(self.path, '.git', 'config'), 'w') as config:
@@ -313,7 +313,7 @@ nothing to commit, working tree clean
                 if difference < found.identifier:
                     return self.commits[found.branch][found.identifier - difference - 1]
                 difference -= found.identifier
-                if difference < found.branch_point:
+                if found.branch_point and difference < found.branch_point:
                     return self.commits[self.default_branch][found.branch_point - difference - 1]
                 return None
 

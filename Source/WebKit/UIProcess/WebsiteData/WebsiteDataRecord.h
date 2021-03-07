@@ -59,6 +59,11 @@ struct WebsiteDataRecord {
     void addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain&);
 #endif
 
+    bool matches(const WebCore::RegistrableDomain&) const;
+    String topPrivatelyControlledDomain();
+
+    WebsiteDataRecord isolatedCopy() const;
+
     String displayName;
     OptionSet<WebsiteDataType> types;
 
@@ -78,9 +83,6 @@ struct WebsiteDataRecord {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     HashSet<WebCore::RegistrableDomain> resourceLoadStatisticsRegistrableDomains;
 #endif
-
-    bool matches(const WebCore::RegistrableDomain&) const;
-    String topPrivatelyControlledDomain();
 };
 
 }

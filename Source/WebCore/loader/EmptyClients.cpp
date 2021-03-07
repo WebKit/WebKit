@@ -507,7 +507,7 @@ std::unique_ptr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTi
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-void EmptyChromeClient::storeAppHighlight(const AppHighlight&) const
+void EmptyChromeClient::storeAppHighlight(AppHighlight&&) const
 {
 }
 #endif

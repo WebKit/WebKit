@@ -51,7 +51,8 @@ public:
     JSParserScriptMode scriptMode() const { return m_codeBlock->scriptMode(); }
     NeedsClassFieldInitializer needsClassFieldInitializer() const { return m_codeBlock->needsClassFieldInitializer(); }
     PrivateBrandRequirement privateBrandRequirement() const { return m_codeBlock->privateBrandRequirement(); }
-    bool usesEval() const { return m_codeBlock->usesEval(); }
+    bool usesCallEval() const { return m_codeBlock->usesCallEval(); }
+    void setUsesCallEval() { return m_codeBlock->setUsesCallEval(); }
     SourceParseMode parseMode() const { return m_codeBlock->parseMode(); }
     bool isArrowFunction() { return m_codeBlock->isArrowFunction(); }
     DerivedContextType derivedContextType() const { return m_codeBlock->derivedContextType(); }

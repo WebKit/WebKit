@@ -28,7 +28,6 @@
 #import "config.h"
 #import "PDFPluginChoiceAnnotation.h"
 
-#import "PDFKitImports.h"
 #import "PDFLayerControllerSPI.h"
 #import <Quartz/Quartz.h>
 #import <WebCore/CSSPrimitiveValue.h>

@@ -1223,6 +1223,16 @@
       ],
       "status" : "reviewer"
    },
+   "Chris Gambrell" : {
+      "emails" : [
+         "cgambrell@apple.com"
+      ],
+      "expertise" : "CGI, PHP, and Python",
+      "nicks" : [
+         "ChrisGambrell"
+      ],
+      "status" : "committer"
+   },
    "Chris Guillory" : {
       "emails" : [
          "ctguil@chromium.org",
@@ -4481,7 +4491,7 @@
          "pgriffis",
          "TingPing"
       ],
-      "status": "committer"
+      "status" : "committer"
    },
    "Paulo Matos" : {
       "emails" : [
@@ -4757,7 +4767,8 @@
       ],
       "nicks" : [
          "rcaliman"
-      ]
+      ],
+      "status" : "committer"
    },
    "Rebecca Hauck" : {
       "emails" : [
@@ -4826,6 +4837,12 @@
          "rhogan"
       ]
    },
+   "Robert Jenner" : {
+      "emails" : [
+         "jenner@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Robert Kroeger" : {
       "emails" : [
          "rjkroege@chromium.org"
@@ -4884,6 +4901,11 @@
          "rkirsling"
       ],
       "status" : "reviewer"
+   },
+   "Ruben Turcios" : {
+      "emails" : [
+         "rubent_22@apple.com"
+      ]
    },
    "Russell Epstein" : {
       "emails" : [
@@ -5272,11 +5294,6 @@
       ],
       "nicks" : [
          "szledan"
-      ]
-   },
-   "Ruben Turcios" : {
-      "emails" : [
-	 "rubent_22@apple.com"
       ]
    },
    "Tab Atkins" : {

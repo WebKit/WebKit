@@ -7,7 +7,7 @@ info: |
       5. If F contains any code unit other than "g", "i", "m", "s", "u", or "y" or if it contains the same code unit more than once, throw a SyntaxError exception.
 esid: sec-regexpinitialize
 description: Check that duplicate RegExp flags are disallowed
-features: [regexp-dotall]
+features: [regexp-dotall, regexp-match-indices]
 ---*/
 
 new RegExp("", "mig"); // single g will not throw SyntaxError
@@ -27,3 +27,6 @@ assert.throws(SyntaxError, () => new RegExp("", "uu"), "duplicate u");
 
 new RegExp("", "y"); // single y will not throw SyntaxError
 assert.throws(SyntaxError, () => new RegExp("", "yy"), "duplicate y");
+
+new RegExp("", "d"); // single d will not throw SyntaxError
+assert.throws(SyntaxError, () => new RegExp("", "dd"), "duplicate d");

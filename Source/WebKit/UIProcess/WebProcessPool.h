@@ -70,11 +70,9 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #endif
 
 #if PLATFORM(MAC)
-#import <WebCore/PowerObserverMac.h>
-#import <pal/system/SystemSleepListener.h>
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 #include "DisplayLink.h"
-#endif
+#include <WebCore/PowerObserverMac.h>
+#include <pal/system/SystemSleepListener.h>
 #endif
 
 namespace API {
@@ -240,7 +238,7 @@ public:
     PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     Optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
     void startDisplayLink(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID);
     void stopDisplayLink(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID);
@@ -312,7 +310,7 @@ public:
 
     void reportWebContentCPUTime(Seconds cpuTime, uint64_t activityState);
 
-    WebProcessProxy& processForRegistrableDomain(WebsiteDataStore&, WebPageProxy*, const WebCore::RegistrableDomain&); // Will return an existing one if limit is met or due to caching.
+    Ref<WebProcessProxy> processForRegistrableDomain(WebsiteDataStore&, WebPageProxy*, const WebCore::RegistrableDomain&); // Will return an existing one if limit is met or due to caching.
 
     void prewarmProcess();
 
@@ -489,7 +487,9 @@ public:
 
     void setJavaScriptConfigurationDirectory(String&& directory) { m_javaScriptConfigurationDirectory = directory; }
     const String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
-    
+
+    void setOverrideLanguages(Vector<String>&&);
+
     WebProcessDataStoreParameters webProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
     
     static void setUseSeparateServiceWorkerProcess(bool);
@@ -526,7 +526,7 @@ private:
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 
-    WebProcessProxy& createNewWebProcess(WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
+    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
@@ -546,9 +546,6 @@ private:
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
-
-    static void languageChanged(void* context);
-    void languageChanged();
 
     bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
 
@@ -667,9 +664,7 @@ private:
     RetainPtr<NSObject> m_automaticQuoteSubstitutionNotificationObserver;
     RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
     RetainPtr<NSObject> m_accessibilityDisplayOptionsNotificationObserver;
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     RetainPtr<NSObject> m_scrollerStyleNotificationObserver;
-#endif
     RetainPtr<NSObject> m_deactivationObserver;
     RetainPtr<WKWebInspectorPreferenceObserver> m_webInspectorPreferenceObserver;
 
@@ -753,7 +748,7 @@ private:
 
     HashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
     Vector<std::unique_ptr<DisplayLink>> m_displayLinks;
 #endif
 

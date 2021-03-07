@@ -950,11 +950,11 @@ void NetworkProcess::mergeStatisticForTesting(PAL::SessionID sessionID, const Re
     }
 }
 
-void NetworkProcess::insertExpiredStatisticForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::insertExpiredStatisticForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->insertExpiredStatisticForTesting(domain, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
+            resourceLoadStatistics->insertExpiredStatisticForTesting(domain, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
         else
             completionHandler();
     } else {
@@ -2777,5 +2777,24 @@ void NetworkProcess::setCORSDisablingPatterns(PageIdentifier pageIdentifier, Vec
     }
     m_extensionCORSDisablingPatterns.set(pageIdentifier, WTFMove(parsedPatterns));
 }
+
+#if PLATFORM(COCOA)
+void NetworkProcess::appBoundNavigationData(PAL::SessionID sessionID, CompletionHandler<void(const AppBoundNavigationTestingData&)>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        completionHandler(networkSession->appBoundNavigationTestingData());
+        return;
+    }
+    completionHandler({ });
+}
+
+void NetworkProcess::clearAppBoundNavigationData(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->appBoundNavigationTestingData().clearAppBoundNavigationDataTesting();
+
+    completionHandler();
+}
+#endif
 
 } // namespace WebKit

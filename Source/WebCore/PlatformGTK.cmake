@@ -44,6 +44,20 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/text/gtk"
 )
 
+if (USE_AVIF)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/image-decoders/avif"
+    )
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/image-decoders/avif/AVIFUniquePtr.h
+    )
+    list(APPEND WebCore_SOURCES
+        platform/image-decoders/avif/AVIFImageDecoder.cpp
+        platform/image-decoders/avif/AVIFImageReader.cpp
+    )
+    list(APPEND WebCore_LIBRARIES AVIF::AVIF)
+endif ()
+
 if (USE_WPE_RENDERER)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/libwpe"

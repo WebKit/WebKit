@@ -16,5 +16,4 @@ for (let i = 0; i < 10000; i++) {
     testNoException((array) => delete array[0], i);
     testNoException((array) => Object.getOwnPropertyDescriptor(array, 0), i);
     testNoException((array) => array[0] = 1, i);
-    testNoException((array) => Object.defineProperty(array, 0, { value: 1, writable: true, configurable: true, enumerable: true }), i)
 }

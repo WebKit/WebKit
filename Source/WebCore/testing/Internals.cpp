@@ -101,6 +101,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
+#include "HighlightRegister.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
@@ -627,13 +628,13 @@ Internals::Internals(Document& document)
 #endif
 
 #if PLATFORM(COCOA)
-    setOverrideSystemHasBatteryForTesting(WTF::nullopt);
-    setOverrideSystemHasACForTesting(WTF::nullopt);
+    SystemBatteryStatusTestingOverrides::singleton().setHasAC(WTF::nullopt);
+    SystemBatteryStatusTestingOverrides::singleton().setHasBattery(WTF::nullopt);
 #endif
 
 #if ENABLE(VP9) && PLATFORM(COCOA)
-    setOverrideVP9HardwareDecoderDisabledForTesting(false);
-    resetOverrideVP9ScreenSizeAndScaleForTesting();
+    VP9TestingOverrides::singleton().setHardwareDecoderDisabled(WTF::nullopt);
+    VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(WTF::nullopt);
 #endif
 }
 
@@ -5091,14 +5092,21 @@ void Internals::setApplePayIsActive(Document& document)
 #endif
 
 #if ENABLE(WEBGL)
-void Internals::simulateWebGLContextChanged(WebGLRenderingContext& context)
+void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext& context)
 {
-    context.simulateContextChanged();
-}
-
-void Internals::failNextGPUStatusCheck(WebGLRenderingContext& context)
-{
-    context.setFailNextGPUStatusCheck();
+    WebGLRenderingContext::SimulatedEventForTesting contextEvent;
+    switch (event) {
+    case SimulatedWebGLContextEvent::ContextChange:
+        contextEvent = WebGLRenderingContext::SimulatedEventForTesting::ContextChange;
+        break;
+    case SimulatedWebGLContextEvent::GPUStatusFailure:
+        contextEvent = WebGLRenderingContext::SimulatedEventForTesting::GPUStatusFailure;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    context.simulateEventForTesting(contextEvent);
 }
 
 bool Internals::hasLowAndHighPowerGPUs()
@@ -5842,7 +5850,7 @@ bool Internals::systemHasBattery() const
 void Internals::setSystemHasBatteryForTesting(bool hasBattery)
 {
 #if PLATFORM(COCOA)
-    WebCore::setOverrideSystemHasBatteryForTesting(hasBattery);
+    SystemBatteryStatusTestingOverrides::singleton().setHasBattery(hasBattery);
 #else
     UNUSED_PARAM(hasBattery);
 #endif
@@ -5851,7 +5859,7 @@ void Internals::setSystemHasBatteryForTesting(bool hasBattery)
 void Internals::setSystemHasACForTesting(bool hasAC)
 {
 #if PLATFORM(COCOA)
-    WebCore::setOverrideSystemHasACForTesting(hasAC);
+    SystemBatteryStatusTestingOverrides::singleton().setHasAC(hasAC);
 #else
     UNUSED_PARAM(hasAC);
 #endif
@@ -5860,7 +5868,7 @@ void Internals::setSystemHasACForTesting(bool hasAC)
 void Internals::setHardwareVP9DecoderDisabledForTesting(bool disabled)
 {
 #if ENABLE(VP9) && PLATFORM(COCOA)
-    WebCore::setOverrideVP9HardwareDecoderDisabledForTesting(disabled);
+    VP9TestingOverrides::singleton().setHardwareDecoderDisabled(disabled);
 #else
     UNUSED_PARAM(disabled);
 #endif
@@ -5869,7 +5877,7 @@ void Internals::setHardwareVP9DecoderDisabledForTesting(bool disabled)
 void Internals::setVP9ScreenSizeAndScaleForTesting(double width, double height, double scale)
 {
 #if ENABLE(VP9) && PLATFORM(COCOA)
-    WebCore::setOverrideVP9ScreenSizeAndScaleForTesting(width, height, scale);
+    VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(makeOptional<ScreenDataOverrides>({ width, height, scale }));
 #else
     UNUSED_PARAM(width);
     UNUSED_PARAM(height);
@@ -5910,6 +5918,22 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
     UNUSED_PARAM(process);
     UNUSED_PARAM(ioKitClass);
     return false;
+}
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+unsigned Internals::numberOfAppHighlights()
+{
+    Document* document = contextDocument();
+    if (!document)
+        return 0;
+    auto appHighlightRegister = document->appHighlightRegisterIfExists();
+    if (!appHighlightRegister)
+        return 0;
+    unsigned numHighlights = 0;
+    for (auto& highlight : appHighlightRegister->map())
+        numHighlights += highlight.value->rangesData().size();
+    return numHighlights;
 }
 #endif
 

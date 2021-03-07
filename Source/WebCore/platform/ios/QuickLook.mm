@@ -41,8 +41,8 @@ const char* QLPreviewProtocol = "x-apple-ql-id";
 
 NSSet *QLPreviewGetSupportedMIMETypesSet()
 {
-    static NSSet *set = [PAL::softLink_QuickLook_QLPreviewGetSupportedMIMETypes() retain];
-    return set;
+    static NeverDestroyed<RetainPtr<NSSet>> set = PAL::softLink_QuickLook_QLPreviewGetSupportedMIMETypes();
+    return set.get().get();
 }
 
 static Lock qlPreviewConverterDictionaryLock;
@@ -102,21 +102,21 @@ bool isQuickLookPreviewURL(const URL& url)
 
 static NSDictionary *temporaryFileAttributes()
 {
-    static NSDictionary *attributes = [@{
+    static NeverDestroyed<RetainPtr<NSDictionary>> attributes = @{
         NSFileOwnerAccountName : NSUserName(),
         NSFilePosixPermissions : [NSNumber numberWithInteger:(WEB_UREAD | WEB_UWRITE)],
-        } retain];
-    return attributes;
+    };
+    return attributes.get().get();
 }
 
 static NSDictionary *temporaryDirectoryAttributes()
 {
-    static NSDictionary *attributes = [@{
+    static NeverDestroyed<RetainPtr<NSDictionary>> attributes = @{
         NSFileOwnerAccountName : NSUserName(),
         NSFilePosixPermissions : [NSNumber numberWithInteger:(WEB_UREAD | WEB_UWRITE | WEB_UEXEC)],
         NSFileProtectionKey : NSFileProtectionCompleteUnlessOpen,
-        } retain];
-    return attributes;
+    };
+    return attributes.get().get();
 }
 
 NSString *createTemporaryFileForQuickLook(NSString *fileName)

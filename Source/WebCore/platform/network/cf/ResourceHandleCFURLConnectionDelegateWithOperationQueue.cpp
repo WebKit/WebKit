@@ -131,15 +131,13 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupConnectionSch
     CFURLConnectionScheduleDownloadWithRunLoop(connection, runLoop, kCFRunLoopDefaultMode);
 }
 
-CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest(CFURLRequestRef cfRequest, CFURLResponseRef originalRedirectResponse)
+RetainPtr<CFURLRequestRef> ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest(CFURLRequestRef cfRequest, CFURLResponseRef originalRedirectResponse)
 {
     // If the protocols of the new request and the current request match, this is not an HSTS redirect and we don't need to synthesize a redirect response.
     if (!originalRedirectResponse) {
         RetainPtr<CFStringRef> newScheme = adoptCF(CFURLCopyScheme(CFURLRequestGetURL(cfRequest)));
-        if (CFStringCompare(newScheme.get(), m_originalScheme.get(), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
-            CFRetain(cfRequest);
+        if (CFStringCompare(newScheme.get(), m_originalScheme.get(), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
             return cfRequest;
-        }
     }
 
     ASSERT(!isMainThread());
@@ -172,7 +170,7 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
         callOnMainThread(WTFMove(work));
     m_semaphore.wait();
 
-    return m_requestResult.leakRef();
+    return std::exchange(m_requestResult, nullptr);
 }
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse(CFURLConnectionRef connection, CFURLResponseRef cfResponse)

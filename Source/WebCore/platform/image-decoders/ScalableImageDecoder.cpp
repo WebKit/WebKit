@@ -30,6 +30,9 @@
 #include "NotImplemented.h"
 #include "PNGImageDecoder.h"
 #include "SharedBuffer.h"
+#if USE(AVIF)
+#include "AVIFImageDecoder.h"
+#endif
 #if USE(OPENJPEG)
 #include "JPEG2000ImageDecoder.h"
 #endif
@@ -76,6 +79,13 @@ bool matchesJPEGSignature(char* contents)
 {
     return !memcmp(contents, "\xFF\xD8\xFF", 3);
 }
+
+#if USE(AVIF)
+bool matchesAVIFSignature(char* contents)
+{
+    return !memcmp(contents + 4, "\x66\x74\x79\x70", 4);
+}
+#endif
 
 #if USE(OPENJPEG)
 bool matchesJP2Signature(char* contents)
@@ -133,6 +143,11 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(SharedBuffer& data, Al
 
     if (matchesJPEGSignature(contents))
         return JPEGImageDecoder::create(alphaOption, gammaAndColorProfileOption);
+
+#if USE(AVIF)
+    if (matchesAVIFSignature(contents))
+        return AVIFImageDecoder::create(alphaOption, gammaAndColorProfileOption);
+#endif
 
 #if USE(OPENJPEG)
     if (matchesJP2Signature(contents))

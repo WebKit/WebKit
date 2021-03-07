@@ -15,5 +15,3 @@ STRIP_STYLE = non-global
 
 // Let the user install by specifying the $DSTROOT with xcodebuild
 SKIP_INSTALL = NO
-
-INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;

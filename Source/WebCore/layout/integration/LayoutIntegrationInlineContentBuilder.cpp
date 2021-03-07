@@ -189,7 +189,7 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
             }
             // Text + <br> (or just <br> or text<span></span><br>) behaves like text.
             for (auto& inlineLevelBox : nonRootInlineLevelBoxList) {
-                if (inlineLevelBox->isAtomicInlineLevelBox()) {
+                if (inlineLevelBox.isAtomicInlineLevelBox()) {
                     // Content like text<img> prevents legacy snapping.
                     return false;
                 }
@@ -359,7 +359,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
             enclosingTopAndBottom.bottom = roundToInt(enclosingTopAndBottom.bottom);
         }
         auto runCount = runIndex - firstRunIndex;
-        inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeftOffset(), line.contentLogicalWidth() });
+        inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
     }
 }
 
@@ -369,17 +369,19 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
     auto inlineQuirks = inlineFormattingContext.quirks();
     for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
         auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
-        auto& lineBoxLogicalRect = lineBox.logicalRect();
+        if (!lineBox.hasInlineBox())
+            continue;
 
+        auto& lineBoxLogicalRect = lineBox.logicalRect();
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (!inlineLevelBox->isInlineBox())
+            if (!inlineLevelBox.isInlineBox())
                 continue;
-            auto& layoutBox = inlineLevelBox->layoutBox();
+            auto& layoutBox = inlineLevelBox.layoutBox();
             auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
             auto inlineBoxRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
 
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineQuirks.inlineLevelBoxAffectsLineBox(*inlineLevelBox, lineBox) });
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineQuirks.inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox) });
         }
     }
 }

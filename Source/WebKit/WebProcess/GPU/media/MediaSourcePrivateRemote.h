@@ -85,7 +85,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void seekToTime(const MediaTime&);
 
-    GPUProcessConnection& m_gpuProcessConnection;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteMediaSourceIdentifier m_identifier;
     RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;

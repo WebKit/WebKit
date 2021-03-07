@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct NetworkTransactionInformation {
-    enum class Type { Redirection, Preflight };
+    enum class Type : bool { Redirection, Preflight };
     Type type;
     ResourceRequest request;
     ResourceResponse response;
@@ -44,25 +44,12 @@ struct NetworkTransactionInformation {
 };
 
 struct NetworkLoadInformation {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     ResourceRequest request;
     ResourceResponse response;
     NetworkLoadMetrics metrics;
     Vector<NetworkTransactionInformation> transactions;
 };
-
-}
-
-namespace WTF {
-template<> struct EnumTraits<WebCore::NetworkTransactionInformation::Type> {
-    using values = EnumValues<
-        WebCore::NetworkTransactionInformation::Type,
-        WebCore::NetworkTransactionInformation::Type::Redirection,
-        WebCore::NetworkTransactionInformation::Type::Preflight
-    >;
-};
-}
-
-namespace WebCore {
 
 template<class Encoder> inline void NetworkTransactionInformation::encode(Encoder& encoder) const
 {

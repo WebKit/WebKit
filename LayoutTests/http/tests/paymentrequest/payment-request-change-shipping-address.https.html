@@ -74,7 +74,8 @@ function testShippingAddressChange() {
       });
     });
     const handlerPromise = new Promise(resolve => {
-      request.onshippingaddresschange = () => {
+      request.onshippingaddresschange = (event) => {
+        event.updateWith({});
         resolve(request.shippingAddress);
       };
     });

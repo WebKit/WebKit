@@ -32,6 +32,10 @@
 #include <WebCore/InspectorFrontendHost.h>
 #include <wtf/Deque.h>
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+#include "InspectorExtensionTypes.h"
+#endif
+
 namespace WebCore {
 class CertificateInfo;
 class FloatRect;
@@ -39,8 +43,10 @@ class FloatRect;
 
 namespace WebKit {
 
-class WebInspectorUIExtensionController;
 class WebPage;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+class WebInspectorUIExtensionController;
+#endif
 
 class RemoteWebInspectorUI final
     : public RefCounted<RemoteWebInspectorUI>
@@ -108,6 +114,12 @@ public:
     bool supportsDiagnosticLogging() override;
     bool diagnosticLoggingAvailable() override { return m_diagnosticLoggingAvailable; }
     void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
+#endif
+        
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    bool supportsWebExtensions() override;
+    void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) override;
+    void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) override;
 #endif
 
     bool canSave() override { return true; }

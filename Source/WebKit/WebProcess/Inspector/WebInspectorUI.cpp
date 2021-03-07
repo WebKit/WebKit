@@ -355,7 +355,30 @@ void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
 
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDiagnosticLoggingAvailable"_s, { JSON::Value::create(m_diagnosticLoggingAvailable) });
 }
-#endif
+#endif // ENABLE(INSPECTOR_TELEMETRY)
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+bool WebInspectorUI::supportsWebExtensions()
+{
+    return true;
+}
+
+void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID)
+{
+    if (!m_extensionController)
+        return;
+    
+    m_extensionController->didShowExtensionTab(extensionID, extensionTabID);
+}
+
+void WebInspectorUI::didHideExtensionTab(const String& extensionID, const String& extensionTabID)
+{
+    if (!m_extensionController)
+        return;
+
+    m_extensionController->didHideExtensionTab(extensionID, extensionTabID);
+}
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 void WebInspectorUI::showConsole()
 {

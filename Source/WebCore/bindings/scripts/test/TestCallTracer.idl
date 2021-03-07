@@ -26,11 +26,11 @@
 typedef (boolean or float or DOMString) VariantType;
 
 [
-    CallTracingCallback=testCallTracerInterface,
+    CallTracer=TestInterfaceCallTracer,
     Exposed=TestGlobalObject
 ] interface TestCallTracer {
     attribute boolean testAttributeInterface;
-    [CallTracingCallback=testCallTracerAttribute] attribute boolean testAttributeSpecified;
+    [CallTracer=TestAttributeCallTracer] attribute boolean testAttributeSpecified;
 
     attribute VariantType testAttributeWithVariant;
     readonly attribute boolean testReadonlyAttribute;
@@ -38,7 +38,7 @@ typedef (boolean or float or DOMString) VariantType;
     const boolean testConstValue = false;
 
     undefined testOperationInterface();
-    [CallTracingCallback=testCallTracerOperation] undefined testOperationSpecified();
+    [CallTracer=TestOperationCallTracer] undefined testOperationSpecified();
 
     undefined testOperationWithArguments(boolean a, float b, DOMString c);
     undefined testOperationWithNullableArgument(Node? nodeNullableArg);

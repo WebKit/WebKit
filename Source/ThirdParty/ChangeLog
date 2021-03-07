@@ -1,3 +1,17 @@
+2021-02-24  Tim Horton  <timothy_horton@apple.com>
+
+        Fix linker warnings building gtest for macCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=222346
+        <rdar://problem/74405116>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * gtest/xcode/Config/FrameworkTarget.xcconfig:
+        * gtest/xcode/Config/General.xcconfig:
+        Work around a linker warning about macCatalyst by not specifying
+        an INSTALL_NAME that is outside of /System/iOSSupport, where all
+        macCatalyst-only binaries must live.
+
 2021-01-08  Ryan Hostetler  <rhost@apple.com>
 
         Add support for source caching between platforms

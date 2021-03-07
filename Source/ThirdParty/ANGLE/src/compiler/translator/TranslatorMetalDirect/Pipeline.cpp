@@ -447,7 +447,7 @@ AddressSpace Pipeline::externalAddressSpace() const
     }
 }
 
-bool PipelineStructs::matches(const TStructure &s, bool internal, bool external) const
+bool PipelineStructs::matches(const TStructure *s, bool internal, bool external) const
 {
     PipelineScoped<TStructure> ps[] = {
         fragmentIn,
@@ -464,11 +464,11 @@ bool PipelineStructs::matches(const TStructure &s, bool internal, bool external)
     };
     for (const auto &p : ps)
     {
-        if (internal && p.internal == &s)
+        if (internal && p.internal == s)
         {
             return true;
         }
-        if (external && p.external == &s)
+        if (external && p.external == s)
         {
             return true;
         }

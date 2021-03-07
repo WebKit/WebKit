@@ -10,7 +10,7 @@ character encoding in hidden _charset_ field.
 <p>
 This should submit _charset_=iso8559-1.  Note that this _charset_ input has a value before it submits, which is overwritten. IE6 submits windows1252, because all pages are evidently Unicode in IE6.  The point is that it submits the charset we're using, not what exactly it submits.</p>
 
-<form name="testForm" action="resources/char-encoding-in-hidden-charset-field.php" method="post">
+<form name="testForm" action="resources/char-encoding-in-hidden-charset-field.py" method="post">
 <input type=hidden name="_charset_" value="This value should change">
 <input type=submit>
 </form>

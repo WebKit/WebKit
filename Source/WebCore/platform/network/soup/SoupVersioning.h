@@ -138,4 +138,24 @@ static inline void
 soup_auth_cancel(SoupAuth*)
 {
 }
+
+static inline void
+soup_session_set_proxy_resolver(SoupSession* session, GProxyResolver* resolver)
+{
+    g_object_set(session, "proxy-resolver", resolver, nullptr);
+}
+
+static inline GProxyResolver*
+soup_session_get_proxy_resolver(SoupSession* session)
+{
+    GRefPtr<GProxyResolver> resolver;
+    g_object_get(session, "proxy-resolver", &resolver.outPtr(), nullptr);
+    return resolver.get();
+}
+
+static inline void
+soup_session_set_accept_language(SoupSession* session, const char* acceptLanguage)
+{
+    g_object_set(session, "accept-language", acceptLanguage, nullptr);
+}
 #endif // USE(SOUP2)

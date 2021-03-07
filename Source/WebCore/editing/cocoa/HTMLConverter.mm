@@ -415,16 +415,13 @@ AttributedString HTMLConverter::convert()
 // Returns the font to be used if the NSFontAttributeName doesn't exist
 static NSFont *WebDefaultFont()
 {
-    static NSFont *defaultFont = nil;
-    if (defaultFont)
-        return defaultFont;
-
-    NSFont *font = [NSFont fontWithName:@"Helvetica" size:12];
-    if (!font)
-        font = [NSFont systemFontOfSize:12];
-
-    defaultFont = [font retain];
-    return defaultFont;
+    static auto defaultFont = makeNeverDestroyed([] {
+        NSFont *font = [NSFont fontWithName:@"Helvetica" size:12];
+        if (!font)
+            font = [NSFont systemFontOfSize:12];
+        return retainPtr(font);
+    }());
+    return defaultFont.get().get();
 }
 #endif
 
@@ -520,13 +517,13 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
 
 static NSParagraphStyle *defaultParagraphStyle()
 {
-    static NSMutableParagraphStyle *defaultParagraphStyle = nil;
-    if (!defaultParagraphStyle) {
-        defaultParagraphStyle = [[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy];
+    static auto defaultParagraphStyle = makeNeverDestroyed([] {
+        auto defaultParagraphStyle = adoptNS([[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy]);
         [defaultParagraphStyle setDefaultTabInterval:36];
         [defaultParagraphStyle setTabStops:@[]];
-    }
-    return defaultParagraphStyle;
+        return defaultParagraphStyle;
+    }());
+    return defaultParagraphStyle.get().get();
 }
 
 RefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, CSSPropertyID propertyId)
@@ -2093,7 +2090,6 @@ void HTMLConverter::_processText(CharacterData& characterData)
     unichar lastChar = (textLength > 0) ? [[_attrStr string] characterAtIndex:textLength - 1] : '\n';
     BOOL suppressLeadingSpace = ((_flags.isSoft && lastChar == ' ') || lastChar == '\n' || lastChar == '\r' || lastChar == '\t' || lastChar == NSParagraphSeparatorCharacter || lastChar == NSLineSeparatorCharacter || lastChar == NSFormFeedCharacter || lastChar == WebNextLineCharacter);
     NSRange rangeToReplace = NSMakeRange(textLength, 0);
-    CFMutableStringRef mutstr = NULL;
 
     String originalString = characterData.data();
     unsigned startOffset = 0;
@@ -2163,8 +2159,6 @@ void HTMLConverter::_processText(CharacterData& characterData)
             [_attrStr setAttributes:aggregatedAttributesForAncestors(characterData) range:rangeToReplace];
         _flags.isSoft = wasSpace;
     }
-    if (mutstr)
-        CFRelease(mutstr);
 }
 
 void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)

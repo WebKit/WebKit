@@ -60,7 +60,6 @@ def send_email(to_emails, subject, text, reference=''):
         print('Error: skipping email since no subject or text is specified')
         return
 
-    text = text.encode('utf-8')
     text = text.replace('\n', '<br>')
 
     msg = MIMEText(text, 'html')

@@ -40,7 +40,7 @@ WI.WebInspectorExtension = class WebInspectorExtension
     get displayName() { return this._displayName; }
 };
 
-// Note: these values are synonymous with the values of enum class WebKit::InspectorExtensionError.
+// Note: these values are synonymous with the values of enum class Inspector::ExtensionError.
 WI.WebInspectorExtension.ErrorCode = {
     ContextDestroyed: "ContextDestroyed",
     InternalError: "InternalError",

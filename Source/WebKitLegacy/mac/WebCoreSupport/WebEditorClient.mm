@@ -459,10 +459,10 @@ static NSDictionary *attributesForAttributedStringConversion()
 
 void _WebCreateFragment(Document& document, NSAttributedString *string, FragmentAndResources& result)
 {
-    static NSDictionary *documentAttributes = [attributesForAttributedStringConversion() retain];
+    static NeverDestroyed<RetainPtr<NSDictionary>> documentAttributes = attributesForAttributedStringConversion();
     NSArray *subresources;
     DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length])
-        document:kit(&document) documentAttributes:documentAttributes subresources:&subresources];
+        document:kit(&document) documentAttributes:documentAttributes.get().get() subresources:&subresources];
     result.fragment = core(fragment);
     for (WebResource* resource in subresources)
         result.resources.append([resource _coreResource].get());

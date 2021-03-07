@@ -180,9 +180,9 @@ DEFINE_VISIT_AGGREGATE(Table);
 Type Table::wasmType() const
 {
     if (isExternrefTable())
-        return Type::Externref;
+        return Types::Externref;
     ASSERT(isFuncrefTable());
-    return Type::Funcref;
+    return Types::Funcref;
 }
 
 FuncRefTable* Table::asFuncrefTable()

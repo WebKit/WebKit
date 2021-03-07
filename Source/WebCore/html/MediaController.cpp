@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "MediaController.h"
 
 #if ENABLE(VIDEO)
-#include "MediaController.h"
 
 #include "EventNames.h"
 #include "HTMLMediaElement.h"

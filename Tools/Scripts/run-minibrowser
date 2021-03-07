@@ -17,13 +17,14 @@
 # Boston, MA 02110-1301, USA.
 
 """Wrapper around webkitpy/minibrowser/run_webkit_app.py"""
-import os
 import sys
 from webkitpy.minibrowser import run_webkit_app
 
-top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 if sys.platform.startswith('linux'):
+    import os
+    top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
     sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
+
     import flatpakutils
     flatpakutils.run_in_sandbox_if_available(sys.argv)
 

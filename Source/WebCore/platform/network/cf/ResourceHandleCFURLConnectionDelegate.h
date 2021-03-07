@@ -66,7 +66,7 @@ private:
     static Boolean canRespondToProtectionSpaceCallback(CFURLConnectionRef, CFURLProtectionSpaceRef, const void* clientInfo);
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
-    virtual CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef) = 0;
+    virtual RetainPtr<CFURLRequestRef> willSendRequest(CFURLRequestRef, CFURLResponseRef) = 0;
     virtual void didReceiveResponse(CFURLConnectionRef, CFURLResponseRef) = 0;
     virtual void didReceiveData(CFDataRef, CFIndex originalLength) = 0;
     virtual void didFinishLoading() = 0;

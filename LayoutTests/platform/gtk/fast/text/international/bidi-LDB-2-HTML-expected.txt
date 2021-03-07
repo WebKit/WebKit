@@ -29,7 +29,7 @@ layer at (0,0) size 800x517
         RenderText {#text} at (0,1) size 360x17
           text run at (0,1) width 360: "In each box, all the lines should be the same."
       RenderBlock (anonymous) at (0,129) size 784x236
-        RenderBlock {DIV} at (3,7) size 101x170 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (3,7) size 101x171 [border: (1px solid #008000)]
           RenderBlock {P} at (4,4) size 93x18
             RenderText {#text} at (0,0) size 93x17
               text run at (0,0) width 93: "ABCDEFGHI"
@@ -87,9 +87,9 @@ layer at (0,0) size 800x517
                 text run at (33,0) width 31 LTR override: "DEF"
             RenderText {#text} at (0,0) size 33x17
               text run at (0,0) width 33 RTL override: "CBA"
-        RenderText {#text} at (107,82) size 5x17
-          text run at (107,82) width 5: " "
-        RenderBlock {DIV} at (115,52) size 35x80 [border: (1px solid #008000)]
+        RenderText {#text} at (107,83) size 5x17
+          text run at (107,83) width 5: " "
+        RenderBlock {DIV} at (115,52) size 35x81 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 27x18
             RenderTableSection {TBODY} at (0,0) size 27x18
               RenderTableRow {TR} at (0,0) size 27x18
@@ -111,9 +111,9 @@ layer at (0,0) size 800x517
           RenderBlock {P} at (4,58) size 27x18
             RenderText {#text} at (0,0) size 27x17
               text run at (0,0) width 27 LTR override: "\x{5D2}\x{5D1}\x{5D0}"
-        RenderText {#text} at (153,82) size 5x17
-          text run at (153,82) width 5: " "
-        RenderBlock {DIV} at (161,60) size 101x64 [border: (1px solid #008000)]
+        RenderText {#text} at (153,83) size 5x17
+          text run at (153,83) width 5: " "
+        RenderBlock {DIV} at (161,60) size 101x65 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 93x18
             RenderTableSection {TBODY} at (0,0) size 93x18
               RenderTableRow {TR} at (0,0) size 93x18
@@ -160,8 +160,8 @@ layer at (0,0) size 800x517
               text run at (0,1) width 32 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (32,1) width 33: "ABC"
               text run at (64,1) width 29 RTL: "\x{5D3}\x{5D4}\x{5D5} "
-        RenderText {#text} at (265,82) size 5x17
-          text run at (265,82) width 5: " "
+        RenderText {#text} at (265,83) size 5x17
+          text run at (265,83) width 5: " "
         RenderBlock {DIV} at (273,3) size 168x178 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 160x18
             RenderTableSection {TBODY} at (0,0) size 160x18
@@ -301,9 +301,9 @@ layer at (0,0) size 800x517
             RenderText {#text} at (0,1) size 129x17
               text run at (0,1) width 32 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (92,1) width 37: " DEF"
-        RenderText {#text} at (444,82) size 5x17
-          text run at (444,82) width 5: " "
-        RenderBlock {DIV} at (452,69) size 202x45 [border: (1px solid #008000)]
+        RenderText {#text} at (444,83) size 5x17
+          text run at (444,83) width 5: " "
+        RenderBlock {DIV} at (452,70) size 202x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 194x18
             RenderTableSection {TBODY} at (0,0) size 194x18
               RenderTableRow {TR} at (0,0) size 194x18
@@ -383,9 +383,9 @@ layer at (0,0) size 800x517
               text run at (69,1) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
               text run at (92,1) width 76: " DEF GHI "
               text run at (167,1) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (657,82) size 5x17
-          text run at (657,82) width 5: " "
-        RenderBR {BR} at (662,82) size 0x17
+        RenderText {#text} at (657,83) size 5x17
+          text run at (657,83) width 5: " "
+        RenderBR {BR} at (662,83) size 0x17
         RenderBlock {DIV} at (3,187) size 202x45 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 194x18
             RenderTableSection {TBODY} at (0,0) size 194x18

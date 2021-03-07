@@ -28,12 +28,12 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    JSGenerateToJSObject,
+    CustomToJSObject,
     JSGenerateToNativeObject,
     SkipVTableValidation,
     InterfaceName=XRReferenceSpace
 ] interface WebXRReferenceSpace : WebXRSpace {
-    [NewObject] WebXRReferenceSpace getOffsetReferenceSpace(WebXRRigidTransform originOffset);
+    [NewObject, MayThrowException] WebXRReferenceSpace getOffsetReferenceSpace(WebXRRigidTransform originOffset);
 
     attribute EventHandler onreset;
 };

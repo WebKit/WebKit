@@ -109,9 +109,8 @@ void VideoSampleBufferCompressor::videoCompressionCallback(void *refCon, void*, 
 static inline OSStatus setCompressionSessionProperty(VTCompressionSessionRef vtSession, CFStringRef key, uint32_t value)
 {
     int64_t value64 = value;
-    CFNumberRef cfValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value64);
-    OSStatus status = VTSessionSetProperty(vtSession, key, cfValue);
-    CFRelease(cfValue);
+    auto cfValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value64));
+    OSStatus status = VTSessionSetProperty(vtSession, key, cfValue.get());
     return status;
 }
 

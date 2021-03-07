@@ -56,12 +56,20 @@ static inline size_t maximumInlineBodySize()
 
 static double computeRecordWorth(FileTimes);
 
+static uint64_t nextReadOperationOrdinal()
+{
+    static uint64_t ordinal;
+    return ++ordinal;
+}
+
 struct Storage::ReadOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ReadOperation(Storage& storage, const Key& key, RetrieveCompletionHandler&& completionHandler)
+    ReadOperation(Storage& storage, const Key& key, unsigned priority, RetrieveCompletionHandler&& completionHandler)
         : storage(storage)
         , key(key)
+        , ordinal(nextReadOperationOrdinal())
+        , priority(priority)
         , completionHandler(WTFMove(completionHandler))
     { }
 
@@ -71,6 +79,8 @@ public:
     Ref<Storage> storage;
 
     const Key key;
+    const uint64_t ordinal;
+    unsigned priority;
     RetrieveCompletionHandler completionHandler;
     
     std::unique_ptr<Record> resultRecord;
@@ -80,6 +90,13 @@ public:
     bool isCanceled { false };
     Timings timings;
 };
+
+bool Storage::isHigherPriority(const std::unique_ptr<ReadOperation>& a, const std::unique_ptr<ReadOperation>& b)
+{
+    if (a->priority == b->priority)
+        return a->ordinal < b->ordinal;
+    return a->priority > b->priority;
+}
 
 void Storage::ReadOperation::cancel()
 {
@@ -777,14 +794,11 @@ void Storage::cancelAllReadOperations()
     for (auto& readOperation : m_activeReadOperations)
         readOperation->cancel();
 
-    size_t pendingCount = 0;
-    for (int priority = maximumRetrievePriority; priority >= 0; --priority) {
-        auto& pendingRetrieveQueue = m_pendingReadOperationsByPriority[priority];
-        pendingCount += pendingRetrieveQueue.size();
-        for (auto it = pendingRetrieveQueue.rbegin(), end = pendingRetrieveQueue.rend(); it != end; ++it)
-            (*it)->cancel();
-        pendingRetrieveQueue.clear();
-    }
+    size_t pendingCount = m_pendingReadOperations.size();
+    UNUSED_PARAM(pendingCount);
+
+    while (!m_pendingReadOperations.isEmpty())
+        m_pendingReadOperations.dequeue()->cancel();
 
     LOG(NetworkCacheStorage, "(NetworkProcess) retrieve timeout, canceled %u active and %zu pending", m_activeReadOperations.size(), pendingCount);
 }
@@ -795,15 +809,12 @@ void Storage::dispatchPendingReadOperations()
 
     const int maximumActiveReadOperationCount = 5;
 
-    for (int priority = maximumRetrievePriority; priority >= 0; --priority) {
+    while (!m_pendingReadOperations.isEmpty()) {
         if (m_activeReadOperations.size() > maximumActiveReadOperationCount) {
             LOG(NetworkCacheStorage, "(NetworkProcess) limiting parallel retrieves");
             return;
         }
-        auto& pendingRetrieveQueue = m_pendingReadOperationsByPriority[priority];
-        if (pendingRetrieveQueue.isEmpty())
-            continue;
-        dispatchReadOperation(pendingRetrieveQueue.takeLast());
+        dispatchReadOperation(m_pendingReadOperations.dequeue());
     }
 }
 
@@ -899,7 +910,6 @@ void Storage::finishWriteOperation(WriteOperation& writeOperation, int error)
 void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(priority <= maximumRetrievePriority);
     ASSERT(!key.isNull());
 
     if (!m_capacity) {
@@ -917,12 +927,12 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     if (retrieveFromMemory(m_activeWriteOperations, key, completionHandler))
         return;
 
-    auto readOperation = makeUnique<ReadOperation>(*this, key, WTFMove(completionHandler));
+    auto readOperation = makeUnique<ReadOperation>(*this, key, priority, WTFMove(completionHandler));
 
     readOperation->timings.startTime = MonotonicTime::now();
     readOperation->timings.dispatchCountAtStart = m_readOperationDispatchCount;
 
-    m_pendingReadOperationsByPriority[priority].prepend(WTFMove(readOperation));
+    m_pendingReadOperations.enqueue(WTFMove(readOperation));
     dispatchPendingReadOperations();
 }
 

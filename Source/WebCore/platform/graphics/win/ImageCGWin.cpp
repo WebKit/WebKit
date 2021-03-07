@@ -70,19 +70,16 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     ASSERT(bmpInfo.bmBitsPixel == 32);
     int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
     
-    CGContextRef cgContext = CGBitmapContextCreate(bmpInfo.bmBits, bmpInfo.bmWidth, bmpInfo.bmHeight,
-        8, bmpInfo.bmWidthBytes, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+    auto cgContext = adoptCF(CGBitmapContextCreate(bmpInfo.bmBits, bmpInfo.bmWidth, bmpInfo.bmHeight,
+        8, bmpInfo.bmWidthBytes, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
   
-    GraphicsContext gc(cgContext);
+    GraphicsContext gc(cgContext.get());
 
     FloatSize imageSize = BitmapImage::size();
     if (size)
         drawFrameMatchingSourceSize(gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), *size, CompositeOperator::Copy);
     else
         draw(gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), { CompositeOperator::Copy });
-
-    // Do cleanup
-    CGContextRelease(cgContext);
 
     return true;
 }

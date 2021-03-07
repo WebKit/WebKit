@@ -38,7 +38,7 @@ function runTest()
     });
 
     let gl = document.querySelector("canvas").getContext("webgl");
-    window.internals.simulateWebGLContextChanged(gl);
+    window.internals.simulateEventForWebGLContext("ContextChange", gl);
 }
 
 

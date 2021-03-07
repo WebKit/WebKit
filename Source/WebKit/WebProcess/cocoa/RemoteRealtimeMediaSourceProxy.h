@@ -46,6 +46,7 @@ namespace WebKit {
 class RemoteRealtimeMediaSourceProxy {
 public:
     RemoteRealtimeMediaSourceProxy(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, bool shouldCaptureInGPUProcess, const WebCore::MediaConstraints*);
+    ~RemoteRealtimeMediaSourceProxy();
 
     IPC::Connection* connection();
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }

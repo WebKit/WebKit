@@ -255,6 +255,12 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
 #endif
 }
 
+void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting event)
+{
+    // FIXME: only run this in testing mode. https://bugs.webkit.org/show_bug.cgi?id=222544
+    m_context->simulateEventForTesting(event);
+}
+
 } // namespace WebKit
 
 #endif

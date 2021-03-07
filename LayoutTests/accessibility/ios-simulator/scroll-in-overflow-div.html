@@ -74,7 +74,7 @@ var successfullyParsed = false;
     window.jsTestIsAsync = true;
     function focusCallback(element, notification, info) {
 
-        if (notification == "AXScrollByPage") {
+        if (notification == "AXPageScrolled") {
             debug(notification + " received: data: " + info.status);
         }
 

@@ -1,7 +1,7 @@
 function clearCookies()
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "block-cookies-worker.php?clear=1", false);
+    xhr.open("GET", "block-cookies-worker.py?clear=1", false);
     xhr.send(null);
 }
 

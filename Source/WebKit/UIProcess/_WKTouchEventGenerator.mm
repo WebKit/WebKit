@@ -98,7 +98,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 @end
 
 @implementation _WKTouchEventGenerator {
-    IOHIDEventSystemClientRef _ioSystemClient;
+    RetainPtr<IOHIDEventSystemClientRef> _ioSystemClient;
     SyntheticEventDigitizerInfo _activePoints[HIDMaxTouchCount];
     NSUInteger _activePointCount;
 }
@@ -131,9 +131,6 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 - (void)dealloc
 {
-  if (_ioSystemClient)
-        CFRelease(_ioSystemClient);
-
     [_eventCallbacks release];
     [super dealloc];
 }
@@ -210,7 +207,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 - (BOOL)_sendHIDEvent:(IOHIDEventRef)eventRef
 {
     if (!_ioSystemClient)
-        _ioSystemClient = IOHIDEventSystemClientCreate(kCFAllocatorDefault);
+        _ioSystemClient = adoptCF(IOHIDEventSystemClientCreate(kCFAllocatorDefault));
 
     if (eventRef) {
         RunLoop::main().dispatch([strongEvent = retainPtr(eventRef)] {

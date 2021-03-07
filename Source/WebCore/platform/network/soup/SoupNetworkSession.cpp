@@ -101,8 +101,7 @@ static AllowedCertificatesMap& allowedCertificates()
 }
 
 SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
-    : m_soupSession(adoptGRef(soup_session_new()))
-    , m_sessionID(sessionID)
+    : m_sessionID(sessionID)
 {
     // Values taken from http://www.browserscope.org/ following
     // the rule "Do What Every Other Modern Browser Is Doing". They seem
@@ -111,12 +110,12 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
     static const int maxConnections = 17;
     static const int maxConnectionsPerHost = 6;
 
-    g_object_set(m_soupSession.get(),
+    m_soupSession = adoptGRef(soup_session_new_with_options(
         "max-conns", maxConnections,
         "max-conns-per-host", maxConnectionsPerHost,
         "timeout", 0,
         "idle-timeout", 0,
-        nullptr);
+        nullptr));
 
     soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_CONTENT_SNIFFER);
     soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_AUTH_NTLM);
@@ -281,10 +280,8 @@ void SoupNetworkSession::setProxySettings(SoupNetworkProxySettings&& settings)
     GRefPtr<GProxyResolver> resolver;
     switch (m_proxySettings.mode) {
     case SoupNetworkProxySettings::Mode::Default: {
-        GRefPtr<GProxyResolver> currentResolver;
-        g_object_get(m_soupSession.get(), "proxy-resolver", &currentResolver.outPtr(), nullptr);
         GProxyResolver* defaultResolver = g_proxy_resolver_get_default();
-        if (currentResolver.get() == defaultResolver)
+        if (defaultResolver == soup_session_get_proxy_resolver(m_soupSession.get()))
             return;
         resolver = defaultResolver;
         break;
@@ -303,7 +300,7 @@ void SoupNetworkSession::setProxySettings(SoupNetworkProxySettings&& settings)
         break;
     }
 
-    g_object_set(m_soupSession.get(), "proxy-resolver", resolver.get(), nullptr);
+    soup_session_set_proxy_resolver(m_soupSession.get(), resolver.get());
     soup_session_abort(m_soupSession.get());
 }
 
@@ -314,7 +311,7 @@ void SoupNetworkSession::setInitialAcceptLanguages(const CString& languages)
 
 void SoupNetworkSession::setAcceptLanguages(const CString& languages)
 {
-    g_object_set(m_soupSession.get(), "accept-language", languages.data(), nullptr);
+    soup_session_set_accept_language(m_soupSession.get(), languages.data());
 }
 
 void SoupNetworkSession::setIgnoreTLSErrors(bool ignoreTLSErrors)

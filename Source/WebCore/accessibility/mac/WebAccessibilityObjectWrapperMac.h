@@ -31,6 +31,7 @@
 #if PLATFORM(MAC)
 
 #import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/RetainPtr.h>
 
 #ifndef NSAccessibilityPrimaryScreenHeightAttribute
 #define NSAccessibilityPrimaryScreenHeightAttribute @"_AXPrimaryScreenHeight"
@@ -42,7 +43,7 @@
 // Inside WebCore, use the WebCore homonymous declared below instead.
 - (id)textMarkerRangeFromVisiblePositions:(const WebCore::VisiblePosition&)startPosition endPosition:(const WebCore::VisiblePosition&)endPosition;
 - (id)textMarkerForVisiblePosition:(const WebCore::VisiblePosition&)visiblePos;
-- (id)textMarkerForFirstPositionInTextControl:(WebCore::HTMLTextFormControlElement&)textControl;
+- (RetainPtr<AXTextMarkerRef>)textMarkerForFirstPositionInTextControl:(WebCore::HTMLTextFormControlElement&)textControl;
 
 // When a plugin uses a WebKit control to act as a surrogate view (e.g. PDF use WebKit to create text fields).
 - (id)associatedPluginParent;

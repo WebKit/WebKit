@@ -599,7 +599,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         }
         
         // handle deleting all nodes that are completely selected
-        while (node && node != m_downstreamEnd.deprecatedNode()) {
+        while (node && node != m_downstreamEnd.deprecatedNode() && !m_downstreamEnd.isNull() && !m_downstreamEnd.isOrphan()) {
             if (firstPositionInOrBeforeNode(node.get()) >= m_downstreamEnd) {
                 // NodeTraversal::nextSkippingChildren just blew past the end position, so stop deleting
                 node = nullptr;

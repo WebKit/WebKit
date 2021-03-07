@@ -11,7 +11,7 @@
       var test = async_test("Testing timing out preflight")
       test.step(function() {
         var client = new XMLHttpRequest()
-        var url = "http://localhost:8000/misc/resources/delayed-log.php?delay=10000000"
+        var url = "http://localhost:8000/misc/resources/delayed-log.py?delay=10000000"
         client.open("GET", url, true)
         client.setRequestHeader("X-Custom", "test")
         client.hasTimedout = false;

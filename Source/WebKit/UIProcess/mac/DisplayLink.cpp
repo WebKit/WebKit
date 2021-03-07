@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DisplayLink.h"
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
 
 #include "EventDispatcherMessages.h"
 #include "WebProcessMessages.h"
@@ -150,4 +150,4 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
 
 } // namespace WebKit
 
-#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#endif // HAVE(CVDISPLAYLINK)

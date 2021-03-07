@@ -169,6 +169,9 @@ imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-005.h
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
 
+# Passing since r260062.
+imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass ]
+
 # css-values passing for us.
 imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-004.html [ Pass ]
@@ -299,7 +302,6 @@ webkit.org/b/221645 accessibility/aria-sort.html [ Failure ]
 webkit.org/b/221645 accessibility/aria-sort-changed-notification.html [ Skip ]
 
 # Not supported
-accessibility/aria-errormessage.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -332,6 +334,28 @@ webkit.org/b/211979 imported/w3c/web-platform-tests/clipboard-apis/async-raw-wri
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/214417 [ Debug ] css3/color/composited-solid-backgrounds.html [ Crash ]
+
+# Failures related with ENABLE_CSS_COMPOSITING=ON
+webkit.org/b/169916 css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-body-composited-child-background-color.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-body-composited-child.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-child.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-double.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-transformed-blending.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-clip-rect-accelerated-blending.html [ ImageOnlyFailure ]
+webkit.org/b/169916 css3/blending/blend-mode-isolated-group-1.html [ Missing Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-isolated-group-2.html [ Missing Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-isolated-group-3.html [ Missing Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-isolation-turn-off-self-painting-layer1.html [ Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-isolation-turn-off-self-painting-layer2.html [ Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-isolation-turn-off-self-painting-layer.html [ Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-isolation-turn-on-self-painting-layer.html [ Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-layers.html [ Missing Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-reflection.html [ Missing Failure ]
+webkit.org/b/169916 css3/blending/blend-mode-simple-composited.html [ Missing Failure ]
+webkit.org/b/169916 imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests
@@ -488,7 +512,7 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout Pass ]
-webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
+webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Release ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Pass Crash ]
@@ -569,6 +593,17 @@ webkit.org/b/220610 storage/indexeddb/result-request-cycle.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IndexedDB-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# JavaScriptCore-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/222453 [ Release ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-4-tla.html [ Crash ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of JavaScriptCore-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -963,6 +998,8 @@ webkit.org/b/218318 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ F
 
 webkit.org/b/219251 fast/canvas/webgl/getIndexedParameter-crash.html [ Failure ]
 
+webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -978,7 +1015,8 @@ webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
-webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Failure ]
+webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Timeout Failure ]
+webkit.org/b/222585 [ Debug ] webrtc/video-h264.html [ Crash ]
 
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
 webkit.org/b/212809 [ Release ] webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
@@ -992,8 +1030,6 @@ webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
 
 webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure Crash ]
 
-webkit.org/b/216777 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Crash Timeout Pass ]
-
 webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache-long.html [ Failure Pass Timeout ]
 webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache.html [ Failure Pass Timeout ]
 
@@ -1001,13 +1037,16 @@ webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failur
 
 webkit.org/b/209163 webrtc/audio-video-element-playing.html [ Crash Failure Pass ]
 
-webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Failure ]
+webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 
 webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
 
-webkit.org/b/219825 webrtc/sframe-keys.html [ Failure ]
+# Release timing out.
+webkit.org/b/219825 [ Release ] webrtc/sframe-keys.html [ Skip ]
+webkit.org/b/219825 [ Debug ] webrtc/sframe-keys.html [ Failure ]
+
 
 webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute2.html  [ Failure ]
 webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute.html  [ Failure Timeout ]
@@ -1269,6 +1308,8 @@ webkit.org/b/216740 imported/w3c/web-platform-tests/domparsing/insert_adjacent_h
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/212146 http/tests/xmlhttprequest/logout.html [ Failure Pass ]
+
+webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of XHR-related bugs
@@ -1534,7 +1575,7 @@ webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-b
 
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/217363 js/throw-large-string-oom.html [ Pass Crash Timeout ]
+webkit.org/b/222638 js/throw-large-string-oom.html [ Pass Timeout ]
 
 # Fails when built with GCC but passes with Clang
 webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Pass Failure ]
@@ -1724,26 +1765,6 @@ webkit.org/b/169909 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Fail
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
 webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html [ ImageOnlyFailure ]
-
-# Failures related with ENABLE_CSS_COMPOSITING=ON
-webkit.org/b/169916 css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-child.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-double.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-transformed-blending.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-clip-rect-accelerated-blending.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-isolated-group-1.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-isolated-group-2.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-isolated-group-3.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-isolation-turn-off-self-painting-layer1.html [ Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-isolation-turn-off-self-painting-layer2.html [ Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-isolation-turn-off-self-painting-layer.html [ Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-isolation-turn-on-self-painting-layer.html [ Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-layers.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-reflection.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/blend-mode-simple-composited.html [ Missing Failure ]
-webkit.org/b/169916 imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
 
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]

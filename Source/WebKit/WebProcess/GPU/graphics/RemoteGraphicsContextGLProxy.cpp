@@ -93,9 +93,6 @@ void RemoteGraphicsContextGLProxy::prepareForDisplay()
     }
     auto displayBuffer = IOSurface::createFromSendRight(WTFMove(displayBufferSendRight), sRGBColorSpaceRef());
     if (displayBuffer) {
-        // Claim in the WebProcess ownership of the IOSurface constructed by the GPUProcess so that Jetsam knows which processes to kill.
-        displayBuffer->setOwnership(mach_task_self());
-
         auto& sc = platformSwapChain();
         sc.recycleBuffer();
         sc.present({ WTFMove(displayBuffer), nullptr });
@@ -126,12 +123,6 @@ void RemoteGraphicsContextGLProxy::notifyMarkContextChanged()
     auto sendResult = send(Messages::RemoteGraphicsContextGL::NotifyMarkContextChanged());
     if (!sendResult)
         markContextLost();
-}
-
-void RemoteGraphicsContextGLProxy::simulateContextChanged()
-{
-    // FIXME: Currently not implemented because it's not clear this is the right way. https://bugs.webkit.org/show_bug.cgi?id=219349
-    notImplemented();
 }
 
 void RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas(ImageBuffer& buffer)
@@ -197,6 +188,15 @@ GCGLenum RemoteGraphicsContextGLProxy::getError()
         return static_cast<GCGLenum>(returnValue);
     }
     return std::exchange(m_errorWhenContextIsLost, NO_ERROR);
+}
+
+void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTesting event)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::SimulateEventForTesting(event));
+        if (!sendResult)
+            markContextLost();
+    }
 }
 
 void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& semaphore, String&& availableExtensions, String&& requestedExtensions)

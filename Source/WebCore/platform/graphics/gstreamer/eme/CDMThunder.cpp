@@ -131,7 +131,7 @@ const Vector<String>& CDMFactoryThunder::supportedKeySystems() const
             GST_WARNING("Thunder is up-ranked as preferred decryptor but Thunder is not supporting any encryption system. Is "
                 "Thunder running? Are the plugins built?");
 #endif
-        GST_DEBUG("%u supported key systems", supportedKeySystems.size());
+        GST_DEBUG("%zu supported key systems", supportedKeySystems.size());
     };
     return supportedKeySystems;
 }

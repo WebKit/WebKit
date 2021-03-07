@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
 
 #include "DisplayLinkObserverID.h"
 #include <CoreVideo/CVDisplayLink.h>
@@ -71,5 +71,4 @@ private:
 
 } // namespace WebKit
 
-#endif
-
+#endif // HAVE(CVDISPLAYLINK)

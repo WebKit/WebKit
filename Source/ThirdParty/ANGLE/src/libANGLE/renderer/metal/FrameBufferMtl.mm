@@ -56,7 +56,7 @@ const gl::InternalFormat &GetReadAttachmentInfo(const gl::Context *context,
 // FramebufferMtl implementation
 FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state,
                                bool flipY,
-                               SurfaceMtlProtocol *backbuffer)
+                               WindowSurfaceMtl *backbuffer)
     : FramebufferImpl(state), mBackbuffer(backbuffer), mFlipY(flipY)
 {
     reset();
@@ -506,7 +506,6 @@ bool FramebufferMtl::checkStatus(const gl::Context *context) const
     {
         return checkPackedDepthStencilAttachment();
     }
-
     return true;
 }
 
@@ -1337,6 +1336,10 @@ angle::Result FramebufferMtl::readPixelsImpl(const gl::Context *context,
     {
         texture = renderTarget->getTexture();
         // For non-default framebuffer, MSAA read pixels is disallowed.
+        if(!texture)
+        {
+            return angle::Result::Stop;
+        }
         ANGLE_MTL_CHECK(contextMtl, texture->samples() == 1, GL_INVALID_OPERATION);
     }
 

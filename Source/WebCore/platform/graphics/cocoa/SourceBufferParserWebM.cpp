@@ -1158,10 +1158,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
         }
     } else if (codec() == CodecType::VP8) {
         auto header = parseVP8FrameHeader(blockBufferData, segmentSizeAtPosition);
-        if (!header)
-            return;
-
-        if (header->keyframe) {
+        if (header && header->keyframe) {
             isKey = true;
             auto formatDescription = createFormatDescriptionFromVP8Header(*header, track().video.value().colour);
             if (!formatDescription) {
@@ -1229,7 +1226,11 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
 
     m_packetData.resize(m_packetBytesRead + metadata.size);
     size_t packetDataOffset = m_packetBytesRead;
+
+    ASSERT(m_partialBytesRead < metadata.size);
     size_t bytesToRead = metadata.size;
+    if (m_partialBytesRead && m_partialBytesRead < bytesToRead)
+        bytesToRead -= m_partialBytesRead;
     while (bytesToRead) {
         uint64_t bytesRead;
         auto status = reader.Read(bytesToRead, m_packetData.data() + m_packetBytesRead, &bytesRead);
@@ -1238,8 +1239,12 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
         m_packetBytesRead += bytesRead;
 
         // FIXME: We can't yet handle parsing a Frame that doesn't have all its memory available.
-        if (status.code == webm::Status::kOkPartial || status.code == webm::Status::kWouldBlock)
+        if (status.code == webm::Status::kOkPartial || status.code == webm::Status::kWouldBlock) {
+            m_partialBytesRead += bytesRead;
             return status;
+        }
+
+        m_partialBytesRead = 0;
     }
 
     if (!formatDescription()) {

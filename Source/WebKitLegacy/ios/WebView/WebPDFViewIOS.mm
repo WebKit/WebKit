@@ -302,14 +302,11 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)[dataSource data]);
-
+    auto provider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)[dataSource data]));
     if (!provider) 
         return;
     
-    _PDFDocument = CGPDFDocumentCreateWithProvider(provider);
-    CGDataProviderRelease(provider);
-        
+    _PDFDocument = CGPDFDocumentCreateWithProvider(provider.get());
     if (!_PDFDocument)
         return;
     

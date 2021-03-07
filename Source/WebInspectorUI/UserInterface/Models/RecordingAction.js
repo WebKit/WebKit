@@ -33,7 +33,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._payloadParameters = parameters;
         this._payloadSwizzleTypes = swizzleTypes;
         this._payloadTrace = trace;
-        this._payloadSnapshot = snapshot || -1;
+        this._payloadSnapshot = snapshot ?? -1;
 
         this._name = "";
         this._parameters = [];

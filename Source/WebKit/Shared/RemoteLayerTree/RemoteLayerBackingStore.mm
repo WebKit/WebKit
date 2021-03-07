@@ -175,6 +175,21 @@ unsigned RemoteLayerBackingStore::bytesPerPixel() const
 
 void RemoteLayerBackingStore::swapToValidFrontBuffer()
 {
+    // Sometimes, we can get two swaps ahead of the render server.
+    // If we're using shared IOSurfaces, we must wait to modify
+    // a surface until it no longer has outstanding clients.
+    if (m_acceleratesDrawing) {
+        if (!m_backBuffer.imageBuffer || m_backBuffer.imageBuffer->isInUse()) {
+            std::swap(m_backBuffer, m_secondaryBackBuffer);
+
+            // When pulling the secondary back buffer out of hibernation (to become
+            // the new front buffer), if it is somehow still in use (e.g. we got
+            // three swaps ahead of the render server), just give up and discard it.
+            if (m_backBuffer.imageBuffer && m_backBuffer.imageBuffer->isInUse())
+                m_backBuffer.discard();
+        }
+    }
+
     std::swap(m_frontBuffer, m_backBuffer);
 
     if (m_frontBuffer.imageBuffer)

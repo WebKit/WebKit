@@ -84,11 +84,6 @@ static Optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
     return convertColor<SRGBA<uint8_t>>(SRGBA<float> { r, g, b, a });
 }
 
-Color::Color(CGColorRef color)
-    : Color(roundAndClampToSRGBALossy(color))
-{
-}
-
 Color::Color(CGColorRef color, OptionSet<Flags> flags)
     : Color(roundAndClampToSRGBALossy(color), flags)
 {
@@ -128,8 +123,8 @@ static CGColorRef leakCGColor(const Color& color)
 
 CGColorRef cachedCGColor(const Color& color)
 {
-    if (color.isInline()) {
-        switch (PackedColor::RGBA { color.asInline() }.value) {
+    if (auto srgb = color.tryGetAsSRGBABytes()) {
+        switch (PackedColor::RGBA { *srgb }.value) {
         case PackedColor::RGBA { Color::transparentBlack }.value: {
             static CGColorRef transparentCGColor = leakCGColor(color);
             return transparentCGColor;

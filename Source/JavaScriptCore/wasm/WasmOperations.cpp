@@ -548,26 +548,26 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
         JSValue value = buffer.at(index);
 
         uint64_t unboxedValue = 0;
-        switch (signature->returnType(index)) {
-        case I32:
+        switch (signature->returnType(index).kind) {
+        case TypeKind::I32:
             unboxedValue = value.toInt32(globalObject);
             break;
-        case I64:
+        case TypeKind::I64:
             unboxedValue = value.toBigInt64(globalObject);
             break;
-        case F32:
+        case TypeKind::F32:
             unboxedValue = bitwise_cast<uint32_t>(value.toFloat(globalObject));
             break;
-        case F64:
+        case TypeKind::F64:
             unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
             break;
-        case Funcref:
+        case TypeKind::Funcref:
             if (!value.isCallable(vm)) {
                 throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
                 return;
             }
             FALLTHROUGH;
-        case Externref:
+        case TypeKind::Externref:
             unboxedValue = bitwise_cast<uint64_t>(value);
             RELEASE_ASSERT(Options::useWebAssemblyReferences());
             break;

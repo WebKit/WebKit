@@ -44,10 +44,10 @@ OBJC_CLASS WebScriptWorld;
 OBJC_CLASS WebView;
 
 extern CFMutableArrayRef openWindowsRef;
-extern CFMutableSetRef disallowedURLs;
 extern WebFrame* mainFrame;
 extern WebFrame* topLoadingFrame;
 #ifdef __cplusplus
+extern RetainPtr<CFMutableSetRef> disallowedURLs;
 extern RetainPtr<DumpRenderTreeDraggingInfo> draggingInfo;
 extern RetainPtr<NavigationController> gNavigationController;
 extern RetainPtr<PolicyDelegate> policyDelegate;
@@ -60,9 +60,10 @@ extern RetainPtr<UIWindow> mainWindow;
 OBJC_CLASS NSWindow;
 extern RetainPtr<NSWindow> mainWindow;
 #endif
-#endif
 
-void setWaitToDumpWatchdog(CFRunLoopTimerRef);
+void setWaitToDumpWatchdog(RetainPtr<CFRunLoopTimerRef>&&);
+#endif // __cplusplus
+
 bool shouldSetWaitToDumpWatchdog(void);
 
 #ifdef __cplusplus

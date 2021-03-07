@@ -147,7 +147,7 @@ public:
     SVGAnimatedString& classNameAnimated() { return m_className; }
 
 protected:
-    SVGElement(const QualifiedName&, Document&);
+    SVGElement(const QualifiedName&, Document&, ConstructionType = CreateSVGElement);
     virtual ~SVGElement();
 
     bool rendererIsNeeded(const RenderStyle&) override;

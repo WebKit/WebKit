@@ -38,13 +38,19 @@ from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
+if sys.version_info > (3, 0):
+    from buildbot.test.util.misc import TestReactorMixin
+else:
+    TestReactorMixin = type('TestReactorMixin', (object,), {})
+    TestReactorMixin.setUpTestReactor = lambda self: None
+
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch, CompileWebKit,
                    CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
+                   FetchBranches, FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
@@ -95,10 +101,11 @@ class ExpectMasterShellCommand(object):
         return 'ExpectMasterShellCommand({0})'.format(repr(self.args))
 
 
-class BuildStepMixinAdditions(BuildStepMixin):
+class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
     def setUpBuildStep(self):
         self.patch(reactor, 'spawnProcess', lambda *args, **kwargs: self._checkSpawnProcess(*args, **kwargs))
         self._expected_local_commands = []
+        self.setUpTestReactor()
 
         self._temp_directory = tempfile.mkdtemp()
         os.chdir(self._temp_directory)
@@ -665,7 +672,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'runUnittests.py', 'ews-build'],
+                        command=['python3', 'runUnittests.py', 'ews-build'],
                         )
             + 0,
         )
@@ -678,7 +685,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'runUnittests.py', 'ews-build'],
+                        command=['python3', 'runUnittests.py', 'ews-build'],
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,
@@ -2430,7 +2437,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     def test_relevant_windows_wk1_patch(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Source/WebKitLegacy'
+        CheckPatchRelevance._get_patch = lambda x: b'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckPatchRelevance())
         self.setProperty('buildername', 'Windows-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
@@ -2653,7 +2660,7 @@ class TestDownloadBuiltProductFromMaster(BuildStepMixinAdditions, unittest.TestC
 
         yield self.runStep()
 
-        buf = ''.join(buf)
+        buf = b''.join(buf)
         self.assertEqual(len(buf), self.READ_LIMIT)
         with open(__file__, 'rb') as masterFile:
             data = masterFile.read(self.READ_LIMIT)
@@ -3833,8 +3840,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        env={'GITHUB_COM_USERNAME': None, 'GITHUB_COM_ACCESS_TOKEN': None},
-                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', '51a6aec9f664']) +
+                        command=['python', 'Tools/Scripts/git-webkit', 'find', '51a6aec9f664']) +
             ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
             0,
         )
@@ -3849,12 +3855,46 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        env={'GITHUB_COM_USERNAME': None, 'GITHUB_COM_ACCESS_TOKEN': None},
-                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', 'HEAD']) +
+                        command=['python', 'Tools/Scripts/git-webkit', 'find', 'HEAD']) +
             ExpectShell.log('stdio', stdout='Unexpected failure') +
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to find identifier')
+        return self.runStep()
+
+
+class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(FetchBranches())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'fetch']) +
+            ExpectShell.log('stdio', stdout='   fb192c1de607..afb17ed1708b  main       -> origin/main\n') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS)
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(FetchBranches())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'fetch']) +
+            ExpectShell.log('stdio', stdout="fatal: unable to access 'https://github.com/WebKit/WebKit/': Could not resolve host: github.com\n") +
+            2,
+        )
+        self.expectOutcome(result=FAILURE)
         return self.runStep()
 
 

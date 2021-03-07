@@ -3079,10 +3079,10 @@ void TestController::setStatisticsMergeStatistic(WKStringRef host, WKStringRef t
     m_currentInvocation->didMergeStatistic();
 }
 
-void TestController::setStatisticsExpiredStatistic(WKStringRef host, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent)
+void TestController::setStatisticsExpiredStatistic(WKStringRef host, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent)
 {
     ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreSetStatisticsExpiredStatistic(websiteDataStore(), host, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, &context, resourceStatisticsVoidResultCallback);
+    WKWebsiteDataStoreSetStatisticsExpiredStatistic(websiteDataStore(), host, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
     m_currentInvocation->didSetExpiredStatistic();
 }

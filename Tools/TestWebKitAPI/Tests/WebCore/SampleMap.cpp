@@ -66,7 +66,7 @@ public:
         m_decodeTime = decodeTime;
     };
     bool isDivisable() const final { return false; }
-    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) final { return { }; }
+    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime&, UseEndTime) final { return { }; }
     Ref<MediaSample> createNonDisplayingCopy() const final {
         return create(m_presentationTime, m_decodeTime, m_duration, static_cast<SampleFlags>(m_flags | IsNonDisplaying));
     }

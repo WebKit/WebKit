@@ -93,10 +93,10 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasHorizonalWritingMode:
         stream << "horizontal writing mode";
         break;
-    case AvoidanceReason::FlowHasOutline:
+    case AvoidanceReason::ContentHasOutline:
         stream << "outline";
         break;
-    case AvoidanceReason::FlowIsRuby:
+    case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
     case AvoidanceReason::FlowHasHangingPunctuation:
@@ -118,7 +118,7 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         stream << "wrapping textarea";
         break;
     case AvoidanceReason::FlowHasNonSupportedChild:
-        stream << "nested renderers";
+        stream << "unsupported child renderer";
         break;
     case AvoidanceReason::FlowHasUnsupportedFloat:
         stream << "complicated float";
@@ -196,16 +196,16 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         stream << "text is combine";
         break;
     case AvoidanceReason::FlowTextIsRenderCounter:
-        stream << "unsupported RenderCounter";
+        stream << "RenderCounter";
         break;
     case AvoidanceReason::FlowTextIsRenderQuote:
-        stream << "unsupported RenderQuote";
+        stream << "RenderQuote";
         break;
     case AvoidanceReason::FlowTextIsTextFragment:
-        stream << "unsupported TextFragment";
+        stream << "TextFragment";
         break;
     case AvoidanceReason::FlowTextIsSVGInlineText:
-        stream << "unsupported SVGInlineText";
+        stream << "SVGInlineText";
         break;
     case AvoidanceReason::FlowHasComplexFontCodePath:
         stream << "text with complex font codepath";
@@ -245,6 +245,33 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
         stream << "flow does not establishes inline formatting context";
+        break;
+    case AvoidanceReason::UnsupportedFieldset:
+        stream << "fieldset box";
+        break;
+    case AvoidanceReason::ChildBoxIsFloatingOrPositioned:
+        stream << "child box is floating or positioned";
+        break;
+    case AvoidanceReason::ContentIsSVG:
+        stream << "SVG content";
+        break;
+    case AvoidanceReason::ChildBoxHasUnsupportedStyle:
+        stream << "child box has unsupported style";
+        break;
+    case AvoidanceReason::UnsupportedImageMap:
+        stream << "image map";
+        break;
+    case AvoidanceReason::InlineBoxNeedsLayer:
+        stream << "inline box needs layer";
+        break;
+    case AvoidanceReason::InlineBoxHasBorderOrBorderImage:
+        stream << "inline box has border or border image";
+        break;
+    case AvoidanceReason::InlineBoxHasBackground:
+        stream << "inline box has background";
+        break;
+    case AvoidanceReason::InlineBoxHasMarginOrPadding:
+        stream << "inline box has margin or padding";
         break;
     default:
         break;
@@ -525,7 +552,7 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (style.textUnderlinePosition() != TextUnderlinePosition::Auto || !style.textUnderlineOffset().isAuto() || !style.textDecorationThickness().isAuto())
+    if (!style.textDecorationsInEffect().isEmpty() && (style.textUnderlinePosition() != TextUnderlinePosition::Auto || !style.textUnderlineOffset().isAuto() || !style.textDecorationThickness().isAuto()))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedUnderlineDecoration, reasons, includeReasons);
     if (!style.isLeftToRightDirection())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
@@ -590,7 +617,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 
     if (child.isFieldset()) {
         // Fieldsets don't follow the standard CSS box model. They require special handling.
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+        SET_REASON_AND_RETURN_IF_NEEDED(UnsupportedFieldset, reasons, includeReasons)
     }
 
 #if ALLOW_IMAGES || ALLOW_ALL_REPLACED || ALLOW_INLINE_BLOCK
@@ -610,18 +637,18 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
     if (is<RenderReplaced>(child)) {
         auto& replaced = downcast<RenderReplaced>(child);
         if (replaced.isFloating() || replaced.isPositioned())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
 
         if (replaced.isSVGRoot())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
 
         if (!isSupportedStyle(replaced.style()))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons);
 
         if (is<RenderImage>(replaced)) {
             auto& image = downcast<RenderImage>(replaced);
             if (image.imageMap())
-                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+                SET_REASON_AND_RETURN_IF_NEEDED(UnsupportedImageMap, reasons, includeReasons);
             return reasons;
         }
 #if !ALLOW_ALL_REPLACED
@@ -637,15 +664,15 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (!block.isReplaced() || !block.isInline())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
         if (block.isFloating() || block.isPositioned())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
         if (block.isRubyRun())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
 
         auto& style = block.style();
         if (!isSupportedStyle(style))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons)
         if (style.display() != DisplayType::InlineBlock)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons)
 
         return reasons;
     }
@@ -654,31 +681,29 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 #if ALLOW_INLINES
     if (is<RenderInline>(child)) {
         auto& renderInline = downcast<RenderInline>(child);
-        if (renderInline.isRubyInline() || renderInline.isQuote() || renderInline.isSVGInline())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-
+        if (renderInline.isSVGInline())
+            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+        if (renderInline.isRubyInline() || renderInline.isQuote())
+            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
         if (renderInline.requiresLayer())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+            SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxNeedsLayer, reasons, includeReasons)
 
         auto& style = renderInline.style();
         if (!isSupportedStyle(style))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
-        if (style.hasBorder())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-        if (style.borderImage().hasImage())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons)
+        if (style.hasBorder() || style.borderImage().hasImage())
+            SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBorderOrBorderImage, reasons, includeReasons);
         if (style.hasBackground())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBackground, reasons, includeReasons);
         if (style.hasOutline())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-        if (renderInline.marginLeft() < 0 || renderInline.marginRight() < 0 || renderInline.marginTop() < 0 || renderInline.marginBottom() < 0)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-        if (renderInline.paddingLeft() < 0 || renderInline.paddingRight() < 0 || renderInline.paddingTop() < 0 || renderInline.paddingBottom() < 0)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(ContentHasOutline, reasons, includeReasons);
+        if (renderInline.marginLeft() < 0 || renderInline.marginRight() < 0 || renderInline.marginTop() < 0 || renderInline.marginBottom() < 0
+            || renderInline.paddingLeft() < 0 || renderInline.paddingRight() < 0 || renderInline.paddingTop() < 0 || renderInline.paddingBottom() < 0)
+            SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasMarginOrPadding, reasons, includeReasons);
         if (renderInline.isInFlowPositioned())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
         if (renderInline.containingBlock()->style().lineBoxContain() != RenderStyle::initialLineBoxContain())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
         auto fontAndTextReasons = canUseForFontAndText(downcast<RenderInline>(child), includeReasons);
         if (fontAndTextReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
@@ -741,9 +766,9 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     if (!flow.isHorizontalWritingMode())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHorizonalWritingMode, reasons, includeReasons);
     if (flow.hasOutline())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOutline, reasons, includeReasons);
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentHasOutline, reasons, includeReasons);
     if (flow.isRubyText() || flow.isRubyBase())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsRuby, reasons, includeReasons);
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
     if (!flow.style().hangingPunctuation().isEmpty())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons);
 

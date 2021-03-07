@@ -154,6 +154,10 @@
 #include "UserMediaCaptureManager.h"
 #endif
 
+#if PLATFORM(MAC)
+#include <WebCore/DisplayRefreshMonitorManager.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include "WebSQLiteDatabaseTracker.h"
 #endif
@@ -208,11 +212,8 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include <WebCore/SystemBattery.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
-#endif
-
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-#include <WebCore/DisplayRefreshMonitorManager.h>
 #endif
 
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
@@ -509,6 +510,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     WebResourceLoadObserver::setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
 
+#if PLATFORM(COCOA)
+    if (m_processType == ProcessType::PrewarmedWebContent)
+        prewarmGlobally();
+#endif
+
     RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Presenting processPID=%d", WebCore::presentingApplicationPID());
 }
 
@@ -676,9 +682,9 @@ void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
     WebCore::FontCascade::setShouldUseSmoothing(useFontSmoothing);
 }
 
-void WebProcess::userPreferredLanguagesChanged() const
+void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
 {
-    WTF::languageDidChange();
+    overrideUserPreferredLanguages(languages);
 }
 
 void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
@@ -1876,7 +1882,7 @@ bool WebProcess::areAllPagesThrottleable() const
     });
 }
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
 void WebProcess::displayWasRefreshed(uint32_t displayID)
 {
     ASSERT(RunLoop::isMain());
@@ -1975,6 +1981,24 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
         WebCore::RemoteCommandListener::setCreationFunction([this] (WebCore::RemoteCommandListenerClient& client) { return RemoteRemoteCommandListener::create(client, *this); });
     else
         WebCore::RemoteCommandListener::resetCreationFunction();
+
+#if PLATFORM(COCOA)
+    if (useGPUProcessForMedia) {
+        SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback([this] () {
+            ensureGPUProcessConnection().updateMediaConfiguration();
+        });
+#if ENABLE(VP9)
+        VP9TestingOverrides::singleton().setConfigurationChangedCallback([this] () {
+            ensureGPUProcessConnection().updateMediaConfiguration();
+        });
+#endif
+    } else {
+        SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback(nullptr);
+#if ENABLE(VP9)
+        VP9TestingOverrides::singleton().setConfigurationChangedCallback(nullptr);
+#endif
+    }
+#endif
 }
 
 bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
@@ -2005,42 +2029,6 @@ bool WebProcess::shouldUseRemoteRenderingForWebGL() const
 
 #endif
 
-#endif
-
-#if ENABLE(VP9)
-void WebProcess::enableVP9Decoder()
-{
-    if (m_vp9DecoderEnabled)
-        return;
-
-    m_vp9DecoderEnabled = true;
-
-#if PLATFORM(COCOA)
-    WebCore::registerSupplementalVP9Decoder();
-#endif
-}
-
-void WebProcess::enableVP8SWDecoder()
-{
-    if (m_vp9SWDecoderEnabled)
-        return;
-
-    m_vp8SWDecoderEnabled = true;
-#if PLATFORM(COCOA)
-    WebCore::registerWebKitVP8Decoder();
-#endif
-}
-
-void WebProcess::enableVP9SWDecoder()
-{
-    if (m_vp9SWDecoderEnabled)
-        return;
-
-    m_vp9SWDecoderEnabled = true;
-#if PLATFORM(COCOA)
-    WebCore::registerWebKitVP9Decoder();
-#endif
-}
 #endif
 
 #if ENABLE(MEDIA_STREAM)

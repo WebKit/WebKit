@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 import sys
@@ -8,6 +8,10 @@ import unittest
 This is the equivalent of running:
     python -m unittest discover --start-directory {test_discovery_path} --pattern {UNIT_TEST_PATTERN}
 """
+
+# This is work-around for https://bugs.webkit.org/show_bug.cgi?id=222361
+from buildbot.process.buildstep import BuildStep
+BuildStep.warn_deprecated_if_oldstyle_subclass = lambda self, name: None
 
 UNIT_TEST_PATTERN = '*_unittest.py'
 

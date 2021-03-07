@@ -660,6 +660,16 @@ bool Quirks::needsWeChatScrollingQuirk() const
 #endif
 }
 
+bool Quirks::shouldOmitHTMLDocumentSupportedPropertyNames()
+{
+#if PLATFORM(COCOA)
+    static bool shouldOmitHTMLDocumentSupportedPropertyNames = !linkedOnOrAfter(SDKVersion::FirstWithHTMLDocumentSupportedPropertyNames);
+    return shouldOmitHTMLDocumentSupportedPropertyNames;
+#else
+    return false;
+#endif
+}
+
 bool Quirks::shouldSilenceWindowResizeEvents() const
 {
 #if PLATFORM(IOS)

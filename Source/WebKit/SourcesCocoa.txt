@@ -71,6 +71,7 @@ Platform/cf/ModuleCF.cpp
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
+Platform/cocoa/ImageExtractionUtilities.mm
 Platform/cocoa/LayerHostingContext.mm
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
@@ -158,6 +159,7 @@ Shared/Cocoa/CoreTextHelpers.mm
 Shared/Cocoa/DataDetectionResult.mm
 Shared/Cocoa/InsertTextOptions.cpp
 Shared/Cocoa/LoadParametersCocoa.mm
+Shared/Cocoa/PDFKitSoftLink.mm
 Shared/Cocoa/SandboxExtensionCocoa.mm
 Shared/Cocoa/SandboxInitialiationParametersCocoa.mm
 Shared/Cocoa/SandboxUtilities.mm
@@ -203,7 +205,6 @@ Shared/mac/NativeWebMouseEventMac.mm
 Shared/mac/NativeWebWheelEventMac.mm
 Shared/mac/ObjCObjectGraph.mm
 Shared/mac/PasteboardTypes.mm
-Shared/mac/PDFKitImports.mm
 Shared/mac/PrintInfoMac.mm
 Shared/mac/SecItemRequestData.cpp
 Shared/mac/SecItemResponseData.cpp
@@ -422,6 +423,7 @@ UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm
 UIProcess/Gamepad/mac/UIGamepadProviderMac.mm
 
 UIProcess/Inspector/Cocoa/InspectorDelegate.mm
+UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm
 
 UIProcess/Inspector/ios/WKInspectorHighlightView.mm
 UIProcess/Inspector/ios/WKInspectorNodeSearchGestureRecognizer.mm

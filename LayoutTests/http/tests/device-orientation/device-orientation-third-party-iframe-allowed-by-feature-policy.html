@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that third-party iframes can request access to device orientation events if allowed by feature policy.");
+jsTestIsAsync = true;
+
+// If prompted, allow.
+if (window.testRunner)
+    testRunner.setShouldAllowDeviceOrientationAndMotionAccess(true);
+
+onmessage = (_e) => {
+    e = _e;
+    shouldBeEqualToString("e.data", "granted");
+    finishJSTest();    
+};
+</script>
+<iframe src="http://localhost:8000/device-orientation/resources/request-orientation-events.html" allow="accelerometer;gyroscope;magnetometer"></iframe>
+</body>
+</html>

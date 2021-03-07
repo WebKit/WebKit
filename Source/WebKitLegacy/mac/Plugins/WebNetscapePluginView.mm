@@ -1453,16 +1453,15 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 -(void)status:(const char *)message
 {    
-    CFStringRef status = CFStringCreateWithCString(NULL, message ? message : "", kCFStringEncodingUTF8);
+    auto status = adoptCF(CFStringCreateWithCString(NULL, message ? message : "", kCFStringEncodingUTF8));
     if (!status) {
         LOG_ERROR("NPN_Status: the message was not valid UTF-8");
         return;
     }
     
-    LOG(Plugins, "NPN_Status: %@", status);
+    LOG(Plugins, "NPN_Status: %@", status.get());
     WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webView:wv setStatusText:(__bridge NSString *)status];
-    CFRelease(status);
+    [[wv _UIDelegateForwarder] webView:wv setStatusText:(__bridge NSString *)status.get()];
 }
 
 -(void)invalidateRect:(NPRect *)invalidRect

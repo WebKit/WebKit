@@ -120,12 +120,11 @@ static void setClientCertificateInSSLProperties(CFMutableDictionaryRef sslProps,
 {
     if (!sslProps || !certData)
         return;
-    CFMutableDictionaryRef certDict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    auto certDict = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if (!certDict)
         return;
-    CFDictionarySetValue(certDict, _kCFWindowsSSLLocalCert, certData);
-    CFDictionarySetValue(sslProps, _kCFStreamPropertyWindowsSSLCertInfo, certDict);
-    CFRelease(certDict);
+    CFDictionarySetValue(certDict.get(), _kCFWindowsSSLLocalCert, certData);
+    CFDictionarySetValue(sslProps, _kCFStreamPropertyWindowsSSLCertInfo, certDict.get());
 }
 #endif
 
@@ -205,11 +204,11 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     if (sslProps)
         CFURLRequestSetSSLProperties(request.get(), sslProps.get());
 
-    CFMutableDictionaryRef streamProperties  = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    auto streamProperties = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     if (!shouldUseCredentialStorage) {
         // Avoid using existing connections, because they may be already authenticated.
-        CFDictionarySetValue(streamProperties, CFSTR("_kCFURLConnectionSessionID"), CFSTR("WebKitPrivateSession"));
+        CFDictionarySetValue(streamProperties.get(), CFSTR("_kCFURLConnectionSessionID"), CFSTR("WebKitPrivateSession"));
     }
 
     static const CFStringRef kCFURLConnectionSocketStreamProperties = CFSTR("kCFURLConnectionSocketStreamProperties");
@@ -228,8 +227,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 #endif
 
     // FIXME: This code is different from iOS code in ResourceHandleMac.mm in that here we ignore stream properties that were present in client properties.
-    CFDictionaryAddValue(propertiesDictionary.get(), kCFURLConnectionSocketStreamProperties, streamProperties);
-    CFRelease(streamProperties);
+    CFDictionaryAddValue(propertiesDictionary.get(), kCFURLConnectionSocketStreamProperties, streamProperties.get());
 
     d->m_connectionDelegate = adoptRef(new ResourceHandleCFURLConnectionDelegateWithOperationQueue(this, WTFMove(messageQueue)));
     d->m_connectionDelegate->setupRequest(request.get());

@@ -55,6 +55,7 @@ async function runTests() {
                 paymentRequest.onpaymentmethodchange = (event) => {
                     shouldBe("event.methodName", "'https://apple.com/apple-pay'");
                     shouldBe("event.methodDetails.type", "'credit'");
+                    event.updateWith({});
                     paymentRequest.abort();
                     resolve();
                 };

@@ -731,7 +731,6 @@ webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Timeout ]
 webkit.org/b/122042 media/media-controller-playback.html [ Pass Timeout ]
 webkit.org/b/122126 media/click-volume-bar-not-pausing.html [ Pass Timeout ]
 webkit.org/b/122507 media/track/track-cue-rendering.html [ Pass Failure ]
-webkit.org/b/123010 media/W3C/audio/networkState/networkState_during_loadstart.html [ Pass Failure ]
 webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Timeout ]
 webkit.org/b/123522 media/track/track-in-band-legacy-api.html [ Pass Failure Crash ]
 webkit.org/b/131855 media/event-attributes.html [ Pass Failure Timeout ]
@@ -871,6 +870,7 @@ imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failu
 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
 media/media-source/media-source-resize.html [ Timeout ]
+platform/mac/media/media-source/videoplaybackquality-decompressionsession.html [ Failure ]
 
 # Requires WebM
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html [ Skip ]
@@ -1157,8 +1157,6 @@ webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
 webkit.org/b/161144 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
 
 webkit.org/b/161883 imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-escapes-1.xhtml [ Pass Failure ]
-
-webkit.org/b/162308 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure ]
 
 webkit.org/b/162523 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Pass Failure ]
 
@@ -1539,7 +1537,7 @@ webkit.org/b/189686 webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-imag
 
 webkit.org/b/170877 [ Debug ] webgl/1.0.3/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
 
-webkit.org/b/190724 [ Debug ] http/tests/misc/large-js-program.php [ Pass Timeout ]
+webkit.org/b/190724 [ Debug ] http/tests/misc/large-js-program.py [ Pass Timeout ]
 
 webkit.org/b/191565 imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Pass Slow ] 
 
@@ -1617,8 +1615,6 @@ webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-tim
 
 webkit.org/b/136627 media/track/track-cue-rendering-vertical.html [ Failure ]
 
-# <rdar://problem/47088939>
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html  [ Failure ]
 webaudio/oscillator-sine.html [ Skip ]
 
 webkit.org/b/199013 [ Debug ] imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html [ Pass Failure ]
@@ -1915,9 +1911,6 @@ webkit.org/b/215450 imported/w3c/web-platform-tests/media-source/mediasource-cha
 # <rdar://problem/59461792> REGRESSION: [ Mac iOS ] ( r254389 - r254411 ) fast/text/international/system-language/declarative-language.html is failing internally
 fast/text/international/system-language/declarative-language.html [ Pass Failure ]
 
-# <rdar://problem/59628620> REGRESSION: compositing/video/video-border-radius-clipping.html is failing and flaky crashing
-compositing/video/video-border-radius-clipping.html [ Pass Failure Timeout ]
-
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Pass Failure ]
@@ -2195,7 +2188,7 @@ webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-20.html [ S
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ Slow ]
 
 # This test requires API only availble on BigSur and later
-[ BigSur+ ] http/tests/media/hls/hls-hdr-switch.html [ Pass ]
+webkit.org/b/222425 [ BigSur+ ] http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
 
 # rdar://69347249
 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
@@ -2290,9 +2283,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-1
 
 webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html [ ImageOnlyFailure ]
 
-webkit.org/b/222117 media/modern-media-controls/volume-support/volume-support-drag.html [ Pass Failure ]
-webkit.org/b/222117 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
-
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
 
 webkit.org/b/222197 media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html [ Pass Timeout ]
@@ -2300,3 +2290,14 @@ webkit.org/b/222197 media/modern-media-controls/tracks-support/tracks-support-au
 webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/222195 inspector/animation/lifecycle-css-transition.html [ Pass Timeout ]
+
+webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure Slow ]
+
+# Not all OSes support the same set of emoji.
+[ Mojave Catalina BigSur ] fast/text/mending-heart.html [ Failure ]
+
+webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
+
+webkit.org/b/222495 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
+
+webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]

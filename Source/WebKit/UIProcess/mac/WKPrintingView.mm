@@ -30,7 +30,7 @@
 
 #import "APIData.h"
 #import "Logging.h"
-#import "PDFKitImports.h"
+#import "PDFKitSoftLink.h"
 #import "PrintInfo.h"
 #import "ShareableBitmap.h"
 #import "WebPageProxy.h"
@@ -486,7 +486,7 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
     }
 
     for (PDFAnnotation *annotation in [pdfPage annotations]) {
-        if (![annotation isKindOfClass:WebKit::pdfAnnotationLinkClass()])
+        if (![annotation isKindOfClass:WebKit::getPDFAnnotationLinkClass()])
             continue;
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -584,7 +584,7 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
 
     if (!_printedPagesPDFDocument) {
         RetainPtr<NSData> pdfData = adoptNS([[NSData alloc] initWithBytes:_printedPagesData.data() length:_printedPagesData.size()]);
-        _printedPagesPDFDocument = adoptNS([[WebKit::pdfDocumentClass() alloc] initWithData:pdfData.get()]);
+        _printedPagesPDFDocument = adoptNS([WebKit::allocPDFDocumentInstance() initWithData:pdfData.get()]);
 
         unsigned pageCount = [_printedPagesPDFDocument pageCount];
         _linkDestinationsPerPage.clear();
@@ -592,7 +592,7 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
         for (unsigned i = 0; i < pageCount; i++) {
             PDFPage *page = [_printedPagesPDFDocument pageAtIndex:i];
             for (PDFAnnotation *annotation in page.annotations) {
-                if (![annotation isKindOfClass:WebKit::pdfAnnotationLinkClass()])
+                if (![annotation isKindOfClass:WebKit::getPDFAnnotationLinkClass()])
                     continue;
 
                 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

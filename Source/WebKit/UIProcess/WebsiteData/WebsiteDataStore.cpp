@@ -310,7 +310,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
 
 void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply)
 {
-    struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator> {
+    struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
         CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
             : fetchOptions(fetchOptions)
             , queue(WTFMove(queue))
@@ -322,19 +322,19 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 
         ~CallbackAggregator()
         {
+            ASSERT(RunLoop::isMain());
             ASSERT(!pendingCallbacks);
-
-            // Make sure the data store gets destroyed on the main thread even though the CallbackAggregator can get destroyed on a background queue.
-            RunLoop::main().dispatch([protectedDataStore = WTFMove(protectedDataStore)] { });
         }
 
         void addPendingCallback()
         {
-            pendingCallbacks++;
+            ASSERT(RunLoop::isMain());
+            ++pendingCallbacks;
         }
 
         void removePendingCallback(WebsiteData websiteData)
         {
+            ASSERT(RunLoop::isMain());
             ASSERT(pendingCallbacks);
             --pendingCallbacks;
 
@@ -420,13 +420,14 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 
         void callIfNeeded()
         {
+            ASSERT(RunLoop::isMain());
             if (pendingCallbacks)
                 return;
 
             Vector<WebsiteDataRecord> records;
             records.reserveInitialCapacity(m_websiteDataRecords.size());
             for (auto& record : m_websiteDataRecords.values())
-                records.uncheckedAppend(WTFMove(record));
+                records.uncheckedAppend(queue ? crossThreadCopy(record) : WTFMove(record));
 
             auto processRecords = [apply = WTFMove(apply), records = WTFMove(records)] () mutable {
                 apply(WTFMove(records));
@@ -637,7 +638,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<WebCore::RegistrableDomain>& domains, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<WebCore::RegistrableDomain>&& domains, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
 {
     fetchDataAndApply(dataTypes, fetchOptions, m_queue.copyRef(), [domains = crossThreadCopy(domains), completionHandler = WTFMove(completionHandler)] (auto&& existingDataRecords) mutable {
         ASSERT(!RunLoop::isMain());
@@ -1551,7 +1552,7 @@ void WebsiteDataStore::mergeStatisticForTesting(const URL& url, const URL& topFr
     networkProcess().mergeStatisticForTesting(m_sessionID, WebCore::RegistrableDomain { url }, WebCore::RegistrableDomain { topFrameUrl1 }, WebCore::RegistrableDomain { topFrameUrl2 }, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, [callbackAggregator] { });
 }
 
-void WebsiteDataStore::insertExpiredStatisticForTesting(const URL& url, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::insertExpiredStatisticForTesting(const URL& url, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)
 {
     if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
@@ -1560,7 +1561,7 @@ void WebsiteDataStore::insertExpiredStatisticForTesting(const URL& url, bool had
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    networkProcess().insertExpiredStatisticForTesting(m_sessionID, WebCore::RegistrableDomain { url }, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, [callbackAggregator] { });
+    networkProcess().insertExpiredStatisticForTesting(m_sessionID, WebCore::RegistrableDomain { url }, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, [callbackAggregator] { });
 }
 
 void WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned(bool value, CompletionHandler<void()>&& completionHandler)

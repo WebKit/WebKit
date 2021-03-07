@@ -124,8 +124,9 @@ user_activation_test(async t => {
 
   var shippingAddressChanged = false;
   const shippingAddressChangedPromise = new Promise((resolve) => {
-    request.onshippingaddresschange = () => {
+    request.onshippingaddresschange = (event) => {
       shippingAddressChanged = true;
+      event.updateWith({});
       resolve();
     };
   });

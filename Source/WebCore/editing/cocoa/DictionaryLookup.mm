@@ -342,6 +342,8 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
 
         // As context, we are going to use 250 characters of text before and after the point.
         fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
+        if (!fullCharacterRange)
+            return WTF::nullopt;
 
         selectionRange = NSMakeRange(NSNotFound, 0);
         hitIndex = characterCount(*makeSimpleRange(fullCharacterRange->start, position));

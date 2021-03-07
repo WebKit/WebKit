@@ -243,11 +243,4 @@ void NetworkProcess::platformProcessDidTransitionToForeground()
 {
 }
 
-NetworkHTTPSUpgradeChecker& NetworkProcess::networkHTTPSUpgradeChecker()
-{
-    if (!m_networkHTTPSUpgradeChecker)
-        m_networkHTTPSUpgradeChecker = makeUnique<NetworkHTTPSUpgradeChecker>();
-    return *m_networkHTTPSUpgradeChecker;
-}
-
 } // namespace WebKit

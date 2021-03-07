@@ -31,6 +31,10 @@
 #import "WKObject.h"
 
 namespace WebKit {
+class InspectorExtensionDelegate;
+}
+
+namespace WebKit {
 
 template<> struct WrapperTraits<API::InspectorExtension> {
     using WrapperClass = _WKInspectorExtension;
@@ -41,6 +45,7 @@ template<> struct WrapperTraits<API::InspectorExtension> {
 @interface _WKInspectorExtension () <WKObject> {
 @package
     API::ObjectStorage<API::InspectorExtension> _extension;
+    std::unique_ptr<WebKit::InspectorExtensionDelegate> _delegate;
 }
 
 @end

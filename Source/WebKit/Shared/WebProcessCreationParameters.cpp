@@ -97,6 +97,8 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << uiProcessBundleIdentifier;
     encoder << uiProcessSDKVersion;
+    encoder << latencyQOS;
+    encoder << throughputQOS;
 #endif
     encoder << presentingApplicationPID;
 #if PLATFORM(COCOA)
@@ -320,6 +322,10 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.uiProcessBundleIdentifier))
         return false;
     if (!decoder.decode(parameters.uiProcessSDKVersion))
+        return false;
+    if (!decoder.decode(parameters.latencyQOS))
+        return false;
+    if (!decoder.decode(parameters.throughputQOS))
         return false;
 #endif
     if (!decoder.decode(parameters.presentingApplicationPID))

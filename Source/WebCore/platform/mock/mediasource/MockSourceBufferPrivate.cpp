@@ -68,7 +68,7 @@ private:
     void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }
     void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
     bool isDivisable() const override { return false; }
-    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime&) override { return {nullptr, nullptr}; }
+    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime&, UseEndTime) override { return {nullptr, nullptr}; }
     Ref<MediaSample> createNonDisplayingCopy() const override;
 
     unsigned generation() const { return m_box.generation(); }

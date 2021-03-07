@@ -128,8 +128,4 @@ CSSPropertyID cssPropertyID(StringView);
 WEBCORE_EXPORT CSSValueID cssValueKeywordID(StringView);
 bool isCustomPropertyName(const String&);
 
-#if PLATFORM(IOS_FAMILY)
-void cssPropertyNameIOSAliasing(const char* propertyName, const char*& propertyNameAlias, unsigned& newLength);
-#endif
-
 } // namespace WebCore

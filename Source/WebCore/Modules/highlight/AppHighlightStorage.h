@@ -48,7 +48,7 @@ class AppHighlightStorage : RefCounted<AppHighlightStorage> {
 public:
     AppHighlightStorage(Document&);
 
-    WEBCORE_EXPORT void storeAppHighlight(StaticRange& , CreateNewGroupForHighlight isNewGroup);
+    WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&);
     WEBCORE_EXPORT bool restoreAppHighlight(Ref<SharedBuffer>&&);
 
 private:

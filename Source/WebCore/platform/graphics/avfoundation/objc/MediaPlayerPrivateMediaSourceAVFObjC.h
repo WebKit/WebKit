@@ -54,7 +54,6 @@ class CDMSessionMediaSourceAVFObjC;
 class EffectiveRateChangedListener;
 class MediaSourcePrivateAVFObjC;
 class PixelBufferConformerCV;
-class PlatformClockCM;
 class VideoLayerManagerObjC;
 class WebCoreDecompressionSession;
 
@@ -221,7 +220,7 @@ private:
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-    CVPixelBufferRef pixelBufferForCurrentTime() final;
+    RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() final;
 
     bool supportsAcceleratedRendering() const override;
     // called when the rendering system flips the into or out of accelerated rendering mode.

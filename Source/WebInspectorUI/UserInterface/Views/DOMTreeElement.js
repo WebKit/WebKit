@@ -2057,7 +2057,17 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (!this._gridBadgeElement)
             return;
 
-        this._gridBadgeElement.classList.toggle("activated", WI.overlayManager.isGridOverlayVisible(this.representedObject));
+        let isGridVisible = WI.overlayManager.isGridOverlayVisible(this.representedObject);
+        this._gridBadgeElement.classList.toggle("activated", isGridVisible);
+
+        if (isGridVisible) {
+            let color = WI.overlayManager.getGridColorForNode(this.representedObject);
+            let hue = color.hsl[0];
+            this._gridBadgeElement.style.borderColor = color.toString();
+            this._gridBadgeElement.style.backgroundColor = `hsl(${hue}, 90%, 95%)`;
+            this._gridBadgeElement.style.setProperty("color", `hsl(${hue}, 55%, 40%)`);
+        } else
+            this._gridBadgeElement.removeAttribute("style");
     }
 
     _handleLayoutContextTypeChanged(event)

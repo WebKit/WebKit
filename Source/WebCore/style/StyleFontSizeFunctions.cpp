@@ -39,13 +39,7 @@ namespace WebCore {
 
 namespace Style {
 
-enum class MinimumFontSizeRule {
-    None,
-    Absolute,
-    AbsoluteAndRelative
-};
-
-static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumSizeRule, const Settings& settings)
+float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumSizeRule, const Settings::Values& settings)
 {
     // Text with a 0px font size should not be visible and therefore needs to be
     // exempt from minimum font size rules. Acid3 relies on this for pixel-perfect
@@ -67,8 +61,8 @@ static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsol
     if (minimumSizeRule == MinimumFontSizeRule::None)
         return specifiedSize;
 
-    int minSize = settings.minimumFontSize();
-    int minLogicalSize = settings.minimumLogicalFontSize();
+    int minSize = settings.minimumFontSize;
+    int minLogicalSize = settings.minimumLogicalFontSize;
     float zoomedSize = specifiedSize * zoomFactor;
 
     // Apply the hard minimum first. We only apply the hard minimum if after zooming we're still too small.
@@ -95,12 +89,12 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
         if (frame && style->textZoom() != TextZoom::Reset)
             zoomFactor *= frame->textZoomFactor();
     }
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settings());
+    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues());
 }
 
 float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
 {
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settings());
+    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settingsValues());
 }
 
 const int fontSizeTableMax = 16;
@@ -145,20 +139,24 @@ static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
 // factors for each keyword value.
 static const float fontSizeFactors[totalKeywords] = { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f, 2.0f, 3.0f };
 
-float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Document& document)
+float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Settings::Values& settings, bool inQuirksMode)
 {
-    bool quirksMode = document.inQuirksMode();
-    int mediumSize = shouldUseFixedDefaultSize ? document.settings().defaultFixedFontSize() : document.settings().defaultFontSize();
+    int mediumSize = shouldUseFixedDefaultSize ? settings.defaultFixedFontSize : settings.defaultFontSize;
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         // Look up the entry in the table.
         int row = mediumSize - fontSizeTableMin;
         int col = (keywordID - CSSValueXxSmall);
-        return quirksMode ? quirksFontSizeTable[row][col] : strictFontSizeTable[row][col];
+        return inQuirksMode ? quirksFontSizeTable[row][col] : strictFontSizeTable[row][col];
     }
 
     // Value is outside the range of the table. Apply the scale factor instead.
-    float minLogicalSize = std::max<float>(document.settings().minimumLogicalFontSize(), 1);
+    float minLogicalSize = std::max<float>(settings.minimumLogicalFontSize, 1);
     return std::max(fontSizeFactors[keywordID - CSSValueXxSmall] * mediumSize, minLogicalSize);
+}
+
+float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Document& document)
+{
+    return fontSizeForKeyword(keywordID, shouldUseFixedDefaultSize, document.settingsValues(), document.inQuirksMode());
 }
 
 template<typename T>

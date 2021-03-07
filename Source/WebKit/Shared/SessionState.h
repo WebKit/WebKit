@@ -33,6 +33,7 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
+#include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -80,16 +81,24 @@ struct HTTPBody {
     Vector<Element> elements;
 };
 
-struct FrameState {
+class FrameState {
+public:
     void encode(IPC::Encoder&) const;
     static Optional<FrameState> decode(IPC::Decoder&);
+
+    // These are used to help debug <rdar://problem/48634553>.
+    FrameState() { RELEASE_ASSERT(RunLoop::isMain()); }
+    ~FrameState() { RELEASE_ASSERT(RunLoop::isMain()); }
+    const Vector<String>& documentState() const { return m_documentState; }
+    enum class ShouldValidate : bool { No, Yes };
+    void setDocumentState(const Vector<String>&, ShouldValidate = ShouldValidate::No);
+    void validateDocumentState() const;
 
     String urlString;
     String originalURLString;
     String referrer;
     String target;
 
-    Vector<String> documentState;
     Optional<Vector<uint8_t>> stateObjectData;
 
     int64_t documentSequenceNumber { 0 };
@@ -113,9 +122,8 @@ struct FrameState {
 
     Vector<FrameState> children;
 
-    // This is only used to help debug <rdar://problem/48634553>.
-    bool isDestructed { false };
-    ~FrameState() { isDestructed = true; }
+private:
+    Vector<String> m_documentState;
 };
 
 struct PageState {

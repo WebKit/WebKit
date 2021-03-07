@@ -1098,8 +1098,18 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
-    (global-name "com.apple.mobileassetd")
-)
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name
+            "com.apple.mobileassetd"
+            "com.apple.mobileassetd.v2"
+)))
+#else
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.mobileassetd.v2")
+))
 #endif
 
 ;; Various services required by AppKit and other frameworks
@@ -1259,7 +1269,7 @@
     (global-name "com.apple.system.notification_center")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
     (apply-message-filter
-        (deny mach-message-send (with telemetry-backtrace))
+        (allow mach-message-send (with telemetry-backtrace))
         (deny mach-message-send (with no-report) (message-number 1023))
         (allow mach-message-send (with telemetry-backtrace) (message-number
             1002
@@ -1691,6 +1701,7 @@
         (syscall-number SYS_fstat64_extended) ;; <rdar://problem/61310019>
         (syscall-number SYS_gethostuuid)
         (syscall-number SYS_setattrlist) ;; rdar://problem/74162777
+        (syscall-number SYS_open_dprotected_np) ;; <rdar://problem/74473824>
     )
 
     (if (equal? (param "CPU") "arm64")
@@ -1785,6 +1796,7 @@
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy
+                task_create_identity_token
                 task_get_special_port_from_user
                 task_info_from_user
                 task_policy_set

@@ -1,0 +1,2 @@
+// <-- magic whitespace onload = () => { document.querySelector('script').appendChild(document.createElement('span')); document.execCommand('FindString', false, 'a'); document.execCommand('FontSizeDelta', false, '1'); }; if (window.testRunner) testRunner.dumpAsText();
+The test PASS if it does not CRASH.

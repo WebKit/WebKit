@@ -20,5 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitscmpy.mocks.remote.bitbucket import BitBucket
 from webkitscmpy.mocks.remote.git_hub import GitHub
 from webkitscmpy.mocks.remote.svn import Svn

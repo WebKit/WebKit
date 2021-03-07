@@ -33,7 +33,6 @@
 
 #include "GStreamerVideoFrameLibWebRTC.h"
 #include "MediaSampleGStreamer.h"
-#include <gst/video/video.h>
 
 namespace WebCore {
 
@@ -59,14 +58,13 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
     if (!isProducingData())
         return;
 
-    auto sample = GStreamerSampleFromLibWebRTCVideoFrame(frame);
-    callOnMainThread([protectedThis = makeRef(*this), sample] {
-        protectedThis->videoSampleAvailable(MediaSampleGStreamer::create(sample.get(),
-            WebCore::FloatSize(), String()));
+    callOnMainThread([protectedThis = makeRef(*this), frame] {
+        auto gstSample = GStreamerSampleFromLibWebRTCVideoFrame(frame);
+        auto sample = MediaSampleGStreamer::create(WTFMove(gstSample), { }, { });
+        protectedThis->videoSampleAvailable(sample.get());
     });
 }
 
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)
-

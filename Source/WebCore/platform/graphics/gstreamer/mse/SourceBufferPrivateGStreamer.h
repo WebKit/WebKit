@@ -73,7 +73,7 @@ public:
     void notifyReadyForMoreSamples();
 
     void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
-    void didReceiveSample(MediaSample&);
+    void didReceiveSample(Ref<MediaSample>&&);
     void didReceiveAllPendingSamples();
     void appendParsingFailed();
 

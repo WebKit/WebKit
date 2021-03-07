@@ -415,9 +415,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     # Media
     SetMediaVolume(float volume)
-    SetMuted(WebCore::MediaProducer::MutedStateFlags muted)
+    SetMuted(WebCore::MediaProducer::MutedStateFlags muted) -> () Async
     SetMayStartMediaWhenInWindow(bool mayStartMedia)
-    StopMediaCapture()
+    StopMediaCapture(WebCore::MediaProducer::MediaCaptureKind kind) -> () Async
 
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)
@@ -626,11 +626,15 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetCanUseCredentialStorage(bool canUse)
 
 #if ENABLE(APP_HIGHLIGHTS)
-    CreateAppHighlightInSelectedRange(enum:bool WebCore::CreateNewGroupForHighlight createNewGroup)
+    CreateAppHighlightInSelectedRange(enum:bool WebCore::CreateNewGroupForHighlight createNewGroup, enum:bool WebCore::HighlightRequestOriginatedInApp requestOrigin)
     RestoreAppHighlights(Vector<WebKit::SharedMemory::IPCHandle> memoryHandles)
 #endif
 
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async
 
     LastNavigationWasAppBound() -> (bool wasAppBound) Async
+
+#if ENABLE(IMAGE_EXTRACTION)
+    UpdateWithImageExtractionResult(struct WebCore::ImageExtractionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (bool textExistsAtLocation) Async
+#endif
 }

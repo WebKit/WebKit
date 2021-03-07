@@ -108,7 +108,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    uint32_t indexedLength = base->methodTable(vm)->getEnumerableLength(globalObject, base);
+    uint32_t indexedLength = base->getEnumerableLength(globalObject);
 
     JSPropertyNameEnumerator* enumerator = nullptr;
 

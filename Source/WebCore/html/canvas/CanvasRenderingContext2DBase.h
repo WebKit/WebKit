@@ -64,7 +64,6 @@ class ImageBitmap;
 class ImageData;
 class OffscreenCanvas;
 class Path2D;
-class RenderStyle;
 class RenderObject;
 class TextMetrics;
 
@@ -235,11 +234,15 @@ public:
         FontProxy& operator=(const FontProxy&);
 
         bool realized() const { return m_font.fontSelector(); }
-        void initialize(FontSelector&, const RenderStyle&);
+        void initialize(FontSelector&, const FontCascade&);
         const FontMetrics& fontMetrics() const;
         const FontCascadeDescription& fontDescription() const;
         float width(const TextRun&, GlyphOverflow* = 0) const;
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
+
+#if ASSERT_ENABLED
+        bool isPopulated() const { return m_font.fonts(); }
+#endif
 
     private:
         void update(FontSelector&);

@@ -54,17 +54,15 @@ void Gradient::createCGGradient()
     Vector<CGFloat, 4 * reservedStops> colorComponents;
     colorComponents.reserveInitialCapacity(numStops * 4);
 
-    bool hasExtendedColors = false;
+    // FIXME: Consider making this into two loops to avoid unnecessary allocation of the
+    // CGColorRefs in the common case of all ColorSpace::SRGB.
+
+    bool hasOnlyBoundedSRGBColorStops = true;
     for (const auto& stop : m_stops) {
-
-        // If all the stops are sRGB, it is faster to create a gradient using
-        // components than CGColors.
-        // FIXME: Rather than just check for extended colors, we should check the actual
-        // color space, and whether or not the components are outside [0-1].
-        // <rdar://problem/32926606>
-
-        if (stop.color.isExtended())
-            hasExtendedColors = true;
+        // If all the stops are bounded sRGB (as represented by the color having the color space
+        // ColorSpace::SRGB, it is faster to create a gradient using components than CGColors.
+        if (stop.color.colorSpace() != ColorSpace::SRGB)
+            hasOnlyBoundedSRGBColorStops = false;
 
         auto [colorSpace, components] = stop.color.colorSpaceAndComponents();
         auto [r, g, b, a] = components;
@@ -83,10 +81,10 @@ void Gradient::createCGGradient()
     auto extendedColorsGradientColorSpace = sRGBColorSpaceRef();
 #endif
 
-    if (hasExtendedColors)
-        m_gradient = adoptCF(CGGradientCreateWithColors(extendedColorsGradientColorSpace, colorsArray.get(), locations.data()));
-    else
+    if (hasOnlyBoundedSRGBColorStops)
         m_gradient = adoptCF(CGGradientCreateWithColorComponents(sRGBColorSpaceRef(), colorComponents.data(), locations.data(), numStops));
+    else
+        m_gradient = adoptCF(CGGradientCreateWithColors(extendedColorsGradientColorSpace, colorsArray.get(), locations.data()));
 }
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)

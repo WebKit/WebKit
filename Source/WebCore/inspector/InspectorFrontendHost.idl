@@ -95,6 +95,10 @@
 
     readonly attribute boolean supportsDiagnosticLogging;
     [Conditional=INSPECTOR_TELEMETRY] undefined logDiagnosticEvent(DOMString eventName, DOMString content);
+
+    readonly attribute boolean supportsWebExtensions;
+    [Conditional=INSPECTOR_EXTENSIONS] undefined didShowExtensionTab(DOMString extensionID, DOMString extensionTabID);
+    [Conditional=INSPECTOR_EXTENSIONS] undefined didHideExtensionTab(DOMString extensionID, DOMString extensionTabID);
 };
 
 dictionary ContextMenuItem {

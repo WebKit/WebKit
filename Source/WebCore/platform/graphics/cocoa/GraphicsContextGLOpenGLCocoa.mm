@@ -569,9 +569,16 @@ bool GraphicsContextGLOpenGL::isGLES2Compliant() const
     return m_isForWebGL2;
 }
 
-void GraphicsContextGLOpenGL::simulateContextChanged()
+void GraphicsContextGLOpenGL::simulateEventForTesting(SimulatedEventForTesting event)
 {
-    GraphicsContextGLOpenGLManager::sharedManager().displayWasReconfigured();
+    if (event == SimulatedEventForTesting::ContextChange) {
+        GraphicsContextGLOpenGLManager::sharedManager().displayWasReconfigured();
+        return;
+    }
+    if (event == SimulatedEventForTesting::GPUStatusFailure) {
+        m_failNextStatusCheck = true;
+        return;
+    }
 }
 
 void GraphicsContextGLOpenGL::prepareForDisplay()

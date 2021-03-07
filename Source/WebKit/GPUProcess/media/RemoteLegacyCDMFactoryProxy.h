@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "Connection.h"
+#include "GPUConnectionToWebProcess.h"
 #include "MessageReceiver.h"
 #include "RemoteLegacyCDMIdentifier.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
@@ -37,7 +38,6 @@
 
 namespace WebKit {
 
-class GPUConnectionToWebProcess;
 class RemoteLegacyCDMSessionProxy;
 class RemoteLegacyCDMProxy;
 struct RemoteLegacyCDMConfiguration;
@@ -62,7 +62,7 @@ public:
     void removeSession(RemoteLegacyCDMSessionIdentifier);
     RemoteLegacyCDMSessionProxy* getSession(const RemoteLegacyCDMSessionIdentifier&) const;
 
-    GPUConnectionToWebProcess& gpuConnectionToWebProcess() const { return m_gpuConnectionToWebProcess; }
+    GPUConnectionToWebProcess* gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
 private:
     friend class GPUProcessConnection;
@@ -74,7 +74,7 @@ private:
     void createCDM(const String& keySystem, Optional<WebCore::MediaPlayerIdentifier>&&, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&&);
     void supportsKeySystem(const String& keySystem, Optional<String> mimeType, CompletionHandler<void(bool)>&&);
 
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     HashMap<RemoteLegacyCDMIdentifier, std::unique_ptr<RemoteLegacyCDMProxy>> m_proxies;
     HashMap<RemoteLegacyCDMSessionIdentifier, std::unique_ptr<RemoteLegacyCDMSessionProxy>> m_sessions;
 };

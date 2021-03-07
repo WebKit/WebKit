@@ -15,6 +15,7 @@ contact-picker/contacts-select-after-dismissing-picker.html [ Pass ]
 contact-picker/contacts-select-while-presenting-picker.html [ Pass ]
 contact-picker/contacts-select.html [ Pass ]
 fast/device-orientation [ Pass ]
+http/tests/device-orientation [ Pass ]
 fast/history/ios [ Pass ]
 fast/scrolling/ios [ Pass ]
 fast/speechrecognition/ios [ Pass ]
@@ -136,6 +137,7 @@ scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrollbars-on-positioned-content.html [ Failure ]
 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
+css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html [ Failure ]
 
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
@@ -364,7 +366,7 @@ http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Failure ]
 http/tests/security/no-referrer.html [ Failure ]
 http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
-http/tests/uri/css-href.php [ Failure ]
+http/tests/uri/css-href.py [ Failure ]
 
 # HTTP tests that assert:
 http/tests/plugins/plugin-document-has-focus.html
@@ -1887,12 +1889,6 @@ webkit.org/b/217408 http/tests/cache-storage/page-cache-domcache-pending-promise
 
 webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.any.worker.html [ Pass Failure ]
 
-#<rdar://70623742> 2 compositing/contents-scale/*  and 2 fast/canvas/canvas* tests are flaky failures
-compositing/contents-scale/non-decomposable-matrix.html [ Pass Failure ]
-compositing/contents-scale/rasterization-scale.html [ Pass Failure ]
-fast/canvas/canvas-blending-global-alpha.html [ Pass Failure ]
-fast/canvas/canvas-scale-shadowBlur.html [ Pass Failure ]
-
 webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
 
 webkit.org/b/219438 [ Release ] fast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]
@@ -1902,8 +1898,6 @@ webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.ht
 webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
-
-webkit.org/b/221821 platform/ios/media/mediacapabilities/mediacapabilities-encodingInfo-undefined.html [ Failure ]
 
 # @counter-style WPT failures specific to ios-wk2
 imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ ImageOnlyFailure ]

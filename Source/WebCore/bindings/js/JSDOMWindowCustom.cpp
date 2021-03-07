@@ -298,14 +298,6 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* le
     // Indexed getters take precendence over regular properties, so caching would be invalid.
     slot.disableCaching();
 
-    String errorMessage;
-    Optional<bool> cachedIsCrossOriginAccess;
-    auto isCrossOriginAccess = [&] {
-        if (!cachedIsCrossOriginAccess)
-            cachedIsCrossOriginAccess = !BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, window, errorMessage);
-        return *cachedIsCrossOriginAccess;
-    };
-
     // (1) First, indexed properties.
     // These are also allowed cross-origin, so come before the access check.
     if (frame && index < frame->tree().scopedChildCount()) {
@@ -314,7 +306,8 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* le
     }
 
     // Hand off all cross-domain/frameless access to jsDOMWindowGetOwnPropertySlotRestrictedAccess.
-    if (isCrossOriginAccess())
+    String errorMessage;
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, window, errorMessage))
         return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, window, *lexicalGlobalObject, Identifier::from(vm, index), slot, errorMessage);
 
     // (2) Regular own properties.
@@ -327,8 +320,6 @@ void JSDOMWindow::doPutPropertySecurityCheck(JSObject* cell, JSGlobalObject* lex
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
-    if (!thisObject->wrapped().frame())
-        return;
 
     String errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
@@ -346,8 +337,6 @@ bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Propert
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
-    if (!thisObject->wrapped().frame())
-        return false;
 
     String errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
@@ -367,9 +356,15 @@ bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Propert
 
 bool JSDOMWindow::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
 {
+    VM& vm = lexicalGlobalObject->vm();
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
-    if (!thisObject->wrapped().frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped()))
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String errorMessage;
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
+        throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
         return false;
+    }
     
     return Base::putByIndex(thisObject, lexicalGlobalObject, index, value, shouldThrow);
 }

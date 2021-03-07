@@ -51,20 +51,24 @@ public:
 
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
-    virtual void updateSupportedCommands() { }
+
+    using RemoteCommandsSet = HashSet<PlatformMediaSession::RemoteControlCommandType, WTF::IntHash<PlatformMediaSession::RemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSession::RemoteControlCommandType>>;
+    void setSupportedCommands(const RemoteCommandsSet&);
+    const RemoteCommandsSet& supportedCommands() const;
+
+    virtual void updateSupportedCommands();
     void scheduleSupportedCommandsUpdate();
+
     void setSupportsSeeking(bool);
+    bool supportsSeeking() const;
 
     RemoteCommandListenerClient& client() const { return m_client; }
 
-protected:
+private:
     RemoteCommandListenerClient& m_client;
-
-    using RemoteCommandsSet = HashSet<PlatformMediaSession::RemoteControlCommandType, WTF::IntHash<PlatformMediaSession::RemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSession::RemoteControlCommandType>>;
-    RemoteCommandsSet m_registeredCommands;
-    bool m_supportsSeeking { false };
-
+    RemoteCommandsSet m_supportedCommands;
     DeferrableTask<Timer> m_updateCommandsTask;
+    bool m_supportsSeeking { false };
 };
 
 }

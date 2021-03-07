@@ -66,16 +66,7 @@ enum class InputType {
 
 #if PLATFORM(IOS_FAMILY)
 struct OptionItem {
-    OptionItem() { }
-
-    OptionItem(const OptionItem& item)
-        : text(item.text)
-        , isGroup(item.isGroup)
-        , isSelected(item.isSelected)
-        , disabled(item.disabled)
-        , parentGroupID(item.parentGroupID)
-    {
-    }
+    OptionItem() = default;
 
     OptionItem(const String& text, bool isGroup, int parentID, bool selected, bool disabled)
         : text(text)
@@ -85,6 +76,7 @@ struct OptionItem {
         , parentGroupID(parentID)
     {
     }
+
     String text;
     bool isGroup { false };
     bool isSelected { false };

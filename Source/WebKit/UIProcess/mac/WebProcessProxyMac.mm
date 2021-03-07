@@ -59,7 +59,6 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
     return !path.isEmpty() && !path.startsWith("/System/");
 }
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -72,7 +71,6 @@ void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore:
     ASSERT(connection());
     processPool().stopDisplayLink(*connection(), observerID, displayID);
 }
-#endif
 
 } // namespace WebKit
 

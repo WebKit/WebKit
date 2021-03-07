@@ -92,9 +92,9 @@ JSC::JSGlobalObject* globalObject(DOMWrapperWorld& world, Node* node)
     return frame->script().globalObject(world);
 }
 
-JSC::JSGlobalObject* globalObject(DOMWrapperWorld& world, Page* page)
+JSC::JSGlobalObject* globalObject(DOMWrapperWorld& world, Frame* frame)
 {
-    return page ? page->mainFrame().script().globalObject(world) : nullptr;
+    return frame ? frame->script().globalObject(world) : nullptr;
 }
 
 JSC::JSGlobalObject* globalObject(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope)

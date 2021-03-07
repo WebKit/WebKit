@@ -24,6 +24,9 @@ WebDOMTestCEReactions.h:
 JSTestCEReactionsStringifier.h: 
 DOMTestCEReactionsStringifier.h: 
 WebDOMTestCEReactionsStringifier.h: 
+JSTestCSSProperty.h: 
+DOMTestCSSProperty.h: 
+WebDOMTestCSSProperty.h: 
 JSTestCallTracer.h: 
 DOMTestCallTracer.h: 
 WebDOMTestCallTracer.h: 

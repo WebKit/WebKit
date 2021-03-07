@@ -172,6 +172,8 @@ size_t HTTPServer::totalRequests() const
 static String statusText(unsigned statusCode)
 {
     switch (statusCode) {
+    case 101:
+        return "Switching Protocols"_s;
     case 200:
         return "OK"_s;
     case 301:

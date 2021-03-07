@@ -216,7 +216,9 @@ template<typename DOMClass> inline void setSubclassStructureIfNeeded(JSC::JSGlob
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* newTargetGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(JSC::getFunctionRealm(vm, newTarget));
+    auto* functionGlobalObject = JSC::getFunctionRealm(lexicalGlobalObject, newTarget);
+    RETURN_IF_EXCEPTION(scope, void());
+    auto* newTargetGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(functionGlobalObject);
     auto* baseStructure = getDOMStructure<WrapperClass>(vm, *newTargetGlobalObject);
     auto* subclassStructure = JSC::InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure);
     RETURN_IF_EXCEPTION(scope, void());

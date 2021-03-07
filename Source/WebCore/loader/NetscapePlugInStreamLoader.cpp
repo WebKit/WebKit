@@ -60,7 +60,7 @@ NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame& frame, NetscapePlu
     , m_client(makeWeakPtr(client))
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    m_resourceType = ContentExtensions::ResourceType::PlugInStream;
+    m_resourceType = { ContentExtensions::ResourceType::PlugInStream };
 #endif
 }
 

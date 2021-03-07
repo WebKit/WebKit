@@ -214,7 +214,6 @@ class AbstractPatchUploadingCommand(AbstractSequencedCommand):
         return state
 
 
-@DeprecatedCommand
 class Post(AbstractPatchUploadingCommand):
     name = "post"
     help_text = "Attach the current working directory diff to a bug as a patch file"
@@ -259,7 +258,6 @@ class HasLanded(AbstractPatchUploadingCommand):
     ]
 
 
-@DeprecatedCommand
 class Prepare(AbstractSequencedCommand):
     name = "prepare"
     help_text = "Creates a bug (or prompts for an existing bug) and prepares the ChangeLogs"
@@ -381,7 +379,6 @@ class PostCommits(Command):
 
 
 # FIXME: This command needs to be brought into the modern age with steps and CommitInfo.
-@DeprecatedCommand
 class MarkBugFixed(Command):
     name = "mark-bug-fixed"
     help_text = "Mark the specified bug as fixed"

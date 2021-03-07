@@ -490,9 +490,14 @@ static void testWebViewAuthenticationProxy(ProxyAuthenticationTest* test, gconst
 {
     test->loadURI(kServer->getURIForPath("/proxy/auth-test.html").data());
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
+#if USE(SOUP2)
     // FIXME: the uri and host should the proxy ones, not the requested ones.
     ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, kServer->baseURL().host().toString().utf8());
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, kServer->port());
+#else
+    ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, test->m_proxyServer.baseURL().host().toString().utf8());
+    g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, test->m_proxyServer.port());
+#endif
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "Proxy realm");
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
     g_assert_true(webkit_authentication_request_is_for_proxy(request));
@@ -500,8 +505,13 @@ static void testWebViewAuthenticationProxy(ProxyAuthenticationTest* test, gconst
     auto* origin = webkit_authentication_request_get_security_origin(request);
     g_assert_nonnull(origin);
     ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, kServer->baseURL().protocol().toString().utf8());
+#if USE(SOUP2)
     ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, kServer->baseURL().host().toString().utf8());
     g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, kServer->port());
+#else
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, test->m_proxyServer.baseURL().host().toString().utf8());
+    g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, test->m_proxyServer.port());
+#endif
     webkit_security_origin_unref(origin);
 }
 
@@ -512,9 +522,14 @@ static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, g
 
     test->loadURI(httpsServer->getURIForPath("/proxy/auth-test.html").data());
     WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
+#if USE(SOUP2)
     // FIXME: the uri and host should the proxy ones, not the requested ones.
     ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, httpsServer->baseURL().host().toString().utf8());
     g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, httpsServer->port());
+#else
+    ASSERT_CMP_CSTRING(webkit_authentication_request_get_host(request), ==, test->m_proxyServer.baseURL().host().toString().utf8());
+    g_assert_cmpuint(webkit_authentication_request_get_port(request), ==, test->m_proxyServer.port());
+#endif
     g_assert_cmpstr(webkit_authentication_request_get_realm(request), ==, "Proxy realm");
     g_assert_cmpint(webkit_authentication_request_get_scheme(request), ==, WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC);
     g_assert_true(webkit_authentication_request_is_for_proxy(request));
@@ -522,8 +537,13 @@ static void testWebViewAuthenticationProxyHTTPS(ProxyAuthenticationTest* test, g
     auto* origin = webkit_authentication_request_get_security_origin(request);
     g_assert_nonnull(origin);
     ASSERT_CMP_CSTRING(webkit_security_origin_get_protocol(origin), ==, httpsServer->baseURL().protocol().toString().utf8());
+#if USE(SOUP2)
     ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, httpsServer->baseURL().host().toString().utf8());
     g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, httpsServer->port());
+#else
+    ASSERT_CMP_CSTRING(webkit_security_origin_get_host(origin), ==, test->m_proxyServer.baseURL().host().toString().utf8());
+    g_assert_cmpuint(webkit_security_origin_get_port(origin), ==, test->m_proxyServer.port());
+#endif
     webkit_security_origin_unref(origin);
 }
 

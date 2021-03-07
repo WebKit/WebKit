@@ -557,8 +557,29 @@ void ScrollableArea::updateScrollSnapState()
         scrollToPositionWithoutAnimation(correctedPosition);
     }
 }
+
+void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation orientation)
+{
+    if (!usesScrollSnap())
+        return;
+
+    auto currentOffset = scrollOffset();
+    auto newOffset = currentOffset;
+    if (orientation == HorizontalScrollbar)
+        newOffset.setX(m_scrollAnimator->adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Horizontal, currentOffset.x(), ScrollSnapPointSelectionMethod::Closest));
+    else
+        newOffset.setY(m_scrollAnimator->adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Vertical, currentOffset.y(), ScrollSnapPointSelectionMethod::Closest));
+    if (newOffset == currentOffset)
+        return;
+
+    scrollAnimator().scrollToOffsetWithAnimation(newOffset);
+}
 #else
 void ScrollableArea::updateScrollSnapState()
+{
+}
+
+void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation)
 {
 }
 #endif

@@ -200,7 +200,7 @@ HRESULT WebApplicationCache::originsWithCache(IPropertyBag** origins)
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(
         CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    RetainPtr<CFStringRef> key = adoptCF(MarshallingHelpers::BSTRToCFStringRef(_bstr_t(L"origins")));
+    auto key = MarshallingHelpers::BSTRToCFStringRef(_bstr_t(L"origins"));
     CFDictionaryAddValue(dictionary.get(), key.get(), arrayItem.get());
 
     COMPtr<CFDictionaryPropertyBag> result = CFDictionaryPropertyBag::createInstance();

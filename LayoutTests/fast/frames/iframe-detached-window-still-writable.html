@@ -1,0 +1,15 @@
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+    description("Verify that detached windows are still writable");
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    const iframeContentWindow = iframe.contentWindow;
+    iframeContentWindow.foo = 1;
+    iframe.remove();
+    iframeContentWindow.foo++;
+    shouldBe("iframeContentWindow.foo", "2");
+</script>
+</body>
+</html>

@@ -31,16 +31,15 @@
 #include "WebCoreInstanceHandle.h"
 #include <CoreFoundation/CFBundle.h>
 #include <windows.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-static CFBundleRef createWebKitBundle()
+static RetainPtr<CFBundleRef> createWebKitBundle()
 {
-    if (CFBundleRef existingBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"))) {
-        CFRetain(existingBundle);
+    if (CFBundleRef existingBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit")))
         return existingBundle;
-    }
 
     wchar_t dllPathBuffer[MAX_PATH];
     DWORD length = ::GetModuleFileNameW(WebCore::instanceHandle(), dllPathBuffer, WTF_ARRAY_LENGTH(dllPathBuffer));
@@ -52,14 +51,14 @@ static CFBundleRef createWebKitBundle()
     RetainPtr<CFURLRef> dllDirectoryURL = adoptCF(CFURLCreateCopyDeletingLastPathComponent(0, dllURL.get()));
     RetainPtr<CFURLRef> resourcesDirectoryURL = adoptCF(CFURLCreateCopyAppendingPathComponent(0, dllDirectoryURL.get(), CFSTR("WebKit.resources"), true));
 
-    return CFBundleCreate(0, resourcesDirectoryURL.get());
+    return adoptCF(CFBundleCreate(0, resourcesDirectoryURL.get()));
 }
 
 CFBundleRef webKitBundle()
 {
-    static CFBundleRef bundle = createWebKitBundle();
-    ASSERT(bundle);
-    return bundle;
+    static NeverDestroyed<RetainPtr<CFBundleRef>> bundle = createWebKitBundle();
+    ASSERT(bundle.get());
+    return bundle.get().get();
 }
 
 } // namespace WebCore

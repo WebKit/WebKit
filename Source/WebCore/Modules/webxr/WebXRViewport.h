@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "IntRect.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -36,15 +37,19 @@ namespace WebCore {
 class WebXRViewport : public RefCounted<WebXRViewport> {
     WTF_MAKE_ISO_ALLOCATED(WebXRViewport);
 public:
-    static Ref<WebXRViewport> create();
+    static Ref<WebXRViewport> create(const IntRect&);
 
-    int x() const;
-    int y() const;
-    int width() const;
-    int height() const;
+    int x() const { return m_viewport.x(); }
+    int y() const { return m_viewport.y(); }
+    int width() const { return m_viewport.width(); }
+    int height() const { return m_viewport.height(); }
+
+    void updateViewport(const IntRect& viewport) { m_viewport = viewport; }
 
 private:
-    WebXRViewport();
+    explicit WebXRViewport(const IntRect&);
+
+    IntRect m_viewport;
 };
 
 } // namespace WebCore

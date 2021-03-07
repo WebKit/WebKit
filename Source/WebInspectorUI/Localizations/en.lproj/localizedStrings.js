@@ -178,6 +178,8 @@ localizedStrings["Application Cache"] = "Application Cache";
 /* Approximate count of events */
 localizedStrings["Approximate Number"] = "~%s";
 localizedStrings["Area"] = "Area";
+/* Label for option to toggle the area names setting for CSS grid overlays */
+localizedStrings["Area names @ Layout Panel Overlay Options"] = "Area Names";
 localizedStrings["Assertion"] = "Assertion";
 localizedStrings["Assertion Failed"] = "Assertion Failed";
 localizedStrings["Assertion Failed: %s"] = "Assertion Failed: %s";
@@ -842,6 +844,10 @@ localizedStrings["Light @ Settings General Appearance"] = "Light";
 localizedStrings["Line %d"] = "Line %d";
 localizedStrings["Line %d:%d"] = "Line %d:%d";
 localizedStrings["Line Number"] = "Line Number";
+/* Label for option to toggle the line names setting for CSS grid overlays */
+localizedStrings["Line names @ Layout Panel Overlay Options"] = "Line Names";
+/* Label for option to toggle the line numbers setting for CSS grid overlays */
+localizedStrings["Line numbers @ Layout Panel Overlay Options"] = "Line Numbers";
 localizedStrings["Line wrapping:"] = "Line wrapping:";
 localizedStrings["Linear Gradient"] = "Linear Gradient";
 /* Property value for `font-variant-numeric: lining-nums`. */
@@ -1033,8 +1039,8 @@ localizedStrings["PDF"] = "PDF";
 localizedStrings["PNG"] = "PNG";
 localizedStrings["Page"] = "Page";
 localizedStrings["Page Issue"] = "Page Issue";
-/* Heading for list of grid overlay settings */
-localizedStrings["Page Overlay Settings @ Layout Panel Section Header"] = "Grid Overlay Settings";
+/* Heading for list of grid overlay options */
+localizedStrings["Page Overlay Options @ Layout Panel Section Header"] = "Page Overlay Options";
 /* Heading for list of grid nodes */
 localizedStrings["Page Overlays @ Layout Sidebar Section Header"] = "Grid Overlays";
 localizedStrings["Page navigated at %s"] = "Page navigated at %s";
@@ -1315,28 +1321,20 @@ localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";
 localizedStrings["Show Scope Chain on pause"] = "Show Scope Chain on pause";
 localizedStrings["Show all actions"] = "Show all actions";
 localizedStrings["Show all resources"] = "Show all resources";
-/* Label for option to toggle the area names setting for CSS grid overlays */
-localizedStrings["Show area names @ Layers Panel Grid Overlay Setting"] = "Show area names";
 localizedStrings["Show compositing borders"] = "Show compositing borders";
 /* Label for option to toggle the extended lines setting for CSS grid overlays */
-localizedStrings["Show extended lines @ Layers Panel Grid Overlay Setting"] = "Show extended lines";
+localizedStrings["Show extended lines @ Layout Panel Overlay Options"] = "Extended Grid Lines";
 localizedStrings["Show full certificate"] = "Show full certificate";
 localizedStrings["Show hidden tabs"] = "Show hidden tabs";
 /* Settings tab checkbox label for whether the independent styles sidebar should be shown */
 localizedStrings["Show independent Styles sidebar @ Settings Elements Pane"] = "Show independent Styles sidebar";
 localizedStrings["Show jump to effective property button"] = "Show jump to effective property button";
 localizedStrings["Show jump to variable declaration button"] = "Show jump to variable declaration button";
-/* Label for option to toggle the line names setting for CSS grid overlays */
-localizedStrings["Show line names @ Layers Panel Grid Overlay Setting"] = "Show line names";
-/* Label for option to toggle the line numbers setting for CSS grid overlays */
-localizedStrings["Show line numbers @ Layers Panel Grid Overlay Setting"] = "Show line numbers";
 localizedStrings["Show only for selected node"] = "Show only for selected node";
 localizedStrings["Show page rulers and node border lines"] = "Show page rulers and node border lines";
 localizedStrings["Show rulers"] = "Show rulers";
 localizedStrings["Show the details sidebar (%s)"] = "Show the details sidebar (%s)";
 localizedStrings["Show the navigation sidebar (%s)"] = "Show the navigation sidebar (%s)";
-/* Label for option to toggle the track sizes setting for CSS grid overlays */
-localizedStrings["Show track sizes @ Layers Panel Grid Overlay Setting"] = "Show track sizes";
 /* Settings tab checkbox label for whether the transparency grid is shown by default */
 localizedStrings["Show transparency grid (settings label)"] = "Show transparency grid";
 /* Tooltip for showing the checkered transparency grid under images and canvases */
@@ -1548,6 +1546,8 @@ localizedStrings["Totals:"] = "Totals:";
 localizedStrings["Trace"] = "Trace";
 localizedStrings["Trace: %s"] = "Trace: %s";
 localizedStrings["Traces:"] = "Traces:";
+/* Label for option to toggle the track sizes setting for CSS grid overlays */
+localizedStrings["Track sizes @ Layout Panel Overlay Options"] = "Track Sizes";
 /* Property value for `font-variant-alternates: traditional`. */
 localizedStrings["Traditional Forms @ Font Details Sidebar Property Value"] = "Traditional Forms";
 /* Amount of data sent over the network for a single resource */

@@ -40,6 +40,7 @@
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -583,96 +584,139 @@ static constexpr double mmPerInch = 25.4;
 static constexpr double cmPerInch = 2.54;
 static constexpr double QPerInch = 25.4 * 4.0;
 
-double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversionData& conversionData, CSSUnitType primitiveType, double value)
+double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primitiveType, double value, CSSPropertyID propertyToCompute, const FontMetrics* fontMetrics, const FontCascadeDescription* fontDescription, const FontCascadeDescription* rootFontDescription, const RenderView* renderView)
 {
-    double factor;
-    bool applyZoom = true;
-
     switch (primitiveType) {
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
-        ASSERT(conversionData.style());
-        factor = conversionData.computingFontSize() ? conversionData.style()->fontDescription().specifiedSize() : conversionData.style()->fontDescription().computedSize();
-        break;
+        ASSERT(fontDescription);
+        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription->specifiedSize() : fontDescription->computedSize()) * value;
     case CSSUnitType::CSS_EXS:
-        ASSERT(conversionData.style());
-        // FIXME: We have a bug right now where the zoom will be applied twice to EX units.
-        // We really need to compute EX using fontMetrics for the original specifiedSize and not use
-        // our actual constructed rendering font.
-        if (conversionData.style()->fontMetrics().hasXHeight())
-            factor = conversionData.style()->fontMetrics().xHeight();
-        else
-            factor = (conversionData.computingFontSize() ? conversionData.style()->fontDescription().specifiedSize() : conversionData.style()->fontDescription().computedSize()) / 2.0;
-        break;
+        ASSERT(fontMetrics);
+        if (fontMetrics->hasXHeight())
+            return fontMetrics->xHeight() * value;
+        ASSERT(fontDescription);
+        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription->specifiedSize() : fontDescription->computedSize()) / 2.0 * value;
     case CSSUnitType::CSS_REMS:
-        if (conversionData.rootStyle())
-            factor = conversionData.computingFontSize() ? conversionData.rootStyle()->fontDescription().specifiedSize() : conversionData.rootStyle()->fontDescription().computedSize();
-        else
-            factor = 1.0;
-        break;
+        if (!rootFontDescription)
+            return value;
+        return ((propertyToCompute == CSSPropertyFontSize) ? rootFontDescription->specifiedSize() : rootFontDescription->computedSize()) * value;
     case CSSUnitType::CSS_CHS:
-        ASSERT(conversionData.style());
-        factor = conversionData.style()->fontMetrics().zeroWidth();
-        break;
+        ASSERT(fontMetrics);
+        return fontMetrics->zeroWidth() * value;
     case CSSUnitType::CSS_PX:
-        factor = 1.0;
-        break;
+        return value;
     case CSSUnitType::CSS_CM:
-        factor = cssPixelsPerInch / cmPerInch;
-        break;
+        return cssPixelsPerInch / cmPerInch * value;
     case CSSUnitType::CSS_MM:
-        factor = cssPixelsPerInch / mmPerInch;
-        break;
+        return cssPixelsPerInch / mmPerInch * value;
     case CSSUnitType::CSS_Q:
-        factor = cssPixelsPerInch / QPerInch;
-        break;
+        return cssPixelsPerInch / QPerInch * value;
     case CSSUnitType::CSS_LHS:
-        ASSERT(conversionData.style());
-        if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
-            // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
-            factor = conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.style()->fontMetrics().lineSpacing();
-        } else
-            factor = conversionData.style()->computedLineHeight();
-        break;
     case CSSUnitType::CSS_RLHS:
-        if (conversionData.rootStyle()) {
-            if (conversionData.computingLineHeight() || conversionData.computingFontSize())
-                factor = conversionData.rootStyle()->computeLineHeight(conversionData.rootStyle()->specifiedLineHeight());
-            else
-                factor = conversionData.rootStyle()->computedLineHeight();
-        } else
-            factor = 1.0;
-        break;
+        ASSERT_NOT_REACHED();
+        return -1.0;
     case CSSUnitType::CSS_IN:
-        factor = cssPixelsPerInch;
-        break;
+        return cssPixelsPerInch * value;
     case CSSUnitType::CSS_PT:
-        factor = cssPixelsPerInch / 72.0;
-        break;
+        return cssPixelsPerInch / 72.0 * value;
     case CSSUnitType::CSS_PC:
         // 1 pc == 12 pt
-        factor = cssPixelsPerInch * 12.0 / 72.0;
-        break;
+        return cssPixelsPerInch * 12.0 / 72.0 * value;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
         ASSERT_NOT_REACHED();
         return -1.0;
     case CSSUnitType::CSS_VH:
-        factor = conversionData.viewportHeightFactor();
-        applyZoom = false;
-        break;
+        return renderView ? renderView->viewportSizeForCSSViewportUnits().height() / 100.0 * value : 0;
     case CSSUnitType::CSS_VW:
-        factor = conversionData.viewportWidthFactor();
-        applyZoom = false;
-        break;
+        return renderView ? renderView->viewportSizeForCSSViewportUnits().width() / 100.0 * value : 0;
     case CSSUnitType::CSS_VMAX:
-        factor = conversionData.viewportMaxFactor();
-        applyZoom = false;
-        break;
+        if (renderView) {
+            IntSize viewportSizeForCSSViewportUnits = renderView->viewportSizeForCSSViewportUnits();
+            return std::max(viewportSizeForCSSViewportUnits.width(), viewportSizeForCSSViewportUnits.height()) / 100.0 * value;
+        }
+        return value;
     case CSSUnitType::CSS_VMIN:
-        factor = conversionData.viewportMinFactor();
-        applyZoom = false;
+        if (renderView) {
+            IntSize viewportSizeForCSSViewportUnits = renderView->viewportSizeForCSSViewportUnits();
+            return std::min(viewportSizeForCSSViewportUnits.width(), viewportSizeForCSSViewportUnits.height()) / 100.0 * value;
+        }
+        return value;
+    default:
+        ASSERT_NOT_REACHED();
+        return -1.0;
+    }
+}
+
+double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversionData& conversionData, CSSUnitType primitiveType, double value)
+{
+    switch (primitiveType) {
+    case CSSUnitType::CSS_EMS:
+    case CSSUnitType::CSS_QUIRKY_EMS:
+        ASSERT(conversionData.style());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), nullptr, &conversionData.style()->fontDescription());
         break;
+
+    case CSSUnitType::CSS_EXS:
+        // FIXME: We have a bug right now where the zoom will be applied twice to EX units.
+        // We really need to compute EX using fontMetrics for the original specifiedSize and not use
+        // our actual constructed rendering font.
+        ASSERT(conversionData.style());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.style()->fontMetrics(), &conversionData.style()->fontDescription());
+        break;
+
+    case CSSUnitType::CSS_REMS:
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), nullptr, nullptr, conversionData.rootStyle() ? &conversionData.rootStyle()->fontDescription() : nullptr);
+        break;
+
+    case CSSUnitType::CSS_CHS:
+        ASSERT(conversionData.style());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.style()->fontMetrics());
+        break;
+
+    case CSSUnitType::CSS_PX:
+    case CSSUnitType::CSS_CM:
+    case CSSUnitType::CSS_MM:
+    case CSSUnitType::CSS_Q:
+    case CSSUnitType::CSS_IN:
+    case CSSUnitType::CSS_PT:
+    case CSSUnitType::CSS_PC:
+    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
+    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute());
+        break;
+
+    case CSSUnitType::CSS_VH:
+        return value * conversionData.viewportHeightFactor();
+
+    case CSSUnitType::CSS_VW:
+        return value * conversionData.viewportWidthFactor();
+
+    case CSSUnitType::CSS_VMAX:
+        return value * conversionData.viewportMaxFactor();
+
+    case CSSUnitType::CSS_VMIN:
+        return value * conversionData.viewportMinFactor();
+
+    case CSSUnitType::CSS_LHS:
+        ASSERT(conversionData.style());
+        if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
+            // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
+            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.style()->fontMetrics().lineSpacing();
+        } else
+            value *= conversionData.style()->computedLineHeight();
+        break;
+
+    case CSSUnitType::CSS_RLHS:
+        if (conversionData.rootStyle()) {
+            if (conversionData.computingLineHeight() || conversionData.computingFontSize())
+                value *= conversionData.rootStyle()->computeLineHeight(conversionData.rootStyle()->specifiedLineHeight());
+            else
+                value *= conversionData.rootStyle()->computedLineHeight();
+        }
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return -1.0;
@@ -681,14 +725,10 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     // We do not apply the zoom factor when we are computing the value of the font-size property. The zooming
     // for font sizes is much more complicated, since we have to worry about enforcing the minimum font size preference
     // as well as enforcing the implicit "smart minimum."
-    double result = value * factor;
     if (conversionData.computingFontSize() || isFontRelativeLength(primitiveType))
-        return result;
+        return value;
 
-    if (applyZoom)
-        result *= conversionData.zoom();
-
-    return result;
+    return value * conversionData.zoom();
 }
 
 bool CSSPrimitiveValue::equalForLengthResolution(const RenderStyle& styleA, const RenderStyle& styleB)

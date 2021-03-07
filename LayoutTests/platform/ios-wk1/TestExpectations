@@ -1796,7 +1796,7 @@ fast/borders/hidpi-border-clipping-right-after-move.html [ Pass ImageOnlyFailure
 fast/forms/input-select-webkit-user-select-none.html [ Crash Failure ]
 fast/forms/textarea-live-pseudo-selectors.html [ Crash Failure ]
 fast/text/font-weights.html [ Pass Failure ]
-http/tests/loading/preload-append-scan.php [ Crash Failure Pass ]
+http/tests/loading/preload-append-scan.py [ Crash Failure Pass ]
 http/tests/security/appcache-switching-private-browsing.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/blob-url-does-not-match-source-self.html [ Pass ImageOnlyFailure ]
 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html [ Pass Failure ]

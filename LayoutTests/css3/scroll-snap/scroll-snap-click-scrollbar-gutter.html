@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Clicking in the scrollbar gutter should trigger scroll snapping</title>
+        <style type="text/css">
+            /* Use customized scrollbar to avoid platform differences. */
+            ::-webkit-scrollbar {
+                width: 20px;
+                height: 20px;
+            }
+            ::-webkit-scrollbar-button {
+                height: 0px;
+                width: 0px;
+            }
+
+            ::-webkit-scrollbar-track-piece  {
+                background-color: gray;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                height: 20px;
+                width: 20px;
+                background-color: black;
+            }
+
+            body {
+                margin: 0px;
+            }
+
+            .container {
+                height: 200px;
+                width: 200px;
+                overflow: auto;
+                scroll-snap-type: both mandatory;
+            }
+
+            .block {
+                height: 1000px;
+                width: 250px;
+                scroll-snap-align: start;
+            }
+
+            .horizontal-drawer {
+                height: 100%;
+                width: 2000px;
+            }
+
+            .horizontal-drawer .block {
+                width: 1000px;
+                height: 250px;
+            }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function onLoad()
+        {
+            if (window.eventSender == undefined) {
+                document.getElementById('console').innerText = "Clicking in the scrollbar gutter should trigger scroll snapping.";
+                return;
+            }
+            try {
+                eventSender.mouseMoveTo(175, 190);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+
+                let horizontalContainer = document.getElementById("horizontal-container");
+                await UIHelper.waitForTargetScrollAnimationToSettle(horizontalContainer);
+                expectTrue(horizontalContainer.scrollLeft == 1000, "clicking the horizontal scrollbar gutter snapped");
+
+                eventSender.mouseMoveTo(190, 370);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+                let verticalContainer = document.getElementById("vertical-container");
+                await UIHelper.waitForTargetScrollAnimationToSettle(verticalContainer);
+                expectTrue(verticalContainer.scrollTop == 1000, "dragging the vertical scrollbar thumb snapped");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="horizontal-container" class="container">
+            <div class="horizontal-drawer">
+                <div class="block" style="float: left; background: #80475E"></div>
+                <div class="block" style="width: 450px; float: left; background: #CC5A71"></div>
+            </div>
+        </div>
+        <div id="vertical-container" class="container">
+            <div class="block" style="background: #80475E"></div>
+            <div class="block" style="height: 450px; background: #CC5A71"></div>
+        </div>
+        <p id="console"></p>
+        <script>
+        </script>
+    </body>
+</html>

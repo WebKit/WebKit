@@ -322,6 +322,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
     parameters.uiProcessSDKVersion = applicationSDKVersion();
 
+    parameters.latencyQOS = webProcessLatencyQOS();
+    parameters.throughputQOS = webProcessThroughputQOS();
+    
 #if PLATFORM(IOS_FAMILY)
     if (!m_resolvedPaths.cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.cookieStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.cookieStorageDirectoryExtensionHandle);
@@ -666,12 +669,10 @@ void WebProcessPool::registerNotificationObservers()
         screenPropertiesStateChanged();
     }];
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     m_scrollerStyleNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSPreferredScrollerStyleDidChangeNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         auto scrollbarStyle = [NSScroller preferredScrollerStyle];
         sendToAllProcesses(Messages::WebProcess::ScrollerStylePreferenceChanged(scrollbarStyle));
     }];
-#endif
 
     m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidBecomeActiveNotification object:NSApp queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
 #if ENABLE(CFPREFS_DIRECT_MODE)
@@ -736,9 +737,7 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticQuoteSubstitutionNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticDashSubstitutionNotificationObserver.get()];
     [[NSWorkspace.sharedWorkspace notificationCenter] removeObserver:m_accessibilityDisplayOptionsNotificationObserver.get()];
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [[NSNotificationCenter defaultCenter] removeObserver:m_scrollerStyleNotificationObserver.get()];
-#endif
     [[NSNotificationCenter defaultCenter] removeObserver:m_deactivationObserver.get()];
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDistributedCenter(), this, AppleColorPreferencesChangedNotification, nullptr);
 #elif !PLATFORM(MACCATALYST)
@@ -767,7 +766,7 @@ bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
     return _CFNetworkIsKnownHSTSHostWithSession(url.get(), nullptr);
 }
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if HAVE(CVDISPLAYLINK)
 Optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
 {
     for (auto& displayLink : m_displayLinks) {
@@ -810,7 +809,7 @@ void WebProcessPool::stopDisplayLinks(IPC::Connection& connection)
     for (auto& displayLink : m_displayLinks)
         displayLink->removeObservers(connection);
 }
-#endif
+#endif // HAVE(CVDISPLAYLINK)
 
 // FIXME: Deprecated. Left here until a final decision is made.
 void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)

@@ -247,7 +247,7 @@ bool MediaSampleAVFObjC::isDivisable() const
     return true;
 }
 
-std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(const MediaTime& presentationTime)
+std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(const MediaTime& presentationTime, UseEndTime useEndTime)
 {
     if (!isDivisable())
         return { nullptr, nullptr };
@@ -255,7 +255,18 @@ std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(c
     CFIndex samplesBeforePresentationTime = 0;
 
     CMSampleBufferCallBlockForEachSample(m_sample.get(), [&] (CMSampleBufferRef sampleBuffer, CMItemCount) -> OSStatus {
-        if (PAL::toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) >= presentationTime)
+        auto timeStamp = CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer);
+        if (CMTIME_IS_INVALID(timeStamp))
+            timeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+
+        if (useEndTime == UseEndTime::Use) {
+            auto duration = CMSampleBufferGetOutputDuration(sampleBuffer);
+            if (CMTIME_IS_INVALID(duration))
+                duration = CMSampleBufferGetDuration(sampleBuffer);
+
+            if (PAL::toMediaTime(CMTimeAdd(timeStamp, duration)) > presentationTime)
+                return 1;
+        } else if (PAL::toMediaTime(timeStamp) >= presentationTime)
             return 1;
         ++samplesBeforePresentationTime;
         return noErr;

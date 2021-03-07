@@ -27,13 +27,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Type.h"
 #include "WasmOps.h"
 #include <cstdint>
-#include <cstring>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -48,7 +44,6 @@ namespace JSC {
 namespace Wasm {
 
 using SignatureArgCount = uint32_t;
-using SignatureIndex = uint64_t;
 
 class Signature : public ThreadSafeRefCounted<Signature> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -146,7 +141,7 @@ public:
     static SignatureInformation& singleton();
 
     static RefPtr<Signature> signatureFor(const Vector<Type, 1>& returnTypes, const Vector<Type>& argumentTypes);
-    ALWAYS_INLINE const Signature* thunkFor(Type type) const { return thunkSignatures[linearizeType(type)]; }
+    ALWAYS_INLINE const Signature* thunkFor(Type type) const { return thunkSignatures[linearizeType(type.kind)]; }
 
     static const Signature& get(SignatureIndex);
     static SignatureIndex get(const Signature&);

@@ -113,12 +113,12 @@ static RetainPtr<WKWebViewConfiguration> configurationWithContentFilterSettings(
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
-    EXPECT_WK_STREQ(webView.URL.absoluteString, @"http://redirect/?pass");
+    EXPECT_WK_STREQ(webView.URL.absoluteString, @"https://redirect/?pass");
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
 {
-    EXPECT_WK_STREQ(webView.URL.absoluteString, @"http://pass/");
+    EXPECT_WK_STREQ(webView.URL.absoluteString, @"https://pass/");
 }
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
@@ -131,13 +131,13 @@ static RetainPtr<WKWebViewConfiguration> configurationWithContentFilterSettings(
 TEST(ContentFiltering, URLAfterServerRedirect)
 {
     @autoreleasepool {
-        [TestProtocol registerWithScheme:@"http"];
+        [TestProtocol registerWithScheme:@"https"];
 
         auto configuration = configurationWithContentFilterSettings(Decision::Allow, DecisionPoint::AfterAddData);
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto navigationDelegate = adoptNS([[ServerRedirectNavigationDelegate alloc] init]);
         [webView setNavigationDelegate:navigationDelegate.get()];
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://redirect?pass"]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://redirect?pass"]]];
         TestWebKitAPI::Util::run(&isDone);
 
         [TestProtocol unregister];
@@ -183,7 +183,7 @@ static bool downloadDidStart;
 static void downloadTest(Decision decision, DecisionPoint decisionPoint)
 {
     @autoreleasepool {
-        [TestProtocol registerWithScheme:@"http"];
+        [TestProtocol registerWithScheme:@"https"];
 
         auto configuration = configurationWithContentFilterSettings(decision, decisionPoint);
         auto downloadDelegate = adoptNS([[ContentFilteringDownloadDelegate alloc] init]);
@@ -191,7 +191,7 @@ static void downloadTest(Decision decision, DecisionPoint decisionPoint)
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto navigationDelegate = adoptNS([[BecomeDownloadDelegate alloc] init]);
         [webView setNavigationDelegate:navigationDelegate.get()];
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://redirect/?download"]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://redirect/?download"]]];
 
         isDone = false;
         downloadDidStart = false;
@@ -293,13 +293,13 @@ TEST(ContentFiltering, BlockDownloadNever)
 static void loadAlternateTest(Decision decision, DecisionPoint decisionPoint)
 {
     @autoreleasepool {
-        [TestProtocol registerWithScheme:@"http"];
+        [TestProtocol registerWithScheme:@"https"];
 
         auto configuration = configurationWithContentFilterSettings(decision, decisionPoint);
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto navigationDelegate = adoptNS([[LoadAlternateNavigationDelegate alloc] init]);
         [webView setNavigationDelegate:navigationDelegate.get()];
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://redirect/?result"]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://redirect/?result"]]];
 
         isDone = false;
         TestWebKitAPI::Util::run(&isDone);

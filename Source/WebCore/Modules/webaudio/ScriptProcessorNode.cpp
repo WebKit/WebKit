@@ -101,6 +101,31 @@ void ScriptProcessorNode::initialize()
     AudioNode::initialize();
 }
 
+RefPtr<AudioBuffer> ScriptProcessorNode::createInputBufferForJS(AudioBuffer* inputBuffer) const
+{
+    if (!inputBuffer)
+        return nullptr;
+
+    // As an optimization, we reuse the same buffer as last time when possible.
+    if (!m_cachedInputBufferForJS || !m_cachedInputBufferForJS->topologyMatches(*inputBuffer))
+        m_cachedInputBufferForJS = inputBuffer->clone();
+    else
+        inputBuffer->copyTo(*m_cachedInputBufferForJS);
+
+    return m_cachedInputBufferForJS;
+}
+
+RefPtr<AudioBuffer> ScriptProcessorNode::createOutputBufferForJS(AudioBuffer& outputBuffer) const
+{
+    // As an optimization, we reuse the same buffer as last time when possible.
+    if (!m_cachedOutputBufferForJS || !m_cachedOutputBufferForJS->topologyMatches(outputBuffer))
+        m_cachedOutputBufferForJS = outputBuffer.clone(AudioBuffer::ShouldCopyChannelData::No);
+    else
+        m_cachedOutputBufferForJS->zero();
+
+    return m_cachedOutputBufferForJS;
+}
+
 void ScriptProcessorNode::uninitialize()
 {
     if (!isInitialized())
@@ -123,13 +148,22 @@ void ScriptProcessorNode::process(size_t framesToProcess)
 {
     // Discussion about inputs and outputs:
     // As in other AudioNodes, ScriptProcessorNode uses an AudioBus for its input and output (see inputBus and outputBus below).
-    // Additionally, there is a double-buffering for input and output which is exposed directly to JavaScript (see inputBuffer and outputBuffer below).
+    // Additionally, there is a double-buffering for input and output (see inputBuffer and outputBuffer below).
     // This node is the producer for inputBuffer and the consumer for outputBuffer.
-    // The JavaScript code is the consumer of inputBuffer and the producer for outputBuffer.
+    // The JavaScript code is the consumer of inputBuffer and the producer for outputBuffer. The JavaScript gets its own copy
+    // of the buffers for safety reasons.
 
     // Get input and output busses.
     AudioBus* inputBus = this->input(0)->bus();
     AudioBus* outputBus = this->output(0)->bus();
+
+    auto locker = tryHoldLock(m_processLock);
+    if (!locker) {
+        // We're late in handling the previous request. The main thread must be
+        // very busy. The best we can do is clear out the buffer ourself here.
+        outputBus->zero();
+        return;
+    }
 
     // Get input and output buffers. We double-buffer both the input and output sides.
     unsigned doubleBufferIndex = this->doubleBufferIndex();
@@ -192,14 +226,6 @@ void ScriptProcessorNode::process(size_t framesToProcess)
             });
             semaphore.wait();
         } else {
-            auto locker = tryHoldLock(m_processLock);
-            if (!locker) {
-                // We're late in handling the previous request. The main thread must be
-                // very busy. The best we can do is clear out the buffer ourself here.
-                outputBuffer->zero();
-                return;
-            }
-
             callOnMainThread([this, doubleBufferIndex = m_doubleBufferIndex, protector = makeRef(*this)] {
                 auto locker = holdLock(m_processLock);
                 fireProcessEvent(doubleBufferIndex);
@@ -226,14 +252,21 @@ void ScriptProcessorNode::fireProcessEvent(unsigned doubleBufferIndex)
         return;
 
     // Avoid firing the event if the document has already gone away.
-    if (!context().isStopped()) {
-        // Calculate playbackTime with the buffersize which needs to be processed each time when onaudioprocess is called.
-        // The outputBuffer being passed to JS will be played after exhausting previous outputBuffer by double-buffering.
-        double playbackTime = (context().currentSampleFrame() + m_bufferSize) / static_cast<double>(context().sampleRate());
+    if (context().isStopped())
+        return;
 
-        // Call the JavaScript event handler which will do the audio processing.
-        dispatchEvent(AudioProcessingEvent::create(inputBuffer, outputBuffer, playbackTime));
-    }
+    // Calculate playbackTime with the buffersize which needs to be processed each time when onaudioprocess is called.
+    // The outputBuffer being passed to JS will be played after exhausting previous outputBuffer by double-buffering.
+    double playbackTime = (context().currentSampleFrame() + m_bufferSize) / static_cast<double>(context().sampleRate());
+
+    auto inputBufferForJS = createInputBufferForJS(inputBuffer);
+    auto outputBufferForJS = createOutputBufferForJS(*outputBuffer);
+
+    // Call the JavaScript event handler which will do the audio processing.
+    dispatchEvent(AudioProcessingEvent::create(inputBufferForJS.get(), outputBufferForJS.get(), playbackTime));
+
+    if (!outputBufferForJS->copyTo(*outputBuffer))
+        outputBuffer->zero();
 }
 
 ExceptionOr<void> ScriptProcessorNode::setChannelCount(unsigned channelCount)

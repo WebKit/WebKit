@@ -698,6 +698,7 @@ class WebkitFlatpak:
         sandbox_build_path = os.path.join(self.sandbox_source_root, "WebKitBuild", self.build_type)
         sandbox_environment = {
             "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
+            "PATH": "/usr/bin:/usr/lib/sdk/rust-stable/bin/",
         }
 
         if not args:

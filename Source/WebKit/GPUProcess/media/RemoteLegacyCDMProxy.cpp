@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "GPUConnectionToWebProcess.h"
 #include "RemoteLegacyCDMSessionProxy.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
@@ -87,7 +86,11 @@ RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
     if (!m_playerId || !m_factory)
         return nullptr;
 
-    return m_factory->gpuConnectionToWebProcess().remoteMediaPlayerManagerProxy().mediaPlayer(m_playerId);
+    auto* gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    if (!gpuConnectionToWebProcess)
+        return nullptr;
+
+    return gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(m_playerId);
 }
 
 }

@@ -52,6 +52,8 @@ public:
     static const char* errorString(int statusCode);
     static const char* lastErrorString();
 
+    EGLConfig config() const { return m_config; }
+
     virtual ~GLContextEGL();
 
 private:
@@ -71,16 +73,16 @@ private:
 
     enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };
 
-    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, EGLSurfaceType);
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, EGLSurfaceType);
 #if PLATFORM(X11)
-    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, XUniquePixmap&&);
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, XUniquePixmap&&);
 #endif
 #if PLATFORM(WAYLAND)
-    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, WlUniquePtr<struct wl_surface>&&, struct wl_egl_window*);
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, WlUniquePtr<struct wl_surface>&&, struct wl_egl_window*);
     void destroyWaylandWindow();
 #endif
 #if USE(WPE_RENDERER)
-    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, struct wpe_renderer_backend_egl_offscreen_target*);
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, struct wpe_renderer_backend_egl_offscreen_target*);
     void destroyWPETarget();
 #endif
 
@@ -104,6 +106,7 @@ private:
 
     EGLContext m_context { nullptr };
     EGLSurface m_surface { nullptr };
+    EGLConfig m_config { nullptr };
     EGLSurfaceType m_type;
 #if PLATFORM(X11)
     XUniquePixmap m_pixmap;

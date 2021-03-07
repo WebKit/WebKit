@@ -744,6 +744,26 @@ void Element::setFocus(bool flag)
 
     for (auto* element = this; element; element = element->parentElementInComposedTree())
         element->setHasFocusWithin(flag);
+
+    auto computeHasFocusVisible = [&] {
+        if (!flag)
+            return false;
+        // Elements that support keyboard input (form inputs and contenteditable) always match :focus-visible when focused.
+        return hasFocusVisible() || isTextField() || isContentEditable();
+    };
+    setHasFocusVisible(computeHasFocusVisible());
+}
+
+void Element::setHasFocusVisible(bool flag)
+{
+    if (!document().settings().focusVisibleEnabled())
+        return;
+
+    if (hasFocusVisible() == flag)
+        return;
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusVisible);
+    setNodeFlag(NodeFlag::HasFocusVisible, flag);
 }
 
 void Element::setHasFocusWithin(bool flag)
@@ -3355,6 +3375,9 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
         elementsRequiringComputedStyle.prepend(&ancestor);
     }
 
+    // On iOS request delegates called during styleForElement may result in re-entering WebKit and killing the style resolver.
+    Style::PostResolutionCallbackDisabler disabler(document(), Style::PostResolutionCallbackDisabler::DrainCallbacks::No);
+
     // Resolve and cache styles starting from the most distant ancestor.
     for (auto& element : elementsRequiringComputedStyle) {
         auto style = document().styleForElementIgnoringPendingStylesheets(*element, computedStyle);
@@ -3424,6 +3447,8 @@ const RenderStyle& Element::resolvePseudoElementStyle(PseudoId pseudoElementSpec
     auto* parentStyle = existingComputedStyle();
     ASSERT(parentStyle);
     ASSERT(!parentStyle->getCachedPseudoStyle(pseudoElementSpecifier));
+
+    Style::PostResolutionCallbackDisabler disabler(document(), Style::PostResolutionCallbackDisabler::DrainCallbacks::No);
 
     auto style = document().styleForElementIgnoringPendingStylesheets(*this, parentStyle, pseudoElementSpecifier);
     if (!style) {

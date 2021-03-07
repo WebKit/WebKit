@@ -2461,12 +2461,9 @@ static bool needsMicrosoftMessengerDOMDocumentWorkaround()
 
 static NSURL *createUniqueWebDataURL()
 {
-    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
-    NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
-    CFRelease(UUIDRef);
-    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"applewebdata://%@", UUIDString]];
-    CFRelease(UUIDString);
-    return URL;
+    auto UUIDRef = adoptCF(CFUUIDCreate(kCFAllocatorDefault));
+    auto UUIDString = adoptCF(CFUUIDCreateString(kCFAllocatorDefault, UUIDRef.get()));
+    return [NSURL URLWithString:[NSString stringWithFormat:@"applewebdata://%@", (__bridge NSString *)UUIDString.get()]];
 }
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL unreachableURL:(NSURL *)unreachableURL

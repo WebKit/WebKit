@@ -45,6 +45,11 @@ public:
         DisplayCapture,
         SyncXHR,
         Fullscreen,
+#if ENABLE(DEVICE_ORIENTATION)
+        Gyroscope,
+        Accelerometer,
+        Magnetometer,
+#endif
 #if ENABLE(WEBXR)
         XRSpatialTracking,
 #endif
@@ -64,7 +69,14 @@ private:
     AllowRule m_displayCaptureRule;
     AllowRule m_syncXHRRule;
     AllowRule m_fullscreenRule;
+#if ENABLE(DEVICE_ORIENTATION)
+    AllowRule m_gyroscopeRule;
+    AllowRule m_accelerometerRule;
+    AllowRule m_magnetometerRule;
+#endif
+#if ENABLE(WEBXR)
     AllowRule m_xrSpatialTrackingRule;
+#endif
 };
 
 enum class LogFeaturePolicyFailure { No, Yes };

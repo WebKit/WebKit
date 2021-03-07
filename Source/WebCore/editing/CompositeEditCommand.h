@@ -187,7 +187,7 @@ protected:
     void deleteInsignificantText(const Position& start, const Position& end);
     void deleteInsignificantTextDownstream(const Position&);
 
-    Ref<Element> appendBlockPlaceholder(Ref<Element>&&);
+    RefPtr<Element> appendBlockPlaceholder(Ref<Element>&&);
     RefPtr<Node> insertBlockPlaceholder(const Position&);
     RefPtr<Node> addBlockPlaceholderIfNeeded(Element*);
     void removePlaceholderAt(const Position&);
