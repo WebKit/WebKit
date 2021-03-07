@@ -3134,11 +3134,11 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
 bool RenderLayerCompositor::requiresCompositingForModel(RenderLayerModelObject& renderer) const
 {
 #if ENABLE(MODEL_ELEMENT)
-    if (!is<RenderModel>(renderer))
-        return false;
+    if (is<RenderModel>(renderer))
+        return true;
 #endif
 
-    return true;
+    return false;
 }
 
 bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject& renderer, RequiresCompositingData& queryData) const
