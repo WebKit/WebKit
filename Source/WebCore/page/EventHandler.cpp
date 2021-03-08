@@ -3075,7 +3075,10 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     if (!m_frame.page())
         return;
 
-    if (!m_currentWheelEventAllowsScrolling)
+    auto platformEvent = wheelEvent.underlyingPlatformEvent();
+    bool isUserEvent = platformEvent.hasValue();
+
+    if (isUserEvent && !m_currentWheelEventAllowsScrolling)
         return;
 
     auto protectedFrame = makeRef(m_frame);
@@ -3101,13 +3104,12 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     if (!m_frame.page()->scrollLatchingController().latchingAllowsScrollingInFrame(m_frame, latchedScroller))
         return;
 
-    if (latchedScroller) {
+    if (isUserEvent && latchedScroller) {
         if (latchedScroller == m_frame.view()) {
             // FrameView scrolling is handled via processWheelEventForScrolling().
             return;
         }
 
-        auto platformEvent = wheelEvent.underlyingPlatformEvent();
         if (platformEvent) {
             auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
             if (handleWheelEventInScrollableArea(copiedEvent, *latchedScroller, eventHandling))

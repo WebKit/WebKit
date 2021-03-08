@@ -1,3 +1,14 @@
+2021-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Trackpad scrolling in the web inspector timeline is broken
+        https://bugs.webkit.org/show_bug.cgi?id=222853
+        rdar://73509018
+
+        Reviewed by Sam Weinig.
+
+        * fast/events/wheel/redispatched-wheel-event-expected.txt: Added.
+        * fast/events/wheel/redispatched-wheel-event.html: Added.
+
 2021-03-08  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] avif tests failing
