@@ -562,7 +562,7 @@ sub IDLFileForInterface
         $idlFiles = { };
 
         my $wanted = sub {
-            $idlFiles->{$1} = $File::Find::name if /^([A-Z].*)\.idl$/;
+            $idlFiles->{$1} = $File::Find::name if /^([A-Z].*)\.idl$/ && !exists $idlFiles->{$1};
             $File::Find::prune = 1 if /^\../;
         };
         find($wanted, @directories);
