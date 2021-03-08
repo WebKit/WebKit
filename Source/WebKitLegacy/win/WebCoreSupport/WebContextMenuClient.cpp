@@ -33,6 +33,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/UserGestureIndicator.h>
 
+#if ENABLE(CONTEXT_MENUS)
 WebContextMenuClient::WebContextMenuClient(WebView* webView)
     : m_webView(webView)
 {
@@ -84,3 +85,5 @@ bool WebContextMenuClient::isSpeaking()
     notImplemented();
     return false;
 }
+#endif
+

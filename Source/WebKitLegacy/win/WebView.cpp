@@ -1569,6 +1569,7 @@ Page* WebView::page()
     return m_page;
 }
 
+#if ENABLE(CONTEXT_MENUS)
 static HMENU createContextMenuFromItems(const Vector<ContextMenuItem>& items)
 {
     HMENU menu = ::CreatePopupMenu();
@@ -1625,9 +1626,11 @@ HMENU WebView::createContextMenu()
 
     return contextMenu;
 }
+#endif
 
 bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
 {
+#if ENABLE(CONTEXT_MENUS)
     // Translate the screen coordinates into window coordinates
     POINT coords = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
     if (coords.x == -1 || coords.y == -1) {
@@ -1713,6 +1716,11 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     }
 
     return true;
+#else
+    UNUSED_PARAM(wParam);
+    UNUSED_PARAM(lParam);
+    return false;
+#endif
 }
 
 bool WebView::onMeasureItem(WPARAM /*wParam*/, LPARAM lParam)
@@ -1781,6 +1789,7 @@ bool WebView::onUninitMenuPopup(WPARAM wParam, LPARAM /*lParam*/)
 
 void WebView::onMenuCommand(WPARAM wParam, LPARAM lParam)
 {
+#if ENABLE(CONTEXT_MENUS)
     HMENU hMenu = reinterpret_cast<HMENU>(lParam);
     unsigned index = static_cast<unsigned>(wParam);
 
@@ -1813,6 +1822,10 @@ void WebView::onMenuCommand(WPARAM wParam, LPARAM lParam)
     }
 
     m_page->contextMenuController().contextMenuItemSelected(action, title);
+#else
+    UNUSED_PARAM(wParam);
+    UNUSED_PARAM(lParam);
+#endif
 }
 
 bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
@@ -3138,7 +3151,9 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<MediaRecorderProvider>()
     );
     configuration.chromeClient = new WebChromeClient(this);
+#if ENABLE(CONTEXT_MENUS)
     configuration.contextMenuClient = new WebContextMenuClient(this);
+#endif
     configuration.dragClient = makeUnique<WebDragClient>(this);
     configuration.inspectorClient = m_inspectorClient;
     configuration.applicationCacheStorage = &WebApplicationCache::storage();

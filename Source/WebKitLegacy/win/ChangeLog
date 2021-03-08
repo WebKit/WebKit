@@ -1,3 +1,16 @@
+2021-03-08  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Builds with ENABLE_CONTEXT_MENUS=OFF fail
+        https://bugs.webkit.org/show_bug.cgi?id=222771
+
+        Reviewed by Don Olmstead.
+
+        Build fix for turning off context menus adding ifdefs as necessary.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebView.cpp:
+
 2021-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.12 or later
