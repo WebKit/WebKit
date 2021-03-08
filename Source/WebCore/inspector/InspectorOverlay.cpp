@@ -38,6 +38,7 @@
 #include "DOMCSSNamespace.h"
 #include "DOMTokenList.h"
 #include "Element.h"
+#include "FloatLine.h"
 #include "FloatPoint.h"
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
@@ -210,7 +211,7 @@ static void buildQuadHighlight(const FloatQuad& quad, const InspectorOverlay::Hi
     highlight.quads.append(quad);
 }
 
-static Path quadToPath(const FloatQuad& quad, InspectorOverlay::Highlight::Bounds& bounds)
+static Path quadToPath(const FloatQuad& quad)
 {
     Path path;
     path.moveTo(quad.p1());
@@ -219,6 +220,12 @@ static Path quadToPath(const FloatQuad& quad, InspectorOverlay::Highlight::Bound
     path.addLineTo(quad.p4());
     path.closeSubpath();
 
+    return path;
+}
+
+static Path quadToPath(const FloatQuad& quad, InspectorOverlay::Highlight::Bounds& bounds)
+{
+    auto path = quadToPath(quad);
     bounds.unite(path.boundingRect());
 
     return path;
@@ -1149,13 +1156,10 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     return path;
 }
 
-void InspectorOverlay::drawLayoutHatching(GraphicsContext& context, FloatRect rect, IntPoint scrollOffset)
+void InspectorOverlay::drawLayoutHatching(GraphicsContext& context, FloatQuad quad)
 {
     GraphicsContextStateSaver saver(context);
-    
-    context.translate(rect.x(), rect.y());
-    context.clip(FloatRect(0, 0, rect.width(), rect.height()));
-    
+    context.clipPath(quadToPath(quad));
     context.setStrokeThickness(0.5);
     context.setStrokeStyle(StrokeStyle::DashedStroke);
     context.setLineDash({ 2, 2 }, 2);
@@ -1163,18 +1167,23 @@ void InspectorOverlay::drawLayoutHatching(GraphicsContext& context, FloatRect re
     constexpr auto hatchSpacing = 12;
     Path hatchPath;
     
-    // The opposite axis' size is used to determine how far to draw a hatch line in both dimensions, which keeps the lines at a 45deg angle.
-    if (rect.width() > rect.height()) {
-        // Move across the top of the rect, starting left of `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
-        for (float x = (-scrollOffset.x() % hatchSpacing) - rect.height(); x < rect.width(); x += hatchSpacing) {
-            hatchPath.moveTo({ x, 0 });
-            hatchPath.addLineTo({ x + rect.height(), rect.height()});
+    FloatLine topSide = { quad.p1(), quad.p2() };
+    FloatLine leftSide = { quad.p1(), quad.p4() };
+    
+    // The opposite axis' length is used to determine how far to draw a hatch line in both dimensions, which keeps the lines at a 45deg angle.
+    if (topSide.length() > leftSide.length()) {
+        FloatLine bottomSide = { quad.p4(), quad.p3() };
+        // Move across the relative top of the quad, starting left of `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
+        for (float x = -leftSide.length(); x < topSide.length(); x += hatchSpacing) {
+            hatchPath.moveTo(topSide.pointAtAbsoluteDistance(x));
+            hatchPath.addLineTo(bottomSide.pointAtAbsoluteDistance(x + leftSide.length()));
         }
     } else {
-        // Move down the left side of the rect, starting above `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
-        for (float y = (-scrollOffset.y() % hatchSpacing) - rect.width(); y < rect.height(); y += hatchSpacing) {
-            hatchPath.moveTo({ 0, y });
-            hatchPath.addLineTo({ rect.width(), y + rect.width()});
+        FloatLine rightSide = { quad.p2(), quad.p3() };
+        // Move down the relative left side of the quad, starting above `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
+        for (float y = -topSide.length(); y < leftSide.length(); y += hatchSpacing) {
+            hatchPath.moveTo(leftSide.pointAtAbsoluteDistance(y));
+            hatchPath.addLineTo(rightSide.pointAtAbsoluteDistance(y + topSide.length()));
         }
     }
     
@@ -1390,71 +1399,90 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     }
     
     constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(153);
-
-    auto* renderGrid = downcast<RenderGrid>(renderer);
-    auto columnPositions = renderGrid->columnPositions();
-    auto rowPositions = renderGrid->rowPositions();
-    LayoutRect paddingBox = renderGrid->clientBoxRect();
-    LayoutRect contentBox = LayoutRect(paddingBox.x() + renderGrid->paddingLeft(), paddingBox.y() + renderGrid->paddingTop(),
-        paddingBox.width() - renderGrid->paddingLeft() - renderGrid->paddingRight(), paddingBox.height() - renderGrid->paddingTop() - renderGrid->paddingBottom());
-    FloatQuad absoluteContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
-    // FIXME: <webkit.org/b/221971> The position of the grid's bounding box can end up in the wrong place in some layout contexts (e.g. inside another grid)
-    // The grid's bounding box may be less than the size of the content box.
-    FloatRect gridBoundingBox = {
-        absoluteContentQuad.boundingBox().x(),
-        absoluteContentQuad.boundingBox().y(),
-        columnPositions[columnPositions.size() - 1],
-        rowPositions[rowPositions.size() - 1],
-    };
     
     IntPoint scrollOffset;
     FrameView* pageView = m_page.mainFrame().view();
     if (!pageView->delegatesScrolling())
         scrollOffset = pageView->visibleContentRect().location();
-
-    FloatSize viewportSize = pageView->sizeForVisibleContent();
+    
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
     float pageScaleFactor = m_page.pageScaleFactor();
 
     float scrollX = scrollOffset.x() * pageScaleFactor;
     float scrollY = scrollOffset.y() * pageScaleFactor;
-
+    
+    FloatRect viewportBounds = { FloatPoint(scrollX, scrollY), pageView->sizeForVisibleContent() };
+    
+    auto& renderGrid = *downcast<RenderGrid>(renderer);
+    auto columnPositions = renderGrid.columnPositions();
+    auto rowPositions = renderGrid.rowPositions();
+    if (!columnPositions.size() || !rowPositions.size())
+        return;
+    
+    float gridStartX = columnPositions[0];
+    float gridEndX = columnPositions[columnPositions.size() - 1];
+    float gridStartY = rowPositions[0];
+    float gridEndY = rowPositions[rowPositions.size() - 1];
+    
+    // FIXME: <webkit.org/b/222920> Grid overlay does not adjust for element inside iframes.
+    auto columnLineAt = [&](int x) -> FloatLine {
+        return {
+            renderGrid.localToContainerPoint(FloatPoint(x, gridStartY), nullptr),
+            renderGrid.localToContainerPoint(FloatPoint(x, gridEndY), nullptr),
+        };
+    };
+    auto rowLineAt = [&](int y) -> FloatLine {
+        return {
+            renderGrid.localToContainerPoint(FloatPoint(gridStartX, y), nullptr),
+            renderGrid.localToContainerPoint(FloatPoint(gridEndX, y), nullptr),
+        };
+    };
+    
     GraphicsContextStateSaver saver(context);
 
     // Drawing code is relative to the visible viewport area.
     context.translate(0 - scrollX, contentInset.height() - scrollY);
-    
     context.setStrokeThickness(1);
     context.setStrokeColor(gridOverlay.config.gridColor);
-    
-    // FIXME: <webkit.org/b/221974> This clipping clips labels as well.
-    if (!gridOverlay.config.showExtendedGridLines)
-        context.clip(gridBoundingBox);
 
     // Draw columns and rows.
-    auto columnWidths = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForColumns);
+    auto columnWidths = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::ForColumns);
     auto columnLineNames = gridLineNames(node->renderStyle(), GridTrackSizingDirection::ForColumns, columnPositions.size());
     auto authoredTrackColumnSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::ForColumns, columnWidths.size());
-    float previousColumnX = 0;
+    FloatLine previousColumnEndLine;
     for (unsigned i = 0; i < columnPositions.size(); ++i) {
-        // Column positions are (apparently) relative to the element's content area.
-        auto position = columnPositions[i] + gridBoundingBox.x();
+        auto columnStartLine = columnLineAt(columnPositions[i]);
 
         Path columnPaths;
-        columnPaths.moveTo({ position, scrollY });
-        columnPaths.addLineTo({ position, scrollY + viewportSize.height() });
+        if (gridOverlay.config.showExtendedGridLines) {
+            auto extendedLine = columnStartLine.extendedToBounds(viewportBounds);
+            columnPaths.moveTo(extendedLine.start());
+            columnPaths.addLineTo(extendedLine.end());
+        } else {
+            columnPaths.moveTo(columnStartLine.start());
+            columnPaths.addLineTo(columnStartLine.end());
+        }
         
-        float labelX = position;
-        if (previousColumnX) {
-            drawLayoutHatching(context, FloatRect(previousColumnX, scrollY, position - previousColumnX, viewportSize.height()), IntPoint(scrollX, scrollY));
-            labelX = (position + previousColumnX) / 2;
+        FloatPoint gapLabelPosition = columnStartLine.start();
+        if (i) {
+            drawLayoutHatching(context, { previousColumnEndLine.start(), columnStartLine.start(), columnStartLine.end(), previousColumnEndLine.end() });
+            FloatLine lineBetweenColumnTops = { columnStartLine.start(), previousColumnEndLine.start() };
+            gapLabelPosition = lineBetweenColumnTops.pointAtRelativeDistance(0.5);
         }
 
-        if (i < columnWidths.size() && i + 1 != columnPositions.size()) {
+        if (i < columnWidths.size() && i < columnPositions.size()) {
             auto width = columnWidths[i];
-            columnPaths.moveTo({ position + width, scrollY });
-            columnPaths.addLineTo({ position + width, scrollY + viewportSize.height() });
-            previousColumnX = position + width;
+            auto columnEndLine = columnLineAt(columnPositions[i] + width);
+
+            if (gridOverlay.config.showExtendedGridLines) {
+                auto extendedLine = columnEndLine.extendedToBounds(viewportBounds);
+                columnPaths.moveTo(extendedLine.start());
+                columnPaths.addLineTo(extendedLine.end());
+            } else {
+                columnPaths.moveTo(columnEndLine.start());
+                columnPaths.addLineTo(columnEndLine.end());
+            }
+            previousColumnEndLine = columnEndLine;
             
             if (gridOverlay.config.showTrackSizes) {
                 auto trackSizeLabel = String::number(roundf(width));
@@ -1471,10 +1499,11 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
                     }
                 }
                 
-                drawLayoutLabel(context, trackSizeLabel, FloatPoint(position + (width / 2), gridBoundingBox.y()), LabelArrowDirection::Up, translucentLabelBackgroundColor);
+                FloatLine trackTopLine = { columnStartLine.start(), columnEndLine.start() };
+                drawLayoutLabel(context, trackSizeLabel, trackTopLine.pointAtRelativeDistance(0.5), LabelArrowDirection::Up, translucentLabelBackgroundColor);
             }
         } else
-            previousColumnX = position;
+            previousColumnEndLine = columnStartLine;
         
         context.strokePath(columnPaths);
         
@@ -1490,36 +1519,51 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
         }
         // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
         if (!lineLabel.isEmpty())
-            drawLayoutLabel(context, lineLabel.toString(), FloatPoint(labelX, gridBoundingBox.y()), LabelArrowDirection::Down);
+            drawLayoutLabel(context, lineLabel.toString(), gapLabelPosition, LabelArrowDirection::Down);
     }
 
-    auto rowHeights = renderGrid->trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
+    auto rowHeights = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
     auto rowLineNames = gridLineNames(node->renderStyle(), GridTrackSizingDirection::ForRows, rowPositions.size());
     auto authoredTrackRowSizes = authoredGridTrackSizes(node, GridTrackSizingDirection::ForRows, rowHeights.size());
-    float previousRowY = 0;
+    FloatLine previousRowEndLine;
     for (unsigned i = 0; i < rowPositions.size(); ++i) {
-        auto position = rowPositions[i] + gridBoundingBox.y();
+        auto rowStartLine = rowLineAt(rowPositions[i]);
 
         Path rowPaths;
-        rowPaths.moveTo({ scrollX, position });
-        rowPaths.addLineTo({ scrollX + viewportSize.width(), position });
-        
-        float labelY = position;
-        if (previousRowY) {
-            drawLayoutHatching(context, FloatRect(scrollX, previousRowY, viewportSize.width(), position - previousRowY), IntPoint(scrollX, scrollY));
-            labelY = (position + previousRowY) / 2;
+        if (gridOverlay.config.showExtendedGridLines) {
+            auto line = rowStartLine.extendedToBounds(viewportBounds);
+            rowPaths.moveTo(line.start());
+            rowPaths.addLineTo(line.end());
+        } else {
+            rowPaths.moveTo(rowStartLine.start());
+            rowPaths.addLineTo(rowStartLine.end());
         }
-            
-        if (i < rowHeights.size()) {
+        
+        FloatPoint gapLabelPosition = rowStartLine.start();
+        if (i) {
+            FloatLine lineBetweenRowStarts = { rowStartLine.start(), previousRowEndLine.start() };
+            drawLayoutHatching(context, { previousRowEndLine.start(), previousRowEndLine.end(), rowStartLine.end(), rowStartLine.start() });
+            gapLabelPosition = lineBetweenRowStarts.pointAtRelativeDistance(0.5);
+        }
+
+        if (i < rowHeights.size() && i < rowPositions.size()) {
             auto height = rowHeights[i];
-            rowPaths.moveTo({ scrollX, position + height });
-            rowPaths.addLineTo({ scrollX + viewportSize.width(), position + height });
-            previousRowY = position + height;
+            auto rowEndLine = rowLineAt(rowPositions[i] + height);
+            
+            if (gridOverlay.config.showExtendedGridLines) {
+                auto extendedLine = rowEndLine.extendedToBounds(viewportBounds);
+                rowPaths.moveTo(extendedLine.start());
+                rowPaths.addLineTo(extendedLine.end());
+            } else {
+                rowPaths.moveTo(rowEndLine.start());
+                rowPaths.addLineTo(rowEndLine.end());
+            }
+            previousRowEndLine = rowEndLine;
             
             if (gridOverlay.config.showTrackSizes) {
                 auto trackSizeLabel = String::number(roundf(height));
                 trackSizeLabel.append("px"_s);
-                
+
                 String authoredTrackSize;
                 if (i < authoredTrackRowSizes.size()) {
                     auto authoredTrackSize = authoredTrackRowSizes[i];
@@ -1530,11 +1574,11 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
                         trackSizeLabel.append(authoredTrackSize);
                     }
                 }
-                
-                drawLayoutLabel(context, trackSizeLabel, FloatPoint(gridBoundingBox.x(), position + (height / 2)), LabelArrowDirection::Left, translucentLabelBackgroundColor);
+                FloatLine trackLeftLine = { rowStartLine.start(), rowEndLine.start() };
+                drawLayoutLabel(context, trackSizeLabel, trackLeftLine.pointAtRelativeDistance(0.5), LabelArrowDirection::Left, translucentLabelBackgroundColor);
             }
         } else
-            previousRowY = position;
+            previousRowEndLine = rowStartLine;
 
         context.strokePath(rowPaths);
         
@@ -1550,7 +1594,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
         }
         // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
         if (!lineLabel.isEmpty())
-            drawLayoutLabel(context, lineLabel.toString(), FloatPoint(gridBoundingBox.x(), labelY), LabelArrowDirection::Right);
+            drawLayoutLabel(context, lineLabel.toString(), gapLabelPosition, LabelArrowDirection::Right);
     }
     
     if (gridOverlay.config.showAreaNames) {
@@ -1559,20 +1603,27 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
             auto& area = gridArea.value;
 
             // Named grid areas will always be rectangular per the CSS Grid specification.
-            auto columnStartLine = area.columns.startLine();
-            auto columnEndLine = area.columns.endLine();
-            auto rowStartLine = area.rows.startLine();
-            auto rowEndLine = area.rows.endLine();
+            auto columnStartLine = columnLineAt(columnPositions[area.columns.startLine()] - columnPositions[0]);
+            auto columnEndLine = columnLineAt(columnPositions[area.columns.endLine() - 1] + columnWidths[area.columns.endLine() - 1]);
+            auto rowStartLine = rowLineAt(rowPositions[area.rows.startLine()] - rowPositions[0]);
+            auto rowEndLine = rowLineAt(rowPositions[area.rows.endLine() - 1] + rowHeights[area.rows.endLine() - 1] - rowPositions[0]);
             
-            FloatRect areaRect = {
-                columnPositions[columnStartLine] + gridBoundingBox.x(),
-                rowPositions[rowStartLine] + gridBoundingBox.y(),
-                columnPositions[columnEndLine - 1] + columnWidths[columnEndLine - 1] - columnPositions[columnStartLine],
-                rowPositions[rowEndLine - 1] + rowHeights[rowEndLine - 1] - rowPositions[rowStartLine],
-            };
+            Optional<FloatPoint> topLeft = columnStartLine.intersectionWith(rowStartLine);
+            Optional<FloatPoint> topRight = columnEndLine.intersectionWith(rowStartLine);
+            Optional<FloatPoint> bottomRight = columnEndLine.intersectionWith(rowEndLine);
+            Optional<FloatPoint> bottomLeft = columnStartLine.intersectionWith(rowEndLine);
             
-            context.strokeRect(areaRect, 3);
-            drawLayoutLabel(context, name, areaRect.location(), LabelArrowDirection::None, translucentLabelBackgroundColor, areaRect.width());
+            // If any two lines are coincident with each other, they will not have an intersection, which can occur with extreme `transform: perspective(...)` values.
+            if (!topLeft || !topRight || !bottomRight || !bottomLeft)
+                continue;
+
+            FloatQuad areaQuad = { *topLeft, *topRight, *bottomRight, *bottomLeft };
+
+            context.setStrokeThickness(3);
+            context.strokePath(quadToPath(areaQuad));
+
+            context.setStrokeThickness(1);
+            drawLayoutLabel(context, name, areaQuad.p1(), LabelArrowDirection::None, translucentLabelBackgroundColor, areaQuad.boundingBox().width());
         }
     }
 }
