@@ -341,7 +341,7 @@ public:
     void setPrivateClickMeasurementTokenSignatureURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementAttributionReportURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
-    void setFraudPreventionValuesForTesting(PAL::SessionID, String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID, CompletionHandler<void()>&&);
+    void setPCMFraudPreventionValuesForTesting(PAL::SessionID, String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID, CompletionHandler<void()>&&);
 
     RefPtr<WebCore::StorageQuotaManager> storageQuotaManager(PAL::SessionID, const WebCore::ClientOrigin&);
 

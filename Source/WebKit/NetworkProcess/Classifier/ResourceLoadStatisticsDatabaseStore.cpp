@@ -2985,7 +2985,7 @@ PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMe
         attribution.setEarliestTimeToSend(WallTime::fromRawSeconds(earliestTimeToSend));
     }
 
-    attribution.setSourceUnlinkableToken({ token, signature, keyID });
+    attribution.setSourceSecretToken({ token, signature, keyID });
 
     return attribution;
 }

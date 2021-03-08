@@ -10069,9 +10069,9 @@ void WebPageProxy::markPrivateClickMeasurementsAsExpiredForTesting(CompletionHan
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::MarkPrivateClickMeasurementsAsExpiredForTesting(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setFraudPreventionValuesForTesting(const String& secretToken, const String& unlinkableToken, const String& signature, const String& keyID, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setPCMFraudPreventionValuesForTesting(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetFraudPreventionValuesForTesting(m_websiteDataStore->sessionID(), secretToken, unlinkableToken, signature, keyID), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPCMFraudPreventionValuesForTesting(m_websiteDataStore->sessionID(), unlinkableToken, secretToken, signature, keyID), WTFMove(completionHandler));
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)

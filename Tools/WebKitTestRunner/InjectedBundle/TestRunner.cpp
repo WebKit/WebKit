@@ -2049,11 +2049,11 @@ void TestRunner::markPrivateClickMeasurementsAsExpiredForTesting()
     postSynchronousPageMessage("MarkPrivateClickMeasurementsAsExpiredForTesting");
 }
 
-void TestRunner::setFraudPreventionValuesForTesting(JSStringRef secretToken, JSStringRef unlinkableToken, JSStringRef signature, JSStringRef keyID)
+void TestRunner::setPrivateClickMeasurementFraudPreventionValuesForTesting(JSStringRef unlinkableToken, JSStringRef secretToken, JSStringRef signature, JSStringRef keyID)
 {
-    postSynchronousMessage("SetFraudPreventionValuesForTesting", createWKDictionary({
-        { "SecretToken", toWK(secretToken) },
+    postSynchronousMessage("SetPCMFraudPreventionValuesForTesting", createWKDictionary({
         { "UnlinkableToken", toWK(unlinkableToken) },
+        { "SecretToken", toWK(secretToken) },
         { "Signature", toWK(signature) },
         { "KeyID", toWK(keyID) },
     }));

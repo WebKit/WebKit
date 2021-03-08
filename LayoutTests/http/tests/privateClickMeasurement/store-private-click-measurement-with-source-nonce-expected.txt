@@ -8,30 +8,30 @@ Frame: '<!--frame1-->'
 Token signing request received.
 REQUEST_METHOD: GET
 HTTP_HOST: 127.0.0.1:8000
-REQUEST_URI: /privateClickMeasurement/resources/signToken.php
+REQUEST_URI: /privateClickMeasurement/resources/fraudPreventionTestURL.php
 No cookies in token signing request.
 Request body:
 
 REQUEST_METHOD: POST
 HTTP_HOST: 127.0.0.1:8000
 Content type: application/json
-REQUEST_URI: /privateClickMeasurement/resources/signToken.php
+REQUEST_URI: /privateClickMeasurement/resources/fraudPreventionTestURL.php
 No cookies in token signing request.
 Request body:
-{"source_engagement_type":"click","source_nonce":"ABCDEFabcdef0123456789","source_secret_token":"secretToken","version":2}
+{"source_engagement_type":"click","source_nonce":"ABCDEFabcdef0123456789","source_unlinkable_token":"unlinkableToken","version":2}
 REQUEST_METHOD: GET
 HTTP_HOST: 127.0.0.1:8000
-REQUEST_URI: /privateClickMeasurement/resources/signToken.php
+REQUEST_URI: /privateClickMeasurement/resources/fraudPreventionTestURL.php
 No cookies in token signing request.
 Request body:
 
 REQUEST_METHOD: POST
 HTTP_HOST: 127.0.0.1:8000
 Content type: application/json
-REQUEST_URI: /privateClickMeasurement/resources/signToken.php
+REQUEST_URI: /privateClickMeasurement/resources/fraudPreventionTestURL.php
 No cookies in token signing request.
 Request body:
-{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":3,"attributed_on_site":"localhost","trigger_data":12,"version":2,"source_unlinkable_token":"unlinkableToken","source_unlinkable_token_signature":"signature"}
+{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":3,"attributed_on_site":"localhost","trigger_data":12,"version":2,"source_secret_token":"secretToken","source_secret_token_signature":"signature"}
 
 
 No stored Private Click Measurement data.

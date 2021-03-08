@@ -1,3 +1,44 @@
+2021-03-08  John Wilander  <wilander@apple.com>
+
+        PCM: Align fraud prevention token naming with issue 73 in the Privacy CG repo
+        https://bugs.webkit.org/show_bug.cgi?id=222838
+        <rdar://75115427>
+
+        Reviewed by Brent Fulgham.
+
+        This patch doesn't change functionality and only aligns naming to this W3C Privacy CG issue:
+        https://github.com/privacycg/private-click-measurement/issues/73
+
+        Naming for PCM fraud prevention is updated like this:
+
+        /.well-known/private-click-measurement/sign-secret-token/ changed to
+        /.well-known/private-click-measurement/sign-unlinkable-token/
+
+        /.well-known/private-click-measurement/get-unlinkable-token-public-key/ changed to
+        /.well-known/private-click-measurement/get-token-public-key/
+
+        source_secret_token in requests for token signature changed to source_unlinkable_token
+
+        source_unlinkable_token in attribution reports changed to source_secret_token
+
+        Variable, member, and function names are being renamed similarly.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPrivateClickMeasurementFraudPreventionValuesForTesting):
+        (WTR::TestRunner::setFraudPreventionValuesForTesting): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setPCMFraudPreventionValuesForTesting):
+        (WTR::TestController::setFraudPreventionValuesForTesting): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2021-03-08  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Adopt webkitscmpy

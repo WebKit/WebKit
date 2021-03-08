@@ -359,9 +359,9 @@ void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
 }
 
 // FIXME: Switch to non-mocked test data once the right cryptography library is available in open source.
-void NetworkSession::setFraudPreventionValuesForTesting(String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID)
+void NetworkSession::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)
 {
-    privateClickMeasurement().setFraudPreventionValuesForTesting(WTFMove(secretToken), WTFMove(unlinkableToken), WTFMove(signature), WTFMove(keyID));
+    privateClickMeasurement().setPCMFraudPreventionValuesForTesting(WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID));
 }
 
 void NetworkSession::firePrivateClickMeasurementTimerImmediately()

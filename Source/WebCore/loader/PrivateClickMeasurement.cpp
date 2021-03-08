@@ -37,8 +37,8 @@
 namespace WebCore {
 
 static const char privateClickMeasurementTriggerAttributionPath[] = "/.well-known/private-click-measurement/trigger-attribution/";
-static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-secret-token/";
-static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/private-click-measurement/get-unlinkable-token-public-key/";
+static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-unlinkable-token/";
+static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/private-click-measurement/get-token-public-key/";
 static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
@@ -146,9 +146,10 @@ Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
     reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
     reportDetails->setInteger("version"_s, 2);
 
-    if (m_sourceUnlinkableToken) {
-        reportDetails->setString("source_unlinkable_token"_s, m_sourceUnlinkableToken->tokenBase64URL);
-        reportDetails->setString("source_unlinkable_token_signature"_s, m_sourceUnlinkableToken->signatureBase64URL);
+    // This token has been kept secret this far and cannot be linked to the unlinkable token.
+    if (m_sourceSecretToken) {
+        reportDetails->setString("source_secret_token"_s, m_sourceSecretToken->tokenBase64URL);
+        reportDetails->setString("source_secret_token_signature"_s, m_sourceSecretToken->signatureBase64URL);
     }
 
     return reportDetails;
@@ -212,24 +213,25 @@ Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
     if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
         return reportDetails;
 
-    if (m_sourceSecretToken.valueBase64URL.isEmpty())
+    if (m_sourceUnlinkableToken.valueBase64URL.isEmpty())
         return reportDetails;
 
     reportDetails->setString("source_engagement_type"_s, "click"_s);
     reportDetails->setString("source_nonce"_s, m_ephemeralSourceNonce->nonce);
-    reportDetails->setString("source_secret_token"_s, m_sourceSecretToken.valueBase64URL);
+    // This token can not be linked to the secret token.
+    reportDetails->setString("source_unlinkable_token"_s, m_sourceUnlinkableToken.valueBase64URL);
     reportDetails->setInteger("version"_s, 2);
     return reportDetails;
 }
 
-void PrivateClickMeasurement::setSourceUnlinkableToken(SourceUnlinkableToken&& token)
+void PrivateClickMeasurement::setSourceSecretToken(SourceSecretToken&& token)
 {
     if (!token.isValid())
         return;
-    m_sourceUnlinkableToken = WTFMove(token);
+    m_sourceSecretToken = WTFMove(token);
 }
 
-bool PrivateClickMeasurement::SourceUnlinkableToken::isValid() const
+bool PrivateClickMeasurement::SourceSecretToken::isValid() const
 {
     return !(tokenBase64URL.isEmpty() || signatureBase64URL.isEmpty() || keyIDBase64URL.isEmpty());
 }

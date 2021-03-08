@@ -1,3 +1,61 @@
+2021-03-08  John Wilander  <wilander@apple.com>
+
+        PCM: Align fraud prevention token naming with issue 73 in the Privacy CG repo
+        https://bugs.webkit.org/show_bug.cgi?id=222838
+        <rdar://75115427>
+
+        Reviewed by Brent Fulgham.
+
+        This patch doesn't change functionality and only aligns naming to this W3C Privacy CG issue:
+        https://github.com/privacycg/private-click-measurement/issues/73
+
+        Naming for PCM fraud prevention is updated like this:
+
+        /.well-known/private-click-measurement/sign-secret-token/ changed to
+        /.well-known/private-click-measurement/sign-unlinkable-token/
+
+        /.well-known/private-click-measurement/get-unlinkable-token-public-key/ changed to
+        /.well-known/private-click-measurement/get-token-public-key/
+
+        source_secret_token in requests for token signature changed to source_unlinkable_token
+
+        source_unlinkable_token in attribution reports changed to source_secret_token
+
+        Variable, member, and function names are being renamed similarly.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setPCMFraudPreventionValuesForTesting):
+        (WebKit::NetworkProcess::setFraudPreventionValuesForTesting): Deleted.
+            Renamed setPCMFraudPreventionValuesForTesting() to make it more clear.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPCMFraudPreventionValuesForTesting):
+        (WebKit::NetworkSession::setFraudPreventionValuesForTesting): Deleted.
+            Renamed setPCMFraudPreventionValuesForTesting() to make it more clear.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::setPCMFraudPreventionValuesForTesting):
+        (WebKit::PrivateClickMeasurementManager::getSignedSecretToken): Deleted.
+        (WebKit::PrivateClickMeasurementManager::setFraudPreventionValuesForTesting): Deleted.
+            Renamed setPCMFraudPreventionValuesForTesting() to make it more clear.
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPCMFraudPreventionValuesForTesting):
+        (WKPageSetFraudPreventionValuesForTesting): Deleted.
+            Renamed WKPageSetPCMFraudPreventionValuesForTesting() to make it more clear.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPCMFraudPreventionValuesForTesting):
+        (WebKit::WebPageProxy::setFraudPreventionValuesForTesting): Deleted.
+            Renamed setPCMFraudPreventionValuesForTesting() to make it more clear.
+        * UIProcess/WebPageProxy.h:
+
 2021-03-08  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] <select multiple> group headers are illegible in dark mode

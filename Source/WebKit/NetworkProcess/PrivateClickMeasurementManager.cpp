@@ -85,15 +85,15 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
                 return;
 
             if (m_fraudPreventionValuesForTesting)
-                attribution.setSourceSecretTokenValue(m_fraudPreventionValuesForTesting->secretToken);
+                attribution.setSourceUnlinkableTokenValue(m_fraudPreventionValuesForTesting->unlinkableToken);
 #if PLATFORM(COCOA)
             else {
-                if (!attribution.calculateAndUpdateSourceSecretToken(publicKeyBase64URL))
+                if (!attribution.calculateAndUpdateSourceUnlinkableToken(publicKeyBase64URL))
                     return;
             }
 #endif
 
-            getSignedSecretToken(WTFMove(attribution));
+            getSignedUnlinkableToken(WTFMove(attribution));
         });
     }
 
@@ -150,8 +150,8 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
         return;
 
     // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
-    auto tokenPublicKeyURL = attribution.tokenPublicKeyURL();
     auto pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
+    auto tokenPublicKeyURL = attribution.tokenPublicKeyURL();
     if (m_tokenPublicKeyURLForTesting) {
         tokenPublicKeyURL = *m_tokenPublicKeyURLForTesting;
         pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
@@ -162,32 +162,33 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
 
     auto loadParameters = generateNetworkResourceLoadParametersForHttpGet(WTFMove(tokenPublicKeyURL), pcmDataCarried);
 
-    RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token public key request.");
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token public key request."_s);
+    RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
+    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
     m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) mutable {
         if (!weakThis)
             return;
 
         if (!error.isNull()) {
-            m_networkProcess->broadcastConsoleMessage(weakThis->m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for unlinkable token public key request."_s));
+            m_networkProcess->broadcastConsoleMessage(weakThis->m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for token public key request."_s));
             return;
         }
 
         // FIXME(222217): Retrieve the public key from the content instead of the header.
+        // FIXME: This should be renamed to token public key without "unlinkble" or "secret" when 222217 is fixed.
         callback(WTFMove(attribution), response.httpHeaderFields().get("unlinkable_token_public_key"_s));
     });
 
 }
 
-void PrivateClickMeasurementManager::getSignedSecretToken(PrivateClickMeasurement&& attribution)
+void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasurement&& attribution)
 {
     if (!featureEnabled())
         return;
 
     // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
-    auto tokenSignatureURL = attribution.tokenSignatureURL();
     auto pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
+    auto tokenSignatureURL = attribution.tokenSignatureURL();
     if (m_tokenSignatureURLForTesting) {
         tokenSignatureURL = *m_tokenSignatureURLForTesting;
         pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
@@ -198,8 +199,8 @@ void PrivateClickMeasurementManager::getSignedSecretToken(PrivateClickMeasuremen
 
     auto loadParameters = generateNetworkResourceLoadParametersForHttpPost(WTFMove(tokenSignatureURL), attribution.tokenSignatureJSON(), pcmDataCarried);
 
-    RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a secret token signing request.");
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a secret token signing request."_s);
+    RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request.");
+    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
 
     m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution)] (const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) mutable {
         if (!weakThis)
@@ -211,20 +212,22 @@ void PrivateClickMeasurementManager::getSignedSecretToken(PrivateClickMeasuremen
         }
 
         // FIXME(222217): Retrieve the signature from the content instead of the header.
+        // FIXME: This should be renamed to unlinkable token when 222217 is fixed.
         auto signatureBase64URL = response.httpHeaderFields().get("secret_token_signature"_s);
         if (signatureBase64URL.isEmpty())
             return;
 
+        // FIX NOW!
         if (m_fraudPreventionValuesForTesting)
-            attribution.setSourceUnlinkableToken({ m_fraudPreventionValuesForTesting->unlinkableToken, m_fraudPreventionValuesForTesting->signature, m_fraudPreventionValuesForTesting->keyID });
+            attribution.setSourceSecretToken({ m_fraudPreventionValuesForTesting->secretToken, m_fraudPreventionValuesForTesting->signature, m_fraudPreventionValuesForTesting->keyID });
 #if PLATFORM(COCOA)
         else {
-            if (!attribution.calculateAndUpdateSourceUnlinkableToken(signatureBase64URL))
+            if (!attribution.calculateAndUpdateSourceSecretToken(signatureBase64URL))
                 return;
         }
 #endif
 
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing an unlinkable token."_s);
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing a secret token."_s);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
@@ -490,11 +493,11 @@ void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()
 #endif
 }
 
-void PrivateClickMeasurementManager::setFraudPreventionValuesForTesting(String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID)
+void PrivateClickMeasurementManager::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)
 {
-    if (secretToken.isEmpty() || unlinkableToken.isEmpty() || signature.isEmpty() || keyID.isEmpty())
+    if (unlinkableToken.isEmpty() || secretToken.isEmpty() || signature.isEmpty() || keyID.isEmpty())
         return;
-    m_fraudPreventionValuesForTesting = TestingFraudPreventionValues { WTFMove(secretToken), WTFMove(unlinkableToken), WTFMove(signature), WTFMove(keyID) };
+    m_fraudPreventionValuesForTesting = TestingFraudPreventionValues { WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID) };
 }
 
 bool PrivateClickMeasurementManager::featureEnabled() const

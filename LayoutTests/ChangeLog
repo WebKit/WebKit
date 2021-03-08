@@ -1,3 +1,20 @@
+2021-03-08  John Wilander  <wilander@apple.com>
+
+        PCM: Align fraud prevention token naming with issue 73 in the Privacy CG repo
+        https://bugs.webkit.org/show_bug.cgi?id=222838
+        <rdar://75115427>
+
+        Reviewed by Brent Fulgham.
+
+        This patch doesn't change functionality and only aligns naming to this W3C Privacy CG issue:
+        https://github.com/privacycg/private-click-measurement/issues/73
+
+        * http/tests/privateClickMeasurement/resources/fraudPreventionTestURL.php: Renamed from LayoutTests/http/tests/privateClickMeasurement/resources/signToken.php.
+            The way this PHP file is used goes beyond signing tokens so it now has a generic name.
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce-expected.txt:
+            Re-baselined to reflect the new naming.
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html:
+
 2021-03-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r269627?): ASSERTION FAILED: &layoutState().establishedFormattingState(layoutBox.formattingContextRoot()) == this in WebCore::Layout::FormattingState::boxGeometry

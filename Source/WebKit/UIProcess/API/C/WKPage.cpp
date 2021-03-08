@@ -2973,9 +2973,9 @@ void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPag
     });
 }
 
-void WKPageSetFraudPreventionValuesForTesting(WKPageRef page, WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID, WKPageSetFraudPreventionValuesForTestingFunction callback, void* callbackContext)
+void WKPageSetPCMFraudPreventionValuesForTesting(WKPageRef page, WKStringRef unlinkableToken, WKStringRef secretToken, WKStringRef signature, WKStringRef keyID, WKPageSetPCMFraudPreventionValuesForTestingFunction callback, void* callbackContext)
 {
-    toImpl(page)->setFraudPreventionValuesForTesting(toWTFString(secretToken), toWTFString(unlinkableToken), toWTFString(signature), toWTFString(keyID), [callbackContext, callback] () {
+    toImpl(page)->setPCMFraudPreventionValuesForTesting(toWTFString(unlinkableToken), toWTFString(secretToken), toWTFString(signature), toWTFString(keyID), [callbackContext, callback] () {
         callback(callbackContext);
     });
 }

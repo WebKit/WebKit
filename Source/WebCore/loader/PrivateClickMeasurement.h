@@ -295,7 +295,7 @@ public:
     Optional<EphemeralSourceNonce> ephemeralSourceNonce() const { return m_ephemeralSourceNonce; };
     void clearEphemeralSourceNonce() { m_ephemeralSourceNonce.reset(); };
 
-    struct SourceUnlinkableToken {
+    struct SourceSecretToken {
         String tokenBase64URL;
         String signatureBase64URL;
         String keyIDBase64URL;
@@ -304,13 +304,13 @@ public:
     };
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT bool calculateAndUpdateSourceSecretToken(const String& serverPublicKeyBase64URL);
-    WEBCORE_EXPORT bool calculateAndUpdateSourceUnlinkableToken(const String& serverResponseBase64URL);
+    WEBCORE_EXPORT bool calculateAndUpdateSourceUnlinkableToken(const String& serverPublicKeyBase64URL);
+    WEBCORE_EXPORT bool calculateAndUpdateSourceSecretToken(const String& serverResponseBase64URL);
 #endif
 
-    void setSourceSecretTokenValue(const String& value) { m_sourceSecretToken.valueBase64URL = value; }
-    const Optional<SourceUnlinkableToken>& sourceUnlinkableToken() const { return m_sourceUnlinkableToken; }
-    WEBCORE_EXPORT void setSourceUnlinkableToken(SourceUnlinkableToken&&);
+    void setSourceUnlinkableTokenValue(const String& value) { m_sourceUnlinkableToken.valueBase64URL = value; }
+    const Optional<SourceSecretToken>& sourceUnlinkableToken() const { return m_sourceSecretToken; }
+    WEBCORE_EXPORT void setSourceSecretToken(SourceSecretToken&&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<PrivateClickMeasurement> decode(Decoder&);
@@ -328,7 +328,7 @@ private:
     Optional<AttributionTriggerData> m_attributionTriggerData;
     Optional<WallTime> m_earliestTimeToSend;
 
-    struct SourceSecretToken {
+    struct SourceUnlinkableToken {
 #if PLATFORM(COCOA)
         RetainPtr<RSABSSATokenBlinder> blinder;
         RetainPtr<RSABSSATokenWaitingActivation> waitingToken;
@@ -338,8 +338,8 @@ private:
     };
 
     Optional<EphemeralSourceNonce> m_ephemeralSourceNonce;
-    SourceSecretToken m_sourceSecretToken;
-    Optional<SourceUnlinkableToken> m_sourceUnlinkableToken;
+    SourceUnlinkableToken m_sourceUnlinkableToken;
+    Optional<SourceSecretToken> m_sourceSecretToken;
 };
 
 template<class Encoder>

@@ -2640,10 +2640,10 @@ void NetworkProcess::markPrivateClickMeasurementsAsExpiredForTesting(PAL::Sessio
     completionHandler();
 }
 
-void NetworkProcess::setFraudPreventionValuesForTesting(PAL::SessionID sessionID, String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setPCMFraudPreventionValuesForTesting(PAL::SessionID sessionID, String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->setFraudPreventionValuesForTesting(WTFMove(secretToken), WTFMove(unlinkableToken), WTFMove(signature), WTFMove(keyID));
+        session->setPCMFraudPreventionValuesForTesting(WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID));
 
     completionHandler();
 }

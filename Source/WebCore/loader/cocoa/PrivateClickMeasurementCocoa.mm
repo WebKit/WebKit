@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-bool PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& serverPublicKeyBase64URL)
+bool PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken(const String& serverPublicKeyBase64URL)
 {
 #if HAVE(RSA_BSSA)
     {
@@ -40,17 +40,17 @@ bool PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& 
         auto serverPublicKey = adoptNS([[NSData alloc] initWithBytes:serverPublicKeyData.data() length:serverPublicKeyData.size()]);
 
         // FIXME(222018): Check error.
-        m_sourceSecretToken.blinder = adoptNS([PAL::allocRSABSSATokenBlinderInstance() initWithPublicKey:serverPublicKey.get() error:nullptr]);
-        if (!m_sourceSecretToken.blinder)
+        m_sourceUnlinkableToken.blinder = adoptNS([PAL::allocRSABSSATokenBlinderInstance() initWithPublicKey:serverPublicKey.get() error:nullptr]);
+        if (!m_sourceUnlinkableToken.blinder)
             return false;
     }
 
     // FIXME(222018): Check error.
-    m_sourceSecretToken.waitingToken = [m_sourceSecretToken.blinder tokenWaitingActivationWithContent:nullptr error:nullptr];
-    if (!m_sourceSecretToken.waitingToken)
+    m_sourceUnlinkableToken.waitingToken = [m_sourceUnlinkableToken.blinder tokenWaitingActivationWithContent:nullptr error:nullptr];
+    if (!m_sourceUnlinkableToken.waitingToken)
         return false;
 
-    m_sourceSecretToken.valueBase64URL = WTF::base64URLEncode([m_sourceSecretToken.waitingToken blindedMessage].bytes, [m_sourceSecretToken.waitingToken blindedMessage].length);
+    m_sourceUnlinkableToken.valueBase64URL = WTF::base64URLEncode([m_sourceUnlinkableToken.waitingToken blindedMessage].bytes, [m_sourceUnlinkableToken.waitingToken blindedMessage].length);
     return true;
 #else
     UNUSED_PARAM(serverPublicKeyBase64URL);
@@ -58,10 +58,10 @@ bool PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& 
 #endif // HAVE(RSA_BSSA)
 }
 
-bool PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken(const String& serverResponseBase64URL)
+bool PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& serverResponseBase64URL)
 {
 #if HAVE(RSA_BSSA)
-    if (!m_sourceSecretToken.waitingToken)
+    if (!m_sourceUnlinkableToken.waitingToken)
         return false;
 
     {
@@ -71,17 +71,17 @@ bool PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken(const Stri
         auto serverResponse = adoptNS([[NSData alloc] initWithBytes:serverResponseData.data() length:serverResponseData.size()]);
 
         // FIXME(222018): Check error.
-        m_sourceSecretToken.readyToken = [m_sourceSecretToken.waitingToken activateTokenWithServerResponse:serverResponse.get() error:nullptr];
-        if (!m_sourceSecretToken.readyToken)
+        m_sourceUnlinkableToken.readyToken = [m_sourceUnlinkableToken.waitingToken activateTokenWithServerResponse:serverResponse.get() error:nullptr];
+        if (!m_sourceUnlinkableToken.readyToken)
             return false;
     }
 
-    SourceUnlinkableToken token;
-    token.tokenBase64URL = WTF::base64URLEncode([m_sourceSecretToken.readyToken tokenContent].bytes, [m_sourceSecretToken.readyToken tokenContent].length);
-    token.keyIDBase64URL = WTF::base64URLEncode([m_sourceSecretToken.readyToken keyId].bytes, [m_sourceSecretToken.readyToken keyId].length);
-    token.signatureBase64URL = WTF::base64URLEncode([m_sourceSecretToken.readyToken signature].bytes, [m_sourceSecretToken.readyToken signature].length);
+    SourceSecretToken token;
+    token.tokenBase64URL = WTF::base64URLEncode([m_sourceUnlinkableToken.readyToken tokenContent].bytes, [m_sourceUnlinkableToken.readyToken tokenContent].length);
+    token.keyIDBase64URL = WTF::base64URLEncode([m_sourceUnlinkableToken.readyToken keyId].bytes, [m_sourceUnlinkableToken.readyToken keyId].length);
+    token.signatureBase64URL = WTF::base64URLEncode([m_sourceUnlinkableToken.readyToken signature].bytes, [m_sourceUnlinkableToken.readyToken signature].length);
 
-    m_sourceUnlinkableToken = WTFMove(token);
+    m_sourceSecretToken = WTFMove(token);
     return true;
 #else
     UNUSED_PARAM(serverResponseBase64URL);

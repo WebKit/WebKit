@@ -66,12 +66,12 @@ public:
     void setAttributionReportURLForTesting(URL&&);
     void markAllUnattributedAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
-    void setFraudPreventionValuesForTesting(String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID);
+    void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
     void startTimer(Seconds);
 
 private:
     void getTokenPublicKey(PrivateClickMeasurement&&, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
-    void getSignedSecretToken(PrivateClickMeasurement&&);
+    void getSignedUnlinkableToken(PrivateClickMeasurement&&);
     void clearSentAttribution(PrivateClickMeasurement&&);
     void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
@@ -92,8 +92,8 @@ private:
     Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
 
     struct TestingFraudPreventionValues {
-        String secretToken;
         String unlinkableToken;
+        String secretToken;
         String signature;
         String keyID;
     };

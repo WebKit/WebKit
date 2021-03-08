@@ -1363,14 +1363,14 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetFraudPreventionValuesForTesting")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPCMFraudPreventionValuesForTesting")) {
         auto testDictionary = dictionaryValue(messageBody);
-        auto secretToken = stringValue(testDictionary, "SecretToken");
         auto unlinkableToken = stringValue(testDictionary, "UnlinkableToken");
+        auto secretToken = stringValue(testDictionary, "SecretToken");
         auto signature = stringValue(testDictionary, "Signature");
         auto keyID = stringValue(testDictionary, "KeyID");
 
-        TestController::singleton().setFraudPreventionValuesForTesting(secretToken, unlinkableToken, signature, keyID);
+        TestController::singleton().setPCMFraudPreventionValuesForTesting(unlinkableToken, secretToken, signature, keyID);
         return nullptr;
     }
 
