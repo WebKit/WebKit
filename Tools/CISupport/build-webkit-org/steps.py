@@ -30,8 +30,13 @@ from twisted.internet import defer
 import os
 import re
 import socket
+import sys
 import json
 import urllib
+
+if sys.version_info < (3, 5):
+    print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
+    sys.exit(1)
 
 APPLE_WEBKIT_AWS_PROXY = "http://proxy01.webkit.org:3128"
 BUILD_WEBKIT_HOSTNAME = 'build.webkit.org'

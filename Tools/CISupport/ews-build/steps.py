@@ -39,8 +39,9 @@ import requests
 import socket
 import sys
 
-if sys.version_info > (3, 0):
-    unicode = str
+if sys.version_info < (3, 5):
+    print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
+    sys.exit(1)
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
@@ -124,9 +125,9 @@ class CheckOutSource(git.Git):
             self.build.addStepsAfterCurrentStep([CleanUpGitIndexLock()])
 
         if self.results != SUCCESS:
-            return {u'step': u'Failed to updated working directory'}
+            return {'step': 'Failed to updated working directory'}
         else:
-            return {u'step': u'Cleaned and updated working directory'}
+            return {'step': 'Cleaned and updated working directory'}
 
 
 class CleanUpGitIndexLock(shell.ShellCommand):
@@ -234,7 +235,7 @@ class ShowIdentifier(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to find identifier'}
+            return {'step': 'Failed to find identifier'}
         return shell.ShellCommand.getResultSummary(self)
 
     def hideStepIf(self, results, step):
@@ -270,9 +271,9 @@ class UpdateWorkingDirectory(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to updated working directory'}
+            return {'step': 'Failed to updated working directory'}
         else:
-            return {u'step': u'Updated working directory'}
+            return {'step': 'Updated working directory'}
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
@@ -314,7 +315,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'svn-apply failed to apply patch to trunk'}
+            return {'step': 'svn-apply failed to apply patch to trunk'}
         return super(ApplyPatch, self).getResultSummary()
 
     def evaluateCommand(self, cmd):
@@ -406,11 +407,10 @@ class CheckPatchRelevance(buildstep.BuildStep):
 
         for change in patch.splitlines():
             for path in relevant_paths:
-                if sys.version_info > (3, 0):
-                    if type(path) == str:
-                        path = path.encode(encoding='utf-8', errors='replace')
-                    if type(change) == str:
-                        change = change.encode(encoding='utf-8', errors='replace')
+                if type(path) == str:
+                    path = path.encode(encoding='utf-8', errors='replace')
+                if type(change) == str:
+                    change = change.encode(encoding='utf-8', errors='replace')
                 if re.search(path, change, re.IGNORECASE):
                     return True
         return False
@@ -449,7 +449,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
 
     def getResultSummary(self):
         if self.results == FAILURE:
-            return {u'step': u'Patch doesn\'t have relevant changes'}
+            return {'step': 'Patch doesn\'t have relevant changes'}
         return super(CheckPatchRelevance, self).getResultSummary()
 
 
@@ -615,7 +615,7 @@ class BugzillaMixin(object):
             self.setProperty('sensitive', True)
             bug_title = ''
         if self.addURLs:
-            self.addURL(u'Bug {} {}'.format(bug_id, bug_title), Bugzilla.bug_url(bug_id))
+            self.addURL('Bug {} {}'.format(bug_id, bug_title), Bugzilla.bug_url(bug_id))
         if bug_json.get('status') in self.bug_closed_statuses:
             return 1
         return 0
@@ -741,7 +741,7 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
 
     def getResultSummary(self):
         if self.results == FAILURE:
-            return {u'step': unicode(self.descriptionDone)}
+            return {'step': self.descriptionDone}
         return super(ValidatePatch, self).getResultSummary()
 
     def doStepIf(self, step):
@@ -857,7 +857,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
 
     def getResultSummary(self):
         if self.results == FAILURE:
-            return {u'step': unicode(self.descriptionDone)}
+            return {'step': self.descriptionDone}
         return buildstep.BuildStep.getResultSummary(self)
 
     def fail_build(self, email, status):
@@ -932,7 +932,7 @@ class ValidateChangeLogAndReviewer(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'ChangeLog validation failed'}
+            return {'step': 'ChangeLog validation failed'}
         return shell.ShellCommand.getResultSummary(self)
 
     def evaluateCommand(self, cmd):
@@ -960,10 +960,10 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Set cq- flag on patch'}
+            return {'step': 'Set cq- flag on patch'}
         elif self.results == SKIPPED:
             return buildstep.BuildStep.getResultSummary(self)
-        return {u'step': u'Failed to set cq- flag on patch'}
+        return {'step': 'Failed to set cq- flag on patch'}
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
@@ -988,8 +988,8 @@ class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Removed flags on bugzilla patch'}
-        return {u'step': u'Failed to remove flags on bugzilla patch'}
+            return {'step': 'Removed flags on bugzilla patch'}
+        return {'step': 'Failed to remove flags on bugzilla patch'}
 
 
 class CloseBug(buildstep.BuildStep, BugzillaMixin):
@@ -1011,8 +1011,8 @@ class CloseBug(buildstep.BuildStep, BugzillaMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Closed bug {}'.format(self.bug_id)}
-        return {u'step': u'Failed to close bug {}'.format(self.bug_id)}
+            return {'step': 'Closed bug {}'.format(self.bug_id)}
+        return {'step': 'Failed to close bug {}'.format(self.bug_id)}
 
 
 class CommentOnBug(buildstep.BuildStep, BugzillaMixin):
@@ -1036,10 +1036,10 @@ class CommentOnBug(buildstep.BuildStep, BugzillaMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Added comment on bug {}'.format(self.bug_id)}
+            return {'step': 'Added comment on bug {}'.format(self.bug_id)}
         elif self.results == SKIPPED:
             return buildstep.BuildStep.getResultSummary(self)
-        return {u'step': u'Failed to add comment on bug {}'.format(self.bug_id)}
+        return {'step': 'Failed to add comment on bug {}'.format(self.bug_id)}
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
@@ -1113,9 +1113,9 @@ class TestWithFailureCount(shell.Test):
             if self.failedTestCount:
                 status = self.failedTestsFormatString % (self.failedTestCount, self.failedTestPluralSuffix)
             else:
-                status += u' ({})'.format(Results[self.results])
+                status += ' ({})'.format(Results[self.results])
 
-        return {u'step': unicode(status)}
+        return {'step': status}
 
 
 class CheckStyle(TestWithFailureCount):
@@ -1159,7 +1159,7 @@ class RunBindingsTests(shell.ShellCommand):
         if self.results == SUCCESS:
             message = 'Passed bindings tests'
             self.build.buildFinished([message], SUCCESS)
-            return {u'step': unicode(message)}
+            return {'step': message}
 
         logLines = self.log_observer.getStdout()
         json_text = ''.join([line for line in logLines.splitlines()])
@@ -1176,7 +1176,7 @@ class RunBindingsTests(shell.ShellCommand):
         failures_string = ', '.join([failure.replace('(JS) ', '') for failure in failures])
         message = 'Found {} Binding test failure{}: {}'.format(len(failures), pluralSuffix, failures_string)
         self.build.buildFinished([message], FAILURE)
-        return {u'step': unicode(message)}
+        return {'step': message}
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -1202,8 +1202,8 @@ class RunWebKitPerlTests(shell.ShellCommand):
         if self.results == SUCCESS:
             message = 'Passed webkitperl tests'
             self.build.buildFinished([message], SUCCESS)
-            return {u'step': unicode(message)}
-        return {u'step': u'Failed webkitperl tests'}
+            return {'step': message}
+        return {'step': 'Failed webkitperl tests'}
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
@@ -1234,8 +1234,8 @@ class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Passed build.webkit.org unit tests'}
-        return {u'step': u'Failed build.webkit.org unit tests'}
+            return {'step': 'Passed build.webkit.org unit tests'}
+        return {'step': 'Failed build.webkit.org unit tests'}
 
 
 class RunEWSUnitTests(shell.ShellCommand):
@@ -1248,8 +1248,8 @@ class RunEWSUnitTests(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Passed EWS unit tests'}
-        return {u'step': u'Failed EWS unit tests'}
+            return {'step': 'Passed EWS unit tests'}
+        return {'step': 'Failed EWS unit tests'}
 
 
 class RunEWSBuildbotCheckConfig(shell.ShellCommand):
@@ -1262,8 +1262,8 @@ class RunEWSBuildbotCheckConfig(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Passed buildbot checkconfig'}
-        return {u'step': u'Failed buildbot checkconfig'}
+            return {'step': 'Passed buildbot checkconfig'}
+        return {'step': 'Failed buildbot checkconfig'}
 
 
 class RunResultsdbpyTests(shell.ShellCommand):
@@ -1282,8 +1282,8 @@ class RunResultsdbpyTests(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {u'step': u'Passed resultsdbpy unit tests'}
-        return {u'step': u'Failed resultsdbpy unit tests'}
+            return {'step': 'Passed resultsdbpy unit tests'}
+        return {'step': 'Failed resultsdbpy unit tests'}
 
 
 class WebKitPyTest(shell.ShellCommand):
@@ -1318,7 +1318,7 @@ class WebKitPyTest(shell.ShellCommand):
         if self.results == SUCCESS:
             message = 'Passed webkitpy {} tests'.format(self.language)
             self.setBuildSummary(message)
-            return {u'step': unicode(message)}
+            return {'step': message}
 
         logLines = self.log_observer.getStdout()
         json_text = ''.join([line for line in logLines.splitlines()])
@@ -1337,7 +1337,7 @@ class WebKitPyTest(shell.ShellCommand):
         if len(failures) > self.NUM_FAILURES_TO_DISPLAY:
             message += ' ...'
         self.setBuildSummary(message)
-        return {u'step': unicode(message)}
+        return {'step': message}
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -1511,7 +1511,7 @@ class CompileWebKit(shell.Compile):
 
     def getResultSummary(self):
         if self.results == FAILURE:
-            return {u'step': u'Failed to compile WebKit'}
+            return {'step': 'Failed to compile WebKit'}
         return shell.Compile.getResultSummary(self)
 
 
@@ -1578,7 +1578,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
             defer.returnValue(None)
 
         logs = yield self.master.db.logs.getLogs(step.stepid)
-        log = next((log for log in logs if log['name'] == u'errors'), None)
+        log = next((log for log in logs if log['name'] == 'errors'), None)
         if not log:
             defer.returnValue(None)
 
@@ -1627,14 +1627,14 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
             else:
                 logs = self.filter_logs_containing_error(logs)
 
-            email_subject = u'Build failure for Patch {}: {}'.format(patch_id, bug_title)
+            email_subject = 'Build failure for Patch {}: {}'.format(patch_id, bug_title)
             email_text = 'EWS has detected build failure on {}'.format(builder_name)
             email_text += ' while testing <a href="{}">Patch {}</a>'.format(Bugzilla.patch_url(patch_id), patch_id)
             email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             if logs:
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
+                email_text += '\n\nError lines:\n\n<code>{}</code>'.format(logs)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
             self._addToLog('stdio', 'Sending email notification to {}'.format(patch_author))
             send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
@@ -1653,11 +1653,11 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
             else:
                 logs = self.filter_logs_containing_error(logs)
 
-            email_subject = u'Build failure on trunk on {}'.format(builder_name)
+            email_subject = 'Build failure on trunk on {}'.format(builder_name)
             email_text = 'Failed to build WebKit without patch in {}\n\nBuilder: {}\n\nWorker: {}'.format(build_url, builder_name, worker_name)
             if logs:
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
+                email_text += '\n\nError lines:\n\n<code>{}</code>'.format(logs)
             reference = 'preexisting-build-failure-{}-{}'.format(builder_name, date.today().strftime("%Y-%d-%m"))
             send_email_to_bot_watchers(email_subject, email_text, builder_name, reference)
         except Exception as e:
@@ -1675,7 +1675,7 @@ class CompileJSC(CompileWebKit):
 
     def getResultSummary(self):
         if self.results == FAILURE:
-            return {u'step': u'Failed to compile JSC'}
+            return {'step': 'Failed to compile JSC'}
         return shell.Compile.getResultSummary(self)
 
 
@@ -1778,7 +1778,7 @@ class RunJavaScriptCoreTests(shell.Test):
                 pluralSuffix = 's' if len(self.binaryFailures) > 1 else ''
                 status += 'JSC test binary failure{}: {}'.format(pluralSuffix, ', '.join(self.binaryFailures))
 
-            return {u'step': unicode(status)}
+            return {'step': status}
 
         return shell.Test.getResultSummary(self)
 
@@ -1914,7 +1914,7 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=javascriptcore-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = u'Flaky test: {}'.format(test_name)
+            email_subject = 'Flaky test: {}'.format(test_name)
             email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(test_name))
         except Exception as e:
@@ -1927,7 +1927,7 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=javascriptcore-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = u'Pre-existing test failure: {}'.format(test_name)
+            email_subject = 'Pre-existing test failure: {}'.format(test_name)
             email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
@@ -1959,7 +1959,7 @@ class KillOldProcesses(shell.Compile):
 
     def getResultSummary(self):
         if self.results in [FAILURE, EXCEPTION]:
-            return {u'step': u'Failed to kill old processes'}
+            return {'step': 'Failed to kill old processes'}
         return shell.Compile.getResultSummary(self)
 
 
@@ -1974,7 +1974,7 @@ class TriggerCrashLogSubmission(shell.Compile):
 
     def getResultSummary(self):
         if self.results in [FAILURE, EXCEPTION]:
-            return {u'step': u'Failed to trigger crash log submission'}
+            return {'step': 'Failed to trigger crash log submission'}
         return shell.Compile.getResultSummary(self)
 
 
@@ -1989,7 +1989,7 @@ class WaitForCrashCollection(shell.Compile):
 
     def getResultSummary(self):
         if self.results in [FAILURE, EXCEPTION]:
-            return {u'step': u'Crash log collection process still running'}
+            return {'step': 'Crash log collection process still running'}
         return shell.Compile.getResultSummary(self)
 
 
@@ -2145,8 +2145,8 @@ class RunWebKitTests(shell.Test):
         status = self.name
 
         if self.results != SUCCESS and self.incorrectLayoutLines:
-            status = u' '.join(self.incorrectLayoutLines)
-            return {u'step': status}
+            status = ' '.join(self.incorrectLayoutLines)
+            return {'step': status}
 
         return super(RunWebKitTests, self).getResultSummary()
 
@@ -2210,7 +2210,7 @@ class ReRunWebKitTests(RunWebKitTests):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = u'Flaky test: {}'.format(test_name)
+            email_subject = 'Flaky test: {}'.format(test_name)
             email_text = 'Test {} flaked in {}\n\nBuilder: {}'.format(test_name, build_url, builder_name)
             email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(test_name))
@@ -2324,7 +2324,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = u'Flaky test: {}'.format(test_name)
+            email_subject = 'Flaky test: {}'.format(test_name)
             email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(test_name))
         except Exception as e:
@@ -2337,7 +2337,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = u'Pre-existing test failure: {}'.format(test_name)
+            email_subject = 'Pre-existing test failure: {}'.format(test_name)
             email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
@@ -2360,7 +2360,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
                 test_names_string += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
 
             pluralSuffix = 's' if len(test_names) > 1 else ''
-            email_subject = u'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
+            email_subject = 'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
             email_text = 'EWS has detected layout test failure{} on {}'.format(pluralSuffix, builder_name)
             email_text += ' while testing <a href="{}">Patch {}</a>'.format(Bugzilla.patch_url(patch_id), patch_id)
             email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
@@ -2484,7 +2484,7 @@ class UploadBuiltProduct(transfer.FileUpload):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to upload built product'}
+            return {'step': 'Failed to upload built product'}
         return super(UploadBuiltProduct, self).getResultSummary()
 
 
@@ -2524,7 +2524,7 @@ class TransferToS3(master.MasterShellCommand):
 
     def getResultSummary(self):
         if self.results == FAILURE:
-            return {u'step': u'Failed to transfer archive to S3'}
+            return {'step': 'Failed to transfer archive to S3'}
         return super(TransferToS3, self).getResultSummary()
 
 
@@ -2539,7 +2539,7 @@ class DownloadBuiltProduct(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to download built product from S3'}
+            return {'step': 'Failed to download built product from S3'}
         return super(DownloadBuiltProduct, self).getResultSummary()
 
     def __init__(self, **kwargs):
@@ -2572,7 +2572,7 @@ class DownloadBuiltProductFromMaster(transfer.FileDownload):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to download built product from build master'}
+            return {'step': 'Failed to download built product from build master'}
         return super(DownloadBuiltProductFromMaster, self).getResultSummary()
 
 
@@ -2777,7 +2777,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             defer.returnValue(None)
 
         logs = yield self.master.db.logs.getLogs(step.stepid)
-        log = next((log for log in logs if log['name'] == u'json'), None)
+        log = next((log for log in logs if log['name'] == 'json'), None)
         if not log:
             self._addToLog('stderr', 'ERROR: log for step not found: {}'.format(step))
             defer.returnValue(None)
@@ -2799,7 +2799,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=api-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = u'Flaky test: {}'.format(test_name)
+            email_subject = 'Flaky test: {}'.format(test_name)
             email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(test_name))
         except Exception as e:
@@ -2812,7 +2812,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=api-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = u'Pre-existing test failure: {}'.format(test_name)
+            email_subject = 'Pre-existing test failure: {}'.format(test_name)
             email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
@@ -2920,10 +2920,7 @@ class PrintConfiguration(steps.ShellSequence):
             command_list.extend(self.command_list_win)
 
         for command in command_list:
-            if sys.version_info > (3, 0):
-                self.commands.append(util.ShellArg(command=command, logname='stdio'))
-            else:
-                self.commands.append(util.ShellArg(command=command, logfile='stdio'))
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
         return super(PrintConfiguration, self).run()
 
     def convert_build_to_os_name(self, build):
@@ -2952,21 +2949,21 @@ class PrintConfiguration(steps.ShellSequence):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to print configuration'}
+            return {'step': 'Failed to print configuration'}
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
-        configuration = u'Printed configuration'
+        configuration = 'Printed configuration'
         match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
         if match:
             os_version = match.group(1).strip()
             os_name = self.convert_build_to_os_name(os_version)
-            configuration = u'OS: {} ({})'.format(os_name, os_version)
+            configuration = 'OS: {} ({})'.format(os_name, os_version)
 
         xcode_re = sdk_re = 'Xcode[ \t]+?([0-9.]+?)\n'
         match = re.search(xcode_re, logText)
         if match:
             xcode_version = match.group(1).strip()
-            configuration += u', Xcode: {}'.format(xcode_version)
-        return {u'step': configuration}
+            configuration += ', Xcode: {}'.format(xcode_version)
+        return {'step': configuration}
 
 
 class ApplyWatchList(shell.ShellCommand):
@@ -2983,7 +2980,7 @@ class ApplyWatchList(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to apply watchlist'}
+            return {'step': 'Failed to apply watchlist'}
         return super(ApplyWatchList, self).getResultSummary()
 
 
@@ -3024,7 +3021,7 @@ class FindModifiedChangeLogs(shell.ShellCommand):
     def getResultSummary(self):
         if self.results != SUCCESS:
             patch_id = self.getProperty('patch_id', '')
-            return {u'step': u'Failed to find any modified ChangeLog in Patch {}'.format(patch_id)}
+            return {'step': 'Failed to find any modified ChangeLog in Patch {}'.format(patch_id)}
         return shell.ShellCommand.getResultSummary(self)
 
     def evaluateCommand(self, cmd):
@@ -3074,7 +3071,7 @@ class CreateLocalGITCommit(shell.ShellCommand):
         modified_changelogs = self.getProperty('modified_changelogs')
         patch_id = self.getProperty('patch_id', '')
         if not modified_changelogs:
-            self.failure_message = u'No modified ChangeLog file found for Patch {}'.format(patch_id)
+            self.failure_message = 'No modified ChangeLog file found for Patch {}'.format(patch_id)
             self.finished(FAILURE)
             return None
 
@@ -3085,9 +3082,9 @@ class CreateLocalGITCommit(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.failure_message:
-            return {u'step': self.failure_message}
+            return {'step': self.failure_message}
         if self.results != SUCCESS:
-            return {u'step': u'Failed to create git commit'}
+            return {'step': 'Failed to create git commit'}
         return shell.ShellCommand.getResultSummary(self)
 
     def evaluateCommand(self, cmd):
@@ -3162,7 +3159,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to push commit to Webkit repository'}
+            return {'step': 'Failed to push commit to Webkit repository'}
         return shell.ShellCommand.getResultSummary(self)
 
     def doStepIf(self, step):
