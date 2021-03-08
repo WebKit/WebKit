@@ -1,3 +1,15 @@
+2021-03-08  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html is a failure
+        https://bugs.webkit.org/show_bug.cgi?id=203416
+
+        Unreviewed.
+
+        This test now passes reliably on iOS according to 
+        https://results.webkit.org/?suite=layout-tests&test=imported%2Fw3c%2Fweb-platform-tests%2Fcss%2Fcss-transitions%2Fbefore-load-001.html
+
+        * platform/ios/TestExpectations:
+
 2021-03-08  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Some media tests related to canvas fail when media in GPU Process is enabled
