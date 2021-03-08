@@ -59,29 +59,18 @@
 
 namespace WebCore {
 
-using namespace WebKitFontFamilyNames;
-
 static unsigned fontSelectorId;
 
-CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
-    : ActiveDOMObject(&context)
-    , m_context(makeWeakPtr(context))
+CSSFontSelector::CSSFontSelector(Document& document)
+    : ActiveDOMObject(document)
+    , m_document(makeWeakPtr(document))
     , m_cssFontFaceSet(CSSFontFaceSet::create(this))
     , m_fontModifiedObserver([this] { fontModified(); })
     , m_fontLoadingTimer(*this, &CSSFontSelector::fontLoadingTimerFired)
     , m_uniqueId(++fontSelectorId)
     , m_version(0)
 {
-    if (is<Document>(context)) {
-        m_fontFamilyNames.reserveInitialCapacity(familyNames->size());
-        for (auto& familyName : familyNames.get())
-            m_fontFamilyNames.uncheckedConstructAndAppend(familyName);
-    } else {
-        m_fontFamilyNames.reserveInitialCapacity(familyNamesData->size());
-        for (auto& familyName : familyNamesData.get())
-            m_fontFamilyNames.uncheckedAppend(familyName);
-    }
-
+    ASSERT(m_document);
     FontCache::singleton().addClient(*this);
     m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);
     LOG(Fonts, "CSSFontSelector %p ctor", this);
@@ -105,8 +94,8 @@ FontFaceSet* CSSFontSelector::fontFaceSetIfExists()
 FontFaceSet& CSSFontSelector::fontFaceSet()
 {
     if (!m_fontFaceSet) {
-        ASSERT(m_context);
-        m_fontFaceSet = FontFaceSet::create(*m_context, m_cssFontFaceSet.get());
+        ASSERT(m_document);
+        m_fontFaceSet = FontFaceSet::create(*m_document, m_cssFontFaceSet.get());
     }
 
     return *m_fontFaceSet;
@@ -208,7 +197,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (loadingBehavior)
         fontFace->setLoadingBehavior(*loadingBehavior);
 
-    CSSFontFace::appendSources(fontFace, srcList, m_context.get(), isInitiatingElementInUserAgentShadowTree);
+    CSSFontFace::appendSources(fontFace, srcList, m_document.get(), isInitiatingElementInUserAgentShadowTree);
     if (fontFace->computeFailureState())
         return;
 
@@ -242,6 +231,14 @@ void CSSFontSelector::unregisterForInvalidationCallbacks(FontSelectorClient& cli
     m_clients.remove(&client);
 }
 
+ScriptExecutionContext* CSSFontSelector::scriptExecutionContext() const
+{
+    // This class returns a ScriptExecutionContext despite holding a Document as preparation for a future
+    // where it will actually hold a ScriptExecutionContext (which would be either a Document or a
+    // WorkerGlobalScope, in the case of using fonts in OffscreenCanvas).
+    return m_document.get();
+}
+
 void CSSFontSelector::dispatchInvalidationCallbacks()
 {
     ++m_version;
@@ -272,8 +269,8 @@ void CSSFontSelector::fontModified()
 
 void CSSFontSelector::fontStyleUpdateNeeded(CSSFontFace&)
 {
-    if (is<Document>(m_context.get()))
-        downcast<Document>(*m_context).updateStyleIfNeeded();
+    if (m_document)
+        m_document->updateStyleIfNeeded();
 }
 
 void CSSFontSelector::fontCacheInvalidated()
@@ -281,23 +278,32 @@ void CSSFontSelector::fontCacheInvalidated()
     dispatchInvalidationCallbacks();
 }
 
-Optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescription& fontDescription, const AtomString& familyName)
+static Optional<AtomString> resolveGenericFamily(Document* document, const FontDescription& fontDescription, const AtomString& familyName)
 {
     auto platformResult = FontDescription::platformResolveGenericFamily(fontDescription.script(), fontDescription.computedLocale(), familyName);
     if (!platformResult.isNull())
         return platformResult;
 
-    if (!m_context)
+    if (!document)
         return WTF::nullopt;
 
-    const auto& settings = m_context->settingsValues();
+    const Settings& settings = document->settings();
 
     UScriptCode script = fontDescription.script();
-    auto familyNameIndex = m_fontFamilyNames.find(familyName);
-    if (familyNameIndex != notFound) {
-        if (auto familyString = settings.fontGenericFamilies.fontFamily(static_cast<FamilyNamesIndex>(familyNameIndex), script))
-            return AtomString(*familyString);
-    }
+    if (familyName == serifFamily)
+        return AtomString(settings.serifFontFamily(script));
+    if (familyName == sansSerifFamily)
+        return AtomString(settings.sansSerifFontFamily(script));
+    if (familyName == cursiveFamily)
+        return AtomString(settings.cursiveFontFamily(script));
+    if (familyName == fantasyFamily)
+        return AtomString(settings.fantasyFontFamily(script));
+    if (familyName == monospaceFamily)
+        return AtomString(settings.fixedFontFamily(script));
+    if (familyName == pictographFamily)
+        return AtomString(settings.pictographFontFamily(script));
+    if (familyName == standardFamily)
+        return AtomString(settings.standardFontFamily(script));
 
     return WTF::nullopt;
 }
@@ -308,31 +314,34 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     ASSERT(!m_buildIsUnderway || m_computingRootStyleFontCount);
 
     // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
-    bool resolveGenericFamilyFirst = familyName == m_fontFamilyNames[static_cast<int>(FamilyNamesIndex::StandardFamily)];
+    bool resolveGenericFamilyFirst = familyName == standardFamily;
 
     AtomString familyForLookup = familyName;
     Optional<FontDescription> overrideFontDescription;
     const FontDescription* fontDescriptionForLookup = &fontDescription;
-    auto resolveAndAssignGenericFamily = [&]() {
-        if (auto genericFamilyOptional = resolveGenericFamily(fontDescription, familyName))
+    auto resolveGenericFamily = [&]() {
+        if (auto genericFamilyOptional = WebCore::resolveGenericFamily(m_document.get(), fontDescription, familyName))
             familyForLookup = *genericFamilyOptional;
     };
 
     if (resolveGenericFamilyFirst)
-        resolveAndAssignGenericFamily();
-    Document* document = is<Document>(m_context.get()) ? &downcast<Document>(*m_context) : nullptr;
+        resolveGenericFamily();
     auto* face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup);
     if (face) {
-        if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-            ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), true);
+        if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+            if (m_document)
+                ResourceLoadObserver::shared().logFontLoad(*m_document, familyForLookup.string(), true);
+        }
         return face->fontRanges(*fontDescriptionForLookup);
     }
 
     if (!resolveGenericFamilyFirst)
-        resolveAndAssignGenericFamily();
+        resolveGenericFamily();
     auto font = FontCache::singleton().fontForFamily(*fontDescriptionForLookup, familyForLookup);
-    if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), !!font);
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+        if (m_document)
+            ResourceLoadObserver::shared().logFontLoad(*m_document, familyForLookup.string(), !!font);
+    }
     return FontRanges { WTFMove(font) };
 }
 
@@ -347,15 +356,12 @@ void CSSFontSelector::stopLoadingAndClearFonts()
     m_isStopped = true;
     m_fontLoadingTimer.stop();
 
-    if (is<Document>(m_context.get())) {
-        auto& document = downcast<Document>(*m_context);
-        CachedResourceLoader& cachedResourceLoader = document.cachedResourceLoader();
-        for (auto& fontHandle : m_fontsToBeginLoading) {
-            // Balances incrementRequestCount() in beginLoadingFontSoon().
-            cachedResourceLoader.decrementRequestCount(*fontHandle);
-        }
-        m_fontsToBeginLoading.clear();
+    CachedResourceLoader& cachedResourceLoader = m_document->cachedResourceLoader();
+    for (auto& fontHandle : m_fontsToBeginLoading) {
+        // Balances incrementRequestCount() in beginLoadingFontSoon().
+        cachedResourceLoader.decrementRequestCount(*fontHandle);
     }
+    m_fontsToBeginLoading.clear();
 
     m_cssFontFaceSet->clear();
     m_clients.clear();
@@ -363,16 +369,14 @@ void CSSFontSelector::stopLoadingAndClearFonts()
 
 void CSSFontSelector::beginLoadingFontSoon(CachedFont& font)
 {
-    if (m_isStopped || !is<Document>(m_context.get()))
+    if (m_isStopped)
         return;
-
-    auto& document = downcast<Document>(*m_context);
 
     m_fontsToBeginLoading.append(&font);
     // Increment the request count now, in order to prevent didFinishLoad from being dispatched
     // after this font has been requested but before it began loading. Balanced by
     // decrementRequestCount() in fontLoadingTimerFired() and in stopLoadingAndClearFonts().
-    document.cachedResourceLoader().incrementRequestCount(font);
+    m_document->cachedResourceLoader().incrementRequestCount(font);
 
     if (!m_isFontLoadingSuspended && !m_fontLoadingTimer.isActive())
         m_fontLoadingTimer.startOneShot(0_s);
@@ -385,10 +389,8 @@ void CSSFontSelector::suspendFontLoadingTimer()
 
 void CSSFontSelector::loadPendingFonts()
 {
-    if (m_isFontLoadingSuspended || !is<Document>(m_context.get()))
+    if (m_isFontLoadingSuspended)
         return;
-
-    auto& document = downcast<Document>(*m_context);
 
     Vector<CachedResourceHandle<CachedFont>> fontsToBeginLoading;
     fontsToBeginLoading.swap(m_fontsToBeginLoading);
@@ -396,7 +398,7 @@ void CSSFontSelector::loadPendingFonts()
     // CSSFontSelector could get deleted via beginLoadIfNeeded() or loadDone() unless protected.
     Ref<CSSFontSelector> protectedThis(*this);
 
-    CachedResourceLoader& cachedResourceLoader = document.cachedResourceLoader();
+    CachedResourceLoader& cachedResourceLoader = m_document->cachedResourceLoader();
     for (auto& fontHandle : fontsToBeginLoading) {
         fontHandle->beginLoadIfNeeded(cachedResourceLoader);
         // Balances incrementRequestCount() in beginLoadingFontSoon().
@@ -406,22 +408,18 @@ void CSSFontSelector::loadPendingFonts()
 
 void CSSFontSelector::fontLoadingTimerFired()
 {
-    if (!is<Document>(m_context.get()))
-        return;
-
-    auto& document = downcast<Document>(*m_context);
     Ref<CSSFontSelector> protectedThis(*this);
 
     loadPendingFonts();
 
     // FIXME: Use SubresourceLoader instead.
     // Call FrameLoader::loadDone before FrameLoader::subresourceLoadDone to match the order in SubresourceLoader::notifyDone.
-    document.cachedResourceLoader().loadDone(LoadCompletionType::Finish);
+    m_document->cachedResourceLoader().loadDone(LoadCompletionType::Finish);
     // Ensure that if the request count reaches zero, the frame loader will know about it.
     // New font loads may be triggered by layout after the document load is complete but before we have dispatched
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
-    if (document.frame())
-        document.frame()->loader().checkLoadComplete();
+    if (m_document && m_document->frame())
+        m_document->frame()->loader().checkLoadComplete();
 }
 
 size_t CSSFontSelector::fallbackFontCount()
@@ -429,7 +427,7 @@ size_t CSSFontSelector::fallbackFontCount()
     if (m_isStopped)
         return 0;
 
-    return m_context->settingsValues().fontFallbackPrefersPictographs ? 1 : 0;
+    return m_document->settings().fontFallbackPrefersPictographs() ? 1 : 0;
 }
 
 RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescription, size_t index)
@@ -439,12 +437,12 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     if (m_isStopped)
         return nullptr;
 
-    if (!m_context->settingsValues().fontFallbackPrefersPictographs)
+    if (!m_document->settings().fontFallbackPrefersPictographs())
         return nullptr;
-    auto& pictographFontFamily = m_context->settingsValues().fontGenericFamilies.pictographFontFamily();
+    auto& pictographFontFamily = m_document->settings().pictographFontFamily();
     auto font = FontCache::singleton().fontForFamily(fontDescription, pictographFontFamily);
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled() && is<Document>(m_context.get()))
-        ResourceLoadObserver::shared().logFontLoad(downcast<Document>(*m_context), pictographFontFamily, !!font);
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logFontLoad(*m_document, pictographFontFamily, !!font);
 
     return font;
 }

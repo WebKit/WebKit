@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef FontGenericFamilies_h
+#define FontGenericFamilies_h
 
-#include "WebKitFontFamilyNames.h"
 #include <unicode/uscript.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomString.h>
@@ -59,8 +59,6 @@ public:
     const String& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
     const String& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-    const String* fontFamily(WebKitFontFamilyNames::FamilyNamesIndex, UScriptCode = USCRIPT_COMMON) const;
-
     bool setStandardFontFamily(const String&, UScriptCode);
     bool setFixedFontFamily(const String&, UScriptCode);
     bool setSerifFontFamily(const String&, UScriptCode);
@@ -80,3 +78,5 @@ private:
 };
 
 }
+
+#endif

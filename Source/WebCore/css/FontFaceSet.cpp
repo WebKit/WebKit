@@ -41,22 +41,22 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FontFaceSet);
 
-Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, const Vector<RefPtr<FontFace>>& initialFaces)
+Ref<FontFaceSet> FontFaceSet::create(Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
 {
-    Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(context, initialFaces));
+    Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(document, initialFaces));
     result->suspendIfNeeded();
     return result;
 }
 
-Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, CSSFontFaceSet& backing)
+Ref<FontFaceSet> FontFaceSet::create(Document& document, CSSFontFaceSet& backing)
 {
-    Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(context, backing));
+    Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(document, backing));
     result->suspendIfNeeded();
     return result;
 }
 
-FontFaceSet::FontFaceSet(ScriptExecutionContext& context, const Vector<RefPtr<FontFace>>& initialFaces)
-    : ActiveDOMObject(&context)
+FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
+    : ActiveDOMObject(document)
     , m_backing(CSSFontFaceSet::create())
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
 {
@@ -65,16 +65,13 @@ FontFaceSet::FontFaceSet(ScriptExecutionContext& context, const Vector<RefPtr<Fo
         add(*face);
 }
 
-FontFaceSet::FontFaceSet(ScriptExecutionContext& context, CSSFontFaceSet& backing)
-    : ActiveDOMObject(&context)
+FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
+    : ActiveDOMObject(document)
     , m_backing(backing)
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
 {
-    if (is<Document>(context)) {
-        auto& document = downcast<Document>(context);
-        if (document.frame())
-            m_isDocumentLoaded = document.loadEventFinished() && !document.processingLoadEvent();
-    }
+    if (document.frame())
+        m_isDocumentLoaded = document.loadEventFinished() && !document.processingLoadEvent();
 
     if (m_isDocumentLoaded && !backing.hasActiveFontFaces())
         m_readyPromise->resolve(*this);
