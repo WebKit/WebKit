@@ -1,3 +1,18 @@
+2021-03-08  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        webkitbot should stop saying "<revision> broke the build" when we revert commits
+        https://bugs.webkit.org/show_bug.cgi?id=222906
+
+        Reviewed by Jonathan Bedard.
+
+        Instead of saying the patch "broke the build," let's say it "introduced a regression." This
+        is more generic, since we revert patches for lots of reasons that are not build failures.
+        Build failures count as regressions.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (CreateRevert._prepare_state):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+
 2021-03-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r273084.
