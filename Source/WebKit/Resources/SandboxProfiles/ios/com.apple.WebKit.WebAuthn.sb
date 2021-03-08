@@ -659,3 +659,29 @@
 ;; Allow accesses to the SEP
 (allow mach-lookup
     (global-name "com.apple.ctkd.token-client"))
+
+;; Allow accesses to AAA and the network
+(allow mach-lookup
+    (global-name "com.apple.nehelper")
+    (global-name "com.apple.usymptomsd")
+    (global-name "com.apple.dnssd.service")
+    (global-name "com.apple.trustd")
+    (global-name "com.apple.containermanagerd")
+    (global-name "com.apple.mobilegestalt.xpc"))
+
+(allow file-read*
+    (subpath "/private/var/containers/Shared/SystemGroup") ;; FIXME<rdar://problem/71137389>
+    (literal "/private/var/preferences/com.apple.networkd.plist"))
+
+(allow iokit-open
+    (iokit-user-client-class "AppleKeyStoreUserClient"))
+
+(allow network-outbound
+    (literal "/private/var/run/mDNSResponder")
+    (remote tcp)
+    (remote udp))
+
+(allow sysctl-read
+    (sysctl-name
+        "kern.maxfilesperproc"
+        "kern.ostype"))
