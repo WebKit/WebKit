@@ -112,8 +112,9 @@ imported/w3c/web-platform-tests/css/css-ui/outline-019.html [ Pass ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
-fast/images/avif-image-decoding.html [ Pass ]
-fast/images/avif-as-image.html [ Pass ]
+# Temporarily skip avif related tests until the gtk port enables avif as default.
+fast/images/avif-image-decoding.html [ Skip ]
+fast/images/avif-as-image.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.

@@ -1,3 +1,15 @@
+2021-03-08  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] avif tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=222882
+
+        Reviewed by Philippe Normand.
+
+        Skip avif related tests since the avif support is disabled as default.
+        We will enable them when activating the avif support as default.
+
+        * platform/gtk/TestExpectations:
+
 2021-03-08  John Wilander  <wilander@apple.com>
 
         PCM: Align fraud prevention token naming with issue 73 in the Privacy CG repo
