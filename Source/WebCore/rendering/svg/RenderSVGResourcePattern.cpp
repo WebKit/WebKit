@@ -178,7 +178,7 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const Rend
             patternData->pattern->setPatternSpaceTransform(transformOnNonScalingStroke(&renderer, patternData->transform));
         context->setAlpha(svgStyle.strokeOpacity());
         context->setStrokePattern(*patternData->pattern);
-        SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
+        SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
     }
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {

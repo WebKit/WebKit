@@ -1,3 +1,22 @@
+2021-03-05  Darin Adler  <darin@apple.com>
+
+        Fix inspector viewing of canvas save/restore stack, and tighten and simplify CanvasRenderingContext2DBase
+        https://bugs.webkit.org/show_bug.cgi?id=222532
+
+        Reviewed by Sam Weinig.
+
+        * inspector/canvas/recording-2d-frameCount-expected.txt: Update since the state stack value of
+        the direction property is now correctly saved.
+        * inspector/canvas/recording-2d-full-expected.txt: Ditto.
+        * inspector/canvas/recording-2d-memoryLimit-expected.txt: Ditto.
+
+        * inspector/canvas/recording-2d-saves-expected.txt: Updated.
+        * inspector/canvas/recording-2d-saves.html: Added tests of setting all the properties
+        that the inspector canvas state machinery serializes, rather than just testing fillStyle.
+        * inspector/canvas/resources/recording-2d.js:
+        (performSavePreActions.saveAndSet): Ditto.
+        (performSavePreActions): Ditto.
+
 2021-03-08  Simon Fraser  <simon.fraser@apple.com>
 
         Trackpad scrolling in the web inspector timeline is broken

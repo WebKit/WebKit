@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2010, 2011, 2012, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,17 +50,11 @@
 
 namespace WebCore {
 
-class TypedOMCSSImageValue;
 class CachedImage;
-class CanvasBase;
 class CanvasGradient;
-class CanvasPattern;
 class DOMMatrix;
 class FloatRect;
 class GraphicsContext;
-class HTMLImageElement;
-class HTMLVideoElement;
-class ImageBitmap;
 class ImageData;
 class OffscreenCanvas;
 class Path2D;
@@ -83,48 +77,51 @@ using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasEle
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
-public:
+protected:
     CanvasRenderingContext2DBase(CanvasBase&, bool usesCSSCompatibilityParseMode);
+
+public:
     virtual ~CanvasRenderingContext2DBase();
 
-    float lineWidth() const;
+    float lineWidth() const { return state().lineWidth; }
     void setLineWidth(float);
 
-    CanvasLineCap lineCap() const;
+    CanvasLineCap lineCap() const { return state().canvasLineCap(); }
     void setLineCap(CanvasLineCap);
     void setLineCap(const String&);
 
-    CanvasLineJoin lineJoin() const;
+    CanvasLineJoin lineJoin() const { return state().canvasLineJoin(); }
     void setLineJoin(CanvasLineJoin);
     void setLineJoin(const String&);
 
-    float miterLimit() const;
+    float miterLimit() const { return state().miterLimit; }
     void setMiterLimit(float);
 
-    const Vector<float>& getLineDash() const;
+    const Vector<float>& getLineDash() const { return state().lineDash; }
     void setLineDash(const Vector<float>&);
+
     const Vector<float>& webkitLineDash() const { return getLineDash(); }
     void setWebkitLineDash(const Vector<float>&);
 
-    float lineDashOffset() const;
+    float lineDashOffset() const { return state().lineDashOffset; }
     void setLineDashOffset(float);
 
-    float shadowOffsetX() const;
+    float shadowOffsetX() const { return state().shadowOffset.width(); }
     void setShadowOffsetX(float);
 
-    float shadowOffsetY() const;
+    float shadowOffsetY() const { return state().shadowOffset.height(); }
     void setShadowOffsetY(float);
 
-    float shadowBlur() const;
+    float shadowBlur() const { return state().shadowBlur; }
     void setShadowBlur(float);
 
-    String shadowColor() const;
+    String shadowColor() const { return state().shadowColorString(); }
     void setShadowColor(const String&);
 
-    float globalAlpha() const;
+    float globalAlpha() const { return state().globalAlpha; }
     void setGlobalAlpha(float);
 
-    String globalCompositeOperation() const;
+    String globalCompositeOperation() const { return state().globalCompositeOperationString(); }
     void setGlobalCompositeOperation(const String&);
 
     void save() { ++m_unrealizedSaveCount; }
@@ -196,37 +193,33 @@ public:
     void putImageData(ImageData&, float dx, float dy);
     void putImageData(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
-    float webkitBackingStorePixelRatio() const { return 1; }
+    static constexpr float webkitBackingStorePixelRatio() { return 1; }
 
     void reset();
 
-    LineCap getLineCap() const { return state().lineCap; }
-    LineJoin getLineJoin() const { return state().lineJoin; }
-
-    bool imageSmoothingEnabled() const;
+    bool imageSmoothingEnabled() const { return state().imageSmoothingEnabled; }
     void setImageSmoothingEnabled(bool);
 
-    ImageSmoothingQuality imageSmoothingQuality() const;
+    ImageSmoothingQuality imageSmoothingQuality() const { return state().imageSmoothingQuality; }
     void setImageSmoothingQuality(ImageSmoothingQuality);
 
     void setPath(Path2D&);
     Ref<Path2D> getPath() const;
 
-    bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; };
     void setUsesDisplayListDrawing(bool flag) { m_usesDisplayListDrawing = flag; };
 
-    String font() const;
+    String font() const { return state().fontString(); }
 
-    CanvasTextAlign textAlign() const;
+    CanvasTextAlign textAlign() const { return state().canvasTextAlign(); }
     void setTextAlign(CanvasTextAlign);
 
-    CanvasTextBaseline textBaseline() const;
+    CanvasTextBaseline textBaseline() const { return state().canvasTextBaseline(); }
     void setTextBaseline(CanvasTextBaseline);
 
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
-    class FontProxy : public FontSelectorClient {
+    class FontProxy final : public FontSelectorClient {
     public:
         FontProxy() = default;
         virtual ~FontProxy();
@@ -246,16 +239,13 @@ public:
 
     private:
         void update(FontSelector&);
-        void fontsNeedUpdate(FontSelector&) override;
+        void fontsNeedUpdate(FontSelector&) final;
 
         FontCascade m_font;
     };
 
     struct State final {
         State();
-
-        State(const State&);
-        State& operator=(const State&);
 
         String unparsedStrokeColor;
         String unparsedFillColor;
@@ -277,56 +267,64 @@ public:
         float lineDashOffset;
         bool imageSmoothingEnabled;
         ImageSmoothingQuality imageSmoothingQuality;
-
-        // Text state.
         TextAlign textAlign;
         TextBaseline textBaseline;
         Direction direction;
 
         String unparsedFont;
         FontProxy font;
-    };
 
-    const State& state() const { return m_stateStack.last(); }
+        CanvasLineCap canvasLineCap() const;
+        CanvasLineJoin canvasLineJoin() const;
+        CanvasTextAlign canvasTextAlign() const;
+        CanvasTextBaseline canvasTextBaseline() const;
+        String fontString() const;
+        String globalCompositeOperationString() const;
+        String shadowColorString() const;
+    };
     const Vector<State, 1>& stateStack();
 
 protected:
     static const int DefaultFontSize;
     static const char* const DefaultFontFamily;
-    static const char* const DefaultFont;
 
-    enum CanvasDidDrawOption {
-        CanvasDidDrawApplyNone = 0,
-        CanvasDidDrawApplyTransform = 1,
-        CanvasDidDrawApplyShadow = 1 << 1,
-        CanvasDidDrawApplyClip = 1 << 2,
-        CanvasDidDrawApplyAll = 0xffffffff
-    };
-
-    bool isFullCanvasCompositeMode(CompositeOperator);
-
+    const State& state() const { return m_stateStack.last(); }
+    void realizeSaves();
     State& modifiableState() { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
 
+    GraphicsContext* drawingContext() const;
+
+    static String normalizeSpaces(const String&);
+
+    void drawText(const String& text, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
+    bool canDrawText(float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
+    void drawTextUnchecked(const TextRun&, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
+
+    Ref<TextMetrics> measureTextInternal(const TextRun&);
+    Ref<TextMetrics> measureTextInternal(const String& text);
+
+    bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
+
+private:
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
     bool shouldDrawShadows() const;
 
-    void didDraw(const FloatRect&, unsigned options = CanvasDidDrawApplyAll);
+    enum class DidDrawOption {
+        ApplyTransform = 1 << 0,
+        ApplyShadow = 1 << 1,
+        ApplyClip = 1 << 2,
+    };
+    void didDraw(const FloatRect&, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip });
     void didDrawEntireCanvas();
 
     void paintRenderingResultsToCanvas() override;
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 
-    GraphicsContext* drawingContext() const;
-
     void unwindStateStack();
-    void realizeSaves();
     void realizeSavesLoop();
-
-    void applyStrokePattern();
-    void applyFillPattern();
 
     void setStrokeStyle(CanvasStyle);
     void setFillStyle(CanvasStyle);
@@ -378,22 +376,15 @@ protected:
 
     bool isAccelerated() const override;
 
-    bool hasInvertibleTransform() const override { return state().hasInvertibleTransform; }
+    bool hasInvertibleTransform() const final { return state().hasInvertibleTransform; }
 
     // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
     // Therefore, all font operations must pass through the proxy.
     virtual const FontProxy* fontProxy() { return nullptr; }
 
-    static void normalizeSpaces(String&);
-    bool canDrawTextWithParams(float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
-    void drawText(const String& text, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
-    void drawTextUnchecked(const TextRun&, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
-    Ref<TextMetrics> measureTextInternal(const String& text);
-    Ref<TextMetrics> measureTextInternal(const TextRun&);
-
     FloatPoint textOffset(float width, TextDirection);
 
-    static const unsigned MaxSaveCount = 1024 * 16;
+    static constexpr unsigned MaxSaveCount = 1024 * 16;
     Vector<State, 1> m_stateStack;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
@@ -402,4 +393,3 @@ protected:
 };
 
 } // namespace WebCore
-

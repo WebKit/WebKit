@@ -24,7 +24,7 @@ initialState:
     font: "10px sans-serif"
     textAlign: "start"
     textBaseline: "alphabetic"
-    direction: "ltr"
+    direction: "inherit"
     strokeStyle: "#000000"
     fillStyle: "#000000"
     imageSmoothingEnabled: true

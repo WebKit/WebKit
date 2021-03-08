@@ -89,7 +89,6 @@ class FloatSize;
 class GraphicsContext;
 class PathTraversalState;
 class RoundedRect;
-class StrokeStyleApplier;
 
 // The points in the structure are the same as those that would be used with the
 // add... method. For example, a line returns the endpoint, while a cubic returns
@@ -138,12 +137,13 @@ public:
     static Path polygonPathFromPoints(const Vector<FloatPoint>&);
 
     bool contains(const FloatPoint&, WindRule = WindRule::NonZero) const;
-    bool strokeContains(StrokeStyleApplier&, const FloatPoint&) const;
+    bool strokeContains(const FloatPoint&, const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
+
     // fastBoundingRect() should equal or contain boundingRect(); boundingRect()
     // should perfectly bound the points within the path.
     FloatRect boundingRect() const;
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
-    FloatRect strokeBoundingRect(StrokeStyleApplier* = 0) const;
+    FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
 
     WEBCORE_EXPORT size_t elementCount() const;
     float length() const;

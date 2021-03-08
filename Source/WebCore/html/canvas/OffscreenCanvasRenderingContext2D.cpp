@@ -74,7 +74,7 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
     // the "inherit" and "initial" values must be ignored. parseFontWorkerSafe() ignores these.
-    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode));
+    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!fontRaw)
         return;
 

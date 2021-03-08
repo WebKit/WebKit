@@ -33,7 +33,6 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "StrokeStyleApplier.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
@@ -233,8 +232,10 @@ bool Path::contains(const FloatPoint &point, WindRule rule) const
     return ret;
 }
 
-bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) const
+bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
+    ASSERT(strokeStyleApplier);
+
     if (isNull())
         return false;
 
@@ -245,11 +246,11 @@ bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) 
     CGContextAddPath(context, platformPath());
 
     GraphicsContext graphicsContext(context);
-    applier.strokeStyle(&graphicsContext);
+    strokeStyleApplier(graphicsContext);
 
     bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
     CGContextRestoreGState(context);
-    
+
     return hitSuccess;
 }
 
@@ -293,7 +294,7 @@ FloatRect Path::fastBoundingRectSlowCase() const
     return zeroRectIfNull(CGPathGetBoundingBox(platformPath()));
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
+FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     if (isNull())
         return CGRectZero;
@@ -304,9 +305,9 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
     CGContextBeginPath(context);
     CGContextAddPath(context, platformPath());
 
-    if (applier) {
+    if (strokeStyleApplier) {
         GraphicsContext graphicsContext(context);
-        applier->strokeStyle(&graphicsContext);
+        strokeStyleApplier(graphicsContext);
     }
 
     CGContextReplacePathWithStrokedPath(context);

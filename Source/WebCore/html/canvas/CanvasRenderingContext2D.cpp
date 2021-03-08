@@ -108,7 +108,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
     // the "inherit" and "initial" values must be ignored. parseFontWorkerSafe() ignores these.
-    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode));
+    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!fontRaw)
         return;
 
@@ -121,7 +121,8 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     if (auto* computedStyle = canvas().computedStyle())
         fontDescription = FontCascadeDescription { computedStyle->fontDescription() };
     else {
-        fontDescription.setOneFamily(DefaultFontFamily);
+        static NeverDestroyed<AtomString> family = DefaultFontFamily;
+        fontDescription.setOneFamily(family.get());
         fontDescription.setSpecifiedSize(DefaultFontSize);
         fontDescription.setComputedSize(DefaultFontSize);
     }
@@ -181,15 +182,10 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
         ResourceLoadObserver::shared().logCanvasRead(canvas.document());
     }
 
-    Ref<TextMetrics> metrics = TextMetrics::create();
-
-    String normalizedText = text;
-    normalizeSpaces(normalizedText);
-
+    String normalizedText = normalizeSpaces(text);
     const RenderStyle* computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
-    bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
-
+    bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
     TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
     return measureTextInternal(textRun);
 }
@@ -207,16 +203,13 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasWriteOrMeasure(this->canvas().document(), text);
 
-    if (!canDrawTextWithParams(x, y, fill, maxWidth))
+    if (!canDrawText(x, y, fill, maxWidth))
         return;
 
-    String normalizedText = text;
-    normalizeSpaces(normalizedText);
-
+    String normalizedText = normalizeSpaces(text);
     const RenderStyle* computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
-    bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
-
+    bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
     TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
 }

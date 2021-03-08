@@ -64,7 +64,6 @@
 #include "ScriptDisallowedScope.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "StrokeStyleApplier.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "TextMetrics.h"
@@ -84,38 +83,146 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext2DBase);
 
 #if USE(CG)
-const ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;
+static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;
 #else
-const ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Medium;
+static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Medium;
 #endif
 
 const int CanvasRenderingContext2DBase::DefaultFontSize = 10;
 const char* const CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif";
-const char* const CanvasRenderingContext2DBase::DefaultFont = "10px sans-serif";
+static constexpr ASCIILiteral DefaultFont = "10px sans-serif"_s;
 
-class CanvasStrokeStyleApplier : public StrokeStyleApplier {
-public:
-    CanvasStrokeStyleApplier(CanvasRenderingContext2DBase* canvasContext)
-        : m_canvasContext(canvasContext)
-    {
+static CanvasLineCap toCanvasLineCap(LineCap lineCap)
+{
+    switch (lineCap) {
+    case ButtCap:
+        return CanvasLineCap::Butt;
+    case RoundCap:
+        return CanvasLineCap::Round;
+    case SquareCap:
+        return CanvasLineCap::Square;
     }
+    ASSERT_NOT_REACHED();
+    return CanvasLineCap::Butt;
+}
 
-    void strokeStyle(GraphicsContext* c) override
-    {
-        c->setStrokeThickness(m_canvasContext->lineWidth());
-        c->setLineCap(m_canvasContext->getLineCap());
-        c->setLineJoin(m_canvasContext->getLineJoin());
-        c->setMiterLimit(m_canvasContext->miterLimit());
-        const Vector<float>& lineDash = m_canvasContext->getLineDash();
-        DashArray convertedLineDash(lineDash.size());
-        for (size_t i = 0; i < lineDash.size(); ++i)
-            convertedLineDash[i] = static_cast<DashArrayElement>(lineDash[i]);
-        c->setLineDash(convertedLineDash, m_canvasContext->lineDashOffset());
+static LineCap fromCanvasLineCap(CanvasLineCap canvasLineCap)
+{
+    switch (canvasLineCap) {
+    case CanvasLineCap::Butt:
+        return ButtCap;
+    case CanvasLineCap::Round:
+        return RoundCap;
+    case CanvasLineCap::Square:
+        return SquareCap;
     }
+    ASSERT_NOT_REACHED();
+    return ButtCap;
+}
 
-private:
-    CanvasRenderingContext2DBase* m_canvasContext;
-};
+static CanvasLineJoin toCanvasLineJoin(LineJoin lineJoin)
+{
+    switch (lineJoin) {
+    case RoundJoin:
+        return CanvasLineJoin::Round;
+    case BevelJoin:
+        return CanvasLineJoin::Bevel;
+    case MiterJoin:
+        return CanvasLineJoin::Miter;
+    }
+    ASSERT_NOT_REACHED();
+    return CanvasLineJoin::Round;
+}
+
+static LineJoin fromCanvasLineJoin(CanvasLineJoin canvasLineJoin)
+{
+    switch (canvasLineJoin) {
+    case CanvasLineJoin::Round:
+        return RoundJoin;
+    case CanvasLineJoin::Bevel:
+        return BevelJoin;
+    case CanvasLineJoin::Miter:
+        return MiterJoin;
+    }
+    ASSERT_NOT_REACHED();
+    return RoundJoin;
+}
+
+static CanvasTextAlign toCanvasTextAlign(TextAlign textAlign)
+{
+    switch (textAlign) {
+    case StartTextAlign:
+        return CanvasTextAlign::Start;
+    case EndTextAlign:
+        return CanvasTextAlign::End;
+    case LeftTextAlign:
+        return CanvasTextAlign::Left;
+    case RightTextAlign:
+        return CanvasTextAlign::Right;
+    case CenterTextAlign:
+        return CanvasTextAlign::Center;
+    }
+    ASSERT_NOT_REACHED();
+    return CanvasTextAlign::Start;
+}
+
+static TextAlign fromCanvasTextAlign(CanvasTextAlign canvasTextAlign)
+{
+    switch (canvasTextAlign) {
+    case CanvasTextAlign::Start:
+        return StartTextAlign;
+    case CanvasTextAlign::End:
+        return EndTextAlign;
+    case CanvasTextAlign::Left:
+        return LeftTextAlign;
+    case CanvasTextAlign::Right:
+        return RightTextAlign;
+    case CanvasTextAlign::Center:
+        return CenterTextAlign;
+    }
+    ASSERT_NOT_REACHED();
+    return StartTextAlign;
+}
+
+static CanvasTextBaseline toCanvasTextBaseline(TextBaseline textBaseline)
+{
+    switch (textBaseline) {
+    case TopTextBaseline:
+        return CanvasTextBaseline::Top;
+    case HangingTextBaseline:
+        return CanvasTextBaseline::Hanging;
+    case MiddleTextBaseline:
+        return CanvasTextBaseline::Middle;
+    case AlphabeticTextBaseline:
+        return CanvasTextBaseline::Alphabetic;
+    case IdeographicTextBaseline:
+        return CanvasTextBaseline::Ideographic;
+    case BottomTextBaseline:
+        return CanvasTextBaseline::Bottom;
+    }
+    ASSERT_NOT_REACHED();
+    return CanvasTextBaseline::Top;
+}
+
+static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTextBaseline)
+{
+    switch (canvasTextBaseline) {
+    case CanvasTextBaseline::Top:
+        return TopTextBaseline;
+    case CanvasTextBaseline::Hanging:
+        return HangingTextBaseline;
+    case CanvasTextBaseline::Middle:
+        return MiddleTextBaseline;
+    case CanvasTextBaseline::Alphabetic:
+        return AlphabeticTextBaseline;
+    case CanvasTextBaseline::Ideographic:
+        return IdeographicTextBaseline;
+    case CanvasTextBaseline::Bottom:
+        return BottomTextBaseline;
+    }
+    ASSERT_NOT_REACHED();
+    return TopTextBaseline;
+}
 
 CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, bool usesCSSCompatibilityParseMode)
     : CanvasRenderingContext(canvas)
@@ -188,64 +295,59 @@ CanvasRenderingContext2DBase::State::State()
 {
 }
 
-CanvasRenderingContext2DBase::State::State(const State& other)
-    : unparsedStrokeColor(other.unparsedStrokeColor)
-    , unparsedFillColor(other.unparsedFillColor)
-    , strokeStyle(other.strokeStyle)
-    , fillStyle(other.fillStyle)
-    , lineWidth(other.lineWidth)
-    , lineCap(other.lineCap)
-    , lineJoin(other.lineJoin)
-    , miterLimit(other.miterLimit)
-    , shadowOffset(other.shadowOffset)
-    , shadowBlur(other.shadowBlur)
-    , shadowColor(other.shadowColor)
-    , globalAlpha(other.globalAlpha)
-    , globalComposite(other.globalComposite)
-    , globalBlend(other.globalBlend)
-    , transform(other.transform)
-    , hasInvertibleTransform(other.hasInvertibleTransform)
-    , lineDashOffset(other.lineDashOffset)
-    , imageSmoothingEnabled(other.imageSmoothingEnabled)
-    , imageSmoothingQuality(other.imageSmoothingQuality)
-    , textAlign(other.textAlign)
-    , textBaseline(other.textBaseline)
-    , direction(other.direction)
-    , unparsedFont(other.unparsedFont)
-    , font(other.font)
+String CanvasRenderingContext2DBase::State::fontString() const
 {
+    if (!font.realized())
+        return DefaultFont;
+
+    StringBuilder serializedFont;
+    const auto& font = this->font.fontDescription();
+
+    auto italic = font.italic() ? "italic " : "";
+    auto smallCaps = font.variantCaps() == FontVariantCaps::Small ? "small-caps " : "";
+    serializedFont.append(italic, smallCaps, font.computedPixelSize(), "px");
+
+    for (unsigned i = 0; i < font.familyCount(); ++i) {
+        StringView family = font.familyAt(i);
+        if (family.startsWith("-webkit-"))
+            family = family.substring(8);
+
+        auto separator = i ? ", " : " ";
+        auto quote = family.contains(' ') ? "\"" : "";
+        serializedFont.append(separator, quote, family, quote);
+    }
+
+    return serializedFont.toString();
 }
 
-CanvasRenderingContext2DBase::State& CanvasRenderingContext2DBase::State::operator=(const State& other)
+CanvasLineCap CanvasRenderingContext2DBase::State::canvasLineCap() const
 {
-    if (this == &other)
-        return *this;
+    return toCanvasLineCap(lineCap);
+}
 
-    unparsedStrokeColor = other.unparsedStrokeColor;
-    unparsedFillColor = other.unparsedFillColor;
-    strokeStyle = other.strokeStyle;
-    fillStyle = other.fillStyle;
-    lineWidth = other.lineWidth;
-    lineCap = other.lineCap;
-    lineJoin = other.lineJoin;
-    miterLimit = other.miterLimit;
-    shadowOffset = other.shadowOffset;
-    shadowBlur = other.shadowBlur;
-    shadowColor = other.shadowColor;
-    globalAlpha = other.globalAlpha;
-    globalComposite = other.globalComposite;
-    globalBlend = other.globalBlend;
-    transform = other.transform;
-    hasInvertibleTransform = other.hasInvertibleTransform;
-    imageSmoothingEnabled = other.imageSmoothingEnabled;
-    imageSmoothingQuality = other.imageSmoothingQuality;
-    textAlign = other.textAlign;
-    textBaseline = other.textBaseline;
-    direction = other.direction;
-    unparsedFont = other.unparsedFont;
-    font = other.font;
+CanvasLineJoin CanvasRenderingContext2DBase::State::canvasLineJoin() const
+{
+    return toCanvasLineJoin(lineJoin);
+}
 
-    return *this;
+CanvasTextAlign CanvasRenderingContext2DBase::State::canvasTextAlign() const
+{
+    return toCanvasTextAlign(textAlign);
+}
+
+CanvasTextBaseline CanvasRenderingContext2DBase::State::canvasTextBaseline() const
+{
+    return toCanvasTextBaseline(textBaseline);
+}
+
+String CanvasRenderingContext2DBase::State::globalCompositeOperationString() const
+{
+    return compositeOperatorName(globalComposite, globalBlend);
+}
+
+String CanvasRenderingContext2DBase::State::shadowColorString() const
+{
+    return serializationForHTML(shadowColor);
 }
 
 CanvasRenderingContext2DBase::FontProxy::~FontProxy()
@@ -416,11 +518,6 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasStyle style)
     state.unparsedFillColor = String();
 }
 
-float CanvasRenderingContext2DBase::lineWidth() const
-{
-    return state().lineWidth;
-}
-
 void CanvasRenderingContext2DBase::setLineWidth(float width)
 {
     if (!(std::isfinite(width) && width > 0))
@@ -433,41 +530,6 @@ void CanvasRenderingContext2DBase::setLineWidth(float width)
     if (!c)
         return;
     c->setStrokeThickness(width);
-}
-
-static CanvasLineCap toCanvasLineCap(LineCap lineCap)
-{
-    switch (lineCap) {
-    case ButtCap:
-        return CanvasLineCap::Butt;
-    case RoundCap:
-        return CanvasLineCap::Round;
-    case SquareCap:
-        return CanvasLineCap::Square;
-    }
-
-    ASSERT_NOT_REACHED();
-    return CanvasLineCap::Butt;
-}
-
-static LineCap fromCanvasLineCap(CanvasLineCap canvasLineCap)
-{
-    switch (canvasLineCap) {
-    case CanvasLineCap::Butt:
-        return ButtCap;
-    case CanvasLineCap::Round:
-        return RoundCap;
-    case CanvasLineCap::Square:
-        return SquareCap;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return ButtCap;
-}
-
-CanvasLineCap CanvasRenderingContext2DBase::lineCap() const
-{
-    return toCanvasLineCap(state().lineCap);
 }
 
 void CanvasRenderingContext2DBase::setLineCap(CanvasLineCap canvasLineCap)
@@ -498,41 +560,6 @@ void CanvasRenderingContext2DBase::setLineCap(const String& stringValue)
     setLineCap(cap);
 }
 
-static CanvasLineJoin toCanvasLineJoin(LineJoin lineJoin)
-{
-    switch (lineJoin) {
-    case RoundJoin:
-        return CanvasLineJoin::Round;
-    case BevelJoin:
-        return CanvasLineJoin::Bevel;
-    case MiterJoin:
-        return CanvasLineJoin::Miter;
-    }
-
-    ASSERT_NOT_REACHED();
-    return CanvasLineJoin::Round;
-}
-
-static LineJoin fromCanvasLineJoin(CanvasLineJoin canvasLineJoin)
-{
-    switch (canvasLineJoin) {
-    case CanvasLineJoin::Round:
-        return RoundJoin;
-    case CanvasLineJoin::Bevel:
-        return BevelJoin;
-    case CanvasLineJoin::Miter:
-        return MiterJoin;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return RoundJoin;
-}
-
-CanvasLineJoin CanvasRenderingContext2DBase::lineJoin() const
-{
-    return toCanvasLineJoin(state().lineJoin);
-}
-
 void CanvasRenderingContext2DBase::setLineJoin(CanvasLineJoin canvasLineJoin)
 {
     auto lineJoin = fromCanvasLineJoin(canvasLineJoin);
@@ -561,11 +588,6 @@ void CanvasRenderingContext2DBase::setLineJoin(const String& stringValue)
     setLineJoin(join);
 }
 
-float CanvasRenderingContext2DBase::miterLimit() const
-{
-    return state().miterLimit;
-}
-
 void CanvasRenderingContext2DBase::setMiterLimit(float limit)
 {
     if (!(std::isfinite(limit) && limit > 0))
@@ -580,11 +602,6 @@ void CanvasRenderingContext2DBase::setMiterLimit(float limit)
     c->setMiterLimit(limit);
 }
 
-float CanvasRenderingContext2DBase::shadowOffsetX() const
-{
-    return state().shadowOffset.width();
-}
-
 void CanvasRenderingContext2DBase::setShadowOffsetX(float x)
 {
     if (!std::isfinite(x))
@@ -594,11 +611,6 @@ void CanvasRenderingContext2DBase::setShadowOffsetX(float x)
     realizeSaves();
     modifiableState().shadowOffset.setWidth(x);
     applyShadow();
-}
-
-float CanvasRenderingContext2DBase::shadowOffsetY() const
-{
-    return state().shadowOffset.height();
 }
 
 void CanvasRenderingContext2DBase::setShadowOffsetY(float y)
@@ -612,11 +624,6 @@ void CanvasRenderingContext2DBase::setShadowOffsetY(float y)
     applyShadow();
 }
 
-float CanvasRenderingContext2DBase::shadowBlur() const
-{
-    return state().shadowBlur;
-}
-
 void CanvasRenderingContext2DBase::setShadowBlur(float blur)
 {
     if (!(std::isfinite(blur) && blur >= 0))
@@ -626,11 +633,6 @@ void CanvasRenderingContext2DBase::setShadowBlur(float blur)
     realizeSaves();
     modifiableState().shadowBlur = blur;
     applyShadow();
-}
-
-String CanvasRenderingContext2DBase::shadowColor() const
-{
-    return serializationForHTML(state().shadowColor);
 }
 
 void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
@@ -643,11 +645,6 @@ void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
     realizeSaves();
     modifiableState().shadowColor = color;
     applyShadow();
-}
-
-const Vector<float>& CanvasRenderingContext2DBase::getLineDash() const
-{
-    return state().lineDash;
 }
 
 static bool lineDashSequenceIsValid(const Vector<float>& dash)
@@ -685,11 +682,6 @@ void CanvasRenderingContext2DBase::setWebkitLineDash(const Vector<float>& dash)
     applyLineDash();
 }
 
-float CanvasRenderingContext2DBase::lineDashOffset() const
-{
-    return state().lineDashOffset;
-}
-
 void CanvasRenderingContext2DBase::setLineDashOffset(float offset)
 {
     if (!std::isfinite(offset) || state().lineDashOffset == offset)
@@ -711,11 +703,6 @@ void CanvasRenderingContext2DBase::applyLineDash() const
     c->setLineDash(convertedLineDash, state().lineDashOffset);
 }
 
-float CanvasRenderingContext2DBase::globalAlpha() const
-{
-    return state().globalAlpha;
-}
-
 void CanvasRenderingContext2DBase::setGlobalAlpha(float alpha)
 {
     if (!(alpha >= 0 && alpha <= 1))
@@ -728,11 +715,6 @@ void CanvasRenderingContext2DBase::setGlobalAlpha(float alpha)
     if (!c)
         return;
     c->setAlpha(alpha);
-}
-
-String CanvasRenderingContext2DBase::globalCompositeOperation() const
-{
-    return compositeOperatorName(state().globalComposite, state().globalBlend);
 }
 
 void CanvasRenderingContext2DBase::setGlobalCompositeOperation(const String& operation)
@@ -1007,7 +989,7 @@ static bool validateRectForCanvas(float& x, float& y, float& width, float& heigh
     return true;
 }
 
-bool CanvasRenderingContext2DBase::isFullCanvasCompositeMode(CompositeOperator op)
+static bool isFullCanvasCompositeMode(CompositeOperator op)
 {
     // See 4.8.11.1.3 Compositing
     // CompositeOperator::SourceAtop and CompositeOperator::DestinationOut are not listed here as the platforms already
@@ -1165,14 +1147,13 @@ bool CanvasRenderingContext2DBase::isPointInStroke(Path2D& path, float x, float 
 
 bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, float x, float y, CanvasFillRule windingRule)
 {
-    auto* c = drawingContext();
-    if (!c)
+    if (!drawingContext())
         return false;
-    if (!state().hasInvertibleTransform)
+    auto& state = this->state();
+    if (!state.hasInvertibleTransform)
         return false;
 
-    auto transformedPoint = state().transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
-
+    auto transformedPoint = state.transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
@@ -1181,18 +1162,27 @@ bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, float
 
 bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, float x, float y)
 {
-    auto* c = drawingContext();
-    if (!c)
+    if (!drawingContext())
         return false;
-    if (!state().hasInvertibleTransform)
+    auto& state = this->state();
+    if (!state.hasInvertibleTransform)
         return false;
 
-    auto transformedPoint = state().transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
+    auto transformedPoint = state.transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
-    CanvasStrokeStyleApplier applier(this);
-    return path.strokeContains(applier, transformedPoint);
+    return path.strokeContains(transformedPoint, [&state] (GraphicsContext& context) {
+        context.setStrokeThickness(state.lineWidth);
+        context.setLineCap(state.lineCap);
+        context.setLineJoin(state.lineJoin);
+        context.setMiterLimit(state.miterLimit);
+        auto& lineDash = state.lineDash;
+        DashArray convertedLineDash(lineDash.size());
+        for (size_t i = 0; i < lineDash.size(); ++i)
+            convertedLineDash[i] = static_cast<DashArrayElement>(lineDash[i]);
+        context.setLineDash(convertedLineDash, state.lineDashOffset);
+    });
 }
 
 void CanvasRenderingContext2DBase::clearRect(float x, float y, float width, float height)
@@ -2010,24 +2000,22 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(T
 
 void CanvasRenderingContext2DBase::didDrawEntireCanvas()
 {
-    didDraw(FloatRect(FloatPoint::zero(), canvasBase().size()), CanvasDidDrawApplyClip);
+    didDraw(FloatRect(FloatPoint::zero(), canvasBase().size()), DidDrawOption::ApplyClip);
 }
 
-void CanvasRenderingContext2DBase::didDraw(const FloatRect& r, unsigned options)
+void CanvasRenderingContext2DBase::didDraw(const FloatRect& r, OptionSet<DidDrawOption> options)
 {
-    auto* c = drawingContext();
-    if (!c)
+    if (!drawingContext())
         return;
     if (!state().hasInvertibleTransform)
         return;
 
     FloatRect dirtyRect = r;
-    if (options & CanvasDidDrawApplyTransform) {
-        AffineTransform ctm = state().transform;
-        dirtyRect = ctm.mapRect(r);
-    }
 
-    if (options & CanvasDidDrawApplyShadow && state().shadowColor.isVisible()) {
+    if (options.contains(DidDrawOption::ApplyTransform))
+        dirtyRect = state().transform.mapRect(dirtyRect);
+
+    if (options.contains(DidDrawOption::ApplyShadow) && state().shadowColor.isVisible()) {
         // The shadow gets applied after transformation
         FloatRect shadowRect(dirtyRect);
         shadowRect.move(state().shadowOffset);
@@ -2035,11 +2023,7 @@ void CanvasRenderingContext2DBase::didDraw(const FloatRect& r, unsigned options)
         dirtyRect.unite(shadowRect);
     }
 
-    if (options & CanvasDidDrawApplyClip) {
-        // FIXME: apply the current clip to the rectangle. Unfortunately we can't get the clip
-        // back out of the GraphicsContext, so to take clip into account for incremental painting,
-        // we'd have to keep the clip path around.
-    }
+    // FIXME: This does not apply the clip because we have no way of reading the clip out of the GraphicsContext.
 
     canvasBase().didDraw(dirtyRect);
 }
@@ -2158,13 +2142,8 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(float 
 
     auto imageData = buffer->getImageData(AlphaPremultiplication::Unpremultiplied, imageDataRect);
     if (!imageData) {
-        StringBuilder consoleMessage;
-        consoleMessage.appendLiteral("Unable to get image data from canvas. Requested size was ");
-        consoleMessage.appendNumber(imageDataRect.width());
-        consoleMessage.appendLiteral(" x ");
-        consoleMessage.appendNumber(imageDataRect.height());
-
-        canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, consoleMessage.toString());
+        canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
+            makeString("Unable to get image data from canvas. Requested size was ", imageDataRect.width(), " x ", imageDataRect.height()));
         return Exception { InvalidStateError };
     }
 
@@ -2210,7 +2189,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float
     if (!sourceRect.isEmpty())
         buffer->putImageData(AlphaPremultiplication::Unpremultiplied, data, sourceRect, IntPoint(destOffset));
 
-    didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
+    didDraw(destRect, { }); // ignore transform, shadow and clip
 }
 
 void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const
@@ -2242,11 +2221,6 @@ static inline InterpolationQuality smoothingToInterpolationQuality(ImageSmoothin
     return InterpolationQuality::Low;
 };
 
-auto CanvasRenderingContext2DBase::imageSmoothingQuality() const -> ImageSmoothingQuality
-{
-    return state().imageSmoothingQuality;
-}
-
 void CanvasRenderingContext2DBase::setImageSmoothingQuality(ImageSmoothingQuality quality)
 {
     if (quality == state().imageSmoothingQuality)
@@ -2260,11 +2234,6 @@ void CanvasRenderingContext2DBase::setImageSmoothingQuality(ImageSmoothingQualit
 
     if (auto* context = drawingContext())
         context->setImageInterpolationQuality(smoothingToInterpolationQuality(quality));
-}
-
-bool CanvasRenderingContext2DBase::imageSmoothingEnabled() const
-{
-    return state().imageSmoothingEnabled;
 }
 
 void CanvasRenderingContext2DBase::setImageSmoothingEnabled(bool enabled)
@@ -2289,82 +2258,6 @@ Ref<Path2D> CanvasRenderingContext2DBase::getPath() const
     return Path2D::create(m_path);
 }
 
-String CanvasRenderingContext2DBase::font() const
-{
-    if (!state().font.realized())
-        return DefaultFont;
-
-    StringBuilder serializedFont;
-    const auto& fontDescription = state().font.fontDescription();
-
-    if (fontDescription.italic())
-        serializedFont.appendLiteral("italic ");
-    if (fontDescription.variantCaps() == FontVariantCaps::Small)
-        serializedFont.appendLiteral("small-caps ");
-
-    serializedFont.appendNumber(fontDescription.computedPixelSize());
-    serializedFont.appendLiteral("px");
-
-    for (unsigned i = 0; i < fontDescription.familyCount(); ++i) {
-        if (i)
-            serializedFont.append(',');
-
-        // FIXME: We should append family directly to serializedFont rather than building a temporary string.
-        String family = fontDescription.familyAt(i);
-        if (family.startsWith("-webkit-"))
-            family = family.substring(8);
-        if (family.contains(' '))
-            family = makeString('"', family, '"');
-
-        serializedFont.append(' ', family);
-    }
-
-    return serializedFont.toString();
-}
-
-static CanvasTextAlign toCanvasTextAlign(TextAlign textAlign)
-{
-    switch (textAlign) {
-    case StartTextAlign:
-        return CanvasTextAlign::Start;
-    case EndTextAlign:
-        return CanvasTextAlign::End;
-    case LeftTextAlign:
-        return CanvasTextAlign::Left;
-    case RightTextAlign:
-        return CanvasTextAlign::Right;
-    case CenterTextAlign:
-        return CanvasTextAlign::Center;
-    }
-
-    ASSERT_NOT_REACHED();
-    return CanvasTextAlign::Start;
-}
-
-static TextAlign fromCanvasTextAlign(CanvasTextAlign canvasTextAlign)
-{
-    switch (canvasTextAlign) {
-    case CanvasTextAlign::Start:
-        return StartTextAlign;
-    case CanvasTextAlign::End:
-        return EndTextAlign;
-    case CanvasTextAlign::Left:
-        return LeftTextAlign;
-    case CanvasTextAlign::Right:
-        return RightTextAlign;
-    case CanvasTextAlign::Center:
-        return CenterTextAlign;
-    }
-
-    ASSERT_NOT_REACHED();
-    return StartTextAlign;
-}
-
-CanvasTextAlign CanvasRenderingContext2DBase::textAlign() const
-{
-    return toCanvasTextAlign(state().textAlign);
-}
-
 void CanvasRenderingContext2DBase::setTextAlign(CanvasTextAlign canvasTextAlign)
 {
     auto textAlign = fromCanvasTextAlign(canvasTextAlign);
@@ -2372,53 +2265,6 @@ void CanvasRenderingContext2DBase::setTextAlign(CanvasTextAlign canvasTextAlign)
         return;
     realizeSaves();
     modifiableState().textAlign = textAlign;
-}
-
-static CanvasTextBaseline toCanvasTextBaseline(TextBaseline textBaseline)
-{
-    switch (textBaseline) {
-    case TopTextBaseline:
-        return CanvasTextBaseline::Top;
-    case HangingTextBaseline:
-        return CanvasTextBaseline::Hanging;
-    case MiddleTextBaseline:
-        return CanvasTextBaseline::Middle;
-    case AlphabeticTextBaseline:
-        return CanvasTextBaseline::Alphabetic;
-    case IdeographicTextBaseline:
-        return CanvasTextBaseline::Ideographic;
-    case BottomTextBaseline:
-        return CanvasTextBaseline::Bottom;
-    }
-
-    ASSERT_NOT_REACHED();
-    return CanvasTextBaseline::Top;
-}
-
-static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTextBaseline)
-{
-    switch (canvasTextBaseline) {
-    case CanvasTextBaseline::Top:
-        return TopTextBaseline;
-    case CanvasTextBaseline::Hanging:
-        return HangingTextBaseline;
-    case CanvasTextBaseline::Middle:
-        return MiddleTextBaseline;
-    case CanvasTextBaseline::Alphabetic:
-        return AlphabeticTextBaseline;
-    case CanvasTextBaseline::Ideographic:
-        return IdeographicTextBaseline;
-    case CanvasTextBaseline::Bottom:
-        return BottomTextBaseline;
-    }
-
-    ASSERT_NOT_REACHED();
-    return TopTextBaseline;
-}
-
-CanvasTextBaseline CanvasRenderingContext2DBase::textBaseline() const
-{
-    return toCanvasTextBaseline(state().textBaseline);
 }
 
 void CanvasRenderingContext2DBase::setTextBaseline(CanvasTextBaseline canvasTextBaseline)
@@ -2439,7 +2285,7 @@ void CanvasRenderingContext2DBase::setDirection(Direction direction)
     modifiableState().direction = direction;
 }
 
-bool CanvasRenderingContext2DBase::canDrawTextWithParams(float x, float y, bool fill, Optional<float> maxWidth)
+bool CanvasRenderingContext2DBase::canDrawText(float x, float y, bool fill, Optional<float> maxWidth)
 {
     if (!fontProxy()->realized())
         return false;
@@ -2479,11 +2325,11 @@ static inline bool isSpaceThatNeedsReplacing(UChar c)
     return c == 0x0009 || c == 0x000A || c == 0x000B || c == 0x000C || c == 0x000D;
 }
 
-void CanvasRenderingContext2DBase::normalizeSpaces(String& text)
+String CanvasRenderingContext2DBase::normalizeSpaces(const String& text)
 {
     size_t i = text.find(isSpaceThatNeedsReplacing);
     if (i == notFound)
-        return;
+        return text;
 
     unsigned textLength = text.length();
     Vector<UChar> charVector(textLength);
@@ -2495,20 +2341,17 @@ void CanvasRenderingContext2DBase::normalizeSpaces(String& text)
         if (isSpaceThatNeedsReplacing(charVector[i]))
             charVector[i] = ' ';
     }
-    text = String::adopt(WTFMove(charVector));
+    return String::adopt(WTFMove(charVector));
 }
 
 void CanvasRenderingContext2DBase::drawText(const String& text, float x, float y, bool fill, Optional<float> maxWidth)
 {
-    if (!canDrawTextWithParams(x, y, fill, maxWidth))
+    if (!canDrawText(x, y, fill, maxWidth))
         return;
 
-    String normalizedText = text;
-    normalizeSpaces(normalizedText);
-
+    String normalizedText = normalizeSpaces(text);
     auto direction = (state().direction == Direction::Rtl) ? TextDirection::RTL : TextDirection::LTR;
     TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, false, true);
-
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
 }
 
@@ -2626,12 +2469,9 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, flo
 
 Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const String& text)
 {
-    String normalizedText = text;
-    normalizeSpaces(normalizedText);
-
+    String normalizedText = normalizeSpaces(text);
     auto direction = (state().direction == Direction::Rtl) ? TextDirection::RTL : TextDirection::LTR;
     TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, false, true);
-
     return measureTextInternal(textRun);
 }
 

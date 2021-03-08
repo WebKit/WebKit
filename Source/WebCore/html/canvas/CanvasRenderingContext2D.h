@@ -26,8 +26,6 @@
 #pragma once
 
 #include "CanvasRenderingContext2DBase.h"
-#include "CanvasTextAlign.h"
-#include "CanvasTextBaseline.h"
 #include "HTMLCanvasElement.h"
 #include <memory>
 
@@ -47,8 +45,6 @@ public:
     void drawFocusIfNeeded(Element&);
     void drawFocusIfNeeded(Path2D&, Element&);
 
-    float webkitBackingStorePixelRatio() const { return 1; }
-
     void setFont(const String&);
 
     CanvasDirection direction() const;
@@ -57,11 +53,10 @@ public:
     void strokeText(const String& text, float x, float y, Optional<float> maxWidth = WTF::nullopt);
     Ref<TextMetrics> measureText(const String& text);
 
-    bool is2d() const override { return true; }
-
 private:
     CanvasRenderingContext2D(CanvasBase&, bool usesCSSCompatibilityParseMode);
 
+    bool is2d() const final { return true; }
     const FontProxy* fontProxy() final;
 
     void drawTextInternal(const String& text, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);

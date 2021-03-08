@@ -173,7 +173,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
             userspaceTransform = transformOnNonScalingStroke(&renderer, gradientData.userspaceTransform);
         context->setAlpha(svgStyle.strokeOpacity());
         context->setStrokeGradient(*gradientData.gradient, userspaceTransform);
-        SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
+        SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
     }
 
     return true;

@@ -409,14 +409,36 @@ function performSavePreActions() {
     ctx.restore();
     ctx.restore();
 
-    function saveFillStyle(value) {
-        ctx.save();
-        ctx.fillStyle = value;
+    function saveAndSet(translateX, translateY, globalAlpha, globalCompositeOperation, lineWidth, lineCap, lineJoin, miterLimit, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor, lineDash, lineDashOffset, font, textAlign, textBaseline, direction, strokeStyle, fillStyle, imageSmoothingEnabled, imageSmoothingQuality) {
+        ctx.save()
+
+        ctx.translate(translateX, translateY)
+        ctx.globalAlpha = globalAlpha
+        ctx.globalCompositeOperation = globalCompositeOperation
+        ctx.lineWidth = lineWidth
+        ctx.lineCap = lineCap
+        ctx.lineJoin = lineJoin
+        ctx.miterLimit = miterLimit
+        ctx.shadowOffsetX = shadowOffsetX
+        ctx.shadowOffsetY = shadowOffsetY
+        ctx.shadowBlur = shadowBlur
+        ctx.shadowColor = shadowColor
+        ctx.setLineDash(lineDash)
+        ctx.lineDashOffset = lineDashOffset
+        ctx.font = font
+        ctx.textAlign = textAlign
+        ctx.textBaseline = textBaseline
+        ctx.direction = direction
+        ctx.strokeStyle = strokeStyle
+        ctx.fillStyle = fillStyle
+        ctx.imageSmoothingEnabled = imageSmoothingEnabled
+        ctx.imageSmoothingQuality = imageSmoothingQuality
+        // FIXME: Change the path, too.
     }
 
-    saveFillStyle("#ff0000");
-    saveFillStyle("#00ff00");
-    saveFillStyle("#0000ff");
+    saveAndSet(1, 0, 0.5, "source-in", 0.5, "round", "bevel", 20, 2, 3, 4, "#100000", [1, 2], 10, "20px sans-serif", "left", "top", "ltr", pattern, linearGradient, false, "medium")
+    saveAndSet(0, 1, 0, "difference", 2, "square", "round", 30, 4, 5, 6, "#001000", [3, 4], 11, "30px cursive", "right", "hanging", "inherit", linearGradient, pattern, true, "high")
+    saveAndSet(-1, -2, 0.75, "source-over", 3, "round", "bevel", 40, 6, 7, 8, "#000010", [5, 6], 12, "40px fantasy", "center", "ideographic", "rtl", "#200000", "#300000", false, "medium")
 }
 
 function performSavePostActions() {
