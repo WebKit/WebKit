@@ -227,12 +227,6 @@ bool defaultEnforceCSSMIMETypeInNoQuirksMode()
     return needsQuirk;
 }
 
-bool defaultNeedsIsLoadingInAPISenseQuirk()
-{
-    static bool needsQuirk = _CFAppVersionCheckLessThan(CFSTR("com.apple.iAdProducer"), -1, 2.1);
-    return needsQuirk;
-}
-
 #endif // PLATFORM(MAC)
 
 bool defaultAttachmentElementEnabled()

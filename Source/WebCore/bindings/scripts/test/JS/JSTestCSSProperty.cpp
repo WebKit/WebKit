@@ -193,7 +193,7 @@ static inline bool setJSTestCSSProperty_propertySetter(JSGlobalObject& lexicalGl
     auto nativeValue = convert<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
-        return impl.setPropertyValueInternal(CSSPropertyPropertyName, WTFMove(nativeValue));
+        return impl.setPropertyInternal(CSSPropertyPropertyName, WTFMove(nativeValue), false);
     });
     return true;
 }

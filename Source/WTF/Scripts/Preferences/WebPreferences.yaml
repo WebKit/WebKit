@@ -1556,18 +1556,6 @@ NeedsFrameNameFallbackToIdQuirk:
     WebCore:
       default: false
 
-NeedsIsLoadingInAPISenseQuirk:
-  comment: Some apps needs isLoadingInAPISense to account for active subresource loaders.
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      PLATFORM(MAC): WebKit::defaultNeedsIsLoadingInAPISenseQuirk()
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 NeedsKeyboardEventDisambiguationQuirks:
   comment: This is a quirk we are pro-actively applying to old applications. It changes
     keyboard event dispatching, making keyIdentifier available on keypress events,

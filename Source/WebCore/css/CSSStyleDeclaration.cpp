@@ -212,20 +212,6 @@ CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(co
     return propertyIDFromJavaScriptCSSPropertyName(propertyName, nullptr);
 }
 
-ExceptionOr<void> CSSStyleDeclaration::setPropertyValueInternal(CSSPropertyID propertyID, String value)
-{
-    bool important = false;
-    if (DeprecatedGlobalSettings::shouldRespectPriorityInCSSAttributeSetters()) {
-        auto importantIndex = value.findIgnoringASCIICase("!important");
-        if (importantIndex && importantIndex != notFound) {
-            important = true;
-            value = value.left(importantIndex - 1);
-        }
-    }
-
-    return setPropertyInternal(propertyID, WTFMove(value), important);
-}
-
 const Settings* CSSStyleDeclaration::settings() const
 {
     return parentElement() ? &parentElement()->document().settings() : nullptr;
@@ -257,7 +243,7 @@ ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomString& propertyNa
     }
 
     propertySupported = true;
-    return setPropertyValueInternal(propertyID, WTFMove(value));
+    return setPropertyInternal(propertyID, WTFMove(value), false);
 }
 
 Vector<AtomString> CSSStyleDeclaration::supportedPropertyNames() const

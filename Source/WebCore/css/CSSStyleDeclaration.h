@@ -67,7 +67,6 @@ public:
     virtual RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) = 0;
     virtual String getPropertyValueInternal(CSSPropertyID) = 0;
     virtual ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) = 0;
-    ExceptionOr<void> setPropertyValueInternal(CSSPropertyID, String);
 
     virtual Ref<MutableStyleProperties> copyProperties() const = 0;
 

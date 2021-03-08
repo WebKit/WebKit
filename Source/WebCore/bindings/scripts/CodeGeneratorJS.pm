@@ -5496,7 +5496,7 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    auto nativeValue = ${toNativeExpression};\n");
         push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
         push(@$outputArray, "    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {\n");
-        push(@$outputArray, "        return impl.setPropertyValueInternal(CSSProperty${propertyID}, WTFMove(nativeValue));\n");
+        push(@$outputArray, "        return impl.setPropertyInternal(CSSProperty${propertyID}, WTFMove(nativeValue), false);\n");
         push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");
     } elsif ($isConstructor) {

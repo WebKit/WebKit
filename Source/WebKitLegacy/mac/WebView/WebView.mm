@@ -1390,17 +1390,6 @@ static RetainPtr<NSString> createLaBanquePostaleQuirksScript()
 }
 #endif
 
-static bool shouldRespectPriorityInCSSAttributeSetters()
-{
-#if PLATFORM(IOS_FAMILY)
-    return false;
-#else
-    static bool isIAdProducerNeedingAttributeSetterQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CSS_ATTRIBUTE_SETTERS_IGNORING_PRIORITY)
-        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.iAdProducer"];
-    return isIAdProducerNeedingAttributeSetterQuirk;
-#endif
-}
-
 #if PLATFORM(IOS_FAMILY)
 static bool isInternalInstall()
 {
@@ -1502,7 +1491,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if PLATFORM(MAC)
         WebCore::SwitchingGPUClient::setSingleton(WebKit::WebSwitchingGPUClient::singleton());
 #endif
-        WebCore::DeprecatedGlobalSettings::setShouldRespectPriorityInCSSAttributeSetters(shouldRespectPriorityInCSSAttributeSetters());
 
 #if PLATFORM(IOS_FAMILY)
         if (WebCore::IOSApplication::isMobileSafari())

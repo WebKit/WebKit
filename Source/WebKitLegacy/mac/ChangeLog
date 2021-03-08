@@ -1,3 +1,20 @@
+2021-03-08  Sam Weinig  <weinig@apple.com>
+
+        Remove quirks for the no longer supported iAd Producer
+        https://bugs.webkit.org/show_bug.cgi?id=222894
+
+        Reviewed by Chris Dumez.
+
+        Remove two quirks that were only for iAd Producer, which is no longer
+        supported on the latest macOS operating systems.
+
+        * WebView/WebPreferencesDefaultValues.h:
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::defaultNeedsIsLoadingInAPISenseQuirk): Deleted.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (shouldRespectPriorityInCSSAttributeSetters): Deleted.
+
 2021-03-06  Sam Weinig  <weinig@apple.com>
 
         Simplify DumpRenderTree WebPreferences reset

@@ -1,3 +1,14 @@
+2021-03-08  Sam Weinig  <weinig@apple.com>
+
+        Remove quirks for the no longer supported iAd Producer
+        https://bugs.webkit.org/show_bug.cgi?id=222894
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Remove NeedsIsLoadingInAPISenseQuirk preference which only existed to enable
+        a quirk for iAd Producer.
+
 2021-03-07  Sam Weinig  <weinig@apple.com>
 
         Move new color(), lab() and lch() color functions behind runtime settings.
