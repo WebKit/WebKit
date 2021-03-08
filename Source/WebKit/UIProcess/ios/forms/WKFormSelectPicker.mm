@@ -847,7 +847,6 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
     auto sectionLabel = adoptNS([[UILabel alloc] init]);
     [sectionLabel setText:[self tableView:tableView titleForHeaderInSection:section]];
-    [sectionLabel setTextColor:UIColor.blackColor];
     [sectionLabel setFont:[UIFont boldSystemFontOfSize:sectionHeaderFontSize]];
     [sectionLabel setAdjustsFontSizeToFitWidth:NO];
     [sectionLabel setLineBreakMode:NSLineBreakByTruncatingTail];

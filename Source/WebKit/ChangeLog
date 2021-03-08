@@ -1,3 +1,18 @@
+2021-03-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] <select multiple> group headers are illegible in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=222914
+        <rdar://problem/75020326>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPickerTableViewController tableView:heightForHeaderInSection:]):
+
+        Do not specify a textColor for the header label. This ensures the default
+        semantic label color is used, which automatically adapts when dark mode
+        is enabled.
+
 2021-03-08  Chris Dumez  <cdumez@apple.com>
 
         Simplify CallbackAggregator in WebsiteDataStore::removeData()
