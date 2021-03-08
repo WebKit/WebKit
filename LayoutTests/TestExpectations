@@ -3627,9 +3627,6 @@ webkit.org/b/206578 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-height-ratio-auto-5px.html [ Skip ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Skip ]
 
-webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
-webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ ImageOnlyFailure ]
-webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-slow.html [ ImageOnlyFailure ]
 webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ ImageOnlyFailure ]
 
 webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/animations/vertical-align-composition.html [ Skip ]

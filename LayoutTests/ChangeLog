@@ -1,3 +1,24 @@
+2021-03-06  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Some tests under web-animations/timing-model/animations are ImageOnlyFailure
+        https://bugs.webkit.org/show_bug.cgi?id=207260
+
+        Reviewed by Sam Weinig.
+
+        These three tests have been passing reliably on most plaforms for a while now and should no longer
+        be marked as ImageOnlyFailure:
+        
+        - imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html
+        - imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html
+        - imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-slow.html
+
+        The first of those three tests is still an ImageOnlyFailure on GTK and WPE, so we add that expectation
+        to the platform-specific files.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-03-08  Rob Buis  <rbuis@igalia.com>
 
         Support aspect-ratio in intrinsic sizing
