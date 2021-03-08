@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -695,11 +695,11 @@ def requireOptions(*options)
 end
 
 def runWithOutputHandler(kind, outputHandler, *options)
-    addRunCommand(kind, vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    addRunCommand(kind, vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + [$benchmark.to_s], outputHandler, simpleErrorHandler)
 end
 
 def runWithOutputHandlerWithoutBaseOption(kind, outputHandler, *options)
-    addRunCommand(kind, vmCommand + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    addRunCommand(kind, vmCommand + options + $testSpecificRequiredOptions + [$benchmark.to_s], outputHandler, simpleErrorHandler)
 end
 
 def run(kind, *options)
@@ -765,7 +765,7 @@ def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
         return
     end
 
-    options = BASE_OPTIONS + $testSpecificRequiredOptions + FTL_OPTIONS + optionalTestSpecificOptions
+    options = BASE_OPTIONS + FTL_OPTIONS + optionalTestSpecificOptions + $testSpecificRequiredOptions
     addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, fileTemplate.to_s, *vmCommand, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
 end
 
@@ -1073,9 +1073,10 @@ def runTest262(mode, exception, includeFiles, flags)
 
     prepareExtraRelativeFiles(includeFiles.map { |f| "../" + f }, $collection)
 
-    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions
+    args = vmCommand + BASE_OPTIONS
     args << "--exception=" + exception if failsWithException
     args << "--test262-async" if isAsync
+    args += $testSpecificRequiredOptions
     args += includeFiles
 
     case mode
@@ -1224,7 +1225,7 @@ def runHarnessTest(kind, *options)
     wasmFiles.each {
         | file |
         basename = file.basename.to_s
-        addRunCommand("(" + basename + ")-" + kind, vmCommand + $testSpecificRequiredOptions + options + [$benchmark.to_s, "--", basename], silentOutputHandler, simpleErrorHandler)
+        addRunCommand("(" + basename + ")-" + kind, vmCommand + options + $testSpecificRequiredOptions + [$benchmark.to_s, "--", basename], silentOutputHandler, simpleErrorHandler)
     }
 end
 
@@ -1322,11 +1323,12 @@ def runChakra(mode, exception, baselineFile, extraFiles)
     prepareExtraAbsoluteFiles(CHAKRATESTS_PATH, ["jsc-lib.js"])
     prepareExtraRelativeFiles(extraFiles.map { |f| "../" + f }, $collection)
 
-    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions
+    args = vmCommand + BASE_OPTIONS
     args += FTL_OPTIONS if $isFTLPlatform
     args += EAGER_OPTIONS
     args << "--exception=" + exception if failsWithException
     args << "--dumpException" if failsWithException
+    args += $testSpecificRequiredOptions
     args += ["jsc-lib.js"]
 
     case mode
@@ -1363,7 +1365,7 @@ def runLayoutTest(kind, *options)
     prepareExtraRelativeFiles(["../#{testName}-expected.txt"], $benchmarkDirectory)
     prepareExtraAbsoluteFiles(LAYOUTTESTS_PATH, ["resources/standalone-pre.js", "resources/standalone-post.js"])
 
-    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options +
+    args = vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions +
         [(Pathname.new("resources") + "standalone-pre.js").to_s,
          $benchmark.to_s,
          (Pathname.new("resources") + "standalone-post.js").to_s]
@@ -1503,7 +1505,7 @@ end
 def runComplexTest(before, after, additionalEnv, *options)
     prepareExtraRelativeFiles(before.map{|v| (Pathname("..") + v).to_s}, $collection)
     prepareExtraRelativeFiles(after.map{|v| (Pathname("..") + v).to_s}, $collection)
-    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options + before.map{|v| v.to_s} + [$benchmark.to_s] + after.map{|v| v.to_s}
+    args = vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + before.map{|v| v.to_s} + [$benchmark.to_s] + after.map{|v| v.to_s}
     addRunCommand("complex", args, noisyOutputHandler, simpleErrorHandler, *additionalEnv)
 end
 
@@ -1514,7 +1516,7 @@ def runMozillaTest(kind, mode, extraFiles, *options)
         kind = "mozilla"
     end
     prepareExtraRelativeFiles(extraFiles.map{|v| (Pathname("..") + v).to_s}, $collection)
-    args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
+    args = vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
     case mode
     when :normal
         errorHandler = mozillaErrorHandler
@@ -1584,7 +1586,7 @@ def defaultRunMozillaTest(mode, *extraFiles)
 end
 
 def runNoisyTestImpl(kind, options, additionalEnv)
-    addRunCommand(kind, vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
+    addRunCommand(kind, vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
 end
 
 def runNoisyTest(kind, *options)

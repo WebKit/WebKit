@@ -1,3 +1,14 @@
+2021-03-08  Mark Lam  <mark.lam@apple.com>
+
+        JSC stress tests' $testSpecificRequiredOptions should be appended last.
+        https://bugs.webkit.org/show_bug.cgi?id=222936
+
+        Reviewed by Keith Miller.
+
+        This allows each test to get the last say on what options it needs.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-03-08  Sam Weinig  <weinig@apple.com>
 
         Add preference reseting to WebKitLegacy Windows to simplify testing reset
