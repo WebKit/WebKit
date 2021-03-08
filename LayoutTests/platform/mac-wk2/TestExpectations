@@ -1305,8 +1305,7 @@ fast/layoutformattingcontext/block-only/min-max-and-preferred-width-simple.html 
 webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse.html [ ImageOnlyFailure ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.html [ ImageOnlyFailure ]
-webkit.org/b/219905 [ Release ] fast/layoutformattingcontext/subframe-with-display-none-html.html [ ImageOnlyFailure ]
-webkit.org/b/219905 [ Debug ] fast/layoutformattingcontext/subframe-with-display-none-html.html [ Skip ]
+webkit.org/b/219905 fast/layoutformattingcontext/subframe-with-display-none-html.html [ Skip ]
 # This file should contain entries for expectations that are specific
 # to the Apple Mac port running the WebKit2 variant (--webkit-test-runner)
 

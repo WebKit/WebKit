@@ -1,3 +1,12 @@
+2021-03-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r269627?): ASSERTION FAILED: &layoutState().establishedFormattingState(layoutBox.formattingContextRoot()) == this in WebCore::Layout::FormattingState::boxGeometry
+        https://bugs.webkit.org/show_bug.cgi?id=219905
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Skip the test.
+
 2021-03-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r272842): [iOS] security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html is consistently failing
