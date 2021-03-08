@@ -54,8 +54,8 @@ class Scm(ScmBase):
             return local.Svn(path, contributors=contributors)
         raise OSError("'{}' is not a known SCM type".format(path))
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None):
-        super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None):
+        super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
 
         if not isinstance(path, six.string_types):
             raise ValueError("Expected 'path' to be a string type, not '{}'".format(type(path)))

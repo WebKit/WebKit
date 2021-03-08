@@ -37,7 +37,7 @@ class BitBucket(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None):
         match = self.URL_RE.match(url)
         if not match:
             raise self.Exception("'{}' is not a valid BitBucket project".format(url))
@@ -45,7 +45,12 @@ class BitBucket(Scm):
         self.project = match.group('project')
         self.name = match.group('repository')
 
-        super(BitBucket, self).__init__(url, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
+        super(BitBucket, self).__init__(
+            url,
+            dev_branches=dev_branches, prod_branches=prod_branches,
+            contributors=contributors,
+            id=id or self.name.lower(),
+        )
 
     @property
     def is_git(self):
@@ -238,6 +243,7 @@ class BitBucket(Scm):
             order += 1
 
         return Commit(
+            repository_id=self.id,
             hash=commit_data['id'],
             revision=revision,
             branch_point=branch_point,

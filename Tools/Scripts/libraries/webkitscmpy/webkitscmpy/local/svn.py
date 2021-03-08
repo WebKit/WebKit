@@ -50,8 +50,8 @@ class Svn(Scm):
     def is_checkout(cls, path):
         return run([cls.executable(), 'info'], cwd=path, capture_output=True).returncode == 0
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None):
-        super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None):
+        super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
 
         self._root_path = self.path
         self._root_path = self.info(cached=False).get('Working Copy Root Path')
@@ -380,6 +380,7 @@ class Svn(Scm):
             message = None
 
         return Commit(
+            repository_id=self.id,
             revision=int(revision),
             branch=branch,
             identifier=identifier if include_identifier else None,

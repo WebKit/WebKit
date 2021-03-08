@@ -43,7 +43,7 @@ class Commit(object):
                 return super(Commit.Encoder, self).default(obj)
 
             result = dict()
-            for attribute in ['hash', 'revision', 'branch', 'timestamp', 'order', 'message']:
+            for attribute in ['hash', 'revision', 'branch', 'timestamp', 'order', 'message', 'repository_id']:
                 value = getattr(obj, attribute, None)
                 if value is not None:
                     result[attribute] = value
@@ -151,7 +151,7 @@ class Commit(object):
         hash=None,
         revision=None,
         identifier=None, branch=None, branch_point=None,
-        timestamp=None, author=None, message=None, order=None,
+        timestamp=None, author=None, message=None, order=None, repository_id=None
     ):
         self.hash = self._parse_hash(hash, do_assert=True)
         self.revision = self._parse_revision(revision, do_assert=True)
@@ -202,6 +202,10 @@ class Commit(object):
         if message and not isinstance(message, six.string_types):
             raise ValueError("Expected 'message' to be a string, got '{}'".format(message))
         self.message = message
+
+        if repository_id and not isinstance(repository_id, six.string_types):
+            raise ValueError("Expected 'repository_id' to be a string, got '{}'".format(repository_id))
+        self.repository_id = repository_id
 
         # Force a commit format check
         self.__repr__()

@@ -401,6 +401,9 @@ class TestGitHub(unittest.TestCase):
             self.assertEqual(0, remote.GitHub(self.remote).commit(hash='bae5d1e90999').order)
             self.assertEqual(1, remote.GitHub(self.remote).commit(hash='d8bce26fa65c').order)
 
+    def test_id(self):
+        self.assertEqual(remote.GitHub(self.remote).id, 'webkit')
+
 
 class TestBitBucket(unittest.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
@@ -518,3 +521,6 @@ class TestBitBucket(unittest.TestCase):
         with mocks.remote.BitBucket():
             self.assertEqual(0, remote.BitBucket(self.remote).commit(hash='bae5d1e90999').order)
             self.assertEqual(1, remote.BitBucket(self.remote).commit(hash='d8bce26fa65c').order)
+
+    def test_id(self):
+        self.assertEqual(remote.BitBucket(self.remote).id, 'webkit')
