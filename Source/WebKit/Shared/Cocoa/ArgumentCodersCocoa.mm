@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WKSecureCodingArchivingDelegate : NSObject <NSKeyedArchiverDelegate, NSKeyedUnarchiverDelegate>
 @end
 
-@interface WKSecureCodingURLWrapper : NSObject <NSSecureCoding>
+@interface WKSecureCodingURLWrapper : NSURL <NSSecureCoding>
 - (instancetype _Nullable)initWithURL:(NSURL *)wrappedURL;
 @property (nonatomic, readonly) NSURL * wrappedURL;
 @end

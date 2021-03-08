@@ -1,3 +1,22 @@
+2021-03-08  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r273541): Payloads requiring NSURL in serialization fail 
+        https://bugs.webkit.org/show_bug.cgi?id=222856
+        <rdar://problem/75036452>
+
+        Reviewed by Darin Adler.
+
+        In Bug 222145 I converted serialization of CFURLRequest to NSURLRequest. As part of that change,
+        I used a new encoder (WKSecureCodingURLWrapper) to wrap the NSURL to ensure proper handling of
+        encoded URLs.
+
+        The WKSecureCodingURLWrapper should have been declared as a subclass of NSURL, so that NSSecureCoding
+        would respect it as a valid way of serializing an NSURL.
+
+        This patch corrects that oversight.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+
 2021-03-08  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Changes in WebInspectorUI's appearance don't propagate to .effectiveAppearance while docked
