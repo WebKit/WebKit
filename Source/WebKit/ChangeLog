@@ -1,3 +1,17 @@
+2021-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Simplify CallbackAggregator in WebsiteDataStore::removeData()
+        https://bugs.webkit.org/show_bug.cgi?id=222837
+
+        Reviewed by Geoffrey Garen.
+
+        Simplify CallbackAggregator in WebsiteDataStore::removeData(). We don't need an explicit
+        counter data member or explicit calls to addPendingCallback() / removePendingCallback().
+        We can simply rely on the ref count of the CallbackAggregator.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+
 2021-03-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL asserts after GPU process times out

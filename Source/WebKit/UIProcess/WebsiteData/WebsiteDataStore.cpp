@@ -672,59 +672,34 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<Web
     return processAccessType;
 }
 
+class RemovalCallbackAggregator : public ThreadSafeRefCounted<RemovalCallbackAggregator, WTF::DestructionThread::MainRunLoop> {
+public:
+    RemovalCallbackAggregator(WebsiteDataStore& dataStore, CompletionHandler<void()>&& completionHandler)
+        : m_protectedDataStore(dataStore)
+        , m_completionHandler(WTFMove(completionHandler))
+    {
+        ASSERT(RunLoop::isMain());
+    }
+
+    ~RemovalCallbackAggregator()
+    {
+        ASSERT(RunLoop::isMain());
+        RunLoop::main().dispatch(WTFMove(m_completionHandler));
+    }
+
+private:
+    Ref<WebsiteDataStore> m_protectedDataStore;
+    CompletionHandler<void()> m_completionHandler;
+};
+
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, Function<void()>&& completionHandler)
 {
-    struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
-        CallbackAggregator(WebsiteDataStore& dataStore, Function<void()>&& completionHandler)
-            : completionHandler(WTFMove(completionHandler))
-            , protectedDataStore(dataStore)
-        {
-            ASSERT(RunLoop::isMain());
-        }
-
-        ~CallbackAggregator()
-        {
-            ASSERT(RunLoop::isMain());
-        }
-
-        void addPendingCallback()
-        {
-            ASSERT(RunLoop::isMain());
-            pendingCallbacks++;
-        }
-
-        void removePendingCallback()
-        {
-            ASSERT(RunLoop::isMain());
-            ASSERT(pendingCallbacks);
-            --pendingCallbacks;
-
-            callIfNeeded();
-        }
-
-        void callIfNeeded()
-        {
-            ASSERT(RunLoop::isMain());
-            if (!pendingCallbacks)
-                RunLoop::main().dispatch(WTFMove(completionHandler));
-        }
-
-        unsigned pendingCallbacks = 0;
-        Function<void()> completionHandler;
-        Ref<WebsiteDataStore> protectedDataStore;
-    };
-
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(*this, WTFMove(completionHandler)));
+    auto callbackAggregator = adoptRef(new RemovalCallbackAggregator(*this, WTFMove(completionHandler)));
 
 #if ENABLE(VIDEO)
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
-        callbackAggregator->addPendingCallback();
         m_queue->dispatch([modifiedSince, mediaCacheDirectory = m_configuration->mediaCacheDirectory().isolatedCopy(), callbackAggregator] {
             WebCore::HTMLMediaElement::clearMediaCache(mediaCacheDirectory, modifiedSince);
-            
-            WTF::RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
     }
 #endif
@@ -740,10 +715,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         FALLTHROUGH;
     case ProcessAccessType::OnlyIfLaunched:
         if (m_networkProcess) {
-            callbackAggregator->addPendingCallback();
-            m_networkProcess->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
+            m_networkProcess->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
             didNotifyNetworkProcessToDeleteWebsiteData = true;
 #endif
@@ -778,68 +750,35 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
                 ASSERT_NOT_REACHED();
             }
 
-            callbackAggregator->addPendingCallback();
-            process.deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
+            process.deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
         }
     }
 
-    if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies))) {
-        callbackAggregator->addPendingCallback();
-
-        m_deviceIdHashSaltStorage->deleteDeviceIdHashSaltOriginsModifiedSince(modifiedSince, [callbackAggregator] {
-            callbackAggregator->removePendingCallback();
-        });
-    }
+    if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies)))
+        m_deviceIdHashSaltStorage->deleteDeviceIdHashSaltOriginsModifiedSince(modifiedSince, [callbackAggregator] { });
 
     if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
-        callbackAggregator->addPendingCallback();
-
         m_queue->dispatch([applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
             auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
-
             storage->deleteAllCaches();
-
-            WTF::RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
     }
 
     if (dataTypes.contains(WebsiteDataType::WebSQLDatabases) && isPersistent()) {
-        callbackAggregator->addPendingCallback();
-
         m_queue->dispatch([webSQLDatabaseDirectory = m_configuration->webSQLDatabaseDirectory().isolatedCopy(), callbackAggregator, modifiedSince] {
             WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory)->deleteDatabasesModifiedSince(modifiedSince);
-
-            RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
     }
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
-        callbackAggregator->addPendingCallback();
-
         m_queue->dispatch([mediaKeysStorageDirectory = m_configuration->mediaKeysStorageDirectory().isolatedCopy(), callbackAggregator, modifiedSince] {
             removeMediaKeys(mediaKeysStorageDirectory, modifiedSince);
-
-            RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
     }
 
     if (dataTypes.contains(WebsiteDataType::SearchFieldRecentSearches) && isPersistent()) {
-        callbackAggregator->addPendingCallback();
-
         m_queue->dispatch([modifiedSince, callbackAggregator] {
             platformRemoveRecentSearches(modifiedSince);
-
-            RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
     }
 
@@ -847,19 +786,17 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
         class State {
         public:
-            static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, WallTime modifiedSince)
+            static void deleteData(Ref<RemovalCallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, WallTime modifiedSince)
             {
                 new State(WTFMove(callbackAggregator), WTFMove(plugins), modifiedSince);
             }
 
         private:
-            State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, WallTime modifiedSince)
+            State(Ref<RemovalCallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, WallTime modifiedSince)
                 : m_callbackAggregator(WTFMove(callbackAggregator))
                 , m_plugins(WTFMove(plugins))
                 , m_modifiedSince(modifiedSince)
             {
-                m_callbackAggregator->addPendingCallback();
-
                 deleteWebsiteDataForNextPlugin();
             }
 
@@ -871,8 +808,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
             void deleteWebsiteDataForNextPlugin()
             {
                 if (m_plugins.isEmpty()) {
-                    m_callbackAggregator->removePendingCallback();
-
                     delete this;
                     return;
                 }
@@ -883,7 +818,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
                 });
             }
 
-            Ref<CallbackAggregator> m_callbackAggregator;
+            Ref<RemovalCallbackAggregator> m_callbackAggregator;
             Vector<PluginModuleInfo> m_plugins;
             WallTime m_modifiedSince;
         };
@@ -894,21 +829,12 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
-        if (!didNotifyNetworkProcessToDeleteWebsiteData) {
-            networkProcess().deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
-        }
+        if (!didNotifyNetworkProcessToDeleteWebsiteData)
+            networkProcess().deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
 
-        callbackAggregator->addPendingCallback();
-        clearResourceLoadStatisticsInWebProcesses([callbackAggregator] {
-            callbackAggregator->removePendingCallback();
-        });
+        clearResourceLoadStatisticsInWebProcesses([callbackAggregator] { });
     }
 #endif
-
-    // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
-    callbackAggregator->callIfNeeded();
 }
 
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Vector<WebsiteDataRecord>& dataRecords, Function<void()>&& completionHandler)
@@ -920,47 +846,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             origins.append(origin);
     }
 
-    struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
-        CallbackAggregator(WebsiteDataStore& dataStore, Function<void()>&& completionHandler)
-            : completionHandler(WTFMove(completionHandler))
-            , protectedDataStore(dataStore)
-        {
-            ASSERT(RunLoop::isMain());
-        }
-
-        ~CallbackAggregator()
-        {
-            ASSERT(RunLoop::isMain());
-        }
-
-        void addPendingCallback()
-        {
-            ASSERT(RunLoop::isMain());
-            pendingCallbacks++;
-        }
-
-        void removePendingCallback()
-        {
-            ASSERT(RunLoop::isMain());
-            ASSERT(pendingCallbacks);
-            --pendingCallbacks;
-
-            callIfNeeded();
-        }
-
-        void callIfNeeded()
-        {
-            ASSERT(RunLoop::isMain());
-            if (!pendingCallbacks)
-                RunLoop::main().dispatch(WTFMove(completionHandler));
-        }
-
-        unsigned pendingCallbacks = 0;
-        Function<void()> completionHandler;
-        Ref<WebsiteDataStore> protectedDataStore;
-    };
-
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(*this, WTFMove(completionHandler)));
+    auto callbackAggregator = adoptRef(new RemovalCallbackAggregator(*this, WTFMove(completionHandler)));
     
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
         HashSet<WebCore::SecurityOriginData> origins;
@@ -970,12 +856,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         }
         
 #if ENABLE(VIDEO)
-        callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins = WTFMove(origins), mediaCacheDirectory = m_configuration->mediaCacheDirectory().isolatedCopy(), callbackAggregator] {
             WebCore::HTMLMediaElement::clearMediaCacheForOrigins(mediaCacheDirectory, origins);
-            WTF::RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
 #endif
     }
@@ -1010,10 +892,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 #endif
             }
 
-            callbackAggregator->addPendingCallback();
-            networkProcess().deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, cookieHostNames, HSTSCacheHostNames, registrableDomains, [callbackAggregator, processPool] {
-                callbackAggregator->removePendingCallback();
-            });
+            networkProcess().deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, cookieHostNames, HSTSCacheHostNames, registrableDomains, [callbackAggregator, processPool] { });
         }
     }
 
@@ -1035,20 +914,12 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 ASSERT_NOT_REACHED();
             }
 
-            callbackAggregator->addPendingCallback();
-
-            process.deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
+            process.deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator] { });
         }
     }
 
     if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies))) {
-        callbackAggregator->addPendingCallback();
-
-        m_deviceIdHashSaltStorage->deleteDeviceIdHashSaltForOrigins(origins, [callbackAggregator] {
-            callbackAggregator->removePendingCallback();
-        });
+        m_deviceIdHashSaltStorage->deleteDeviceIdHashSaltForOrigins(origins, [callbackAggregator] { });
     }
 
     if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
@@ -1058,14 +929,10 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 origins.add(crossThreadCopy(origin));
         }
 
-        callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins = WTFMove(origins), applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
             auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
             for (const auto& origin : origins)
                 storage->deleteCacheForOrigin(origin);
-            WTF::RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
     }
 
@@ -1076,14 +943,10 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 origins.add(crossThreadCopy(origin));
         }
 
-        callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins = WTFMove(origins), callbackAggregator, webSQLDatabaseDirectory = m_configuration->webSQLDatabaseDirectory().isolatedCopy()] {
             auto databaseTracker = WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory);
             for (auto& origin : origins)
                 databaseTracker->deleteOrigin(origin);
-            RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
     }
 
@@ -1094,14 +957,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 origins.add(crossThreadCopy(origin));
         }
 
-        callbackAggregator->addPendingCallback();
         m_queue->dispatch([mediaKeysStorageDirectory = m_configuration->mediaKeysStorageDirectory().isolatedCopy(), callbackAggregator, origins = WTFMove(origins)] {
-
             removeMediaKeys(mediaKeysStorageDirectory, origins);
-
-            RunLoop::main().dispatch([callbackAggregator] {
-                callbackAggregator->removePendingCallback();
-            });
         });
     }
 
@@ -1116,19 +973,17 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
         class State {
         public:
-            static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
+            static void deleteData(Ref<RemovalCallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
             {
                 new State(WTFMove(callbackAggregator), WTFMove(plugins), WTFMove(hostNames));
             }
 
         private:
-            State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
+            State(Ref<RemovalCallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
                 : m_callbackAggregator(WTFMove(callbackAggregator))
                 , m_plugins(WTFMove(plugins))
                 , m_hostNames(WTFMove(hostNames))
             {
-                m_callbackAggregator->addPendingCallback();
-
                 deleteWebsiteDataForNextPlugin();
             }
 
@@ -1140,8 +995,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             void deleteWebsiteDataForNextPlugin()
             {
                 if (m_plugins.isEmpty()) {
-                    m_callbackAggregator->removePendingCallback();
-
                     delete this;
                     return;
                 }
@@ -1152,7 +1005,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 });
             }
 
-            Ref<CallbackAggregator> m_callbackAggregator;
+            Ref<RemovalCallbackAggregator> m_callbackAggregator;
             Vector<PluginModuleInfo> m_plugins;
             Vector<String> m_hostNames;
         };
@@ -1161,9 +1014,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             State::deleteData(*callbackAggregator, plugins(), WTFMove(hostNames));
     }
 #endif
-
-    // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
-    callbackAggregator->callIfNeeded();
 }
 
 void WebsiteDataStore::setServiceWorkerTimeoutForTesting(Seconds seconds)
