@@ -75,7 +75,7 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
         IntSize size = { (int)CVPixelBufferGetWidth(pixelBuffer) , (int)CVPixelBufferGetHeight(pixelBuffer) };
         AffineTransform transform;
         transform.rotate(rotationToAngle(rotation));
-        m_rotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(transform), size, CVPixelBufferGetPixelFormatType(pixelBuffer), ImageRotationSessionVT::IsCGImageCompatible::No);
+        m_rotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(transform), size, ImageRotationSessionVT::IsCGImageCompatible::No);
     }
 
     return m_rotationSession->rotate(pixelBuffer);

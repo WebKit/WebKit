@@ -390,7 +390,7 @@ void ImageDecoderAVFObjC::readTrackMetadata()
         || !m_imageRotationSession->transform()
         || m_imageRotationSession->transform().value() != finalTransform
         || m_imageRotationSession->size() != size)
-        m_imageRotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(finalTransform), size, kCVPixelFormatType_32BGRA, ImageRotationSessionVT::IsCGImageCompatible::Yes);
+        m_imageRotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(finalTransform), size, ImageRotationSessionVT::IsCGImageCompatible::Yes);
 
     m_size = expandedIntSize(m_imageRotationSession->rotatedSize());
 }

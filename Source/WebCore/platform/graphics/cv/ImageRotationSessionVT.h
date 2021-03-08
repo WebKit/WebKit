@@ -52,8 +52,8 @@ public:
         Yes,
     };
 
-    ImageRotationSessionVT(AffineTransform&&, FloatSize, OSType, IsCGImageCompatible);
-    ImageRotationSessionVT(const RotationProperties&, FloatSize, OSType, IsCGImageCompatible);
+    ImageRotationSessionVT(AffineTransform&&, FloatSize, IsCGImageCompatible);
+    ImageRotationSessionVT(const RotationProperties&, FloatSize, IsCGImageCompatible);
     ImageRotationSessionVT() = default;
 
     const Optional<AffineTransform>& transform() const { return m_transform; }
@@ -64,14 +64,14 @@ public:
     RetainPtr<CVPixelBufferRef> rotate(CVPixelBufferRef);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> rotate(MediaSample&, const RotationProperties&, IsCGImageCompatible);
 
-    bool isMatching(MediaSample&, const RotationProperties&);
-
 private:
-    void initialize(const RotationProperties&, FloatSize, OSType pixelFormat, IsCGImageCompatible);
+    void initialize(const RotationProperties&, FloatSize, IsCGImageCompatible);
 
-    Optional<AffineTransform> m_transform;
     RotationProperties m_rotationProperties;
     FloatSize m_size;
+    Optional<AffineTransform> m_transform;
+    OSType m_pixelFormat;
+    IsCGImageCompatible m_isCGImageCompatible;
     FloatSize m_rotatedSize;
     RetainPtr<VTImageRotationSessionRef> m_rotationSession;
     RetainPtr<CVPixelBufferPoolRef> m_rotationPool;
