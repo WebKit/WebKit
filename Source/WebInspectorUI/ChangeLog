@@ -1,3 +1,18 @@
+2021-03-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r269359): TypeError: undefined is not an object (evaluating 'listenersForEventType')
+        https://bugs.webkit.org/show_bug.cgi?id=222940
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Models/JavaScriptBreakpoint.js:
+        (WI.JavaScriptBreakpoint.prototype.get special):
+        The existing logic for `get special` checks if `this` is one of the specially saved objects
+        on `WI.debuggerManager` (e.g. `assertionFailuresBreakpoint`). When deleting a breakpoint,
+        `WI.debuggerManager` has already cleared out it's previously saved reference to that object,
+        so it won't match. Use the existing `_isSpecial` (which looks at the `_sourceCodeLocation`)
+        as a backup in case `this` doesn't directly match any of the saved objects.
+
 2021-03-06  Tim Horton  <timothy_horton@apple.com>
 
         <model> should create a model-owning compositing layer

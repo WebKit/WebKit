@@ -138,6 +138,9 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
             return true;
         }
 
+        if (this._isSpecial())
+            return true;
+
         return super.special;
     }
 
