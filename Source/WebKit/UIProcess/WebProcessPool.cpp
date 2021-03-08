@@ -678,6 +678,8 @@ static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayC
     for (auto& processPool : WebProcessPool::allProcessPools()) {
         processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
         processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
+        if (auto gpuProcess = processPool->gpuProcess())
+            gpuProcess->displayConfigurationChanged(display, flags);
     }
 }
 
@@ -1945,10 +1947,12 @@ void WebProcessPool::sendDisplayConfigurationChangedMessageForTesting()
 {
 #if PLATFORM(MAC)
     auto display = CGSMainDisplayID();
-
+    CGDisplayChangeSummaryFlags flags = kCGDisplaySetModeFlag | kCGDisplayDesktopShapeChangedFlag;
     for (auto& processPool : WebProcessPool::allProcessPools()) {
         processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, kCGDisplayBeginConfigurationFlag));
-        processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, kCGDisplaySetModeFlag | kCGDisplayDesktopShapeChangedFlag));
+        processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
+        if (auto gpuProcess = processPool->gpuProcess())
+            gpuProcess->displayConfigurationChanged(display, flags);
     }
 #endif
 }

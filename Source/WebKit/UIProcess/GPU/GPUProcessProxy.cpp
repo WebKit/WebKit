@@ -413,6 +413,13 @@ LayerHostingContextID GPUProcessProxy::contextIDForVisibilityPropagation() const
 }
 #endif
 
+#if PLATFORM(MAC)
+void GPUProcessProxy::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+{
+    send(Messages::GPUProcess::DisplayConfigurationChanged { displayID, flags }, 0);
+}
+#endif
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

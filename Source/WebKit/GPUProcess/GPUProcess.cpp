@@ -253,6 +253,14 @@ void GPUProcess::resetMockMediaDevices()
 }
 #endif
 
+#if PLATFORM(MAC)
+void GPUProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+{
+    for (auto& connection : m_webProcessConnections.values())
+        connection->displayConfigurationChanged(displayID, flags);
+}
+#endif
+
 void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameters&& parameters)
 {
     ASSERT(!m_sessions.contains(sessionID));

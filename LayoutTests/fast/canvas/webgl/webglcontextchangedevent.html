@@ -13,20 +13,22 @@ function log(msg)
 
 function runTest()
 {
-    if (!window.internals) {
-        log("This test must run inside DRT/WKTR.");
-        return;
-    }
-
     log("We should see three changed events.");
 
     let changedEventsSeen = 0;
 
     let handleChangedEvent = (event) => {
         log("Saw webglcontextchanged event.");
+        let gl = event.target.getContext("webgl");
+        gl.clearColor(0, 1, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
         changedEventsSeen++;
-        if (changedEventsSeen == 3)
-            testRunner.notifyDone();
+        if (changedEventsSeen == 3) {
+            if (window.testRunner)
+                testRunner.notifyDone();
+            else
+                log("Test done.");
+        }
     }
 
     document.querySelectorAll("canvas").forEach((c) =>
@@ -38,7 +40,10 @@ function runTest()
     });
 
     let gl = document.querySelector("canvas").getContext("webgl");
-    window.internals.simulateEventForWebGLContext("ContextChange", gl);
+    if (window.internals)
+        window.internals.simulateEventForWebGLContext("ContextChange", gl);
+    else
+        log("To run the test, trigger a GPU change manually.");
 }
 
 

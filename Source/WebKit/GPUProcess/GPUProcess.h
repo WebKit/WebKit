@@ -35,6 +35,10 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/WeakPtr.h>
 
+#if PLATFORM(MAC)
+#include <CoreGraphics/CGDisplayConfiguration.h>
+#endif
+
 namespace WebCore {
 class NowPlayingManager;
 struct MockMediaDevice;
@@ -117,6 +121,9 @@ private:
     void clearMockMediaDevices();
     void removeMockMediaDevice(const String& persistentId);
     void resetMockMediaDevices();
+#endif
+#if PLATFORM(MAC)
+    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
     // Connections to WebProcesses.

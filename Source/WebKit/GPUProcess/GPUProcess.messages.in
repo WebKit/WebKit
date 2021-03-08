@@ -45,6 +45,9 @@ messages -> GPUProcess {
     RemoveMockMediaDevice(String persistentId);
     ResetMockMediaDevices();
 #endif
+#if PLATFORM(MAC)
+    DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

@@ -48,6 +48,10 @@
 #include <WebCore/GraphicsContextGLAttributes.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <CoreGraphics/CGDisplayConfiguration.h>
+#endif
+
 namespace WebKit {
 
 class GPUProcess;
@@ -103,6 +107,9 @@ public:
     bool allowsAudioCapture() const { return m_allowsAudioCapture; }
     bool allowsVideoCapture() const { return m_allowsVideoCapture; }
     bool allowsDisplayCapture() const { return m_allowsDisplayCapture; }
+#endif
+#if PLATFORM(MAC)
+    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
 #if HAVE(TASK_IDENTITY_TOKEN)

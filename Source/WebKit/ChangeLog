@@ -1,3 +1,37 @@
+2021-03-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context screen change events should work with GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=219669
+        <rdar://problem/72373371>
+
+        Reviewed by Per Arne Vollan.
+
+        Pass display configuration change notification from UI
+        process to GPU process.
+
+        Fixes
+         fast/canvas/webgl/webglcontextchangedevent.html
+         fast/canvas/webgl/context-update-on-display-configuration.html
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::displayConfigurationChanged):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::displayConfigurationChanged):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::displayWasReconfigured):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * Platform/IPC/ScopedActiveMessageReceiveQueue.h:
+        (IPC::ScopedActiveMessageReceiveQueue::operator-> const):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::displayConfigurationChanged):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::displayReconfigurationCallBack):
+        (WebKit::WebProcessPool::sendDisplayConfigurationChangedMessageForTesting):
+
 2021-03-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] maild hits a simulated crash when ENABLE(APP_HIGHLIGHTS) is defined

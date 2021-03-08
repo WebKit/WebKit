@@ -1,3 +1,16 @@
+2021-03-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context screen change events should work with GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=219669
+        <rdar://problem/72373371>
+
+        Reviewed by Per Arne Vollan.
+
+        * fast/canvas/webgl/webglcontextchangedevent.html:
+        Make manually testable.
+        * gpu-process/TestExpectations:
+        Remove two tests that now pass.
+
 2021-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r272900): Nullptr crash in ComposedTreeIterator::traverseNextInShadowTree() via ShadowRoot::hostChildElementDidChange

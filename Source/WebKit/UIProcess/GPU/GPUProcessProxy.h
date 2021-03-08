@@ -41,6 +41,10 @@
 #include "LayerHostingContext.h"
 #endif
 
+#if PLATFORM(MAC)
+#include <CoreGraphics/CGDisplayConfiguration.h>
+#endif
+
 namespace WebCore {
 struct MockMediaDevice;
 }
@@ -81,6 +85,10 @@ public:
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID contextIDForVisibilityPropagation() const;
+#endif
+
+#if PLATFORM(MAC)
+    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
 private:

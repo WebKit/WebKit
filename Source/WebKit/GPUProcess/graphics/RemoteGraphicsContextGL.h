@@ -41,6 +41,10 @@
 #include <WebCore/GraphicsContextGLIOSurfaceSwapChain.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <CoreGraphics/CGDisplayConfiguration.h>
+#endif
+
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;
@@ -61,6 +65,9 @@ public:
 
     // IPC::StreamServerConnection<RemoteGraphicsContextGL> template contract implementation.
     void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&);
+#if PLATFORM(MAC)
+    void displayWasReconfigured();
+#endif
 
 protected:
     RemoteGraphicsContextGL(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, IPC::StreamConnectionBuffer&&);

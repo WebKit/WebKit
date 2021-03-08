@@ -652,6 +652,18 @@ void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool
 }
 #endif
 
+#if PLATFORM(MAC)
+void GPUConnectionToWebProcess::displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags)
+{
+#if ENABLE(WEBGL)
+    if (flags & kCGDisplaySetModeFlag) {
+        for (auto& context : m_remoteGraphicsContextGLMap.values())
+            context->displayWasReconfigured();
+    }
+#endif
+}
+#endif
+
 #if ENABLE(VP9)
 void GPUConnectionToWebProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
 {

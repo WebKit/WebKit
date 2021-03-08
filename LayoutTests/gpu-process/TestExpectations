@@ -2,10 +2,6 @@
 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
 inspector/canvas/memory.html [ Failure ]
 
-# webkit.org/b/220806
-fast/canvas/webgl/context-update-on-display-configuration.html [ Timeout ]
-fast/canvas/webgl/webglcontextchangedevent.html [ Timeout ]
-
 # webkit.org/b/222726
 fast/canvas/webgl/uniform-samplers-test.html [ Slow ]
 webgl/1.0.3/conformance/uniforms/uniform-samplers-test.html [ Slow ]

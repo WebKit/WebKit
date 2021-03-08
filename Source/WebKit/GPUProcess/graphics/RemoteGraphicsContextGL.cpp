@@ -95,6 +95,15 @@ void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&&
     });
 }
 
+#if PLATFORM(MAC)
+void RemoteGraphicsContextGL::displayWasReconfigured()
+{
+    remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = makeRef(*this)]() {
+        protectedThis->m_context->displayWasReconfigured();
+    });
+}
+#endif
+
 void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     platformWorkQueueInitialize(WTFMove(attributes));
