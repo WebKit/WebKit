@@ -277,4 +277,8 @@ interface IWebPreferencesPrivate8 : IWebPreferencesPrivate7
     HRESULT setSpeechRecognitionEnabled([in] BOOL enabled);
     HRESULT overscrollBehaviorEnabled([ out, retval ] BOOL*);
     HRESULT setOverscrollBehaviorEnabled([in] BOOL enabled);
+    HRESULT resetForTesting();
 }
+
+// NOTE: Please do not add any more preferences that are only for testing purposes. Instead,
+// please use the generalized set<type>PreferenceForTesting() functions.

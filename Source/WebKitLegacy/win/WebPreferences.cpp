@@ -2611,3 +2611,9 @@ HRESULT WebPreferences::setOverscrollBehaviorEnabled(BOOL enabled)
     setBoolValue(WebKitOverscrollBehaviorEnabledPreferenceKey, enabled);
     return S_OK;
 }
+
+HRESULT WebPreferences::resetForTesting()
+{
+    load();
+    return S_OK;
+}

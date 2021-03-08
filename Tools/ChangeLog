@@ -1,3 +1,15 @@
+2021-03-08  Sam Weinig  <weinig@apple.com>
+
+        Add preference reseting to WebKitLegacy Windows to simplify testing reset
+        https://bugs.webkit.org/show_bug.cgi?id=222865
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        Call the new resetForTesting() method to ensure all values are reset back
+        to defaults for each test without have to explicitly list them.
+
 2021-03-08  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Remove old Python 2 related code

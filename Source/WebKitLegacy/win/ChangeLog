@@ -1,3 +1,18 @@
+2021-03-08  Sam Weinig  <weinig@apple.com>
+
+        Add preference reseting to WebKitLegacy Windows to simplify testing reset
+        https://bugs.webkit.org/show_bug.cgi?id=222865
+
+        Reviewed by Brent Fulgham.
+
+        Add resetForTesting() function to allow easy reseting of all preferences
+        for testing, matching functionality added to Cocoa WebKitLegacy.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferences.cpp:
+        (WebPreferences::resetForTesting):
+        * WebPreferences.h:
+
 2021-03-08  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Builds with ENABLE_CONTEXT_MENUS=OFF fail

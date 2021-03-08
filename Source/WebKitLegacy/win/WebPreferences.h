@@ -315,6 +315,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setSpeechRecognitionEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE overscrollBehaviorEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setOverscrollBehaviorEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE resetForTesting();
 
     // WebPreferences
 

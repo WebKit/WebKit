@@ -837,12 +837,15 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 {
     ASSERT(preferences);
 
-    enableExperimentalFeatures(preferences);
-
     preferences->setAutosaves(FALSE);
 
     COMPtr<IWebPreferencesPrivate8> prefsPrivate(Query, preferences);
     ASSERT(prefsPrivate);
+
+    prefsPrivate->resetForTesting();
+
+    enableExperimentalFeatures(preferences);
+
     prefsPrivate->setFullScreenEnabled(TRUE);
 
 #ifdef USE_MAC_FONTS
