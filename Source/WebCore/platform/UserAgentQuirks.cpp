@@ -35,6 +35,30 @@ namespace WebCore {
 // When editing the quirks in this file, be sure to update
 // Tools/TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp.
 
+static bool isGoogle(const URL& url)
+{
+    String domain = url.host().toString();
+    String baseDomain = topPrivatelyControlledDomain(domain);
+
+    // Our Google UA is *very* complicated to get right. Read
+    // https://webkit.org/b/142074 carefully before changing. Test that 3D
+    // view is available in Google Maps. Test Google Calendar. Test logging out
+    // and logging in to a Google account. Change platformVersionForUAString()
+    // to return "FreeBSD amd64" and test everything again.
+    if (baseDomain.startsWith("google."))
+        return true;
+    if (baseDomain == "gstatic.com")
+        return true;
+    if (baseDomain == "googleusercontent.com")
+        return true;
+    // googleapis.com is in the public suffix list, which is confusing. E.g.
+    // fonts.googleapis.com is actually a base domain.
+    if (domain.endsWith(".googleapis.com"))
+        return true;
+
+    return false;
+}
+
 // Be careful with this quirk: it's an invitation for sites to use JavaScript
 // that works in Chrome that WebKit cannot handle. Prefer other quirks instead.
 static bool urlRequiresChromeBrowser(const URL& url)
