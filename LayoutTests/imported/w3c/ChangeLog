@@ -1,3 +1,19 @@
+2021-03-08  Ziran Sun  <zsun@igalia.com>
+
+        Fix replaced element definiteness as a grid-item
+        https://bugs.webkit.org/show_bug.cgi?id=221337
+
+        Reviewed by Javier Fernandez.
+
+        The test is imported from WPT.
+
+        * web-platform-tests/css/css-grid/grid-items/percentage-size-indefinite-replaced-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/percentage-size-indefinite-replaced.html: Added.
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-002.html: Added.
+
 2021-03-07  Antoine Quint  <graouts@webkit.org>
 
         Correctly handle "auto" values when blending z-index
