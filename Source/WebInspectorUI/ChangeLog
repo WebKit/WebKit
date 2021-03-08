@@ -1,3 +1,27 @@
+2021-03-08  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: REGRESSION (r267038): Inspector fails to show any details about animations/transitions in the timeline
+        https://bugs.webkit.org/show_bug.cgi?id=222921
+
+        Reviewed by Devin Rousso.
+
+        Timeline views should always be updated with the time from the overview, but r267038 erroneously prevented the
+        end time from being updated while recording was stopping and prevented the current time from being updated while
+        recording was stopping or inactive, which meant after a recording finished (Stopping -> Inactive) the timeline
+        views would not be updated with the current time. Because `_updateTimelineViewTimes` can be called when a
+        different content view is selected, it was incorrect to gate setting these values based on the recording state.
+        The check for not being in the inactive state was particularly problematic as it is quite common that a
+        developer would open a specific timelime view for the first time after recording finishes, at which point all
+        values should be populated regardless of recording state. The source of the time values continues to be handled
+        in such a way as to prevent values from continuously jumping around as a recording is stopped but data continues
+        to arrive.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype._updateTimes):
+        - Drive-by spelling correction.
+        (WI.TimelineRecordingContentView.prototype._updateTimelineViewTimes):
+        - Remove checks for the current recording state.
+
 2021-03-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r269359): TypeError: undefined is not an object (evaluating 'listenersForEventType')
