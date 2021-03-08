@@ -541,6 +541,11 @@ void WebAnimation::updatePlaybackRate(double newPlaybackRate)
         // timeline time - (unconstrained current time / pending playback rate)
         // Where timeline time is the current time value of the timeline associated with animation.
         // If pending playback rate is zero, let animation's start time be timeline time.
+        
+        // If timeline is inactive abort these steps.
+        if (!m_timeline->currentTime())
+            return;
+        
         auto newStartTime = m_timeline->currentTime().value();
         if (m_pendingPlaybackRate)
             newStartTime -= (unconstrainedCurrentTime.value() / m_pendingPlaybackRate.value());
