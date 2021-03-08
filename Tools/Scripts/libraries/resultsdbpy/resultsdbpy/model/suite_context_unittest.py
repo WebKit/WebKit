@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@ from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.mock_repository import MockSVNRepository
 from resultsdbpy.model.test_context import Expectations
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 
@@ -37,10 +36,11 @@ class SuiteContextTest(WaitForDockerTestCase):
     KEYSPACE = 'suite_context_test_keyspace'
 
     def init_database(self, redis=StrictRedis, cassandra=CassandraContext, test_results=None):
-        cassandra.drop_keyspace(keyspace=self.KEYSPACE)
-        self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
-        MockModelFactory.add_mock_results(self.model, test_results=test_results)
-        MockModelFactory.process_results(self.model)
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
+            MockModelFactory.add_mock_results(self.model, test_results=test_results)
+            MockModelFactory.process_results(self.model)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_all(self, redis=StrictRedis, cassandra=CassandraContext):
@@ -60,7 +60,8 @@ class SuiteContextTest(WaitForDockerTestCase):
         results = self.model.suite_context.find_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=False,
-            begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236543),
+            begin=1601661000,
+            end=1601663000,
         )
         self.assertEqual(len(results), 2)
         for results_for_config in results.values():
@@ -86,7 +87,8 @@ class SuiteContextTest(WaitForDockerTestCase):
         results = self.model.suite_context.find_by_start_time(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests',
-            begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000,
+            end=1601660000,
         )
 
         self.assertEqual(
@@ -120,8 +122,8 @@ class SuiteContextTest(WaitForDockerTestCase):
         results = self.model.suite_context.find_by_start_time(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests',
-            begin=MockSVNRepository.webkit().commit_for_id(236542),
-            end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000,
+            end=1601660000,
         )
 
         self.assertEqual(
@@ -156,8 +158,8 @@ class SuiteContextTest(WaitForDockerTestCase):
         results = self.model.suite_context.find_by_start_time(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests',
-            begin=MockSVNRepository.webkit().commit_for_id(236542),
-            end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000,
+            end=1601660000,
         )
 
         self.assertEqual(

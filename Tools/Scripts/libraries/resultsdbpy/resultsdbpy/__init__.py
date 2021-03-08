@@ -27,7 +27,7 @@ import sys
 def _maybe_add_webkit_python_library_paths():
     # Hopefully we're beside webkit*py libraries, otherwise webkit*py will need to be installed.
     libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    for library in ['webkitcorepy', 'webkitflaskpy']:
+    for library in ['webkitcorepy', 'webkitscmpy', 'webkitflaskpy']:
         library_path = os.path.join(libraries_path, library)
         if os.path.isdir(library_path) and os.path.isdir(os.path.join(library_path, library)) and library_path not in sys.path:
             sys.path.insert(0, library_path)
@@ -44,6 +44,6 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(1, 1, 3)
+version = Version(2, 0, 0)
 
 name = 'resultsdbpy'

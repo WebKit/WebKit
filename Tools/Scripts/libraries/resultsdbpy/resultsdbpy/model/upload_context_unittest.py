@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,11 +34,12 @@ class UploadContextTest(WaitForDockerTestCase):
     KEYSPACE = 'upload_context_test_keyspace'
 
     def init_database(self, redis=StrictRedis, cassandra=CassandraContext, async_processing=False):
-        cassandra.drop_keyspace(keyspace=self.KEYSPACE)
-        self.model = MockModelFactory.create(
-            redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True),
-            async_processing=async_processing,
-        )
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            self.model = MockModelFactory.create(
+                redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True),
+                async_processing=async_processing,
+            )
 
     def test_zipping(self):
         zipped_bytes = UploadContext.to_zip('somestring' * 100)
@@ -89,7 +90,7 @@ class UploadContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
-        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='iOS', is_simulator=True)], suite='layout-tests', branch='safari-606-branch', recent=True)
+        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='iOS', is_simulator=True)], suite='layout-tests', branch='branch-a', recent=True)
         self.assertEqual(3, len(results))
         for config, values in results.items():
             self.assertEqual(config, Configuration(platform='iOS', is_simulator=True))

@@ -24,9 +24,9 @@ import json
 
 from collections import defaultdict
 from flask import abort, jsonify, request
-from resultsdbpy.model.repository import SCMException
 from resultsdbpy.controller.commit import Commit
 from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query
+from webkitscmpy import ScmBase
 
 
 def _find_comparison(commit_context, repository_id, branch, id, uuid, timestamp, priority=min):
@@ -299,7 +299,7 @@ class CommitController(HasCommitContext):
                 branch=commit.get('branch'),
                 commit_id=commit.get('id'),
             )
-        except (RuntimeError, SCMException) as error:
+        except (RuntimeError, ScmBase.Exception) as error:
             abort(404, description=str(error))
 
         if is_endpoint:

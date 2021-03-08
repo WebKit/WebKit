@@ -1,5 +1,68 @@
 2021-03-08  Jonathan Bedard  <jbedard@apple.com>
 
+        [resultsdbpy] Adopt webkitscmpy
+        https://bugs.webkit.org/show_bug.cgi?id=222754
+        <rdar://problem/75049209>
+
+        Reviewed by Dewei Zhu.
+
+        Adopting webkitscmpy's remote repositories requires using the unit testing paradigms from
+        those objects, which requires considerable adjustment of testing code.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version, include webkitscmpy.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/archive_controller_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/ci_controller_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_controller.py:
+        (CommitController.register): Use webkitscmpy's exceptions.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_controller_unittest.py:
+        (CommitControllerTest.test_register_via_post): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/failure_controller_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/suite_controller_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/test_controller_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/upload_controller_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/archive_context_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/ci_context_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/commit_context.py:
+        (CommitContext.branch_keys_for_commits):
+        (CommitContext.find_commits_by_id): default_branch is now an instance variable.
+        (CommitContext.find_commits_by_uuid): Ditto.
+        (CommitContext.find_commits_by_timestamp): Ditto.
+        (CommitContext.find_commits_in_range): Ditto.
+        (CommitContext.sibling_commits): Ditto.
+        (CommitContext.register_commit_with_repo_and_id): webkitscmpy repositories compute branch.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/commit_context_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/failure_context_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/mock_model_factory.py:
+        (MockModelFactory):
+        (MockModelFactory.safari): Use shared webkitscmpy mocks.
+        (MockModelFactory.webkit): Ditto.
+        (MockModelFactory.create): Timestamps in webkitscmpy are just integers.
+        (MockModelFactory.iterate_all_commits): webkitscmpy and resultsdbpy have slightly different
+        commit representations, so the mechanics of registering commits are different.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/mock_repository.py: Removed.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/model_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/repository.py:
+        (Repository):
+        (Repository.__init__): default_branch is now an instance variable.
+        (Repository.commit_for_id): webkitscmpy does not require the branch, given a hash or revision.
+        (StashRepository): Retrieve commit from webkitscmpy's remote BitBucket object.
+        (WebKitRepository): Hard-code WebKit's Subversion URL. This is temporary, since WebKit will shortly
+        become a GitHub repository.
+        (SCMException): Deleted.
+        (HTTPRepository): Deleted.
+        (SVNRepository): Deleted.
+        (WebKitRepository.commit_for_id.diff_changelogs): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/repository_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/suite_context_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/test_context_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/upload_context_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/archive_view_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/commit_view_unittest.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/view_routes_unittest.py:
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+
+2021-03-08  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Add repository_id
         https://bugs.webkit.org/show_bug.cgi?id=222827
         <rdar://problem/75111000>

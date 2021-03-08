@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,9 +27,11 @@ from resultsdbpy.controller.commit import Commit
 from resultsdbpy.flask_support.flask_testcase import FlaskTestCase
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
-from resultsdbpy.model.mock_repository import MockStashRepository, MockSVNRepository
+from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.model import Model
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
+from resultsdbpy.model.repository import StashRepository, WebKitRepository
+from webkitcorepy import OutputCapture
 
 
 class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
@@ -37,20 +39,25 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
-        redis_instance = redis()
-        safari = MockStashRepository.safari(redis_instance)
-        webkit = MockSVNRepository.webkit(redis_instance)
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            redis_instance = redis()
+            safari = StashRepository('https://bitbucket.example.com/projects/SAFARI/repos/safari')
+            webkit = WebKitRepository()
 
-        cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
-        cassandra_instance = cassandra(keyspace=cls.KEYSPACE, create_keyspace=True)
+            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra_instance = cassandra(keyspace=cls.KEYSPACE, create_keyspace=True)
 
-        app.register_blueprint(APIRoutes(Model(redis=redis_instance, cassandra=cassandra_instance, repositories=[safari, webkit])))
+            app.register_blueprint(APIRoutes(Model(redis=redis_instance, cassandra=cassandra_instance, repositories=[safari, webkit])))
 
     def register_all_commits(self, client):
-        for mock_repository in [MockStashRepository.safari(), MockSVNRepository.webkit()]:
-            for commit_list in mock_repository.commits.values():
-                for commit in commit_list:
-                    self.assertEqual(200, client.post(self.URL + '/api/commits/register', data=Commit.Encoder().default(commit)).status_code)
+        with MockModelFactory.safari() as safari, MockModelFactory.webkit() as webkit:
+            for name, mock_repository in dict(safari=safari, webkit=webkit).items():
+                for commit_list in mock_repository.commits.values():
+                    for commit in commit_list:
+                        self.assertEqual(200, client.post(
+                            self.URL + '/api/commits/register',
+                            data=dict(id=commit.hash or commit.revision, repository_id=name)
+                        ).status_code)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
@@ -68,15 +75,17 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
         self.register_all_commits(client)
         response = client.get(self.URL + '/api/commits/branches')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(dict(webkit=['safari-606-branch', 'trunk'], safari=['master', 'safari-606-branch']), response.json())
+        self.assertEqual(dict(
+            webkit=['branch-a', 'branch-b', 'tags/tag-1', 'tags/tag-2', 'trunk'],
+            safari=['branch-a', 'branch-b', 'main']), response.json())
 
-        response = client.get(self.URL + '/api/commits/branches?branch=safari')
+        response = client.get(self.URL + '/api/commits/branches?branch=branch')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(dict(webkit=['safari-606-branch'], safari=['safari-606-branch']), response.json())
+        self.assertEqual(dict(webkit=['branch-a', 'branch-b'], safari=['branch-a', 'branch-b']), response.json())
 
         response = client.get(self.URL + '/api/commits/branches?repository_id=safari')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(dict(safari=['master', 'safari-606-branch']), response.json())
+        self.assertEqual(dict(safari=['branch-a', 'branch-b', 'main']), response.json())
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
@@ -86,54 +95,52 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
-    def test_register_via_post(self, client, **kwargs):
-        self.assertEqual(200, client.post(self.URL + '/api/commits', data=dict(repository_id='safari', id='bb6bda5f44dd2')).status_code)
-        response = client.get(self.URL + '/api/commits?repository_id=safari')
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(
-            Commit.from_json(response.json()[0]),
-            MockStashRepository.safari().commit_for_id('bb6bda5f44dd2'),
-        )
-
-        self.assertEqual(200, client.post(self.URL + '/api/commits', data=dict(repository_id='webkit', id='236544')).status_code)
-        response = client.get(self.URL + '/api/commits?repository_id=webkit')
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(
-            Commit.from_json(response.json()[0]),
-            MockSVNRepository.webkit().commit_for_id('236544'),
-        )
-
-    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
-    @FlaskTestCase.run_with_webserver()
     def test_register_with_partial_commit(self, client, **kwargs):
-        self.assertEqual(200, client.post(self.URL + '/api/commits', data=dict(repository_id='safari', id='bb6bda5f44dd2')).status_code)
-        response = client.get(self.URL + '/api/commits?repository_id=safari')
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(
-            Commit.from_json(response.json()[0]),
-            MockStashRepository.safari().commit_for_id('bb6bda5f44dd2'),
-        )
-        self.assertEqual(404, client.post(self.URL + '/api/commits', data=dict(repository_id='safari', id='aaaaaaaaaaaaa')).status_code)
+        with MockModelFactory.safari(), MockModelFactory.webkit(), OutputCapture():
+            self.assertEqual(200, client.post(self.URL + '/api/commits', data=dict(repository_id='safari', id='d8bce26fa65c')).status_code)
+            response = client.get(self.URL + '/api/commits?repository_id=safari')
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(
+                Commit.from_json(response.json()[0]).message,
+                'Patch Series\n',
+            )
+            self.assertEqual(404, client.post(self.URL + '/api/commits', data=dict(repository_id='safari', id='aaaaaaaaaaaaa')).status_code)
 
-        self.assertEqual(200, client.post(self.URL + '/api/commits', data=dict(repository_id='webkit', id='236544')).status_code)
-        response = client.get(self.URL + '/api/commits?repository_id=webkit')
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(
-            Commit.from_json(response.json()[0]),
-            MockSVNRepository.webkit().commit_for_id('236544'),
-        )
-        self.assertEqual(404, client.post(self.URL + '/api/commits', data=dict(repository_id='webkit', id='0')).status_code)
+            self.assertEqual(200, client.post(self.URL + '/api/commits', data=dict(repository_id='webkit', id='6')).status_code)
+            response = client.get(self.URL + '/api/commits?repository_id=webkit')
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(
+                Commit.from_json(response.json()[0]).message,
+                '6th commit',
+            )
+            self.assertEqual(404, client.post(self.URL + '/api/commits', data=dict(repository_id='webkit', id='1234')).status_code)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_register_with_full_commit(self, client, **kwargs):
-        git_commit = MockStashRepository.safari().commit_for_id('bb6bda5f44dd2')
+        git_commit = Commit(
+            repository_id='safari',
+            branch='main',
+            id='8eba280e32daaf5fddbbb65aea37932ea9ad85df',
+            timestamp=1601650100,
+            order=0,
+            committer='jbedard@webkit.org',
+            message='custom commit',
+        )
         self.assertEqual(200, client.post(self.URL + '/api/commits', data=Commit.Encoder().default(git_commit)).status_code)
         response = client.get(self.URL + '/api/commits?repository_id=safari')
         self.assertEqual(200, response.status_code)
         self.assertEqual(Commit.from_json(response.json()[0]), git_commit)
 
-        svn_commit = MockSVNRepository.webkit().commit_for_id('236544')
+        svn_commit = Commit(
+            repository_id='webkit',
+            branch='trunk',
+            id='1234',
+            timestamp=1601650100,
+            order=0,
+            committer='jbedard@webkit.org',
+            message='custom commit',
+        )
         self.assertEqual(200, client.post(self.URL + '/api/commits', data=Commit.Encoder().default(svn_commit)).status_code)
         response = client.get(self.URL + '/api/commits?repository_id=webkit')
         self.assertEqual(200, response.status_code)
@@ -150,126 +157,128 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @FlaskTestCase.run_with_webserver()
     def test_find_id(self, client, **kwargs):
         self.register_all_commits(client)
-        response = client.get(self.URL + '/api/commits?id=336610a8')
+        response = client.get(self.URL + '/api/commits?id=d8bce26fa65c')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(Commit.from_json(response.json()[0]), MockStashRepository.safari().commit_for_id(id='336610a8'))
+        self.assertEqual(Commit.from_json(response.json()[0]).hash, 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
 
-        response = client.get(self.URL + '/api/commits?id=236540')
+        response = client.get(self.URL + '/api/commits?id=6')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(Commit.from_json(response.json()[0]), MockSVNRepository.webkit().commit_for_id(id=236540))
+        self.assertEqual(Commit.from_json(response.json()[0]).revision, 6)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_find_timestamp(self, client, **kwargs):
         self.register_all_commits(client)
-        response = client.get(self.URL + '/api/commits?timestamp=1537550685')
+        response = client.get(self.URL + '/api/commits?timestamp=1601668000')
         self.assertEqual(200, response.status_code)
         self.assertEqual(2, len(response.json()))
-        self.assertEqual([Commit.from_json(element) for element in response.json()], [
-            MockStashRepository.safari().commit_for_id(id='e64810a4'),
-            MockStashRepository.safari().commit_for_id(id='7be40842'),
+        self.assertEqual([Commit.from_json(element).hash for element in response.json()], [
+            'bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
+            'd8bce26fa65c6fc8f39c17927abb77f69fab82fc',
         ])
 
-        response = client.get(self.URL + '/api/commits?timestamp=1538041791.8')
+        response = client.get(self.URL + '/api/commits?timestamp=1601639900')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(Commit.from_json(response.json()[0]), MockSVNRepository.webkit().commit_for_id(id=236541))
+        self.assertEqual(Commit.from_json(response.json()[0]).revision, 6)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_find_uuid(self, client, **kwargs):
         self.register_all_commits(client)
-        response = client.get(self.URL + '/api/commits?uuid=153755068501')
+        response = client.get(self.URL + '/api/commits?uuid=160166800001')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(Commit.from_json(response.json()[0]), MockStashRepository.safari().commit_for_id(id='7be40842'))
+        self.assertEqual(Commit.from_json(response.json()[0]).hash, 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
 
-        response = client.get(self.URL + '/api/commits?uuid=153804179200')
+        response = client.get(self.URL + '/api/commits?uuid=160163990000')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(Commit.from_json(response.json()[0]), MockSVNRepository.webkit().commit_for_id(id=236541))
+        self.assertEqual(Commit.from_json(response.json()[0]).revision, 6)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_find_range_id(self, client, **kwargs):
         self.register_all_commits(client)
-        response = client.get(self.URL + '/api/commits?after_id=336610a8&before_id=236540')
+        response = client.get(self.URL + '/api/commits?after_id=6&before_id=fff83bb2d917')
         self.assertEqual(200, response.status_code)
-        self.assertEqual([Commit.from_json(element) for element in response.json()], [
-            MockStashRepository.safari().commit_for_id(id='336610a8'),
-            MockStashRepository.safari().commit_for_id(id='bb6bda5f'),
-            MockSVNRepository.webkit().commit_for_id(id=236540),
+        self.assertEqual([Commit.from_json(element).id for element in response.json()], [
+            '6', '9b8311f25a77ba14923d9d5a6532103f54abefcb', 'fff83bb2d9171b4d9196e977eb0508fd57e7a08d',
         ])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_find_range_timestamp(self, client, **kwargs):
         self.register_all_commits(client)
-        response = client.get(self.URL + '/api/commits?after_timestamp=1538041792.3&before_timestamp=1538049108')
+        response = client.get(self.URL + '/api/commits?after_timestamp=1601637900&before_timestamp=1601639900')
         self.assertEqual(200, response.status_code)
         self.assertEqual(
-            [Commit.from_json(element) for element in response.json()],
-            [MockSVNRepository.webkit().commit_for_id(id=236541), MockSVNRepository.webkit().commit_for_id(id=236542)],
+            [Commit.from_json(element).revision for element in response.json()],
+            [4, 6],
         )
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_find_range_uuid(self, client, **kwargs):
         self.register_all_commits(client)
-        response = client.get(self.URL + '/api/commits?after_uuid=153755068501&before_uuid=153756638602')
+        response = client.get(self.URL + '/api/commits?after_uuid=160166800000&before_uuid=160166800001')
         self.assertEqual(200, response.status_code)
         self.assertEqual(
-            [Commit.from_json(element) for element in response.json()],
-            [MockStashRepository.safari().commit_for_id(id='7be40842'), MockStashRepository.safari().commit_for_id(id='336610a4')],
+            [Commit.from_json(element).hash for element in response.json()], [
+                'bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
+                'd8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+            ],
         )
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_next(self, client, **kwargs):
         self.register_all_commits(client)
-        response = client.get(self.URL + '/api/commits/next?id=336610a4')
+        response = client.get(self.URL + '/api/commits/next?id=bae5d1e90999')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(MockStashRepository.safari().commit_for_id(id='336610a8'), Commit.from_json(response.json()[0]))
+        self.assertEqual('d8bce26fa65c6fc8f39c17927abb77f69fab82fc', Commit.from_json(response.json()[0]).hash)
 
-        response = client.get(self.URL + '/api/commits/next?id=236542')
+        response = client.get(self.URL + '/api/commits/next?id=4')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(MockSVNRepository.webkit().commit_for_id(id=236543), Commit.from_json(response.json()[0]))
+        self.assertEqual(6, Commit.from_json(response.json()[0]).revision)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_previous(self, client, **kwargs):
         self.register_all_commits(client)
-        response = client.get(self.URL + '/api/commits/previous?id=336610a4')
+        response = client.get(self.URL + '/api/commits/previous?id=d8bce26fa65c')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(MockStashRepository.safari().commit_for_id(id='7be40842'), Commit.from_json(response.json()[0]))
+        self.assertEqual('bae5d1e90999d4f916a8a15810ccfa43f37a2fd6', Commit.from_json(response.json()[0]).hash)
 
-        response = client.get(self.URL + '/api/commits/previous?id=236542')
+        response = client.get(self.URL + '/api/commits/previous?id=6')
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(MockSVNRepository.webkit().commit_for_id(id=236541), Commit.from_json(response.json()[0]))
+        self.assertEqual(4, Commit.from_json(response.json()[0]).revision)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_siblings(self, client, **kwargs):
         self.register_all_commits(client)
 
-        response = client.get(self.URL + '/api/commits/siblings?repository_id=webkit&id=236542')
+        response = client.get(self.URL + '/api/commits/siblings?repository_id=webkit&id=6')
         self.assertEqual(200, response.status_code)
-        commits = {key: [Commit.from_json(element) for element in values] for key, values in response.json().items()}
-        self.assertEqual(commits, {'safari': [MockStashRepository.safari().commit_for_id(id='bb6bda5f44dd24')]})
+        commits = {key: [Commit.from_json(element).hash for element in values] for key, values in response.json().items()}
+        self.assertEqual(
+            commits, dict(safari=[
+                'd8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                'bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
+                '1abe25b443e985f93b90d830e4a7e3731336af4d',
+                'fff83bb2d9171b4d9196e977eb0508fd57e7a08d',
+                '9b8311f25a77ba14923d9d5a6532103f54abefcb',
+            ]),
+        )
 
-        response = client.get(self.URL + '/api/commits/siblings?repository_id=safari&id=bb6bda5f44dd24')
+        response = client.get(self.URL + '/api/commits/siblings?repository_id=safari&id=d8bce26fa65c')
         self.assertEqual(200, response.status_code)
-        commits = {key: [Commit.from_json(element) for element in values] for key, values in response.json().items()}
-        self.assertEqual(commits, {'webkit': [
-            MockSVNRepository.webkit().commit_for_id(id=236544),
-            MockSVNRepository.webkit().commit_for_id(id=236543),
-            MockSVNRepository.webkit().commit_for_id(id=236542),
-            MockSVNRepository.webkit().commit_for_id(id=236541),
-            MockSVNRepository.webkit().commit_for_id(id=236540),
-        ]})
+        commits = {key: [Commit.from_json(element).revision for element in values] for key, values in response.json().items()}
+        self.assertEqual(commits, dict(webkit=[6]))

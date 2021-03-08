@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,9 +23,8 @@
 import time
 
 from fakeredis import FakeStrictRedis
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
-from resultsdbpy.model.mock_repository import MockStashRepository, MockSVNRepository
+from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 from resultsdbpy.view.view_routes_unittest import WebSiteTestCase
 from selenium.webdriver.support.select import Select
@@ -33,10 +32,18 @@ from selenium.webdriver.support.select import Select
 
 class CommitViewUnittest(WebSiteTestCase):
     def register_all_commits(self, client):
-        for repo in [MockStashRepository.safari(), MockSVNRepository.webkit()]:
+        for name, repo in dict(safari=MockModelFactory.safari(), webkit=MockModelFactory.webkit()).items():
             for commits in repo.commits.values():
                 for commit in commits:
-                    self.assertEqual(200, client.post(self.URL + '/api/commits/register', data=Commit.Encoder().default(commit)).status_code)
+                    self.assertEqual(200, client.post(self.URL + '/api/commits/register', data=dict(
+                        repository_id=name,
+                        id=commit.revision or commit.hash,
+                        branch=commit.branch,
+                        timestamp=commit.timestamp,
+                        order=commit.order,
+                        committer=commit.author.email,
+                        message=commit.message,
+                    )).status_code)
 
     def unpack_commit_table(self, commit_table):
         headers = commit_table.find_elements_by_tag_name('th')
@@ -85,7 +92,7 @@ class CommitViewUnittest(WebSiteTestCase):
         self.assertIn('webkit', commits)
 
         self.assertEqual(5, len(commits['safari']))
-        self.assertEqual(5, len(commits['webkit']))
+        self.assertEqual(4, len(commits['webkit']))
 
         rows = commit_table.find_element_by_tag_name('tbody').find_elements_by_tag_name('tr')
         self.assertNotEqual(
@@ -121,24 +128,8 @@ class CommitViewUnittest(WebSiteTestCase):
         self.assertIn('safari', commits)
         self.assertIn('webkit', commits)
 
-        self.assertEqual(1, len(commits['safari']))
-        self.assertEqual(5, len(commits['webkit']))
-
-    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
-    @WebSiteTestCase.decorator()
-    def test_radar_strings(self, driver, client, **kwargs):
-        self.register_all_commits(client)
-        driver.get(self.URL + '/commits?id=336610a4')
-
-        while not driver.find_elements_by_class_name('commit-table'):
-            time.sleep(.1)
-        commit_table = driver.find_element_by_class_name('commit-table')
-
-        commits = self.unpack_commit_table(commit_table)
-        changelog = commits['safari'][0].find_element_by_tag_name('div')
-
-        radar = '<rdar://problem/99999999>'
-        self.assertEqual(changelog.text[:len(radar)], radar)
+        self.assertEqual(5, len(commits['safari']))
+        self.assertEqual(4, len(commits['webkit']))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @WebSiteTestCase.decorator()
@@ -156,7 +147,7 @@ class CommitViewUnittest(WebSiteTestCase):
         self.assertIn('webkit', commits)
 
         self.assertEqual(5, len(commits['safari']))
-        self.assertEqual(5, len(commits['webkit']))
+        self.assertEqual(4, len(commits['webkit']))
 
         controls = self.find_input_with_name(driver, 'Limit:').find_elements_by_tag_name('input')
         self.assertEqual(3, len(controls))
@@ -184,14 +175,14 @@ class CommitViewUnittest(WebSiteTestCase):
     @WebSiteTestCase.decorator()
     def test_one_line_switch(self, driver, client, **kwargs):
         self.register_all_commits(client)
-        driver.get(self.URL + '/commits?id=7be40842')
+        driver.get(self.URL + '/commits?id=d8bce26fa65c')
 
         while not driver.find_elements_by_class_name('commit-table'):
             time.sleep(.1)
         commit_table = driver.find_element_by_class_name('commit-table')
 
-        line_1 = u'Change 4 \u2014 (Part 2) description.'
-        line_2 = 'Reviewed by person.'
+        line_1 = u'Patch Series'
+        line_2 = ''
 
         commits = self.unpack_commit_table(commit_table)
         changelog = commits['safari'][0].find_element_by_tag_name('div')
@@ -229,11 +220,11 @@ class CommitViewUnittest(WebSiteTestCase):
         self.assertIn('webkit', commits)
 
         self.assertEqual(5, len(commits['safari']))
-        self.assertEqual(5, len(commits['webkit']))
+        self.assertEqual(4, len(commits['webkit']))
 
         controls = self.find_input_with_name(driver, 'Branch').find_elements_by_tag_name('select')
         self.assertEqual(1, len(controls))
-        Select(controls[0]).select_by_visible_text('safari-606-branch')
+        Select(controls[0]).select_by_visible_text('branch-a')
 
         self.toggle_drawer(driver, assert_displayed=False)
 

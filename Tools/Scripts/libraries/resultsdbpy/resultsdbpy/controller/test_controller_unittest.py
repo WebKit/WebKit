@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,12 +38,13 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
-        cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
-        model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
-        app.register_blueprint(APIRoutes(model))
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
+            app.register_blueprint(APIRoutes(model))
 
-        MockModelFactory.add_mock_results(model)
-        MockModelFactory.process_results(model)
+            MockModelFactory.add_mock_results(model)
+            MockModelFactory.process_results(model)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
@@ -106,7 +107,7 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_results_by_commit(self, client, **kwargs):
-        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=iOS&style=Debug&after_id=336610a84&before_id=236542')
+        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=iOS&style=Debug&after_id=6&before_id=1abe25b443e9')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
         for i in range(2):

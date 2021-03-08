@@ -29,7 +29,6 @@ from resultsdbpy.flask_support.flask_testcase import FlaskTestCase
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.test_context import Expectations
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 
 
@@ -38,25 +37,26 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
-        cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
-        model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
-        app.register_blueprint(APIRoutes(model))
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
+            app.register_blueprint(APIRoutes(model))
 
-        MockModelFactory.add_mock_results(model, test_results=dict(
-            details=dict(link='dummy-link'),
-            run_stats=dict(tests_skipped=0),
-            results={
-                'fast': {
-                    'encoding': {
-                        'css-cached-bom.html': dict(expected='PASS', actual='FAIL', time=1.2),
-                        'css-charset-default.xhtml': dict(expected='FAIL', actual='FAIL', time=1.2),
-                        'css-charset.html': dict(expected='FAIL', actual='PASS', time=1.2),
-                        'css-link-charset.html': dict(expected='PASS', actual='PAS', time=1.2),
+            MockModelFactory.add_mock_results(model, test_results=dict(
+                details=dict(link='dummy-link'),
+                run_stats=dict(tests_skipped=0),
+                results={
+                    'fast': {
+                        'encoding': {
+                            'css-cached-bom.html': dict(expected='PASS', actual='FAIL', time=1.2),
+                            'css-charset-default.xhtml': dict(expected='FAIL', actual='FAIL', time=1.2),
+                            'css-charset.html': dict(expected='FAIL', actual='PASS', time=1.2),
+                            'css-link-charset.html': dict(expected='PASS', actual='PAS', time=1.2),
+                        }
                     }
-                }
-            },
-        ))
-        MockModelFactory.process_results(model)
+                },
+            ))
+            MockModelFactory.process_results(model)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()

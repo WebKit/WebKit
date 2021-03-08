@@ -28,7 +28,9 @@ from cassandra.cqlengine import columns
 from cassandra.cqlengine.models import Model
 from datetime import datetime
 from resultsdbpy.controller.commit import Commit
-from resultsdbpy.model.repository import Repository, SCMException
+from resultsdbpy.model.repository import Repository
+
+from webkitscmpy import ScmBase
 
 
 class CommitContext(object):
@@ -119,7 +121,7 @@ class CommitContext(object):
         # this case, track branches which are not the default branch independently.
         for commit in commits:
             repo = self.repositories.get(commit.repository_id, Repository(key=commit.repository_id))
-            if commit.branch != repo.DEFAULT_BRANCH:
+            if commit.branch != repo.default_branch:
                 branches.add(commit.branch)
         if len(branches) == 0:
             branches.add(self.DEFAULT_BRANCH_KEY)
@@ -145,7 +147,7 @@ class CommitContext(object):
 
     def find_commits_by_id(self, repository_id, branch, commit_id, limit=100):
         if branch is None:
-            branch = self.repositories[repository_id].DEFAULT_BRANCH
+            branch = self.repositories[repository_id].default_branch
 
         def callback(commit_id=commit_id):
             with self:
@@ -169,7 +171,7 @@ class CommitContext(object):
 
     def find_commits_by_uuid(self, repository_id, branch, uuid, limit=100):
         if branch is None:
-            branch = self.repositories[repository_id].DEFAULT_BRANCH
+            branch = self.repositories[repository_id].default_branch
 
         def callback():
             with self:
@@ -185,7 +187,7 @@ class CommitContext(object):
 
     def find_commits_by_timestamp(self, repository_id, branch, timestamp, limit=100):
         if branch is None:
-            branch = self.repositories[repository_id].DEFAULT_BRANCH
+            branch = self.repositories[repository_id].default_branch
 
         if isinstance(timestamp, datetime):
             timestamp = calendar.timegm(timestamp.timetuple())
@@ -208,7 +210,7 @@ class CommitContext(object):
 
     def find_commits_in_range(self, repository_id, branch=None, begin=None, end=None, limit=100):
         if branch is None:
-            branch = self.repositories[repository_id].DEFAULT_BRANCH
+            branch = self.repositories[repository_id].default_branch
 
         begin = self.convert_to_uuid(begin)
         end = self.convert_to_uuid(end, self.timestamp_to_uuid())
@@ -262,8 +264,8 @@ class CommitContext(object):
                 if id not in self.repositories:
                     continue
 
-                if commit.branch == self.repositories[commit.repository_id].DEFAULT_BRANCH or not self.branches(id, commit.branch):
-                    branch = self.repositories[id].DEFAULT_BRANCH
+                if commit.branch == self.repositories[commit.repository_id].default_branch or not self.branches(id, commit.branch):
+                    branch = self.repositories[id].default_branch
                 else:
                     branch = commit.branch
 
@@ -319,17 +321,17 @@ class CommitContext(object):
 
     def register_commit_with_repo_and_id(self, repository_id, branch, commit_id):
         if branch is None:
-            branch = self.repositories[repository_id].DEFAULT_BRANCH
+            branch = self.repositories[repository_id].default_branch
         if repository_id not in self.repositories:
             raise RuntimeError('{} is not a recognized repository')
 
         with self:
             commits = self.find_commits_by_id(repository_id=repository_id, branch=branch, commit_id=commit_id)
             if len(commits) > 1:
-                raise SCMException(f'Multiple commits with the id {commit_id} exist in {repository_id} on {branch}')
+                raise ScmBase.Exception(f'Multiple commits with the id {commit_id} exist in {repository_id} on {branch}')
             if commits:
                 return commits[0]
-            commit = self.repositories[repository_id].commit_for_id(commit_id, branch)
+            commit = self.repositories[repository_id].commit_for_id(commit_id)
             return self.register_commit(commit)
 
     def url(self, commit):
