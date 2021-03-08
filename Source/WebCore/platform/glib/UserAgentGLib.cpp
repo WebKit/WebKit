@@ -89,6 +89,8 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
 
     if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsMacintoshPlatform));
+    else if (quirks.contains(UserAgentQuirks::NeedsLinuxDesktopPlatform))
+        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsLinuxDesktopPlatform));
     else {
         uaString.append(platformForUAString());
         uaString.appendLiteral("; ");
