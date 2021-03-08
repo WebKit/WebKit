@@ -215,12 +215,20 @@ void JSToken::dump(PrintStream& out) const
 }
 
 template <typename LexerType>
-Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>::parseInner(const Identifier& calleeName, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>* classFieldLocations)
+Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>::parseInner(const Identifier& calleeName, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>* classFieldLocations, const PrivateNameEnvironment* parentScopePrivateNames)
 {
     ASTBuilder context(const_cast<VM&>(m_vm), m_parserArena, const_cast<SourceCode*>(m_source));
     SourceParseMode parseMode = sourceParseMode();
     ScopeRef scope = currentScope();
     scope->setIsLexicalScope();
+
+    bool hasPrivateNames = scope->isEvalContext() && parentScopePrivateNames && parentScopePrivateNames->size();
+
+    if (hasPrivateNames) {
+        scope->setIsPrivateNameScope();
+        scope->lexicalVariables().addPrivateNamesFrom(parentScopePrivateNames);
+    }
+
     SetForScope<FunctionParsePhase> functionParsePhasePoisoner(m_parserState.functionParsePhase, FunctionParsePhase::Body);
 
     FunctionParameters* parameters = nullptr;
@@ -282,6 +290,9 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
     bool validEnding = consume(EOFTOK);
     if (!sourceElements || !validEnding)
         return makeUnexpected(hasError() ? m_errorMessage : "Parser error"_s);
+
+    if (hasPrivateNames && scope->hasUsedButUndeclaredPrivateNames())
+        return makeUnexpected("Cannot reference undeclared private names");
 
     IdentifierSet capturedVariables;
     UniquedStringImplPtrSet sloppyModeHoistedFunctions;

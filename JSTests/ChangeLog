@@ -1,3 +1,14 @@
+2021-03-08  Saam Barati  <sbarati@apple.com>
+
+        Using an undeclared private field inside eval shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=222834
+        <rdar://75035388>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/declared-private-field-in-eval.js: Added.
+        * stress/undeclared-private-field-in-eval.js: Added.
+
 2021-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         BooleanConstructor should be inlined in DFG / FTL
