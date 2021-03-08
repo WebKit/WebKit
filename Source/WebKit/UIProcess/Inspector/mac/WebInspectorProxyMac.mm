@@ -841,23 +841,25 @@ DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
 
 void WebInspectorProxy::applyForcedAppearance()
 {
-    NSWindow *window = m_inspectorWindow.get();
-    if (!window)
-        return;
-
+    NSAppearance *platformAppearance;
     switch (m_frontendAppearance) {
     case InspectorFrontendClient::Appearance::System:
-        window.appearance = nil;
+        platformAppearance = nil;
         break;
 
     case InspectorFrontendClient::Appearance::Light:
-        window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        platformAppearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         break;
 
     case InspectorFrontendClient::Appearance::Dark:
-        window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+        platformAppearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
         break;
     }
+
+    if (NSWindow *window = m_inspectorWindow.get())
+        window.appearance = platformAppearance;
+
+    [m_inspectorViewController webView].appearance = platformAppearance;
 }
 
 } // namespace WebKit

@@ -1,3 +1,21 @@
+2021-03-08  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Changes in WebInspectorUI's appearance don't propagate to .effectiveAppearance while docked
+        https://bugs.webkit.org/show_bug.cgi?id=222925
+        <rdar://71201454>
+
+        Reviewed by Devin Rousso.
+
+        Update the appearance property for the underlying webView in addition to
+        setting it for the inspector NSWindow (undocked only).
+
+        This fix is needed for both local and remote inspector code paths.
+
+        * UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformSetForcedAppearance):
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::applyForcedAppearance):
+
 2021-03-08  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Builds with ENABLE_CONTEXT_MENUS=OFF fail
