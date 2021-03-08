@@ -3136,6 +3136,8 @@ bool RenderLayerCompositor::requiresCompositingForModel(RenderLayerModelObject& 
 #if ENABLE(MODEL_ELEMENT)
     if (is<RenderModel>(renderer))
         return true;
+#else
+    UNUSED_PARAM(renderer);
 #endif
 
     return false;
