@@ -33,9 +33,9 @@ StreamClientConnection::StreamClientConnection(Connection& connection, size_t si
     , m_buffer(size)
 {
     // Read starts from 0 with limit of 0 and reader sleeping.
-    sharedClientOffset().store(StreamConnectionBuffer::clientOffsetServerIsSleepingTag, std::memory_order_relaxed);
+    sharedClientOffset().store(ClientOffset::serverIsSleepingTag, std::memory_order_relaxed);
     // Write starts from 0 with a limit of the whole buffer.
-    sharedServerOffset().store(0, std::memory_order_relaxed);
+    sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_relaxed);
 }
 
 void StreamClientConnection::setWakeUpSemaphore(IPC::Semaphore&& semaphore)

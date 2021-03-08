@@ -5102,6 +5102,9 @@ void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, W
     case SimulatedWebGLContextEvent::GPUStatusFailure:
         contextEvent = WebGLRenderingContext::SimulatedEventForTesting::GPUStatusFailure;
         break;
+    case SimulatedWebGLContextEvent::Timeout:
+        contextEvent = WebGLRenderingContext::SimulatedEventForTesting::Timeout;
+        break;
     default:
         ASSERT_NOT_REACHED();
         return;

@@ -1,5 +1,27 @@
 2021-03-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        WebGL asserts after GPU process times out
+        https://bugs.webkit.org/show_bug.cgi?id=222546
+
+        Reviewed by Wenson Hsieh.
+
+        Add tests to test the case where a WebGL call times out.
+        Add two variants: one which most probably times out on
+        synchronous call, and one which most probably times out on
+        asynchronous call.
+
+        * fast/canvas/webgl/lose-context-on-status-failure.html:
+        The testing APIs were changed, so replace use of
+        Internals.setFailNextGPUStatusCheck()
+        with Internals.simulateEventForWebGLContext()
+        * fast/canvas/webgl/lose-context-on-timeout-async-expected.txt: Added.
+        * fast/canvas/webgl/lose-context-on-timeout-async.html: Added.
+        * fast/canvas/webgl/lose-context-on-timeout-expected.txt: Added.
+        * fast/canvas/webgl/lose-context-on-timeout.html: Added.
+        * fast/canvas/webgl/webglcontextchangedevent.html:
+
+2021-03-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         WebGL context screen change events should work with GPU process
         https://bugs.webkit.org/show_bug.cgi?id=219669
         <rdar://problem/72373371>

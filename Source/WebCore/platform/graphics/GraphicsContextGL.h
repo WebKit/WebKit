@@ -1301,7 +1301,8 @@ public:
 
     enum class SimulatedEventForTesting {
         ContextChange,
-        GPUStatusFailure
+        GPUStatusFailure,
+        Timeout
     };
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;
 

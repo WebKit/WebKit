@@ -137,7 +137,9 @@ public:
     void updateSupportedRemoteCommands();
 
     void terminateWebProcess();
-
+#if ENABLE(WEBGL)
+    void releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier);
+#endif
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID, GPUProcessConnectionParameters&&);
 

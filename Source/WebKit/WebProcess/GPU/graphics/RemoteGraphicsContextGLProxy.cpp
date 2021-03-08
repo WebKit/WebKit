@@ -172,7 +172,7 @@ void RemoteGraphicsContextGLProxy::synthesizeGLError(GCGLenum error)
     if (!isContextLost()) {
         auto sendResult = send(Messages::RemoteGraphicsContextGL::SynthesizeGLError(error));
         if (!sendResult)
-            wasLost();
+            markContextLost();
         return;
     }
     m_errorWhenContextIsLost = error;
@@ -184,7 +184,7 @@ GCGLenum RemoteGraphicsContextGLProxy::getError()
         uint32_t returnValue = 0;
         auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetError(), Messages::RemoteGraphicsContextGL::GetError::Reply(returnValue));
         if (!sendResult)
-            wasLost();
+            markContextLost();
         return static_cast<GCGLenum>(returnValue);
     }
     return std::exchange(m_errorWhenContextIsLost, NO_ERROR);

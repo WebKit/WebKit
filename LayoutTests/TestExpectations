@@ -3463,6 +3463,10 @@ webgl/2.0.0/conformance2/misc/uninitialized-test-2.html [ Skip ]
 # Failing on certain hardware configurations: macOS with Intel GPUs. Also slow.
 webkit.org/b/220753 webgl/conformance/extensions/webgl-multi-draw.html [ Pass Failure Slow ]
 
+# Timeout testing is not applicable to in-process webgl, only webgl in gpu process.
+fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ]
+fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
+
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]
 
@@ -4838,4 +4842,3 @@ imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-count
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
-

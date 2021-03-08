@@ -74,11 +74,13 @@ protected:
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
     Span alignedSpan(size_t offset, size_t limit);
     size_t size(size_t offset, size_t limit);
-    size_t clampedLimit(size_t untrustedLimit) const;
     size_t wrapOffset(size_t offset) const { return m_buffer.wrapOffset(offset); }
     size_t alignOffset(size_t offset) const { return m_buffer.alignOffset<messageAlignment>(offset, minimumMessageSize); }
-    Atomic<size_t>& sharedClientOffset() { return m_buffer.clientOffset(); }
-    Atomic<size_t>& sharedServerOffset() { return m_buffer.serverOffset(); }
+    using ServerLimit = StreamConnectionBuffer::ClientOffset;
+    Atomic<ServerLimit>& sharedServerLimit() { return m_buffer.clientOffset(); }
+    using ServerOffset = StreamConnectionBuffer::ServerOffset;
+    Atomic<ServerOffset>& sharedServerOffset() { return m_buffer.serverOffset(); }
+    size_t clampedLimit(ServerLimit) const;
     uint8_t* data() const { return m_buffer.data(); }
     size_t dataSize() const { return m_buffer.dataSize(); }
 

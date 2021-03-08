@@ -1028,7 +1028,8 @@ template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesti
     using values = EnumValues<
     WebCore::GraphicsContextGL::SimulatedEventForTesting,
     WebCore::GraphicsContextGL::SimulatedEventForTesting::ContextChange,
-    WebCore::GraphicsContextGL::SimulatedEventForTesting::GPUStatusFailure
+    WebCore::GraphicsContextGL::SimulatedEventForTesting::GPUStatusFailure,
+    WebCore::GraphicsContextGL::SimulatedEventForTesting::Timeout
     >;
 };
 #endif

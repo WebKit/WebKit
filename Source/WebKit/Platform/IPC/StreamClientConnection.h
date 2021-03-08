@@ -80,12 +80,14 @@ private:
 
     Span alignedSpan(size_t offset, size_t limit);
     size_t size(size_t offset, size_t limit);
-    size_t clampedLimit(size_t untrustedLimit) const;
 
     size_t wrapOffset(size_t offset) const { return m_buffer.wrapOffset(offset); }
     size_t alignOffset(size_t offset) const { return m_buffer.alignOffset<messageAlignment>(offset, minimumMessageSize); }
-    Atomic<size_t>& sharedClientOffset() { return m_buffer.clientOffset(); }
-    Atomic<size_t>& sharedServerOffset() { return m_buffer.serverOffset(); }
+    using ClientOffset = StreamConnectionBuffer::ClientOffset;
+    Atomic<ClientOffset>& sharedClientOffset() { return m_buffer.clientOffset(); }
+    using ClientLimit = StreamConnectionBuffer::ServerOffset;
+    Atomic<ClientLimit>& sharedClientLimit() { return m_buffer.serverOffset(); }
+    size_t toLimit(ClientLimit) const;
     uint8_t* data() const { return m_buffer.data(); }
     size_t dataSize() const { return m_buffer.dataSize(); }
 
@@ -135,9 +137,7 @@ StreamClientConnection::SendSyncResult StreamClientConnection::sendSync(T&& mess
     // FIXME: implement send through stream.
     // FIXME: implement receive through stream.
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    auto result = m_connection.sendSync(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout);
-    ASSERT(result);
-    return result;
+    return m_connection.sendSync(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout);
 }
 
 inline bool StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)
@@ -168,30 +168,34 @@ inline void StreamClientConnection::sendProcessOutOfStreamMessage(Span&& span)
 }
 inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire(Timeout timeout)
 {
+    ClientLimit clientLimit = sharedClientLimit().load(std::memory_order_acquire);
+    // This would mean we try to send messages after a timeout. It is a programming error.
+    // Since the value is trusted, we only assert.
+    ASSERT(clientLimit != ClientLimit::clientIsWaitingTag);
+
     for (;;) {
-        size_t clientLimit = clampedLimit(sharedServerOffset().load(std::memory_order_acquire));
-        auto result = alignedSpan(m_clientOffset, clientLimit);
-        if (result.size < minimumMessageSize) {
-            if (timeout.didTimeOut())
-                break;
-#if PLATFORM(COCOA)
-            size_t oldClientLimit = sharedServerOffset().compareExchangeStrong(clientLimit, StreamConnectionBuffer::serverOffsetClientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
-            if (clientLimit == oldClientLimit)
-                m_buffer.clientWaitSemaphore().waitFor(timeout);
-            else {
-                clientLimit = clampedLimit(oldClientLimit);
-                result = alignedSpan(m_clientOffset, clientLimit);
-            }
-#else
-            Thread::yield();
-#endif
+        if (clientLimit != ClientLimit::clientIsWaitingTag) {
+            auto result = alignedSpan(m_clientOffset, toLimit(clientLimit));
+            if (result.size >= minimumMessageSize)
+                return result;
         }
-        if (result.size >= minimumMessageSize)
-            return result;
+        if (timeout.didTimeOut())
+            break;
+#if PLATFORM(COCOA)
+        ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
+        if (clientLimit == oldClientLimit) {
+            m_buffer.clientWaitSemaphore().waitFor(timeout);
+            clientLimit = sharedClientLimit().load(std::memory_order_acquire);
+        } else
+            clientLimit = oldClientLimit;
+#else
+        Thread::yield();
+        clientLimit = sharedClientLimit().load(std::memory_order_acquire);
+#endif
         // The alignedSpan uses the minimumMessageSize to calculate the next beginning position in the buffer,
         // and not the size. The size might be more or less what is needed, depending on where the reader is.
         // If there is no capacity for minimum message size, wait until more is available.
-        // In the case where clientOffset < serverOffset we can arrive to a situation where
+        // In the case where clientOffset < clientLimit we can arrive to a situation where
         // 0 < result.size < minimumMessageSize.
     }
     return WTF::nullopt;
@@ -202,11 +206,11 @@ inline StreamClientConnection::WakeUpServer StreamClientConnection::release(size
     size = std::max(size, minimumMessageSize);
     m_clientOffset = wrapOffset(alignOffset(m_clientOffset) + size);
     ASSERT(m_clientOffset < dataSize());
-    // If the server wrote over the clientOffset with clientOffsetServerIsSleepingTag, we know it is sleeping.
-    size_t serverLimit = sharedClientOffset().exchange(m_clientOffset, std::memory_order_acq_rel);
-    if (serverLimit == StreamConnectionBuffer::clientOffsetServerIsSleepingTag)
+    // If the server wrote over the clientOffset with serverIsSleepingTag, we know it is sleeping.
+    ClientOffset oldClientOffset = sharedClientOffset().exchange(static_cast<ClientOffset>(m_clientOffset), std::memory_order_acq_rel);
+    if (oldClientOffset == ClientOffset::serverIsSleepingTag)
         return WakeUpServer::Yes;
-    ASSERT(!(serverLimit & StreamConnectionBuffer::clientOffsetServerIsSleepingTag));
+    ASSERT(!(oldClientOffset & ClientOffset::serverIsSleepingTag));
     return WakeUpServer::No;
 }
 
@@ -235,10 +239,11 @@ inline size_t StreamClientConnection::size(size_t offset, size_t limit)
     return limit - offset - 1;
 }
 
-inline size_t StreamClientConnection::clampedLimit(size_t untrustedLimit) const
+inline size_t StreamClientConnection::toLimit(ClientLimit clientLimit) const
 {
-    ASSERT(untrustedLimit < (dataSize() - 1));
-    return std::min(untrustedLimit, dataSize() - 1);
+    ASSERT(!(clientLimit & ClientLimit::clientIsWaitingTag));
+    ASSERT(static_cast<size_t>(clientLimit) <= dataSize() - 1);
+    return static_cast<size_t>(clientLimit);
 }
 
 }

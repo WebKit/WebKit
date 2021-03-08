@@ -774,7 +774,8 @@ public:
 #if ENABLE(WEBGL)
     enum class SimulatedWebGLContextEvent {
         ContextChange,
-        GPUStatusFailure
+        GPUStatusFailure,
+        Timeout
     };
     void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContext&);
     bool hasLowAndHighPowerGPUs();

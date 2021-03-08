@@ -82,19 +82,27 @@ public:
         return offset;
     }
 
-    Atomic<size_t>& clientOffset() { return header().clientOffset; }
-    Atomic<size_t>& serverOffset() { return header().serverOffset; }
+    // Value denoting the client index to the buffer, with special tag values.
+    // The client trusts this. The server converts the value to trusted size_t offset with a special function.
+    enum ClientOffset : size_t {
+        // Tag value stored in when the server is sleeping, e.g. not running.
+        serverIsSleepingTag = 1u << 31
+    };
+
+    // Value denoting the server index to the buffer, with special tag values.
+    // The client trusts this. The server converts the value to trusted size_t offset with a special function.
+    enum ServerOffset : size_t {
+        // Tag value stored when the client is waiting, e.g. waiting on a semaphore.
+        clientIsWaitingTag = 1u << 31
+    };
+
+    Atomic<ClientOffset>& clientOffset() { return header().clientOffset; }
+    Atomic<ServerOffset>& serverOffset() { return header().serverOffset; }
     uint8_t* data() const { return static_cast<uint8_t*>(m_sharedMemory->data()) + headerSize(); }
     size_t dataSize() const { return m_dataSize; }
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
-    // Tag value stored in Header::clientOffset when the server is sleeping, e.g. not running.
-    static constexpr size_t clientOffsetServerIsSleepingTag = 1 << 31;
-    // Tag value stored in Header::serverOffset when the client is waiting, e.g. waiting on
-    // a semaphore.
-    static constexpr size_t serverOffsetClientIsWaitingTag = 1 << 31;
-
-    static constexpr size_t maximumSize() { return std::min(clientOffsetServerIsSleepingTag, clientOffsetServerIsSleepingTag) - 1; }
+    static constexpr size_t maximumSize() { return std::min(static_cast<size_t>(ClientOffset::serverIsSleepingTag), static_cast<size_t>(ClientOffset::serverIsSleepingTag)) - 1; }
     void encode(Encoder&) const;
     static Optional<StreamConnectionBuffer> decode(Decoder&);
 
@@ -102,10 +110,10 @@ private:
     StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&, size_t memorySize, Semaphore&& clientWaitSemaphore);
 
     struct Header {
-        Atomic<size_t> serverOffset;
+        Atomic<ServerOffset> serverOffset;
         // Padding so that the variables mostly accessed by different processes do not share a cache line.
         // This is an attempt to avoid cache-line induced reduction of parallel access.
-        alignas(sizeof(uint64_t[2])) Atomic<size_t> clientOffset;
+        alignas(sizeof(uint64_t[2])) Atomic<ClientOffset> clientOffset;
     };
     Header& header() const { return *reinterpret_cast<Header*>(m_sharedMemory->data()); }
     static constexpr size_t headerSize() { return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(Header)); }

@@ -1,5 +1,129 @@
 2021-03-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        WebGL asserts after GPU process times out
+        https://bugs.webkit.org/show_bug.cgi?id=222546
+
+        Reviewed by Wenson Hsieh.
+
+        IPC::StreamClientConnection::tryAcquire would assert on
+            ASSERT(untrustedLimit < (dataSize() - 1));
+        The untrustedLimit value would be then:
+            StreamConnectionBuffer::serverOffsetClientIsWaitingTag.
+        This would be equivalent of assertion added in this commit:
+            ASSERT(clientLimit != ClientLimit::clientIsWaitingTag);
+
+        This would happen in case of timeout, because upon entering
+        the wait sequence:
+         1) The client itself would first write the tag value to the
+            offset variable.
+         2) Wait and timeout the wait.
+         3) run the next iteration of the acquire loop.
+
+        The next iteration would load the tag value written before,
+        e.g. serverOffsetClientIsWaitingTag.
+        This would be then used in clampedLimit() call.
+
+        Fix this by taking it into account that the variable might be
+        ClientLimit::clientIsWaitingTag within the acquire loop.
+
+        Possibly fix future similar problems by not treating the value as
+        size_t, rather treat it as enum class ClientOffset : size_t. This
+        enables the compiler to enforce that when checking for the various tag
+        values, the holder must hold the enum class. When intending to interpret
+        the value as size_t, holder must explicitly convert.
+
+        Do the above change for the ServerOffset.
+
+        Tests: fast/canvas/webgl/lose-context-on-timeout-async.html
+               fast/canvas/webgl/lose-context-on-timeout.html
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::releaseGraphicsContextGL):
+        Do not assert that the release message actually releases the context.
+        For testing, the induce the timeout by releasing the context prematurely
+        and treating the subsequent messages as if they were non-legit messages.
+        That should be just skipped.
+
+        (WebKit::GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting):
+        Add a public function to invoke from "ForTesting" codepaths.
+
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+        Skip RemoteGraphicsContextGL messages that do not get routed to any
+        instance. These messages can be "non-legit", ones that are sent before
+        the "context was lost" message reached the sender, or ones that are
+        sent during simulated timeout.
+        These do not contain asserts as it is expected that these will occur in
+        above situations.
+
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::simulateEventForTesting):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+        Add the simulateEventForTesting function to simulate the
+        timeout. Simulate via just removing the context, which causes
+        left-over messages to skipped.
+        Currently we do not simulate the timeout with an infinite loop
+        in GPU process threads as that is not supported.
+        Currently we do not simulate the timeout with a gpu process
+        crash since it is not supported to be tested (will cause a
+        reload).
+
+        * Platform/IPC/StreamClientConnection.cpp:
+        (IPC::StreamClientConnection::StreamClientConnection):
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::sendSync):
+        (IPC::StreamClientConnection::release):
+        Change size_t usage to -> ClientOffset, ServerOffset
+
+        (IPC::StreamClientConnection::tryAcquire):
+        Fix the assertion of equivalent of ASSERT(clientLimit != ClientLimit::clientIsWaitingTag);
+        by reorganizing the acquire loop.
+
+        (IPC::StreamClientConnection::toLimit const):
+        Fix the off-by-one in assertion error
+        ( < dataSize() - 1  vs <= dataSize() - 1)
+
+        Rename from clampedLimit() to toLimit(), as the
+        clamping is confusing as the client trusts the
+        server.
+
+        * Platform/IPC/StreamConnectionBuffer.cpp:
+        (IPC::StreamConnectionBuffer::StreamConnectionBuffer):
+        (IPC::StreamConnectionBuffer::operator=):
+        (IPC::StreamConnectionBuffer::encode const):
+        * Platform/IPC/StreamConnectionBuffer.h:
+        (IPC::StreamConnectionBuffer::clientOffset):
+        (IPC::StreamConnectionBuffer::serverOffset):
+        (IPC::StreamConnectionBuffer::clientWaitSemaphore):
+        (IPC::StreamConnectionBuffer::maximumSize):
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnectionBase::tryAquire):
+        (IPC::StreamServerConnectionBase::release):
+        Change size_t usage to -> ClientOffset, ServerOffset
+
+        (IPC::StreamServerConnectionBase::clampedLimit const):
+        Fix the off-by-one in assertion error
+        ( < dataSize() - 1  vs <= dataSize() - 1)
+
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnectionBase::sharedServerLimit):
+        (IPC::StreamServerConnectionBase::sharedServerOffset):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::synthesizeGLError):
+        (WebKit::RemoteGraphicsContextGLProxy::getError):
+        For the cases where the timeout would happen in these two functions,
+        call the markContextLost() instead of wasLost(). This is to clarify
+        all the context lost handling to use the same pattern.
+
+        (WebKit::RemoteGraphicsContextGLProxy::simulateEventForTesting):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+
+2021-03-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         WebGL context screen change events should work with GPU process
         https://bugs.webkit.org/show_bug.cgi?id=219669
         <rdar://problem/72373371>

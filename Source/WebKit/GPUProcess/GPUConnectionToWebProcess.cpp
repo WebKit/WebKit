@@ -41,6 +41,7 @@
 #include "MediaOverridesForTesting.h"
 #include "RemoteAudioHardwareListenerProxy.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
+#include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"
@@ -361,10 +362,15 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContext
 
 void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdentifier graphicsContextGLIdentifier)
 {
-    bool found = m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
-    ASSERT_UNUSED(found, found);
+    m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
+}
+
+void GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier identifier)
+{
+    releaseGraphicsContextGL(identifier);
 }
 #endif
+
 void GPUConnectionToWebProcess::clearNowPlayingInfo()
 {
     m_isActiveNowPlayingProcess = false;
@@ -555,6 +561,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+#if ENABLE(WEBGL)
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName()) {
+        // Skip messages for already removed receivers.
+        return true;
+    }
+#endif
 
     if (m_remoteRemoteCommandListener && decoder.messageReceiverName() == Messages::RemoteRemoteCommandListenerProxy::messageReceiverName()) {
         m_remoteRemoteCommandListener->didReceiveMessage(connection, decoder);
@@ -619,7 +631,13 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
         return true;
     }
 #endif
-
+#if ENABLE(WEBGL)
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName()) {
+        // Skip messages for already removed receivers.
+        replyEncoder.reset();
+        return true;
+    }
+#endif
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
