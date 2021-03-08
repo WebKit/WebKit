@@ -2787,9 +2787,6 @@ fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ I
 # <rdar://problem/32626498> REGRESSION (iOS 11/High Sierra): media/remote-control-command-seek.html is timing out
 media/remote-control-command-seek.html [ Timeout ]
 
-# <rdar://problem/32714935> iOS 11: LayoutTest security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html is timing out
-security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Timeout ]
-
 # <rdar://problem/32714919> iOS 11: http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html and allow-video.html are timing out
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Timeout ]
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Timeout ]
@@ -3507,6 +3504,8 @@ webkit.org/b/221486 imported/w3c/web-platform-tests/shadow-dom/nested-slot-remov
 
 webkit.org/b/221466 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys.html [ Skip ]
 webkit.org/b/221465 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-combinations.html [ Skip ]
+
+webkit.org/b/222840 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
 
 # Not all OSes support the same set of emoji.
 fast/text/mending-heart.html [ Failure ] 
