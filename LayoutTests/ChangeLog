@@ -1,3 +1,13 @@
+2021-03-08  Chris Gambrell  <cgambrell@apple.com>
+
+        REGRESSION: [iOS] http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=222823
+        <rdar://problem/75133450>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html:
+
 2021-03-06  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Some tests under web-animations/timing-model/animations are ImageOnlyFailure
