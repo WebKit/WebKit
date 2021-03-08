@@ -65,6 +65,13 @@ class IOSInlineMediaControls extends InlineMediaControls
 
     gestureRecognizerStateDidChange(recognizer)
     {
+        if (recognizer.state === GestureRecognizer.States.Cancelled) {
+            // The only way to enter a `Cancelled` state is to disable the gesture recognizer when
+            // there are active touches. Since the gesture recognizer is now disabled (which clears
+            // active touches and removes event listeners), don't bother handling the state change.
+            return;
+        }
+
         if (recognizer === this._pinchGestureRecognizer)
             this._pinchGestureRecognizerStateDidChange(recognizer);
         else if (recognizer === this._tapGestureRecognizer)
@@ -96,7 +103,7 @@ class IOSInlineMediaControls extends InlineMediaControls
     _pinchGestureRecognizerStateDidChange(recognizer)
     {
         console.assert(this.visible);
-        if (recognizer.state !== GestureRecognizer.States.Ended && recognizer.state !== GestureRecognizer.States.Changed)
+        if (recognizer.state !== GestureRecognizer.States.Recognized && recognizer.state !== GestureRecognizer.States.Changed)
             return;
 
         if (recognizer.scale > IOSInlineMediaControls.MinimumScaleToEnterFullscreen && this.delegate && typeof this.delegate.iOSInlineMediaControlsRecognizedPinchInGesture === "function")
