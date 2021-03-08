@@ -1,3 +1,31 @@
+2021-03-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update baselines.
+
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt: After r273882.
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: After r273882.
+        * platform/glib/fast/table/table-display-types-strict-expected.txt: After r273386.
+        * platform/glib/http/tests/navigation/redirect-to-fragment2-expected.txt: Added. Passing since r273781.
+        * platform/glib/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https-expected.txt: After r273644.
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt: After r273882.
+        * platform/gtk/compositing/geometry/clipping-foreground-expected.png: After r271348.
+        * platform/gtk/compositing/geometry/clipping-foreground-expected.txt: After r271348.
+        * platform/gtk/css1/text_properties/vertical_align-expected.txt: After r273386.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt: After r271110.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: After r271110.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.png: After r271110.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt: After r271110.
+        * platform/gtk/fast/forms/input-disabled-color-expected.png: After r271021.
+        * platform/gtk/fast/forms/input-disabled-color-expected.txt: After r271021.
+        * platform/gtk/fast/forms/linebox-overflow-in-textarea-padding-expected.png: After r271348. 
+        * platform/gtk/fast/forms/linebox-overflow-in-textarea-padding-expected.txt: After r271348.
+        * platform/gtk/fast/inline-block/inline-block-vertical-align-expected.txt: After r271110.
+        * platform/gtk/fast/scrolling/overflow-scrollable-after-back-expected.txt: Removed. Stale baseline.
+        * platform/gtk/http/tests/navigation/redirect-to-fragment2-expected.txt: Removed. Moved to GLib baseline.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt: Removed. Stale baseline.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: After r273072.
+        * platform/wpe/http/tests/navigation/redirect-to-fragment2-expected.txt: Removed. Moved to GLib baseline.
+
 2021-03-07  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening and updating baselines

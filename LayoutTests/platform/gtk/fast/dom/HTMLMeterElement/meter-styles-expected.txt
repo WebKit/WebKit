@@ -25,19 +25,19 @@ layer at (0,0) size 800x600
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 60x16
         RenderListItem {LI} at (43,21) size 732x42
-          RenderBlock {METER} at (0,0) size 30x41
+          RenderBlock {METER} at (0,0) size 30x40
             RenderBlock {DIV} at (0,0) size 30x40
               RenderBlock {DIV} at (0,0) size 30x40
                 RenderBlock {DIV} at (0,0) size 8x40
           RenderText {#text} at (30,23) size 4x17
             text run at (30,23) width 4: " "
-          RenderBlock {METER} at (34,0) size 30x41
+          RenderBlock {METER} at (34,0) size 30x40
             RenderBlock {DIV} at (0,0) size 30x40
               RenderBlock {DIV} at (0,0) size 30x40
                 RenderBlock {DIV} at (0,0) size 14x40
           RenderText {#text} at (64,23) size 4x17
             text run at (64,23) width 4: " "
-          RenderBlock {METER} at (68,0) size 30x41
+          RenderBlock {METER} at (68,0) size 30x40
             RenderBlock {DIV} at (0,0) size 30x40
               RenderBlock {DIV} at (0,0) size 30x40
                 RenderBlock {DIV} at (0,0) size 23x40
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (80,0) size 80x17
               text run at (80,0) width 80: " has padding"
           RenderListItem {LI} at (43,42) size 732x28
-            RenderBlock {METER} at (10,5) size 80x17 [bgcolor=#AAAACC]
+            RenderBlock {METER} at (10,5) size 80x16 [bgcolor=#AAAACC]
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
                   RenderBlock {DIV} at (0,0) size 64x16

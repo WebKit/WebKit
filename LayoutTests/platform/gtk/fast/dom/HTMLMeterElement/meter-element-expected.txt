@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 80x16
           RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 18x16
-      RenderBlock {METER} at (80,0) size 10x61
+      RenderBlock {METER} at (80,0) size 10x60
         RenderBlock {DIV} at (0,0) size 10x60
           RenderBlock {DIV} at (0,0) size 10x60
             RenderBlock {DIV} at (0,0) size 7x60

@@ -11,15 +11,15 @@ Harness Error (TIMEOUT), message = null
 PASS Tests that a MediaStream can be assigned to a video element with srcObject
 PASS Tests that a MediaStream assigned to a video element is not seekable
 PASS Tests that a MediaStream assigned to a video element is in readyState HAVE_NOTHING initially
-TIMEOUT Tests that a MediaStream assigned to a video element has expected duration Test timed out
-NOTRUN Tests that a video element with a MediaStream assigned is not preloaded
-NOTRUN Tests that a video element with a MediaStream assigned ignores playbackRate attributes (defaultPlaybackRate is identical)
-NOTRUN Tests that a video element with a MediaStream assigned ignores playbackRate attributes (defaultPlaybackRate is different)
-NOTRUN Tests that a media element with an assigned MediaStream reports the played attribute as expected
-NOTRUN Tests that a media element with an assigned MediaStream reports the currentTime attribute as expected
-NOTRUN Tests that a media element with an assigned MediaStream starts its timeline at 0 regardless of when the MediaStream was created
-NOTRUN Tests that a media element with an assigned MediaStream does not advance currentTime while paused
-NOTRUN Tests that a media element with an assigned MediaStream does not start advancing currentTime until potentially playing
+PASS Tests that a MediaStream assigned to a video element has expected duration
+FAIL Tests that a video element with a MediaStream assigned is not preloaded assert_equals: preload must always be none expected "none" but got "metadata"
+FAIL Tests that a video element with a MediaStream assigned ignores playbackRate attributes (defaultPlaybackRate is identical) assert_equals: playback rate is always 1 expected 1 but got 0.3
+FAIL Tests that a video element with a MediaStream assigned ignores playbackRate attributes (defaultPlaybackRate is different) assert_equals: playback rate is always 1 expected 1 but got 0.3
+FAIL Tests that a media element with an assigned MediaStream reports the played attribute as expected assert_equals: The UA MUST ignore attempts to set the currentTime attribute expected 0.474763999 but got 0
+FAIL Tests that a media element with an assigned MediaStream reports the currentTime attribute as expected assert_equals: The initial value is 0 expected 0 but got 0.140334
+FAIL Tests that a media element with an assigned MediaStream starts its timeline at 0 regardless of when the MediaStream was created assert_between_exclusive: currentTime starts at 0 and has progressed at first timeupdate expected a number greater than 0 and less than 0.5 but got 0.711370999
+FAIL Tests that a media element with an assigned MediaStream does not advance currentTime while paused assert_between_exclusive: currentTime does not skip ahead after pause expected a number greater than 0 and less than 0.5 but got 0.750835001
+TIMEOUT Tests that a media element with an assigned MediaStream does not start advancing currentTime until potentially playing Test timed out
 NOTRUN Tests that the loop attribute has no effect on a media element with an assigned MediaStream
 NOTRUN Tests that a media element with an assigned MediaStream ends when the MediaStream becomes inactive through tracks ending
 NOTRUN Tests that an audio element with an assigned MediaStream ends when the MediaStream becomes inaudible through audio tracks ending
