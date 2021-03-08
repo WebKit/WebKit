@@ -35,8 +35,8 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(CG)
 typedef struct CGColor* CGColorRef;
@@ -185,7 +185,7 @@ public:
     template<class Decoder> static Optional<Color> decode(Decoder&);
 
 private:
-    class OutOfLineComponents : public RefCounted<OutOfLineComponents> {
+    class OutOfLineComponents : public ThreadSafeRefCounted<OutOfLineComponents> {
     public:
         static Ref<OutOfLineComponents> create(ColorComponents<float> components)
         {
