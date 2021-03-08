@@ -514,7 +514,7 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout Pass ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
-webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
+webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash Timeout ]
 webkit.org/b/191886 webkit.org/b/210800 [ Release ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Pass Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Debug ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Crash ]
 webkit.org/b/216716 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Pass ]
@@ -747,6 +747,8 @@ webkit.org/b/168543 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/168543 imported/w3c/web-platform-tests/resource-timing/nextHopProtocol-tao-protected.https.html [ Failure ]
 webkit.org/b/214442 imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content_redirect.html [ Failure ]
 
+webkit.org/b/222756 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of ResourceTiming API bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -904,6 +906,8 @@ webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
 webkit.org/b/216024 fast/text/ahom.html [ ImageOnlyFailure ]
 
 webkit.org/b/220680 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
+
+webkit.org/b/222753 fast/text/multi-code-unit-simple-path.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Text-related bugs
@@ -1287,6 +1291,8 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/menclose/legacy-mencl
 webkit.org/b/219247 imported/w3c/web-platform-tests/compat/webkit-box-clamp-bottom-border.html [ ImageOnlyFailure ]
 
 webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Timeout ]
+
+webkit.org/b/206503 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Pass Timeout Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

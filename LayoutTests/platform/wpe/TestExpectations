@@ -212,6 +212,7 @@ webkit.org/b/216037 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 
 # SVG
 webkit.org/b/220614 imported/w3c/web-platform-tests/svg/linking/reftests/url-reference-local-textpath.svg [ Failure Pass ]
+webkit.org/b/222895 imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg [ Failure Pass ]
 
 # WebGL
 webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
@@ -1329,8 +1330,6 @@ webkit.org/b/194009 fast/css/has-attachment.html [ Failure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-force-end-001.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ Timeout ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ Timeout ImageOnlyFailure ]
-
-webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
 
 webkit.org/b/202736 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
 

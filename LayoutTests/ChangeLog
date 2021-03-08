@@ -1,3 +1,13 @@
+2021-03-07  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening and updating baselines
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/shadow-dom/nested-slot-remove-crash-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+
 2021-03-07  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Recording transparency layer should reset the alpha of lastDrawingState
