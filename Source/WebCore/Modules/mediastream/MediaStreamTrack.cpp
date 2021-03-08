@@ -531,6 +531,7 @@ static inline bool trackMatchesKind(RealtimeMediaSource::Type type, MediaProduce
     case MediaProducer::MediaCaptureKind::Video:
         return type == RealtimeMediaSource::Type::Video;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void MediaStreamTrack::endCapture(Document& document, MediaProducer::MediaCaptureKind kind)
