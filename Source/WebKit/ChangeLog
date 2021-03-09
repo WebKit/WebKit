@@ -1,3 +1,16 @@
+2021-03-08  Youenn Fablet  <youenn@apple.com>
+
+        Allow access to more cmio services from Web/GPU processes
+        https://bugs.webkit.org/show_bug.cgi?id=222465
+
+        Reviewed by Per Arne Vollan.
+
+        These new services are used when getting camera access.
+        Manually tested.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-03-08  Chris Dumez  <cdumez@apple.com>
 
         Simplify CallbackAggregator in WebsiteDataStore::fetchDataAndApply()

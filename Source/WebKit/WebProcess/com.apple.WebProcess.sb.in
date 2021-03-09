@@ -1408,6 +1408,8 @@
     (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
     (allow mach-lookup
         (global-name "com.apple.cmio.AppleCameraAssistant")
+        (global-name "com.apple.cmio.registerassistantservice")
+        (global-name "com.apple.cmio.registerassistantservice.system-extensions")
         ;; Apple DAL assistants
         (global-name "com.apple.cmio.VDCAssistant")
         (global-name "com.apple.cmio.AVCAssistant")
