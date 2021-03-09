@@ -82,12 +82,12 @@ MediaFormatReader::MediaFormatReader(Allocator&& allocator)
 
 void MediaFormatReader::startOnMainThread(MTPluginByteSourceRef byteSource)
 {
-    if (isMainThread()) {
+    if (isMainRunLoop()) {
         parseByteSource(WTFMove(byteSource));
         return;
     }
 
-    callOnMainThread([this, protectedThis = makeRef(*this), byteSource = retainPtr(byteSource)]() mutable {
+    callOnMainRunLoop([this, protectedThis = makeRef(*this), byteSource = retainPtr(byteSource)]() mutable {
         parseByteSource(WTFMove(byteSource));
     });
 }
@@ -100,7 +100,7 @@ static WorkQueue& readerQueue()
 
 void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteSource)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     static NeverDestroyed<ContentType> contentType("video/webm"_s);
     auto parser = SourceBufferParserWebM::create(contentType);
@@ -152,7 +152,7 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
 
 void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::InitializationSegment&& segment, uint64_t errorCode)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     auto locker = holdLock(m_parseTracksLock);
     ASSERT(!m_parseTracksStatus);
@@ -195,7 +195,7 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
 
 void MediaFormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint64_t trackID, const String&)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     auto locker = holdLock(m_parseTracksLock);
     auto trackIndex = m_trackReaders.findMatching([&](auto& track) {
@@ -208,7 +208,7 @@ void MediaFormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint
 
 void MediaFormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ALWAYS_LOG(LOGIDENTIFIER);
 
     auto locker = holdLock(m_parseTracksLock);

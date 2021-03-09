@@ -670,7 +670,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         return;
     }
 
-    callOnMainThread([weakThis = makeWeakPtr(*this), this] {
+    callOnMainRunLoop([weakThis = makeWeakPtr(*this), this] {
         if (!weakThis)
             return;
 
@@ -683,7 +683,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 #if ENABLE(MEDIA_STREAM)
 void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
 {
-    callOnMainThread([weakThis = makeWeakPtr(*this), this] {
+    callOnMainRunLoop([weakThis = makeWeakPtr(*this), this] {
         if (!weakThis)
             return;
 

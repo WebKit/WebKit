@@ -51,7 +51,7 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
     , m_allowDatabaseWrite(allowDatabaseWrite)
     , m_clearLoadedIconsTimer(RunLoop::main(), this, &IconDatabase::clearLoadedIconsTimerFired)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_clearLoadedIconsTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 
     // We initialize the database synchronously, it's hopefully fast enough because it makes
@@ -108,7 +108,7 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
 
 IconDatabase::~IconDatabase()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     BinarySemaphore semaphore;
     m_workQueue->dispatch([&] {
@@ -124,7 +124,7 @@ IconDatabase::~IconDatabase()
 
 bool IconDatabase::createTablesIfNeeded()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     if (m_db.tableExists("IconInfo") && m_db.tableExists("IconData") && m_db.tableExists("PageURL") && m_db.tableExists("IconDatabaseInfo"))
         return false;
@@ -182,7 +182,7 @@ bool IconDatabase::createTablesIfNeeded()
 
 void IconDatabase::populatePageURLToIconURLMap()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     if (!m_db.isOpen())
         return;
@@ -206,7 +206,7 @@ void IconDatabase::populatePageURLToIconURLMap()
 
 void IconDatabase::clearStatements()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
 
     m_iconIDForIconURLStatement = nullptr;
@@ -223,7 +223,7 @@ void IconDatabase::clearStatements()
 
 void IconDatabase::pruneTimerFired()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
 
     if (!m_pruneIconsStatement) {
@@ -253,7 +253,7 @@ void IconDatabase::pruneTimerFired()
 
 void IconDatabase::startPruneTimer()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     if (!m_pruneTimer || !m_db.isOpen())
         return;
@@ -265,7 +265,7 @@ void IconDatabase::startPruneTimer()
 
 void IconDatabase::clearLoadedIconsTimerFired()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     LockHolder lockHolder(m_loadedIconsLock);
     auto now = MonotonicTime::now();
@@ -284,7 +284,7 @@ void IconDatabase::clearLoadedIconsTimerFired()
 
 void IconDatabase::startClearLoadedIconsTimer()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (m_clearLoadedIconsTimer.isActive())
         return;
@@ -294,7 +294,7 @@ void IconDatabase::startClearLoadedIconsTimer()
 
 Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& expired)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
 
     if (!m_iconIDForIconURLStatement) {
@@ -323,7 +323,7 @@ Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& ex
 
 bool IconDatabase::setIconIDForPageURL(int64_t iconID, const String& pageURL)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
@@ -351,7 +351,7 @@ bool IconDatabase::setIconIDForPageURL(int64_t iconID, const String& pageURL)
 
 Vector<char> IconDatabase::iconData(int64_t iconID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
 
     if (!m_iconDataStatement) {
@@ -378,7 +378,7 @@ Vector<char> IconDatabase::iconData(int64_t iconID)
 
 Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char>& iconData)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
@@ -421,7 +421,7 @@ Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char
 
 void IconDatabase::updateIconTimestamp(int64_t iconID, int64_t timestamp)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
@@ -445,7 +445,7 @@ void IconDatabase::updateIconTimestamp(int64_t iconID, int64_t timestamp)
 
 void IconDatabase::deleteIcon(int64_t iconID)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
@@ -492,7 +492,7 @@ void IconDatabase::deleteIcon(int64_t iconID)
 
 void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool, bool)>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), iconURL = iconURL.isolatedCopy(), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, completionHandler = WTFMove(completionHandler)]() mutable {
         bool result = false;
@@ -545,7 +545,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
 
 void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(PlatformImagePtr&&)>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTFMove(completionHandler)]() mutable {
         Optional<int64_t> iconID;
@@ -607,7 +607,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
 
 String IconDatabase::iconURLForPageURL(const String& pageURL)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     LockHolder lockHolder(m_pageURLToIconURLMapLock);
     return m_pageURLToIconURLMap.get(pageURL);
@@ -615,7 +615,7 @@ String IconDatabase::iconURLForPageURL(const String& pageURL)
 
 void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char* iconData, size_t iconDataSize, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     // If database write is not allowed load the icon to cache it in memory only.
     if (m_allowDatabaseWrite == AllowDatabaseWrite::No || allowDatabaseWrite == AllowDatabaseWrite::No) {
@@ -677,7 +677,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char*
 
 void IconDatabase::clear(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     {
         LockHolder lockHolder(m_loadedIconsLock);

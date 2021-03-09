@@ -59,7 +59,7 @@ void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(Optional<Naviga
 
 void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(!m_safeBrowsingWarning);
     if (m_policyResult && m_isNavigatingToAppBoundDomain) {
         if (m_reply)

@@ -78,7 +78,7 @@ MediaTrackReader::MediaTrackReader(Allocator&& allocator, const MediaFormatReade
     , m_logger(formatReader.logger())
     , m_logIdentifier(formatReader.nextTrackReaderLogIdentifier(trackID))
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     ALWAYS_LOG(LOGIDENTIFIER, mediaTypeString(), " ", trackID);
     if (enabled)
@@ -97,7 +97,7 @@ MediaTime MediaTrackReader::greatestPresentationTime() const
 
 void MediaTrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRef byteSource)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     auto locker = holdLock(m_sampleStorageLock);
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
@@ -126,7 +126,7 @@ void MediaTrackReader::waitForSample(Function<bool(SampleMap&, bool)>&& predicat
 
 void MediaTrackReader::finishParsing()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     ALWAYS_LOG(LOGIDENTIFIER);
     auto locker = holdLock(m_sampleStorageLock);

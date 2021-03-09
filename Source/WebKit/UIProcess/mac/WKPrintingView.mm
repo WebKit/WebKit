@@ -63,7 +63,7 @@ static BOOL isForcingPreviewUpdate;
 
 - (void)dealloc
 {
-    callOnMainThread([frame = WTFMove(_webFrame), previews = WTFMove(_pagePreviews)] {
+    callOnMainRunLoop([frame = WTFMove(_webFrame), previews = WTFMove(_pagePreviews)] {
         // Deallocate these on the main thread, not the current thread, since the
         // reference counting and the destructors aren't threadsafe.
     });

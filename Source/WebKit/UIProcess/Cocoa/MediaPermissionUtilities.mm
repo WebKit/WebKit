@@ -212,7 +212,7 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, Option
 
 void requestAVCaptureAccessForType(MediaPermissionType type, CompletionHandler<void(bool authorized)>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     AVMediaType mediaType = type == MediaPermissionType::Audio ? AVMediaTypeAudio : AVMediaTypeVideo;
     auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL authorized) mutable {
@@ -240,7 +240,7 @@ MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType type)
 
 void requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](SFSpeechRecognizerAuthorizationStatus status) mutable {
         bool authorized = status == SFSpeechRecognizerAuthorizationStatusAuthorized;

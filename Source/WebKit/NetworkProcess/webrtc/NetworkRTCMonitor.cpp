@@ -115,7 +115,7 @@ void NetworkManagerWrapper::onNetworksChanged()
     RTCNetwork::IPAddress ipv6;
     m_manager->GetDefaultLocalAddress(AF_INET6, &ipv6.value);
 
-    callOnMainThread([this, networkList = WTFMove(networkList), ipv4 = WTFMove(ipv4), ipv6 = WTFMove(ipv6)]() mutable {
+    callOnMainRunLoop([this, networkList = WTFMove(networkList), ipv4 = WTFMove(ipv4), ipv6 = WTFMove(ipv6)]() mutable {
         m_didReceiveResults = true;
 
         m_networkList = WTFMove(networkList);

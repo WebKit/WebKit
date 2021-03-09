@@ -93,7 +93,7 @@ bool DisplayRefreshMonitorMac::requestRefreshCallback()
 
 void DisplayRefreshMonitorMac::displayLinkFired()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     if (!m_firstCallbackInCurrentRunloop)
         return;
     m_firstCallbackInCurrentRunloop = false;

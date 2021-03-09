@@ -147,7 +147,7 @@ void WebSWClientConnection::setSWOriginTableIsImported()
 
 void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, Optional<ServiceWorkerRegistrationData>&& result)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (auto completionHandler = m_ongoingMatchRegistrationTasks.take(matchingRequest))
         completionHandler(WTFMove(result));
@@ -155,7 +155,7 @@ void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, Optio
 
 void WebSWClientConnection::didGetRegistrations(uint64_t matchingRequest, Vector<ServiceWorkerRegistrationData>&& registrations)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (auto completionHandler = m_ongoingGetRegistrationsTasks.take(matchingRequest))
         completionHandler(WTFMove(registrations));
@@ -163,7 +163,7 @@ void WebSWClientConnection::didGetRegistrations(uint64_t matchingRequest, Vector
 
 void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
         callback(WTF::nullopt);
@@ -209,7 +209,7 @@ void WebSWClientConnection::setDocumentIsControlled(DocumentIdentifier documentI
 
 void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
         callback({ });

@@ -89,7 +89,7 @@ private:
 
     struct SampleStorage {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        ~SampleStorage() { ASSERT(!isMainThread()); }
+        ~SampleStorage() { ASSERT(!isMainRunLoop()); }
         WebCore::SampleMap sampleMap;
         bool hasAllSamples { false };
     };

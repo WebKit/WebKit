@@ -81,7 +81,7 @@ public:
 
     void waitForDidFlushOnSecondaryThread(WebCore::DisplayList::FlushIdentifier targetFlushIdentifier)
     {
-        ASSERT(!isMainThread());
+        ASSERT(!isMainRunLoop());
         auto locker = holdLock(m_receivedFlushIdentifierLock);
         m_receivedFlushIdentifierChangedCondition.wait(m_receivedFlushIdentifierLock, [&] {
             return m_receivedFlushIdentifier == targetFlushIdentifier;

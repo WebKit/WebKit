@@ -48,7 +48,7 @@ namespace ax = WebCore::Accessibility;
 
 - (NakedPtr<WebCore::AXObjectCache>)axObjectCache
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (!m_page)
         return nullptr;
@@ -66,7 +66,7 @@ namespace ax = WebCore::Accessibility;
 
 - (id)accessibilityPluginObject
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     auto retrieveBlock = [&self]() -> id {
         id axPlugin = nil;
         auto dispatchBlock = [&axPlugin, &self] {
@@ -74,10 +74,10 @@ namespace ax = WebCore::Accessibility;
                 axPlugin = self->m_page->accessibilityObjectForMainFramePlugin();
         };
 
-        if (isMainThread())
+        if (isMainRunLoop())
             dispatchBlock();
         else {
-            callOnMainThreadAndWait([&dispatchBlock] {
+            callOnMainRunLoopAndWait([&dispatchBlock] {
                 dispatchBlock();
             });
         }
@@ -107,7 +107,7 @@ namespace ax = WebCore::Accessibility;
 
 - (void)setWebPage:(NakedPtr<WebKit::WebPage>)page
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     m_page = page;
 
@@ -124,13 +124,13 @@ namespace ax = WebCore::Accessibility;
 
 - (void)setHasMainFramePlugin:(bool)hasPlugin
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_hasMainFramePlugin = hasPlugin;
 }
 
 - (void)setRemoteParent:(id)parent
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     m_parent = parent;
 }
 

@@ -80,6 +80,7 @@ using WTF::callOnMainThreadAndWait;
 using WTF::callOnMainRunLoop;
 using WTF::callOnMainRunLoopAndWait;
 using WTF::canCurrentThreadAccessThreadLocalData;
+using WTF::isMainRunLoop;
 using WTF::isMainThread;
 using WTF::isMainThreadOrGCThread;
 using WTF::isUIThread;

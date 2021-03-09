@@ -655,8 +655,8 @@ PDFPlugin::~PDFPlugin()
 #if !LOG_DISABLED
 void PDFPlugin::pdfLog(const String& message)
 {
-    if (!isMainThread()) {
-        callOnMainThread([this, protectedThis = makeRef(*this), message = message.isolatedCopy()] {
+    if (!isMainRunLoop()) {
+        callOnMainRunLoop([this, protectedThis = makeRef(*this), message = message.isolatedCopy()] {
             pdfLog(message);
         });
         return;
@@ -669,7 +669,7 @@ void PDFPlugin::pdfLog(const String& message)
 
 void PDFPlugin::logStreamLoader(WTF::TextStream& stream, WebCore::NetscapePlugInStreamLoader& loader)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     auto* request = byteRangeRequestForLoader(loader);
     stream << "(";
@@ -683,7 +683,7 @@ void PDFPlugin::logStreamLoader(WTF::TextStream& stream, WebCore::NetscapePlugIn
 
 void PDFPlugin::verboseLog()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     TextStream stream;
     stream << "\n";
@@ -717,11 +717,11 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
     if (m_hasBeenDestroyed)
         return;
 
-    if (!isMainThread()) {
+    if (!isMainRunLoop()) {
 #if !LOG_DISABLED
         pdfLog("Disabling incremental PDF loading on background thread");
 #endif
-        callOnMainThread([this, protectedThis = makeRef(*this)] {
+        callOnMainRunLoop([this, protectedThis = makeRef(*this)] {
             receivedNonLinearizedPDFSentinel();
         });
         return;
@@ -748,7 +748,7 @@ static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, o
 {
     Ref<PDFPlugin> plugin = *((PDFPlugin*)info);
 
-    if (isMainThread()) {
+    if (isMainRunLoop()) {
 #if !LOG_DISABLED
         plugin->pdfLog(makeString("Handling request for ", count, " bytes at position ", position, " synchronously on the main thread"));
 #endif
@@ -799,7 +799,7 @@ static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, o
 
 static void dataProviderGetByteRangesCallback(void* info, CFMutableArrayRef buffers, const CFRange* ranges, size_t count)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
 #if !LOG_DISABLED
     Ref<PDFPlugin> debugPluginRef = *((PDFPlugin*)info);
@@ -846,7 +846,7 @@ static void dataProviderGetByteRangesCallback(void* info, CFMutableArrayRef buff
 
 static void dataProviderReleaseInfoCallback(void* info)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     adoptRef((PDFPlugin*)info);
 }
 
@@ -871,7 +871,7 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
     auto scopeExit = makeScopeExit([protectedPlugin = WTFMove(protectedPlugin)] () mutable {
         // Keep the PDFPlugin alive until the end of this function and the end
         // of the last main thread task submitted by this function.
-        callOnMainThread([protectedPlugin = WTFMove(protectedPlugin)] { });
+        callOnMainRunLoop([protectedPlugin = WTFMove(protectedPlugin)] { });
     });
 
     // Balanced by a deref inside of the dataProviderReleaseInfoCallback
@@ -899,7 +899,7 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
 
     [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->dispatchQueue() completion:[&firstPageSemaphore, this] (NSIndexSet *) mutable {
         if (m_incrementalPDFLoadingEnabled) {
-            callOnMainThread([this] {
+            callOnMainRunLoop([this] {
                 adoptBackgroundThreadDocument();
             });
         } else
@@ -924,7 +924,7 @@ void PDFPlugin::unconditionalCompleteOutstandingRangeRequests()
 
 size_t PDFPlugin::getResourceBytesAtPositionMainThread(void* buffer, off_t position, size_t count)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(m_documentFinishedLoading);
     ASSERT(position >= 0);
 
@@ -943,7 +943,7 @@ size_t PDFPlugin::getResourceBytesAtPositionMainThread(void* buffer, off_t posit
 
 void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, CompletionHandler<void(const uint8_t*, size_t)>&& completionHandler)
 {
-    ASSERT(isMainThread()); 
+    ASSERT(isMainRunLoop());
     ASSERT(position >= 0);
 
     ByteRangeRequest request = { static_cast<uint64_t>(position), count, WTFMove(completionHandler) };
@@ -1002,7 +1002,7 @@ void PDFPlugin::adoptBackgroundThreadDocument()
 
     ASSERT(!m_pdfDocument);
     ASSERT(m_backgroundThreadDocument);
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
 #if !LOG_DISABLED
     pdfLog("Adopting PDFDocument from background thread");
@@ -1610,7 +1610,7 @@ void PDFPlugin::documentDataDidFinishLoading()
 void PDFPlugin::installPDFDocument()
 {
     ASSERT(m_pdfDocument);
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     LOG(IncrementalPDF, "Installing PDF document");
 
     if (m_hasBeenDestroyed)
@@ -1760,7 +1760,7 @@ void PDFPlugin::manualStreamDidFail(bool)
 
 void PDFPlugin::tryRunScriptsInPDFDocument()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (!m_pdfDocument || !m_documentFinishedLoading)
         return;
@@ -1781,12 +1781,12 @@ void PDFPlugin::tryRunScriptsInPDFDocument()
     auto& rawQueue = scriptUtilityQueue.get();
     RetainPtr<CGPDFDocumentRef> document = [m_pdfDocument documentRef];
     rawQueue.dispatch([scriptUtilityQueue = WTFMove(scriptUtilityQueue), completionHandler = WTFMove(completionHandler), document = WTFMove(document)] () mutable {
-        ASSERT(!isMainThread());
+        ASSERT(!isMainRunLoop());
 
         Vector<RetainPtr<CFStringRef>> scripts;
         getAllScriptsInPDFDocument(document.get(), scripts);
 
-        callOnMainThread([completionHandler = WTFMove(completionHandler), scripts = WTFMove(scripts)] () mutable {
+        callOnMainRunLoop([completionHandler = WTFMove(completionHandler), scripts = WTFMove(scripts)] () mutable {
             completionHandler(WTFMove(scripts));
         });
     });

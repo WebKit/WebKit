@@ -145,7 +145,7 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
 void NetworkRTCProvider::createServerTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort, int options)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
-    callOnMainThread([this, protectedThis = makeRef(*this), identifier, address, minPort, maxPort, options] {
+    callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier, address, minPort, maxPort, options] {
         if (!m_connection)
             return;
 
@@ -170,7 +170,7 @@ rtc::ProxyInfo NetworkRTCProvider::proxyInfoFromSession(const RTCNetwork::Socket
 
 void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), identifier, localAddress, remoteAddress, userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
+    callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier, localAddress, remoteAddress, userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
         if (!m_connection)
             return;
 
@@ -260,8 +260,8 @@ void NetworkRTCProvider::dispatchToThread(Function<void()>&& callback)
 
 void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, String&& address)
 {
-    if (!isMainThread()) {
-        callOnMainThread([this, protectedThis = makeRef(*this), identifier, address = WTFMove(address).isolatedCopy()]() mutable {
+    if (!isMainRunLoop()) {
+        callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier, address = WTFMove(address).isolatedCopy()]() mutable {
             if (!m_connection)
                 return;
             createResolver(identifier, WTFMove(address));
@@ -298,8 +298,8 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
 
 void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
 {
-    if (!isMainThread()) {
-        callOnMainThread([this, protectedThis = makeRef(*this), identifier] {
+    if (!isMainRunLoop()) {
+        callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier] {
             if (!m_connection)
                 return;
             stopResolver(identifier);
@@ -316,7 +316,7 @@ void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
 
 void NetworkRTCProvider::closeListeningSockets(Function<void()>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     if (!m_isListeningSocketAuthorized) {
         completionHandler();
         return;
@@ -332,7 +332,7 @@ void NetworkRTCProvider::closeListeningSockets(Function<void()>&& completionHand
         for (auto id : listeningSocketIdentifiers)
             m_sockets.get(id)->close();
 
-        callOnMainThread([provider = makeRef(*this), listeningSocketIdentifiers = WTFMove(listeningSocketIdentifiers), completionHandler = WTFMove(completionHandler)] {
+        callOnMainRunLoop([provider = makeRef(*this), listeningSocketIdentifiers = WTFMove(listeningSocketIdentifiers), completionHandler = WTFMove(completionHandler)] {
             if (provider->m_connection) {
                 for (auto identifier : listeningSocketIdentifiers)
                     provider->m_connection->connection().send(Messages::LibWebRTCNetwork::SignalClose(identifier, ECONNABORTED), 0);

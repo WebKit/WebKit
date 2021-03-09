@@ -199,7 +199,7 @@ void Engine::clearCachesForOrigin(NetworkProcess& networkProcess, PAL::SessionID
 
 static uint64_t getDirectorySize(const String& directoryPath)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     uint64_t directorySize = 0;
     Deque<String> paths;
@@ -227,7 +227,7 @@ static uint64_t getDirectorySize(const String& directoryPath)
 
 uint64_t Engine::diskUsage(const String& rootPath, const WebCore::ClientOrigin& origin)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     if (rootPath.isEmpty())
         return 0;

@@ -112,7 +112,7 @@ void RemoteRealtimeAudioSource::applyConstraintsSucceeded(WebCore::RealtimeMedia
 
 void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
     audioSamplesAvailable(time, data, description, size);
 }
 

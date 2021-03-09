@@ -158,7 +158,7 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
 
 void RemoteAudioDestinationProxy::renderQuantum()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
 #if PLATFORM(COCOA)
     m_audioBufferList->setSampleCount(WebCore::AudioUtilities::renderQuantumSize);

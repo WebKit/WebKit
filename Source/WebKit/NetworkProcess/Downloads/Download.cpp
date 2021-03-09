@@ -87,7 +87,7 @@ Download::~Download()
 
 void Download::cancel(CompletionHandler<void(const IPC::DataReference&)>&& completionHandler, IgnoreDidFailCallback ignoreDidFailCallback)
 {
-    RELEASE_ASSERT(isMainThread());
+    RELEASE_ASSERT(isMainRunLoop());
 
     // URLSession:task:didCompleteWithError: is still called after cancelByProducingResumeData's completionHandler.
     // If this cancel request came from the API, we do not want to send DownloadProxy::DidFail because the

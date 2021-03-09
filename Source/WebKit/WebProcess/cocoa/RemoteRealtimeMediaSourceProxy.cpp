@@ -51,7 +51,7 @@ RemoteRealtimeMediaSourceProxy::~RemoteRealtimeMediaSourceProxy()
 
 IPC::Connection* RemoteRealtimeMediaSourceProxy::connection()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 #if ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
         return &WebProcess::singleton().ensureGPUProcessConnection().connection();

@@ -7665,7 +7665,7 @@ static const Vector<ASCIILiteral>& attachmentElementServices()
 #if PLATFORM(COCOA)
 static const Vector<ASCIILiteral>& gpuIOKitClasses()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
 #if PLATFORM(IOS_FAMILY)
         "AGXDeviceUserClient"_s,
@@ -7697,7 +7697,7 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
 
 static const Vector<ASCIILiteral>& gpuMachServices()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.MTLCompilerService"_s,
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -7710,7 +7710,7 @@ static const Vector<ASCIILiteral>& gpuMachServices()
 // FIXME(207716): The following should be removed when the GPU process is complete.
 static const Vector<ASCIILiteral>& mediaRelatedMachServices()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.audio.AudioComponentPrefs"_s, "com.apple.audio.AudioComponentRegistrar"_s,
         "com.apple.audio.AudioQueueServer"_s, "com.apple.coremedia.endpoint.xpc"_s,

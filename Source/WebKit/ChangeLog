@@ -1,5 +1,176 @@
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
+        Stop using callOnMainThread() / isMainThread() in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=222986
+
+        Reviewed by Alex Christensen.
+
+        Use callOnMainRunLoop() / callOnMainRunLoopAndWait() / isMainRunLoop() in WebKit2
+        instead of callOnMainThread() / callOnMainThreadAndWait() / isMainThread().
+        Using the "MainThread" variants doesn't do the right thing in the UIProcess when
+        an iOS app is using both WK1 (with WebThread) and WK2.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::copyTextureFromMedia):
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::render):
+        * GPUProcess/media/RemoteMediaResource.cpp:
+        (WebKit::RemoteMediaResource::~RemoteMediaResource):
+        (WebKit::RemoteMediaResource::responseReceived):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::close):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::releaseLayer):
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::cancel):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::storageQuotaManager):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::getDirectorySize):
+        (WebKit::CacheStorage::Engine::diskUsage):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::resume):
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp:
+        (WebKit::NetworkManagerWrapper::onNetworksChanged):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        (WebKit::NetworkRTCProvider::createResolver):
+        (WebKit::NetworkRTCProvider::stopResolver):
+        (WebKit::NetworkRTCProvider::closeListeningSockets):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::dispatchMessage):
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::initializeConnection):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::startOnMainThread):
+        (WebKit::MediaFormatReader::parseByteSource):
+        (WebKit::MediaFormatReader::didParseTracks):
+        (WebKit::MediaFormatReader::didProvideMediaData):
+        (WebKit::MediaFormatReader::finishParsing):
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp:
+        (WebKit::MediaSampleByteRange::MediaSampleByteRange):
+        * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+        (WebKit::MediaTrackReader::MediaTrackReader):
+        (WebKit::MediaTrackReader::addSample):
+        (WebKit::MediaTrackReader::finishParsing):
+        * Shared/mac/MediaFormatReader/MediaTrackReader.h:
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::IconDatabase):
+        (WebKit::IconDatabase::~IconDatabase):
+        (WebKit::IconDatabase::createTablesIfNeeded):
+        (WebKit::IconDatabase::populatePageURLToIconURLMap):
+        (WebKit::IconDatabase::clearStatements):
+        (WebKit::IconDatabase::pruneTimerFired):
+        (WebKit::IconDatabase::startPruneTimer):
+        (WebKit::IconDatabase::clearLoadedIconsTimerFired):
+        (WebKit::IconDatabase::startClearLoadedIconsTimer):
+        (WebKit::IconDatabase::iconIDForIconURL):
+        (WebKit::IconDatabase::setIconIDForPageURL):
+        (WebKit::IconDatabase::iconData):
+        (WebKit::IconDatabase::addIcon):
+        (WebKit::IconDatabase::updateIconTimestamp):
+        (WebKit::IconDatabase::deleteIcon):
+        (WebKit::IconDatabase::checkIconURLAndSetPageURLIfNeeded):
+        (WebKit::IconDatabase::loadIconForPageURL):
+        (WebKit::IconDatabase::iconURLForPageURL):
+        (WebKit::IconDatabase::setIconForPageURL):
+        (WebKit::IconDatabase::clear):
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::requestAVCaptureAccessForType):
+        (WebKit::requestSpeechRecognitionAccess):
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKUserDefaults _notifyObserversOfChangeFromValuesForKeys:toValuesForKeys:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::nonBrowserServices):
+        (WebKit::agxCompilerClasses):
+        (WebKit::agxCompilerServices):
+        (WebKit::diagnosticServices):
+        * UIProcess/Inspector/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::sendWebInspectorEvent):
+        (WebKit::RemoteInspectorClient::didClose):
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::gpuIOKitClasses):
+        (WebKit::gpuMachServices):
+        (WebKit::mediaRelatedMachServices):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView dealloc]):
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::~WebCacheStorageConnection):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::waitForDidFlushOnSecondaryThread):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::renderQuantum):
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.cpp:
+        (WebKit::RemoteAudioSourceProvider::RemoteAudioSourceProvider):
+        (WebKit::RemoteAudioSourceProvider::close):
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::createFrameImageAtIndex):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::setCallbacks):
+        (WebKit::LibWebRTCCodecs::failedDecoding):
+        (WebKit::LibWebRTCCodecs::completedDecoding):
+        (WebKit::LibWebRTCCodecs::completedEncoding):
+        * WebProcess/Network/webrtc/LibWebRTCResolver.cpp:
+        (WebKit::LibWebRTCResolver::sendOnMainThread):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        * WebProcess/Network/webrtc/WebRTCMonitor.cpp:
+        (WebKit::WebRTCMonitor::sendOnMainThread):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfLog):
+        (WebKit::PDFPlugin::logStreamLoader):
+        (WebKit::PDFPlugin::verboseLog):
+        (WebKit::PDFPlugin::receivedNonLinearizedPDFSentinel):
+        (WebKit::dataProviderGetBytesAtPositionCallback):
+        (WebKit::dataProviderGetByteRangesCallback):
+        (WebKit::dataProviderReleaseInfoCallback):
+        (WebKit::PDFPlugin::threadEntry):
+        (WebKit::PDFPlugin::getResourceBytesAtPositionMainThread):
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+        (WebKit::PDFPlugin::adoptBackgroundThreadDocument):
+        (WebKit::PDFPlugin::installPDFDocument):
+        (WebKit::PDFPlugin::tryRunScriptsInPDFDocument):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::didMatchRegistration):
+        (WebKit::WebSWClientConnection::didGetRegistrations):
+        (WebKit::WebSWClientConnection::matchRegistration):
+        (WebKit::WebSWClientConnection::getRegistrations):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish):
+        (WebKit::WebServiceWorkerFetchTaskClient::cleanup):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidBlur):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+        (WebKit::WebPage::didFinishContentChangeObserving):
+        (WebKit::WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded):
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::displayLinkFired):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase axObjectCache]):
+        (-[WKAccessibilityWebPageObjectBase accessibilityPluginObject]):
+        (-[WKAccessibilityWebPageObjectBase setWebPage:]):
+        (-[WKAccessibilityWebPageObjectBase setHasMainFramePlugin:]):
+        (-[WKAccessibilityWebPageObjectBase setRemoteParent:]):
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        (WebKit::RemoteRealtimeAudioSource::remoteAudioSamplesAvailable):
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp:
+        (WebKit::RemoteRealtimeMediaSourceProxy::connection):
+
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
         [IPC Hardening] Protect against bad input in WebProcessProxy::createSpeechRecognitionServer() and MessageReceiverMap
         https://bugs.webkit.org/show_bug.cgi?id=222948
         <rdar://problem/75191472>

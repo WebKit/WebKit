@@ -542,7 +542,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
 
         if (findIndicatorRect != m_findIndicatorRect) {
             // We are underneath painting, so it's not safe to mutate the layer tree synchronously.
-            callOnMainThread([weakWebPage = makeWeakPtr(m_webPage)] {
+            callOnMainRunLoop([weakWebPage = makeWeakPtr(m_webPage)] {
                 if (!weakWebPage)
                     return;
                 weakWebPage->findController().didScrollAffectingFindIndicatorPosition();

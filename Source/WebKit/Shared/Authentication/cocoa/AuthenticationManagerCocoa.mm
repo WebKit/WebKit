@@ -39,7 +39,7 @@ namespace WebKit {
 
 void AuthenticationManager::initializeConnection(IPC::Connection* connection)
 {
-    RELEASE_ASSERT(isMainThread());
+    RELEASE_ASSERT(isMainRunLoop());
 
     if (!connection || !connection->xpcConnection()) {
         ASSERT_NOT_REACHED();
@@ -50,8 +50,8 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
     // The following xpc event handler overwrites the boostrap event handler and is only used
     // to capture client certificate credential.
     xpc_connection_set_event_handler(connection->xpcConnection(), ^(xpc_object_t event) {
-        callOnMainThread([event = OSObjectPtr(event), weakThis = weakThis] {
-            RELEASE_ASSERT(isMainThread());
+        callOnMainRunLoop([event = OSObjectPtr(event), weakThis = weakThis] {
+            RELEASE_ASSERT(isMainRunLoop());
 
             xpc_type_t type = xpc_get_type(event.get());
             if (type == XPC_TYPE_ERROR || !weakThis)

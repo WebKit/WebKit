@@ -2510,7 +2510,7 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
     idbRootPath = sessionStorageQuotaManager->idbRootPath();
 #endif
     StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()]() {
-        ASSERT(!isMainThread());    
+        ASSERT(!isMainRunLoop());
 
         uint64_t usage = CacheStorage::Engine::diskUsage(cacheRootPath, origin);
 #if ENABLE(INDEXED_DATABASE)
@@ -2520,7 +2520,7 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
         return usage;
     };
     StorageQuotaManager::QuotaIncreaseRequester quotaIncreaseRequester = [this, weakThis = makeWeakPtr(*this), sessionID, origin] (uint64_t currentQuota, uint64_t currentSpace, uint64_t requestedIncrease, auto&& callback) {
-        ASSERT(isMainThread());
+        ASSERT(isMainRunLoop());
         if (!weakThis)
             callback({ });
         requestStorageSpace(sessionID, origin, currentQuota, currentSpace, requestedIncrease, WTFMove(callback));

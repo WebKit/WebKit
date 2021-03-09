@@ -184,7 +184,7 @@ LibWebRTCCodecs::~LibWebRTCCodecs()
 
 void LibWebRTCCodecs::setCallbacks(bool useGPUProcess)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 
     if (!useGPUProcess) {
         webrtc::setVideoDecoderCallbacks(nullptr, nullptr, nullptr, nullptr);
@@ -259,7 +259,7 @@ void LibWebRTCCodecs::registerDecodeFrameCallback(Decoder& decoder, void* decode
 
 void LibWebRTCCodecs::failedDecoding(RTCDecoderIdentifier decoderIdentifier)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     if (auto* decoder = m_decoders.get(decoderIdentifier))
         decoder->hasError = true;
@@ -267,7 +267,7 @@ void LibWebRTCCodecs::failedDecoding(RTCDecoderIdentifier decoderIdentifier)
 
 void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&& remoteSample)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     // FIXME: Do error logging.
     auto* decoder = m_decoders.get(decoderIdentifier);
@@ -430,7 +430,7 @@ void LibWebRTCCodecs::setEncodeRates(Encoder& encoder, uint32_t bitRate, uint32_
 
 void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::DataReference&& data, const webrtc::WebKitEncodedFrameInfo& info)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     // FIXME: Do error logging.
     auto* encoder = m_encoders.get(identifier);

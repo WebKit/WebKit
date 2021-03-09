@@ -224,7 +224,7 @@ static bool isInternalInstall()
 #if PLATFORM(IOS_FAMILY)
 static const Vector<ASCIILiteral>& nonBrowserServices()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.lsd.open"_s,
         "com.apple.iconservices"_s,
@@ -236,7 +236,7 @@ static const Vector<ASCIILiteral>& nonBrowserServices()
 
 static const Vector<ASCIILiteral>& agxCompilerClasses()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto iokitClasses = makeNeverDestroyed(Vector<ASCIILiteral> {
         "AGXCommandQueue"_s,
         "AGXDevice"_s,
@@ -256,7 +256,7 @@ static const Vector<ASCIILiteral>& agxCompilerClasses()
 #if PLATFORM(IOS)
 static const Vector<ASCIILiteral>& agxCompilerServices()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.AGXCompilerService"_s,
         "com.apple.AGXCompilerService-S2A8"_s
@@ -267,7 +267,7 @@ static const Vector<ASCIILiteral>& agxCompilerServices()
 
 static const Vector<ASCIILiteral>& diagnosticServices()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.diagnosticd"_s,
 #if PLATFORM(IOS_FAMILY)
