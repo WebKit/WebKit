@@ -28,6 +28,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleScrollSnapPoints.h"

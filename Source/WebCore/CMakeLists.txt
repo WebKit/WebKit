@@ -1796,6 +1796,8 @@ list(APPEND WebCoreTestSupport_SOURCES
 
     inspector/InspectorFrontendClientLocal.cpp
 
+    page/scrolling/ScrollingMomentumCalculator.cpp
+
     platform/graphics/HEVCUtilities.cpp
     platform/graphics/VP9Utilities.cpp
 

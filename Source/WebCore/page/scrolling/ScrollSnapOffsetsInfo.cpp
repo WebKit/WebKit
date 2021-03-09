@@ -32,6 +32,7 @@
 #include "ElementChildIterator.h"
 #include "LayoutRect.h"
 #include "Length.h"
+#include "Logging.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "RenderView.h"

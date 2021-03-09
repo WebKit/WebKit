@@ -30,6 +30,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "FocusEvent.h"
 #include "HTMLFormElement.h"
 #include "MouseEvent.h"

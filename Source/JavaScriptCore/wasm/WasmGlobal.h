@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "SlotVisitorMacros.h"
 #include "WasmFormat.h"
 #include "WasmLimits.h"
 #include "WriteBarrier.h"

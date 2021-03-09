@@ -30,6 +30,7 @@
 #include "EventTarget.h"
 #include "InspectorInstrumentation.h"
 #include "Performance.h"
+#include "TouchList.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
