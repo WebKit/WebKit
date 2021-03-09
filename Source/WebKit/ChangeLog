@@ -1,3 +1,23 @@
+2021-03-09  Ben Nham  <nham@apple.com>
+
+        Adopt new NSURLSessionConfiguration SPI for connection cache configuration
+        https://bugs.webkit.org/show_bug.cgi?id=222934
+
+        Reviewed by Geoffrey Garen.
+
+        This uses the NSURLSessionConfiguration connection cache limit SPI introduced in Big Sur to
+        properly set the parameters we want for HTTP/1.1 connections. Previously we tried to do this
+        using _CFNetworkHTTPConnectionCacheSetLimit in NetworkProcessCocoa, but this didn't work
+        because that SPI only applies to NSURLConnection rather than NSURLSession.
+
+        In particular, this meant that the number of priority levels wasn't set correctly, which we
+        had to work around by constraining the number of priority levels when mapping WebKit
+        resource priorities to CFNetwork priorities (https://bugs.webkit.org/show_bug.cgi?id=203423).
+        This patch adopts the SPI and removes that workaround.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID):
+
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] IPC::decode(Decoder& decoder, RetainPtr<CFDictionaryRef>&) should make sure keys & values aren't null

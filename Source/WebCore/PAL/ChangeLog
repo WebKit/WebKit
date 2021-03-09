@@ -1,3 +1,14 @@
+2021-03-09  Ben Nham  <nham@apple.com>
+
+        Adopt new NSURLSessionConfiguration SPI for connection cache configuration
+        https://bugs.webkit.org/show_bug.cgi?id=222934
+
+        Reviewed by Geoffrey Garen.
+
+        Declare NSURLSessionConfiguration connection cache limit SPI when building using the public SDK.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2021-03-05  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix compile error

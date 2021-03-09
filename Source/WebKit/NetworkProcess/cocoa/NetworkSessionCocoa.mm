@@ -1078,6 +1078,15 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration._allowsSensitiveLogging = NO;
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
+
+#if HAVE(CFNETWORK_NSURLSESSION_CONNECTION_CACHE_LIMITS)
+    if (WebCore::ResourceRequest::resourcePrioritiesEnabled()) {
+        configuration._connectionCacheNumPriorityLevels = WebCore::resourceLoadPriorityCount;
+        configuration._connectionCacheMinimumFastLanePriority = toPlatformRequestPriority(WebCore::ResourceLoadPriority::Medium);
+        configuration._connectionCacheNumFastLanes = 1;
+    }
+#endif
+
     return configuration;
 }
 

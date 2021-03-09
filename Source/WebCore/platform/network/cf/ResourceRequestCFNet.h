@@ -44,9 +44,49 @@ void getResourceRequest(ResourceRequest&, CFURLRequestRef);
 CFURLRequestRef cfURLRequest(const ResourceRequest&);
 #endif
 
+#if HAVE(CFNETWORK_NSURLSESSION_CONNECTION_CACHE_LIMITS)
 inline ResourceLoadPriority toResourceLoadPriority(CFURLRequestPriority priority)
 {
-    // FIXME: switch VeryLow back to 0 priority when CFNetwork fixes <rdar://problem/56621205>
+    switch (priority) {
+    case 0:
+        return ResourceLoadPriority::VeryLow;
+    case 1:
+        return ResourceLoadPriority::Low;
+    case 2:
+        return ResourceLoadPriority::Medium;
+    case 3:
+        return ResourceLoadPriority::High;
+    case 4:
+        return ResourceLoadPriority::VeryHigh;
+    default:
+        ASSERT_NOT_REACHED();
+        return ResourceLoadPriority::Lowest;
+    }
+}
+
+inline CFURLRequestPriority toPlatformRequestPriority(ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return 0;
+    case ResourceLoadPriority::Low:
+        return 1;
+    case ResourceLoadPriority::Medium:
+        return 2;
+    case ResourceLoadPriority::High:
+        return 3;
+    case ResourceLoadPriority::VeryHigh:
+        return 4;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+#else
+
+inline ResourceLoadPriority toResourceLoadPriority(CFURLRequestPriority priority)
+{
     switch (priority) {
     case -1:
         return ResourceLoadPriority::VeryLow;
@@ -66,7 +106,6 @@ inline ResourceLoadPriority toResourceLoadPriority(CFURLRequestPriority priority
 
 inline CFURLRequestPriority toPlatformRequestPriority(ResourceLoadPriority priority)
 {
-    // FIXME: switch VeryLow back to 0 priority when CFNetwork fixes <rdar://problem/56621205>
     switch (priority) {
     case ResourceLoadPriority::VeryLow:
         return -1;
@@ -83,6 +122,8 @@ inline CFURLRequestPriority toPlatformRequestPriority(ResourceLoadPriority prior
     ASSERT_NOT_REACHED();
     return 0;
 }
+#endif
+
 
 inline RetainPtr<CFStringRef> httpHeaderValueUsingSuitableEncoding(HTTPHeaderMap::const_iterator::KeyValue header)
 {
