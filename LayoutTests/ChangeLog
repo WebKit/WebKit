@@ -1,3 +1,17 @@
+2021-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r274025-r273811): Crash under RenderLayerBacking::updateGeometry()
+        https://bugs.webkit.org/show_bug.cgi?id=222021
+        rdar://74414963
+
+        Reviewed by Zalan Bujtas.
+
+        When a RenderLayer gains or loses its scrollable area, we have to set the dirty
+        bit on the RenderLayer to ensure that RenderLayerBacking::updateConfiguration() runs,
+        which updates compositing layers for scrolling.
+
+        * fast/layers/remove-scrollable-area-crash.html: Added.
+
 2021-03-08  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r274033): [ macOS/iOS ] model-element/model-element-ready-load-aborted.html is text failing

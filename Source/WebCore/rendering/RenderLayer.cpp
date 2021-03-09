@@ -5427,11 +5427,17 @@ void RenderLayer::clearLayerFilters()
 RenderLayerScrollableArea* RenderLayer::ensureLayerScrollableArea()
 {
     bool hadScrollableArea = scrollableArea();
+    
     if (!m_scrollableArea)
         m_scrollableArea = makeUnique<RenderLayerScrollableArea>(*this);
 
-    if (!hadScrollableArea)
+    if (!hadScrollableArea) {
+        if (renderer().settings().asyncOverflowScrollingEnabled())
+            setNeedsCompositingConfigurationUpdate();
+
         m_scrollableArea->restoreScrollPosition();
+    }
+
     return m_scrollableArea.get();
 }
 
@@ -5462,7 +5468,11 @@ void RenderLayer::updateFiltersAfterStyleChange()
 void RenderLayer::updateLayerScrollableArea()
 {
     if (!is<RenderBox>(renderer()) || !downcast<RenderBox>(renderer()).requiresLayerWithScrollableArea()) {
+        bool hadScrollableArea = scrollableArea();
         clearLayerScrollableArea();
+
+        if (hadScrollableArea && renderer().settings().asyncOverflowScrollingEnabled())
+            setNeedsCompositingConfigurationUpdate();
         return;
     }
 
@@ -5775,6 +5785,10 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     auto layerRect = layer.rect();
 
     stream << &layer << " " << layerRect;
+
+    if (auto* scrollableArea = layer.scrollableArea())
+        stream << " [SA " << static_cast<const void*>(scrollableArea) << "]";
+
     if (layer.isComposited()) {
         auto& backing = *layer.backing();
         stream << " (layerID " << backing.graphicsLayer()->primaryLayerID() << ")";
