@@ -1260,6 +1260,10 @@ class RunEWSBuildbotCheckConfig(shell.ShellCommand):
     def __init__(self, **kwargs):
         super(RunEWSBuildbotCheckConfig, self).__init__(workdir='build/Tools/CISupport/ews-build', timeout=2 * 60, logEnviron=False, **kwargs)
 
+    def start(self):
+        self.workerEnvironment['LC_CTYPE'] = 'en_US.UTF-8'
+        return shell.ShellCommand.start(self)
+
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {'step': 'Passed buildbot checkconfig'}

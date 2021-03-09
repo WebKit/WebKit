@@ -637,6 +637,7 @@ class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=120,
                         logEnviron=False,
                         command=['buildbot', 'checkconfig'],
+                        env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + 0,
         )
@@ -650,6 +651,7 @@ class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=120,
                         logEnviron=False,
                         command=['buildbot', 'checkconfig'],
+                        env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) iOS-12-Debug-Build-EWS have no schedulers to drive them')
             + 2,

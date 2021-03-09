@@ -1,3 +1,14 @@
+2021-03-09  Aakash Jain  <aakash_jain@apple.com>
+
+        buildbot checkconfig is failing in ews after buildbot upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=222974
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (RunEWSBuildbotCheckConfig.start): Set LC_ALL environment variable on bots.
+        * CISupport/ews-build/steps_unittest.py: Updated unit-tests accordingly.
+
 2021-03-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Reenable -fvisibility=hidden
