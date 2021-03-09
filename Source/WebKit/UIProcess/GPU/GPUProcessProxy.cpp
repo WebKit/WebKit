@@ -36,8 +36,10 @@
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "Logging.h"
+#include "WebPageGroup.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -103,6 +105,7 @@ Ref<GPUProcessProxy> GPUProcessProxy::getOrCreate()
         return *existingGPUProcess;
     }
     auto gpuProcess = adoptRef(*new GPUProcessProxy);
+    gpuProcess->updatePreferences();
     singleton() = makeWeakPtr(gpuProcess.get());
     return gpuProcess;
 }
@@ -419,6 +422,69 @@ void GPUProcessProxy::displayConfigurationChanged(CGDirectDisplayID displayID, C
     send(Messages::GPUProcess::DisplayConfigurationChanged { displayID, flags }, 0);
 }
 #endif
+
+void GPUProcessProxy::updatePreferences()
+{
+    if (!canSendMessage())
+        return;
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+    bool hasEnabledWebMParser = false;
+#endif
+
+#if ENABLE(WEBM_FORMAT_READER)
+    bool hasEnabledWebMFormatReader = false;
+#endif
+
+#if ENABLE(OPUS)
+    bool hasEnabledOpus = false;
+#endif
+
+#if ENABLE(VORBIS)
+    bool hasEnabledVorbis = false;
+#endif
+
+    WebPageGroup::forEach([&] (auto& group) mutable {
+        if (!group.preferences().useGPUProcessForMediaEnabled())
+            return;
+
+#if ENABLE(OPUS)
+        if (group.preferences().opusDecoderEnabled())
+            hasEnabledOpus = true;
+#endif
+
+#if ENABLE(VORBIS)
+        if (group.preferences().vorbisDecoderEnabled())
+            hasEnabledVorbis = true;
+#endif
+
+#if ENABLE(WEBM_FORMAT_READER)
+        if (group.preferences().webMFormatReaderEnabled())
+            hasEnabledWebMFormatReader = true;
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+        if (group.preferences().webMParserEnabled())
+            hasEnabledWebMParser = true;
+#endif
+    });
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+    send(Messages::GPUProcess::SetWebMParserEnabled(hasEnabledWebMParser), 0);
+#endif
+
+#if ENABLE(WEBM_FORMAT_READER)
+    send(Messages::GPUProcess::SetWebMFormatReaderEnabled(hasEnabledWebMFormatReader), 0);
+#endif
+
+#if ENABLE(OPUS)
+    send(Messages::GPUProcess::SetOpusDecoderEnabled(hasEnabledOpus), 0);
+#endif
+
+#if ENABLE(VORBIS)
+    send(Messages::GPUProcess::SetVorbisDecoderEnabled(hasEnabledVorbis), 0);
+#endif
+}
 
 } // namespace WebKit
 

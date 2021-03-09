@@ -64,6 +64,15 @@ WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
     return webPageGroupMap().get(pageGroupID);
 }
 
+void WebPageGroup::forEach(Function<void(WebPageGroup&)>&& function)
+{
+    auto allGroups = copyToVectorOf<RefPtr<WebPageGroup>>(webPageGroupMap().values());
+    for (auto& group : allGroups) {
+        if (group)
+            function(*group);
+    }
+}
+
 static WebPageGroupData pageGroupData(const String& identifier)
 {
     WebPageGroupData data;

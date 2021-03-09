@@ -48,6 +48,22 @@ messages -> GPUProcess {
 #if PLATFORM(MAC)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 #endif
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+    SetWebMParserEnabled(bool enabled);
+#endif
+
+#if ENABLE(WEBM_FORMAT_READER)
+    SetWebMFormatReaderEnabled(bool enabled);
+#endif
+
+#if ENABLE(OPUS)
+    SetOpusDecoderEnabled(bool enabled);
+#endif
+
+#if ENABLE(VORBIS)
+    SetVorbisDecoderEnabled(bool enabled);
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

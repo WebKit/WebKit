@@ -46,6 +46,7 @@ public:
     static Ref<WebPageGroup> create(const String& identifier = { });
 
     static WebPageGroup* get(uint64_t pageGroupID);
+    static void forEach(Function<void(WebPageGroup&)>&&);
 
     virtual ~WebPageGroup();
 

@@ -91,6 +91,8 @@ public:
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
+    void updatePreferences();
+
 private:
     explicit GPUProcessProxy();
 

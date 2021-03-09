@@ -1,3 +1,32 @@
+2021-03-08  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa][GPUP] Enable WebM/Vorbis/Opus in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=222926
+
+        Reviewed by Eric Carlson.
+
+        The first time a GPUProcessProxy is created, and whenever a new WebPageProxy is created,
+        The GPUProcessProxy will query all existing WebPageGroups and their WebPreferences. If
+        any group enables "Media in the GPU Process", and also WebM, Vorbis, or Opus, those features
+        which are enabled will also be enabled inside the GPU process.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::setWebMParserEnabled):
+        (WebKit::GPUProcess::setWebMFormatReaderEnabled):
+        (WebKit::GPUProcess::setOpusDecoderEnabled):
+        (WebKit::GPUProcess::setVorbisDecoderEnabled):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getOrCreate):
+        (WebKit::GPUProcessProxy::updatePreferences):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::forEach):
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
 2021-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r273541): Payloads requiring NSURL in serialization fail 

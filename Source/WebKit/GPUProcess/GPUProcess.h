@@ -126,6 +126,23 @@ private:
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+    void setWebMParserEnabled(bool);
+#endif
+
+#if ENABLE(WEBM_FORMAT_READER)
+    void setWebMFormatReaderEnabled(bool);
+#endif
+
+#if ENABLE(OPUS)
+    void setOpusDecoderEnabled(bool);
+#endif
+
+#if ENABLE(VORBIS)
+    void setVorbisDecoderEnabled(bool);
+#endif
+
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
 
@@ -165,6 +182,18 @@ private:
     bool m_enableVP8Decoder { false };
     bool m_enableVP9Decoder { false };
     bool m_enableVP9SWDecoder { false };
+#endif
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+    bool m_webMParserEnabled { false };
+#endif
+#if ENABLE(WEBM_FORMAT_READER)
+    bool m_webMFormatReaderEnabled { false };
+#endif
+#if ENABLE(OPUS)
+    bool m_opusEnabled { false };
+#endif
+#if ENABLE(VORBIS)
+    bool m_vorbisEnabled { false };
 #endif
 };
 

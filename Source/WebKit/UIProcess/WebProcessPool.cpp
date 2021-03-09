@@ -1078,6 +1078,11 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     if (wasProcessSwappingOnNavigationEnabled != m_configuration->processSwapsOnNavigation())
         m_webProcessCache->updateCapacity(*this);
 
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->updatePreferences();
+#endif
+
     return page;
 }
 
