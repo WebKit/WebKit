@@ -247,10 +247,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interfa
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Failure ]
 
-# webkit.org/b/221795
-fast/images/animated-image-mp4.html [ Timeout ]
-fast/images/animated-image-mp4-crash.html [ Timeout ]
-
 webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 
 webkit.org/b/221817 imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]

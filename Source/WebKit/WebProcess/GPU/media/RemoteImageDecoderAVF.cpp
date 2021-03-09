@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
+#include "ColorSpaceData.h"
 #include "GPUProcessConnection.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
 #include "SharedBufferDataReference.h"
@@ -162,28 +163,30 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
     if (m_frameImages.contains(index))
         return m_frameImages.get(index);
 
-    // This function might be called in the main thread to run the decoder synchronously
-    if (isMainThread())
-        return nullptr;
-
-    callOnMainThreadAndWait([this, protectedThis = makeRef(*this), index] {
+    auto createFrameImage = [&] {
         if (!m_gpuProcessConnection)
             return;
 
         Optional<MachSendRight> sendRight;
-        if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex::Reply(sendRight), 0))
+        ColorSpaceData colorSpace;
+        if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex::Reply(sendRight, colorSpace), 0))
             return;
 
         if (!sendRight)
             return;
 
-        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), sRGBColorSpaceRef());
+        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), colorSpace.cgColorSpace.get());
         if (!surface)
             return;
 
         if (auto image = IOSurface::sinkIntoImage(WTFMove(surface)))
             m_frameImages.add(index, image);
-    });
+    };
+
+    if (isMainThread())
+        createFrameImage();
+    else
+        callOnMainThreadAndWait(WTFMove(createFrameImage));
 
     if (m_frameImages.contains(index))
         return m_frameImages.get(index);
