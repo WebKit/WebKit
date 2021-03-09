@@ -1,3 +1,17 @@
+2021-03-09  Said Abou-Hallawa  <said@apple.com>
+
+        [GPUP] Enable 2D Canvas in layout tests by default
+        https://bugs.webkit.org/show_bug.cgi?id=222835
+
+        Reviewed by Simon Fraser.
+
+        Move UseGPUProcessForCanvasRenderingEnabled from WebPreferencesInternal 
+        to WebPreferencesExperimental so that the WebKitTestRunner will turn it
+        on by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-03-09  Sam Weinig  <weinig@apple.com>
 
         Remove CSSParserContext::enforcesCSSMIMETypeInNoQuirksMode as it is unused

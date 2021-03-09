@@ -1,3 +1,27 @@
+2021-03-09  Said Abou-Hallawa  <said@apple.com>
+
+        [GPUP] Enable 2D Canvas in layout tests by default
+        https://bugs.webkit.org/show_bug.cgi?id=222835
+
+        Reviewed by Simon Fraser.
+
+        Some of the canvas layout tests are still failing when GPUP is enabled
+        for 2D Canvas. Skip these tests for now.
+
+        * TestExpectations:
+        * gpu-process/TestExpectations:
+
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-2.html:
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-3.html:
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-4.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-2.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-3.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-4.html:
+        webkit.org/b/222881
+
+        * inspector/canvas/memory.html:
+        webkit.org/b/222880
+
 2021-03-09  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r273003): Animated style may lose original display property value

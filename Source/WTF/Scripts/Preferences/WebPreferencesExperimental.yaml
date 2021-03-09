@@ -922,6 +922,17 @@ TransformStreamAPIEnabled:
     WebKit:
       default: true
 
+UseGPUProcessForCanvasRenderingEnabled:
+  type: bool
+  humanReadableName: "GPU Process: Canvas Rendering"
+  humanReadableDescription: "Enable canvas rendering in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: defaultUseGPUProcessForCanvasRenderingEnabled()
+
 UseGPUProcessForMediaEnabled:
   type: bool
   humanReadableName: "GPU Process: Media"
