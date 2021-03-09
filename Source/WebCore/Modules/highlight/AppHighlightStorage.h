@@ -49,7 +49,7 @@ public:
     AppHighlightStorage(Document&);
     ~AppHighlightStorage();
 
-    WEBCORE_EXPORT void storeAppHighlight(StaticRange&&);
+    WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&);
     WEBCORE_EXPORT void restoreAppHighlight(Ref<SharedBuffer>&&);
     void restoreUnrestoredAppHighlights();
 
