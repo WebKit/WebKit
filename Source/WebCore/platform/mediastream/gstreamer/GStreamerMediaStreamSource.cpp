@@ -454,7 +454,7 @@ static void webkitMediaStreamSrcAddPad(WebKitMediaStreamSrc* self, GstPad* targe
     gst_pad_set_active(ghostPad, TRUE);
     gst_element_add_pad(GST_ELEMENT_CAST(self), ghostPad);
 
-    auto proxyPad = adoptGRef(GST_PAD(gst_proxy_pad_get_internal(GST_PROXY_PAD(ghostPad))));
+    auto proxyPad = adoptGRef(GST_PAD_CAST(gst_proxy_pad_get_internal(GST_PROXY_PAD(ghostPad))));
     gst_flow_combiner_add_pad(self->priv->flowCombiner.get(), proxyPad.get());
     gst_pad_set_chain_function(proxyPad.get(), static_cast<GstPadChainFunction>(webkitMediaStreamSrcChain));
 
@@ -464,8 +464,13 @@ static void webkitMediaStreamSrcAddPad(WebKitMediaStreamSrc* self, GstPad* targe
 static void webkitMediaStreamSrcRemovePad(WebKitMediaStreamSrc* self, const char* padName)
 {
     auto pad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT_CAST(self), padName));
-    auto proxyPad = adoptGRef(GST_PAD(gst_proxy_pad_get_internal(GST_PROXY_PAD(pad.get()))));
-    gst_flow_combiner_remove_pad(self->priv->flowCombiner.get(), proxyPad.get());
+    if (!pad)
+        return;
+
+    auto proxyPad = adoptGRef(GST_PAD_CAST(gst_proxy_pad_get_internal(GST_PROXY_PAD(pad.get()))));
+    if (proxyPad)
+        gst_flow_combiner_remove_pad(self->priv->flowCombiner.get(), proxyPad.get());
+
     gst_pad_set_active(pad.get(), FALSE);
     gst_element_remove_pad(GST_ELEMENT_CAST(self), pad.get());
 }

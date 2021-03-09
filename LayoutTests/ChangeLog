@@ -1,3 +1,15 @@
+2021-03-09  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] webrtc/multi-video.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=222792
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update expectations for webrtc/multi-video.html which is currently expected to fail.
+        
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-03-08  Antoine Quint  <graouts@webkit.org>
 
         Select CSS properties animating as float should not allow negative values

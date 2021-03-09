@@ -627,7 +627,6 @@ webkit.org/b/187064 webrtc/video-remote-mute.html
 webkit.org/b/187064 webrtc/video-addTransceiver.html
 webkit.org/b/187064 webrtc/peer-connection-track-end.html
 webkit.org/b/187064 webrtc/video.html
-webkit.org/b/187064 webrtc/multi-video.html
 webkit.org/b/187064 webrtc/video-addTrack.html
 webkit.org/b/187064 webrtc/video-rotation.html
 webkit.org/b/187064 webrtc/video-mute.html
