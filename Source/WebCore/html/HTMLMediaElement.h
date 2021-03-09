@@ -1173,6 +1173,7 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
+    MonotonicTime m_currentPlaybackTargetIsWirelessEventFiredTime;
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     bool m_failedToPlayToWirelessTarget { false };
 #endif

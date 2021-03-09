@@ -966,11 +966,8 @@ void HTMLMediaElement::scheduleCheckPlaybackTargetCompatability()
     if (m_checkPlaybackTargetCompatablityTask.hasPendingTask())
         return;
 
-    auto logSiteIdentifier = LOGIDENTIFIER;
-    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
-    m_checkPlaybackTargetCompatablityTask.scheduleTask([this, logSiteIdentifier] {
-        UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_checkPlaybackTargetCompatablityTask.scheduleTask([this] {
         checkPlaybackTargetCompatablity();
     });
 }
@@ -979,7 +976,14 @@ void HTMLMediaElement::checkPlaybackTargetCompatablity()
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_isPlayingToWirelessTarget && !m_player->canPlayToWirelessPlaybackTarget()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "calling setShouldPlayToPlaybackTarget(false)");
+        static const Seconds maxIntervalForWirelessPlaybackPlayerUpdate { 500_ms };
+        Seconds delta = MonotonicTime::now() - m_currentPlaybackTargetIsWirelessEventFiredTime;
+        if (delta < maxIntervalForWirelessPlaybackPlayerUpdate) {
+            scheduleCheckPlaybackTargetCompatability();
+            return;
+        }
+
+        ERROR_LOG(LOGIDENTIFIER, "player incompatible after ", delta.value(), ", calling setShouldPlayToPlaybackTarget(false)");
         m_failedToPlayToWirelessTarget = true;
         m_player->setShouldPlayToPlaybackTarget(false);
     }
@@ -5750,10 +5754,8 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool is
 void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarget)
 {
     auto logSiteIdentifier = LOGIDENTIFIER;
-    ALWAYS_LOG(logSiteIdentifier, isPlayingToWirelessTarget);
     m_playbackTargetIsWirelessQueue.enqueueTask([this, isPlayingToWirelessTarget, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
 
         if (isPlayingToWirelessTarget == m_isPlayingToWirelessTarget)
             return;
@@ -5768,6 +5770,7 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
         updateSleepDisabling();
 
         m_failedToPlayToWirelessTarget = false;
+        m_currentPlaybackTargetIsWirelessEventFiredTime = MonotonicTime::now();
         scheduleCheckPlaybackTargetCompatability();
 
         if (!isContextStopped())
