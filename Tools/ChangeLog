@@ -1,3 +1,15 @@
+2021-03-08  Stephan Szabo  <stephan.szabo@sony.com>
+
+        TestWebKitAPI WebKit.HitTestResultNodeHandle does not complete with ENABLE_CONTEXT_MENUS=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=222938
+
+        Reviewed by Ross Kirsling.
+
+        Make the test only build with context menus are supported.
+
+        * TestWebKitAPI/Tests/WebKit/HitTestResultNodeHandle.cpp:
+        * TestWebKitAPI/Tests/WebKit/HitTestResultNodeHandle_Bundle.cpp:
+
 2021-03-08  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Isolate dateutil imports
