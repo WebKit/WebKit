@@ -1,3 +1,12 @@
+2021-03-09  Keith Miller  <keith_miller@apple.com>
+
+        JSC Crash in makeString() while creating Error object.
+        https://bugs.webkit.org/show_bug.cgi?id=222452
+
+        Reviewed by Mark Lam.
+
+        * stress/large-string-should-not-crash-error-creation.js: Added.
+
 2021-03-09  Mark Lam  <mark.lam@apple.com>
 
         Use --verifyGC=true on some JSC stress test configurations.
