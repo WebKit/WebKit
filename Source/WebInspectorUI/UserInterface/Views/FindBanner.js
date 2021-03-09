@@ -25,11 +25,12 @@
 
 WI.FindBanner = class FindBanner extends WI.NavigationItem
 {
-    constructor(delegate, className, fixed = false)
+    constructor(delegate, className, alwaysShowing = false)
     {
         super();
 
         this._delegate = delegate || null;
+        this._alwaysShowing = alwaysShowing;
 
         this.element.classList.add("find-banner");
 
@@ -73,9 +74,10 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         nextResultButtonGlyphElement.classList.add(WI.FindBanner.SegmentGlyphStyleClassName);
         this._nextResultButton.appendChild(nextResultButtonGlyphElement);
 
-        if (fixed)
+        if (this._alwaysShowing) {
+            this.element.classList.add(WI.FindBanner.ShowingStyleClassName);
             this._clearAndBlurKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape, this.clearAndBlur.bind(this), this.element);
-        else {
+        } else {
             let doneButtonElement = document.createElement("button");
             doneButtonElement.textContent = WI.UIString("Done");
             doneButtonElement.addEventListener("click", this._doneButtonClicked.bind(this));
@@ -138,7 +140,9 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
             this._targetElement.classList.remove(WI.FindBanner.ShowingFindBannerStyleClassName);
 
             this.element.classList.add(WI.FindBanner.NoTransitionStyleClassName);
-            this.element.classList.remove(WI.FindBanner.ShowingStyleClassName);
+
+            if (!this._alwaysShowing)
+                this.element.classList.remove(WI.FindBanner.ShowingStyleClassName);
 
             // Delay so we can remove the no transition style class after the other style changes are committed.
             setTimeout(delayedWork.bind(this), 0);
@@ -214,7 +218,9 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         this._inputField.blur();
 
         this._targetElement.classList.remove(WI.FindBanner.ShowingFindBannerStyleClassName);
-        this.element.classList.remove(WI.FindBanner.ShowingStyleClassName);
+
+        if (!this._alwaysShowing)
+            this.element.classList.remove(WI.FindBanner.ShowingStyleClassName);
 
         this.dispatchEventToListeners(WI.FindBanner.Event.DidHide);
     }

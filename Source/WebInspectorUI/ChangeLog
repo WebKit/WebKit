@@ -1,3 +1,19 @@
+2021-03-09  Razvan Caliman  <rcaliman@apple.com>
+
+        [Cocoa] Web Inspector: Console search box is broken, advancing to next result instead pastes from system find pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=220773
+        <rdar://problem/73410423>
+
+        Reviewed by Devin Rousso.
+
+        Ensure FindBanner is always marked as shown in the Console
+        to prevent malfunction when advancing through search results.
+
+        * UserInterface/Views/FindBanner.js:
+        (WI.FindBanner):
+        (WI.FindBanner.prototype.set targetElement):
+        (WI.FindBanner.prototype.hide):
+
 2021-03-08  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: REGRESSION (r267038): Inspector fails to show any details about animations/transitions in the timeline
