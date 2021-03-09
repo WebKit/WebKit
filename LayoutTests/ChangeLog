@@ -1,3 +1,19 @@
+2021-03-09  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL2: Red flickering when using copyTexImage2D()
+        https://bugs.webkit.org/show_bug.cgi?id=222790
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/copy-tex-image-and-sub-image-2d-expected.txt:
+        * fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html:
+        Change the test to test WebGL2 and copyTexImage2D with non-full framebuffer
+        rectangles.
+
+        * fast/canvas/webgl/resources/webgl-test.js:
+        (create3DContext):
+        Fix logic error when trying to create WebGL2 context.
+
 2021-03-08  Antoine Quint  <graouts@webkit.org>
 
         Unreviewed. Update border-width interpolation test after WPT PR #27934.

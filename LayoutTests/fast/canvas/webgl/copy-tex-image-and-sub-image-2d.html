@@ -2,6 +2,7 @@
 <head>
 <script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
 <script id="vshader" type="x-shader/x-vertex">
 attribute vec3 g_Position;
 attribute vec2 g_TexCoord0;
@@ -44,14 +45,16 @@ function init()
 var pixel = [0, 0, 0];
 var correctColor = null;
 var gl = null;
+var wtu = WebGLTestUtils;
 
-function runTestIteration(antialias)
+function runTestIteration(antialias, version2)
 {
-    if (antialias)
-        gl = initWebGL("antialiasOn", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
-    else
-        gl = initWebGL("antialiasOff", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1, { antialias: false });
-
+    let canvasName = `antialias${antialias ? "On" : "Off"}${version2 ? "2" : ""}`;
+    gl = initWebGL(canvasName, "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1, { antialias: !!antialias}, !!version2);
+    if (!gl) {
+        testFailed(`Could not create context for antialias: ${antialias} version2:${version2}`);
+        return false;
+    }
     var textureLoc = gl.getUniformLocation(gl.program, "tex");
 
     var vertices = new Float32Array([
@@ -85,77 +88,60 @@ function runTestIteration(antialias)
 
     gl.colorMask(1, 1, 1, 0);
     gl.disable(gl.BLEND);
-    debug('Testing copyTexImage2D');
-
-    // Red canvas
-    gl.clearColor(1, 0, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
+    gl.uniform1i(textureLoc, 0);
     var texture = gl.createTexture();
-    // Bind the texture to texture unit 0
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    // Set up texture
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    glErrorShouldBe(gl, gl.NO_ERROR);
 
+    debug('Testing copyTexImage2D');
+    // Copy red to the texture.
+    gl.clearColor(1, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     glErrorShouldBe(gl, gl.NO_ERROR);
     gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, 2, 2, 0);
     glErrorShouldBe(gl, gl.NO_ERROR);
 
-    // Green canvas
     gl.clearColor(0, 1, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    // Point the uniform sampler to texture unit 0
-    gl.uniform1i(textureLoc, 0);
-    // Draw the triangles
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-    // Read back the rendering results, should be red
-    var buf = new Uint8Array(2 * 2 * 4);
-    gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
-    var idx = 0;
-    correctColor = [255, 0, 0];
-    for (var y = 0; y < 2; y++) {
-        for (var x = 0; x < 2; x++) {
-            idx = (y * 2 + x) * 4;
-            pixel[0] = buf[idx];
-            pixel[1] = buf[idx + 1];
-            pixel[2] = buf[idx + 2];
-            shouldBe("pixel", "correctColor");
-        }
-    }
+    wtu.checkCanvasRect(gl, 0, 0, 2, 2, [255, 0, 0, 0], "copyTexImage2D is correct (drawn texture was red)", 2);
 
     debug('Testing copyTexSubImage2D');
-
-    // Green canvas
+    // Copy green to the texture.
     gl.clearColor(0, 1, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
     glErrorShouldBe(gl, gl.NO_ERROR);
     gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 2, 2);
     glErrorShouldBe(gl, gl.NO_ERROR);
 
-    // Blue canvas
     gl.clearColor(0, 0, 1, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    // Draw the triangles
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+    wtu.checkCanvasRect(gl, 0, 0, 2, 2, [0, 255, 0, 0], "copyTexImage2D is correct (drawn texture was green)", 2);
 
-    // Read back the rendering results, should be green
-    gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
-    correctColor = [0, 255, 0];
-    for (var y = 0; y < 2; y++) {
-        for (var x = 0; x < 2; x++) {
-            idx = (y * 2 + x) * 4;
-            pixel[0] = buf[idx];
-            pixel[1] = buf[idx + 1];
-            pixel[2] = buf[idx + 2];
-            shouldBe("pixel", "correctColor");
-        }
-    }
+    debug('Testing copyTexImage2D from partial FBO rectangle');
+    gl.clearColor(0.5, 0.1, 0.1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 1, 1, 0);
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    wtu.checkCanvasRect(gl, 0, 0, 2, 2, [128, 25, 25, 0], "copyTexImage2D from partial FBO rectangle is correct (drawn texture was redish)", 2);
+    glErrorShouldBe(gl, gl.NO_ERROR);
+
+    debug('Testing copyTexSubImage2D from partial FBO rectangle');
+    gl.clearColor(0.1, 0.5, 0.1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, 1, 1);
+    gl.clearColor(0, 0, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    wtu.checkCanvasRect(gl, 0, 0, 2, 2, [25, 128, 25, 0], "copyTexSubImage2D from partial FBO rectangle is correct (drawn texture greenish)", 2);
+    glErrorShouldBe(gl, gl.NO_ERROR);
 }
 
 function runTest(antialias)
@@ -164,6 +150,10 @@ function runTest(antialias)
     runTestIteration(true);
     debug("Testing with antialias off");
     runTestIteration(false);
+    debug("Testing with antialias on, WebGL2");
+    runTestIteration(true, true);
+    debug("Testing with antialias off, WebGL2");
+    runTestIteration(false, true);
     var epilogue = document.createElement("script");
     epilogue.onload = finish;
     epilogue.src = "../../../resources/js-test-post.js";
@@ -180,6 +170,8 @@ function finish() {
 <body onload="init()">
 <canvas id="antialiasOn" width="2px" height="2px"></canvas>
 <canvas id="antialiasOff" width="2px" height="2px"></canvas>
+<canvas id="antialiasOn2" width="2px" height="2px"></canvas>
+<canvas id="antialiasOff2" width="2px" height="2px"></canvas>
 <div id="description"></div>
 <div id="console"></div>
 </body>
