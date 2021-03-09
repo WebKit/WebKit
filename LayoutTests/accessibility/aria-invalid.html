@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -37,10 +38,8 @@
 
 <p id="description"></p>
 <div id="console"></div>
-<div id="notifications"></div>
 
 <script>
-
     description("This tests that aria-invalid causes the right attribute to be returned and it ensures a notification is sent when it changes.");
 
     function $(id){
@@ -50,7 +49,8 @@
     var axNotificationElement = null;
     function notificationCallback(notification) {
         if (notification == "AXInvalidStatusChanged") {
-            $("notifications").innerHTML += "Notification received successfully.";
+            debug("Notification received successfully.");
+
             axNotificationElement.removeNotificationListener();
             $("examples").hidden = true;
             finishJSTest();
@@ -59,10 +59,10 @@
 
     var result = $('console');
     function verify(value, expectation, element) {
-      if (value === expectation)
-        result.innerText += "PASS: AXInvalid is " + value + ".\n";
-      else
-        result.innerText += "FAIL: AXInvalid is " + value + ". Expected: " + expectation + ". " + (element ? element.outerHTML : "") + "\n";
+        if (value === expectation)
+            result.innerText += "PASS: AXInvalid is " + value + ".\n";
+        else
+            result.innerText += "FAIL: AXInvalid is " + value + ". Expected: " + expectation + ". " + (element ? element.outerHTML : "") + "\n";
     }
 
     if (window.accessibilityController) {
@@ -76,7 +76,7 @@
             var value = accessibilityController.focusedElement.stringAttributeValue('AXInvalid');
             verify(value, expectation, el);
         }
-        
+
         var domNotificationElement = document.querySelector(".ex");
         domNotificationElement.focus();
         axNotificationElement = accessibilityController.focusedElement;
@@ -85,7 +85,7 @@
         domNotificationElement.setAttribute("aria-invalid", "spelling");
         verify(axNotificationElement.stringAttributeValue('AXInvalid'), "spelling", domNotificationElement);
     }
-
 </script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

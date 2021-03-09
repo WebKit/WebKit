@@ -24,7 +24,8 @@ PASS: AXInvalid is true.
 PASS: AXInvalid is true.
 PASS addedNotification is true
 PASS: AXInvalid is spelling.
+Notification received successfully.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Notification received successfully.
+
