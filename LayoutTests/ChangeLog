@@ -1,3 +1,17 @@
+2021-03-09  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] setKeyframes does not preserve animation's current offset
+        https://bugs.webkit.org/show_bug.cgi?id=222939
+        <rdar://problem/75207793>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that updating keyframes after an animation has completed
+        correctly updates styles accounting for the new keyframes.
+
+        * webanimations/set-keyframes-after-animation-completion-expected.html: Added.
+        * webanimations/set-keyframes-after-animation-completion.html: Added.
+
 2021-03-09  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Test fast/images/animated-image-mp4.html times out when media in GPU Process is enabled

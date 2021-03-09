@@ -156,7 +156,7 @@ public:
 
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
-    const HashSet<CSSPropertyID>& animatedProperties() const { return m_blendingKeyframes.properties(); }
+    const HashSet<CSSPropertyID>& animatedProperties();
     bool animatesProperty(CSSPropertyID) const;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
@@ -215,6 +215,7 @@ private:
 #endif
 
     KeyframeList m_blendingKeyframes { emptyString() };
+    HashSet<CSSPropertyID> m_animatedProperties;
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;
