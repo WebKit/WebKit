@@ -319,8 +319,8 @@ public:
     bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
     bool focused() const { return isUserActionElement() && isUserActionElementFocused(); }
     bool isBeingDragged() const { return isUserActionElement() && isUserActionElementDragged(); }
-    bool hasFocusVisible() const { return hasNodeFlag(NodeFlag::HasFocusVisible); };
-    bool hasFocusWithin() const { return hasNodeFlag(NodeFlag::HasFocusWithin); };
+    bool hasFocusVisible() const { return isUserActionElement() && isUserActionElementHasFocusVisible(); }
+    bool hasFocusWithin() const { return isUserActionElement() && isUserActionElementHasFocusWithin(); };
 
     virtual void setActive(bool = true, bool pause = false, Style::InvalidationScope = Style::InvalidationScope::All);
     virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All);
@@ -654,6 +654,8 @@ private:
     bool isUserActionElementFocused() const;
     bool isUserActionElementHovered() const;
     bool isUserActionElementDragged() const;
+    bool isUserActionElementHasFocusVisible() const;
+    bool isUserActionElementHasFocusWithin() const;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot&) { }
 

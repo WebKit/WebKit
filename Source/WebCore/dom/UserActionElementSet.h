@@ -43,12 +43,16 @@ public:
     bool isHovered(const Element& element) { return hasFlag(element, Flag::IsHovered); }
     bool isInActiveChain(const Element& element) { return hasFlag(element, Flag::InActiveChain); }
     bool isBeingDragged(const Element& element) { return hasFlag(element, Flag::IsBeingDragged); }
+    bool hasFocusVisible(const Element& element) { return hasFlag(element, Flag::HasFocusVisible); }
+    bool hasFocusWithin(const Element& element) { return hasFlag(element, Flag::HasFocusWithin); }
 
     void setActive(Element& element, bool enable) { setFlags(element, enable, Flag::IsActive); }
     void setFocused(Element& element, bool enable) { setFlags(element, enable, Flag::IsFocused); }
     void setHovered(Element& element, bool enable) { setFlags(element, enable, Flag::IsHovered); }
     void setInActiveChain(Element& element, bool enable) { setFlags(element, enable, Flag::InActiveChain); }
     void setBeingDragged(Element& element, bool enable) { setFlags(element, enable, Flag::IsBeingDragged); }
+    void setHasFocusVisible(Element& element, bool enable) { setFlags(element, enable, Flag::HasFocusVisible); }
+    void setHasFocusWithin(Element& element, bool enable) { setFlags(element, enable, Flag::HasFocusWithin); }
 
     void clearActiveAndHovered(Element& element) { clearFlags(element, { Flag::IsActive, Flag::InActiveChain, Flag::IsHovered }); }
 
@@ -61,6 +65,8 @@ private:
         IsHovered       = 1 << 2,
         IsFocused       = 1 << 3,
         IsBeingDragged  = 1 << 4,
+        HasFocusVisible = 1 << 5,
+        HasFocusWithin  = 1 << 6,
     };
 
     void setFlags(Element& element, bool enable, OptionSet<Flag> flags) { enable ? setFlags(element, flags) : clearFlags(element, flags); }

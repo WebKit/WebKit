@@ -513,8 +513,6 @@ public:
     static int32_t flagIsShadowRoot() { return static_cast<int32_t>(NodeFlag::IsShadowRoot); }
     static int32_t flagIsHTML() { return static_cast<int32_t>(NodeFlag::IsHTMLElement); }
     static int32_t flagIsLink() { return static_cast<int32_t>(NodeFlag::IsLink); }
-    static int32_t flagHasFocusVisible() { return static_cast<int32_t>(NodeFlag::HasFocusVisible); }
-    static int32_t flagHasFocusWithin() { return static_cast<int32_t>(NodeFlag::HasFocusWithin); }
     static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
 
@@ -539,24 +537,22 @@ protected:
         // be stored in the same memory word as the Node bits above.
         IsDocumentFragmentForInnerOuterHTML = 1 << 14, // DocumentFragment
         IsEditingText = 1 << 15, // Text
-        HasFocusWithin = 1 << 16, // Element
-        IsLink = 1 << 17,
-        IsUserActionElement = 1 << 18,
-        IsParsingChildrenFinished = 1 << 19,
-        HasSyntheticAttrChildNodes = 1 << 20,
-        SelfOrAncestorHasDirAuto = 1 << 21,
+        IsLink = 1 << 16, // Element
+        IsUserActionElement = 1 << 17,
+        IsParsingChildrenFinished = 1 << 18,
+        HasSyntheticAttrChildNodes = 1 << 19,
+        SelfOrAncestorHasDirAuto = 1 << 20,
 
-        HasCustomStyleResolveCallbacks = 1 << 22,
+        HasCustomStyleResolveCallbacks = 1 << 21,
 
-        HasPendingResources = 1 << 23,
-        HasElementIdentifier = 1 << 24,
+        HasPendingResources = 1 << 22,
+        HasElementIdentifier = 1 << 23,
 #if ENABLE(FULLSCREEN_API)
-        ContainsFullScreenElement = 1 << 25,
+        ContainsFullScreenElement = 1 << 24,
 #endif
-        IsComputedStyleInvalidFlag = 1 << 26,
+        IsComputedStyleInvalidFlag = 1 << 25,
 
-        HasFocusVisible = 1 << 27,
-        // Bits 27-31 are free.
+        // Bits 26-31 are free.
     };
 
     enum class TabIndexState : uint8_t {

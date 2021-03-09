@@ -679,6 +679,18 @@ bool Element::isUserActionElementDragged() const
     return document().userActionElements().isBeingDragged(*this);
 }
 
+bool Element::isUserActionElementHasFocusVisible() const
+{
+    ASSERT(isUserActionElement());
+    return document().userActionElements().hasFocusVisible(*this);
+}
+
+bool Element::isUserActionElementHasFocusWithin() const
+{
+    ASSERT(isUserActionElement());
+    return document().userActionElements().hasFocusWithin(*this);
+}
+
 void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalidationScope)
 {
     if (flag == active())
@@ -763,7 +775,7 @@ void Element::setHasFocusVisible(bool flag)
         return;
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusVisible);
-    setNodeFlag(NodeFlag::HasFocusVisible, flag);
+    document().userActionElements().setHasFocusVisible(*this, flag);
 }
 
 void Element::setHasFocusWithin(bool flag)
@@ -772,7 +784,7 @@ void Element::setHasFocusWithin(bool flag)
         return;
     {
         Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusWithin);
-        setNodeFlag(NodeFlag::HasFocusWithin, flag);
+        document().userActionElements().setHasFocusWithin(*this, flag);
     }
 }
 
