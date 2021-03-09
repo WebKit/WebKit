@@ -1,3 +1,31 @@
+2021-03-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        MotionMark scores are super sensitive to a single long frame
+        https://bugs.webkit.org/show_bug.cgi?id=220847
+        <rdar://problem/74152743>
+
+        Reviewed by Jon Lee.
+
+        Currently, "ramp" tests have three phases. The middle phase is where they try to determine a maximum reasonable
+        complexity, and the third one is where they try various complexities between 0 and the maximum. The calculation
+        of this maximum reasonable complexity is currently very sensitive to outlier frame times. If there is a single
+        outlier frame time, the failure mode is to assume that the maximum complexity is ~10. So, the solution is to
+        ignore outlier frame times during this first phase, and to ensure that there are at least 9 frames measured that
+        have non-outlier times.
+
+        This test also changes the speed of the middle phase. Previously, each interval during this phase had
+        a complexity that was 3.16x of the previous complexity. This patch changes that to 1.78x of the previous
+        complexity for complexities above 50, and 1.33x for complexities above 10,000.
+
+        * MotionMark/tests/resources/main.js:
+        (filterOutOutliers):
+        (_measureAndResetInterval):
+        (update):
+        (registerFrameTime):
+        (intervalHasConcluded):
+        (start):
+        (didFinishInterval):
+
 2021-02-26  Zalan Bujtas  <zalan@apple.com>
 
         [Performance test][Line layout] Add test with inline boxes
