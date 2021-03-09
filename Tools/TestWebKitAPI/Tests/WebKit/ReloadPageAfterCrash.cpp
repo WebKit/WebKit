@@ -34,6 +34,10 @@
 #include <WebKit/WKRetainPtr.h>
 #include <signal.h>
 
+#if PLATFORM(PLAYSTATION)
+#include <process-launcher.h>
+#endif
+
 namespace TestWebKitAPI {
 
 static bool loadBeforeCrash = false;
@@ -137,7 +141,11 @@ TEST(WebKit, FocusedFrameAfterCrash)
     while (!WKPageGetFocusedFrame(webView.page()))
         Util::spinRunLoop(10);
 
+#if PLATFORM(PLAYSTATION)
+    PlayStation::terminateProcess(WKPageGetProcessIdentifier(webView.page()));
+#else
     kill(WKPageGetProcessIdentifier(webView.page()), 9);
+#endif
 
     Util::run(&calledCrashHandler);
 }

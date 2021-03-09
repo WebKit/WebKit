@@ -1,5 +1,17 @@
 2021-03-08  Stephan Szabo  <stephan.szabo@sony.com>
 
+        [PlayStation] Various small fixes for TestWTF/TestWebKit tests on PlayStation
+        https://bugs.webkit.org/show_bug.cgi?id=222931
+
+        Reviewed by Don Olmstead.
+
+        * TestWebKitAPI/PlatformPlayStation.cmake: Link to API for process termination
+        * TestWebKitAPI/Tests/WTF/DataMutex.cpp: Turn off test using ASSERT_DEATH
+        * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp: Use PlayStation api to kill webprocess for this test
+        * TestWebKitAPI/playstation/PlatformWebViewPlayStation.cpp: Set size in resizeTo
+
+2021-03-08  Stephan Szabo  <stephan.szabo@sony.com>
+
         TestWebKitAPI WebKit.HitTestResultNodeHandle does not complete with ENABLE_CONTEXT_MENUS=OFF
         https://bugs.webkit.org/show_bug.cgi?id=222938
 
