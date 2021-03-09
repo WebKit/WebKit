@@ -54,6 +54,7 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
     , m_menuItems(menuItems)
     , m_webHitTestResultData(context.hitTestResult(), true)
     , m_selectedText(context.selectedText())
+    , m_selectionBounds(context.selectionBounds())
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionIsEditable(false)
 #endif
@@ -79,6 +80,7 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
     encoder << m_menuItems;
     encoder << m_webHitTestResultData;
     encoder << m_selectedText;
+    encoder << m_selectionBounds;
 
 #if ENABLE(SERVICE_CONTROLS)
     ShareableBitmap::Handle handle;
@@ -106,6 +108,9 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
         return false;
 
     if (!decoder.decode(result.m_selectedText))
+        return false;
+
+    if (!decoder.decode(result.m_selectionBounds))
         return false;
 
 #if ENABLE(SERVICE_CONTROLS)

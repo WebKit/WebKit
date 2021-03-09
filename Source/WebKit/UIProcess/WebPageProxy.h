@@ -1866,6 +1866,10 @@ public:
     void resetImageExtractionPreview();
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+    bool canHandleContextMenuTranslation() const;
+#endif
+
 #if PLATFORM(COCOA)
     void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);

@@ -150,6 +150,7 @@ enum ContextMenuAction {
     ContextMenuItemTagAddHighlightToNewGroup,
 #endif
     ContextMenuItemTagRevealImage,
+    ContextMenuItemTagTranslate,
     ContextMenuItemBaseCustomTag = 5000,
     ContextMenuItemLastCustomTag = 5999,
     ContextMenuItemBaseApplicationTag = 10000

@@ -362,6 +362,14 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         });
     }
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+    if (!page()->canHandleContextMenuTranslation() || isPopover) {
+        filteredItems.removeAllMatching([] (auto& item) {
+            return item.action() == ContextMenuItemTagTranslate;
+        });
+    }
+#endif
+
     auto sparseMenuItems = retainPtr([NSPointerArray strongObjectsPointerArray]);
     auto insertMenuItem = makeBlockPtr([completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
         ASSERT(index < [sparseMenuItems count]);
@@ -459,6 +467,9 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
 
     case ContextMenuItemTagToggleVideoFullscreen:
         return _WKMenuItemIdentifierToggleFullScreen;
+
+    case ContextMenuItemTagTranslate:
+        return _WKMenuItemIdentifierTranslate;
 
     case ContextMenuItemTagShareMenu:
         return _WKMenuItemIdentifierShareMenu;

@@ -6722,6 +6722,12 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 #endif
         return;
 
+    case ContextMenuItemTagTranslate:
+#if HAVE(TRANSLATION_UI_SERVICES)
+        pageClient().handleContextMenuTranslation(m_activeContextMenuContextData.selectedText(), m_activeContextMenuContextData.selectionBounds(), m_activeContextMenuContextData.menuLocation());
+#endif
+        return;
+
     default:
         break;
     }

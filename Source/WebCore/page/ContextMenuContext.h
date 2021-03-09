@@ -43,6 +43,9 @@ public:
     void setSelectedText(const String& selectedText) { m_selectedText = selectedText; }
     const String& selectedText() const { return m_selectedText; }
 
+    void setSelectionBounds(const IntRect& bounds) { m_selectionBounds = bounds; }
+    const IntRect& selectionBounds() const { return m_selectionBounds; }
+
 #if ENABLE(SERVICE_CONTROLS)
     void setControlledImage(Image* controlledImage) { m_controlledImage = controlledImage; }
     Image* controlledImage() const { return m_controlledImage.get(); }
@@ -51,6 +54,7 @@ public:
 private:
     HitTestResult m_hitTestResult;
     String m_selectedText;
+    IntRect m_selectionBounds;
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<Image> m_controlledImage;

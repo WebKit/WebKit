@@ -55,3 +55,5 @@ NSString * const _WKMenuItemIdentifierToggleFullScreen = @"WKMenuItemIdentifierT
 
 NSString * const _WKMenuItemIdentifierShareMenu = @"WKMenuItemIdentifierShareMenu";
 NSString * const _WKMenuItemIdentifierSpeechMenu = @"WKMenuItemIdentifierSpeechMenu";
+
+NSString * const _WKMenuItemIdentifierTranslate = @"WKMenuItemIdentifierTranslate";

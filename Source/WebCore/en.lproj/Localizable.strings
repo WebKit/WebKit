@@ -124,11 +124,20 @@
 /* Button title in Device Orientation Permission API prompt */
 "Allow (device motion and orientation access)" = "Allow";
 
+/* Allow button title in speech recognition prompt */
+"Allow (speechrecognition)" = "Allow";
+
+/* Allow button title in user media prompt */
+"Allow (usermedia)" = "Allow";
+
+/* Message for requesting cross-site cookie and website data access. */
+"Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
+
+/* Message for spechrecognition prompt */
+"Allow “%@” to capture your audio and use it for speech recognition?" = "Allow “%@” to capture your audio and use it for speech recognition?";
+
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” to use cookies and website data while browsing “%@”?";
-
-/* Message for requesting cross-site cookie and website data access for multiple third party domains. */
-"Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
 
 /* Message for user media prompt */
 "Allow “%@” to use your camera and microphone?" = "Allow “%@” to use your camera and microphone?";
@@ -139,21 +148,6 @@
 /* Message for user microphone access prompt */
 "Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
 
-/* Allow button title in user media prompt */
-"Allow (usermedia)" = "Allow";
-
-/* Disallow button title in user media prompt */
-"Don’t Allow (usermedia)" = "Don’t Allow";
-
-/* Message for speech recognition prompt */
-"Allow “%@” to capture your audio and use it for speech recognition?" = "Allow “%@” to capture your audio and use it for speech recognition?";
-
-/* Allow button title in speech recognition prompt */
-"Allow (speechrecognition)" = "Allow";
-
-/* Disallow button title in speech recognition prompt */
-"Don’t Allow (speechrecognition)" = "Don’t Allow";
-
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
 
@@ -162,6 +156,9 @@
 
 /* Malware confirmation dialog title */
 "Are you sure you wish to go to this site?" = "Are you sure you wish to go to this site?";
+
+/* WKErrorNavigationAppBoundDomain description */
+"Attempted to navigate away from an app-bound domain or navigate after using restricted APIs" = "Attempted to navigate away from an app-bound domain or navigate after using restricted APIs";
 
 /* WKErrorAttributedStringContentFailedToLoad description */
 "Attributed string content failed to load" = "Attributed string content failed to load";
@@ -320,10 +317,10 @@
 "Dictation (Undo action name)" = "Dictation";
 
 /* Message for requesting cross-site cookie and website data access. */
-"Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
-
-/* Message for requesting cross-site cookie and website data access for multiple third party domains. */
 "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
+
+/* Message for requesting cross-site cookie and website data access. */
+"Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
 
 /* Button title in Storage Access API prompt */
 "Don't Allow (cross-site cookie and website data access)" = "Don't Allow";
@@ -333,6 +330,12 @@
 
 /* Title of the Done button for zoomed form controls. */
 "Done" = "Done";
+
+/* Disallow button title in speech recognition prompt */
+"Don’t Allow (speechrecognition)" = "Don’t Allow";
+
+/* Disallow button title in user media prompt */
+"Don’t Allow (usermedia)" = "Don’t Allow";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
@@ -472,6 +475,12 @@
 /* WKErrorJavaScriptResultTypeIsUnsupported description */
 "JavaScript execution returned a result of an unsupported type" = "JavaScript execution returned a result of an unsupported type";
 
+/* WKErrorJavaScriptAppBoundDomain description */
+"JavaScript execution targeted a frame that is not in an app-bound domain" = "JavaScript execution targeted a frame that is not in an app-bound domain";
+
+/* WKErrorJavaScriptInvalidFrameTarget description */
+"JavaScript execution targeted an invalid frame" = "JavaScript execution targeted an invalid frame";
+
 /* Undo action name */
 "Justify (Undo action name)" = "Justify";
 
@@ -571,14 +580,14 @@
 /* Option in segmented control for inserting a numbered list in text editing */
 "Numbered list" = "Numbered list";
 
+/* Title of the OK button in date/time form controls. */
+"OK (OK button title in date/time picker)" = "OK";
+
 /* Title of the OK button for the number pad in zoomed form controls. */
 "OK (OK button title in extra zoomed number pad)" = "OK";
 
 /* OK button label in document password failure alert */
 "OK (document password failure alert)" = "OK";
-
-/* Title of the OK button in date/time form controls. */
-"OK (OK button title in date/time picker)" = "OK";
 
 /* Menu item label for the track that represents disabling closed captions */
 "Off" = "Off";
@@ -926,10 +935,10 @@
 "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
 
 /* Informative text for requesting cross-site cookie and website data access. */
-"This will allow “%@” to track your activity." = "This will allow “%@” to track your activity.";
+"This will allow “%@” and “%@” to track your activity." = "This will allow “%@” and “%@” to track your activity.";
 
 /* Informative text for requesting cross-site cookie and website data access. */
-"This will allow “%@” and “%@” to track your activity." = "This will allow “%@” and “%@” to track your activity.";
+"This will allow “%@” to track your activity." = "This will allow “%@” to track your activity.";
 
 /* Undo action name */
 "Tighten Kerning (Undo action name)" = "Tighten Kerning";
@@ -954,6 +963,9 @@
 
 /* Transformations context sub-menu item */
 "Transformations" = "Transformations";
+
+/* Translate context menu item with selected word */
+"Translate “%@”" = "Translate “%@”";
 
 /* Undo action name */
 "Turn Off Kerning (Undo action name)" = "Turn Off Kerning";

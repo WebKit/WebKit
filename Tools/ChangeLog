@@ -1,3 +1,16 @@
+2021-03-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add a way to trigger webpage translation via the context menu
+        https://bugs.webkit.org/show_bug.cgi?id=222953
+        <rdar://problem/73901967>
+
+        Reviewed by Devin Rousso.
+
+        Adjust an API test. This new enum value is now the new last valid item value.
+
+        * TestWebKitAPI/Tests/WebCore/ContextMenuAction.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-03-08  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Various small fixes for TestWTF/TestWebKit tests on PlayStation

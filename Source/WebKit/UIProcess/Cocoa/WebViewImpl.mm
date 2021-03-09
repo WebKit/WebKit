@@ -139,6 +139,13 @@
 #import <WebCore/ImageExtractionResult.h>
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+#import <TranslationUIServices/LTUITranslationViewController.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
+SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
+#endif
+
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
 SOFT_LINK_CLASS(AVKit, AVTouchBarPlaybackControlsProvider)
@@ -5573,6 +5580,47 @@ bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()
 {
     return false;
 }
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+bool WebViewImpl::canHandleContextMenuTranslation() const
+{
+    return TranslationUIServicesLibrary() && [getLTUITranslationViewControllerClass() isAvailable];
+}
+
+void WebViewImpl::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const IntPoint& menuLocation)
+{
+    if (!canHandleContextMenuTranslation()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto view = m_view.get();
+    auto translationViewController = adoptNS([allocLTUITranslationViewControllerInstance() init]);
+    auto textToTranslate = adoptNS([[NSAttributedString alloc] initWithString:text]);
+    [translationViewController setText:textToTranslate.get()];
+    if (NSEqualSizes([translationViewController preferredContentSize], NSZeroSize))
+        [translationViewController setPreferredContentSize:NSMakeSize(400, 400)];
+
+    auto popover = adoptNS([[NSPopover alloc] init]);
+    [popover setBehavior:NSPopoverBehaviorTransient];
+    [popover setAppearance:[view effectiveAppearance]];
+    [popover setAnimates:YES];
+    [popover setContentViewController:translationViewController.get()];
+    [popover setContentSize:[translationViewController preferredContentSize]];
+
+    NSRectEdge preferredEdge;
+    auto aim = menuLocation.x();
+    auto highlight = boundsInView.center().x();
+    if (aim == highlight)
+        preferredEdge = [view userInterfaceLayoutDirection] == NSUserInterfaceLayoutDirectionRightToLeft ? NSRectEdgeMinX : NSRectEdgeMaxX;
+    else
+        preferredEdge = aim > highlight ? NSRectEdgeMaxX : NSRectEdgeMinX;
+
+    [popover showRelativeToRect:boundsInView ofView:view.get() preferredEdge:preferredEdge];
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 } // namespace WebKit
 

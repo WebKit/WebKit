@@ -276,6 +276,11 @@ private:
     WebCore::Color accentColor() override;
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+    bool canHandleContextMenuTranslation() const override;
+    void handleContextMenuTranslation(const String&, const WebCore::IntRect&, const WebCore::IntPoint&) override;
+#endif
+
     NSView *m_view;
     WeakPtr<WebViewImpl> m_impl;
 #if USE(AUTOCORRECTION_PANEL)

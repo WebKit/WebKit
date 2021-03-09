@@ -518,6 +518,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().applyDictationAlternative(title);
         break;
     case ContextMenuItemTagRevealImage:
+    case ContextMenuItemTagTranslate:
         // This should be handled at the client layer.
         ASSERT_NOT_REACHED();
         break;
@@ -831,7 +832,7 @@ void ContextMenuController::populate()
     if (!m_context.hitTestResult().isContentEditable() && is<HTMLFormControlElement>(*node))
         return;
 #endif
-    Frame* frame = node->document().frame();
+    auto frame = makeRefPtr(node->document().frame());
     if (!frame)
         return;
 
@@ -842,8 +843,16 @@ void ContextMenuController::populate()
 #endif
 
     if (!m_context.hitTestResult().isContentEditable()) {
-        String selectedString = m_context.hitTestResult().selectedText();
+        auto selectedString = m_context.hitTestResult().selectedText();
         m_context.setSelectedText(selectedString);
+
+        if (!selectedString.isEmpty()) {
+            if (auto view = makeRefPtr(frame->view())) {
+                auto selectionBoundsInContentCoordinates = enclosingIntRect(frame->selection().selectionBounds());
+                if (!selectionBoundsInContentCoordinates.isEmpty())
+                    m_context.setSelectionBounds(view->contentsToRootView(selectionBoundsInContentCoordinates));
+            }
+        }
 
         FrameLoader& loader = frame->loader();
         URL linkURL = m_context.hitTestResult().absoluteLinkURL();
@@ -907,6 +916,10 @@ void ContextMenuController::populate()
                     ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
 
                     appendItem(LookUpInDictionaryItem, m_contextMenu.get());
+#endif
+#if HAVE(TRANSLATION_UI_SERVICES)
+                    ContextMenuItem TranslateItem(ActionType, ContextMenuItemTagTranslate, contextMenuItemTagTranslate(selectedString));
+                    appendItem(TranslateItem, m_contextMenu.get());
 #endif
 
 #if !PLATFORM(GTK)
@@ -1463,6 +1476,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldCheck = shouldEnable &&  m_context.hitTestResult().mediaMuted();
             break;
         case ContextMenuItemTagRevealImage:
+        case ContextMenuItemTagTranslate:
             break;
     }
 

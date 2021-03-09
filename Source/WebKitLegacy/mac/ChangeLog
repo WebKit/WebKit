@@ -1,3 +1,16 @@
+2021-03-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add a way to trigger webpage translation via the context menu
+        https://bugs.webkit.org/show_bug.cgi?id=222953
+        <rdar://problem/73901967>
+
+        Reviewed by Devin Rousso.
+
+        Add (no-op) handling for the new enum value.
+
+        * WebView/WebHTMLView.mm:
+        (toTag):
+
 2021-03-08  Sam Weinig  <weinig@apple.com>
 
         Remove quirks for the no longer supported iAd Producer

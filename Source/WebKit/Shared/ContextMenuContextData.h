@@ -61,6 +61,7 @@ public:
     WebHitTestResultData& webHitTestResultData() { return m_webHitTestResultData; }
     const WebHitTestResultData& webHitTestResultData() const { return m_webHitTestResultData; }
     const String& selectedText() const { return m_selectedText; }
+    const WebCore::IntRect& selectionBounds() const { return m_selectionBounds; }
 
 #if ENABLE(SERVICE_CONTROLS)
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
@@ -91,6 +92,7 @@ private:
 
     WebHitTestResultData m_webHitTestResultData;
     String m_selectedText;
+    WebCore::IntRect m_selectionBounds;
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<ShareableBitmap> m_controlledImage;

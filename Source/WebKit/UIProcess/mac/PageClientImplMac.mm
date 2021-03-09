@@ -992,6 +992,20 @@ WebCore::Color PageClientImpl::accentColor()
 }
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+bool PageClientImpl::canHandleContextMenuTranslation() const
+{
+    return m_impl->canHandleContextMenuTranslation();
+}
+
+void PageClientImpl::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const WebCore::IntPoint& menuLocation)
+{
+    m_impl->handleContextMenuTranslation(text, boundsInView, menuLocation);
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

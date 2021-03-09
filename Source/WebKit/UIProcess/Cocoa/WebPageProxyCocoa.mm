@@ -590,7 +590,8 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
     return SandboxExtension::HandleArray();
 }
 
-#if ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
+#if ENABLE(CONTEXT_MENUS)
+#if ENABLE(IMAGE_EXTRACTION)
 
 void WebPageProxy::handleContextMenuRevealImage()
 {
@@ -601,7 +602,17 @@ void WebPageProxy::handleContextMenuRevealImage()
     revealExtractedImageInPreviewPanel(*result.imageBitmap, result.toolTipText);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
+#endif // ENABLE(IMAGE_EXTRACTION)
+
+#if HAVE(TRANSLATION_UI_SERVICES)
+
+bool WebPageProxy::canHandleContextMenuTranslation() const
+{
+    return pageClient().canHandleContextMenuTranslation();
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES)
+#endif // ENABLE(CONTEXT_MENUS)
 
 void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& callback)
 {

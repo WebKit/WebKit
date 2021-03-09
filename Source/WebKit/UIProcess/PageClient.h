@@ -602,6 +602,11 @@ public:
 #if PLATFORM(GTK)
     virtual String themeName() const = 0;
 #endif
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+    virtual bool canHandleContextMenuTranslation() const = 0;
+    virtual void handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& menuLocation) = 0;
+#endif
 };
 
 } // namespace WebKit

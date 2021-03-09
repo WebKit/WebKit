@@ -615,6 +615,7 @@ static Optional<NSInteger> toTag(WebCore::ContextMenuAction action)
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
     case ContextMenuItemTagRevealImage:
+    case ContextMenuItemTagTranslate:
         return WTF::nullopt;
 
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:
