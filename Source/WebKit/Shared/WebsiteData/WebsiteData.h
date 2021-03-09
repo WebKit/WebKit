@@ -49,9 +49,13 @@ struct WebsiteData {
         WebsiteDataType type;
         uint64_t size;
 
+        Entry isolatedCopy() const;
+
         void encode(IPC::Encoder&) const;
         static Optional<WebsiteData::Entry> decode(IPC::Decoder&);
     };
+
+    WebsiteData isolatedCopy() const;
 
     Vector<Entry> entries;
     HashSet<String> hostNamesWithCookies;

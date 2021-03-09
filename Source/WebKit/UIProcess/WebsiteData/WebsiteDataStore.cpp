@@ -310,34 +310,43 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
 
 void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply)
 {
-    struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
-        CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
-            : fetchOptions(fetchOptions)
-            , queue(WTFMove(queue))
-            , apply(WTFMove(apply))
-            , protectedDataStore(dataStore)
+    class CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
+    public:
+        static Ref<CallbackAggregator> create(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
         {
-            ASSERT(RunLoop::isMain());
+            return adoptRef(*new CallbackAggregator(fetchOptions, WTFMove(queue), WTFMove(apply), dataStore));
         }
 
         ~CallbackAggregator()
         {
             ASSERT(RunLoop::isMain());
-            ASSERT(!pendingCallbacks);
+
+            Vector<WebsiteDataRecord> records;
+            records.reserveInitialCapacity(m_websiteDataRecords.size());
+            for (auto& record : m_websiteDataRecords.values())
+                records.uncheckedAppend(m_queue ? crossThreadCopy(record) : WTFMove(record));
+
+            auto processRecords = [apply = WTFMove(m_apply), records = WTFMove(records)] () mutable {
+                apply(WTFMove(records));
+            };
+
+            if (m_queue)
+                m_queue->dispatch(WTFMove(processRecords));
+            else
+                RunLoop::main().dispatch(WTFMove(processRecords));
         }
 
-        void addPendingCallback()
-        {
-            ASSERT(RunLoop::isMain());
-            ++pendingCallbacks;
-        }
+        const OptionSet<WebsiteDataFetchOption>& fetchOptions() const { return m_fetchOptions; }
 
-        void removePendingCallback(WebsiteData websiteData)
+        void addWebsiteData(WebsiteData&& websiteData)
         {
+            if (!RunLoop::isMain()) {
+                RunLoop::main().dispatch([protectedThis = makeRef(*this), websiteData = crossThreadCopy(websiteData)]() mutable {
+                    protectedThis->addWebsiteData(WTFMove(websiteData));
+                });
+                return;
+            }
             ASSERT(RunLoop::isMain());
-            ASSERT(pendingCallbacks);
-            --pendingCallbacks;
-
             for (auto& entry : websiteData.entries) {
                 auto displayName = WebsiteDataRecord::displayNameForOrigin(entry.origin);
                 if (!displayName) {
@@ -354,7 +363,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 
                 record.add(entry.type, entry.origin);
 
-                if (fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes)) {
+                if (m_fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes)) {
                     if (!record.size)
                         record.size = WebsiteDataRecord::Size { 0, { } };
 
@@ -414,53 +423,35 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 record.addResourceLoadStatisticsRegistrableDomain(domain);
             }
 #endif
-
-            callIfNeeded();
         }
 
-        void callIfNeeded()
+private:
+        CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
+            : m_fetchOptions(fetchOptions)
+            , m_queue(WTFMove(queue))
+            , m_apply(WTFMove(apply))
+            , m_protectedDataStore(dataStore)
         {
             ASSERT(RunLoop::isMain());
-            if (pendingCallbacks)
-                return;
-
-            Vector<WebsiteDataRecord> records;
-            records.reserveInitialCapacity(m_websiteDataRecords.size());
-            for (auto& record : m_websiteDataRecords.values())
-                records.uncheckedAppend(queue ? crossThreadCopy(record) : WTFMove(record));
-
-            auto processRecords = [apply = WTFMove(apply), records = WTFMove(records)] () mutable {
-                apply(WTFMove(records));
-            };
-
-            if (queue)
-                queue->dispatch(WTFMove(processRecords));
-            else
-                RunLoop::main().dispatch(WTFMove(processRecords));
         }
 
-        const OptionSet<WebsiteDataFetchOption> fetchOptions;
-
-        unsigned pendingCallbacks = 0;
-        RefPtr<WorkQueue> queue;
-        Function<void(Vector<WebsiteDataRecord>)> apply;
+        const OptionSet<WebsiteDataFetchOption> m_fetchOptions;
+        RefPtr<WorkQueue> m_queue;
+        Function<void(Vector<WebsiteDataRecord>)> m_apply;
 
         HashMap<String, WebsiteDataRecord> m_websiteDataRecords;
-        Ref<WebsiteDataStore> protectedDataStore;
+        Ref<WebsiteDataStore> m_protectedDataStore;
     };
 
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(fetchOptions, WTFMove(queue), WTFMove(apply), *this));
+    auto callbackAggregator = CallbackAggregator::create(fetchOptions, WTFMove(queue), WTFMove(apply), *this);
 
 #if ENABLE(VIDEO)
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
-        callbackAggregator->addPendingCallback();
         m_queue->dispatch([mediaCacheDirectory = m_configuration->mediaCacheDirectory().isolatedCopy(), callbackAggregator] {
             WebsiteData websiteData;
             for (auto& origin : WebCore::HTMLMediaElement::originsInMediaCache(mediaCacheDirectory))
-                websiteData.entries.append(WebsiteData::Entry { crossThreadCopy(origin), WebsiteDataType::DiskCache, 0 });
-            RunLoop::main().dispatch([callbackAggregator, websiteData = WTFMove(websiteData)]() mutable {
-                callbackAggregator->removePendingCallback(WTFMove(websiteData));
-            });
+                websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::DiskCache, 0 });
+            callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
 #endif
@@ -473,9 +464,8 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
         FALLTHROUGH;
     case ProcessAccessType::OnlyIfLaunched:
         if (m_networkProcess) {
-            callbackAggregator->addPendingCallback();
             m_networkProcess->fetchWebsiteData(m_sessionID, dataTypes, fetchOptions, [callbackAggregator](WebsiteData websiteData) {
-                callbackAggregator->removePendingCallback(WTFMove(websiteData));
+                callbackAggregator->addWebsiteData(WTFMove(websiteData));
             });
         }
         break;
@@ -501,65 +491,48 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 ASSERT_NOT_REACHED();
             }
 
-            callbackAggregator->addPendingCallback();
             process.fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator](WebsiteData websiteData) {
-                callbackAggregator->removePendingCallback(WTFMove(websiteData));
+                callbackAggregator->addWebsiteData(WTFMove(websiteData));
             });
         }
     }
 
     if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt)) {
-        callbackAggregator->addPendingCallback();
-
         m_deviceIdHashSaltStorage->getDeviceIdHashSaltOrigins([callbackAggregator](auto&& origins) {
             WebsiteData websiteData;
-
             while (!origins.isEmpty())
                 websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::DeviceIdHashSalt, 0 });
-
-            callbackAggregator->removePendingCallback(WTFMove(websiteData));
+            callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
 
     if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
-        callbackAggregator->addPendingCallback();
-
         m_queue->dispatch([fetchOptions, applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
             auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
             WebsiteData websiteData;
             for (auto& origin : storage->originsWithCache()) {
                 uint64_t size = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? storage->diskUsageForOrigin(origin) : 0;
-                websiteData.entries.append(WebsiteData::Entry { crossThreadCopy(origin), WebsiteDataType::OfflineWebApplicationCache, size });
+                websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::OfflineWebApplicationCache, size });
             }
-            RunLoop::main().dispatch([callbackAggregator, websiteData = WTFMove(websiteData)]() mutable {
-                callbackAggregator->removePendingCallback(WTFMove(websiteData));
-            });
+            callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
 
     if (dataTypes.contains(WebsiteDataType::WebSQLDatabases) && isPersistent()) {
-        callbackAggregator->addPendingCallback();
-
         m_queue->dispatch([webSQLDatabaseDirectory = m_configuration->webSQLDatabaseDirectory().isolatedCopy(), callbackAggregator]() {
             WebsiteData websiteData;
             for (auto& origin : WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory)->origins())
-                websiteData.entries.append(WebsiteData::Entry { crossThreadCopy(origin), WebsiteDataType::WebSQLDatabases, 0 });
-            RunLoop::main().dispatch([callbackAggregator, websiteData = WTFMove(websiteData)]() mutable {
-                callbackAggregator->removePendingCallback(WTFMove(websiteData));
-            });
+                websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::WebSQLDatabases, 0 });
+            callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
-        callbackAggregator->addPendingCallback();
-
         m_queue->dispatch([mediaKeysStorageDirectory = m_configuration->mediaKeysStorageDirectory().isolatedCopy(), callbackAggregator] {
             WebsiteData websiteData;
             for (auto& origin : mediaKeyOrigins(mediaKeysStorageDirectory))
-                websiteData.entries.append(WebsiteData::Entry { crossThreadCopy(origin), WebsiteDataType::MediaKeys, 0 });
-            RunLoop::main().dispatch([callbackAggregator, websiteData = WTFMove(websiteData)]() mutable {
-                callbackAggregator->removePendingCallback(WTFMove(websiteData));
-            });
+                websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::MediaKeys, 0 });
+            callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
 
@@ -577,8 +550,6 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 : m_callbackAggregator(WTFMove(callbackAggregator))
                 , m_plugins(WTFMove(plugins))
             {
-                m_callbackAggregator->addPendingCallback();
-
                 fetchWebsiteDataForNextPlugin();
             }
 
@@ -593,14 +564,14 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                     WebsiteData websiteData;
                     websiteData.hostNamesWithPluginData = WTFMove(m_hostNames);
 
-                    m_callbackAggregator->removePendingCallback(WTFMove(websiteData));
+                    m_callbackAggregator->addWebsiteData(WTFMove(websiteData));
 
                     delete this;
                     return;
                 }
 
                 auto plugin = m_plugins.takeLast();
-                PluginProcessManager::singleton().fetchWebsiteData(plugin, m_callbackAggregator->fetchOptions, [this](Vector<String> hostNames) {
+                PluginProcessManager::singleton().fetchWebsiteData(plugin, m_callbackAggregator->fetchOptions(), [this](Vector<String> hostNames) {
                     for (auto& hostName : hostNames)
                         m_hostNames.add(WTFMove(hostName));
                     fetchWebsiteDataForNextPlugin();
@@ -612,11 +583,9 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
             HashSet<String> m_hostNames;
         };
 
-        State::fetchData(*callbackAggregator, plugins());
+        State::fetchData(callbackAggregator.copyRef(), plugins());
     }
 #endif
-
-    callbackAggregator->callIfNeeded();
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -674,11 +643,9 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<Web
 
 class RemovalCallbackAggregator : public ThreadSafeRefCounted<RemovalCallbackAggregator, WTF::DestructionThread::MainRunLoop> {
 public:
-    RemovalCallbackAggregator(WebsiteDataStore& dataStore, CompletionHandler<void()>&& completionHandler)
-        : m_protectedDataStore(dataStore)
-        , m_completionHandler(WTFMove(completionHandler))
+    static Ref<RemovalCallbackAggregator> create(WebsiteDataStore& dataStore, CompletionHandler<void()>&& completionHandler)
     {
-        ASSERT(RunLoop::isMain());
+        return adoptRef(*new RemovalCallbackAggregator(dataStore, WTFMove(completionHandler)));
     }
 
     ~RemovalCallbackAggregator()
@@ -688,13 +655,20 @@ public:
     }
 
 private:
+    RemovalCallbackAggregator(WebsiteDataStore& dataStore, CompletionHandler<void()>&& completionHandler)
+        : m_protectedDataStore(dataStore)
+        , m_completionHandler(WTFMove(completionHandler))
+    {
+        ASSERT(RunLoop::isMain());
+    }
+
     Ref<WebsiteDataStore> m_protectedDataStore;
     CompletionHandler<void()> m_completionHandler;
 };
 
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, Function<void()>&& completionHandler)
 {
-    auto callbackAggregator = adoptRef(new RemovalCallbackAggregator(*this, WTFMove(completionHandler)));
+    auto callbackAggregator = RemovalCallbackAggregator::create(*this, WTFMove(completionHandler));
 
 #if ENABLE(VIDEO)
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
@@ -823,7 +797,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
             WallTime m_modifiedSince;
         };
 
-        State::deleteData(*callbackAggregator, plugins(), modifiedSince);
+        State::deleteData(callbackAggregator.copyRef(), plugins(), modifiedSince);
     }
 #endif
 
@@ -846,7 +820,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             origins.append(origin);
     }
 
-    auto callbackAggregator = adoptRef(new RemovalCallbackAggregator(*this, WTFMove(completionHandler)));
+    auto callbackAggregator = RemovalCallbackAggregator::create(*this, WTFMove(completionHandler));
     
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
         HashSet<WebCore::SecurityOriginData> origins;
@@ -1011,7 +985,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         };
 
         if (!hostNames.isEmpty())
-            State::deleteData(*callbackAggregator, plugins(), WTFMove(hostNames));
+            State::deleteData(callbackAggregator.copyRef(), plugins(), WTFMove(hostNames));
     }
 #endif
 }

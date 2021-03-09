@@ -1,5 +1,27 @@
 2021-03-08  Chris Dumez  <cdumez@apple.com>
 
+        Simplify CallbackAggregator in WebsiteDataStore::fetchDataAndApply()
+        https://bugs.webkit.org/show_bug.cgi?id=222937
+
+        Reviewed by Darin Adler.
+
+        Simplify CallbackAggregator in WebsiteDataStore::fetchDataAndApply():
+        1. Get rid of removePendingCallback() / addPendingCallback() / callIfNeeded()
+           and instead rely on ref counting to determine when we need to call the
+           apply function.
+        2. Replaced removePendingCallback() with addWebsiteData() since it takes
+           a WebsiteData as an object and make it so that it can be called on
+           any thread for convenience.
+
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::isolatedCopy const):
+        (WebKit::WebsiteData::Entry::isolatedCopy const):
+        * Shared/WebsiteData/WebsiteData.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+
+2021-03-08  Chris Dumez  <cdumez@apple.com>
+
         Regression(r273875): Potential over-release in WKRemoteObjectCoder's decodeObjCObject()
         https://bugs.webkit.org/show_bug.cgi?id=222954
         <rdar://75163359>
