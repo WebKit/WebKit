@@ -40,6 +40,25 @@ promise_test(async (test) => {
     URL.revokeObjectURL(url);
 }, "Pausing and resuming the recording should impact the video duration");
 
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const recorder = new MediaRecorder(stream);
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+    recorder.pause();
+    recorder.requestData();
+
+    const blob = await dataPromise;
+    assert_greater_than(blob.size, 2000);
+}, "Calling requestData once after pausing should lead to more than header data");
+
+
     </script>
 </body>
 </html>

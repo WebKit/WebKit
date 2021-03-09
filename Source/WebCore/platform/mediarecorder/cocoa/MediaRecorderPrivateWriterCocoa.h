@@ -76,7 +76,6 @@ public:
     void resume();
 
     void appendData(const char*, size_t);
-    void appendData(Ref<SharedBuffer>&&);
 
     const String& mimeType() const;
     unsigned audioBitRate() const;
@@ -108,6 +107,7 @@ private:
 
     void finishedFlushingSamples();
     void completeFetchData();
+    RefPtr<SharedBuffer> takeData();
 
     bool m_hasAudio { false };
     bool m_hasVideo { false };
@@ -118,6 +118,7 @@ private:
 
     RetainPtr<AVAssetWriter> m_writer;
 
+    Lock m_dataLock;
     RefPtr<SharedBuffer> m_data;
     CompletionHandler<void(RefPtr<SharedBuffer>&&, double)> m_fetchDataCompletionHandler;
 
