@@ -1,3 +1,18 @@
+2021-03-09  Sam Weinig  <weinig@apple.com>
+
+        Remove CSSParserContext::enforcesCSSMIMETypeInNoQuirksMode as it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=222949
+
+        Reviewed by Darin Adler.
+
+        At some point in the past we stoped doing anything with the enforcesCSSMIMETypeInNoQuirksMode
+        bit on CSSParserContext.
+
+        The only time it was ever disabled was when running ancient versions of iWeb, a product that
+        itself hasn't existed for over a decade, so I think we are ok to remove it.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2021-03-09  Ben Nham  <nham@apple.com>
 
         Adopt new NSURLSessionConfiguration SPI for connection cache configuration

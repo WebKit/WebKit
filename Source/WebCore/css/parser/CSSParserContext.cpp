@@ -74,7 +74,6 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
     , cssColor4 { document.settings().cssColor4() }
     , deferredCSSParserEnabled { document.settings().deferredCSSParserEnabled() }
-    , enforcesCSSMIMETypeInNoQuirksMode { document.settings().enforceCSSMIMETypeInNoQuirksMode() }
     , individualTransformPropertiesEnabled { document.settings().cssIndividualTransformPropertiesEnabled() }
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     , legacyOverflowScrollingTouchEnabled { shouldEnableLegacyOverflowScrollingTouch(document) }
@@ -114,7 +113,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.cssColor4 == b.cssColor4
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
-        && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
         && a.individualTransformPropertiesEnabled == b.individualTransformPropertiesEnabled
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         && a.legacyOverflowScrollingTouchEnabled == b.legacyOverflowScrollingTouchEnabled

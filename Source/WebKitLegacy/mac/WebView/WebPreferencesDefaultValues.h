@@ -71,7 +71,6 @@ bool defaultNeedsAdobeFrameReloadingQuirk();
 bool defaultTreatsAnyTextCSSLinkAsStylesheet();
 bool defaultNeedsFrameNameFallbackToIdQuirk();
 bool defaultNeedsKeyboardEventDisambiguationQuirks();
-bool defaultEnforceCSSMIMETypeInNoQuirksMode();
 #endif
 
 bool defaultAttachmentElementEnabled();

@@ -221,12 +221,6 @@ bool defaultNeedsKeyboardEventDisambiguationQuirks()
     return needsQuirks;
 }
 
-bool defaultEnforceCSSMIMETypeInNoQuirksMode()
-{
-    static bool needsQuirk = !_CFAppVersionCheckLessThan(CFSTR("com.apple.iWeb"), -1, 2.1);
-    return needsQuirk;
-}
-
 #endif // PLATFORM(MAC)
 
 bool defaultAttachmentElementEnabled()

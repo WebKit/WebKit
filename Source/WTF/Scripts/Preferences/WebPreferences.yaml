@@ -740,17 +740,6 @@ EncryptedMediaAPIEnabled:
     WebCore:
       default: false
 
-EnforceCSSMIMETypeInNoQuirksMode:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      PLATFORM(MAC): WebKit::defaultEnforceCSSMIMETypeInNoQuirksMode()
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 EnumeratingAllNetworkInterfacesEnabled:
   type: bool
   webcoreBinding: none

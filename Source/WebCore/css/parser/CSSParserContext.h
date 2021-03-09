@@ -64,7 +64,6 @@ public:
     bool constantPropertiesEnabled { false };
     bool cssColor4 { false };
     bool deferredCSSParserEnabled { false };
-    bool enforcesCSSMIMETypeInNoQuirksMode { true };
     bool individualTransformPropertiesEnabled { false };
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     bool legacyOverflowScrollingTouchEnabled { false };
@@ -117,27 +116,26 @@ struct CSSParserContextHash {
             & key.constantPropertiesEnabled                 << 8
             & key.cssColor4                                 << 9
             & key.deferredCSSParserEnabled                  << 10
-            & key.enforcesCSSMIMETypeInNoQuirksMode         << 11
-            & key.individualTransformPropertiesEnabled      << 12
+            & key.individualTransformPropertiesEnabled      << 11
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-            & key.legacyOverflowScrollingTouchEnabled       << 13
+            & key.legacyOverflowScrollingTouchEnabled       << 12
 #endif
-            & key.overscrollBehaviorEnabled                 << 14
-            & key.relativeColorSyntaxEnabled                << 15
-            & key.scrollBehaviorEnabled                     << 16
-            & key.springTimingFunctionEnabled               << 17
+            & key.overscrollBehaviorEnabled                 << 13
+            & key.relativeColorSyntaxEnabled                << 14
+            & key.scrollBehaviorEnabled                     << 15
+            & key.springTimingFunctionEnabled               << 16
 #if ENABLE(TEXT_AUTOSIZING)
-            & key.textAutosizingEnabled                     << 18
+            & key.textAutosizingEnabled                     << 17
 #endif
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-            & key.transformStyleOptimized3DEnabled          << 19
+            & key.transformStyleOptimized3DEnabled          << 18
 #endif
-            & key.useLegacyBackgroundSizeShorthandBehavior  << 20
-            & key.focusVisibleEnabled                       << 21
+            & key.useLegacyBackgroundSizeShorthandBehavior  << 19
+            & key.focusVisibleEnabled                       << 20
 #if ENABLE(ATTACHMENT_ELEMENT)
-            & key.attachmentEnabled                         << 22
+            & key.attachmentEnabled                         << 21
 #endif
-            & key.mode                                      << 23; // Keep this last.
+            & key.mode                                      << 22; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }
