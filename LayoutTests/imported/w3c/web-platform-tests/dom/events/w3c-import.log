@@ -51,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-propagation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-returnValue.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-stopImmediatePropagation.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-stopPropagation-cancel-bubbling.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-subclasses-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-safe-resolution.html
@@ -74,6 +75,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-removeEventListener.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-this-of-listener.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-touchmove-event-listener-passive-by-default.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/document-level-wheel-event-listener-passive-by-default.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-disabled-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-extra.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.html

@@ -1,3 +1,35 @@
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/dom tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=222983
+
+        Reviewed by Geoffrey Garen.
+
+        Resync web-platform-tests/dom tests from upstream 7a9388b0f029e03.
+
+        * web-platform-tests/dom/events/Event-dispatch-click-expected.txt:
+        * web-platform-tests/dom/events/Event-dispatch-click.html:
+        * web-platform-tests/dom/events/Event-dispatch-redispatch.html:
+        * web-platform-tests/dom/events/Event-stopPropagation-cancel-bubbling-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-stopPropagation-cancel-bubbling.html: Added.
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+        * web-platform-tests/dom/events/document-level-wheel-event-listener-passive-by-default-expected.txt: Added.
+        * web-platform-tests/dom/events/document-level-wheel-event-listener-passive-by-default.html: Added.
+        * web-platform-tests/dom/events/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.https.html:
+        * web-platform-tests/dom/nodes/Document-createEvent.js:
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/Element-webkitMatchesSelector-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/dom/nodes/aria-element-reflection.tentative-expected.txt:
+        * web-platform-tests/dom/nodes/aria-element-reflection.tentative.html:
+        * web-platform-tests/dom/nodes/selectors.js:
+        * web-platform-tests/dom/slot-recalc-expected.txt: Added.
+        * web-platform-tests/dom/slot-recalc.html: Added.
+        * web-platform-tests/dom/w3c-import.log:
+
 2021-03-09  Antoine Quint  <graouts@webkit.org>
 
         Correctly blend column-width and column-count CSS properties

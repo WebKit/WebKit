@@ -166,7 +166,7 @@ PASS In-document Element.webkitMatchesSelector: :pseudo-only-of-type pseudo-clas
 PASS In-document Element.webkitMatchesSelector: :empty pseudo-class selector, matching empty p elements (with no refNodes): #pseudo-empty p:empty
 PASS In-document Element.webkitMatchesSelector: :empty pseudo-class selector, matching all empty elements (with no refNodes): #pseudo-empty :empty
 PASS In-document Element.webkitMatchesSelector: :link and :visited pseudo-class selectors, matching a and area elements with href attributes (with no refNodes): #pseudo-link :link, #pseudo-link :visited
-PASS In-document Element.webkitMatchesSelector: :link and :visited pseudo-class selectors, matching link elements with href attributes (with no refNodes): #head :link, #head :visited
+PASS In-document Element.webkitMatchesSelector: :link and :visited pseudo-class selectors, matching no elements (with no refNodes): #head :link, #head :visited
 PASS In-document Element.webkitMatchesSelector: :target pseudo-class selector, matching the element referenced by the URL fragment identifier (with no refNodes): :target
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching inherited language (with no refNodes): #pseudo-lang-div1:lang(en)
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with exact value (with no refNodes): #pseudo-lang-div2:lang(fr)
@@ -658,7 +658,7 @@ PASS In-document Element.webkitMatchesSelector: :pseudo-only-of-type pseudo-clas
 PASS In-document Element.webkitMatchesSelector: :empty pseudo-class selector, matching empty p elements (with refNode Element): p:empty
 PASS In-document Element.webkitMatchesSelector: :empty pseudo-class selector, matching all empty elements (with refNode Element): :empty
 PASS In-document Element.webkitMatchesSelector: :link and :visited pseudo-class selectors, matching a and area elements with href attributes (with refNode Element):  :link, #pseudo-link :visited
-PASS In-document Element.webkitMatchesSelector: :link and :visited pseudo-class selectors, matching link elements with href attributes (with refNode Element):  :link, #head :visited
+PASS In-document Element.webkitMatchesSelector: :link and :visited pseudo-class selectors, matching no elements (with refNode Element):  :link, #head :visited
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching inherited language (1) (with no refNodes): #pseudo-lang-div1:lang(en)
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with exact value (1) (with no refNodes): #pseudo-lang-div2:lang(fr)
 PASS In-document Element.webkitMatchesSelector: :lang pseudo-class selector, matching specified language with partial value (1) (with no refNodes): #pseudo-lang-div3:lang(en)

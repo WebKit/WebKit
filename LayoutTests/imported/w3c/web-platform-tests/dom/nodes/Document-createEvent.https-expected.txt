@@ -121,13 +121,6 @@ PASS createEvent('textevent') should be initialized correctly.
 FAIL TEXTEVENT should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEvent]" but got object "[object TextEvent]"
 PASS createEvent('TEXTEVENT') should be initialized correctly.
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TextEvents"
-FAIL TouchEvent should be an alias for TouchEvent. The operation is not supported.
-FAIL createEvent('TouchEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL touchevent should be an alias for TouchEvent. The operation is not supported.
-FAIL createEvent('touchevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL TOUCHEVENT should be an alias for TouchEvent. The operation is not supported.
-FAIL createEvent('TOUCHEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TouchEvents"
 PASS UIEvent should be an alias for UIEvent.
 PASS createEvent('UIEvent') should be initialized correctly.
 PASS uievent should be an alias for UIEvent.
@@ -274,6 +267,8 @@ PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SyncEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "SyncEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TimeEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "TimeEvents"
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TouchEvent"
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "TouchEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TrackEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "TrackEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TransitionEvent"
