@@ -1,3 +1,14 @@
+2021-03-08  Antoine Quint  <graouts@webkit.org>
+
+        Select CSS properties animating as float should not allow negative values
+        https://bugs.webkit.org/show_bug.cgi?id=222912
+
+        Reviewed by Sam Weinig.
+
+        Mark WPT progressions for a platform-specific result.
+
+        * platform/ios/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-interpolation-expected.txt:
+
 2021-03-09  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL2: Red flickering when using copyTexImage2D()
