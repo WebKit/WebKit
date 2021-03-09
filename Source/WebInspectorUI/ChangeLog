@@ -1,5 +1,23 @@
 2021-03-09  Razvan Caliman  <rcaliman@apple.com>
 
+        Web Inspector: Jump from Layout panel to grid container element
+        https://bugs.webkit.org/show_bug.cgi?id=222429
+        <rdar://problem/74751801>
+
+        Reviewed by Devin Rousso.
+
+        Add a button to inspect a CSS grid overlay's corresponding element.
+        Remove the similar functionality from the overloaded label.
+
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .node-display-name,):
+        (.css-grid-section .node-overlay-list-item-container :is(.go-to-arrow, .inline-swatch)):
+        (.css-grid-section .node-overlay-list-item-container:not(:hover) .go-to-arrow):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.layout):
+
+2021-03-09  Razvan Caliman  <rcaliman@apple.com>
+
         [Cocoa] Web Inspector: Console search box is broken, advancing to next result instead pastes from system find pasteboard
         https://bugs.webkit.org/show_bug.cgi?id=220773
         <rdar://problem/73410423>

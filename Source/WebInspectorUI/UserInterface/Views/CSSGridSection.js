@@ -101,7 +101,10 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
             let checkboxElement = labelElement.appendChild(document.createElement("input"));
             checkboxElement.type = "checkbox";
             checkboxElement.checked = nodesWithGridOverlay.includes(domNode);
-            labelElement.appendChild(WI.linkifyNodeReference(domNode));
+
+            const nodeDisplayName = labelElement.appendChild(document.createElement("span"));
+            nodeDisplayName.classList.add("node-display-name");
+            nodeDisplayName.textContent = domNode.displayName;
 
             this._checkboxElementByNodeMap.set(domNode, checkboxElement);
 
@@ -128,6 +131,10 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
                 gridColor = event.target.value;
                 WI.overlayManager.setGridColorForNode(domNode, gridColor);
             }, swatch);
+
+            let buttonElement = itemContainerElement.appendChild(WI.createGoToArrowButton());
+            buttonElement.title = WI.repeatedUIString.revealInDOMTree();
+            WI.bindInteractionsForNodeToElement(domNode, buttonElement);
         }
     }
 
