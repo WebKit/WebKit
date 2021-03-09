@@ -35,6 +35,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
 #include "JSEventTarget.h"
+#include "JSHTMLModelElement.h"
 #include "Model.h"
 #include "RenderModel.h"
 #include <wtf/IsoMallocInlines.h>

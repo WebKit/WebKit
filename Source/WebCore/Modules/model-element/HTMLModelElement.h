@@ -54,7 +54,7 @@ public:
     ReadyPromise& ready() { return m_readyPromise.get(); }
 
     RefPtr<SharedBuffer> modelData() const;
-    
+
     RefPtr<Model> model() const;
 
 private:
