@@ -1,3 +1,22 @@
+2021-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r273875): Potential over-release in WKRemoteObjectCoder's decodeObjCObject()
+        https://bugs.webkit.org/show_bug.cgi?id=222954
+        <rdar://75163359>
+
+        Reviewed by Darin Adler.
+
+        r273875 added an adoptNS() for the result of `[allocation initWithCoder:decoder]`. This would be
+        fine in general, except that we call awakeAfterUsingCoder on the result right after. As per the
+        awakeAfterUsingCoder documentation [1], it may return the receiver or a new object. When it
+        returns a new object, it takes care of releasing the receiver. This is an issue for us here since
+        we were holding the receiver in a smart pointer.
+
+        [1] https://developer.apple.com/documentation/objectivec/nsobject/1417074-awakeafterusingcoder
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (decodeObjCObject):
+
 2021-03-08  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa][GPUP] Enable WebM/Vorbis/Opus in the GPU process
