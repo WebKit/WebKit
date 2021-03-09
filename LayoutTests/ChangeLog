@@ -1,3 +1,9 @@
+2021-03-08  Antoine Quint  <graouts@webkit.org>
+
+        Unreviewed. Update border-width interpolation test after WPT PR #27934.
+
+        * platform/ios/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-interpolation-expected.txt:
+
 2021-03-08  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r274025-r273811): Crash under RenderLayerBacking::updateGeometry()

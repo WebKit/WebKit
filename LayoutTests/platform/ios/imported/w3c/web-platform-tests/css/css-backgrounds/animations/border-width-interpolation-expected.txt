@@ -47,30 +47,30 @@ PASS Web Animations: property <border-left-width> from neutral to [20px] at (0.3
 PASS Web Animations: property <border-left-width> from neutral to [20px] at (0.6) should be [16px]
 PASS Web Animations: property <border-left-width> from neutral to [20px] at (1) should be [20px]
 PASS Web Animations: property <border-left-width> from neutral to [20px] at (1.5) should be [25px]
-FAIL CSS Transitions: property <border-left-width> from [initial] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 2.1px "
-PASS CSS Transitions: property <border-left-width> from [initial] to [20px] at (0) should be [3px]
-FAIL CSS Transitions: property <border-left-width> from [initial] to [20px] at (0.3) should be [8.1px] assert_equals: expected "8px " but got "8.1px "
-FAIL CSS Transitions: property <border-left-width> from [initial] to [20px] at (0.6) should be [13.2px] assert_equals: expected "13px " but got "13.2px "
-PASS CSS Transitions: property <border-left-width> from [initial] to [20px] at (1) should be [20px]
-PASS CSS Transitions: property <border-left-width> from [initial] to [20px] at (1.5) should be [28.5px]
-FAIL CSS Transitions with transition: all: property <border-left-width> from [initial] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 2.1px "
-PASS CSS Transitions with transition: all: property <border-left-width> from [initial] to [20px] at (0) should be [3px]
-FAIL CSS Transitions with transition: all: property <border-left-width> from [initial] to [20px] at (0.3) should be [8.1px] assert_equals: expected "8px " but got "8.1px "
-FAIL CSS Transitions with transition: all: property <border-left-width> from [initial] to [20px] at (0.6) should be [13.2px] assert_equals: expected "13px " but got "13.2px "
-PASS CSS Transitions with transition: all: property <border-left-width> from [initial] to [20px] at (1) should be [20px]
-PASS CSS Transitions with transition: all: property <border-left-width> from [initial] to [20px] at (1.5) should be [28.5px]
-FAIL CSS Animations: property <border-left-width> from [initial] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 2.1px "
-PASS CSS Animations: property <border-left-width> from [initial] to [20px] at (0) should be [3px]
-FAIL CSS Animations: property <border-left-width> from [initial] to [20px] at (0.3) should be [8.1px] assert_equals: expected "8px " but got "8.1px "
-FAIL CSS Animations: property <border-left-width> from [initial] to [20px] at (0.6) should be [13.2px] assert_equals: expected "13px " but got "13.2px "
-PASS CSS Animations: property <border-left-width> from [initial] to [20px] at (1) should be [20px]
-PASS CSS Animations: property <border-left-width> from [initial] to [20px] at (1.5) should be [28.5px]
-FAIL Web Animations: property <border-left-width> from [initial] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 2.1px "
-PASS Web Animations: property <border-left-width> from [initial] to [20px] at (0) should be [3px]
-FAIL Web Animations: property <border-left-width> from [initial] to [20px] at (0.3) should be [8.1px] assert_equals: expected "8px " but got "8.1px "
-FAIL Web Animations: property <border-left-width> from [initial] to [20px] at (0.6) should be [13.2px] assert_equals: expected "13px " but got "13.2px "
-PASS Web Animations: property <border-left-width> from [initial] to [20px] at (1) should be [20px]
-PASS Web Animations: property <border-left-width> from [initial] to [20px] at (1.5) should be [28.5px]
+FAIL CSS Transitions: property <border-left-width> from [initial] to [23px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
+PASS CSS Transitions: property <border-left-width> from [initial] to [23px] at (0) should be [3px]
+PASS CSS Transitions: property <border-left-width> from [initial] to [23px] at (0.3) should be [9px]
+PASS CSS Transitions: property <border-left-width> from [initial] to [23px] at (0.6) should be [15px]
+PASS CSS Transitions: property <border-left-width> from [initial] to [23px] at (1) should be [23px]
+PASS CSS Transitions: property <border-left-width> from [initial] to [23px] at (1.5) should be [33px]
+FAIL CSS Transitions with transition: all: property <border-left-width> from [initial] to [23px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
+PASS CSS Transitions with transition: all: property <border-left-width> from [initial] to [23px] at (0) should be [3px]
+PASS CSS Transitions with transition: all: property <border-left-width> from [initial] to [23px] at (0.3) should be [9px]
+PASS CSS Transitions with transition: all: property <border-left-width> from [initial] to [23px] at (0.6) should be [15px]
+PASS CSS Transitions with transition: all: property <border-left-width> from [initial] to [23px] at (1) should be [23px]
+PASS CSS Transitions with transition: all: property <border-left-width> from [initial] to [23px] at (1.5) should be [33px]
+FAIL CSS Animations: property <border-left-width> from [initial] to [23px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
+PASS CSS Animations: property <border-left-width> from [initial] to [23px] at (0) should be [3px]
+PASS CSS Animations: property <border-left-width> from [initial] to [23px] at (0.3) should be [9px]
+PASS CSS Animations: property <border-left-width> from [initial] to [23px] at (0.6) should be [15px]
+PASS CSS Animations: property <border-left-width> from [initial] to [23px] at (1) should be [23px]
+PASS CSS Animations: property <border-left-width> from [initial] to [23px] at (1.5) should be [33px]
+FAIL Web Animations: property <border-left-width> from [initial] to [23px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
+PASS Web Animations: property <border-left-width> from [initial] to [23px] at (0) should be [3px]
+PASS Web Animations: property <border-left-width> from [initial] to [23px] at (0.3) should be [9px]
+PASS Web Animations: property <border-left-width> from [initial] to [23px] at (0.6) should be [15px]
+PASS Web Animations: property <border-left-width> from [initial] to [23px] at (1) should be [23px]
+PASS Web Animations: property <border-left-width> from [initial] to [23px] at (1.5) should be [33px]
 FAIL CSS Transitions: property <border-left-width> from [inherit] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 6px "
 PASS CSS Transitions: property <border-left-width> from [inherit] to [20px] at (0) should be [0px]
 PASS CSS Transitions: property <border-left-width> from [inherit] to [20px] at (0.3) should be [6px]
@@ -95,30 +95,30 @@ PASS Web Animations: property <border-left-width> from [inherit] to [20px] at (0
 PASS Web Animations: property <border-left-width> from [inherit] to [20px] at (0.6) should be [12px]
 PASS Web Animations: property <border-left-width> from [inherit] to [20px] at (1) should be [20px]
 PASS Web Animations: property <border-left-width> from [inherit] to [20px] at (1.5) should be [30px]
-FAIL CSS Transitions: property <border-left-width> from [unset] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 2.1px "
-PASS CSS Transitions: property <border-left-width> from [unset] to [20px] at (0) should be [3px]
-FAIL CSS Transitions: property <border-left-width> from [unset] to [20px] at (0.3) should be [8.1px] assert_equals: expected "8px " but got "8.1px "
-FAIL CSS Transitions: property <border-left-width> from [unset] to [20px] at (0.6) should be [13.2px] assert_equals: expected "13px " but got "13.2px "
-PASS CSS Transitions: property <border-left-width> from [unset] to [20px] at (1) should be [20px]
-PASS CSS Transitions: property <border-left-width> from [unset] to [20px] at (1.5) should be [28.5px]
-FAIL CSS Transitions with transition: all: property <border-left-width> from [unset] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 2.1px "
-PASS CSS Transitions with transition: all: property <border-left-width> from [unset] to [20px] at (0) should be [3px]
-FAIL CSS Transitions with transition: all: property <border-left-width> from [unset] to [20px] at (0.3) should be [8.1px] assert_equals: expected "8px " but got "8.1px "
-FAIL CSS Transitions with transition: all: property <border-left-width> from [unset] to [20px] at (0.6) should be [13.2px] assert_equals: expected "13px " but got "13.2px "
-PASS CSS Transitions with transition: all: property <border-left-width> from [unset] to [20px] at (1) should be [20px]
-PASS CSS Transitions with transition: all: property <border-left-width> from [unset] to [20px] at (1.5) should be [28.5px]
-FAIL CSS Animations: property <border-left-width> from [unset] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 2.1px "
-PASS CSS Animations: property <border-left-width> from [unset] to [20px] at (0) should be [3px]
-FAIL CSS Animations: property <border-left-width> from [unset] to [20px] at (0.3) should be [8.1px] assert_equals: expected "8px " but got "8.1px "
-FAIL CSS Animations: property <border-left-width> from [unset] to [20px] at (0.6) should be [13.2px] assert_equals: expected "13px " but got "13.2px "
-PASS CSS Animations: property <border-left-width> from [unset] to [20px] at (1) should be [20px]
-PASS CSS Animations: property <border-left-width> from [unset] to [20px] at (1.5) should be [28.5px]
-FAIL Web Animations: property <border-left-width> from [unset] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 2.1px "
-PASS Web Animations: property <border-left-width> from [unset] to [20px] at (0) should be [3px]
-FAIL Web Animations: property <border-left-width> from [unset] to [20px] at (0.3) should be [8.1px] assert_equals: expected "8px " but got "8.1px "
-FAIL Web Animations: property <border-left-width> from [unset] to [20px] at (0.6) should be [13.2px] assert_equals: expected "13px " but got "13.2px "
-PASS Web Animations: property <border-left-width> from [unset] to [20px] at (1) should be [20px]
-PASS Web Animations: property <border-left-width> from [unset] to [20px] at (1.5) should be [28.5px]
+FAIL CSS Transitions: property <border-left-width> from [unset] to [23px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
+PASS CSS Transitions: property <border-left-width> from [unset] to [23px] at (0) should be [3px]
+PASS CSS Transitions: property <border-left-width> from [unset] to [23px] at (0.3) should be [9px]
+PASS CSS Transitions: property <border-left-width> from [unset] to [23px] at (0.6) should be [15px]
+PASS CSS Transitions: property <border-left-width> from [unset] to [23px] at (1) should be [23px]
+PASS CSS Transitions: property <border-left-width> from [unset] to [23px] at (1.5) should be [33px]
+FAIL CSS Transitions with transition: all: property <border-left-width> from [unset] to [23px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
+PASS CSS Transitions with transition: all: property <border-left-width> from [unset] to [23px] at (0) should be [3px]
+PASS CSS Transitions with transition: all: property <border-left-width> from [unset] to [23px] at (0.3) should be [9px]
+PASS CSS Transitions with transition: all: property <border-left-width> from [unset] to [23px] at (0.6) should be [15px]
+PASS CSS Transitions with transition: all: property <border-left-width> from [unset] to [23px] at (1) should be [23px]
+PASS CSS Transitions with transition: all: property <border-left-width> from [unset] to [23px] at (1.5) should be [33px]
+FAIL CSS Animations: property <border-left-width> from [unset] to [23px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
+PASS CSS Animations: property <border-left-width> from [unset] to [23px] at (0) should be [3px]
+PASS CSS Animations: property <border-left-width> from [unset] to [23px] at (0.3) should be [9px]
+PASS CSS Animations: property <border-left-width> from [unset] to [23px] at (0.6) should be [15px]
+PASS CSS Animations: property <border-left-width> from [unset] to [23px] at (1) should be [23px]
+PASS CSS Animations: property <border-left-width> from [unset] to [23px] at (1.5) should be [33px]
+FAIL Web Animations: property <border-left-width> from [unset] to [23px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
+PASS Web Animations: property <border-left-width> from [unset] to [23px] at (0) should be [3px]
+PASS Web Animations: property <border-left-width> from [unset] to [23px] at (0.3) should be [9px]
+PASS Web Animations: property <border-left-width> from [unset] to [23px] at (0.6) should be [15px]
+PASS Web Animations: property <border-left-width> from [unset] to [23px] at (1) should be [23px]
+PASS Web Animations: property <border-left-width> from [unset] to [23px] at (1.5) should be [33px]
 FAIL CSS Transitions: property <border-left-width> from [0px] to [10px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 3px "
 PASS CSS Transitions: property <border-left-width> from [0px] to [10px] at (0) should be [0px]
 PASS CSS Transitions: property <border-left-width> from [0px] to [10px] at (0.3) should be [3px]
