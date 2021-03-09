@@ -1,5 +1,18 @@
 2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        [perf dashboard] Use async/await in tests for TimeSeriesChart and InteractiveTimeSeriesChart
+        https://bugs.webkit.org/show_bug.cgi?id=222876
+
+        Reviewed by Sam Weinig.
+
+        Use async/await instead of chaining promises manually in the browser tests for
+        TimeSeriesChart and InteractiveTimeSeriesChart for better readability.
+
+        * browser-tests/interactive-time-series-chart-tests.js:
+        * browser-tests/time-series-chart-tests.js:
+
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         [perf dashboard] Modernize TimeSeries and TimeSeriesView
         https://bugs.webkit.org/show_bug.cgi?id=222872
 
