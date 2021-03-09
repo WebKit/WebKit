@@ -1,3 +1,12 @@
+2021-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Use --verifyGC=true on some JSC stress test configurations.
+        https://bugs.webkit.org/show_bug.cgi?id=222289
+
+        Reviewed by Filip Pizlo.
+
+        * stress/heap-analyzer-taking-lock.js:
+
 2021-03-08  Saam Barati  <sbarati@apple.com>
 
         Using an undeclared private field inside eval shouldn't crash
