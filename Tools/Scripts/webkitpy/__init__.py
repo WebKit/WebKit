@@ -71,6 +71,6 @@ AutoInstall.register(Package('webencodings', Version(0, 5, 1)))
 AutoInstall.register(Package('zipp', Version(1, 2, 0)))
 AutoInstall.register(Package('zope.interface', Version(5, 1, 0), aliases=['zope'], pypi_name='zope-interface'))
 
-AutoInstall.register(Package('webkitscmpy', Version(0, 0, 1)), local=True)
+AutoInstall.register(Package('webkitscmpy', Version(0, 12, 5)), local=True)
 
 import webkitscmpy
