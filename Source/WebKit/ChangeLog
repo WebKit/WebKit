@@ -1,3 +1,29 @@
+2021-03-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Deadlocks in WTF::Thread::ThreadHolder::~ThreadHolder while WebKitWebProcess.exe is shutting down
+        https://bugs.webkit.org/show_bug.cgi?id=222682
+
+        Reviewed by Don Olmstead.
+
+        WinCairo WebKit2 layout tests were observing deadlocks in
+        WTF::Thread::ThreadHolder::~ThreadHolder while
+        WebKitWebProcess.exe is shutting down in the IPC thread.
+        WebProcess calls _exit in IPC threads if a IPC connection is
+        disconnected.
+
+        r260911 (Bug 210955) fixed a similar deadlock by skipping the
+        destruction in ~ThreadHolder if the calling thread is the main
+        thread.
+
+        Microsoft Docs describe how a process is terminated and recommend
+        TerminateProcess API to avoid such deadlocks.
+        <https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess>
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::callExitSoon): Use TerminateProcess instead of _exit.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::callExit): Ditto.
+
 2021-03-09  Ben Nham  <nham@apple.com>
 
         Adopt new NSURLSessionConfiguration SPI for connection cache configuration

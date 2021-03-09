@@ -232,7 +232,12 @@ using namespace WebCore;
 
 NO_RETURN static void callExit(IPC::Connection*)
 {
+#if OS(WINDOWS)
+    // Calling _exit in non-main threads may cause a deadlock in WTF::Thread::ThreadHolder::~ThreadHolder.
+    TerminateProcess(GetCurrentProcess(), EXIT_SUCCESS);
+#else
     _exit(EXIT_SUCCESS);
+#endif
 }
 
 WebProcess& WebProcess::singleton()

@@ -130,7 +130,12 @@ static void callExitSoon(IPC::Connection*)
         // global destructors or atexit handlers to be called from this thread while the main thread is busy
         // doing its thing.
         RELEASE_LOG_ERROR(IPC, "Exiting process early due to unacknowledged closed-connection");
+#if OS(WINDOWS)
+        // Calling _exit in non-main threads may cause a deadlock in WTF::Thread::ThreadHolder::~ThreadHolder.
+        TerminateProcess(GetCurrentProcess(), EXIT_FAILURE);
+#else
         _exit(EXIT_FAILURE);
+#endif
     });
 }
 
