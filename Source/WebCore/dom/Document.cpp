@@ -6019,6 +6019,11 @@ void Document::finishedParsing()
             serviceWorkerContainer->startMessages();
     }
 #endif
+    
+#if ENABLE(APP_HIGHLIGHTS)
+    if (auto* appHighlightStorage = appHighlightStorageIfExists())
+        appHighlightStorage->restoreUnrestoredAppHighlights();
+#endif
 }
 
 void Document::clearSharedObjectPool()

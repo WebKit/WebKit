@@ -43,16 +43,19 @@ class Highlight;
 
 enum class CreateNewGroupForHighlight : bool;
 
-class AppHighlightStorage : RefCounted<AppHighlightStorage> {
+class AppHighlightStorage final : RefCounted<AppHighlightStorage> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AppHighlightStorage(Document&);
+    ~AppHighlightStorage();
 
-    WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&);
-    WEBCORE_EXPORT bool restoreAppHighlight(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT void storeAppHighlight(StaticRange&&);
+    WEBCORE_EXPORT void restoreAppHighlight(Ref<SharedBuffer>&&);
+    void restoreUnrestoredAppHighlights();
 
 private:
     WeakPtr<Document> m_document;
+    Vector<AppHighlightRangeData> m_unrestoredHighlights;
 };
 
 #endif

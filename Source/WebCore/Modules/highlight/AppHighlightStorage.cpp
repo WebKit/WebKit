@@ -214,6 +214,8 @@ AppHighlightStorage::AppHighlightStorage(Document& document)
 {
 }
 
+AppHighlightStorage::~AppHighlightStorage() = default;
+
 void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range)
 {
     auto data = createAppHighlightRangeData(range);
@@ -227,24 +229,43 @@ void AppHighlightStorage::storeAppHighlight(Ref<StaticRange>&& range)
     m_document->page()->chrome().storeAppHighlight(WTFMove(highlight));
 }
 
-bool AppHighlightStorage::restoreAppHighlight(Ref<SharedBuffer>&& buffer)
+void AppHighlightStorage::restoreAppHighlight(Ref<SharedBuffer>&& buffer)
 {
-    auto strongDocument = makeRefPtr(m_document.get());
-
     if (!m_document)
-        return false;
+        return;
+    
+    auto strongDocument = makeRefPtr(m_document.get());
 
     auto appHighlightRangeData = AppHighlightRangeData::create(buffer);
     if (!appHighlightRangeData)
-        return false;
+        return;
 
     auto range = findRange(*appHighlightRangeData, *strongDocument);
     
     if (!range)
-        return false;
-    strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
+        m_unrestoredHighlights.append(appHighlightRangeData.value());
+    else
+        strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
+}
 
-    return true;
+void AppHighlightStorage::restoreUnrestoredAppHighlights()
+{
+    Vector<AppHighlightRangeData> remainingRanges;
+
+    if (!m_document)
+        return;
+    
+    auto strongDocument = makeRefPtr(m_document.get());
+    
+    for (auto& highlight : m_unrestoredHighlights) {
+        auto range = findRange(highlight, *strongDocument);
+        
+        if (!range)
+            remainingRanges.append(highlight);
+        else
+            strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
+    }
+    m_unrestoredHighlights = WTFMove(remainingRanges);
 }
 
 #endif
