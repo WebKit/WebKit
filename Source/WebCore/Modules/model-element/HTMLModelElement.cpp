@@ -74,9 +74,10 @@ RefPtr<SharedBuffer> HTMLModelElement::modelData() const
 
 RefPtr<Model> HTMLModelElement::model() const
 {
-    if (auto modelData = this->modelData())
-        return Model::create(*modelData);
-    return nullptr;
+    if (!m_dataComplete)
+        return nullptr;
+    
+    return m_model;
 }
 
 void HTMLModelElement::sourcesChanged()
@@ -190,6 +191,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     }
 
     m_dataComplete = true;
+    m_model = Model::create(*m_data);
 
     invalidateResourceHandleAndUpdateRenderer();
 
