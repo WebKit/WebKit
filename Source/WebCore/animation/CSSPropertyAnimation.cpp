@@ -1698,34 +1698,47 @@ public:
     }
 };
 
-class ZIndexPropertyWrapper : public PropertyWrapper<int> {
+template <typename T>
+class AutoPropertyWrapper : public PropertyWrapper<T> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ZIndexPropertyWrapper()
-        : PropertyWrapper<int>(CSSPropertyZIndex, &RenderStyle::specifiedZIndex, &RenderStyle::setSpecifiedZIndex)
+    AutoPropertyWrapper(CSSPropertyID prop, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T), bool (RenderStyle::*autoGetter)() const, void (RenderStyle::*autoSetter)(), Optional<T> minValue = WTF::nullopt)
+        : PropertyWrapper<T>(prop, getter, setter)
+        , m_autoGetter(autoGetter)
+        , m_autoSetter(autoSetter)
+        , m_minValue(minValue)
     {
     }
 
     bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const override
     {
-        return !from->hasAutoSpecifiedZIndex() && !to->hasAutoSpecifiedZIndex();
+        return !(from->*m_autoGetter)() && !(to->*m_autoGetter)();
     }
 
     void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* from, const RenderStyle* to, double progress) const override
     {
-        PropertyWrapper::blend(anim, dst, from, to, progress);
+        auto blendedValue = blendFunc(anim, this->value(from), this->value(to), progress);
+        if (this->m_minValue)
+            blendedValue = blendedValue > *this->m_minValue ? blendedValue : *this->m_minValue;
+        (dst->*this->m_setter)(blendedValue);
+
         if (canInterpolate(from, to))
             return;
 
         ASSERT(!progress || progress == 1.0);
         if (!progress) {
-            if (from->hasAutoSpecifiedZIndex())
-                dst->setHasAutoSpecifiedZIndex();
+            if ((from->*m_autoGetter)())
+                (dst->*m_autoSetter)();
         } else {
-            if (to->hasAutoSpecifiedZIndex())
-                dst->setHasAutoSpecifiedZIndex();
+            if ((to->*m_autoGetter)())
+                (dst->*m_autoSetter)();
         }
     }
+
+private:
+    bool (RenderStyle::*m_autoGetter)() const;
+    void (RenderStyle::*m_autoSetter)();
+    Optional<T> m_minValue;
 };
 
 class NonNegativeFloatPropertyWrapper : public PropertyWrapper<float> {
@@ -1856,11 +1869,11 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<unsigned short>(CSSPropertyColumnRuleWidth, &RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth),
         new LengthVariantPropertyWrapper<GapLength>(CSSPropertyColumnGap, &RenderStyle::columnGap, &RenderStyle::setColumnGap),
         new LengthVariantPropertyWrapper<GapLength>(CSSPropertyRowGap, &RenderStyle::rowGap, &RenderStyle::setRowGap),
-        new PropertyWrapper<unsigned short>(CSSPropertyColumnCount, &RenderStyle::columnCount, &RenderStyle::setColumnCount),
-        new NonNegativeFloatPropertyWrapper(CSSPropertyColumnWidth, &RenderStyle::columnWidth, &RenderStyle::setColumnWidth),
+        new AutoPropertyWrapper<unsigned short>(CSSPropertyColumnCount, &RenderStyle::columnCount, &RenderStyle::setColumnCount, &RenderStyle::hasAutoColumnCount, &RenderStyle::setHasAutoColumnCount, 1),
+        new AutoPropertyWrapper<float>(CSSPropertyColumnWidth, &RenderStyle::columnWidth, &RenderStyle::setColumnWidth, &RenderStyle::hasAutoColumnWidth, &RenderStyle::setHasAutoColumnWidth, 0),
         new PropertyWrapper<float>(CSSPropertyWebkitBorderHorizontalSpacing, &RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing),
         new PropertyWrapper<float>(CSSPropertyWebkitBorderVerticalSpacing, &RenderStyle::verticalBorderSpacing, &RenderStyle::setVerticalBorderSpacing),
-        new ZIndexPropertyWrapper,
+        new AutoPropertyWrapper<int>(CSSPropertyZIndex, &RenderStyle::specifiedZIndex, &RenderStyle::setSpecifiedZIndex, &RenderStyle::hasAutoSpecifiedZIndex, &RenderStyle::setHasAutoSpecifiedZIndex),
         new PropertyWrapper<unsigned short>(CSSPropertyOrphans, &RenderStyle::orphans, &RenderStyle::setOrphans),
         new PropertyWrapper<unsigned short>(CSSPropertyWidows, &RenderStyle::widows, &RenderStyle::setWidows),
         new LengthPropertyWrapper(CSSPropertyLineHeight, &RenderStyle::specifiedLineHeight, &RenderStyle::setLineHeight),

@@ -1,3 +1,18 @@
+2021-03-09  Antoine Quint  <graouts@webkit.org>
+
+        Correctly blend column-width and column-count CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=222969
+
+        Reviewed by Antti Koivisto.
+
+        Add an extra 160 PASS results. We now pass all the column-width and column-count interpolation tests.
+
+        * web-platform-tests/css/css-multicol/animation/column-count-interpolation-expected.txt:
+        * web-platform-tests/css/css-multicol/animation/column-width-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
 2021-03-08  Antoine Quint  <graouts@webkit.org>
 
         Select CSS properties animating as float should not allow negative values

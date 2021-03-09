@@ -136,9 +136,9 @@ PASS color supports animating as color of hsla()
 PASS column-count (type: positiveInteger) has testInterpolation function
 PASS column-count supports animating as a positive integer
 PASS column-count (type: discrete) has testInterpolation function
-FAIL column-count uses discrete animation when animating between "auto" and "10" with linear easing assert_equals: The value should be auto at 0ms expected "auto" but got "0"
-FAIL column-count uses discrete animation when animating between "auto" and "10" with effect easing assert_equals: The value should be auto at 0ms expected "auto" but got "0"
-FAIL column-count uses discrete animation when animating between "auto" and "10" with keyframe easing assert_equals: The value should be auto at 0ms expected "auto" but got "0"
+PASS column-count uses discrete animation when animating between "auto" and "10" with linear easing
+PASS column-count uses discrete animation when animating between "auto" and "10" with effect easing
+PASS column-count uses discrete animation when animating between "auto" and "10" with keyframe easing
 PASS column-gap (type: length) has testInterpolation function
 PASS column-gap supports animating as a length
 PASS column-gap supports animating as a length of rem
@@ -168,9 +168,9 @@ PASS column-width (type: length) has testInterpolation function
 PASS column-width supports animating as a length
 PASS column-width supports animating as a length of rem
 PASS column-width (type: discrete) has testInterpolation function
-FAIL column-width uses discrete animation when animating between "auto" and "1px" with linear easing assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
-FAIL column-width uses discrete animation when animating between "auto" and "1px" with effect easing assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
-FAIL column-width uses discrete animation when animating between "auto" and "1px" with keyframe easing assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
+PASS column-width uses discrete animation when animating between "auto" and "1px" with linear easing
+PASS column-width uses discrete animation when animating between "auto" and "1px" with effect easing
+PASS column-width uses discrete animation when animating between "auto" and "1px" with keyframe easing
 PASS cursor (type: discrete) has testInterpolation function
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with linear easing
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with effect easing
