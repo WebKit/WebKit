@@ -100,12 +100,19 @@ if (length($fontNamesIn)) {
     printLicenseHeader($F);
     printHeaderHead($F, "CSS", $familyNamesFileBase, <<END, "");
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 END
 
-    printMacros($F, "extern const StringImpl::StaticStringImpl", "Data", \%parameters);
+    print F "extern LazyNeverDestroyed<Vector<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
+    print F "extern MainThreadLazyNeverDestroyed<Vector<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
+    printMacros($F, "extern MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
     print F "\n";
-    printMacros($F, "extern MainThreadLazyNeverDestroyed<const WTF::AtomString>", "", \%parameters);
+    print F "enum class FamilyNamesIndex {\n";
+    for my $name (sort keys %parameters) {
+        print F "    ", ucfirst(${name}), ",\n";
+    }
+    print F "};\n\n";
     print F "#endif\n\n";
 
     printInit($F, 1);
@@ -119,15 +126,30 @@ END
 
     print F StaticString::GenerateStrings(\%parameters);
 
-    printMacros($F, "MainThreadLazyNeverDestroyed<const WTF::AtomString>", "", \%parameters);
+    print F "LazyNeverDestroyed<Vector<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
+    print F "MainThreadLazyNeverDestroyed<Vector<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
+
+    printMacros($F, "MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
 
     printInit($F, 0);
 
     print F "\n";
     print F StaticString::GenerateStringAsserts(\%parameters);
 
+    print F "    familyNamesData.construct();\n";
+    for my $name (sort keys %parameters) {
+        print F "    familyNamesData->uncheckedAppend(&${name}Data);\n";
+    }
+
+    print F "\n";
     for my $name (sort keys %parameters) {
         print F "    ${name}.construct(&${name}Data);\n";
+    }
+
+    print F "\n";
+    print F "    familyNames.construct();\n";
+    for my $name (sort keys %parameters) {
+        print F "    familyNames->uncheckedAppend(${name}->impl());\n";
     }
 
     print F "}\n}\n}\n";
@@ -694,7 +716,7 @@ END
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
     print F "// Namespace\n";
-    print F "WEBCORE_EXPORT extern MainThreadLazyNeverDestroyed<const WTF::AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
+    print F "WEBCORE_EXPORT extern MainThreadLazyNeverDestroyed<const AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
 
     if (keys %allTags) {
         print F "// Tags\n";

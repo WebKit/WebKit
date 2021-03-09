@@ -35,6 +35,7 @@
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextControlInnerElements.h>
+#include <WebCore/WebKitFontFamilyNames.h>
 
 // FIXME: Expose the functions tested here in WebKit internals object, then replace this test with one written in JavaScript.
 // FIXME: When doing the above, don't forget to remove the many WEBCORE_EXPORT that were added so we could compile and link this test.
@@ -51,6 +52,7 @@ using namespace WebCore;
 static Ref<Document> createDocument()
 {
     HTMLNames::init();
+    WebKitFontFamilyNames::init();
     auto settings = Settings::create(nullptr);
     auto document = Document::create(settings.get(), aboutBlankURL());
     auto documentElement = HTMLHtmlElement::create(document);
