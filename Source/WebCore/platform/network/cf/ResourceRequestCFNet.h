@@ -48,6 +48,7 @@ CFURLRequestRef cfURLRequest(const ResourceRequest&);
 inline ResourceLoadPriority toResourceLoadPriority(CFURLRequestPriority priority)
 {
     switch (priority) {
+    case -1:
     case 0:
         return ResourceLoadPriority::VeryLow;
     case 1:
