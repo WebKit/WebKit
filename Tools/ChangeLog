@@ -1,3 +1,13 @@
+2021-03-09  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Don Olmstead.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-03-09  Mark Lam  <mark.lam@apple.com>
 
         Use --verifyGC=true on some JSC stress test configurations.
