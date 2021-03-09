@@ -42,7 +42,7 @@ class RemoteLegacyCDMSessionProxy;
 class RemoteLegacyCDMProxy;
 struct RemoteLegacyCDMConfiguration;
 
-class RemoteLegacyCDMFactoryProxy final : private IPC::MessageReceiver, public CanMakeWeakPtr<RemoteLegacyCDMFactoryProxy> {
+class RemoteLegacyCDMFactoryProxy final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess&);

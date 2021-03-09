@@ -43,8 +43,7 @@ class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
 
 class RemoteAudioSessionProxy
-    : public IPC::MessageReceiver
-    , public CanMakeWeakPtr<RemoteAudioSessionProxy> {
+    : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static UniqueRef<RemoteAudioSessionProxy> create(GPUConnectionToWebProcess&);

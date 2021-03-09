@@ -77,9 +77,8 @@ class PaymentSetupFeatures;
 class WebPageProxy;
 
 class WebPaymentCoordinatorProxy
-    : private IPC::MessageReceiver
+    : public IPC::MessageReceiver
     , private IPC::MessageSender
-    , public CanMakeWeakPtr<WebPaymentCoordinatorProxy>
     , public PaymentAuthorizationPresenter::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:

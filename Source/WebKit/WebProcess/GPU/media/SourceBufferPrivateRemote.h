@@ -58,9 +58,8 @@ class MediaPlayerPrivateRemote;
 class MediaSourcePrivateRemote;
 
 class SourceBufferPrivateRemote final
-    : public CanMakeWeakPtr<SourceBufferPrivateRemote>
-    , public WebCore::SourceBufferPrivate
-    , private IPC::MessageReceiver
+    : public WebCore::SourceBufferPrivate
+    , public IPC::MessageReceiver
 {
 public:
     static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);

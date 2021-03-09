@@ -66,9 +66,8 @@ struct TextTrackPrivateRemoteConfiguration;
 struct TrackPrivateRemoteConfiguration;
 
 class MediaPlayerPrivateRemote final
-    : public CanMakeWeakPtr<MediaPlayerPrivateRemote>
-    , public WebCore::MediaPlayerPrivateInterface
-    , private IPC::MessageReceiver
+    : public WebCore::MediaPlayerPrivateInterface
+    , public IPC::MessageReceiver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif

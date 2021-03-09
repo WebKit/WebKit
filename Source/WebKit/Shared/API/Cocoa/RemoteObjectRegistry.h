@@ -43,7 +43,7 @@ namespace WebKit {
 class RemoteObjectInvocation;
 class UserData;
 
-class RemoteObjectRegistry : public CanMakeWeakPtr<RemoteObjectRegistry>, public IPC::MessageReceiver {
+class RemoteObjectRegistry : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~RemoteObjectRegistry();

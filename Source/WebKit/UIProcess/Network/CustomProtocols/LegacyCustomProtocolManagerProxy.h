@@ -46,7 +46,7 @@ namespace WebKit {
 
 class NetworkProcessProxy;
 
-class LegacyCustomProtocolManagerProxy : public CanMakeWeakPtr<LegacyCustomProtocolManagerProxy>, public IPC::MessageReceiver {
+class LegacyCustomProtocolManagerProxy : public IPC::MessageReceiver {
 public:
     LegacyCustomProtocolManagerProxy(NetworkProcessProxy&);
     ~LegacyCustomProtocolManagerProxy();

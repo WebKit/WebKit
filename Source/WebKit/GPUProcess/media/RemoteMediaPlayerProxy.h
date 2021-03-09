@@ -81,9 +81,8 @@ class RemoteTextTrackProxy;
 class RemoteVideoTrackProxy;
 
 class RemoteMediaPlayerProxy final
-    : public CanMakeWeakPtr<RemoteMediaPlayerProxy>
-    , public WebCore::MediaPlayerClient
-    , private IPC::MessageReceiver {
+    : public WebCore::MediaPlayerClient
+    , public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);

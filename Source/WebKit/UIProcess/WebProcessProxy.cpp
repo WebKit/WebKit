@@ -1720,6 +1720,8 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
         return;
 
     ASSERT(!m_speechRecognitionServerMap.contains(identifier));
+    MESSAGE_CHECK(!m_speechRecognitionServerMap.contains(identifier));
+
     auto& speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr).iterator->value;
     auto permissionChecker = [weakPage = makeWeakPtr(targetPage)](auto& request, auto&& completionHandler) mutable {
         if (!weakPage) {

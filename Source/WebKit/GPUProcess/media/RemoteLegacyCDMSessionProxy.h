@@ -50,9 +50,8 @@ class RemoteLegacyCDMProxy;
 class RemoteMediaPlayerProxy;
 
 class RemoteLegacyCDMSessionProxy
-    : private IPC::MessageReceiver
-    , public WebCore::LegacyCDMSessionClient
-    , public CanMakeWeakPtr<RemoteLegacyCDMSessionProxy> {
+    : public IPC::MessageReceiver
+    , public WebCore::LegacyCDMSessionClient {
 public:
     static std::unique_ptr<RemoteLegacyCDMSessionProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>&&, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
     ~RemoteLegacyCDMSessionProxy();

@@ -44,7 +44,7 @@ class AuthenticatorManager;
 class WebAuthnConnectionToWebProcess;
 struct WebAuthnProcessCreationParameters;
 
-class WebAuthnProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<WebAuthnProcess>, public CanMakeWeakPtr<WebAuthnProcess> {
+class WebAuthnProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<WebAuthnProcess> {
     WTF_MAKE_NONCOPYABLE(WebAuthnProcess);
 public:
     explicit WebAuthnProcess(AuxiliaryProcessInitializationParameters&&);
