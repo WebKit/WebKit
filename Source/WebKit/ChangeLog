@@ -1,3 +1,15 @@
+2021-03-10  Per Arne  <pvollan@apple.com>
+
+        [iOS] Add additional telemetry to WebContent sandbox 
+        https://bugs.webkit.org/show_bug.cgi?id=223035
+        <rdar://75275161>
+
+        Reviewed by Geoffrey Garen.
+
+        Add additional telemetry to WebContent sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Add additional bundle ID property to WKWebViewConfiguration

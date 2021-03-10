@@ -500,7 +500,8 @@
 
     (mobile-preferences-read "kCFPreferencesAnyApplication")
     (allow file-read*
-           (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist"))
+           (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist")
+           (front-user-home-literal "/Library/Preferences/.GlobalPreferences_m.plist"))
 
     (allow file-read*
            (literal "/private/var/Managed Preferences/mobile/.GlobalPreferences.plist"))
@@ -580,6 +581,9 @@
     required-etc-files
     (literal "/"))
 
+(deny file-read* (with no-report)
+      (literal "/private/etc/passwd"))
+
 (allow file-read*
        (subpath "/private/var/MobileAsset/PreinstalledAssetsV2/InstallWithOs"))
 
@@ -601,8 +605,8 @@
 (allow ipc-posix-shm-read*
        (ipc-posix-name-prefix "apple.cfprefs."))
  
-(deny mach-lookup
-    (global-name "com.apple.lsd.mapdb"))
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.lsd.mapdb")) 
 
 ;; <rdar://problem/12413942>
 (allow file-read*
@@ -695,7 +699,6 @@
 (allow process-info-setcontrol (target self))
 (allow process-info-dirtycontrol (target self))
 (allow process-info-rusage (target self))
-(allow process-info-codesignature (target self))
 
 ;;;
 ;;; End common.sb content
@@ -1166,7 +1169,7 @@
         (syscall-number SYS_getgid)
         (syscall-number SYS_sigprocmask)
         (syscall-number SYS_sigaltstack)
-        (syscall-number SYS_ioctl)
+        (syscall-number SYS_ioctl) ;; needed by tcgetattr (TIOCGETA) - debugging
         (syscall-number SYS_readlink)
         (syscall-number SYS_umask)
         (syscall-number SYS_msync)
@@ -1182,7 +1185,7 @@
         (syscall-number SYS_setsockopt)
         (syscall-number SYS_gettimeofday)
         (syscall-number SYS_getrusage)
-        (syscall-number SYS_getsockopt)
+        (syscall-number SYS_getsockopt) ;; used by libwebrtc
         (syscall-number SYS_writev)
         (syscall-number SYS_fchmod)
         (syscall-number SYS_rename)
@@ -1194,8 +1197,8 @@
         (syscall-number SYS_rmdir)
         (syscall-number SYS_pread)
         (syscall-number SYS_pwrite)
-        (syscall-number SYS_csops)
-        (syscall-number SYS_csops_audittoken)
+        (syscall-number SYS_csops) ;; used by Corefoundation initialization
+        (syscall-number SYS_csops_audittoken) ;; used by WK to get entitlments
         (syscall-number SYS_kdebug_trace64)
         (syscall-number SYS_kdebug_trace)
         (syscall-number SYS_sigreturn)
@@ -1208,7 +1211,7 @@
         (syscall-number SYS_sysctl)
         (syscall-number SYS_mlock)
         (syscall-number SYS_munlock)
-        (syscall-number SYS_getattrlist)
+        (syscall-number SYS_getattrlist) ;; xpc_realpath and directory enumeration
         (syscall-number SYS_getxattr)
         (syscall-number SYS_fgetxattr)
         (syscall-number SYS_listxattr)
@@ -1264,7 +1267,7 @@
         (syscall-number SYS_change_fdguard_np)
         (syscall-number SYS_proc_rlimit_control)
         (syscall-number SYS_connectx)
-        (syscall-number SYS_getattrlistbulk)
+        (syscall-number SYS_getattrlistbulk) ;; xpc_realpath and directory enumeration
         (syscall-number SYS_openat)
         (syscall-number SYS_openat_nocancel)
         (syscall-number SYS_fstatat64)
@@ -1288,7 +1291,7 @@
         (syscall-number SYS_memorystatus_control)
         (syscall-number SYS_sem_open)
         (syscall-number SYS_sem_close)
-        (syscall-number SYS_fsetattrlist)
+        (syscall-number SYS_fsetattrlist) ;; MTLCompilerFSCache::openSync
         (syscall-number SYS_guarded_open_dprotected_np) ; <rdar://problem/48166729>
         (syscall-number SYS_mremap_encrypted)
         (syscall-number SYS_dup2)
@@ -1313,6 +1316,65 @@
     )
     (if (defined? 'SYS_objc_bp_assist_cfg_np)
         (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
+)
+
+(when (defined? 'file-ioctl)
+    (allow file-ioctl (with telemetry))
+    ;; restrict to the two ioctl's /dev/aes_0 needs
+    (allow file-ioctl (with telemetry)
+       (ioctl-command (_IO "T" 101)) ;; IOAES_GET_INFO
+       (ioctl-command (_IO "T" 102))) ;; IOAES_ENCRYPT_DECRYPT
+)
+
+(when (defined? 'socket-ioctl)
+    (allow socket-ioctl (with telemetry))
+)
+
+(when (defined? 'system-fcntl)
+    (allow system-fcntl (with telemetry))
+    (allow system-fcntl
+        (fcntl-command F_GETPATH) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
+        (fcntl-command F_ADDFILESIGS_RETURN) ;; ImageLoaderMachO::loadCodeSignature
+        (fcntl-command F_CHECK_LV) ;; ImageLoaderMachO::loadCodeSignature
+        (fcntl-command F_SPECULATIVE_READ) ;; ImageLoaderMachO::mapSegments
+        (fcntl-command F_SETFD) ;; libwebrtc.dylib (no backtrace)
+        (fcntl-command F_GETFD) ;; libwebrtc.dylib (no backtrace)
+
+        (fcntl-command F_SETFL) ;; CMCapture uses when camera is enabled
+        (fcntl-command F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
+
+    (allow system-fcntl
+        (fcntl-command F_GETPROTECTIONCLASS))
+)
+
+(when (defined? 'process-codesigning*)
+    ;; csops/csops_audittoken
+    (allow process-codesigning-status-set (with telemetry))
+    (allow process-codesigning-text-offset-get (with telemetry))
+    (allow process-codesigning-cdhash-get (with telemetry))
+    (allow process-codesigning-blob-get (with telemetry))
+    (allow process-codesigning-teamid-get (with telemetry))
+    (allow process-codesigning-identity-get (with telemetry)) ;; codeSigningIdentifierForCurrentProcess
+    (allow process-codesigning-entitlements-blob-get) ;; WK reading entitlments via SecTaskCopyValueForEntitlement and _getSelfParsedEntitlements (accessibility)
+    (allow process-codesigning-status-get) ;; _xpc_get_entitlements
+    (deny process-info-codesignature (with no-report)) ;; SecTaskCopyValueForEntitlement - granting this grants all the process-codesign-* checks
+)
+
+(when (not (defined? 'process-codesigning*))
+    (allow process-info-codesignature (target self))
+)
+
+(when (defined? 'socket-option-get)
+    ;; getsockopt
+    (allow socket-option-get (with telemetry))
+    (allow socket-option-get
+        (socket-option-level SOL_SOCKET)
+            (socket-option-name SO_ERROR)) ;; libwebrtc; physical_socket_server.cc, ProcessEvents.  Called with fd=-1, so it fails.  Not technically needed, but the code needs changing
+)
+
+(when (defined? 'socket-option-set)
+    ;; setsockopt
+    (allow socket-option-set (with telemetry))
 )
 
 (when (defined? 'mach-bootstrap)
