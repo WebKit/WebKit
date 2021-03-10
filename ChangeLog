@@ -1,3 +1,20 @@
+2021-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        GLib JSC API headers should only include other GLib JSC API headers
+        https://bugs.webkit.org/show_bug.cgi?id=222803
+
+        Reviewed by Michael Catanzaro.
+
+        GTK and WPE both build the JavaScriptCore GLib API. However they diverged with their CMake
+        variable names for the directory containing jsc. Declare a single variable for that
+        directory, DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR, that is shared between GLib ports.
+
+        Remove the GLIB_API_DIR variant which will just be replaced with
+        ${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc in the CMake code.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-03-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Reenable -fvisibility=hidden

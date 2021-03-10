@@ -22,6 +22,7 @@
 
 #include "JSCContextPrivate.h"
 #include "JSCVirtualMachinePrivate.h"
+#include "JSContextRef.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/WTFGType.h>

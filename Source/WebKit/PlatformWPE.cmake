@@ -255,15 +255,10 @@ add_custom_command(
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_JAVASCRIPCOREWPE_DIR}"
-    "${FORWARDING_HEADERS_DIR}"
-    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/"
-    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
-    "${FORWARDING_HEADERS_WPE_DIR}"
-    "${FORWARDING_HEADERS_WPE_EXTENSION_DIR}"
-    "${FORWARDING_HEADERS_WPE_DOM_DIR}"
-    "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_WPE_API_DIR}"
+    "${FORWARDING_HEADERS_WPE_DIR}"
+    "${FORWARDING_HEADERS_WPE_DOM_DIR}"
+    "${FORWARDING_HEADERS_WPE_EXTENSION_DIR}"
     "${WEBKIT_DIR}/NetworkProcess/glib"
     "${WEBKIT_DIR}/NetworkProcess/soup"
     "${WEBKIT_DIR}/Platform/IPC/glib"
@@ -291,16 +286,13 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM"
-    "${WEBKIT_DIR}/WebProcess/glib"
-    "${WEBKIT_DIR}/WebProcess/soup"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/atk"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
     "${WEBKIT_DIR}/WebProcess/WebPage/wpe"
-    "${WTF_DIR}/wtf/gtk/"
-    "${WTF_DIR}/wtf/gobject"
-    "${WTF_DIR}"
+    "${WEBKIT_DIR}/WebProcess/glib"
+    "${WEBKIT_DIR}/WebProcess/soup"
 )
 
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
@@ -383,8 +375,7 @@ add_library(WPEInjectedBundle MODULE "${WEBKIT_DIR}/WebProcess/InjectedBundle/AP
 ADD_WEBKIT_PREFIX_HEADER(WPEInjectedBundle)
 target_link_libraries(WPEInjectedBundle WebKit)
 
-target_include_directories(WPEInjectedBundle PRIVATE ${WebKit_INCLUDE_DIRECTORIES} ${WebKit_PRIVATE_INCLUDE_DIRECTORIES})
-target_include_directories(WPEInjectedBundle SYSTEM PRIVATE ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
+target_include_directories(WPEInjectedBundle PRIVATE $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-wpe.cfg
     "[wpe-${WPE_API_VERSION}]\n"
@@ -443,6 +434,7 @@ if (ENABLE_WPE_QT_API)
     )
 
     set(qtwpe_INCLUDE_DIRECTORIES
+        $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>
         ${CMAKE_BINARY_DIR}
         ${GLIB_INCLUDE_DIRS}
         ${Qt5_INCLUDE_DIRS}
@@ -465,7 +457,7 @@ if (ENABLE_WPE_QT_API)
     )
     target_compile_definitions(qtwpe PUBLIC QT_NO_KEYWORDS=1)
     target_link_libraries(qtwpe ${qtwpe_LIBRARIES})
-    target_include_directories(qtwpe SYSTEM PRIVATE ${qtwpe_INCLUDE_DIRECTORIES})
+    target_include_directories(qtwpe PRIVATE ${qtwpe_INCLUDE_DIRECTORIES})
     install(TARGETS qtwpe DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/qt5/qml/org/wpewebkit/qtwpe/")
     install(FILES ${WEBKIT_DIR}/UIProcess/API/wpe/qt/qmldir DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/qt5/qml/org/wpewebkit/qtwpe/")
 

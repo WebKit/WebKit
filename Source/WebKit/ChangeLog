@@ -1,3 +1,17 @@
+2021-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        GLib JSC API headers should only include other GLib JSC API headers
+        https://bugs.webkit.org/show_bug.cgi?id=222803
+
+        Reviewed by Michael Catanzaro.
+
+        Update the includes and include directories.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMNode.cpp:
+        * WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp:
+
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r274174): ASSERTION FAILED: m_shouldBeCalledOnMainThread == isMainThread() under WebKit::RemoteSampleBufferDisplayLayerManager::createLayer

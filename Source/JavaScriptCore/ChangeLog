@@ -1,3 +1,30 @@
+2021-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        GLib JSC API headers should only include other GLib JSC API headers
+        https://bugs.webkit.org/show_bug.cgi?id=222803
+
+        Reviewed by Michael Catanzaro.
+
+        A number of private GLib JSC headers are directly including private JavaScriptCore headers.
+        To get this to compile ${FORWARDING_HEADERS_DIR}/JavaScriptCore was added to the list of
+        includes in targets that needed the JSC headers. This is incorrect because they are being
+        distributed in different directories.
+
+        The private JSC headers being used were replaced with forward declarations. The source
+        files were then updated accordingly.
+
+        Also the include directories that contained the <jsc/Foo.h> headers were added to
+        JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES so they're properly propagated to dependants.
+
+        * API/glib/JSCClassPrivate.h:
+        * API/glib/JSCContext.cpp:
+        * API/glib/JSCContextPrivate.h:
+        * API/glib/JSCVirtualMachine.cpp:
+        * API/glib/JSCVirtualMachinePrivate.h:
+        * API/glib/JSCWrapperMap.cpp:
+        * GLib.cmake:
+        * PlatformGTK.cmake:
+
 2021-03-09  Keith Miller  <keith_miller@apple.com>
 
         JSC Crash in makeString() while creating Error object.

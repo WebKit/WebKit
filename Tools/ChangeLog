@@ -1,3 +1,19 @@
+2021-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        GLib JSC API headers should only include other GLib JSC API headers
+        https://bugs.webkit.org/show_bug.cgi?id=222803
+
+        Reviewed by Michael Catanzaro.
+
+        Update the includes and include directories.
+
+        * MiniBrowser/wpe/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        * TestWebKitAPI/glib/PlatformGTK.cmake:
+        * TestWebKitAPI/glib/PlatformWPE.cmake:
+
 2021-03-09  Alex Christensen  <achristensen@webkit.org>
 
         HTTPS upgrade should allow same-site redirects from HTTPS to HTTP

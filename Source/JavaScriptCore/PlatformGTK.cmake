@@ -3,10 +3,6 @@ include(inspector/remote/GLib.cmake)
 
 set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
 
-list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}"
-)
-
 configure_file(javascriptcoregtk.pc.in ${JavaScriptCore_PKGCONFIG_FILE} @ONLY)
 
 install(FILES "${CMAKE_BINARY_DIR}/Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc"
@@ -70,6 +66,7 @@ if (ENABLE_INTROSPECTION)
             ${INTROSPECTION_SCANNER}
             --quiet
             --warn-all
+            --warn-error
             --symbol-prefix=jsc
             --identifier-prefix=JSC
             --namespace=JavaScriptCore
@@ -85,9 +82,8 @@ if (ENABLE_INTROSPECTION)
             ${GIR_SOURCES_TOP_DIRS}
             --c-include="jsc/jsc.h"
             -DJSC_COMPILATION
-            -I${CMAKE_SOURCE_DIR}/Source
-            -I${JAVASCRIPTCORE_DIR}
-            -I${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}
+            -I${JAVASCRIPTCORE_DIR}/API/glib
+            -I${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}
             -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
             ${JavaScriptCore_INSTALLED_HEADERS}
             ${JAVASCRIPTCORE_DIR}/API/glib/*.cpp
@@ -109,9 +105,8 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-jsc-glib.cfg
     "decorator=JSC_API\n"
     "deprecation_guard=JSC_DISABLE_DEPRECATED\n"
     "namespace=jsc\n"
-    "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
-    "       -I${JAVASCRIPTCORE_DIR}/API/glib\n"
-    "       -I${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}\n"
+    "cflags=-I${JAVASCRIPTCORE_DIR}/API/glib\n"
+    "       -I${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}\n"
     "       -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib\n"
     "doc_dir=${JAVASCRIPTCORE_DIR}/API/glib/docs\n"
     "source_dirs=${JAVASCRIPTCORE_DIR}/API/glib\n"

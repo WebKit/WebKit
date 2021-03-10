@@ -1,5 +1,5 @@
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib)
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR})
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc)
 
 list(APPEND JavaScriptCore_SOURCES
     API/glib/JSAPIWrapperGlobalObject.cpp
@@ -18,12 +18,17 @@ list(APPEND JavaScriptCore_SOURCES
 
 list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
-    "${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR}"
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc"
     "${JAVASCRIPTCORE_DIR}/API/glib"
 )
 
+list(APPEND JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES
+    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}"
+)
+
 set(JavaScriptCore_INSTALLED_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR}/JSCVersion.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc/JSCVersion.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCAutocleanups.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCClass.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCContext.h
@@ -36,7 +41,7 @@ set(JavaScriptCore_INSTALLED_HEADERS
     ${JAVASCRIPTCORE_DIR}/API/glib/jsc.h
 )
 
-configure_file(API/glib/JSCVersion.h.in ${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR}/JSCVersion.h)
+configure_file(API/glib/JSCVersion.h.in ${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc/JSCVersion.h)
 
 # These symbolic link allows includes like #include <jsc/jsc.h> which simulates installed headers.
 add_custom_command(
