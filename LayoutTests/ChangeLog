@@ -1,3 +1,14 @@
+2021-03-10  Zalan Bujtas  <zalan@apple.com>
+
+        Multi-column state propagation should follow containing block rules
+        https://bugs.webkit.org/show_bug.cgi?id=222932
+        <rdar://problem/74459411>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/state-propagation-over-out-of-flow-boundary-expected.txt: Added.
+        * fast/multicol/state-propagation-over-out-of-flow-boundary.html: Added.
+
 2021-03-10  Youenn Fablet  <youenn@apple.com>
 
         Remove getUserMedia denied requests if user grants a new getUserMedia request

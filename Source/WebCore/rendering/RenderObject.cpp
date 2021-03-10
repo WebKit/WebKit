@@ -192,7 +192,7 @@ bool RenderObject::isHTMLMarquee() const
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
 }
 
-void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowState state)
+void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowState state, const RenderElement* fragmentedFlowRoot)
 {
     setFragmentedFlowState(state);
 
@@ -203,8 +203,22 @@ void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowStat
         // If the child is a fragmentation context it already updated the descendants flag accordingly.
         if (child.isRenderFragmentedFlow())
             continue;
+        if (fragmentedFlowRoot && child.isOutOfFlowPositioned()) {
+            // Fragmented status propagation stops at out-of-flow boundary.
+            auto isInsideMulticolumnFlow = [&] {
+                auto* containingBlock = child.containingBlock();
+                if (!containingBlock) {
+                    ASSERT_NOT_REACHED();
+                    return false;
+                }
+                // It's ok to only check the first level containing block (as opposed to the containing block chain) as setFragmentedFlowStateIncludingDescendants is top to down.
+                return containingBlock->isDescendantOf(fragmentedFlowRoot);
+            };
+            if (!isInsideMulticolumnFlow())
+                continue;
+        }
         ASSERT(state != child.fragmentedFlowState());
-        child.setFragmentedFlowStateIncludingDescendants(state);
+        child.setFragmentedFlowStateIncludingDescendants(state, fragmentedFlowRoot);
     }
 }
 
@@ -246,7 +260,8 @@ void RenderObject::initializeFragmentedFlowStateOnInsertion()
     if (fragmentedFlowState() == computedState)
         return;
 
-    setFragmentedFlowStateIncludingDescendants(computedState);
+    auto* enclosingFragmentedFlow = locateEnclosingFragmentedFlow();
+    setFragmentedFlowStateIncludingDescendants(computedState, enclosingFragmentedFlow ? enclosingFragmentedFlow->parent() : nullptr);
 }
 
 void RenderObject::resetFragmentedFlowStateOnRemoval()
@@ -263,7 +278,8 @@ void RenderObject::resetFragmentedFlowStateOnRemoval()
     if (isRenderFragmentedFlow())
         return;
 
-    setFragmentedFlowStateIncludingDescendants(NotInsideFragmentedFlow);
+    auto* enclosingFragmentedFlow = this->enclosingFragmentedFlow();
+    setFragmentedFlowStateIncludingDescendants(NotInsideFragmentedFlow, enclosingFragmentedFlow ? enclosingFragmentedFlow->parent() : nullptr);
 }
 
 void RenderObject::setParent(RenderElement* parent)
