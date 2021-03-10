@@ -876,6 +876,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
         downcast<RenderBox>(child).deleteLineBoxWrapper();
     else if (is<RenderLineBreak>(child))
         downcast<RenderLineBreak>(child).deleteInlineBoxWrapper();
+    else if (is<RenderText>(child))
+        downcast<RenderText>(child).removeAndDestroyTextBoxes();
 
     if (!parent.renderTreeBeingDestroyed() && is<RenderFlexibleBox>(parent) && !child.isFloatingOrOutOfFlowPositioned() && child.isBox())
         downcast<RenderFlexibleBox>(parent).clearCachedChildIntrinsicContentLogicalHeight(downcast<RenderBox>(child));
