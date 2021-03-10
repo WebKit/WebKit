@@ -1,5 +1,22 @@
 2021-03-10  Youenn Fablet  <youenn@apple.com>
 
+        Do not send sandbox extensions to WebProcess if capture happens in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222961
+
+        Reviewed by Eric Carlson.
+
+        In case capture does not happen in WebProcess, we do not need to send the tccd sandbox extension.
+        Ditto for camera/microphone sandbox extensions if capture happens in GPUProcess.
+        Manually tested.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::c):
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+
+2021-03-10  Youenn Fablet  <youenn@apple.com>
+
         Remove getUserMedia denied requests if user grants a new getUserMedia request
         https://bugs.webkit.org/show_bug.cgi?id=222962
         <rdar://74805451>

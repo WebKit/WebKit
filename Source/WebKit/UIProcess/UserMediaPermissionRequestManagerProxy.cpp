@@ -260,6 +260,11 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 }
 
 #if ENABLE(MEDIA_STREAM)
+static bool doesPageNeedTCCD(const WebPageProxy& page)
+{
+    return (!page.preferences().captureAudioInGPUProcessEnabled() && !page.preferences().captureAudioInUIProcessEnabled()) || !page.preferences().captureVideoInGPUProcessEnabled();
+}
+
 void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPermissionRequestProxy& request)
 {
     ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID());
@@ -285,7 +290,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
 
         SandboxExtension::Handle handle;
 #if PLATFORM(COCOA)
-        if (!m_hasCreatedSandboxExtensionForTCCD) {
+        if (!m_hasCreatedSandboxExtensionForTCCD && doesPageNeedTCCD(m_page)) {
             SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_page.process().connection()->getAuditToken(), handle);
             m_hasCreatedSandboxExtensionForTCCD = true;
         }
