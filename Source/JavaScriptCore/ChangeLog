@@ -1,3 +1,15 @@
+2021-03-10  Keith Miller  <keith_miller@apple.com>
+
+        executeModuleProgram needs to ensure module argument array is still in scope
+        https://bugs.webkit.org/show_bug.cgi?id=223039
+
+        Reviewed by Saam Barati.
+
+        This was causing testing builds to crash for wasm tests.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeModuleProgram):
+
 2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Reenable -fvisibility=hidden
