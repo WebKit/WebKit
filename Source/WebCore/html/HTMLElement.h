@@ -126,7 +126,7 @@ public:
     String enterKeyHint() const;
     void setEnterKeyHint(const String& value);
 
-    static bool shouldUpdateSelectionForMouseDrag(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
+    WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
     bool hasImageOverlay() const;
     WEBCORE_EXPORT static bool isImageOverlayText(const Node&);
 

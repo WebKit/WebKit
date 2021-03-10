@@ -1513,13 +1513,20 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
                 pointInDocument.setY(endY);
         }
     }
-    
-    VisiblePosition result;
-    Optional<SimpleRange> range;
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
-    auto hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, hitType);
+    auto hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, {
+        HitTestRequest::ReadOnly,
+        HitTestRequest::Active,
+        HitTestRequest::AllowVisibleChildFrameContentOnly,
+    });
+
     auto targetNode = makeRefPtr(hitTest.targetNode());
+    if (targetNode && !HTMLElement::shouldExtendSelectionToTargetNode(*targetNode, existingSelection))
+        return WTF::nullopt;
+
+    Optional<SimpleRange> range;
+    VisiblePosition result;
+
     if (targetNode)
         result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), targetNode.get()).deepEquivalent();
     else

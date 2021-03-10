@@ -940,7 +940,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (!target)
         return;
 
-    if (!HTMLElement::shouldUpdateSelectionForMouseDrag(*target, m_frame.selection().selection()))
+    if (!HTMLElement::shouldExtendSelectionToTargetNode(*target, m_frame.selection().selection()))
         return;
 
     VisiblePosition targetPosition = selectionExtentRespectingEditingBoundary(m_frame.selection().selection(), hitTestResult.localPoint(), target);

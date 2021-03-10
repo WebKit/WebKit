@@ -1,3 +1,17 @@
+2021-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Logic for updating the text selection when dragging selection handles should account for image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=223010
+
+        Reviewed by Tim Horton.
+
+        Apply the same logic introduced in r272503 to iOS, when extending the selection by moving selection handles. In
+        the case where the hit-tested node is the image overlay container (as opposed to any text inside the container),
+        it's better avoid updating the selection, rather than extend the selection to the start of the image overlay.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+
 2021-03-10  Youenn Fablet  <youenn@apple.com>
 
         Do not send sandbox extensions to WebProcess if capture happens in GPUProcess

@@ -1201,7 +1201,7 @@ static const AtomString& imageOverlayElementIdentifier()
     return identifier;
 }
 
-bool HTMLElement::shouldUpdateSelectionForMouseDrag(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate)
+bool HTMLElement::shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate)
 {
     if (!is<HTMLDivElement>(targetNode))
         return true;
