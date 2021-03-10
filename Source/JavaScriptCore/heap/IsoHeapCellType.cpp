@@ -37,6 +37,8 @@ IsoHeapCellType::IsoHeapCellType(DestructionMode destructionMode, DestroyFunctio
 {
 }
 
+IsoHeapCellType::~IsoHeapCellType() = default;
+
 void IsoHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
 {
     handle.finishSweepKnowingHeapCellType(freeList, *this);

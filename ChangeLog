@@ -1,3 +1,25 @@
+2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Don Olmstead.
+
+        In non-DEVELOPER_MODE builds, we rely on a linker version script to hide symbols that we
+        don't want to export. Building with hidden visibility might seem redundant with this, but
+        actually building with hidden visibility has advantages anyway. See
+        https://gcc.gnu.org/wiki/Visibility.
+
+        Note that I'm not confident GTK port can safely use -fvisibility-inlines-hidden, since it's
+        split between two shared objects. Also, because GTK is split into two shared objects, GTK
+        needs to build bmalloc and WTF as CMake OBJECT libraries, which is effectively the same as
+        using -Wl,--whole-archive to prevent symbols from being prematurely stripped away.
+
+        P.S. Major credit to Don Olmstead, who did most of the work to make this possible, which has
+        already landed in previous patches.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2021-03-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r274166.

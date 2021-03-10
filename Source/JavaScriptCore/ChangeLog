@@ -1,3 +1,15 @@
+2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Don Olmstead.
+
+        We need to export the destructor of IsoHeapCellType.
+
+        * heap/IsoHeapCellType.cpp:
+        * heap/IsoHeapCellType.h:
+
 2021-03-09  Don Olmstead  <don.olmstead@sony.com>
 
         GLib JSC API headers should only include other GLib JSC API headers

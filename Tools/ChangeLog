@@ -1,3 +1,13 @@
+2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Don Olmstead.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-03-10  Jonathan Bedard  <jbedard@apple.com>
 
         git-webkit should have an "info" command

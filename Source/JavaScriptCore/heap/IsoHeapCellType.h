@@ -34,6 +34,8 @@ class IsoHeapCellType final : public HeapCellType {
 public:
     using DestroyFunctionPtr = void (*)(JSCell*);
 
+    JS_EXPORT_PRIVATE ~IsoHeapCellType();
+
     JS_EXPORT_PRIVATE IsoHeapCellType(DestructionMode, DestroyFunctionPtr);
 
     template<typename CellType>

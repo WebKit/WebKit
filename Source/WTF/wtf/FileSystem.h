@@ -183,7 +183,7 @@ WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
 
 #if USE(GLIB)
-String filenameForDisplay(const String&);
+WTF_EXPORT_PRIVATE String filenameForDisplay(const String&);
 #endif
 
 #if OS(WINDOWS)

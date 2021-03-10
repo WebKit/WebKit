@@ -103,7 +103,7 @@ public:
     const EventTargetData* eventTargetData() const;
 
 protected:
-    virtual ~EventTarget() = default;
+    WEBCORE_EXPORT virtual ~EventTarget();
     
     virtual EventTargetData* eventTargetData() = 0;
     virtual EventTargetData* eventTargetDataConcurrently() = 0;
@@ -122,7 +122,7 @@ private:
 };
 
 class EventTargetWithInlineData : public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(EventTargetWithInlineData);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(EventTargetWithInlineData, WEBCORE_EXPORT);
 protected:
     EventTargetData* eventTargetData() final { return &m_eventTargetData; }
     EventTargetData* eventTargetDataConcurrently() final { return &m_eventTargetData; }
