@@ -1,3 +1,18 @@
+2021-03-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Syntax highlighting for JSX is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=217613
+        <rdar://problem/70210975>
+
+        Reviewed by BJ Burg.
+
+        Out of the box, React specifies the "js" extension for JSX files.
+        Use JSX mode for source map resources with the "js" extension. This
+        appears to match what the other browsers' developer tools do.
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource):
+
 2021-03-10  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: CSS Grid Inspector clean-up
