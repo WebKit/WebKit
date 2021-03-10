@@ -353,6 +353,9 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     for (auto& scheme : parameters.urlSchemesRegisteredAsNoAccess)
         registerURLSchemeAsNoAccess(scheme);
     
+    for (auto&& websiteDataStoreParameters : WTFMove(parameters.websiteDataStoreParameters))
+        addWebsiteDataStore(WTFMove(websiteDataStoreParameters));
+
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting processPID=%d", this, WebCore::presentingApplicationPID());
 }
 
@@ -430,6 +433,8 @@ void NetworkProcess::addSessionStorageQuotaManager(PAL::SessionID sessionID, uin
     }).isNewEntry;
     if (isNewEntry)
         SandboxExtension::consumePermanently(cacheRootPathHandle);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void NetworkProcess::removeSessionStorageQuotaManager(PAL::SessionID sessionID)

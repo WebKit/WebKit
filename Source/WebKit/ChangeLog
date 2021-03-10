@@ -1,3 +1,33 @@
+2021-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r272376): [iOS] ASSERTION FAILED: sessionID.isEphemeral() || !path.isEmpty() in WebKit::NetworkProcess::swServerForSession
+        https://bugs.webkit.org/show_bug.cgi?id=222713
+
+        Reviewed by Geoff Garen.
+
+        Because NetworkProcess::CreateNetworkConnectionToWebProcess is sent with SendOption::DispatchMessageEvenWhenWaitingForSyncReply, it is possible
+        for two messages of type NetworkProcess::AddWebsiteDataStore and two messages of type NetworkProcess::CreateNetworkConnectionToWebProcess to be in the queue,
+        but the second NetworkProcess::CreateNetworkConnectionToWebProcess jumps to the front of the line while the UI process is waiting for the reply to the first.
+        Then, when calling NetworkProcess::swServerForSession we expect the session's parameters to have been initialized in the network process already, but we cut
+        ahead of the parameter initialization message.  This is a realistically rare condition that can only be hit when using SPI, but it is hit in the
+        ResourceLoadStatistics.StoreSuspension API test.  To fix this, we send the WebsiteDataStoreParameters from each WebsiteDataStore in the NetworkProcessCreationParameters.
+        To avoid doing extra work, we introduce an early return in NetworkProcessProxy::addSession if we have already added parameters from this session to the network process.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::addSessionStorageQuotaManager):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+        (WebKit::NetworkProcessProxy::addSession):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parametersFromEachWebsiteDataStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebViewImpl::flagsChanged()

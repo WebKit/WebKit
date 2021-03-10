@@ -208,7 +208,7 @@ NetworkProcessProxy& WebsiteDataStore::networkProcess()
 {
     if (!m_networkProcess) {
         m_networkProcess = networkProcessForSession(m_sessionID);
-        m_networkProcess->addSession(*this);
+        m_networkProcess->addSession(*this, NetworkProcessProxy::SendParametersToNetworkProcess::Yes);
     }
 
     return *m_networkProcess;
@@ -1908,6 +1908,15 @@ void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheMode
 {
     for (auto processPool : WebProcessPool::allProcessPools())
         processPool->setCacheModelSynchronouslyForTesting(cacheModel);
+}
+
+Vector<WebsiteDataStoreParameters> WebsiteDataStore::parametersFromEachWebsiteDataStore()
+{
+    Vector<WebsiteDataStoreParameters> parameters;
+    parameters.reserveInitialCapacity(allDataStores().size());
+    for (auto* dataStore : allDataStores().values())
+        parameters.uncheckedAppend(dataStore->parameters());
+    return parameters;
 }
 
 WebsiteDataStoreParameters WebsiteDataStore::parameters()

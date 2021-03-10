@@ -43,8 +43,13 @@ class Encoder;
 
 namespace WebKit {
 
+struct WebsiteDataStoreParameters;
+
 struct NetworkProcessCreationParameters {
     NetworkProcessCreationParameters();
+    NetworkProcessCreationParameters(NetworkProcessCreationParameters&&);
+    ~NetworkProcessCreationParameters();
+    NetworkProcessCreationParameters& operator=(NetworkProcessCreationParameters&&);
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
@@ -82,6 +87,8 @@ struct NetworkProcessCreationParameters {
 
     bool enablePrivateClickMeasurement { true };
     bool enablePrivateClickMeasurementDebugMode { false };
+
+    Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
 };
 
 } // namespace WebKit
