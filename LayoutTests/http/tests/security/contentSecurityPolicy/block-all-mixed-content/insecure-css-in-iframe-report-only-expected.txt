@@ -2,9 +2,9 @@ frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 frame "<!--frame1-->" - didCommitLoadForFrame
 CONSOLE MESSAGE: [Report Only] Blocked mixed content http://127.0.0.1:8000/security/mixedContent/resources/style.css because 'block-all-mixed-content' appears in the Content Security Policy.
-CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php was not allowed to run insecure content from http://127.0.0.1:8000/security/mixedContent/resources/style.css.
+CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.py was not allowed to run insecure content from http://127.0.0.1:8000/security/mixedContent/resources/style.css.
 
-frame "<!--frame1-->" - willPerformClientRedirectToURL: https://127.0.0.1:8443/security/contentSecurityPolicy/resources/echo-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php
+frame "<!--frame1-->" - willPerformClientRedirectToURL: https://127.0.0.1:8443/security/contentSecurityPolicy/resources/echo-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.py
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame
@@ -25,8 +25,8 @@ Frame: '<!--frame1-->'
 CSP report received:
 CONTENT_TYPE: application/csp-report
 HTTP_HOST: 127.0.0.1:8443
-HTTP_REFERER: https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php
+HTTP_REFERER: https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.py
 REQUEST_METHOD: POST
-REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php
+REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.py
 === POST DATA ===
-{"csp-report":{"document-uri":"https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php","referrer":"http://127.0.0.1:8000/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only.html","violated-directive":"block-all-mixed-content","effective-directive":"block-all-mixed-content","original-policy":"block-all-mixed-content; report-uri ../../resources/save-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php","blocked-uri":"http://127.0.0.1:8000","status-code":0}}
+{"csp-report":{"document-uri":"https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.py","referrer":"http://127.0.0.1:8000/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only.html","violated-directive":"block-all-mixed-content","effective-directive":"block-all-mixed-content","original-policy":"block-all-mixed-content; report-uri ../../resources/save-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.py","blocked-uri":"http://127.0.0.1:8000","status-code":0}}

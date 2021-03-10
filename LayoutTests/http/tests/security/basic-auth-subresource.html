@@ -137,17 +137,17 @@ const NumberOfIFrameTests = 3;
 
 var imageTests = [
 {
-    src: "resources/subresource1/protected-image.php",
+    src: "resources/subresource1/protected-image.py",
     onload: (image) => pass(image, DidLoadImage),
     onerror: (image) => fail(image, DidNotLoadImage),
 },
 {
-    src: "http://localhost:8000/security/resources/subresource1/protected-image.php",
+    src: "http://localhost:8000/security/resources/subresource1/protected-image.py",
     onload: (image) => fail(image, DidLoadImage),
     onerror: (image) => pass(image, DidNotLoadImage),
 },
 {
-    src: "https://localhost:8443/security/resources/subresource1/protected-image.php",
+    src: "https://localhost:8443/security/resources/subresource1/protected-image.py",
     onload: (image) => fail(image, DidLoadImage),
     onerror: (image) => pass(image, DidNotLoadImage),
 },

@@ -44,7 +44,7 @@ var searchParams = new URLSearchParams(document.location.search);
 
 var imageTests = [
 {
-    src: "subresource2/protected-image.php",
+    src: "subresource2/protected-image.py",
     onload: (image) => {
         if (document.location.origin === searchParams.get("top-origin"))
             pass(image, DidLoadImage);
@@ -59,17 +59,17 @@ var imageTests = [
     },
 },
 {
-    src: "http://127.0.0.1:8000/security/resources/subresource2/protected-image.php",
+    src: "http://127.0.0.1:8000/security/resources/subresource2/protected-image.py",
     onload: (image) => pass(image, DidLoadImage),
     onerror: (image) => fail(image, DidNotLoadImage),
 },
 {
-    src: "https://127.0.0.1:8443/security/resources/subresource2/protected-image.php",
+    src: "https://127.0.0.1:8443/security/resources/subresource2/protected-image.py",
     onload: (image) => fail(image, DidLoadImage),
     onerror: (image) => pass(image, DidNotLoadImage),
 },
 {
-    src: "https://localhost:8443/security/resources/subresource2/protected-image.php",
+    src: "https://localhost:8443/security/resources/subresource2/protected-image.py",
     onload: (image) => fail(image, DidLoadImage),
     onerror: (image) => pass(image, DidNotLoadImage),
 },

@@ -10,7 +10,7 @@ if (window.testRunner) {
 function createLinkElement(isCORS, handler)
 {
     link = document.createElement('link');
-    link.href = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=cssStyle.css&contentType=text/css&allowCredentials"
+    link.href = "http://127.0.0.1:8080/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=cssStyle.css&contentType=text/css&allowCredentials"
     link.rel = "stylesheet";
     link.type = "text/css";
     if (isCORS)

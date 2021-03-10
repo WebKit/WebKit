@@ -141,8 +141,8 @@ http/tests/misc/willCacheResponse-delegate-callback.html [ Skip ]
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
 
 # testRunner.setStatisticsShouldDowngradeReferrer() is not supported on Windows
-http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.php [ Skip ] 
-http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.php [ Skip ] 
+http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py [ Skip ] 
+http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py [ Skip ] 
 http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
 http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ] 
@@ -765,7 +765,7 @@ webkit.org/b/117323 platform/win/plugins/call-javascript-that-destroys-plugin.ht
 webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html [ Skip ]
 
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html [ Skip ]
-http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php [ Skip ]
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py [ Skip ]
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html [ Skip ]
 
 http/tests/security/blob-null-url-location-origin.html [ Skip ]
@@ -4181,7 +4181,7 @@ webkit.org/b/189836 webanimations/accelerated-animation-suspension.html [ Skip ]
 [ Win10 ] fast/text/international/hindi-spacing.html [ Failure ]
 [ Win10 ] fast/text/international/thai-baht-space.html [ Failure ]
 [ Win10 ] fast/text/orientation-sideways.html [ Failure ]
-[ Win10 ] http/tests/security/contentSecurityPolicy/report-blocked-file-uri.php [ Failure ]
+[ Win10 ] http/tests/security/contentSecurityPolicy/report-blocked-file-uri.py [ Failure ]
 [ Win10 ] http/tests/security/frame-loading-via-document-write-async-delegates.html [ Failure ]
 [ Win10 ] http/tests/security/frame-loading-via-document-write.html [ Failure ]
 [ Win10 ] http/tests/security/local-CSS-from-remote.html [ Failure ]

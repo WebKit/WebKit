@@ -1451,7 +1451,7 @@ fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit.html [ Pass
 fast/viewport/ios/width-is-device-width-overflowing.html [ Pass Failure ]
 fast/viewport/ios/width-is-device-width.html [ Pass Failure ]
 fast/zooming/ios/zoom-to-scale.html [ Pass Failure Timeout ]
-http/tests/security/contentSecurityPolicy/report-only-from-header.php [ Pass Failure ]
+http/tests/security/contentSecurityPolicy/report-only-from-header.py [ Pass Failure ]
 imported/blink/css3/blending/svg-isolation-add-filter.html [ Pass ImageOnlyFailure ]
 imported/blink/css3/blending/svg-isolation-add-isolation.html [ Pass ImageOnlyFailure ]
 imported/blink/css3/blending/svg-isolation-remove-opacity.html [ Pass ImageOnlyFailure ]

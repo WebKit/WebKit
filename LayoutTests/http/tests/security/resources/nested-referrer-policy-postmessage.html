@@ -17,10 +17,10 @@ function receiveMessage(messageEvent)
     else {
         // From owner
         if (messageEvent.data === "new-window")
-            window.open("referrer-policy-postmessage.php");
+            window.open("referrer-policy-postmessage.py");
         else if (messageEvent.data === "new-subframe") {
             var subframe = document.createElement("iframe");
-            subframe.src = "referrer-policy-postmessage.php";
+            subframe.src = "referrer-policy-postmessage.py";
             document.body.appendChild(subframe);
         }
     }

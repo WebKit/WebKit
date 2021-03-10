@@ -1,3 +1,496 @@
+2021-03-10  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/security convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222668
+        <rdar://problem/74993152>
+
+        Reviewed by Jonathan Bedard.
+
+        * TestExpectations:
+        * http/tests/fetch/redirectmode-and-preload-expected.txt:
+        * http/tests/fetch/redirectmode-and-preload.html:
+        * http/tests/local/file-url-sent-as-referer.html:
+        * http/tests/security/basic-auth-subresource-expected.txt:
+        * http/tests/security/basic-auth-subresource.html:
+        * http/tests/security/cached-cross-origin-preloaded-css-stylesheet-expected.txt:
+        * http/tests/security/cached-cross-origin-preloaded-css-stylesheet.html:
+        * http/tests/security/cached-cross-origin-preloading-css-stylesheet-expected.txt:
+        * http/tests/security/cached-cross-origin-preloading-css-stylesheet.html:
+        * http/tests/security/cached-cross-origin-shared-css-stylesheet.html:
+        * http/tests/security/cannot-read-cssrules-redirect.html:
+        * http/tests/security/cannot-read-cssrules.html:
+        * http/tests/security/canvas-remote-read-remote-image-allowed-with-credentials.html:
+        * http/tests/security/canvas-remote-read-remote-image-allowed.html:
+        * http/tests/security/canvas-remote-read-remote-image-blocked-no-crossorigin.html:
+        * http/tests/security/canvas-remote-read-remote-image-blocked-then-allowed.html:
+        * http/tests/security/clean-origin-css-exposed-resource-timing.html:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-in-enforced-policy-and-not-in-report-only.html:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.html:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-same-origin.html:
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect.html:
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/module-scriptnonce-in-enforced-policy-and-not-in-report-only.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/module-scriptnonce-in-enforced-policy-and-not-in-report-only.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/module-scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/module-scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scripthash-in-enforced-policy-and-not-in-report-only.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scripthash-in-enforced-policy-and-not-in-report-only.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scripthash-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scripthash-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scriptnonce-in-enforced-policy-and-not-in-report-only.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scriptnonce-in-enforced-policy-and-not-in-report-only.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-in-enforced-policy-and-not-in-report-only.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-enforced-policy-and-blocked-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.py: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-in-enforced-policy-and-not-in-report-only.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-in-one-enforced-policy-neither-in-another-enforced-policy-nor-report-policy.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-redirect.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php: Removed.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.py: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image-with-enforced-and-report-policies.php: Removed.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image-with-enforced-and-report-policies.py: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked.html:
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.php: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.py: Added.
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode.php: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode.py: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-inside-csp.html:
+        * http/tests/security/contentSecurityPolicy/image-document-default-src-none.html:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-and-enforce.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-blocked-data-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-data-uri.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-blocked-data-uri.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-and-do-not-follow-redirect-when-sending-report-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-and-do-not-follow-redirect-when-sending-report.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-and-do-not-follow-redirect-when-sending-report.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.php:
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-only-from-header.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-report-uri-missing.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-only-report-uri-missing.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-upgrade-insecure-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-upgrade-insecure.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-only-upgrade-insecure.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-only.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-only.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.py: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri.php: Removed.
+        * http/tests/security/contentSecurityPolicy/report-uri.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/child-src-test.js:
+        (injectFrameRedirectingTo):
+        * http/tests/security/contentSecurityPolicy/resources/determine-content-security-policy-header.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/generate-csp-report.php:
+        * http/tests/security/contentSecurityPolicy/resources/go-to-echo-report.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/go-to-echo-report.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/image-document-default-src-none-iframe.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/image-document-default-src-none-iframe.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/redir.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/sandbox.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/sandbox.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/sandboxed-eval.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/sandboxed-eval.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/utils.py: Added.
+        (determine_content_security_policy_header):
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-allowed.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-allowed.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-blocked.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-blocked.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-allowed.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-allowed.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-allowed.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-allowed.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-blocked.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-blocked.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/xsl-redirect-allowed.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/xsl-redirect-allowed.py: Added.
+        * http/tests/security/contentSecurityPolicy/resources/xsl-redirect-blocked.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/xsl-redirect-blocked.py: Added.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report-expected.txt:
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php: Removed.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-control.html:
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header.html:
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header2.py: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe.php: Removed.
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe.py: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header.php: Removed.
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header.py: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-control-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-control.html:
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header.html:
+        * http/tests/security/contentSecurityPolicy/sandbox-invalid-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-invalid-header.html:
+        * http/tests/security/contentSecurityPolicy/sandbox-report-only.html:
+        * http/tests/security/contentSecurityPolicy/script-src-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-redirect.html:
+        * http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher.php: Removed.
+        * http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher.py: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin.html:
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-allowed.html:
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-without-csp-importScripts-redirect-cross-origin-allowed.html:
+        * http/tests/security/contentSecurityPolicy/xsl-allowed.php: Removed.
+        * http/tests/security/contentSecurityPolicy/xsl-allowed.py: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-blocked.php: Removed.
+        * http/tests/security/contentSecurityPolicy/xsl-blocked.py: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-img-blocked.php: Removed.
+        * http/tests/security/contentSecurityPolicy/xsl-img-blocked.py: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed.html:
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed2.html:
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php: Removed.
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.py: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2.php: Removed.
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2.py: Added.
+        * http/tests/security/cookie-module-import-expected.txt:
+        * http/tests/security/cookie-module-import-propagate-expected.txt:
+        * http/tests/security/cookie-module-import-propagate.html:
+        * http/tests/security/cookie-module-import.html:
+        * http/tests/security/cookie-module-propagate-expected.txt:
+        * http/tests/security/cookie-module-propagate.html:
+        * http/tests/security/cookie-module.html:
+        * http/tests/security/cookies/cookies-wrong-domain-rejected.php: Removed.
+        * http/tests/security/cookies/cookies-wrong-domain-rejected.py: Added.
+        * http/tests/security/cors-post-redirect-301.html:
+        * http/tests/security/cors-post-redirect-302.html:
+        * http/tests/security/cors-post-redirect-303.html:
+        * http/tests/security/cors-post-redirect-307-pson.html:
+        * http/tests/security/cors-post-redirect-307.html:
+        * http/tests/security/cors-post-redirect-308.html:
+        * http/tests/security/credentials-in-referer.html:
+        * http/tests/security/credentials-main-resource.html:
+        * http/tests/security/cross-origin-cached-images-canvas.html:
+        * http/tests/security/cross-origin-cached-images-expected.txt:
+        * http/tests/security/cross-origin-cached-images-parallel-expected.txt:
+        * http/tests/security/cross-origin-cached-images-parallel.html:
+        * http/tests/security/cross-origin-cached-images.html:
+        * http/tests/security/cross-origin-cached-resource-expected.txt:
+        * http/tests/security/cross-origin-cached-scripts-expected.txt:
+        * http/tests/security/cross-origin-cached-scripts-parallel-expected.txt:
+        * http/tests/security/cross-origin-cached-scripts-parallel.html:
+        * http/tests/security/cross-origin-cached-scripts.html:
+        * http/tests/security/cross-origin-clean-css-resource-timing.html:
+        * http/tests/security/cross-origin-css-9.html:
+        * http/tests/security/cross-origin-css-resource-timing.html:
+        * http/tests/security/css-mask-image-credentials.html:
+        * http/tests/security/css-mask-image.html:
+        * http/tests/security/http-0.9/default-port-script-blocked.html:
+        * http/tests/security/http-0.9/resources/close-connection.php: Removed.
+        * http/tests/security/http-0.9/resources/close-connection.py: Added.
+        * http/tests/security/import-module-crossorigin-loads-error.html:
+        * http/tests/security/import-script-crossorigin-loads-error.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr-redirect.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-blob-importScript-redirect-cross-origin.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-importScripts-redirect-cross-origin.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker-redirect.html:
+        * http/tests/security/isolatedWorld/bypass-worker-csp-for-xhr-redirect-cross-origin.html:
+        * http/tests/security/isolatedWorld/bypass-worker-csp-for-xhr.html:
+        * http/tests/security/load-image-after-redirection-2-expected.txt:
+        * http/tests/security/load-image-after-redirection-2.html:
+        * http/tests/security/load-image-after-redirection-expected.txt:
+        * http/tests/security/load-image-after-redirection.html:
+        * http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https.html:
+        * http/tests/security/mixedContent/insecure-basic-auth-image.https-expected.txt:
+        * http/tests/security/mixedContent/insecure-basic-auth-image.https.html:
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials-expected.txt:
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-expected.txt:
+        * http/tests/security/mixedContent/insecure-script-redirects-to-basic-auth-secure-script-expected.https.txt:
+        * http/tests/security/mixedContent/insecure-script-redirects-to-basic-auth-secure-script-expected.txt:
+        * http/tests/security/mixedContent/insecure-stylesheet-redirects-to-basic-auth-secure-stylesheet-expected.txt:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-image-redirects-to-basic-auth-secure-image.html:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-script-redirects-to-basic-auth-secure-script.html:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-stylesheet-redirects-to-basic-auth-secure-stylesheet.html:
+        * http/tests/security/mixedContent/resources/frame-with-programmatically-added-insecure-image-redirects-to-basic-auth-secure-image.html:
+        * http/tests/security/mixedContent/resources/subresource/protected-image.php: Removed.
+        * http/tests/security/mixedContent/resources/subresource/protected-image.py: Added.
+        * http/tests/security/mixedContent/resources/subresource/protected-page.php: Removed.
+        * http/tests/security/mixedContent/resources/subresource/protected-page.py: Added.
+        * http/tests/security/mixedContent/resources/subresource/protected-script.php: Removed.
+        * http/tests/security/mixedContent/resources/subresource/protected-script.py: Added.
+        * http/tests/security/mixedContent/resources/subresource/protected-stylesheet.php: Removed.
+        * http/tests/security/mixedContent/resources/subresource/protected-stylesheet.py: Added.
+        * http/tests/security/mixedContent/resources/subresource2/protected-image.php: Removed.
+        * http/tests/security/mixedContent/resources/subresource2/protected-image.py: Added.
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-insecure-page.https-expected.txt:
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-insecure-page.https.html:
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https-expected.txt:
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https.html:
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html:
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html:
+        * http/tests/security/no-javascript-location-percent-escaped.html:
+        * http/tests/security/no-javascript-location.html:
+        * http/tests/security/no-javascript-refresh-expected.txt:
+        * http/tests/security/no-javascript-refresh-percent-escaped.php: Removed.
+        * http/tests/security/no-javascript-refresh-percent-escaped.py: Added.
+        * http/tests/security/no-javascript-refresh-spaces-expected.txt:
+        * http/tests/security/no-javascript-refresh-spaces.php: Removed.
+        * http/tests/security/no-javascript-refresh-spaces.py: Added.
+        * http/tests/security/no-javascript-refresh.php: Removed.
+        * http/tests/security/no-javascript-refresh.py: Added.
+        * http/tests/security/no-referrer.html:
+        * http/tests/security/private-browsing-http-auth.html:
+        * http/tests/security/referrer-policy-attribute-style-no-referrer.html:
+        * http/tests/security/referrer-policy-header-and-meta-tag-emptyString.html:
+        * http/tests/security/referrer-policy-header-and-meta-tag.html:
+        * http/tests/security/referrer-policy-window-open.html:
+        * http/tests/security/resources/abe-allow-credentials.php: Removed.
+        * http/tests/security/resources/abe-allow-credentials.py: Added.
+        * http/tests/security/resources/abe-allow-star.php: Removed.
+        * http/tests/security/resources/abe-allow-star.py: Added.
+        * http/tests/security/resources/allow-if-origin.php: Removed.
+        * http/tests/security/resources/allow-if-origin.py: Added.
+        * http/tests/security/resources/attachment.php: Removed.
+        * http/tests/security/resources/auth-echo.php: Removed.
+        * http/tests/security/resources/auth-echo.py: Added.
+        * http/tests/security/resources/basic-auth-subresource.html:
+        * http/tests/security/resources/canvas-cors-subtest.html:
+        * http/tests/security/resources/captions-with-access-control-headers.php: Removed.
+        * http/tests/security/resources/captions-with-access-control-headers.py: Added.
+        * http/tests/security/resources/cookie-protected-script.php: Removed.
+        * http/tests/security/resources/cookie-protected-script.py: Added.
+        * http/tests/security/resources/cors-deny.php: Removed.
+        * http/tests/security/resources/cors-deny.py: Added.
+        * http/tests/security/resources/cors-post-redirect-target.php: Removed.
+        * http/tests/security/resources/cors-post-redirect-target.py: Added.
+        * http/tests/security/resources/credentials-in-referer-frame.php: Removed.
+        * http/tests/security/resources/credentials-in-referer-frame.py: Added.
+        * http/tests/security/resources/credentials-in-referer.php: Removed.
+        * http/tests/security/resources/credentials-in-referer.py: Added.
+        * http/tests/security/resources/credentials-main-resource.php: Removed.
+        * http/tests/security/resources/credentials-main-resource.py: Added.
+        * http/tests/security/resources/css-mask-image-credentials-2.html:
+        * http/tests/security/resources/echo-referrer.php: Removed.
+        * http/tests/security/resources/echo-referrer.py: Added.
+        * http/tests/security/resources/empty-svg.php: Removed.
+        * http/tests/security/resources/empty-svg.py: Added.
+        * http/tests/security/resources/get-css-if-origin-header.php: Removed.
+        * http/tests/security/resources/get-css-if-origin-header.py: Added.
+        * http/tests/security/resources/green-if-no-referrer-css.php: Removed.
+        * http/tests/security/resources/green-if-no-referrer-css.py: Added.
+        * http/tests/security/resources/image-access-control.php: Removed.
+        * http/tests/security/resources/image-access-control.py: Added.
+        * http/tests/security/resources/image-credential-check.php: Removed.
+        * http/tests/security/resources/image-credential-check.py: Added.
+        * http/tests/security/resources/import-module-crossorigin-loads-error-src.js:
+        * http/tests/security/resources/imported-loading-subresources.css:
+        (#mydiv):
+        * http/tests/security/resources/loading-subresources.css:
+        (#mydiv):
+        * http/tests/security/resources/loading-subresources.php: Removed.
+        * http/tests/security/resources/loading-subresources.py: Added.
+        * http/tests/security/resources/module-nest-import.php: Removed.
+        * http/tests/security/resources/module-nest-import.py: Added.
+        * http/tests/security/resources/nested-referrer-policy-postmessage.html:
+        * http/tests/security/resources/no-javascript-location-percent-escaped.php: Removed.
+        * http/tests/security/resources/no-javascript-location-percent-escaped.py: Added.
+        * http/tests/security/resources/no-javascript-location.php: Removed.
+        * http/tests/security/resources/no-javascript-location.py: Added.
+        * http/tests/security/resources/no-referrer-frame.php: Removed.
+        * http/tests/security/resources/no-referrer-frame.py: Added.
+        * http/tests/security/resources/no-referrer.php: Removed.
+        * http/tests/security/resources/no-referrer.py: Added.
+        * http/tests/security/resources/pass-if-no-referrer.php: Removed.
+        * http/tests/security/resources/pass-if-no-referrer.py: Added.
+        * http/tests/security/resources/postReferrer.php: Removed.
+        * http/tests/security/resources/postReferrer.py: Added.
+        * http/tests/security/resources/redirect-allow-star.php: Removed.
+        * http/tests/security/resources/redirect-allow-star.py: Added.
+        * http/tests/security/resources/redirect.php: Removed.
+        * http/tests/security/resources/redirect.py: Added.
+        * http/tests/security/resources/referrer-policy-log.php: Removed.
+        * http/tests/security/resources/referrer-policy-log.py: Added.
+        * http/tests/security/resources/referrer-policy-postmessage.php: Removed.
+        * http/tests/security/resources/referrer-policy-postmessage.py: Added.
+        * http/tests/security/resources/referrer-policy-redirect-link-downgrade.html:
+        * http/tests/security/resources/referrer-policy-redirect-link.html:
+        * http/tests/security/resources/referrer-policy-redirect.html:
+        * http/tests/security/resources/referrer-policy-start.html:
+        * http/tests/security/resources/rel-noreferrer.html:
+        * http/tests/security/resources/send-mime-types.php: Removed.
+        * http/tests/security/resources/send-mime-types.py: Added.
+        * http/tests/security/resources/serve-referrer-policy-and-meta-tag.php: Removed.
+        * http/tests/security/resources/serve-referrer-policy-and-meta-tag.py: Added.
+        * http/tests/security/resources/serve-referrer-policy-and-test.php:
+        * http/tests/security/resources/set-cookie.php: Removed.
+        * http/tests/security/resources/set-cookie.py: Added.
+        * http/tests/security/resources/showRefererImage.php: Removed.
+        * http/tests/security/resources/showRefererImage.py: Added.
+        * http/tests/security/resources/subresource1/protected-image.php: Removed.
+        * http/tests/security/resources/subresource1/protected-image.py: Added.
+        * http/tests/security/resources/subresource2/protected-image.php: Removed.
+        * http/tests/security/resources/subresource2/protected-image.py: Added.
+        * http/tests/security/resources/xorigincss1-allow-star.php: Removed.
+        * http/tests/security/resources/xorigincss1-allow-star.py: Added.
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-1.html:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-2.html:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-3-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-3.html:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-4.html:
+        * http/tests/security/shape-image-cors-redirect.html:
+        * http/tests/security/shape-image-cors.html:
+        * http/tests/security/shape-outside-and-cached-resources-expected.html:
+        * http/tests/security/shape-outside-and-cached-resources.html:
+        * http/tests/security/srcdoc-inherits-referrer-for-forms.html:
+        * http/tests/security/srcdoc-inherits-referrer.html:
+        * http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html:
+        * http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html:
+        * http/tests/security/svg-image-leak.html:
+        * http/tests/security/text-track-crossorigin.html:
+        * http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html:
+        * http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html:
+        * http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html:
+        * http/tests/security/webgl-remote-read-remote-image-allowed.html:
+        * http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html:
+        * http/tests/security/xss-DENIED-getSVGDocument-iframe.html:
+        * http/tests/security/xss-DENIED-getSVGDocument-object.html:
+        * http/tests/security/xss-DENIED-mime-type-execute-as-html.html:
+        * http/tests/security/xssAuditor/crash-while-loading-tag-with-pause.html:
+        * http/tests/security/xssAuditor/full-block-iframe-no-inherit.php: Removed.
+        * http/tests/security/xssAuditor/full-block-iframe-no-inherit.py: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/resources/tag-with-pause.php: Removed.
+        * http/tests/security/xssAuditor/resources/tag-with-pause.py: Added.
+        * http/tests/ssl/referer-301.html:
+        * http/tests/ssl/referer-303.html:
+        * http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash.html:
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/win/http/tests/security/basic-auth-subresource-expected.txt:
+        * platform/win/http/tests/security/contentSecurityPolicy/1.1/child-src/worker-redirect-blocked-expected.txt:
+        * platform/win/http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt:
+        * platform/win/http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * platform/wk2/TestExpectations:
+        * platform/wk2/http/tests/security/basic-auth-subresource-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies-expected.txt:
+        * platform/wk2/http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * platform/wk2/http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials-expected.txt:
+        * platform/wk2/http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * platform/wk2/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+
 2021-03-10  Antoine Quint  <graouts@webkit.org>
 
         Improve font-variation-settings interpolation

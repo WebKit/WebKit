@@ -15,7 +15,7 @@ function done(msg) {
 
 // Executed with "omit".
 // https://github.com/tc39/proposal-dynamic-import/blob/master/HTML%20Integration.md
-import("http://localhost:8000/security/resources/cors-deny.php?credentials=true").then(
+import("http://localhost:8000/security/resources/cors-deny.py?credentials=true").then(
     function() { done("FAIL");},
     function() { done("PASS"); });
 </script>

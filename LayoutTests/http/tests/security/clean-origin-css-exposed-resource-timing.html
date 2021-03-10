@@ -34,9 +34,9 @@ document.fonts.ready.then(async () => {
         if (!hasImport)
             hasImport = entries.some(entry => entry.name.includes('imported-loading-subresources.css'));
         if (!hasImage)
-            hasImage = entries.some(entry => entry.name.includes('abe-allow-star.php?image'));
+            hasImage = entries.some(entry => entry.name.includes('abe-allow-star.py?image'));
         if (!hasCursor)
-            hasCursor = entries.some(entry => entry.name.includes('abe-allow-star.php?cursor'));
+            hasCursor = entries.some(entry => entry.name.includes('abe-allow-star.py?cursor'));
         if (!hasFont)
             hasFont = entries.some(entry => entry.name.includes('Ahem.woff'));
         if (hasImport && hasImage && hasFont && hasCursor)

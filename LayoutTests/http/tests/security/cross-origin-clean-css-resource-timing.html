@@ -4,7 +4,7 @@
 <title>CSS subresources of a clean stylesheet should populate resource timing entries, but not for imported stylesheets</title>
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
-<link href='http://localhost:8080/security/resources/loading-subresources.php' rel='stylesheet' type='text/css' crossorigin="anonymous">
+<link href='http://localhost:8080/security/resources/loading-subresources.py' rel='stylesheet' type='text/css' crossorigin="anonymous">
 </head>
 <body>
 <div id="mydiv" style="font: 12px 'ahem'">Test</div>
@@ -34,9 +34,9 @@ document.fonts.ready.then(async () => {
         if (!hasImport)
             hasImport = entries.some(entry => entry.name.includes('imported-loading-subresources.css'));
         if (!hasImage)
-            hasImage = entries.some(entry => entry.name.includes('abe-allow-star.php?image'));
+            hasImage = entries.some(entry => entry.name.includes('abe-allow-star.py?image'));
         if (!hasCursor)
-            hasCursor = entries.some(entry => entry.name.includes('abe-allow-star.php?cursor'));
+            hasCursor = entries.some(entry => entry.name.includes('abe-allow-star.py?cursor'));
         if (!hasFont)
             hasFont = entries.some(entry => entry.name.includes('Ahem.woff'));
         if (hasImport && hasFont && hasCursor)

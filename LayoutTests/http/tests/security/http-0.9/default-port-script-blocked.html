@@ -12,7 +12,7 @@ if (window.testRunner) {
 
 async function closeConnectionsThenAddFrame() {
     for (var i = 0; i < 6; i = i + 1) {
-        await fetch('resources/close-connection.php', {mode: 'no-cors'});
+        await fetch('resources/close-connection.py', {mode: 'no-cors'});
     }
     var iframe = document.createElement('iframe');
     iframe.src = "resources/nph-alert-fail.pl";

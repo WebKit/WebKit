@@ -23,7 +23,7 @@ window.addEventListener("load", function() {
 }, false);
 </script>
 First we load an image as a control to make sure we can set cookies:<br>
-<img src="http://127.0.0.1:8000/security/resources/set-cookie.php?name=img&amp;value=PASS">
+<img src="http://127.0.0.1:8000/security/resources/set-cookie.py?name=img&amp;value=PASS">
 
 Then we load an SVGImage to see if we can issue network requests from inside the image:<br>
 <img height=200px src='data:image/svg+xml;utf8,
@@ -31,7 +31,7 @@ Then we load an SVGImage to see if we can issue network requests from inside the
 <defs>
 
 <style type="text/css">
-@font-face { font-family: Extern2; src: url(http://127.0.0.1:8000/security/resources/set-cookie.php?name=font&amp;amp;value=FAIL) format("woff"); }
+@font-face { font-family: Extern2; src: url(http://127.0.0.1:8000/security/resources/set-cookie.py?name=font&amp;amp;value=FAIL) format("woff"); }
 
 .cc {
 font-family: Extern2;
@@ -40,7 +40,7 @@ font-size: 20px;
 </style>
 
 <style type="text/css">
-@import url("http://127.0.0.1:8000/security/resources/set-cookie.php?name=import&amp;amp;value=FAIL");
+@import url("http://127.0.0.1:8000/security/resources/set-cookie.py?name=import&amp;amp;value=FAIL");
 </style>
 </defs>
 

@@ -4,5 +4,5 @@
     src: url("/resources/Ahem.woff");
 }
 #mydiv {
-  cursor: url("/security/resources/abe-allow-star.php?cursor"), auto;
+  cursor: url("/security/resources/abe-allow-star.py?cursor"), auto;
 }

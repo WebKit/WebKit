@@ -21,13 +21,13 @@
     }
 
     var referrer;
-    fetch("resources/echo-referrer.php").then(function(response) {
+    fetch("resources/echo-referrer.py").then(function(response) {
         return response.text();
     }).then(function(data) {
         referrer = data;
         shouldBeEqualToString("referrer", "http://127.0.0.1:8000/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html");
 
-        openIframe("resources/redirect.php?redirectTo=http://localhost:8000/security/resources/echo-referrer.php", finishJSTest);
+        openIframe("resources/redirect.py?redirectTo=http://localhost:8000/security/resources/echo-referrer.py", finishJSTest);
 
     }).catch(function(error) {
         console.log(error.message);

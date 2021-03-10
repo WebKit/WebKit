@@ -22,7 +22,7 @@ function firstFrameLoaded() {
     // no credentials should be sent out automatically this time.
     
     var frame = document.createElement("iframe");
-    frame.setAttribute("src", "resources/auth-echo.php");
+    frame.setAttribute("src", "resources/auth-echo.py");
     frame.setAttribute("onload", "secondFrameLoaded()");
     document.body.appendChild(frame);
 }

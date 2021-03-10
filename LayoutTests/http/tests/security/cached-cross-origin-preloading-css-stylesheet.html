@@ -12,10 +12,10 @@ function errorPreload(e)
 }
 
 </script>
-<link rel=preload onerror="errorPreload(1)" as=style href="http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials">
-<link rel=preload onerror="errorPreload(2)" as=style href="http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials">
-<link rel=preload onerror="errorPreload(3)" as=style crossorigin="with-credentials" href="http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials">
-<link rel=preload onload="errorPreload(4)"  as=style crossorigin="with-credentials" href="http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials">
+<link rel=preload onerror="errorPreload(1)" as=style href="http://localhost:8000/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials">
+<link rel=preload onerror="errorPreload(2)" as=style href="http://localhost:8080/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials">
+<link rel=preload onerror="errorPreload(3)" as=style crossorigin="with-credentials" href="http://localhost:8000/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials">
+<link rel=preload onload="errorPreload(4)"  as=style crossorigin="with-credentials" href="http://localhost:8080/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials">
 <div id="log"></div>
 <script>
 var maxResults = 5;
@@ -60,15 +60,15 @@ function createLinkElement(url, isCORS, expectSuccess)
 }
 
 // Preload 1 (no-cors) with link element (cors): should fail
-document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", true, false));
+document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", true, false));
 // Preload 1 (no-cors) with link element (no-cors): should succeed
-document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", false, true));
+document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", false, true));
 // Preload 2 (no-cors) with link element (cors): should succeed since 127.0.0.1:8000 allowed
-document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials", true, true));
+document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials", true, true));
 // Preload 3 (cors) with link element (cors): should succeed
-document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials", true, true));
+document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials", true, true));
 // Preload 4 (cors, preload should fail) with link element (no-cors): should succeed
-document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials", false, true));
+document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.py?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials", false, true));
 </script>
 </body>
 </html>

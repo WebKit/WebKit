@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Security-Policy" content="connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php">
+<meta http-equiv="Content-Security-Policy" content="connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py">
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
@@ -25,7 +25,7 @@ function testLoadXHRThatRedirects()
     var xhr = new XMLHttpRequest;
     xhr.onload = function () { window.postMessage("PASS did receive XHR response.", "*"); };
     xhr.onerror = function () { window.postMessage("FAIL did not receive XHR response.", "*"); };
-    xhr.open("GET", "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi");
+    xhr.open("GET", "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi");
     xhr.send();
 }
 
