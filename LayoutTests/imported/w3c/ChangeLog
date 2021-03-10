@@ -1,3 +1,15 @@
+2021-03-09  Antoine Quint  <graouts@webkit.org>
+
+        Correctly blend the flex-basis CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=222981
+
+        Reviewed by Dean Jackson.
+
+        Add an extra 14 PASS results. We now pass all the flex-basis interpolation tests.
+
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-composition-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-interpolation-expected.txt:
+
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/dom tests from upstream
