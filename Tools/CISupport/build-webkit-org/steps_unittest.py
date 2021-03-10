@@ -909,3 +909,56 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=EXCEPTION, state_string='layout-tests (exception)')
         return self.runStep()
+
+
+class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
+        self.jsonFileName = 'jsc_results.json'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        del os.environ['RESULTS_SERVER_API_KEY']
+        return self.tearDownBuildStep()
+
+    def configureStep(self, platform=None, fullPlatform=None, configuration=None):
+        self.setupStep(RunJavaScriptCoreTests())
+        if platform:
+            self.setProperty('platform', platform)
+        if fullPlatform:
+            self.setProperty('fullPlatform', fullPlatform)
+        if configuration:
+            self.setProperty('configuration', configuration)
+        self.setProperty('buildername', 'JSC-Tests')
+        self.setProperty('buildnumber', '101')
+        self.setProperty('workername', 'bot100')
+
+    def test_success(self):
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', './Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'],
+                        logfiles={'json': self.jsonFileName},
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='jscore-test')
+        return self.runStep()
+
+    def test_failure(self):
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', './Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'],
+                        logfiles={'json': self.jsonFileName},
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+                        )
+            + ExpectShell.log('stdio', stdout='Results for JSC stress tests:\n 9 failures found.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='9 JSC tests failed')
+        return self.runStep()

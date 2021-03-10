@@ -432,6 +432,10 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
 
     def start(self):
         self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+        self.failedTestCount = 0
+
         platform = self.getProperty('platform')
         architecture = self.getProperty("architecture")
         # Currently run-javascriptcore-test doesn't support run javascript core test binaries list below remotely
@@ -449,7 +453,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         return shell.Test.start(self)
 
     def countFailures(self, cmd):
-        logText = cmd.logs['stdio'].getText()
+        logText = self.log_observer.getStdout()
         count = 0
 
         match = re.search(r'^Results for JSC stress tests:\r?\n\s+(\d+) failure', logText, re.MULTILINE)
