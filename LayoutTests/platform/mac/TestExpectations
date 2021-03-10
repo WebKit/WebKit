@@ -2228,8 +2228,10 @@ webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 # Mojave doesn't support COLR fonts.
 webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
 
-# rdar://rdar://71039166
-[ Mojave ] http/tests/canvas/color-fonts [ Skip ]
+webkit.org/b/223005 [ BigSur+ arm64 ] fast/text/canvas-color-fonts/stroke-color-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/223005 [ BigSur+ arm64 ] fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/223005 [ BigSur+ arm64 ] http/tests/canvas/color-fonts/stroke-color-sbix.html [ ImageOnlyFailure ]
+webkit.org/b/223005 [ BigSur+ arm64 ] http/tests/canvas/color-fonts/stroke-color-shadow-sbix.html [ ImageOnlyFailure ]
 
 webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
 
