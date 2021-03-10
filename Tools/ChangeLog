@@ -1,3 +1,13 @@
+2021-03-10  Sam Sneddon  <gsnedders@apple.com>
+
+        Mark myself as a committer.
+
+        Unreviewed.
+
+        Also claim I know about webkitpy.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Reenable -fvisibility=hidden
