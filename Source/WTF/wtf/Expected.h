@@ -452,7 +452,7 @@ public:
 
     expected& operator=(const expected& e) { type(e).swap(*this); return *this; }
     expected& operator=(expected&& e) { type(std::move(e)).swap(*this); return *this; }
-    template<class U> expected& operator=(U&& u) { type(std::move(u)).swap(*this); return *this; }
+    template<class U> expected& operator=(U&& u) { type(std::forward<U>(u)).swap(*this); return *this; }
     expected& operator=(const unexpected_type& u) { type(u).swap(*this); return *this; }
     expected& operator=(unexpected_type&& u) { type(std::move(u)).swap(*this); return *this; }
     // template<class... Args> void emplace(Args&&...);

@@ -181,7 +181,7 @@ private:
 
 template<typename T, typename AccessTraits> inline NeverDestroyed<T, AccessTraits> makeNeverDestroyed(T&& argument)
 {
-    return WTFMove(argument);
+    return std::forward<T>(argument);
 }
 
 template<typename T>

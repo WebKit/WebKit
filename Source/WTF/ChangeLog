@@ -1,3 +1,20 @@
+2021-03-10  Dean Jackson  <dino@apple.com>
+
+        Use std::forward for forwarding references instead of WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=223040
+
+        Reviewed by Darin Adler.
+
+        A newer version of clang produced a helpful warning that told
+        us we were using WTFMove in places where we should use std::forward.
+
+        * wtf/Expected.h:
+        (std::experimental::fundamentals_v3::expected::operator=):
+        * wtf/Function.h:
+        (WTF::Function<Out):
+        * wtf/NeverDestroyed.h:
+        (WTF::makeNeverDestroyed):
+
 2021-03-09  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make WebKit API Objective-C objects safe to release on non-main threads
