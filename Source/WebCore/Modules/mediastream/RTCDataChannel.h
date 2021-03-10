@@ -50,7 +50,7 @@ class RTCPeerConnectionHandler;
 class RTCDataChannel final : public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(RTCDataChannel);
 public:
-    static Ref<RTCDataChannel> create(Document&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
+    static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
     bool ordered() const { return *m_options.ordered; }
     Optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
@@ -80,9 +80,9 @@ public:
     using RTCDataChannelHandlerClient::deref;
 
 private:
-    RTCDataChannel(Document&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
+    RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
-    static NetworkSendQueue createMessageQueue(Document&, RTCDataChannel&);
+    static NetworkSendQueue createMessageQueue(ScriptExecutionContext&, RTCDataChannel&);
 
     void scheduleDispatchEvent(Ref<Event>&&);
 

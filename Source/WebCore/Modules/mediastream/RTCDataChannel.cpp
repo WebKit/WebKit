@@ -54,19 +54,19 @@ static const AtomString& arraybufferKeyword()
     return arraybuffer;
 }
 
-Ref<RTCDataChannel> RTCDataChannel::create(Document& document, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
+Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
 {
     ASSERT(handler);
-    auto channel = adoptRef(*new RTCDataChannel(document, WTFMove(handler), WTFMove(label), WTFMove(options)));
+    auto channel = adoptRef(*new RTCDataChannel(context, WTFMove(handler), WTFMove(label), WTFMove(options)));
     channel->suspendIfNeeded();
     channel->m_handler->setClient(channel.get());
     channel->setPendingActivity(channel.get());
     return channel;
 }
 
-NetworkSendQueue RTCDataChannel::createMessageQueue(Document& document, RTCDataChannel& channel)
+NetworkSendQueue RTCDataChannel::createMessageQueue(ScriptExecutionContext& context, RTCDataChannel& channel)
 {
-    return { document, [&channel](auto& utf8) {
+    return { context, [&channel](auto& utf8) {
         if (!channel.m_handler->sendStringData(utf8))
             channel.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending string through RTCDataChannel."_s);
     }, [&channel](auto* data, size_t length) {
@@ -81,12 +81,12 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(Document& document, RTCDataC
     } };
 }
 
-RTCDataChannel::RTCDataChannel(Document& document, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
-    : ActiveDOMObject(document)
+RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
+    : ActiveDOMObject(&context)
     , m_handler(WTFMove(handler))
     , m_label(WTFMove(label))
     , m_options(WTFMove(options))
-    , m_messageQueue(createMessageQueue(document, *this))
+    , m_messageQueue(createMessageQueue(context, *this))
 {
 }
 
