@@ -1362,3 +1362,4 @@ webkit.org/b/222808 imported/w3c/web-platform-tests/webrtc/protocol/candidate-ex
 
 webkit.org/b/221011 fast/selectors/selection-window-inactive-text-shadow.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/223012 media/media-source/media-source-canplaythrough-event.html [ Pass Failure ]

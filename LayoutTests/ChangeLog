@@ -1,3 +1,12 @@
+2021-03-09  Robert Jenner  <jenner@apple.com>
+
+        [ macOS wk 2 ] media/media-source/media-source-canplaythrough-event.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223012
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass Failure, until test can be fixed.
+
 2021-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         [BigSur arm64] 4 canvas-color-fonts tests consistently failing
