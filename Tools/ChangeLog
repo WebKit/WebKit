@@ -1,5 +1,91 @@
 2021-03-10  Sam Sneddon  <gsnedders@apple.com>
 
+        Adding Python type annotations to test_expectations.py
+        https://bugs.webkit.org/show_bug.cgi?id=222770
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (ParseError.__init__):
+        (ParseError.__str__):
+        (ParseError.__repr__):
+        (TestExpectationWarning.__init__):
+        (TestExpectationParser):
+        (TestExpectationParser.__init__):
+        (TestExpectationParser.parse):
+        (TestExpectationParser.expectation_for_skipped_test):
+        (TestExpectationParser._parse_line):
+        (TestExpectationParser._parse_modifiers):
+        (TestExpectationParser._parse_expectations):
+        (TestExpectationParser._check_test_exists):
+        (TestExpectationParser._collect_matching_tests):
+        (TestExpectationParser._tokenize_line):
+        (TestExpectationLine):
+        (TestExpectationLine.__init__):
+        (TestExpectationLine.__str__):
+        (TestExpectationLine.is_invalid):
+        (TestExpectationLine.is_flaky):
+        (TestExpectationLine.expected_behavior):
+        (TestExpectationLine.create_passing_expectation):
+        (TestExpectationLine.to_string):
+        (TestExpectationLine._serialize_parsed_expectations):
+        (TestExpectationLine._serialize_parsed_modifiers):
+        (TestExpectationLine._format_line):
+        (TestExpectationsModel):
+        (TestExpectationsModel.__init__):
+        (TestExpectationsModel._dict_of_sets):
+        (TestExpectationsModel.get_test_set):
+        (TestExpectationsModel.get_test_set_for_keyword):
+        (TestExpectationsModel.get_tests_with_result_type):
+        (TestExpectationsModel.get_tests_with_timeline):
+        (TestExpectationsModel.get_modifiers):
+        (TestExpectationsModel.has_modifier):
+        (TestExpectationsModel.has_keyword):
+        (TestExpectationsModel.has_test):
+        (TestExpectationsModel.get_expectation_line):
+        (TestExpectationsModel.get_expectations):
+        (TestExpectationsModel.get_expectations_or_pass):
+        (TestExpectationsModel.expectations_to_string):
+        (TestExpectationsModel.get_expectations_string):
+        (TestExpectationsModel.expectation_to_string):
+        (TestExpectationsModel.add_expectation_line):
+        (TestExpectationsModel._add_test):
+        (TestExpectationsModel._clear_expectations_for_test):
+        (TestExpectationsModel._remove_from_sets):
+        (TestExpectationsModel._already_seen_better_match):
+        (TestExpectations):
+        (TestExpectations.expectation_from_string):
+        (TestExpectations.result_was_expected):
+        (TestExpectations.remove_pixel_failures):
+        (TestExpectations.remove_leak_failures):
+        (TestExpectations.has_pixel_failures):
+        (TestExpectations.suffixes_for_expectations):
+        (TestExpectations.__init__):
+        (TestExpectations.readable_filename_and_line_number):
+        (TestExpectations.parse_generic_expectations):
+        (TestExpectations.parse_default_port_expectations):
+        (TestExpectations.parse_override_expectations):
+        (TestExpectations.parse_all_expectations):
+        (TestExpectations.model):
+        (TestExpectations.get_rebaselining_failures):
+        (TestExpectations.filtered_expectations_for_test):
+        (TestExpectations.matches_an_expected_result):
+        (TestExpectations.is_rebaselining):
+        (TestExpectations._shorten_filename):
+        (TestExpectations._report_warnings):
+        (TestExpectations._process_tests_without_expectations):
+        (TestExpectations.has_warnings):
+        (TestExpectations.remove_configuration_from_test):
+        (TestExpectations.remove_rebaselined_tests):
+        (TestExpectations.remove_rebaselined_tests.without_rebaseline_modifier):
+        (TestExpectations._add_expectations):
+        (TestExpectations.add_skipped_tests):
+        (TestExpectations.list_to_string):
+        (TestExpectations.serialize):
+        (TestExpectations.nones_out):
+
+2021-03-10  Sam Sneddon  <gsnedders@apple.com>
+
         Mark myself as a committer.
 
         Unreviewed.
