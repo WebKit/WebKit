@@ -84,7 +84,7 @@ void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer
         auto layer = RemoteSampleBufferDisplayLayer::create(identifier, m_connection.copyRef());
         auto& layerReference = *layer;
         layerReference.initialize(hideRootLayer, size, [this, protectedThis = makeRef(*this), callback = WTFMove(callback), identifier, layer = WTFMove(layer)](auto layerId) mutable {
-            callOnMainRunLoop([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {
+            dispatchToThread([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {
                 ASSERT(!m_layers.contains(identifier));
                 m_layers.add(identifier, WTFMove(layer));
                 callback(WTFMove(layerId));

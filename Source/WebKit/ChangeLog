@@ -1,3 +1,14 @@
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r274174): ASSERTION FAILED: m_shouldBeCalledOnMainThread == isMainThread() under WebKit::RemoteSampleBufferDisplayLayerManager::createLayer
+        https://bugs.webkit.org/show_bug.cgi?id=223015
+        <rdar://problem/75248289>
+
+        Unreviewed, r274174 mistakenly replaced a call to dispatchToThread() with a call to callOnMainRunLoop().
+
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+
 2021-03-09  Sam Weinig  <weinig@apple.com>
 
         Preferences do not need to be passed to the WebProcess via WebPageCreationParameters since the store already is
