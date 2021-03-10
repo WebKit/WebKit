@@ -172,6 +172,7 @@ public:
     int toInt(bool& isValid) const;
     int toIntStrict(bool& isValid) const;
     Optional<uint64_t> toUInt64Strict() const;
+    Optional<int64_t> toInt64Strict() const;
     float toFloat(bool& isValid) const;
 
     static void invalidate(const StringImpl&);
@@ -611,6 +612,13 @@ inline Optional<uint64_t> StringView::toUInt64Strict() const
 {
     bool isValid;
     uint64_t result = is8Bit() ? charactersToUInt64Strict(characters8(), m_length, &isValid) : charactersToUInt64Strict(characters16(), m_length, &isValid);
+    return isValid ? makeOptional(result) : WTF::nullopt;
+}
+
+inline Optional<int64_t> StringView::toInt64Strict() const
+{
+    bool isValid;
+    int64_t result = is8Bit() ? charactersToInt64Strict(characters8(), m_length, &isValid) : charactersToInt64Strict(characters16(), m_length, &isValid);
     return isValid ? makeOptional(result) : WTF::nullopt;
 }
 

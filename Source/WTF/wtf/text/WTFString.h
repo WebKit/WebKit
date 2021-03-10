@@ -46,8 +46,8 @@ WTF_EXPORT_PRIVATE int charactersToIntStrict(const LChar*, size_t, bool* ok = nu
 WTF_EXPORT_PRIVATE int charactersToIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
 WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
-int64_t charactersToInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
-int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_PRIVATE int64_t charactersToInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_PRIVATE int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 WTF_EXPORT_PRIVATE uint64_t charactersToUInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
 WTF_EXPORT_PRIVATE uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 intptr_t charactersToIntPtrStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
