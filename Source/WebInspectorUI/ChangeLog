@@ -1,3 +1,17 @@
+2021-03-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: CSS Grid Inspector clean-up
+        https://bugs.webkit.org/show_bug.cgi?id=222913
+        <rdar://problem/75171301>
+
+        Reviewed by BJ Burg.
+
+        Remove obsolete methods to show/hide the grid overlay directly from a DOMNode.
+        Remove engineering-only context menu helpers used while implementing grid overlays.
+
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+
 2021-03-09  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Jump from Layout panel to grid container element
