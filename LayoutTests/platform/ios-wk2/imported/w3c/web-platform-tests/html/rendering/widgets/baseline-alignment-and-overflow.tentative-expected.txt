@@ -77,11 +77,11 @@ FAIL <input type="range" style="overflow: scroll; appearance: auto;"> assert_app
 FAIL <input type="range" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 71 +/- 3 but got 61
 FAIL <input type="range" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 71 +/- 3 but got 61
 FAIL <input type="range" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 71 +/- 3 but got 61
-FAIL <input type="color" value="#000000" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 51
-FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 51
+FAIL <input type="color" value="#000000" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 49
+FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 49
 FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 71
-FAIL <input type="color" value="#000000" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 51
-FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 51
+FAIL <input type="color" value="#000000" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 49
+FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 49
 FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 61 +/- 3 but got 71
 PASS <input type="checkbox" style="overflow: visible; appearance: auto;">
 PASS <input type="checkbox" style="overflow: hidden; appearance: auto;">

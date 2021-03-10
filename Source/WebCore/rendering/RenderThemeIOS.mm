@@ -2434,7 +2434,7 @@ String RenderThemeIOS::colorInputStyleSheet(const Settings& settings) const
     if (!settings.iOSFormControlRefreshEnabled())
         return RenderTheme::colorInputStyleSheet(settings);
 
-    return "input[type=\"color\"] { -webkit-appearance: color-well; width: 23px; height: 23px; outline: none; border: initial; border-radius: 50%; } "_s;
+    return "input[type=\"color\"] { -webkit-appearance: color-well; width: 28px; height: 28px; outline: none; border: initial; border-radius: 50%; } "_s;
 }
 
 void RenderThemeIOS::adjustColorWellStyle(RenderStyle& style, const Element* element) const
@@ -2453,14 +2453,14 @@ bool RenderThemeIOS::paintColorWell(const RenderObject& box, const PaintInfo& pa
     return true;
 }
 
-void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled()) {
         RenderTheme::paintColorWellDecorations(box, paintInfo, rect);
         return;
     }
 
-    constexpr int strokeThickness = 2;
+    constexpr int strokeThickness = 3;
     constexpr DisplayP3<float> colorStops[] = {
         { 1, 1, 0, 1 },
         { 1, 0.5, 0, 1 },
@@ -2481,10 +2481,13 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
+    FloatRect strokeRect = rect;
+    strokeRect.inflate(-strokeThickness / 2.0f);
+
     context.setStrokeThickness(strokeThickness);
     context.setStrokeStyle(SolidStroke);
     context.setStrokeGradient(WTFMove(gradient));
-    context.strokeEllipse(rect);
+    context.strokeEllipse(strokeRect);
 }
 
 #endif // ENABLE(INPUT_TYPE_COLOR)

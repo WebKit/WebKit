@@ -91,6 +91,7 @@ input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-slider-t
 
 input[type="color"]::-webkit-color-swatch-wrapper {
     border-radius: initial;
+    padding: 0;
 }
 
 input[type="color"]::-webkit-color-swatch {

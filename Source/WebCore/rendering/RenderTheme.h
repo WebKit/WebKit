@@ -312,7 +312,7 @@ protected:
     virtual void paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
     virtual void paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&);
 #endif
 
     virtual void adjustTextFieldStyle(RenderStyle&, const Element*) const;

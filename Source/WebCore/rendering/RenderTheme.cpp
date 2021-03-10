@@ -485,6 +485,9 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     if (paintInfo.context().paintingDisabled())
         return;
 
+    // FIXME: Investigate whether all controls can use a device-pixel-snapped rect
+    // rather than an integral-snapped rect.
+
     IntRect integralSnappedRect = snappedIntRect(rect);
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
 
@@ -513,7 +516,7 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
         break;
 #if ENABLE(INPUT_TYPE_COLOR)
     case ColorWellPart:
-        paintColorWellDecorations(box, paintInfo, integralSnappedRect);
+        paintColorWellDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
 #endif
     case ButtonPart:
@@ -1002,9 +1005,9 @@ bool RenderTheme::paintMeter(const RenderObject&, const PaintInfo&, const IntRec
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-void RenderTheme::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderTheme::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    paintButtonDecorations(box, paintInfo, rect);
+    paintButtonDecorations(box, paintInfo, snappedIntRect(LayoutRect(rect)));
 }
 #endif
 

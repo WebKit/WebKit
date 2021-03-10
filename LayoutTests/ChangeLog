@@ -1,3 +1,23 @@
+2021-03-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Color inputs are painted outside their box
+        https://bugs.webkit.org/show_bug.cgi?id=222299
+        <rdar://problem/74621954>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a reference test which verifies that color inputs are painted
+        within their box. This is done by drawing a square over the input
+        and comparing to a page which contains a square of the same size,
+        with the input hidden.
+
+        Rebaselined tests after change to padding.
+
+        * fast/forms/ios/form-control-refresh/color/paint-within-box-expected.html: Added.
+        * fast/forms/ios/form-control-refresh/color/paint-within-box.html: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-overflow.tentative-expected.txt:
+        * platform/ios/fast/forms/color/input-appearance-color-expected.txt:
+
 2021-03-10  Robert Jenner  <jenner@apple.com>
 
         [ macOS wk2 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html is a flakey text failure

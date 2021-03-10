@@ -996,7 +996,7 @@ select:focus {
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 input[type="color"] {
-    padding: 0.3em;
+    padding: 3px;
 }
 #endif
 
@@ -1004,7 +1004,7 @@ input[type="color"]::-webkit-color-swatch-wrapper {
     display: flex;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border-radius: inherit;
-    padding: 0;
+    padding: 2px;
 #else
     padding: 4px 2px 5px;
 #endif
