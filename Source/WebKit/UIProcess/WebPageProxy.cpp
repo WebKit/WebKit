@@ -7922,8 +7922,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.urlSchemesWithLegacyCustomProtocolHandlers = WebProcessPool::urlSchemesWithCustomProtocolHandlers();
 
 #if ENABLE(WEB_RTC)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.iceCandidateFilteringEnabled = m_preferences->iceCandidateFilteringEnabled();
 #if USE(LIBWEBRTC)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.enumeratingAllNetworkInterfacesEnabled = m_preferences->enumeratingAllNetworkInterfacesEnabled();
 #endif
 #endif
@@ -7949,20 +7951,31 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     process.addWebUserContentControllerProxy(userContentController);
     parameters.userContentControllerParameters = userContentController.get().parameters();
 
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureAudioInUIProcess = preferences().captureAudioInUIProcessEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureAudioInGPUProcess = preferences().captureAudioInGPUProcessEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureVideoInUIProcess = preferences().captureVideoInUIProcessEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureVideoInGPUProcess = preferences().captureVideoInGPUProcessEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldRenderCanvasInGPUProcess = preferences().useGPUProcessForCanvasRenderingEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldRenderDOMInGPUProcess = preferences().useGPUProcessForDOMRenderingEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldPlayMediaInGPUProcess = preferences().useGPUProcessForMediaEnabled();
 #if ENABLE(WEBGL)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldRenderWebGLInGPUProcess = preferences().useGPUProcessForWebGLEnabled();
 #endif
 
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldEnableVP9Decoder = preferences().vp9DecoderEnabled();
 #if ENABLE(VP9) && PLATFORM(COCOA)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldEnableVP8Decoder = preferences().vp9DecoderEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldEnableVP9SWDecoder = preferences().vp9DecoderEnabled() && (!WebCore::systemHasBattery() || preferences().vp9SWDecoderEnabledOnBattery());
 #endif
     parameters.shouldCaptureDisplayInUIProcess = m_process->processPool().configuration().shouldCaptureDisplayInUIProcess();
@@ -7984,14 +7997,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     }
 #endif
 
-#if ENABLE(APP_BOUND_DOMAINS)
-    parameters.needsInAppBrowserPrivacyQuirks = preferences().needsInAppBrowserPrivacyQuirks();
-#endif
-    
-    parameters.textInteractionEnabled = preferences().textInteractionEnabled();
     parameters.httpsUpgradeEnabled = preferences().upgradeKnownHostsToHTTPSEnabled() ? m_configuration->httpsUpgradeEnabled() : false;
 
 #if PLATFORM(IOS)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload = allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
 #endif
 

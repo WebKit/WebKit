@@ -708,8 +708,7 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
 
 bool EventHandler::mouseDownMayStartSelect() const
 {
-    auto* page = m_frame.page();
-    if (page && !page->textInteractionEnabled())
+    if (!m_frame.settings().textInteractionEnabled())
         return false;
 
     return m_mouseDownMayStartSelect;

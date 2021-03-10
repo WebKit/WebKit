@@ -1,3 +1,15 @@
+2021-03-09  Sam Weinig  <weinig@apple.com>
+
+        Preferences do not need to be passed to the WebProcess via WebPageCreationParameters since the store already is
+        https://bugs.webkit.org/show_bug.cgi?id=222945
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/Preferences/WebPreferencesDebug.yaml:
+        NeedsInAppBrowserPrivacyQuirks is only ever accessed via the WebKit preferences store,
+        so does not need to be exposed in WebKitLegacy or WebCore. Achieve this by removing the
+        WebKitLegacy and WebCore defaults.
+
 2021-03-09  Alex Christensen  <achristensen@webkit.org>
 
         Reduce unnecessary string copies in ParsedContentRange

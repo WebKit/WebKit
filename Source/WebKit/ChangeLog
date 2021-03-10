@@ -1,3 +1,25 @@
+2021-03-09  Sam Weinig  <weinig@apple.com>
+
+        Preferences do not need to be passed to the WebProcess via WebPageCreationParameters since the store already is
+        https://bugs.webkit.org/show_bug.cgi?id=222945
+
+        Reviewed by Simon Fraser.
+
+        needsInAppBrowserPrivacyQuirks and textInteractionEnabled were both being passed to the WebProcess twice, 
+        once via the preferences store, and once via explicit serialization.
+        
+        Use the preferences infrastructure to do this for us instead, and remove a bunch of unneeded code.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+        (WebKit::WebPage::updatePreferences):
+
 2021-03-09  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r274109): Catalina Perf tests failing due to unexpected output (222993)

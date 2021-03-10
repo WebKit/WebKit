@@ -833,9 +833,6 @@ public:
 
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
 
-    bool textInteractionEnabled() const { return m_textInteractionEnabled; }
-    void setTextInteractionEnabled(bool value) { m_textInteractionEnabled = value; }
-
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
@@ -1147,8 +1144,7 @@ private:
     bool m_hasBeenNotifiedToInjectUserScripts { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
-    
-    bool m_textInteractionEnabled { true };
+
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
 };
