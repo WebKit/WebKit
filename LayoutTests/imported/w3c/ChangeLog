@@ -1,3 +1,15 @@
+2021-03-10  Antoine Quint  <graouts@webkit.org>
+
+        Improve background-size interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=223025
+
+        Reviewed by Dean Jackson.
+
+        Add an extra 32 PASS results. We now pass all the background-size interpolation tests except for
+        those involving the "contain" and "cover" keywords which we don't support.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-size-interpolation-expected.txt:
+
 2021-03-09  Antoine Quint  <graouts@webkit.org>
 
         Correctly blend the flex-basis CSS property

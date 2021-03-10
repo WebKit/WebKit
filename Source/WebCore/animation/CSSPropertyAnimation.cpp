@@ -1228,6 +1228,7 @@ public:
 
     virtual bool equals(const FillLayer*, const FillLayer*) const = 0;
     virtual void blend(const CSSPropertyBlendingClient*, FillLayer*, const FillLayer*, const FillLayer*, double) const = 0;
+    virtual bool canInterpolate(const FillLayer*, const FillLayer*) const { return true; }
 
 #if !LOG_DISABLED
     virtual void logBlend(const FillLayer* result, const FillLayer*, const FillLayer*, double) const = 0;
@@ -1285,6 +1286,11 @@ public:
     void blend(const CSSPropertyBlendingClient* anim, FillLayer* dst, const FillLayer* a, const FillLayer* b, double progress) const override
     {
         (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
+    }
+
+    bool canInterpolate(const FillLayer* a, const FillLayer* b) const override
+    {
+        return canInterpolateLengthVariants(this->value(a), this->value(b));
     }
 
 #if !LOG_DISABLED
@@ -1463,6 +1469,22 @@ public:
 
         while (fromLayer && toLayer) {
             if (!m_fillLayerPropertyWrapper->equals(fromLayer, toLayer))
+                return false;
+
+            fromLayer = fromLayer->next();
+            toLayer = toLayer->next();
+        }
+
+        return true;
+    }
+
+    bool canInterpolate(const RenderStyle* a, const RenderStyle* b) const override
+    {
+        auto* fromLayer = &(a->*m_layersGetter)();
+        auto* toLayer = &(b->*m_layersGetter)();
+
+        while (fromLayer && toLayer) {
+            if (!m_fillLayerPropertyWrapper->canInterpolate(fromLayer, toLayer))
                 return false;
 
             fromLayer = fromLayer->next();

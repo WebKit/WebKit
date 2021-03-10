@@ -27,16 +27,16 @@ PASS Web Animations: property <background-size> from neutral to [20px 20px, 0px 
 PASS Web Animations: property <background-size> from neutral to [20px 20px, 0px 0px] at (0.75) should be [17.5px 17.5px,  2.5px  2.5px, 17.5px 17.5px,  2.5px  2.5px]
 PASS Web Animations: property <background-size> from neutral to [20px 20px, 0px 0px] at (1) should be [20.0px 20.0px,  0.0px  0.0px, 20.0px 20.0px,  0.0px  0.0px]
 PASS Web Animations: property <background-size> from neutral to [20px 20px, 0px 0px] at (1.25) should be [22.5px 22.5px,  0.0px  0.0px, 22.5px 22.5px,  0.0px  0.0px]
-FAIL CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (-0.3) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
-FAIL CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
-FAIL CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0.3) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
+PASS CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (-0.3) should be [20px 20px, 0px 0px]
+PASS CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0) should be [20px 20px, 0px 0px]
+PASS CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0.3) should be [20px 20px, 0px 0px]
 PASS CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0.5) should be [20px 20px, 0px 0px]
 PASS CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0.6) should be [20px 20px, 0px 0px]
 PASS CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (1) should be [20px 20px, 0px 0px]
 PASS CSS Transitions: property <background-size> from [initial] to [20px 20px, 0px 0px] at (1.5) should be [20px 20px, 0px 0px]
-FAIL CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (-0.3) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
-FAIL CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
-FAIL CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0.3) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
+PASS CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (-0.3) should be [20px 20px, 0px 0px]
+PASS CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0) should be [20px 20px, 0px 0px]
+PASS CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0.3) should be [20px 20px, 0px 0px]
 PASS CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0.5) should be [20px 20px, 0px 0px]
 PASS CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (0.6) should be [20px 20px, 0px 0px]
 PASS CSS Transitions with transition: all: property <background-size> from [initial] to [20px 20px, 0px 0px] at (1) should be [20px 20px, 0px 0px]
@@ -83,16 +83,16 @@ PASS Web Animations: property <background-size> from [inherit] to [20px 20px, 0p
 PASS Web Animations: property <background-size> from [inherit] to [20px 20px, 0px 0px] at (0.75) should be [ 40px  40px,  25px  25px,  40px  40px,  25px  25px]
 PASS Web Animations: property <background-size> from [inherit] to [20px 20px, 0px 0px] at (1) should be [ 20px  20px,   0px   0px,  20px  20px,   0px   0px]
 PASS Web Animations: property <background-size> from [inherit] to [20px 20px, 0px 0px] at (1.25) should be [  0px   0px,   0px   0px,   0px   0px,   0px   0px]
-FAIL CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (-0.3) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
-FAIL CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
-FAIL CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0.3) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
+PASS CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (-0.3) should be [20px 20px, 0px 0px]
+PASS CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0) should be [20px 20px, 0px 0px]
+PASS CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0.3) should be [20px 20px, 0px 0px]
 PASS CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0.5) should be [20px 20px, 0px 0px]
 PASS CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0.6) should be [20px 20px, 0px 0px]
 PASS CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (1) should be [20px 20px, 0px 0px]
 PASS CSS Transitions: property <background-size> from [unset] to [20px 20px, 0px 0px] at (1.5) should be [20px 20px, 0px 0px]
-FAIL CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (-0.3) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
-FAIL CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
-FAIL CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0.3) should be [20px 20px, 0px 0px] assert_equals: expected "20px 20px , 0px 0px , 20px 20px , 0px 0px " but got "auto , auto , auto , auto "
+PASS CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (-0.3) should be [20px 20px, 0px 0px]
+PASS CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0) should be [20px 20px, 0px 0px]
+PASS CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0.3) should be [20px 20px, 0px 0px]
 PASS CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0.5) should be [20px 20px, 0px 0px]
 PASS CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (0.6) should be [20px 20px, 0px 0px]
 PASS CSS Transitions with transition: all: property <background-size> from [unset] to [20px 20px, 0px 0px] at (1) should be [20px 20px, 0px 0px]
@@ -167,34 +167,34 @@ FAIL Web Animations: property <background-size> from [0px 0px, 0px 0px, contain,
 FAIL Web Animations: property <background-size> from [0px 0px, 0px 0px, contain, cover] to [40px 40px, 40px 40px, cover, contain] at (0.6) should be [40px 40px, 40px 40px, cover, contain] assert_equals: expected "40px 40px , 40px 40px , cover , contain " but got "24px 24px , 24px 24px , auto , auto "
 FAIL Web Animations: property <background-size> from [0px 0px, 0px 0px, contain, cover] to [40px 40px, 40px 40px, cover, contain] at (1) should be [40px 40px, 40px 40px, cover, contain] assert_equals: expected "40px 40px , 40px 40px , cover , contain " but got "40px 40px , 40px 40px , auto , auto "
 FAIL Web Animations: property <background-size> from [0px 0px, 0px 0px, contain, cover] to [40px 40px, 40px 40px, cover, contain] at (1.5) should be [40px 40px, 40px 40px, cover, contain] assert_equals: expected "40px 40px , 40px 40px , cover , contain " but got "60px 60px , 60px 60px , auto , auto "
-FAIL CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (-0.3) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "0px , 0px 0px , 0px , 0px 0px "
-FAIL CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "0px , 0px 0px , 0px , 0px 0px "
-FAIL CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.3) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "0px , 12px 12px , 0px , 12px 12px "
-FAIL CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.5) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 20px 20px , auto 40px , 20px 20px "
-FAIL CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.6) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 24px 24px , auto 40px , 24px 24px "
+PASS CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (-0.3) should be [auto 40px, 40px 40px]
+PASS CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0) should be [auto 40px, 40px 40px]
+PASS CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.3) should be [auto 40px, 40px 40px]
+PASS CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.5) should be [auto 40px, 40px 40px]
+PASS CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.6) should be [auto 40px, 40px 40px]
 PASS CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1) should be [auto 40px, 40px 40px]
-FAIL CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1.5) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 60px 60px , auto 40px , 60px 60px "
-FAIL CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (-0.3) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "0px , 0px 0px , 0px , 0px 0px "
-FAIL CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "0px , 0px 0px , 0px , 0px 0px "
-FAIL CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.3) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "0px , 12px 12px , 0px , 12px 12px "
-FAIL CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.5) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 20px 20px , auto 40px , 20px 20px "
-FAIL CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.6) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 24px 24px , auto 40px , 24px 24px "
+PASS CSS Transitions: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1.5) should be [auto 40px, 40px 40px]
+PASS CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (-0.3) should be [auto 40px, 40px 40px]
+PASS CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0) should be [auto 40px, 40px 40px]
+PASS CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.3) should be [auto 40px, 40px 40px]
+PASS CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.5) should be [auto 40px, 40px 40px]
+PASS CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.6) should be [auto 40px, 40px 40px]
 PASS CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1) should be [auto 40px, 40px 40px]
-FAIL CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1.5) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 60px 60px , auto 40px , 60px 60px "
+PASS CSS Transitions with transition: all: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1.5) should be [auto 40px, 40px 40px]
 PASS CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (-0.3) should be [0px auto, 0px 0px]
 PASS CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0) should be [0px auto, 0px 0px]
-FAIL CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.3) should be [0px auto, 0px 0px] assert_equals: expected "0px , 0px 0px , 0px , 0px 0px " but got "0px , 12px 12px , 0px , 12px 12px "
-FAIL CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.5) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 20px 20px , auto 40px , 20px 20px "
-FAIL CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.6) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 24px 24px , auto 40px , 24px 24px "
+PASS CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.3) should be [0px auto, 0px 0px]
+PASS CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.5) should be [auto 40px, 40px 40px]
+PASS CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.6) should be [auto 40px, 40px 40px]
 PASS CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1) should be [auto 40px, 40px 40px]
-FAIL CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1.5) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 60px 60px , auto 40px , 60px 60px "
+PASS CSS Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1.5) should be [auto 40px, 40px 40px]
 PASS Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (-0.3) should be [0px auto, 0px 0px]
 PASS Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0) should be [0px auto, 0px 0px]
-FAIL Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.3) should be [0px auto, 0px 0px] assert_equals: expected "0px , 0px 0px , 0px , 0px 0px " but got "0px , 12px 12px , 0px , 12px 12px "
-FAIL Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.5) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 20px 20px , auto 40px , 20px 20px "
-FAIL Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.6) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 24px 24px , auto 40px , 24px 24px "
+PASS Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.3) should be [0px auto, 0px 0px]
+PASS Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.5) should be [auto 40px, 40px 40px]
+PASS Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (0.6) should be [auto 40px, 40px 40px]
 PASS Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1) should be [auto 40px, 40px 40px]
-FAIL Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1.5) should be [auto 40px, 40px 40px] assert_equals: expected "auto 40px , 40px 40px , auto 40px , 40px 40px " but got "auto 40px , 60px 60px , auto 40px , 60px 60px "
+PASS Web Animations: property <background-size> from [0px auto, 0px 0px] to [auto 40px, 40px 40px] at (1.5) should be [auto 40px, 40px 40px]
 PASS CSS Transitions: property <background-size> from [0px 0px, 0px 0px, 0px 0px, 0px 0px] to [20px 20px, 40px 40px, 60px 60px, 100px 100px] at (-0.25) should be [ 0px  0px,  0px  0px,  0px  0px,   0px   0px]
 PASS CSS Transitions: property <background-size> from [0px 0px, 0px 0px, 0px 0px, 0px 0px] to [20px 20px, 40px 40px, 60px 60px, 100px 100px] at (0) should be [ 0px  0px,  0px  0px,  0px  0px,   0px   0px]
 PASS CSS Transitions: property <background-size> from [0px 0px, 0px 0px, 0px 0px, 0px 0px] to [20px 20px, 40px 40px, 60px 60px, 100px 100px] at (0.25) should be [ 5px  5px, 10px 10px, 15px 15px,  25px  25px]
