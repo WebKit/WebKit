@@ -1,3 +1,29 @@
+2021-03-10  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in MergeUVRow_AVX2
+        https://bugs.webkit.org/show_bug.cgi?id=222996
+        <rdar://75183835>
+
+        Reviewed by Geoff Garen.
+
+        Crash logging shows occasional crashes in MergeUVRow_AVX2. These crashes  all occur when
+        calling -[AVAssetImageGenerator copyCGImageAtTime:actualTime:error:]. This path is only used
+        when there was no prior image generated, and a new image is not available from
+        AVPlayerItemVideoOutput, which is a scenario which only occurs when doing a software-paint
+        immedately after a <video> element begins loading. While we should probably stop using
+        AVAssetImageGenerator, that would be a much riskier change, and wouldn't address the
+        underlying cause of the crash. Instead, bailing out early when in this state would cause
+        decoding to fail, but since this scenario only appears to occur for the
+        AVAssetImageGenerator path, painting would quickly recover as soon as
+        AVPlayerItemVideoOutput begins emitting frames.
+
+        The explanation for these crashes seems to be a mismatch between the size of the libvpx
+        output frame and the size of the CVPixelBuffer where the converted frame data is being
+        stored. Add a pre-flight check that will bail out early in this scenario.
+
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::CopyVideoFrameToPixelBuffer):
+
 2021-03-09  Youenn Fablet  <youenn@apple.com>
 
         Duplicate headers in WebRTC

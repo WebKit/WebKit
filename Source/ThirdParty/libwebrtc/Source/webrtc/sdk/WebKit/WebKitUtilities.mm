@@ -60,11 +60,26 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I420BufferInterface* frame
     if (CVPixelBufferLockBaseAddress(pixel_buffer, 0) != kCVReturnSuccess)
         return false;
 
+    auto src_width_y = frame->width();
+    auto src_height_y = frame->height();
+    auto src_width_uv = frame->ChromaWidth();
+    auto src_height_uv = frame->ChromaHeight();
+
     uint8_t* dst_y = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixel_buffer, 0));
     int dst_stride_y = CVPixelBufferGetBytesPerRowOfPlane(pixel_buffer, 0);
+    auto dst_width_y = CVPixelBufferGetWidthOfPlane(pixel_buffer, 0);
+    auto dst_height_y = CVPixelBufferGetHeightOfPlane(pixel_buffer, 0);
 
     uint8_t* dst_uv = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixel_buffer, 1));
     int dst_stride_uv = CVPixelBufferGetBytesPerRowOfPlane(pixel_buffer, 1);
+    auto dst_width_uv = CVPixelBufferGetWidthOfPlane(pixel_buffer, 1);
+    auto dst_height_uv = CVPixelBufferGetHeightOfPlane(pixel_buffer, 1);
+
+    if (src_width_y != dst_width_y
+        || src_height_y != dst_height_y
+        || src_width_uv != dst_width_uv
+        || src_height_uv != dst_height_uv)
+        return false;
 
     int result = libyuv::I420ToNV12(
         frame->DataY(), frame->StrideY(),
