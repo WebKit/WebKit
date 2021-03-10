@@ -98,6 +98,9 @@ ImageLoader::ImageLoader(Element& element)
     : m_element(element)
     , m_image(nullptr)
     , m_derefElementTimer(*this, &ImageLoader::timerFired)
+    , m_hasPendingBeforeLoadEvent(false)
+    , m_hasPendingLoadEvent(false)
+    , m_hasPendingErrorEvent(false)
     , m_imageComplete(true)
     , m_loadManually(false)
     , m_elementIsProtected(false)
@@ -109,16 +112,16 @@ ImageLoader::~ImageLoader()
     if (m_image)
         m_image->removeClient(*this);
 
-    ASSERT(m_pendingBeforeLoadEventCount || !beforeLoadEventSender().hasPendingEvents(*this));
-    if (m_pendingBeforeLoadEventCount)
+    ASSERT(m_hasPendingBeforeLoadEvent || !beforeLoadEventSender().hasPendingEvents(*this));
+    if (m_hasPendingBeforeLoadEvent)
         beforeLoadEventSender().cancelEvent(*this);
 
-    ASSERT(m_pendingLoadEventCount || !loadEventSender().hasPendingEvents(*this));
-    if (m_pendingLoadEventCount)
+    ASSERT(m_hasPendingLoadEvent || !loadEventSender().hasPendingEvents(*this));
+    if (m_hasPendingLoadEvent)
         loadEventSender().cancelEvent(*this);
 
-    ASSERT(m_pendingErrorEventCount || !errorEventSender().hasPendingEvents(*this));
-    if (m_pendingErrorEventCount)
+    ASSERT(m_hasPendingErrorEvent || !errorEventSender().hasPendingEvents(*this));
+    if (m_hasPendingErrorEvent)
         errorEventSender().cancelEvent(*this);
 }
 
@@ -137,17 +140,17 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
     CachedImage* oldImage = m_image.get();
     if (oldImage) {
         m_image = nullptr;
-        if (m_pendingBeforeLoadEventCount) {
+        if (m_hasPendingBeforeLoadEvent) {
             beforeLoadEventSender().cancelEvent(*this);
-            m_pendingBeforeLoadEventCount--;
+            m_hasPendingBeforeLoadEvent = false;
         }
-        if (m_pendingLoadEventCount) {
+        if (m_hasPendingLoadEvent) {
             loadEventSender().cancelEvent(*this);
-            m_pendingLoadEventCount--;
+            m_hasPendingLoadEvent = false;
         }
-        if (m_pendingErrorEventCount) {
+        if (m_hasPendingErrorEvent) {
             errorEventSender().cancelEvent(*this);
-            m_pendingErrorEventCount--;
+            m_hasPendingErrorEvent = false;
         }
         m_imageComplete = true;
         if (oldImage)
@@ -221,42 +224,40 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         // error event if the page is not being dismissed.
         if (!newImage && !pageIsBeingDismissed(document)) {
             m_failedLoadURL = attr;
-            m_pendingErrorEventCount++;
+            m_hasPendingErrorEvent = true;
             errorEventSender().dispatchEventSoon(*this);
         } else
             clearFailedLoadURL();
     } else if (!attr.isNull()) {
         // Fire an error event if the url is empty.
         m_failedLoadURL = attr;
-        m_pendingErrorEventCount++;
+        m_hasPendingErrorEvent = true;
         errorEventSender().dispatchEventSoon(*this);
     }
 
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage || relevantMutation == RelevantMutation::Yes) {
-        if (m_pendingBeforeLoadEventCount) {
+        if (m_hasPendingBeforeLoadEvent) {
             beforeLoadEventSender().cancelEvent(*this);
-            m_pendingBeforeLoadEventCount--;
+            m_hasPendingBeforeLoadEvent = false;
         }
-        if (m_pendingLoadEventCount) {
+        if (m_hasPendingLoadEvent) {
             loadEventSender().cancelEvent(*this);
-            m_pendingLoadEventCount--;
+            m_hasPendingLoadEvent = false;
         }
 
         // Cancel error events that belong to the previous load, which is now cancelled by changing the src attribute.
         // If newImage is null and m_hasPendingErrorEvent is true, we know the error event has been just posted by
         // this load and we should not cancel the event.
         // FIXME: If both previous load and this one got blocked with an error, we can receive one error event instead of two.
-        if (m_pendingErrorEventCount && newImage) {
+        if (m_hasPendingErrorEvent && newImage) {
             errorEventSender().cancelEvent(*this);
-            m_pendingErrorEventCount--;
+            m_hasPendingErrorEvent = false;
         }
 
         m_image = newImage;
-        if (!document.isImageDocument() && newImage)
-            m_pendingBeforeLoadEventCount++;
-        if (newImage)
-            m_pendingLoadEventCount++;
+        m_hasPendingBeforeLoadEvent = !document.isImageDocument() && newImage;
+        m_hasPendingLoadEvent = newImage;
         m_imageComplete = !newImage;
 
         if (newImage) {
@@ -337,7 +338,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
     if (!hasPendingBeforeLoadEvent())
         updateRenderer();
 
-    if (!m_pendingLoadEventCount)
+    if (!m_hasPendingLoadEvent)
         return;
 
     if (m_image->resourceError().isAccessControl()) {
@@ -345,7 +346,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 
         clearImageWithoutConsideringPendingLoadEvent();
 
-        m_pendingErrorEventCount++;
+        m_hasPendingErrorEvent = true;
         errorEventSender().dispatchEventSoon(*this);
 
         auto message = makeString("Cannot load image ", imageURL.string(), " due to access control checks.");
@@ -354,7 +355,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
         if (hasPendingDecodePromises())
             rejectDecodePromises("Access control error.");
         
-        ASSERT(!m_pendingLoadEventCount);
+        ASSERT(!m_hasPendingLoadEvent);
 
         // Only consider updating the protection ref-count of the Element immediately before returning
         // from this function as doing so might result in the destruction of this ImageLoader.
@@ -365,8 +366,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
     if (m_image->wasCanceled()) {
         if (hasPendingDecodePromises())
             rejectDecodePromises("Loading was canceled.");
-        ASSERT(m_pendingLoadEventCount);
-        m_pendingLoadEventCount--;
+        m_hasPendingLoadEvent = false;
         // Only consider updating the protection ref-count of the Element immediately before returning
         // from this function as doing so might result in the destruction of this ImageLoader.
         updatedHasPendingEvent();
@@ -422,7 +422,7 @@ void ImageLoader::updatedHasPendingEvent()
     // destroyed by DOM manipulation or garbage collection.
     // If such an Element wishes for the load to stop when removed from the DOM it needs to stop the ImageLoader explicitly.
     bool wasProtected = m_elementIsProtected;
-    m_elementIsProtected = m_pendingLoadEventCount || m_pendingErrorEventCount;
+    m_elementIsProtected = m_hasPendingLoadEvent || m_hasPendingErrorEvent;
     if (wasProtected == m_elementIsProtected)
         return;
 
@@ -501,13 +501,13 @@ void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
 
 void ImageLoader::dispatchPendingBeforeLoadEvent()
 {
-    if (!m_pendingBeforeLoadEventCount)
+    if (!m_hasPendingBeforeLoadEvent)
         return;
     if (!m_image)
         return;
     if (!element().document().hasLivingRenderTree())
         return;
-    m_pendingBeforeLoadEventCount--;
+    m_hasPendingBeforeLoadEvent = false;
     Ref<Document> originalDocument = element().document();
     if (element().dispatchBeforeLoadEvent(m_image->url().string())) {
         bool didEventListenerDisconnectThisElement = !element().isConnected() || &element().document() != originalDocument.ptr();
@@ -523,8 +523,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
     }
 
     loadEventSender().cancelEvent(*this);
-    ASSERT(m_pendingLoadEventCount);
-    m_pendingLoadEventCount--;
+    m_hasPendingLoadEvent = false;
     
     if (is<HTMLObjectElement>(element()))
         downcast<HTMLObjectElement>(element()).renderFallbackContent();
@@ -536,11 +535,11 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
 
 void ImageLoader::dispatchPendingLoadEvent()
 {
-    if (!m_pendingLoadEventCount)
+    if (!m_hasPendingLoadEvent)
         return;
     if (!m_image)
         return;
-    m_pendingLoadEventCount--;
+    m_hasPendingLoadEvent = false;
     if (element().document().hasLivingRenderTree())
         dispatchLoadEvent();
 
@@ -551,9 +550,9 @@ void ImageLoader::dispatchPendingLoadEvent()
 
 void ImageLoader::dispatchPendingErrorEvent()
 {
-    if (!m_pendingErrorEventCount)
+    if (!m_hasPendingErrorEvent)
         return;
-    m_pendingErrorEventCount--;
+    m_hasPendingErrorEvent = false;
     if (element().document().hasLivingRenderTree())
         element().dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
