@@ -78,12 +78,12 @@ public:
     
     template<typename U> bool contains(const U&) const;
 
-    T& first() { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
-    const T& first() const { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
+    T& first() { RELEASE_ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
+    const T& first() const { RELEASE_ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
     T takeFirst();
 
-    T& last() { ASSERT(m_start != m_end); return *(--end()); }
-    const T& last() const { ASSERT(m_start != m_end); return *(--end()); }
+    T& last() { RELEASE_ASSERT(m_start != m_end); return *(--end()); }
+    const T& last() const { RELEASE_ASSERT(m_start != m_end); return *(--end()); }
     T takeLast();
 
     void append(T&& value) { append<T>(std::forward<T>(value)); }
@@ -499,7 +499,7 @@ inline void Deque<T, inlineCapacity>::removeFirst()
 {
     checkValidity();
     invalidateIterators();
-    ASSERT(!isEmpty());
+    RELEASE_ASSERT(!isEmpty());
     TypeOperations::destruct(std::addressof(m_buffer.buffer()[m_start]), std::addressof(m_buffer.buffer()[m_start + 1]));
     if (m_start == m_buffer.capacity() - 1)
         m_start = 0;
@@ -513,7 +513,7 @@ inline void Deque<T, inlineCapacity>::removeLast()
 {
     checkValidity();
     invalidateIterators();
-    ASSERT(!isEmpty());
+    RELEASE_ASSERT(!isEmpty());
     if (!m_end)
         m_end = m_buffer.capacity() - 1;
     else

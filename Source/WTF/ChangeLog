@@ -1,3 +1,16 @@
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Use RELEASE_ASSERT() for Deque bounds checks
+        https://bugs.webkit.org/show_bug.cgi?id=223008
+
+        Reviewed by Alex Christensen.
+
+        Use RELEASE_ASSERT() for Deque bounds checks instead of ASSERT(), similarly to what we did for Vector.
+
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::removeFirst):
+        (WTF::inlineCapacity>::removeLast):
+
 2021-03-09  Sam Weinig  <weinig@apple.com>
 
         Preferences do not need to be passed to the WebProcess via WebPageCreationParameters since the store already is
