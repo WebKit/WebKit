@@ -1,3 +1,14 @@
+2021-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        HTTPS upgrade should allow same-site redirects from HTTPS to HTTP
+        https://bugs.webkit.org/show_bug.cgi?id=222994
+        <rdar://75159643>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
         [ BigSur wk2 arm64 ] quite a few fast/forms (Layout-Tests) are text failing on Apple Silicon

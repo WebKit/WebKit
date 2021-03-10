@@ -88,7 +88,7 @@ public:
     void removePage(Page&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    ContentRuleListResults processContentRuleListsForLoad(Page&, const URL&, OptionSet<ContentExtensions::ResourceType>, DocumentLoader& initiatingDocumentLoader);
+    ContentRuleListResults processContentRuleListsForLoad(Page&, const URL&, OptionSet<ContentExtensions::ResourceType>, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom = { });
 #endif
 
 protected:

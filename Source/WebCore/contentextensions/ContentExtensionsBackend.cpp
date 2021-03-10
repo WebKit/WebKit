@@ -57,8 +57,11 @@ namespace ContentExtensions {
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/ContentRuleListAdditions.mm>
 #else
-static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& url)
+static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& url, const URL& redirectFrom = { })
 {
+    if (redirectFrom.host() == url.host() && redirectFrom.protocolIs("https"))
+        return;
+
     if (url.protocolIs("http") && (url.host() == "www.opengl.org" || url.host() == "download"))
         results.summary.madeHTTPS = true;
 }
@@ -163,7 +166,7 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom)
 {
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
@@ -184,7 +187,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
 
     ContentRuleListResults results;
     if (page.httpsUpgradeEnabled())
-        makeSecureIfNecessary(results, url);
+        makeSecureIfNecessary(results, url, redirectFrom);
     results.results.reserveInitialCapacity(actions.size());
     for (const auto& actionsFromContentRuleList : actions) {
         const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
