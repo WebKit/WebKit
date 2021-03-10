@@ -93,6 +93,7 @@ static Optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType payment
     case PKPaymentMethodTypeStore:
         return ApplePayPaymentMethod::Type::Store;
     case PKPaymentMethodTypeUnknown:
+    default:
         return WTF::nullopt;
     }
 }
