@@ -221,8 +221,7 @@ public:
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 #endif
 
-    enum class SendParametersToNetworkProcess : bool { No, Yes };
-    void addSession(WebsiteDataStore&, SendParametersToNetworkProcess);
+    void addSession(WebsiteDataStore&);
     void removeSession(WebsiteDataStore&);
     
 #if ENABLE(INDEXED_DATABASE)

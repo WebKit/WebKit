@@ -258,7 +258,6 @@ public:
     DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
 
     WebsiteDataStoreParameters parameters();
-    static Vector<WebsiteDataStoreParameters> parametersFromEachWebsiteDataStore();
 
     void flushCookies(CompletionHandler<void()>&&);
     void clearCachedCredentials();
