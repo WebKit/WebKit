@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1148,6 +1148,11 @@ const String& NetworkSessionCocoa::sourceApplicationSecondaryIdentifier() const
     return m_sourceApplicationSecondaryIdentifier;
 }
 
+const String& NetworkSessionCocoa::attributedBundleIdentifier() const
+{
+    return m_attributedBundleIdentifier;
+}
+
 #if PLATFORM(IOS_FAMILY)
 const String& NetworkSessionCocoa::dataConnectionServiceType() const
 {
@@ -1222,6 +1227,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
     , m_sourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier)
     , m_sourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier)
+    , m_attributedBundleIdentifier(parameters.attributedBundleIdentifier)
     , m_proxyConfiguration(parameters.proxyConfiguration)
     , m_shouldLogCookieInformation(parameters.shouldLogCookieInformation)
     , m_fastServerTrustEvaluationEnabled(parameters.fastServerTrustEvaluationEnabled)

@@ -1,3 +1,43 @@
+2021-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Add additional bundle ID property to WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=222919
+        <rdar://problem/75013854>
+
+        Reviewed by Alex Christensen.
+
+        Add an additional property to _WKWebsiteDataStoreConfiguration to help thread the correct bundle
+        ID of the driving application to lower levels of WebKit so that we can provide better messaging
+        when a remote service (e.g., Safari View Controller or ASWebAuthenticationSession) is used. Currently
+        we often lack context and have to report a generic "web content" message that doesn't help a user
+        understand which app is actually requesting the load.
+
+        We cannot use either of the existing bundle ID's for this purpose since we always indicate 'com.apple.Safari'
+        as the source application to ensure proper handling of web traffic in lower levels of the system Network stack,
+        and sourceApplicationSecondaryIdentifier is used for Apple Pay purposes and cannot be repurposed for this task.
+
+        This first patch adds the property. A follow-up patch will flesh out the implementation.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::attributedBundleIdentifier const):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration setAttributedBundleIdentifier:]):
+        (-[_WKWebsiteDataStoreConfiguration attributedBundleIdentifier]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::attributedBundleIdentifier const):
+        (WebKit::WebsiteDataStoreConfiguration::setAttributedBundleIdentifier):
+
 2021-03-09  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make WebKit API Objective-C objects safe to release on non-main threads

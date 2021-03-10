@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -240,6 +240,16 @@ static void checkURLArgument(NSURL *url)
 - (void)setSourceApplicationSecondaryIdentifier:(NSString *)identifier
 {
     _configuration->setSourceApplicationSecondaryIdentifier(identifier);
+}
+
+- (void)setAttributedBundleIdentifier:(NSString *)identifier
+{
+    _configuration->setAttributedBundleIdentifier(identifier);
+}
+
+- (NSString *)attributedBundleIdentifier
+{
+    return _configuration->attributedBundleIdentifier();
 }
 
 - (NSURL *)applicationCacheDirectory

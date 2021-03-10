@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,6 +75,7 @@ public:
     const String& boundInterfaceIdentifier() const;
     const String& sourceApplicationBundleIdentifier() const;
     const String& sourceApplicationSecondaryIdentifier() const;
+    const String& attributedBundleIdentifier() const;
 #if PLATFORM(IOS_FAMILY)
     const String& dataConnectionServiceType() const;
 #endif
@@ -147,6 +148,7 @@ private:
     String m_boundInterfaceIdentifier;
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
+    String m_attributedBundleIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
     RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
     bool m_deviceManagementRestrictionsEnabled { false };
