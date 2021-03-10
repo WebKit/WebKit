@@ -274,8 +274,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
 
         auto& request = strongRequest.get();
 
-        if (request.requestType() == MediaStreamRequest::Type::UserMedia)
-            m_grantedRequests.append(makeRef(request));
+        updateStoredRequests(request);
 
         // FIXME: m_hasFilteredDeviceList will trigger ondevicechange events for various documents from different origins.
         if (m_hasFilteredDeviceList)
@@ -351,14 +350,17 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
     return nullptr;
 }
 
-bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(FrameIdentifier mainFrameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool needsScreenCapture)
+static bool isMatchingDeniedRequest(const UserMediaPermissionRequestProxy& request, const UserMediaPermissionRequestManagerProxy::DeniedRequest& deniedRequest)
+{
+    return deniedRequest.mainFrameID == request.mainFrameID()
+        && deniedRequest.userMediaDocumentOrigin->isSameSchemeHostPort(request.userMediaDocumentSecurityOrigin())
+        && deniedRequest.topLevelDocumentOrigin->isSameSchemeHostPort(request.topLevelDocumentSecurityOrigin());
+}
+
+bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(const UserMediaPermissionRequestProxy& request, bool needsAudio, bool needsVideo, bool needsScreenCapture)
 {
     for (const auto& deniedRequest : m_deniedRequests) {
-        if (!deniedRequest.userMediaDocumentOrigin->isSameSchemeHostPort(userMediaDocumentOrigin))
-            continue;
-        if (!deniedRequest.topLevelDocumentOrigin->isSameSchemeHostPort(topLevelDocumentOrigin))
-            continue;
-        if (deniedRequest.mainFrameID != mainFrameID)
+        if (!isMatchingDeniedRequest(request, deniedRequest))
             continue;
 
         if (deniedRequest.isScreenCaptureDenied && needsScreenCapture)
@@ -379,6 +381,25 @@ bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(FrameIdentifier ma
     return false;
 }
 
+void UserMediaPermissionRequestManagerProxy::updateStoredRequests(UserMediaPermissionRequestProxy& request)
+{
+    if (request.requestType() == MediaStreamRequest::Type::UserMedia)
+        m_grantedRequests.append(makeRef(request));
+
+    m_deniedRequests.removeAllMatching([&request](auto& deniedRequest) {
+        if (!isMatchingDeniedRequest(request, deniedRequest))
+            return false;
+
+        if (deniedRequest.isAudioDenied && request.requiresAudioCapture())
+            return true;
+        if (deniedRequest.isVideoDenied && request.requiresVideoCapture())
+            return true;
+        if (deniedRequest.isScreenCaptureDenied && request.requiresDisplayCapture())
+            return true;
+
+        return false;
+    });
+}
 #endif
 
 void UserMediaPermissionRequestManagerProxy::rejectionTimerFired()
@@ -405,7 +426,7 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
     ASSERT(!(requestingScreenCapture && !request.hasVideoDevice()));
     ASSERT(!(requestingScreenCapture && requestingMicrophone));
 
-    if (!request.isUserGesturePriviledged() && wasRequestDenied(request.frameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera, requestingScreenCapture))
+    if (!request.isUserGesturePriviledged() && wasRequestDenied(request, requestingMicrophone, requestingCamera, requestingScreenCapture))
         return RequestAction::Deny;
 
     if (request.requestType() == MediaStreamRequest::Type::DisplayMedia)

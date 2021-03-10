@@ -99,6 +99,15 @@ public:
 
     void checkUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier, const WebCore::SecurityOrigin&, const WebCore::SecurityOrigin&, const WebCore::CaptureDevice&, CompletionHandler<void(bool)>&&);
 
+    struct DeniedRequest {
+        WebCore::FrameIdentifier mainFrameID;
+        Ref<WebCore::SecurityOrigin> userMediaDocumentOrigin;
+        Ref<WebCore::SecurityOrigin> topLevelDocumentOrigin;
+        bool isAudioDenied;
+        bool isVideoDenied;
+        bool isScreenCaptureDenied;
+    };
+
 private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
@@ -112,7 +121,7 @@ private:
     void finishGrantingRequest(UserMediaPermissionRequestProxy&);
 
     const UserMediaPermissionRequestProxy* searchForGrantedRequest(WebCore::FrameIdentifier, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const;
-    bool wasRequestDenied(WebCore::FrameIdentifier mainFrameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo, bool needsScreenCapture);
+    bool wasRequestDenied(const UserMediaPermissionRequestProxy&, bool needsAudio, bool needsVideo, bool needsScreenCapture);
 
     using PermissionInfo = UserMediaPermissionCheckProxy::PermissionInfo;
     void getUserMediaPermissionInfo(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&&);
@@ -131,9 +140,7 @@ private:
     void startProcessingUserMediaPermissionRequest(Ref<UserMediaPermissionRequestProxy>&&);
 
     static void requestSystemValidation(const WebPageProxy&, UserMediaPermissionRequestProxy&, CompletionHandler<void(bool)>&&);
-#endif
 
-#if ENABLE(MEDIA_STREAM)
     void platformValidateUserMediaRequestConstraints(WebCore::RealtimeMediaSourceCenter::ValidConstraintsHandler&& validHandler, WebCore::RealtimeMediaSourceCenter::InvalidConstraintsHandler&& invalidHandler, String&& deviceIDHashSalt);
 #endif
 
@@ -141,6 +148,7 @@ private:
 
     void processNextUserMediaRequestIfNeeded();
     void decidePolicyForUserMediaPermissionRequest();
+    void updateStoredRequests(UserMediaPermissionRequestProxy&);
 
     RefPtr<UserMediaPermissionRequestProxy> m_currentUserMediaRequest;
     Deque<Ref<UserMediaPermissionRequestProxy>> m_pendingUserMediaRequests;
@@ -154,14 +162,6 @@ private:
     Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
     Vector<Ref<UserMediaPermissionRequestProxy>> m_grantedRequests;
 
-    struct DeniedRequest {
-        WebCore::FrameIdentifier mainFrameID;
-        Ref<WebCore::SecurityOrigin> userMediaDocumentOrigin;
-        Ref<WebCore::SecurityOrigin> topLevelDocumentOrigin;
-        bool isAudioDenied;
-        bool isVideoDenied;
-        bool isScreenCaptureDenied;
-    };
     Vector<DeniedRequest> m_deniedRequests;
 
     WebCore::MediaProducer::MediaStateFlags m_captureState { WebCore::MediaProducer::IsNotPlaying };
