@@ -244,19 +244,19 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
     didReceiveNetworkProcessMessage(connection, decoder);
 }
 
-void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     ASSERT(parentProcessConnection() == &connection);
     if (parentProcessConnection() != &connection) {
         WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), decoder.destinationID());
         ASSERT_NOT_REACHED();
-        return;
+        return false;
     }
 
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
-        return;
+        return true;
 
-    didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
 }
 
 void NetworkProcess::didClose(IPC::Connection&)

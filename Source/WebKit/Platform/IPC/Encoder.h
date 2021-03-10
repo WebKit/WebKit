@@ -29,6 +29,7 @@
 #include "MessageNames.h"
 #include "StringReference.h"
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
@@ -56,7 +57,7 @@ public:
 
     void setFullySynchronousModeForTesting();
 
-    void wrapForTesting(std::unique_ptr<Encoder>);
+    void wrapForTesting(UniqueRef<Encoder>&&);
 
     void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
 

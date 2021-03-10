@@ -97,25 +97,21 @@ void PluginProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC
     pluginProxy->didReceivePluginProxyMessage(connection, decoder);
 }
 
-void PluginProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool PluginProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    if (decoder.messageReceiverName() == Messages::NPObjectMessageReceiver::messageReceiverName()) {
-        m_npRemoteObjectMap->didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return;
-    }
+    if (decoder.messageReceiverName() == Messages::NPObjectMessageReceiver::messageReceiverName())
+        return m_npRemoteObjectMap->didReceiveSyncMessage(connection, decoder, replyEncoder);
 
     uint64_t destinationID = decoder.destinationID();
 
-    if (!destinationID) {
-        didReceiveSyncPluginProcessConnectionMessage(connection, decoder, replyEncoder);
-        return;
-    }
+    if (!destinationID)
+        return didReceiveSyncPluginProcessConnectionMessage(connection, decoder, replyEncoder);
 
     PluginProxy* pluginProxy = m_plugins.get(destinationID);
     if (!pluginProxy)
-        return;
+        return false;
 
-    pluginProxy->didReceiveSyncPluginProxyMessage(connection, decoder, replyEncoder);
+    return pluginProxy->didReceiveSyncPluginProxyMessage(connection, decoder, replyEncoder);
 }
 
 void PluginProcessConnection::didClose(IPC::Connection&)

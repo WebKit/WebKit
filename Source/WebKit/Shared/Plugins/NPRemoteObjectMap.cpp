@@ -217,13 +217,13 @@ void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
     }
 }
 
-void NPRemoteObjectMap::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool NPRemoteObjectMap::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     NPObjectMessageReceiver* messageReceiver = m_registeredNPObjects.get(decoder.destinationID());
     if (!messageReceiver)
-        return;
+        return false;
 
-    messageReceiver->didReceiveSyncNPObjectMessageReceiverMessage(connection, decoder, replyEncoder);
+    return messageReceiver->didReceiveSyncNPObjectMessageReceiverMessage(connection, decoder, replyEncoder);
 }
 
 } // namespace WebKit

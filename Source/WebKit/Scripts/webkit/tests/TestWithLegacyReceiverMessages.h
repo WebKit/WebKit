@@ -357,7 +357,7 @@ public:
 
     using DelayedReply = GetPluginProcessConnectionDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, const IPC::Connection::Handle& connectionHandle);
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, const IPC::Connection::Handle& connectionHandle);
     using Reply = std::tuple<IPC::Connection::Handle&>;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
     explicit GetPluginProcessConnection(const String& pluginPath)
@@ -383,7 +383,7 @@ public:
 
     using DelayedReply = TestMultipleAttributesDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&);
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&);
     using Reply = std::tuple<>;
     using ReplyArguments = std::tuple<>;
     const Arguments& arguments() const

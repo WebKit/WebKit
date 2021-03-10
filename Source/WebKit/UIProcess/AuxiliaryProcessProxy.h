@@ -33,6 +33,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
@@ -116,7 +117,7 @@ public:
     ProcessID processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
 
     bool canSendMessage() const { return state() != State::Terminated;}
-    bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo = WTF::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo = WTF::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
     void shutDownProcess();
 
@@ -129,7 +130,7 @@ protected:
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     void logInvalidMessage(IPC::Connection&, IPC::MessageName);
     virtual ASCIILiteral processName() const = 0;
@@ -138,7 +139,7 @@ protected:
     virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { };
 
     struct PendingMessage {
-        std::unique_ptr<IPC::Encoder> encoder;
+        UniqueRef<IPC::Encoder> encoder;
         OptionSet<IPC::SendOption> sendOptions;
         Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>> asyncReplyInfo;
     };
@@ -162,8 +163,8 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = makeUnique<IPC::Encoder>(T::name(), destinationID);
-    *encoder << message.arguments();
+    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+    encoder.get() << message.arguments();
 
     return sendMessage(WTFMove(encoder), sendOptions);
 }
@@ -186,10 +187,10 @@ uint64_t AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHa
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = makeUnique<IPC::Encoder>(T::name(), destinationID);
+    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
     uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-    *encoder << listenerID;
-    *encoder << message.arguments();
+    encoder.get() << listenerID;
+    encoder.get() << message.arguments();
     sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
         if (decoder && decoder->isValid())
             T::callReply(*decoder, WTFMove(completionHandler));

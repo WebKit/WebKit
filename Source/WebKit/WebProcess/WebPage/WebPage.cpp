@@ -4886,9 +4886,9 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
     didReceiveWebPageMessage(connection, decoder);
 }
 
-void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {   
-    didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
 }
 
 #if ENABLE(ASYNC_SCROLLING)

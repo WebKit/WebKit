@@ -145,28 +145,24 @@ void WebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::D
     pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, decoder);
 }
 
-void WebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool WebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     SetForScope<IPC::Connection*> currentConnectionChange(currentConnection, &connection);
 
     uint64_t destinationID = decoder.destinationID();
 
-    if (!destinationID) {
-        didReceiveSyncWebProcessConnectionMessage(connection, decoder, replyEncoder);
-        return;
-    }
+    if (!destinationID)
+        return didReceiveSyncWebProcessConnectionMessage(connection, decoder, replyEncoder);
 
-    if (decoder.messageReceiverName() == Messages::NPObjectMessageReceiver::messageReceiverName()) {
-        m_npRemoteObjectMap->didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return;
-    }
+    if (decoder.messageReceiverName() == Messages::NPObjectMessageReceiver::messageReceiverName())
+        return m_npRemoteObjectMap->didReceiveSyncMessage(connection, decoder, replyEncoder);
 
     PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(decoder.destinationID());
     if (!pluginControllerProxy)
-        return;
+        return false;
 
     PluginController::PluginDestructionProtector protector(pluginControllerProxy->asPluginController());
-    pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, decoder, replyEncoder);
+    return pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, decoder, replyEncoder);
 }
 
 void WebProcessConnection::didClose(IPC::Connection&)

@@ -219,8 +219,8 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        auto encoder = makeUnique<Encoder>(MessageName::InitializeConnection, 0);
-        *encoder << MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
+        auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
+        encoder.get() << MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
 
         initializeSendSource();
 
@@ -290,7 +290,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return !m_pendingOutgoingMachMessage && !m_isInitializingSendSource;
 }
 
-bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
+bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
     ASSERT(!m_pendingOutgoingMachMessage && !m_isInitializingSendSource);
 

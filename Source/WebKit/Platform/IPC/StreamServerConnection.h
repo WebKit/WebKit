@@ -100,8 +100,8 @@ template<typename... Arguments>
 void StreamServerConnectionBase::sendSyncReply(uint64_t syncRequestID, Arguments&&... arguments)
 {
     // FIXME: implement sending to buffer.
-    auto encoder = makeUnique<IPC::Encoder>(IPC::MessageName::SyncMessageReply, syncRequestID);
-    (*encoder << ... << arguments);
+    auto encoder = makeUniqueRef<IPC::Encoder>(IPC::MessageName::SyncMessageReply, syncRequestID);
+    (encoder.get() << ... << arguments);
     m_connection->sendSyncReply(WTFMove(encoder));
 }
 

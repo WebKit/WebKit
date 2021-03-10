@@ -35,14 +35,10 @@ namespace WebKit {
 
 void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& connection, IPC::Decoder& decoder)
 {
-    if (decoder.messageName() == Messages::TestWithStream::SendString::name()) {
-        IPC::handleMessage<Messages::TestWithStream::SendString>(decoder, this, &TestWithStream::sendString);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithStream::SendStringSynchronized::name()) {
-        IPC::handleMessage<Messages::TestWithStream::SendStringSynchronized>(decoder, this, &TestWithStream::sendStringSynchronized);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithStream::SendString::name())
+        return IPC::handleMessage<Messages::TestWithStream::SendString>(decoder, this, &TestWithStream::sendString);
+    if (decoder.messageName() == Messages::TestWithStream::SendStringSynchronized::name())
+        return IPC::handleMessage<Messages::TestWithStream::SendStringSynchronized>(decoder, this, &TestWithStream::sendStringSynchronized);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
     ASSERT_NOT_REACHED();

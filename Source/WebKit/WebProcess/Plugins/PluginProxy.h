@@ -62,7 +62,7 @@ public:
     void pluginProcessCrashed();
 
     void didReceivePluginProxyMessage(IPC::Connection&, IPC::Decoder&);
-    void didReceiveSyncPluginProxyMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
+    bool didReceiveSyncPluginProxyMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
 private:
     explicit PluginProxy(uint64_t pluginProcessToken);

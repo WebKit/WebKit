@@ -166,11 +166,12 @@ void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& con
         player->didReceiveMessage(connection, decoder);
 }
 
-void RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& encoder)
+bool RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
     ASSERT(RunLoop::isMain());
     if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
-        player->didReceiveSyncMessage(connection, decoder, encoder);
+        return player->didReceiveSyncMessage(connection, decoder, encoder);
+    return false;
 }
 
 // May get called on a background thread.

@@ -830,20 +830,19 @@ void WebProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
     // FIXME: Add unhandled message logging.
 }
 
-void WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
-        return;
+        return true;
 
     if (m_processPool->dispatchSyncMessage(connection, decoder, replyEncoder))
-        return;
+        return true;
 
-    if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
-        didReceiveSyncWebProcessProxyMessage(connection, decoder, replyEncoder);
-        return;
-    }
+    if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName())
+        return didReceiveSyncWebProcessProxyMessage(connection, decoder, replyEncoder);
 
     // FIXME: Add unhandled message logging.
+    return false;
 }
 
 void WebProcessProxy::didClose(IPC::Connection&)

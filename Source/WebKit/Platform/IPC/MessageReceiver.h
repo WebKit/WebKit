@@ -46,9 +46,10 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    virtual void didReceiveSyncMessage(Connection&, Decoder&, std::unique_ptr<Encoder>&)
+    virtual bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&)
     {
         ASSERT_NOT_REACHED();
+        return false;
     }
 
 private:

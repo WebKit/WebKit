@@ -38,26 +38,23 @@ namespace WebKit {
 void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name()) {
-        IPC::handleMessage<Messages::TestWithImageData::SendImageData>(decoder, this, &TestWithImageData::sendImageData);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name())
+        return IPC::handleMessage<Messages::TestWithImageData::SendImageData>(decoder, this, &TestWithImageData::sendImageData);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     ASSERT_NOT_REACHED();
 }
 
-void TestWithImageData::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool TestWithImageData::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name()) {
-        IPC::handleMessage<Messages::TestWithImageData::ReceiveImageData>(decoder, *replyEncoder, this, &TestWithImageData::receiveImageData);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name())
+        return IPC::handleMessage<Messages::TestWithImageData::ReceiveImageData>(decoder, *replyEncoder, this, &TestWithImageData::receiveImageData);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);
     ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebKit

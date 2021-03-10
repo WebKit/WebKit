@@ -644,14 +644,14 @@ JSValueRef JSIPC::sendMessage(JSContextRef context, JSObjectRef, JSObjectRef thi
         return JSValueMakeUndefined(context);
 
     auto messageName = static_cast<IPC::MessageName>(*messageID);
-    auto encoder = makeUnique<IPC::Encoder>(messageName, *destinationID);
+    auto encoder = makeUniqueRef<IPC::Encoder>(messageName, *destinationID);
 
     JSValueRef returnValue = JSValueMakeUndefined(context);
 
     bool hasReply = !!messageReplyArgumentDescriptions(messageName);
     if (hasReply) {
         uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-        *encoder << listenerID;
+        encoder.get() << listenerID;
 
         JSObjectRef resolve;
         JSObjectRef reject;
@@ -687,7 +687,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 
     if (argumentCount > 3) {
-        if (!encodeArgument(*encoder, *jsIPC, context, arguments[3], exception))
+        if (!encodeArgument(encoder.get(), *jsIPC, context, arguments[3], exception))
             return JSValueMakeUndefined(context);
     }
 
@@ -742,7 +742,7 @@ JSValueRef JSIPC::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef
     auto encoder = connection->createSyncMessageEncoder(messageName, *destinationID, syncRequestID);
 
     if (argumentCount > 4) {
-        if (!encodeArgument(*encoder, *jsIPC, context, arguments[4], exception))
+        if (!encodeArgument(encoder.get(), *jsIPC, context, arguments[4], exception))
             return JSValueMakeUndefined(context);
     }
 

@@ -61,7 +61,7 @@ public:
 
     void pluginDestroyed(Plugin*);
 
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
 private:
     explicit NPRemoteObjectMap(IPC::Connection*);

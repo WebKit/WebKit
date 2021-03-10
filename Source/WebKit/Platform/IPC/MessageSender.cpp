@@ -30,7 +30,7 @@ namespace IPC {
 
 MessageSender::~MessageSender() = default;
 
-bool MessageSender::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo)
+bool MessageSender::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo)
 {
     auto* connection = messageSenderConnection();
     ASSERT(connection);

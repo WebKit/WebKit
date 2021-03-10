@@ -576,7 +576,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
 
-bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
 #if ENABLE(WEB_AUDIO)
     if (decoder.messageReceiverName() == Messages::RemoteAudioDestinationManager::messageReceiverName()) {
@@ -632,11 +632,9 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
     }
 #endif
 #if ENABLE(WEBGL)
-    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName()) {
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName())
         // Skip messages for already removed receivers.
-        replyEncoder.reset();
         return true;
-    }
 #endif
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }

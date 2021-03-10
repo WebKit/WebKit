@@ -372,15 +372,15 @@ void Connection::dispatchMessageReceiverMessage(MessageReceiver& messageReceiver
         return;
     }
 
-    auto replyEncoder = makeUnique<Encoder>(MessageName::SyncMessageReply, syncRequestID);
+    auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID);
 
     // Hand off both the decoder and encoder to the work queue message receiver.
-    messageReceiver.didReceiveSyncMessage(*this, *decoder, replyEncoder);
+    bool wasHandled = messageReceiver.didReceiveSyncMessage(*this, *decoder, replyEncoder);
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
     ASSERT(decoder->isValid());
 
-    if (replyEncoder)
+    if (!wasHandled)
         sendSyncReply(WTFMove(replyEncoder));
 }
 
@@ -415,18 +415,18 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
     m_didReceiveInvalidMessage = true;
 }
 
-std::unique_ptr<Encoder> Connection::createSyncMessageEncoder(MessageName messageName, uint64_t destinationID, uint64_t& syncRequestID)
+UniqueRef<Encoder> Connection::createSyncMessageEncoder(MessageName messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
-    auto encoder = makeUnique<Encoder>(messageName, destinationID);
+    auto encoder = makeUniqueRef<Encoder>(messageName, destinationID);
 
     // Encode the sync request ID.
     syncRequestID = ++m_syncRequestID;
-    *encoder << syncRequestID;
+    encoder.get() << syncRequestID;
 
     return encoder;
 }
 
-bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOption> sendOptions)
+bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions)
 {
     if (!isValid())
         return false;
@@ -436,7 +436,7 @@ bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOpt
         bool hasDeadObservers = false;
         for (auto& observerWeakPtr : m_messageObservers) {
             if (auto* observer = observerWeakPtr.get())
-                observer->willSendMessage(*encoder, sendOptions);
+                observer->willSendMessage(encoder.get(), sendOptions);
             else
                 hasDeadObservers = true;
         }
@@ -475,7 +475,7 @@ bool Connection::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOpt
     return true;
 }
 
-bool Connection::sendSyncReply(std::unique_ptr<Encoder> encoder)
+bool Connection::sendSyncReply(UniqueRef<Encoder>&& encoder)
 {
     return sendMessage(WTFMove(encoder), { });
 }
@@ -564,7 +564,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
     return nullptr;
 }
 
-std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder> encoder, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
+std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, UniqueRef<Encoder>&& encoder, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     ASSERT(RunLoop::isMain());
 
@@ -879,10 +879,11 @@ void Connection::sendOutgoingMessages()
             auto locker = holdLock(m_outgoingMessagesMutex);
             if (m_outgoingMessages.isEmpty())
                 break;
-            message = m_outgoingMessages.takeFirst();
+            message = m_outgoingMessages.takeFirst().moveToUniquePtr();
         }
+        ASSERT(message);
 
-        if (!sendOutgoingMessage(WTFMove(message)))
+        if (!sendOutgoingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(message))))
             break;
     }
 }
@@ -898,8 +899,9 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         return;
     }
 
-    auto replyEncoder = makeUnique<Encoder>(MessageName::SyncMessageReply, syncRequestID);
+    auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID);
 
+    bool wasHandled = false;
     if (decoder.messageName() == MessageName::WrappedAsyncMessageForTesting) {
         if (!m_fullySynchronousModeIsAllowedForTesting) {
             decoder.markInvalid();
@@ -912,7 +914,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         SyncMessageState::singleton().dispatchMessages();
     } else {
         // Hand off both the decoder and encoder to the client.
-        m_client.didReceiveSyncMessage(*this, decoder, replyEncoder);
+        wasHandled = m_client.didReceiveSyncMessage(*this, decoder, replyEncoder);
     }
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
@@ -922,7 +924,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
     ASSERT(decoder.isValid());
 #endif
 
-    if (replyEncoder)
+    if (!wasHandled)
         sendSyncReply(WTFMove(replyEncoder));
 }
 

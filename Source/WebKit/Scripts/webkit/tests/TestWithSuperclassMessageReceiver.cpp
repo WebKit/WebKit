@@ -59,9 +59,9 @@ void TestAsyncMessage::cancelReply(CompletionHandler<void(uint64_t&&)>&& complet
     completionHandler(IPC::AsyncReplyError<uint64_t>::create());
 }
 
-void TestAsyncMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, uint64_t result)
+void TestAsyncMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, uint64_t result)
 {
-    *encoder << result;
+    encoder.get() << result;
     connection.sendSyncReply(WTFMove(encoder));
 }
 
@@ -79,7 +79,7 @@ void TestAsyncMessageWithNoArguments::cancelReply(CompletionHandler<void()>&& co
     completionHandler();
 }
 
-void TestAsyncMessageWithNoArguments::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection)
+void TestAsyncMessageWithNoArguments::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection)
 {
     connection.sendSyncReply(WTFMove(encoder));
 }
@@ -112,10 +112,10 @@ void TestAsyncMessageWithMultipleArguments::cancelReply(CompletionHandler<void(b
     completionHandler(IPC::AsyncReplyError<bool>::create(), IPC::AsyncReplyError<uint64_t>::create());
 }
 
-void TestAsyncMessageWithMultipleArguments::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag, uint64_t value)
+void TestAsyncMessageWithMultipleArguments::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag, uint64_t value)
 {
-    *encoder << flag;
-    *encoder << value;
+    encoder.get() << flag;
+    encoder.get() << value;
     connection.sendSyncReply(WTFMove(encoder));
 }
 
@@ -140,23 +140,23 @@ void TestAsyncMessageWithConnection::cancelReply(CompletionHandler<void(bool&&)>
     completionHandler(IPC::AsyncReplyError<bool>::create());
 }
 
-void TestAsyncMessageWithConnection::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag)
+void TestAsyncMessageWithConnection::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag)
 {
-    *encoder << flag;
+    encoder.get() << flag;
     connection.sendSyncReply(WTFMove(encoder));
 }
 
 #endif
 
-void TestSyncMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, uint8_t reply)
+void TestSyncMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, uint8_t reply)
 {
-    *encoder << reply;
+    encoder.get() << reply;
     connection.sendSyncReply(WTFMove(encoder));
 }
 
-void TestSynchronousMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const Optional<WebKit::TestClassName>& optionalReply)
+void TestSynchronousMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const Optional<WebKit::TestClassName>& optionalReply)
 {
-    *encoder << optionalReply;
+    encoder.get() << optionalReply;
     connection.sendSyncReply(WTFMove(encoder));
 }
 
@@ -169,52 +169,39 @@ namespace WebKit {
 void TestWithSuperclass::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithSuperclass::LoadURL::name()) {
-        IPC::handleMessage<Messages::TestWithSuperclass::LoadURL>(decoder, this, &TestWithSuperclass::loadURL);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::LoadURL::name())
+        return IPC::handleMessage<Messages::TestWithSuperclass::LoadURL>(decoder, this, &TestWithSuperclass::loadURL);
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessage::name()) {
-        IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessage>(connection, decoder, this, &TestWithSuperclass::testAsyncMessage);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessage::name())
+        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessage>(connection, decoder, this, &TestWithSuperclass::testAsyncMessage);
 #endif
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::name()) {
-        IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithNoArguments);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::name())
+        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithNoArguments);
 #endif
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::name()) {
-        IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithMultipleArguments);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::name())
+        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithMultipleArguments);
 #endif
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithConnection::name()) {
-        IPC::handleMessageAsyncWantsConnection<Messages::TestWithSuperclass::TestAsyncMessageWithConnection>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithConnection);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithConnection::name())
+        return IPC::handleMessageAsyncWantsConnection<Messages::TestWithSuperclass::TestAsyncMessageWithConnection>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithConnection);
 #endif
     WebPageBase::didReceiveMessage(connection, decoder);
 }
 
-void TestWithSuperclass::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool TestWithSuperclass::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestSyncMessage::name()) {
-        IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSyncMessage);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestSynchronousMessage::name()) {
-        IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSynchronousMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSynchronousMessage);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestSyncMessage::name())
+        return IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSyncMessage);
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestSynchronousMessage::name())
+        return IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSynchronousMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSynchronousMessage);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);
     ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebKit

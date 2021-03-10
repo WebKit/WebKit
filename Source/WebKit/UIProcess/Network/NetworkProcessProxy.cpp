@@ -373,12 +373,12 @@ void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::De
     didReceiveNetworkProcessProxyMessage(connection, decoder);
 }
 
-void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
-        return;
+        return true;
 
-    didReceiveSyncNetworkProcessProxyMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncNetworkProcessProxyMessage(connection, decoder, replyEncoder);
 }
 
 void NetworkProcessProxy::didClose(IPC::Connection&)

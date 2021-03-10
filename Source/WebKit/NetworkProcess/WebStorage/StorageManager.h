@@ -74,7 +74,7 @@ public:
     void clearStorageNamespaces();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder);
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>& replyEncoder);
     
     LocalStorageDatabaseTracker* localStorageDatabaseTracker() const { return m_localStorageDatabaseTracker.get(); }
     

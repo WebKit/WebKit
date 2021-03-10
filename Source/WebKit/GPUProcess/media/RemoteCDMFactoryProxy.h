@@ -50,13 +50,13 @@ public:
     virtual ~RemoteCDMFactoryProxy();
 
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    void didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& encoder) { didReceiveSyncMessage(connection, decoder, encoder); }
+    bool didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) { return didReceiveSyncMessage(connection, decoder, encoder); }
     void didReceiveCDMMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveCDMInstanceMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveCDMInstanceSessionMessage(IPC::Connection&, IPC::Decoder&);
-    void didReceiveSyncCDMMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
-    void didReceiveSyncCDMInstanceMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
-    void didReceiveSyncCDMInstanceSessionMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
+    bool didReceiveSyncCDMMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool didReceiveSyncCDMInstanceMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool didReceiveSyncCDMInstanceSessionMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     void addProxy(const RemoteCDMIdentifier&, std::unique_ptr<RemoteCDMProxy>&&);
     void removeProxy(const RemoteCDMIdentifier&);
@@ -74,7 +74,7 @@ private:
     friend class GPUProcessConnection;
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { }
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
     void createCDM(const String& keySystem, CompletionHandler<void(RemoteCDMIdentifier&&, RemoteCDMConfiguration&&)>&&);

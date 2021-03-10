@@ -63,13 +63,13 @@ namespace Messages {
 
 namespace TestWithLegacyReceiver {
 
-void GetPluginProcessConnection::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const IPC::Connection::Handle& connectionHandle)
+void GetPluginProcessConnection::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const IPC::Connection::Handle& connectionHandle)
 {
-    *encoder << connectionHandle;
+    encoder.get() << connectionHandle;
     connection.sendSyncReply(WTFMove(encoder));
 }
 
-void TestMultipleAttributes::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection)
+void TestMultipleAttributes::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection)
 {
     connection.sendSyncReply(WTFMove(encoder));
 }
@@ -83,122 +83,79 @@ namespace WebKit {
 void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadURL::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadURL>(decoder, this, &TestWithLegacyReceiver::loadURL);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadURL::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadURL>(decoder, this, &TestWithLegacyReceiver::loadURL);
 #if ENABLE(TOUCH_EVENTS)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadSomething::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadSomething>(decoder, this, &TestWithLegacyReceiver::loadSomething);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadSomething::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadSomething>(decoder, this, &TestWithLegacyReceiver::loadSomething);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TouchEvent::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::TouchEvent>(decoder, this, &TestWithLegacyReceiver::touchEvent);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TouchEvent::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TouchEvent>(decoder, this, &TestWithLegacyReceiver::touchEvent);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::AddEvent::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::AddEvent>(decoder, this, &TestWithLegacyReceiver::addEvent);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::AddEvent::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::AddEvent>(decoder, this, &TestWithLegacyReceiver::addEvent);
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadSomethingElse::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadSomethingElse>(decoder, this, &TestWithLegacyReceiver::loadSomethingElse);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadSomethingElse::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadSomethingElse>(decoder, this, &TestWithLegacyReceiver::loadSomethingElse);
 #endif
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidReceivePolicyDecision::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::DidReceivePolicyDecision>(decoder, this, &TestWithLegacyReceiver::didReceivePolicyDecision);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::Close::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::Close>(decoder, this, &TestWithLegacyReceiver::close);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::PreferencesDidChange::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::PreferencesDidChange>(decoder, this, &TestWithLegacyReceiver::preferencesDidChange);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SendDoubleAndFloat::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::SendDoubleAndFloat>(decoder, this, &TestWithLegacyReceiver::sendDoubleAndFloat);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SendInts::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::SendInts>(decoder, this, &TestWithLegacyReceiver::sendInts);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestParameterAttributes::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::TestParameterAttributes>(decoder, this, &TestWithLegacyReceiver::testParameterAttributes);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TemplateTest::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::TemplateTest>(decoder, this, &TestWithLegacyReceiver::templateTest);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SetVideoLayerID::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::SetVideoLayerID>(decoder, this, &TestWithLegacyReceiver::setVideoLayerID);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidReceivePolicyDecision::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DidReceivePolicyDecision>(decoder, this, &TestWithLegacyReceiver::didReceivePolicyDecision);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::Close::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::Close>(decoder, this, &TestWithLegacyReceiver::close);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::PreferencesDidChange::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::PreferencesDidChange>(decoder, this, &TestWithLegacyReceiver::preferencesDidChange);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SendDoubleAndFloat::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SendDoubleAndFloat>(decoder, this, &TestWithLegacyReceiver::sendDoubleAndFloat);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SendInts::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SendInts>(decoder, this, &TestWithLegacyReceiver::sendInts);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestParameterAttributes::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TestParameterAttributes>(decoder, this, &TestWithLegacyReceiver::testParameterAttributes);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TemplateTest::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TemplateTest>(decoder, this, &TestWithLegacyReceiver::templateTest);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SetVideoLayerID::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SetVideoLayerID>(decoder, this, &TestWithLegacyReceiver::setVideoLayerID);
 #if PLATFORM(MAC)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection>(decoder, this, &TestWithLegacyReceiver::didCreateWebProcessConnection);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection>(decoder, this, &TestWithLegacyReceiver::didCreateWebProcessConnection);
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DeprecatedOperation::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::DeprecatedOperation>(decoder, this, &TestWithLegacyReceiver::deprecatedOperation);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DeprecatedOperation::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DeprecatedOperation>(decoder, this, &TestWithLegacyReceiver::deprecatedOperation);
 #endif
 #if ENABLE(EXPERIMENTAL_FEATURE)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::ExperimentalOperation::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::ExperimentalOperation>(decoder, this, &TestWithLegacyReceiver::experimentalOperation);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::ExperimentalOperation::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::ExperimentalOperation>(decoder, this, &TestWithLegacyReceiver::experimentalOperation);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     ASSERT_NOT_REACHED();
 }
 
-void TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::CreatePlugin::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::CreatePlugin>(decoder, *replyEncoder, this, &TestWithLegacyReceiver::createPlugin);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::RunJavaScriptAlert::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::RunJavaScriptAlert>(decoder, *replyEncoder, this, &TestWithLegacyReceiver::runJavaScriptAlert);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPlugins::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::GetPlugins>(decoder, *replyEncoder, this, &TestWithLegacyReceiver::getPlugins);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPluginProcessConnection::name()) {
-        IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::getPluginProcessConnection);
-        return;
-    }
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestMultipleAttributes::name()) {
-        IPC::handleMessageSynchronousWantsConnection<Messages::TestWithLegacyReceiver::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::testMultipleAttributes);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::CreatePlugin::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::CreatePlugin>(decoder, *replyEncoder, this, &TestWithLegacyReceiver::createPlugin);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::RunJavaScriptAlert::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::RunJavaScriptAlert>(decoder, *replyEncoder, this, &TestWithLegacyReceiver::runJavaScriptAlert);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPlugins::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::GetPlugins>(decoder, *replyEncoder, this, &TestWithLegacyReceiver::getPlugins);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPluginProcessConnection::name())
+        return IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::getPluginProcessConnection);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestMultipleAttributes::name())
+        return IPC::handleMessageSynchronousWantsConnection<Messages::TestWithLegacyReceiver::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::testMultipleAttributes);
 #if PLATFORM(MAC)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::InterpretKeyEvent::name()) {
-        IPC::handleMessage<Messages::TestWithLegacyReceiver::InterpretKeyEvent>(decoder, *replyEncoder, this, &TestWithLegacyReceiver::interpretKeyEvent);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::InterpretKeyEvent::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::InterpretKeyEvent>(decoder, *replyEncoder, this, &TestWithLegacyReceiver::interpretKeyEvent);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);
     ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebKit

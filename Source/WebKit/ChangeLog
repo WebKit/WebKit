@@ -1,3 +1,77 @@
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Use UniqueRef<> instead of std::unique_ptr<> when passing IPC::Encoder to sendMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=222992
+
+        Reviewed by Alex Christensen.
+
+        Use UniqueRef<> instead of std::unique_ptr<> when passing IPC::Encoder to sendMessage(), to
+        make it clear it cannot be null.
+
+        I had to update didReceiveSyncMessage() to return a boolean since we can no longer rely
+        on the function nulling out the encoder it is given (since I modified the type from
+        std::unique_ptr to WTF::UniqueRef).
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchMessageReceiverMessage):
+        (IPC::Connection::createSyncMessageEncoder):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendSyncReply):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::sendOutgoingMessages):
+        (IPC::Connection::dispatchSyncMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        (IPC::Connection::sendWithAsyncReply):
+        (IPC::Connection::sendSync):
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::wrapForTesting):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageSynchronous):
+        (IPC::handleMessageSynchronousWantsConnection):
+        (IPC::handleMessageAsync):
+        (IPC::handleMessageAsyncWantsConnection):
+        * Platform/IPC/MessageSender.cpp:
+        (IPC::MessageSender::sendMessage):
+        * Platform/IPC/MessageSender.h:
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnectionBase::sendSyncReply):
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::open):
+        (IPC::Connection::sendOutgoingMessage):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::sendOutgoingMessage):
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::sendOutgoingMessage):
+        * Scripts/webkit/messages.py:
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::send):
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::sendMessage):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::sendMessage):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::sendMessage):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sendMessage):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPC::sendMessage):
+        (WebKit::IPCTestingAPI::JSIPC::sendSyncMessage):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::create):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher):
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush):
+
 2021-03-09  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r272376): [iOS] ASSERTION FAILED: sessionID.isEphemeral() || !path.isEmpty() in WebKit::NetworkProcess::swServerForSession

@@ -424,11 +424,11 @@ bool Connection::platformCanSendOutgoingMessages() const
     return !m_pendingOutputMessage;
 }
 
-bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
+bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
     COMPILE_ASSERT(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, AttachmentsFitToMessageInline);
 
-    UnixMessage outputMessage(*encoder);
+    UnixMessage outputMessage(encoder.get());
     if (outputMessage.attachments().size() > (attachmentMaxAmount - 1)) {
         ASSERT_NOT_REACHED();
         return false;
