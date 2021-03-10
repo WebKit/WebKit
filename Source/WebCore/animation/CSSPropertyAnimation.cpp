@@ -526,15 +526,19 @@ static inline NinePieceImage blendFunc(const CSSPropertyBlendingClient* anim, co
 
 static inline FontVariationSettings blendFunc(const CSSPropertyBlendingClient* anim, const FontVariationSettings& from, const FontVariationSettings& to, double progress)
 {
-    if (from.size() != to.size())
-        return FontVariationSettings();
+    if (!progress)
+        return from;
+
+    if (progress == 1.0)
+        return to;
+
+    ASSERT(from.size() == to.size());
     FontVariationSettings result;
     unsigned size = from.size();
     for (unsigned i = 0; i < size; ++i) {
         auto& fromItem = from.at(i);
         auto& toItem = to.at(i);
-        if (fromItem.tag() != toItem.tag())
-            return FontVariationSettings();
+        ASSERT(fromItem.tag() == toItem.tag());
         float interpolated = blendFunc(anim, fromItem.value(), toItem.value(), progress);
         result.insert({ fromItem.tag(), interpolated });
     }
@@ -851,6 +855,23 @@ public:
         if (!a || !b)
             return false;
         return this->value(a) == this->value(b);
+    }
+
+    bool canInterpolate(const RenderStyle* a, const RenderStyle* b) const override
+    {
+        auto aVariationSettings = value(a);
+        auto bVariationSettings = value(b);
+
+        if (aVariationSettings.size() != bVariationSettings.size())
+            return false;
+
+        auto size = aVariationSettings.size();
+        for (unsigned i = 0; i < size; ++i) {
+            if (aVariationSettings.at(i).tag() != bVariationSettings.at(i).tag())
+                return false;
+        }
+
+        return true;
     }
 };
 #endif

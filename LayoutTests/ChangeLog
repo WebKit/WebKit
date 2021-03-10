@@ -1,5 +1,19 @@
 2021-03-10  Antoine Quint  <graouts@webkit.org>
 
+        Improve font-variation-settings interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=223027
+
+        Reviewed by Dean Jackson.
+
+        Remove an incorrect test that is also testing functionality well covered by the WPT test
+        css/css-fonts/animations/font-variation-settings-interpolation.html.
+
+        * animations/font-variations/font-variation-settings-unlike-expected.txt: Deleted.
+        * animations/font-variations/font-variation-settings-unlike.html: Deleted.
+        * platform/win/TestExpectations:
+
+2021-03-10  Antoine Quint  <graouts@webkit.org>
+
         Improve background-size interpolation
         https://bugs.webkit.org/show_bug.cgi?id=223025
 

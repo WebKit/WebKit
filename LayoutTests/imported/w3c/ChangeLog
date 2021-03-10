@@ -1,5 +1,19 @@
 2021-03-10  Antoine Quint  <graouts@webkit.org>
 
+        Improve font-variation-settings interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=223027
+
+        Reviewed by Dean Jackson.
+
+        Add an extra 140 PASS results.
+
+        * web-platform-tests/css/css-fonts/inheritance-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-variation-settings-composition-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-variation-settings-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2021-03-10  Antoine Quint  <graouts@webkit.org>
+
         Improve background-size interpolation
         https://bugs.webkit.org/show_bug.cgi?id=223025
 

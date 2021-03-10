@@ -118,8 +118,8 @@ public:
     static void applyInheritWebkitMaskImage(BuilderState&) { }
     static void applyInitialFontFeatureSettings(BuilderState&) { }
     static void applyInheritFontFeatureSettings(BuilderState&) { }
-    static void applyInitialFontVariationSettings(BuilderState&) { }
-    static void applyInheritFontVariationSettings(BuilderState&) { }
+    static void applyInitialFontVariationSettings(BuilderState&);
+    static void applyInheritFontVariationSettings(BuilderState&);
 
     // Custom handling of inherit + value setting only.
     static void applyInheritDisplay(BuilderState&);
@@ -1096,6 +1096,16 @@ inline bool BuilderCustom::isValidDisplayValue(BuilderState& builderState, Displ
     if (is<SVGElement>(builderState.element()) && builderState.style().styleType() == PseudoId::None)
         return display == DisplayType::Inline || display == DisplayType::Block || display == DisplayType::None;
     return true;
+}
+
+inline void BuilderCustom::applyInitialFontVariationSettings(BuilderState& builderState)
+{
+    builderState.style().setFontVariationSettings({ });
+}
+
+inline void BuilderCustom::applyInheritFontVariationSettings(BuilderState& builderState)
+{
+    builderState.style().setFontVariationSettings(builderState.parentStyle().fontVariationSettings());
 }
 
 inline void BuilderCustom::applyInheritDisplay(BuilderState& builderState)

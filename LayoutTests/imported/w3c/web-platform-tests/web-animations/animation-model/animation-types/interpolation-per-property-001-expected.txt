@@ -240,14 +240,14 @@ PASS float uses discrete animation when animating between "left" and "right" wit
 PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function
 PASS font-variation-settings supports animation as float
 PASS font-variation-settings supports animation as float with multiple tags
-FAIL font-variation-settings supports animation as float with multiple duplicate tags assert_array_equals: The computed values should be "wdth" 2,"wght" 1.2 at 250ms lengths differ, expected array ["\"wdth\" 2", "\"wght\" 1.2"] length 2, got ["normal"] length 1
+FAIL font-variation-settings supports animation as float with multiple duplicate tags assert_array_equals: The computed values should be "wdth" 2,"wght" 1.2 at 250ms expected property 0 to be "\"wdth\" 2" but got "\"wdth\" 1" (expected array ["\"wdth\" 2", "\"wght\" 1.2"] got ["\"wdth\" 1", "\"wght\" 1.1"])
 PASS font-variation-settings (type: discrete) has testInterpolation function
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with linear easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with effect easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with keyframe easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with linear easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with effect easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with keyframe easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with linear easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "\"wght\" 1.1, \"wdth\" 1"
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with effect easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "\"wght\" 1.1, \"wdth\" 1"
+FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with keyframe easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "\"wght\" 1.1, \"wdth\" 1"
+PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with linear easing
+PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with effect easing
+PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with keyframe easing
 PASS grid-auto-columns (type: discrete) has testInterpolation function
 PASS grid-auto-columns uses discrete animation when animating between "1px" and "5px" with linear easing
 PASS grid-auto-columns uses discrete animation when animating between "1px" and "5px" with effect easing
