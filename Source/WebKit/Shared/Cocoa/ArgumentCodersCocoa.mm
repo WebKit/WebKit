@@ -123,7 +123,7 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
 
 - (_Nullable instancetype)initWithCoder:(NSCoder *)coder
 {
-    auto selfPtr = adoptNS([super init]);
+    auto selfPtr = adoptNS([super initWithString:@""]);
     if (!selfPtr)
         return nil;
 
@@ -149,7 +149,7 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
 
 - (_Nullable instancetype)initWithURL:(NSURL *)url
 {
-    if (self = [super init])
+    if (self = [super initWithString:@""])
         m_wrappedURL = url;
 
     return self;
