@@ -1,3 +1,24 @@
+2021-03-10  Jonathan Bedard  <jbedard@apple.com>
+
+        git-webkit should have an "info" command
+        https://bugs.webkit.org/show_bug.cgi?id=222846
+        <rdar://problem/75171053>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add Info command.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/find.py:
+        (Info):
+        (Info.parser): Moved from Find.parser, exclude argument.
+        (Info.main): Moved from Find.main, add a default reference.
+        (Find):
+        (Find.parser): Invoke Info.parser.
+        (Find.main): Invoke Info.main with user's specified reference.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+
 2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Introduce NeedsUnbrandedUserAgent quirk and use it for accounts.google.com, docs.google.com, and drive.google.com

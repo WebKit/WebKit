@@ -233,3 +233,31 @@ Date: {}
 Revision: 4
 '''.format(datetime.fromtimestamp(1601686700).strftime('%a %b %d %H:%M:%S %Y')),
         )
+
+
+class TestInfo(unittest.TestCase):
+    path = '/mock/repository'
+
+    def test_basic_git(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(
+                args=('info', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '5@main | d8bce26fa65c | Patch Series\n')
+
+    def test_basic_git_svn(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(
+                args=('info', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '5@main | d8bce26fa65c, r9 | Patch Series\n')
+
+    def test_basic_svn(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
+            self.assertEqual(0, program.main(
+                args=('info', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6 | 6th commit\n')

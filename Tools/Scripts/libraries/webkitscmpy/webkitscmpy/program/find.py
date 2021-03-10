@@ -29,9 +29,9 @@ from webkitcorepy import arguments
 from webkitscmpy import Commit, local
 
 
-class Find(Command):
-    name = 'find'
-    help = 'Given an identifier, revision or hash, normalize and print the commit'
+class Info(Command):
+    name = 'info'
+    help = 'Print information about the HEAD commit'
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -55,16 +55,10 @@ class Find(Command):
             default=True,
         )
 
-        parser.add_argument(
-            'argument', nargs=1,
-            type=str, default=None,
-            help='String representation of a commit or branch to be normalized',
-        )
-
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args, repository, reference='HEAD', **kwargs):
         try:
-            commit = repository.find(args.argument[0], include_log=args.include_log)
+            commit = repository.find(reference, include_log=args.include_log)
         except (local.Scm.Exception, ValueError) as exception:
             # ValueErrors and Scm exceptions usually contain enough information to be displayed
             # to the user as an error
@@ -103,3 +97,22 @@ class Find(Command):
                 print(u'    {}'.format(line))
 
         return 0
+
+
+class Find(Command):
+    name = 'find'
+    help = 'Given an identifier, revision or hash, normalize and print the commit'
+
+    @classmethod
+    def parser(cls, parser, loggers=None):
+        Info.parser(parser, loggers=loggers)
+
+        parser.add_argument(
+            'argument', nargs=1,
+            type=str, default=None,
+            help='String representation of a commit or branch to be normalized',
+        )
+
+    @classmethod
+    def main(cls, args, repository, **kwargs):
+        return Info.main(args, repository=repository, reference=args.argument[0], **kwargs)

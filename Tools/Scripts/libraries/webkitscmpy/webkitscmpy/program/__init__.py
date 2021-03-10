@@ -31,7 +31,7 @@ from .canonicalize import Canonicalize
 from .clean import Clean
 from .command import Command
 from .checkout import Checkout
-from .find import Find
+from .find import Find, Info
 from .pull import Pull
 from .setup_git_svn import SetupGitSvn
 
@@ -57,7 +57,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    programs = [Find, Checkout, Canonicalize, Pull, Clean]
+    programs = [Find, Info, Checkout, Canonicalize, Pull, Clean]
     if subversion:
         programs.append(SetupGitSvn)
 
