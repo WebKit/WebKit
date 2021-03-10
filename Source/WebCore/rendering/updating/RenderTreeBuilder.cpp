@@ -599,7 +599,17 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
     // Out of flow children of RenderMultiColumnFlow are not really part of the multicolumn flow. We need to ensure that changes in positioning like this
     // trigger insertions into the multicolumn flow.
     if (auto* enclosingFragmentedFlow = parent.enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(enclosingFragmentedFlow)) {
-        auto movingIntoMulticolumn = wasOutOfFlowPositioned && !isOutOfFlowPositioned;
+        auto movingIntoMulticolumn = [&] {
+            if (wasOutOfFlowPositioned && !isOutOfFlowPositioned)
+                return true;
+            if (auto* containingBlock = renderer.containingBlock(); containingBlock && isOutOfFlowPositioned) {
+                // Sometimes the flow state could change even when the renderer stays out-of-flow (e.g when going from fixed to absolute and
+                // the containing block is inside a multi-column flow).
+                return containingBlock->fragmentedFlowState() == RenderObject::InsideInFragmentedFlow
+                    && renderer.fragmentedFlowState() == RenderObject::NotInsideFragmentedFlow;
+            }
+            return false;
+        }();
         if (movingIntoMulticolumn) {
             multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), renderer);
             renderer.initializeFragmentedFlowStateOnInsertion();
