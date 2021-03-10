@@ -31,6 +31,7 @@
 #import "WKWebProcessPlugInFrameInternal.h"
 #import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/WebImage.h>
 
 @implementation WKWebProcessPlugInNodeHandle {
@@ -39,6 +40,8 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInNodeHandle.class, self))
+        return;
     _nodeHandle->~InjectedBundleNodeHandle();
     [super dealloc];
 }

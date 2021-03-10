@@ -27,12 +27,15 @@
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
 
 #import "APIArray.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKResourceLoadStatisticsThirdParty
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKResourceLoadStatisticsThirdParty.class, self))
+        return;
     _thirdParty->API::ResourceLoadStatisticsThirdParty::~ResourceLoadStatisticsThirdParty();
     [super dealloc];
 }

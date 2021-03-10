@@ -37,7 +37,6 @@
 #import <Quartz/Quartz.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/LocalDefaultSystemAppearance.h>
-#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RunLoop.h>
 
 NSString * const WebKitOriginalTopPrintingMarginKey = @"WebKitOriginalTopMargin";
@@ -63,7 +62,7 @@ static BOOL isForcingPreviewUpdate;
 
 - (void)dealloc
 {
-    callOnMainRunLoop([frame = WTFMove(_webFrame), previews = WTFMove(_pagePreviews)] {
+    ensureOnMainRunLoop([frame = WTFMove(_webFrame), previews = WTFMove(_pagePreviews)] {
         // Deallocate these on the main thread, not the current thread, since the
         // reference counting and the destructors aren't threadsafe.
     });

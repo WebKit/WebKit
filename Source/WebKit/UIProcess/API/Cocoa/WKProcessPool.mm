@@ -53,6 +53,7 @@
 #import <WebCore/HTTPCookieAcceptPolicyCocoa.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/RegistrableDomain.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -99,6 +100,9 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKProcessPool.class, self))
+        return;
+
     _processPool->~WebProcessPool();
 
     [super dealloc];

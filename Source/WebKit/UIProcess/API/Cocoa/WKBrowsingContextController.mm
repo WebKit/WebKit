@@ -56,6 +56,7 @@
 #import "WebProcessPool.h"
 #import "WebProtectionSpace.h"
 #import "_WKRemoteObjectRegistryInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -90,6 +91,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBrowsingContextController.class, self))
+        return;
+
     ASSERT(browsingContextControllerMap().get(_page.get()) == self);
     browsingContextControllerMap().remove(_page.get());
 

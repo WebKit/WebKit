@@ -28,6 +28,7 @@
 
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKBackForwardList {
     API::ObjectStorage<WebKit::WebBackForwardList> _list;
@@ -35,6 +36,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBackForwardList.class, self))
+        return;
+
     _list->~WebBackForwardList();
 
     [super dealloc];

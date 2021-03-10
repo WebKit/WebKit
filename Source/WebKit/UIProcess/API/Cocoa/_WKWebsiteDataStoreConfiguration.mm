@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
 
 static void checkURLArgument(NSURL *url)
@@ -60,6 +61,8 @@ static void checkURLArgument(NSURL *url)
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebsiteDataStoreConfiguration.class, self))
+        return;
     _configuration->~WebsiteDataStoreConfiguration();
     [super dealloc];
 }

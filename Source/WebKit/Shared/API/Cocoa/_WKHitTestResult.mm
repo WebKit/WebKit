@@ -28,10 +28,15 @@
 
 #if PLATFORM(MAC)
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation _WKHitTestResult
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKHitTestResult.class, self))
+        return;
+
     _hitTestResult->~HitTestResult();
 
     [super dealloc];

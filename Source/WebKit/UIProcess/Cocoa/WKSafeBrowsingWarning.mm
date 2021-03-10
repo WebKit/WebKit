@@ -30,9 +30,11 @@
 #import "PageClient.h"
 #import "SafeBrowsingWarning.h"
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/URL.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Language.h>
+#import <wtf/MainThread.h>
 
 #if PLATFORM(WATCHOS)
 #import "PepperUICoreSPI.h"
@@ -511,8 +513,10 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 
 - (void)dealloc
 {
-    if (_completionHandler)
-        _completionHandler(WebKit::ContinueUnsafeLoad::No);
+    ensureOnMainRunLoop([completionHandler = WTFMove(_completionHandler), warning = WTFMove(_warning)] () mutable {
+        if (completionHandler)
+            completionHandler(WebKit::ContinueUnsafeLoad::No);
+    });
     [super dealloc];
 }
 

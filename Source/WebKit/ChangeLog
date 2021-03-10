@@ -1,3 +1,164 @@
+2021-03-09  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make WebKit API Objective-C objects safe to release on non-main threads
+        https://bugs.webkit.org/show_bug.cgi?id=223013
+
+        Reviewed by Geoffrey Garen.
+
+        Used ensureOnMainRunLoop in dealloc methods where possible to make them
+        thread-safe. Used WebCoreObjCScheduleDeallocateOnMainRunLoop instead in cases
+        that were too complex to be done with ensureOnMainRunLoop.
+
+        * Shared/API/APIFrameHandle.cpp:
+        (API::FrameHandle::~FrameHandle): Deleted.
+        * Shared/API/APIFrameHandle.h: Use pragma once. Marked the class final.
+        Removed explicit destructor because it is not helpful.
+
+        * Shared/API/Cocoa/_WKFrameHandle.mm:
+        (-[_WKFrameHandle dealloc]): Use WebCoreObjCScheduleDeallocateOnMainRunLoop.
+        * Shared/API/Cocoa/_WKHitTestResult.mm:
+        (-[_WKHitTestResult dealloc]): Ditto.
+        * Shared/Cocoa/WKNSArray.mm:
+        (-[WKNSArray dealloc]): Ditto.
+        * Shared/Cocoa/WKNSData.mm:
+        (-[WKNSData dealloc]): Ditto.
+        * Shared/Cocoa/WKNSDictionary.mm:
+        (-[WKNSDictionary dealloc]): Ditto.
+        * Shared/Cocoa/WKObject.mm:
+        (-[WKObject dealloc]): Ditto.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (-[WKObservablePageState dealloc]): Use ensureOnMainRunLoop.
+
+        * UIProcess/API/Cocoa/PageLoadStateObserver.h: Added clearObject for use in
+        the WKObservablePageState deallc method. Removed header guards since this is
+        an Objective-C header and #import takes care of it.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        (-[WKBackForwardList dealloc]): Use WebCoreObjCScheduleDeallocateOnMainRunLoop.
+        * UIProcess/API/Cocoa/WKBackForwardListItem.mm:
+        (-[WKBackForwardListItem dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (-[WKConnection dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKContentRuleList.mm:
+        (-[WKContentRuleList dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (-[WKContentRuleListStore dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKContentWorld.mm:
+        (-[WKContentWorld dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKDownload.mm:
+        (-[WKDownload dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        (-[WKHTTPCookieStore dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKNavigation.mm:
+        (-[WKNavigation dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKNavigationData.mm:
+        (-[WKNavigationData dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKNavigationResponse.mm:
+        (-[WKNavigationResponse dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm:
+        (-[WKSecurityOrigin dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (-[WKWebsiteDataRecord dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore dealloc]): Ditto.
+        * UIProcess/API/Cocoa/WKWindowFeatures.mm:
+        (-[WKWindowFeatures dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifest dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachment dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKContentRuleListAction.mm:
+        (-[_WKContentRuleListAction dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKCustomHeaderFields.mm:
+        (-[_WKCustomHeaderFields dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKExperimentalFeature.mm:
+        (-[_WKExperimentalFeature dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKFrameTreeNode.mm:
+        (-[_WKFrameTreeNode dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKGeolocationPosition.mm:
+        (-[_WKGeolocationPosition dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKInspectorConfiguration.mm:
+        (-[_WKInspectorConfiguration dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKInspectorDebuggableInfo.mm:
+        (-[_WKInspectorDebuggableInfo dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        (-[_WKInspectorExtension dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKInternalDebugFeature.mm:
+        (-[_WKInternalDebugFeature dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.mm:
+        (-[_WKResourceLoadInfo dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm:
+        (-[_WKResourceLoadStatisticsFirstParty dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm:
+        (-[_WKResourceLoadStatisticsThirdParty dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKUserInitiatedAction.mm:
+        (-[_WKUserInitiatedAction dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.mm:
+        (-[_WKVisitedLinkStore dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm:
+        (-[_WKWebAuthenticationAssertionResponse dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel dealloc]): Ditto.
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration dealloc]): Ditto.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]): Ditto.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (-[WKSafeBrowsingWarning dealloc]): Use ensureOnMainRunLoop.
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView dealloc]): Ditto.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame dealloc]): Use WebCoreObjCScheduleDeallocateOnMainRunLoop.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm:
+        (-[WKWebProcessPlugInHitTestResult dealloc]): Ditto.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle dealloc]): Ditto.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm:
+        (-[WKWebProcessPlugInPageGroup dealloc]): Ditto.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        (-[WKWebProcessPlugInRangeHandle dealloc]): Ditto.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        (-[WKWebProcessPlugInScriptWorld dealloc]): Ditto.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode dealloc]): Use ensureOnMainRunLoop.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange dealloc]): Ditto.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        (-[WKWebProcessPlugInController dealloc]): Use WebCoreObjCScheduleDeallocateOnMainRunLoop.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController dealloc]): Ditto.
+
 2021-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Logic for updating the text selection when dragging selection handles should account for image overlays

@@ -1,3 +1,17 @@
+2021-03-09  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make WebKit API Objective-C objects safe to release on non-main threads
+        https://bugs.webkit.org/show_bug.cgi?id=223013
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/MainThread.cpp:
+        (WTF::ensureOnMainRunLoop): Added. For use in cases where we want to be more
+        efficient, and synchronous, when already on the main run loop, but we can do
+        the work asynchronously when called and not on the main run loop.
+
+        * wtf/MainThread.h: Added ensureOnMainRunLoop.
+
 2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Reenable -fvisibility=hidden

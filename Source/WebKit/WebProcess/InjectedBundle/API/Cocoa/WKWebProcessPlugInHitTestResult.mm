@@ -27,6 +27,7 @@
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 
 #import "WKWebProcessPlugInNodeHandleInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKWebProcessPlugInHitTestResult {
     API::ObjectStorage<WebKit::InjectedBundleHitTestResult> _hitTestResult;
@@ -34,6 +35,8 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInHitTestResult.class, self))
+        return;
     _hitTestResult->~InjectedBundleHitTestResult();
     [super dealloc];
 }

@@ -32,6 +32,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
+#import <wtf/MainThread.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKDOMRange
@@ -55,7 +56,9 @@
 
 - (void)dealloc
 {
-    WebKit::WKDOMRangeCache().remove(_impl.get());
+    ensureOnMainRunLoop([range = WTFMove(_impl)] {
+        WebKit::WKDOMRangeCache().remove(range.get());
+    });
     [super dealloc];
 }
 

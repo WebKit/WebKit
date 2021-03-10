@@ -34,6 +34,7 @@
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKWebViewInternal.h"
 #import <Foundation/Foundation.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/WeakObjCPtr.h>
 
 class DownloadClient final : public API::DownloadClient {
@@ -242,6 +243,8 @@ private:
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKDownload.class, self))
+        return;
     _download->~DownloadProxy();
     [super dealloc];
 }

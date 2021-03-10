@@ -27,6 +27,7 @@
 #import "_WKCustomHeaderFields.h"
 
 #import "_WKCustomHeaderFieldsInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -43,6 +44,8 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKCustomHeaderFields.class, self))
+        return;
     _fields->API::CustomHeaderFields::~CustomHeaderFields();
     [super dealloc];
 }

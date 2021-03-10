@@ -26,12 +26,17 @@
 #import "config.h"
 #import "WKNSArray.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation WKNSArray {
     API::ObjectStorage<API::Array> _array;
 }
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNSArray.class, self))
+        return;
+
     _array->~Array();
 
     [super dealloc];

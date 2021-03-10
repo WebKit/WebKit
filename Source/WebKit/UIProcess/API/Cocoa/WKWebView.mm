@@ -138,6 +138,7 @@
 #import <WebCore/TextManipulationController.h>
 #import <WebCore/VersionChecks.h>
 #import <WebCore/ViewportArguments.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/BlockPtr.h>
@@ -616,6 +617,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebView.class, self))
+        return;
+
 #if PLATFORM(MAC)
     [_textFinderClient willDestroyView:self];
 #endif

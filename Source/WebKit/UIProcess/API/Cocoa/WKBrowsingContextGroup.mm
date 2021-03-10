@@ -38,6 +38,7 @@
 #import "WKStringCF.h"
 #import "WKURL.h"
 #import "WKURLCF.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/Vector.h>
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -48,6 +49,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBrowsingContextGroup.class, self))
+        return;
+
     _pageGroup->~WebPageGroup();
 
     [super dealloc];

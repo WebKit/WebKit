@@ -28,12 +28,16 @@
 
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RefPtr.h>
 
 @implementation WKSecurityOrigin
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKSecurityOrigin.class, self))
+        return;
+
     _securityOrigin->~SecurityOrigin();
 
     [super dealloc];

@@ -30,6 +30,7 @@
 #import "APIContentRuleListStore.h"
 #import "NetworkCacheFileSystem.h"
 #import "WKErrorInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -55,6 +56,9 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContentRuleListStore.class, self))
+        return;
+
     _contentRuleListStore->~ContentRuleListStore();
 
     [super dealloc];

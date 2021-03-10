@@ -26,10 +26,14 @@
 #import "config.h"
 #import "_WKResourceLoadStatisticsFirstPartyInternal.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation _WKResourceLoadStatisticsFirstParty
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKResourceLoadStatisticsFirstParty.class, self))
+        return;
     _firstParty->API::ResourceLoadStatisticsFirstParty::~ResourceLoadStatisticsFirstParty();
     [super dealloc];
 }

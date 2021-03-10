@@ -48,10 +48,6 @@ FrameHandle::FrameHandle(WebCore::FrameIdentifier frameID, bool isAutoconverting
 {
 }
 
-FrameHandle::~FrameHandle()
-{
-}
-
 void FrameHandle::encode(IPC::Encoder& encoder) const
 {
     encoder << m_frameID;

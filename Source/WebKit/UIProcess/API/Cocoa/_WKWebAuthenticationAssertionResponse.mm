@@ -27,6 +27,7 @@
 #import "_WKWebAuthenticationAssertionResponseInternal.h"
 
 #import "WKNSData.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKWebAuthenticationAssertionResponse
 
@@ -34,6 +35,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebAuthenticationAssertionResponse.class, self))
+        return;
+
     _response->~WebAuthenticationAssertionResponse();
 
     [super dealloc];

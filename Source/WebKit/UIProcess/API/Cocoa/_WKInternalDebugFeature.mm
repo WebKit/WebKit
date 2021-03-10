@@ -26,10 +26,15 @@
 #import "config.h"
 #import "_WKInternalDebugFeatureInternal.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation _WKInternalDebugFeature
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKInternalDebugFeature.class, self))
+        return;
+
     _internalDebugFeature->API::InternalDebugFeature::~InternalDebugFeature();
 
     [super dealloc];

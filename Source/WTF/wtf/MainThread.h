@@ -57,6 +57,7 @@ WTF_EXPORT_PRIVATE bool canCurrentThreadAccessThreadLocalData(Thread&);
 WTF_EXPORT_PRIVATE bool isMainRunLoop();
 WTF_EXPORT_PRIVATE void callOnMainRunLoop(Function<void()>&&);
 WTF_EXPORT_PRIVATE void callOnMainRunLoopAndWait(Function<void()>&&);
+WTF_EXPORT_PRIVATE void ensureOnMainRunLoop(Function<void()>&&); // Sync if called on main run loop, async otherwise.
 
 #if USE(WEB_THREAD)
 WTF_EXPORT_PRIVATE bool isWebThread();
@@ -79,16 +80,19 @@ using WTF::callOnMainThread;
 using WTF::callOnMainThreadAndWait;
 using WTF::callOnMainRunLoop;
 using WTF::callOnMainRunLoopAndWait;
+using WTF::ensureOnMainRunLoop;
 using WTF::canCurrentThreadAccessThreadLocalData;
 using WTF::isMainRunLoop;
 using WTF::isMainThread;
 using WTF::isMainThreadOrGCThread;
 using WTF::isUIThread;
 using WTF::isWebThread;
+
 #if PLATFORM(COCOA)
 using WTF::dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded;
 using WTF::callOnWebThreadOrDispatchAsyncOnMainThread;
 #endif
+
 #if USE(WEB_THREAD)
 using WTF::initializeWebThread;
 using WTF::initializeApplicationUIThread;

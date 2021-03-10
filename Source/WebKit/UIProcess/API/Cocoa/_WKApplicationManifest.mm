@@ -28,6 +28,7 @@
 
 #import <WebCore/ApplicationManifest.h>
 #import <WebCore/ApplicationManifestParser.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKApplicationManifest
 
@@ -63,6 +64,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifest.class, self))
+        return;
+
     _applicationManifest->~ApplicationManifest();
 
     [super dealloc];

@@ -68,6 +68,14 @@ void callOnMainRunLoop(Function<void()>&& function)
     RunLoop::main().dispatch(WTFMove(function));
 }
 
+void ensureOnMainRunLoop(Function<void()>&& function)
+{
+    if (RunLoop::isMain())
+        function();
+    else
+        RunLoop::main().dispatch(WTFMove(function));
+}
+
 void callOnMainThread(Function<void()>&& function)
 {
 #if USE(WEB_THREAD)

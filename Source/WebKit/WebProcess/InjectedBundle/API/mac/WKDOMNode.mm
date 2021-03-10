@@ -32,6 +32,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/SimpleRange.h>
+#import <wtf/MainThread.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKDOMNode
@@ -50,7 +51,9 @@
 
 - (void)dealloc
 {
-    WebKit::WKDOMNodeCache().remove(_impl.get());
+    ensureOnMainRunLoop([node = WTFMove(_impl)] {
+        WebKit::WKDOMNodeCache().remove(node.get());
+    });
     [super dealloc];
 }
 

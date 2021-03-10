@@ -28,6 +28,7 @@
 
 #import "WKContentWorldInternal.h"
 #import "_WKUserContentWorldInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKUserScript
@@ -49,6 +50,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKUserScript.class, self))
+        return;
+
     _userScript->~UserScript();
 
     [super dealloc];

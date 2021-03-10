@@ -1,18 +1,18 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution. 
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -35,18 +35,49 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/Threading.h>
 
-bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
+#if ASSERT_ENABLED
+
+// This is like the isKindOfClass: method, bypassing it to get the correct answer for our purposes even for classes that override it.
+// At the time of this writing, that included WebKit's WKObject class.
+static bool safeIsKindOfClass(id object, Class testClass)
 {
-    ASSERT([object isKindOfClass:cls]);
+    if (!object)
+        return false;
+    for (auto ancestorClass = object_getClass(object); ancestorClass; ancestorClass = class_getSuperclass(ancestorClass)) {
+        if (ancestorClass == testClass)
+            return true;
+    }
+    return false;
+}
+
+#endif
+
+bool WebCoreObjCScheduleDeallocateOnMainThread(Class deallocMethodClass, id object)
+{
+    ASSERT(safeIsKindOfClass(object, deallocMethodClass));
 
     if (isMainThread())
         return false;
 
-    callOnMainThread([cls, object] {
+    callOnMainThread([deallocMethodClass, object] {
         auto deallocSelector = sel_registerName("dealloc");
-        wtfCallIMP<void>(method_getImplementation(class_getInstanceMethod(cls, deallocSelector)), object, deallocSelector);
+        wtfCallIMP<void>(method_getImplementation(class_getInstanceMethod(deallocMethodClass, deallocSelector)), object, deallocSelector);
     });
 
     return true;
 }
 
+bool WebCoreObjCScheduleDeallocateOnMainRunLoop(Class deallocMethodClass, id object)
+{
+    ASSERT(safeIsKindOfClass(object, deallocMethodClass));
+
+    if (isMainRunLoop())
+        return false;
+
+    callOnMainRunLoop([deallocMethodClass, object] {
+        auto deallocSelector = sel_registerName("dealloc");
+        wtfCallIMP<void>(method_getImplementation(class_getInstanceMethod(deallocMethodClass, deallocSelector)), object, deallocSelector);
+    });
+
+    return true;
+}

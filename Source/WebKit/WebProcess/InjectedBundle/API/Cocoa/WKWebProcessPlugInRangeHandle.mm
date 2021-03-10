@@ -30,6 +30,7 @@
 #import "WKWebProcessPlugInFrameInternal.h"
 #import <WebCore/DataDetection.h>
 #import <WebCore/Range.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 #if ENABLE(DATA_DETECTION)
 #import "WKDataDetectorTypesInternal.h"
@@ -41,6 +42,8 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInRangeHandle.class, self))
+        return;
     _rangeHandle->~InjectedBundleRangeHandle();
     [super dealloc];
 }

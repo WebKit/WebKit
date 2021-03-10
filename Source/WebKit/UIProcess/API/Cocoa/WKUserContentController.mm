@@ -46,6 +46,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SerializedScriptValue.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKUserContentController
 
@@ -61,6 +62,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKUserContentController.class, self))
+        return;
+
     _userContentControllerProxy->~WebUserContentControllerProxy();
 
     [super dealloc];

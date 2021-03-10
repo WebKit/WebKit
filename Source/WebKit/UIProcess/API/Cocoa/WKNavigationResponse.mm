@@ -27,11 +27,15 @@
 #import "WKNavigationResponseInternal.h"
 
 #import "WKFrameInfoInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKNavigationResponse
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNavigationResponse.class, self))
+        return;
+
     _navigationResponse->~NavigationResponse();
 
     [super dealloc];

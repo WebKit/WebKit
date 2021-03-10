@@ -28,6 +28,7 @@
 
 #import "VisitedLinkStore.h"
 #import <WebCore/SharedStringHash.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKVisitedLinkStore
 
@@ -43,6 +44,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKVisitedLinkStore.class, self))
+        return;
+
     _visitedLinkStore->~VisitedLinkStore();
 
     [super dealloc];
