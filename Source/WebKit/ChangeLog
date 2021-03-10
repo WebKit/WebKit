@@ -1,3 +1,26 @@
+2021-03-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r273453. rdar://problem/75280351
+
+    Unreviewed, fix build with the latest iOS SDK.
+    
+    Source/WebCore:
+    
+    * platform/DragData.h:
+    (WebCore::DragData::operator=): Deleted.
+    
+    Source/WebKit:
+    
+    * Shared/FocusedElementInformation.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273453 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-24  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, fix build with the latest iOS SDK.
+
+            * Shared/FocusedElementInformation.h:
+
 2021-03-05  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r273997. rdar://problem/75115235
