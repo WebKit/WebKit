@@ -80,6 +80,7 @@
 - (void)synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:(NSString *)html;
 - (void)clearMessageHandlers:(NSArray *)messageNames;
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
+- (void)performAfterReceivingAnyMessage:(void (^)(NSString *))action;
 - (void)waitForMessage:(NSString *)message;
 
 // This function waits until a DOM load event is fired.

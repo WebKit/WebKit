@@ -88,8 +88,8 @@ private:
 
 TEST_F(AppleLanguagesTest, UpdateAppleLanguages)
 {
-    // Tests uses "en-US" language initially.
-    system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '(\"en-US\")'"].UTF8String);
+    // Tests uses "en-GB" language initially.
+    system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '(\"en-GB\")'"].UTF8String);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
@@ -101,7 +101,7 @@ TEST_F(AppleLanguagesTest, UpdateAppleLanguages)
     auto preferredLanguage = [&] {
         return [webView stringByEvaluatingJavaScript:@"navigator.language"];
     };
-    EXPECT_WK_STREQ(@"en-us", preferredLanguage());
+    EXPECT_WK_STREQ(@"en-gb", preferredLanguage());
 
     __block bool done = false;
     [webView evaluateJavaScript:@"onlanguagechange = () => { webkit.messageHandlers.testHandler.postMessage(navigator.language); }; true;" completionHandler:^(id value, NSError *error) {
@@ -110,18 +110,25 @@ TEST_F(AppleLanguagesTest, UpdateAppleLanguages)
     }];
     TestWebKitAPI::Util::run(&done);
 
+    done = false;
     __block bool didChangeLanguage = false;
-    [webView performAfterReceivingMessage:@"en-gb" action:^{ didChangeLanguage = true; }];
-    [webView performAfterReceivingMessage:@"en-us" action:^{
-        EXPECT_TRUE(false); // navigator.language was wrong when the languagechange event fired.
+    [webView performAfterReceivingAnyMessage:^(NSString *newLanguage) {
+        EXPECT_WK_STREQ(@"en-us", newLanguage);
         didChangeLanguage = true;
+        done = true;
     }];
 
-    // Switch system language from "en-US" to "en-GB". Make sure that we fire a languagechange event at the Window and that navigator.language
+    // Switch system language from "en-GB" to "en-US". Make sure that we fire a languagechange event at the Window and that navigator.language
     // now reports "en-gb".
-    system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '(\"en-GB\")'"].UTF8String);
+    system([NSString stringWithFormat:@"defaults write NSGlobalDomain AppleLanguages '(\"en-US\")'"].UTF8String);
     CFNotificationCenterPostNotification(CFNotificationCenterGetDistributedCenter(), CFSTR("AppleLanguagePreferencesChangedNotification"), nullptr, nullptr, true);
 
-    TestWebKitAPI::Util::run(&didChangeLanguage);
+    // Implement our own timeout because we would fail to reset the language if we let the test actually time out.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        done = true;
+    });
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didChangeLanguage);
 }
 #endif

@@ -1,3 +1,28 @@
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Improve AppleLanguagesTest.UpdateAppleLanguages API test
+        https://bugs.webkit.org/show_bug.cgi?id=223037
+
+        Reviewed by Per Arne Vollan.
+
+        Made the following improvements to the test:
+        1. Use 'en-GB' initially instead of 'en-US'. Our bots use 'en-US' by default so this makes
+           sure we are indeed able to change the system language.
+        2. Make it so that the test no longer times out if the languageevent fires but navigator.language
+           returns an unexpected language. This was done by using [TestWKWebView performAfterReceivingAnyMessage:]
+           instead of [TestWKWebView performAfterMessage:action:].
+        3. Add an internal timeout handling in the test instead of relying on the test suite's timeout.
+           Without this, we would fail to reset the system's language at the end of the test in case
+           of a timeout.
+
+        * TestWebKitAPI/Tests/WebKit/OverrideAppleLanguagesPreference.mm:
+        (TEST_F):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestMessageHandler setWildcardMessageHandler:]):
+        (-[TestMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[TestWKWebView performAfterReceivingAnyMessage:]):
+
 2021-03-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Running Tools/gtk/install-dependencies installs too many packages on Debian/Ubuntu
