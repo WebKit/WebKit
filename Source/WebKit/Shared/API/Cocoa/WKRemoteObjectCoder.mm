@@ -310,7 +310,7 @@ static RetainPtr<id> decodeObjCObject(WKRemoteObjectDecoder *decoder, Class obje
     if (!result)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" returned nil from -initWithCoder: while being decoded", NSStringFromClass(objectClass)];
 
-    result = [result awakeAfterUsingCoder:decoder];
+    result = adoptNS([result.leakRef() awakeAfterUsingCoder:decoder]);
     if (!result)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" returned nil from -awakeAfterUsingCoder: while being decoded", NSStringFromClass(objectClass)];
 
