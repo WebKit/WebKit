@@ -8,6 +8,13 @@ include(platform/TextureMapper.cmake)
 
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 
+# FIXME: https://bugs.webkit.org/show_bug.cgi?id=181916
+# Remove these lines when turning on hidden visibility
+list(APPEND WebCore_PRIVATE_LIBRARIES WebKit::WTF)
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND WebCore_PRIVATE_LIBRARIES WebKit::bmalloc)
+endif ()
+
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
 

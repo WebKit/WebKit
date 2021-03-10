@@ -66,8 +66,6 @@ Ref<EventTarget> EventTarget::create(ScriptExecutionContext& context)
     return EventTargetConcrete::create(context);
 }
 
-EventTarget::~EventTarget() = default;
-
 bool EventTarget::isNode() const
 {
     return false;
