@@ -1,5 +1,9 @@
 2021-03-10  Ruben Turcios  <rubent_22@apple.com>
 
+        Revert r271193. rdar://problem/75273221
+
+2021-03-10  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r274231. rdar://problem/75279800
 
     [iOS] Add additional telemetry to WebContent sandbox 
