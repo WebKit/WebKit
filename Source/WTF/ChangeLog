@@ -1,3 +1,19 @@
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Use BinarySemaphore in callOnMainAndWait()
+        https://bugs.webkit.org/show_bug.cgi?id=223092
+
+        Reviewed by Geoffrey Garen.
+
+        Use BinarySemaphore in callOnMainAndWait() instead of a Condition, this simplifies the code
+        a bit. Also templatize the function to make sure we avoid any runtime checks for the
+        the "mainStyle".
+
+        * wtf/MainThread.cpp:
+        (WTF::callOnMainAndWait):
+        (WTF::callOnMainRunLoopAndWait):
+        (WTF::callOnMainThreadAndWait):
+
 2021-03-11  Mark Lam  <mark.lam@apple.com>
 
         Use tagged pointers in more places in the MetaAllocator code.

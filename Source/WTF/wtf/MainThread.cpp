@@ -30,7 +30,6 @@
 #include <wtf/MainThread.h>
 
 #include <mutex>
-#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
@@ -38,6 +37,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
 
@@ -101,7 +101,8 @@ enum class MainStyle : bool {
     RunLoop
 };
 
-static void callOnMainAndWait(WTF::Function<void()>&& function, MainStyle mainStyle)
+template <MainStyle mainStyle>
+static void callOnMainAndWait(Function<void()>&& function)
 {
 
     if (mainStyle == MainStyle::Thread ? isMainThread() : isMainRunLoop()) {
@@ -109,17 +110,10 @@ static void callOnMainAndWait(WTF::Function<void()>&& function, MainStyle mainSt
         return;
     }
 
-    Lock mutex;
-    Condition conditionVariable;
-
-    bool isFinished = false;
-
-    auto functionImpl = [&, function = WTFMove(function)] {
+    BinarySemaphore semaphore;
+    auto functionImpl = [&semaphore, function = WTFMove(function)] {
         function();
-
-        auto locker = holdLock(mutex);
-        isFinished = true;
-        conditionVariable.notifyOne();
+        semaphore.signal();
     };
 
     switch (mainStyle) {
@@ -129,21 +123,17 @@ static void callOnMainAndWait(WTF::Function<void()>&& function, MainStyle mainSt
     case MainStyle::RunLoop:
         callOnMainRunLoop(WTFMove(functionImpl));
     };
-
-    std::unique_lock<Lock> lock(mutex);
-    conditionVariable.wait(lock, [&] {
-        return isFinished;
-    });
+    semaphore.wait();
 }
 
-void callOnMainRunLoopAndWait(WTF::Function<void()>&& function)
+void callOnMainRunLoopAndWait(Function<void()>&& function)
 {
-    callOnMainAndWait(WTFMove(function), MainStyle::RunLoop);
+    callOnMainAndWait<MainStyle::RunLoop>(WTFMove(function));
 }
 
-void callOnMainThreadAndWait(WTF::Function<void()>&& function)
+void callOnMainThreadAndWait(Function<void()>&& function)
 {
-    callOnMainAndWait(WTFMove(function), MainStyle::Thread);
+    callOnMainAndWait<MainStyle::Thread>(WTFMove(function));
 }
 
 } // namespace WTF
