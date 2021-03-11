@@ -85,12 +85,12 @@ class Info(Command):
         if commit.message:
             print(u'Title: {}'.format(commit.message.splitlines()[0]))
         print(u'Author: {}'.format(commit.author))
-        print(u'Identifier: {}'.format(commit))
         print(datetime.fromtimestamp(commit.timestamp).strftime('Date: %a %b %d %H:%M:%S %Y'))
         if args.verbose > 0 or commit.revision:
             print('Revision: {}'.format(commit.revision or 'N/A'))
         if args.verbose > 0 or commit.hash:
             print('Hash: {}'.format(commit.hash[:Commit.HASH_LABEL_SIZE] if commit.hash else 'N/A'))
+        print(u'Identifier: {}'.format(commit))
 
         if args.verbose > 0:
             for line in commit.message.splitlines():

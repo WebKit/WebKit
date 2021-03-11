@@ -136,10 +136,10 @@ class TestFind(unittest.TestCase):
             captured.stdout.getvalue(),
             '''Title: 4th commit
 Author: Jonathan Bedard <jbedard@apple.com>
-Identifier: 3@main
 Date: {}
 Revision: 4
 Hash: 1abe25b443e9
+Identifier: 3@main
 '''.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
         )
 
@@ -153,10 +153,10 @@ Hash: 1abe25b443e9
             captured.stdout.getvalue(),
             '''Title: 4th commit
 Author: Jonathan Bedard <jbedard@apple.com>
-Identifier: 3@main
 Date: {}
 Revision: 4
 Hash: 1abe25b443e9
+Identifier: 3@main
     4th commit
     svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
@@ -228,9 +228,9 @@ Hash: 1abe25b443e9
             captured.stdout.getvalue(),
             '''Title: 4th commit
 Author: jbedard@apple.com <jbedard@apple.com>
-Identifier: 3@trunk
 Date: {}
 Revision: 4
+Identifier: 3@trunk
 '''.format(datetime.fromtimestamp(1601686700).strftime('%a %b %d %H:%M:%S %Y')),
         )
 

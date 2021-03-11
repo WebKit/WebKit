@@ -1,5 +1,19 @@
 2021-03-10  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Make identifier last string in 'find'
+        https://bugs.webkit.org/show_bug.cgi?id=223031
+        <rdar://problem/75272100>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/find.py:
+        (Info.main):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+
+2021-03-10  Jonathan Bedard  <jbedard@apple.com>
+
         [resultsdbpy] Make client aware of hashes and revisions
         https://bugs.webkit.org/show_bug.cgi?id=223001
         <rdar://problem/75237812>
