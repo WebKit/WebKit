@@ -1,5 +1,13 @@
 2021-03-11  Imanol Fernandez  <ifernandez@igalia.com>
 
+        Fix contributors file canonical format issue.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json: Fix canonical format issue.
+
+2021-03-11  Imanol Fernandez  <ifernandez@igalia.com>
+
         Add myself as committer in the contributors file.
 
         Unreviewed.
