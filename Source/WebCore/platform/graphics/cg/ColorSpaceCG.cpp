@@ -30,6 +30,7 @@
 
 #include <mutex>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
