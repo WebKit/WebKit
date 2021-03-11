@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,7 +96,7 @@ public:
                 
                 m_parent->additionalPagesInHeap += numPages;
         
-                return FreeSpacePtr(result);
+                return FreeSpacePtr::makeFromRawPointer(result);
             }
                 
             default:

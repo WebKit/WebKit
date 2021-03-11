@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <wtf/MetaAllocator.h>
 
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WTFConfig.h>
 
 namespace WTF {
 
@@ -64,9 +65,9 @@ void MetaAllocatorTracker::release(MetaAllocatorHandle& handle)
 void MetaAllocator::release(const LockHolder&, MetaAllocatorHandle& handle)
 {
     if (handle.sizeInBytes()) {
-        void* start = handle.start().untaggedPtr();
+        MemoryPtr start = handle.start();
         size_t sizeInBytes = handle.sizeInBytes();
-        decrementPageOccupancy(start, sizeInBytes);
+        decrementPageOccupancy(start.untaggedPtr(), sizeInBytes);
         addFreeSpaceFromReleasedHandle(FreeSpacePtr(start), sizeInBytes);
     }
 
@@ -74,10 +75,10 @@ void MetaAllocator::release(const LockHolder&, MetaAllocatorHandle& handle)
         m_tracker->release(handle);
 }
 
-MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator& allocator, void* start, size_t sizeInBytes)
+MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator& allocator, MetaAllocatorHandle::MemoryPtr start, size_t sizeInBytes)
     : m_allocator(allocator)
     , m_start(start)
-    , m_end(reinterpret_cast<char*>(start) + sizeInBytes)
+    , m_end(start + sizeInBytes)
 {
     ASSERT(start);
     ASSERT(sizeInBytes);
@@ -104,17 +105,18 @@ void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
     if (newSizeInBytes == sizeInBytes)
         return;
 
-    uintptr_t freeStart = m_start.untaggedPtr<uintptr_t>() + newSizeInBytes;
+    MemoryPtr freeStart = m_start + newSizeInBytes;
     size_t freeSize = sizeInBytes - newSizeInBytes;
-    uintptr_t freeEnd = freeStart + freeSize;
+    uintptr_t freeStartValue = freeStart.untaggedPtr<uintptr_t>();
+    uintptr_t freeEnd = freeStartValue + freeSize;
     
-    uintptr_t firstCompletelyFreePage = (freeStart + allocator.m_pageSize - 1) & ~(allocator.m_pageSize - 1);
+    uintptr_t firstCompletelyFreePage = roundUpToMultipleOf(allocator.m_pageSize, freeStartValue);
     if (firstCompletelyFreePage < freeEnd)
-        allocator.decrementPageOccupancy(reinterpret_cast<void*>(firstCompletelyFreePage), freeSize - (firstCompletelyFreePage - freeStart));
+        allocator.decrementPageOccupancy(reinterpret_cast<void*>(firstCompletelyFreePage), freeSize - (firstCompletelyFreePage - freeStartValue));
 
     allocator.addFreeSpaceFromReleasedHandle(MetaAllocator::FreeSpacePtr(freeStart), freeSize);
 
-    m_end = m_start + newSizeInBytes;
+    m_end = freeStart;
 }
 
 void MetaAllocatorHandle::dump(PrintStream& out) const
@@ -188,7 +190,7 @@ RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(const LockHolder&, size_t si
     m_numAllocations++;
 #endif
 
-    auto handle = adoptRef(*new MetaAllocatorHandle(*this, start.untaggedPtr(), sizeInBytes));
+    auto handle = adoptRef(*new MetaAllocatorHandle(*this, MemoryPtr(start), sizeInBytes));
 
     if (UNLIKELY(!!m_tracker))
         m_tracker->notify(*handle.ptr());
@@ -284,9 +286,10 @@ void MetaAllocator::addFreeSpaceFromReleasedHandle(FreeSpacePtr start, size_t si
 
 void MetaAllocator::addFreshFreeSpace(void* start, size_t sizeInBytes)
 {
+    Config::AssertNotFrozenScope assertNotFrozenScope;
     LockHolder locker(&m_lock);
     m_bytesReserved += sizeInBytes;
-    addFreeSpace(FreeSpacePtr(start), sizeInBytes);
+    addFreeSpace(FreeSpacePtr::makeFromRawPointer(start), sizeInBytes);
 }
 
 size_t MetaAllocator::debugFreeSpaceSize()

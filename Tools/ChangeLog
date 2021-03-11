@@ -1,3 +1,13 @@
+2021-03-11  Mark Lam  <mark.lam@apple.com>
+
+        Use tagged pointers in more places in the MetaAllocator code.
+        https://bugs.webkit.org/show_bug.cgi?id=223055
+        rdar://69971224
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Tests/WTF/MetaAllocator.cpp:
+
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
         Introduce WorkQueue::dispatchSync()

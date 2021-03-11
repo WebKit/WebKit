@@ -1,3 +1,33 @@
+2021-03-11  Mark Lam  <mark.lam@apple.com>
+
+        Use tagged pointers in more places in the MetaAllocator code.
+        https://bugs.webkit.org/show_bug.cgi?id=223055
+        rdar://69971224
+
+        Reviewed by Saam Barati.
+
+        1. Made the MetaAllocatorPtr constructor that takes a raw pointer private, and
+           only call it from a static factory method, MetaAllocatorPtr::makeFromRawPointer()
+           to make it clear that we're using an untagged pointer as a source.
+        2. Added a MetaAllocatorPtr constructor that retags a pointer.
+           This allows minimizes the window of working with an untagged pointer.
+        3. Assert that MetaAllocator::addFreshFreeSpace() is only called at system
+           initialization time.
+        4. Removed an unused MetaAllocator::FreeSpaceNode constructor.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocator::FreeSpaceNode::FreeSpaceNode): Deleted.
+        * wtf/MetaAllocatorHandle.h:
+        * wtf/MetaAllocatorPtr.h:
+        (WTF::MetaAllocatorPtr::makeFromRawPointer):
+        (WTF::MetaAllocatorPtr::MetaAllocatorPtr):
+
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
         Introduce WorkQueue::dispatchSync()
