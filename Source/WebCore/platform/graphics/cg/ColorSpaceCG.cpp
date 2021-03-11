@@ -31,6 +31,7 @@
 #include <mutex>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
