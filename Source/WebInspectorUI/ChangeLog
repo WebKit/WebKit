@@ -1,5 +1,31 @@
 2021-03-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Add checkbox to toggle all grid overlays
+        https://bugs.webkit.org/show_bug.cgi?id=221924
+        <rdar://problem/74365101>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Controllers/OverlayManager.js:
+        Drive-by: remove unused getter.
+
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .toggle-all):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection):
+        (WI.CSSGridSection.prototype.initialLayout):
+        (WI.CSSGridSection.prototype._handleToggleAllCheckboxChanged):
+
+        (WI.CSSGridSection.prototype.layout):
+        Drive-by: replace `Array.prototype.includes`, which runs at O(n) time, with `isGridOverlayVisible`,
+        which checks a Map instead.
+
+        (WI.CSSGridSection.prototype._handleGridOverlayStateChanged):
+        (WI.CSSGridSection.prototype._updateToggleAllCheckbox):
+        Optimization: minimize number of Map lookups when when at least one overlay is visible and at least one is hidden.
+
+2021-03-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Syntax highlighting for JSX is incorrect
         https://bugs.webkit.org/show_bug.cgi?id=217613
         <rdar://problem/70210975>

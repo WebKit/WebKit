@@ -35,6 +35,8 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
         this._gridNodeSet = new Set;
         this._checkboxElementByNodeMap = new WeakMap;
+        this._toggleAllCheckboxElement = null;
+        this._suppressUpdateToggleAllCheckbox = false;
     }
 
     // Public
@@ -78,10 +80,29 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
         let listHeading = this.element.appendChild(document.createElement("h2"));
         listHeading.classList.add("heading");
-        listHeading.textContent = WI.UIString("Grid Overlays", "Page Overlays @ Layout Sidebar Section Header", "Heading for list of grid nodes");
+
+        let label = listHeading.createChild("label");
+        this._toggleAllCheckboxElement = label.createChild("input", "toggle-all");
+        this._toggleAllCheckboxElement.type = "checkbox";
+        this._toggleAllCheckboxElement.addEventListener("change", this._handleToggleAllCheckboxChanged.bind(this));
+
+        label.append(WI.UIString("Grid Overlays", "Page Overlays @ Layout Sidebar Section Header", "Heading for list of grid nodes"));
 
         this._listElement = this.element.appendChild(document.createElement("ul"));
         this._listElement.classList.add("node-overlay-list");
+    }
+
+    _handleToggleAllCheckboxChanged(event)
+    {
+        let isChecked = event.target.checked;
+        this._suppressUpdateToggleAllCheckbox = true;
+        for (let domNode of this._gridNodeSet) {
+            if (isChecked)
+                WI.overlayManager.showGridOverlay(domNode);
+            else
+                WI.overlayManager.hideGridOverlay(domNode);
+        }
+        this._suppressUpdateToggleAllCheckbox = false;
     }
 
     layout()
@@ -89,8 +110,6 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
         super.layout();
 
         this._listElement.removeChildren();
-
-        let nodesWithGridOverlay = WI.overlayManager.nodesWithGridOverlay;
 
         for (let domNode of this._gridNodeSet) {
             let itemElement = this._listElement.appendChild(document.createElement("li"));
@@ -100,7 +119,7 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
             let labelElement = itemContainerElement.appendChild(document.createElement("label"));
             let checkboxElement = labelElement.appendChild(document.createElement("input"));
             checkboxElement.type = "checkbox";
-            checkboxElement.checked = nodesWithGridOverlay.includes(domNode);
+            checkboxElement.checked = WI.overlayManager.isGridOverlayVisible(domNode);
 
             const nodeDisplayName = labelElement.appendChild(document.createElement("span"));
             nodeDisplayName.classList.add("node-display-name");
@@ -136,6 +155,8 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
             buttonElement.title = WI.repeatedUIString.revealInDOMTree();
             WI.bindInteractionsForNodeToElement(domNode, buttonElement);
         }
+
+        this._updateToggleAllCheckbox();
     }
 
     // Private
@@ -147,5 +168,33 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
             return;
 
         checkboxElement.checked = event.type === WI.OverlayManager.Event.GridOverlayShown;
+        this._updateToggleAllCheckbox();
+    }
+
+    _updateToggleAllCheckbox()
+    {
+        if (this._suppressUpdateToggleAllCheckbox)
+            return;
+
+        let hasVisible = false;
+        let hasHidden = false;
+        for (let domNode of this._gridNodeSet) {
+            let isVisible = WI.overlayManager.isGridOverlayVisible(domNode);
+            if (isVisible)
+                hasVisible = true;
+            else
+                hasHidden = true;
+
+            // Exit early as soon as the partial state is determined.
+            if (hasVisible && hasHidden)
+                break;
+        }
+
+        if (hasVisible && hasHidden)
+            this._toggleAllCheckboxElement.indeterminate = true;
+        else {
+            this._toggleAllCheckboxElement.indeterminate = false;
+            this._toggleAllCheckboxElement.checked = hasVisible;
+        }
     }
 };

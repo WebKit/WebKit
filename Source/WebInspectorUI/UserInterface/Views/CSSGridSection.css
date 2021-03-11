@@ -62,3 +62,7 @@
     font-weight: 500;
     color: var(--text-color)
 }
+
+.css-grid-section .toggle-all {
+    margin-inline-end: 7px;
+}

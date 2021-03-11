@@ -44,11 +44,6 @@ WI.OverlayManager = class OverlayManager extends WI.Object
 
     // Public
 
-    get nodesWithGridOverlay()
-    {
-        return Array.from(this._gridOverlayForNodeMap.keys());
-    }
-
     showGridOverlay(domNode, {color} = {})
     {
         console.assert(!domNode.destroyed, domNode);
