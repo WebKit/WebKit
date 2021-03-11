@@ -111,6 +111,7 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_manager(manager)
     , m_remoteEngineIdentifier(engineIdentifier)
     , m_id(playerIdentifier)
+    , m_documentSecurityOrigin(player->documentSecurityOrigin())
 {
     INFO_LOG(LOGIDENTIFIER);
 }
@@ -128,13 +129,6 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
     if (m_audioSourceProvider)
         m_audioSourceProvider->close();
 #endif
-}
-
-void MediaPlayerPrivateRemote::setConfiguration(RemoteMediaPlayerConfiguration&& configuration, WebCore::SecurityOriginData&& documentSecurityOrigin)
-{
-    m_configuration = WTFMove(configuration);
-    m_documentSecurityOrigin = WTFMove(documentSecurityOrigin);
-    m_player->mediaEngineUpdated();
 }
 
 void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
@@ -181,9 +175,12 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         sandboxExtensionHandle = WTFMove(handle);
     }
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
-        if (weakThis)
-            weakThis->m_configuration = WTFMove(configuration);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = makeWeakPtr(*this), this](auto&& configuration) {
+        if (!weakThis)
+            return;
+
+        m_configuration = WTFMove(configuration);
+        m_player->mediaEngineUpdated();
     }, m_id);
 }
 
@@ -661,9 +658,12 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 {
     if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE) {
         auto identifier = RemoteMediaSourceIdentifier::generate();
-        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled(), identifier), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
-            if (weakThis)
-                weakThis->m_configuration = WTFMove(configuration);
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled(), identifier), [weakThis = makeWeakPtr(*this), this](auto&& configuration) {
+            if (!weakThis)
+                return;
+
+            m_configuration = WTFMove(configuration);
+            m_player->mediaEngineUpdated();
         }, m_id);
         m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
 
@@ -1219,11 +1219,6 @@ void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remo
 void MediaPlayerPrivateRemote::resourceNotSupported()
 {
     m_player->resourceNotSupported();
-}
-
-void MediaPlayerPrivateRemote::engineUpdated()
-{
-    m_player->mediaEngineUpdated();
 }
 
 void MediaPlayerPrivateRemote::activeSourceBuffersChanged()

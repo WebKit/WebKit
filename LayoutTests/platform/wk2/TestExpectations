@@ -255,11 +255,6 @@ webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-m
 
 webkit.org/b/221783 [ Debug ] loader/change-src-during-iframe-load-crash.html [ Skip ]
 
-# webkit.org/b/220375
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html [ Crash Pass ]
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html [ Crash Pass ]
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html [ Crash Pass ]
-
 webkit.org/b/222569 fast/mediastream/media-stream-track-interrupted.html [ Crash Pass ]
 
 ### END OF (1) Classified failures with bug reports

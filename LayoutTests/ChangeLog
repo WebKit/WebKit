@@ -1,3 +1,12 @@
+2021-03-10  Peng Liu  <peng.liu6@apple.com>
+
+        [GPU Process] Assertion under RenderLayerCompositor::computeCompositingRequirements()
+        https://bugs.webkit.org/show_bug.cgi?id=220375
+
+        Reviewed by Eric Carlson.
+
+        * platform/wk2/TestExpectations:
+
 2021-03-10  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/security convert PHP to Python

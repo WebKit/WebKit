@@ -146,6 +146,7 @@ public:
     using HTMLElement::weakPtrFactory;
 
     RefPtr<MediaPlayer> player() const { return m_player; }
+    bool supportsAcceleratedRendering() const { return m_cachedSupportsAcceleratedRendering; }
 
     virtual bool isVideo() const { return false; }
     bool hasVideo() const override { return false; }
@@ -1017,6 +1018,7 @@ private:
 #endif
 
     RefPtr<MediaPlayer> m_player;
+    bool m_cachedSupportsAcceleratedRendering { false };
 
     MediaPlayer::Preload m_preload { Preload::Auto };
 

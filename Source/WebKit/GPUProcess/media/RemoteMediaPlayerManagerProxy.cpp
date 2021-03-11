@@ -57,7 +57,7 @@ RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy()
 {
 }
 
-void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_gpuConnectionToWebProcess);
@@ -65,13 +65,8 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
     auto locker = holdLock(m_proxiesLock);
     ASSERT(!m_proxies.contains(identifier));
 
-    RemoteMediaPlayerConfiguration playerConfiguration;
-
     auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, identifier, m_gpuConnectionToWebProcess->connection(), engineIdentifier, WTFMove(proxyConfiguration));
-    proxy->getConfiguration(playerConfiguration);
     m_proxies.add(identifier, WTFMove(proxy));
-
-    completionHandler(playerConfiguration);
 }
 
 void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier identifier)

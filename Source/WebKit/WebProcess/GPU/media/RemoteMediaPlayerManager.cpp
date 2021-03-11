@@ -165,16 +165,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     proxyConfiguration.documentSecurityOrigin = documentSecurityOrigin;
 
     auto identifier = MediaPlayerIdentifier::generate();
-    RemoteMediaPlayerConfiguration playerConfiguration;
-    auto completionHandler = [this, weakThis = makeWeakPtr(this), identifier, documentSecurityOrigin = WTFMove(documentSecurityOrigin)](auto&& playerConfiguration) mutable {
-        if (!weakThis)
-            return;
-
-        if (const auto& player = m_players.get(identifier))
-            player->setConfiguration(WTFMove(playerConfiguration), WTFMove(documentSecurityOrigin));
-    };
-
-    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, remoteEngineIdentifier, proxyConfiguration), completionHandler, 0);
+    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, remoteEngineIdentifier, proxyConfiguration), 0);
 
     auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, identifier, *this);
     m_players.add(identifier, makeWeakPtr(*remotePlayer));

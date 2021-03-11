@@ -1,3 +1,51 @@
+2021-03-10  Peng Liu  <peng.liu6@apple.com>
+
+        [GPU Process] Assertion under RenderLayerCompositor::computeCompositingRequirements()
+        https://bugs.webkit.org/show_bug.cgi?id=220375
+
+        Reviewed by Eric Carlson.
+
+        When "GPU Process: Media" is enabled, `MediaPlayer` will call `mediaPlayerEngineUpdated()`
+        three times when a media element tries to load a URL. The three calls happen at the
+        following time points:
+        1) `MediaPlayer` creates a `MediaPlayerPrivateRemote`.
+        2) `MediaPlayerPrivateRemote` receives the response of a "createMediaPlayer" message
+        from the GPU process and gets the initial configurations of the "remote" media player.
+        3) The `RemoteMediaPlayerProxy` creates a `MediaPlayerPrivate` in the GPU process and
+        notify the `MediaPlayerPrivateRemote` in the WebContent process.
+
+        The second call of `mediaPlayerEngineUpdated()` is unnecessary because the player's
+        configuration at that time is similar to `NullMediaPlayerPrivate`. This patch removes it.
+
+        For the third call of `mediaPlayerEngineUpdated()`, we have to make sure that
+        the `MediaPlayerPrivateRemote` has received the configuration update from the GPU
+        process before the call. Therefore, this patch removes the message
+        `MediaPlayerPrivateRemote::EngineUpdated`, and let `MediaPlayerPrivateRemote`
+        decide when to call `mediaPlayerEngineUpdated()`.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        The `playerConfiguration` is meaningless in this step so we can remove it.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerEngineUpdated): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::setConfiguration): Deleted.
+        (WebKit::MediaPlayerPrivateRemote::engineUpdated): Deleted.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+
 2021-03-10  Chris Dumez  <cdumez@apple.com>
 
         Use RetainPtr<> / OSObjectPtr<> more in WebKit
