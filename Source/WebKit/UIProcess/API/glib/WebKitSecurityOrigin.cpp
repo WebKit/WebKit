@@ -224,7 +224,7 @@ guint16 webkit_security_origin_get_port(WebKitSecurityOrigin* origin)
  * @origin: a #WebKitSecurityOrigin
  *
  * This function returns %FALSE. #WebKitSecurityOrigin is now a simple
- * wrapper around a <protocol, host, port> triplet, and no longer
+ * wrapper around a &lt;protocol, host, port&gt; triplet, and no longer
  * represents an origin as defined by web standards that may be opaque.
  *
  * Returns: %FALSE

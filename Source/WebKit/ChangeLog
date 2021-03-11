@@ -1,3 +1,12 @@
+2021-03-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r274270): Broke WebKitSecurityOrigin docs
+        https://bugs.webkit.org/show_bug.cgi?id=223077
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp:
+
 2021-03-11  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add message filtering check in sandbox
