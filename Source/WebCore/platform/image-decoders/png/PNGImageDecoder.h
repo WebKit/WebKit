@@ -30,6 +30,11 @@
 #include <png.h>
 #endif
 
+#if USE(LCMS)
+typedef void* cmsHPROFILE;
+typedef void* cmsHTRANSFORM;
+#endif
+
 namespace WebCore {
 
     class PNGImageReader;
@@ -102,6 +107,8 @@ namespace WebCore {
         void fallbackNotAnimated();
 #endif
 
+        void clear();
+
         std::unique_ptr<PNGImageReader> m_reader;
         bool m_doNothingOnFailure;
         unsigned m_currentFrame;
@@ -131,6 +138,11 @@ namespace WebCore {
         png_byte m_dataPLTE[12 + 256 * 3];
         png_byte m_datatRNS[12 + 256];
 #endif
+#if USE(LCMS)
+        cmsHPROFILE m_iccProfile { nullptr };
+        cmsHTRANSFORM m_iccTransform { nullptr };
+#endif
+
     };
 
 } // namespace WebCore

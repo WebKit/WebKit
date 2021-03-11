@@ -1,3 +1,16 @@
+2021-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] Add support for ICC color management
+        https://bugs.webkit.org/show_bug.cgi?id=177185
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add optional lcms2 dependency.
+
+        * Source/cmake/FindLCMS2.cmake: Added.
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Reenable -fvisibility=hidden

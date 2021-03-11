@@ -29,6 +29,7 @@
 #include "GLContext.h"
 
 #if PLATFORM(X11)
+#include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xcomposite.h>
 #if PLATFORM(GTK)
@@ -39,6 +40,10 @@
 #if USE(EGL)
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
+#endif
+
+#if USE(LCMS)
+#include <lcms2.h>
 #endif
 
 namespace WebCore {
@@ -149,6 +154,46 @@ void* PlatformDisplayX11::visual() const
 
     return m_visual;
 }
+
+#if USE(LCMS)
+cmsHPROFILE PlatformDisplayX11::colorProfile() const
+{
+    if (m_iccProfile)
+        return m_iccProfile;
+
+    Atom iccAtom = XInternAtom(m_display, "_ICC_PROFILE", False);
+    Atom type;
+    int format;
+    unsigned long itemCount, bytesAfter;
+    unsigned char* data = nullptr;
+    auto result = XGetWindowProperty(m_display, RootWindowOfScreen(DefaultScreenOfDisplay(m_display)), iccAtom, 0L, ~0L, False, XA_CARDINAL, &type, &format, &itemCount, &bytesAfter, &data);
+    if (result == Success && type == XA_CARDINAL && itemCount > 0) {
+        unsigned long dataSize;
+        switch (format) {
+        case 8:
+            dataSize = itemCount;
+            break;
+        case 16:
+            dataSize = sizeof(short) * itemCount;
+            break;
+        case 32:
+            dataSize = sizeof(long) * itemCount;
+            break;
+        default:
+            dataSize = 0;
+            break;
+        }
+
+        if (dataSize)
+            m_iccProfile = cmsOpenProfileFromMem(data, dataSize);
+    }
+
+    if (data)
+        XFree(data);
+
+    return m_iccProfile ? m_iccProfile : PlatformDisplay::colorProfile();
+}
+#endif
 
 } // namespace WebCore
 

@@ -42,9 +42,14 @@
 #include "PNGImageDecoder.h"
 
 #include "Color.h"
+#include "PlatformDisplay.h"
 #include <png.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
+
+#if USE(LCMS)
+#include <lcms2.h>
+#endif
 
 #if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))
 #define JMPBUF(png_ptr) png_jmpbuf(png_ptr)
@@ -222,7 +227,10 @@ PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
 {
 }
 
-PNGImageDecoder::~PNGImageDecoder() = default;
+PNGImageDecoder::~PNGImageDecoder()
+{
+    clear();
+}
 
 #if ENABLE(APNG)
 RepetitionCount PNGImageDecoder::repetitionCount() const
@@ -262,11 +270,26 @@ ScalableImageDecoderFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
     return &frame;
 }
 
+void PNGImageDecoder::clear()
+{
+    m_reader = nullptr;
+#if USE(LCMS)
+    if (m_iccTransform) {
+        cmsDeleteTransform(m_iccTransform);
+        m_iccTransform = nullptr;
+    }
+    if (m_iccProfile) {
+        cmsCloseProfile(m_iccProfile);
+        m_iccProfile = nullptr;
+    }
+#endif
+}
+
 bool PNGImageDecoder::setFailed()
 {
     if (m_doNothingOnFailure)
         return false;
-    m_reader = nullptr;
+    clear();
     return ScalableImageDecoder::setFailed();
 }
 
@@ -381,6 +404,23 @@ void PNGImageDecoder::headerAvailable()
 #endif
     } else
         png_set_gamma(png, cDefaultGamma, cInverseGamma);
+
+#if USE(LCMS)
+    if (!m_ignoreGammaAndColorProfile) {
+        char* iccProfileTitle;
+        unsigned char* iccProfileData;
+        png_uint_32 iccProfileDataSize;
+        int compressionType;
+        if (png_get_iCCP(png, info, &iccProfileTitle, &compressionType, &iccProfileData, &iccProfileDataSize)) {
+            m_iccProfile = cmsOpenProfileFromMem(iccProfileData, iccProfileDataSize);
+            if (m_iccProfile) {
+                auto* displayProfile = PlatformDisplay::sharedDisplay().colorProfile();
+                if (cmsGetColorSpace(m_iccProfile) == cmsSigRgbData && cmsGetColorSpace(displayProfile) == cmsSigRgbData)
+                    m_iccTransform = cmsCreateTransform(m_iccProfile, TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0);
+            }
+        }
+    }
+#endif
 
     // Tell libpng to send us rows for interlaced pngs.
     if (interlaceType == PNG_INTERLACE_ADAM7)
@@ -498,7 +538,8 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     }
 
     // Write the decoded row pixels to the frame buffer.
-    auto* address = buffer.backingStore()->pixelAt(0, rowIndex);
+    auto* destRow = buffer.backingStore()->pixelAt(0, rowIndex);
+    auto* address = destRow;
     int width = size().width();
     unsigned char nonTrivialAlphaMask = 0;
 
@@ -513,6 +554,11 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         for (int x = 0; x < width; ++x, pixel += 3, ++address)
             *address = 0xFF000000 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
     }
+
+#if USE(LCMS)
+    if (m_iccTransform)
+        cmsDoTransform(m_iccTransform, destRow, destRow, width);
+#endif
 
     if (nonTrivialAlphaMask && !buffer.hasAlpha())
         buffer.setHasAlpha(true);
@@ -537,8 +583,10 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataRe
     if (failed())
         return;
 
-    if (!m_reader)
+    if (!m_reader) {
+        clear();
         m_reader = makeUnique<PNGImageReader>(this);
+    }
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.
@@ -547,7 +595,7 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataRe
     // If we're done decoding the image, we don't need the PNGImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)
     else if (isComplete())
-        m_reader = nullptr;
+        clear();
 }
 
 #if ENABLE(APNG)
@@ -807,7 +855,8 @@ void PNGImageDecoder::frameComplete()
         png_bytep row = interlaceBuffer;
         for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
             png_bytep pixel = row;
-            auto* address = buffer.backingStore()->pixelAt(rect.x(), y);
+            auto* destRow = buffer.backingStore()->pixelAt(rect.x(), y);
+            auto* address = destRow;
             for (int x = rect.x(); x < rect.maxX(); ++x, pixel += colorChannels) {
                 unsigned alpha = hasAlpha ? pixel[3] : 255;
                 nonTrivialAlpha |= alpha < 255;
@@ -816,6 +865,10 @@ void PNGImageDecoder::frameComplete()
                 else
                     buffer.backingStore()->blendPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
             }
+#if USE(LCMS)
+            if (m_iccTransform)
+                cmsDoTransform(m_iccTransform, destRow, destRow, rect.maxX());
+#endif
         }
 
         if (!nonTrivialAlpha) {

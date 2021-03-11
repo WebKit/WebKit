@@ -97,6 +97,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspecti
 WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ${GTK_SUPPORTS_QUARTZ})
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ${GTK_SUPPORTS_X11})
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ${GTK_SUPPORTS_WAYLAND})
+WEBKIT_OPTION_DEFINE(USE_LCMS "Whether to enable support for image color management using libcms2." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBNOTIFY "Whether to enable the default web notification implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
@@ -418,6 +419,13 @@ endif ()
 
 if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_THUNDER)
   find_package(Thunder REQUIRED)
+endif ()
+
+if (USE_LCMS)
+    find_package(LCMS2)
+    if (NOT LCMS2_FOUND)
+        message(FATAL_ERROR "libcms2 is required for USE_LCMS.")
+    endif ()
 endif ()
 
 # https://bugs.webkit.org/show_bug.cgi?id=182247

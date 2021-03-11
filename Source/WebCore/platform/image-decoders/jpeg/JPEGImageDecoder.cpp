@@ -40,10 +40,12 @@
 #include "config.h"
 #include "JPEGImageDecoder.h"
 
-extern "C" {
-#if USE(ICCJPEG)
-#include <iccjpeg.h>
+#include "PlatformDisplay.h"
+#if USE(LCMS)
+#include <lcms2.h>
 #endif
+
+extern "C" {
 #include <setjmp.h>
 }
 
@@ -75,7 +77,9 @@ inline bool doFancyUpsampling() { return false; }
 inline bool doFancyUpsampling() { return true; }
 #endif
 
-const int exifMarker = JPEG_APP0 + 1;
+static const int exifMarker = JPEG_APP0 + 1;
+static const int iccMarker = JPEG_APP0 + 2;
+static const unsigned iccHeaderSize = 14;
 
 namespace WebCore {
 
@@ -194,6 +198,51 @@ static ImageOrientation readImageOrientation(jpeg_decompress_struct* info)
     return ImageOrientation::None;
 }
 
+#if USE(LCMS)
+static bool isICCMarker(jpeg_saved_marker_ptr marker)
+{
+    return marker->marker == iccMarker
+        && marker->data_length >= iccHeaderSize
+        && marker->data[0] == 'I'
+        && marker->data[1] == 'C'
+        && marker->data[2] == 'C'
+        && marker->data[3] == '_'
+        && marker->data[4] == 'P'
+        && marker->data[5] == 'R'
+        && marker->data[6] == 'O'
+        && marker->data[7] == 'F'
+        && marker->data[8] == 'I'
+        && marker->data[9] == 'L'
+        && marker->data[10] == 'E'
+        && marker->data[11] == '\0';
+}
+
+static RefPtr<SharedBuffer> readICCProfile(jpeg_decompress_struct* info)
+{
+    auto buffer = SharedBuffer::create();
+    for (jpeg_saved_marker_ptr marker = info->marker_list; marker; marker = marker->next) {
+        if (!isICCMarker(marker))
+            continue;
+
+        unsigned sequenceNumber = marker->data[12];
+        if (!sequenceNumber)
+            return nullptr;
+
+        unsigned markerCount = marker->data[13];
+        if (sequenceNumber > markerCount)
+            return nullptr;
+
+        unsigned markerSize = marker->data_length - iccHeaderSize;
+        buffer->append(reinterpret_cast<const char*>(marker->data + iccHeaderSize), markerSize);
+    }
+
+    if (buffer->isEmpty())
+        return nullptr;
+
+    return buffer;
+}
+#endif
+
 class JPEGImageReader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -232,13 +281,15 @@ public:
         src->pub.term_source = term_source;
         src->decoder = this;
 
-#if USE(ICCJPEG)
-        // Retain ICC color profile markers for color management.
-        setup_read_icc_profile(&m_info);
-#endif
-
         // Keep APP1 blocks, for obtaining exif data.
         jpeg_save_markers(&m_info, exifMarker, 0xFFFF);
+
+#if USE(LCMS)
+        if (!m_decoder->ignoresGammaAndColorProfile()) {
+            // Keep APP2 blocks, for obtaining ICC profile data.
+            jpeg_save_markers(&m_info, iccMarker, 0xFFFF);
+        }
+#endif
     }
 
     ~JPEGImageReader()
@@ -316,6 +367,10 @@ public:
                 return false;
 
             m_decoder->setOrientation(readImageOrientation(info()));
+#if USE(LCMS)
+            if (!m_decoder->ignoresGammaAndColorProfile() && m_info.out_color_space == rgbOutputColorSpace())
+                m_decoder->setICCProfile(readICCProfile(&m_info));
+#endif
 
             // Don't allocate a giant and superfluous memory buffer when the
             // image is a sequential JPEG.
@@ -490,7 +545,10 @@ JPEGImageDecoder::JPEGImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
 {
 }
 
-JPEGImageDecoder::~JPEGImageDecoder() = default;
+JPEGImageDecoder::~JPEGImageDecoder()
+{
+    clear();
+}
 
 ScalableImageDecoderFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
 {
@@ -506,9 +564,24 @@ ScalableImageDecoderFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
     return &frame;
 }
 
-bool JPEGImageDecoder::setFailed()
+void JPEGImageDecoder::clear()
 {
     m_reader = nullptr;
+#if USE(LCMS)
+    if (m_iccTransform) {
+        cmsDeleteTransform(m_iccTransform);
+        m_iccTransform = nullptr;
+    }
+    if (m_iccProfile) {
+        cmsCloseProfile(m_iccProfile);
+        m_iccProfile = nullptr;
+    }
+#endif
+}
+
+bool JPEGImageDecoder::setFailed()
+{
+    clear();
     return ScalableImageDecoder::setFailed();
 }
 
@@ -552,11 +625,17 @@ bool JPEGImageDecoder::outputScanlines(ScalableImageDecoderFrame& buffer)
         if (jpeg_read_scanlines(info, samples, 1) != 1)
             return false;
 
-        auto* currentAddress = buffer.backingStore()->pixelAt(0, sourceY);
+        auto* row = buffer.backingStore()->pixelAt(0, sourceY);
+        auto* currentAddress = row;
         for (int x = 0; x < width; ++x) {
             setPixel<colorSpace>(buffer, currentAddress, samples, x);
             ++currentAddress;
         }
+
+#if USE(LCMS)
+        if (m_iccTransform)
+            cmsDoTransform(m_iccTransform, row, row, info->output_width);
+#endif
     }
     return true;
 }
@@ -585,6 +664,11 @@ bool JPEGImageDecoder::outputScanlines()
             unsigned char* row = reinterpret_cast<unsigned char*>(buffer.backingStore()->pixelAt(0, info->output_scanline));
             if (jpeg_read_scanlines(info, &row, 1) != 1)
                 return false;
+
+#if USE(LCMS)
+            if (m_iccTransform)
+                cmsDoTransform(m_iccTransform, row, row, info->output_width);
+#endif
          }
          return true;
      }
@@ -623,8 +707,10 @@ void JPEGImageDecoder::decode(bool onlySize, bool allDataReceived)
     if (failed())
         return;
 
-    if (!m_reader)
+    if (!m_reader) {
+        clear();
         m_reader = makeUnique<JPEGImageReader>(this);
+    }
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.
@@ -633,7 +719,25 @@ void JPEGImageDecoder::decode(bool onlySize, bool allDataReceived)
     // If we're done decoding the image, we don't need the JPEGImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)
     else if (!m_frameBufferCache.isEmpty() && (m_frameBufferCache[0].isComplete()))
-        m_reader = nullptr;
+        clear();
 }
+
+#if USE(LCMS)
+void JPEGImageDecoder::setICCProfile(RefPtr<SharedBuffer>&& buffer)
+{
+    if (!buffer)
+        return;
+
+    m_iccProfile = cmsOpenProfileFromMem(buffer->data(), buffer->size());
+    if (!m_iccProfile)
+        return;
+
+    auto* displayProfile = PlatformDisplay::sharedDisplay().colorProfile();
+    if (cmsGetColorSpace(m_iccProfile) != cmsSigRgbData || cmsGetColorSpace(displayProfile) != cmsSigRgbData)
+        return;
+
+    m_iccTransform = cmsCreateTransform(m_iccProfile, TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0);
+}
+#endif
 
 }

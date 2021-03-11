@@ -40,6 +40,10 @@ typedef struct _GstGLContext GstGLContext;
 typedef struct _GstGLDisplay GstGLDisplay;
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
+#if USE(LCMS)
+typedef void* cmsHPROFILE;
+#endif
+
 namespace WebCore {
 
 class GLContext;
@@ -82,6 +86,10 @@ public:
     GstGLContext* gstGLContext() const;
 #endif
 
+#if USE(LCMS)
+    virtual cmsHPROFILE colorProfile() const;
+#endif
+
 protected:
     enum class NativeDisplayOwned { No, Yes };
     explicit PlatformDisplay(NativeDisplayOwned);
@@ -98,6 +106,10 @@ protected:
 
 #if USE(EGL) || USE(GLX)
     std::unique_ptr<GLContext> m_sharingGLContext;
+#endif
+
+#if USE(LCMS)
+    mutable cmsHPROFILE m_iccProfile { nullptr };
 #endif
 
 private:
