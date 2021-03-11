@@ -31,6 +31,7 @@
 #include "FrameSelection.h"
 #include "RenderButton.h"
 #include "RenderCounter.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
@@ -793,10 +794,6 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
         return;
     }
 
-    // Remove intruding floats from sibling blocks before detaching.
-    if (is<RenderBox>(rendererToDestroy) && rendererToDestroy.isFloatingOrOutOfFlowPositioned())
-        downcast<RenderBox>(rendererToDestroy).removeFloatingOrPositionedChildFromBlockLists();
-
     auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
         return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow();
     };
@@ -816,6 +813,22 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     };
 
     auto& destroyRoot = destroyRootIncludingAnonymous();
+
+    auto clearFloatsAndOutOfFlowPositionedObjects = [&] {
+        // Remove floats and out-of-flow positioned objects from their containing block before detaching
+        // the renderer from the tree. It includes all the anonymous block descendants that we are about
+        // to destroy as well as part of the cleanup process below.
+        if (!is<RenderElement>(destroyRoot))
+            return;
+        for (auto& descendant : descendantsOfType<RenderBox>(downcast<RenderElement>(destroyRoot))) {
+            if (descendant.isFloatingOrOutOfFlowPositioned())
+                descendant.removeFloatingOrPositionedChildFromBlockLists();
+        }
+        if (is<RenderBox>(destroyRoot) && destroyRoot.isFloatingOrOutOfFlowPositioned())
+            downcast<RenderBox>(destroyRoot).removeFloatingOrPositionedChildFromBlockLists();
+    };
+    clearFloatsAndOutOfFlowPositionedObjects();
+
     if (is<RenderTableRow>(destroyRoot))
         tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
 
