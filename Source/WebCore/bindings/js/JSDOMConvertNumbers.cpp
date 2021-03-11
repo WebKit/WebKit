@@ -184,7 +184,10 @@ static inline T toSmallerUInt(JSGlobalObject& lexicalGlobalObject, JSValue value
         return 0;
 
     x = x < 0 ? -floor(fabs(x)) : floor(fabs(x));
-    return static_cast<T>(fmod(x, LimitsTrait::numberOfValues));
+    x = fmod(x, LimitsTrait::numberOfValues);
+    if (x < 0)
+        x += LimitsTrait::numberOfValues;
+    return static_cast<T>(x);
 }
 
 template<> int8_t convertToIntegerEnforceRange<int8_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
