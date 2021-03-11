@@ -268,6 +268,7 @@
 		46A46A1A2575645600A1B118 /* SessionStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A46A192575645600A1B118 /* SessionStorage.mm */; };
 		46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A911582108E66B0078D40D /* CustomUserAgent.mm */; };
 		46AE5A3720F9066D00E0873E /* SimpleServiceWorkerRegistrations-4.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4656A75720F9054F0002E21F /* SimpleServiceWorkerRegistrations-4.sqlite3 */; };
+		46BBEA1B25F9835700D4987A /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */; };
 		46C1EA9825758820005E409E /* alert.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46C1EA9725758805005E409E /* alert.html */; };
 		46C3AEB323D0E529001B0680 /* beforeunload.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46C3AEB223D0E50F001B0680 /* beforeunload.html */; };
 		46C519DA1D355AB200DAA51A /* LocalStorageNullEntries.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */; };
@@ -5125,6 +5126,7 @@
 				7C83DF4C1D0A590C00FEBCF3 /* Vector.cpp in Sources */,
 				37C7CC2D1EA4146B007BD956 /* WeakLinking.cpp in Sources */,
 				57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */,
+				46BBEA1B25F9835700D4987A /* WorkQueue.cpp in Sources */,
 				7C83DF631D0A590C00FEBCF3 /* WTFString.cpp in Sources */,
 				7CBD5A2322DE42A6004A9E32 /* WTFStringUtilities.cpp in Sources */,
 			);

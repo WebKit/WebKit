@@ -1,3 +1,19 @@
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce WorkQueue::dispatchSync()
+        https://bugs.webkit.org/show_bug.cgi?id=223049
+
+        Reviewed by Alex Christensen.
+
+        Adopt WorkQueue::dispatchSync().
+
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::waitUntilTasksFinished):
+        (WebKit::StorageManagerSet::waitUntilSyncingLocalStorageFinished):
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::IconDatabase):
+        (WebKit::IconDatabase::~IconDatabase):
+
 2021-03-11  Youenn Fablet  <youenn@apple.com>
 
         Add camera-related sandbox extensions to GPUProcess

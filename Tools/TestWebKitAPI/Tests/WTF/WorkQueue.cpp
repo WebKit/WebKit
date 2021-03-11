@@ -84,7 +84,7 @@ TEST(WTF_WorkQueue, Simple)
         m_testCompleted.notifyOne();
     });
 
-    EXPECT_GT(queue->refCount(), 1);
+    EXPECT_GT(queue->refCount(), 1U);
 
     m_testCompleted.wait(m_lock);
 
@@ -111,8 +111,8 @@ TEST(WTF_WorkQueue, TwoQueues)
     auto queue1 = WorkQueue::create("com.apple.WebKit.Test.twoQueues1");
     auto queue2 = WorkQueue::create("com.apple.WebKit.Test.twoQueues2");
 
-    EXPECT_EQ(1, queue1->refCount());
-    EXPECT_EQ(1, queue2->refCount());
+    EXPECT_EQ(1U, queue1->refCount());
+    EXPECT_EQ(1U, queue2->refCount());
 
     LockHolder locker(m_lock);
     
@@ -233,6 +233,45 @@ TEST(WTF_WorkQueue, DestroyOnSelf)
         });
         WTF::sleep(100_ms);
     }
+}
+
+TEST(WTF_WorkQueue, DispatchSync)
+{
+    auto queue = WorkQueue::create("com.apple.WebKit.Test.dispatchSync");
+    std::atomic<bool> firstAsyncTaskRan = false;
+    std::atomic<bool> secondAsyncTaskRan = false;
+    std::atomic<bool> firstSyncTaskTaskRan = false;
+    std::atomic<bool> secondSyncTaskTaskRan = false;
+    queue->dispatch([&] {
+        EXPECT_FALSE(firstAsyncTaskRan);
+        EXPECT_FALSE(firstSyncTaskTaskRan);
+        EXPECT_FALSE(secondAsyncTaskRan);
+        EXPECT_FALSE(secondSyncTaskTaskRan);
+        firstAsyncTaskRan = true;
+    });
+    queue->dispatchSync([&] {
+        EXPECT_TRUE(firstAsyncTaskRan);
+        EXPECT_FALSE(firstSyncTaskTaskRan);
+        EXPECT_FALSE(secondAsyncTaskRan);
+        EXPECT_FALSE(secondSyncTaskTaskRan);
+        firstSyncTaskTaskRan = true;
+    });
+    EXPECT_TRUE(firstSyncTaskTaskRan);
+    queue->dispatch([&] {
+        EXPECT_TRUE(firstAsyncTaskRan);
+        EXPECT_TRUE(firstSyncTaskTaskRan);
+        EXPECT_FALSE(secondAsyncTaskRan);
+        EXPECT_FALSE(secondSyncTaskTaskRan);
+        secondAsyncTaskRan = true;
+    });
+    queue->dispatchSync([&] {
+        EXPECT_TRUE(firstAsyncTaskRan);
+        EXPECT_TRUE(firstSyncTaskTaskRan);
+        EXPECT_TRUE(secondAsyncTaskRan);
+        EXPECT_FALSE(secondSyncTaskTaskRan);
+        secondSyncTaskTaskRan = true;
+    });
+    EXPECT_TRUE(secondSyncTaskTaskRan);
 }
 
 } // namespace TestWebKitAPI

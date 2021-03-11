@@ -187,11 +187,7 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
 
 LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 {
-    BinarySemaphore semaphore;
-    m_processingQueue->dispatch([&semaphore] {
-        semaphore.signal();
-    });
-    semaphore.wait();
+    m_processingQueue->dispatchSync([] { });
 
     m_processingQueue = nullptr;
 

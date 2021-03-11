@@ -1,3 +1,19 @@
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce WorkQueue::dispatchSync()
+        https://bugs.webkit.org/show_bug.cgi?id=223049
+
+        Reviewed by Alex Christensen.
+
+        Introduce WorkQueue::dispatchSync(), which relies on GCD's dispatch_sync() internally on Cocoa
+        ports. For other ports, it relies on a BinarySemaphore for synchronization.
+
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::dispatchSync):
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatchSync):
+
 2021-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. [GTK][WPE] Bump libsoup3 version to 2.99.3

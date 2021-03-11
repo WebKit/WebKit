@@ -56,18 +56,14 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
 
     // We initialize the database synchronously, it's hopefully fast enough because it makes
     // the implementation a lot simpler.
-    BinarySemaphore semaphore;
-    m_workQueue->dispatch([&] {
-        if (allowDatabaseWrite == AllowDatabaseWrite::No && !FileSystem::fileExists(path)) {
-            semaphore.signal();
+    m_workQueue->dispatchSync([&] {
+        if (allowDatabaseWrite == AllowDatabaseWrite::No && !FileSystem::fileExists(path))
             return;
-        }
 
         auto databaseDirectory = FileSystem::directoryName(path);
         FileSystem::makeAllDirectories(databaseDirectory);
         if (!m_db.open(path)) {
             LOG_ERROR("Unable to open favicon database at path %s - %s", path.utf8().data(), m_db.lastErrorMsg());
-            semaphore.signal();
             return;
         }
 
@@ -76,14 +72,12 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
             LOG(IconDatabase, "Database version number %d is greater than our current version number %d - closing the database to prevent overwriting newer versions",
                 databaseVersionNumber, currentDatabaseVersion);
             m_db.close();
-            semaphore.signal();
             return;
         }
 
         if (databaseVersionNumber < currentDatabaseVersion) {
             if (m_allowDatabaseWrite == AllowDatabaseWrite::No) {
                 m_db.close();
-                semaphore.signal();
                 return;
             }
 
@@ -100,26 +94,20 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
 
         if (!createTablesIfNeeded())
             populatePageURLToIconURLMap();
-
-        semaphore.signal();
     });
-    semaphore.wait();
 }
 
 IconDatabase::~IconDatabase()
 {
     ASSERT(isMainRunLoop());
 
-    BinarySemaphore semaphore;
-    m_workQueue->dispatch([&] {
+    m_workQueue->dispatchSync([&] {
         if (m_db.isOpen()) {
             m_pruneTimer = nullptr;
             clearStatements();
             m_db.close();
         }
-        semaphore.signal();
     });
-    semaphore.wait();
 }
 
 bool IconDatabase::createTablesIfNeeded()

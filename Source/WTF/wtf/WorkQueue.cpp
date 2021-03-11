@@ -36,6 +36,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/Ref.h>
 #include <wtf/Threading.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
 
@@ -55,6 +56,16 @@ WorkQueue::~WorkQueue()
 }
 
 #if !PLATFORM(COCOA)
+void WorkQueue::dispatchSync(Function<void()>&& function)
+{
+    BinarySemaphore semaphore;
+    dispatch([&semaphore, function = WTFMove(function)]() mutable {
+        function();
+        semaphore.signal();
+    });
+    semaphore.wait();
+}
+
 void WorkQueue::concurrentApply(size_t iterations, WTF::Function<void (size_t index)>&& function)
 {
     if (!iterations)

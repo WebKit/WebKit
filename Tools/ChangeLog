@@ -1,3 +1,18 @@
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce WorkQueue::dispatchSync()
+        https://bugs.webkit.org/show_bug.cgi?id=223049
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/WorkQueue.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::run):
+
 2021-03-11  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r272293) WebArchives originally loaded over HTTP fail to load subresources that would be upgraded to HTTPS

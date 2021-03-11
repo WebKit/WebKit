@@ -45,6 +45,11 @@ void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
     }).get());
 }
 
+void WorkQueue::dispatchSync(Function<void()>&& function)
+{
+    dispatch_sync(m_dispatchQueue.get(), makeBlockPtr(WTFMove(function)).get());
+}
+
 void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
 {
     dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
