@@ -1,3 +1,14 @@
+2021-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r272293) WebArchives originally loaded over HTTP fail to load subresources that would be upgraded to HTTPS
+        https://bugs.webkit.org/show_bug.cgi?id=223044
+        <rdar://75228599>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/mac/LoadWebArchive.mm:
+        (TestWebKitAPI::TEST):
+
 2021-03-11  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation: ignore leading and trailing spaces when comparing content for all tokens
