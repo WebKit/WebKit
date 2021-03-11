@@ -1,3 +1,14 @@
+2021-03-11  Rob Buis  <rbuis@igalia.com>
+
+        Apply transferred min/max sizes for intrinsic sizing
+        https://bugs.webkit.org/show_bug.cgi?id=222557
+
+        Reviewed by Alex Christensen.
+
+        Enable tests that pass now.
+
+        * TestExpectations:
+
 2021-03-11  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Some modern-media-controls tests are flaky when media in GPU Process is enabled

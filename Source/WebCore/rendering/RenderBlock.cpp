@@ -839,7 +839,7 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
             // If the width of an image is affected by the height of a child (e.g., an image with an aspect ratio),
             // then we have to dirty preferred widths, since even enclosing blocks can become dirty as a result.
             // (A horizontal flexbox that contains an inline image wrapped in an anonymous block for example.)
-            if (renderer->hasAspectRatio())
+            if (renderer->hasIntrinsicAspectRatio() || renderer->style().hasAspectRatio())
                 renderer->setPreferredLogicalWidthsDirty(true);
             auto* container = renderer->container();
             // Mark the svg ancestor chain dirty as we walk to the container.

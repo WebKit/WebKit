@@ -486,7 +486,7 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
             return;
     }
     // Figure out if we need to compute an intrinsic ratio.
-    if (!hasAspectRatio())
+    if (!hasIntrinsicAspectRatio())
         return;
 
     if (intrinsicSize.isEmpty()) {

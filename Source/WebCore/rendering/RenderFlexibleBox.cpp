@@ -549,7 +549,7 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
 
 static bool childHasAspectRatio(const RenderBox& child)
 {
-    return child.hasAspectRatio() || child.style().hasAspectRatio();
+    return child.hasIntrinsicAspectRatio() || child.style().hasAspectRatio();
 }
 
 Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const RenderBox& child, SizeType sizeType, const Length& size)
@@ -1209,7 +1209,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
             contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
         else
             contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).valueOr(0);
-        if (child.hasAspectRatio() && child.intrinsicSize().height())
+        if (child.hasIntrinsicAspectRatio() && child.intrinsicSize().height())
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
         ASSERT(contentSize >= 0);
         contentSize = std::min(contentSize, maxExtent.valueOr(contentSize));
