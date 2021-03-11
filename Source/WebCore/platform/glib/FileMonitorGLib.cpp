@@ -28,7 +28,6 @@
 
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 

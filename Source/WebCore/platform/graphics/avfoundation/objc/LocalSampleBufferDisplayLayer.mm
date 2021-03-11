@@ -40,7 +40,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/cf/TypeCastsCF.h>
-#import <wtf/threads/BinarySemaphore.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 

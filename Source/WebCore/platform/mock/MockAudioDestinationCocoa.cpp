@@ -30,7 +30,6 @@
 
 #include "CAAudioStreamDescription.h"
 #include "WebAudioBufferList.h"
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 

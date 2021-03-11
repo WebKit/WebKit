@@ -142,12 +142,9 @@ unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
         return blobRegistry().blobSize(url);
 
     unsigned long long resultSize;
-    BinarySemaphore semaphore;
-    callOnMainThread([url = url.isolatedCopy(), &semaphore, &resultSize] {
+    callOnMainThreadAndWait([url = url.isolatedCopy(), &resultSize] {
         resultSize = blobRegistry().blobSize(url);
-        semaphore.signal();
     });
-    semaphore.wait();
     return resultSize;
 }
 

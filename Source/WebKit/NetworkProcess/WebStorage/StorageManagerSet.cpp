@@ -31,7 +31,6 @@
 #include "StorageManagerSetMessages.h"
 #include <WebCore/TextEncoding.h>
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 

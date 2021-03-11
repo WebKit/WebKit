@@ -28,7 +28,6 @@
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 using namespace WebCore;

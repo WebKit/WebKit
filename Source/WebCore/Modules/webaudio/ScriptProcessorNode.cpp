@@ -40,7 +40,6 @@
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -219,12 +218,9 @@ void ScriptProcessorNode::process(size_t framesToProcess)
         // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.
         // We only wait for script code execution when the context is an offline one for performance reasons.
         if (context().isOfflineContext()) {
-            BinarySemaphore semaphore;
-            callOnMainThread([this, &semaphore, doubleBufferIndex = m_doubleBufferIndex, protector = makeRef(*this)] {
+            callOnMainThreadAndWait([this, doubleBufferIndex = m_doubleBufferIndex, protector = makeRef(*this)] {
                 fireProcessEvent(doubleBufferIndex);
-                semaphore.signal();
             });
-            semaphore.wait();
         } else {
             callOnMainThread([this, doubleBufferIndex = m_doubleBufferIndex, protector = makeRef(*this)] {
                 auto locker = holdLock(m_processLock);
