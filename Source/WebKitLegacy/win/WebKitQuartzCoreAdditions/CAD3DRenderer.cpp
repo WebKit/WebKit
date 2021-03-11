@@ -34,6 +34,7 @@
 #include <limits>
 #include <string>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
 // Define strings from the HLSL effect that are referenced later
 #define HLSL_TECHNIQUE "InvertColor"
