@@ -2536,6 +2536,18 @@
          "loislo"
       ]
    },
+   "Imanol Fernandez" : {
+      "emails" : [
+         "ifernandez@igalia.com",
+         "mortimergoro@gmail.com"
+      ],
+      "expertise" : "Graphics, WebGL, WebXR",
+      "nicks" : [
+         "imanol",
+         "mortimergoro"
+      ],
+      "status" : "committer"
+   },
    "Ion Rosca" : {
       "emails" : [
          "rosca@adobe.com"

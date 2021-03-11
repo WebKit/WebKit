@@ -1,3 +1,11 @@
+2021-03-11  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Add myself as committer in the contributors file.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json: Added myself as committer.
+
 2021-03-11  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r272469): [WPE][GTK] Epiphany UI process crashes when downloading PDFs, WebKitSecurityOrigin should use SecurityOriginData
