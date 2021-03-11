@@ -164,8 +164,9 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         || eventName == eventNames().canplayEvent) {
         bool isPlaying = this->isPlaying();
         float playbackRate = isStalled() ? StalledPlaybackRate : this->playbackRate();
+        float defaultPlaybackRate = this->defaultPlaybackRate();
         for (auto client : m_clients)
-            client->rateChanged(isPlaying, playbackRate);
+            client->rateChanged(isPlaying, playbackRate, defaultPlaybackRate);
     }
 
     if (all
@@ -299,6 +300,12 @@ void PlaybackSessionModelMediaElement::endScanning()
 {
     if (m_mediaElement)
         m_mediaElement->endScanning();
+}
+
+void PlaybackSessionModelMediaElement::setDefaultPlaybackRate(float defaultPlaybackRate)
+{
+    if (m_mediaElement)
+        m_mediaElement->setDefaultPlaybackRate(defaultPlaybackRate);
 }
 
 void PlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t selectedAudioIndex)
@@ -468,9 +475,14 @@ bool PlaybackSessionModelMediaElement::isStalled() const
     return m_mediaElement && m_mediaElement->readyState() <= HTMLMediaElement::HAVE_CURRENT_DATA;
 }
 
+float PlaybackSessionModelMediaElement::defaultPlaybackRate() const
+{
+    return m_mediaElement ? m_mediaElement->defaultPlaybackRate() : -1;
+}
+
 float PlaybackSessionModelMediaElement::playbackRate() const
 {
-    return m_mediaElement ? m_mediaElement->playbackRate() : 0;
+    return m_mediaElement ? m_mediaElement->playbackRate() : -1;
 }
 
 Ref<TimeRanges> PlaybackSessionModelMediaElement::seekableRanges() const

@@ -1,3 +1,13 @@
+2021-03-10  Devin Rousso  <drousso@apple.com>
+
+        Add plumbing for `defaultPlaybackRate` to AVKit
+        https://bugs.webkit.org/show_bug.cgi?id=222991
+        <rdar://problem/75012417>
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+
 2021-03-09  Ben Nham  <nham@apple.com>
 
         Adopt new NSURLSessionConfiguration SPI for connection cache configuration

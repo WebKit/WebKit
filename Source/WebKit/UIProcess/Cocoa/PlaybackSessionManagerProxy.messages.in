@@ -34,7 +34,7 @@ messages -> PlaybackSessionManagerProxy {
     WirelessVideoPlaybackDisabledChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool disabled)
     DurationChanged(WebKit::PlaybackSessionContextIdentifier contextId, double duration)
     PlaybackStartedTimeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double playbackStartedTime)
-    RateChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool isPlaying, double rate)
+    RateChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool isPlaying, double rate, double defaultPlaybackRate)
     MutedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool muted);
     VolumeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double volume);
     PictureInPictureSupportedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool pictureInPictureSupported)

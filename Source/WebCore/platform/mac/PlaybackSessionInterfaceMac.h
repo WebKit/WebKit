@@ -52,7 +52,7 @@ public:
     // PlaybackSessionModelClient
     void durationChanged(double) final;
     void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;
-    void rateChanged(bool /*isPlaying*/, float /*playbackRate*/) final;
+    void rateChanged(bool /*isPlaying*/, float /*playbackRate*/, float /* defaultPlaybackRate */) final;
     void seekableRangesChanged(const TimeRanges&, double /*lastModifiedTime*/, double /*liveUpdateInterval*/) final;
     void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
     void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;

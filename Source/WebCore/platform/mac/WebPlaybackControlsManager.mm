@@ -48,6 +48,7 @@ using WebCore::PlaybackSessionInterfaceMac;
 @synthesize seekToTime = _seekToTime;
 @synthesize hasEnabledAudio = _hasEnabledAudio;
 @synthesize hasEnabledVideo = _hasEnabledVideo;
+@synthesize defaultPlaybackRate = _defaultPlaybackRate;
 @synthesize rate = _rate;
 @synthesize canTogglePlayback = _canTogglePlayback;
 @synthesize allowsPictureInPicturePlayback;

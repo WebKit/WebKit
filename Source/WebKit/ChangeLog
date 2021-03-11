@@ -1,3 +1,29 @@
+2021-03-10  Devin Rousso  <drousso@apple.com>
+
+        Add plumbing for `defaultPlaybackRate` to AVKit
+        https://bugs.webkit.org/show_bug.cgi?id=222991
+        <rdar://problem/75012417>
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionInterfaceContext::rateChanged):
+        (WebKit::PlaybackSessionManager::rateChanged):
+        (WebKit::PlaybackSessionManager::setDefaultPlaybackRate): Added.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::setDefaultPlaybackRate): Added.
+        (WebKit::PlaybackSessionModelContext::rateChanged):
+        (WebKit::PlaybackSessionManagerProxy::rateChanged):
+        (WebKit::PlaybackSessionManagerProxy::setDefaultPlaybackRate): Added.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (WKFullScreenViewControllerPlaybackSessionModelClient::rateChanged):
+
 2021-03-10  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Adjust telemetry rule

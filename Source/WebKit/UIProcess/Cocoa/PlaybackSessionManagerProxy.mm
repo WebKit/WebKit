@@ -121,6 +121,12 @@ void PlaybackSessionModelContext::endScanning()
         m_manager->endScanning(m_contextId);
 }
 
+void PlaybackSessionModelContext::setDefaultPlaybackRate(float defaultPlaybackRate)
+{
+    if (m_manager)
+        m_manager->setDefaultPlaybackRate(m_contextId, defaultPlaybackRate);
+}
+
 void PlaybackSessionModelContext::selectAudioMediaOption(uint64_t optionId)
 {
     if (m_manager)
@@ -194,12 +200,13 @@ void PlaybackSessionModelContext::bufferedTimeChanged(double bufferedTime)
         client->bufferedTimeChanged(bufferedTime);
 }
 
-void PlaybackSessionModelContext::rateChanged(bool isPlaying, float playbackRate)
+void PlaybackSessionModelContext::rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate)
 {
     m_isPlaying = isPlaying;
     m_playbackRate = playbackRate;
+    m_defaultPlaybackRate = defaultPlaybackRate;
     for (auto* client : m_clients)
-        client->rateChanged(isPlaying, playbackRate);
+        client->rateChanged(m_isPlaying, m_playbackRate, m_defaultPlaybackRate);
 }
 
 void PlaybackSessionModelContext::seekableRangesChanged(WebCore::TimeRanges& seekableRanges, double lastModifiedTime, double liveUpdateInterval)
@@ -476,9 +483,9 @@ void PlaybackSessionManagerProxy::playbackStartedTimeChanged(PlaybackSessionCont
     ensureModel(contextId).playbackStartedTimeChanged(playbackStartedTime);
 }
 
-void PlaybackSessionManagerProxy::rateChanged(PlaybackSessionContextIdentifier contextId, bool isPlaying, double rate)
+void PlaybackSessionManagerProxy::rateChanged(PlaybackSessionContextIdentifier contextId, bool isPlaying, double rate, double defaultPlaybackRate)
 {
-    ensureModel(contextId).rateChanged(isPlaying, rate);
+    ensureModel(contextId).rateChanged(isPlaying, rate, defaultPlaybackRate);
 }
 
 void PlaybackSessionManagerProxy::pictureInPictureSupportedChanged(PlaybackSessionContextIdentifier contextId, bool supported)
@@ -548,6 +555,11 @@ void PlaybackSessionManagerProxy::beginScanningBackward(PlaybackSessionContextId
 void PlaybackSessionManagerProxy::endScanning(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::PlaybackSessionManager::EndScanning(contextId));
+}
+
+void PlaybackSessionManagerProxy::setDefaultPlaybackRate(PlaybackSessionContextIdentifier contextId, float defaultPlaybackRate)
+{
+    m_page->send(Messages::PlaybackSessionManager::SetDefaultPlaybackRate(contextId, defaultPlaybackRate));
 }
 
 void PlaybackSessionManagerProxy::selectAudioMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)

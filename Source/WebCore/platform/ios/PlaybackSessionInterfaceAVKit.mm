@@ -61,7 +61,7 @@ PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionMode
     durationChanged(model.duration());
     currentTimeChanged(model.currentTime(), [[NSProcessInfo processInfo] systemUptime]);
     bufferedTimeChanged(model.bufferedTime());
-    rateChanged(model.isPlaying(), model.playbackRate());
+    rateChanged(model.isPlaying(), model.playbackRate(), model.defaultPlaybackRate());
     seekableRangesChanged(model.seekableRanges(), model.seekableTimeRangesLastModifiedTime(), model.liveUpdateInterval());
     canPlayFastReverseChanged(model.canPlayFastReverse());
     audioMediaSelectionOptionsChanged(model.audioMediaSelectionOptions(), model.audioMediaSelectedIndex());
@@ -124,9 +124,10 @@ void PlaybackSessionInterfaceAVKit::bufferedTimeChanged(double bufferedTime)
     playerController.loadedTimeRanges = @[@0, @(normalizedBufferedTime)];
 }
 
-void PlaybackSessionInterfaceAVKit::rateChanged(bool isPlaying, float playbackRate)
+void PlaybackSessionInterfaceAVKit::rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate)
 {
     [m_playerController setRate:isPlaying ? playbackRate : 0.];
+    [m_playerController setDefaultPlaybackRate:defaultPlaybackRate];
 }
 
 void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)

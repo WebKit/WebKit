@@ -62,6 +62,7 @@ WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
 @property (getter=isPlaying) BOOL playing;
 @property BOOL canPause;
 @property BOOL canTogglePlayback;
+@property double defaultPlaybackRate;
 @property double rate;
 @property BOOL canSeek;
 @property NSTimeInterval contentDuration;

@@ -63,7 +63,7 @@ public:
     void durationChanged(double) override;
     void currentTimeChanged(double currentTime, double anchorTime) override;
     void bufferedTimeChanged(double) override;
-    void rateChanged(bool isPlaying, float playbackRate) override;
+    void rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate) override;
     void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) override;
     void canPlayFastReverseChanged(bool) override;
     void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;

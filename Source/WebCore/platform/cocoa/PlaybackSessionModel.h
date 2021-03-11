@@ -55,6 +55,7 @@ public:
     virtual void beginScanningForward() = 0;
     virtual void beginScanningBackward() = 0;
     virtual void endScanning() = 0;
+    virtual void setDefaultPlaybackRate(float) = 0;
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
     virtual void togglePictureInPicture() = 0;
@@ -72,6 +73,7 @@ public:
     virtual double bufferedTime() const = 0;
     virtual bool isPlaying() const = 0;
     virtual bool isScrubbing() const = 0;
+    virtual float defaultPlaybackRate() const = 0;
     virtual float playbackRate() const = 0;
     virtual Ref<TimeRanges> seekableRanges() const = 0;
     virtual double seekableTimeRangesLastModifiedTime() const = 0;
@@ -98,7 +100,7 @@ public:
     virtual void currentTimeChanged(double /* currentTime */, double /* anchorTime */) { }
     virtual void bufferedTimeChanged(double) { }
     virtual void playbackStartedTimeChanged(double /* playbackStartedTime */) { }
-    virtual void rateChanged(bool /* isPlaying */, float /* playbackRate */) { }
+    virtual void rateChanged(bool /* isPlaying */, float /* playbackRate */, float /* defaultPlaybackRate */) { }
     virtual void seekableRangesChanged(const TimeRanges&, double /* lastModified */, double /* liveInterval */) { }
     virtual void canPlayFastReverseChanged(bool) { }
     virtual void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /* options */, uint64_t /* selectedIndex */) { }
