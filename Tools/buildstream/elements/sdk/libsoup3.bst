@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gnome_downloads:libsoup/2.99/libsoup-2.99.1.tar.xz
-  ref: 9703c09e1b41d413bc17b5a3b8baac7cd8be1aa89ebd628de802d9a572dc8d44
+  url: gnome_downloads:libsoup/2.99/libsoup-2.99.2.tar.xz
+  ref: 664fa1b78a15cc0aa1fa65efb3b281a888417530f9f56a219571c0630f942ba5
 build-depends:
 - freedesktop-sdk.bst:components/gobject-introspection.bst
 - freedesktop-sdk.bst:components/python3.bst
