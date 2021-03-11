@@ -1,3 +1,14 @@
+2021-03-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Indexed DB transactions outdated immediately after it just created
+        https://bugs.webkit.org/show_bug.cgi?id=216769
+        <rdar://problem/69321075>
+
+        Reviewed by Ryosuke Niwa.
+
+        * storage/indexeddb/transaction-state-active-after-creation-expected.txt: Added.
+        * storage/indexeddb/transaction-state-active-after-creation.html: Added.
+
 2021-03-10  Rob Buis  <rbuis@igalia.com>
 
         Fix intrinsic-size-005.html

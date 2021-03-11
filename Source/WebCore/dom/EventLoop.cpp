@@ -180,4 +180,12 @@ void EventLoopTaskGroup::performMicrotaskCheckpoint()
         m_eventLoop->performMicrotaskCheckpoint();
 }
 
+void EventLoopTaskGroup::runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&& function)
+{
+    if (m_state == State::Stopped || !m_eventLoop)
+        return;
+
+    microtaskQueue().addCheckpointTask(makeUnique<EventLoopFunctionDispatchTask>(TaskSource::IndexedDB, *this, WTFMove(function)));
+}
+
 } // namespace WebCore
