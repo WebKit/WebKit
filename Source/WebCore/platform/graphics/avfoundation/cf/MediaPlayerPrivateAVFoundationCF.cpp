@@ -1604,7 +1604,7 @@ void AVFWrapper::createPlayerItem()
         return;
 
     // Create the player item so we begin loading media data.
-    m_avPlayerItem = adoptF(AVCFPlayerItemCreateWithAsset(kCFAllocatorDefault, avAsset(), m_notificationQueue.get()));
+    m_avPlayerItem = adoptCF(AVCFPlayerItemCreateWithAsset(kCFAllocatorDefault, avAsset(), m_notificationQueue.get()));
 
     CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
     ASSERT(center);
