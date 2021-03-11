@@ -560,7 +560,7 @@ Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const Rend
     // height, so it's the inverse. So we need the logical width if we have a
     // horizontal flow and horizontal writing mode, or vertical flow and vertical
     // writing mode. Otherwise we need the logical height.
-    if (isHorizontalFlow() != child.style().isHorizontalWritingMode()) {
+    if (!mainAxisIsChildInlineAxis(child)) {
         // We don't have to check for "auto" here - computeContentLogicalHeight
         // will just return a null Optional for that case anyway. It's safe to access
         // scrollbarLogicalHeight here because ComputeNextFlexLine will have
@@ -590,7 +590,6 @@ Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const Rend
     return child.computeLogicalWidthInFragmentUsing(sizeType, size, contentLogicalWidth(), *this, fragment) - borderAndPadding;
 }
 
-    
 WritingMode RenderFlexibleBox::transformedWritingMode() const
 {
     WritingMode mode = style().writingMode();
@@ -785,7 +784,8 @@ bool RenderFlexibleBox::useChildAspectRatio(const RenderBox& child) const
     return childCrossSizeIsDefinite(child, crossSizeLengthForChild(MainOrPreferredSize, child));
 }
 
-    
+// FIXME: computeMainSizeFromAspectRatioUsing may need to return an Optional<LayoutUnit> in the future
+// rather than returning indefinite sizes as 0/-1.
 LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const
 {
     ASSERT(childHasAspectRatio(child));
@@ -925,7 +925,6 @@ void RenderFlexibleBox::clearCachedMainSizeForChild(const RenderBox& child)
     m_intrinsicSizeAlongMainAxis.remove(&child);
 }
 
-    
 LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding)
 {
     Length flexBasis = flexBasisForChild(child);
@@ -1224,11 +1223,9 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
         }
 
         if (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child)) {
-            Optional<LayoutUnit> transferredSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
-            if (transferredSize) {
-                transferredSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, transferredSize.value());
-                return std::max(childSize, std::min(transferredSize.value(), contentSize));
-            }
+            LayoutUnit transferredSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
+            transferredSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, transferredSize);
+            return std::max(childSize, std::min(transferredSize, contentSize));
         }
 
         return std::max(childSize, contentSize);
@@ -1452,7 +1449,6 @@ static LayoutUnit justifyContentSpaceBetweenChildren(LayoutUnit availableFreeSpa
     return 0;
 }
 
-
 static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition position, LayoutUnit ascent, LayoutUnit maxAscent, bool isWrapReverse)
 {
     switch (position) {
@@ -1633,7 +1629,7 @@ bool RenderFlexibleBox::needToStretchChildLogicalHeight(const RenderBox& child) 
 
 bool RenderFlexibleBox::childHasIntrinsicMainAxisSize(const RenderBox& child) const
 {
-    if (isHorizontalFlow() == child.style().isHorizontalWritingMode())
+    if (mainAxisIsChildInlineAxis(child))
         return false;
 
     Length childFlexBasis = flexBasisForChild(child);
@@ -1931,8 +1927,7 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
             ItemPosition position = alignmentForChild(flexItem.box);
             if (position == ItemPosition::Stretch)
                 applyStretchAlignmentToChild(flexItem.box, lineCrossAxisExtent);
-            LayoutUnit availableSpace =
-            availableAlignmentSpaceForChild(lineCrossAxisExtent, flexItem.box);
+            LayoutUnit availableSpace = availableAlignmentSpaceForChild(lineCrossAxisExtent, flexItem.box);
             LayoutUnit offset = alignmentOffset(availableSpace, position, marginBoxAscentForChild(flexItem.box), maxAscent, style().flexWrap() == FlexWrap::Reverse);
             adjustAlignmentForChild(flexItem.box, offset);
             if (position == ItemPosition::Baseline && style().flexWrap() == FlexWrap::Reverse)
