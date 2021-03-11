@@ -191,14 +191,9 @@ class MediaControls extends LayoutNode
     {
         this.element.classList.remove("shows-tracks-panel");
 
-        let shouldFadeControlsBar = true;
-        if (window.event instanceof MouseEvent)
-            shouldFadeControlsBar = !this.isPointInControls(new DOMPoint(event.clientX, event.clientY), true);
-
         this.tracksButton.on = false;
         this.tracksButton.element.focus();
         this.autoHideController.hasSecondaryUIAttached = false;
-        this.faded = this.autoHideController.fadesWhileIdle && shouldFadeControlsBar;
         this.tracksPanel.hide();
     }
 

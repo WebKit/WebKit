@@ -47,11 +47,11 @@ shouldBecomeEqual("mediaControls.tracksPanel.element.parentNode", "mediaControls
         debug("");
         debug("mediaControls.hideTracksPanel()");
         mediaControls.hideTracksPanel();
-        shouldBeTrue("mediaControls.faded");
-
-        debug("");
-        mediaControls.element.remove();
-        finishJSTest();
+        shouldBecomeEqual("mediaControls.faded", "true", () => {
+            debug("");
+            mediaControls.element.remove();
+            finishJSTest();
+        });
     }, mediaControls.autoHideController.autoHideDelay);
 });
 

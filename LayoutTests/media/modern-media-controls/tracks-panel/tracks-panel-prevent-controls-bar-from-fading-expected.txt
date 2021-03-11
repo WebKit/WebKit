@@ -13,7 +13,7 @@ Now enter and exit the media controls, the controls bar should remain visible
 PASS mediaControls.faded is false
 
 mediaControls.hideTracksPanel()
-PASS mediaControls.faded is true
+PASS mediaControls.faded became true
 
 PASS successfullyParsed is true
 
