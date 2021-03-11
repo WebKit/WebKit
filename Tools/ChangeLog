@@ -1,3 +1,24 @@
+2021-03-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r272469): [WPE][GTK] Epiphany UI process crashes when downloading PDFs, WebKitSecurityOrigin should use SecurityOriginData
+        https://bugs.webkit.org/show_bug.cgi?id=222943
+
+        Reviewed by Alex Christensen.
+
+        Add a test to ensure security origins can be successfully created for custom protocols.
+        Also, update the tests to accomodate the deprecation of webkit_security_origin_is_opaque().
+        Notably, origins for data:// URIs are no longer special.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSecurityOrigin.cpp:
+        (testSecurityOriginBasicConstructor):
+        (testSecurityOriginURIConstructor):
+        (testSecurityOriginDefaultPort):
+        (testSecurityOriginFileURI):
+        (testSecurityOriginDataURI):
+        (testCustomProtocolOrigin):
+        (beforeAll):
+        (testOpaqueSecurityOrigin): Deleted.
+
 2021-03-10  Chris Dumez  <cdumez@apple.com>
 
         Use RetainPtr<> / OSObjectPtr<> more in WebKit

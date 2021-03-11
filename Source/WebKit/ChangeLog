@@ -1,3 +1,46 @@
+2021-03-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r272469): [WPE][GTK] Epiphany UI process crashes when downloading PDFs, WebKitSecurityOrigin should use SecurityOriginData
+        https://bugs.webkit.org/show_bug.cgi?id=222943
+
+        Reviewed by Alex Christensen.
+
+        Since r272469, WebCore::SecurityOrigin no longer accepts custom protocols except those
+        registered with LegacySchemeRegistry. WebPage registers all custom protocols, but
+        WebPageProxy does not, so WebCore::SecurityOrigin now only supports custom protocols in the
+        web process, not the UI process. This causes Epiphany to crash when the protocol of its
+        WebKitSecurityOrigin is unexpectedly NULL.
+
+        Alex wants to reduce usage of WebCore::SecurityOrigin outside the web process, so instead of
+        registering custom protocols with LegacySchemeRegistry in the UI process -- making it harder
+        to eventually get rid of LegacySchemeRegistry -- we will transition WebKitSecurityOrigin
+        from WebCore::SecurityOrigin to WebCore::SecurityOriginData, which is a simple data store
+        for <protocol, host, port>. This is mostly sufficient to implement WebKitSecurityOrigin,
+        except for webkit_security_origin_is_opaque(). I considered multiple ways to handle this,
+        but ultimately decided to just deprecate it. Epiphany is the only client using this function
+        in order to implement a WebKitSecurityOrigin equality operation, and it does so using
+        origins that should never be opaque, so there are no compatibility concerns here.
+
+        * UIProcess/API/glib/WebKitAuthenticationRequest.cpp:
+        (webkit_authentication_request_get_security_origin):
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp:
+        (_WebKitSecurityOrigin::_WebKitSecurityOrigin):
+        (webkitSecurityOriginCreate):
+        (webkitSecurityOriginGetSecurityOriginData):
+        (webkit_security_origin_new):
+        (webkit_security_origin_new_for_uri):
+        (webkit_security_origin_get_protocol):
+        (webkit_security_origin_get_host):
+        (webkit_security_origin_get_port):
+        (webkit_security_origin_is_opaque):
+        (webkit_security_origin_to_string):
+        (webkitSecurityOriginGetSecurityOrigin): Deleted.
+        * UIProcess/API/glib/WebKitSecurityOriginPrivate.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (addOriginToMap):
+        * UIProcess/API/gtk/WebKitSecurityOrigin.h:
+        * UIProcess/API/wpe/WebKitSecurityOrigin.h:
+
 2021-03-10  Peng Liu  <peng.liu6@apple.com>
 
         [GPU Process] Assertion under RenderLayerCompositor::computeCompositingRequirements()
