@@ -1,3 +1,15 @@
+2021-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r260302
+        https://bugs.webkit.org/show_bug.cgi?id=223048
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::clientCertServer): Deleted.
+        (TestWebKitAPI::BlockPtr<void): Deleted.
+        (TestWebKitAPI::countClientCertChallenges): Deleted.
+
 2021-03-11  Mark Lam  <mark.lam@apple.com>
 
         Use tagged pointers in more places in the MetaAllocator code.

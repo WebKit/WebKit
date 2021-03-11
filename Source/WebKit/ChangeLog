@@ -1,3 +1,28 @@
+2021-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r260302
+        https://bugs.webkit.org/show_bug.cgi?id=223048
+
+        Reviewed by Geoffrey Garen.
+
+        r260302 was based on the faulty assumption that if we receive bytes from a server after a client certificate challenge,
+        it must've accepted the client certificate we provided and we should always provide this certificate to this server.
+        This assumption is faulty because there are servers that request a client certificate but provide a response if you do
+        not provide a certificate that it accepts.  I'm removing this code because as part of my investigation of rdar://73974226
+        I found that it did not help anything, and since then I committed r269162 which did help solve that problem.
+ 
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::clientCertificateSuggestedForHost): Deleted.
+        (WebKit::NetworkSessionCocoa::taskServerConnectionSucceeded): Deleted.
+        (WebKit::NetworkSessionCocoa::taskFailed): Deleted.
+        (WebKit::NetworkSessionCocoa::successfulClientCertificateForHost const): Deleted.
+
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
         Replace some usage of dispatch_queue with WorkQueue now that it supports sync dispatching

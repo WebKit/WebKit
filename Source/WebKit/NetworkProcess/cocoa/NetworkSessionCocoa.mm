@@ -535,11 +535,6 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     LOG(NetworkSession, "%llu willPerformHTTPRedirection from %s to %s", taskIdentifier, response.URL.absoluteString.UTF8String, request.URL.absoluteString.UTF8String);
 
     if (auto* networkDataTask = [self existingTask:task]) {
-        auto completionHandlerCopy = Block_copy(completionHandler);
-
-        if (auto* sessionCocoa = [self sessionFromTask:task])
-            sessionCocoa->taskServerConnectionSucceeded(taskIdentifier);
-
         bool shouldIgnoreHSTS = false;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
@@ -553,7 +548,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
             ASSERT_NOT_REACHED();
 #endif
 
-        networkDataTask->willPerformHTTPRedirection(response, request, [completionHandlerCopy, taskIdentifier, shouldIgnoreHSTS](auto&& request) {
+        networkDataTask->willPerformHTTPRedirection(response, request, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier, shouldIgnoreHSTS](auto&& request) {
 #if !LOG_DISABLED
             LOG(NetworkSession, "%llu willPerformHTTPRedirection completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
 #else
@@ -561,8 +556,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 #endif
             auto nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
             nsRequest = updateIgnoreStrictTransportSecuritySettingIfNecessary(nsRequest, shouldIgnoreHSTS);
-            completionHandlerCopy(nsRequest);
-            Block_release(completionHandlerCopy);
+            completionHandler(nsRequest);
         });
     } else {
         LOG(NetworkSession, "%llu willPerformHTTPRedirection completionHandler (nil)", taskIdentifier);
@@ -589,8 +583,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
             ASSERT_NOT_REACHED();
 #endif
 
-        auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy, taskIdentifier, shouldIgnoreHSTS](auto&& request) {
+        networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier, shouldIgnoreHSTS](auto&& request) {
 #if !LOG_DISABLED
             LOG(NetworkSession, "%llu _schemeUpgraded completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
 #else
@@ -598,8 +591,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 #endif
             auto nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
             nsRequest = updateIgnoreStrictTransportSecuritySettingIfNecessary(nsRequest, shouldIgnoreHSTS);
-            completionHandlerCopy(nsRequest);
-            Block_release(completionHandlerCopy);
+            completionHandler(nsRequest);
         });
     } else {
         LOG(NetworkSession, "%llu _schemeUpgraded completionHandler (nil)", taskIdentifier);
@@ -709,19 +701,6 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         }
     }
 
-    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodClientCertificate]) {
-        HostAndPort key { challenge.protectionSpace.host, challenge.protectionSpace.port };
-        if (auto* credential = sessionCocoa->successfulClientCertificateForHost(challenge.protectionSpace.host, challenge.protectionSpace.port))
-            return completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
-        sessionCocoa->continueDidReceiveChallenge(*_sessionWrapper, challenge, negotiatedLegacyTLS, taskIdentifier, [self existingTask:task], [completionHandler = makeBlockPtr(completionHandler), key, weakSessionCocoa = makeWeakPtr(sessionCocoa), taskIdentifier] (WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
-            NSURLCredential *nsCredential = credential.nsCredential();
-            if (disposition == WebKit::AuthenticationChallengeDisposition::UseCredential && nsCredential && weakSessionCocoa)
-                weakSessionCocoa->clientCertificateSuggestedForHost(taskIdentifier, nsCredential, key.first, key.second);
-            completionHandler(toNSURLSessionAuthChallengeDisposition(disposition), nsCredential);
-        });
-        return;
-    }
-
     sessionCocoa->continueDidReceiveChallenge(*_sessionWrapper, challenge, negotiatedLegacyTLS, taskIdentifier, [self existingTask:task], [completionHandler = makeBlockPtr(completionHandler)] (WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
         completionHandler(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
     });
@@ -738,15 +717,9 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         error = [NSError errorWithDomain:[error domain] code:[error code] userInfo:newUserInfo];
     }
 
-    if (auto* networkDataTask = [self existingTask:task]) {
-        if (auto* sessionCocoa = [self sessionFromTask:task]) {
-            if (error)
-                sessionCocoa->taskFailed(task.taskIdentifier);
-            else
-                sessionCocoa->taskServerConnectionSucceeded(task.taskIdentifier);
-        }
+    if (auto* networkDataTask = [self existingTask:task])
         networkDataTask->didCompleteWithError(error, networkDataTask->networkLoadMetrics());
-    } else if (error) {
+    else if (error) {
         if (!_sessionWrapper)
             return;
         auto downloadID = _sessionWrapper->downloadMap.take(task.taskIdentifier);
@@ -894,9 +867,6 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     if (auto* networkDataTask = [self existingTask:dataTask]) {
         ASSERT(RunLoop::isMain());
 
-        if (auto* sessionCocoa = [self sessionFromTask:dataTask])
-            sessionCocoa->taskServerConnectionSucceeded(taskIdentifier);
-
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
 #if HAVE(TLS_PROTOCOL_VERSION_T)
         NSURLSessionTaskTransactionMetrics *metrics = dataTask._incompleteTaskMetrics.transactionMetrics.lastObject;
@@ -930,15 +900,13 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         // NetworkLoadMetrics. For example, PerformanceTiming.
         resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData([dataTask _timingData]));
 
-        auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, [completionHandlerCopy, taskIdentifier](WebCore::PolicyAction policyAction) {
+        networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier](WebCore::PolicyAction policyAction) {
 #if !LOG_DISABLED
             LOG(NetworkSession, "%llu didReceiveResponse completionHandler (%d)", taskIdentifier, policyAction);
 #else
             UNUSED_PARAM(taskIdentifier);
 #endif
-            completionHandlerCopy(toNSURLSessionResponseDisposition(policyAction));
-            Block_release(completionHandlerCopy);
+            completionHandler(toNSURLSessionResponseDisposition(policyAction));
         });
     } else {
         LOG(NetworkSession, "%llu didReceiveResponse completionHandler (cancel)", taskIdentifier);
@@ -1088,38 +1056,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     return configuration;
-}
-
-void NetworkSessionCocoa::clientCertificateSuggestedForHost(NetworkDataTaskCocoa::TaskIdentifier taskID, NSURLCredential *credential, const String& host, uint16_t port)
-{
-    m_suggestedClientCertificates.set(taskID, SuggestedClientCertificate { host, port, credential });
-}
-
-void NetworkSessionCocoa::taskServerConnectionSucceeded(NetworkDataTaskCocoa::TaskIdentifier identifier)
-{
-    if (LIKELY(m_suggestedClientCertificates.isEmpty()))
-        return;
-
-    auto suggestedClientCertificate = m_suggestedClientCertificates.take(identifier);
-    HostAndPort key { suggestedClientCertificate.host, suggestedClientCertificate.port };
-    if (suggestedClientCertificate.credential && decltype(m_successfulClientCertificates)::isValidKey(key))
-        m_successfulClientCertificates.add(key, suggestedClientCertificate.credential);
-}
-
-void NetworkSessionCocoa::taskFailed(NetworkDataTaskCocoa::TaskIdentifier identifier)
-{
-    if (LIKELY(m_suggestedClientCertificates.isEmpty()))
-        return;
-
-    m_suggestedClientCertificates.take(identifier);
-}
-
-NSURLCredential *NetworkSessionCocoa::successfulClientCertificateForHost(const String& host, uint16_t port) const
-{
-    HostAndPort key { host, port };
-    if (!decltype(m_successfulClientCertificates)::isValidKey(key))
-        return nil;
-    return m_successfulClientCertificates.get(key).get();
 }
 
 _NSHSTSStorage *NetworkSessionCocoa::hstsStorage() const
