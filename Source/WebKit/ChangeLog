@@ -1,3 +1,15 @@
+2021-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add message filtering check in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=223072
+        <rdar://75314821>
+
+        Reviewed by Brent Fulgham.
+
+        Message filters cannot be applied unconditionally; their presence needs to be checked first.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
         Introduce WorkQueue::dispatchSync()
