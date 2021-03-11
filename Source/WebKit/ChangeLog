@@ -1,3 +1,26 @@
+2021-03-11  Youenn Fablet  <youenn@apple.com>
+
+        Add camera-related sandbox extensions to GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=223059
+
+        Reviewed by Eric Carlson.
+
+        Align GPU process sandbox with WebProcess one, including additional camera related sandboxes.
+        Allow reading preferences for "com.apple.cmio"like done for coremedia.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::shouldCreateAppleCameraServiceSandboxExtension):
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        * UIProcess/UserMediaProcessManager.cpp:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-03-11  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r272469): [WPE][GTK] Epiphany UI process crashes when downloading PDFs, WebKitSecurityOrigin should use SecurityOriginData

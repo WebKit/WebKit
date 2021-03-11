@@ -871,6 +871,7 @@
 
 ;; Media capture, camera access
 (with-filter (extension "com.apple.webkit.camera")
+    (shared-preferences-read "com.apple.cmio")
     (shared-preferences-read "com.apple.coremedia")
     (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
     (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
@@ -883,7 +884,12 @@
         (global-name "com.apple.cmio.AVCAssistant")
         (global-name "com.apple.cmio.IIDCVideoAssistant")
         ;; QuickTimeIIDCDigitizer assistant
-        (global-name "com.apple.IIDCAssistant"))
+        (global-name "com.apple.IIDCAssistant")
+        ;; applecamerad
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.applecamerad")
+        ))
     (allow iokit-open
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")

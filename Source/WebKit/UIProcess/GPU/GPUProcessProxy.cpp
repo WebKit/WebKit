@@ -47,6 +47,7 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TranslatedProcess.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/spi/darwin/XPCSPI.h>
@@ -90,6 +91,19 @@ static inline bool shouldCreateMicrophoneSandboxExtension()
         return false;
     return true;
 }
+
+#if ENABLE(MEDIA_STREAM) && HAVE(AUDIT_TOKEN)
+static bool shouldCreateAppleCameraServiceSandboxExtension()
+{
+#if !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
+    return false;
+#elif CPU(ARM64)
+    return true;
+#else
+    return WTF::isX86BinaryRunningOnARM();
+#endif
+}
+#endif
 
 static WeakPtr<GPUProcessProxy>& singleton()
 {
@@ -146,11 +160,21 @@ GPUProcessProxy::GPUProcessProxy()
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera"_s, parameters.cameraSandboxExtensionHandle);
     if (needsMicrophoneSandboxExtension)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, parameters.microphoneSandboxExtensionHandle);
+
+#if HAVE(AUDIT_TOKEN)
+    if (needsCameraSandboxExtension && shouldCreateAppleCameraServiceSandboxExtension()) {
+        SandboxExtension::createHandleForMachLookup("com.apple.applecamerad"_s, WTF::nullopt, parameters.appleCameraServicePathSandboxExtensionHandle);
+#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+        SandboxExtension::createHandleForMachLookup("com.apple.appleh13camerad"_s, WTF::nullopt, parameters.additionalAppleCameraServicePathSandboxExtensionHandle);
+#endif
+    }
+#endif // HAVE(AUDIT_TOKEN)
+
 #if PLATFORM(IOS)
     if (needsCameraSandboxExtension || needsMicrophoneSandboxExtension)
         SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, WTF::nullopt, parameters.tccSandboxExtensionHandle);
 #endif
-#endif
+#endif // ENABLE(MEDIA_STREAM)
     parameters.parentPID = getCurrentProcessID();
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)

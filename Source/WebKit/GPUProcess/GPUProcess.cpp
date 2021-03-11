@@ -145,6 +145,12 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if ENABLE(MEDIA_STREAM)
     setMockCaptureDevicesEnabled(parameters.useMockCaptureDevices);
     SandboxExtension::consumePermanently(parameters.cameraSandboxExtensionHandle);
+#if HAVE(AUDIT_TOKEN)
+    SandboxExtension::consumePermanently(parameters.appleCameraServicePathSandboxExtensionHandle);
+#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+    SandboxExtension::consumePermanently(parameters.additionalAppleCameraServicePathSandboxExtensionHandle);
+#endif
+#endif // HAVE(AUDIT_TOKEN)
     SandboxExtension::consumePermanently(parameters.microphoneSandboxExtensionHandle);
 #if PLATFORM(IOS)
     SandboxExtension::consumePermanently(parameters.tccSandboxExtensionHandle);
