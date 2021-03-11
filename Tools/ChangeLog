@@ -1,3 +1,25 @@
+2021-03-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Make client aware of hashes and revisions
+        https://bugs.webkit.org/show_bug.cgi?id=223001
+        <rdar://problem/75237812>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (Commit): Support both "id" and "identifier" in constructor.
+        (Commit.prototype.repr): Centralize string representation of commit.
+        (_CommitBank.prototype._loadSiblings):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/investigate.js:
+        (commitsForUuid): Use repr().
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale): Use repr().
+        (TimelineFromEndpoint.prototype.render.onDotEnterFactory): Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/commits.html: Convert JSON to Commit object.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/investigate.html: Use repr().
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+
 2021-03-10  Chris Dumez  <cdumez@apple.com>
 
         Improve AppleLanguagesTest.UpdateAppleLanguages API test

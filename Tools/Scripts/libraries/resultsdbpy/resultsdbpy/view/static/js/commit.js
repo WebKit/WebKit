@@ -101,16 +101,16 @@ function CommitTable(commits, repositoryIds = [], oneLine = false) {
                     let commitArgs = paramsToQuery({
                         repository_id: [cell.commit.repository_id],
                         branch: [cell.commit.branch],
-                        id: [cell.commit.id],
+                        id: [cell.commit.identifier],
                     });
-                    let investigateArgs = {id: [cell.commit.id]};
-                    if (!['master', 'trunk'].includes(cell.commit.branch))
+                    let investigateArgs = {id: [cell.commit.identifier]};
+                    if (!['master', 'main', 'trunk'].includes(cell.commit.branch))
                         investigateArgs.branch = [cell.commit.branch];
 
                     return `<td rowspan="${cell.rowspan}">
-                        <a href="/commit?${commitArgs}">${cell.commit.id}</a> <br>
+                        <a href="/commit?${commitArgs}">${cell.commit.label()}</a> <br>
                         Branch: ${cell.commit.branch} <br>
-                        Committer: ${escapeHTML(cell.commit.committer)} <br>
+                        Author: ${escapeHTML(cell.commit.author)} <br>
                         <a href="/commit/info?${commitArgs}">More Info</a><br>
                         <a href="/investigate?${paramsToQuery(investigateArgs)}">Test results for commit</a>
                         ${function() {
@@ -129,17 +129,26 @@ function CommitTable(commits, repositoryIds = [], oneLine = false) {
 
 class Commit {
     constructor(json) {
-        this.branch = json.branch;
-        this.committer = json.committer;
-        this.id = json.id;
-        this.message = json.message;
-        this.order = json.order;
+        this.identifier = json.identifier ? json.identifier : json.id;
+        this.revision = json.revision;
+        this.hash = json.hash;
+
+        this.author = json.author ? json.author.name : json.committer;
+
         this.repository_id = json.repository_id;
+        this.branch = json.branch;
+        this.message = json.message;
+
         this.timestamp = json.timestamp;
+        this.order = json.order;
         this.uuid = this.timestamp * TIMESTAMP_TO_UUID_MULTIPLIER + this.order;
     }
     compare(commit) {
         return this.uuid - commit.uuid;
+    }
+    label() {
+        // Per the birthday paradox, 10% chance of collision with 7.7 million commits with 12 character commits
+        return this.identifier.substring(0,12);
     }
 };
 
@@ -286,7 +295,7 @@ class _CommitBank {
         const query = paramsToQuery({
             branch: [commit.branch],
             repository_id: [commit.repository_id],
-            id: [commit.id],
+            id: [commit.identifier],
         });
         return fetch('api/commits/siblings?' + query).then(response => {
             let self = this;

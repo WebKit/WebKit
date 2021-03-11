@@ -30,7 +30,7 @@
 <script type="module">
 import {REF, DOM} from '/library/js/Ref.js';
 import {ErrorDisplay} from '/assets/js/common.js';
-import {CommitTable} from '/assets/js/commit.js';
+import {Commit, CommitTable} from '/assets/js/commit.js';
 import {Drawer, BranchSelector, LimitSlider} from '/assets/js/drawer.js';
 
 var oneLine = true;
@@ -71,7 +71,7 @@ class Table {
         fetch(query ? 'api/commits?' + query : 'api/commits').then(response => {
             response.json().then(json => {
                 if (myDispatch == this.latestDispatch)
-                    this.ref.setState(json);
+                    this.ref.setState(json.map(datum => new Commit(datum)));
             });
         }).catch(error => {
             if (myDispatch == this.latestDispatch)
