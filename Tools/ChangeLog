@@ -1,3 +1,14 @@
+2021-03-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation: ignore leading and trailing spaces when comparing content for all tokens
+        https://bugs.webkit.org/show_bug.cgi?id=223057
+        <rdar://73706436>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2021-03-11  Imanol Fernandez  <ifernandez@igalia.com>
 
         Fix contributors file canonical format issue.
