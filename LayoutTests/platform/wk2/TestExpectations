@@ -217,11 +217,8 @@ http/tests/media/hls/hls-progress.html [ Failure ]
 http/tests/media/video-play-stall.html [ Failure ]
 
 # webkit.org/b/221685
-media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Timeout Failure Pass ]
-media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Timeout Pass ]
 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Crash Pass ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Timeout Pass ]
-media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Failure Timeout ]
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Failure Pass ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Timeout Pass ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Timeout Pass ]
@@ -229,7 +226,6 @@ media/modern-media-controls/media-controller/media-controller-space-bar-toggle-p
 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Timeout Pass ]
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout Pass ]
 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Timeout Pass ]
-http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Timeout ]
 
 # webkit.org/b/221693
 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash ]

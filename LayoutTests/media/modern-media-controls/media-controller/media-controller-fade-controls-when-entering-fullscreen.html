@@ -8,6 +8,13 @@ window.jsTestIsAsync = true;
 
 description("Fading in the controls when entering fullscreen.");
 
+if (!window.internals) {
+    debug("window.internals is not defined");
+    finishJSTest();
+}
+
+internals.setMockVideoPresentationModeEnabled(true);
+
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
 let mediaControls = shadowRoot.lastElementChild.lastElementChild;
@@ -21,15 +28,21 @@ media.addEventListener("play", () => {
         
         clickOnFullscreenButton();
         media.addEventListener("webkitfullscreenchange", () => {
-            mediaControls = shadowRoot.lastElementChild.lastElementChild;
-            debug("Obtained a webkitfullscreenchange event");
-            shouldBeTrue("media.webkitDisplayingFullscreen");
-            debug("We should fade the controls in when showing them fullscreen");
-            shouldBeTrue("mediaControls.classList.contains('fade-in')");
+            if (!media.webkitDisplayingFullscreen) {
+                media.remove();
+                finishJSTest();
+            }
 
-            debug("");
-            media.remove();
-            finishJSTest();
+            shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", () => {
+                mediaControls = shadowRoot.lastElementChild.lastElementChild;
+                debug("Obtained a webkitfullscreenchange event");
+                shouldBeTrue("media.webkitDisplayingFullscreen");
+                debug("We should fade the controls in when showing them fullscreen");
+                shouldBeTrue("mediaControls.classList.contains('fade-in')");
+
+                debug("");
+                media.webkitExitFullscreen();
+            });
         });
     });
 });
