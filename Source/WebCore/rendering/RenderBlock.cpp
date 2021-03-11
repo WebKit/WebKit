@@ -2403,7 +2403,13 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, Layout
             minPreferredLogicalWidth = maxPreferredLogicalWidth = downcast<RenderBox>(child).logicalHeight();
             return;
         }
-        minPreferredLogicalWidth = maxPreferredLogicalWidth = downcast<RenderBox>(child).computeLogicalHeightWithoutLayout();
+        auto& box = downcast<RenderBox>(child);
+        if (box.shouldComputeLogicalHeightFromAspectRatio() && box.style().logicalWidth().isFixed()) {
+            LayoutUnit logicalWidth = LayoutUnit(box.style().logicalWidth().value());
+            minPreferredLogicalWidth = maxPreferredLogicalWidth = blockSizeFromAspectRatio(box.horizontalBorderAndPaddingExtent(), box.verticalBorderAndPaddingExtent(), LayoutUnit(box.style().logicalAspectRatio()), box.style().boxSizingForAspectRatio(), logicalWidth);
+            return;
+        }
+        minPreferredLogicalWidth = maxPreferredLogicalWidth = box.computeLogicalHeightWithoutLayout();
         return;
     }
     

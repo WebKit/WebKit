@@ -650,6 +650,8 @@ override;
 
     LayoutRect absoluteAnchorRectWithScrollMargin(bool* insideFixed = nullptr) const override;
 
+    bool shouldComputeLogicalHeightFromAspectRatio() const;
+
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBox(Document&, RenderStyle&&, BaseTypeFlags);
@@ -699,7 +701,6 @@ protected:
 
     void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
 
-    bool shouldComputeLogicalHeightFromAspectRatio() const;
     bool shouldComputeLogicalWidthFromAspectRatio() const;
     bool shouldComputeLogicalWidthFromAspectRatioAndInsets() const;
     LayoutUnit computeLogicalWidthFromAspectRatio(RenderFragmentContainer* = nullptr) const;

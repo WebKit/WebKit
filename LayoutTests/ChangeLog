@@ -1,3 +1,14 @@
+2021-03-10  Rob Buis  <rbuis@igalia.com>
+
+        Fix intrinsic-size-005.html
+        https://bugs.webkit.org/show_bug.cgi?id=222970
+
+        Reviewed by Simon Fraser.
+
+        Enable test that passes now.
+
+        * TestExpectations:
+
 2021-03-10  Peng Liu  <peng.liu6@apple.com>
 
         [GPU Process] Assertion under RenderLayerCompositor::computeCompositingRequirements()
