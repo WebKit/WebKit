@@ -33,7 +33,7 @@
 
                 var mediaFile = findMediaFile("video", "../../../../media/content/long-test");
                 var mimeType = mimeTypeForFile(mediaFile);
-                video.src = "http://127.0.0.1:8000/media/resources/serve-video.php?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=100000&stallDuration=60&chunkSize=1024";
+                video.src = "http://127.0.0.1:8000/media/resources/serve-video.php?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=1000000&stallDuration=60&chunkSize=1024";
             }
 
         </script>

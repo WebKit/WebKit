@@ -952,9 +952,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 webkit.org/b/140022 http/tests/media/track-in-band-hls-metadata.html [ Pass Timeout ]
 
-# See also: <rdar://problem/20622665>
-webkit.org/b/148597 http/tests/media/video-play-stall.html [ Pass Failure ]
-
 # <rdar://problem/21263363>
 http/tests/media/remove-while-loading.html [ Skip ]
 http/tests/media/video-accept-encoding.html [ Failure ]

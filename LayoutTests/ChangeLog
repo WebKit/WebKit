@@ -1,3 +1,18 @@
+2021-03-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] http/tests/media/video-play-stall.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=148597
+        <rdar://problem/22484300>
+
+        Reviewed by Jer Noble.
+
+        * http/tests/media/video-play-stall.html: Increase the amount of data loaded before
+        stalling because the test assumes that playback begins before the 'stalled' event
+        is fired, and AVFoundation has become much more conservative about predicting when
+        is is possible to begin playing without running out of data.
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2021-03-11  Rob Buis  <rbuis@igalia.com>
 
         Apply transferred min/max sizes for intrinsic sizing

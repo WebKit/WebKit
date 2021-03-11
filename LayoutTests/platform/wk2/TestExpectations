@@ -214,7 +214,6 @@ http/tests/images/loading-image-no-border.html
 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
 http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
 http/tests/media/hls/hls-progress.html [ Failure ]
-http/tests/media/video-play-stall.html [ Failure ]
 
 # webkit.org/b/221685
 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Crash Pass ]
