@@ -1,3 +1,14 @@
+2021-03-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: `WI.Object.singleFireEventListener` should not keep a strong reference to `thisObject`
+        https://bugs.webkit.org/show_bug.cgi?id=223090
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Base/Object.js:
+        (WI.Object.addEventListener):
+        (WI.Object.singleFireEventListener):
+
 2021-03-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Add checkbox to toggle all grid overlays

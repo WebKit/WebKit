@@ -45,7 +45,7 @@ WI.Object = class WebInspectorObject
             thisObjectWeakRef: new WeakRef(thisObject),
         };
 
-        WI.Object._listenerThisObjectFinalizationRegistry.register(thisObject, {eventTarget: this, eventType, data}, data);
+        WI.Object._listenerThisObjectFinalizationRegistry.register(thisObject, {eventTargetWeakRef: new WeakRef(this), eventType, data}, data);
 
         this._listeners ??= new Multimap;
         this._listeners.add(eventType, data);
@@ -57,12 +57,11 @@ WI.Object = class WebInspectorObject
 
     static singleFireEventListener(eventType, listener, thisObject)
     {
-        let wrappedCallback = (...args) => {
-            this.removeEventListener(eventType, wrappedCallback, thisObject);
-            listener.apply(thisObject, args);
-        };
-        this.addEventListener(eventType, wrappedCallback, thisObject);
-        return wrappedCallback;
+        let eventTargetWeakRef = new WeakRef(this);
+        return this.addEventListener(eventType, function wrappedCallback() {
+            eventTargetWeakRef.deref()?.removeEventListener(eventType, wrappedCallback, this);
+            listener.apply(this, arguments);
+        }, thisObject);
     }
 
     static awaitEvent(eventType, thisObject)
@@ -181,7 +180,7 @@ WI.Object = class WebInspectorObject
 };
 
 WI.Object._listenerThisObjectFinalizationRegistry = new FinalizationRegistry((heldValue) => {
-    heldValue.eventTarget._listeners.delete(heldValue.eventType, heldValue.data);
+    heldValue.eventTargetWeakRef.deref()?._listeners.delete(heldValue.eventType, heldValue.data);
 });
 
 WI.Event = class Event
