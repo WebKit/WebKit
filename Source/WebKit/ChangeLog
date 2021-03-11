@@ -1,3 +1,15 @@
+2021-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add additional telemetry to WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=223080
+
+        Reviewed by Brent Fulgham.
+
+        Add additional telemetry to WebContent sandbox on macOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-03-11  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] WebKitMediaKeySystemPermissionRequest.h missing in top-level header

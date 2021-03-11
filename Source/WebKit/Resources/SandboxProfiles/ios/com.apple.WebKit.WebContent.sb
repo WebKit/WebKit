@@ -1339,7 +1339,7 @@
         (fcntl-command F_SPECULATIVE_READ) ;; ImageLoaderMachO::mapSegments
         (fcntl-command F_SETFD) ;; libwebrtc.dylib (no backtrace)
         (fcntl-command F_GETFD) ;; libwebrtc.dylib (no backtrace)
-
+        (fcntl-command F_GETFL) ;; LibJPEGReadPlugin::copyImageBlockSetStandard
         (fcntl-command F_SETFL) ;; CMCapture uses when camera is enabled
         (fcntl-command F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
 

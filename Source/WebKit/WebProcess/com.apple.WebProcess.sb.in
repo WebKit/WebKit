@@ -1544,6 +1544,61 @@
 (allow system-fsctl
     (fsctl-command (_IO "h" 47))) ;; See <rdar://74387453>
 
+(when (defined? 'file-ioctl)
+    (allow file-ioctl (with telemetry))
+)
+
+(when (defined? 'socket-ioctl)
+    (allow socket-ioctl (with telemetry))
+)
+
+(when (defined? 'system-fcntl)
+    (allow system-fcntl (with telemetry))
+    (allow system-fcntl
+        (fcntl-command F_GETPATH) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
+        (fcntl-command F_ADDFILESIGS_RETURN) ;; ImageLoaderMachO::loadCodeSignature
+        (fcntl-command F_CHECK_LV) ;; ImageLoaderMachO::loadCodeSignature
+        (fcntl-command F_SPECULATIVE_READ) ;; ImageLoaderMachO::mapSegments
+        (fcntl-command F_SETFD) ;; libwebrtc.dylib (no backtrace)
+        (fcntl-command F_GETFD) ;; libwebrtc.dylib (no backtrace)
+        (fcntl-command F_GETFL) ;; LibJPEGReadPlugin::copyImageBlockSetStandard
+        (fcntl-command F_RDADVISE) ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
+        (fcntl-command F_NOCACHE) ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
+
+        (fcntl-command F_SETFL) ;; CMCapture uses when camera is enabled
+        (fcntl-command F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
+
+    (allow system-fcntl
+        (fcntl-command F_GETPROTECTIONCLASS))
+)
+
+(when (defined? 'process-codesigning*)
+    ;; csops/csops_audittoken
+    (allow process-codesigning-status-set (with telemetry))
+    (allow process-codesigning-text-offset-get (with telemetry))
+    (allow process-codesigning-cdhash-get (with telemetry))
+    (allow process-codesigning-blob-get (with telemetry))
+    (allow process-codesigning-teamid-get (with telemetry))
+    (allow process-codesigning-identity-get (with telemetry)) ;; codeSigningIdentifierForCurrentProcess
+    (allow process-codesigning-entitlements-blob-get) ;; WK reading entitlments via SecTaskCopyValueForEntitlement and _getSelfParsedEntitlements (accessibility)
+    (allow process-codesigning-status-get) ;; _xpc_get_entitlements
+    (deny process-info-codesignature (with no-report)) ;; SecTaskCopyValueForEntitlement - granting this grants all the process-codesign-* checks
+)
+
+(when (defined? 'socket-option-get)
+    ;; getsockopt
+    (allow socket-option-get (with telemetry))
+    (allow socket-option-get
+        (require-all
+            (socket-option-level SOL_SOCKET)
+            (socket-option-name SO_ERROR))) ;; libwebrtc; physical_socket_server.cc, ProcessEvents.  Called with fd=-1, so it fails.  Not technically needed, but the code needs changing
+)
+
+(when (defined? 'socket-option-set)
+    ;; setsockopt
+    (allow socket-option-set (with telemetry))
+)
+
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix
