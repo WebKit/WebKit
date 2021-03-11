@@ -124,18 +124,38 @@ typedef enum {
     IgnoreAutoreleasePool
 } AutoreleasePoolOperation;
 
-static CFRunLoopSourceRef WebThreadReleaseSource;
-static CFMutableArrayRef WebThreadReleaseObjArray;
+static RetainPtr<CFRunLoopSourceRef>& webThreadReleaseSource()
+{
+    static NeverDestroyed<RetainPtr<CFRunLoopSourceRef>> webThreadReleaseSource;
+    return webThreadReleaseSource;
+}
+
+static RetainPtr<CFMutableArrayRef>& webThreadReleaseObjArray()
+{
+    static NeverDestroyed<RetainPtr<CFMutableArrayRef>> webThreadReleaseObjArray;
+    return webThreadReleaseObjArray;
+}
 
 static Lock delegateLock;
 static StaticCondition delegateCondition;
-static CFRunLoopSourceRef delegateSource = nullptr;
+
+static RetainPtr<CFRunLoopSourceRef>& delegateSource()
+{
+    static NeverDestroyed<RetainPtr<CFRunLoopSourceRef>> delegateSource;
+    return delegateSource;
+}
+
 static BOOL delegateHandled;
 #if LOG_MAIN_THREAD_LOCKING
 static BOOL sendingDelegateMessage;
 #endif
 
-static CFRunLoopObserverRef mainRunLoopAutoUnlockObserver;
+static RetainPtr<CFRunLoopObserverRef>& mainRunLoopAutoUnlockObserver()
+{
+    static NeverDestroyed<RetainPtr<CFRunLoopObserverRef>> mainRunLoopAutoUnlockObserver;
+    return mainRunLoopAutoUnlockObserver;
+}
+
 static BOOL mainThreadHasPendingAutoUnlock;
 
 static Lock startupLock;
@@ -234,7 +254,7 @@ static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)
         return;
     }
 
-    ASSERT(delegateSource);
+    ASSERT(delegateSource());
     delegateLock.lock();
 
     delegateInvocation() = WTFMove(invocation);
@@ -255,7 +275,7 @@ static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)
         JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
         _WebThreadUnlock();
 
-        CFRunLoopSourceSignal(delegateSource);
+        CFRunLoopSourceSignal(delegateSource().get());
         CFRunLoopWakeUp(CFRunLoopGetMain());
 
         while (!delegateHandled) {
@@ -296,7 +316,7 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
 void WebThreadAdoptAndRelease(id obj)
 {
     ASSERT(!WebThreadIsCurrent());
-    ASSERT(WebThreadReleaseSource);
+    ASSERT(webThreadReleaseSource());
 
 #if LOG_RELEASES
     NSLog(@"Release send [main thread]: %@", obj);
@@ -304,10 +324,10 @@ void WebThreadAdoptAndRelease(id obj)
 
     auto locker = holdLock(webThreadReleaseLock);
 
-    if (WebThreadReleaseObjArray == nil)
-        WebThreadReleaseObjArray = CFArrayCreateMutable(kCFAllocatorSystemDefault, 0, nullptr);
-    CFArrayAppendValue(WebThreadReleaseObjArray, obj);
-    CFRunLoopSourceSignal(WebThreadReleaseSource);
+    if (webThreadReleaseObjArray() == nil)
+        webThreadReleaseObjArray() = adoptCF(CFArrayCreateMutable(kCFAllocatorSystemDefault, 0, nullptr));
+    CFArrayAppendValue(webThreadReleaseObjArray().get(), obj);
+    CFRunLoopSourceSignal(webThreadReleaseSource().get());
     CFRunLoopWakeUp(webThreadRunLoop);
 }
 
@@ -404,9 +424,9 @@ static void HandleWebThreadReleaseSource(void*)
     RetainPtr<CFMutableArrayRef> objects;
     {
         auto locker = holdLock(webThreadReleaseLock);
-        if (CFArrayGetCount(WebThreadReleaseObjArray)) {
-            objects = adoptCF(CFArrayCreateMutableCopy(nullptr, 0, WebThreadReleaseObjArray));
-            CFArrayRemoveAllValues(WebThreadReleaseObjArray);
+        if (CFArrayGetCount(webThreadReleaseObjArray().get())) {
+            objects = adoptCF(CFArrayCreateMutableCopy(nullptr, 0, webThreadReleaseObjArray().get()));
+            CFArrayRemoveAllValues(webThreadReleaseObjArray().get());
         }
     }
 
@@ -473,7 +493,7 @@ static void MainRunLoopAutoUnlock(CFRunLoopObserverRef, CFRunLoopActivity, void*
         return;
 
     mainThreadHasPendingAutoUnlock = NO;
-    CFRunLoopRemoveObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver, kCFRunLoopCommonModes);
+    CFRunLoopRemoveObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver().get(), kCFRunLoopCommonModes);
 
     _WebThreadUnlock();
 }
@@ -484,7 +504,7 @@ static void _WebThreadAutoLock(void)
 
     if (!mainThreadLockCount) {
         mainThreadHasPendingAutoUnlock = YES;
-        CFRunLoopAddObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver, kCFRunLoopCommonModes);    
+        CFRunLoopAddObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver().get(), kCFRunLoopCommonModes);
         _WebThreadLock();
         CFRunLoopWakeUp(CFRunLoopGetMain());
     }
@@ -556,12 +576,12 @@ static void MainRunLoopUnlockGuard(CFRunLoopObserverRef observer, CFRunLoopActiv
 
 static void _WebRunLoopEnableNestedFromMainThread()
 {
-    CFRunLoopRemoveObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver, kCFRunLoopCommonModes);
+    CFRunLoopRemoveObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver().get(), kCFRunLoopCommonModes);
 }
 
 static void _WebRunLoopDisableNestedFromMainThread()
 {
-    CFRunLoopAddObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver, kCFRunLoopCommonModes); 
+    CFRunLoopAddObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver().get(), kCFRunLoopCommonModes);
 }
 
 void WebRunLoopEnableNested()
@@ -642,8 +662,8 @@ static void* RunWebThread(void*)
     CFRunLoopAddObserver(webThreadRunLoop, webRunLoopUnlockObserverRef.get(), kCFRunLoopCommonModes);
 
     CFRunLoopSourceContext ReleaseSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, HandleWebThreadReleaseSource};
-    WebThreadReleaseSource = CFRunLoopSourceCreate(nullptr, -1, &ReleaseSourceContext);
-    CFRunLoopAddSource(webThreadRunLoop, WebThreadReleaseSource, kCFRunLoopDefaultMode);
+    webThreadReleaseSource() = adoptCF(CFRunLoopSourceCreate(nullptr, -1, &ReleaseSourceContext));
+    CFRunLoopAddSource(webThreadRunLoop, webThreadReleaseSource().get(), kCFRunLoopDefaultMode);
 
     perCalloutAutoreleasepoolEnabled = _CFRunLoopSetPerCalloutAutoreleasepoolEnabled(YES);
 
@@ -679,16 +699,16 @@ static void StartWebThread()
 
     CFRunLoopRef runLoop = CFRunLoopGetCurrent();
     CFRunLoopSourceContext delegateSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, HandleDelegateSource};
-    delegateSource = CFRunLoopSourceCreate(nullptr, 0, &delegateSourceContext);
+    delegateSource() = adoptCF(CFRunLoopSourceCreate(nullptr, 0, &delegateSourceContext));
 
     // We shouldn't get delegate callbacks while scrolling, but there might be
     // one outstanding when we start.  Add the source for all common run loop
     // modes so we don't block the web thread while scrolling.
-    CFRunLoopAddSource(runLoop, delegateSource, kCFRunLoopCommonModes);
+    CFRunLoopAddSource(runLoop, delegateSource().get(), kCFRunLoopCommonModes);
 
     sAsyncDelegates() = adoptNS([[NSMutableArray alloc] init]);
 
-    mainRunLoopAutoUnlockObserver = CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeWaiting | kCFRunLoopExit, YES, 3000001, MainRunLoopAutoUnlock, nullptr);
+    mainRunLoopAutoUnlockObserver() = adoptCF(CFRunLoopObserverCreate(nullptr, kCFRunLoopBeforeWaiting | kCFRunLoopExit, YES, 3000001, MainRunLoopAutoUnlock, nullptr));
 
     pthread_attr_t tattr;
     pthread_attr_init(&tattr);

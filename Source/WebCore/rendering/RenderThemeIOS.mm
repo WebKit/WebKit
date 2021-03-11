@@ -152,36 +152,25 @@ static void interpolateExponentialGradient(void *info, const CGFloat *inData, CG
 
 static CGFunctionRef getSharedFunctionRef(IOSGradientRef gradient, Interpolation interpolation)
 {
-    CGFunctionRef function = nullptr;
-
-    static HashMap<IOSGradientRef, CGFunctionRef>* linearFunctionRefs;
-    static HashMap<IOSGradientRef, CGFunctionRef>* exponentialFunctionRefs;
+    static NeverDestroyed<HashMap<IOSGradientRef, RetainPtr<CGFunctionRef>>> linearFunctionRefs;
+    static NeverDestroyed<HashMap<IOSGradientRef, RetainPtr<CGFunctionRef>>> exponentialFunctionRefs;
 
     if (interpolation == LinearInterpolation) {
-        if (!linearFunctionRefs)
-            linearFunctionRefs = new HashMap<IOSGradientRef, CGFunctionRef>;
-        else
-            function = linearFunctionRefs->get(gradient);
-    
+        auto function = linearFunctionRefs->get(gradient);
         if (!function) {
             static struct CGFunctionCallbacks linearFunctionCallbacks =  { 0, interpolateLinearGradient, 0 };
-            linearFunctionRefs->set(gradient, function = CGFunctionCreate(gradient, 1, nullptr, 4, nullptr, &linearFunctionCallbacks));
+            linearFunctionRefs->set(gradient, function = adoptCF(CGFunctionCreate(gradient, 1, nullptr, 4, nullptr, &linearFunctionCallbacks)));
         }
 
-        return function;
+        return function.get();
     }
 
-    if (!exponentialFunctionRefs)
-        exponentialFunctionRefs = new HashMap<IOSGradientRef, CGFunctionRef>;
-    else
-        function = exponentialFunctionRefs->get(gradient);
-
+    auto function = exponentialFunctionRefs->get(gradient);
     if (!function) {
         static struct CGFunctionCallbacks exponentialFunctionCallbacks =  { 0, interpolateExponentialGradient, 0 };
-        exponentialFunctionRefs->set(gradient, function = CGFunctionCreate(gradient, 1, 0, 4, 0, &exponentialFunctionCallbacks));
+        exponentialFunctionRefs->set(gradient, function = adoptCF(CGFunctionCreate(gradient, 1, 0, 4, 0, &exponentialFunctionCallbacks)));
     }
-
-    return function;
+    return function.get();
 }
 
 static void drawAxialGradient(CGContextRef context, IOSGradientRef gradient, const FloatPoint& startPoint, const FloatPoint& stopPoint, Interpolation interpolation)

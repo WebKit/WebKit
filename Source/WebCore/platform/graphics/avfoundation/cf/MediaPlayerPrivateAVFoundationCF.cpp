@@ -69,10 +69,11 @@
 #endif
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/OSObjectPtr.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
-#include <wtf/StringPrintStream.h>
 
 // Soft-linking headers must be included last since they #define functions, constants, etc.
 #include "AVFoundationCFSoftLinking.h"
@@ -157,7 +158,7 @@ public:
     inline AVCFPlayerItemLegibleOutputRef legibleOutput() const { return m_legibleOutput.get(); }
     AVCFMediaSelectionGroupRef safeMediaSelectionGroupForLegibleMedia() const;
 #endif
-    inline dispatch_queue_t dispatchQueue() const { return m_notificationQueue; }
+    dispatch_queue_t dispatchQueue() const { return m_notificationQueue.get(); }
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RetainPtr<AVCFAssetResourceLoadingRequestRef> takeRequestForKeyURI(const String&);
@@ -195,7 +196,7 @@ private:
     RetainPtr<AVCFMediaSelectionGroupRef> m_selectionGroup;
 #endif
 
-    dispatch_queue_t m_notificationQueue;
+    OSObjectPtr<dispatch_queue_t> m_notificationQueue;
 
     mutable RetainPtr<CACFLayerRef> m_caVideoLayer;
     RefPtr<PlatformCALayer> m_videoLayerWrapper;
@@ -244,7 +245,7 @@ static const char* boolString(bool val)
 }
 #endif
 
-static CFArrayRef createMetadataKeyNames()
+static RetainPtr<CFArrayRef> createMetadataKeyNames()
 {
     static const CFStringRef keyNames[] = {
         AVCFAssetPropertyDuration,
@@ -258,13 +259,13 @@ static CFArrayRef createMetadataKeyNames()
 #endif
     };
     
-    return CFArrayCreate(0, (const void**)keyNames, sizeof(keyNames) / sizeof(keyNames[0]), &kCFTypeArrayCallBacks);
+    return adoptCF(CFArrayCreate(0, (const void**)keyNames, sizeof(keyNames) / sizeof(keyNames[0]), &kCFTypeArrayCallBacks));
 }
 
 static CFArrayRef metadataKeyNames()
 {
-    static CFArrayRef keys = createMetadataKeyNames();
-    return keys;
+    static NeverDestroyed<RetainPtr<CFArrayRef>> keys = createMetadataKeyNames();
+    return keys.get().get();
 }
 
 // FIXME: It would be better if AVCFTimedMetadataGroup.h exported this key.
@@ -1375,7 +1376,7 @@ AVFWrapper::AVFWrapper(MediaPlayerPrivateAVFoundationCF* owner)
     ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     LOG(Media, "AVFWrapper::AVFWrapper(%p)", this);
 
-    m_notificationQueue = dispatch_queue_create("MediaPlayerPrivateAVFoundationCF.notificationQueue", 0);
+    m_notificationQueue = adoptOSObject(dispatch_queue_create("MediaPlayerPrivateAVFoundationCF.notificationQueue", 0));
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     m_resourceLoaderCallbacks.version = kAVCFAssetResourceLoader_CallbacksVersion_1;
@@ -1394,9 +1395,6 @@ AVFWrapper::~AVFWrapper()
 
     destroyVideoLayer();
     destroyImageGenerator();
-
-    if (m_notificationQueue)
-        dispatch_release(m_notificationQueue);
 
     if (avAsset()) {
         AVCFAssetCancelLoading(avAsset());
@@ -1530,7 +1528,7 @@ void AVFWrapper::createAssetForURL(const URL& url, bool inheritURI)
 
     CFDictionarySetValue(optionsRef.get(), AVCFURLAssetReferenceRestrictionsKey, cfRestrictions.get());
 
-    m_avAsset = adoptCF(AVCFURLAssetCreateWithURLAndOptions(kCFAllocatorDefault, urlRef.get(), optionsRef.get(), m_notificationQueue));
+    m_avAsset = adoptCF(AVCFURLAssetCreateWithURLAndOptions(kCFAllocatorDefault, urlRef.get(), optionsRef.get(), m_notificationQueue.get()));
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     ASSERT(callbackContext());
@@ -1567,24 +1565,23 @@ void AVFWrapper::createPlayer(IDirect3DDevice9* d3dDevice)
 #endif
 
     // FIXME: We need a way to create a AVPlayer without an AVPlayerItem, see <rdar://problem/9877730>.
-    AVCFPlayerRef playerRef = AVCFPlayerCreateWithPlayerItemAndOptions(kCFAllocatorDefault, avPlayerItem(), optionsRef.get(), m_notificationQueue);
-    m_avPlayer = adoptCF(playerRef);
+    m_avPlayer = adoptCF(AVCFPlayerCreateWithPlayerItemAndOptions(kCFAllocatorDefault, avPlayerItem(), optionsRef.get(), m_notificationQueue.get()));
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
-    AVCFPlayerSetClosedCaptionDisplayEnabled(playerRef, FALSE);
+    AVCFPlayerSetClosedCaptionDisplayEnabled(m_avPlayer.get(), FALSE);
 #endif
 
     if (m_d3dDevice && AVCFPlayerSetDirect3DDevicePtr())
-        AVCFPlayerSetDirect3DDevicePtr()(playerRef, m_d3dDevice.get());
+        AVCFPlayerSetDirect3DDevicePtr()(m_avPlayer.get(), m_d3dDevice.get());
 
     CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
     ASSERT(center);
 
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerRateChangedNotification, playerRef, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerRateChangedNotification, m_avPlayer.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
 
     // Add a time observer, ask to be called infrequently because we don't really want periodic callbacks but
     // our observer will also be called whenever a seek happens.
     const double veryLongInterval = 60*60*60*24*30;
-    m_timeObserver = adoptCF(AVCFPlayerCreatePeriodicTimeObserverForInterval(playerRef, CMTimeMake(veryLongInterval, 10), m_notificationQueue, &periodicTimeObserverCallback, callbackContext()));
+    m_timeObserver = adoptCF(AVCFPlayerCreatePeriodicTimeObserverForInterval(m_avPlayer.get(), CMTimeMake(veryLongInterval, 10), m_notificationQueue.get(), &periodicTimeObserverCallback, callbackContext()));
 }
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
@@ -1607,22 +1604,21 @@ void AVFWrapper::createPlayerItem()
         return;
 
     // Create the player item so we begin loading media data.
-    AVCFPlayerItemRef itemRef = AVCFPlayerItemCreateWithAsset(kCFAllocatorDefault, avAsset(), m_notificationQueue);
-    m_avPlayerItem = adoptCF(itemRef);
+    m_avPlayerItem = adoptF(AVCFPlayerItemCreateWithAsset(kCFAllocatorDefault, avAsset(), m_notificationQueue.get()));
 
     CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
     ASSERT(center);
 
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemDidPlayToEndTimeNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemStatusChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemTracksChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemSeekableTimeRangesChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemLoadedTimeRangesChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemPresentationSizeChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemIsPlaybackLikelyToKeepUpChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemIsPlaybackBufferEmptyChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemIsPlaybackBufferFullChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemDurationChangedNotification, itemRef, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemDidPlayToEndTimeNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemStatusChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemTracksChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemSeekableTimeRangesChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemLoadedTimeRangesChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemPresentationSizeChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemIsPlaybackLikelyToKeepUpChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemIsPlaybackBufferEmptyChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemIsPlaybackBufferFullChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, AVCFPlayerItemDurationChangedNotification, m_avPlayerItem.get(), CFNotificationSuspensionBehaviorDeliverImmediately);
     // FIXME: Are there other legible output things we need to register for? asset and hasEnabledAudio are not exposed by AVCF
 
     CFNotificationCenterAddObserver(center, callbackContext(), notificationCallback, CACFContextNeedsFlushNotification(), 0, CFNotificationSuspensionBehaviorDeliverImmediately);
@@ -1754,15 +1750,14 @@ void AVFWrapper::checkPlayability()
 {
     LOG(Media, "AVFWrapper::checkPlayability(%p)", this);
 
-    static CFArrayRef propertyKeyName;
-    if (!propertyKeyName) {
-        static const CFStringRef keyNames[] = { 
+    static auto propertyKeyName = makeNeverDestroyed([] {
+        const void* keyNames[] = {
             AVCFAssetPropertyPlayable
         };
-        propertyKeyName = CFArrayCreate(0, (const void**)keyNames, sizeof(keyNames) / sizeof(keyNames[0]), &kCFTypeArrayCallBacks);
-    }
+        return adoptCF(CFArrayCreate(0, keyNames, std::size(keyNames), &kCFTypeArrayCallBacks));
+    }());
 
-    AVCFAssetLoadValuesAsynchronouslyForProperties(avAsset(), propertyKeyName, loadPlayableCompletionCallback, callbackContext());
+    AVCFAssetLoadValuesAsynchronouslyForProperties(avAsset(), propertyKeyName.get().get(), loadPlayableCompletionCallback, callbackContext());
 }
 
 void AVFWrapper::loadMetadataCompletionCallback(AVCFAssetRef, void* context)
@@ -2003,7 +1998,7 @@ void AVFWrapper::createAVCFVideoLayer()
         return;
 
     // The layer will get hooked up via RenderLayerBacking::updateConfiguration().
-    m_avCFVideoLayer = adoptCF(AVCFPlayerLayerCreateWithAVCFPlayer(kCFAllocatorDefault, avPlayer(), m_notificationQueue));
+    m_avCFVideoLayer = adoptCF(AVCFPlayerLayerCreateWithAVCFPlayer(kCFAllocatorDefault, avPlayer(), m_notificationQueue.get()));
     LOG(Media, "AVFWrapper::createAVCFVideoLayer(%p) - returning %p", this, videoLayer());
 }
 

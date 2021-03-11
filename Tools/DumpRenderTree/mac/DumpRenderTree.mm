@@ -100,6 +100,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
@@ -1810,20 +1811,18 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
 // lock to prevent potentially re-entering WebCore.
 static void WebThreadLockAfterDelegateCallbacksHaveCompleted()
 {
-    dispatch_semaphore_t delegateSemaphore = dispatch_semaphore_create(0);
+    auto delegateSemaphore = adoptOSObject(dispatch_semaphore_create(0));
     WebThreadRun(^{
-        dispatch_semaphore_signal(delegateSemaphore);
+        dispatch_semaphore_signal(delegateSemaphore.get());
     });
 
-    while (dispatch_semaphore_wait(delegateSemaphore, DISPATCH_TIME_NOW)) {
+    while (dispatch_semaphore_wait(delegateSemaphore.get(), DISPATCH_TIME_NOW)) {
         @autoreleasepool {
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
         }
     }
 
     WebThreadLock();
-
-    dispatch_release(delegateSemaphore);
 }
 #endif
 

@@ -27,6 +27,7 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #import <CoreMedia/CoreMedia.h>
+#import <wtf/OSObjectPtr.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct OpaqueAudioConverter* AudioConverterRef;
@@ -63,7 +64,7 @@ private:
     void processSampleBuffersUntilLowWaterTime(CMTime);
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
 
-    dispatch_queue_t m_serialDispatchQueue;
+    OSObjectPtr<dispatch_queue_t> m_serialDispatchQueue;
     CMTime m_lowWaterTime { kCMTimeInvalid };
 
     RetainPtr<CMBufferQueueRef> m_outputBufferQueue;

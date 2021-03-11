@@ -556,7 +556,7 @@ void GraphicsContext::applyStrokePattern()
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
-    RetainPtr<CGPatternRef> platformPattern = adoptCF(m_state.strokePattern->createPlatformPattern(userToBaseCTM));
+    auto platformPattern = m_state.strokePattern->createPlatformPattern(userToBaseCTM);
     if (!platformPattern)
         return;
 
@@ -580,7 +580,7 @@ void GraphicsContext::applyFillPattern()
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
-    RetainPtr<CGPatternRef> platformPattern = adoptCF(m_state.fillPattern->createPlatformPattern(userToBaseCTM));
+    auto platformPattern = m_state.fillPattern->createPlatformPattern(userToBaseCTM);
     if (!platformPattern)
         return;
 

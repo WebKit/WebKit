@@ -126,7 +126,7 @@ RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, 
     
     // Creating this bitmap in the device color space prevents any color conversion when the image of the web view is drawn into it.
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    auto context = adoptCF(CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
     if (!context) {
         WTFLogAlways("DumpRenderTree: CGBitmapContextCreate(%p, %zu, %zu, 8, %zu, %p, 0x%x) failed\n", buffer, pixelsHigh, pixelsWide, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
         free(buffer);
@@ -134,6 +134,6 @@ RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, 
         return nullptr;
     }
 
-    return BitmapContext::createByAdoptingBitmapAndContext(buffer, context);
+    return BitmapContext::createByAdoptingBitmapAndContext(buffer, WTFMove(context));
 }
 #endif

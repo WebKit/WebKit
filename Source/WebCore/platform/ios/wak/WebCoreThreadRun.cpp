@@ -112,14 +112,19 @@ extern "C" {
 typedef WTF::Vector<WebThreadBlock> WebThreadRunQueue;
 
 static Lock runQueueMutex;
-static CFRunLoopSourceRef runSource;
 static WebThreadRunQueue* runQueue;
+
+static RetainPtr<CFRunLoopSourceRef>& runSource()
+{
+    static NeverDestroyed<RetainPtr<CFRunLoopSourceRef>> runSource;
+    return runSource;
+}
 
 static void HandleRunSource(void *info)
 {
     UNUSED_PARAM(info);
     ASSERT(WebThreadIsCurrent());
-    ASSERT(runSource);
+    ASSERT(runSource());
     ASSERT(runQueue);
 
     WebThreadRunQueue queueCopy;
@@ -140,7 +145,7 @@ static void _WebThreadRun(void (^block)(void), bool synchronous)
         return;
     }
 
-    ASSERT(runSource);
+    ASSERT(runSource());
     ASSERT(runQueue);
 
     WebThreadBlockState* state = 0;
@@ -152,7 +157,7 @@ static void _WebThreadRun(void (^block)(void), bool synchronous)
         runQueue->append(WebThreadBlock(block, state));
     }
 
-    CFRunLoopSourceSignal(runSource);
+    CFRunLoopSourceSignal(runSource().get());
     CFRunLoopWakeUp(WebThreadRunLoop());
 
     if (synchronous) {
@@ -169,15 +174,15 @@ void WebThreadRun(void (^block)(void))
 void WebThreadInitRunQueue()
 {
     ASSERT(!runQueue);
-    ASSERT(!runSource);
+    ASSERT(!runSource());
 
     static dispatch_once_t pred;
     dispatch_once(&pred, ^{
         runQueue = new WebThreadRunQueue;
 
-        CFRunLoopSourceContext runSourceContext = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, HandleRunSource};
-        runSource = CFRunLoopSourceCreate(NULL, -1, &runSourceContext);
-        CFRunLoopAddSource(WebThreadRunLoop(), runSource, kCFRunLoopDefaultMode);
+        CFRunLoopSourceContext runSourceContext = { 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, HandleRunSource };
+        runSource() = adoptCF(CFRunLoopSourceCreate(nullptr, -1, &runSourceContext));
+        CFRunLoopAddSource(WebThreadRunLoop(), runSource().get(), kCFRunLoopDefaultMode);
     });
 }
 

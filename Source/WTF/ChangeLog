@@ -1,3 +1,27 @@
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::setDispatchQueue):
+        * wtf/MemoryPressureHandler.h:
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::uninstall):
+        (WTF::MemoryPressureHandler::holdOff):
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+        (WTF::WorkQueue::platformInitialize):
+        (WTF::WorkQueue::platformInvalidate):
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringWrapperCFAllocator::allocator):
+        (WTF::StringImpl::createCFString):
+
 2021-03-10  Dean Jackson  <dino@apple.com>
 
         Use std::forward for forwarding references instead of WTFMove

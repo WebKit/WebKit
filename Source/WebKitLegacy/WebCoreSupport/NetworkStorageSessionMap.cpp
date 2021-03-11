@@ -66,7 +66,7 @@ void NetworkStorageSessionMap::switchToNewTestingSession()
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
     String sessionName = makeString("WebKit Test-", getCurrentProcessID());
 
-    auto session = adoptCF(WebCore::createPrivateStorageSession(sessionName.createCFString().get()));
+    auto session = WebCore::createPrivateStorageSession(sessionName.createCFString().get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
@@ -90,7 +90,7 @@ void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, co
 
     RetainPtr<CFURLStorageSessionRef> storageSession;
     if (sessionID.isEphemeral())
-        storageSession = adoptCF(WebCore::createPrivateStorageSession(cfIdentifier.get()));
+        storageSession = WebCore::createPrivateStorageSession(cfIdentifier.get());
     else
         storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get());
 

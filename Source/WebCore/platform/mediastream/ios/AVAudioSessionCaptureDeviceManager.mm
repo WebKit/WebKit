@@ -87,9 +87,9 @@ AVAudioSessionCaptureDeviceManager& AVAudioSessionCaptureDeviceManager::singleto
 }
 
 AVAudioSessionCaptureDeviceManager::AVAudioSessionCaptureDeviceManager()
-    : m_dispatchQueue(dispatch_queue_create("com.apple.WebKit.AVAudioSessionCaptureDeviceManager", DISPATCH_QUEUE_SERIAL))
+    : m_dispatchQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.AVAudioSessionCaptureDeviceManager", DISPATCH_QUEUE_SERIAL)))
 {
-    dispatch_async(m_dispatchQueue, makeBlockPtr([this, locker = holdLock(m_lock)] {
+    dispatch_async(m_dispatchQueue.get(), makeBlockPtr([this, locker = holdLock(m_lock)] {
         createAudioSession();
     }).get());
 }
@@ -113,7 +113,6 @@ void AVAudioSessionCaptureDeviceManager::createAudioSession()
 
 AVAudioSessionCaptureDeviceManager::~AVAudioSessionCaptureDeviceManager()
 {
-    dispatch_release(m_dispatchQueue);
     [m_listener invalidate];
     m_listener = nullptr;
 }
@@ -157,13 +156,13 @@ void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
     if (m_audioSessionState == AudioSessionState::Inactive) {
         m_audioSessionState = AudioSessionState::Active;
 
-        dispatch_sync(m_dispatchQueue, makeBlockPtr([this] {
+        dispatch_sync(m_dispatchQueue.get(), makeBlockPtr([this] {
             activateAudioSession();
         }).get());
     }
 
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
-    dispatch_sync(m_dispatchQueue, makeBlockPtr([&] {
+    dispatch_sync(m_dispatchQueue.get(), makeBlockPtr([&] {
         newAudioDevices = retrieveAudioSessionCaptureDevices();
     }).get());
     setAudioCaptureDevices(WTFMove(newAudioDevices));
@@ -174,12 +173,12 @@ void AVAudioSessionCaptureDeviceManager::getCaptureDevices(CompletionHandler<voi
     if (m_audioSessionState == AudioSessionState::Inactive) {
         m_audioSessionState = AudioSessionState::Active;
 
-        dispatch_async(m_dispatchQueue, makeBlockPtr([this] {
+        dispatch_async(m_dispatchQueue.get(), makeBlockPtr([this] {
             activateAudioSession();
         }).get());
     }
 
-    dispatch_async(m_dispatchQueue, makeBlockPtr([this, completion = WTFMove(completion)] () mutable {
+    dispatch_async(m_dispatchQueue.get(), makeBlockPtr([this, completion = WTFMove(completion)] () mutable {
         auto newAudioDevices = retrieveAudioSessionCaptureDevices();
         callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([this, completion = WTFMove(completion), newAudioDevices = WTFMove(newAudioDevices)] () mutable {
             setAudioCaptureDevices(WTFMove(newAudioDevices));
@@ -254,7 +253,7 @@ void AVAudioSessionCaptureDeviceManager::disableAllDevicesQuery()
         return;
 
     if (m_audioSessionState == AudioSessionState::Active) {
-        dispatch_async(m_dispatchQueue, makeBlockPtr([this] {
+        dispatch_async(m_dispatchQueue.get(), makeBlockPtr([this] {
             if (m_audioSessionState != AudioSessionState::NotNeeded)
                 return;
             NSError *error = nil;

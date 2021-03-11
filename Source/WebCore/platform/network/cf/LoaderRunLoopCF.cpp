@@ -63,8 +63,8 @@ CFRunLoopRef loaderRunLoop()
 
                 // Must add a source to the run loop to prevent CFRunLoopRun() from exiting.
                 CFRunLoopSourceContext ctxt = {0, (void*)1 /*must be non-null*/, 0, 0, 0, 0, 0, 0, 0, emptyPerform};
-                CFRunLoopSourceRef bogusSource = CFRunLoopSourceCreate(0, 0, &ctxt);
-                CFRunLoopAddSource(loaderRunLoopObject, bogusSource, kCFRunLoopDefaultMode);
+                auto bogusSource = adoptCF(CFRunLoopSourceCreate(0, 0, &ctxt));
+                CFRunLoopAddSource(loaderRunLoopObject, bogusSource.get(), kCFRunLoopDefaultMode);
 
                 loaderRunLoopConditionVariable.notifyOne();
             }

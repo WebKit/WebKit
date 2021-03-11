@@ -38,6 +38,10 @@
 #include <wtf/win/Win32Handle.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/OSObjectPtr.h>
+#endif
+
 namespace WTF {
 
 enum class MemoryUsagePolicy : uint8_t {
@@ -92,7 +96,7 @@ public:
     WTF_EXPORT_PRIVATE static MemoryUsagePolicy currentMemoryUsagePolicy();
 
 #if PLATFORM(COCOA)
-    WTF_EXPORT_PRIVATE void setDispatchQueue(dispatch_queue_t);
+    WTF_EXPORT_PRIVATE void setDispatchQueue(OSObjectPtr<dispatch_queue_t>&&);
 #endif
 
     class ReliefLogger {
@@ -206,7 +210,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    dispatch_queue_t m_dispatchQueue { nullptr };
+    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
 #endif
 };
 

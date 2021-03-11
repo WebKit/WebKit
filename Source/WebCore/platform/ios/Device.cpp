@@ -58,12 +58,12 @@ MGDeviceClass deviceClass()
 String deviceName()
 {
 #if TARGET_OS_IOS
-    static CFStringRef deviceName;
+    static NeverDestroyed<RetainPtr<CFStringRef>> deviceName;
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
-        deviceName = static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr));
+        deviceName.get() = adoptCF(static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr)));
     });
-    return deviceName;
+    return deviceName.get().get();
 #else
     return "iPhone"_s;
 #endif

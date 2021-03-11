@@ -62,7 +62,7 @@ static void setAppleLanguagesPreference()
 
 static void XPCServiceEventHandler(xpc_connection_t peer)
 {
-    static xpc_object_t priorityBoostMessage = nullptr;
+    static NeverDestroyed<OSObjectPtr<xpc_object_t>> priorityBoostMessage;
 
     xpc_connection_set_target_queue(peer, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
@@ -118,19 +118,18 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                     dup2(fd, STDERR_FILENO);
 
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    initializerFunctionPtr(peer, event, priorityBoostMessage);
+                    initializerFunctionPtr(peer, event, priorityBoostMessage.get().get());
 
                     setAppleLanguagesPreference();
                 });
 
-                if (priorityBoostMessage)
-                    xpc_release(priorityBoostMessage);
+                priorityBoostMessage.get() = nullptr;
             }
 
             // Leak a boost onto the NetworkProcess.
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "pre-bootstrap")) {
-                assert(!priorityBoostMessage);
-                priorityBoostMessage = xpc_retain(event);
+                assert(!priorityBoostMessage.get());
+                priorityBoostMessage.get() = event;
             }
 
             handleXPCEndpointMessages(event);

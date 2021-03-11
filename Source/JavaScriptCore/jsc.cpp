@@ -99,6 +99,7 @@
 
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
+#include <wtf/OSObjectPtr.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -3541,9 +3542,8 @@ int jscmain(int argc, char** argv)
 #if PLATFORM(COCOA)
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
     {
-        dispatch_queue_t queue = dispatch_queue_create("jsc shell memory pressure handler", DISPATCH_QUEUE_SERIAL);
-        memoryPressureHandler.setDispatchQueue(queue);
-        dispatch_release(queue);
+        auto queue = adoptOSObject(dispatch_queue_create("jsc shell memory pressure handler", DISPATCH_QUEUE_SERIAL));
+        memoryPressureHandler.setDispatchQueue(WTFMove(queue));
     }
     Box<Critical> memoryPressureCriticalState = Box<Critical>::create(Critical::No);
     Box<Synchronous> memoryPressureSynchronousState = Box<Synchronous>::create(Synchronous::No);

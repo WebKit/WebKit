@@ -49,6 +49,7 @@
 #import <WebKitLegacy/WebNSViewExtras.h>
 #import <WebKitLegacy/WebViewPrivate.h>
 #import <wtf/Assertions.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
@@ -59,11 +60,11 @@ static int comparePageRects(const void *key, const void *array);
 static const float PAGE_WIDTH_INSET     = 4.0 * 2.0;
 static const float PAGE_HEIGHT_INSET    = 4.0 * 2.0;
 
-static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
+static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
 {
-    static CGColorSpaceRef graySpace = CGColorSpaceCreateDeviceGray();
+    static NeverDestroyed<RetainPtr<CGColorSpaceRef>> graySpace = adoptCF(CGColorSpaceCreateDeviceGray());
     const CGFloat components[] = { white, alpha };
-    return CGColorCreate(graySpace, components);
+    return adoptCF(CGColorCreate(graySpace.get().get(), components));
 }
 
 @implementation WebPDFView {
@@ -83,14 +84,14 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
 
 + (CGColorRef)shadowColor
 {
-    static CGColorRef shadowColor = createCGColorWithDeviceWhite(0, 2.0 / 3);
-    return shadowColor;
+    static NeverDestroyed<RetainPtr<CGColorRef>> shadowColor = createCGColorWithDeviceWhite(0, 2.0 / 3);
+    return shadowColor.get().get();
 }
 
 + (CGColorRef)backgroundColor
 {
-    static CGColorRef backgroundColor = createCGColorWithDeviceWhite(204.0 / 255, 1);
-    return backgroundColor;
+    static NeverDestroyed<RetainPtr<CGColorRef>> backgroundColor = createCGColorWithDeviceWhite(204.0 / 255, 1);
+    return backgroundColor.get().get();
 }
 
 // This is a secret protocol for WebDataSource and WebFrameView to offer us the opportunity to do something different 

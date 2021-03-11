@@ -191,9 +191,9 @@ void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedS
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_clearCacheDispatchGroup)
-        m_clearCacheDispatchGroup = dispatch_group_create();
+        m_clearCacheDispatchGroup = adoptOSObject(dispatch_group_create());
 
-    auto group = m_clearCacheDispatchGroup;
+    auto group = m_clearCacheDispatchGroup.get();
     dispatch_group_async(group, dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = makeRef(*this), modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
         auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
         forEachNetworkSession([modifiedSince, &aggregator](NetworkSession& session) {

@@ -334,7 +334,7 @@ HRESULT WebDownload::useCredential(_In_opt_ IWebURLCredential* credential, _In_o
     if (!webCredential)
         return E_NOINTERFACE;
 
-    RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(webCredential->credential()));
+    auto cfCredential = createCF(webCredential->credential());
 
     if (m_download)
         CFURLDownloadUseCredential(m_download.get(), cfCredential.get(), webChallenge->authenticationChallenge().cfURLAuthChallengeRef());
@@ -376,7 +376,7 @@ void WebDownload::didReceiveAuthenticationChallenge(CFURLAuthChallengeRef challe
     if (!CFURLAuthChallengeGetPreviousFailureCount(challenge)) {
         Credential credential = NetworkStorageSessionMap::defaultStorageSession().credentialStorage().get(emptyString(), core(CFURLAuthChallengeGetProtectionSpace(challenge)));
         if (!credential.isEmpty()) {
-            RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
+            auto cfCredential = createCF(credential);
             CFURLDownloadUseCredential(m_download.get(), cfCredential.get(), challenge);
             return;
         }

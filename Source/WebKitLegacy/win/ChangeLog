@@ -1,3 +1,28 @@
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * WebApplicationCache.cpp:
+        (WebApplicationCache::originsWithCache):
+        * WebDownloadCFNet.cpp:
+        (WebDownload::useCredential):
+        (WebDownload::didReceiveAuthenticationChallenge):
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp:
+        (WKQCA::updateBounds):
+        * WebLocalizableStrings.cpp:
+        (LocalizedString::LocalizedString):
+        (LocalizedString::operator CFStringRef const):
+        (LocalizedString::operator LPCTSTR const):
+        (copyLocalizedStringFromBundle):
+        * WebPreferences.cpp:
+        (defaultSettings):
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::valueForKey):
+        (WebPreferences::copyWebKitPreferencesToCFPreferences):
+
 2021-03-08  Sam Weinig  <weinig@apple.com>
 
         Add preference reseting to WebKitLegacy Windows to simplify testing reset

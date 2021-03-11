@@ -109,7 +109,7 @@ void deleteDragImage(DragImageRef)
 static FontCascade cascadeForSystemFont(CGFloat size)
 {
     UIFont *font = [PAL::getUIFontClass() systemFontOfSize:size];
-    return FontCascade(FontPlatformData(CTFontCreateWithName((CFStringRef)font.fontName, font.pointSize, nil), font.pointSize));
+    return FontCascade(FontPlatformData(adoptCF(CTFontCreateWithName((CFStringRef)font.fontName, font.pointSize, nil)), font.pointSize));
 }
 
 DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String& title, TextIndicatorData& indicatorData, FontRenderingMode, float)

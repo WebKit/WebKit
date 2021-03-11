@@ -117,7 +117,11 @@ static RetainPtr<CFStringRef> stringValueForPreferencesValue(CFPropertyListRef v
 
 // WebPreferences ----------------------------------------------------------------
 
-static CFDictionaryRef defaultSettings;
+static RetainPtr<CFDictionaryRef>& defaultSettings()
+{
+    static NeverDestroyed<RetainPtr<CFDictionaryRef>> defaultSettings;
+    return defaultSettings;
+}
 
 RetainPtr<CFStringRef> WebPreferences::m_applicationId = kCFPreferencesCurrentApplication;
 #endif
@@ -214,157 +218,157 @@ CFStringRef WebPreferences::applicationId()
 void WebPreferences::initializeDefaultSettings()
 {
 #if USE(CF)
-    if (defaultSettings)
+    if (defaultSettings())
         return;
 
-    CFMutableDictionaryRef defaults = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    auto defaults = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES;
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitStandardFontPreferenceKey), CFSTR("Times New Roman"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitFixedFontPreferenceKey), CFSTR("Courier New"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitSerifFontPreferenceKey), CFSTR("Times New Roman"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitSansSerifFontPreferenceKey), CFSTR("Arial"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCursiveFontPreferenceKey), CFSTR("Comic Sans MS"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitFantasyFontPreferenceKey), CFSTR("Comic Sans MS"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPictographFontPreferenceKey), CFSTR("Segoe UI Symbol"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitMinimumFontSizePreferenceKey), CFSTR("0"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitMinimumLogicalFontSizePreferenceKey), CFSTR("9"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultFontSizePreferenceKey), CFSTR("16"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultFixedFontSizePreferenceKey), CFSTR("13"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitStandardFontPreferenceKey), CFSTR("Times New Roman"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitFixedFontPreferenceKey), CFSTR("Courier New"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitSerifFontPreferenceKey), CFSTR("Times New Roman"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitSansSerifFontPreferenceKey), CFSTR("Arial"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCursiveFontPreferenceKey), CFSTR("Comic Sans MS"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitFantasyFontPreferenceKey), CFSTR("Comic Sans MS"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitPictographFontPreferenceKey), CFSTR("Segoe UI Symbol"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitMinimumFontSizePreferenceKey), CFSTR("0"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitMinimumLogicalFontSizePreferenceKey), CFSTR("9"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitDefaultFontSizePreferenceKey), CFSTR("16"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitDefaultFixedFontSizePreferenceKey), CFSTR("13"));
 
     String defaultDefaultEncoding(WEB_UI_STRING("ISO-8859-1", "The default, default character encoding on Windows"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultTextEncodingNamePreferenceKey), defaultDefaultEncoding.createCFString().get());
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitDefaultTextEncodingNamePreferenceKey), defaultDefaultEncoding.createCFString().get());
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitUserStyleSheetEnabledPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitUserStyleSheetLocationPreferenceKey), CFSTR(""));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitShouldPrintBackgroundsPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitTextAreasAreResizablePreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitJavaEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptRuntimeFlagsPreferenceKey), CFSTR("0"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowTopNavigationToDataURLsPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAudioEnabledPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowFileAccessFromFileURLsPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanAccessClipboardPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitXSSAuditorEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitFrameFlatteningEnabledPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPluginsEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSRegionsEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDatabasesEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitLocalStorageEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitExperimentalNotificationsEnabledPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitZoomsTextOnlyPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowAnimatedImagesPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowAnimatedImageLoopingPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDisplayImagesKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitLoadSiteIconsKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitTabToLinksPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPrivateBrowsingEnabledPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitRespectStandardStyleKeyEquivalentsPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitShowsURLsInToolTipsPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitShowsToolTipOverTruncatedTextPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPDFDisplayModePreferenceKey), CFSTR("1"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPDFScaleFactorPreferenceKey), CFSTR("0"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplaySubtitlesPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayCaptionsPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitShouldDisplayTextDescriptionsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitUserStyleSheetEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitUserStyleSheetLocationPreferenceKey), CFSTR(""));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitShouldPrintBackgroundsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitTextAreasAreResizablePreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaScriptEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaScriptRuntimeFlagsPreferenceKey), CFSTR("0"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAllowTopNavigationToDataURLsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitWebAudioEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAllowFileAccessFromFileURLsPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaScriptCanAccessClipboardPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitXSSAuditorEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitFrameFlatteningEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitPluginsEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCSSRegionsEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitDatabasesEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitLocalStorageEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitExperimentalNotificationsEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitZoomsTextOnlyPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAllowAnimatedImagesPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAllowAnimatedImageLoopingPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitDisplayImagesKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitLoadSiteIconsKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitBackForwardCacheExpirationIntervalKey), CFSTR("1800"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitTabToLinksPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitPrivateBrowsingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitRespectStandardStyleKeyEquivalentsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitShowsURLsInToolTipsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitShowsToolTipOverTruncatedTextPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitPDFDisplayModePreferenceKey), CFSTR("1"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitPDFScaleFactorPreferenceKey), CFSTR("0"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitShouldDisplaySubtitlesPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitShouldDisplayCaptionsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitShouldDisplayTextDescriptionsPreferenceKey), kCFBooleanFalse);
 
     RetainPtr<CFStringRef> linkBehaviorStringRef = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebKitEditableLinkDefaultBehavior));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitEditableLinkBehaviorPreferenceKey), linkBehaviorStringRef.get());
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitEditableLinkBehaviorPreferenceKey), linkBehaviorStringRef.get());
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitHistoryItemLimitKey), CFSTR("1000"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitHistoryAgeInDaysLimitKey), CFSTR("7"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitIconDatabaseLocationKey), CFSTR(""));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitIconDatabaseEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitFontSmoothingTypePreferenceKey), CFSTR("2"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitFontSmoothingContrastPreferenceKey), CFSTR("2"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCookieStorageAcceptPolicyPreferenceKey), CFSTR("2"));
-    CFDictionaryAddValue(defaults, CFSTR(WebContinuousSpellCheckingEnabledPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebGrammarCheckingEnabledPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(AllowContinuousSpellCheckingPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitUsesPageCachePreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitLocalStorageDatabasePathPreferenceKey), CFSTR(""));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitHistoryItemLimitKey), CFSTR("1000"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitHistoryAgeInDaysLimitKey), CFSTR("7"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitIconDatabaseLocationKey), CFSTR(""));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitIconDatabaseEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitFontSmoothingTypePreferenceKey), CFSTR("2"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitFontSmoothingContrastPreferenceKey), CFSTR("2"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCookieStorageAcceptPolicyPreferenceKey), CFSTR("2"));
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebContinuousSpellCheckingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebGrammarCheckingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(AllowContinuousSpellCheckingPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitUsesPageCachePreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitLocalStorageDatabasePathPreferenceKey), CFSTR(""));
 
     RetainPtr<CFStringRef> cacheModelRef = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%d"), WebCacheModelDocumentViewer));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCacheModelPreferenceKey), cacheModelRef.get());
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCacheModelPreferenceKey), cacheModelRef.get());
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitOfflineWebApplicationCacheEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitOfflineWebApplicationCacheEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPaintNativeControlsPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitPaintNativeControlsPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitUseHighResolutionTimersPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitUseHighResolutionTimersPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitShowDebugBordersPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitShowDebugBordersPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitSpatialNavigationEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitSpatialNavigationEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDNSPrefetchingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitDNSPrefetchingEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPlaybackRequiresUserGesturePreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPlaybackAllowsInlinePreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitMediaPlaybackRequiresUserGesturePreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitMediaPlaybackAllowsInlinePreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitRequestAnimationFrameEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitRequestAnimationFrameEnabledPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitFullScreenEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitFullScreenEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitRequestAnimationFrameEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitRequestAnimationFrameEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCustomElementsEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCustomElementsEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitLinkPreloadEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitLinkPreloadEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitMediaPreloadingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitMediaPreloadingEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitDataTransferItemsEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitDataTransferItemsEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitInspectorAdditionsEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitInspectorAdditionsEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitVisualViewportAPIEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitVisualViewportAPIEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSOMViewScrollingAPIEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCSSOMViewScrollingAPIEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitResizeObserverEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitResizeObserverEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCoreMathMLEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCoreMathMLEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitRequestIdleCallbackEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitRequestIdleCallbackEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAsyncClipboardAPIEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAsyncClipboardAPIEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitContactPickerAPIEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitContactPickerAPIEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitWebSQLEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitWebSQLEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey), kCFBooleanTrue);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitSpeechRecognitionEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitSpeechRecognitionEnabledPreferenceKey), kCFBooleanFalse);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitOverscrollBehaviorEnabledPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitOverscrollBehaviorEnabledPreferenceKey), kCFBooleanFalse);
 
-    defaultSettings = defaults;
+    defaultSettings() = WTFMove(defaults);
 #endif
 }
 
@@ -379,7 +383,7 @@ RetainPtr<CFPropertyListRef> WebPreferences::valueForKey(CFStringRef key)
     if (value)
         return value;
 
-    return CFDictionaryGetValue(defaultSettings, key);
+    return CFDictionaryGetValue(defaultSettings().get(), key);
 }
 
 void WebPreferences::setValueForKey(CFStringRef key, CFPropertyListRef value)
@@ -620,7 +624,7 @@ void WebPreferences::copyWebKitPreferencesToCFPreferences(CFDictionaryRef dict)
             continue;
 
         if (omitDefaults) {
-            CFTypeRef defaultValue = CFDictionaryGetValue(defaultSettings, keys[i]);
+            CFTypeRef defaultValue = CFDictionaryGetValue(defaultSettings().get(), keys[i]);
             if (defaultValue && CFEqual(defaultValue, values[i]))
                 continue;
         }

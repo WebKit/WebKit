@@ -1,3 +1,15 @@
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebPDFViewIOS.mm:
+        (createCGColorWithDeviceWhite):
+        (+[WebPDFView shadowColor]):
+        (+[WebPDFView backgroundColor]):
+
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit

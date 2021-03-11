@@ -79,16 +79,16 @@ static CFHTTPCookieStorageAcceptPolicy toCFHTTPCookieStorageAcceptPolicy(HTTPCoo
     return CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
-CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, Optional<HTTPCookieAcceptPolicy> cookieAcceptPolicy)
+RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identifier, Optional<HTTPCookieAcceptPolicy> cookieAcceptPolicy)
 {
     const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
     const void* sessionPropertyValues[] = { kCFBooleanTrue };
-    CFDictionaryRef sessionProperties = CFDictionaryCreate(kCFAllocatorDefault, sessionPropertyKeys, sessionPropertyValues, sizeof(sessionPropertyKeys) / sizeof(*sessionPropertyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFURLStorageSessionRef storageSession = _CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, sessionProperties);
+    auto sessionProperties = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, sessionPropertyKeys, sessionPropertyValues, sizeof(sessionPropertyKeys) / sizeof(*sessionPropertyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto storageSession = adoptCF(_CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, sessionProperties.get()));
     
     // The private storage session should have the same properties as the default storage session,
     // with the exception that it should be in-memory only storage.
-    auto cache = adoptCF(_CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession));
+    auto cache = adoptCF(_CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession.get()));
     CFURLCacheSetDiskCapacity(cache.get(), 0);
     auto defaultCache = adoptCF(CFURLCacheCopySharedURLCache());
     CFURLCacheSetMemoryCapacity(cache.get(), CFURLCacheMemoryCapacity(defaultCache.get()));
@@ -101,7 +101,7 @@ CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, Optio
         cfCookieAcceptPolicy = CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage);
     }
 
-    auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession));
+    auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
     CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), cfCookieAcceptPolicy);
     
     return storageSession;

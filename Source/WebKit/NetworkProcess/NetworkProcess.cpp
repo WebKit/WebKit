@@ -451,7 +451,7 @@ std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSessio
     // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
     String sessionName = makeString("WebKit Test-", getCurrentProcessID());
 
-    auto session = adoptCF(WebCore::createPrivateStorageSession(sessionName.createCFString().get()));
+    auto session = WebCore::createPrivateStorageSession(sessionName.createCFString().get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
@@ -485,7 +485,7 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldU
     RetainPtr<CFURLStorageSessionRef> storageSession;
     RetainPtr<CFStringRef> cfIdentifier = makeString(identifierBase, ".PrivateBrowsing.", createCanonicalUUIDString()).createCFString();
     if (sessionID.isEphemeral())
-        storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
+        storageSession = createPrivateStorageSession(cfIdentifier.get());
     else if (sessionID != PAL::SessionID::defaultSessionID())
         storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get());
 

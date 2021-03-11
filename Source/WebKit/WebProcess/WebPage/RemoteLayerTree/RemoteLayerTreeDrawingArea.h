@@ -35,6 +35,7 @@
 #include <atomic>
 #include <dispatch/dispatch.h>
 #include <wtf/HashMap.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -157,7 +158,7 @@ private:
     bool m_waitingForBackingStoreSwap { false };
     bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };
 
-    dispatch_queue_t m_commitQueue;
+    OSObjectPtr<dispatch_queue_t> m_commitQueue;
     RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;
 
     HashSet<RemoteLayerTreeDisplayRefreshMonitor*> m_displayRefreshMonitors;

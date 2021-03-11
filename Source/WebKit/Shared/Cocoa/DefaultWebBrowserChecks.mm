@@ -31,6 +31,8 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VersionChecks.h>
 #import <wtf/HashMap.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -119,7 +121,11 @@ static bool determineITPStateInternal(bool appWasLinkedOnOrAfter, const String& 
     return result != kTCCAccessPreflightDenied;
 }
 
-static dispatch_queue_t g_itpQueue;
+static OSObjectPtr<dispatch_queue_t>& itpQueue()
+{
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> itpQueue;
+    return itpQueue;
+}
 
 void determineITPState()
 {
@@ -130,14 +136,13 @@ void determineITPState()
     g_currentITPState = ITPState::Initializing;
     bool appWasLinkedOnOrAfter = linkedOnOrAfter(WebCore::SDKVersion::FirstWithSessionCleanupByDefault);
 
-    g_itpQueue = dispatch_queue_create("com.apple.WebKit.itpCheckQueue", NULL);
+    itpQueue() = adoptOSObject(dispatch_queue_create("com.apple.WebKit.itpCheckQueue", NULL));
 
-    dispatch_async(g_itpQueue, [appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
+    dispatch_async(itpQueue().get(), [appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
         g_currentITPState = determineITPStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? ITPState::Enabled : ITPState::Disabled;
 
         RunLoop::main().dispatch([] {
-            dispatch_release(g_itpQueue);
-            g_itpQueue = nullptr;
+            itpQueue() = nullptr;
         });
     });
 }
@@ -149,10 +154,10 @@ bool doesAppHaveITPEnabled()
     if (g_currentITPState > ITPState::Initializing)
         return g_currentITPState == ITPState::Enabled;
 
-    RELEASE_ASSERT(g_itpQueue);
+    RELEASE_ASSERT(itpQueue());
 
     __block bool isITPEnabled;
-    dispatch_sync(g_itpQueue, ^{
+    dispatch_sync(itpQueue().get(), ^{
         isITPEnabled = g_currentITPState == ITPState::Enabled;
     });
     return isITPEnabled;

@@ -65,7 +65,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     webPage.corePage()->settings().setForceCompositingMode(true);
     m_rootLayer->setName("drawing area root");
 
-    m_commitQueue = dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr);
+    m_commitQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr));
 
     // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because DisplayRefreshMonitor
     // is driven by this class), give each page a unique DisplayID derived from WebPage's unique ID.
@@ -78,10 +78,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
         setViewExposedRect(viewExposedRect);
 }
 
-RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
-{
-    dispatch_release(m_commitQueue);
-}
+RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea() = default;
 
 void RemoteLayerTreeDrawingArea::setNeedsDisplay()
 {
@@ -412,7 +409,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
     auto pageID = m_webPage.identifier();
-    dispatch_async(m_commitQueue, [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
+    dispatch_async(m_commitQueue.get(), [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
         backingStoreFlusher->flush();
 
         MonotonicTime timestamp = MonotonicTime::now();

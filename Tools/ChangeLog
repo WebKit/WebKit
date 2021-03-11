@@ -1,3 +1,27 @@
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (createBitmapContext):
+        * DumpRenderTree/cg/PixelDumpSupportCG.h:
+        (BitmapContext::createByAdoptingBitmapAndContext):
+        (BitmapContext::BitmapContext):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (WebThreadLockAfterDelegateCallbacksHaveCompleted):
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView):
+        * ImageDiff/ImageDiff.xcodeproj/project.pbxproj:
+        * ImageDiff/cg/PlatformImageCG.cpp:
+        (ImageDiff::PlatformImage::pixels const):
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::createCGContextFromCGImage):
+        (WTR::createCGContextFromImage):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2021-03-10  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Make identifier last string in 'find'

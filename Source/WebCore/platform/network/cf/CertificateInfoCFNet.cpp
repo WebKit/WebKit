@@ -58,10 +58,10 @@ bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
 RetainPtr<CFArrayRef> CertificateInfo::certificateChainFromSecTrust(SecTrustRef trust)
 {
     auto count = SecTrustGetCertificateCount(trust);
-    auto certificateChain = CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks);
+    auto certificateChain = adoptCF(CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks));
     for (CFIndex i = 0; i < count; i++)
-        CFArrayAppendValue(certificateChain, SecTrustGetCertificateAtIndex(trust, i));
-    return adoptCF((CFArrayRef)certificateChain);
+        CFArrayAppendValue(certificateChain.get(), SecTrustGetCertificateAtIndex(trust, i));
+    return certificateChain;
 }
 #endif
 

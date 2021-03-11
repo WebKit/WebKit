@@ -43,7 +43,7 @@ namespace WebCore {
 // When we disabled content sniffing for file URLs we caused problems with these 100+ extensions that CoreTypes
 // doesn't know about.
 // If CoreTypes is ever brought up to speed we can remove this table and associated code.
-static CFDictionaryRef createExtensionToMIMETypeMap()
+static RetainPtr<CFDictionaryRef> createExtensionToMIMETypeMap()
 {
     CFStringRef keys[] = {
         CFSTR("ai"),
@@ -288,7 +288,7 @@ static CFDictionaryRef createExtensionToMIMETypeMap()
     };
 
     ASSERT(sizeof(keys) == sizeof(values));
-    return CFDictionaryCreate(kCFAllocatorDefault, (const void**)&keys, (const void**)&values, sizeof(keys)/sizeof(CFStringRef), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)&keys, (const void**)&values, sizeof(keys) / sizeof(CFStringRef), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceLoad)
@@ -304,11 +304,11 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
             if (extension) {
                 // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
                 // When this radar is resolved, we can remove this file:// url specific code.
-                static CFDictionaryRef extensionMap = createExtensionToMIMETypeMap();
-                CFMutableStringRef mutableExtension = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, extension.get());
-                CFStringLowercase(mutableExtension, NULL);
-                extension = adoptCF(mutableExtension);
-                result = (CFStringRef)CFDictionaryGetValue(extensionMap, extension.get());
+                static NeverDestroyed<RetainPtr<CFDictionaryRef>> extensionMap = createExtensionToMIMETypeMap();
+                auto mutableExtension = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, extension.get()));
+                CFStringLowercase(mutableExtension.get(), NULL);
+                extension = WTFMove(mutableExtension);
+                result = (CFStringRef)CFDictionaryGetValue(extensionMap.get().get(), extension.get());
                 
                 if (!result) {
                     // If the Gatekeeper-based map doesn't have a MIME type, we'll try to figure out what it should be by

@@ -34,6 +34,7 @@
 
 #if USE(COCOA_EVENT_LOOP)
 #include <dispatch/dispatch.h>
+#include <wtf/OSObjectPtr.h>
 #else
 #include <wtf/RunLoop.h>
 #endif
@@ -58,7 +59,7 @@ public:
     WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, WTF::Function<void(size_t index)>&&);
 
 #if USE(COCOA_EVENT_LOOP)
-    dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
+    dispatch_queue_t dispatchQueue() const { return m_dispatchQueue.get(); }
 #else
     RunLoop& runLoop() const { return *m_runLoop; }
 #endif
@@ -71,7 +72,7 @@ private:
 
 #if USE(COCOA_EVENT_LOOP)
     static void executeFunction(void*);
-    dispatch_queue_t m_dispatchQueue;
+    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
 #else
     RunLoop* m_runLoop;
 #endif

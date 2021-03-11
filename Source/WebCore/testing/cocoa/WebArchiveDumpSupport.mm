@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebCoreTestSupport {
 
-static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
+static RetainPtr<CFURLResponseRef> createCFURLResponseFromResponseData(CFDataRef responseData)
 {
     NSURLResponse *response;
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)responseData error:nullptr]);
@@ -53,7 +53,7 @@ static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseDa
     }
 
     if (![response isKindOfClass:[NSHTTPURLResponse class]])
-        return CFURLResponseCreate(kCFAllocatorDefault, (__bridge CFURLRef)response.URL, (__bridge CFStringRef)response.MIMEType, response.expectedContentLength, (__bridge CFStringRef)response.textEncodingName, kCFURLCacheStorageAllowed);
+        return adoptCF(CFURLResponseCreate(kCFAllocatorDefault, (__bridge CFURLRef)response.URL, (__bridge CFStringRef)response.MIMEType, response.expectedContentLength, (__bridge CFStringRef)response.textEncodingName, kCFURLCacheStorageAllowed));
 
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
 
@@ -64,7 +64,7 @@ static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseDa
     for (NSString *headerField in [headerFields keyEnumerator])
         CFHTTPMessageSetHeaderFieldValue(httpMessage.get(), (__bridge CFStringRef)headerField, (__bridge CFStringRef)[headerFields objectForKey:headerField]);
 
-    return CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (__bridge CFURLRef)response.URL, httpMessage.get(), kCFURLCacheStorageAllowed);
+    return adoptCF(CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (__bridge CFURLRef)response.URL, httpMessage.get(), kCFURLCacheStorageAllowed));
 }
 
 static void convertMIMEType(CFMutableStringRef mimeType)
@@ -156,7 +156,7 @@ static void convertWebResourceResponseToDictionary(CFMutableDictionaryRef proper
     if (CFGetTypeID(responseData) != CFDataGetTypeID())
         return;
 
-    RetainPtr<CFURLResponseRef> response = adoptCF(createCFURLResponseFromResponseData(responseData));
+    auto response = createCFURLResponseFromResponseData(responseData);
     if (!response)
         return;
 

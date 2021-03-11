@@ -48,14 +48,13 @@ std::unique_ptr<VideoSampleBufferCompressor> VideoSampleBufferCompressor::create
 }
 
 VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType outputCodecType)
-    : m_serialDispatchQueue { dispatch_queue_create("com.apple.VideoSampleBufferCompressor", DISPATCH_QUEUE_SERIAL) }
+    : m_serialDispatchQueue { adoptOSObject(dispatch_queue_create("com.apple.VideoSampleBufferCompressor", DISPATCH_QUEUE_SERIAL)) }
     , m_outputCodecType { outputCodecType }
 {
 }
 
 VideoSampleBufferCompressor::~VideoSampleBufferCompressor()
 {
-    dispatch_release(m_serialDispatchQueue);
     if (m_vtSession) {
         VTCompressionSessionInvalidate(m_vtSession.get());
         m_vtSession = nullptr;
@@ -83,7 +82,7 @@ void VideoSampleBufferCompressor::setBitsPerSecond(unsigned bitRate)
 
 void VideoSampleBufferCompressor::finish()
 {
-    dispatch_sync(m_serialDispatchQueue, ^{
+    dispatch_sync(m_serialDispatchQueue.get(), ^{
         auto error = VTCompressionSessionCompleteFrames(m_vtSession.get(), kCMTimeInvalid);
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionCompleteFrames failed with %d", error);
 
@@ -165,7 +164,7 @@ void VideoSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
 
 void VideoSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
 {
-    dispatch_sync(m_serialDispatchQueue, ^{
+    dispatch_sync(m_serialDispatchQueue.get(), ^{
         if (!m_isEncoding)
             return;
 

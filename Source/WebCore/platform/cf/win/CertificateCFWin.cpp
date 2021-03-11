@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "CertificateCFWin.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -34,19 +35,19 @@ static void deallocCertContext(void* ptr, void* info)
         CertFreeCertificateContext(static_cast<PCCERT_CONTEXT>(ptr));
 }
 
-static CFAllocatorRef createCertContextDeallocator()
+static RetainPtr<CFAllocatorRef> createCertContextDeallocator()
 {
     CFAllocatorContext allocContext = {
         0, 0, 0, 0, 0, 0, 0, deallocCertContext, 0
     };
-    return CFAllocatorCreate(kCFAllocatorDefault, &allocContext);
+    return adoptCF(CFAllocatorCreate(kCFAllocatorDefault, &allocContext));
 }
 
 RetainPtr<CFDataRef> copyCertificateToData(PCCERT_CONTEXT certificate)
 {
-    static CFAllocatorRef certDealloc = createCertContextDeallocator();
+    static NeverDestroyed<RetainPtr<CFAllocatorRef>> certDealloc = createCertContextDeallocator();
     PCCERT_CONTEXT certificateCopy = CertDuplicateCertificateContext(certificate);
-    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(certificateCopy), sizeof(*certificateCopy), certDealloc));
+    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(certificateCopy), sizeof(*certificateCopy), certDealloc.get().get()));
 }
 
 } // namespace WebCore

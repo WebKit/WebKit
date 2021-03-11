@@ -458,10 +458,10 @@ private:
     void cancelReceiveSource();
 
     mach_port_t m_sendPort { MACH_PORT_NULL };
-    dispatch_source_t m_sendSource { nullptr };
+    OSObjectPtr<dispatch_source_t> m_sendSource;
 
     mach_port_t m_receivePort { MACH_PORT_NULL };
-    dispatch_source_t m_receiveSource { nullptr };
+    OSObjectPtr<dispatch_source_t> m_receiveSource;
 
     std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
     bool m_isInitializingSendSource { false };

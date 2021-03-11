@@ -50,11 +50,15 @@
 
 using namespace WebCore;
 
-static CFMutableDictionaryRef lookupTable = NULL;
+static RetainPtr<CFMutableDictionaryRef>& lookupTable()
+{
+    static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> lookupTable;
+    return lookupTable;
+}
 
 static void addLookupKey(NSString *key, SEL selector)
 {
-    CFDictionaryAddValue(lookupTable, (__bridge CFStringRef)key, selector);
+    CFDictionaryAddValue(lookupTable().get(), (__bridge CFStringRef)key, selector);
 }
 
 static void cacheValueForKey(const void *key, const void *value, void *self)
@@ -76,10 +80,10 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 + (void)initializeLookupTable
 {
-    if (lookupTable)
+    if (lookupTable())
         return;
 
-    lookupTable = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFCopyStringDictionaryKeyCallBacks, NULL);
+    lookupTable() = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFCopyStringDictionaryKeyCallBacks, NULL));
 
     addLookupKey(WebElementDOMNodeKey, @selector(_domNode));
     addLookupKey(WebElementFrameKey, @selector(_webFrame));
@@ -125,7 +129,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (void)_fillCache
 {
-    CFDictionaryApplyFunction(lookupTable, cacheValueForKey, (__bridge void*)self);
+    CFDictionaryApplyFunction(lookupTable().get(), cacheValueForKey, (__bridge void*)self);
     _cacheComplete = YES;
 }
 
@@ -149,12 +153,12 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     if (value || _cacheComplete || [_nilValues containsObject:key])
         return value;
 
-    SEL selector = static_cast<SEL>(const_cast<void*>(CFDictionaryGetValue(lookupTable, (__bridge CFTypeRef)key)));
+    SEL selector = static_cast<SEL>(const_cast<void*>(CFDictionaryGetValue(lookupTable().get(), (__bridge CFTypeRef)key)));
     if (!selector)
         return nil;
     value = [self performSelector:selector];
 
-    NSUInteger lookupTableCount = CFDictionaryGetCount(lookupTable);
+    NSUInteger lookupTableCount = CFDictionaryGetCount(lookupTable().get());
     if (value) {
         if (!_cache)
             _cache = [[NSMutableDictionary alloc] initWithCapacity:lookupTableCount];

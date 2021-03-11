@@ -63,6 +63,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include <wtf/OSObjectPtr.h>
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
 
@@ -557,7 +558,7 @@ private:
     // FIXME: We'd like to be able to do this without the #ifdef, but WorkQueue + BinarySemaphore isn't good enough since
     // multiple requests to clear the cache can come in before previous requests complete, and we need to wait for all of them.
     // In the future using WorkQueue and a counting semaphore would work, as would WorkQueue supporting the libdispatch concept of "work groups".
-    dispatch_group_t m_clearCacheDispatchGroup { nullptr };
+    OSObjectPtr<dispatch_group_t> m_clearCacheDispatchGroup;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

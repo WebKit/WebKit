@@ -30,6 +30,7 @@
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <wtf/Function.h>
 #import <wtf/Noncopyable.h>
+#import <wtf/OSObjectPtr.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ private:
     io_connect_t m_powerConnection;
     IONotificationPortRef m_notificationPort;
     io_object_t m_notifierReference;
-    dispatch_queue_t m_dispatchQueue;
+    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
 };
 
 } // namespace WebCore

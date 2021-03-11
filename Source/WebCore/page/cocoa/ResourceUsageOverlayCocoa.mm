@@ -119,10 +119,10 @@ private:
     unsigned m_current { 0 };
 };
 
-static CGColorRef createColor(float r, float g, float b, float a)
+static RetainPtr<CGColorRef> createColor(float r, float g, float b, float a)
 {
     CGFloat components[4] = { r, g, b, a };
-    return CGColorCreate(sRGBColorSpaceRef(), components);
+    return adoptCF(CGColorCreate(sRGBColorSpaceRef(), components));
 }
 
 struct HistoricMemoryCategoryInfo {
@@ -224,7 +224,7 @@ void ResourceUsageOverlay::platformInitialize()
 
     [m_layer.get() setAnchorPoint:CGPointZero];
     [m_layer.get() setContentsScale:2.0];
-    [m_layer.get() setBackgroundColor:adoptCF(createColor(0, 0, 0, 0.8)).get()];
+    [m_layer.get() setBackgroundColor:createColor(0, 0, 0, 0.8).get()];
     [m_layer.get() setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
 
     overlay().layer().setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::None);
@@ -280,17 +280,17 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
 
 static void drawGraphLabel(CGContextRef context, float x, float y, const String& text)
 {
-    static CGColorRef black = createColor(0, 0, 0, 1);
-    showText(context, x + 5, y - 3, black, text);
-    static CGColorRef white = createColor(1, 1, 1, 1);
-    showText(context, x + 4, y - 4, white, text);
+    static NeverDestroyed<RetainPtr<CGColorRef>> black = createColor(0, 0, 0, 1);
+    showText(context, x + 5, y - 3, black.get().get(), text);
+    static NeverDestroyed<RetainPtr<CGColorRef>> white = createColor(1, 1, 1, 1);
+    showText(context, x + 4, y - 4, white.get().get(), text);
 }
 
 static void drawCpuHistory(CGContextRef context, float x1, float y1, float y2, RingBuffer<float>& history)
 {
-    static CGColorRef cpuColor = createColor(0, 1, 0, 1);
+    static NeverDestroyed<RetainPtr<CGColorRef>> cpuColor = createColor(0, 1, 0, 1);
 
-    CGContextSetStrokeColorWithColor(context, cpuColor);
+    CGContextSetStrokeColorWithColor(context, cpuColor.get().get());
     CGContextSetLineWidth(context, 1);
 
     int i = 0;
@@ -321,8 +321,8 @@ static void drawGCHistory(CGContextRef context, float x1, float y1, float y2, Ri
 
     CGContextSetLineWidth(context, 1);
 
-    static CGColorRef capacityColor = createColor(1, 0, 0.3, 1);
-    CGContextSetStrokeColorWithColor(context, capacityColor);
+    static NeverDestroyed<RetainPtr<CGColorRef>> capacityColor = createColor(1, 0, 0.3, 1);
+    CGContextSetStrokeColorWithColor(context, capacityColor.get().get());
 
     size_t i = 0;
 
@@ -335,8 +335,8 @@ static void drawGCHistory(CGContextRef context, float x1, float y1, float y2, Ri
         i++;
     });
 
-    static CGColorRef sizeColor = createColor(0.6, 0.5, 0.9, 1);
-    CGContextSetStrokeColorWithColor(context, sizeColor);
+    static NeverDestroyed<RetainPtr<CGColorRef>> sizeColor = createColor(0.6, 0.5, 0.9, 1);
+    CGContextSetStrokeColorWithColor(context, sizeColor.get().get());
 
     i = 0;
 
@@ -456,10 +456,10 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     CGRect viewBounds = m_overlay->bounds();
     CGContextClearRect(context, viewBounds);
 
-    static CGColorRef colorForLabels = createColor(0.9, 0.9, 0.9, 1);
-    showText(context, 10, 20, colorForLabels, makeString("        CPU: ", FormattedNumber::fixedPrecision(data.cpu.last(), 6, KeepTrailingZeros)));
-    showText(context, 10, 30, colorForLabels, "  Footprint: " + formatByteNumber(memoryFootprint()));
-    showText(context, 10, 40, colorForLabels, "   External: " + formatByteNumber(data.totalExternalSize.last()));
+    static NeverDestroyed<RetainPtr<CGColorRef>> colorForLabels = createColor(0.9, 0.9, 0.9, 1);
+    showText(context, 10, 20, colorForLabels.get().get(), makeString("        CPU: ", FormattedNumber::fixedPrecision(data.cpu.last(), 6, KeepTrailingZeros)));
+    showText(context, 10, 30, colorForLabels.get().get(), "  Footprint: " + formatByteNumber(memoryFootprint()));
+    showText(context, 10, 40, colorForLabels.get().get(), "   External: " + formatByteNumber(data.totalExternalSize.last()));
 
     float y = 55;
     for (auto& category : data.categories) {
@@ -480,8 +480,8 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     y -= 5;
 
     MonotonicTime now = MonotonicTime::now();
-    showText(context, 10, y + 10, colorForLabels, "    Eden GC: " + gcTimerString(data.timeOfNextEdenCollection, now));
-    showText(context, 10, y + 20, colorForLabels, "    Full GC: " + gcTimerString(data.timeOfNextFullCollection, now));
+    showText(context, 10, y + 10, colorForLabels.get().get(), "    Eden GC: " + gcTimerString(data.timeOfNextEdenCollection, now));
+    showText(context, 10, y + 20, colorForLabels.get().get(), "    Full GC: " + gcTimerString(data.timeOfNextFullCollection, now));
 
     drawCpuHistory(context, viewBounds.size.width - 70, 0, viewBounds.size.height, data.cpu);
     drawGCHistory(context, viewBounds.size.width - 140, 0, viewBounds.size.height, data.gcHeapSize, data.categories[MemoryCategory::GCHeap].dirtySize);

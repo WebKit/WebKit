@@ -1,3 +1,23 @@
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebElementDictionary.mm:
+        (lookupTable):
+        (addLookupKey):
+        (+[WebElementDictionary initializeLookupTable]):
+        (-[WebElementDictionary _fillCache]):
+        (-[WebElementDictionary objectForKey:]):
+        * WebView/WebView.mm:
+        (+[WebView _makeAllWebViewsPerformSelector:]):
+        (-[WebView _removeFromAllWebViewsSet]):
+        (-[WebView _addToAllWebViewsSet]):
+        (+[WebView closeAllWebViews]):
+        (+[WebView _maxCacheModelInAnyInstance]):
+
 2021-03-09  Sam Weinig  <weinig@apple.com>
 
         Remove CSSParserContext::enforcesCSSMIMETypeInNoQuirksMode as it is unused

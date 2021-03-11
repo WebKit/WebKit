@@ -197,9 +197,7 @@ HRESULT WebApplicationCache::originsWithCache(IPropertyBag** origins)
     for (auto& coreOrigin : coreOrigins)
         CFArrayAppendValue(arrayItem.get(), reinterpret_cast<void*>(WebSecurityOrigin::createInstance(coreOrigin.securityOrigin().ptr())));
 
-    RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(
-        CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
+    auto dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto key = MarshallingHelpers::BSTRToCFStringRef(_bstr_t(L"origins"));
     CFDictionaryAddValue(dictionary.get(), key.get(), arrayItem.get());
 

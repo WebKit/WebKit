@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS AVAudioSession;
@@ -77,7 +78,7 @@ private:
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
     RetainPtr<AVAudioSession> m_audioSession;
     GenericTaskQueue<Timer> m_updateDeviceStateQueue;
-    dispatch_queue_t m_dispatchQueue { nullptr };
+    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
     Lock m_lock;
     AudioSessionState m_audioSessionState { AudioSessionState::NotNeeded };
 };

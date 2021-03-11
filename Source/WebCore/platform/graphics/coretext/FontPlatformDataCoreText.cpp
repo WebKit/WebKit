@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, CreationData* creationData)
+FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, CreationData* creationData)
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, creationData)
 {
     ASSERT_ARG(font, font);
@@ -44,9 +44,9 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
 #else
     m_font = font;
 #endif
-    m_isColorBitmapFont = CTFontGetSymbolicTraits(font) & kCTFontColorGlyphsTrait;
-    m_isSystemFont = WebCore::isSystemFont(font);
-    auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font, kCTFontVariationAttribute)));
+    m_isColorBitmapFont = CTFontGetSymbolicTraits(font.get()) & kCTFontColorGlyphsTrait;
+    m_isSystemFont = WebCore::isSystemFont(font.get());
+    auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font.get(), kCTFontVariationAttribute)));
     m_hasVariations = variations && CFDictionaryGetCount(variations.get());
 
 #if PLATFORM(IOS_FAMILY)

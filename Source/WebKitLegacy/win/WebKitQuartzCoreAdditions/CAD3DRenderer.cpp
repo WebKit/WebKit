@@ -370,14 +370,12 @@ static bool prepareDevice(IDirect3DDevice9* device, const CGRect& bounds, IDirec
 
 static CGRect updateBounds(CARenderUpdate* update)
 {
-    CGSRegionObj rgn = CARenderUpdateCopyRegion(update);
+    auto rgn = adoptCF(CARenderUpdateCopyRegion(update));
     if (!rgn)
         return CGRectZero;
 
     CGRect result;
-    CGError error = CGSGetRegionBounds(rgn, &result);
-    CGSReleaseRegion(rgn);
-
+    CGError error = CGSGetRegionBounds(rgn.get(), &result);
     return error == kCGErrorSuccess ? result : CGRectZero;
 }
 

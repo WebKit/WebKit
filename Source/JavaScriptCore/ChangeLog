@@ -1,3 +1,22 @@
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.h:
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::RemoteInspectorXPCConnection):
+        (Inspector::RemoteInspectorXPCConnection::closeFromMessage):
+        (Inspector::RemoteInspectorXPCConnection::closeOnQueue):
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        (Inspector::RemoteInspectorXPCConnection::sendMessage):
+        * jsc.cpp:
+        (jscmain):
+
 2021-03-10  Keith Miller  <keith_miller@apple.com>
 
         executeModuleProgram needs to ensure module argument array is still in scope

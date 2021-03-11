@@ -1,3 +1,45 @@
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::newTestingSession):
+        (WebKit::NetworkProcess::ensureSession):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformTerminate):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::cancelReceiveSource):
+        (IPC::Connection::open):
+        (IPC::Connection::initializeSendSource):
+        (IPC::Connection::receiveSourceEventHandler):
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::itpQueue):
+        (WebKit::determineITPState):
+        (WebKit::doesAppHaveITPEnabled):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/ShareableResource.cpp:
+        (WebKit::createShareableResourceDeallocator):
+        (WebKit::ShareableResource::wrapInSharedBuffer):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::decode):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeSessionHistoryEntryData):
+        * WebProcess/WebPage/Cocoa/WebCookieCacheCocoa.mm:
+        (WebKit::WebCookieCache::inMemoryStorageSession):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+
 2021-03-10  Devin Rousso  <drousso@apple.com>
 
         Add plumbing for `defaultPlaybackRate` to AVKit
