@@ -66,6 +66,10 @@ class WebPageProxy;
 @interface WKChildScrollView : UIScrollView <WKContentControlled>
 @end
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKSeparatedModelView.h>
+#endif
+
 namespace WebKit {
 
 OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint&);
