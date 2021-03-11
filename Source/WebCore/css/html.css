@@ -526,6 +526,15 @@ input:matches([type="date"], [type="time"], [type="datetime-local"], [type="mont
     font-feature-settings: "ss03";
 #endif
 }
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input:matches([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]):disabled {
+    background-color: rgb(238, 238, 238, 0.75);
+    color: rgba(60, 60, 67, 0.3);
+    opacity: initial;
+}
+#endif
+
 #endif
 
 input::-webkit-date-and-time-value {
@@ -913,6 +922,8 @@ input[readonly], textarea[readonly] {
 }
 #endif
 
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+
 input:matches([type="button"], [type="submit"], [type="reset"]):disabled,
 input[type="file"]:disabled::file-selector-button, button:disabled,
 select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
@@ -920,7 +931,6 @@ select[disabled]>option {
     color: GrayText;
 }
 
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::file-selector-button, button:active {
     border-style: inset;
 }
@@ -929,6 +939,23 @@ input:matches([type="button"], [type="submit"], [type="reset"]):active:disabled,
 input[type="file"]:active:disabled::file-selector-button, button:active:disabled {
     border-style: outset;
 }
+
+#else
+
+input[type="file"]:disabled {
+    color: rgba(60, 60, 67, 0.3);
+    opacity: initial;
+}
+
+input:matches([type="button"], [type="submit"], [type="reset"]):disabled,
+input[type="file"]:disabled::file-selector-button,
+button:disabled,
+select:disabled {
+    background-color: rgb(238, 238, 238, 0.75);
+    color: rgba(60, 60, 67, 0.3);
+    opacity: initial;
+}
+
 #endif
 
 area, param {
@@ -965,7 +992,7 @@ input[type="checkbox"]:indeterminate {
 }
 
 input[type="checkbox"]:indeterminate:disabled {
-    opacity: 0.4;
+    opacity: initial;
     background: rgba(0, 0, 0, 0.8);
 }
 
@@ -973,8 +1000,12 @@ input:matches([type="checkbox"], [type="radio"]):checked {
     border-color: rgba(255, 255, 255, 0.0);
 }
 
+input:matches([type="checkbox"], [type="radio"]):disabled {
+    opacity: initial;
+}
+
 input:matches([type="checkbox"], [type="radio"]):checked:disabled {
-    opacity: 0.4;
+    opacity: initial;
     background: rgba(0, 0, 0, 0.8);
 }
 #endif

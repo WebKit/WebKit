@@ -34,6 +34,12 @@ input:matches([type="checkbox"], [type="radio"]) {
     border: 1px solid #4c4c4c;
 }
 
+input[type="checkbox"]:indeterminate:disabled,
+input:matches([type="checkbox"], [type="radio"]):checked:disabled,
+input:matches([type="checkbox"], [type="radio"]):disabled {
+    opacity: 0.4;
+}
+
 input::-webkit-list-button {
     width: 16px;
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black" width="16" height="16"><polygon points="8 11.031, 4.5 4.969, 11.5 4.969"/></svg>');
@@ -75,6 +81,18 @@ input[type="submit"] {
     font-weight: initial;
 }
 
+input:matches([type="button"], [type="submit"], [type="reset"]):disabled,
+input[type="file"]:disabled::file-selector-button, button:disabled,
+select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
+select[disabled]>option {
+    color: GrayText;
+}
+
+input[type="file"]:disabled {
+    color: initial;
+    opacity: 0.4;
+}
+
 input[type="range"]::-webkit-slider-thumb {
     background-color: white;
 }
@@ -102,6 +120,12 @@ input:matches([type="date"], [type="time"], [type="datetime-local"], [type="mont
     border: 1px solid #4c4c4c;
     font-family: Helvetica;
     color: initial;
+}
+
+input:matches([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]):disabled {
+    background-color: white;
+    color: initial;
+    opacity: 0.4;
 }
 
 input::-webkit-date-and-time-value {

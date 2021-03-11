@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (711,0) size 5x19
           text run at (711,0) width 5: "."
       RenderBlock {P} at (0,36) size 784x24
-        RenderMenuList {SELECT} at (2,2) size 156x20 [color=#808080] [bgcolor=#EBF5FF]
+        RenderMenuList {SELECT} at (2,2) size 156x20 [color=#3C3C434D] [bgcolor=#EEEEEEBF]
           RenderBlock (anonymous) at (5,3) size 146x14
             RenderText at (0,0) size 135x14
               text run at (0,0) width 135: "This text should be gray"

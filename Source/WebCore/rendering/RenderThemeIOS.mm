@@ -2059,13 +2059,13 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
 // Colors
 constexpr auto controlColor = SRGBA<uint8_t> { 0, 122, 255 };
+constexpr auto controlDisabledColor = SRGBA<uint8_t> { 60, 60, 67, 76 };
 constexpr auto controlBackgroundColor = SRGBA<uint8_t> { 238, 238, 238 };
+constexpr auto controlDisabledBackgroundColor = SRGBA<uint8_t> { 238, 238, 238, 191 };
 
 constexpr auto meterOptimalColor = SRGBA<uint8_t> { 52, 199, 89 };
 constexpr auto meterSuboptimalColor = SRGBA<uint8_t> { 247, 206, 70 };
 constexpr auto meterEvenLessGoodColor = SRGBA<uint8_t> { 255, 59, 48 };
-
-constexpr auto menulistButtonColor = SRGBA<uint8_t> { 97, 172, 255 };
 
 bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
@@ -2083,7 +2083,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     auto checked = isChecked(box);
     auto indeterminate = isIndeterminate(box);
     if (checked || indeterminate) {
-        context.fillRoundedRect(checkboxRect, controlColor);
+        context.fillRoundedRect(checkboxRect, isEnabled(box) ? controlColor : controlDisabledBackgroundColor);
 
         Path path;
         if (checked) {
@@ -2117,10 +2117,10 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
             path.addRoundedRect(indeterminateBarRect, indeterminateBarRoundingRadii);
         }
 
-        context.setFillColor(Color::white);
+        context.setFillColor(isEnabled(box) ? Color::white : controlDisabledColor);
         context.fillPath(path);
     } else
-        context.fillRoundedRect(checkboxRect, controlBackgroundColor);
+        context.fillRoundedRect(checkboxRect, isEnabled(box) ? controlBackgroundColor : controlDisabledBackgroundColor);
 
     return false;
 }
@@ -2134,7 +2134,7 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     GraphicsContextStateSaver stateSaver(context);
 
     if (isChecked(box)) {
-        context.setFillColor(controlColor);
+        context.setFillColor(isEnabled(box) ? controlColor : controlDisabledBackgroundColor);
         context.fillEllipse(rect);
 
         // The inner circle is 6 / 14 the size of the surrounding circle,
@@ -2145,10 +2145,10 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
         innerCircleRect.inflateX(-innerCircleRect.width() * innerInverseRatio);
         innerCircleRect.inflateY(-innerCircleRect.height() * innerInverseRatio);
 
-        context.setFillColor(Color::white);
+        context.setFillColor(isEnabled(box) ? Color::white : controlDisabledColor);
         context.fillEllipse(innerCircleRect);
     } else {
-        context.setFillColor(controlBackgroundColor);
+        context.setFillColor(isEnabled(box) ? controlBackgroundColor : controlDisabledBackgroundColor);
         context.fillEllipse(rect);
     }
 
@@ -2552,7 +2552,7 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
     transform.scale(glyphScale);
     glyphPath.transform(transform);
 
-    context.setFillColor(menulistButtonColor);
+    context.setFillColor(isEnabled(box) ? controlColor : controlDisabledColor);
     context.fillPath(glyphPath);
 }
 

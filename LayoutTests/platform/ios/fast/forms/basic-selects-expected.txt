@@ -28,7 +28,7 @@ layer at (0,0) size 800x509
               text run at (0,0) width 19: "foo"
         RenderText {#text} at (184,42) size 8x19
           text run at (184,42) width 8: "a"
-        RenderMenuList {SELECT} at (193,43) size 41x20 [color=#808080] [bgcolor=#EBF5FF]
+        RenderMenuList {SELECT} at (193,43) size 41x20 [color=#3C3C434D] [bgcolor=#EEEEEEBF]
           RenderBlock (anonymous) at (5,3) size 30x14
             RenderText at (0,0) size 19x14
               text run at (0,0) width 19: "foo"
@@ -44,7 +44,7 @@ layer at (0,0) size 800x509
               text run at (0,0) width 19: "foo"
         RenderText {#text} at (242,82) size 8x19
           text run at (242,82) width 8: "a"
-        RenderMenuList {SELECT} at (251,83) size 41x20 [color=#808080] [bgcolor=#EBF5FF]
+        RenderMenuList {SELECT} at (251,83) size 41x20 [color=#3C3C434D] [bgcolor=#EEEEEEBF]
           RenderBlock (anonymous) at (5,3) size 30x14
             RenderText at (0,0) size 19x14
               text run at (0,0) width 19: "bar"
@@ -60,7 +60,7 @@ layer at (0,0) size 800x509
               text run at (0,0) width 19: "foo"
         RenderText {#text} at (486,122) size 8x19
           text run at (486,122) width 8: "a"
-        RenderMenuList {SELECT} at (495,123) size 41x20 [color=#808080] [bgcolor=#EBF5FF]
+        RenderMenuList {SELECT} at (495,123) size 41x20 [color=#3C3C434D] [bgcolor=#EEEEEEBF]
           RenderBlock (anonymous) at (5,3) size 30x14
             RenderText at (0,0) size 19x14
               text run at (0,0) width 19: "foo"
@@ -76,7 +76,7 @@ layer at (0,0) size 800x509
               text run at (0,0) width 19: "foo"
         RenderText {#text} at (248,167) size 8x19
           text run at (248,167) width 8: "a"
-        RenderMenuList {SELECT} at (257,163) size 65x30 [color=#808080] [bgcolor=#EBF5FF] [border: (8px solid #33CCFF)]
+        RenderMenuList {SELECT} at (257,163) size 65x30 [color=#3C3C434D] [bgcolor=#EEEEEEBF] [border: (8px solid #33CCFF)]
           RenderBlock (anonymous) at (13,8) size 38x14
             RenderText at (0,0) size 19x14
               text run at (0,0) width 19: "foo"
@@ -92,7 +92,7 @@ layer at (0,0) size 800x509
               text run at (0,0) width 19: "foo"
         RenderText {#text} at (174,213) size 8x19
           text run at (174,213) width 8: "a"
-        RenderMenuList {SELECT} at (183,213) size 53x22 [color=#808080] [bgcolor=#EBF5FF] [border: (4px solid #33CCFF)]
+        RenderMenuList {SELECT} at (183,213) size 53x22 [color=#3C3C434D] [bgcolor=#EEEEEEBF] [border: (4px solid #33CCFF)]
           RenderBlock (anonymous) at (9,4) size 34x14
             RenderText at (0,0) size 19x14
               text run at (0,0) width 19: "foo"
@@ -108,7 +108,7 @@ layer at (0,0) size 800x509
               text run at (0,0) width 19: "foo"
         RenderText {#text} at (535,257) size 8x19
           text run at (535,257) width 8: "a"
-        RenderMenuList {SELECT} at (544,253) size 41x30 [color=#808080] [bgcolor=#EBF5FF]
+        RenderMenuList {SELECT} at (544,253) size 41x30 [color=#3C3C434D] [bgcolor=#EEEEEEBF]
           RenderBlock (anonymous) at (5,8) size 30x14
             RenderText at (0,0) size 19x14
               text run at (0,0) width 19: "foo"
