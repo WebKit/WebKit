@@ -90,6 +90,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "JSOffscreenCanvas.h"
@@ -4153,21 +4154,17 @@ IDBValue SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously()
 {
     ASSERT(!isMainThread());
 
+    BinarySemaphore semaphore;
     IDBValue value;
-    Lock lock;
-    Condition condition;
-    lock.lock();
-
-    RunLoop::main().dispatch([this, conditionPtr = &condition, valuePtr = &value] {
-        writeBlobsToDiskForIndexedDB([conditionPtr, valuePtr](IDBValue&& result) {
+    callOnMainThread([this, &semaphore, &value] {
+        writeBlobsToDiskForIndexedDB([&semaphore, &value](IDBValue&& result) {
             ASSERT(isMainThread());
-            valuePtr->setAsIsolatedCopy(result);
+            value.setAsIsolatedCopy(result);
 
-            conditionPtr->notifyAll();
+            semaphore.signal();
         });
     });
-
-    condition.wait(lock);
+    semaphore.wait();
 
     return value;
 }
