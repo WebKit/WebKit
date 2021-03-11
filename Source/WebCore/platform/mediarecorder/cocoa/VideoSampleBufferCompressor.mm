@@ -48,7 +48,7 @@ std::unique_ptr<VideoSampleBufferCompressor> VideoSampleBufferCompressor::create
 }
 
 VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType outputCodecType)
-    : m_serialDispatchQueue { adoptOSObject(dispatch_queue_create("com.apple.VideoSampleBufferCompressor", DISPATCH_QUEUE_SERIAL)) }
+    : m_serialDispatchQueue { WorkQueue::create("com.apple.VideoSampleBufferCompressor") }
     , m_outputCodecType { outputCodecType }
 {
 }
@@ -82,7 +82,7 @@ void VideoSampleBufferCompressor::setBitsPerSecond(unsigned bitRate)
 
 void VideoSampleBufferCompressor::finish()
 {
-    dispatch_sync(m_serialDispatchQueue.get(), ^{
+    m_serialDispatchQueue->dispatchSync([this] {
         auto error = VTCompressionSessionCompleteFrames(m_vtSession.get(), kCMTimeInvalid);
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionCompleteFrames failed with %d", error);
 
@@ -164,7 +164,7 @@ void VideoSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
 
 void VideoSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
 {
-    dispatch_sync(m_serialDispatchQueue.get(), ^{
+    m_serialDispatchQueue->dispatchSync([this, buffer] {
         if (!m_isEncoding)
             return;
 

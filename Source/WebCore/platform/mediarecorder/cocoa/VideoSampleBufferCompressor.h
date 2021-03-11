@@ -28,7 +28,7 @@
 
 #include <CoreMedia/CoreMedia.h>
 #include <VideoToolbox/VTErrors.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/WorkQueue.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct OpaqueVTCompressionSession *VTCompressionSessionRef;
@@ -59,7 +59,7 @@ private:
 
     static void videoCompressionCallback(void *refCon, void*, OSStatus, VTEncodeInfoFlags, CMSampleBufferRef);
 
-    OSObjectPtr<dispatch_queue_t> m_serialDispatchQueue;
+    Ref<WorkQueue> m_serialDispatchQueue;
     CMVideoCodecType m_outputCodecType { kCMVideoCodecType_H264 };
 
     RetainPtr<CMBufferQueueRef> m_outputBufferQueue;

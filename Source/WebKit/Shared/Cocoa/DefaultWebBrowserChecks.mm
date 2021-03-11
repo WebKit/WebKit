@@ -32,9 +32,9 @@
 #import <WebCore/VersionChecks.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/WorkQueue.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/StringHash.h>
 
@@ -88,12 +88,11 @@ static bool isInWebKitChildProcess()
 
 enum class ITPState : uint8_t {
     Uninitialized,
-    Initializing,
     Enabled,
     Disabled
 };
 
-static std::atomic<ITPState> g_currentITPState = ITPState::Uninitialized;
+static std::atomic<ITPState> currentITPState = ITPState::Uninitialized;
 
 bool hasRequestedCrossWebsiteTrackingPermission()
 {
@@ -121,26 +120,23 @@ static bool determineITPStateInternal(bool appWasLinkedOnOrAfter, const String& 
     return result != kTCCAccessPreflightDenied;
 }
 
-static OSObjectPtr<dispatch_queue_t>& itpQueue()
+static RefPtr<WorkQueue>& itpQueue()
 {
-    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> itpQueue;
+    static NeverDestroyed<RefPtr<WorkQueue>> itpQueue;
     return itpQueue;
 }
 
 void determineITPState()
 {
     ASSERT(RunLoop::isMain());
-    if (g_currentITPState != ITPState::Uninitialized)
+    if (currentITPState != ITPState::Uninitialized)
         return;
 
-    g_currentITPState = ITPState::Initializing;
     bool appWasLinkedOnOrAfter = linkedOnOrAfter(WebCore::SDKVersion::FirstWithSessionCleanupByDefault);
 
-    itpQueue() = adoptOSObject(dispatch_queue_create("com.apple.WebKit.itpCheckQueue", NULL));
-
-    dispatch_async(itpQueue().get(), [appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
-        g_currentITPState = determineITPStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? ITPState::Enabled : ITPState::Disabled;
-
+    itpQueue() = WorkQueue::create("com.apple.WebKit.itpCheckQueue");
+    itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
+        currentITPState = determineITPStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? ITPState::Enabled : ITPState::Disabled;
         RunLoop::main().dispatch([] {
             itpQueue() = nullptr;
         });
@@ -151,16 +147,11 @@ bool doesAppHaveITPEnabled()
 {
     ASSERT(!isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
-    if (g_currentITPState > ITPState::Initializing)
-        return g_currentITPState == ITPState::Enabled;
-
-    RELEASE_ASSERT(itpQueue());
-
-    __block bool isITPEnabled;
-    dispatch_sync(itpQueue().get(), ^{
-        isITPEnabled = g_currentITPState == ITPState::Enabled;
-    });
-    return isITPEnabled;
+    // If we're still computing the ITP state on the background thread, then synchronize with it.
+    if (itpQueue())
+        itpQueue()->dispatchSync([] { });
+    ASSERT(currentITPState != ITPState::Uninitialized);
+    return currentITPState == ITPState::Enabled;
 }
 
 bool doesParentProcessHaveITPEnabled(Optional<audit_token_t> auditToken, bool hasRequestedCrossWebsiteTrackingPermissionValue)

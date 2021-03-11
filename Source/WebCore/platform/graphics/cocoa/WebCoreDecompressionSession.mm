@@ -51,8 +51,8 @@ namespace WebCore {
 
 WebCoreDecompressionSession::WebCoreDecompressionSession(Mode mode)
     : m_mode(mode)
-    , m_decompressionQueue(adoptOSObject(dispatch_queue_create("WebCoreDecompressionSession Decompression Queue", DISPATCH_QUEUE_SERIAL)))
-    , m_enqueingQueue(adoptOSObject(dispatch_queue_create("WebCoreDecompressionSession Enqueueing Queue", DISPATCH_QUEUE_SERIAL)))
+    , m_decompressionQueue(WorkQueue::create("WebCoreDecompressionSession Decompression Queue"))
+    , m_enqueingQueue(WorkQueue::create("WebCoreDecompressionSession Enqueueing Queue"))
 {
 }
 
@@ -118,9 +118,6 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
     if (noErr != CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, itemCount, timingInfoArray.data(), nullptr))
         return;
 
-    if (!m_decompressionQueue)
-        m_decompressionQueue = adoptOSObject(dispatch_queue_create("SourceBufferPrivateAVFObjC Decompression Queue", DISPATCH_QUEUE_SERIAL));
-
     // CMBufferCallbacks contains 64-bit pointers that aren't 8-byte aligned. To suppress the linker
     // warning about this, we prepend 4 bytes of padding when building.
     const size_t padSize = 4;
@@ -167,7 +164,7 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
 
     LOG(Media, "WebCoreDecompressionSession::enqueueSample(%p) - framesBeingDecoded(%d)", this, m_framesBeingDecoded);
 
-    dispatch_async(m_decompressionQueue.get(), [protectedThis = makeRefPtr(*this), strongBuffer = retainPtr(sampleBuffer), displaying] {
+    m_decompressionQueue->dispatch([protectedThis = makeRefPtr(*this), strongBuffer = retainPtr(sampleBuffer), displaying] {
         protectedThis->decodeSample(strongBuffer.get(), displaying);
     });
 }
@@ -314,7 +311,7 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
         return;
     }
 
-    dispatch_async(m_enqueingQueue.get(), [protectedThis = makeRefPtr(this), imageSampleBuffer = adoptCF(rawImageSampleBuffer), displaying] {
+    m_enqueingQueue->dispatch([protectedThis = makeRefPtr(this), imageSampleBuffer = adoptCF(rawImageSampleBuffer), displaying] {
         protectedThis->enqueueDecodedSample(imageSampleBuffer.get(), displaying);
     });
 }
@@ -522,9 +519,9 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
 
 void WebCoreDecompressionSession::flush()
 {
-    dispatch_sync(m_decompressionQueue.get(), [protectedThis = RefPtr<WebCoreDecompressionSession>(this)] {
+    m_decompressionQueue->dispatchSync([this, protectedThis = makeRef(*this)]() mutable {
         CMBufferQueueReset(protectedThis->m_producerQueue.get());
-        dispatch_sync(protectedThis->m_enqueingQueue.get(), [protectedThis] {
+        m_enqueingQueue->dispatchSync([protectedThis = WTFMove(protectedThis)] {
             CMBufferQueueReset(protectedThis->m_consumerQueue.get());
             protectedThis->m_framesSinceLastQosCheck = 0;
             protectedThis->m_currentQosTier = 0;

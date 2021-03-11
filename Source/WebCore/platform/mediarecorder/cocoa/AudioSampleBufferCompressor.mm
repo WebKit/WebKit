@@ -52,7 +52,7 @@ std::unique_ptr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create
 }
 
 AudioSampleBufferCompressor::AudioSampleBufferCompressor()
-    : m_serialDispatchQueue { adoptOSObject(dispatch_queue_create("com.apple.AudioSampleBufferCompressor", DISPATCH_QUEUE_SERIAL)) }
+    : m_serialDispatchQueue { WorkQueue::create("com.apple.AudioSampleBufferCompressor") }
     , m_lowWaterTime { CMTimeMakeWithSeconds(LOW_WATER_TIME_IN_SECONDS, 1000) }
 {
 }
@@ -88,7 +88,7 @@ bool AudioSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callba
 
 void AudioSampleBufferCompressor::finish()
 {
-    dispatch_sync(m_serialDispatchQueue.get(), ^{
+    m_serialDispatchQueue->dispatchSync([this] {
         processSampleBuffersUntilLowWaterTime(kCMTimeInvalid);
         auto error = CMBufferQueueMarkEndOfData(m_outputBufferQueue.get());
         RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor CMBufferQueueMarkEndOfData failed %d", error);
@@ -509,7 +509,7 @@ void AudioSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
 
 void AudioSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
 {
-    dispatch_sync(m_serialDispatchQueue.get(), ^{
+    m_serialDispatchQueue->dispatchSync([this, buffer] {
         if (m_isEncoding)
             processSampleBuffer(buffer);
     });

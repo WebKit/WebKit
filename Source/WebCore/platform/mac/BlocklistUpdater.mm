@@ -51,10 +51,19 @@ NSString * const blocklistPath = @"/System/Library/CoreServices/XProtect.bundle/
 
 namespace WebCore {
 
-dispatch_queue_t BlocklistUpdater::s_queue;
-
 PluginBlocklist* BlocklistUpdater::s_pluginBlocklist = nullptr;
 WebGLBlocklist* BlocklistUpdater::s_webGLBlocklist = nullptr;
+
+WorkQueue& BlocklistUpdater::queue()
+{
+    static NeverDestroyed<RefPtr<WorkQueue>> queue;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        queue.get() = WorkQueue::create("com.apple.WebKit.Blocklist");
+    });
+
+    return *queue.get();
+}
 
 NSDictionary * BlocklistUpdater::readBlocklistData()
 {
@@ -99,14 +108,6 @@ void BlocklistUpdater::reloadIfNecessary()
     s_webGLBlocklist = WebGLBlocklist::create(propertyList).release();
 
     blocklistUpdateTime = statBuf.st_mtimespec.tv_sec;
-}
-
-void BlocklistUpdater::initializeQueue()
-{
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        s_queue = dispatch_queue_create("com.apple.WebKit.Blocklist", 0);
-    });
 }
 
 }
