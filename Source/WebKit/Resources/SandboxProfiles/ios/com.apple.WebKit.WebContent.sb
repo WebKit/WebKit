@@ -1368,8 +1368,9 @@
     ;; getsockopt
     (allow socket-option-get (with telemetry))
     (allow socket-option-get
-        (socket-option-level SOL_SOCKET)
-            (socket-option-name SO_ERROR)) ;; libwebrtc; physical_socket_server.cc, ProcessEvents.  Called with fd=-1, so it fails.  Not technically needed, but the code needs changing
+        (require-all
+            (socket-option-level SOL_SOCKET)
+            (socket-option-name SO_ERROR))) ;; libwebrtc; physical_socket_server.cc, ProcessEvents.  Called with fd=-1, so it fails.  Not technically needed, but the code needs changing
 )
 
 (when (defined? 'socket-option-set)

@@ -1,3 +1,14 @@
+2021-03-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Adjust telemetry rule
+        https://bugs.webkit.org/show_bug.cgi?id=223045
+
+        Reviewed by Geoffrey Garen.
+
+        Adjust socket-option related telemetry rule on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-03-10  Per Arne  <pvollan@apple.com>
 
         [iOS] Add additional telemetry to WebContent sandbox 
