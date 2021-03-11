@@ -51,6 +51,8 @@ public:
     static const AtomString& automaticKeyword();
     static const AtomString& forcedOnlyKeyword();
 
+    String platform() const;
+
     Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList&);
     Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList&);
 
@@ -81,9 +83,6 @@ public:
     enum class DeviceType { None, Airplay, Tvout };
     DeviceType externalDeviceType() const;
 
-    bool compactMode() const;
-    void setSimulateCompactMode(bool value) { m_simulateCompactMode = value; }
-
     bool controlsDependOnPageScaleFactor() const;
     void setControlsDependOnPageScaleFactor(bool v);
 
@@ -106,8 +105,6 @@ private:
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     RefPtr<VoidCallback> m_showMediaControlsContextMenuCallback;
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-
-    bool m_simulateCompactMode { false };
 };
 
 }

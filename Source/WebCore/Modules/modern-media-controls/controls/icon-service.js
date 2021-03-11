@@ -30,17 +30,17 @@ const Icons = {
     EnterPiP        : { name: "PipIn", type: "svg", label: UIString("Enter Picture in Picture") },
     ExitFullscreen  : { name: "ExitFullscreen", type: "svg", label: UIString("Exit Full Screen") },
     Forward         : { name: "Forward", type: "svg", label: UIString("Forward") },
-    InvalidCompact  : { name: "InvalidCompact", type: "pdf", label: UIString("Invalid") },
+    InvalidCircle   : { name: "InvalidCircle", type: "pdf", label: UIString("Invalid") },
     InvalidPlacard  : { name: "invalid-placard", type: "png", label: UIString("Invalid") },
     Overflow        : { name: "Overflow", type: "svg", label: UIString("More...") },
     Pause           : { name: "Pause", type: "svg", label: UIString("Pause") },
     PiPPlacard      : { name: "pip-placard", type: "png", label: UIString("Picture in Picture") },
     Play            : { name: "Play", type: "svg", label: UIString("Play") },
-    PlayCompact     : { name: "PlayCompact", type: "pdf", label: UIString("Play") },
+    PlayCircle      : { name: "PlayCircle", type: "pdf", label: UIString("Play") },
     Rewind          : { name: "Rewind", type: "svg", label: UIString("Rewind") },
     SkipBack        : { name: "SkipBack15", type: "svg", label: UIString("Skip Back %s Seconds", SkipSeconds) },
     SkipForward     : { name: "SkipForward15", type: "svg", label: UIString("Skip Forward %s Seconds", SkipSeconds) },
-    SpinnerCompact  : { name: "ActivityIndicatorSpriteCompact", type: "png", label: UIString("Loading…") },
+    SpinnerSprite   : { name: "SpinnerSprite", type: "png", label: UIString("Loading…") },
     Tracks          : { name: "MediaSelector", type: "svg", label: UIString("Media Selection") },
     Volume0         : { name: "Volume0", type: "svg", label: UIString("Mute") },
     Volume0RTL      : { name: "Volume0-RTL", type: "svg", label: UIString("Mute") },
@@ -97,8 +97,10 @@ const iconService = new class IconService {
         let platform;
         if (layoutTraits & LayoutTraits.macOS)
             platform = "macOS";
-        else if (layoutTraits & LayoutTraits.iOS || layoutTraits & LayoutTraits.Compact)
+        else if (layoutTraits & LayoutTraits.iOS)
             platform = "iOS";
+        else if (layoutTraits & LayoutTraits.watchOS)
+            platform = "watchOS";
         else
             throw "Could not identify icon's platform from layout traits.";
 

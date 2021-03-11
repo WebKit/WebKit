@@ -103,6 +103,22 @@ MediaControlsHost::~MediaControlsHost()
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 }
 
+String MediaControlsHost::platform() const
+{
+#if PLATFORM(MAC)
+    return "macos";
+#elif PLATFORM(MACCATALYST)
+    return "maccatalyst"_s;
+#elif PLATFORM(IOS)
+    return "ios"_s;
+#elif PLATFORM(WATCHOS)
+    return "watchos"_s;
+#else
+    ASSERT_NOT_REACHED();
+    return nullString();
+#endif
+}
+
 Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {
     if (!m_mediaElement)
@@ -473,15 +489,6 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 }
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-
-bool MediaControlsHost::compactMode() const
-{
-#if PLATFORM(WATCHOS)
-    return true;
-#else
-    return m_simulateCompactMode;
-#endif
-}
 
 }
 

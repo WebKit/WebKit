@@ -96,10 +96,24 @@ class MediaController
 
     get layoutTraits()
     {
-        if (this.host && this.host.compactMode)
-            return LayoutTraits.Compact;
+        let traits = LayoutTraits.Unknown;
 
-        let traits = window.isIOSFamily ? LayoutTraits.iOS : LayoutTraits.macOS;
+        switch (this.host?.platform) {
+        case "macos":
+        case "maccatalyst":
+        default: // For when `this.host` is not defined.
+            traits = LayoutTraits.macOS;
+            break;
+
+        case "ios":
+            traits = LayoutTraits.iOS;
+            break;
+
+        case "watchos":
+            traits = LayoutTraits.watchOS;
+            break;
+        }
+
         if (this.isFullscreen)
             return traits | LayoutTraits.Fullscreen;
         return traits;
@@ -206,8 +220,8 @@ class MediaController
 
     _supportingObjectClasses()
     {
-        if (this.layoutTraits & LayoutTraits.Compact)
-            return [CompactMediaControlsSupport];
+        if (this.layoutTraits & LayoutTraits.watchOS)
+            return [WatchOSMediaControlsSupport];
 
         return [AirplaySupport, AudioSupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, OverflowSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport, VolumeSupport];
     }
@@ -304,8 +318,8 @@ class MediaController
 
     _controlsClassForLayoutTraits(layoutTraits)
     {
-        if (layoutTraits & LayoutTraits.Compact)
-            return CompactMediaControls;
+        if (layoutTraits & LayoutTraits.watchOS)
+            return WatchOSMediaControls;
         if (layoutTraits & LayoutTraits.iOS)
             return IOSInlineMediaControls;
         if (layoutTraits & LayoutTraits.Fullscreen)
@@ -335,8 +349,8 @@ class MediaController
 
     _shouldControlsBeAvailable()
     {
-        // Controls are always available with compact layout.
-        if (this.layoutTraits & LayoutTraits.Compact)
+        // Controls are always available on watchOS.
+        if (this.layoutTraits & LayoutTraits.watchOS)
             return true;
 
         // Controls are always available while in fullscreen on macOS, and they are never available when in fullscreen on iOS.

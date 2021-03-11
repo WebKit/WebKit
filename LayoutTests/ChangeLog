@@ -1,5 +1,18 @@
 2021-03-11  Devin Rousso  <drousso@apple.com>
 
+        [macCatalyst] media controls should have macOS styling and behavior
+        https://bugs.webkit.org/show_bug.cgi?id=223078
+        <rdar://problem/71857091>
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/watchos-media-controls/watchos-media-controls-constructor.html: Renamed from media/modern-media-controls/compact-media-controls/compact-media-controls-constructor.html.
+        * media/modern-media-controls/watchos-media-controls/watchos-media-controls-constructor-expected.txt: Renamed from media/modern-media-controls/compact-media-controls/compact-media-controls-constructor-expected.txt.
+        * media/modern-media-controls/watchos-media-controls/watchos-media-controls-layout.html: Renamed from media/modern-media-controls/compact-media-controls/compact-media-controls-layout.html.
+        * media/modern-media-controls/watchos-media-controls/watchos-media-controls-layout-expected.txt: Renamed from media/modern-media-controls/compact-media-controls/compact-media-controls-layout-expected.txt.
+
+2021-03-11  Devin Rousso  <drousso@apple.com>
+
         Video controls stay on screen indefinitely after interacting with time scrubber
         https://bugs.webkit.org/show_bug.cgi?id=223081
         <rdar://problem/73935705>

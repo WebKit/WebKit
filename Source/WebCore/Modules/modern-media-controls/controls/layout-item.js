@@ -27,8 +27,8 @@ const LayoutTraits = {
     Unknown        : 0,
     macOS          : 1 << 0,
     iOS            : 1 << 1,
-    Fullscreen     : 1 << 2,
-    Compact        : 1 << 3
+    watchOS        : 1 << 2,
+    Fullscreen     : 1 << 3,
 };
 
 class LayoutItem extends LayoutNode
