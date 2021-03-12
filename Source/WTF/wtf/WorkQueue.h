@@ -50,6 +50,8 @@ public:
     };
     using QOS = Thread::QOS;
 
+    WTF_EXPORT_PRIVATE static WorkQueue& main();
+
     WTF_EXPORT_PRIVATE static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
     ~WorkQueue() final;
 
@@ -66,7 +68,14 @@ public:
 #endif
 
 private:
-    explicit WorkQueue(const char* name, Type, QOS);
+    WorkQueue(const char* name, Type, QOS);
+
+    static Ref<WorkQueue> constructMainWorkQueue();
+#if USE(COCOA_EVENT_LOOP)
+    explicit WorkQueue(OSObjectPtr<dispatch_queue_t>&&);
+#else
+    explicit WorkQueue(RunLoop&);
+#endif
 
     void platformInitialize(const char* name, Type, QOS);
     void platformInvalidate();

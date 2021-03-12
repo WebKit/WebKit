@@ -117,7 +117,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 if (fd != -1)
                     dup2(fd, STDERR_FILENO);
 
-                dispatch_sync(dispatch_get_main_queue(), ^{
+                WorkQueue::main().dispatchSync([&] {
                     initializerFunctionPtr(peer, event, priorityBoostMessage.get().get());
 
                     setAppleLanguagesPreference();

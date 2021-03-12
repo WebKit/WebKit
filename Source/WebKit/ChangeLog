@@ -1,5 +1,63 @@
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
+        Introduce WorkQueue::main() to get the main thread's work queue
+        https://bugs.webkit.org/show_bug.cgi?id=223087
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce WorkQueue::main() to get the main thread's work queue. This allows us to port some more code from
+        dispatch_queue to WorkQueue. It also simplifies some code that has to deal that sometimes needs to run on
+        the main thread and other times on a background queue. Having a single WorkQueue type to represent both the
+        main thread and a background queue makes writing such code more convenient.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::writeFile):
+        (WebKit::CacheStorage::Engine::readFile):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::retrieveOriginFromDirectory):
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::write):
+        * NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp:
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::write):
+        * NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp:
+        (WebKit::NetworkCache::inputStreamReadReadyCallback):
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::readSyncInThread):
+        (WebKit::NetworkCache::outputStreamWriteReadyCallback):
+        (WebKit::NetworkCache::IOChannel::write):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        (WebKit::NetworkCache::Storage::traverse):
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::InitializeWebKit2):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (+[WKBrowsingContextController registerSchemeForCustomProtocol:]):
+        (+[WKBrowsingContextController unregisterSchemeForCustomProtocol:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::scheduleActivityStateUpdate):
+        * UIProcess/PDF/WKPDFHUDView.mm:
+        (-[WKPDFHUDView initWithFrame:pluginIdentifier:page:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _scheduleReleaseTask]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestRectsToEvadeForSelectionCommandsWithCompletionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::willOpenAppLink):
+        * UIProcess/mac/ServicesController.mm:
+        (WebKit::ServicesController::refreshExistingServices):
+
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
         Use CallOnMainThreadAndWait() instead of CallAndMainThread() + BinarySemaphore
         https://bugs.webkit.org/show_bug.cgi?id=223093
 

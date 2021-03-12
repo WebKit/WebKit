@@ -4229,8 +4229,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 
     // Give the page some time to present custom editing UI before attempting to detect and evade it.
-    auto delayBeforeShowingCalloutBar = (0.25_s).nanoseconds();
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delayBeforeShowingCalloutBar), dispatch_get_main_queue(), [completion = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKContentView>(self)] () mutable {
+    auto delayBeforeShowingCalloutBar = 0.25_s;
+    WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKContentView>(self)] () mutable {
         if (!weakSelf) {
             completion(@[ ]);
             return;

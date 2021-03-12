@@ -68,17 +68,6 @@ IOChannel::~IOChannel()
     RELEASE_ASSERT(!m_wasDeleted.exchange(true));
 }
 
-static inline void runTaskInQueue(Function<void()>&& task, WorkQueue* queue)
-{
-    if (queue) {
-        queue->dispatch(WTFMove(task));
-        return;
-    }
-
-    // Using nullptr as queue submits the result to the main context.
-    RunLoop::main().dispatch(WTFMove(task));
-}
-
 static void fillDataFromReadBuffer(GBytes* readBuffer, size_t size, Data& data)
 {
     GRefPtr<GBytes> buffer;
@@ -103,7 +92,7 @@ struct ReadAsyncData {
 
     RefPtr<IOChannel> channel;
     GRefPtr<GBytes> buffer;
-    RefPtr<WorkQueue> queue;
+    Ref<WorkQueue> queue;
     size_t bytesToRead;
     Function<void(Data&, int error)> completionHandler;
     Data data;
@@ -114,18 +103,16 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
     std::unique_ptr<ReadAsyncData> asyncData(static_cast<ReadAsyncData*>(userData));
     gssize bytesRead = g_input_stream_read_finish(stream, result, nullptr);
     if (bytesRead == -1) {
-        WorkQueue* queue = asyncData->queue.get();
-        runTaskInQueue([asyncData = WTFMove(asyncData)] {
+        asyncData->queue->dispatch([asyncData = WTFMove(asyncData)] {
             asyncData->completionHandler(asyncData->data, -1);
-        }, queue);
+        });
         return;
     }
 
     if (!bytesRead) {
-        WorkQueue* queue = asyncData->queue.get();
-        runTaskInQueue([asyncData = WTFMove(asyncData)] {
+        asyncData->queue->dispatch([asyncData = WTFMove(asyncData)] {
             asyncData->completionHandler(asyncData->data, 0);
-        }, queue);
+        });
         return;
     }
 
@@ -134,10 +121,9 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
 
     size_t pendingBytesToRead = asyncData->bytesToRead - asyncData->data.size();
     if (!pendingBytesToRead) {
-        WorkQueue* queue = asyncData->queue.get();
-        runTaskInQueue([asyncData = WTFMove(asyncData)] {
+        asyncData->queue->dispatch([asyncData = WTFMove(asyncData)] {
             asyncData->completionHandler(asyncData->data, 0);
-        }, queue);
+        });
         return;
     }
 
@@ -148,14 +134,14 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData.release());
 }
 
-void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void(Data&, int error)>&& completionHandler)
+void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void(Data&, int error)>&& completionHandler)
 {
     RefPtr<IOChannel> protectedThis(this);
     if (!m_inputStream) {
-        runTaskInQueue([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
+        queue.dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
             Data data;
             completionHandler(data, -1);
-        }, queue);
+        });
         return;
     }
 
@@ -174,11 +160,11 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData);
 }
 
-void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue* queue, Function<void(Data&, int error)>&& completionHandler)
+void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue& queue, Function<void(Data&, int error)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    Thread::create("IOChannel::readSync", [this, protectedThis = makeRef(*this), size, queue, completionHandler = WTFMove(completionHandler)] () mutable {
+    Thread::create("IOChannel::readSync", [this, protectedThis = makeRef(*this), size, queue = makeRef(queue), completionHandler = WTFMove(completionHandler)] () mutable {
         size_t bufferSize = std::min(size, gDefaultReadBufferSize);
         uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
         GRefPtr<GBytes> readBuffer = adoptGRef(g_bytes_new_with_free_func(bufferData, bufferSize, fastFree, bufferData));
@@ -189,10 +175,10 @@ void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue* queue, F
             // FIXME: implement offset.
             gssize bytesRead = g_input_stream_read(m_inputStream.get(), const_cast<void*>(g_bytes_get_data(readBuffer.get(), nullptr)), bytesToRead, nullptr, nullptr);
             if (bytesRead == -1) {
-                runTaskInQueue([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
+                queue->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
                     Data data;
                     completionHandler(data, -1);
-                }, queue);
+                });
                 return;
             }
 
@@ -206,10 +192,10 @@ void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue* queue, F
             bytesToRead = std::min(pendingBytesToRead, g_bytes_get_size(readBuffer.get()));
         } while (pendingBytesToRead);
 
-        runTaskInQueue([protectedThis = WTFMove(protectedThis), buffer = GRefPtr<GBytes>(data.bytes()), completionHandler = WTFMove(completionHandler)]() mutable {
+        queue->dispatch([protectedThis = WTFMove(protectedThis), buffer = GRefPtr<GBytes>(data.bytes()), completionHandler = WTFMove(completionHandler)]() mutable {
             Data data = { WTFMove(buffer) };
             completionHandler(data, 0);
-        }, queue);
+        });
     })->detach();
 }
 
@@ -218,7 +204,7 @@ struct WriteAsyncData {
 
     RefPtr<IOChannel> channel;
     GRefPtr<GBytes> buffer;
-    RefPtr<WorkQueue> queue;
+    Ref<WorkQueue> queue;
     Function<void(int error)> completionHandler;
 };
 
@@ -227,19 +213,17 @@ static void outputStreamWriteReadyCallback(GOutputStream* stream, GAsyncResult* 
     std::unique_ptr<WriteAsyncData> asyncData(static_cast<WriteAsyncData*>(userData));
     gssize bytesWritten = g_output_stream_write_finish(stream, result, nullptr);
     if (bytesWritten == -1) {
-        WorkQueue* queue = asyncData->queue.get();
-        runTaskInQueue([asyncData = WTFMove(asyncData)] {
+        asyncData->queue->dispatch([asyncData = WTFMove(asyncData)] {
             asyncData->completionHandler(-1);
-        }, queue);
+        });
         return;
     }
 
     gssize pendingBytesToWrite = g_bytes_get_size(asyncData->buffer.get()) - bytesWritten;
     if (!pendingBytesToWrite) {
-        WorkQueue* queue = asyncData->queue.get();
-        runTaskInQueue([asyncData = WTFMove(asyncData)] {
+        asyncData->queue->dispatch([asyncData = WTFMove(asyncData)] {
             asyncData->completionHandler(0);
-        }, queue);
+        });
         return;
     }
 
@@ -250,21 +234,21 @@ static void outputStreamWriteReadyCallback(GOutputStream* stream, GAsyncResult* 
         reinterpret_cast<GAsyncReadyCallback>(outputStreamWriteReadyCallback), asyncData.release());
 }
 
-void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, Function<void(int error)>&& completionHandler)
+void IOChannel::write(size_t offset, const Data& data, WorkQueue& queue, Function<void(int error)>&& completionHandler)
 {
     RefPtr<IOChannel> protectedThis(this);
     if (!m_outputStream && !m_ioStream) {
-        runTaskInQueue([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
+        queue.dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
             completionHandler(-1);
-        }, queue);
+        });
         return;
     }
 
     GOutputStream* stream = m_outputStream ? m_outputStream.get() : g_io_stream_get_output_stream(G_IO_STREAM(m_ioStream.get()));
     if (!stream) {
-        runTaskInQueue([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
+        queue.dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
             completionHandler(-1);
-        }, queue);
+        });
         return;
     }
 

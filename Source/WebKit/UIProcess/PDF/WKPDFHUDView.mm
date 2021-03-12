@@ -109,7 +109,7 @@ static NSArray<NSString *> *controlArray()
     [self setFrame:frame];
 
     WeakObjCPtr<WKPDFHUDView> weakSelf = self;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(initialHideTimeInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    WorkQueue::main().dispatchAfter(Seconds { initialHideTimeInterval }, [weakSelf] {
         [weakSelf _hideTimerFired];
     });
     return self;

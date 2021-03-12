@@ -45,6 +45,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/WorkQueue.h>
 
 namespace WTR {
 
@@ -151,7 +152,7 @@ void UIScriptControllerMac::activateDataListSuggestion(unsigned index, JSValueRe
     [table selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
     // Send the action after a short delay to simulate normal user interaction.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), [this, protectedThis = makeRefPtr(*this), callbackID, table] {
+    WorkQueue::main().dispatchAfter(50_ms, [this, protectedThis = makeRefPtr(*this), callbackID, table] {
         if ([table window])
             [table sendAction:[table action] to:[table target]];
 
@@ -210,11 +211,11 @@ void UIScriptControllerMac::chooseMenuAction(JSStringRef jsAction, JSValueRef ca
         [activeMenu cancelTracking];
     }
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    WorkQueue::main().dispatch([this, strongThis = makeRef(*this), callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
-    }).get());
+    });
 }
 
 void UIScriptControllerMac::beginBackSwipe(JSValueRef callback)
@@ -287,11 +288,11 @@ void UIScriptControllerMac::activateAtPoint(long x, long y, JSValueRef callback)
     eventSender->mouseDown(0, 0);
     eventSender->mouseUp(0, 0);
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    WorkQueue::main().dispatch([this, strongThis = makeRef(*this), callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
-    }).get());
+    });
 }
 
 void UIScriptControllerMac::copyText(JSStringRef text)

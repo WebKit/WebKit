@@ -357,7 +357,7 @@ private:
     void addTestDomains() const;
 #endif
 
-    void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
+    void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Ref<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
     void platformInitialize();
     void platformDestroy();

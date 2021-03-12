@@ -1,3 +1,18 @@
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce WorkQueue::main() to get the main thread's work queue
+        https://bugs.webkit.org/show_bug.cgi?id=223087
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce WorkQueue::main() to get the main thread's work queue. This allows us to port some more code from
+        dispatch_queue to WorkQueue. It also simplifies some code that has to deal that sometimes needs to run on
+        the main thread and other times on a background queue. Having a single WorkQueue type to represent both the
+        main thread and a background queue makes writing such code more convenient.
+
+        * Misc/WebDownload.mm:
+        (callOnDelegateThreadAndWait):
+
 2021-03-10  Chris Dumez  <cdumez@apple.com>
 
         Use RetainPtr<> / OSObjectPtr<> more in WebKit

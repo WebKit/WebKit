@@ -32,7 +32,7 @@
 #import <mutex>
 #import <wtf/MainThread.h>
 #import <wtf/RefCounted.h>
-#import <wtf/RunLoop.h>
+#import <wtf/WorkQueue.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -67,7 +67,7 @@ void InitializeWebKit2()
         if ([NSThread isMainThread] || linkedOnOrAfter(WebCore::SDKVersion::FirstWithInitializeWebKit2MainThreadAssertion))
             runInitializationCode();
         else
-            dispatch_sync_f(dispatch_get_main_queue(), nullptr, runInitializationCode);
+            WorkQueue::main().dispatchSync([] { runInitializationCode(); });
     });
 }
 

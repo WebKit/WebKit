@@ -305,14 +305,14 @@ static ProcessAccessType computeWebProcessAccessTypeForDataFetch(OptionSet<Websi
 
 void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler)
 {
-    fetchDataAndApply(dataTypes, fetchOptions, nullptr, WTFMove(completionHandler));
+    fetchDataAndApply(dataTypes, fetchOptions, WorkQueue::main(), WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply)
+void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Ref<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply)
 {
     class CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator, WTF::DestructionThread::MainRunLoop> {
     public:
-        static Ref<CallbackAggregator> create(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
+        static Ref<CallbackAggregator> create(OptionSet<WebsiteDataFetchOption> fetchOptions, Ref<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
         {
             return adoptRef(*new CallbackAggregator(fetchOptions, WTFMove(queue), WTFMove(apply), dataStore));
         }
@@ -324,16 +324,11 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
             Vector<WebsiteDataRecord> records;
             records.reserveInitialCapacity(m_websiteDataRecords.size());
             for (auto& record : m_websiteDataRecords.values())
-                records.uncheckedAppend(m_queue ? crossThreadCopy(record) : WTFMove(record));
+                records.uncheckedAppend(m_queue.ptr() != &WorkQueue::main() ? crossThreadCopy(record) : WTFMove(record));
 
-            auto processRecords = [apply = WTFMove(m_apply), records = WTFMove(records)] () mutable {
+            m_queue->dispatch([apply = WTFMove(m_apply), records = WTFMove(records)] () mutable {
                 apply(WTFMove(records));
-            };
-
-            if (m_queue)
-                m_queue->dispatch(WTFMove(processRecords));
-            else
-                RunLoop::main().dispatch(WTFMove(processRecords));
+            });
         }
 
         const OptionSet<WebsiteDataFetchOption>& fetchOptions() const { return m_fetchOptions; }
@@ -426,7 +421,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
         }
 
 private:
-        CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
+        CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, Ref<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
             : m_fetchOptions(fetchOptions)
             , m_queue(WTFMove(queue))
             , m_apply(WTFMove(apply))
@@ -436,7 +431,7 @@ private:
         }
 
         const OptionSet<WebsiteDataFetchOption> m_fetchOptions;
-        RefPtr<WorkQueue> m_queue;
+        Ref<WorkQueue> m_queue;
         Function<void(Vector<WebsiteDataRecord>)> m_apply;
 
         HashMap<String, WebsiteDataRecord> m_websiteDataRecords;

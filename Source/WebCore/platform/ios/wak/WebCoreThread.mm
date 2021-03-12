@@ -46,12 +46,14 @@
 #import <libkern/OSAtomic.h>
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RecursiveLockAdapter.h>
 #import <wtf/RunLoop.h>
 #import <wtf/ThreadSpecific.h>
 #import <wtf/Threading.h>
+#import <wtf/WorkQueue.h>
 #import <wtf/spi/cf/CFRunLoopSPI.h>
 #import <wtf/spi/cocoa/objcSPI.h>
 #import <wtf/text/AtomString.h>
@@ -306,9 +308,7 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
     JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
     _WebThreadUnlock();
 
-    void (^delegateBlockCopy)() = Block_copy(delegateBlock);
-    dispatch_sync(dispatch_get_main_queue(), delegateBlockCopy);
-    Block_release(delegateBlockCopy);
+    WorkQueue::main().dispatchSync(makeBlockPtr(delegateBlock).get());
 
     _WebThreadLock();
 }

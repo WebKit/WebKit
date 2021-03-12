@@ -40,6 +40,16 @@
 
 namespace WTF {
 
+WorkQueue& WorkQueue::main()
+{
+    static NeverDestroyed<RefPtr<WorkQueue>> mainWorkQueue;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        mainWorkQueue.get() = constructMainWorkQueue();
+    });
+    return *mainWorkQueue.get();
+}
+
 Ref<WorkQueue> WorkQueue::create(const char* name, Type type, QOS qos)
 {
     return adoptRef(*new WorkQueue(name, type, qos));

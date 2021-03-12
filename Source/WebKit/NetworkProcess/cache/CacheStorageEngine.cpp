@@ -468,7 +468,7 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
             FileSystem::makeAllDirectories(directoryPath);
 
         auto channel = IOChannel::open(filename, IOChannel::Type::Create, WorkQueue::QOS::Default);
-        channel->write(0, data, nullptr, [this, weakThis = WTFMove(weakThis), identifier](int error) mutable {
+        channel->write(0, data, WorkQueue::main(), [this, weakThis = WTFMove(weakThis), identifier](int error) mutable {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
@@ -505,7 +505,7 @@ void Engine::readFile(const String& filename, CompletionHandler<void(const Netwo
             return;
         }
 
-        channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [this, weakThis = WTFMove(weakThis), identifier](const Data& data, int error) mutable {
+        channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [this, weakThis = WTFMove(weakThis), identifier](const Data& data, int error) mutable {
             RELEASE_LOG_ERROR_IF(error, CacheStorage, "CacheStorage::Engine::readFile failed with error %d", error);
 
             // FIXME: We should do the decoding in the background thread.

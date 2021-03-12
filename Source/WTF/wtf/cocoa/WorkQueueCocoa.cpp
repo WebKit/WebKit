@@ -50,6 +50,16 @@ void WorkQueue::dispatchSync(Function<void()>&& function)
     dispatch_sync(m_dispatchQueue.get(), makeBlockPtr(WTFMove(function)).get());
 }
 
+Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
+{
+    return adoptRef(*new WorkQueue(dispatch_get_main_queue()));
+}
+
+WorkQueue::WorkQueue(OSObjectPtr<dispatch_queue_t>&& dispatchQueue)
+    : m_dispatchQueue(WTFMove(dispatchQueue))
+{
+}
+
 void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
 {
     dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;

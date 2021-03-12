@@ -42,8 +42,10 @@
 #import "WebCoreThreadRun.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <UIKit/UIView.h>
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/WorkQueue.h>
+
+#import <pal/ios/UIKitSoftLink.h>
 
 using namespace WebCore;
 
@@ -233,7 +235,7 @@ VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
         m_playbackModel = nullptr;
         m_fullscreenModel = nullptr;
     } else
-        dispatch_sync(dispatch_get_main_queue(), WTFMove(notifyClientsModelWasDestroyed));
+        WorkQueue::main().dispatchSync(WTFMove(notifyClientsModelWasDestroyed));
 }
 
 #pragma mark VideoFullscreenChangeObserver

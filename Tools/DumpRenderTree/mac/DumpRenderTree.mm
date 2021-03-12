@@ -105,6 +105,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
+#import <wtf/WorkQueue.h>
 #import <wtf/cocoa/CrashReporter.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
@@ -1238,7 +1239,7 @@ static const char **_argv;
 - (void)_webThreadInvoked
 {
     ASSERT(WebThreadIsCurrent());
-    dispatch_async(dispatch_get_main_queue(), ^{
+    WorkQueue::main().dispatch([self, retainedSelf = retainPtr(self)] {
         [self _webThreadEventLoopHasRun];
     });
 }

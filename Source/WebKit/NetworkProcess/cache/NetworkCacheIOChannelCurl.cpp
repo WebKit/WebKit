@@ -55,20 +55,9 @@ IOChannel::~IOChannel()
     FileSystem::closeFile(m_fileDescriptor);
 }
 
-static inline void runTaskInQueue(Function<void()>&& task, WorkQueue* queue)
+void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void(Data&, int error)>&& completionHandler)
 {
-    if (queue) {
-        queue->dispatch(WTFMove(task));
-        return;
-    }
-
-    // Using nullptr as queue submits the result to the main context.
-    RunLoop::main().dispatch(WTFMove(task));
-}
-
-void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void(Data&, int error)>&& completionHandler)
-{
-    runTaskInQueue([this, protectedThis = makeRef(*this), offset, size, completionHandler = WTFMove(completionHandler)] {
+    queue.dispatch([this, protectedThis = makeRef(*this), offset, size, completionHandler = WTFMove(completionHandler)] {
         long long fileSize;
         if (!FileSystem::getFileSize(m_fileDescriptor, fileSize) || fileSize > std::numeric_limits<size_t>::max()) {
             Data data;
@@ -83,17 +72,17 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void
         err = err < 0 ? err : 0;
         auto data = Data(WTFMove(buffer));
         completionHandler(data, err);
-    }, queue);
+    });
 }
 
-void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, Function<void(int error)>&& completionHandler)
+void IOChannel::write(size_t offset, const Data& data, WorkQueue& queue, Function<void(int error)>&& completionHandler)
 {
-    runTaskInQueue([this, protectedThis = makeRef(*this), offset, data, completionHandler = WTFMove(completionHandler)] {
+    queue.dispatch([this, protectedThis = makeRef(*this), offset, data, completionHandler = WTFMove(completionHandler)] {
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);
         int err = FileSystem::writeToFile(m_fileDescriptor, reinterpret_cast<const char*>(data.data()), data.size());
         err = err < 0 ? err : 0;
         completionHandler(err);
-    }, queue);
+    });
 }
 
 } // namespace NetworkCache
