@@ -49,6 +49,7 @@ public:
     void* visual() const;
     bool supportsXComposite() const;
     bool supportsXDamage(Optional<int>& damageEventBase, Optional<int>& damageErrorBase) const;
+    bool supportsGLX(Optional<int>& glxErrorBase) const;
 
 private:
     PlatformDisplayX11(::Display*, NativeDisplayOwned);
@@ -68,6 +69,10 @@ private:
     mutable Optional<bool> m_supportsXDamage;
     mutable Optional<int> m_damageEventBase;
     mutable Optional<int> m_damageErrorBase;
+#if USE(GLX)
+    mutable Optional<bool> m_supportsGLX;
+    mutable Optional<int> m_glxErrorBase;
+#endif
     mutable void* m_visual { nullptr };
 };
 
