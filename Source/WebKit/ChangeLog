@@ -1,3 +1,13 @@
+2021-03-12  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS] Reenable Audio Capture in GPUProcess by default
+        https://bugs.webkit.org/show_bug.cgi?id=223060
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+
 2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GTK4 crashes with XVFB: GLXBadWindow
