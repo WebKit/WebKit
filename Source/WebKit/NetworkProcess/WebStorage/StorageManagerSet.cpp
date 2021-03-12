@@ -31,6 +31,7 @@
 #include "StorageManagerSetMessages.h"
 #include <WebCore/TextEncoding.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 
@@ -139,13 +140,16 @@ void StorageManagerSet::waitUntilSyncingLocalStorageFinished()
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatchSync([this] {
+    BinarySemaphore semaphore;
+    m_queue->dispatch([this, &semaphore] {
         for (const auto& storageArea : m_storageAreas.values()) {
             ASSERT(storageArea);
             if (storageArea)
                 storageArea->syncToDatabase();
         }
+        semaphore.signal();
     });
+    semaphore.wait();
 }
 
 void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)

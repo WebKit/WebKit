@@ -1,3 +1,10 @@
+2021-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, partial revert of r274286 because this introduced an assertion failure.
+
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::waitUntilSyncingLocalStorageFinished):
+
 2021-03-12  Alex Christensen  <achristensen@webkit.org>
 
         Reduce maximum HashTable entry size to 400 bytes
