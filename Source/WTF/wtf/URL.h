@@ -186,8 +186,8 @@ public:
 #endif
 
 #if USE(GLIB) && HAVE(GURI)
-    URL(GUri*);
-    GRefPtr<GUri> createGUri() const;
+    WTF_EXPORT_PRIVATE URL(GUri*);
+    WTF_EXPORT_PRIVATE GRefPtr<GUri> createGUri() const;
 #endif
 
 #ifndef NDEBUG
