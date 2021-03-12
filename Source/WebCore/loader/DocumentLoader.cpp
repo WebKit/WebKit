@@ -495,6 +495,11 @@ void DocumentLoader::finishedLoading()
     m_applicationCacheHost->finishedLoadingMainResource();
 }
 
+static bool isRedirectToGetAfterPost(const ResourceRequest& oldRequest, const ResourceRequest& newRequest)
+{
+    return oldRequest.httpMethod() == "POST" && newRequest.httpMethod() == "GET";
+}
+
 bool DocumentLoader::isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     if (newRequest.httpMethod() == "POST")
@@ -659,6 +664,9 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     // Also, POST requests always load from origin, but this does not affect subresources.
     if (newRequest.cachePolicy() == ResourceRequestCachePolicy::UseProtocolCachePolicy && isPostOrRedirectAfterPost(newRequest, redirectResponse))
         newRequest.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
+
+    if (isRedirectToGetAfterPost(m_request, newRequest))
+        newRequest.clearHTTPOrigin();
 
     if (&topFrame != m_frame) {
         if (!MixedContentChecker::canDisplayInsecureContent(*m_frame, m_frame->document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url(), MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes)) {
