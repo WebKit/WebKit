@@ -665,7 +665,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename HashTranslator, typename T>
     ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::inlineLookup(const T& key) -> ValueType*
     {
-        static_assert(sizeof(Key) + sizeof(Value) < 500, "Your HashTable types are too big to efficiently move when rehashing.  Consider using std::unique_ptr instead");
+        static_assert(sizeof(Key) + sizeof(Value) < 400, "Your HashTable types are too big to efficiently move when rehashing.  Consider using std::unique_ptr instead");
 
         checkKey<HashTranslator>(key);
 

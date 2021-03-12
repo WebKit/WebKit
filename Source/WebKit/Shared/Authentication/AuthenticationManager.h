@@ -79,6 +79,12 @@ public:
 
 private:
     struct Challenge {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        Challenge(WebPageProxyIdentifier pageID, const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
+            : pageID(pageID)
+            , challenge(challenge)
+            , completionHandler(WTFMove(completionHandler)) { }
+        
         WebPageProxyIdentifier pageID;
         WebCore::AuthenticationChallenge challenge;
         ChallengeCompletionHandler completionHandler;
@@ -92,14 +98,14 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    uint64_t addChallengeToChallengeMap(Challenge&&);
+    uint64_t addChallengeToChallengeMap(std::unique_ptr<Challenge>&&);
     bool shouldCoalesceChallenge(WebPageProxyIdentifier, uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;
 
     Vector<uint64_t> coalesceChallengesMatching(uint64_t challengeID) const;
 
     NetworkProcess& m_process;
 
-    HashMap<uint64_t, Challenge> m_challenges;
+    HashMap<uint64_t, std::unique_ptr<Challenge>> m_challenges;
 };
 
 } // namespace WebKit

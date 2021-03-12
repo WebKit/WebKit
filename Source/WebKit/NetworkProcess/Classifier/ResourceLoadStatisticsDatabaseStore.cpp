@@ -942,8 +942,8 @@ void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const Resource
         return;
 
     auto& statisticsMap = memoryStore.data();
-    for (const auto& statistic : statisticsMap) {
-        auto result = insertObservedDomain(statistic.value);
+    for (const auto& statistic : statisticsMap.values()) {
+        auto result = insertObservedDomain(*statistic);
         if (!result) {
             RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore insertObservedDomain failed to complete, error message: %{private}s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -953,8 +953,8 @@ void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const Resource
 
     // Make a separate pass for inter-domain relationships so we
     // can refer to the ObservedDomain table entries
-    for (auto& statistic : statisticsMap)
-        insertDomainRelationships(statistic.value);
+    for (auto& statistic : statisticsMap.values())
+        insertDomainRelationships(*statistic);
 }
 
 void ResourceLoadStatisticsDatabaseStore::merge(WebCore::SQLiteStatement* current, const ResourceLoadStatistics& other)

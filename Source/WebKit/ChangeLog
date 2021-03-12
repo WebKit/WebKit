@@ -1,3 +1,51 @@
+2021-03-12  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 400 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=223106
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::pruneResources):
+        (WebKit::ResourceLoadStatisticsMemoryStore::aggregatedThirdPartyData const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::markAsPrevalentIfHasRedirectedToPrevalent):
+        (WebKit::ResourceLoadStatisticsMemoryStore::classifyPrevalentResources):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPrevalentResource):
+        (WebKit::ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isPrevalentResource const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isVeryPrevalentResource const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isRegisteredAsSubresourceUnder const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isRegisteredAsSubFrameUnder const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isRegisteredAsRedirectingTo const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isGrandfathered const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::ensureResourceStatisticsForRegistrableDomain):
+        (WebKit::ResourceLoadStatisticsMemoryStore::createEncoderFromData const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::mergeStatistics):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+        (WebKit::ResourceLoadStatisticsMemoryStore::processStatistics const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+        (WebKit::ResourceLoadStatisticsMemoryStore::pruneStatisticsIfNeeded):
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeDataForDomain):
+        (WebKit::ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::addChallengeToChallengeMap):
+        (WebKit::AuthenticationManager::shouldCoalesceChallenge const):
+        (WebKit::AuthenticationManager::coalesceChallengesMatching const):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        (WebKit::AuthenticationManager::completeAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        (WebKit::AuthenticationManager::Challenge::Challenge):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain):
+        (WebKit::WebResourceLoadObserver::statisticsForURL):
+        (WebKit::WebResourceLoadObserver::takeStatistics):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+
 2021-03-12  Youenn Fablet  <youenn@apple.com>
 
         [MacOS] Reenable Audio Capture in GPUProcess by default

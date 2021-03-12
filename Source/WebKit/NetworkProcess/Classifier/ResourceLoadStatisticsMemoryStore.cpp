@@ -57,7 +57,7 @@ struct StatisticsLastSeen {
     WallTime lastSeen;
 };
 
-static void pruneResources(HashMap<RegistrableDomain, ResourceLoadStatistics>& statisticsMap, Vector<StatisticsLastSeen>& statisticsToPrune, size_t& numberOfEntriesToPrune)
+static void pruneResources(HashMap<RegistrableDomain, std::unique_ptr<ResourceLoadStatistics>>& statisticsMap, Vector<StatisticsLastSeen>& statisticsToPrune, size_t& numberOfEntriesToPrune)
 {
     if (statisticsToPrune.size() > numberOfEntriesToPrune) {
         std::sort(statisticsToPrune.begin(), statisticsToPrune.end(), [](const StatisticsLastSeen& a, const StatisticsLastSeen& b) {
@@ -115,9 +115,9 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsMem
     ASSERT(!RunLoop::isMain());
 
     Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
-    for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (hasBeenThirdParty(statistic) && (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All || statistic.isPrevalentResource))
-            thirdPartyDataList.append(WebResourceLoadStatisticsStore::ThirdPartyData { statistic.registrableDomain, getThirdPartyDataForSpecificFirstPartyDomains(statistic) });
+    for (auto& statistics : m_resourceStatisticsMap.values()) {
+        if (hasBeenThirdParty(*statistics) && (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All || statistics->isPrevalentResource))
+            thirdPartyDataList.append(WebResourceLoadStatisticsStore::ThirdPartyData { statistics->registrableDomain, getThirdPartyDataForSpecificFirstPartyDomains(*statistics) });
     }
     std::sort(thirdPartyDataList.rbegin(), thirdPartyDataList.rend());
     return thirdPartyDataList;
@@ -148,18 +148,18 @@ unsigned ResourceLoadStatisticsMemoryStore::recursivelyGetAllDomainsThatHaveRedi
     numberOfRecursiveCalls++;
 
     for (auto& subresourceUniqueRedirectFromDomain : resourceStatistic.subresourceUniqueRedirectsFrom) {
-        auto mapEntry = m_resourceStatisticsMap.find(RegistrableDomain { subresourceUniqueRedirectFromDomain });
-        if (mapEntry == m_resourceStatisticsMap.end() || mapEntry->value.isPrevalentResource)
+        auto* statistics = m_resourceStatisticsMap.get(RegistrableDomain { subresourceUniqueRedirectFromDomain });
+        if (!statistics || statistics->isPrevalentResource)
             continue;
-        if (domainsThatHaveRedirectedTo.add(mapEntry->value.registrableDomain).isNewEntry)
-            numberOfRecursiveCalls = recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(mapEntry->value, domainsThatHaveRedirectedTo, numberOfRecursiveCalls);
+        if (domainsThatHaveRedirectedTo.add(statistics->registrableDomain).isNewEntry)
+            numberOfRecursiveCalls = recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(*statistics, domainsThatHaveRedirectedTo, numberOfRecursiveCalls);
     }
     for (auto& topFrameUniqueRedirectFromDomain : resourceStatistic.topFrameUniqueRedirectsFrom) {
-        auto mapEntry = m_resourceStatisticsMap.find(RegistrableDomain { topFrameUniqueRedirectFromDomain });
-        if (mapEntry == m_resourceStatisticsMap.end() || mapEntry->value.isPrevalentResource)
+        auto* statistics = m_resourceStatisticsMap.get(RegistrableDomain { topFrameUniqueRedirectFromDomain });
+        if (!statistics || statistics->isPrevalentResource)
             continue;
-        if (domainsThatHaveRedirectedTo.add(mapEntry->value.registrableDomain).isNewEntry)
-            numberOfRecursiveCalls = recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(mapEntry->value, domainsThatHaveRedirectedTo, numberOfRecursiveCalls);
+        if (domainsThatHaveRedirectedTo.add(statistics->registrableDomain).isNewEntry)
+            numberOfRecursiveCalls = recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(*statistics, domainsThatHaveRedirectedTo, numberOfRecursiveCalls);
     }
 
     return numberOfRecursiveCalls;
@@ -173,16 +173,16 @@ void ResourceLoadStatisticsMemoryStore::markAsPrevalentIfHasRedirectedToPrevalen
         return;
 
     for (auto& subresourceDomainRedirectedTo : resourceStatistic.subresourceUniqueRedirectsTo) {
-        auto mapEntry = m_resourceStatisticsMap.find(RegistrableDomain { subresourceDomainRedirectedTo });
-        if (mapEntry != m_resourceStatisticsMap.end() && mapEntry->value.isPrevalentResource) {
+        auto* statistics = m_resourceStatisticsMap.get(RegistrableDomain { subresourceDomainRedirectedTo });
+        if (statistics && statistics->isPrevalentResource) {
             setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
             return;
         }
     }
 
     for (auto& topFrameDomainRedirectedTo : resourceStatistic.topFrameUniqueRedirectsTo) {
-        auto mapEntry = m_resourceStatisticsMap.find(RegistrableDomain { topFrameDomainRedirectedTo });
-        if (mapEntry != m_resourceStatisticsMap.end() && mapEntry->value.isPrevalentResource) {
+        auto* statistics = m_resourceStatisticsMap.get(RegistrableDomain { topFrameDomainRedirectedTo });
+        if (statistics && statistics->isPrevalentResource) {
             setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
             return;
         }
@@ -202,16 +202,16 @@ void ResourceLoadStatisticsMemoryStore::classifyPrevalentResources()
     ASSERT(!RunLoop::isMain());
 
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-        if (shouldSkip(resourceStatistic.registrableDomain))
+        if (shouldSkip(resourceStatistic->registrableDomain))
             continue;
-        if (isPrevalentDueToDebugMode(resourceStatistic))
-            setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
-        else if (!resourceStatistic.isVeryPrevalentResource) {
-            markAsPrevalentIfHasRedirectedToPrevalent(resourceStatistic);
-            auto currentPrevalence = resourceStatistic.isPrevalentResource ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low;
-            auto newPrevalence = classifier().calculateResourcePrevalence(resourceStatistic, currentPrevalence);
+        if (isPrevalentDueToDebugMode(*resourceStatistic))
+            setPrevalentResource(*resourceStatistic, ResourceLoadPrevalence::High);
+        else if (!resourceStatistic->isVeryPrevalentResource) {
+            markAsPrevalentIfHasRedirectedToPrevalent(*resourceStatistic);
+            auto currentPrevalence = resourceStatistic->isPrevalentResource ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low;
+            auto newPrevalence = classifier().calculateResourcePrevalence(*resourceStatistic, currentPrevalence);
             if (newPrevalence != currentPrevalence)
-                setPrevalentResource(resourceStatistic, newPrevalence);
+                setPrevalentResource(*resourceStatistic, newPrevalence);
         }
     }
 }
@@ -510,8 +510,8 @@ bool ResourceLoadStatisticsMemoryStore::hasHadUserInteraction(const RegistrableD
 {
     ASSERT(!RunLoop::isMain());
 
-    auto mapEntry = m_resourceStatisticsMap.find(domain);
-    return mapEntry == m_resourceStatisticsMap.end() ? false: hasHadUnexpiredRecentUserInteraction(mapEntry->value, operatingDatesWindow);
+    auto* statistics = m_resourceStatisticsMap.get(domain);
+    return statistics ? hasHadUnexpiredRecentUserInteraction(*statistics, operatingDatesWindow) : false;
 }
 
 void ResourceLoadStatisticsMemoryStore::setPrevalentResource(ResourceLoadStatistics& resourceStatistic, ResourceLoadPrevalence newPrevalence)
@@ -526,11 +526,11 @@ void ResourceLoadStatisticsMemoryStore::setPrevalentResource(ResourceLoadStatist
     HashSet<RegistrableDomain> domainsThatHaveRedirectedTo;
     recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(resourceStatistic, domainsThatHaveRedirectedTo, 0);
     for (auto& domain : domainsThatHaveRedirectedTo) {
-        auto mapEntry = m_resourceStatisticsMap.find(domain);
-        if (mapEntry == m_resourceStatisticsMap.end())
+        auto* statistics = m_resourceStatisticsMap.get(domain);
+        if (!statistics)
             continue;
-        ASSERT(!mapEntry->value.isPrevalentResource);
-        mapEntry->value.isPrevalentResource = true;
+        ASSERT(!statistics->isPrevalentResource);
+        statistics->isPrevalentResource = true;
     }
 }
     
@@ -548,7 +548,7 @@ void ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics(CompletionHan
     result.appendLiteral("Resource load statistics:\n\n");
     Vector<String> sortedMapEntries;
     for (auto& mapEntry : m_resourceStatisticsMap.values())
-        sortedMapEntries.append(mapEntry.toString());
+        sortedMapEntries.append(mapEntry->toString());
 
     std::sort(sortedMapEntries.begin(), sortedMapEntries.end(), WTF::codePointCompareLessThan);
 
@@ -573,8 +573,8 @@ bool ResourceLoadStatisticsMemoryStore::isPrevalentResource(const RegistrableDom
     if (shouldSkip(domain))
         return false;
 
-    auto mapEntry = m_resourceStatisticsMap.find(domain);
-    return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.isPrevalentResource;
+    auto* statistics = m_resourceStatisticsMap.get(domain);
+    return statistics ? statistics->isPrevalentResource : false;
 }
 
 bool ResourceLoadStatisticsMemoryStore::isVeryPrevalentResource(const RegistrableDomain& domain) const
@@ -584,32 +584,32 @@ bool ResourceLoadStatisticsMemoryStore::isVeryPrevalentResource(const Registrabl
     if (shouldSkip(domain))
         return false;
     
-    auto mapEntry = m_resourceStatisticsMap.find(domain);
-    return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.isPrevalentResource && mapEntry->value.isVeryPrevalentResource;
+    auto* statistics = m_resourceStatisticsMap.get(domain);
+    return statistics ? statistics->isPrevalentResource && statistics->isVeryPrevalentResource : false;
 }
 
 bool ResourceLoadStatisticsMemoryStore::isRegisteredAsSubresourceUnder(const SubResourceDomain& subresourceDomain, const TopFrameDomain& topFrameDomain) const
 {
     ASSERT(!RunLoop::isMain());
 
-    auto mapEntry = m_resourceStatisticsMap.find(subresourceDomain);
-    return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.subresourceUnderTopFrameDomains.contains(topFrameDomain);
+    auto* statistics = m_resourceStatisticsMap.get(subresourceDomain);
+    return statistics ? statistics->subresourceUnderTopFrameDomains.contains(topFrameDomain) : false;
 }
 
 bool ResourceLoadStatisticsMemoryStore::isRegisteredAsSubFrameUnder(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain) const
 {
     ASSERT(!RunLoop::isMain());
 
-    auto mapEntry = m_resourceStatisticsMap.find(subFrameDomain);
-    return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.subframeUnderTopFrameDomains.contains(topFrameDomain);
+    auto* statistics = m_resourceStatisticsMap.get(subFrameDomain);
+    return statistics ? statistics->subframeUnderTopFrameDomains.contains(topFrameDomain) : false;
 }
 
 bool ResourceLoadStatisticsMemoryStore::isRegisteredAsRedirectingTo(const RedirectedFromDomain& redirectedFromDomain, const RedirectedToDomain& redirectedToDomain) const
 {
     ASSERT(!RunLoop::isMain());
 
-    auto mapEntry = m_resourceStatisticsMap.find(redirectedFromDomain);
-    return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.subresourceUniqueRedirectsTo.contains(redirectedToDomain);
+    auto* statistics = m_resourceStatisticsMap.get(redirectedFromDomain);
+    return statistics ? statistics->subresourceUniqueRedirectsTo.contains(redirectedToDomain) : false;
 }
 
 void ResourceLoadStatisticsMemoryStore::clearPrevalentResource(const RegistrableDomain& domain)
@@ -633,8 +633,8 @@ bool ResourceLoadStatisticsMemoryStore::isGrandfathered(const RegistrableDomain&
 {
     ASSERT(!RunLoop::isMain());
 
-    auto mapEntry = m_resourceStatisticsMap.find(domain);
-    return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.grandfathered;
+    auto* statistics = m_resourceStatisticsMap.get(domain);
+    return statistics ? statistics->grandfathered : false;
 }
 
 void ResourceLoadStatisticsMemoryStore::setSubframeUnderTopFrameDomain(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain)
@@ -702,8 +702,8 @@ ResourceLoadStatistics& ResourceLoadStatisticsMemoryStore::ensureResourceStatist
 {
     ASSERT(!RunLoop::isMain());
 
-    return m_resourceStatisticsMap.ensure(domain, [&domain] {
-        return ResourceLoadStatistics(domain);
+    return *m_resourceStatisticsMap.ensure(domain, [&domain] {
+        return makeUnique<ResourceLoadStatistics>(domain);
     }).iterator->value;
 }
 
@@ -716,7 +716,7 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsMemoryStore::createEncoderFr
     encoder->encodeDouble("endOfGrandfatheringTimestamp", endOfGrandfatheringTimestamp().secondsSinceEpoch().value());
 
     encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [](KeyedEncoder& encoderInner, const auto& domain) {
-        domain.value.encode(encoderInner);
+        domain.value->encode(encoderInner);
     });
 
     auto& operatingDates = this->operatingDates();
@@ -795,10 +795,10 @@ void ResourceLoadStatisticsMemoryStore::mergeStatistics(Vector<ResourceLoadStati
 
     for (auto& statistic : statistics) {
         auto result = m_resourceStatisticsMap.ensure(statistic.registrableDomain, [&statistic] {
-            return WTFMove(statistic);
+            return makeUnique<ResourceLoadStatistics>(WTFMove(statistic));
         });
         if (!result.isNewEntry)
-            result.iterator->value.merge(statistic);
+            result.iterator->value->merge(statistic);
     }
 }
 
@@ -825,12 +825,12 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor;
     Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-        if (hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long)) {
-            if (resourceStatistic.isPrevalentResource)
-                domainsToBlockButKeepCookiesFor.append(resourceStatistic.registrableDomain.isolatedCopy());
-            domainsWithUserInteractionAsFirstParty.append(resourceStatistic.registrableDomain);
-        } else if (resourceStatistic.isPrevalentResource)
-            domainsToBlockAndDeleteCookiesFor.append(resourceStatistic.registrableDomain);
+        if (hasHadUnexpiredRecentUserInteraction(*resourceStatistic, OperatingDatesWindow::Long)) {
+            if (resourceStatistic->isPrevalentResource)
+                domainsToBlockButKeepCookiesFor.append(resourceStatistic->registrableDomain.isolatedCopy());
+            domainsWithUserInteractionAsFirstParty.append(resourceStatistic->registrableDomain);
+        } else if (resourceStatistic->isPrevalentResource)
+            domainsToBlockAndDeleteCookiesFor.append(resourceStatistic->registrableDomain);
     }
 
     if (domainsToBlockAndDeleteCookiesFor.isEmpty() && domainsToBlockButKeepCookiesFor.isEmpty() && domainsWithUserInteractionAsFirstParty.isEmpty() && !debugModeEnabled()) {
@@ -865,7 +865,7 @@ void ResourceLoadStatisticsMemoryStore::processStatistics(const Function<void(co
     ASSERT(!RunLoop::isMain());
 
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
-        processFunction(resourceStatistic);
+        processFunction(*resourceStatistic);
 }
 
 bool ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics& resourceStatistic, OperatingDatesWindow operatingDatesWindow) const
@@ -951,30 +951,30 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
     auto oldestUserInteraction = now;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor toDeleteOrRestrictFor;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (shouldExemptFromWebsiteDataDeletion(statistic.registrableDomain))
+        if (shouldExemptFromWebsiteDataDeletion(statistic->registrableDomain))
             continue;
-        if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(statistic))
+        if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(*statistic))
             oldestUserInteraction = std::min(oldestUserInteraction, *mostRecentUserInteractionTime);
-        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
-            toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
-            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
+        if (shouldRemoveAllWebsiteDataFor(*statistic, shouldCheckForGrandfathering)) {
+            toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic->registrableDomain);
+            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic->registrableDomain);
         } else {
-            if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
-                toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
-                statistic.gotLinkDecorationFromPrevalentResource = false;
+            if (shouldRemoveAllButCookiesFor(*statistic, shouldCheckForGrandfathering)) {
+                toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic->registrableDomain);
+                statistic->gotLinkDecorationFromPrevalentResource = false;
             }
-            if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
-                toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
+            if (shouldEnforceSameSiteStrictFor(*statistic, shouldCheckForGrandfathering)) {
+                toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic->registrableDomain);
 
                 if (UNLIKELY(debugLoggingEnabled())) {
-                    RELEASE_LOG_INFO(ITPDebug, "Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8().data());
-                    debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Scheduled '", statistic.registrableDomain.string(), "' to have its cookies set to SameSite=strict'."));
+                    RELEASE_LOG_INFO(ITPDebug, "Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic->registrableDomain.string().utf8().data());
+                    debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Scheduled '", statistic->registrableDomain.string(), "' to have its cookies set to SameSite=strict'."));
                 }
             }
         }
 
-        if (shouldClearGrandfathering && statistic.grandfathered)
-            statistic.grandfathered = false;
+        if (shouldClearGrandfathering && statistic->grandfathered)
+            statistic->grandfathered = false;
     }
 
     // Give the user enough time to interact with websites until we remove non-cookie website data.
@@ -998,7 +998,7 @@ void ResourceLoadStatisticsMemoryStore::pruneStatisticsIfNeeded()
 
     Vector<StatisticsLastSeen> resourcesToPrunePerImportance[maxImportance + 1];
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
-        resourcesToPrunePerImportance[computeImportance(resourceStatistic)].append({ resourceStatistic.registrableDomain, resourceStatistic.lastSeen });
+        resourcesToPrunePerImportance[computeImportance(*resourceStatistic)].append({ resourceStatistic->registrableDomain, resourceStatistic->lastSeen });
 
     for (unsigned importance = 0; numberOfEntriesLeftToPrune && importance <= maxImportance; ++importance)
         pruneResources(m_resourceStatisticsMap, resourcesToPrunePerImportance[importance], numberOfEntriesLeftToPrune);
@@ -1018,16 +1018,16 @@ void ResourceLoadStatisticsMemoryStore::removeDataForDomain(const RegistrableDom
 {
     m_resourceStatisticsMap.remove(domain);
     
-    for (auto& statistic : m_resourceStatisticsMap) {
-        statistic.value.topFrameUniqueRedirectsTo.remove(domain);
-        statistic.value.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.remove(domain);
-        statistic.value.topFrameUniqueRedirectsFrom.remove(domain);
-        statistic.value.topFrameLinkDecorationsFrom.remove(domain);
-        statistic.value.topFrameLoadedThirdPartyScripts.remove(domain);
-        statistic.value.subframeUnderTopFrameDomains.remove(domain);
-        statistic.value.subresourceUnderTopFrameDomains.remove(domain);
-        statistic.value.subresourceUniqueRedirectsTo.remove(domain);
-        statistic.value.subresourceUniqueRedirectsFrom.remove(domain);
+    for (auto& statistic : m_resourceStatisticsMap.values()) {
+        statistic->topFrameUniqueRedirectsTo.remove(domain);
+        statistic->topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.remove(domain);
+        statistic->topFrameUniqueRedirectsFrom.remove(domain);
+        statistic->topFrameLinkDecorationsFrom.remove(domain);
+        statistic->topFrameLoadedThirdPartyScripts.remove(domain);
+        statistic->subframeUnderTopFrameDomains.remove(domain);
+        statistic->subresourceUnderTopFrameDomains.remove(domain);
+        statistic->subresourceUniqueRedirectsTo.remove(domain);
+        statistic->subresourceUniqueRedirectsFrom.remove(domain);
     }
 }
 
@@ -1159,7 +1159,7 @@ void ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting(const R
     statistic.gotLinkDecorationFromPrevalentResource = isScheduledForAllButCookieDataRemoval;
 
     m_resourceStatisticsMap.ensure(statistic.registrableDomain, [&statistic] {
-        return WTFMove(statistic);
+        return makeUnique<ResourceLoadStatistics>(WTFMove(statistic));
     });
 }
 

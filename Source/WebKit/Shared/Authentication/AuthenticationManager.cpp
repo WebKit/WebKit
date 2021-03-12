@@ -67,7 +67,7 @@ AuthenticationManager::AuthenticationManager(NetworkProcess& process)
     m_process.addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), *this);
 }
 
-uint64_t AuthenticationManager::addChallengeToChallengeMap(Challenge&& challenge)
+uint64_t AuthenticationManager::addChallengeToChallengeMap(std::unique_ptr<Challenge>&& challenge)
 {
     ASSERT(RunLoop::isMain());
 
@@ -82,7 +82,7 @@ bool AuthenticationManager::shouldCoalesceChallenge(WebPageProxyIdentifier pageI
         return false;
 
     for (auto& item : m_challenges) {
-        if (item.key != challengeID && item.value.pageID == pageID && ProtectionSpace::compare(challenge.protectionSpace(), item.value.challenge.protectionSpace()))
+        if (item.key != challengeID && item.value->pageID == pageID && ProtectionSpace::compare(challenge.protectionSpace(), item.value->challenge.protectionSpace()))
             return true;
     }
     return false;
@@ -90,19 +90,20 @@ bool AuthenticationManager::shouldCoalesceChallenge(WebPageProxyIdentifier pageI
 
 Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t challengeID) const
 {
-    auto iterator = m_challenges.find(challengeID);
-    ASSERT(iterator != m_challenges.end());
-
-    auto& challenge = iterator->value;
+    auto* challenge = m_challenges.get(challengeID);
+    if (!challenge) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 
     Vector<uint64_t> challengesToCoalesce;
     challengesToCoalesce.append(challengeID);
 
-    if (!canCoalesceChallenge(challenge.challenge))
+    if (!canCoalesceChallenge(challenge->challenge))
         return challengesToCoalesce;
 
     for (auto& item : m_challenges) {
-        if (item.key != challengeID && item.value.pageID == challenge.pageID && ProtectionSpace::compare(challenge.challenge.protectionSpace(), item.value.challenge.protectionSpace()))
+        if (item.key != challengeID && item.value->pageID == challenge->pageID && ProtectionSpace::compare(challenge->challenge.protectionSpace(), item.value->challenge.protectionSpace()))
             challengesToCoalesce.append(item.key);
     }
 
@@ -114,7 +115,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID ses
     if (!pageID)
         return completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
 
-    uint64_t challengeID = addChallengeToChallengeMap({ pageID, authenticationChallenge, WTFMove(completionHandler) });
+    uint64_t challengeID = addChallengeToChallengeMap(makeUnique<Challenge>(pageID, authenticationChallenge, WTFMove(completionHandler)));
 
     // Coalesce challenges in the same protection space and in the same page.
     if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
@@ -129,7 +130,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID ses
 void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
     WebPageProxyIdentifier dummyPageID;
-    uint64_t challengeID = addChallengeToChallengeMap({ dummyPageID, authenticationChallenge, WTFMove(completionHandler) });
+    uint64_t challengeID = addChallengeToChallengeMap(makeUnique<Challenge>(dummyPageID, authenticationChallenge, WTFMove(completionHandler)));
     
     // Coalesce challenges in the same protection space and in the same page.
     if (shouldCoalesceChallenge(dummyPageID, challengeID, authenticationChallenge))
@@ -144,8 +145,8 @@ void AuthenticationManager::completeAuthenticationChallenge(uint64_t challengeID
 
     for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID)) {
         auto challenge = m_challenges.take(coalescedChallengeID);
-        ASSERT(!challenge.challenge.isNull());
-        challenge.completionHandler(disposition, credential);
+        ASSERT(!challenge->challenge.isNull());
+        challenge->completionHandler(disposition, credential);
     }
 }
 

@@ -41,6 +41,7 @@ class KeyedDecoder;
 class KeyedEncoder;
 
 struct ResourceLoadStatistics {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     explicit ResourceLoadStatistics(const RegistrableDomain& domain)
         : registrableDomain { domain }
     {

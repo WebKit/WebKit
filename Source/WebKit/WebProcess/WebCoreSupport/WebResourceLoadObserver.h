@@ -81,7 +81,7 @@ private:
 
     WebCore::ResourceLoadStatistics::IsEphemeral m_isEphemeral { WebCore::ResourceLoadStatistics::IsEphemeral::No };
 
-    HashMap<WebCore::RegistrableDomain, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
+    HashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::ResourceLoadStatistics>> m_resourceStatisticsMap;
     HashMap<WebCore::RegistrableDomain, WTF::WallTime> m_lastReportedUserInteractionMap;
 
     WebCore::Timer m_notificationTimer;
