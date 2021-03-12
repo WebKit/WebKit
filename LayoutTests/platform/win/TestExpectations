@@ -2327,6 +2327,7 @@ http/tests/history/back-during-onload-triggered-by-back.html [ Skip ] # Timeout
 fast/frames/restoring-page-cache-should-not-run-scripts.html [ Skip ]
 http/tests/security/mixedContent/blob-url-in-iframe.html [ Skip ]
 http/tests/security/contentSecurityPolicy/navigate-self-to-blob.html [ Skip ]
+http/tests/security/contentSecurityPolicy/report-document-uri-blob.html [ Skip ]
 fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html [ Skip ]
 
 # Clear Key not implemented
