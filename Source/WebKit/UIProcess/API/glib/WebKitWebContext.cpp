@@ -1704,7 +1704,7 @@ guint webkit_web_context_get_web_process_count_limit(WebKitWebContext* context)
 
 static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, bool>* map, bool allowed)
 {
-    String string = webkitSecurityOriginGetSecurityOrigin(origin).toString();
+    String string = webkitSecurityOriginGetSecurityOriginData(origin).toString();
     if (string != "null")
         map->set(string, allowed);
 }
