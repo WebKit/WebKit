@@ -1,3 +1,17 @@
+2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
+        https://bugs.webkit.org/show_bug.cgi?id=203456
+
+        Reviewed by Robin Morisset.
+
+        * fast/dom/Window/Location/window-override-location-using-defineGetter-expected.txt:
+        * fast/dom/Window/Location/window-override-location-using-defineGetter.html:
+        * fast/dom/Window/Location/window-override-window-using-defineGetter-expected.txt:
+        * fast/dom/Window/Location/window-override-window-using-defineGetter.html:
+        * fast/dom/getter-on-window-object2-expected.txt:
+        * fast/dom/getter-on-window-object2.html:
+
 2021-03-11  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Update disabled state for button-like controls

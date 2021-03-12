@@ -99,14 +99,14 @@ inline bool symbolTableGet(
 
 template<typename SymbolTableObjectType>
 inline bool symbolTableGet(
-    SymbolTableObjectType* object, PropertyName propertyName, PropertyDescriptor& descriptor)
+    SymbolTableObjectType* object, PropertyName propertyName, SymbolTableEntry& entry, PropertyDescriptor& descriptor)
 {
     SymbolTable& symbolTable = *object->symbolTable();
     ConcurrentJSLocker locker(symbolTable.m_lock);
     SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
     if (iter == symbolTable.end(locker))
         return false;
-    SymbolTableEntry::Fast entry = iter->value;
+    entry = iter->value;
     ASSERT(!entry.isNull());
 
     ScopeOffset offset = entry.scopeOffset();
@@ -115,29 +115,6 @@ inline bool symbolTableGet(
         return false;
 
     descriptor.setDescriptor(object->variableAt(offset).get(), entry.getAttributes() | PropertyAttribute::DontDelete);
-    return true;
-}
-
-template<typename SymbolTableObjectType>
-inline bool symbolTableGet(
-    SymbolTableObjectType* object, PropertyName propertyName, PropertySlot& slot,
-    bool& slotIsWriteable)
-{
-    SymbolTable& symbolTable = *object->symbolTable();
-    ConcurrentJSLocker locker(symbolTable.m_lock);
-    SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
-    if (iter == symbolTable.end(locker))
-        return false;
-    SymbolTableEntry::Fast entry = iter->value;
-    ASSERT(!entry.isNull());
-
-    ScopeOffset offset = entry.scopeOffset();
-    // Defend against the inspector asking for a var after it has been optimized out.
-    if (!object->isValidScopeOffset(offset))
-        return false;
-
-    slot.setValue(object, entry.getAttributes() | PropertyAttribute::DontDelete, object->variableAt(offset).get());
-    slotIsWriteable = !entry.isReadOnly();
     return true;
 }
 

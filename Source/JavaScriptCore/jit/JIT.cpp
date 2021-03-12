@@ -117,6 +117,12 @@ void JIT::emitNotifyWrite(GPRReg pointerToSet)
     addSlowCase(branch8(NotEqual, Address(pointerToSet, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
 }
 
+void JIT::emitVarReadOnlyCheck(ResolveType resolveType)
+{
+    if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+        addSlowCase(branch8(Equal, AbsoluteAddress(m_codeBlock->globalObject()->varReadOnlyWatchpoint()->addressOfState()), TrustedImm32(IsInvalidated)));
+}
+
 void JIT::assertStackPointerOffset()
 {
     if (!ASSERT_ENABLED)

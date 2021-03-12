@@ -1341,6 +1341,13 @@ macro notifyWrite(set, slow)
     bbneq WatchpointSet::m_state[set], IsInvalidated, slow
 end
 
+macro varReadOnlyCheck(slowPath, scratch)
+    loadp CodeBlock[cfr], scratch
+    loadp CodeBlock::m_globalObject[scratch], scratch
+    loadp JSGlobalObject::m_varReadOnlyWatchpoint[scratch], scratch
+    bbeq WatchpointSet::m_state[scratch], IsInvalidated, slowPath
+end
+
 macro checkSwitchToJIT(increment, action)
     loadp CodeBlock[cfr], t0
     baddis increment, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t0], .continue

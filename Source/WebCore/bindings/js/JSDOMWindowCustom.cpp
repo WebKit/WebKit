@@ -475,20 +475,16 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalG
 
 bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::JSGlobalObject* lexicalGlobalObject, JSC::PropertyName propertyName, const JSC::PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    JSC::VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow defining properties in this way by frames in the same origin, as it allows setters to be introduced.
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), ThrowSecurityError))
-        RELEASE_AND_RETURN(scope, false);
-
-    EXCEPTION_ASSERT(!scope.exception());
-    // Don't allow shadowing location using accessor properties.
-    if (descriptor.isAccessorDescriptor() && propertyName == Identifier::fromString(vm, "location"))
         return false;
 
-    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, lexicalGlobalObject, propertyName, descriptor, shouldThrow));
+    auto& builtinNames = static_cast<JSVMClientData*>(lexicalGlobalObject->vm().clientData)->builtinNames();
+    if (propertyName == builtinNames.documentPublicName() || propertyName == builtinNames.windowPublicName())
+        return JSObject::defineOwnProperty(thisObject, lexicalGlobalObject, propertyName, descriptor, shouldThrow);
+
+    return Base::defineOwnProperty(thisObject, lexicalGlobalObject, propertyName, descriptor, shouldThrow);
 }
 
 JSValue JSDOMWindow::getPrototype(JSObject* object, JSGlobalObject* lexicalGlobalObject)

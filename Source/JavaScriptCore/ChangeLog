@@ -1,3 +1,59 @@
+2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
+        https://bugs.webkit.org/show_bug.cgi?id=203456
+
+        Reviewed by Robin Morisset.
+
+        Per spec, top-level `var` bindings are non-configurable properties of the global
+        object [1], while `undefined` / `NaN` / `Infinity` are also non-writable [2].
+
+        Prior to this change, redefining global `var` binding with accessor descriptor
+        failed silently (rather than throwing a TypeError); redefining with data or
+        generic descriptor created a structure property, which took precedence over
+        symbol table entry in JSGlobalObject::getOwnPropertySlot(), effectively
+        destroying live binding between `global.foo` and `var foo`.
+
+        This patch re-engineers JSGlobalObject::defineOwnProperty(), fixing both issues
+        mentioned above. If defineOwnProperty() override is removed, there is no way
+        a live binding can be maintained.
+
+        In a follow-up change, JSGlobalObject::getOwnPropertySlot() will be updated to
+        search symbol table first, aligning it with the spec [3], put(), and
+        defineOwnProperty(). Apart from consistency, this will bring a mild speed-up.
+
+        To accomodate global `var` binding reassignment right after it becomes read-only
+        (in the same scope), this patch introduces a watchpoint that can be fired by
+        JSGlobalObject::defineOwnProperty(). put_to_scope performance is neutral.
+
+        Also, this patch removes unused symbolTableGet() overload and orphaned
+        JSGlobalObject::defineGetter() / JSGlobalObject::defineSetter() declarations.
+
+        [1]: https://tc39.es/ecma262/#sec-object-environment-records-createmutablebinding-n-d
+        [2]: https://tc39.es/ecma262/#sec-value-properties-of-the-global-object
+        [3]: https://tc39.es/ecma262/#sec-global-environment-records-getbindingvalue-n-s
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::needsDynamicLookup):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitVarReadOnlyCheck):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_to_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_to_scope):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::varReadOnlyWatchpoint):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+
 2021-03-11  BJ Burg  <bburg@apple.com>
 
         Web Inspector: Occasional crash under RemoteConnectionToTargetCocoa::close()

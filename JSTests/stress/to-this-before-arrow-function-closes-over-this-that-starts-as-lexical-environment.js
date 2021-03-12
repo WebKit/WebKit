@@ -17,8 +17,7 @@ function foo() {
     function capture() { return wrapper; }
     function wrapper() {
         let x = () => {
-            // This should not defineProperty on a JSLexicalEnvironment! That's a huge bug.
-            Object.defineProperty(this, "foo", {
+            Object.defineProperty(this, "baz", {
                 get: function() { },
                 set: function() { }
             });
@@ -37,11 +36,11 @@ function foo2() {
     function capture() { return wrapper; }
     function wrapper() {
         let x = () => {
-            // This should not defineProperty on a JSLexicalEnvironment! That's a huge bug.
-            Object.defineProperty(this, "foo", {
+            Object.defineProperty(this, "baz2", {
                 get: function() { },
                 set: function() { }
             });
+            assert(this === globalThis);
         }
 
         x();
@@ -56,3 +55,6 @@ function foo2() {
     wrapper();
 }
 foo2();
+
+assert(this.hasOwnProperty("baz"));
+assert(this.hasOwnProperty("baz2"));

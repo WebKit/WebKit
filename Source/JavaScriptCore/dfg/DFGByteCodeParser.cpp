@@ -4215,8 +4215,15 @@ bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
         return true;
 
     switch (type) {
-    case GlobalProperty:
     case GlobalVar:
+    case GlobalVarWithVarInjectionChecks: {
+        if (opcode == op_put_to_scope && globalObject->varReadOnlyWatchpoint()->hasBeenInvalidated())
+            return true;
+
+        return false;
+    }
+
+    case GlobalProperty:    
     case GlobalLexicalVar:
     case ClosureVar:
     case LocalClosureVar:
@@ -4251,7 +4258,6 @@ bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
         return true;
 
     case GlobalPropertyWithVarInjectionChecks:
-    case GlobalVarWithVarInjectionChecks:
     case GlobalLexicalVarWithVarInjectionChecks:
     case ClosureVarWithVarInjectionChecks:
         return false;
@@ -7925,6 +7931,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     Node* value = addToGraph(GetGlobalLexicalVariable, OpInfo(operand), OpInfo(prediction));
                     addToGraph(CheckNotEmpty, value);
                 }
+                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+                    m_graph.watchpoints().addLazily(globalObject->varReadOnlyWatchpoint());
 
                 JSSegmentedVariableObject* scopeObject = jsCast<JSSegmentedVariableObject*>(JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
                 if (watchpoints) {

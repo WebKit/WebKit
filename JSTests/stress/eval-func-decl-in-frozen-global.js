@@ -36,7 +36,7 @@ assert(globalNonWritableDescriptor.enumerable, true);
 
 Object.freeze(this);
 {
-  var error = false;
+  let error = false;
   try {
     eval('{ function boo() {} }');
   } catch (e) {

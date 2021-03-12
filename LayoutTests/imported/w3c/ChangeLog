@@ -1,3 +1,13 @@
+2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
+        https://bugs.webkit.org/show_bug.cgi?id=203456
+
+        Reviewed by Robin Morisset.
+
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-define-own-property-unforgeable-same-origin-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-windowproxy-exotic-object/windowproxy-define-own-property-unforgeable-same-origin.html: Added.
+
 2021-03-10  Antoine Quint  <graouts@webkit.org>
 
         Improve font-variation-settings interpolation

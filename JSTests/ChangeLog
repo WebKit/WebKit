@@ -1,3 +1,22 @@
+2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
+        https://bugs.webkit.org/show_bug.cgi?id=203456
+
+        Reviewed by Robin Morisset.
+
+        * microbenchmarks/global-var-put-to-scope.js: Added.
+        * stress/eval-func-decl-in-frozen-global.js:
+        Object.freeze() redefines all global variables as ReadOnly, including hoisted `var error`.
+        Aligns with V8.
+
+        * stress/global-object-define-own-property-put-to-scope.js: Added.
+        * stress/global-object-define-own-property.js: Added.
+        * stress/to-this-before-arrow-function-closes-over-this-that-starts-as-lexical-environment.js:
+        Fix unwanted name conflict, which was an error in the original test, not an intended part of it.
+        Also, remove misleading comment on `defineProperty` and assert accessors are created on global object.
+        Aligns with V8.
+
 2021-03-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r274263.

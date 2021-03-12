@@ -2727,6 +2727,7 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
 
 .pGlobalVar:
     bineq t0, GlobalVar, .pGlobalLexicalVar
+    varReadOnlyCheck(.pDynamic, t2)
     putGlobalVariable()
     writeBarrierOnGlobalObject(size, get, m_value)
     dispatch()
@@ -2754,7 +2755,10 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
 
 .pGlobalVarWithVarInjectionChecks:
     bineq t0, GlobalVarWithVarInjectionChecks, .pGlobalLexicalVarWithVarInjectionChecks
+    # FIXME: Avoid loading m_globalObject twice
+    # https://bugs.webkit.org/show_bug.cgi?id=223097
     varInjectionCheck(.pDynamic, t2)
+    varReadOnlyCheck(.pDynamic, t2)
     putGlobalVariable()
     writeBarrierOnGlobalObject(size, get, m_value)
     dispatch()
