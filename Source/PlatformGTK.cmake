@@ -11,7 +11,7 @@ endif ()
 list(APPEND DocumentationDependencies
     WebKit
     "${CMAKE_SOURCE_DIR}/Source/WebKit/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml"
-    "${CMAKE_SOURCE_DIR}/Source/WebKit/UIProcess/API/gtk/docs/webkit2gtk-${WEBKITGTK_API_VERSION}-sections.txt"
+    "${CMAKE_SOURCE_DIR}/Source/WebKit/UIProcess/API/gtk/docs/webkit2gtk-${WEBKITGTK_API_DOC_VERSION}-sections.txt"
 )
 
 if (ENABLE_GTKDOC)
