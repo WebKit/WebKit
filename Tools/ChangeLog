@@ -1,3 +1,12 @@
+2021-03-11  Amir Mark Jr  <amir_mark@apple.com>
+
+        Adding myself as a committer in the contributors file 
+        N/A
+
+        N/A
+
+        * Scripts/webkitpy/common/config/contributors.json: Added myself as a committer
+
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
         Introduce WorkQueue::main() to get the main thread's work queue

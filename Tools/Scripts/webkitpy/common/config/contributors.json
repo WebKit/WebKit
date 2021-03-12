@@ -442,6 +442,12 @@
          "fischman"
       ]
    },
+   "Amir Mark Jr" : {
+      "emails" : [
+         "amir_mark@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Amruth Raj" : {
       "emails" : [
          "amruthraj@motorola.com"
