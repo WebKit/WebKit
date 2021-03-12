@@ -88,6 +88,14 @@ void callOnMainThread(Function<void()>&& function)
     RunLoop::main().dispatch(WTFMove(function));
 }
 
+void ensureOnMainThread(Function<void()>&& function)
+{
+    if (isMainThread())
+        function();
+    else
+        callOnMainThread(WTFMove(function));
+}
+
 bool isMainThreadOrGCThread()
 {
     if (Thread::mayBeGCThread())

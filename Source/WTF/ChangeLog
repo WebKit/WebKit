@@ -1,5 +1,25 @@
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
+        Introduce ensureOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=223105
+
+        Reviewed by Darin Adler.
+
+        Introduce ensureOnMainThread(), similarly to the recently added ensureOnMainThreadRunLoop(). It runs
+        the task synchronously when on the main thread, otherwise dispatches the task to the main thread.
+
+        * wtf/MainThread.cpp:
+        (WTF::ensureOnMainThread):
+        * wtf/MainThread.h:
+        * wtf/ThreadSafeRefCounted.h:
+        (WTF::ThreadSafeRefCounted::deref const):
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringWrapperCFAllocator::deallocate):
+        * wtf/unix/MemoryPressureHandlerUnix.cpp:
+        (WTF::MemoryPressureHandler::triggerMemoryPressureEvent):
+
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
         Introduce WorkQueue::main() to get the main thread's work queue
         https://bugs.webkit.org/show_bug.cgi?id=223087
 

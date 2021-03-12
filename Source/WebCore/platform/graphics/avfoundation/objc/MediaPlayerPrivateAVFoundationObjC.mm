@@ -168,14 +168,6 @@ enum MediaPlayerAVFoundationObservationContext {
     MediaPlayerAVFoundationObservationContextAVPlayerLayer,
 };
 
-static void ensureOnMainThread(Function<void()>&& f)
-{
-    if (isMainThread())
-        f();
-    else
-        callOnMainThread(WTFMove(f));
-}
-
 @interface WebCoreAVFMovieObserver : NSObject <AVPlayerItemLegibleOutputPushDelegate, AVPlayerItemMetadataOutputPushDelegate, AVPlayerItemMetadataCollectorPushDelegate>
 {
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;

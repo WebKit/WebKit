@@ -69,12 +69,9 @@ void MemoryPressureHandler::triggerMemoryPressureEvent(bool isCritical)
 
     setUnderMemoryPressure(true);
 
-    if (isMainThread())
+    ensureOnMainThread([this, isCritical] {
         respondToMemoryPressure(isCritical ? Critical::Yes : Critical::No);
-    else
-        RunLoop::main().dispatch([this, isCritical] {
-            respondToMemoryPressure(isCritical ? Critical::Yes : Critical::No);
-        });
+    });
 
     if (ReliefLogger::loggingEnabled() && isUnderMemoryPressure())
         LOG(MemoryPressure, "System is no longer under memory pressure.");

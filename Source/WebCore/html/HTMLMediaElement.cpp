@@ -7994,18 +7994,11 @@ void HTMLMediaElement::mediaStreamCaptureStarted()
 
 void HTMLMediaElement::enqueueTaskForDispatcher(Function<void()>&& function)
 {
-    if (!isMainThread()) {
-        callOnMainThread([this, weakThis = makeWeakPtr(*this), function = WTFMove(function)]() mutable {
-            if (!weakThis)
-                return;
-            enqueueTaskForDispatcher(WTFMove(function));
-        });
-        return;
-    }
-
-    if (!scriptExecutionContext())
-        return;
-    scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, WTFMove(function));
+    ensureOnMainThread([this, weakThis = makeWeakPtr(*this), function = WTFMove(function)]() mutable {
+        if (!weakThis || !scriptExecutionContext())
+            return;
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, WTFMove(function));
+    });
 }
 
 SecurityOriginData HTMLMediaElement::documentSecurityOrigin() const

@@ -1,3 +1,16 @@
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce ensureOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=223105
+
+        Reviewed by Darin Adler.
+
+        Introduce ensureOnMainThread(), similarly to the recently added ensureOnMainThreadRunLoop(). It runs
+        the task synchronously when on the main thread, otherwise dispatches the task to the main thread.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::setOriginDetails):
+
 2021-03-11  Sihui Liu  <sihui_liu@appe.com>
 
         Add some logging to help debug flaky quota tests

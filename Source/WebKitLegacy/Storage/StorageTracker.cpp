@@ -299,15 +299,10 @@ void StorageTracker::setOriginDetails(const String& originIdentifier, const Stri
         syncSetOriginDetails(originIdentifier, databaseFile);
     };
 
-    if (isMainThread()) {
-        ASSERT(m_thread);
+    // FIXME: This weird ping-ponging was done to fix a deadlock. We should figure out a cleaner way to avoid it instead.
+    ensureOnMainThread([this, function = WTFMove(function)]() mutable {
         m_thread->dispatch(WTFMove(function));
-    } else {
-        // FIXME: This weird ping-ponging was done to fix a deadlock. We should figure out a cleaner way to avoid it instead.
-        callOnMainThread([this, function = WTFMove(function)]() mutable {
-            m_thread->dispatch(WTFMove(function));
-        });
-    }
+    });
 }
 
 void StorageTracker::syncSetOriginDetails(const String& originIdentifier, const String& databaseFile)

@@ -230,13 +230,9 @@ void MessagePort::close()
         return;
     m_closed = true;
 
-    if (isMainThread())
-        MessagePortChannelProvider::singleton().messagePortClosed(m_identifier);
-    else {
-        callOnMainThread([identifier = m_identifier] {
-            MessagePortChannelProvider::singleton().messagePortClosed(identifier);
-        });
-    }
+    ensureOnMainThread([identifier = m_identifier] {
+        MessagePortChannelProvider::singleton().messagePortClosed(identifier);
+    });
 
     removeAllEventListeners();
 }

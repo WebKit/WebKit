@@ -82,17 +82,10 @@ namespace StringWrapperCFAllocator {
     static void deallocate(void* pointer, void*)
     {
         StringImpl** header = static_cast<StringImpl**>(pointer) - 1;
-        StringImpl* underlyingString = *header;
-        if (!underlyingString)
+        if (!*header)
             StringWrapperCFAllocatorMalloc::free(header);
         else {
-            if (isMainThread()) {
-                underlyingString->deref(); // Balanced by call to ref in allocate above.
-                StringWrapperCFAllocatorMalloc::free(header);
-                return;
-            }
-
-            callOnMainThread([header] {
+            ensureOnMainThread([header] {
                 StringImpl* underlyingString = *header;
                 ASSERT(underlyingString);
                 underlyingString->deref(); // Balanced by call to ref in allocate above.

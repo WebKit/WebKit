@@ -44,6 +44,7 @@ WTF_EXPORT_PRIVATE void initializeMainThread();
 
 WTF_EXPORT_PRIVATE void callOnMainThread(Function<void()>&&);
 WTF_EXPORT_PRIVATE void callOnMainThreadAndWait(Function<void()>&&);
+WTF_EXPORT_PRIVATE void ensureOnMainThread(Function<void()>&&); // Sync if called on main thread, async otherwise.
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void (^block)());
@@ -81,6 +82,7 @@ using WTF::callOnMainThreadAndWait;
 using WTF::callOnMainRunLoop;
 using WTF::callOnMainRunLoopAndWait;
 using WTF::ensureOnMainRunLoop;
+using WTF::ensureOnMainThread;
 using WTF::canCurrentThreadAccessThreadLocalData;
 using WTF::isMainRunLoop;
 using WTF::isMainThread;

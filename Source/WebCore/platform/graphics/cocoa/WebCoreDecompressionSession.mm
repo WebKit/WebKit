@@ -95,13 +95,7 @@ void WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData()
 
     LOG(Media, "WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData(%p) - isReadyForMoreMediaData(%d), hasCallback(%d)", this, isReadyForMoreMediaData(), !!m_notificationCallback);
 
-    if (isMainThread()) {
-        m_notificationCallback();
-        return;
-    }
-
-    RefPtr<WebCoreDecompressionSession> protectedThis { this };
-    RunLoop::main().dispatch([protectedThis] {
+    ensureOnMainThread([protectedThis = makeRef(*this)] {
         if (protectedThis->m_notificationCallback)
             protectedThis->m_notificationCallback();
     });
