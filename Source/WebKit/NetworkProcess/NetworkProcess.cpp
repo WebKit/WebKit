@@ -2404,7 +2404,7 @@ void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void
 void NetworkProcess::setQuotaLoggingEnabled(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
 {
     if (m_quotaLoggingEnabled == enabled)
-        return;
+        return completionHandler();
     m_quotaLoggingEnabled = enabled;
 
     LockHolder locker(m_sessionStorageQuotaManagersLock);

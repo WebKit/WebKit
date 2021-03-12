@@ -1,5 +1,14 @@
 2021-03-12  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix debug assertion on bots after r274323.
+
+        Was failing to call the completion handler in a early return case.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setQuotaLoggingEnabled):
+
+2021-03-12  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, partial revert of r274286 because this introduced an assertion failure.
 
         * NetworkProcess/WebStorage/StorageManagerSet.cpp:
