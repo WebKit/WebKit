@@ -183,10 +183,7 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
             m_frameImages.add(index, image);
     };
 
-    if (isMainRunLoop())
-        createFrameImage();
-    else
-        callOnMainRunLoopAndWait(WTFMove(createFrameImage));
+    callOnMainRunLoopAndWait(WTFMove(createFrameImage));
 
     if (m_frameImages.contains(index))
         return m_frameImages.get(index);

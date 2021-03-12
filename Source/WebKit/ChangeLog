@@ -1,3 +1,25 @@
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Drop some unnecessary RunLoop::isMain() / IsMainRunLoop() checks
+        https://bugs.webkit.org/show_bug.cgi?id=223094
+
+        Reviewed by Darin Adler.
+
+        Drop some unnecessary RunLoop::isMain() / IsMainRunLoop() checks. callOnMainThread() / ensureOnMainRunLoop()
+        take care of calling their lambda synchronously when already on the main runloop.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::copyTextureFromMedia):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::startOnMainThread):
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (getExceptionTypeFromMainRunLoop):
+        (-[WKURLSchemeTaskImpl dealloc]):
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::createFrameImageAtIndex):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase accessibilityPluginObject]):
+
 2021-03-11  Eric Carlson  <eric.carlson@apple.com>
 
         [GPU Process] http/tests/media/hls/hls-audio-tracks-locale-selection.html fails

@@ -930,17 +930,11 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
 
 void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName)
 {
-    if (!RunLoop::isMain()) {
-        RunLoop::main().dispatch([protectedThis = makeRef(*this), messageName]() mutable {
-            if (!protectedThis->isValid())
-                return;
-            protectedThis->m_client.didReceiveInvalidMessage(protectedThis, messageName);
-        });
-    }
-    if (!isValid())
-        return;
-
-    m_client.didReceiveInvalidMessage(*this, messageName);
+    ensureOnMainRunLoop([this, protectedThis = makeRef(*this), messageName]() mutable {
+        if (!isValid())
+            return;
+        m_client.didReceiveInvalidMessage(*this, messageName);
+    });
 }
 
 void Connection::didFailToSendSyncMessage()

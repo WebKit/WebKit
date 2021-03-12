@@ -69,18 +69,10 @@ namespace ax = WebCore::Accessibility;
     ASSERT(isMainRunLoop());
     auto retrieveBlock = [&self]() -> id {
         id axPlugin = nil;
-        auto dispatchBlock = [&axPlugin, &self] {
+        callOnMainRunLoopAndWait([&axPlugin, &self] {
             if (self->m_page)
                 axPlugin = self->m_page->accessibilityObjectForMainFramePlugin();
-        };
-
-        if (isMainRunLoop())
-            dispatchBlock();
-        else {
-            callOnMainRunLoopAndWait([&dispatchBlock] {
-                dispatchBlock();
-            });
-        }
+        });
         return axPlugin;
     };
     

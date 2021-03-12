@@ -82,12 +82,7 @@ MediaFormatReader::MediaFormatReader(Allocator&& allocator)
 
 void MediaFormatReader::startOnMainThread(MTPluginByteSourceRef byteSource)
 {
-    if (isMainRunLoop()) {
-        parseByteSource(WTFMove(byteSource));
-        return;
-    }
-
-    callOnMainRunLoop([this, protectedThis = makeRef(*this), byteSource = retainPtr(byteSource)]() mutable {
+    ensureOnMainRunLoop([this, protectedThis = makeRef(*this), byteSource = retainPtr(byteSource)]() mutable {
         parseByteSource(WTFMove(byteSource));
     });
 }

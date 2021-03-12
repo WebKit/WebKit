@@ -227,13 +227,9 @@ private:
 
         downloadProgress.cancellable = YES;
         downloadProgress.cancellationHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKDownload> { self }] () mutable {
-            if (!RunLoop::isMain()) {
-                RunLoop::main().dispatch([weakSelf = WTFMove(weakSelf)] {
-                    [weakSelf cancel:nil];
-                });
-                return;
-            }
-            [weakSelf cancel:nil];
+            ensureOnMainRunLoop([weakSelf = WTFMove(weakSelf)] {
+                [weakSelf cancel:nil];
+            });
         }).get();
 
         _download->setProgress(downloadProgress);

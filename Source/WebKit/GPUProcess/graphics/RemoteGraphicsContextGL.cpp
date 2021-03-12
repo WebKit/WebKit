@@ -231,10 +231,7 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
             pixelBuffer = mediaPlayer->pixelBufferForCurrentTime();
     };
 
-    if (isMainRunLoop())
-        getPixelBuffer();
-    else
-        callOnMainRunLoopAndWait(WTFMove(getPixelBuffer));
+    callOnMainRunLoopAndWait(WTFMove(getPixelBuffer));
 
     if (!pixelBuffer) {
         completionHandler(false);

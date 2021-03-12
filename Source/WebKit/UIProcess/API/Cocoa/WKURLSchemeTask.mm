@@ -38,9 +38,6 @@
 
 static WebKit::WebURLSchemeTask::ExceptionType getExceptionTypeFromMainRunLoop(Function<WebKit::WebURLSchemeTask::ExceptionType ()>&& function)
 {
-    if (RunLoop::isMain())
-        return function();
-
     WebKit::WebURLSchemeTask::ExceptionType exceptionType;
     callOnMainRunLoopAndWait([function = WTFMove(function), &exceptionType] {
         exceptionType = function();
@@ -80,10 +77,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
         task->API::URLSchemeTask::~URLSchemeTask();
     };
 
-    if (RunLoop::isMain())
-        func();
-    else
-        callOnMainRunLoop(WTFMove(func));
+    ensureOnMainRunLoop(WTFMove(func));
 
     [super dealloc];
 }

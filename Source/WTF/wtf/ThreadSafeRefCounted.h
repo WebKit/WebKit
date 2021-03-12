@@ -126,11 +126,8 @@ public:
             }
             break;
         case DestructionThread::MainRunLoop:
-            if (!isMainRunLoop()) {
-                callOnMainRunLoop(WTFMove(deleteThis));
-                return;
-            }
-            break;
+            ensureOnMainRunLoop(WTFMove(deleteThis));
+            return;
         }
         deleteThis();
     }
