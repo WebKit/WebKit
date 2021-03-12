@@ -3533,10 +3533,15 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         keydown->preventDefault();
     keydown->setTarget(element);
 
-    // If the user interacts with the page via the keyboard, the currently focused element should match :focus-visible.
-    // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
-    if (keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty()))
-        element->setHasFocusVisible(true);
+    auto shouldMatchFocusVisible = [initialKeyEvent, keydown](const Element& element) {
+        if (!element.focused())
+            return false;
+
+        // If the user interacts with the page via the keyboard, the currently focused element should match :focus-visible.
+        // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
+        return keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
+    };
+    element->setHasFocusVisible(shouldMatchFocusVisible(*element));
 
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
         element->dispatchEvent(keydown);
@@ -3583,9 +3588,11 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     // Focus may have changed during keydown handling, so refetch element.
     // But if we are dispatching a fake backward compatibility keypress, then we pretend that the keypress happened on the original element.
     if (!keydownResult) {
+        element->setHasFocusVisible(false);
         element = eventTargetElementForDocument(m_frame.document());
         if (!element)
             return false;
+        element->setHasFocusVisible(shouldMatchFocusVisible(*element));
     }
 
     PlatformKeyboardEvent keyPressEvent = initialKeyEvent;

@@ -3395,6 +3395,7 @@ webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-011.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-012.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-013.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/hover-002.html [ Skip ]
 
 # Certain versions of iOS use different text security characters.
