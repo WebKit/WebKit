@@ -383,6 +383,11 @@ void TestRunner::setDatabaseQuota(uint64_t quota)
     return WKBundleSetDatabaseQuota(InjectedBundle::singleton().bundle(), quota);
 }
 
+void TestRunner::setQuotaLoggingEnabled(bool enabled)
+{
+    postSynchronousPageMessage("SetQuotaLoggingEnabled", enabled);
+}
+
 void TestRunner::syncLocalStorage()
 {
     postSynchronousMessage("SyncLocalStorage", true);
@@ -2104,12 +2109,12 @@ void TestRunner::didSetAppBoundDomainsCallback()
 
 void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)
 {
-    postSynchronousPageMessage("setIsSpeechRecognitionPermissionGranted", granted);
+    postSynchronousPageMessage("SetIsSpeechRecognitionPermissionGranted", granted);
 }
 
 void TestRunner::setIsMediaKeySystemPermissionGranted(bool granted)
 {
-    postSynchronousPageMessage("setIsMediaKeySystemPermissionGranted", granted);
+    postSynchronousPageMessage("SetIsMediaKeySystemPermissionGranted", granted);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

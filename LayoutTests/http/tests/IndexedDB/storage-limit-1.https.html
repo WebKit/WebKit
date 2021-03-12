@@ -5,10 +5,12 @@
 </head>
 <body>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.setQuotaLoggingEnabled(true);
     testRunner.setAllowStorageQuotaIncrease(false);
+}
 
-description("This test makes sure that storage of indexedDB  and Cache API do not grow unboundedly.");
+description("This test makes sure that storage of indexedDB and Cache API do not grow unboundedly.");
 
 window.caches.open("test").then(cache => {
     return cache.put(new Request("/test"), new Response(new Uint8Array(200 * 1024)));
@@ -25,7 +27,7 @@ window.caches.open("test").then(cache => {
     indexedDBTest(prepareDatabase, onOpenSuccess, {'suffix': '-1'});
 }).catch(e => {
     testFailed("Cache API store operation failed: " + e);
-    finishJSTest();
+    finishTest();
 });
 
 function prepareDatabase(event)
@@ -45,13 +47,19 @@ async function onOpenSuccess(event)
         shouldBeTrue("'error' in request");
         shouldBe("request.error.code", "DOMException.QUOTA_EXCEEDED_ERR");
         shouldBeEqualToString("request.error.name", "QuotaExceededError");
-        finishJSTest();
+        finishTest();
     }
 
     request.onsuccess = function(event) {
         testFailed("Add operation should fail because storage limit is reached, but succeeded.");
-        finishJSTest();
+        finishTest();
     }
-}</script>
+}
+
+function finishTest() {
+    testRunner.setQuotaLoggingEnabled(false);
+    finishJSTest();
+}
+</script>
 </body>
 </html>

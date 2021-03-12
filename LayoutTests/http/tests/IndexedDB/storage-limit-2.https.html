@@ -5,8 +5,10 @@
 </head>
 <body>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.setQuotaLoggingEnabled(true);
     testRunner.setAllowStorageQuotaIncrease(false);
+}
 
 description("This test makes sure that storage of indexedDB and Cache API do not grow unboundedly.");
 
@@ -27,7 +29,7 @@ async function onOpenSuccess(event)
     evalAndLog("request = store.add(new Uint8Array(204800), 'key')");
     request.onerror = function(event) {
         testFailed("Add operation should fail because storage limit is reached, but succeeded.");
-        finishJSTest();
+        finishTest();
     }
 
     request.onsuccess = async (event) => {
@@ -51,11 +53,16 @@ function cacheTest()
         return cache.put(new Request("/test"), new Response(new Uint8Array(304800)));
     }).then(() => {
         testFailed("Cache API store operation succeeded");
-        finishJSTest();
+        finishTest();
     }).catch(e => {
         debug("Cache API store operation failed: " + e);
-        finishJSTest();
+        finishTest();
     });
+}
+
+function finishTest() {
+    testRunner.setQuotaLoggingEnabled(false);
+    finishJSTest();
 }
 </script>
 </body>

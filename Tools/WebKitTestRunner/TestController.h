@@ -281,6 +281,7 @@ public:
     void terminateServiceWorkers();
 
     void resetQuota();
+    void setQuotaLoggingEnabled(bool);
 
     void removeAllSessionCredentials();
 

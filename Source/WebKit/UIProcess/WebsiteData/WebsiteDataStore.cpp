@@ -2067,6 +2067,12 @@ void WebsiteDataStore::resetQuota(CompletionHandler<void()>&& completionHandler)
     networkProcess().resetQuota(m_sessionID, [callbackAggregator] { });
 }
 
+void WebsiteDataStore::setQuotaLoggingEnabled(bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    networkProcess().setQuotaLoggingEnabled(m_sessionID, enabled, [callbackAggregator] { });
+}
+
 #if !PLATFORM(COCOA)
 WTF::String WebsiteDataStore::defaultMediaCacheDirectory()
 {

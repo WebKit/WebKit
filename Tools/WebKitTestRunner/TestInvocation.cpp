@@ -1379,13 +1379,18 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "setIsSpeechRecognitionPermissionGranted")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "SetIsSpeechRecognitionPermissionGranted")) {
         TestController::singleton().setIsSpeechRecognitionPermissionGranted(booleanValue(messageBody));
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "setIsMediaKeySystemPermissionGranted")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "SetIsMediaKeySystemPermissionGranted")) {
         TestController::singleton().setIsMediaKeySystemPermissionGranted(booleanValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetQuotaLoggingEnabled")) {
+        TestController::singleton().setQuotaLoggingEnabled(messageBody);
         return nullptr;
     }
 

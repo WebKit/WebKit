@@ -131,6 +131,7 @@ interface TestRunner {
     // Local storage API
     undefined clearAllDatabases();
     undefined setDatabaseQuota(unsigned long long quota);
+    undefined setQuotaLoggingEnabled(boolean enabled);
     DOMString pathToLocalResource(DOMString url);
     undefined syncLocalStorage();
 

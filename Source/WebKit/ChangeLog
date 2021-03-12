@@ -1,3 +1,25 @@
+2021-03-11  Sihui Liu  <sihui_liu@appe.com>
+
+        Add some logging to help debug flaky quota tests
+        https://bugs.webkit.org/show_bug.cgi?id=222995
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setQuotaLoggingEnabled):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetQuotaLoggingEnabled):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setQuotaLoggingEnabled):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setQuotaLoggingEnabled):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
         Drop some unnecessary RunLoop::isMain() / IsMainRunLoop() checks

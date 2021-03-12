@@ -240,6 +240,7 @@ public:
     void networkProcessCrashed();
     
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
+    void setQuotaLoggingEnabled(PAL::SessionID, bool enabled, CompletionHandler<void()>&&);
 
     void resourceLoadDidSendRequest(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceRequest&&, Optional<IPC::FormDataReference>&&);
     void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);

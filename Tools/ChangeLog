@@ -1,3 +1,22 @@
+2021-03-11  Sihui Liu  <sihui_liu@appe.com>
+
+        Add some logging to help debug flaky quota tests
+        https://bugs.webkit.org/show_bug.cgi?id=222995
+
+        Reviewed by Youenn Fablet.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setQuotaLoggingEnabled):
+        (WTR::TestRunner::setIsSpeechRecognitionPermissionGranted):
+        (WTR::TestRunner::setIsMediaKeySystemPermissionGranted):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setQuotaLoggingEnabled):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2021-03-11  Amir Mark Jr  <amir_mark@apple.com>
 
         Adding myself as a committer in the contributors file 
