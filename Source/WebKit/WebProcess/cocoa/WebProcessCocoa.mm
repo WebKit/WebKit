@@ -1233,9 +1233,9 @@ void WebProcess::platformInitializeGPUProcessConnectionParameters(GPUProcessConn
         parameters.webProcessIdentityToken = MachSendRight::adopt(identityToken);
     else
         RELEASE_LOG_ERROR(Process, "Call to task_create_identity_token() failed: %{private}s (%x)", mach_error_string(kr), kr);
-#else
-    UNUSED_PARAM(parameters);
 #endif
+
+    parameters.overrideLanguages = userPreferredLanguagesOverride();
 }
 #endif
 

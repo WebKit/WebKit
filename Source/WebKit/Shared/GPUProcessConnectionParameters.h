@@ -35,14 +35,14 @@ struct GPUProcessConnectionParameters {
 #if HAVE(TASK_IDENTITY_TOKEN)
     MachSendRight webProcessIdentityToken;
 #endif
+    Vector<String> overrideLanguages;
 
     void encode(IPC::Encoder& encoder) const
     {
 #if HAVE(TASK_IDENTITY_TOKEN)
         encoder << webProcessIdentityToken;
-#else
-        UNUSED_PARAM(encoder);
 #endif
+        encoder << overrideLanguages;
     }
 
     static Optional<GPUProcessConnectionParameters> decode(IPC::Decoder& decoder)
@@ -52,14 +52,18 @@ struct GPUProcessConnectionParameters {
         decoder >> webProcessIdentityToken;
         if (!webProcessIdentityToken)
             return WTF::nullopt;
-#else
-        UNUSED_PARAM(decoder);
 #endif
+
+        Optional<Vector<String>> overrideLanguages;
+        decoder >> overrideLanguages;
+        if (!overrideLanguages)
+            return WTF::nullopt;
 
         return GPUProcessConnectionParameters {
 #if HAVE(TASK_IDENTITY_TOKEN)
             WTFMove(*webProcessIdentityToken),
 #endif
+            WTFMove(*overrideLanguages),
         };
     }
 };

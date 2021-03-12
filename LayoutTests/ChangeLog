@@ -1,3 +1,13 @@
+2021-03-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPU Process] http/tests/media/hls/hls-audio-tracks-locale-selection.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223102
+        <rdar://problem/75338802>
+
+        Reviewed by Jer Noble.
+
+        * platform/wk2/TestExpectations: Unskip the passing test.
+
 2021-03-11  Amir Mark Jr  <amir_mark@apple.com>
 
         REGRESSION (r274264) [MacOS Wk1] compositing/visibility/iframe-visibility-hidden.html is a flakey image failure

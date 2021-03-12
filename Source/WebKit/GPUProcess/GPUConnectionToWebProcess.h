@@ -187,6 +187,7 @@ private:
     void createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void setMediaOverridesForTesting(MediaOverridesForTesting);
+    void setUserPreferredLanguages(const Vector<String>&);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;

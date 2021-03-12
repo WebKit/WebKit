@@ -1,3 +1,33 @@
+2021-03-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPU Process] http/tests/media/hls/hls-audio-tracks-locale-selection.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223102
+        <rdar://problem/75338802>
+
+        Reviewed by Jer Noble.
+
+        No new tests, these changes fix an existing test.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess): Set user preferred
+        languages if parameters.overrideLanguages isn't empty.
+        (WebKit::GPUConnectionToWebProcess::setUserPreferredLanguages): Set user preferred
+        languages.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+
+        * Shared/GPUProcessConnectionParameters.h: Add overrideLanguages.
+        (WebKit::GPUProcessConnectionParameters::encode const):
+        (WebKit::GPUProcessConnectionParameters::decode):
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::languagesChanged): Send new languages to GPU process.
+        (WebKit::GPUProcessConnection::GPUProcessConnection): Register for language changes.
+        (WebKit::GPUProcessConnection::~GPUProcessConnection): Unregister.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeGPUProcessConnectionParameters):Add overrideLanguages.
+
 2021-03-11  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS, macOS] Re-allow WebContent sandbox permissions for specific /etc files 

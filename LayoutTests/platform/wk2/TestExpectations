@@ -211,7 +211,6 @@ http/tests/images/loading-image-border.html
 http/tests/images/loading-image-no-border.html
 
 # webkit.org/b/221694
-http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
 http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
 http/tests/media/hls/hls-progress.html [ Failure ]
 
