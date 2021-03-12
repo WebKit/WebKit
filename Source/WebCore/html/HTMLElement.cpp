@@ -1280,8 +1280,6 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
 
     auto container = HTMLDivElement::create(document());
     container->setIdAttribute(imageOverlayElementIdentifier());
-    if (document().isImageDocument())
-        container->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
     shadowRoot->appendChild(container);
 
     static MainThreadNeverDestroyed<const AtomString> imageOverlayTextClass("image-overlay-text", AtomString::ConstructFromLiteral);
@@ -1314,9 +1312,6 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
             rotationTransformationAsText,
             "scale("_s, scale.width(), ", "_s, scale.height(), ") "_s
         ));
-
-        if (document().isImageDocument())
-            child->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);
     }
 
     if (auto frame = makeRefPtr(document().frame()))

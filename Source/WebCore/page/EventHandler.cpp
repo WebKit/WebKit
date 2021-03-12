@@ -999,10 +999,6 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
 
     m_frame.selection().setSelectionByMouseIfDifferent(newSelection, m_frame.selection().granularity(),
         FrameSelection::EndPointsAdjustmentMode::AdjustAtBidiBoundary);
-
-    if (newSelection.start().containerNode() && HTMLElement::isImageOverlayText(*newSelection.start().containerNode())
-        && newSelection.end().containerNode() && HTMLElement::isImageOverlayText(*newSelection.end().containerNode()))
-        invalidateClick();
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
