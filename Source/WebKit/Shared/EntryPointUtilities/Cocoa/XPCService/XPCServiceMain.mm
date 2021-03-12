@@ -165,6 +165,8 @@ int XPCServiceMain(int argc, const char** argv)
     UNUSED_PARAM(argv);
 #endif
 
+    WTF::initializeMainThread();
+
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 
     if (bootstrap) {

@@ -1,3 +1,14 @@
+2021-03-11  Saam Barati  <sbarati@apple.com>
+
+        Adopt VM_FLAGS_PERMANENT for the config vm mapping
+        https://bugs.webkit.org/show_bug.cgi?id=222086
+        <rdar://74402690>
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+
 2021-03-11  Sihui Liu  <sihui_liu@appe.com>
 
         Add some logging to help debug flaky quota tests
