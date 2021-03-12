@@ -29,6 +29,7 @@
 #if ENABLE(PDFKIT_PLUGIN)
 
 #import "ArgumentCoders.h"
+#import "CocoaColor.h"
 #import "DataReference.h"
 #import "FrameInfoData.h"
 #import "Logging.h"
@@ -58,7 +59,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ArchiveResource.h>
+#import <WebCore/CSSPropertyNames.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/Color.h>
+#import <WebCore/ColorSerialization.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentLoader.h>
@@ -69,6 +73,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/HTMLBodyElement.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLPlugInElement.h>
@@ -610,6 +615,13 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
 #endif
     m_pdfLayerController.get().delegate = m_pdfLayerControllerDelegate.get();
     m_pdfLayerController.get().parentLayer = m_contentLayer.get();
+
+    if (isFullFramePlugin()) {
+        auto* document = frame.coreFrame()->document();
+
+        // FIXME: <rdar://problem/75332948> get the background color from PDFKit instead of hardcoding it
+        document->bodyOrFrameset()->setInlineStyleProperty(WebCore::CSSPropertyBackgroundColor, WebCore::serializationForHTML([CocoaColor grayColor].CGColor));
+    }
 
     if (supportsForms()) {
         auto* document = frame.coreFrame()->document();
