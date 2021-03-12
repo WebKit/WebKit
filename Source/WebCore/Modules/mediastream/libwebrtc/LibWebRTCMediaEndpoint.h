@@ -180,7 +180,7 @@ private:
 #endif
 
     LibWebRTCPeerConnectionBackend& m_peerConnectionBackend;
-    webrtc::PeerConnectionFactoryInterface& m_peerConnectionFactory;
+    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_peerConnectionFactory;
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> m_backend;
 
     friend CreateSessionDescriptionObserver<LibWebRTCMediaEndpoint>;
