@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,6 +76,16 @@ namespace Bindings {
     [], other       exception
 
 */
+
+static long long convertDoubleToLongLong(double d)
+{
+    // Ensure that non-x86_64 ports will match x86_64 semantics which allows for overflow.
+    long long potentiallyOverflowed = (unsigned long long)d;
+    if (potentiallyOverflowed < (long long)d)
+        return potentiallyOverflowed;
+    return (long long)d;
+}
+
 ObjcValue convertValueToObjcValue(JSGlobalObject* lexicalGlobalObject, JSValue value, ObjcValueType type)
 {
     ObjcValue result;
@@ -129,7 +139,7 @@ ObjcValue convertValueToObjcValue(JSGlobalObject* lexicalGlobalObject, JSValue v
             break;
         case ObjcLongLongType:
         case ObjcUnsignedLongLongType:
-            result.longLongValue = (long long)d;
+            result.longLongValue = convertDoubleToLongLong(d);
             break;
         case ObjcFloatType:
             result.floatValue = (float)d;
