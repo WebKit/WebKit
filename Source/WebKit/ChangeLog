@@ -1,5 +1,14 @@
 2021-03-11  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        REGRESSION(r274270): Broke WebKitSecurityOrigin docs
+        https://bugs.webkit.org/show_bug.cgi?id=223077
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp:
+
+2021-03-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         REGRESSION(r272469): [WPE][GTK] Epiphany UI process crashes when downloading PDFs, WebKitSecurityOrigin should use SecurityOriginData
         https://bugs.webkit.org/show_bug.cgi?id=222943
 
