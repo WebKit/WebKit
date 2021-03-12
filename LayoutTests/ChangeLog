@@ -1,3 +1,12 @@
+2021-03-11  Amir Mark Jr  <amir_mark@apple.com>
+
+        REGRESSION (r274264) [MacOS Wk1] compositing/visibility/iframe-visibility-hidden.html is a flakey image failure
+        https://bugs.webkit.org/show_bug.cgi?id=223104
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
