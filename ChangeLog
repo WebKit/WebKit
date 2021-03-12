@@ -1,5 +1,11 @@
 2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.31.91 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
+2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Bump API version when building with libsoup3
         https://bugs.webkit.org/show_bug.cgi?id=223067
 

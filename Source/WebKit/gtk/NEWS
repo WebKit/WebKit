@@ -1,4 +1,17 @@
 =================
+WebKitGTK 2.31.91
+=================
+
+What's new in WebKitGTK 2.31.91?
+
+  - Make WebKitSecurityOrigin a simple data store for <protocol, host, port> and deprecate webkit_security_origin_is_opaque().
+  - Fix user agent again to work on several google websites.
+  - Fix web view url on web process terminate signals.
+  - Fix preferred language overrides sent to the web process.
+  - Fix the build in i386.
+  - Translation updates: Simplified Chinese.
+
+=================
 WebKitGTK 2.31.90
 =================
 
