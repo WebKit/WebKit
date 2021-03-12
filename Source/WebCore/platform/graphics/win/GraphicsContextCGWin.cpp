@@ -78,7 +78,6 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
         return;
 
     m_data = new GraphicsContextPlatformPrivate(CGContextWithHDC(hdc, hasAlpha));
-    CGContextRelease(m_data->m_cgContext.get());
     m_data->m_hdc = hdc;
     if (m_data->m_cgContext) {
         // Make sure the context starts in sync with our state.
