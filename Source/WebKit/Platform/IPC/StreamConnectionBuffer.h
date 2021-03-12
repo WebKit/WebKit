@@ -114,7 +114,7 @@ private:
         alignas(sizeof(uint64_t[2])) Atomic<size_t> senderOffset;
     };
     Header& header() const { return *reinterpret_cast<Header*>(m_sharedMemory->data()); }
-    static constexpr size_t headerSize() { return roundUpToMultipleOf<sizeof(std::max_align_t)>(sizeof(Header)); }
+    static constexpr size_t headerSize() { return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(Header)); }
 
     size_t m_dataSize { 0 };
     Ref<WebKit::SharedMemory> m_sharedMemory;

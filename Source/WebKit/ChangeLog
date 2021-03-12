@@ -1,3 +1,13 @@
+2021-03-01  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Fails to build in i386: static assertion failed: divisor must be a power of two
+        https://bugs.webkit.org/show_bug.cgi?id=222480
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Platform/IPC/StreamConnectionBuffer.h:
+        (IPC::StreamConnectionBuffer::headerSize):
+
 2021-02-11  Sergio Villar Senin  <svillar@igalia.com>
 
         Non unified build fixes for mid February 2021
