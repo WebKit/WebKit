@@ -1,3 +1,14 @@
+2021-03-12  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] inspector/canvas/memory.html fails when GPU rendering is enabled for 2D Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=222880
+
+        Reviewed by Tim Horton.
+
+        Enable GPUP rendering for 2D canvas for this test.
+
+        * inspector/canvas/memory.html:
+
 2021-03-12  Robert Jenner  <jenner@apple.com>
 
         [ MacOS wk2 ] inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html is flakey timing out
