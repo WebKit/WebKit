@@ -31,6 +31,7 @@
 #include "Blob.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "Logging.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
@@ -59,8 +60,16 @@ Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std:
     ASSERT(handler);
     auto channel = adoptRef(*new RTCDataChannel(context, WTFMove(handler), WTFMove(label), WTFMove(options)));
     channel->suspendIfNeeded();
-    channel->m_handler->setClient(channel.get());
     channel->setPendingActivity(channel.get());
+    queueTaskKeepingObjectAlive(channel.get(), TaskSource::Networking, [channel = channel.ptr()] {
+        if (!channel->m_isDetachable)
+            return;
+        channel->m_isDetachable = false;
+        if (!channel->m_handler)
+            return;
+        if (auto* context = channel->scriptExecutionContext())
+            channel->m_handler->setClient(*channel, context->contextIdentifier());
+    });
     return channel;
 }
 
@@ -84,6 +93,8 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(ScriptExecutionContext& cont
 RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
     : ActiveDOMObject(&context)
     , m_handler(WTFMove(handler))
+    , m_identifier(RTCDataChannelIdentifier { Process::identifier(), ObjectIdentifier<RTCDataChannelIdentifierType>::generateThreadSafe() })
+    , m_contextIdentifier(context.isDocument() ? ScriptExecutionContextIdentifier { } : context.contextIdentifier())
     , m_label(WTFMove(label))
     , m_options(WTFMove(options))
     , m_messageQueue(createMessageQueue(context, *this))
@@ -168,7 +179,8 @@ void RTCDataChannel::close()
 
     m_messageQueue.clear();
 
-    m_handler->close();
+    if (m_handler)
+        m_handler->close();
     m_handler = nullptr;
     unsetPendingActivity(*this);
 }
@@ -225,6 +237,8 @@ void RTCDataChannel::bufferedAmountIsDecreasing(size_t amount)
 
 void RTCDataChannel::stop()
 {
+    removeFromDataChannelLocalMapIfNeeded();
+
     close();
 }
 
@@ -235,6 +249,72 @@ void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
 
     // https://w3c.github.io/webrtc-pc/#operation
     queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(event));
+}
+
+static Lock s_rtcDataChannelLocalMapLock;
+static HashMap<ObjectIdentifier<RTCDataChannelIdentifierType>, std::unique_ptr<RTCDataChannelHandler>>& rtcDataChannelLocalMap()
+{
+    ASSERT(s_rtcDataChannelLocalMapLock.isHeld());
+    static LazyNeverDestroyed<HashMap<ObjectIdentifier<RTCDataChannelIdentifierType>, std::unique_ptr<RTCDataChannelHandler>>> map;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        map.construct();
+    });
+    return map;
+}
+
+bool RTCDataChannel::canDetach() const
+{
+    return m_isDetachable && !m_isDetached && !m_bufferedAmount && m_readyState != RTCDataChannelState::Closed;
+}
+
+std::unique_ptr<DetachedRTCDataChannel> RTCDataChannel::detach()
+{
+    ASSERT(canDetach());
+
+    auto state = m_readyState;
+
+    m_isDetachable = false;
+    m_isDetached = true;
+    m_readyState = RTCDataChannelState::Closed;
+
+    auto locker = holdLock(s_rtcDataChannelLocalMapLock);
+    rtcDataChannelLocalMap().add(identifier().channelIdentifier, WTFMove(m_handler));
+
+    return makeUnique<DetachedRTCDataChannel>(identifier(), label().isolatedCopy(), options(), state);
+}
+
+void RTCDataChannel::removeFromDataChannelLocalMapIfNeeded()
+{
+    if (!m_isDetached)
+        return;
+
+    auto locker = holdLock(s_rtcDataChannelLocalMapLock);
+    rtcDataChannelLocalMap().remove(identifier().channelIdentifier);
+}
+
+static Ref<RTCDataChannel> createClosedChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)
+{
+    auto channel = RTCDataChannel::create(context, nullptr, WTFMove(label), WTFMove(options));
+    channel->close();
+    return channel;
+}
+
+Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
+{
+    if (identifier.processIdentifier != Process::identifier()) {
+        RELEASE_LOG_ERROR(WebRTC, "Out-of-process data channels are not yet supported");
+        return createClosedChannel(context, WTFMove(label), WTFMove(options));
+    }
+
+    auto locker = holdLock(s_rtcDataChannelLocalMapLock);
+    auto handler = rtcDataChannelLocalMap().take(identifier.channelIdentifier);
+    if (!handler)
+        return createClosedChannel(context, WTFMove(label), WTFMove(options));
+
+    auto channel = RTCDataChannel::create(context, WTFMove(handler), WTFMove(label), WTFMove(options));
+    channel->m_readyState = state;
+    return channel;
 }
 
 } // namespace WebCore

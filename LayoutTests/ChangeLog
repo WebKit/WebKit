@@ -1,3 +1,15 @@
+2021-03-12  Youenn Fablet  <youenn@apple.com>
+
+        Make RTCDataChannel transferable
+        https://bugs.webkit.org/show_bug.cgi?id=222965
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/datachannel-worker-expected.txt: Added.
+        * http/wpt/webrtc/datachannel-worker.html: Added.
+        * http/wpt/webrtc/datachannel-worker.js: Added.
+        (onmessage):
+
 2021-03-11  Said Abou-Hallawa  <said@apple.com>
 
         [GPUP] Enable 2D Canvas in layout tests by default

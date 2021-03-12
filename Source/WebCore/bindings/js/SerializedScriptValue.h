@@ -50,6 +50,9 @@ namespace WebCore {
 #if ENABLE(OFFSCREEN_CANVAS)
 class DetachedOffscreenCanvas;
 #endif
+#if ENABLE(WEB_RTC)
+struct DetachedRTCDataChannel;
+#endif
 class IDBValue;
 class MessagePort;
 class ImageBitmapBacking;
@@ -122,6 +125,9 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
 #endif
+#if ENABLE(WEB_RTC)
+        , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
+#endif
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray> = nullptr
         , std::unique_ptr<WasmMemoryHandleArray> = nullptr
@@ -136,6 +142,9 @@ private:
     Vector<Optional<ImageBitmapBacking>> m_backingStores;
 #if ENABLE(OFFSCREEN_CANVAS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> m_detachedOffscreenCanvases;
+#endif
+#if ENABLE(WEB_RTC)
+    Vector<std::unique_ptr<DetachedRTCDataChannel>> m_detachedRTCDataChannels;
 #endif
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;

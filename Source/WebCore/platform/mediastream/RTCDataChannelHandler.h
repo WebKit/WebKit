@@ -28,6 +28,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCPriorityType.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +42,16 @@ struct RTCDataChannelInit {
     Optional<bool> negotiated;
     Optional<unsigned short> id;
     RTCPriorityType priority { RTCPriorityType::Low };
+
+    RTCDataChannelInit isolatedCopy() const;
 };
+
+inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() const
+{
+    auto copy = *this;
+    copy.protocol = protocol.isolatedCopy();
+    return copy;
+}
 
 class RTCDataChannelHandlerClient;
 
@@ -49,7 +59,7 @@ class RTCDataChannelHandler {
 public:
     virtual ~RTCDataChannelHandler() = default;
 
-    virtual void setClient(RTCDataChannelHandlerClient&) = 0;
+    virtual void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) = 0;
 
     virtual bool sendStringData(const CString&) = 0;
     virtual bool sendRawData(const char*, size_t) = 0;

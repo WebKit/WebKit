@@ -40,7 +40,7 @@ RTCDataChannelHandlerMock::RTCDataChannelHandlerMock(const String& label, const 
 {
 }
 
-void RTCDataChannelHandlerMock::setClient(RTCDataChannelHandlerClient& client)
+void RTCDataChannelHandlerMock::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier)
 {
     ASSERT(!m_client);
     m_client = &client;

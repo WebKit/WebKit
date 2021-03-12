@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,10 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "NetworkSendQueue.h"
+#include "ProcessIdentifier.h"
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelHandlerClient.h"
+#include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
 #include "Timer.h"
 
@@ -47,10 +49,44 @@ namespace WebCore {
 class Blob;
 class RTCPeerConnectionHandler;
 
+enum RTCDataChannelIdentifierType { };
+struct RTCDataChannelIdentifier {
+    ProcessIdentifier processIdentifier;
+    ObjectIdentifier<RTCDataChannelIdentifierType> channelIdentifier;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<RTCDataChannelIdentifier> decode(Decoder&);
+
+#if !LOG_DISABLED
+    String logString() const;
+#endif
+};
+
+struct DetachedRTCDataChannel {
+    WTF_MAKE_NONCOPYABLE(DetachedRTCDataChannel);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, const String& label, const RTCDataChannelInit& options, RTCDataChannelState state)
+        : identifier(identifier)
+        , label(label.isolatedCopy())
+        , options(options.isolatedCopy())
+        , state(state)
+    {
+    }
+
+    size_t memoryCost() const { return label.sizeInBytes(); }
+
+    RTCDataChannelIdentifier identifier;
+    String label;
+    RTCDataChannelInit options;
+    RTCDataChannelState state { RTCDataChannelState::Closed };
+};
+
 class RTCDataChannel final : public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(RTCDataChannel);
 public:
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
+    static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, String&&, RTCDataChannelInit&&, RTCDataChannelState);
 
     bool ordered() const { return *m_options.ordered; }
     Optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
@@ -59,6 +95,7 @@ public:
     bool negotiated() const { return *m_options.negotiated; };
     Optional<unsigned short> id() const { return m_options.id; };
     RTCPriorityType priority() const { return m_options.priority; };
+    const RTCDataChannelInit& options() const { return m_options; }
 
     String label() const { return m_label; }
     RTCDataChannelState readyState() const {return m_readyState; }
@@ -76,6 +113,10 @@ public:
 
     void close();
 
+    RTCDataChannelIdentifier identifier() const { return m_identifier; }
+    bool canDetach() const;
+    std::unique_ptr<DetachedRTCDataChannel> detach();
+
     using RTCDataChannelHandlerClient::ref;
     using RTCDataChannelHandlerClient::deref;
 
@@ -85,6 +126,7 @@ private:
     static NetworkSendQueue createMessageQueue(ScriptExecutionContext&, RTCDataChannel&);
 
     void scheduleDispatchEvent(Ref<Event>&&);
+    void removeFromDataChannelLocalMapIfNeeded();
 
     EventTargetInterface eventTargetInterface() const final { return RTCDataChannelEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
@@ -104,7 +146,8 @@ private:
     void bufferedAmountIsDecreasing(size_t) final;
 
     std::unique_ptr<RTCDataChannelHandler> m_handler;
-
+    RTCDataChannelIdentifier m_identifier;
+    ScriptExecutionContextIdentifier m_contextIdentifier;
     // FIXME: m_stopped is probably redundant with m_readyState.
     bool m_stopped { false };
     RTCDataChannelState m_readyState { RTCDataChannelState::Connecting };
@@ -116,7 +159,8 @@ private:
     RTCDataChannelInit m_options;
     size_t m_bufferedAmount { 0 };
     size_t m_bufferedAmountLowThreshold { 0 };
-
+    bool m_isDetachable { true };
+    bool m_isDetached { false };
     NetworkSendQueue m_messageQueue;
 };
 

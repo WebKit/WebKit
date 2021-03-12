@@ -28,6 +28,9 @@
 
 #include "LibWebRTCMacros.h"
 #include "RTCDataChannelHandler.h"
+#include "RTCDataChannelState.h"
+#include "SharedBuffer.h"
+#include <wtf/Lock.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
@@ -50,7 +53,7 @@ class ScriptExecutionContext;
 class LibWebRTCDataChannelHandler final : public RTCDataChannelHandler, private webrtc::DataChannelObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&& channel) : m_channel(WTFMove(channel)) { ASSERT(m_channel); }
+    explicit LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
     ~LibWebRTCDataChannelHandler();
 
     static webrtc::DataChannelInit fromRTCDataChannelInit(const RTCDataChannelInit&);
@@ -58,8 +61,7 @@ public:
 
 private:
     // RTCDataChannelHandler API
-    void setClient(RTCDataChannelHandlerClient&) final;
-    void checkState();
+    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
     bool sendStringData(const CString&) final;
     bool sendRawData(const char*, size_t) final;
     void close() final;
@@ -69,8 +71,21 @@ private:
     void OnMessage(const webrtc::DataBuffer&);
     void OnBufferedAmountChange(uint64_t);
 
+    void checkState();
+
+    using Message = Variant<RTCDataChannelState, String, Ref<SharedBuffer>>;
+    using PendingMessages = Vector<Message>;
+    void storeMessage(PendingMessages&, const webrtc::DataBuffer&);
+    void processMessage(const webrtc::DataBuffer&);
+    void processStoredMessage(Message&);
+
+    void postTask(Function<void()>&&);
+
     rtc::scoped_refptr<webrtc::DataChannelInterface> m_channel;
+    Lock m_clientLock;
     RTCDataChannelHandlerClient* m_client { nullptr };
+    ScriptExecutionContextIdentifier m_contextIdentifier;
+    PendingMessages m_bufferedMessages;
 };
 
 } // namespace WebCore

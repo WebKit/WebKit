@@ -27,7 +27,7 @@
     ActiveDOMObject,
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
-    Exposed=Window
+    Exposed=(Window,Worker),
 ] interface RTCDataChannel : EventTarget {
     // FIXME: Add support for priority attribute.
 
