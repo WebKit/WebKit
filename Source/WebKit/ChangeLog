@@ -1,3 +1,20 @@
+2021-03-12  Youenn Fablet  <youenn@apple.com>
+
+        Enable video capture in GPUProcess by default on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=223061
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureVideoInGPUProcessEnabled):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        We need to synchronously fill the granted requests, otherwise there is a risk that
+        the granted requests will be cleared (on page close for instance) and then later filled
+        for the page that was gone.
+
 2021-03-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix debug assertion on bots after r274323.

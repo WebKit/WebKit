@@ -268,6 +268,8 @@ static bool doesPageNeedTCCD(const WebPageProxy& page)
 void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPermissionRequestProxy& request)
 {
     ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID());
+    updateStoredRequests(request);
+
     if (!UserMediaProcessManager::singleton().willCreateMediaStream(*this, request.hasAudioDevice(), request.hasVideoDevice())) {
         denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "Unable to extend sandbox.");
         return;
@@ -276,10 +278,6 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     m_page.willStartCapture(request, [this, weakThis = makeWeakPtr(this), strongRequest = makeRef(request)]() mutable {
         if (!weakThis)
             return;
-
-        auto& request = strongRequest.get();
-
-        updateStoredRequests(request);
 
         // FIXME: m_hasFilteredDeviceList will trigger ondevicechange events for various documents from different origins.
         if (m_hasFilteredDeviceList)
@@ -296,6 +294,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
         }
 #endif
 
+        auto& request = strongRequest.get();
         m_page.sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt(), handle }, [this, weakThis = WTFMove(weakThis)] {
             if (!weakThis)
                 return;
