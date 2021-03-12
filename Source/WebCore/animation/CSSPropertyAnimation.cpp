@@ -2149,7 +2149,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyWebkitTextStroke,
         CSSPropertyColumnRule,
         CSSPropertyWebkitBorderRadius,
-        CSSPropertyTransformOrigin
+        CSSPropertyTransformOrigin,
+        CSSPropertyPerspectiveOrigin
     };
     const unsigned animatableShorthandPropertiesCount = WTF_ARRAY_LENGTH(animatableShorthandProperties);
 

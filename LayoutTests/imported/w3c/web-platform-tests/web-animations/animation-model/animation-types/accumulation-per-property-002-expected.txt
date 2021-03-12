@@ -79,6 +79,10 @@ PASS paint-order: "fill" onto "stroke"
 PASS perspective (type: length) has testAccumulation function
 FAIL perspective: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL perspective: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+PASS perspective-origin (type: position) has testAccumulation function
+FAIL perspective-origin: length pair assert_equals: The value should be 20px 20px at 0ms expected "20px 20px" but got "10px 10px"
+FAIL perspective-origin: length pair of rem assert_equals: The value should be 20px 20px at 0ms expected "20px 20px" but got "10px 10px"
+FAIL perspective-origin: position of percentage assert_equals: The value should be 1019.1875px 0px at 0ms expected "1019.1875px 0px" but got "548.796875px 0px"
 PASS pointer-events (type: discrete) has testAccumulation function
 PASS pointer-events: "none" onto "fill"
 PASS pointer-events: "fill" onto "none"

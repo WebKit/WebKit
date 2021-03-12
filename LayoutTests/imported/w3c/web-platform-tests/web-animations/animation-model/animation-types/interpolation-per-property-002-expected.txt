@@ -96,6 +96,10 @@ PASS paint-order uses discrete animation when animating between "fill" and "stro
 PASS perspective (type: length) has testInterpolation function
 PASS perspective supports animating as a length
 PASS perspective supports animating as a length of rem
+PASS perspective-origin (type: position) has testInterpolation function
+PASS perspective-origin supports animating as a length pair
+PASS perspective-origin supports animating as a length pair of rem
+PASS perspective-origin supports animating as a position of percent
 PASS pointer-events (type: discrete) has testInterpolation function
 PASS pointer-events uses discrete animation when animating between "fill" and "none" with linear easing
 PASS pointer-events uses discrete animation when animating between "fill" and "none" with effect easing
