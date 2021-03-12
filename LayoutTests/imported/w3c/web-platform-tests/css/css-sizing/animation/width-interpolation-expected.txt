@@ -127,30 +127,30 @@ PASS Web Animations: property <width> from [0px] to [100px] at (0.3) should be [
 PASS Web Animations: property <width> from [0px] to [100px] at (0.6) should be [60px]
 PASS Web Animations: property <width> from [0px] to [100px] at (1) should be [100px]
 PASS Web Animations: property <width> from [0px] to [100px] at (1.5) should be [150px]
-FAIL CSS Transitions: property <width> from [10px] to [100%] at (-0.3) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS CSS Transitions: property <width> from [10px] to [100%] at (-0.3) should be [0px]
 PASS CSS Transitions: property <width> from [10px] to [100%] at (0) should be [10px]
 PASS CSS Transitions: property <width> from [10px] to [100%] at (0.3) should be [37px]
 PASS CSS Transitions: property <width> from [10px] to [100%] at (0.6) should be [64px]
 PASS CSS Transitions: property <width> from [10px] to [100%] at (1) should be [100px]
-FAIL CSS Transitions: property <width> from [10px] to [100%] at (1.5) should be [145px] assert_equals: expected "145px " but got "100px "
-FAIL CSS Transitions with transition: all: property <width> from [10px] to [100%] at (-0.3) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS CSS Transitions: property <width> from [10px] to [100%] at (1.5) should be [145px]
+PASS CSS Transitions with transition: all: property <width> from [10px] to [100%] at (-0.3) should be [0px]
 PASS CSS Transitions with transition: all: property <width> from [10px] to [100%] at (0) should be [10px]
 PASS CSS Transitions with transition: all: property <width> from [10px] to [100%] at (0.3) should be [37px]
 PASS CSS Transitions with transition: all: property <width> from [10px] to [100%] at (0.6) should be [64px]
 PASS CSS Transitions with transition: all: property <width> from [10px] to [100%] at (1) should be [100px]
-FAIL CSS Transitions with transition: all: property <width> from [10px] to [100%] at (1.5) should be [145px] assert_equals: expected "145px " but got "100px "
-FAIL CSS Animations: property <width> from [10px] to [100%] at (-0.3) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS CSS Transitions with transition: all: property <width> from [10px] to [100%] at (1.5) should be [145px]
+PASS CSS Animations: property <width> from [10px] to [100%] at (-0.3) should be [0px]
 PASS CSS Animations: property <width> from [10px] to [100%] at (0) should be [10px]
 PASS CSS Animations: property <width> from [10px] to [100%] at (0.3) should be [37px]
 PASS CSS Animations: property <width> from [10px] to [100%] at (0.6) should be [64px]
 PASS CSS Animations: property <width> from [10px] to [100%] at (1) should be [100px]
-FAIL CSS Animations: property <width> from [10px] to [100%] at (1.5) should be [145px] assert_equals: expected "145px " but got "100px "
-FAIL Web Animations: property <width> from [10px] to [100%] at (-0.3) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS CSS Animations: property <width> from [10px] to [100%] at (1.5) should be [145px]
+PASS Web Animations: property <width> from [10px] to [100%] at (-0.3) should be [0px]
 PASS Web Animations: property <width> from [10px] to [100%] at (0) should be [10px]
 PASS Web Animations: property <width> from [10px] to [100%] at (0.3) should be [37px]
 PASS Web Animations: property <width> from [10px] to [100%] at (0.6) should be [64px]
 PASS Web Animations: property <width> from [10px] to [100%] at (1) should be [100px]
-FAIL Web Animations: property <width> from [10px] to [100%] at (1.5) should be [145px] assert_equals: expected "145px " but got "100px "
+PASS Web Animations: property <width> from [10px] to [100%] at (1.5) should be [145px]
 PASS CSS Transitions: property <width> from [1em] to [10vw] at (-0.3) should be [0.00px]
 PASS CSS Transitions: property <width> from [1em] to [10vw] at (0) should be [16.00px]
 PASS CSS Transitions: property <width> from [1em] to [10vw] at (0.3) should be [35.20px]

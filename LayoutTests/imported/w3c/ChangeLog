@@ -1,3 +1,28 @@
+2021-03-12  Antoine Quint  <graouts@webkit.org>
+
+        Blending lengths of different types should be allowed outside of the [0-1] range
+        https://bugs.webkit.org/show_bug.cgi?id=223115
+
+        Reviewed by Antti Koivisto.
+
+        Add an extra 57 PASS results.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/width-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/perspective-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation-expected.txt:
+        * web-platform-tests/css/css-values/animations/calc-interpolation-expected.txt:
+
 2021-03-11  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of perspective property
