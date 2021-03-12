@@ -927,7 +927,7 @@ UseGPUProcessForCanvasRenderingEnabled:
   humanReadableName: "GPU Process: Canvas Rendering"
   humanReadableDescription: "Enable canvas rendering in GPU Process"
   webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS)
+  condition: ENABLE(GPU_PROCESS) && !(PLATFORM(GTK) || PLATFORM(WPE))
   exposed: [ WebKit ]
   defaultValue:
     WebKit:

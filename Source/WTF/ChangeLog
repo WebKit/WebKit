@@ -1,3 +1,12 @@
+2021-03-12  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r274327) [GLIB] 2D Canvas tests timing out after enabling GPUProces in testing
+        https://bugs.webkit.org/show_bug.cgi?id=223130
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-03-12  Alex Christensen  <achristensen@webkit.org>
 
         Reduce maximum HashTable entry size to 400 bytes
