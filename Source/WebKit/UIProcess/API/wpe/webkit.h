@@ -53,6 +53,7 @@
 #include <wpe/WebKitInputMethodContext.h>
 #include <wpe/WebKitInstallMissingMediaPluginsPermissionRequest.h>
 #include <wpe/WebKitJavascriptResult.h>
+#include <wpe/WebKitMediaKeySystemPermissionRequest.h>
 #include <wpe/WebKitMimeInfo.h>
 #include <wpe/WebKitNavigationAction.h>
 #include <wpe/WebKitNavigationPolicyDecision.h>
