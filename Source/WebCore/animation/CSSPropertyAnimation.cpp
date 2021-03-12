@@ -1804,6 +1804,30 @@ public:
     }
 };
 
+class PerspectiveWrapper : public NonNegativeFloatPropertyWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PerspectiveWrapper()
+        : NonNegativeFloatPropertyWrapper(CSSPropertyPerspective, &RenderStyle::perspective, &RenderStyle::setPerspective)
+    {
+    }
+
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const override
+    {
+        if (!from->hasPerspective() || !to->hasPerspective())
+            return false;
+        return NonNegativeFloatPropertyWrapper::canInterpolate(from, to);
+    }
+
+    void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* from, const RenderStyle* to, double progress) const override
+    {
+        if (!canInterpolate(from, to))
+            (dst->*m_setter)(progress ? value(to) : value(from));
+        else
+            NonNegativeFloatPropertyWrapper::blend(anim, dst, from, to, progress);
+    }
+};
+
 class CSSPropertyAnimationWrapperMap {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -1931,7 +1955,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyWordSpacing, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing),
         new LengthPropertyWrapper(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent, LengthPropertyWrapper::Flags::IsLengthPercentage),
 
-        new NonNegativeFloatPropertyWrapper(CSSPropertyPerspective, &RenderStyle::perspective, &RenderStyle::setPerspective),
+        new PerspectiveWrapper,
         new LengthPropertyWrapper(CSSPropertyPerspectiveOriginX, &RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, LengthPropertyWrapper::Flags::IsLengthPercentage),
         new LengthPropertyWrapper(CSSPropertyPerspectiveOriginY, &RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY, LengthPropertyWrapper::Flags::IsLengthPercentage),
         new LengthPropertyWrapper(CSSPropertyTransformOriginX, &RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX, LengthPropertyWrapper::Flags::IsLengthPercentage),

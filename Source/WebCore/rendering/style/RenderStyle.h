@@ -716,7 +716,7 @@ public:
 
     BackfaceVisibility backfaceVisibility() const { return static_cast<BackfaceVisibility>(m_rareNonInheritedData->backfaceVisibility); }
     float perspective() const { return m_rareNonInheritedData->perspective; }
-    bool hasPerspective() const { return m_rareNonInheritedData->perspective > 0; }
+    bool hasPerspective() const { return m_rareNonInheritedData->perspective != initialPerspective(); }
     const Length& perspectiveOriginX() const { return m_rareNonInheritedData->perspectiveOriginX; }
     const Length& perspectiveOriginY() const { return m_rareNonInheritedData->perspectiveOriginY; }
     LengthPoint perspectiveOrigin() const { return m_rareNonInheritedData->perspectiveOrigin(); }
@@ -1654,7 +1654,7 @@ public:
     static float initialTransformOriginZ() { return 0; }
     static TransformStyle3D initialTransformStyle3D() { return TransformStyle3D::Flat; }
     static BackfaceVisibility initialBackfaceVisibility() { return BackfaceVisibility::Visible; }
-    static float initialPerspective() { return 0; }
+    static float initialPerspective() { return -1; }
     static Length initialPerspectiveOriginX() { return Length(50.0f, LengthType::Percent); }
     static Length initialPerspectiveOriginY() { return Length(50.0f, LengthType::Percent); }
     static Color initialBackgroundColor() { return Color::transparentBlack; }

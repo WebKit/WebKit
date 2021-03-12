@@ -1,3 +1,18 @@
+2021-03-11  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of perspective property
+        https://bugs.webkit.org/show_bug.cgi?id=223111
+
+        Reviewed by Antti Koivisto.
+
+        Add an extra 59 PASS results, although we also have 18 new FAIL results. Of those
+        new failures, 16 are due to what I believe to be an issue in the WPT test and I filed
+        https://github.com/web-platform-tests/wpt/pull/28036 to address this. With this change
+        in the test, we pass all perspective interpolation tests.
+
+        * web-platform-tests/css/css-transforms/animation/perspective-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/perspective-interpolation-expected.txt:
+
 2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
