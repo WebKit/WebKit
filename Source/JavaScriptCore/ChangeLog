@@ -1,3 +1,17 @@
+2021-03-11  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI validator patchpoint should read heap top
+        https://bugs.webkit.org/show_bug.cgi?id=223052
+        <rdar://75087095>
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, the patchpoint doesn't specify any reads, which allows it to be moved around by B3
+        and can cause false positives since it at least read the structure ID for comparing values.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+
 2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
