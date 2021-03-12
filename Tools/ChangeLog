@@ -1,3 +1,13 @@
+2021-03-12  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION: two webkitscmpy.test.svn_unittest.TestRemoteSvn tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=223006
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/svn.py:
+        (Svn.request): Hard-code timezone delta for Subversion server.
+
 2021-03-12  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed: Update Alicia's status to reviewer
