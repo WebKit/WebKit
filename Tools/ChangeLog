@@ -1,3 +1,14 @@
+2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump API version when building with libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=223067
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use WEBKITGTK_API_DOC_VERSION instead of WEBKITGTK_API_VERSION.
+
+        * gtk/manifest.txt.in:
+
 2021-03-11  Sihui Liu  <sihui_liu@appe.com>
 
         Add some logging to help debug flaky quota tests

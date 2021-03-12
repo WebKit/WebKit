@@ -1,3 +1,14 @@
+2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump API version when building with libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=223067
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use WEBKITGTK_API_DOC_VERSION instead of WEBKITGTK_API_VERSION for the gtkdoc configuration file.
+
+        * PlatformGTK.cmake:
+
 2021-03-11  Saam Barati  <sbarati@apple.com>
 
         Adopt VM_FLAGS_PERMANENT for the config vm mapping

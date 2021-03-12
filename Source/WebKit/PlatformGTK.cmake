@@ -818,7 +818,7 @@ if (ENABLE_INTROSPECTION)
 endif ()
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
-    "[webkit2gtk-${WEBKITGTK_API_VERSION}]\n"
+    "[webkit2gtk-${WEBKITGTK_API_DOC_VERSION}]\n"
     "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
     "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
     "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
@@ -843,7 +843,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
 )
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
-    "[webkitdomgtk-${WEBKITGTK_API_VERSION}]\n"
+    "[webkitdomgtk-${WEBKITGTK_API_DOC_VERSION}]\n"
     "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
     "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
     "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"

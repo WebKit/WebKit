@@ -100,7 +100,7 @@ if (ENABLE_INTROSPECTION)
 endif ()
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-jsc-glib.cfg
-    "[jsc-glib-${WEBKITGTK_API_VERSION}]\n"
+    "[jsc-glib-${WEBKITGTK_API_DOC_VERSION}]\n"
     "pkgconfig_file=${JavaScriptCore_PKGCONFIG_FILE}\n"
     "decorator=JSC_API\n"
     "deprecation_guard=JSC_DISABLE_DEPRECATED\n"
