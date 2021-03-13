@@ -1,3 +1,18 @@
+2021-03-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] run buildbot checkconfig in services ews
+        https://bugs.webkit.org/show_bug.cgi?id=222687
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (RunBuildbotCheckConfigForEWS): Renamed from RunEWSBuildbotCheckConfig.
+        (RunBuildbotCheckConfigForBuildWebKit): Build step to run buildbot checkconfig for build.webkit.org
+        * CISupport/ews-build/factories.py:
+        (ServicesFactory.__init__): Added build step to run buildbot checkconfig for build.webkit.org
+        * CISupport/ews-build/steps_unittest.py: Added and updated unit-tests.
+        * CISupport/ews-build/factories_unittest.py: Updated unit-tests.
+
 2021-03-12  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r274270): [WPE][GTK] Broke Epiphany test /embed/ephy-web-view/error-pages-not-stored-in-history

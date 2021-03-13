@@ -1252,13 +1252,15 @@ class RunEWSUnitTests(shell.ShellCommand):
         return {'step': 'Failed EWS unit tests'}
 
 
-class RunEWSBuildbotCheckConfig(shell.ShellCommand):
+class RunBuildbotCheckConfig(shell.ShellCommand):
     name = 'buildbot-check-config'
     description = ['buildbot-checkconfig running']
     command = ['buildbot', 'checkconfig']
+    directory = 'build/Tools/CISupport/ews-build'
+    timeout = 2 * 60
 
     def __init__(self, **kwargs):
-        super(RunEWSBuildbotCheckConfig, self).__init__(workdir='build/Tools/CISupport/ews-build', timeout=2 * 60, logEnviron=False, **kwargs)
+        super(RunBuildbotCheckConfig, self).__init__(workdir=self.directory, timeout=self.timeout, logEnviron=False, **kwargs)
 
     def start(self):
         self.workerEnvironment['LC_CTYPE'] = 'en_US.UTF-8'
@@ -1268,6 +1270,16 @@ class RunEWSBuildbotCheckConfig(shell.ShellCommand):
         if self.results == SUCCESS:
             return {'step': 'Passed buildbot checkconfig'}
         return {'step': 'Failed buildbot checkconfig'}
+
+
+class RunBuildbotCheckConfigForEWS(RunBuildbotCheckConfig):
+    name = 'buildbot-check-config-for-ews'
+    directory = 'build/Tools/CISupport/ews-build'
+
+
+class RunBuildbotCheckConfigForBuildWebKit(RunBuildbotCheckConfig):
+    name = 'buildbot-check-config-for-build-webkit'
+    directory = 'build/Tools/CISupport/build-webkit-org'
 
 
 class RunResultsdbpyTests(shell.ShellCommand):

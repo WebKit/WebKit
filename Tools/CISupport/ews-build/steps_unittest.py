@@ -53,8 +53,8 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    FetchBranches, FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
-                   RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
-                   RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
+                   RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
+                   RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
                    UploadTestResults, ValidateCommiterAndReviewer, ValidatePatch)
@@ -622,7 +622,7 @@ FAILED (failures=1, errors=0)''')
         return self.runStep()
 
 
-class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
+class TestRunBuildbotCheckConfigForEWS(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -631,7 +631,7 @@ class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        self.setupStep(RunEWSBuildbotCheckConfig())
+        self.setupStep(RunBuildbotCheckConfigForEWS())
         self.expectRemoteCommands(
             ExpectShell(workdir='build/Tools/CISupport/ews-build',
                         timeout=120,
@@ -645,7 +645,7 @@ class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RunEWSBuildbotCheckConfig())
+        self.setupStep(RunBuildbotCheckConfigForEWS())
         self.expectRemoteCommands(
             ExpectShell(workdir='build/Tools/CISupport/ews-build',
                         timeout=120,
@@ -653,7 +653,45 @@ class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
                         command=['buildbot', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
-            + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) iOS-12-Debug-Build-EWS have no schedulers to drive them')
+            + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) iOS-14-Debug-Build-EWS have no schedulers to drive them')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed buildbot checkconfig')
+        return self.runStep()
+
+
+class TestRunBuildbotCheckConfigForBuildWebKit(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunBuildbotCheckConfigForBuildWebKit())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['buildbot', 'checkconfig'],
+                        env={'LC_CTYPE': 'en_US.UTF-8'}
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed buildbot checkconfig')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunBuildbotCheckConfigForBuildWebKit())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['buildbot', 'checkconfig'],
+                        env={'LC_CTYPE': 'en_US.UTF-8'}
+                        )
+            + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) Apple-iOS-14-Release-Build have no schedulers to drive them')
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed buildbot checkconfig')
