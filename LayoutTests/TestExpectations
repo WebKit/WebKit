@@ -1196,17 +1196,13 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-direction-row-reverse.h
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-order.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/align-self-015.html [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-003.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/canvas-dynamic-change-001.html [ Failure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-img-expand-evenly.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-015.html [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flex-item-vertical-align.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-safe-overflow-position-001.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-002.html [ ImageOnlyFailure ]
 webkit.org/b/210243 imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-002.html [ Failure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-no-margin.html [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/stretch-input-in-column.html [ ImageOnlyFailure ]
 
 # grid layout tests
 imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010.html [ Pass Failure ]
@@ -4019,9 +4015,7 @@ webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-just
 # align-content in flexbox.
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_center.html [ ImageOnlyFailure ]
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_flex-end.html [ ImageOnlyFailure ]
-webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_flex-start.html [ ImageOnlyFailure ]
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_space-around.html [ ImageOnlyFailure ]
-webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_space-between.html [ ImageOnlyFailure ]
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_stretch.html [ ImageOnlyFailure ]
 
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-002.xhtml [ ImageOnlyFailure ]
@@ -4029,7 +4023,6 @@ webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-alig
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-005.xhtml [ ImageOnlyFailure ]
 
 # align baseline in flexbox.
-webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/align-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001a.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001b.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-006.xhtml [ ImageOnlyFailure ]

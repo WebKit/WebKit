@@ -1,3 +1,21 @@
+2021-03-13  Rob Buis  <rbuis@igalia.com>
+
+        [css-flexbox] Fix incorrect relative path
+        https://bugs.webkit.org/show_bug.cgi?id=223120
+
+        Reviewed by Darin Adler.
+
+        Fix incorrect relative path, because of this the comparisons
+        were not accurate, causing failures where the rendering was correct.
+
+        * web-platform-tests/css/css-flexbox/align-baseline-expected.html:
+        * web-platform-tests/css/css-flexbox/align-content_flex-start-expected.html:
+        * web-platform-tests/css/css-flexbox/align-content_space-between-expected.html:
+        * web-platform-tests/css/css-flexbox/align-self-015-expected.html:
+        * web-platform-tests/css/css-flexbox/auto-margins-003-expected.html:
+        * web-platform-tests/css/css-flexbox/flex-item-vertical-align-expected.html:
+        * web-platform-tests/css/css-flexbox/stretch-input-in-column-expected.html:
+
 2021-03-13  Antoine Quint  <graouts@webkit.org>
 
         Unreviewed. Merge the changes to the perspective interpolation test that resulted
