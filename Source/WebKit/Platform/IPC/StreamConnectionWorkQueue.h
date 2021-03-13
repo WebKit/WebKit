@@ -53,7 +53,10 @@ private:
     void wakeUpProcessingThread();
     void processStreams();
 
+#if PLATFORM(COCOA)
     const char* const m_name;
+#endif
+
     Semaphore m_wakeUpSemaphore;
     RefPtr<Thread> m_processingThread;
 

@@ -2533,7 +2533,7 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
         usage += IDBServer::IDBServer::diskUsage(idbRootPath, origin);
 #endif
         if (shouldPrintusageDetail == StorageQuotaManager::ShouldPrintUsageDetail::Yes)
-            WTFLogAlways("StorageQuotaManager::UsageGetter Cachce usage %llu, IDB usage %llu", cacheUsage, usage);
+            WTFLogAlways("StorageQuotaManager::UsageGetter Cache usage %" PRIu64 ", IDB usage %" PRIu64, cacheUsage, usage);
 
         return usage;
     };

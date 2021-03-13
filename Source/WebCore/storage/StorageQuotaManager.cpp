@@ -112,7 +112,7 @@ bool StorageQuotaManager::tryGrantRequest(uint64_t spaceRequested)
     ASSERT(m_quotaCountDownLock.isLocked());
 
     if (m_loggingEnabled)
-        WTFLogAlways("%p - StorageQuotaManager tryGrantRequest m_quota %llu, m_usage %llu, m_quotaCountDown %llu, spaceRequested %llu", this, m_quota, m_usage, m_quotaCountDown, spaceRequested);
+        WTFLogAlways("%p - StorageQuotaManager tryGrantRequest m_quota %" PRIu64 ", m_usage %" PRIu64 ", m_quotaCountDown %" PRIu64 ", spaceRequested %" PRIu64, this, m_quota, m_usage, m_quotaCountDown, spaceRequested);
 
     if (spaceRequested <= m_quotaCountDown) {
         m_quotaCountDown -= spaceRequested;

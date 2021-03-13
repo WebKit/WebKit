@@ -1,3 +1,14 @@
+2021-03-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix build warnings after r273204 and r274323
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::storageQuotaManager): Use portable uint64_t format specifier.
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::StreamConnectionWorkQueue):
+        * Platform/IPC/StreamConnectionWorkQueue.h: Make m_name COCOA specific to avoid
+        unused-member on other platforms.
+
 2021-03-13  Tim Horton  <timothy_horton@apple.com>
 
         Adopt DDMacAction instead of DDAction on macOS
