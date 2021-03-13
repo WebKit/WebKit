@@ -3578,6 +3578,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyClip: {
             if (!style.hasClip())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
+            if (style.clip().top().isAuto() && style.clip().right().isAuto()
+                && style.clip().top().isAuto() && style.clip().right().isAuto())
+                return cssValuePool.createIdentifierValue(CSSValueAuto);
+
             auto rect = Rect::create();
             rect->setTop(autoOrZoomAdjustedValue(style.clip().top(), style));
             rect->setRight(autoOrZoomAdjustedValue(style.clip().right(), style));

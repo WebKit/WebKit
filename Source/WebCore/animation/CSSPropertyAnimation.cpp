@@ -386,12 +386,12 @@ static inline TextDecorationThickness blendFunc(const CSSPropertyBlendingClient*
     return TextDecorationThickness::createWithAuto();
 }
 
-static inline LengthBox blendFunc(const CSSPropertyBlendingClient* anim, const LengthBox& from, const LengthBox& to, double progress)
+static inline LengthBox blendFunc(const CSSPropertyBlendingClient* anim, const LengthBox& from, const LengthBox& to, double progress, ValueRange valueRange = ValueRangeNonNegative)
 {
-    LengthBox result(blendFunc(anim, from.top(), to.top(), progress, ValueRangeNonNegative),
-                     blendFunc(anim, from.right(), to.right(), progress, ValueRangeNonNegative),
-                     blendFunc(anim, from.bottom(), to.bottom(), progress, ValueRangeNonNegative),
-                     blendFunc(anim, from.left(), to.left(), progress, ValueRangeNonNegative));
+    LengthBox result(blendFunc(anim, from.top(), to.top(), progress, valueRange),
+                     blendFunc(anim, from.right(), to.right(), progress, valueRange),
+                     blendFunc(anim, from.bottom(), to.bottom(), progress, valueRange),
+                     blendFunc(anim, from.left(), to.left(), progress, valueRange));
 
     return result;
 }
@@ -790,8 +790,9 @@ class LengthBoxPropertyWrapper : public PropertyWrapperGetter<const LengthBox&> 
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Flags {
-        IsLengthPercentage  = 1 << 0,
-        UsesFillKeyword     = 1 << 1,
+        IsLengthPercentage      = 1 << 0,
+        UsesFillKeyword         = 1 << 1,
+        AllowsNegativeValues    = 1 << 2,
     };
     LengthBoxPropertyWrapper(CSSPropertyID prop, const LengthBox& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthBox&&), OptionSet<Flags> flags = { })
         : PropertyWrapperGetter<const LengthBox&>(prop, getter)
@@ -818,7 +819,8 @@ public:
     {
         if (m_flags.contains(Flags::UsesFillKeyword))
             dst->setBorderImageSliceFill((!progress || canInterpolate(a, b) ? a : b)->borderImage().fill());
-        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress));
+        auto valueRange = m_flags.contains(Flags::AllowsNegativeValues) ? ValueRangeAll : ValueRangeNonNegative;
+        (dst->*m_setter)(blendFunc(anim, this->value(a), this->value(b), progress, valueRange));
     }
 
 protected:
@@ -1986,7 +1988,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<Visibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility),
         new PropertyWrapper<float>(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoomWithoutReturnValue),
 
-        new LengthBoxPropertyWrapper(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip),
+        new LengthBoxPropertyWrapper(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip, { LengthBoxPropertyWrapper::Flags::AllowsNegativeValues }),
 
         new AcceleratedPropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity),
         new AcceleratedPropertyWrapper<const TransformOperations&>(CSSPropertyTransform, &RenderStyle::transform, &RenderStyle::setTransform),
