@@ -1,3 +1,18 @@
+2021-03-12  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of orphans and widows CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=223124
+
+        Reviewed by Darin Adler.
+
+        Import interpolation tests for orphans and widows. These tests pass completely
+        weith 44 PASS results compared to prior to the source changes.
+
+        * web-platform-tests/css/css-break/animation/orphans-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-break/animation/orphans-interpolation.html: Added.
+        * web-platform-tests/css/css-break/animation/widows-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-break/animation/widows-interpolation.html: Added.
+
 2021-03-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Cache cross-origin methods / accessors of Window and Location per lexical global object
