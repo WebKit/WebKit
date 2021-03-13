@@ -1,3 +1,12 @@
+2021-03-13  Antoine Quint  <graouts@webkit.org>
+
+        Unreviewed. Merge the changes to the perspective interpolation test that resulted
+        from https://github.com/web-platform-tests/wpt/pull/28036 and update the expectations
+        now that we pass this test entirely with 16 new PASS results.
+
+        * web-platform-tests/css/css-transforms/animation/perspective-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/perspective-interpolation.html:
+
 2021-03-12  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of orphans and widows CSS properties

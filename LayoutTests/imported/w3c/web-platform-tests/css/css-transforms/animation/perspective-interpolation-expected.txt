@@ -1,30 +1,30 @@
 
-FAIL CSS Transitions: property <perspective> from neutral to [20px] at (-20) should be [none] assert_equals: expected "none " but got "0px "
-FAIL CSS Transitions: property <perspective> from neutral to [20px] at (-1) should be [none] assert_equals: expected "none " but got "0px "
+PASS CSS Transitions: property <perspective> from neutral to [20px] at (-20) should be [0px]
+PASS CSS Transitions: property <perspective> from neutral to [20px] at (-1) should be [0px]
 PASS CSS Transitions: property <perspective> from neutral to [20px] at (-0.3) should be [7px]
 PASS CSS Transitions: property <perspective> from neutral to [20px] at (0) should be [10px]
 PASS CSS Transitions: property <perspective> from neutral to [20px] at (0.3) should be [13px]
 PASS CSS Transitions: property <perspective> from neutral to [20px] at (0.6) should be [16px]
 PASS CSS Transitions: property <perspective> from neutral to [20px] at (1) should be [20px]
 PASS CSS Transitions: property <perspective> from neutral to [20px] at (1.5) should be [25px]
-FAIL CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (-20) should be [none] assert_equals: expected "none " but got "0px "
-FAIL CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (-1) should be [none] assert_equals: expected "none " but got "0px "
+PASS CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (-20) should be [0px]
+PASS CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (-1) should be [0px]
 PASS CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (-0.3) should be [7px]
 PASS CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (0) should be [10px]
 PASS CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (0.3) should be [13px]
 PASS CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (0.6) should be [16px]
 PASS CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (1) should be [20px]
 PASS CSS Transitions with transition: all: property <perspective> from neutral to [20px] at (1.5) should be [25px]
-FAIL CSS Animations: property <perspective> from neutral to [20px] at (-20) should be [none] assert_equals: expected "none " but got "0px "
-FAIL CSS Animations: property <perspective> from neutral to [20px] at (-1) should be [none] assert_equals: expected "none " but got "0px "
+PASS CSS Animations: property <perspective> from neutral to [20px] at (-20) should be [0px]
+PASS CSS Animations: property <perspective> from neutral to [20px] at (-1) should be [0px]
 PASS CSS Animations: property <perspective> from neutral to [20px] at (-0.3) should be [7px]
 PASS CSS Animations: property <perspective> from neutral to [20px] at (0) should be [10px]
 PASS CSS Animations: property <perspective> from neutral to [20px] at (0.3) should be [13px]
 PASS CSS Animations: property <perspective> from neutral to [20px] at (0.6) should be [16px]
 PASS CSS Animations: property <perspective> from neutral to [20px] at (1) should be [20px]
 PASS CSS Animations: property <perspective> from neutral to [20px] at (1.5) should be [25px]
-FAIL Web Animations: property <perspective> from neutral to [20px] at (-20) should be [none] assert_equals: expected "none " but got "0px "
-FAIL Web Animations: property <perspective> from neutral to [20px] at (-1) should be [none] assert_equals: expected "none " but got "0px "
+PASS Web Animations: property <perspective> from neutral to [20px] at (-20) should be [0px]
+PASS Web Animations: property <perspective> from neutral to [20px] at (-1) should be [0px]
 PASS Web Animations: property <perspective> from neutral to [20px] at (-0.3) should be [7px]
 PASS Web Animations: property <perspective> from neutral to [20px] at (0) should be [10px]
 PASS Web Animations: property <perspective> from neutral to [20px] at (0.3) should be [13px]
@@ -119,32 +119,32 @@ PASS Web Animations: property <perspective> from [unset] to [20px] at (0.5) shou
 PASS Web Animations: property <perspective> from [unset] to [20px] at (0.6) should be [20px]
 PASS Web Animations: property <perspective> from [unset] to [20px] at (1) should be [20px]
 PASS Web Animations: property <perspective> from [unset] to [20px] at (1.5) should be [20px]
-FAIL CSS Transitions: property <perspective> from [50px] to [100px] at (-20) should be [none] assert_equals: expected "none " but got "0px "
-FAIL CSS Transitions: property <perspective> from [50px] to [100px] at (-1) should be [none] assert_equals: expected "none " but got "0px "
+PASS CSS Transitions: property <perspective> from [50px] to [100px] at (-20) should be [0px]
+PASS CSS Transitions: property <perspective> from [50px] to [100px] at (-1) should be [0px]
 PASS CSS Transitions: property <perspective> from [50px] to [100px] at (-0.3) should be [35px]
 PASS CSS Transitions: property <perspective> from [50px] to [100px] at (0) should be [50px]
 PASS CSS Transitions: property <perspective> from [50px] to [100px] at (0.3) should be [65px]
 PASS CSS Transitions: property <perspective> from [50px] to [100px] at (0.6) should be [80px]
 PASS CSS Transitions: property <perspective> from [50px] to [100px] at (1) should be [100px]
 PASS CSS Transitions: property <perspective> from [50px] to [100px] at (1.5) should be [125px]
-FAIL CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (-20) should be [none] assert_equals: expected "none " but got "0px "
-FAIL CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (-1) should be [none] assert_equals: expected "none " but got "0px "
+PASS CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (-20) should be [0px]
+PASS CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (-1) should be [0px]
 PASS CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (-0.3) should be [35px]
 PASS CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (0) should be [50px]
 PASS CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (0.3) should be [65px]
 PASS CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (0.6) should be [80px]
 PASS CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (1) should be [100px]
 PASS CSS Transitions with transition: all: property <perspective> from [50px] to [100px] at (1.5) should be [125px]
-FAIL CSS Animations: property <perspective> from [50px] to [100px] at (-20) should be [none] assert_equals: expected "none " but got "0px "
-FAIL CSS Animations: property <perspective> from [50px] to [100px] at (-1) should be [none] assert_equals: expected "none " but got "0px "
+PASS CSS Animations: property <perspective> from [50px] to [100px] at (-20) should be [0px]
+PASS CSS Animations: property <perspective> from [50px] to [100px] at (-1) should be [0px]
 PASS CSS Animations: property <perspective> from [50px] to [100px] at (-0.3) should be [35px]
 PASS CSS Animations: property <perspective> from [50px] to [100px] at (0) should be [50px]
 PASS CSS Animations: property <perspective> from [50px] to [100px] at (0.3) should be [65px]
 PASS CSS Animations: property <perspective> from [50px] to [100px] at (0.6) should be [80px]
 PASS CSS Animations: property <perspective> from [50px] to [100px] at (1) should be [100px]
 PASS CSS Animations: property <perspective> from [50px] to [100px] at (1.5) should be [125px]
-FAIL Web Animations: property <perspective> from [50px] to [100px] at (-20) should be [none] assert_equals: expected "none " but got "0px "
-FAIL Web Animations: property <perspective> from [50px] to [100px] at (-1) should be [none] assert_equals: expected "none " but got "0px "
+PASS Web Animations: property <perspective> from [50px] to [100px] at (-20) should be [0px]
+PASS Web Animations: property <perspective> from [50px] to [100px] at (-1) should be [0px]
 PASS Web Animations: property <perspective> from [50px] to [100px] at (-0.3) should be [35px]
 PASS Web Animations: property <perspective> from [50px] to [100px] at (0) should be [50px]
 PASS Web Animations: property <perspective> from [50px] to [100px] at (0.3) should be [65px]
