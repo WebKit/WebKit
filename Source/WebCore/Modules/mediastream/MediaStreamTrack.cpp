@@ -218,6 +218,8 @@ RefPtr<MediaStreamTrack> MediaStreamTrack::clone()
     if (!scriptExecutionContext())
         return nullptr;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     return MediaStreamTrack::create(*scriptExecutionContext(), m_private->clone());
 }
 
@@ -228,6 +230,8 @@ void MediaStreamTrack::stopTrack(StopMode mode)
 
     if (ended())
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, static_cast<int>(mode));
 
     // An 'ended' event is not posted if m_ended is true when trackEnded is called, so set it now if we are
     // not supposed to post the event.
@@ -549,6 +553,7 @@ void MediaStreamTrack::endCapture(Document& document, MediaProducer::MediaCaptur
 
 void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     configureTrackRendering();
 }
 
@@ -563,6 +568,8 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     if (m_ended)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     if (m_isCaptureTrack && m_private->source().captureDidFail())
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_s);
 
@@ -571,6 +578,8 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 
     if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped())
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, "firing 'ended' event");
 
     // 3. Notify track's source that track is ended so that the source may be stopped, unless other MediaStreamTrack objects depend on it.
     // 4. Fire a simple event named ended at the object.

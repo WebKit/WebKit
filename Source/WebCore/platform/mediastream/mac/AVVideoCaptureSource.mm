@@ -135,6 +135,8 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* device, String&& id,
 
 AVVideoCaptureSource::~AVVideoCaptureSource()
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+
 #if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
 #endif
@@ -192,10 +194,11 @@ void AVVideoCaptureSource::startProducingData()
             return;
     }
 
-    if ([m_session isRunning])
+    bool isRunning = !![m_session isRunning];
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, isRunning);
+    if (isRunning)
         return;
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     [m_objcObserver addNotificationObservers];
     [m_session startRunning];
 }
@@ -205,11 +208,9 @@ void AVVideoCaptureSource::stopProducingData()
     if (!m_session)
         return;
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, !![m_session isRunning]);
     [m_objcObserver removeNotificationObservers];
-
-    if ([m_session isRunning])
-        [m_session stopRunning];
+    [m_session stopRunning];
 
     m_interrupted = false;
 
@@ -491,6 +492,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
 
 void AVVideoCaptureSource::shutdownCaptureSession()
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     m_buffer = nullptr;
 }
 
@@ -509,6 +511,7 @@ void AVVideoCaptureSource::orientationChanged(int orientation)
     ASSERT(orientation == 0 || orientation == 90 || orientation == -90 || orientation == 180);
     m_deviceOrientation = orientation;
     computeSampleRotation();
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_sampleRotation, ", orientation = ", m_deviceOrientation);
 }
 
 void AVVideoCaptureSource::computeSampleRotation()

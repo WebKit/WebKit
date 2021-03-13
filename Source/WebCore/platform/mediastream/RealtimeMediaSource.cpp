@@ -104,10 +104,12 @@ void RealtimeMediaSource::removeObserver(Observer& observer)
 
 void RealtimeMediaSource::setMuted(bool muted)
 {
-    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, muted);
-
     // Changed m_muted before calling start/stop so muted() will reflect the correct state.
     bool changed = m_muted != muted;
+
+    if (changed)
+        ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, muted);
+
     m_muted = muted;
     if (muted)
         stop();
@@ -256,17 +258,18 @@ void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
     if (hasObserverPreventingStopping)
         return;
 
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
     end(&callingObserver);
 }
 
 void RealtimeMediaSource::end(Observer* callingObserver)
 {
-    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
-
     ASSERT(isMainThread());
 
     if (m_isEnded)
         return;
+
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
 
     auto protectedThis = makeRef(*this);
 
