@@ -751,16 +751,17 @@ static bool rubberBandingEnabledForSystem()
 }
 #endif
 
-bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, ScrollBehavior behavior)
+bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, OptionSet<ScrollBehavior> behavior)
 {
     m_haveScrolledSincePageLoad = true;
 
     // This method doesn't do directional snapping, but our base class does. It will call into
     // ScrollAnimatorMac::scroll again with the snapped positions and ScrollBehavior::Default.
-    if (behavior == ScrollBehavior::DoDirectionalSnapping)
+    if (behavior.contains(ScrollBehavior::DoDirectionalSnapping))
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
 
-    bool shouldAnimate = scrollAnimationEnabledForSystem() && m_scrollableArea.scrollAnimatorEnabled() && granularity != ScrollByPixel;
+    bool shouldAnimate = scrollAnimationEnabledForSystem() && m_scrollableArea.scrollAnimatorEnabled() && granularity != ScrollByPixel
+        && !behavior.contains(ScrollBehavior::NeverAnimate);
     FloatPoint newPosition = positionFromStep(orientation, step, multiplier);
     newPosition = newPosition.constrainedBetween(scrollableArea().minimumScrollPosition(), scrollableArea().maximumScrollPosition());
 
@@ -1498,6 +1499,11 @@ void ScrollAnimatorMac::setVisibleScrollerThumbRect(const IntRect& scrollerThumb
 
     m_scrollableArea.setVisibleScrollerThumbRect(rectInViewCoordinates);
     m_visibleScrollerThumbRect = rectInViewCoordinates;
+}
+
+bool ScrollAnimatorMac::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
+{
+    return m_scrollController.processWheelEventForScrollSnap(wheelEvent);
 }
 
 } // namespace WebCore

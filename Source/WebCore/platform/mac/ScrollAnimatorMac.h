@@ -79,7 +79,7 @@ private:
     Timer m_sendContentAreaScrolledTimer;
     FloatSize m_contentAreaScrolledTimerScrollDelta;
 
-    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, ScrollBehavior) override;
+    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>) override;
     bool scrollToPositionWithAnimation(const FloatPoint&) override;
     bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped) override;
 
@@ -139,6 +139,8 @@ private:
 
     String horizontalScrollbarStateForTesting() const final;
     String verticalScrollbarStateForTesting() const final;
+
+    bool processWheelEventForScrollSnap(const PlatformWheelEvent&) override;
 
     // ScrollControllerClient.
 #if ENABLE(RUBBER_BANDING)
