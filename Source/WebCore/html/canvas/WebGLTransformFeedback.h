@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGL2)
 
-#include "WebGL2RenderingContext.h"
 #include "WebGLSharedObject.h"
 
 namespace JSC {
@@ -39,6 +38,10 @@ class AbstractLocker;
 }
 
 namespace WebCore {
+
+class WebGL2RenderingContext;
+class WebGLBuffer;
+class WebGLProgram;
 
 class WebGLTransformFeedback final : public WebGLSharedObject {
 public:

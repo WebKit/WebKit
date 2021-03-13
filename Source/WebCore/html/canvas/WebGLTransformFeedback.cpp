@@ -28,8 +28,8 @@
 #if ENABLE(WEBGL2)
 #include "WebGLTransformFeedback.h"
 
+#include "WebGL2RenderingContext.h"
 #include "WebGLContextGroup.h"
-#include "WebGLRenderingContextBase.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
