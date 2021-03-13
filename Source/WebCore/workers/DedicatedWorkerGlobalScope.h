@@ -76,9 +76,7 @@ public:
 #endif
 
 #if ENABLE(WEB_RTC)
-    RefPtr<RTCRtpScriptTransformer> createRTCRtpScriptTransformer(String&&, TransferredMessagePort);
-    ExceptionOr<void> registerRTCRtpScriptTransformer(String&&, Ref<JSRTCRtpScriptTransformerConstructor>&&);
-    RefPtr<MessagePort> takePendingRTCTransfomerMessagePort() { return WTFMove(m_pendingRTCTransfomerMessagePort); }
+    RefPtr<RTCRtpScriptTransformer> createRTCRtpScriptTransformer(Ref<SerializedScriptValue>&&, TransferredMessagePort&&);
 #endif
 
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Worker; }
@@ -98,10 +96,6 @@ private:
 
 #if ENABLE(OFFSCREEN_CANVAS)
     RefPtr<WorkerAnimationController> m_workerAnimationController;
-#endif
-#if ENABLE(WEB_RTC)
-    HashMap<String, RefPtr<JSRTCRtpScriptTransformerConstructor>> m_rtcRtpTransformerConstructorMap;
-    RefPtr<MessagePort> m_pendingRTCTransfomerMessagePort;
 #endif
 };
 

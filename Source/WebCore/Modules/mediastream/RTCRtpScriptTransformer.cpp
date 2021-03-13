@@ -31,29 +31,38 @@
 #include "DedicatedWorkerGlobalScope.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
-#include "JSRTCRtpScriptTransformerContext.h"
 #include "RTCRtpTransformableFrame.h"
 #include "ReadableStream.h"
 #include "ReadableStreamSource.h"
+#include "SerializedScriptValue.h"
 #include "WritableStream.h"
 #include "WritableStreamSink.h"
 
 namespace WebCore {
 
-ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(ScriptExecutionContext& context)
+ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(ScriptExecutionContext& context, Ref<SerializedScriptValue>&& options, Ref<MessagePort>&& port)
 {
-    auto port = downcast<DedicatedWorkerGlobalScope>(context).takePendingRTCTransfomerMessagePort();
-    if (!port)
-        return Exception { TypeError, "No pending construction data for this RTCRtpScriptTransformer"_s };
+    if (!context.globalObject())
+        return Exception { InvalidStateError };
 
-    auto transformer = adoptRef(*new RTCRtpScriptTransformer(context, port.releaseNonNull()));
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+    JSC::JSLockHolder lock(globalObject.vm());
+    auto readableSource = SimpleReadableStreamSource::create();
+    auto readable = ReadableStream::create(globalObject, readableSource.copyRef());
+    if (readable.hasException())
+        return readable.releaseException();
+
+    auto transformer = adoptRef(*new RTCRtpScriptTransformer(context, WTFMove(options), WTFMove(port), readable.releaseReturnValue(), WTFMove(readableSource)));
     transformer->suspendIfNeeded();
     return transformer;
 }
 
-RTCRtpScriptTransformer::RTCRtpScriptTransformer(ScriptExecutionContext& context, Ref<MessagePort>&& port)
+RTCRtpScriptTransformer::RTCRtpScriptTransformer(ScriptExecutionContext& context, Ref<SerializedScriptValue>&& options, Ref<MessagePort>&& port, Ref<ReadableStream>&& readable, Ref<SimpleReadableStreamSource>&& readableSource)
     : ActiveDOMObject(&context)
+    , m_options(WTFMove(options))
     , m_port(WTFMove(port))
+    , m_readableSource(WTFMove(readableSource))
+    , m_readable(WTFMove(readable))
 {
 }
 
@@ -61,68 +70,51 @@ RTCRtpScriptTransformer::~RTCRtpScriptTransformer()
 {
 }
 
-RefPtr<SimpleReadableStreamSource> RTCRtpScriptTransformer::startStreams(RTCRtpTransformBackend& backend)
+ReadableStream& RTCRtpScriptTransformer::readable()
 {
-    auto callback = WTFMove(m_callback);
-    if (!callback)
-        return nullptr;
+    return m_readable.get();
+}
 
-    auto& context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
+{
+    if (!m_writable) {
+        auto* context = downcast<WorkerGlobalScope>(scriptExecutionContext());
+        if (!context || !context->globalObject())
+            return Exception { InvalidStateError };
 
-    auto& vm = globalObject.vm();
-    JSC::JSLockHolder lock(vm);
+        auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context->globalObject());
+        auto writableOrException = WritableStream::create(globalObject, SimpleWritableStreamSink::create([transformer = makeRef(*this)](auto& context, auto value) -> ExceptionOr<void> {
+            auto& globalObject = *context.globalObject();
 
-    auto readableStreamSource = SimpleReadableStreamSource::create();
-    auto readableStream = ReadableStream::create(globalObject, readableStreamSource.copyRef());
-    if (readableStream.hasException())
-        return nullptr;
+            auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
+            auto frame = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
 
-    auto writableStream = WritableStream::create(globalObject, SimpleWritableStreamSink::create([backend = makeRef(backend)](auto& context, auto value) -> ExceptionOr<void> {
-        auto& globalObject = *context.globalObject();
+            if (scope.exception())
+                return Exception { ExistingExceptionError };
 
-        auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
-        auto frame = convert<IDLUnion<IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);
-
-        if (scope.exception())
-            return Exception { ExistingExceptionError };
-
-        auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
-            return makeRef(value->rtcFrame());
-        }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
-            return makeRef(value->rtcFrame());
-        });
-        backend->processTransformedFrame(rtcFrame.get());
-        return { };
-    }));
-    if (writableStream.hasException())
-        return nullptr;
-
-    // Call start callback.
-    JSC::MarkedArgumentBuffer args;
-    args.append(toJSNewlyCreated(&globalObject, &globalObject, readableStream.releaseReturnValue()));
-    args.append(toJSNewlyCreated(&globalObject, &globalObject, writableStream.releaseReturnValue()));
-    args.append(toJSNewlyCreated(&globalObject, &globalObject, RTCRtpScriptTransformerContext::create(makeRef(backend))));
-
-    NakedPtr<JSC::Exception> returnedException;
-    callback->invokeCallback(JSC::jsUndefined(), args, JSCallbackData::CallbackType::Object, JSC::Identifier::fromString(vm, "start"), returnedException);
-    // FIXME: Do something in case of exception? We should at least log errors.
-
-    return readableStreamSource;
+            auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
+                return makeRef(value->rtcFrame());
+            }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
+                return makeRef(value->rtcFrame());
+            });
+            transformer->m_backend->processTransformedFrame(rtcFrame.get());
+            return { };
+        }));
+        if (writableOrException.hasException())
+            return writableOrException;
+        m_writable = writableOrException.releaseReturnValue();
+    }
+    return makeRef(*m_writable);
 }
 
 void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
 {
-    auto readableStreamSource = startStreams(backend.get());
-    if (!readableStreamSource)
-        return;
-
     m_backend = WTFMove(backend);
 
     auto& context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
-    m_backend->setTransformableFrameCallback([readableStreamSource = makeWeakPtr(readableStreamSource.get()), isAudio = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Audio, thread = makeRef(context.thread())](auto&& frame) mutable {
-        thread->runLoop().postTaskForMode([readableStreamSource, isAudio, frame = WTFMove(frame)](auto& context) mutable {
-            if (!readableStreamSource)
+    m_backend->setTransformableFrameCallback([readableSource = makeWeakPtr(m_readableSource.get()), isAudio = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Audio, thread = makeRef(context.thread())](auto&& frame) mutable {
+        thread->runLoop().postTaskForMode([readableSource, isAudio, frame = WTFMove(frame)](auto& context) mutable {
+            if (!readableSource)
                 return;
 
             auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
@@ -130,7 +122,7 @@ void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
             JSC::JSLockHolder lock(vm);
 
             auto value = isAudio ? toJS(&globalObject, &globalObject, RTCEncodedAudioFrame::create(WTFMove(frame))) : toJS(&globalObject, &globalObject, RTCEncodedVideoFrame::create(WTFMove(frame)));
-            readableStreamSource->enqueue(value);
+            readableSource->enqueue(value);
         }, WorkerRunLoop::defaultMode());
     });
 }
@@ -141,6 +133,23 @@ void RTCRtpScriptTransformer::clear()
         m_backend->clearTransformableFrameCallback();
     m_backend = nullptr;
     stopPendingActivity();
+}
+
+ExceptionOr<void> RTCRtpScriptTransformer::requestKeyFrame()
+{
+    if (!m_backend)
+        return Exception { InvalidStateError, "Not attached to a receiver or sender"_s };
+
+    if (m_backend->mediaType() != RTCRtpTransformBackend::MediaType::Video)
+        return Exception { InvalidStateError, "Cannot request key frame on audio sender"_s };
+
+    m_backend->requestKeyFrame();
+    return { };
+}
+
+JSC::JSValue RTCRtpScriptTransformer::options(JSC::JSGlobalObject& globalObject)
+{
+    return m_options->deserialize(globalObject, &globalObject);
 }
 
 } // namespace WebCore

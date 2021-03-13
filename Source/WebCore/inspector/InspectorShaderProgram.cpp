@@ -39,6 +39,7 @@
 #include "GraphicsContextGL.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContextBase.h"
+#include "WebGLSampler.h"
 #include "WebGLShader.h"
 #endif
 

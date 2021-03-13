@@ -407,8 +407,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCRtpScriptTransform.idl
     Modules/mediastream/RTCRtpScriptTransformProvider.idl
     Modules/mediastream/RTCRtpScriptTransformer.idl
-    Modules/mediastream/RTCRtpScriptTransformerConstructor.idl
-    Modules/mediastream/RTCRtpScriptTransformerContext.idl
     Modules/mediastream/RTCRtpSendParameters.idl
     Modules/mediastream/RTCRtpSender+Transform.idl
     Modules/mediastream/RTCRtpSender.idl
@@ -421,6 +419,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCSignalingState.idl
     Modules/mediastream/RTCStatsReport.idl
     Modules/mediastream/RTCTrackEvent.idl
+    Modules/mediastream/RTCTransformEvent.idl
 
     Modules/model-element/HTMLModelElement.idl
 

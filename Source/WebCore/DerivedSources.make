@@ -276,8 +276,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCRtpScriptTransform.idl \
     $(WebCore)/Modules/mediastream/RTCRtpScriptTransformProvider.idl \
     $(WebCore)/Modules/mediastream/RTCRtpScriptTransformer.idl \
-    $(WebCore)/Modules/mediastream/RTCRtpScriptTransformerConstructor.idl \
-    $(WebCore)/Modules/mediastream/RTCRtpScriptTransformerContext.idl \
     $(WebCore)/Modules/mediastream/RTCRtpSynchronizationSource.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiver.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiverDirection.idl \
@@ -287,6 +285,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCSignalingState.idl \
     $(WebCore)/Modules/mediastream/RTCStatsReport.idl \
     $(WebCore)/Modules/mediastream/RTCTrackEvent.idl \
+    $(WebCore)/Modules/mediastream/RTCTransformEvent.idl \
     $(WebCore)/Modules/model-element/HTMLModelElement.idl \
     $(WebCore)/Modules/notifications/Notification.idl \
     $(WebCore)/Modules/notifications/NotificationPermission.idl \

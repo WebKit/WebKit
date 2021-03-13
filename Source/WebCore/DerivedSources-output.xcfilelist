@@ -1734,10 +1734,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformProvider.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformProvider.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformer.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformerConstructor.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformerConstructor.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformerContext.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpScriptTransformerContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSendParameters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSendParameters.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCRtpSender+Transform.cpp
@@ -1764,6 +1760,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCStatsReport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCStatsReport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCTrackEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCTrackEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCTransformEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCTransformEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRadioNodeList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRadioNodeList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRange+CSSOMView.cpp

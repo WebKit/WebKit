@@ -249,18 +249,14 @@ void Worker::dispatchEvent(Event& event)
 }
 
 #if ENABLE(WEB_RTC)
-void Worker::addRTCRtpScriptTransformer(String&& name)
-{
-    m_transformers.add(WTFMove(name));
-}
-
-void Worker::createRTCRtpScriptTransformer(const String& name, TransferredMessagePort port, RTCRtpScriptTransform& transform)
+void Worker::createRTCRtpScriptTransformer(RTCRtpScriptTransform& transform, Ref<SerializedScriptValue>&& options, TransferredMessagePort&& port)
 {
     if (!scriptExecutionContext())
         return;
 
-    m_contextProxy.postTaskToWorkerGlobalScope([name = name.isolatedCopy(), port, transform = makeRef(transform)](auto& context) mutable {
-        transform->setTransformer(downcast<DedicatedWorkerGlobalScope>(context).createRTCRtpScriptTransformer(WTFMove(name), port));
+    m_contextProxy.postTaskToWorkerGlobalScope([transform = makeRef(transform), options = WTFMove(options), port = WTFMove(port)](auto& context) mutable {
+        if (auto transformer = downcast<DedicatedWorkerGlobalScope>(context).createRTCRtpScriptTransformer(WTFMove(options), WTFMove(port)))
+            transform->setTransformer(*transformer);
         callOnMainThread([transform = WTFMove(transform)] { });
     });
 

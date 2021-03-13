@@ -249,8 +249,6 @@ $(PROJECT_DIR)/Modules/mediastream/RTCRtpSFrameTransform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformProvider.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformer.idl
-$(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformerConstructor.idl
-$(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformerContext.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSendParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSender.idl
@@ -264,6 +262,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCSessionDescriptionInit.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCSignalingState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCStatsReport.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCTrackEvent.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCTransformEvent.idl
 $(PROJECT_DIR)/Modules/model-element/HTMLModelElement.idl
 $(PROJECT_DIR)/Modules/notifications/Notification.idl
 $(PROJECT_DIR)/Modules/notifications/NotificationPermission.idl

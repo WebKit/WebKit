@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "MessagePort.h"
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -45,12 +46,12 @@ class RTCRtpScriptTransform final
     , public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(RTCRtpScriptTransform);
 public:
-    static ExceptionOr<Ref<RTCRtpScriptTransform>> create(ScriptExecutionContext&, Worker&, String&& name);
+    static ExceptionOr<Ref<RTCRtpScriptTransform>> create(JSC::JSGlobalObject&, Worker&, JSC::JSValue);
     ~RTCRtpScriptTransform();
 
     MessagePort& port() { return m_port.get(); }
 
-    void setTransformer(RefPtr<RTCRtpScriptTransformer>&&);
+    void setTransformer(RTCRtpScriptTransformer&);
 
     bool isAttached() const { return m_isAttached; }
     void initializeBackendForReceiver(RTCRtpTransformBackend&);

@@ -178,6 +178,7 @@ Modules/mediastream/RTCRtpTransform.cpp
 Modules/mediastream/RTCRtpTransceiver.cpp
 Modules/mediastream/RTCSessionDescription.cpp
 Modules/mediastream/RTCTrackEvent.cpp
+Modules/mediastream/RTCTransformEvent.cpp
 Modules/mediastream/SFrameUtils.cpp
 Modules/mediastream/STUNMessageParsing.cpp
 Modules/mediastream/UserMediaController.cpp
@@ -3387,8 +3388,6 @@ JSRTCRtpRtxParameters.cpp
 JSRTCRtpSFrameTransform.cpp
 JSRTCRtpScriptTransform.cpp
 JSRTCRtpScriptTransformer.cpp
-JSRTCRtpScriptTransformerConstructor.cpp
-JSRTCRtpScriptTransformerContext.cpp
 JSRTCRtpSendParameters.cpp
 JSRTCRtpSender.cpp
 JSRTCRtpSynchronizationSource.cpp
@@ -3400,6 +3399,7 @@ JSRTCSessionDescriptionInit.cpp
 JSRTCSignalingState.cpp
 JSRTCStatsReport.cpp
 JSRTCTrackEvent.cpp
+JSRTCTransformEvent.cpp
 JSRadioNodeList.cpp
 JSRange.cpp
 JSReadableByteStreamController.cpp
