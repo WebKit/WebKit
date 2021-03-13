@@ -1,3 +1,13 @@
+2021-03-13  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt DDMacAction instead of DDAction on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=223145
+        <rdar://problem/70127512>
+
+        Reviewed by Megan Gardner.
+
+        * wtf/PlatformHave.h:
+
 2021-03-12  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r274327) [GLIB] 2D Canvas tests timing out after enabling GPUProces in testing

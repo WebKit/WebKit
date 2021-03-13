@@ -1,3 +1,17 @@
+2021-03-13  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt DDMacAction instead of DDAction on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=223145
+        <rdar://problem/70127512>
+
+        Reviewed by Megan Gardner.
+
+        * Platform/mac/MenuUtilities.mm:
+        (WebKit::actionForMenuItem):
+        (WebKit::menuItemForTelephoneNumber):
+        (WebKit::menuForTelephoneNumber):
+        Adopt the new class name, when available.
+
 2021-03-12  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa][WebM] Hang when reloading page before WebM content is loaded

@@ -39,6 +39,10 @@
 #import <DataDetectors/DDActionsManager.h>
 #import <DataDetectors/DDHighlightDrawing.h>
 
+#if HAVE(DATA_DETECTORS_MAC_ACTION)
+#import <DataDetectors/DDMacAction.h>
+#endif
+
 #else // !USE(APPLE_INTERNAL_SDK)
 
 @interface DDActionContext : NSObject <NSCopying, NSSecureCoding>
@@ -98,18 +102,25 @@ WTF_EXTERN_C_END
 typedef struct __DDHighlight *DDHighlightRef;
 typedef NSUInteger DDHighlightStyle;
 
+#if !HAVE(DATA_DETECTORS_MAC_ACTION)
 @interface DDAction : NSObject
 
 @property (readonly) NSString *actionUTI;
 
 @end
+#endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
 
-SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDAction)
 SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDActionContext)
 SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDActionsManager)
+
+#if HAVE(DATA_DETECTORS_MAC_ACTION)
+SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDMacAction)
+#else
+SOFT_LINK_CLASS_OPTIONAL(DataDetectors, DDAction)
+#endif
 
 SOFT_LINK_CONSTANT(DataDetectorsCore, DDBinderPhoneNumberKey, CFStringRef)
 #if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
