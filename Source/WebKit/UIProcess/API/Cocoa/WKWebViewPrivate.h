@@ -451,6 +451,16 @@ for this property.
 - (void)_grantAccessToAssetServices WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(14.0));
 - (void)_revokeAccessToAssetServices WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(14.0));
 
+/*! @abstract If the WKWebView was created with _shouldAllowUserInstalledFonts = NO,
+ the web process will automatically use an in-process font registry, and its sandbox
+ will be restricted to forbid access to fontd. Otherwise, the web process will use
+ fontd to look up fonts instead of using the in-process registry, and the web
+ process's sandbox will automatically be extended to allow access to fontd. This
+ method represents a one-time, web-process-wide switch from using the in-process
+ font registry to using fontd, including granting the relevant sandbox extension.
+*/
+- (void)_switchFromStaticFontRegistryToUserFontRegistry WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 @end
 
 #if TARGET_OS_IPHONE

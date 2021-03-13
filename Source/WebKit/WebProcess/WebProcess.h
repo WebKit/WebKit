@@ -341,6 +341,7 @@ public:
 
     void grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle);
     void revokeAccessToAssetServices();
+    void switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle);
 
 #if PLATFORM(MAC)
     void updatePageScreenProperties();
@@ -701,6 +702,7 @@ private:
 #endif
 
     RefPtr<SandboxExtension> m_assetServiceV2Extension;
+    RefPtr<SandboxExtension> m_fontMachExtension;
 
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;

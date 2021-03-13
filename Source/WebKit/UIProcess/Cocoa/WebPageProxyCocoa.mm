@@ -642,6 +642,18 @@ void WebPageProxy::revokeAccessToAssetServices()
     process().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
 }
 
+void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
+{
+    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(fontdMachExtensionHandle()), 0);
+}
+
+SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle()
+{
+    SandboxExtension::Handle fontMachExtensionHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, WTF::nullopt, fontMachExtensionHandle);
+    return fontMachExtensionHandle;
+}
+
 } // namespace WebKit
 
 #if USE(APPLE_INTERNAL_SDK)

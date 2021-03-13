@@ -135,6 +135,7 @@
 #import "WebSwitchingGPUClient.h"
 #import <WebCore/GraphicsContextGLOpenGLManager.h>
 #import <WebCore/ScrollbarThemeMac.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
@@ -1158,6 +1159,17 @@ void WebProcess::revokeAccessToAssetServices()
         return;
     m_assetServiceV2Extension->revoke();
     m_assetServiceV2Extension = nullptr;
+}
+
+void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle)
+{
+    if (m_fontMachExtension)
+        return;
+    m_fontMachExtension = SandboxExtension::create(WTFMove(fontMachExtensionHandle));
+    m_fontMachExtension->consume();
+#if HAVE(STATIC_FONT_REGISTRY)
+    CTFontManagerEnableAllUserFonts(true);
+#endif
 }
 
 void WebProcess::setScreenProperties(const ScreenProperties& properties)

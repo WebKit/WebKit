@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebProcess.h"
+#import "config.h"
 
-#include <WebCore/SharedBuffer.h>
+#if WK_HAVE_C_SPI
 
-RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
+#import "PlatformUtilities.h"
+#import "TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
+
+TEST(WebKit, FontdSandboxCheck)
 {
-    return 0;
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().preferences._shouldAllowUserInstalledFonts = NO;
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    auto sandboxAccess = [&] {
+        return [webView stringByEvaluatingJavaScript:@"window.internals.hasSandboxMachLookupAccessToXPCServiceName('com.apple.WebKit.WebContent', 'com.apple.fonts')"].boolValue;
+    };
+
+#if HAVE(STATIC_FONT_REGISTRY)
+    ASSERT_FALSE(sandboxAccess());
+#endif
+
+    [webView _switchFromStaticFontRegistryToUserFontRegistry];
+
+    ASSERT_TRUE(sandboxAccess());
 }
 
-namespace WebKit {
-
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&)
-{
-}
-
-void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
-{
-}
-
-void WebProcess::platformTerminate()
-{
-}
-
-void WebProcess::platformSetCacheModel(CacheModel)
-{
-}
-
-void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&&)
-{
-}
-
-void WebProcess::revokeAccessToAssetServices()
-{
-}
-
-void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&&)
-{
-}
-
-} // namespace WebKit
+#endif // WK_HAVE_C_SPI

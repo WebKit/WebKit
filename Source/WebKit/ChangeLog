@@ -1,3 +1,83 @@
+2021-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] MobileAsset fonts are broken in Reader mode in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=223062
+
+        Reviewed by Simon Fraser.
+
+        Here is an ASCII-art description of how various kinds of installed fonts work in WebKit:
+
+        +----------------------++-----------------------------------------+-----------------------------------------+
+        |                      || Safari                                  | Normal WKWebViews                       |
+        +======================++=========================================+=========================================+
+        | Preinstalled Fonts   || Just works                              | Just works                              |
+        +----------------------++-----------------------------------------+-----------------------------------------+
+        | MobileAsset Fonts    || Needs access to mobileassetd            | Needs access to mobileassetd but not    |
+        |                      || (and fontd for any subsequent requests  | fontd.                                  |
+        |                      || after the first MobileAsset font is     |                                         |
+        |                      || used)                                   | App calls _grantAccessToAssetServices() |
+        |                      ||                                         | to vend the sandbox extension           |
+        |                      || App calls _grantAccessToAssetServices() |                                         |
+        |                      || to vend the sandbox extension to        | And then the app needs to use           |
+        |                      || mobileassetd                            | InjectedBundle to activate the fonts in |
+        |                      ||                                         | the web process                         |
+        |                      || Web process also needs a call to        |                                         |
+        |                      || CTFontManagerEnableAllUserFonts() and a |                                         |
+        |                      || sandbox extension to access fontd       |                                         |
+        |                      ||                                         |                                         |
+        |                      || After this call is made, font requests  |                                         |
+        |                      || go through fontd (like for normal       |                                         |
+        |                      || WKWebViews)                             |                                         |
+        |                      ||                                         |                                         |
+        |                      || And then the app needs to use           |                                         |
+        |                      || InjectedBundle to activate the fonts in |                                         |
+        |                      || the web process                         |                                         |
+        +----------------------++-----------------------------------------+-----------------------------------------+
+        | User-installed Fonts || Intentionally doesn't work              | Needs access to fontd.                  |
+        |                      ||                                         |                                         |
+        |                      ||                                         | Just works (we already vend the sandbox |
+        |                      ||                                         | extension upon WKWebView creation)      |
+        +----------------------++-----------------------------------------+-----------------------------------------+
+
+        The part that this patch fixes is the "Web process also needs a call to CTFontManagerEnableAllUserFonts()
+        and a sandbox extension to access fontd" under MobileAsset Fonts / Safari.
+
+        From looking at this chart, it becomes clear that a new message is necessary that does:
+        1. Adds a sandbox extension so the web process can access fontd
+        2. Calls CTFontManagerEnableAllUserFonts() to cause platform font routines to use fontd
+
+        So that's exactly what this patch does. It adds new WKWebView SPI,
+        _switchFromStaticFontRegistryToUserFontRegistry, which does these two things.
+
+        Even when we start using fontd, that doesn't allow user-installed fonts in WebKit in Safari, because we'll still
+        continue to use kCTFontUserInstalledAttribute / kCTFontFallbackOptionAttribute, just like we do in Big Sur.
+
+        Test: WebKit.MobileAssetSandboxCheck
+
+        * UIProcess/API/C/WKPreferencesRefPrivate.h: Correct the comment.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _switchFromStaticFontRegistryToUserFontRegistry]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::customizedReaderConfiguration): Deleted.
+        (WebKit::disableStaticFontRegistry): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::switchFromStaticFontRegistryToUserFontRegistry):
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::switchFromStaticFontRegistryToUserFontRegistry):
+        * WebProcess/playstation/WebProcessPlayStation.cpp:
+        (WebKit::WebProcess::switchFromStaticFontRegistryToUserFontRegistry):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::switchFromStaticFontRegistryToUserFontRegistry):
+
 2021-03-12  Youenn Fablet  <youenn@apple.com>
 
         Enable video capture in GPUProcess by default on iOS

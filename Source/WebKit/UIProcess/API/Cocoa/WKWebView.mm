@@ -2239,6 +2239,12 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         _page->revokeAccessToAssetServices();
 }
 
+- (void)_switchFromStaticFontRegistryToUserFontRegistry
+{
+    if (_page)
+        _page->switchFromStaticFontRegistryToUserFontRegistry();
+}
+
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())

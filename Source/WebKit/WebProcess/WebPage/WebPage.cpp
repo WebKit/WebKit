@@ -1013,7 +1013,7 @@ WebPage::~WebPage()
             completionHandler(WTF::nullopt);
     }
 #endif
-    
+
 #if HAVE(STATIC_FONT_REGISTRY)
     if (m_fontExtension)
         m_fontExtension->revoke();

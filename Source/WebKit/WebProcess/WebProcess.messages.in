@@ -168,6 +168,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     GrantAccessToAssetServices(WebKit::SandboxExtension::Handle mobileAssetV2Handle)
     RevokeAccessToAssetServices()
+    SwitchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle fontMachExtensionHandle)
 
 #if PLATFORM(COCOA)
     UnblockServicesRequiredByAccessibility(WebKit::SandboxExtension::HandleArray handleArray)

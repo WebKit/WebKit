@@ -1776,6 +1776,7 @@ public:
 
     void grantAccessToAssetServices();
     void revokeAccessToAssetServices();
+    void switchFromStaticFontRegistryToUserFontRegistry();
 
 #if PLATFORM(COCOA)
     void grantAccessToPreferenceService();
@@ -2413,6 +2414,8 @@ private:
 #endif
 
     static SandboxExtension::HandleArray createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
+
+    static SandboxExtension::Handle fontdMachExtensionHandle();
 
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;
