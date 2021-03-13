@@ -81,7 +81,6 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
     , m_appendState(WaitingForSegment)
     , m_timeOfBufferingMonitor(MonotonicTime::now())
-    , m_buffered(TimeRanges::create())
     , m_pendingRemoveStart(MediaTime::invalidTime())
     , m_pendingRemoveEnd(MediaTime::invalidTime())
     , m_removeTimer(*this, &SourceBuffer::removeTimerFired)
@@ -116,7 +115,7 @@ ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered() const
         return Exception { InvalidStateError };
 
     // 2. Return a new static normalized TimeRanges object for the media segments buffered.
-    return m_buffered->copy();
+    return m_private->buffered()->copy();
 }
 
 double SourceBuffer::timestampOffset() const
@@ -1292,11 +1291,6 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
 void SourceBuffer::sourceBufferPrivateBufferedDirtyChanged(bool flag)
 {
     m_bufferedDirty = flag;
-}
-
-void SourceBuffer::sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges& timeRanges)
-{
-    m_buffered->ranges() = timeRanges;
 }
 
 bool SourceBuffer::isBufferedDirty() const

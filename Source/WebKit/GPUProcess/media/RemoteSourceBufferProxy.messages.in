@@ -35,12 +35,12 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetMediaSourceEnded(bool isEnded)
     SetReadyState(WebCore::MediaPlayer::ReadyState state)
     StartChangingType()
-    UpdateBufferedFromTrackBuffers(bool sourceIsEnded)
+    UpdateBufferedFromTrackBuffers(bool sourceIsEnded) -> (WebCore::PlatformTimeRanges buffered) Synchronous
     AddTrackBuffer(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier)
     ResetTrackBuffers()
     ClearTrackBuffers()
     SetAllTrackBuffersNeedRandomAccess()
-    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded) -> () Async
+    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded) -> (WebCore::PlatformTimeRanges buffered) Async
     EvictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded)
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
     SetGroupStartTimestamp(MediaTime timestamp)

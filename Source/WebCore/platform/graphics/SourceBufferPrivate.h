@@ -99,6 +99,8 @@ public:
     void setClient(SourceBufferPrivateClient* client) { m_client = client; }
     void setIsAttached(bool flag) { m_isAttached = flag; }
 
+    const TimeRanges* buffered() const { return m_buffered.get(); }
+
     bool bufferFull() const { return m_bufferFull; }
 
     // Methods used by MediaSourcePrivate
@@ -162,6 +164,7 @@ protected:
     void reenqueSamples(const AtomString& trackID);
     WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
+    WEBCORE_EXPORT void setBufferedRanges(const PlatformTimeRanges&);
     void provideMediaData(const AtomString& trackID);
     uint64_t totalTrackBufferSizeInBytes() const;
 
@@ -173,7 +176,6 @@ private:
     void reenqueueMediaForTime(TrackBuffer&, const AtomString& trackID, const MediaTime&);
     bool validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
     void provideMediaData(TrackBuffer&, const AtomString& trackID);
-    void setBufferedRanges(const PlatformTimeRanges&);
     void setBufferedDirty(bool);
     void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, const AtomString& trackID);
 

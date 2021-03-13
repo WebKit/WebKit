@@ -1,3 +1,12 @@
+2021-03-13  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP][MSE] MediaSource::buffered and MediaSource::activeSourceBuffers do not update in the same run loop as MediaSource::endOfStream()
+        https://bugs.webkit.org/show_bug.cgi?id=221293
+
+        Reviewed by Jer Noble.
+
+        * platform/mac/TestExpectations:
+
 2021-03-13  Rob Buis  <rbuis@igalia.com>
 
         [css-flexbox] Fix incorrect relative path

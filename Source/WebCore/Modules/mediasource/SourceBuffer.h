@@ -96,7 +96,7 @@ public:
     ExceptionOr<void> remove(const MediaTime&, const MediaTime&);
     ExceptionOr<void> changeType(const String&);
 
-    const TimeRanges& bufferedInternal() const { ASSERT(m_buffered); return *m_buffered; }
+    const TimeRanges& bufferedInternal() const { ASSERT(m_private->buffered()); return *m_private->buffered(); }
 
     void abortIfUpdating();
     void removedFromMediaSource();
@@ -157,7 +157,6 @@ private:
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateBufferedDirtyChanged(bool) final;
-    void sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges&) final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
     void sourceBufferPrivateReportExtraMemoryCost(uint64_t) final;
 
@@ -234,7 +233,6 @@ private:
     double m_bufferedSinceLastMonitor { 0 };
     double m_averageBufferRate { 0 };
     bool m_bufferedDirty { true };
-    RefPtr<TimeRanges> m_buffered;
 
     uint64_t m_reportedExtraMemoryCost { 0 };
 

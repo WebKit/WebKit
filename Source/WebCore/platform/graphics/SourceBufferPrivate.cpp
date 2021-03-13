@@ -113,8 +113,7 @@ void SourceBufferPrivate::updateHighestPresentationTimestamp()
 void SourceBufferPrivate::setBufferedRanges(const PlatformTimeRanges& timeRanges)
 {
     m_buffered->ranges() = timeRanges;
-    if (m_client)
-        m_client->sourceBufferPrivateBufferedRangesChanged(m_buffered->ranges());
+    setBufferedDirty(true);
 }
 
 void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
@@ -159,7 +158,6 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
     // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
     //    then update the current value of this attribute to intersection ranges.
     setBufferedRanges(intersectionRanges);
-    setBufferedDirty(true);
 }
 
 void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, bool isEnded)

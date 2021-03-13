@@ -29,13 +29,12 @@ messages -> SourceBufferPrivateRemote NotRefCounted {
     SourceBufferPrivateDidReceiveInitializationSegment(struct WebKit::InitializationSegmentInfo segmentConfiguration) -> () Async
     SourceBufferPrivateStreamEndedWithDecodeError()
     SourceBufferPrivateAppendError(bool decodeError)
-    SourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult appendResult)
+    SourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult appendResult, WebCore::PlatformTimeRanges buffered)
     SourceBufferPrivateHighestPresentationTimestampChanged(MediaTime timestamp)
     SourceBufferPrivateDurationChanged(MediaTime duration)
     SourceBufferPrivateDidParseSample(double sampleDuration)
     SourceBufferPrivateDidDropSample()
     SourceBufferPrivateBufferedDirtyChanged(bool dirty)
-    SourceBufferPrivateBufferedRangesChanged(WebCore::PlatformTimeRanges timeRanges)
     SourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
     SourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
 }
