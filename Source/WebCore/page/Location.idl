@@ -45,9 +45,9 @@
 ] interface Location {
     [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 
-    [CallWith=ActiveWindow&FirstWindow, MayThrowException, ForwardDeclareInHeader] undefined assign(USVString url);
-    [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, MayThrowException, ForwardDeclareInHeader] undefined replace(USVString url);
-    [CallWith=ActiveWindow, ForwardDeclareInHeader] undefined reload();
+    [CallWith=ActiveWindow&FirstWindow, MayThrowException] undefined assign(USVString url);
+    [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, MayThrowException] undefined replace(USVString url);
+    [CallWith=ActiveWindow] undefined reload();
 
     // URI decomposition attributes
     [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString protocol;

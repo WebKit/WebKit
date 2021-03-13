@@ -62,11 +62,11 @@
     [Replaceable] readonly attribute BarProp statusbar;
     [Replaceable] readonly attribute BarProp toolbar;
     attribute DOMString status;
-    [DoNotCheckSecurity, CallWith=IncumbentDocument, ForwardDeclareInHeader] undefined close();
-    [DoNotCheckSecurity, ForwardDeclareInHeader] readonly attribute boolean closed;
+    [DoNotCheckSecurity, CallWith=IncumbentDocument] undefined close();
+    [DoNotCheckSecurity] readonly attribute boolean closed;
     undefined stop();
-    [DoNotCheckSecurity, CallWith=IncumbentWindow, ForwardDeclareInHeader] undefined focus();
-    [DoNotCheckSecurity, ForwardDeclareInHeader] undefined blur();
+    [DoNotCheckSecurity, CallWith=IncumbentWindow] undefined focus();
+    [DoNotCheckSecurity] undefined blur();
 
     // other browsing contexts
     [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy frames;
@@ -91,8 +91,8 @@
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
     undefined print();
 
-    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] undefined postMessage(any message, optional WindowPostMessageOptions options);
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, MayThrowException] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, MayThrowException] undefined postMessage(any message, optional WindowPostMessageOptions options);
 
 
     // Obsolete: Still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).
@@ -119,7 +119,7 @@
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 
     // Non-standard: This has been dropped from the HTML specification and by other browsers.
-    [Custom, ForwardDeclareInHeader] any showModalDialog(DOMString url, optional any dialogArgs, optional DOMString featureArgs);
+    [Custom] any showModalDialog(DOMString url, optional any dialogArgs, optional DOMString featureArgs);
 
     // Non-standard: should probably deprecate this (https://bugs.webkit.org/show_bug.cgi?id=79653).
     // Blink already deprecated it (https://bugs.chromium.org/p/chromium/issues/detail?id=437569).

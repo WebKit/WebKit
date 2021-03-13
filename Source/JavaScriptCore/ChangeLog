@@ -1,3 +1,30 @@
+2021-03-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Cache cross-origin methods / accessors of Window and Location per lexical global object
+        https://bugs.webkit.org/show_bug.cgi?id=222739
+
+        Reviewed by Darin Adler.
+
+        1. Add WeakGCMap::ensure() to avoid double hashing and clean up JSObject::getOwnPropertyDescriptor().
+        2. Assert early that JSCustom{Getter,Setter}Function is created with non-null function pointer.
+        3. Rename getCustom{Getter,Setter}Function() to align with newly-added JSDOMGlobalObject methods.
+
+        * runtime/JSCustomGetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomGetterFunction::create):
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomSetterFunction::create):
+        * runtime/JSObject.cpp:
+        (JSC::createCustomGetterFunction):
+        (JSC::createCustomSetterFunction):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::getCustomGetterFunction): Deleted.
+        (JSC::getCustomSetterFunction): Deleted.
+        * runtime/Lookup.h:
+        (JSC::nonCachingStaticFunctionGetterImpl): Deleted.
+        * runtime/WeakGCMap.h:
+
 2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump API version when building with libsoup3

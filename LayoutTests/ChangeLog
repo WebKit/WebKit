@@ -1,3 +1,13 @@
+2021-03-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Cache cross-origin methods / accessors of Window and Location per lexical global object
+        https://bugs.webkit.org/show_bug.cgi?id=222739
+
+        Reviewed by Darin Adler.
+
+        * http/tests/navigation/process-swap-window-open-expected.txt:
+        * http/tests/navigation/process-swap-window-open.html:
+
 2021-03-12  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] inspector/canvas/memory.html fails when GPU rendering is enabled for 2D Canvas

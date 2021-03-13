@@ -223,9 +223,6 @@
                 "url": "https://heycam.github.io/webidl/#Exposed"
             }
         },
-        "ForwardDeclareInHeader": {
-            "contextsAllowed": ["attribute", "operation"]
-        },
         "GenerateIsReachable": {
             "contextsAllowed": ["interface"],
             "values": ["", "Impl", "ImplWebGLRenderingContext", "ImplCanvasBase", "ImplDocument", "ImplElementRoot", "ImplOwnerNodeRoot", "ImplScriptExecutionContext", "ReachableFromDOMWindow", "ReachableFromNavigator"]

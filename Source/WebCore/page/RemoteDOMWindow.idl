@@ -46,14 +46,14 @@
     [LegacyUnforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
     [Replaceable] readonly attribute WindowProxy self;
     [PutForwards=href, LegacyUnforgeable] readonly attribute Location? location; // FIXME: Should not be nullable.
-    [CallWith=IncumbentDocument, ForwardDeclareInHeader] undefined close();
-    [ForwardDeclareInHeader] readonly attribute boolean closed;
-    [CallWith=IncumbentWindow, ForwardDeclareInHeader] undefined focus();
-    [ForwardDeclareInHeader] undefined blur();
+    [CallWith=IncumbentDocument] undefined close();
+    readonly attribute boolean closed;
+    [CallWith=IncumbentWindow] undefined focus();
+    undefined blur();
     [Replaceable, ImplementedAs=self] readonly attribute WindowProxy frames;
     [Replaceable] readonly attribute unsigned long length;
     [LegacyUnforgeable] readonly attribute WindowProxy? top;
     readonly attribute WindowProxy? opener;
     [Replaceable] readonly attribute WindowProxy? parent;
-    [CallWith=GlobalObject&IncumbentWindow, ForwardDeclareInHeader] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=GlobalObject&IncumbentWindow] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
 };

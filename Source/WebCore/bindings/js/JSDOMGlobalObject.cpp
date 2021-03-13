@@ -54,9 +54,13 @@
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/CodeBlock.h>
+#include <JavaScriptCore/GetterSetter.h>
+#include <JavaScriptCore/JSCustomGetterFunction.h>
+#include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/WasmStreamingCompiler.h>
+#include <JavaScriptCore/WeakGCMapInlines.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -75,6 +79,8 @@ JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrappe
     , m_world(WTFMove(world))
     , m_worldIsNormal(m_world->isNormal())
     , m_builtinInternalFunctions(vm)
+    , m_crossOriginFunctionMap(vm)
+    , m_crossOriginGetterSetterMap(vm)
 {
 }
 
@@ -296,6 +302,26 @@ void JSDOMGlobalObject::clearDOMGuardedObjects()
     auto guardedObjectsCopy = m_guardedObjects;
     for (auto& guarded : guardedObjectsCopy)
         guarded->clear();
+}
+
+JSFunction* JSDOMGlobalObject::createCrossOriginFunction(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, NativeFunction nativeFunction, unsigned length)
+{
+    CrossOriginMapKey key = std::make_pair(lexicalGlobalObject, nativeFunction.rawPointer());
+    return m_crossOriginFunctionMap.ensure(key, [&] {
+        return JSFunction::create(lexicalGlobalObject->vm(), lexicalGlobalObject, length, propertyName.publicName(), nativeFunction);
+    }).iterator->value.get();
+}
+
+GetterSetter* JSDOMGlobalObject::createCrossOriginGetterSetter(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, GetValueFunc getter, PutValueFunc setter)
+{
+    ASSERT(getter || setter);
+    CrossOriginMapKey key = std::make_pair(lexicalGlobalObject, getter ? reinterpret_cast<void*>(getter) : reinterpret_cast<void*>(setter));
+    return m_crossOriginGetterSetterMap.ensure(key, [&] {
+        auto& vm = lexicalGlobalObject->vm();
+        return GetterSetter::create(vm, lexicalGlobalObject,
+            getter ? JSCustomGetterFunction::create(vm, lexicalGlobalObject, propertyName, getter) : nullptr,
+            setter ? JSCustomSetterFunction::create(vm, lexicalGlobalObject, propertyName, setter) : nullptr);
+    }).iterator->value.get();
 }
 
 #if ENABLE(WEBASSEMBLY)

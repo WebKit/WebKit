@@ -1,0 +1,6 @@
+
+PASS Cross-origin Window methods have correct 'length'
+PASS Cross-origin Window accessors have correct 'length'
+PASS Cross-origin Location `replace` method has correct 'length'
+PASS Cross-origin Location `href` setter has correct 'length'
+
