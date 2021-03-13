@@ -122,8 +122,22 @@ static void testCustomProtocolOrigin(Test*, gconstpointer)
 {
     WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri("squirrel://fish");
     g_assert_nonnull(origin);
+    GUniquePtr<char> asString(webkit_security_origin_to_string(origin));
+    g_assert_cmpstr(asString.get(), ==, "squirrel://fish");
     g_assert_cmpstr(webkit_security_origin_get_protocol(origin), ==, "squirrel");
     g_assert_cmpstr(webkit_security_origin_get_host(origin), ==, "fish");
+    g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 0);
+    webkit_security_origin_unref(origin);
+}
+
+static void testBogusURI(Test*, gconstpointer)
+{
+    WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri("http://localhost:2984375932");
+    g_assert_nonnull(origin);
+    GUniquePtr<char> asString(webkit_security_origin_to_string(origin));
+    g_assert_null(asString.get());
+    g_assert_null(webkit_security_origin_get_protocol(origin));
+    g_assert_null(webkit_security_origin_get_host(origin));
     g_assert_cmpint(webkit_security_origin_get_port(origin), ==, 0);
     webkit_security_origin_unref(origin);
 }
@@ -136,6 +150,7 @@ void beforeAll()
     Test::add("WebKitSecurityOrigin", "file-uri", testSecurityOriginFileURI);
     Test::add("WebKitSecurityOrigin", "blob-uri", testSecurityOriginDataURI);
     Test::add("WebKitSecurityOrigin", "custom-protocol-origin", testCustomProtocolOrigin);
+    Test::add("WebKitSecurityOrigin", "bogus-uri", testBogusURI);
 }
 
 void afterAll()

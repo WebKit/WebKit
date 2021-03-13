@@ -1,3 +1,15 @@
+2021-03-12  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r274270): [WPE][GTK] Broke Epiphany test /embed/ephy-web-view/error-pages-not-stored-in-history
+        https://bugs.webkit.org/show_bug.cgi?id=223140
+
+        Reviewed by Alex Christensen.
+
+        Convert empty strings to NULL.
+
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp:
+        (webkit_security_origin_to_string):
+
 2021-03-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] MobileAsset fonts are broken in Reader mode in Safari

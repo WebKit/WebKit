@@ -41,6 +41,9 @@ String SecurityOriginData::toString() const
     if (protocol == "file")
         return "file://"_s;
 
+    if (protocol.isEmpty() && host.isEmpty())
+        return { };
+
     if (!port)
         return makeString(protocol, "://", host);
     return makeString(protocol, "://", host, ':', static_cast<uint32_t>(*port));
