@@ -1,3 +1,14 @@
+2021-03-13  Chris Gambrell  <cgambrell@apple.com>
+
+        [ macOS Wk2 ] http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.php is constantly text failing
+        https://bugs.webkit.org/show_bug.cgi?id=223079
+        <rdar://problem/75323779>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.php:
+
 2021-03-13  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of clip CSS property
