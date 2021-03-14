@@ -52,6 +52,7 @@ class AnimationTimeline;
 class AudioContext;
 class AudioTrack;
 class CacheStorageConnection;
+class DOMPointReadOnly;
 class DOMRect;
 class DOMRectList;
 class DOMRectReadOnly;
@@ -839,6 +840,17 @@ public:
 #if ENABLE(APPLE_PAY)
     MockPaymentCoordinator& mockPaymentCoordinator(Document&);
 #endif
+
+    struct ImageOverlayText {
+        String text;
+        RefPtr<DOMPointReadOnly> topLeft;
+        RefPtr<DOMPointReadOnly> topRight;
+        RefPtr<DOMPointReadOnly> bottomRight;
+        RefPtr<DOMPointReadOnly> bottomLeft;
+
+        ~ImageOverlayText();
+    };
+    void installImageOverlay(Element&, Vector<ImageOverlayText>&&);
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;

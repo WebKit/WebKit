@@ -1,3 +1,16 @@
+2021-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for accessibility image overlays in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=223146
+
+        Reviewed by Tim Horton.
+
+        Add a very basic test to ensure that image overlay content can be installed.
+
+        * TestExpectations:
+        * fast/images/image-extraction/basic-image-overlay-expected-mismatch.html: Added.
+        * fast/images/image-extraction/basic-image-overlay.html: Added.
+
 2021-03-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r274379.

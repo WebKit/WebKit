@@ -55,6 +55,7 @@
 #include "ComposedTreeIterator.h"
 #include "CookieJar.h"
 #include "Cursor.h"
+#include "DOMPointReadOnly.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMStringList.h"
@@ -78,6 +79,7 @@
 #include "ExtensionStyleSheets.h"
 #include "FetchResponse.h"
 #include "File.h"
+#include "FloatQuad.h"
 #include "FontCache.h"
 #include "FormController.h"
 #include "Frame.h"
@@ -332,6 +334,10 @@
 #include "VP9UtilitiesCocoa.h"
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+#include "ImageExtractionResult.h"
 #endif
 
 using JSC::CallData;
@@ -5512,6 +5518,29 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
     return downcast<MockPaymentCoordinator>(document.frame()->page()->paymentCoordinator().client());
 }
 #endif
+
+Internals::ImageOverlayText::~ImageOverlayText() = default;
+
+void Internals::installImageOverlay(Element& element, Vector<ImageOverlayText>&& allTextInfo)
+{
+    if (!is<HTMLElement>(element))
+        return;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    downcast<HTMLElement>(element).updateWithImageExtractionResult(ImageExtractionResult {
+        allTextInfo.map([] (auto& textInfo) -> ImageExtractionTextData {
+            return { textInfo.text, {
+                FloatPoint(textInfo.topLeft->x(), textInfo.topLeft->y()),
+                FloatPoint(textInfo.topRight->x(), textInfo.topRight->y()),
+                FloatPoint(textInfo.bottomRight->x(), textInfo.bottomRight->y()),
+                FloatPoint(textInfo.bottomLeft->x(), textInfo.bottomLeft->y()),
+            }};
+        })
+    });
+#else
+    UNUSED_PARAM(allTextInfo);
+#endif
+}
 
 bool Internals::isSystemPreviewLink(Element& element) const
 {
