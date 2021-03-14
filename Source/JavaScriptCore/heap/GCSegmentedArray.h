@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,8 +81,8 @@ public:
     const T removeLast();
     bool refill();
     
-    size_t size();
-    bool isEmpty();
+    size_t size() const;
+    bool isEmpty() const;
 
     void fillVector(Vector<T>&);
     void clear();

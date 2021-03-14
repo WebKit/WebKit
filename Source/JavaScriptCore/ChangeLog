@@ -1,3 +1,17 @@
+2021-03-14  Mark Lam  <mark.lam@apple.com>
+
+        GCSegmentedArray's size() and isEmpty() methods should be const.
+        https://bugs.webkit.org/show_bug.cgi?id=223156
+
+        Reviewed by Keith Miller.
+
+        * heap/GCSegmentedArray.h:
+        * heap/GCSegmentedArrayInlines.h:
+        (JSC::GCSegmentedArray<T>::isEmpty const):
+        (JSC::GCSegmentedArray<T>::size const):
+        (JSC::GCSegmentedArray<T>::isEmpty): Deleted.
+        (JSC::GCSegmentedArray<T>::size): Deleted.
+
 2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] wasm atomic wait offset is not index
