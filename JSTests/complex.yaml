@@ -43,3 +43,6 @@
 
 - path: complex/date-parse-milliseconds.js
   cmd: runComplexTest [], [], "TZ=America/Los_Angeles", "--useDollarVM=1"
+
+- path: complex/mozilla-ecma-Date-15.9.5.14.js
+  cmd: runComplexTest ["mozilla-shell.js"], [], "TZ=PST", "--useDollarVM=1"

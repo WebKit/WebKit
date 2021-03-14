@@ -1,5 +1,66 @@
 2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Run one Mozilla test explicitly under PST since this test does not work when we are moving from PST to PDT
+        https://bugs.webkit.org/show_bug.cgi?id=223158
+
+        Reviewed by Mark Lam.
+
+        This mozilla test is broken: it fails when we are close to the point moving from PST to PDT / from PDT to PST.
+        We should always run this test under PST to avoid this DST related flakiness.
+
+        We explicitly set TZ=PST for this test to ensure that this runs under PST (not PDT). TZ environment variable is
+        recognized by system frameworks and some libraries including tzdata and ICU.
+
+        * complex.yaml:
+        * complex/mozilla-ecma-Date-15.9.5.14.js: Renamed from JSTests/mozilla/ecma/Date/15.9.5.14.js.
+        (test):
+        * complex/mozilla-shell.js: Added.
+        (AddTestCase):
+        (TestCase):
+        (startTest):
+        (test):
+        (getTestCaseResult):
+        (writeTestCaseResult):
+        (writeFormattedResult):
+        (writeLineToLog):
+        (writeHeaderToLog):
+        (stopTest):
+        (getFailedCases):
+        (getTimeZoneDiff):
+        (adjustResultArray):
+        (Day):
+        (DaysInYear):
+        (TimeInYear):
+        (DayNumber):
+        (TimeWithinDay):
+        (YearNumber):
+        (TimeFromYear):
+        (DayFromYear):
+        (InLeapYear):
+        (YearFromTime):
+        (MonthFromTime):
+        (DayWithinYear):
+        (DateFromTime):
+        (WeekDay):
+        (UTC):
+        (DaylightSavingTA):
+        (GetFirstSundayInApril):
+        (GetLastSundayInOctober):
+        (GetSecondSundayInMarch):
+        (GetFirstSundayInNovember):
+        (LocalTime):
+        (MakeTime):
+        (MakeDay):
+        (TimeInMonth):
+        (TimeClip):
+        (ToInteger):
+        (Enumerate):
+        (GetContext):
+        (OptLevel):
+        * mozilla/mozilla-tests.yaml:
+
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] wasm atomic wait offset is not index
         https://bugs.webkit.org/show_bug.cgi?id=223159
 

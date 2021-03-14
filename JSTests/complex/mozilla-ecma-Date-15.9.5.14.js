@@ -90,6 +90,8 @@ function test() {
                             testcases[tc].actual );
 
         testcases[tc].reason += ( testcases[tc].passed ) ? "" : "wrong value ";
+        if (!getTestCaseResult(testcases[tc].expect, testcases[tc].actual))
+            throw new Error(testcases[tc].description +" = "+ testcases[tc].actual + " expected: " + testcases[tc].expect);
     }
     stopTest();
     return ( testcases );
