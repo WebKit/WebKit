@@ -1290,7 +1290,7 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         child->classList().add(imageOverlayTextClass);
 
         container->appendChild(child);
-        child->appendChild(Text::create(document(), data.text));
+        child->appendChild(Text::create(document(), makeString('\n', data.text)));
         child->appendChild(HTMLBRElement::create(document()));
 
         IntSize originalSize { child->offsetWidth(), child->offsetHeight() };

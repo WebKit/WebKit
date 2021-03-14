@@ -1,5 +1,17 @@
 2021-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] Selecting the first word in an image overlay may select text in the previous line
+        https://bugs.webkit.org/show_bug.cgi?id=223153
+
+        Reviewed by Tim Horton.
+
+        Add a layout test to verify the behavior change.
+
+        * fast/images/image-extraction/ios/select-word-in-image-overlay-expected.txt: Added.
+        * fast/images/image-extraction/ios/select-word-in-image-overlay.html: Added.
+
+2021-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Add support for accessibility image overlays in layout tests
         https://bugs.webkit.org/show_bug.cgi?id=223146
 
