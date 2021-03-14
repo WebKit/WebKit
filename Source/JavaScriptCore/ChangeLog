@@ -1,3 +1,27 @@
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ARM64 branchAtomicWeakCAS should not use sign-extension
+        https://bugs.webkit.org/show_bug.cgi?id=222813
+
+        Reviewed by Mark Lam.
+
+        ARM64 branchAtomicWeakCAS implementation should not use sign-extension. Instead, it should use zero-extension.
+        This is because loadLinkAcq (ldaxr) will load a value with zero-extension. If we use sign-extension, we will
+        encounter the state where LL/SC never succeeds just because we are comparing sign-extended value and zero-extended
+        value. This implementation is aligned to how X86 implementation works: X86 only cares the effective bit width of branchAtomicWeakCAS.
+
+        This is already tested by stress/atomics-store-result-int52.js.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::zeroExtend):
+        (JSC::MacroAssemblerARM64::atomicStrongCAS):
+        (JSC::MacroAssemblerARM64::atomicRelaxedStrongCAS):
+        (JSC::MacroAssemblerARM64::branchAtomicWeakCAS):
+        (JSC::MacroAssemblerARM64::branchAtomicRelaxedWeakCAS):
+        (JSC::MacroAssemblerARM64::signExtend): Deleted.
+        (JSC::MacroAssemblerARM64::signExtend<8>): Deleted.
+        (JSC::MacroAssemblerARM64::signExtend<16>): Deleted.
+
 2021-03-14  Mark Lam  <mark.lam@apple.com>
 
         GCSegmentedArray's size() and isEmpty() methods should be const.
