@@ -1,3 +1,18 @@
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Prevent dynamic import in service worker
+        https://bugs.webkit.org/show_bug.cgi?id=222308
+
+        Reviewed by Youenn Fablet.
+
+        Covering worklet case.
+
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/dynamic-import-is-prohibited.https-expected.txt: Added.
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/dynamic-import-is-prohibited.https.html: Added.
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/processors/dynamic-import-is-prohibited.js: Added.
+        (DynamicImportIsProhibitedProcessor.prototype.process):
+        (DynamicImportIsProhibitedProcessor):
+
 2021-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Selecting the first word in an image overlay may select text in the previous line
