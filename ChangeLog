@@ -1,3 +1,22 @@
+2021-03-14  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Keep GPUProcess disabled when using experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=223155
+
+        Reviewed by Philippe Normand.
+
+        At least two recent GPUProcess-related revisions caused issues in
+        GLIB, causing serious regressions in the bots. Disabling it for now
+        until we improve its support.
+
+        Revisions:
+
+        r274327 - 2D Canvas enabled by default in GPUProcess
+        r272842 - Media enabled by default in GPUProcess
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump API version when building with libsoup3
