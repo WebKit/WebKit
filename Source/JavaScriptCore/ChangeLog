@@ -1,5 +1,19 @@
 2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [Big Sur arm64] testb3 crashing
+        https://bugs.webkit.org/show_bug.cgi?id=222815
+
+        Reviewed by Mark Lam.
+
+        Fix dmb ish and dmb ishst's formats.
+
+        * b3/testb3_6.cpp:
+        (testMemoryFence):
+        (testStoreFence):
+        (testLoadFence):
+
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] ARM64 branchAtomicWeakCAS should not use sign-extension
         https://bugs.webkit.org/show_bug.cgi?id=222813
 
