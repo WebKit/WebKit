@@ -1,3 +1,16 @@
+2021-03-13  Sam Sneddon  <gsnedders@apple.com>
+
+        Move LayoutTestFinder.split_into_chunks to Manager._split_into_chunks
+        https://bugs.webkit.org/show_bug.cgi?id=223137
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.split_into_chunks):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._split_into_chunks):
+        (Manager._prepare_lists):
+
 2021-03-13  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] run buildbot checkconfig in services ews
