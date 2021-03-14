@@ -48,9 +48,12 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/GetterSetter.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSCustomGetterFunction.h>
+#include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSMicrotask.h>
 #include <JavaScriptCore/Lookup.h>
@@ -64,9 +67,57 @@ namespace WebCore {
 using namespace JSC;
 
 static JSC_DECLARE_HOST_FUNCTION(jsDOMWindowInstanceFunction_openDatabase);
+static JSC_DECLARE_CUSTOM_GETTER(jsRemoteDOMWindowInstanceFunction_blurNonCaching);
+static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_blurNonCaching);
+static JSC_DECLARE_CUSTOM_GETTER(jsRemoteDOMWindowInstanceFunction_closeNonCaching);
+static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_closeNonCaching);
+static JSC_DECLARE_CUSTOM_GETTER(jsRemoteDOMWindowInstanceFunction_focusNonCaching);
+static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_focusNonCaching);
+static JSC_DECLARE_CUSTOM_GETTER(jsRemoteDOMWindowInstanceFunction_postMessageNonCaching);
+static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_postMessageNonCaching);
 #if ENABLE(USER_MESSAGE_HANDLERS)
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_webkit);
 #endif
+
+JSC_DEFINE_CUSTOM_GETTER(jsRemoteDOMWindowInstanceFunction_blurNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsRemoteDOMWindowInstanceFunction_blur, 0>(globalObject, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_blurNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsDOMWindowInstanceFunction_blur, 0>(globalObject, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsRemoteDOMWindowInstanceFunction_closeNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsRemoteDOMWindowInstanceFunction_close, 0>(globalObject, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_closeNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsDOMWindowInstanceFunction_close, 0>(globalObject, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsRemoteDOMWindowInstanceFunction_focusNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsRemoteDOMWindowInstanceFunction_focus, 0>(globalObject, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_focusNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsDOMWindowInstanceFunction_focus, 0>(globalObject, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsRemoteDOMWindowInstanceFunction_postMessageNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsRemoteDOMWindowInstanceFunction_postMessage, 0>(globalObject, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_postMessageNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsDOMWindowInstanceFunction_postMessage, 2>(globalObject, propertyName);
+}
 
 template<typename Visitor>
 void JSDOMWindow::visitAdditionalChildren(Visitor& visitor)
@@ -106,34 +157,45 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
     // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
 
     // These are the functions we allow access to cross-origin (DoNotCheckSecurity in IDL).
-    auto* classInfo = windowType == DOMWindowType::Remote ? JSRemoteDOMWindow::info() : JSDOMWindow::info();
-    if (propertyName == builtinNames.closePublicName()
-        || propertyName == builtinNames.focusPublicName()
-        || propertyName == builtinNames.blurPublicName()
-        || propertyName == builtinNames.postMessagePublicName()) {
-        auto* entry = classInfo->staticPropHashTable->entry(propertyName);
-        auto* jsFunction = thisObject->createCrossOriginFunction(&lexicalGlobalObject, propertyName, entry->function(), entry->functionLength());
-        slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, jsFunction);
+    // Always provide the original function, on a fresh uncached function object.
+    if (propertyName == builtinNames.blurPublicName()) {
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? jsRemoteDOMWindowInstanceFunction_blurNonCaching : jsDOMWindowInstanceFunction_blurNonCaching);
+        return true;
+    }
+    if (propertyName == builtinNames.closePublicName()) {
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? jsRemoteDOMWindowInstanceFunction_closeNonCaching : jsDOMWindowInstanceFunction_closeNonCaching);
+        return true;
+    }
+    if (propertyName == builtinNames.focusPublicName()) {
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? jsRemoteDOMWindowInstanceFunction_focusNonCaching : jsDOMWindowInstanceFunction_focusNonCaching);
+        return true;
+    }
+    if (propertyName == builtinNames.postMessagePublicName()) {
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? jsRemoteDOMWindowInstanceFunction_postMessageNonCaching : jsDOMWindowInstanceFunction_postMessageNonCaching);
         return true;
     }
 
     // When accessing cross-origin known Window properties, we always use the original property getter,
     // even if the property was removed / redefined. As of early 2016, this matches Firefox and Chrome's
     // behavior.
-    if (propertyName == builtinNames.windowPublicName()
-        || propertyName == builtinNames.selfPublicName()
-        || propertyName == builtinNames.locationPublicName()
-        || propertyName == builtinNames.closedPublicName()
-        || propertyName == builtinNames.framesPublicName()
-        || propertyName == vm.propertyNames->length
-        || propertyName == builtinNames.topPublicName()
-        || propertyName == builtinNames.openerPublicName()
-        || propertyName == builtinNames.parentPublicName()) {
-        auto* entry = classInfo->staticPropHashTable->entry(propertyName);
-        auto* setter = propertyName == builtinNames.locationPublicName() ? entry->propertyPutter() : nullptr;
-        auto* getterSetter = thisObject->createCrossOriginGetterSetter(&lexicalGlobalObject, propertyName, entry->propertyGetter(), setter);
-        slot.setGetterSlot(thisObject, PropertyAttribute::Accessor | PropertyAttribute::DontEnum, getterSetter);
-        return true;
+    auto* classInfo = windowType == DOMWindowType::Remote ? JSRemoteDOMWindow::info() : JSDOMWindow::info();
+    if (auto* entry = classInfo->staticPropHashTable->entry(propertyName)) {
+        // Only allow access to these specific properties.
+        if (propertyName == builtinNames.locationPublicName()
+            || propertyName == builtinNames.closedPublicName()
+            || propertyName == vm.propertyNames->length
+            || propertyName == builtinNames.selfPublicName()
+            || propertyName == builtinNames.windowPublicName()
+            || propertyName == builtinNames.framesPublicName()
+            || propertyName == builtinNames.openerPublicName()
+            || propertyName == builtinNames.parentPublicName()
+            || propertyName == builtinNames.topPublicName()) {
+            auto* getter = JSCustomGetterFunction::create(vm, &lexicalGlobalObject, propertyName, entry->propertyGetter());
+            auto* setter = propertyName == builtinNames.locationPublicName() ? JSCustomSetterFunction::create(vm, &lexicalGlobalObject, propertyName, entry->propertyPutter()) : nullptr;
+            auto* getterSetter = GetterSetter::create(vm, &lexicalGlobalObject, getter, setter);
+            slot.setGetterSlot(thisObject, PropertyAttribute::Accessor | PropertyAttribute::DontEnum, getterSetter);
+            return true;
+        }
     }
 
     // Check for child frames by name before built-in properties to match Mozilla. This does
@@ -203,7 +265,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
         // Detect when we're getting the property 'showModalDialog', this is disabled, and has its original value.
         bool isShowModalDialogAndShouldHide = propertyName == static_cast<JSVMClientData*>(lexicalGlobalObject->vm().clientData)->builtinNames().showModalDialogPublicName()
             && (!frame || !DOMWindow::canShowModalDialog(*frame))
-            && slot.isValue() && isHostFunction(slot.getValue(lexicalGlobalObject, propertyName), s_info.staticPropHashTable->entry(propertyName)->function());
+            && slot.isValue() && isHostFunction(slot.getValue(lexicalGlobalObject, propertyName), jsDOMWindowInstanceFunction_showModalDialog);
         // Unless we're in the showModalDialog special case, we're done.
         if (!isShowModalDialogAndShouldHide)
             return true;

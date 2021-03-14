@@ -64,12 +64,6 @@ public:
         return m_map.set(key, WTFMove(value));
     }
 
-    template<typename Functor>
-    AddResult ensure(const KeyType& key, Functor&& functor)
-    {
-        return m_map.ensure(key, std::forward<Functor>(functor));
-    }
-
     bool remove(const KeyType& key)
     {
         return m_map.remove(key);

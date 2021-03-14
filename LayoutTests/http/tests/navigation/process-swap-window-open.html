@@ -36,11 +36,6 @@ function runTest() {
     shouldBeType("w.focus", "Function");
     shouldBeType("w.blur", "Function");
     shouldBeType("w.postMessage", "Function");
-    shouldBe("w.close", "w.close");
-    shouldBe("w.focus", "w.focus");
-    shouldBe("w.blur", "w.blur");
-    shouldBe("w.postMessage", "w.postMessage");
-    shouldBe("w.postMessage.length", "1");
     shouldNotThrow("w.postMessage('test', '*')");
     shouldNotThrow("w.focus()");
     shouldNotThrow("w.blur()");

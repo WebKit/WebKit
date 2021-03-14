@@ -28,11 +28,6 @@ PASS w.close is an instance of Function
 PASS w.focus is an instance of Function
 PASS w.blur is an instance of Function
 PASS w.postMessage is an instance of Function
-PASS w.close is w.close
-PASS w.focus is w.focus
-PASS w.blur is w.blur
-PASS w.postMessage is w.postMessage
-PASS w.postMessage.length is 1
 PASS w.postMessage('test', '*') did not throw exception.
 PASS w.focus() did not throw exception.
 PASS w.blur() did not throw exception.

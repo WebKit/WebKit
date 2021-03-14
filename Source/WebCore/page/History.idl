@@ -33,9 +33,9 @@
     attribute ScrollRestoration scrollRestoration;
     [Custom] readonly attribute any state;
 
-    [CallWith=Document] undefined back();
-    [CallWith=Document] undefined forward();
-    [CallWith=Document] undefined go(optional long delta = 0);
+    [CallWith=Document, ForwardDeclareInHeader] undefined back();
+    [CallWith=Document, ForwardDeclareInHeader] undefined forward();
+    [CallWith=Document, ForwardDeclareInHeader] undefined go(optional long delta = 0);
 
     // FIXME: title should not be nullable as per the HTML specification.
     [MayThrowException] undefined pushState(SerializedScriptValue data, DOMString? title, optional USVString? url = null);

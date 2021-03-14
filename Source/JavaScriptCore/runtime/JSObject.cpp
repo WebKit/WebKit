@@ -3521,18 +3521,24 @@ Butterfly* JSObject::allocateMoreOutOfLineStorage(VM& vm, size_t oldSize, size_t
     return Butterfly::createOrGrowPropertyStorage(butterfly(), vm, this, structure(vm), oldSize, newSize);
 }
 
-static JSCustomGetterFunction* createCustomGetterFunction(JSGlobalObject* globalObject, PropertyName propertyName, GetValueFunc getValueFunc, Optional<DOMAttributeAnnotation> domAttribute)
+static JSCustomGetterFunction* getCustomGetterFunction(JSGlobalObject* globalObject, PropertyName propertyName, GetValueFunc getValueFunc, Optional<DOMAttributeAnnotation> domAttribute)
 {
-    return globalObject->customGetterFunctionMap().ensure(getValueFunc, [&] {
-        return JSCustomGetterFunction::create(globalObject->vm(), globalObject, propertyName, getValueFunc, domAttribute);
-    }).iterator->value.get();
+    JSCustomGetterFunction* customGetterFunction = globalObject->customGetterFunctionMap().get(getValueFunc);
+    if (!customGetterFunction) {
+        customGetterFunction = JSCustomGetterFunction::create(globalObject->vm(), globalObject, propertyName, getValueFunc, domAttribute);
+        globalObject->customGetterFunctionMap().set(getValueFunc, customGetterFunction);
+    }
+    return customGetterFunction;
 }
 
-static JSCustomSetterFunction* createCustomSetterFunction(JSGlobalObject* globalObject, PropertyName propertyName, PutValueFunc putValueFunc)
+static JSCustomSetterFunction* getCustomSetterFunction(JSGlobalObject* globalObject, PropertyName propertyName, PutValueFunc putValueFunc)
 {
-    return globalObject->customSetterFunctionMap().ensure(putValueFunc, [&] {
-        return JSCustomSetterFunction::create(globalObject->vm(), globalObject, propertyName, putValueFunc);
-    }).iterator->value.get();
+    JSCustomSetterFunction* customSetterFunction = globalObject->customSetterFunctionMap().get(putValueFunc);
+    if (!customSetterFunction) {
+        customSetterFunction = JSCustomSetterFunction::create(globalObject->vm(), globalObject, propertyName, putValueFunc);
+        globalObject->customSetterFunctionMap().set(putValueFunc, customSetterFunction);
+    }
+    return customSetterFunction;
 }
 
 bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -3553,9 +3559,9 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
         descriptor.setAccessorDescriptor((slot.attributes() | PropertyAttribute::Accessor) & ~PropertyAttribute::CustomAccessor);
         JSGlobalObject* slotBaseGlobalObject = slot.slotBase()->globalObject(vm);
         if (slot.customGetter())
-            descriptor.setGetter(createCustomGetterFunction(slotBaseGlobalObject, propertyName, slot.customGetter(), slot.domAttribute()));
+            descriptor.setGetter(getCustomGetterFunction(slotBaseGlobalObject, propertyName, slot.customGetter(), slot.domAttribute()));
         if (slot.customSetter())
-            descriptor.setSetter(createCustomSetterFunction(slotBaseGlobalObject, propertyName, slot.customSetter()));
+            descriptor.setSetter(getCustomSetterFunction(slotBaseGlobalObject, propertyName, slot.customSetter()));
     } else {
         JSValue value = slot.getValue(globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, false);

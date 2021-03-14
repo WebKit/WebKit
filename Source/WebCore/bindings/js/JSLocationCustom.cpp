@@ -29,11 +29,20 @@
 #include "JSDOMWindowCustom.h"
 #include "RuntimeApplicationChecks.h"
 #include "WebCoreJSClientData.h"
+#include <JavaScriptCore/GetterSetter.h>
+#include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/Lookup.h>
 
 namespace WebCore {
 using namespace JSC;
+
+static JSC_DECLARE_CUSTOM_GETTER(jsLocationInstanceFunction_replaceNonCaching);
+
+JSC_DEFINE_CUSTOM_GETTER(jsLocationInstanceFunction_replaceNonCaching, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName))
+{
+    return nonCachingStaticFunctionGetterImpl<jsLocationInstanceFunction_replace, 1>(globalObject, propertyName);
+}
 
 static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
@@ -55,9 +64,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
 
     // We only allow access to Location.replace() cross origin.
     if (propertyName == vm.propertyNames->replace) {
-        auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
-        auto* jsFunction = thisObject.globalObject()->createCrossOriginFunction(&lexicalGlobalObject, propertyName, entry->function(), entry->functionLength());
-        slot.setValue(&thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, jsFunction);
+        slot.setCustom(&thisObject, static_cast<unsigned>(PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum), jsLocationInstanceFunction_replaceNonCaching);
         return true;
     }
 
@@ -65,7 +72,8 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
     // a descriptor that has a setter but no getter.
     if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName()) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
-        auto* getterSetter = thisObject.globalObject()->createCrossOriginGetterSetter(&lexicalGlobalObject, propertyName, nullptr, entry->propertyPutter());
+        auto* setter = JSCustomSetterFunction::create(vm, &lexicalGlobalObject, propertyName, entry->propertyPutter());
+        auto* getterSetter = GetterSetter::create(vm, &lexicalGlobalObject, nullptr, setter);
         slot.setGetterSlot(&thisObject, PropertyAttribute::Accessor | PropertyAttribute::DontEnum, getterSetter);
         return true;
     }
