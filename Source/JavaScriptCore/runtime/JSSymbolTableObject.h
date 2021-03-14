@@ -99,7 +99,7 @@ inline bool symbolTableGet(
 
 template<typename SymbolTableObjectType>
 inline bool symbolTableGet(
-    SymbolTableObjectType* object, PropertyName propertyName, SymbolTableEntry& entry, PropertyDescriptor& descriptor)
+    SymbolTableObjectType* object, PropertyName propertyName, SymbolTableEntry::Fast& entry, PropertyDescriptor& descriptor)
 {
     SymbolTable& symbolTable = *object->symbolTable();
     ConcurrentJSLocker locker(symbolTable.m_lock);

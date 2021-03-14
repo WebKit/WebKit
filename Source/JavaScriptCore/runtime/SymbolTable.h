@@ -263,11 +263,6 @@ public:
     {
         return getFast().getAttributes();
     }
-    
-    void setAttributes(unsigned attributes)
-    {
-        pack(varOffset(), isWatchable(), attributes & PropertyAttribute::ReadOnly, attributes & PropertyAttribute::DontEnum);
-    }
 
     bool isReadOnly() const
     {
