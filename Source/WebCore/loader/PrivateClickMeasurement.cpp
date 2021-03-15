@@ -116,14 +116,11 @@ bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasuremen
     return m_attributionTriggerData->priority > other.m_attributionTriggerData->priority;
 }
 
-URL PrivateClickMeasurement::attributionReportURL() const
+static URL attributionReportURL(const RegistrableDomain& registrableDomain)
 {
-    if (!isValid())
-        return URL();
-
     StringBuilder builder;
     builder.appendLiteral("https://");
-    builder.append(m_sourceSite.registrableDomain.string());
+    builder.append(registrableDomain.string());
     builder.appendLiteral(privateClickMeasurementReportAttributionPath);
 
     URL url { URL(), builder.toString() };
@@ -131,6 +128,22 @@ URL PrivateClickMeasurement::attributionReportURL() const
         return url;
 
     return URL();
+}
+
+URL PrivateClickMeasurement::attributionReportSourceURL() const
+{
+    if (!isValid())
+        return URL();
+
+    return attributionReportURL(m_sourceSite.registrableDomain);
+}
+
+URL PrivateClickMeasurement::attributionReportAttributeOnURL() const
+{
+    if (!isValid())
+        return URL();
+
+    return attributionReportURL(m_attributeOnSite.registrableDomain);
 }
 
 Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const

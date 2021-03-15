@@ -97,7 +97,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
         });
     }
 
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing an ad click."_s);
+    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing a click."_s);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
@@ -324,7 +324,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
 
 void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClickMeasurement& attribution)
 {
-    auto attributionURL = m_attributionReportBaseURLForTesting ? *m_attributionReportBaseURLForTesting : attribution.attributionReportURL();
+    auto attributionURL = m_attributionReportBaseURLForTesting ? *m_attributionReportBaseURLForTesting : attribution.attributionReportSourceURL();
     if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
 

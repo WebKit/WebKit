@@ -262,7 +262,8 @@ public:
     WEBCORE_EXPORT static Expected<AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
     WEBCORE_EXPORT Optional<Seconds> attributeAndGetEarliestTimeToSend(AttributionTriggerData&&);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
-    WEBCORE_EXPORT URL attributionReportURL() const;
+    WEBCORE_EXPORT URL attributionReportSourceURL() const;
+    WEBCORE_EXPORT URL attributionReportAttributeOnURL() const;
     WEBCORE_EXPORT Ref<JSON::Object> attributionReportJSON() const;
     const SourceSite& sourceSite() const { return m_sourceSite; };
     const AttributeOnSite& attributeOnSite() const { return m_attributeOnSite; };

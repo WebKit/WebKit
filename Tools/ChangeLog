@@ -1,3 +1,21 @@
+2021-03-15  John Wilander  <wilander@apple.com>
+
+        PCM: Split attributionReportURL() into attributionReportSourceURL() and attributionReportAttributeOnURL()
+        https://bugs.webkit.org/show_bug.cgi?id=223210
+        <rdar://problem/75442246>
+
+        Reviewed by Brent Fulgham.
+
+        This patch splits WebCore::PrivateClickMeasurement::attributionReportURL() into
+        WebCore::PrivateClickMeasurement::attributionReportSourceURL() and
+        WebCore::PrivateClickMeasurement::attributionReportAttributeOnURL() to
+        facilitate sending attribution reports to both the click source and destination.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+            Updated to use the new functions and also not repeat tests of static
+            data.
+
 2021-03-15  Aakash Jain  <aakash_jain@apple.com>
 
         Delete unused build-launcher-dmg script
