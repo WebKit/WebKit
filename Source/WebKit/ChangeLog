@@ -1,3 +1,33 @@
+2021-03-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274231. rdar://problem/75290553
+
+    [iOS] Add additional telemetry to WebContent sandbox 
+    https://bugs.webkit.org/show_bug.cgi?id=223035
+    <rdar://75275161>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Add additional telemetry to WebContent sandbox on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274231 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-10  Per Arne  <pvollan@apple.com>
+
+            [iOS] Add additional telemetry to WebContent sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=223035
+            <rdar://75275161>
+
+            Reviewed by Geoffrey Garen.
+
+            Add additional telemetry to WebContent sandbox on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-03-11  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r274295. rdar://problem/75290553
