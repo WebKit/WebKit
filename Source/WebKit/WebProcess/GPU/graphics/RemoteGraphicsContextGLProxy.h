@@ -308,10 +308,6 @@ public:
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
     void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params) final;
     GCGLint getGraphicsResetStatusARB() final;
-    PlatformGLObject createVertexArrayOES() final;
-    void deleteVertexArrayOES(PlatformGLObject arg0) final;
-    GCGLboolean isVertexArrayOES(PlatformGLObject arg0) final;
-    void bindVertexArrayOES(PlatformGLObject arg0) final;
     String getTranslatedShaderSourceANGLE(PlatformGLObject arg0) final;
     void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) final;
     void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) final;

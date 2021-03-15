@@ -1591,53 +1591,22 @@ void GraphicsContextGLOpenGL::viewport(GCGLint x, GCGLint y, GCGLsizei width, GC
 
 PlatformGLObject GraphicsContextGLOpenGL::createVertexArray()
 {
-    if (!makeContextCurrent())
-        return 0;
-
-    GLuint array = 0;
-#if (!USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))) || PLATFORM(COCOA)
-    ::glGenVertexArrays(1, &array);
-#endif
-    return array;
+    return getExtensions().createVertexArrayOES();
 }
 
 void GraphicsContextGLOpenGL::deleteVertexArray(PlatformGLObject array)
 {
-    if (!array)
-        return;
-    
-    if (!makeContextCurrent())
-        return;
-
-#if (!USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))) || PLATFORM(COCOA)
-    ::glDeleteVertexArrays(1, &array);
-#endif
+    getExtensions().deleteVertexArrayOES(array);
 }
 
 GCGLboolean GraphicsContextGLOpenGL::isVertexArray(PlatformGLObject array)
 {
-    if (!array)
-        return GL_FALSE;
-    
-    if (!makeContextCurrent())
-        return GL_FALSE;
-
-#if (!USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))) || PLATFORM(COCOA)
-    return ::glIsVertexArray(array);
-#endif
-    return GL_FALSE;
+    return getExtensions().isVertexArrayOES(array);
 }
 
 void GraphicsContextGLOpenGL::bindVertexArray(PlatformGLObject array)
 {
-    if (!makeContextCurrent())
-        return;
-
-#if (!USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))) || PLATFORM(COCOA)
-    ::glBindVertexArray(array);
-#else
-    UNUSED_PARAM(array);
-#endif
+    getExtensions().bindVertexArrayOES(array);
 }
 
 void GraphicsContextGLOpenGL::getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value)

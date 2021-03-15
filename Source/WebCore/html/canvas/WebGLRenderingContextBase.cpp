@@ -3165,7 +3165,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
         }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
-    case ExtensionsGL::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
+    case GraphicsContextGL::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
         if (m_oesVertexArrayObject) {
             if (m_boundVertexArrayObject->isDefaultObject())
                 return nullptr;

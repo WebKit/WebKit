@@ -46,7 +46,7 @@ WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES(WebGLRenderingContextBase& 
     case Type::Default:
         break;
     case Type::User:
-        setObject(this->context()->graphicsContextGL()->getExtensions().createVertexArrayOES());
+        setObject(this->context()->graphicsContextGL()->createVertexArray());
         break;
     }
 }
@@ -65,7 +65,7 @@ void WebGLVertexArrayObjectOES::deleteObjectImpl(const WTF::AbstractLocker& lock
     case Type::Default:
         break;
     case Type::User:
-        context3d->getExtensions().deleteVertexArrayOES(object);
+        context3d->deleteVertexArray(object);
         break;
     }
 

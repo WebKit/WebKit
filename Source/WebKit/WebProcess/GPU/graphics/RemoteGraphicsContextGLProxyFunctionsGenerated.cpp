@@ -2298,46 +2298,6 @@ GCGLint RemoteGraphicsContextGLProxy::getGraphicsResetStatusARB()
     return returnValue;
 }
 
-PlatformGLObject RemoteGraphicsContextGLProxy::createVertexArrayOES()
-{
-    uint32_t returnValue = { };
-    if (!isContextLost()) {
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateVertexArrayOES(), Messages::RemoteGraphicsContextGL::CreateVertexArrayOES::Reply(returnValue));
-        if (!sendResult)
-            markContextLost();
-    }
-    return returnValue;
-}
-
-void RemoteGraphicsContextGLProxy::deleteVertexArrayOES(PlatformGLObject arg0)
-{
-    if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::DeleteVertexArrayOES(arg0));
-        if (!sendResult)
-            markContextLost();
-    }
-}
-
-GCGLboolean RemoteGraphicsContextGLProxy::isVertexArrayOES(PlatformGLObject arg0)
-{
-    bool returnValue = { };
-    if (!isContextLost()) {
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::IsVertexArrayOES(arg0), Messages::RemoteGraphicsContextGL::IsVertexArrayOES::Reply(returnValue));
-        if (!sendResult)
-            markContextLost();
-    }
-    return static_cast<GCGLboolean>(returnValue);
-}
-
-void RemoteGraphicsContextGLProxy::bindVertexArrayOES(PlatformGLObject arg0)
-{
-    if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::BindVertexArrayOES(arg0));
-        if (!sendResult)
-            markContextLost();
-    }
-}
-
 String RemoteGraphicsContextGLProxy::getTranslatedShaderSourceANGLE(PlatformGLObject arg0)
 {
     String returnValue = { };

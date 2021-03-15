@@ -1711,7 +1711,10 @@ PlatformGLObject GraphicsContextGLOpenGL::createVertexArray()
         return 0;
 
     GLuint array = 0;
-    gl::GenVertexArrays(1, &array);
+    if (m_isForWebGL2)
+        gl::GenVertexArrays(1, &array);
+    else
+        gl::GenVertexArraysOES(1, &array);
     return array;
 }
 
@@ -1721,8 +1724,10 @@ void GraphicsContextGLOpenGL::deleteVertexArray(PlatformGLObject array)
         return;
     if (!makeContextCurrent())
         return;
-
-    gl::DeleteVertexArrays(1, &array);
+    if (m_isForWebGL2)
+        gl::DeleteVertexArrays(1, &array);
+    else
+        gl::DeleteVertexArraysOES(1, &array);
 }
 
 GCGLboolean GraphicsContextGLOpenGL::isVertexArray(PlatformGLObject array)
@@ -1732,15 +1737,19 @@ GCGLboolean GraphicsContextGLOpenGL::isVertexArray(PlatformGLObject array)
     if (!makeContextCurrent())
         return GL_FALSE;
 
-    return gl::IsVertexArray(array);
+    if (m_isForWebGL2)
+        return gl::IsVertexArray(array);
+    return gl::IsVertexArrayOES(array);
 }
 
 void GraphicsContextGLOpenGL::bindVertexArray(PlatformGLObject array)
 {
     if (!makeContextCurrent())
         return;
-
-    gl::BindVertexArray(array);
+    if (m_isForWebGL2)
+        gl::BindVertexArray(array);
+    else
+        gl::BindVertexArrayOES(array);
 }
 
 void GraphicsContextGLOpenGL::getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value)

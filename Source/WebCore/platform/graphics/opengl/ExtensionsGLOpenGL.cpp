@@ -57,8 +57,6 @@ PlatformGLObject ExtensionsGLOpenGL::createVertexArrayOES()
 #if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         glGenVertexArrays(1, &array);
-#elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
-    glGenVertexArraysAPPLE(1, &array);
 #endif
     return array;
 }
@@ -74,8 +72,6 @@ void ExtensionsGLOpenGL::deleteVertexArrayOES(PlatformGLObject array)
 #if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         glDeleteVertexArrays(1, &array);
-#elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
-    glDeleteVertexArraysAPPLE(1, &array);
 #endif
 }
 
@@ -90,8 +86,6 @@ GCGLboolean ExtensionsGLOpenGL::isVertexArrayOES(PlatformGLObject array)
 #if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         return glIsVertexArray(array);
-#elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
-    return glIsVertexArrayAPPLE(array);
 #endif
     return GL_FALSE;
 }
@@ -104,10 +98,6 @@ void ExtensionsGLOpenGL::bindVertexArrayOES(PlatformGLObject array)
 #if PLATFORM(GTK) || PLATFORM(WIN)
     if (isVertexArrayObjectSupported())
         glBindVertexArray(array);
-#elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
-    glBindVertexArrayAPPLE(array);
-#else
-    UNUSED_PARAM(array);
 #endif
 }
 

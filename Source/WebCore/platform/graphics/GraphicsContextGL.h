@@ -577,6 +577,7 @@ public:
     static constexpr GCGLenum RG32I = 0x823B;
     static constexpr GCGLenum RG32UI = 0x823C;
     static constexpr GCGLenum VERTEX_ARRAY_BINDING = 0x85B5;
+    static constexpr GCGLenum VERTEX_ARRAY_BINDING_OES = 0x85B5;
     static constexpr GCGLenum R8_SNORM = 0x8F94;
     static constexpr GCGLenum RG8_SNORM = 0x8F95;
     static constexpr GCGLenum RGB8_SNORM = 0x8F96;

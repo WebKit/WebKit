@@ -1,5 +1,20 @@
 2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        Move vertex array functionality from ExtensionsGL to GraphicsContextGL
+        https://bugs.webkit.org/show_bug.cgi?id=221665
+
+        Reviewed by Simon Fraser.
+
+        Generate WebGL GPUP implementation after the change.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+        (getGraphicsResetStatusARB):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+
+2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         RemoteRenderingBackend commands are not processed in order if GPU process is waiting for replies
         https://bugs.webkit.org/show_bug.cgi?id=222099
 

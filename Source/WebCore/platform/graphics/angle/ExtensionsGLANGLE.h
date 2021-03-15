@@ -47,10 +47,6 @@ public:
     bool isEnabled(const String&) override;
     GCGLint getGraphicsResetStatusARB() override;
 
-    PlatformGLObject createVertexArrayOES() override;
-    void deleteVertexArrayOES(PlatformGLObject) override;
-    GCGLboolean isVertexArrayOES(PlatformGLObject) override;
-    void bindVertexArrayOES(PlatformGLObject) override;
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
 
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
