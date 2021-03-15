@@ -1,3 +1,21 @@
+2021-03-15  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP][MSE] Add an IPC message to implement SourceBufferPrivateRemote::canSwitchToType()
+        https://bugs.webkit.org/show_bug.cgi?id=223152
+
+        Reviewed by Eric Carlson.
+
+        Add a synchronous message to implement `SourceBufferPrivateRemote::canSwitchToType()`.
+
+        No new tests. This patch fixes a test failure.
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::canSwitchToType):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::canSwitchToType):
+
 2021-03-15  Daniel Kolesa  <dkolesa@igalia.com>
 
         [GLIB] Be more selective about bublewrapping libdirs

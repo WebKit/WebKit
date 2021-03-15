@@ -44,6 +44,7 @@ class Decoder;
 }
 
 namespace WebCore {
+class ContentType;
 class MediaSample;
 class PlatformTimeRanges;
 }
@@ -83,6 +84,7 @@ private:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     void setActive(bool);
+    void canSwitchToType(const WebCore::ContentType&, CompletionHandler<void(bool)>&&);
     void setMode(WebCore::SourceBufferAppendMode);
     void append(const IPC::DataReference&);
     void abort();

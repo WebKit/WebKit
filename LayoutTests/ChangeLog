@@ -1,3 +1,12 @@
+2021-03-15  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP][MSE] Add an IPC message to implement SourceBufferPrivateRemote::canSwitchToType()
+        https://bugs.webkit.org/show_bug.cgi?id=223152
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+
 2021-03-15  Zalan Bujtas  <zalan@apple.com>
 
         Fit-border-to-line may change the layout constraints between 2 paginated line layouts

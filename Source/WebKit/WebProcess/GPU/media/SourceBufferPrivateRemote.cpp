@@ -34,7 +34,6 @@
 #include "MediaSourcePrivateRemote.h"
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
-#include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Ref.h>
@@ -139,10 +138,15 @@ void SourceBufferPrivateRemote::setActive(bool active)
     m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetActive(active), m_remoteSourceBufferIdentifier);
 }
 
-bool SourceBufferPrivateRemote::canSwitchToType(const ContentType&)
+bool SourceBufferPrivateRemote::canSwitchToType(const ContentType& contentType)
 {
-    notImplemented();
-    return false;
+    bool canSwitch = false;
+    if (!m_gpuProcessConnection)
+        return canSwitch;
+
+    m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(contentType), Messages::RemoteSourceBufferProxy::CanSwitchToType::Reply(canSwitch), m_remoteSourceBufferIdentifier);
+
+    return canSwitch;
 }
 
 void SourceBufferPrivateRemote::setMediaSourceEnded(bool isEnded)

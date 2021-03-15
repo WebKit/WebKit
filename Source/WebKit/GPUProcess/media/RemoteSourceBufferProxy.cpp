@@ -33,6 +33,7 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
+#include <WebCore/ContentType.h>
 #include <WebCore/MediaDescription.h>
 #include <WebCore/PlatformTimeRanges.h>
 
@@ -219,6 +220,11 @@ void RemoteSourceBufferProxy::setMediaSourceEnded(bool isEnded)
 void RemoteSourceBufferProxy::setActive(bool active)
 {
     m_sourceBufferPrivate->setActive(active);
+}
+
+void RemoteSourceBufferProxy::canSwitchToType(const ContentType& contentType, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(m_sourceBufferPrivate->canSwitchToType(contentType));
 }
 
 void RemoteSourceBufferProxy::setMode(WebCore::SourceBufferAppendMode appendMode)
