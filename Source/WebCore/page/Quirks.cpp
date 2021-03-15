@@ -166,7 +166,7 @@ bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
         return false;
 
     auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "www.bing.com");
+    return equalLettersIgnoringASCIICase(host, "www.bing.com") || host.endsWithIgnoringASCIICase(".zoom.us");
 }
 
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
