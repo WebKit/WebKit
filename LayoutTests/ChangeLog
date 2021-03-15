@@ -1,3 +1,15 @@
+2021-03-15  Rob Buis  <rbuis@igalia.com>
+
+        Treat min-intrinsic like *-content
+        https://bugs.webkit.org/show_bug.cgi?id=222854
+
+        Reviewed by Sergio Villar Senin.
+
+        Add test for this.
+
+        * fast/flexbox/indefinite-width-crash-expected.txt: Added.
+        * fast/flexbox/indefinite-width-crash.html: Added.
+
 2021-03-15  Imanol Fernandez  <ifernandez@igalia.com>
 
         Split WebXR features into enabledFeatures, supportedFeatures and requestedFeatures

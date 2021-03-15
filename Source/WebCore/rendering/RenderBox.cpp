@@ -3022,10 +3022,8 @@ Optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(Length
 {
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
-    if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent()) {
-        if (!intrinsicContentHeight)
-            return intrinsicContentHeight;
-        if (style().boxSizing() == BoxSizing::BorderBox)
+    if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isMinIntrinsic()) {
+        if (intrinsicContentHeight && style().boxSizing() == BoxSizing::BorderBox)
             return intrinsicContentHeight.value() + borderAndPaddingLogicalHeight();
         return intrinsicContentHeight;
     }
@@ -3041,7 +3039,7 @@ Optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(Siz
         return heightType == MinSize ? Optional<LayoutUnit>(0) : WTF::nullopt;
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
-    if (height.isIntrinsic())
+    if (height.isIntrinsic() || height.isMinIntrinsic())
         return computeIntrinsicLogicalContentHeightUsing(height, intrinsicContentHeight, borderAndPaddingLogicalHeight());
     if (height.isFixed())
         return LayoutUnit(height.value());
