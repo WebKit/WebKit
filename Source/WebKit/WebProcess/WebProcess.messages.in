@@ -196,4 +196,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SystemWillSleep()
     SystemDidWake()
 #endif
+
+#if PLATFORM(COCOA)
+    ConsumeAudioComponentRegistrations(IPC::SharedBufferDataReference registrationData)
+#endif
 }

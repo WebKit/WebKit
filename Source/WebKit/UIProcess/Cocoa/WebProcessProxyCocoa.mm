@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "ObjCObjectGraph.h"
 #import "SandboxUtilities.h"
+#import "SharedBufferDataReference.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
@@ -57,6 +58,8 @@ SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
 SOFT_LINK(TCC, TCCAccessCheckAuditToken, Boolean, (CFStringRef service, audit_token_t auditToken, CFDictionaryRef options), (service, auditToken, options))
 SOFT_LINK_CONSTANT(TCC, kTCCServiceAccessibility, CFStringRef)
 #endif
+
+#import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebKit {
 
@@ -280,5 +283,20 @@ void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHand
     completionHandler(authenticated);
 }
 #endif
+
+void WebProcessProxy::sendAudioComponentRegistrations()
+{
+    using namespace PAL;
+
+    if (!isAudioToolboxCoreFrameworkAvailable() || !canLoad_AudioToolboxCore_AudioComponentFetchServerRegistrations())
+        return;
+
+    CFDataRef registrations { nullptr };
+    if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
+        return;
+
+    auto registrationData = SharedBuffer::create(registrations);
+    send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
+}
 
 }

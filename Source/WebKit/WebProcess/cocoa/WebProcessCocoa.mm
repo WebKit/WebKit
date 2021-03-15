@@ -144,6 +144,7 @@
 #import <os/state_private.h>
 #endif
 
+#import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
@@ -1269,6 +1270,22 @@ void WebProcess::systemDidWake()
         PlatformMediaSessionManager::sharedManager().processSystemDidWake();
 }
 #endif
+
+void WebProcess::consumeAudioComponentRegistrations(const IPC::DataReference& data)
+{
+    using namespace PAL;
+
+    if (!isAudioToolboxCoreFrameworkAvailable() || !canLoad_AudioToolboxCore_AudioComponentApplyServerRegistrations())
+        return;
+
+    auto registrations = adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size()));
+    if (!registrations)
+        return;
+
+    auto err = AudioComponentApplyServerRegistrations(registrations.get());
+    if (noErr != err)
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Could not apply AudioComponent registrations, err(%ld)", static_cast<long>(err));
+}
 
 } // namespace WebKit
 

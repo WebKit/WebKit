@@ -1,3 +1,27 @@
+2021-03-15  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt AudioComponentApplyServerRegistrations()
+        https://bugs.webkit.org/show_bug.cgi?id=223188
+        <rdar://75433850>
+
+        Reviewed by Eric Carlson.
+
+        The WebKit sandbox will block access to the AudioComponent XPC service when the
+        GPU process is enabled. Adopt new API to fetch the registered component data from
+        the priviledged UIProcess and consume that registration data in the WebContent
+        process, making it unnecessary to communicate with the AudioComponent XPC service
+        to instantiate components.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::consumeAudioComponentRegistrations):
+
 2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL IPC should use shared memory for synchronous messages

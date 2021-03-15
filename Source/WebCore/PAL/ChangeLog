@@ -1,3 +1,14 @@
+2021-03-15  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt AudioComponentApplyServerRegistrations()
+        https://bugs.webkit.org/show_bug.cgi?id=223188
+        <rdar://75433850>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h:
+
 2021-03-13  Tim Horton  <timothy_horton@apple.com>
 
         Adopt DDMacAction instead of DDAction on macOS
