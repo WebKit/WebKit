@@ -1,3 +1,14 @@
+2021-03-15  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r233845): EME Keysystem permission when MediaStream is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=223185
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestMediaKeySystemPermissionForFrame): This method is required for
+        EME build configurations, not MediaStream...
+
 2021-03-15  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP][MSE] Add an IPC message to implement SourceBufferPrivateRemote::canSwitchToType()

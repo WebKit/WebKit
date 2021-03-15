@@ -8224,7 +8224,7 @@ void WebPageProxy::clearUserMediaState()
 
 void WebPageProxy::requestMediaKeySystemPermissionForFrame(uint64_t mediaKeySystemID, FrameIdentifier frameID, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const String& keySystem)
 {
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(ENCRYPTED_MEDIA)
     MESSAGE_CHECK(m_process, m_process->webFrame(frameID));
 
     auto origin = API::SecurityOrigin::create(topLevelDocumentOriginData.securityOrigin());
