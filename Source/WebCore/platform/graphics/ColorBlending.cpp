@@ -97,17 +97,17 @@ Color blend(const Color& from, const Color& to, double progress)
     if (progress == 1 && !to.isValid())
         return { };
 
-    auto premultipliedFrom = premultipliedCeiling(from.toSRGBALossy<uint8_t>());
-    auto premultipliedTo = premultipliedCeiling(to.toSRGBALossy<uint8_t>());
+    auto premultipliedFrom = premultiplied(from.toColorTypeLossy<SRGBA<float>>());
+    auto premultipliedTo = premultiplied(to.toColorTypeLossy<SRGBA<float>>());
 
-    auto premultipliedBlended = makeFromComponentsClamping<SRGBA<uint8_t>>(
+    auto premultipliedBlended = makeFromComponentsClamping<SRGBA<float>>(
         WebCore::blend(premultipliedFrom.red, premultipliedTo.red, progress),
         WebCore::blend(premultipliedFrom.green, premultipliedTo.green, progress),
         WebCore::blend(premultipliedFrom.blue, premultipliedTo.blue, progress),
         WebCore::blend(premultipliedFrom.alpha, premultipliedTo.alpha, progress)
     );
 
-    return unpremultiplied(premultipliedBlended);
+    return convertColor<SRGBA<uint8_t>>(unpremultiplied(premultipliedBlended));
 }
 
 Color blendWithoutPremultiply(const Color& from, const Color& to, double progress)
@@ -117,15 +117,17 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
     if (progress == 1 && !to.isValid())
         return { };
 
-    auto fromSRGB = from.toSRGBALossy<uint8_t>();
-    auto toSRGB = to.toSRGBALossy<uint8_t>();
+    auto fromSRGB = from.toColorTypeLossy<SRGBA<float>>();
+    auto toSRGB = to.toColorTypeLossy<SRGBA<float>>();
 
-    return makeFromComponentsClamping<SRGBA<uint8_t>>(
+    auto blended = makeFromComponentsClamping<SRGBA<float>>(
         WebCore::blend(fromSRGB.red, toSRGB.red, progress),
         WebCore::blend(fromSRGB.green, toSRGB.green, progress),
         WebCore::blend(fromSRGB.blue, toSRGB.blue, progress),
         WebCore::blend(fromSRGB.alpha, toSRGB.alpha, progress)
     );
+
+    return convertColor<SRGBA<uint8_t>>(blended);
 }
 
 } // namespace WebCore

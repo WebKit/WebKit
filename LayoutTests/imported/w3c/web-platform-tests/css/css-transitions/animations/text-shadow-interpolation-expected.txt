@@ -25,26 +25,26 @@ PASS Web Animations: property <text-shadow> from neutral to [green 20px 20px 20p
 PASS Web Animations: property <text-shadow> from neutral to [green 20px 20px 20px] at (1.5) should be [rgb(0, 110, 0) 25px 15px 25px]
 FAIL CSS Transitions: property <text-shadow> from [initial] to [green 20px 20px 20px] at (-0.3) should be [rgba(0, 0, 0, 0) -6px -6px 0px] assert_equals: expected "rgba ( 0 , 0 , 0 , 0 ) - 6px - 6px 0px " but got "rgba ( 0 , 0 , 0 , 0 ) - 5.98px - 5.98px - 6px "
 PASS CSS Transitions: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0) should be [rgba(0, 0, 0, 0) 0px 0px 0px]
-FAIL CSS Transitions: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.3) should be [rgba(0, 128, 0, 0.3) 6px 6px 6px] assert_equals: expected "rgba ( 0 , 128 , 0 , 0.3 ) 6px 6px 6px " but got "rgba ( 0 , 126 , 0 , 0.3 ) 6px 6px 6px "
-FAIL CSS Transitions: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.6) should be [rgba(0, 128, 0, 0.6) 12px 12px 12px] assert_equals: expected "rgba ( 0 , 128 , 0 , 0.6 ) 12px 12px 12px " but got "rgba ( 0 , 129 , 0 , 0.6 ) 12px 12px 12px "
+PASS CSS Transitions: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.3) should be [rgba(0, 128, 0, 0.3) 6px 6px 6px]
+PASS CSS Transitions: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.6) should be [rgba(0, 128, 0, 0.6) 12px 12px 12px]
 PASS CSS Transitions: property <text-shadow> from [initial] to [green 20px 20px 20px] at (1) should be [rgb(0, 128, 0) 20px 20px 20px]
 PASS CSS Transitions: property <text-shadow> from [initial] to [green 20px 20px 20px] at (1.5) should be [rgb(0, 192, 0) 30px 30px 30px]
 FAIL CSS Transitions with transition: all: property <text-shadow> from [initial] to [green 20px 20px 20px] at (-0.3) should be [rgba(0, 0, 0, 0) -6px -6px 0px] assert_equals: expected "rgba ( 0 , 0 , 0 , 0 ) - 6px - 6px 0px " but got "rgba ( 0 , 0 , 0 , 0 ) - 5.98px - 5.98px - 6px "
 PASS CSS Transitions with transition: all: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0) should be [rgba(0, 0, 0, 0) 0px 0px 0px]
-FAIL CSS Transitions with transition: all: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.3) should be [rgba(0, 128, 0, 0.3) 6px 6px 6px] assert_equals: expected "rgba ( 0 , 128 , 0 , 0.3 ) 6px 6px 6px " but got "rgba ( 0 , 126 , 0 , 0.3 ) 6px 6px 6px "
-FAIL CSS Transitions with transition: all: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.6) should be [rgba(0, 128, 0, 0.6) 12px 12px 12px] assert_equals: expected "rgba ( 0 , 128 , 0 , 0.6 ) 12px 12px 12px " but got "rgba ( 0 , 129 , 0 , 0.6 ) 12px 12px 12px "
+PASS CSS Transitions with transition: all: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.3) should be [rgba(0, 128, 0, 0.3) 6px 6px 6px]
+PASS CSS Transitions with transition: all: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.6) should be [rgba(0, 128, 0, 0.6) 12px 12px 12px]
 PASS CSS Transitions with transition: all: property <text-shadow> from [initial] to [green 20px 20px 20px] at (1) should be [rgb(0, 128, 0) 20px 20px 20px]
 PASS CSS Transitions with transition: all: property <text-shadow> from [initial] to [green 20px 20px 20px] at (1.5) should be [rgb(0, 192, 0) 30px 30px 30px]
 FAIL CSS Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (-0.3) should be [rgba(0, 0, 0, 0) -6px -6px 0px] assert_equals: expected "rgba ( 0 , 0 , 0 , 0 ) - 6px - 6px 0px " but got "rgba ( 0 , 0 , 0 , 0 ) - 5.98px - 5.98px - 6px "
 PASS CSS Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0) should be [rgba(0, 0, 0, 0) 0px 0px 0px]
-FAIL CSS Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.3) should be [rgba(0, 128, 0, 0.3) 6px 6px 6px] assert_equals: expected "rgba ( 0 , 128 , 0 , 0.3 ) 6px 6px 6px " but got "rgba ( 0 , 126 , 0 , 0.3 ) 6px 6px 6px "
-FAIL CSS Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.6) should be [rgba(0, 128, 0, 0.6) 12px 12px 12px] assert_equals: expected "rgba ( 0 , 128 , 0 , 0.6 ) 12px 12px 12px " but got "rgba ( 0 , 129 , 0 , 0.6 ) 12px 12px 12px "
+PASS CSS Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.3) should be [rgba(0, 128, 0, 0.3) 6px 6px 6px]
+PASS CSS Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.6) should be [rgba(0, 128, 0, 0.6) 12px 12px 12px]
 PASS CSS Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (1) should be [rgb(0, 128, 0) 20px 20px 20px]
 PASS CSS Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (1.5) should be [rgb(0, 192, 0) 30px 30px 30px]
 FAIL Web Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (-0.3) should be [rgba(0, 0, 0, 0) -6px -6px 0px] assert_equals: expected "rgba ( 0 , 0 , 0 , 0 ) - 6px - 6px 0px " but got "rgba ( 0 , 0 , 0 , 0 ) - 5.98px - 5.98px - 6px "
 PASS Web Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0) should be [rgba(0, 0, 0, 0) 0px 0px 0px]
-FAIL Web Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.3) should be [rgba(0, 128, 0, 0.3) 6px 6px 6px] assert_equals: expected "rgba ( 0 , 128 , 0 , 0.3 ) 6px 6px 6px " but got "rgba ( 0 , 126 , 0 , 0.3 ) 6px 6px 6px "
-FAIL Web Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.6) should be [rgba(0, 128, 0, 0.6) 12px 12px 12px] assert_equals: expected "rgba ( 0 , 128 , 0 , 0.6 ) 12px 12px 12px " but got "rgba ( 0 , 129 , 0 , 0.6 ) 12px 12px 12px "
+PASS Web Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.3) should be [rgba(0, 128, 0, 0.3) 6px 6px 6px]
+PASS Web Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (0.6) should be [rgba(0, 128, 0, 0.6) 12px 12px 12px]
 PASS Web Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (1) should be [rgb(0, 128, 0) 20px 20px 20px]
 PASS Web Animations: property <text-shadow> from [initial] to [green 20px 20px 20px] at (1.5) should be [rgb(0, 192, 0) 30px 30px 30px]
 PASS CSS Transitions: property <text-shadow> from [inherit] to [green 20px 20px 20px] at (-0.3) should be [rgb(255, 176, 0) 33px 7px 33px]
