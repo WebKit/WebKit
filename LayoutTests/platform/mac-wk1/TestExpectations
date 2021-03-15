@@ -1261,3 +1261,7 @@ webkit.org/b/221819 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio
 webkit.org/b/222693 [ BigSur Release ] media/video-aspect-ratio.html [ Failure Timeout ]
 
 webkit.org/b/223104 compositing/visibility/iframe-visibility-hidden.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223193 canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
+webkit.org/b/223193 imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
+webkit.org/b/223193 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]

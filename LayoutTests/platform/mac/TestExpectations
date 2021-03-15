@@ -1390,10 +1390,6 @@ http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 
-# <rdar://problem/32620024> REGRESSION: LayoutTests canvas/philip/tests/2d.path.stroke.scale2.html and imported/w3c/canvas/2d.path.stroke.scale2.html are failing
-canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
-imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
-
 # <rdar://problem/32826391> LayoutTest imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm is failing on High Sierra
 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 

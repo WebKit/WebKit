@@ -1,3 +1,22 @@
+2021-03-15  Said Abou-Hallawa  <said@apple.com>
+
+        Enable the layout test 2d.path.stroke.scale2.html
+        https://bugs.webkit.org/show_bug.cgi?id=223176
+
+        Reviewed by Tim Horton.
+
+        This layout test is now fixed on macOS and iOS after enabling GPUP for
+        2D canvas rendering. The reason is CGPathAddRect() has a bug which is
+        tracked by rdar://75419465. Encoding the CGPath converts the rectangle
+        command to moveTo and lineTo commands. This is unintentional workaround
+        for the CGPathAddRect() bug.
+
+        * TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-03-15  Robert Jenner  <jenner@apple.com>
 
         [ macOS wk2 ARM64 ] http/tests/local/loading-stylesheet-import-remove.html is a flakey image failure
