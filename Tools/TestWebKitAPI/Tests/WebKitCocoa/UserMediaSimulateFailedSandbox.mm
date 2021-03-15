@@ -59,7 +59,7 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @implementation SimulateFailedSandboxUIDelegate
 
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermission:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision))decisionHandler
+- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler
 {
     wasPrompted = true;
 

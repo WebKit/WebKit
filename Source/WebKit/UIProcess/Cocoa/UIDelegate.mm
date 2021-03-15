@@ -1062,7 +1062,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return;
     }
 
-    bool respondsToRequestMediaCapturePermission = [delegate respondsToSelector:@selector(_webView:requestMediaCapturePermission:video:decisionHandler:)];
+    bool respondsToRequestMediaCapturePermission = [delegate respondsToSelector:@selector(_webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:audio:video:decisionHandler:)];
     bool respondsToRequestUserMediaAuthorizationForDevices = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
 
     if (!respondsToRequestMediaCapturePermission && !respondsToRequestUserMediaAuthorizationForDevices) {
@@ -1072,7 +1072,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
 
     // FIXME: Provide a specific delegate for display capture.
     if (!request.requiresDisplayCapture() && respondsToRequestMediaCapturePermission) {
-        auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestMediaCapturePermission:video:decisionHandler:));
+        auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:audio:video:decisionHandler:));
         auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](_WKPermissionDecision decision) {
             if (checker->completionHandlerHasBeenCalled())
                 return;
@@ -1093,7 +1093,14 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
                 break;
             }
         });
-        [delegate _webView:m_uiDelegate->m_webView.get().get() requestMediaCapturePermission:request.requiresAudioCapture() video:request.requiresVideoCapture() decisionHandler:decisionHandler.get()];
+
+        Optional<WebCore::FrameIdentifier> mainFrameID;
+        if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
+            mainFrameID = mainFrame->frameID();
+        FrameInfoData frameInfo { frame.isMainFrame(), { }, userMediaOrigin.securityOrigin(), frame.frameID(), mainFrameID };
+        RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
+
+        [delegate _webView:m_uiDelegate->m_webView.get().get() requestMediaCapturePermissionForOrigin:wrapper(topLevelOrigin) initiatedByFrame:frameInfoWrapper.get() audio:request.requiresAudioCapture() video:request.requiresVideoCapture() decisionHandler:decisionHandler.get()];
         return;
     }
 

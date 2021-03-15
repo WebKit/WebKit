@@ -1,3 +1,17 @@
+2021-03-15  Youenn Fablet  <youenn@apple.com>
+
+        Update getUserMedia delegate to expose frame info
+        https://bugs.webkit.org/show_bug.cgi?id=223178
+
+        Reviewed by Eric Carlson.
+
+        Covered by API test.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        Expose frame information in the permission delegate.
+
 2021-03-15  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r233845): EME Keysystem permission when MediaStream is disabled

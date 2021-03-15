@@ -1,3 +1,29 @@
+2021-03-15  Youenn Fablet  <youenn@apple.com>
+
+        Update getUserMedia delegate to expose frame info
+        https://bugs.webkit.org/show_bug.cgi?id=223178
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (-[UserMediaCaptureUIDelegateForParameters _webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:audio:video:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (-[NavigationWhileGetUserMediaPromptDisplayedUIDelegate _webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:audio:video:decisionHandler:]):
+        (-[NavigationWhileGetUserMediaPromptDisplayedUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm:
+        (-[SpeechRecognitionUIDelegate _webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:audio:video:decisionHandler:]):
+        (-[SpeechRecognitionUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (-[UserMediaUIDelegate _webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:audio:video:decisionHandler:]):
+        (-[UserMediaUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        (-[SimulateFailedSandboxUIDelegate _webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:audio:video:decisionHandler:]):
+        (-[SimulateFailedSandboxUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]): Deleted.
+        * TestWebKitAPI/cocoa/UserMediaCaptureUIDelegate.h:
+        * TestWebKitAPI/cocoa/UserMediaCaptureUIDelegate.mm:
+        (-[UserMediaCaptureUIDelegate _webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:audio:video:decisionHandler:]):
+        (-[UserMediaCaptureUIDelegate _webView:requestMediaCapturePermission:video:decisionHandler:]): Deleted.
+
 2021-03-15  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Filter cppfilt output when generating crash logs
