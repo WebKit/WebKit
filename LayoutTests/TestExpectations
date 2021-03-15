@@ -4818,3 +4818,5 @@ imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-count
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
+
+webkit.org/b/223170 [ Debug ] fast/multicol/widow-relayout-with-border-fit.html [ Skip ]
