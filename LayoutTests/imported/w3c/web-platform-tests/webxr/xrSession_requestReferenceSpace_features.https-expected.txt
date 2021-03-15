@@ -1,0 +1,14 @@
+
+PASS Non-immersive session supports viewer space by default
+PASS Immersive session supports viewer space by default
+PASS Immersive session supports local space by default
+PASS Non-immersive session supports local space when required
+PASS Non-immersive session supports local space when optional
+PASS Non-immersive session supports local-floor space when required
+PASS Immersive session supports local-floor space when required
+PASS Immersive session supports local-floor space when optional
+PASS Non-immersive session rejects bounded-floor space even when requested
+PASS Non-immersive session rejects unbounded space even when requested
+PASS Non-immersive session rejects local space if not requested
+PASS Immersive session rejects local-floor space if not requested
+

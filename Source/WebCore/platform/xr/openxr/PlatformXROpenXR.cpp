@@ -245,9 +245,9 @@ Vector<Device::ViewData> OpenXRDevice::views(SessionMode mode) const
     return views;
 }
 
-Device::ListOfEnabledFeatures OpenXRDevice::collectEnabledFeatures()
+Device::FeatureList OpenXRDevice::collectSupportedFeatures()
 {
-    Device::ListOfEnabledFeatures features;
+    Device::FeatureList features;
 
     // https://www.khronos.org/registry/OpenXR/specs/1.0/man/html/XrReferenceSpaceType.html
     // OpenXR runtimes must support Viewer and Local spaces.
@@ -279,7 +279,7 @@ void OpenXRDevice::collectSupportedSessionModes()
     result = xrEnumerateViewConfigurations(m_instance, m_systemId, viewConfigurationCount, &viewConfigurationCount, viewConfigurations);
     RETURN_IF_FAILED(result, "xrEnumerateViewConfigurations", m_instance);
 
-    ListOfEnabledFeatures features = collectEnabledFeatures();
+    FeatureList features = collectSupportedFeatures();
     for (uint32_t i = 0; i < viewConfigurationCount; ++i) {
         auto viewConfigurationProperties = createStructure<XrViewConfigurationProperties, XR_TYPE_VIEW_CONFIGURATION_PROPERTIES>();
         result = xrGetViewConfigurationProperties(m_instance, m_systemId, viewConfigurations[i], &viewConfigurationProperties);
@@ -290,10 +290,10 @@ void OpenXRDevice::collectSupportedSessionModes()
         auto configType = viewConfigurationProperties.viewConfigurationType;
         switch (configType) {
         case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO:
-            setEnabledFeatures(SessionMode::Inline, features);
+            setSupportedFeatures(SessionMode::Inline, features);
             break;
         case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO:
-            setEnabledFeatures(SessionMode::ImmersiveVr, features);
+            setSupportedFeatures(SessionMode::ImmersiveVr, features);
             break;
         default:
             continue;

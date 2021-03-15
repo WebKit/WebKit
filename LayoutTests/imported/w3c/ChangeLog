@@ -1,3 +1,14 @@
+2021-03-15  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Split WebXR features into enabledFeatures, supportedFeatures and requestedFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=222796
+
+        Reviewed by Sergio Villar Senin.
+
+        Update xrSession_requestReferenceSpace_features expectations.
+
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https-expected.txt: Added.
+
 2021-03-15  Rob Buis  <rbuis@igalia.com>
 
         CSS aspect-ratio interpolation

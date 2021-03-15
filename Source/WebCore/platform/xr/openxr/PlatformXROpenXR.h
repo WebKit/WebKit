@@ -59,7 +59,7 @@ private:
     Vector<ViewData> views(SessionMode) const final;
 
     // Custom methods
-    ListOfEnabledFeatures collectEnabledFeatures();
+    FeatureList collectSupportedFeatures();
     void collectSupportedSessionModes();
     void collectConfigurationViews();
     XrSpace createReferenceSpace(XrReferenceSpaceType);

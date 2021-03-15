@@ -646,6 +646,7 @@ imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid
 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]

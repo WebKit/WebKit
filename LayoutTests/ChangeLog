@@ -1,3 +1,14 @@
+2021-03-15  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Split WebXR features into enabledFeatures, supportedFeatures and requestedFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=222796
+
+        Reviewed by Sergio Villar Senin.
+
+        Update xrSession_requestReferenceSpace_features expectations.
+
+        * platform/wpe/TestExpectations:
+
 2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Prevent dynamic import in service worker
