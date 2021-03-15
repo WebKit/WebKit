@@ -128,7 +128,7 @@ public:
     ExceptionOr<RefPtr<ImageBitmap>> transferToImageBitmap();
     void convertToBlob(ImageEncodeOptions&&, Ref<DeferredPromise>&&);
 
-    void didDraw(const FloatRect&) final;
+    void didDraw(const Optional<FloatRect>&) final;
 
     Image* copiedImage() const final;
     void clearCopiedImage() const final;

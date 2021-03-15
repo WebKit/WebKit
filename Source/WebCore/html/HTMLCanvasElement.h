@@ -106,7 +106,7 @@ public:
 #endif
 
     // Used for rendering
-    void didDraw(const FloatRect&) final;
+    void didDraw(const Optional<FloatRect>&) final;
 
     void paint(GraphicsContext&, const LayoutRect&);
 

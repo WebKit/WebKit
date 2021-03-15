@@ -41,9 +41,12 @@ String CSSCanvasValue::customCSSText() const
     return makeString("-webkit-canvas(", m_name, ')');
 }
 
-void CSSCanvasValue::canvasChanged(HTMLCanvasElement&, const FloatRect& changedRect)
+void CSSCanvasValue::canvasChanged(HTMLCanvasElement&, const Optional<FloatRect>& changedRect)
 {
-    IntRect imageChangeRect = enclosingIntRect(changedRect);
+    if (!changedRect)
+        return;
+
+    auto imageChangeRect = enclosingIntRect(changedRect.value());
     for (auto it = clients().begin(), end = clients().end(); it != end; ++it)
         it->key->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
 }

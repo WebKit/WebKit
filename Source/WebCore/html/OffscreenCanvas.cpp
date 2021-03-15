@@ -348,7 +348,7 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
     promise->resolveWithNewlyCreated<IDLInterface<Blob>>(WTFMove(blob));
 }
 
-void OffscreenCanvas::didDraw(const FloatRect& rect)
+void OffscreenCanvas::didDraw(const Optional<FloatRect>& rect)
 {
     clearCopiedImage();
     scheduleCommitToPlaceholderCanvas();

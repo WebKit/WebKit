@@ -8786,7 +8786,7 @@ void Document::clearCanvasPreparation(HTMLCanvasElement* canvas)
     m_canvasesNeedingDisplayPreparation.remove(canvas);
 }
 
-void Document::canvasChanged(CanvasBase& canvasBase, const FloatRect&)
+void Document::canvasChanged(CanvasBase& canvasBase, const Optional<FloatRect>&)
 {
     if (is<HTMLCanvasElement>(canvasBase)) {
         auto* canvas = downcast<HTMLCanvasElement>(&canvasBase);

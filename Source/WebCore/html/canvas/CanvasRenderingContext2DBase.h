@@ -318,6 +318,8 @@ private:
     };
     void didDraw(const FloatRect&, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip });
     void didDrawEntireCanvas();
+    
+    FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
     void paintRenderingResultsToCanvas() override;
     bool needsPreparationForDisplay() const final;

@@ -2000,7 +2000,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(T
 
 void CanvasRenderingContext2DBase::didDrawEntireCanvas()
 {
-    didDraw(FloatRect(FloatPoint::zero(), canvasBase().size()), DidDrawOption::ApplyClip);
+    didDraw(backingStoreBounds(), DidDrawOption::ApplyClip);
 }
 
 void CanvasRenderingContext2DBase::didDraw(const FloatRect& r, OptionSet<DidDrawOption> options)
@@ -2044,7 +2044,7 @@ void CanvasRenderingContext2DBase::paintRenderingResultsToCanvas()
     auto& displayList = m_recordingContext->displayList();
     if (!displayList.isEmpty()) {
         DisplayList::Replayer replayer(*canvasBase().drawingContext(), displayList);
-        replayer.replay({ FloatPoint::zero(), canvasBase().size() });
+        replayer.replay(backingStoreBounds());
         displayList.clear();
     }
 }

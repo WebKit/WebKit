@@ -553,11 +553,16 @@ ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(const S
     return static_cast<ImageBitmapRenderingContext*>(m_context.get());
 }
 
-void HTMLCanvasElement::didDraw(const FloatRect& rect)
+void HTMLCanvasElement::didDraw(const Optional<FloatRect>& rect)
 {
     clearCopiedImage();
+    
+    if (!rect) {
+        notifyObserversCanvasChanged(WTF::nullopt);
+        return;
+    }
 
-    FloatRect dirtyRect = rect;
+    auto dirtyRect = rect.value();
     if (auto* renderer = renderBox()) {
         FloatRect destRect;
         if (is<RenderReplaced>(renderer))
