@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AllowShared in WebGL</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas width="100" height="100"></canvas>
+<canvas width="100" height="100"></canvas>
+<script>
+test(() => {
+    const canvas = document.querySelectorAll('canvas')[0];
+    const gl = canvas.getContext("webgl");
+    const buffer = gl.createBuffer();
+    const bufferData = new Float32Array(new SharedArrayBuffer(128))
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+    gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
+
+    gl.bufferSubData(gl.ARRAY_BUFFER, bufferData.length, bufferData);
+
+    const texture = gl.createTexture();
+    const textureData = new Float32Array(new SharedArrayBuffer(128))
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.FLOAT, textureData);
+
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 30, 0, 4, 4, gl.RGBA, gl.FLOAT, textureData);
+
+    gl.compressedTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, textureData);
+
+    gl.compressedTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.RGBA, textureData);
+
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, textureData);
+}, `WebGL AllowShared`);
+
+test(() => {
+    const canvas = document.querySelectorAll('canvas')[1];
+    const gl = canvas.getContext("webgl2");
+    const buffer = gl.createBuffer();
+    const bufferData = new Float32Array(new SharedArrayBuffer(128))
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+    gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW, 0, 0);
+
+    gl.bufferSubData(gl.ARRAY_BUFFER, bufferData.length, bufferData, 0, 0);
+
+    gl.getBufferSubData(gl.ARRAY_BUFFER, 0, bufferData);
+
+    const texture = gl.createTexture();
+    const textureData = new Float32Array(new SharedArrayBuffer(128))
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    gl.texImage3D(gl.TEXTURE_3D, 0, gl.RGBA, 1, 1, 0, 0, gl.RGBA, gl.FLOAT, textureData);
+
+    gl.texImage3D(gl.TEXTURE_3D, 0, gl.RGBA, 1, 1, 0, 0, gl.RGBA, gl.FLOAT, textureData, 0);
+
+    gl.texSubImage3D(gl.TEXTURE_3D, 0, 0, 0, 0, 1, 0, 0, gl.RGBA, gl.FLOAT, textureData);
+
+    gl.compressedTexImage3D(gl.TEXTURE_2D_ARRAY, 0, gl.COMPRESSED_RGBA8_ETC2_EAC, 4, 4, 1, 0, textureData);
+
+    gl.compressedTexSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, 0, 4, 4, 1, gl.COMPRESSED_RGBA8_ETC2_EAC, textureData)
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.FLOAT, textureData, 0);
+
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 30, 0, 4, 4, gl.RGBA, gl.FLOAT, textureData, 0);
+
+    gl.compressedTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, textureData, 0);
+
+    gl.compressedTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.RGBA, textureData, 0);
+
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, textureData, 0);
+}, `WebGL2 AllowShared`);
+</script>
+</body>
+</html>

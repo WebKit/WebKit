@@ -38,8 +38,11 @@ typedef unsigned long GLuint;
 typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
 typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
-typedef (Float32Array or sequence<GLfloat>) Float32List;
-typedef (Int32Array or sequence<GLint>) Int32List;
+// FIXME: Currently `[AllowShared] BufferDataSource` is not built well in our compile-time IDL type converter. We need more template specialization for that.
+// But we should replace BufferDataSource to BufferSource since both are completely same time, and we already support `[AllowShared] BufferSource`.
+typedef ([AllowShared] ArrayBuffer or [AllowShared] ArrayBufferView) AllowSharedBufferDataSource;
+typedef ([AllowShared] Float32Array or sequence<GLfloat>) Float32List;
+typedef ([AllowShared] Int32Array or sequence<GLint>) Int32List;
 
 #if defined(ENABLE_OFFSCREEN_CANVAS)
 typedef (HTMLCanvasElement or OffscreenCanvas) WebGLCanvas;
@@ -492,9 +495,9 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     undefined blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
     undefined blendFunc(GLenum sfactor, GLenum dfactor);
     undefined blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
-    undefined bufferData(GLenum target, BufferDataSource? data, GLenum usage);
+    undefined bufferData(GLenum target, AllowSharedBufferDataSource? data, GLenum usage);
     undefined bufferData(GLenum target, GLsizeiptr size, GLenum usage);
-    undefined bufferSubData(GLenum target, GLintptr offset, BufferDataSource data);
+    undefined bufferSubData(GLenum target, GLintptr offset, AllowSharedBufferDataSource data);
 
     GLenum checkFramebufferStatus(GLenum target);
     undefined clear(GLbitfield mask);
@@ -504,14 +507,14 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     undefined colorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
     undefined compileShader(WebGLShader shader);
 
-    undefined texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
+    undefined texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
     [MayThrowException] undefined texImage2D(GLenum target, GLint level, GLenum internalformat, GLenum format, GLenum type, TexImageSource source);
 
-    undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView? pixels);
+    undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
     [MayThrowException] undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, TexImageSource source);
 
-    undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, ArrayBufferView data);
-    undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, ArrayBufferView data);
+    undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, [AllowShared] ArrayBufferView data);
+    undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, [AllowShared] ArrayBufferView data);
 
     undefined copyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
     undefined copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
@@ -607,7 +610,7 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     undefined pixelStorei(GLenum pname, GLint param);
     undefined polygonOffset(GLfloat factor, GLfloat units);
 
-    undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView pixels);
+    undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView pixels);
     
     undefined renderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
     undefined sampleCoverage(GLclampf value, GLboolean invert);
