@@ -681,11 +681,19 @@ void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool
 void GPUConnectionToWebProcess::displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags)
 {
 #if ENABLE(WEBGL)
-    if (flags & kCGDisplaySetModeFlag) {
-        for (auto& context : m_remoteGraphicsContextGLMap.values())
-            context->displayWasReconfigured();
-    }
+    if (flags & kCGDisplaySetModeFlag)
+        dispatchDisplayWasReconfigured();
+#else
+    UNUSED_VARIABLE(flags);
 #endif
+}
+#endif
+
+#if PLATFORM(MAC) && ENABLE(WEBGL)
+void GPUConnectionToWebProcess::dispatchDisplayWasReconfigured()
+{
+    for (auto& context : m_remoteGraphicsContextGLMap.values())
+        context->displayWasReconfigured();
 }
 #endif
 

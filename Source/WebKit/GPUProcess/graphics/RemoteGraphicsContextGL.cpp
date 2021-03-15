@@ -273,6 +273,15 @@ void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL
         });
         return;
     }
+    if (event == WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting::ContextChange) {
+#if PLATFORM(MAC)
+        callOnMainRunLoop([weakConnection = m_gpuConnectionToWebProcess]() {
+            if (auto connection = weakConnection.get())
+                connection->dispatchDisplayWasReconfiguredForTesting();
+        });
+#endif
+        return;
+    }
     m_context->simulateEventForTesting(event);
 }
 

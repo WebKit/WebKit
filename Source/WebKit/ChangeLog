@@ -1,3 +1,19 @@
+2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Simulated WebGL context screen change events should work with GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=223121
+
+        Reviewed by Darin Adler.
+
+        Add a hunk missing from "WebGL context screen change events should work with GPU process"
+        that implements the context-specific event for simulating the context change.
+
+        Fixes
+         fast/canvas/webgl/webglcontextchangedevent.html
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::simulateEventForTesting):
+
 2021-03-13  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP][MSE] MediaSource::buffered and MediaSource::activeSourceBuffers do not update in the same run loop as MediaSource::endOfStream()

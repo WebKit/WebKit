@@ -114,6 +114,9 @@ public:
 #if PLATFORM(MAC)
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
+#if PLATFORM(MAC) && ENABLE(WEBGL)
+    void dispatchDisplayWasReconfiguredForTesting() { dispatchDisplayWasReconfigured(); };
+#endif
 
 #if HAVE(TASK_IDENTITY_TOKEN)
     task_id_token_t webProcessIdentityToken() const { return static_cast<task_id_token_t>(m_webProcessIdentityToken.sendRight()); }
@@ -200,6 +203,10 @@ private:
 
     // NowPlayingManager::Client
     void didReceiveRemoteControlCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
+
+#if PLATFORM(MAC) && ENABLE(WEBGL)
+    void dispatchDisplayWasReconfigured();
+#endif
 
     RefPtr<Logger> m_logger;
 
