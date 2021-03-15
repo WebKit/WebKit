@@ -1,3 +1,16 @@
+2021-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+        Enforce subcommand filtering
+        https://bugs.webkit.org/show_bug.cgi?id=223192
+        <rdar://75434409>
+
+        Reviewed by Brent Fulgham.
+
+        Enforce subcommand filtering in the WebContent process' sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-03-15  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt AudioComponentApplyServerRegistrations()
