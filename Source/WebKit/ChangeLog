@@ -1,5 +1,55 @@
 2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        RemoteRenderingBackend commands are not processed in order if GPU process is waiting for replies
+        https://bugs.webkit.org/show_bug.cgi?id=222099
+
+        Reviewed by Simon Fraser.
+
+        Mark all asynchronous message sends with DispatchMessageEvenWhenWaitingForSyncReply.
+        Otherwise synchronous messages will be dispatched before asynchronous messages.
+        The messages are temporally dependent.
+
+        Consider initial message exchange in canvas-blending-color-over-image.html:
+        GPUConnectionToWebProcess_CreateRenderingBackend
+        RemoteRenderingBackend_CreateImageBuffer
+        RemoteRenderingBackend_DidCreateSharedDisplayListHandle
+        RemoteRenderingBackend_CreateImageBuffer
+        RemoteRenderingBackend_WakeUpAndApplyDisplayList
+        RemoteRenderingBackend_GetDataURLForImageBuffer
+        RemoteRenderingBackendProxy_DidCreateImageBufferBackend
+        RemoteRenderingBackendProxy_DidCreateImageBufferBackend
+
+        If GPU process is waiting for a sync reply when the sequence up
+        until GetDataURL.. arrives, then the dispatch order is:
+
+        GPUConnectionToWebProcess_CreateRenderingBackend
+        RemoteRenderingBackend_GetDataURLForImageBuffer
+         [... rest of the messages]
+
+        This is a rare case, affects only the case where:
+        1) These messages arrive before main thread processes the message queue
+        2) GPU process has sent a synchronous message and is waiting for a reply
+
+        In base case after RenderingBackend has been created and the work queue
+        receive queue has been installed, all messages are moved to the work
+        queue thread and dispatched in order of arrival.
+
+        No new tests, timing dependent and WebKit code cannot be
+        unit tested.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::reestablishGPUProcessConnection):
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::cacheNativeImage):
+        (WebKit::RemoteRenderingBackendProxy::cacheFont):
+        (WebKit::RemoteRenderingBackendProxy::deleteAllFonts):
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackendProxy::sendWakeupMessage):
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+
+2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Simulated WebGL context screen change events should work with GPU process
         https://bugs.webkit.org/show_bug.cgi?id=223121
 
