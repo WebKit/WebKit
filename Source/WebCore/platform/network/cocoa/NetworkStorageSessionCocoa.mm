@@ -159,7 +159,8 @@ NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
     auto cfCookieStorage = cookieStorage();
-    if (!cfCookieStorage || [NSHTTPCookieStorage sharedHTTPCookieStorage]._cookieStorage == cfCookieStorage)
+    ASSERT(cfCookieStorage || !m_isInMemoryCookieStore);
+    if (!m_isInMemoryCookieStore && (!cfCookieStorage || [NSHTTPCookieStorage sharedHTTPCookieStorage]._cookieStorage == cfCookieStorage))
         return [NSHTTPCookieStorage sharedHTTPCookieStorage];
 
     return adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cfCookieStorage.get()]).autorelease();
