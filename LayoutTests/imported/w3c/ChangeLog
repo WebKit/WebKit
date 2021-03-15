@@ -1,3 +1,12 @@
+2021-03-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        Do not shrink radio buttons bellow its size
+        https://bugs.webkit.org/show_bug.cgi?id=215575
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-flexbox/radiobutton-min-size-expected.txt: Replaced FAIL by PASS expectations.
+
 2021-03-14  Sam Weinig  <weinig@apple.com>
 
         Match other browsers by interpolating colors in floating point space rather than uint8_t space
