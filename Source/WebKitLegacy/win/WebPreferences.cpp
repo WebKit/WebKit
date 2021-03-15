@@ -165,6 +165,10 @@ WebPreferences* WebPreferences::createInstance()
 
 HRESULT WebPreferences::postPreferencesChangesNotification()
 {
+    if (m_updateBatchCount) {
+        m_needsUpdateAfterBatch = true;
+        return S_OK;
+    }
     IWebNotificationCenter* nc = WebNotificationCenter::defaultCenterInternal();
     HRESULT hr = nc->postNotificationName(webPreferencesChangedNotification(), static_cast<IWebPreferences*>(this), 0);
     if (FAILED(hr))
@@ -2619,5 +2623,25 @@ HRESULT WebPreferences::setOverscrollBehaviorEnabled(BOOL enabled)
 HRESULT WebPreferences::resetForTesting()
 {
     load();
+    return S_OK;
+}
+
+HRESULT WebPreferences::startBatchingUpdates()
+{
+    m_updateBatchCount++;
+    return S_OK;
+}
+
+HRESULT WebPreferences::stopBatchingUpdates()
+{
+    if (!m_updateBatchCount)
+        return E_FAIL;
+    m_updateBatchCount--;
+    if (!m_updateBatchCount) {
+        if (m_needsUpdateAfterBatch) {
+            postPreferencesChangesNotification();
+            m_needsUpdateAfterBatch = false;
+        }
+    }
     return S_OK;
 }

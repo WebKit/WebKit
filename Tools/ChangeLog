@@ -1,3 +1,13 @@
+2021-03-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK1] Add a new API IWebPreferences::startBatchingUpdates to defer WebPreferencesChangedNotification
+        https://bugs.webkit.org/show_bug.cgi?id=223109
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2021-03-13  Sam Sneddon  <gsnedders@apple.com>
 
         Move LayoutTestFinder.split_into_chunks to Manager._split_into_chunks

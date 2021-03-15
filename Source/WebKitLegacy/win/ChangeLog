@@ -1,3 +1,25 @@
+2021-03-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK1] Add a new API IWebPreferences::startBatchingUpdates to defer WebPreferencesChangedNotification
+        https://bugs.webkit.org/show_bug.cgi?id=223109
+
+        Reviewed by Sam Weinig.
+
+        Some JS tests are timing out for Windows WebKit1 Debug build since
+        r274111. Those tests generate very large pages. r274111 resets
+        WebPreferences to the initial state. Changing a preference causes
+        relayout. Thus, resetting preferences caused layouts repeatedly.
+
+        r274040 (Bug 218024) added _batchUpdatePreferencesInBlock to
+        WebPreferences for Mac WebKit1 to defer the notification.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferences.cpp:
+        (WebPreferences::postPreferencesChangesNotification):
+        (WebPreferences::startBatchingUpdates): Added.
+        (WebPreferences::stopBatchingUpdates): Added.
+        * WebPreferences.h:
+
 2021-03-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed Window build fix after r274252.

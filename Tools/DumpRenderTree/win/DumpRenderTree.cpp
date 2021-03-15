@@ -1047,8 +1047,13 @@ static void resetWebViewToConsistentStateBeforeTesting(const WTR::TestOptions& o
 
     COMPtr<IWebPreferences> preferences;
     if (SUCCEEDED(webView->preferences(&preferences))) {
+        COMPtr<IWebPreferencesPrivate8> prefsPrivate { Query, preferences };
+        prefsPrivate->startBatchingUpdates();
+
         resetWebPreferencesToConsistentValues(preferences.get());
         setWebPreferencesForTestOptions(preferences.get(), options);
+
+        prefsPrivate->stopBatchingUpdates();
     }
 
     TestRunner::setSerializeHTTPLoads(false);

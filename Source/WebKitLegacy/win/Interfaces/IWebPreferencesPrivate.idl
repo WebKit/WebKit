@@ -278,6 +278,8 @@ interface IWebPreferencesPrivate8 : IWebPreferencesPrivate7
     HRESULT overscrollBehaviorEnabled([ out, retval ] BOOL*);
     HRESULT setOverscrollBehaviorEnabled([in] BOOL enabled);
     HRESULT resetForTesting();
+    HRESULT startBatchingUpdates();
+    HRESULT stopBatchingUpdates();
 }
 
 // NOTE: Please do not add any more preferences that are only for testing purposes. Instead,
