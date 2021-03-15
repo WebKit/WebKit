@@ -1256,6 +1256,20 @@ bool HTMLElement::isImageOverlayText(const Node& node)
 
 void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result)
 {
+    RefPtr<HTMLDivElement> previousContainer;
+    if (auto shadowRoot = userAgentShadowRoot(); shadowRoot && hasImageOverlay()) {
+        for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
+            if (child.getIdAttribute() == imageOverlayElementIdentifier()) {
+                previousContainer = &child;
+                break;
+            }
+        }
+        if (previousContainer)
+            previousContainer->remove();
+        else
+            ASSERT_NOT_REACHED();
+    }
+
     if (result.isEmpty())
         return;
 
@@ -1266,12 +1280,13 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         downcast<RenderImage>(*renderer).setHasImageOverlay();
     }
 
-    static NeverDestroyed<const String> shadowStyle(imageOverlayUserAgentStyleSheet, String::ConstructFromLiteral);
-    auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
-    style->setTextContent(shadowStyle);
-
     auto shadowRoot = makeRef(ensureUserAgentShadowRoot());
-    shadowRoot->appendChild(WTFMove(style));
+    if (!previousContainer) {
+        static NeverDestroyed<const String> shadowStyle(imageOverlayUserAgentStyleSheet, String::ConstructFromLiteral);
+        auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
+        style->setTextContent(shadowStyle);
+        shadowRoot->appendChild(WTFMove(style));
+    }
 
     auto container = HTMLDivElement::create(document());
     container->setIdAttribute(imageOverlayElementIdentifier());
