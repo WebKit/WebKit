@@ -1,3 +1,19 @@
+2021-03-15  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Filter cppfilt output when generating crash logs
+        https://bugs.webkit.org/show_bug.cgi?id=223171
+
+        Reviewed by Carlos Garcia Campos.
+
+        Like the output from other external commands, the output of cppfilt
+        must also be decoded.
+
+        This should fix the early exits due to unicode exceptions when
+        running the GTK4 bot layout tests.
+
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator.generate_crash_log): Decode cppfilt output.
+
 2021-03-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WK1] Add a new API IWebPreferences::startBatchingUpdates to defer WebPreferencesChangedNotification
