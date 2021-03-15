@@ -1855,6 +1855,52 @@ private:
     }
 };
 
+class PropertyWrapperAspectRatio final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PropertyWrapperAspectRatio()
+        : AnimationPropertyWrapperBase(CSSPropertyAspectRatio)
+    {
+    }
+
+    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    {
+        if (a == b)
+            return true;
+        if (!a || !b)
+            return false;
+
+        return a->aspectRatioType() == b->aspectRatioType() && a->aspectRatioWidth() == b->aspectRatioWidth() && a->aspectRatioHeight() == b->aspectRatioHeight();
+    }
+
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    {
+        return (from->aspectRatioType() == AspectRatioType::Ratio && to->aspectRatioType() == AspectRatioType::Ratio) || (from->aspectRatioType() == AspectRatioType::AutoAndRatio && to->aspectRatioType() == AspectRatioType::AutoAndRatio);
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* result, double progress) const final
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << from->logicalAspectRatio() << " to " << to->logicalAspectRatio() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << result->logicalAspectRatio());
+    }
+#endif
+
+    void blend(const CSSPropertyBlendingClient*, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    {
+        destination->setAspectRatioType(progress < 0.5 ? from->aspectRatioType() : to->aspectRatioType());
+        if (canInterpolate(from, to)) {
+            auto aspectRatioDst = WebCore::blend(log(from->logicalAspectRatio()), log(to->logicalAspectRatio()), progress);
+            destination->setAspectRatio(exp(aspectRatioDst), 1);
+            return;
+        }
+        // For auto/auto-zero aspect-ratio we use discrete values, we can't use general
+        // logic since logicalAspectRatio asserts on aspect-ratio type.
+        ASSERT(!progress || progress == 1);
+        auto* applicableStyle = progress ? to : from;
+        destination->setAspectRatio(applicableStyle->aspectRatioWidth(), applicableStyle->aspectRatioHeight());
+    }
+};
+
 class CSSPropertyAnimationWrapperMap final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -2153,6 +2199,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<Isolation>(CSSPropertyIsolation, &RenderStyle::isolation, &RenderStyle::setIsolation),
         new DiscretePropertyWrapper<BlendMode>(CSSPropertyMixBlendMode, &RenderStyle::blendMode, &RenderStyle::setBlendMode),
 #endif
+        new PropertyWrapperAspectRatio,
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
