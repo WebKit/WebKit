@@ -323,7 +323,9 @@ private:
     bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
     
     std::unique_ptr<Decoder> waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
-    
+    uint64_t makeSyncRequestID() { return ++m_syncRequestID; }
+    bool pushPendingSyncRequestID(uint64_t syncRequestID);
+    void popPendingSyncRequestID(uint64_t syncRequestID);
     std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
     // Called on the connection work queue.
@@ -496,6 +498,7 @@ private:
     EventListener m_writeListener;
     HANDLE m_connectionPipe { INVALID_HANDLE_VALUE };
 #endif
+    friend class StreamClientConnection;
 };
 
 template<typename T>

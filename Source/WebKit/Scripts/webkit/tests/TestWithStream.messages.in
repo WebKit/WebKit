@@ -23,5 +23,10 @@
 # Tests Stream receiver attribute.
 messages -> TestWithStream NotRefCounted Stream {
     void SendString(String url)
-    void SendStringSynchronized(String url) -> (int64_t return)
+    void SendStringSynchronized(String url) -> (int64_t returnValue)
+#if PLATFORM(COCOA)
+    void SendMachSendRight(MachSendRight a1) NotStreamEncodable
+    void ReceiveMachSendRight() -> (MachSendRight r1) NotStreamEncodableReply
+    void SendAndReceiveMachSendRight(MachSendRight a1) -> (MachSendRight r1) NotStreamEncodable NotStreamEncodableReply
+#endif
 }

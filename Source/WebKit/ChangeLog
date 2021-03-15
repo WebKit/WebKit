@@ -1,3 +1,145 @@
+2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL IPC should use shared memory for synchronous messages
+        https://bugs.webkit.org/show_bug.cgi?id=220974
+        <rdar://problem/73876947>
+
+        Reviewed by Geoffrey Garen.
+
+        Send synchronous messages via the stream shared memory.
+        Improves MotionMark on iMac1,1 from 5000 to ~5300 pts.
+
+        If the message is encodable as a value, try to do so.
+        If the reply is encodable as a value, try to do so.
+        A message or a reply is not encodable if an argument in the message
+        must be passed by reference via the OS specific mechanism
+        (e.g. a iosurface or a file handle cannot be sent as a value).
+
+        Similar to asynchronous messages, if the synchronous message fits to
+        the stream buffer, the message is sent via the buffer. Same with the
+        reply.
+
+        If the message or reply is not sent via the stream buffer, it is sent via
+        the normal IPC.
+
+        The client protocol is:
+        1) Write the message to the buffer and release it.
+        2) Wait until the server releases the whole buffer back to the client.
+        3) Read the reply from index 0.
+        4) Continue sending next message from index 0.
+
+        The server protocol is upon receiving a message that is synchronous:
+        1) Read the message from the message position, dispatch it.
+        2) Write the reply to index 0.
+        3) Release the whole buffer back to the client.
+        4) Continue reading next message from index 0.
+
+        The client will not know at the send time whether the server will reply
+        via the stream or via normal IPC message. The client will reserve
+        a IPC sync request ID for normal IPC reply purposes.
+
+        In case a message or a reply does not fit to the stream buffer, the
+        ProcessOutOfStreamMessage message is written to the buffer instead.
+        This will make the reader to wait for the normal IPC message.
+
+        Changes temporarily so that the creation of the context waits for the
+        confirmation that the creation was done. This is due to synchrononous
+        stream send unable to deliver the WasCreated message during
+        wait for reply, at the moment.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * Platform/IPC/ArgumentCoder.h:
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::createSyncMessageEncoder):
+        (IPC::Connection::pushPendingSyncRequestID):
+        (IPC::Connection::popPendingSyncRequestID):
+        (IPC::Connection::sendSyncMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::makeSyncRequestID):
+        Move the code from sendSyncMessage to individual functions so
+        that the client can reserve a sync request ID for reply purposes.
+
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::send):
+        (IPC::StreamClientConnection::trySendStream):
+        (IPC::StreamClientConnection::sendSync):
+        (IPC::StreamClientConnection::trySendSyncStream):
+        (IPC::StreamClientConnection::tryAcquireAll):
+        * Platform/IPC/StreamConnectionBuffer.h:
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnectionBase::acquireAll):
+        (IPC::StreamServerConnectionBase::release):
+        (IPC::StreamServerConnectionBase::releaseAll):
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnectionBase::sendSyncReply):
+        The implementation.
+
+        (IPC::StreamServerConnectionBase::tryAcquire):
+        (IPC::StreamServerConnection<Receiver>::dispatchStreamMessages):
+        Fix a typo StreamServerConnectionBase::tryAquire
+
+        (IPC::StreamServerConnection<Receiver>::dispatchStreamMessage):
+        If the message comes in as normal IPC message, it must be replied
+        via normal IPC.
+
+        Add a flag m_isDispatchingStreamMessage to indicate whether the
+        message being processed comes as a normal IPC message or a
+        stream message. This information must be stateful in the connection
+        class, as it is not passable as arguments when the execution goes through:
+            StreamServerConnection<Receiver>::dispatchStreamMessage()
+            Receiver::didReceiveStreamMessage()
+            handleMessageSynchronous()
+            StreamServerConnection<Receiver>::sendSyncReply()
+
+        * Scripts/webkit/messages.py:
+        Add properties NotStreamEncodable, NotStreamEncodableReply
+        that indicate if the message parameters are such that they
+        cannot be encoded into plain data buffer as values.
+        This is encoded as 'constexpr bool isStreamEncodable' and
+        'constexpr bool isStreamEncodableReply' for the stream messages.
+
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        (IPC::jsValueForArguments):
+        (IPC::messageArgumentDescriptions):
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+        * Scripts/webkit/tests/TestWithIfMessageMessages.h:
+        * Scripts/webkit/tests/TestWithImageDataMessages.h:
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessages.h:
+        * Scripts/webkit/tests/TestWithSemaphoreMessages.h:
+        * Scripts/webkit/tests/TestWithStream.messages.in:
+        * Scripts/webkit/tests/TestWithStreamBufferMessages.h:
+        * Scripts/webkit/tests/TestWithStreamMessageReceiver.cpp:
+        (WebKit::TestWithStream::didReceiveStreamMessage):
+        * Scripts/webkit/tests/TestWithStreamMessages.h:
+        (Messages::TestWithStream::SendMachSendRight::name):
+        (Messages::TestWithStream::SendMachSendRight::SendMachSendRight):
+        (Messages::TestWithStream::SendMachSendRight::arguments const):
+        (Messages::TestWithStream::ReceiveMachSendRight::name):
+        (Messages::TestWithStream::ReceiveMachSendRight::arguments const):
+        (Messages::TestWithStream::SendAndReceiveMachSendRight::name):
+        (Messages::TestWithStream::SendAndReceiveMachSendRight::SendAndReceiveMachSendRight):
+        (Messages::TestWithStream::SendAndReceiveMachSendRight::arguments const):
+        * Scripts/webkit/tests/TestWithSuperclassMessages.h:
+        * Scripts/webkit/tests/TestWithoutAttributesMessages.h:
+        Test changes related to NotStreamEncodable, NotStreamEncodableReply.
+
+        Other changes indicate an auxiliary change to message structs:
+        changing 'const bool isSync' to 'constexpr bool isSync'.
+        This is done for consistency, since 'isStreamEncodable*' properties
+        are also added as constexpr.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        Make types that are WebGL sync message parameters or reply parameters
+        now encodable to a stream by making the encoder part a template.
+        Previously these were sent only by normal IPC, and did not need
+        to be polymorphic to the encoder.
+
 2021-03-15  Youenn Fablet  <youenn@apple.com>
 
         Update getUserMedia delegate to expose frame info

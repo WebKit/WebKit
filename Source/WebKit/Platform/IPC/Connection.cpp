@@ -420,7 +420,7 @@ UniqueRef<Encoder> Connection::createSyncMessageEncoder(MessageName messageName,
     auto encoder = makeUniqueRef<Encoder>(messageName, destinationID);
 
     // Encode the sync request ID.
-    syncRequestID = ++m_syncRequestID;
+    syncRequestID = makeSyncRequestID();
     encoder.get() << syncRequestID;
 
     return encoder;
@@ -564,27 +564,39 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
     return nullptr;
 }
 
+bool Connection::pushPendingSyncRequestID(uint64_t syncRequestID)
+{
+    {
+        LockHolder locker(m_syncReplyStateMutex);
+        if (!m_shouldWaitForSyncReplies)
+            return false;
+        m_pendingSyncReplies.append(PendingSyncReply(syncRequestID));
+    }
+    ++m_inSendSyncCount;
+    return true;
+}
+
+void Connection::popPendingSyncRequestID(uint64_t syncRequestID)
+{
+    --m_inSendSyncCount;
+    LockHolder locker(m_syncReplyStateMutex);
+    ASSERT_UNUSED(syncRequestID, m_pendingSyncReplies.last().syncRequestID == syncRequestID);
+    m_pendingSyncReplies.removeLast();
+}
+
 std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, UniqueRef<Encoder>&& encoder, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
+    ASSERT(syncRequestID);
     ASSERT(RunLoop::isMain());
 
     if (!isValid()) {
         didFailToSendSyncMessage();
         return nullptr;
     }
-
-    // Push the pending sync reply information on our stack.
-    {
-        LockHolder locker(m_syncReplyStateMutex);
-        if (!m_shouldWaitForSyncReplies) {
-            didFailToSendSyncMessage();
-            return nullptr;
-        }
-
-        m_pendingSyncReplies.append(PendingSyncReply(syncRequestID));
+    if (!pushPendingSyncRequestID(syncRequestID)) {
+        didFailToSendSyncMessage();
+        return nullptr;
     }
-
-    ++m_inSendSyncCount;
 
     // First send the message.
     OptionSet<SendOption> sendOptions = IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply;
@@ -599,14 +611,7 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, Uni
     Ref<Connection> protect(*this);
     std::unique_ptr<Decoder> reply = waitForSyncReply(syncRequestID, messageName, timeout, sendSyncOptions);
 
-    --m_inSendSyncCount;
-
-    // Finally, pop the pending sync reply information.
-    {
-        LockHolder locker(m_syncReplyStateMutex);
-        ASSERT(m_pendingSyncReplies.last().syncRequestID == syncRequestID);
-        m_pendingSyncReplies.removeLast();
-    }
+    popPendingSyncRequestID(syncRequestID);
 
     if (!reply)
         didFailToSendSyncMessage();

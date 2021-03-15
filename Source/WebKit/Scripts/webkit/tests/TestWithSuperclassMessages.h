@@ -51,7 +51,7 @@ public:
     using Arguments = std::tuple<const String&>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_LoadURL; }
-    static const bool isSync = false;
+    static constexpr bool isSync = false;
 
     explicit LoadURL(const String& url)
         : m_arguments(url)
@@ -73,7 +73,7 @@ public:
     using Arguments = std::tuple<WebKit::TestTwoStateEnum>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessage; }
-    static const bool isSync = false;
+    static constexpr bool isSync = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void(uint64_t&&)>&&);
     static void cancelReply(CompletionHandler<void(uint64_t&&)>&&);
@@ -104,7 +104,7 @@ public:
     using Arguments = std::tuple<>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments; }
-    static const bool isSync = false;
+    static constexpr bool isSync = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void()>&&);
     static void cancelReply(CompletionHandler<void()>&&);
@@ -130,7 +130,7 @@ public:
     using Arguments = std::tuple<>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments; }
-    static const bool isSync = false;
+    static constexpr bool isSync = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&, uint64_t&&)>&&);
     static void cancelReply(CompletionHandler<void(bool&&, uint64_t&&)>&&);
@@ -156,7 +156,7 @@ public:
     using Arguments = std::tuple<const int&>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnection; }
-    static const bool isSync = false;
+    static constexpr bool isSync = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&)>&&);
     static void cancelReply(CompletionHandler<void(bool&&)>&&);
@@ -186,7 +186,7 @@ public:
     using Arguments = std::tuple<uint32_t>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestSyncMessage; }
-    static const bool isSync = true;
+    static constexpr bool isSync = true;
 
     using DelayedReply = TestSyncMessageDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -212,7 +212,7 @@ public:
     using Arguments = std::tuple<bool>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestSynchronousMessage; }
-    static const bool isSync = true;
+    static constexpr bool isSync = true;
 
     using DelayedReply = TestSynchronousMessageDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;

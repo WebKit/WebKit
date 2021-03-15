@@ -51,7 +51,7 @@ public:
     };
     virtual DispatchResult dispatchStreamMessages(size_t messageLimit) = 0;
 
-    template<typename... Arguments>
+    template<typename T, typename... Arguments>
     void sendSyncReply(uint64_t syncRequestID, Arguments&&...);
 
 protected:
@@ -67,9 +67,11 @@ protected:
         uint8_t* data;
         size_t size;
     };
-    Optional<Span> tryAquire();
+    Optional<Span> tryAcquire();
+    Span acquireAll();
 
     void release(size_t readSize);
+    void releaseAll();
     static constexpr size_t minimumMessageSize = StreamConnectionEncoder::minimumMessageSize;
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
     Span alignedSpan(size_t offset, size_t limit);
@@ -92,15 +94,27 @@ protected:
 
     Lock m_outOfStreamMessagesLock;
     Deque<std::unique_ptr<Decoder>> m_outOfStreamMessages;
+    bool m_isDispatchingStreamMessage { false };
 
     friend class StreamConnectionWorkQueue;
 };
 
-template<typename... Arguments>
+template<typename T, typename... Arguments>
 void StreamServerConnectionBase::sendSyncReply(uint64_t syncRequestID, Arguments&&... arguments)
 {
-    // FIXME: implement sending to buffer.
-    auto encoder = makeUniqueRef<IPC::Encoder>(IPC::MessageName::SyncMessageReply, syncRequestID);
+    if constexpr(T::isReplyStreamEncodable) {
+        if (m_isDispatchingStreamMessage) {
+            auto span = acquireAll();
+            {
+                StreamConnectionEncoder messageEncoder { MessageName::SyncMessageReply, span.data, span.size };
+                if ((messageEncoder << ... << arguments))
+                    return;
+            }
+            StreamConnectionEncoder outOfStreamEncoder { MessageName::ProcessOutOfStreamMessage, span.data, span.size };
+        }
+    }
+    auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID);
+
     (encoder.get() << ... << arguments);
     m_connection->sendSyncReply(WTFMove(encoder));
 }
@@ -142,8 +156,7 @@ private:
     Lock m_receiversLock;
     using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<Receiver>>;
     ReceiversMap m_receivers;
-
-    uint64_t m_currentDestinationID = 0;
+    uint64_t m_currentDestinationID { 0 };
 };
 
 template<typename Receiver>
@@ -176,7 +189,7 @@ StreamServerConnectionBase::DispatchResult StreamServerConnection<Receiver>::dis
     uint8_t currentReceiverName = static_cast<uint8_t>(ReceiverName::Invalid);
 
     for (size_t i = 0; i < messageLimit; ++i) {
-        auto span = tryAquire();
+        auto span = tryAcquire();
         if (!span)
             return DispatchResult::HasNoMessages;
         IPC::Decoder decoder { span->data, span->size, m_currentDestinationID };
@@ -242,12 +255,18 @@ bool StreamServerConnection<Receiver>::processSetStreamDestinationID(Decoder&& d
 template<typename Receiver>
 bool StreamServerConnection<Receiver>::dispatchStreamMessage(Decoder&& decoder, Receiver& receiver)
 {
+    ASSERT(!m_isDispatchingStreamMessage);
+    m_isDispatchingStreamMessage = true;
     receiver.didReceiveStreamMessage(*this, decoder);
+    m_isDispatchingStreamMessage = false;
     if (!decoder.isValid()) {
         m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
         return false;
     }
-    release(decoder.currentBufferPosition());
+    if (decoder.isSyncMessage())
+        releaseAll();
+    else
+        release(decoder.currentBufferPosition());
     return true;
 }
 

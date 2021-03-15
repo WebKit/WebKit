@@ -42,6 +42,7 @@ namespace IPC {
 
 // An argument coder works on POD types
 template<typename T> struct SimpleArgumentCoder {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const T& t)
     {
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&t), sizeof(T), alignof(T));

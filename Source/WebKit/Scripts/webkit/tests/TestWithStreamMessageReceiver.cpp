@@ -29,6 +29,9 @@
 #include "Decoder.h"
 #include "HandleMessage.h"
 #include "TestWithStreamMessages.h"
+#if PLATFORM(COCOA)
+#include <wtf/MachSendRight.h>
+#endif
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -37,8 +40,20 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& co
 {
     if (decoder.messageName() == Messages::TestWithStream::SendString::name())
         return IPC::handleMessage<Messages::TestWithStream::SendString>(decoder, this, &TestWithStream::sendString);
+#if PLATFORM(COCOA)
+    if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name())
+        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(decoder, this, &TestWithStream::sendMachSendRight);
+#endif
     if (decoder.messageName() == Messages::TestWithStream::SendStringSynchronized::name())
         return IPC::handleMessage<Messages::TestWithStream::SendStringSynchronized>(decoder, this, &TestWithStream::sendStringSynchronized);
+#if PLATFORM(COCOA)
+    if (decoder.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name())
+        return IPC::handleMessage<Messages::TestWithStream::ReceiveMachSendRight>(decoder, this, &TestWithStream::receiveMachSendRight);
+#endif
+#if PLATFORM(COCOA)
+    if (decoder.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name())
+        return IPC::handleMessage<Messages::TestWithStream::SendAndReceiveMachSendRight>(decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
+#endif
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
     ASSERT_NOT_REACHED();

@@ -59,7 +59,7 @@ void StreamServerConnectionBase::enqueueMessage(Connection&, std::unique_ptr<Dec
     m_workQueue.wakeUp();
 }
 
-Optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAquire()
+Optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAcquire()
 {
     ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
     if (serverLimit == ServerLimit::serverIsSleepingTag)
@@ -77,6 +77,11 @@ Optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAquire
     return result;
 }
 
+StreamServerConnectionBase::Span StreamServerConnectionBase::acquireAll()
+{
+    return alignedSpan(0, dataSize() - 1);
+}
+
 void StreamServerConnectionBase::release(size_t readSize)
 {
     ASSERT(readSize);
@@ -85,7 +90,7 @@ void StreamServerConnectionBase::release(size_t readSize)
 
 #if PLATFORM(COCOA)
     ServerOffset oldServerOffset = sharedServerOffset().exchange(serverOffset, std::memory_order_acq_rel);
-    // If the sender wrote over serverOffset, it means the sender is waiting.
+    // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
         m_buffer.clientWaitSemaphore().signal();
     else
@@ -96,6 +101,23 @@ void StreamServerConnectionBase::release(size_t readSize)
 #endif
 
     m_serverOffset = serverOffset;
+}
+
+void StreamServerConnectionBase::releaseAll()
+{
+    sharedServerLimit().store(static_cast<ServerLimit>(0), std::memory_order_release);
+#if PLATFORM(COCOA)
+    ServerOffset oldServerOffset = sharedServerOffset().exchange(static_cast<ServerOffset>(0), std::memory_order_acq_rel);
+    // If the client wrote over serverOffset, it means the client is waiting.
+    if (oldServerOffset == ServerOffset::clientIsWaitingTag)
+        m_buffer.clientWaitSemaphore().signal();
+    else
+        ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
+#else
+    sharedServerOffset().store(static_cast<ServerOffset>(0), std::memory_order_release);
+    // IPC::Semaphore not implemented for the platform. Client will poll and yield.
+#endif
+    m_serverOffset = 0;
 }
 
 StreamServerConnectionBase::Span StreamServerConnectionBase::alignedSpan(size_t offset, size_t limit)

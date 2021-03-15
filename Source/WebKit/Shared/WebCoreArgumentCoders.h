@@ -347,6 +347,7 @@ template<> struct ArgumentCoder<WebCore::IntRect> {
 };
 
 template<> struct ArgumentCoder<WebCore::IntSize> {
+    template<typename Encoder>
     static void encode(Encoder&, const WebCore::IntSize&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::IntSize&);
     static Optional<WebCore::IntSize> decode(Decoder&);
@@ -815,11 +816,13 @@ template<> struct ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector> {
 #endif
 
 template<> struct ArgumentCoder<RefPtr<WebCore::ImageData>> {
+    template<typename Encoder>
     static void encode(Encoder&, const RefPtr<WebCore::ImageData>&);
     static Optional<RefPtr<WebCore::ImageData>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<Ref<WebCore::ImageData>> {
+    template<typename Encoder>
     static void encode(Encoder&, const Ref<WebCore::ImageData>&);
     static Optional<Ref<WebCore::ImageData>> decode(Decoder&);
 };
@@ -839,6 +842,7 @@ template<> struct ArgumentCoder<WebCore::GraphicsContextGLAttributes> {
 };
 
 template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo> {
+    template<typename Encoder>
     static void encode(Encoder&, const WebCore::GraphicsContextGL::ActiveInfo&);
     static Optional<WebCore::GraphicsContextGL::ActiveInfo> decode(Decoder&);
 };

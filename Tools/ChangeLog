@@ -1,3 +1,16 @@
+2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL IPC should use shared memory for synchronous messages
+        https://bugs.webkit.org/show_bug.cgi?id=220974
+        <rdar://problem/73876947>
+
+        Reviewed by Geoffrey Garen.
+
+        Mark PrepareForDisplay() as "not replyable through the stream"
+        since it replies with MachSendRight.
+
+        * Scripts/generate-gpup-webgl:
+
 2021-03-15  Youenn Fablet  <youenn@apple.com>
 
         Update getUserMedia delegate to expose frame info

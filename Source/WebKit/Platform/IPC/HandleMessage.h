@@ -184,7 +184,7 @@ void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& d
     }
 
     typename T::DelayedReply completionHandler = [syncRequestID, connection = makeRef(connection)] (auto&&... args) mutable {
-        connection->sendSyncReply(syncRequestID, args...);
+        connection->sendSyncReply<T>(syncRequestID, args...);
     };
     callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), object, function);
 }
