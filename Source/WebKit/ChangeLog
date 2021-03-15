@@ -1,3 +1,18 @@
+2021-03-15  Daniel Kolesa  <dkolesa@igalia.com>
+
+        [GLIB] Be more selective about bublewrapping libdirs
+        https://bugs.webkit.org/show_bug.cgi?id=221709
+
+        Reviewed by Carlos Garcia Campos.
+
+        On 32-bit systems, bubblewrap lib32 instead of lib64. This unbreaks
+        sandbox on some distributions that have lib32 (which glibc defaults
+        its ld cache lookups to) but configure default libdir to lib rather
+        than lib32.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bubblewrapSpawn):
+
 2021-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Move vertex array functionality from ExtensionsGL to GraphicsContextGL
