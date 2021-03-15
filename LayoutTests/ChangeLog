@@ -1,3 +1,18 @@
+2021-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Selecting text via mouse drag in image documents shouldn't trigger click events
+        https://bugs.webkit.org/show_bug.cgi?id=223075
+        <rdar://problem/75334611>
+
+        Reviewed by Tim Horton.
+
+        Add a couple of new layout tests to exercise the new behavior.
+
+        * fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-does-not-fire-click-expected.txt: Added.
+        * fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-does-not-fire-click.html: Added.
+        * fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-expected-mismatch.html: Added.
+        * fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag.html: Added.
+
 2021-03-15  Rob Buis  <rbuis@igalia.com>
 
         Treat min-intrinsic like *-content

@@ -1236,22 +1236,17 @@ bool HTMLElement::hasImageOverlay() const
 
 bool HTMLElement::isImageOverlayText(const Node& node)
 {
-    if (!is<Text>(node))
-        return false;
-
     auto shadowHost = node.shadowHost();
     if (!shadowHost)
         return false;
 
-    auto userAgentShadowRoot = shadowHost->userAgentShadowRoot();
-    if (!userAgentShadowRoot) {
-        ASSERT_NOT_REACHED();
+    auto shadowRoot = shadowHost->shadowRoot();
+    if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent || shadowRoot != node.containingShadowRoot())
         return false;
-    }
 
-    for (auto& child : childrenOfType<HTMLDivElement>(*userAgentShadowRoot)) {
+    for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
         if (child.getIdAttribute() == imageOverlayElementIdentifier())
-            return child.contains(&node);
+            return node.isDescendantOf(&child);
     }
 
     return false;
@@ -1280,6 +1275,8 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
 
     auto container = HTMLDivElement::create(document());
     container->setIdAttribute(imageOverlayElementIdentifier());
+    if (document().isImageDocument())
+        container->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
     shadowRoot->appendChild(container);
 
     static MainThreadNeverDestroyed<const AtomString> imageOverlayTextClass("image-overlay-text", AtomString::ConstructFromLiteral);
@@ -1312,6 +1309,9 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
             rotationTransformationAsText,
             "scale("_s, scale.width(), ", "_s, scale.height(), ") "_s
         ));
+
+        if (document().isImageDocument())
+            child->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);
     }
 
     if (auto frame = makeRefPtr(document().frame()))

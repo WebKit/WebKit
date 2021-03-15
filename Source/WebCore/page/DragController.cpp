@@ -798,6 +798,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         if (dragMode == UserDrag::Auto) {
             if ((m_dragSourceAction.contains(DragSourceAction::Image))
                 && is<HTMLImageElement>(*element)
+                && !HTMLElement::isImageOverlayText(*startElement)
                 && imageElementIsDraggable(downcast<HTMLImageElement>(*element), *sourceFrame)) {
                 state.type.add(DragSourceAction::Image);
                 return element;
