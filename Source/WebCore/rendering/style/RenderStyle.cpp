@@ -1550,8 +1550,14 @@ RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, 
 RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth,
     LayoutUnit leftWidth, LayoutUnit rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    RoundedRect roundedRect { { borderRect.x() + leftWidth, borderRect.y() + topWidth,
-        borderRect.width() - leftWidth - rightWidth, borderRect.height() - topWidth - bottomWidth } };
+    auto width = std::max(0_lu, borderRect.width() - leftWidth - rightWidth);
+    auto height = std::max(0_lu, borderRect.height() - topWidth - bottomWidth);
+    auto roundedRect = RoundedRect {
+        borderRect.x() + leftWidth,
+        borderRect.y() + topWidth,
+        width,
+        height
+    };
     if (hasBorderRadius()) {
         auto radii = getRoundedBorderFor(borderRect).radii();
         radii.shrink(topWidth, bottomWidth, leftWidth, rightWidth);
