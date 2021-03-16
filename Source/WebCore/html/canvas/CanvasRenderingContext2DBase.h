@@ -316,14 +316,16 @@ private:
         ApplyShadow = 1 << 1,
         ApplyClip = 1 << 2,
     };
-    void didDraw(const FloatRect&, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip });
+    void didDraw(Optional<FloatRect>, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip });
     void didDrawEntireCanvas();
-    
-    FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
     void paintRenderingResultsToCanvas() override;
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
+
+    void clearAccumulatedDirtyRect() final;
+    bool isEntireBackingStoreDirty() const;
+    FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
     void unwindStateStack();
     void realizeSavesLoop();
@@ -388,6 +390,7 @@ private:
 
     static constexpr unsigned MaxSaveCount = 1024 * 16;
     Vector<State, 1> m_stateStack;
+    FloatRect m_dirtyRect;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
     bool m_usesDisplayListDrawing { false };

@@ -577,10 +577,8 @@ void HTMLCanvasElement::didDraw(const Optional<FloatRect>& rect)
         FloatRect r = mapRect(dirtyRect, FloatRect(0, 0, size().width(), size().height()), destRect);
         r.intersect(destRect);
 
-        if (!r.isEmpty() && !m_dirtyRect.contains(r)) {
-            m_dirtyRect.unite(r);
-            renderer->repaintRectangle(enclosingIntRect(m_dirtyRect));
-        }
+        if (!r.isEmpty())
+            renderer->repaintRectangle(enclosingIntRect(r));
     }
     notifyObserversCanvasChanged(dirtyRect);
 }
@@ -649,8 +647,8 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
-    // Clear the dirty rect
-    m_dirtyRect = FloatRect();
+    if (m_context)
+        m_context->clearAccumulatedDirtyRect();
 
     if (!context.paintingDisabled()) {
         bool shouldPaint = true;
