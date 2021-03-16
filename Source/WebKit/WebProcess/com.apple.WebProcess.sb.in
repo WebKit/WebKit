@@ -1542,6 +1542,7 @@
 (allow system-fsctl
     (fsctl-command (_IO "h" 47))) ;; See <rdar://74387453>
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (when (defined? 'file-ioctl)
     (deny file-ioctl (with telemetry))
     (allow file-ioctl (literal "/dev/dtracehelper"))
@@ -1608,6 +1609,7 @@
     ;; setsockopt
     (deny socket-option-set (with telemetry))
 )
+#endif
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))
