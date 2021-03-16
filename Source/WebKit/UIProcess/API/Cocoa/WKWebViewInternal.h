@@ -25,7 +25,6 @@
 
 #import "PDFPluginIdentifier.h"
 #import "SameDocumentNavigationType.h"
-#import "WKBlankOverlayView.h"
 #import "WKShareSheet.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewPrivate.h"
@@ -128,8 +127,6 @@ class ViewGestureController;
     _WKSelectionAttributes _selectionAttributes;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
     BOOL _usePlatformFindUI;
-
-    RetainPtr<WKBlankOverlayView> _blankOverlayView;
 
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
