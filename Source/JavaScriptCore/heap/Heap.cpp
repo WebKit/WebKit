@@ -2783,8 +2783,10 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Msr", "Misc Small Roots",
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
-            if constexpr (objcAPIEnabled)
+            if constexpr (objcAPIEnabled) {
+                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ExternalRememberedSet);
                 scanExternalRememberedSet(m_vm, visitor);
+            }
 
             if (m_vm.smallStrings.needsToBeVisited(*m_collectionScope)) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongReferences);
@@ -2802,9 +2804,12 @@ void Heap::addCoreConstraints()
                 MarkedArgumentBuffer::markLists(visitor, *m_markListSet);
             }
 
-            m_markedJSValueRefArrays.forEach([&] (MarkedJSValueRefArray* array) {
-                array->visitAggregate(visitor);
-            });
+            {
+                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::MarkedJSValueRefArray);
+                m_markedJSValueRefArrays.forEach([&] (MarkedJSValueRefArray* array) {
+                    array->visitAggregate(visitor);
+                });
+            }
 
             {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::VMExceptions);
@@ -2866,10 +2871,15 @@ void Heap::addCoreConstraints()
                 RefPtr<SharedTask<void(Visitor&)>> task = set.template forEachMarkedCellInParallel<Visitor>(callOutputConstraint);
                 visitor.addParallelConstraintTask(task);
             };
-            
-            add(vm.executableToCodeBlockEdgesWithConstraints);
-            if (vm.m_weakMapSpace)
+
+            {
+                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ExecutableToCodeBlockEdges);
+                add(vm.executableToCodeBlockEdgesWithConstraints);
+            }
+            if (vm.m_weakMapSpace) {
+                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakMapSpace);
                 add(*vm.m_weakMapSpace);
+            }
         })),
         ConstraintVolatility::GreyedByMarking,
         ConstraintParallelism::Parallel);

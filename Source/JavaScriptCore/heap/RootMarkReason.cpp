@@ -23,46 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "RootMarkReason.h"
+
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-#define FOR_EACH_ROOT_MARK_REASON(v) \
-    v(None) \
-    v(ConservativeScan) \
-    v(ExecutableToCodeBlockEdges) \
-    v(ExternalRememberedSet) \
-    v(StrongReferences) \
-    v(ProtectedValues) \
-    v(MarkedJSValueRefArray) \
-    v(MarkListSet) \
-    v(VMExceptions) \
-    v(StrongHandles) \
-    v(Debugger) \
-    v(JITStubRoutines) \
-    v(WeakMapSpace) \
-    v(WeakSets) \
-    v(Output) \
-    v(DFGWorkLists) \
-    v(CodeBlocks) \
-    v(DOMGCOutput)
+const char* rootMarkReasonDescription(RootMarkReason reason)
+{
+#define CASE_ROOT_MARK_REASON(reason) \
+    case JSC::RootMarkReason::reason: \
+        return #reason; \
 
-#define DECLARE_ROOT_MARK_REASON(reason) reason,
+    switch (reason) {
+        FOR_EACH_ROOT_MARK_REASON(CASE_ROOT_MARK_REASON)
+    }
+#undef CASE_ROOT_MARK_REASON
 
-enum class RootMarkReason : uint8_t {
-    FOR_EACH_ROOT_MARK_REASON(DECLARE_ROOT_MARK_REASON)
-};
-
-#undef DECLARE_ROOT_MARK_REASON
-
-const char* rootMarkReasonDescription(RootMarkReason);
+    ASSERT_NOT_REACHED();
+    return "None";
+}
 
 } // namespace JSC
 
 namespace WTF {
 
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::RootMarkReason);
+void printInternal(PrintStream& out, JSC::RootMarkReason reason)
+{
+    out.print(JSC::rootMarkReasonDescription(reason));
+}
 
 } // namespace WTF
