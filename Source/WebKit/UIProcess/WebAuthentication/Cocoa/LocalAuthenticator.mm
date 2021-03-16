@@ -47,6 +47,17 @@
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringHash.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LocalAuthenticatorAdditions.h>
+#else
+static bool shouldUseAlternateQuery() { return false; }
+static NSDictionary *alternateQueryForRPID(const String&)
+{
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+#endif
+
 namespace WebKit {
 using namespace fido;
 using namespace WebCore;
@@ -130,6 +141,10 @@ static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredenti
         (id)kSecAttrNoLegacy: @YES
 #endif
     };
+
+    if (shouldUseAlternateQuery())
+        query = alternateQueryForRPID(rpId);
+
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
     if (status && status != errSecItemNotFound)

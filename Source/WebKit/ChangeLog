@@ -1,3 +1,16 @@
+2021-03-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add internal additions for WebAuthn compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=223168
+        <rdar://problem/74890060>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (shouldUseAlternateQuery):
+        (alternateQueryForRPID):
+        (WebKit::LocalAuthenticatorInternal::getExistingCredentials):
+
 2021-03-16  Peng Liu  <peng.liu6@apple.com>
 
         [iOS] Scroll event is fired before webkitfullscreenchange event when an element enters fullscreen
