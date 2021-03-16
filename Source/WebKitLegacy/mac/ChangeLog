@@ -1,3 +1,15 @@
+2021-03-16  Antti Koivisto  <antti@apple.com>
+
+        [WebView _touchEventRegions] needs to take the web lock
+        https://bugs.webkit.org/show_bug.cgi?id=223266
+
+        Reviewed by Simon Fraser.
+
+        Clicking anything in UIWebView test app in debug build hits thread assert immediately.
+
+        * WebView/WebView.mm:
+        (-[WebView _touchEventRegions]):
+
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
         Introduce WorkQueue::main() to get the main thread's work queue
