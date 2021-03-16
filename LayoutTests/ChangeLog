@@ -1,3 +1,15 @@
+2021-03-16  Frederic Wang  <fwang@igalia.com>
+
+        Crash in makeBoundaryPoint via ReplaceSelectionCommand::insertedContentRange
+        https://bugs.webkit.org/show_bug.cgi?id=221509
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a regression test.
+
+        * fast/editing/replace-selection-and-apply-style-crash-expected.txt: Added.
+        * fast/editing/replace-selection-and-apply-style-crash.html: Added.
+
 2021-03-16  Youenn Fablet  <youenn@apple.com>
 
         [ macOs Wk1 ] http/wpt/filereader/filereader-stop.html is a flakey text failure

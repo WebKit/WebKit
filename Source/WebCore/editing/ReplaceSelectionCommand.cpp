@@ -1583,6 +1583,13 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         if (m_matchStyle) {
             ASSERT(m_insertionStyle);
             applyStyle(m_insertionStyle.get(), start, end);
+            // applyStyle may clone content to new block wrappers and make anchor nodes orphan.
+            if (start.isOrphan() || end.isOrphan()) {
+                start = endingSelection().start();
+                end = endingSelection().end();
+                m_startOfInsertedContent = start;
+                m_endOfInsertedContent = end;
+            }
         }
 
         if (lastPositionToSelect.isNotNull())
