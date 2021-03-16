@@ -1,3 +1,12 @@
+2021-03-16  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur wk2 arm64 ] 4 webrtc/ Layout-tests are consistently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=223043
+
+        Uneviewed test gadening.
+
+        * platform/mac/TestExpectations: Temporarily updating test expectations for 18 web/rtc tests that only have issues on Apple Silicon Macs, until they can be resolved. 
+
 2021-03-16  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Add GTK4 tests expectations
