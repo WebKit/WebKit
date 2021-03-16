@@ -2910,6 +2910,8 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
 
         // For tables, calculate margins only.
         if (isTable()) {
+            if (shouldComputeLogicalHeightFromAspectRatio())
+                computedValues.m_extent = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit(style().logicalAspectRatio()), style().boxSizingForAspectRatio(), logicalWidth());
             if (hasPerpendicularContainingBlock) {
                 bool shouldFlipBeforeAfter = shouldFlipBeforeAfterMargins(cb.style(), &style());
                 computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), computedValues.m_extent,
@@ -5098,9 +5100,14 @@ void RenderBox::applyTopLeftLocationOffsetWithFlipping(LayoutPoint& point) const
     point.move(rect.x(), rect.y());
 }
 
+bool RenderBox::shouldIgnoreAspectRatio() const
+{
+    return !style().hasAspectRatio() || isTablePart();
+}
+
 bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
 {
-    if (!style().hasAspectRatio())
+    if (shouldIgnoreAspectRatio())
         return false;
 
     if (shouldComputeLogicalWidthFromAspectRatioAndInsets())
@@ -5112,7 +5119,7 @@ bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
 
 bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
 {
-    if (!style().hasAspectRatio())
+    if (shouldIgnoreAspectRatio())
         return false;
 
     auto isResolvablePercentageHeight = [this] () {
