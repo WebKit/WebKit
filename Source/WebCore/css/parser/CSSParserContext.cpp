@@ -135,6 +135,40 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
     ;
 }
 
+bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
+{
+    switch (property) {
+    case CSSPropertyAspectRatio:
+        return !aspectRatioEnabled;
+    case CSSPropertyAppleColorFilter:
+        return !colorFilterEnabled;
+    case CSSPropertyTranslate:
+    case CSSPropertyRotate:
+    case CSSPropertyScale:
+        return !individualTransformPropertiesEnabled;
+    case CSSPropertyOverscrollBehavior:
+    case CSSPropertyOverscrollBehaviorX:
+    case CSSPropertyOverscrollBehaviorY:
+        return !overscrollBehaviorEnabled;
+    case CSSPropertyScrollBehavior:
+        return !scrollBehaviorEnabled;
+#if ENABLE(TEXT_AUTOSIZING)
+    case CSSPropertyWebkitTextSizeAdjust:
+#if !PLATFORM(IOS_FAMILY)
+        return !textAutosizingEnabled;
+#endif
+        return false;
+#endif // ENABLE(TEXT_AUTOSIZING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+    case CSSPropertyWebkitOverflowScrolling:
+        return !legacyOverflowScrollingTouchEnabled;
+#endif
+    default:
+        return false;
+    }
+    return false;
+}
+
 URL CSSParserContext::completeURL(const String& url) const
 {
     auto completedURL = [&] {

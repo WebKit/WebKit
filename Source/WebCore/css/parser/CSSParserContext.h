@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSParserMode.h"
+#include "CSSPropertyNames.h"
 #include "StyleRuleType.h"
 #include "TextEncoding.h"
 #include <wtf/HashFunctions.h>
@@ -55,6 +56,8 @@ public:
 
     bool isContentOpaque { false };
     bool useSystemAppearance { false };
+
+    bool isPropertyRuntimeDisabled(CSSPropertyID) const;
 
     // Settings.
     bool aspectRatioEnabled { false };

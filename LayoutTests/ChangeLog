@@ -1,3 +1,13 @@
+2021-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Runtime-disabled CSS features still still appear enabled via two-arg CSS.supports()
+        https://bugs.webkit.org/show_bug.cgi?id=223141
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/overscroll-behavior-invalidate-if-disabled-expected.txt:
+        * fast/css/overscroll-behavior-invalidate-if-disabled.html:
+
 2021-03-16  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Make WebGL conformance test update script more usable and consistent

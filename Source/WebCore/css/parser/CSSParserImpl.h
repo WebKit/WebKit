@@ -143,8 +143,6 @@ private:
     void consumeDeclaration(CSSParserTokenRange, StyleRuleType);
     void consumeDeclarationValue(CSSParserTokenRange, CSSPropertyID, bool important, StyleRuleType);
     void consumeCustomPropertyValue(CSSParserTokenRange, const AtomString& propertyName, bool important);
-    
-    bool isPropertyRuntimeDisabled(CSSPropertyID) const;
 
     static Vector<double> consumeKeyframeKeyList(CSSParserTokenRange);
 
