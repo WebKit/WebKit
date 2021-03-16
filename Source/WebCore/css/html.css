@@ -867,11 +867,7 @@ input[type="submit"] {
 #endif
 
 input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::file-selector-button:active, button:active {
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    opacity: initial;
-#else
     color: ActiveButtonText;
-#endif
 }
 
 input[type="range"] {
@@ -1012,10 +1008,6 @@ input:matches([type="checkbox"], [type="radio"]):checked:disabled {
     opacity: initial;
     background: rgba(0, 0, 0, 0.8);
 }
-
-input:matches([type="checkbox"], [type="radio"]):active {
-    opacity: initial;
-}
 #endif
 
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
@@ -1028,10 +1020,6 @@ input[type="radio"] {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 select:focus {
     border-color: rgb(17, 46, 135);
-}
-
-select:active {
-    opacity: initial;
 }
 #endif
 
