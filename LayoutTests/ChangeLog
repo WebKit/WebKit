@@ -1,3 +1,18 @@
+2021-03-15  Ebrahim Byagowi <ebrahim@gnu.org> and Myles C. Maxfield  <mmaxfield@apple.com>
+
+        <img> isn't able to render RTL text correctly in ALT text
+        https://bugs.webkit.org/show_bug.cgi?id=221833
+        <rdar://problem/74530491>
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * fast/text/image-alt-text-bidi-2-expected.html: Added.
+        * fast/text/image-alt-text-bidi-2.html: Added.
+        * fast/text/image-alt-text-bidi-expected.html: Added.
+        * fast/text/image-alt-text-bidi.html: Added.
+
 2021-03-16  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Cache cross-origin methods / accessors of Window and Location per lexical global object

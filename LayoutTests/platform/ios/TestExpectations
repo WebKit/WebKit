@@ -3506,3 +3506,5 @@ webkit.org/b/222840 security/contentSecurityPolicy/video-with-data-url-allowed-b
 
 # Not all OSes support the same set of emoji.
 fast/text/mending-heart.html [ Failure ] 
+
+webkit.org/b/221833 fast/text/image-alt-text-bidi.html [ ImageOnlyFailure ]
