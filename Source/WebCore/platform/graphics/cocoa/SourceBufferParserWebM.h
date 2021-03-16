@@ -213,6 +213,8 @@ public:
         CMTime m_samplePresentationTime;
         CMTime m_packetDuration;
         Vector<uint8_t> m_packetData;
+        Optional<size_t> m_currentPacketByteOffset;
+        Optional<size_t> m_currentPacketSize;
         size_t m_packetBytesRead { 0 };
         size_t m_byteOffset { 0 };
         size_t m_partialBytesRead { 0 };
