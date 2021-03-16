@@ -1126,7 +1126,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
 
     checkUpdateBlocksize(length);
 
-    GstBuffer* buffer = gst_buffer_new_wrapped(g_memdup(data, length), length);
+    GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(data, length), length);
     gst_adapter_push(members->adapter.get(), buffer);
     stopLoaderIfNeeded(src, members);
     members->responseCondition.notifyOne();

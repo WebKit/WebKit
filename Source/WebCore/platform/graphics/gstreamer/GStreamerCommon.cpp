@@ -503,6 +503,11 @@ bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState target
     return true;
 }
 
+GstBuffer* gstBufferNewWrappedFast(void* data, size_t length)
+{
+    return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), data, length, 0, length, data, fastFree);
+}
+
 }
 
 #endif // USE(GSTREAMER)

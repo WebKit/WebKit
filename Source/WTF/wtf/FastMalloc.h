@@ -93,6 +93,7 @@ WTF_EXPORT_PRIVATE void* fastZeroedMalloc(size_t) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE void* fastCalloc(size_t numElements, size_t elementSize) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE void* fastRealloc(void*, size_t) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE char* fastStrDup(const char*) RETURNS_NONNULL;
+WTF_EXPORT_PRIVATE void* fastMemDup(const void*, size_t);
 
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastMalloc(size_t);
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastZeroedMalloc(size_t);
@@ -308,6 +309,7 @@ using WTF::fastFree;
 using WTF::fastMalloc;
 using WTF::fastMallocGoodSize;
 using WTF::fastMallocSize;
+using WTF::fastMemDup;
 using WTF::fastRealloc;
 using WTF::fastStrDup;
 using WTF::fastZeroedMalloc;

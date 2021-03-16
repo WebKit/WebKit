@@ -4196,7 +4196,7 @@ GInputStream* webkit_web_view_save_finish(WebKitWebView* webView, GAsyncResult* 
     ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_task_get_task_data(task));
     gsize length = data->webData->size();
     if (length)
-        g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), g_memdup(data->webData->bytes(), length), length, g_free);
+        g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), fastMemDup(data->webData->bytes(), length), length, fastFree);
 
     return dataStream;
 }

@@ -1,3 +1,19 @@
+2021-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Stop using g_memdup
+        https://bugs.webkit.org/show_bug.cgi?id=223189
+
+        Reviewed by Philippe Normand.
+
+        Add fastMemDup() to replace g_memdup() that is now deprecated in GLib because of the possibility of overflow
+        when converting from size_t to unsigned int. There's a replacement in GLib already, but we would need to depend
+        on very new GLib version, so better use fastMemDup() when possible. In cases where we still need to use GLib
+        allocator, we can simply call g_malloc() + memcpy().
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMemDup):
+        * wtf/FastMalloc.h:
+
 2021-03-16  Khem Raj  <raj.khem@gmail.com>
 
         [CMake] Build fails on RISC-V with GCC 11
