@@ -3066,9 +3066,6 @@ sub GenerateHeader
     my $numCustomOperations = 0;
     my $numCustomAttributes = 0;
 
-    my $hasForwardDeclaringOperations = 0;
-    my $hasForwardDeclaringAttributes = 0;
-
     my $hasDOMJITAttributes = 0;
 
     # Attribute and function enums
@@ -3084,8 +3081,6 @@ sub GenerateHeader
                 push(@headerContent, "#endif\n") if $conditionalString;
             }
             $hasDOMJITAttributes = 1 if $attribute->extendedAttributes->{DOMJIT};
-
-            $hasForwardDeclaringAttributes = 1 if $attribute->extendedAttributes->{ForwardDeclareInHeader};
         }
     }
 
@@ -3144,7 +3139,6 @@ sub GenerateHeader
 
     foreach my $operation (@{$interface->operations}) {
         $numCustomOperations++ if HasCustomMethod($operation);
-        $hasForwardDeclaringOperations = 1 if $operation->extendedAttributes->{ForwardDeclareInHeader};
     }
 
     if ($numCustomOperations > 0) {
@@ -3269,52 +3263,6 @@ sub GenerateHeader
     push(@headerContent, "\n");
 
     GeneratePrototypeDeclaration(\@headerContent, $className, $interface) if HeaderNeedsPrototypeDeclaration($interface);
-
-    if ($hasForwardDeclaringOperations) {
-        my $inAppleCopyright = 0;
-        push(@headerContent,"// Functions\n\n");
-        foreach my $operation (@{$interface->operations}) {
-            next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
-            next unless $operation->extendedAttributes->{ForwardDeclareInHeader};
-
-            if ($operation->extendedAttributes->{AppleCopyright}) {
-                if (!$inAppleCopyright) {
-                    push(@headerContent, $beginAppleCopyrightForHeaderFiles);
-                    $inAppleCopyright = 1;
-                }
-            } elsif ($inAppleCopyright) {
-                push(@headerContent, $endAppleCopyright);
-                $inAppleCopyright = 0;
-            }
-
-            my $conditionalAttribute = GetConditionalForOperationConsideringOverloads($operation);
-            my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
-            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $functionName = GetFunctionName($interface, $className, $operation);
-            push(@headerContent, "JSC_DECLARE_HOST_FUNCTION(${functionName});\n");
-            push(@headerContent, "#endif\n") if $conditionalString;
-        }
-
-        push(@headerContent, $endAppleCopyright) if $inAppleCopyright;
-        push(@headerContent,"\n");
-    }
-
-    if ($hasForwardDeclaringAttributes) {
-        push(@headerContent,"// Attributes\n\n");
-        foreach my $attribute (@{$interface->attributes}) {
-            next unless $attribute->extendedAttributes->{ForwardDeclareInHeader};
-
-            my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
-            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@headerContent, "JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
-            if (!IsReadonly($attribute)) {
-                my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@headerContent, "JSC_DECLARE_CUSTOM_SETTER(${setter});\n");
-            }
-            push(@headerContent, "#endif\n") if $conditionalString;
-        }
-    }
 
     # CheckJSCast Snippet function.
     if ($interface->extendedAttributes->{DOMJIT}) {
@@ -4307,7 +4255,6 @@ sub GenerateImplementation
         push(@implContent,"// Functions\n\n");
         foreach my $operation (@{$interface->operations}) {
             next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
-            next if $operation->extendedAttributes->{ForwardDeclareInHeader};
             next if IsJSBuiltin($interface, $operation);
             next if $operation->name eq "[Symbol.Iterator]";
 
@@ -4353,7 +4300,6 @@ sub GenerateImplementation
         }
 
         foreach my $attribute (@{$interface->attributes}) {
-            next if $attribute->extendedAttributes->{ForwardDeclareInHeader};
             next if IsJSBuiltin($interface, $attribute);
 
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
