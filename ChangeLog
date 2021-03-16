@@ -1,3 +1,15 @@
+2021-03-16  Khem Raj  <raj.khem@gmail.com>
+
+        [CMake] Build fails on RISC-V with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=222959
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Check for 1 byte atomic operations along with 64bit ones, some
+        architevtures (e.g. RISCV) operations on less than 4 bytes are not lock-free
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2021-03-14  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Keep GPUProcess disabled when using experimental features

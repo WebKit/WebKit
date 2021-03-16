@@ -1,3 +1,14 @@
+2021-03-16  Khem Raj  <raj.khem@gmail.com>
+
+        [CMake] Build fails on RISC-V with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=222959
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Use renamed ATOMICS_REQUIRE_LIBATOMIC instead of ATOMIC_INT64_REQUIRES_LIBATOMIC.
+
+        * CMakeLists.txt:
+
 2021-03-16  Lauro Moura  <lmoura@igalia.com>
 
         [SOUP] Fix SOUP3 debug build

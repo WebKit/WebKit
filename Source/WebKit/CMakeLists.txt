@@ -346,7 +346,7 @@ if (USE_LIBWEBRTC)
     list(APPEND WebKit_LIBRARIES webrtc)
 endif ()
 
-if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
+if (ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND WebKit_PRIVATE_LIBRARIES atomic)
 endif ()
 

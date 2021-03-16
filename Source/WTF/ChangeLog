@@ -1,3 +1,14 @@
+2021-03-16  Khem Raj  <raj.khem@gmail.com>
+
+        [CMake] Build fails on RISC-V with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=222959
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Link with libatomic if ATOMICS_REQUIRE_LIBATOMIC is set.
+
+        * wtf/CMakeLists.txt:
+
 2021-03-15  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: (r255611) [ Mac ] 3 lldb tests failing related to HashMap
