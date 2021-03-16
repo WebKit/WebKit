@@ -1,3 +1,17 @@
+2021-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        [BigSur arm64] compositing/z-order/rebuild-sibling-of-layer-with-foreground-layer.html is a flakey image failure
+        https://bugs.webkit.org/show_bug.cgi?id=223265
+
+        Unreviewed test gardening.
+        
+        Attempt to make this test pass on AS by avoiding solid-color layers, forcing backing store
+        with &nbsp;. Also reduce the oddly long 1000ms timeout in the test.
+
+        * compositing/z-order/rebuild-sibling-of-layer-with-foreground-layer-expected.html:
+        * compositing/z-order/rebuild-sibling-of-layer-with-foreground-layer.html:
+        * platform/mac/TestExpectations:
+
 2021-03-16  Devin Rousso  <drousso@apple.com>
 
         [macOS] change for the language/subtitle tracks button to use an `NSMenu` instead of web content

@@ -39,17 +39,17 @@
                 document.getElementById('target').classList.add('composited');
                 if (window.testRunner)
                     testRunner.notifyDone();
-            }, 1000);
+            }, 0);
         }, false);
     </script>
 </head>
 <body>
     <div class="container">
         <div class="composited child box">
-            <div class="negative box"></div>
-            <div class="composited positive box"></div>
+            <div class="negative box">&nbsp;</div>
+            <div class="composited positive box">&nbsp;</div>
         </div>
-        <div id="target" class="sibling box"></div>
+        <div id="target" class="sibling box">&nbsp;</div>
     </div>
 </body>
 </html>
