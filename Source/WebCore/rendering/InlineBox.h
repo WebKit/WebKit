@@ -77,9 +77,9 @@ public:
     void showNodeTreeForThis() const;
     void showLineTreeForThis() const;
     
-    virtual void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
-    virtual void outputLineBox(WTF::TextStream&, bool mark, int depth) const;
-    virtual const char* boxName() const;
+    WEBCORE_EXPORT virtual void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
+    WEBCORE_EXPORT virtual void outputLineBox(WTF::TextStream&, bool mark, int depth) const;
+    WEBCORE_EXPORT virtual const char* boxName() const;
 #endif
 
     bool behavesLikeText() const { return m_bitfields.behavesLikeText(); }
