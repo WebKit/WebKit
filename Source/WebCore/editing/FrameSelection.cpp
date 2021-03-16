@@ -181,7 +181,7 @@ FrameSelection::FrameSelection(Document* document)
     // Caret blinking (blinks | does not blink)
     setCaretVisible(activeAndFocused);
 #else
-    setCaretVisibility(activeAndFocused ? Visible : Hidden);
+    setCaretVisibility(activeAndFocused ? Visible : Hidden, ShouldUpdateAppearance::No);
 #endif
 }
 
@@ -2063,7 +2063,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // Caret appears in the active frame.
     if (activeAndFocused)
         setSelectionFromNone();
-    setCaretVisibility(activeAndFocused ? Visible : Hidden);
+    setCaretVisibility(activeAndFocused ? Visible : Hidden, ShouldUpdateAppearance::Yes);
 
     // Because Style::Resolver::checkOneSelector() and
     // RenderTheme::isFocused() check if the frame is active, we have to
@@ -2182,13 +2182,13 @@ void FrameSelection::updateAppearance()
     }
 }
 
-void FrameSelection::setCaretVisibility(CaretVisibility visibility)
+void FrameSelection::setCaretVisibility(CaretVisibility visibility, ShouldUpdateAppearance doAppearanceUpdate)
 {
     if (caretVisibility() == visibility)
         return;
 
     // FIXME: We shouldn't trigger a synchronous layout here.
-    if (m_document)
+    if (doAppearanceUpdate == ShouldUpdateAppearance::Yes && m_document)
         updateSelectionByUpdatingLayoutOrStyle(*m_document);
 
 #if ENABLE(TEXT_CARET)
@@ -2199,7 +2199,8 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility)
     CaretBase::setCaretVisibility(visibility);
 #endif
 
-    updateAppearance();
+    if (doAppearanceUpdate == ShouldUpdateAppearance::Yes)
+        updateAppearance();
 }
 
 void FrameSelection::caretBlinkTimerFired()
