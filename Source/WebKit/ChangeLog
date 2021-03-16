@@ -1,3 +1,15 @@
+2021-03-16  Per Arne  <pvollan@apple.com>
+
+        Add signpost for injected bundle creation
+        https://bugs.webkit.org/show_bug.cgi?id=223068
+
+        Reviewed by Alex Christensen.
+
+        Emit signposts for creation of injected bundle.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::create):
+
 2021-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Stop using g_memdup

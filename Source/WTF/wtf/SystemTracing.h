@@ -116,6 +116,8 @@ enum TracePointCode {
     LayerTreeFreezeEnd,
     FlushRemoteImageBufferStart,
     FlushRemoteImageBufferEnd,
+    CreateInjectedBundleStart,
+    CreateInjectedBundleEnd,
 
     UIProcessRange = 14000,
     CommitLayerTreeStart,

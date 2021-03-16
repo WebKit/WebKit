@@ -1,3 +1,14 @@
+2021-03-16  Per Arne  <pvollan@apple.com>
+
+        Add signpost for injected bundle creation
+        https://bugs.webkit.org/show_bug.cgi?id=223068
+
+        Reviewed by Alex Christensen.
+
+        Add injected bundle signposts to .plist file.
+
+        * Tracing/SystemTracePoints.plist:
+
 2021-03-16  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Decode multiple commit representations

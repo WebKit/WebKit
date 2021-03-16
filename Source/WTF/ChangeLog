@@ -1,3 +1,14 @@
+2021-03-16  Per Arne  <pvollan@apple.com>
+
+        Add signpost for injected bundle creation
+        https://bugs.webkit.org/show_bug.cgi?id=223068
+
+        Reviewed by Alex Christensen.
+
+        Add trace point codes for start and end of injected bundle creation.
+
+        * wtf/SystemTracing.h:
+
 2021-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Stop using g_memdup
