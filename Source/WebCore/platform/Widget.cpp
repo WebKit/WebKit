@@ -263,7 +263,10 @@ IntPoint Widget::convertFromContainingView(const IntPoint& parentPoint) const
 
 FloatPoint Widget::convertToContainingView(const FloatPoint& localPoint) const
 {
-    return convertToContainingView(IntPoint(localPoint));
+    if (const ScrollView* parentScrollView = parent())
+        return parentScrollView->convertChildToSelf(this, localPoint);
+
+    return localPoint;
 }
 
 FloatPoint Widget::convertFromContainingView(const FloatPoint& parentPoint) const

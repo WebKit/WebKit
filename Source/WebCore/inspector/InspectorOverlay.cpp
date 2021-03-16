@@ -99,7 +99,7 @@ static void truncateWithEllipsis(String& string, size_t length)
 
 static FloatPoint localPointToRootPoint(const FrameView* view, const FloatPoint& point)
 {
-    return view->contentsToRootView(roundedIntPoint(point));
+    return view->contentsToRootView(point);
 }
 
 static void contentsQuadToCoordinateSystem(const FrameView* mainView, const FrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
@@ -1400,18 +1400,10 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     
     constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(153);
     
-    IntPoint scrollOffset;
     FrameView* pageView = m_page.mainFrame().view();
-    if (!pageView->delegatesScrolling())
-        scrollOffset = pageView->visibleContentRect().location();
-    
-    FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
-    float pageScaleFactor = m_page.pageScaleFactor();
-
-    float scrollX = scrollOffset.x() * pageScaleFactor;
-    float scrollY = scrollOffset.y() * pageScaleFactor;
-    
-    FloatRect viewportBounds = { FloatPoint(scrollX, scrollY), pageView->sizeForVisibleContent() };
+    if (!pageView)
+        return;
+    FloatRect viewportBounds = { { 0, 0 }, pageView->sizeForVisibleContent() };
     
     auto& renderGrid = *downcast<RenderGrid>(renderer);
     auto columnPositions = renderGrid.columnPositions();
@@ -1423,25 +1415,26 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     float gridEndX = columnPositions[columnPositions.size() - 1];
     float gridStartY = rowPositions[0];
     float gridEndY = rowPositions[rowPositions.size() - 1];
-    
-    // FIXME: <webkit.org/b/222920> Grid overlay does not adjust for element inside iframes.
+
+    Frame* containingFrame = node->document().frame();
+    if (!containingFrame)
+        return;
+    FrameView* containingView = containingFrame->view();
+
     auto columnLineAt = [&](int x) -> FloatLine {
         return {
-            renderGrid.localToContainerPoint(FloatPoint(x, gridStartY), nullptr),
-            renderGrid.localToContainerPoint(FloatPoint(x, gridEndY), nullptr),
+            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(x, gridStartY), nullptr)),
+            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(x, gridEndY), nullptr)),
         };
     };
     auto rowLineAt = [&](int y) -> FloatLine {
         return {
-            renderGrid.localToContainerPoint(FloatPoint(gridStartX, y), nullptr),
-            renderGrid.localToContainerPoint(FloatPoint(gridEndX, y), nullptr),
+            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(gridStartX, y), nullptr)),
+            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(gridEndX, y), nullptr)),
         };
     };
     
     GraphicsContextStateSaver saver(context);
-
-    // Drawing code is relative to the visible viewport area.
-    context.translate(0 - scrollX, contentInset.height() - scrollY);
     context.setStrokeThickness(1);
     context.setStrokeColor(gridOverlay.config.gridColor);
 
