@@ -2170,9 +2170,6 @@ private:
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&);
 #endif
 
-    void stopMakingViewBlankDueToLackOfRenderingUpdate();
-    void makeViewBlankIfUnpaintedSinceLastLoadCommit();
-
     // Spelling and grammar.
     void checkSpellingOfString(const String& text, CompletionHandler<void(int32_t misspellingLocation, int32_t misspellingLength)>&&);
     void checkGrammarOfString(const String& text, CompletionHandler<void(Vector<WebCore::GrammarDetail>&&, int32_t badGrammarLocation, int32_t badGrammarLength)>&&);
@@ -2192,7 +2189,6 @@ private:
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 #if PLATFORM(MAC)
-    void didUpdateRenderingAfterCommittingLoad();
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -2487,13 +2483,11 @@ private:
     std::unique_ptr<MediaUsageManager> m_mediaUsageManager;
 #endif
 
-#if PLATFORM(COCOA)
-    bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
-#endif
 #if PLATFORM(IOS_FAMILY)
     Optional<WebCore::InputMode> m_pendingInputModeChange;
     TransactionID m_firstLayerTreeTransactionIdAfterDidCommitLoad;
     int32_t m_deviceOrientation { 0 };
+    bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad { true };
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };

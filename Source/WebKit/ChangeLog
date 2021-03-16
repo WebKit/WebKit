@@ -1,3 +1,35 @@
+2021-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r272629 as it caused regressions in some apps
+        https://bugs.webkit.org/show_bug.cgi?id=223232
+        <rdar://75440378>
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        * UIProcess/Cocoa/WKBlankOverlayView.h: Removed.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+
 2021-03-15  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Can get stuck in fullscreen mode if node is removed prior to receiving willEnterFullscreen()
