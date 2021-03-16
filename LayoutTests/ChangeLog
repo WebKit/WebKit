@@ -1,5 +1,14 @@
 2021-03-15  Robert Jenner  <jenner@apple.com>
 
+        [ macOS Debug ARM64 ] 2X w3c/svg tests are constantly text failing
+        https://bugs.webkit.org/show_bug.cgi?id=223223
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations to constantly fail in Apple Silicon while test is being looked at.
+
+2021-03-15  Robert Jenner  <jenner@apple.com>
+
         [ MacOS wk2 ] inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html is flakey timing out
         https://bugs.webkit.org/show_bug.cgi?id=221759
 
