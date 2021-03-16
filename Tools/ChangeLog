@@ -1,3 +1,45 @@
+2021-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: (r255611) [ Mac ] 3 lldb tests failing related to HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=207204
+
+        Reviewed by Simon Fraser.
+
+        In r255780 I removed WebKit LLDB support for HashTables because the LLDB python API doesn't have a way to
+        do the equivalent of reinterpret_cast.  With clever use of a union, I can get a pointer to the table and
+        tell LLDB it is actually a pointer to an unsigned integer array.  Then, using pointer->unsigned->pointer
+        transformations I can dereference a negative index.  It's gross, but it works and makes the tests pass again.
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (__lldb_init_module.lldb_webkit):
+        (WTFHashTable_SummaryProvider):
+        (WTFHashMap_SummaryProvider):
+        (WTFHashSet_SummaryProvider):
+        (WTFHashMapProvider):
+        (WTFHashMapProvider.__init__):
+        (WTFHashMapProvider.tableSize):
+        (WTFHashMapProvider.keyCount):
+        (WTFHashSetProvider):
+        (WTFHashSetProvider.__init__):
+        (WTFHashSetProvider.tableSize):
+        (WTFHashSetProvider.keyCount):
+        (WTFHashTableProvider):
+        (WTFHashTableProvider.__init__):
+        (WTFHashTableProvider.metadataWithIndex):
+        (WTFHashTableProvider.tableSize):
+        (WTFHashTableProvider.keyCount):
+        (WTFHashTableProvider.num_children):
+        (WTFHashTableProvider.get_child_index):
+        (WTFHashTableProvider.get_child_at_index):
+        (WTFHashTableProvider.update):
+        (WTFHashTableProvider.has_children):
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders):
+        (TestSummaryProviders.serial_test_WTFHashMap_tablesize_and_size):
+        (TestSummaryProviders.serial_test_WTFHashMap_of_vectors_tablesize_and_size):
+        (TestSummaryProviders.serial_test_WTFHashSet_tablesize_and_size):
+
 2021-03-15  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Can get stuck in fullscreen mode if node is removed prior to receiving willEnterFullscreen()

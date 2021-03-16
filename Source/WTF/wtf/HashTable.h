@@ -589,7 +589,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         unsigned deletedCount() const { ASSERT(m_table); return reinterpret_cast_ptr<unsigned*>(m_table)[deletedCountOffset]; }
         void setDeletedCount(unsigned count) const { ASSERT(m_table); reinterpret_cast_ptr<unsigned*>(m_table)[deletedCountOffset] = count; }
 
-        ValueType* m_table { nullptr };
+        union {
+            ValueType* m_table { nullptr };
+            unsigned* m_tableForLLDB;
+        };
 
 #if CHECK_HASHTABLE_ITERATORS
     public:
