@@ -1,3 +1,30 @@
+2021-03-15  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: `Styles` sidebar pseudo-class checkboxes appear cramped after resizing window at narrow widths
+        https://bugs.webkit.org/show_bug.cgi?id=222990
+
+        Reviewed by Devin Rousso.
+
+        Fixed two compounding bugs that meant that a sidebar could end up using the base minimum width of 250px
+        instead of the actual minimum width as reported by the selected panel.
+
+        * UserInterface/Views/MultiSidebar.js:
+        (WI.MultiSidebar.prototype.didInsertSidebarPanel):
+        (WI.MultiSidebar.prototype.didRemoveSidebarPanel):
+        (WI.MultiSidebar.prototype.didSetCollapsed):
+        - Drive-by: Remove unused (and always undefined) `flag` argument.
+        (WI.MultiSidebar.prototype._updateMinimumWidthForMultipleSidebars):
+        - Add logic to make sure we can calculate a valid `_minimumWidthForMultipleSidebars`, and add a mechanism to
+        allow ignoring the presence of a cached value to force a recalculation.
+        (WI.MultiSidebar.prototype.get _hasWidthForMultipleSidebars):
+        - Ensure if possible that there is a valid `_minimumWidthForMultipleSidebars`.
+        (WI.MultiSidebar.prototype._makeSidebarPanelExclusive):
+        - Sets the sidebar as non-collapsible (which sets `collapsed` to `false`) before adding the panel and setting it
+        as the selected panel so that we don't set the selected panel on a collapsed sidebar.
+        * UserInterface/Views/SingleSidebar.js:
+        (WI.SingleSidebar.prototype.didSetCollapsed):
+        - Drive-by: Remove always undefined `flag` argument, use `this.collapsed` instead.
+
 2021-03-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: `WI.Object.singleFireEventListener` should not keep a strong reference to `thisObject`
