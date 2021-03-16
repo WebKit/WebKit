@@ -1,3 +1,14 @@
+2021-03-16  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Replace the use of -1 with WTF::nullopt
+        https://bugs.webkit.org/show_bug.cgi?id=222376
+
+        Reviewed by Javier Fernandez.
+
+        Update failed expectations of the failing test.
+
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001-expected.txt:
+
 2021-03-15  Said Abou-Hallawa  <said@apple.com>
 
         Enable the layout test 2d.path.stroke.scale2.html

@@ -118,8 +118,8 @@ public:
     LayoutUnit minContentSize() const { return m_minContentSize; };
     LayoutUnit maxContentSize() const { return m_maxContentSize; };
 
-    LayoutSize estimatedGridAreaBreadthForChild(const RenderBox&) const;
     LayoutUnit baselineOffsetForChild(const RenderBox&, GridAxis) const;
+    Optional<LayoutUnit> estimatedGridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
 
     void cacheBaselineAlignedItem(const RenderBox&, GridAxis);
     void copyBaselineItemsCache(const GridTrackSizingAlgorithm&, GridAxis);
@@ -159,8 +159,7 @@ private:
     template <TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
     LayoutUnit itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&) const;
     template <TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& availableLogicalSpace) const;
-    LayoutUnit estimatedGridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
-    LayoutUnit gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
+    Optional<LayoutUnit> gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
 
     void computeBaselineAlignmentContext();
     void updateBaselineAlignmentContext(const RenderBox&, GridAxis);
@@ -267,7 +266,7 @@ protected:
     GridTrackSizingAlgorithmStrategy(GridTrackSizingAlgorithm& algorithm)
         : m_algorithm(algorithm) { }
 
-    virtual LayoutUnit minLogicalSizeForChild(RenderBox&, const Length& childMinSize, LayoutUnit availableSize) const;
+    virtual LayoutUnit minLogicalSizeForChild(RenderBox&, const Length& childMinSize, Optional<LayoutUnit> availableSize) const;
     virtual void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const = 0;
 
     LayoutUnit logicalHeightForChild(RenderBox&) const;

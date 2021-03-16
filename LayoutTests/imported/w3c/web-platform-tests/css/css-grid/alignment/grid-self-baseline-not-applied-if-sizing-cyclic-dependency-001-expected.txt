@@ -65,5 +65,5 @@ FAIL .inline-grid 12 assert_equals:
         <div class="secondRowFirstColumn verticalRL width200Percent" data-offset-x="-50" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
         <div class="firstRowSpanning2AutoColumn verticalRL width25" data-offset-x="50" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
     </div>
-width expected 100 but got 300
+offsetLeft expected 0 but got 100
 
