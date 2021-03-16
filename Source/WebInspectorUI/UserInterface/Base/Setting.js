@@ -228,7 +228,6 @@ WI.settings = {
     experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", true),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
-    experimentalEnableLayoutPanel: new WI.Setting("experimental-enable-layout-panel", false),
     experimentalEnableGridBadges: new WI.Setting("experimental-enable-grid-badges", false),
     experimentalCollapseBlackboxedCallFrames: new WI.Setting("experimental-collapse-blackboxed-call-frames", false),
 

@@ -1,3 +1,18 @@
+2021-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: remove experimental setting and enable Layout sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=221246
+        <rdar://problem/74130753>
+
+        Reviewed by BJ Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2021-03-15  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: `Styles` sidebar pseudo-class checkboxes appear cramped after resizing window at narrow widths
