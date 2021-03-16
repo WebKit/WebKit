@@ -86,9 +86,9 @@ Instance::Impl::Impl()
 
 Instance::Impl::~Impl()
 {
-    m_workQueue->dispatch([this] {
-        if (m_instance != XR_NULL_HANDLE)
-            xrDestroyInstance(m_instance);
+    m_workQueue->dispatch([instance = m_instance] {
+        if (instance != XR_NULL_HANDLE)
+            xrDestroyInstance(instance);
     });
 }
 
@@ -132,7 +132,7 @@ void Instance::enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceLi
         callbackOnExit.release();
 
         callOnMainThread([this, callback = WTFMove(callback), systemId]() mutable {
-            m_immersiveXRDevices = DeviceList::from(makeUniqueRef<OpenXRDevice>(m_impl->xrInstance(), systemId, m_impl->queue(), *m_impl->extensions(), [this, callback = WTFMove(callback)]() mutable {
+            m_immersiveXRDevices = DeviceList::from(OpenXRDevice::create(m_impl->xrInstance(), systemId, m_impl->queue(), *m_impl->extensions(), [this, callback = WTFMove(callback)]() mutable {
                 ASSERT(isMainThread());
                 callback(m_immersiveXRDevices);
             }));

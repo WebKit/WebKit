@@ -23,6 +23,7 @@
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -61,7 +62,7 @@ public:
     // FIXME: handle visibility changes
 };
 
-class Device : public CanMakeWeakPtr<Device> {
+class Device : public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Device);
 public:
@@ -159,7 +160,7 @@ class Instance {
 public:
     static Instance& singleton();
 
-    using DeviceList = Vector<UniqueRef<Device>>;
+    using DeviceList = Vector<Ref<Device>>;
     void enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList&)>&&);
 
 private:

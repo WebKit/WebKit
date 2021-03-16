@@ -46,9 +46,12 @@ class OpenXRExtensions;
 // the XRSystem is basically the entry point for the WebXR API available via the Navigator object.
 class OpenXRDevice final : public Device {
 public:
-    OpenXRDevice(XrInstance, XrSystemId, WorkQueue&, const OpenXRExtensions&, CompletionHandler<void()>&&);
+    static Ref<OpenXRDevice> create(XrInstance, XrSystemId, Ref<WorkQueue>&&, const OpenXRExtensions&, CompletionHandler<void()>&&);
 
 private:
+    OpenXRDevice(XrInstance, XrSystemId, Ref<WorkQueue>&&, const OpenXRExtensions&);
+    void initialize(CompletionHandler<void()>&& callback);
+
     // PlatformXR::Device
     WebCore::IntSize recommendedResolution(SessionMode) final;
     void initializeTrackingAndRendering(SessionMode) final;
