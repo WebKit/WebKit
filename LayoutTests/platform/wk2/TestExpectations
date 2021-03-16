@@ -215,7 +215,6 @@ http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
 http/tests/media/hls/hls-progress.html [ Failure ]
 
 # webkit.org/b/221685
-media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Crash Pass ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Timeout Pass ]
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Failure Pass ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Timeout Pass ]
@@ -223,7 +222,6 @@ media/modern-media-controls/media-controller/media-controller-inline-to-fullscre
 media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback.html [ Failure Pass ]
 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Timeout Pass ]
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout Pass ]
-media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Timeout Pass ]
 
 # webkit.org/b/221693
 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash ]
