@@ -123,6 +123,7 @@ void RemoteAudioDestinationProxy::connectToGPUProcess()
     getAudioStreamBasicDescription(streamFormat);
     m_ringBuffer->allocate(streamFormat, m_numberOfFrames);
     m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
+    m_audioBufferList->setSampleCount(WebCore::AudioUtilities::renderQuantumSize);
 #endif
 
     startRenderingThread();
@@ -161,7 +162,6 @@ void RemoteAudioDestinationProxy::renderQuantum()
     ASSERT(!isMainRunLoop());
 
 #if PLATFORM(COCOA)
-    m_audioBufferList->setSampleCount(WebCore::AudioUtilities::renderQuantumSize);
     AudioDestinationCocoa::render(m_currentFrame / static_cast<double>(m_sampleRate), mach_absolute_time(), WebCore::AudioUtilities::renderQuantumSize, m_audioBufferList->list());
     m_ringBuffer->store(m_audioBufferList->list(), WebCore::AudioUtilities::renderQuantumSize, m_currentFrame);
     m_currentFrame += WebCore::AudioUtilities::renderQuantumSize;

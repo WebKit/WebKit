@@ -1,3 +1,17 @@
+2021-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Avoid heap allocation in RemoteAudioDestinationProxy::renderQuantum()
+        https://bugs.webkit.org/show_bug.cgi?id=223228
+
+        Reviewed by Darin Adler.
+
+        Avoid heap allocation in RemoteAudioDestinationProxy::renderQuantum() since this runs on the
+        audio thread.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::connectToGPUProcess):
+        (WebKit::RemoteAudioDestinationProxy::renderQuantum):
+
 2021-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WebPageProxy's EditorState may be stale until the next remote layer tree commit
