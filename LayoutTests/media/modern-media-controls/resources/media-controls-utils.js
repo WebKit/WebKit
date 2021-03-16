@@ -83,26 +83,6 @@ function pressAtPoint(x, y, continuation)
     }
 }
 
-function showTracksPanel(shadowRoot, continuation)
-{
-    if (typeof continuation !== "function")
-        continuation = new Function;
-
-    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
-        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", () => {
-            debug("=> Tracks button is visible.")
-            debug("");
-            debug("Pressing on the tracks button.");
-            pressOnElement(shadowRoot.querySelector("button.tracks"));
-            shouldBecomeDifferent("shadowRoot.querySelector('.tracks-panel')", "null", () => {
-                debug("=> Tracks panel is visible.")
-                debug("");
-                continuation();
-            });
-        });
-    });
-}
-
 function getTracksContextMenu()
 {
     return new Promise((resolve) => {

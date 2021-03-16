@@ -1263,7 +1263,6 @@ media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html
 media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad [ Skip ]
-media/modern-media-controls/tracks-support/ios [ Skip ]
 
 # These tests are timing-related and can fail due to performance issues on bots
 webkit.org/b/169876 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Timeout ]
@@ -1278,8 +1277,6 @@ webkit.org/b/178127 media/modern-media-controls/media-controller/media-controlle
 # the image is dumped after the video is loaded and the control overlay is displayed. It seems the test still works
 # on iOS, and the bug it was created to regression-test was iOS-only, so there is no hurry to make it work on Mac.
 media/modern-media-controls/media-documents/background-color-and-centering.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/169158 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
 
 webkit.org/b/178083 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
@@ -2279,8 +2276,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-1
 webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html [ ImageOnlyFailure ]
 
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
-
-webkit.org/b/222197 media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html [ Pass Timeout ]
 
 webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
 

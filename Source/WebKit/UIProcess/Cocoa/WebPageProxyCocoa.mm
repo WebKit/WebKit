@@ -39,6 +39,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
 #import "SharedBufferDataReference.h"
+#import "WebContextMenuProxy.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPasteboardProxy.h"
@@ -652,6 +653,16 @@ SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle()
     SandboxExtension::Handle fontMachExtensionHandle;
     SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, WTF::nullopt, fontMachExtensionHandle);
     return fontMachExtensionHandle;
+}
+
+NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceItem)
+{
+#if ENABLE(CONTEXT_MENUS)
+    if (m_activeContextMenu && [userInterfaceItem isEqualToString:@"mediaControlsContextMenu"])
+        return @{ userInterfaceItem: m_activeContextMenu->platformData() };
+#endif // ENABLE(CONTEXT_MENUS)
+
+    return nil;
 }
 
 } // namespace WebKit

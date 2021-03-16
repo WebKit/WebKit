@@ -50,7 +50,6 @@
 #include "FrameSelection.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
-#include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "LocalizedStrings.h"
@@ -103,7 +102,8 @@ void ContextMenuController::handleContextMenuEvent(Event& event)
 
     SetForScope<bool> isHandlingContextMenuEventForScope(m_isHandlingContextMenuEvent, true);
 
-    m_contextMenu = maybeCreateContextMenu(event);
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+    m_contextMenu = maybeCreateContextMenu(event, hitType, ContextMenuContext::Type::ContextMenu);
     if (!m_contextMenu)
         return;
 
@@ -121,7 +121,13 @@ void ContextMenuController::showContextMenu(Event& event, ContextMenuProvider& p
 {
     m_menuProvider = &provider;
 
-    m_contextMenu = maybeCreateContextMenu(event);
+    auto contextType = provider.contextMenuContextType();
+
+    OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
+    if (contextType == ContextMenuContext::Type::ContextMenu)
+        hitType.add(HitTestRequest::DisallowUserAgentShadowContent);
+
+    m_contextMenu = maybeCreateContextMenu(event, WTFMove(hitType), contextType);
     if (!m_contextMenu) {
         clearContextMenu();
         return;
@@ -135,7 +141,7 @@ void ContextMenuController::showContextMenu(Event& event, ContextMenuProvider& p
     showContextMenu(event);
 }
 
-std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event& event)
+std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event& event, OptionSet<HitTestRequest::RequestType> hitType, ContextMenuContext::Type contextType)
 {
     if (!is<MouseEvent>(event))
         return nullptr;
@@ -148,19 +154,18 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
     if (!frame)
         return nullptr;
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
-    auto result = frame->eventHandler().hitTestResultAtPoint(mouseEvent.absoluteLocation(), hitType);
+    auto result = frame->eventHandler().hitTestResultAtPoint(mouseEvent.absoluteLocation(), WTFMove(hitType));
     if (!result.innerNonSharedNode())
         return nullptr;
 
-    m_context = ContextMenuContext(result);
+    m_context = ContextMenuContext(contextType, result);
 
     return makeUnique<ContextMenu>();
 }
 
 void ContextMenuController::showContextMenu(Event& event)
 {
-    if (m_page.inspectorController().enabled())
+    if ((!m_menuProvider || m_menuProvider->contextMenuContextType() == ContextMenuContext::Type::ContextMenu) && m_page.inspectorController().enabled())
         addInspectElementItem();
 
     event.setDefaultHandled();

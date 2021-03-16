@@ -35,8 +35,20 @@ namespace WebCore {
 
 class ContextMenuContext {
 public:
+    enum class Type : uint8_t {
+        ContextMenu,
+#if ENABLE(SERVICE_CONTROLS)
+        ServicesMenu,
+#endif // ENABLE(SERVICE_CONTROLS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+        MediaControls,
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    };
+
     ContextMenuContext();
-    ContextMenuContext(const HitTestResult&);
+    ContextMenuContext(Type, const HitTestResult&);
+
+    Type type() const { return m_type; }
 
     const HitTestResult& hitTestResult() const { return m_hitTestResult; }
 
@@ -52,6 +64,7 @@ public:
 #endif
 
 private:
+    Type m_type { Type::ContextMenu };
     HitTestResult m_hitTestResult;
     String m_selectedText;
     IntRect m_selectionBounds;
@@ -62,5 +75,22 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ContextMenuContext::Type> {
+    using values = EnumValues<
+        WebCore::ContextMenuContext::Type,
+        WebCore::ContextMenuContext::Type::ContextMenu
+#if ENABLE(SERVICE_CONTROLS)
+        , WebCore::ContextMenuContext::Type::ServicesMenu
+#endif // ENABLE(SERVICE_CONTROLS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+        , WebCore::ContextMenuContext::Type::MediaControls
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(CONTEXT_MENUS)

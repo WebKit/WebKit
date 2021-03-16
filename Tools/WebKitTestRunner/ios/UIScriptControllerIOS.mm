@@ -922,26 +922,6 @@ void UIScriptControllerIOS::setDidEndFormControlInteractionCallback(JSValueRef c
         m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
     }).get();
 }
-    
-void UIScriptControllerIOS::setDidShowContextMenuCallback(JSValueRef callback)
-{
-    UIScriptController::setDidShowContextMenuCallback(callback);
-    webView().didShowContextMenuCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
-        if (!m_context)
-            return;
-        m_context->fireCallback(CallbackTypeDidShowContextMenu);
-    }).get();
-}
-
-void UIScriptControllerIOS::setDidDismissContextMenuCallback(JSValueRef callback)
-{
-    UIScriptController::setDidDismissContextMenuCallback(callback);
-    webView().didDismissContextMenuCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
-        if (!m_context)
-            return;
-        m_context->fireCallback(CallbackTypeDidDismissContextMenu);
-    }).get();
-}
 
 void UIScriptControllerIOS::setWillBeginZoomingCallback(JSValueRef callback)
 {
@@ -1266,11 +1246,6 @@ void UIScriptControllerIOS::installTapGestureOnWindow(JSValueRef callback)
             return;
         m_context->fireCallback(CallbackTypeWindowTapRecognized);
     }).get();
-}
-
-bool UIScriptControllerIOS::isShowingContextMenu() const
-{
-    return webView().showingContextMenu;
 }
 
 }

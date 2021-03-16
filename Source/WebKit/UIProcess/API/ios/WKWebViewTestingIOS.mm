@@ -184,16 +184,6 @@
     return [_contentView formInputLabel];
 }
 
-- (void)_didShowContextMenu
-{
-    // For subclasses to override.
-}
-
-- (void)_didDismissContextMenu
-{
-    // For subclasses to override.
-}
-
 - (CGRect)_inputViewBounds
 {
     return _inputViewBounds;

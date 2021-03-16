@@ -630,6 +630,13 @@ NSWindow *WebPageProxy::paymentCoordinatorPresentingWindow(const WebPaymentCoord
 
 #if ENABLE(CONTEXT_MENUS)
 
+NSMenu *WebPageProxy::platformActiveContextMenu() const
+{
+    if (m_activeContextMenu)
+        return m_activeContextMenu->platformMenu();
+    return nil;
+}
+
 void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
 {
     if (item.action() == ContextMenuItemTagPaste)

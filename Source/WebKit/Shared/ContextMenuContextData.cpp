@@ -30,7 +30,6 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/ContextMenuContext.h>
 #include <WebCore/GraphicsContext.h>
 
 namespace WebKit {
@@ -46,9 +45,9 @@ ContextMenuContextData::ContextMenuContextData()
 
 ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
 #if ENABLE(SERVICE_CONTROLS)
-    : m_type(context.controlledImage() ? Type::ServicesMenu : Type::ContextMenu)
+    : m_type(context.controlledImage() ? Type::ServicesMenu : context.type())
 #else
-    : m_type(Type::ContextMenu)
+    : m_type(context.type())
 #endif
     , m_menuLocation(menuLocation)
     , m_menuItems(menuItems)

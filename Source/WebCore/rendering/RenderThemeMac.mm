@@ -95,6 +95,10 @@
 
 #endif // ENABLE(SERVICE_CONTROLS)
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/RenderThemeMacAdditions.cpp>
+#endif
+
 // FIXME: This should go into an SPI.h file in the spi directory.
 @interface NSTextFieldCell ()
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus;
@@ -324,9 +328,14 @@ String RenderThemeMac::mediaControlsScript()
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
         if (m_mediaControlsScript.isEmpty()) {
             NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-            NSString *localizedStrings = [NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
-            NSString *script = [NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil];
-            m_mediaControlsScript = makeString(String { localizedStrings }, String { script });
+
+            StringBuilder scriptBuilder;
+            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
+            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
+#if defined(RenderThemeMacAdditions_mediaControlsScript)
+            RenderThemeMacAdditions_mediaControlsScript
+#endif
+            m_mediaControlsScript = scriptBuilder.toString();
         }
         return m_mediaControlsScript;
     }

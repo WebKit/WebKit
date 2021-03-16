@@ -1,3 +1,128 @@
+2021-03-16  Devin Rousso  <drousso@apple.com>
+
+        [macOS] change for the language/subtitle tracks button to use an `NSMenu` instead of web content
+        https://bugs.webkit.org/show_bug.cgi?id=223239
+        <rdar://problem/75462340>
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/tracks-support/auto-text-track.html: Added.
+        * media/modern-media-controls/tracks-support/auto-text-track-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/click-track-in-contextmenu.html: Added.
+        * media/modern-media-controls/tracks-support/click-track-in-contextmenu-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/hidden-tracks.html: Added.
+        * media/modern-media-controls/tracks-support/hidden-tracks-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/off-text-track.html: Added.
+        * media/modern-media-controls/tracks-support/off-text-track-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/show-contextmenu-then-double-click-on-tracks-button.html: Added.
+        * media/modern-media-controls/tracks-support/show-contextmenu-then-double-click-on-tracks-button-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html: Added.
+        * media/modern-media-controls/tracks-support/text-track-selected-via-media-api-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-auto-text-track.html: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-auto-text-track-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-click-track-in-contextmenu.html: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-click-track-in-contextmenu-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-hidden-tracks.html: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-hidden-tracks-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-off-text-track.html: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-off-text-track-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-show-contextmenu-then-double-click-on-tracks-button.html: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-show-contextmenu-then-double-click-on-tracks-button-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-text-track-selected-via-media-api.html: Removed.
+        * media/modern-media-controls/tracks-support/ios/tracks-support-text-track-selected-via-media-api-expected.txt: Removed.
+        Move the iOS tracks support tests out of an iOS folder since macOS now also uses a contextmenu.
+
+        * media/modern-media-controls/resources/media-controls-loader.js:
+        * media/modern-media-controls/resources/media-controls-utils.js:
+        (showTracksPanel): Deleted.
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-background-to-dismiss-tracks-panel-should-not-toggle-playback.html: Removed.
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-background-to-dismiss-tracks-panel-should-not-toggle-playback-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-esc-key.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-hide-esc-key-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-population.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-population-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-position-and-size.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-position-and-size-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-controls-bar-from-fading.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-controls-bar-from-fading-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-default-on-keydown.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-default-on-keydown-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-right-x.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-right-x-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-mouse.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-mouse-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-up-click-outside-media-does-not-dimiss-media-controls-when-media-is-paused.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-up-click-outside-media-does-not-dimiss-media-controls-when-media-is-paused-expected.txt: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html: Removed.
+        * media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-auto-text-track.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-auto-text-track-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-click-track-in-panel.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-click-track-in-panel-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-hidden-tracks.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-hidden-tracks-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-off-text-track.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-off-text-track-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-and-populate-panel.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-and-populate-panel-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-fullscreen-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-then-double-click-on-tracks-button.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-then-double-click-on-tracks-button-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-text-track-selected-via-media-api.html: Removed.
+        * media/modern-media-controls/tracks-support/mac/tracks-support-text-track-selected-via-media-api-expected.txt: Removed.
+        Remove everything related to `TracksPanel` now that macOS also uses a contextmenu.
+
+        * media/modern-media-controls/tracks-support/captions-offset-with-controls-bar.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-captions-offset-with-controls-bar.html.
+        * media/modern-media-controls/tracks-support/captions-offset-with-controls-bar-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-captions-offset-with-controls-bar-expected.txt.
+        * media/modern-media-controls/tracks-support/no-tracks.html: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-no-tracks.html.
+        * media/modern-media-controls/tracks-support/no-tracks-expected.txt: Renamed from LayoutTests/media/modern-media-controls/tracks-support/tracks-support-no-tracks-expected.txt.
+        Renamed these tests to remove the redundant "tracks-support".
+
+        * media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html: Removed.
+        * media/modern-media-controls/tracks-support/tracks-support-audio-tracks-expected.txt: Removed.
+        * media/modern-media-controls/tracks-support/tracks-support-text-tracks.html: Removed.
+        * media/modern-media-controls/tracks-support/tracks-support-text-tracks-expected.txt: Removed.
+        These tests are covered by the other added/renamed tests above.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-placard.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-slider-visibility.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-shows-start-button.html:
+        Update existing tests to accomodate the `OverflowButton`.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.chooseMenuAction): Added.
+        (window.UIHelper.async chooseMenuAction): Deleted.
+        Use `UIScriptController.prototype.chooseMenuAction` instead of a combination of
+        `UIScriptController.prototype.rectForMenuAction` and `UIScriptController.prototype.activateAt`
+        since `UIScriptController::chooseMenuAction` basically does that anyways.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Runtime-disabled CSS features still still appear enabled via two-arg CSS.supports()

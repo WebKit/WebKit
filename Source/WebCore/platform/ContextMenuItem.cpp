@@ -38,26 +38,29 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
     , m_title(title)
     , m_enabled(true)
     , m_checked(false)
+    , m_indentationLevel(0)
 {
     if (subMenu)
         setSubMenu(subMenu);
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked, unsigned indentationLevel)
     : m_type(type)
     , m_action(action)
     , m_title(title)
     , m_enabled(enabled)
     , m_checked(checked)
+    , m_indentationLevel(indentationLevel)
 {
 }
         
-ContextMenuItem::ContextMenuItem(ContextMenuAction action, const String& title, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems)
+ContextMenuItem::ContextMenuItem(ContextMenuAction action, const String& title, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems, unsigned indentationLevel)
     : m_type(SubmenuType)
     , m_action(action)
     , m_title(title)
     , m_enabled(enabled)
     , m_checked(checked)
+    , m_indentationLevel(indentationLevel)
     , m_subMenuItems(subMenuItems)
 {
 }
@@ -67,6 +70,7 @@ ContextMenuItem::ContextMenuItem()
     , m_action(ContextMenuItemTagNoAction)
     , m_enabled(false)
     , m_checked(false)
+    , m_indentationLevel(0)
 {
 }
 
@@ -107,6 +111,16 @@ void ContextMenuItem::setAction(ContextMenuAction action)
 ContextMenuAction ContextMenuItem::action() const
 {
     return m_action;
+}
+
+void ContextMenuItem::setIndentationLevel(unsigned indentationLevel)
+{
+    m_indentationLevel = indentationLevel;
+}
+
+unsigned ContextMenuItem::indentationLevel() const
+{
+    return m_indentationLevel;
 }
 
 void ContextMenuItem::setChecked(bool checked)

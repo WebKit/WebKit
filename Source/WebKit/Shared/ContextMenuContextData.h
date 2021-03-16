@@ -28,9 +28,9 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "ShareableBitmap.h"
 #include "WebContextMenuItemData.h"
 #include "WebHitTestResultData.h"
+#include <WebCore/ContextMenuContext.h>
 #include <wtf/EnumTraits.h>
 
 namespace IPC {
@@ -38,18 +38,11 @@ class Decoder;
 class Encoder;
 }
 
-namespace WebCore {
-class ContextMenuContext;
-}
-
 namespace WebKit {
 
 class ContextMenuContextData {
 public:
-    enum class Type : bool {
-        ContextMenu,
-        ServicesMenu,
-    };
+    using Type = WebCore::ContextMenuContext::Type;
 
     ContextMenuContextData();
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const WebCore::ContextMenuContext&);

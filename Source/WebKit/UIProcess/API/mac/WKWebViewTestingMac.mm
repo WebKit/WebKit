@@ -114,9 +114,11 @@
 
 - (NSMenu *)_activeMenu
 {
-    // FIXME: Only the DOM paste access menu is supported for now. In the future, it could be
-    // extended to recognize the regular context menu as well.
-    return _impl->domPasteMenu();
+    if (NSMenu *contextMenu = _page->platformActiveContextMenu())
+        return contextMenu;
+    if (NSMenu *domPasteMenu = _impl->domPasteMenu())
+        return domPasteMenu;
+    return nil;
 }
 
 @end

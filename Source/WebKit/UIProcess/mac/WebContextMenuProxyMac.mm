@@ -30,6 +30,7 @@
 
 #import "APIContextMenuClient.h"
 #import "MenuUtilities.h"
+#import "PageClientImplMac.h"
 #import "ServicesController.h"
 #import "ShareableBitmap.h"
 #import "WKMenuItemIdentifiersPrivate.h"
@@ -143,6 +144,38 @@
     }
 
     _menuProxy->contextMenuItemSelected(item);
+}
+
+@end
+
+@interface WKMenuDelegate : NSObject <NSMenuDelegate> {
+    WebKit::WebContextMenuProxyMac* _menuProxy;
+}
+-(instancetype)initWithMenuProxy:(WebKit::WebContextMenuProxyMac&)menuProxy;
+@end
+
+@implementation WKMenuDelegate
+
+-(instancetype)initWithMenuProxy:(WebKit::WebContextMenuProxyMac&)menuProxy
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _menuProxy = &menuProxy;
+
+    return self;
+}
+
+#pragma mark - NSMenuDelegate
+
+- (void)menuWillOpen:(NSMenu *)menu
+{
+    _menuProxy->page()->pageClient().didShowContextMenu();
+}
+
+- (void)menuDidClose:(NSMenu *)menu
+{
+    _menuProxy->page()->pageClient().didDismissContextMenu();
 }
 
 @end
@@ -499,6 +532,7 @@ void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& it
         [menuItem setTag:item.action()];
         [menuItem setEnabled:item.enabled()];
         [menuItem setState:item.checked() ? NSControlStateValueOn : NSControlStateValueOff];
+        [menuItem setIndentationLevel:item.indentationLevel()];
         [menuItem setTarget:[WKMenuTarget sharedMenuTarget]];
         [menuItem setIdentifier:menuItemIdentifier(item.action())];
 
@@ -516,9 +550,10 @@ void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& it
         return;
 
     case WebCore::SubmenuType: {
-        getContextMenuFromItems(item.submenu(), [action = item.action(), completionHandler = WTFMove(completionHandler), enabled = item.enabled(), title = item.title()](NSMenu *menu) mutable {
+        getContextMenuFromItems(item.submenu(), [action = item.action(), completionHandler = WTFMove(completionHandler), enabled = item.enabled(), title = item.title(), indentationLevel = item.indentationLevel()](NSMenu *menu) mutable {
             auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:title action:nullptr keyEquivalent:@""]);
             [menuItem setEnabled:enabled];
+            [menuItem setIndentationLevel:indentationLevel];
             [menuItem setSubmenu:menu];
             [menuItem setIdentifier:menuItemIdentifier(action)];
             completionHandler(menuItem.get());
@@ -571,16 +606,75 @@ void WebContextMenuProxyMac::useContextMenuItems(Vector<Ref<WebContextMenuItem>>
         }
 
         [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
-        page()->contextMenuClient().menuFromProposedMenu(*page(), menu, m_context.webHitTestResultData(), m_userData.object(), [this, protectedThis = WTFMove(protectedThis)](RetainPtr<NSMenu>&& menu) {
+
+        auto menuFromProposedMenu = [this, protectedThis = WTFMove(protectedThis)] (RetainPtr<NSMenu>&& menu) {
+            m_menuDelegate = adoptNS([[WKMenuDelegate alloc] initWithMenuProxy:*this]);
+
             m_menu = WTFMove(menu);
+            [m_menu setDelegate:m_menuDelegate.get()];
+
             WebContextMenuProxy::useContextMenuItems({ });
-        });
+        };
+
+        if (m_context.type() != ContextMenuContext::Type::ContextMenu) {
+            menuFromProposedMenu(menu);
+            return;
+        }
+
+        page()->contextMenuClient().menuFromProposedMenu(*page(), menu, m_context.webHitTestResultData(), m_userData.object(), WTFMove(menuFromProposedMenu));
     });
 }
 
 NSWindow *WebContextMenuProxyMac::window() const
 {
     return [m_webView window];
+}
+
+NSMenu *WebContextMenuProxyMac::platformMenu() const
+{
+    return m_menu.get();
+}
+
+static NSDictionary *contentsOfContextMenuItem(NSMenuItem *item)
+{
+    NSMutableDictionary* result = NSMutableDictionary.dictionary;
+
+    if (item.title.length)
+        result[@"title"] = item.title;
+
+    if (item.isSeparatorItem)
+        result[@"separator"] = @YES;
+    else if (!item.enabled)
+        result[@"enabled"] = @NO;
+
+    if (NSInteger indentationLevel = item.indentationLevel)
+        result[@"indentationLevel"] = [NSNumber numberWithInteger:indentationLevel];
+
+    if (item.state == NSControlStateValueOn)
+        result[@"checked"] = @YES;
+
+    if (NSArray<NSMenuItem *> *submenuItems = item.submenu.itemArray) {
+        NSMutableArray *children = [NSMutableArray arrayWithCapacity:submenuItems.count];
+        for (NSMenuItem *submenuItem : submenuItems)
+            [children addObject:contentsOfContextMenuItem(submenuItem)];
+        result[@"children"] = children;
+    }
+
+    return result;
+}
+
+NSArray *WebContextMenuProxyMac::platformData() const
+{
+    NSMutableArray *result = NSMutableArray.array;
+
+    if (NSArray<NSMenuItem *> *submenuItems = [m_menu itemArray]) {
+        NSMutableArray *children = [NSMutableArray arrayWithCapacity:submenuItems.count];
+        for (NSMenuItem *submenuItem : submenuItems)
+            [children addObject:contentsOfContextMenuItem(submenuItem)];
+        [result addObject:@{ @"children": children }];
+    }
+
+    return result;
 }
 
 } // namespace WebKit

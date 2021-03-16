@@ -140,15 +140,12 @@ private:
     void setAllowsViewportShrinkToFit(bool) override;
     void copyText(JSStringRef) override;
     void installTapGestureOnWindow(JSValueRef) override;
-    bool isShowingContextMenu() const override;
     void setSpellCheckerResults(JSValueRef) override { }
 
     bool mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height) override;
 
     void setDidStartFormControlInteractionCallback(JSValueRef) override;
     void setDidEndFormControlInteractionCallback(JSValueRef) override;
-    void setDidShowContextMenuCallback(JSValueRef) override;
-    void setDidDismissContextMenuCallback(JSValueRef) override;
     void setWillBeginZoomingCallback(JSValueRef) override;
     void setDidEndZoomingCallback(JSValueRef) override;
     void setDidShowKeyboardCallback(JSValueRef) override;

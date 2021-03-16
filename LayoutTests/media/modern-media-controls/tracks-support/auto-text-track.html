@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<script src="../resources/media-controls-utils.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/counting-subtitled.m4v" style="position: absolute; left: 0; top: 0; width: 400px;" autoplay controls muted playsinline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Ensure we have the Auto text track selected by default.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+let checkedItems = null;
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", async () => {
+            debug("Setting caption display mode to 'automatic'...");
+            window.internals.setCaptionDisplayMode("automatic");
+
+            debug("Tapping tracks button...");
+            let [contextmenu] = await Promise.all([
+                getTracksContextMenu(),
+                pressOnElement(shadowRoot.querySelector("button.tracks")),
+            ]);
+            let subtitlesMenu = contextmenu[0].children.find((submenu) => submenu.title === "Subtitles");
+            if (subtitlesMenu.children?.length) {
+                await UIHelper.chooseMenuAction(subtitlesMenu.title);
+                await UIHelper.delayFor(500); // give time for the UIMenu to animate
+                contextmenu = [subtitlesMenu];
+            }
+            checkedItems = contextmenu[0].children.filter((item) => item.checked);
+            shouldBe("checkedItems.length", "1");
+            shouldBeEqualToString("checkedItems[0].title", "Auto (Recommended)");
+
+            debug("Setting caption display mode to 'forcedonly'...");
+            window.internals.setCaptionDisplayMode("forcedonly");
+
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -66,8 +66,6 @@
 
 - (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString withCompletionHandler:(void (^)(void))completionHandler;
 
-- (void)_didShowContextMenu;
-- (void)_didDismissContextMenu;
 - (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action;
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID;

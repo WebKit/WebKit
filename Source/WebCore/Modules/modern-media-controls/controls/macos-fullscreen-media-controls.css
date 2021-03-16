@@ -27,7 +27,6 @@
 
 .media-controls.mac.fullscreen {
     --controls-bar-width: 468px;
-    --tracks-panel-right-margin: 40px;
 
     width: 100% !important;
     height: 100% !important;

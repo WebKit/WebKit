@@ -30,6 +30,9 @@
 
 #pragma once
 
+#if ENABLE(CONTEXT_MENUS)
+
+#include "ContextMenuContext.h"
 #include "ContextMenuItem.h"
 #include <wtf/RefCounted.h>
 
@@ -44,6 +47,9 @@ public:
     virtual void populateContextMenu(ContextMenu*) = 0;
     virtual void contextMenuItemSelected(ContextMenuAction, const String& title) = 0;
     virtual void contextMenuCleared() = 0;
+    virtual ContextMenuContext::Type contextMenuContextType() { return ContextMenuContext::Type::ContextMenu; };
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(CONTEXT_MENUS)

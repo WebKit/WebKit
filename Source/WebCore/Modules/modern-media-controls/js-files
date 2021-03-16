@@ -26,7 +26,6 @@ controls/overflow-button.js
 controls/buttons-container.js
 controls/status-label.js
 controls/controls-bar.js
-controls/tracks-panel.js
 controls/auto-hide-controller.js
 controls/media-controls.js
 controls/background-click-delegate-notifier.js

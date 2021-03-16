@@ -71,6 +71,9 @@
         return @{ userInterfaceItem: @{ @"message": (NSString *)message, @"fontSize": @(fontSize) } };
     }
 
+    if (NSDictionary *contents = _page->contentsOfUserInterfaceItem(userInterfaceItem))
+        return contents;
+
 #if PLATFORM(IOS_FAMILY)
     return [_contentView _contentsOfUserInterfaceItem:(NSString *)userInterfaceItem];
 #else
@@ -307,6 +310,16 @@
     _page->setPrivateClickMeasurementAttributionReportURLsForTesting(sourceURL, attributeOnURL, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
+}
+
+- (void)_didShowContextMenu
+{
+    // For subclasses to override.
+}
+
+- (void)_didDismissContextMenu
+{
+    // For subclasses to override.
 }
 
 - (void)_didPresentContactPicker

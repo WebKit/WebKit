@@ -48,8 +48,6 @@ class MediaControls extends LayoutNode
         this.statusLabel = new StatusLabel(this);
         this.timeControl = new TimeControl(this);
 
-        this.tracksPanel = new TracksPanel;
-
         this.bottomControlsBar = new ControlsBar("bottom");
 
         this.autoHideController = new AutoHideController(this);
@@ -168,33 +166,6 @@ class MediaControls extends LayoutNode
     placardPreventsControlsBarDisplay()
     {
         return this._placard && this._placard !== this.airplayPlacard;
-    }
-
-    showTracksPanel()
-    {
-        this.element.classList.add("shows-tracks-panel");
-
-        this.tracksButton.on = true;
-        this.tracksButton.element.blur();
-        this.autoHideController.hasSecondaryUIAttached = true;
-        this.tracksPanel.presentInParent(this);
-
-        const controlsBounds = this.element.getBoundingClientRect();
-        const controlsBarBounds = this.bottomControlsBar.element.getBoundingClientRect();
-        const tracksButtonBounds = this.tracksButton.element.getBoundingClientRect();
-        this.tracksPanel.rightX = this.width - (tracksButtonBounds.right - controlsBounds.left);
-        this.tracksPanel.bottomY = this.height - (controlsBarBounds.top - controlsBounds.top) + 1;
-        this.tracksPanel.maxHeight = this.height - this.tracksPanel.bottomY - 10;
-    }
-
-    hideTracksPanel()
-    {
-        this.element.classList.remove("shows-tracks-panel");
-
-        this.tracksButton.on = false;
-        this.tracksButton.element.focus();
-        this.autoHideController.hasSecondaryUIAttached = false;
-        this.tracksPanel.hide();
     }
 
     fadeIn()

@@ -19,6 +19,7 @@ fast/scrolling/mac [ Pass ]
 fast/visual-viewport/tiled-drawing [ Pass ]
 fast/web-share [ Pass ]
 imported/w3c/web-platform-tests/web-share [ Pass ]
+media/modern-media-controls/tracks-support [ Pass ]
 scrollingcoordinator [ Pass ]
 scrollingcoordinator/ios [ Skip ]
 swipe [ Pass ]
@@ -800,8 +801,6 @@ http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
 [ Mojave ] http/wpt/webauthn/public-key-credential-create-success-nfc.https.html [ Skip ]
 [ Mojave ] http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html [ Skip ]
 [ Mojave ] http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Skip ]
-
-webkit.org/b/183878 media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html [ Pass Timeout ] 
 
 webkit.org/b/194826 http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html [ Pass Timeout ]
 

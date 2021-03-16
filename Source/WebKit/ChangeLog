@@ -1,3 +1,82 @@
+2021-03-16  Devin Rousso  <drousso@apple.com>
+
+        [macOS] change for the language/subtitle tracks button to use an `NSMenu` instead of web content
+        https://bugs.webkit.org/show_bug.cgi?id=223239
+        <rdar://problem/75462340>
+
+        Reviewed by Eric Carlson.
+
+        * Shared/ContextMenuContextData.h:
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        Move `WebKit::ContextMenuContextData::Type` to `WebCore::ContextmenuContext::Type` so that
+        it can be used in WebCore as well.
+
+        * Shared/WebContextMenuItemData.h:
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::WebContextMenuItemData):
+        (WebKit::WebContextMenuItemData::core const):
+        (WebKit::WebContextMenuItemData::encode const):
+        (WebKit::WebContextMenuItemData::decode):
+        (WebKit::WebContextMenuItemData::indentationLevel const): Added.
+        Provide a way to eventually set the `-[NSMenuItem setIndentationLevel:]`.
+
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKMenuDelegate initWithMenuProxy:]): Added.
+        (-[WKMenuDelegate menuWillOpen:]): Added.
+        (-[WKMenuDelegate menuDidClose:]): Added.
+        (WebKit::WebContextMenuProxyMac::getContextMenuItem):
+        (WebKit::WebContextMenuProxyMac::useContextMenuItems):
+        (WebKit::WebContextMenuProxyMac::platformMenu const): Added.
+        (WebKit::contentsOfContextMenuItem): Added.
+        (WebKit::WebContextMenuProxyMac::platformData const): Added.
+        Add support for `-[NSMenuItem setIndentationLevel:]`.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _contentsOfUserInterfaceItem:]):
+        (-[WKWebView _didShowContextMenu]): Added.
+        (-[WKWebView _didDismissContextMenu]): Added.
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _didShowContextMenu]): Deleted.
+        (-[WKWebView _didDismissContextMenu]): Deleted.
+        Move these methods so they can be used on macOS too.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didShowContextMenu): Added.
+        (WebKit::PageClient::didDismissContextMenu): Added.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didShowContextMenu): Added.
+        (WebKit::PageClientImpl::didDismissContextMenu): Added.
+        Add support for `didShowContextMenu`/`didDismissContextMenu` for tests.
+
+        * UIProcess/API/mac/WKWebViewTestingMac.mm:
+        (-[WKWebView _activeMenu]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::contentsOfUserInterfaceItem): Added.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformActiveContextMenu const): Added.
+        Add support for `contentsOfUserInterfaceItem` for tests.
+
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        Be more explicit with compiler flags.
+
 2021-03-16  Kate Cheney  <katherine_cheney@apple.com>
 
         [Swift] Ambiguous use of 'closeAllMediaPresentations'

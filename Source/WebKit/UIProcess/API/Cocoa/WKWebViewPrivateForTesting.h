@@ -63,6 +63,9 @@ struct WKAppBoundNavigationTestingData {
 
 - (void)_setShareSheetCompletesImmediatelyWithResolutionForTesting:(BOOL)resolved;
 
+- (void)_didShowContextMenu;
+- (void)_didDismissContextMenu;
+
 - (void)_didPresentContactPicker;
 - (void)_didDismissContactPicker;
 - (void)_dismissContactPickerWithContacts:(NSArray *)contacts;

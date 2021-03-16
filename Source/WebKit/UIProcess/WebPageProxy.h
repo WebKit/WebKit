@@ -138,6 +138,7 @@
 #include "EndowmentStateTracker.h"
 #endif
 
+OBJC_CLASS NSMenu;
 OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS NSView;
 OBJC_CLASS _WKRemoteObjectRegistry;
@@ -1627,9 +1628,9 @@ public:
     void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&&);
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
     static WebPageProxy* nonEphemeralWebPageProxy();
 
@@ -1806,6 +1807,7 @@ public:
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
+    NSMenu *platformActiveContextMenu() const;
     void platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
 
@@ -1878,6 +1880,10 @@ public:
     void appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
     void clearAppBoundNavigationData(CompletionHandler<void()>&&);
 #endif
+
+#if PLATFORM(COCOA)
+    NSDictionary *contentsOfUserInterfaceItem(NSString *userInterfaceItem);
+#endif // PLATFORM(COCOA)
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

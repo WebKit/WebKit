@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
@@ -40,7 +40,7 @@ struct MediaControlsContextMenuItem {
     ID id { invalidID };
     String title;
     String icon;
-    bool isChecked { false };
+    bool checked { false };
     Vector<MediaControlsContextMenuItem> children;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -53,7 +53,7 @@ void MediaControlsContextMenuItem::encode(Encoder& encoder) const
     encoder << id;
     encoder << title;
     encoder << icon;
-    encoder << isChecked;
+    encoder << checked;
     encoder << children;
 }
 
@@ -69,14 +69,14 @@ Optional<MediaControlsContextMenuItem> MediaControlsContextMenuItem::decode(Deco
     DECODE(id, ID);
     DECODE(title, String);
     DECODE(icon, String);
-    DECODE(isChecked, bool);
+    DECODE(checked, bool);
     DECODE(children, Vector<MediaControlsContextMenuItem>);
 
 #undef DECODE
 
-    return {{ WTFMove(*id), WTFMove(*title), WTFMove(*icon), WTFMove(*isChecked), WTFMove(*children) }};
+    return {{ WTFMove(*id), WTFMove(*title), WTFMove(*icon), WTFMove(*checked), WTFMove(*children) }};
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

@@ -5,7 +5,7 @@
 
 description("Testing the <code>MacOSInlineMediaControls</code> showsStartButton property.");
 
-const mediaControls = new MacOSInlineMediaControls;
+const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
 
 debug("Default where showsStartButton = false");
 shouldBeFalse("mediaControls.showsStartButton");

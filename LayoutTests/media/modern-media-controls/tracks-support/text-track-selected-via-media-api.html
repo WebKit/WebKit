@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<script src="../resources/media-controls-utils.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/counting-subtitled.m4v" style="position: absolute; left: 0; top: 0; width: 400px;" autoplay controls muted playsinline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description(`This test checks that setting an embedded text track as selected via the HTMLMediaElement JS APIs will correctly show this track as selected, and that selecting the 
+"Automatic (Recommended)" track will revert back to selecting that entry.`);
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+let contextmenu = null;
+
+function subtitleTrack(language) {
+    return Array.from(media.textTracks).find((textTrack) => textTrack.kind === "subtitles" && textTrack.language === language);
+}
+
+function contextmenuItem(title) {
+    return contextmenu[0].children.find((item) => item.title === title);
+}
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", async () => {
+            debug("Setting mode to 'showing' for 'English' text track via JavaScript...");
+            subtitleTrack("en").mode = "showing";
+
+            {
+                debug("Tapping tracks button...");
+                [contextmenu] = await Promise.all([
+                    getTracksContextMenu(),
+                    pressOnElement(shadowRoot.querySelector("button.tracks")),
+                ]);
+                let subtitlesMenu = contextmenu[0].children.find((submenu) => submenu.title === "Subtitles");
+                if (subtitlesMenu.children?.length) {
+                    await UIHelper.chooseMenuAction(subtitlesMenu.title);
+                    await UIHelper.delayFor(500); // give time for the UIMenu to animate
+                    contextmenu = [subtitlesMenu];
+                }
+                shouldBeTrue("contextmenuItem('English').checked");
+                shouldBeUndefined("contextmenuItem('French').checked");
+
+                debug("Selecting 'French' text track...");
+                await UIHelper.chooseMenuAction("French");
+                await UIHelper.waitForContextMenuToHide();
+            }
+
+            shouldBe("subtitleTrack('en').mode", "'disabled'");
+            shouldBe("subtitleTrack('fr').mode", "'showing'");
+
+            {
+                debug("Tapping tracks button...");
+                [contextmenu] = await Promise.all([
+                    getTracksContextMenu(),
+                    pressOnElement(shadowRoot.querySelector("button.tracks")),
+                ]);
+                let subtitlesMenu = contextmenu[0].children.find((submenu) => submenu.title === "Subtitles");
+                if (subtitlesMenu.children?.length) {
+                    await UIHelper.chooseMenuAction(subtitlesMenu.title);
+                    await UIHelper.delayFor(500); // give time for the UIMenu to animate
+                    contextmenu = [subtitlesMenu];
+                }
+                shouldBeUndefined("contextmenuItem('English').checked");
+                shouldBeTrue("contextmenuItem('French').checked");
+            }
+
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -40,8 +40,8 @@ class TracksButton extends Button
     get contextMenuOptions()
     {
         return {
-            includeAudioTracks: true,
-            includeTextTracks: true,
+            includeLanguages: true,
+            includeSubtitles: true,
         };
     }
 
