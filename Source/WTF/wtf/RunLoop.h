@@ -36,6 +36,7 @@
 #include <wtf/Observer.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -190,6 +191,7 @@ public:
 
 private:
     class Holder;
+    static ThreadSpecific<Holder>& runLoopHolder();
 
     class DispatchTimer final : public TimerBase {
     public:
