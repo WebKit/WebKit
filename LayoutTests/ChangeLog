@@ -1,3 +1,14 @@
+2021-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        [Multi-column] Ignore line grid offset when the grid line is shorter than 0.5px
+        https://bugs.webkit.org/show_bug.cgi?id=223220
+        <rdar://73192773>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/crash-when-line-grid-is-shorter-than-half-px-expected.txt: Added.
+        * fast/multicol/crash-when-line-grid-is-shorter-than-half-px.html: Added.
+
 2021-03-15  Robert Jenner  <jenner@apple.com>
 
         [ macOS Debug ARM64 ] 2X w3c/svg tests are constantly text failing
