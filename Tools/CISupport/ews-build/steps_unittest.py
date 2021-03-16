@@ -31,6 +31,7 @@ import tempfile
 from buildbot.process import remotetransfer
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShell
+from buildbot.test.util.misc import TestReactorMixin
 from buildbot.test.util.steps import BuildStepMixin
 from buildbot.util import identifiers as buildbot_identifiers
 from mock import call
@@ -38,11 +39,6 @@ from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
-if sys.version_info > (3, 0):
-    from buildbot.test.util.misc import TestReactorMixin
-else:
-    TestReactorMixin = type('TestReactorMixin', (object,), {})
-    TestReactorMixin.setUpTestReactor = lambda self: None
 
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
