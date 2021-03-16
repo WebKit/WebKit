@@ -1440,7 +1440,8 @@ class BuildLogLineObserver(logobserver.LogLineObserver, object):
             self.error_context_buffer.append(line)
 
         if self.searchString in line:
-            map(self.errorReceived, self.error_context_buffer)
+            for log in self.error_context_buffer:
+                self.errorReceived(log)
             self.error_context_buffer = []
 
 
