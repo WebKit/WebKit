@@ -57,6 +57,7 @@ public:
 
 private:
     bool m_scrollAnimatorEnabled { false };
+    float pageScaleFactor();
 
 #if ENABLE(KINETIC_SCROLLING)
     void ensureScrollAnimationKinetic();

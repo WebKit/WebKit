@@ -163,17 +163,33 @@ WheelEventHandlingResult ScrollingTreeScrollingNodeDelegateNicosia::handleWheelE
         }
     }
 
+    deltaX = -deltaX;
+    deltaY = -deltaY;
+
+    if (!scrollingNode().snapOffsetsInfo().isEmpty()) {
+        float scale = pageScaleFactor();
+        FloatPoint originalOffset = LayoutPoint(scrollingNode().currentScrollOffset().x() / scale, scrollingNode().currentScrollOffset().y() / scale);
+        FloatPoint newFloatOffset = scrollingNode().currentScrollOffset() + FloatSize(deltaX, deltaY);
+        auto newOffset = LayoutPoint(newFloatOffset.x() / scale, newFloatOffset.y() / scale);
+
+        auto offsetX = scrollingNode().snapOffsetsInfo().closestSnapOffset(ScrollEventAxis::Horizontal, newOffset.x(), deltaX, originalOffset.x()).first;
+        auto offsetY = scrollingNode().snapOffsetsInfo().closestSnapOffset(ScrollEventAxis::Vertical, newOffset.y(), deltaY, originalOffset.y()).first;
+
+        deltaX = (offsetX - originalOffset.x()) * scale;
+        deltaY = (offsetY - originalOffset.y()) * scale;
+    }
+
 #if ENABLE(SMOOTH_SCROLLING)
     if (m_scrollAnimatorEnabled && !wheelEvent.hasPreciseScrollingDeltas()) {
         ensureScrollAnimationSmooth();
-        m_smoothAnimation->scroll(HorizontalScrollbar, ScrollByPixel, 1, -deltaX);
-        m_smoothAnimation->scroll(VerticalScrollbar, ScrollByPixel, 1, -deltaY);
+        m_smoothAnimation->scroll(HorizontalScrollbar, ScrollByPixel, 1, deltaX);
+        m_smoothAnimation->scroll(VerticalScrollbar, ScrollByPixel, 1, deltaY);
         return WheelEventHandlingResult::handled();
     }
 #endif
 
     auto updateScope = createUpdateScope();
-    scrollingNode().scrollBy({ -deltaX, -deltaY });
+    scrollingNode().scrollBy({ deltaX, deltaY });
 
     return WheelEventHandlingResult::handled();
 }
@@ -190,6 +206,14 @@ void ScrollingTreeScrollingNodeDelegateNicosia::stopScrollAnimations()
     if (m_smoothAnimation)
         m_smoothAnimation->stop();
 #endif
+}
+
+float ScrollingTreeScrollingNodeDelegateNicosia::pageScaleFactor()
+{
+    // FIXME: What should this return for non-root frames, and overflow?
+    // Also, this should not have to access ScrollingTreeFrameScrollingNode.
+    return is<ScrollingTreeFrameScrollingNode>(scrollingNode()) ?
+        downcast<ScrollingTreeFrameScrollingNode>(scrollingNode()).frameScaleFactor() : 1.;
 }
 
 } // namespace WebCore
