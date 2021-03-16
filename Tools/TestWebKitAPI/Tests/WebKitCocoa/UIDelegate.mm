@@ -25,7 +25,9 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -167,6 +169,75 @@ TEST(WebKit, GeolocationPermission)
     auto delegate2 = adoptNS([[GeolocationDelegate alloc] initWithAllowGeolocation:true]);
     [webView setUIDelegate:delegate2.get()];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org/"]];
+    TestWebKitAPI::Util::run(&done);
+}
+
+@interface GeolocationDelegateNew : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation GeolocationDelegateNew
+- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler {
+    EXPECT_WK_STREQ(origin.protocol, @"https");
+    EXPECT_WK_STREQ(origin.host, @"127.0.0.1");
+    EXPECT_EQ(origin.port, 9090);
+
+    EXPECT_WK_STREQ(frame.securityOrigin.protocol, @"https");
+    EXPECT_WK_STREQ(frame.securityOrigin.host, @"127.0.0.1");
+    EXPECT_EQ(frame.securityOrigin.port, 9091);
+    EXPECT_FALSE(frame.isMainFrame);
+    EXPECT_TRUE(frame.webView == webView);
+
+    done  = true;
+    decisionHandler(_WKPermissionDecisionGrant);
+}
+@end
+
+static const char* mainFrameText = R"DOCDOCDOC(
+<html><body>
+<iframe src='https://127.0.0.1:9091/frame' allow='camera:https://127.0.0.1:9091'></iframe>
+</body></html>
+)DOCDOCDOC";
+static const char* frameText = R"DOCDOCDOC(
+<html><body><script>
+navigator.geolocation.getCurrentPosition(() => { });
+</script></body></html>
+)DOCDOCDOC";
+
+TEST(WebKit, GeolocationPermissionInIFrame)
+{
+    TestWebKitAPI::HTTPServer server1({
+        { "/", { mainFrameText } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9090);
+
+    TestWebKitAPI::HTTPServer server2({
+        { "/frame", { frameText } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
+
+    auto pool = adoptNS([[WKProcessPool alloc] init]);
+
+    WKGeolocationProviderV1 providerCallback;
+    memset(&providerCallback, 0, sizeof(WKGeolocationProviderV1));
+    providerCallback.base.version = 1;
+    providerCallback.startUpdating = [] (WKGeolocationManagerRef manager, const void*) {
+        WKGeolocationManagerProviderDidChangePosition(manager, adoptWK(WKGeolocationPositionCreate(0, 50.644358, 3.345453, 2.53)).get());
+    };
+    WKGeolocationManagerSetProvider(WKContextGetGeolocationManager((WKContextRef)pool.get()), &providerCallback.base);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = pool.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[GeolocationDelegateNew alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:server1.request()];
     TestWebKitAPI::Util::run(&done);
 }
 

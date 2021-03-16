@@ -49,8 +49,11 @@ enum class MediaPermissionResult {
 };
 
 enum class MediaPermissionReason {
-    UserMedia,
-    SpeechRecognition,
+    Camera,
+    CameraAndMicrophone,
+    Microphone,
+    Geolocation,
+    SpeechRecognition
 };
 
 #if PLATFORM(COCOA)
@@ -58,7 +61,7 @@ bool checkSandboxRequirementForType(MediaPermissionType);
 bool checkUsageDescriptionStringForType(MediaPermissionType);
 bool checkUsageDescriptionStringForSpeechRecognition();
 
-void alertForPermission(WebPageProxy&, MediaPermissionReason, OptionSet<MediaPermissionType>, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
+void alertForPermission(WebPageProxy&, MediaPermissionReason, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if HAVE(AVCAPTUREDEVICE)

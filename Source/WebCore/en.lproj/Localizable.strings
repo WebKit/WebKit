@@ -124,6 +124,9 @@
 /* Button title in Device Orientation Permission API prompt */
 "Allow (device motion and orientation access)" = "Allow";
 
+/* Allow button title in geolocation prompt */
+"Allow (geolocation)" = "Allow";
+
 /* Allow button title in speech recognition prompt */
 "Allow (speechrecognition)" = "Allow";
 
@@ -132,6 +135,9 @@
 
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
+
+/* Message for geolocation prompt */
+"Allow “%@” to use your current location?" = "Allow “%@” to use your current location?";
 
 /* Message for spechrecognition prompt */
 "Allow “%@” to capture your audio and use it for speech recognition?" = "Allow “%@” to capture your audio and use it for speech recognition?";
@@ -330,6 +336,9 @@
 
 /* Title of the Done button for zoomed form controls. */
 "Done" = "Done";
+
+/* Disallow button title in geolocation prompt */
+"Don’t Allow (geolocation)" = "Don’t Allow";
 
 /* Disallow button title in speech recognition prompt */
 "Don’t Allow (speechrecognition)" = "Don’t Allow";

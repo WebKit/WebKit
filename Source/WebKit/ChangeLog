@@ -1,3 +1,33 @@
+2021-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Add a new delegate for geolocation permission
+        https://bugs.webkit.org/show_bug.cgi?id=223183
+
+        Reviewed by Eric Carlson.
+
+        Refactoring to reuse media capture prompt for geolocation with updated prompt strings.
+        Introduce a new permission delegate for geolocation which provides both the top level origin as well as frame info.
+        The decision handler can get grant, deny or prompt.
+        In case of prompt, we use the updated prompt to get grant or deny decision from the user.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::alertMessageText):
+        (WebKit::allowButtonText):
+        (WebKit::doNotAllowButtonText):
+        (WebKit::alertForPermission):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest):
+        * UIProcess/MediaPermissionUtilities.h:
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::decideByDefaultAction):
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::prompt):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+
 2021-03-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, revert r272629 as it caused regressions in some apps

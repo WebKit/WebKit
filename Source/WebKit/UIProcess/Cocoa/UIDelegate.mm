@@ -31,6 +31,7 @@
 #import "APIHitTestResult.h"
 #import "APIInspectorConfiguration.h"
 #import "CompletionHandlerCallChecker.h"
+#import "MediaPermissionUtilities.h"
 #import "MediaUtilities.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationActionData.h"
@@ -61,7 +62,7 @@
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <WebCore/FontAttributes.h>
-#import <WebCore/SecurityOriginData.h>
+#import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
 
@@ -106,6 +107,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestStorageAccessPanelUnderFirstPartyCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:completionHandler:)];
     m_delegateMethods.webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
+    m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:)];
     m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForFrame:decisionHandler:)];
     m_delegateMethods.webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo = [delegate respondsToSelector:@selector(_webView:didResignInputElementStrongPasswordAppearanceWithUserInfo:)];
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
@@ -400,15 +402,39 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
 
 void UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, const FrameInfoData& frameInfo, Function<void(bool)>& completionHandler)
 {
-    if (!m_uiDelegate)
-        return;
-
-    if (!m_uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler)
+    if (!m_uiDelegate || (!m_uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler && !m_uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler))
         return;
 
     auto delegate = m_uiDelegate->m_delegate.get();
     if (!delegate)
         return;
+
+    if (m_uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler) {
+        auto securityOrigin = WebCore::SecurityOrigin::createFromString(page.pageLoadState().activeURL());
+        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:));
+        auto decisionHandler = makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), securityOrigin = securityOrigin->data(), checker = WTFMove(checker), page = makeWeakPtr(page)] (_WKPermissionDecision decision) mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            if (!page) {
+                completionHandler(false);
+                return;
+            }
+            switch (decision) {
+            case _WKPermissionDecisionPrompt:
+                alertForPermission(*page, MediaPermissionReason::Geolocation, securityOrigin, WTFMove(completionHandler));
+                break;
+            case _WKPermissionDecisionGrant:
+                completionHandler(true);
+                break;
+            case _WKPermissionDecisionDeny:
+                completionHandler(false);
+                break;
+            }
+        });
+        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestGeolocationPermissionForOrigin:wrapper(API::SecurityOrigin::create(securityOrigin.get())) initiatedByFrame:wrapper(API::FrameInfo::create(FrameInfoData { frameInfo }, &page)) decisionHandler:decisionHandler.get()];
+        return;
+    }
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestGeolocationPermissionForFrame:decisionHandler:));
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestGeolocationPermissionForFrame:wrapper(API::FrameInfo::create(FrameInfoData { frameInfo }, &page)) decisionHandler:makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), checker = WTFMove(checker)] (BOOL result) mutable {

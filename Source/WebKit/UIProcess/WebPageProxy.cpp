@@ -8081,8 +8081,6 @@ void WebPageProxy::requestGeolocationPermissionForFrame(GeolocationIdentifier ge
     auto* frame = m_process->webFrame(*frameInfo.frameID);
     MESSAGE_CHECK(m_process, frame);
 
-    // FIXME: Geolocation should probably be using toString() as its string representation instead of databaseIdentifier().
-    auto origin = API::SecurityOrigin::create(frameInfo.securityOrigin.securityOrigin());
     auto request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
     Function<void(bool)> completionHandler = [request = WTFMove(request)](bool allowed) {
         if (allowed)

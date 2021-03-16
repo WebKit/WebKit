@@ -117,7 +117,7 @@ static NSString* visibleDomain(const String& host)
     return startsWithLettersIgnoringASCIICase(domain, "www.") ? domain.substring(4) : domain;
 }
 
-static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOriginData& origin)
+static NSString *alertMessageText(MediaPermissionReason reason, const WebCore::SecurityOriginData& origin)
 {
     NSString *visibleOrigin;
     if (origin.protocol != "http" && origin.protocol != "https") {
@@ -129,14 +129,14 @@ static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaP
         visibleOrigin = visibleDomain(origin.host);
 
     switch (reason) {
-    case MediaPermissionReason::UserMedia:
-        if (types.contains(MediaPermissionType::Audio) && types.contains(MediaPermissionType::Video))
-            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleOrigin];
-        if (types.contains(MediaPermissionType::Audio))
-            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleOrigin];
-        if (types.contains(MediaPermissionType::Video))
-            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleOrigin];
-        return nil;
+    case MediaPermissionReason::Camera:
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleOrigin];
+    case MediaPermissionReason::CameraAndMicrophone:
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleOrigin];
+    case MediaPermissionReason::Microphone:
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleOrigin];
+    case MediaPermissionReason::Geolocation:
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your current location?", @"Message for geolocation prompt"), visibleDomain(origin.host)];
     case MediaPermissionReason::SpeechRecognition:
         return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host)];
     }
@@ -145,8 +145,12 @@ static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaP
 static NSString *allowButtonText(MediaPermissionReason reason)
 {
     switch (reason) {
-    case MediaPermissionReason::UserMedia:
+    case MediaPermissionReason::Camera:
+    case MediaPermissionReason::CameraAndMicrophone:
+    case MediaPermissionReason::Microphone:
         return WEB_UI_STRING_KEY(@"Allow", "Allow (usermedia)", @"Allow button title in user media prompt");
+    case MediaPermissionReason::Geolocation:
+        return WEB_UI_STRING_KEY(@"Allow", "Allow (geolocation)", @"Allow button title in geolocation prompt");
     case MediaPermissionReason::SpeechRecognition:
         return WEB_UI_STRING_KEY(@"Allow", "Allow (speechrecognition)", @"Allow button title in speech recognition prompt");
     }
@@ -155,14 +159,18 @@ static NSString *allowButtonText(MediaPermissionReason reason)
 static NSString *doNotAllowButtonText(MediaPermissionReason reason)
 {
     switch (reason) {
-    case MediaPermissionReason::UserMedia:
+    case MediaPermissionReason::Camera:
+    case MediaPermissionReason::CameraAndMicrophone:
+    case MediaPermissionReason::Microphone:
         return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (usermedia)", @"Disallow button title in user media prompt");
+    case MediaPermissionReason::Geolocation:
+        return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (geolocation)", @"Disallow button title in geolocation prompt");
     case MediaPermissionReason::SpeechRecognition:
         return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (speechrecognition)", @"Disallow button title in speech recognition prompt");
     }
 }
 
-void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
+void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto *webView = fromWebPageProxy(page);
     if (!webView) {
@@ -170,7 +178,7 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, Option
         return;
     }
     
-    auto *alertTitle = alertMessageText(reason, types, origin);
+    auto *alertTitle = alertMessageText(reason, origin);
     if (!alertTitle) {
         completionHandler(false);
         return;

@@ -243,8 +243,7 @@ void SpeechRecognitionPermissionManager::requestUserPermission(WebCore::SpeechRe
 void SpeechRecognitionPermissionManager::decideByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if PLATFORM(COCOA)
-    OptionSet<MediaPermissionType> type = MediaPermissionType::Audio;
-    alertForPermission(m_page, MediaPermissionReason::SpeechRecognition, type, origin, WTFMove(completionHandler));
+    alertForPermission(m_page, MediaPermissionReason::SpeechRecognition, origin, WTFMove(completionHandler));
 #else
     completionHandler(false);
 #endif
