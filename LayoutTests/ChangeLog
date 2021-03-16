@@ -1,5 +1,15 @@
 2021-03-16  Robert Jenner  <jenner@apple.com>
 
+        [ macOS Debug ] 2 imported/w3c/web-platform-tests/xhr/ are flakey text failures
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=223271
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Updated expectations to Pass Fail for BigSur Debug wk1.
+        * platform/mac/TestExpectations: Updated expectations to Pass Fail for BigSur Debug.
+
+2021-03-16  Robert Jenner  <jenner@apple.com>
+
         [MacOS wk2] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html is a flakey failure
         https://bugs.webkit.org/show_bug.cgi?id=222210
 
