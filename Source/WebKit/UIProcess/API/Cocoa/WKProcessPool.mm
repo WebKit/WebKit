@@ -484,6 +484,11 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 #endif
 }
 
++ (void)_setLinkedOnOrBeforeEverythingForTesting
+{
+    setApplicationSDKVersion(0);
+}
+
 + (void)_setLinkedOnOrAfterEverythingForTesting
 {
     setApplicationSDKVersion(std::numeric_limits<uint32_t>::max());
