@@ -1,3 +1,20 @@
+2021-03-16  Dean Johnson  <dean_johnson@apple.com>
+
+        [prepare-ChangeLog] Assigning a multiline comment to a variable breaks change detection
+        https://bugs.webkit.org/show_bug.cgi?id=223225
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_python): Remove '^' prefix from regex so we match multiline
+        strings assigned to variables.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests-expected.txt:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests.py: Add multiline string
+        variable definition, which previously would cause prepare-ChangeLog to parse the remainder of the file
+        as a multiline comment. Also add a new test to ensure it's not skipped by multiline logic.
+        (Class8.__init__):
+        (Class9):
+
 2021-03-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EWS] run-layout-tests-without-patch step should only retry the tests that failed on the previous steps.
