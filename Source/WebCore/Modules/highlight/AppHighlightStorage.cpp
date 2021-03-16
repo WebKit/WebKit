@@ -246,6 +246,8 @@ void AppHighlightStorage::restoreAppHighlight(Ref<SharedBuffer>&& buffer)
         m_unrestoredHighlights.append(appHighlightRangeData.value());
     else
         strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
+    
+    m_timeAtLastRangeSearch = MonotonicTime::now();
 }
 
 void AppHighlightStorage::restoreUnrestoredAppHighlights()
@@ -265,6 +267,7 @@ void AppHighlightStorage::restoreUnrestoredAppHighlights()
         else
             strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
     }
+    m_timeAtLastRangeSearch = MonotonicTime::now();
     m_unrestoredHighlights = WTFMove(remainingRanges);
 }
 

@@ -23,6 +23,7 @@
 #include "ActivityStateChangeObserver.h"
 #include "AlternativeTextClient.h"
 #include "AnimationFrameRate.h"
+#include "AppHighlightStorage.h"
 #include "ApplicationCacheStorage.h"
 #include "AuthenticatorCoordinator.h"
 #include "BackForwardCache.h"
@@ -1608,6 +1609,24 @@ void Page::doAfterUpdateRendering()
     forEachDocument([] (Document& document) {
         document.updateHighlightPositions();
     });
+#if ENABLE(APP_HIGHLIGHT)
+    forEachDocument([] (Document& document) {
+        if (!auto appHighlightStorage = document.appHighlightStorageIfExists())
+            return;
+        
+        if (appHighlightStorage->hasUnrestoredHighlights() && MonotonicTime::now() - appHighlightStorage->lastRangeSearchTime() > 1_s) {
+            appHighlightStorage->resetLastRangeSearchTime();
+            document.eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakDocument = makeWeakPtr(document)] {
+                auto document = makeRefPtr(weakDocument.get());
+                if (!document)
+                    return;
+
+                if (auto* appHighlightStorage = document->appHighlightStorageIfExists())
+                    appHighlightStorage->restoreUnrestoredAppHighlights();
+            });
+        }
+    });
+#endif
 
 #if ENABLE(VIDEO)
     forEachDocument([] (Document& document) {
