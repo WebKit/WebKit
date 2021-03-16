@@ -1,3 +1,14 @@
+2021-03-16  Youenn Fablet  <youenn@apple.com>
+
+        [ macOs Wk1 ] http/wpt/filereader/filereader-stop.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=222749
+        <rdar://problem/75045013>
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/filereader/filereader-stop.html:
+        Update test to register the event handlers for the second load, not the first one.
+
 2021-03-15  Rob Buis  <rbuis@igalia.com>
 
         Fix table-element-001.html

@@ -21,13 +21,14 @@ function with_iframe(url) {
 promise_test(async t => {
     const frame = await with_iframe("/");
     const reader = new frame.contentWindow.FileReader();
-    reader.onload = () => assert_unreached("load");
-    reader.onerror = () => assert_unreached("error");
 
     reader.readAsText(new Blob(["123"], {type: "text/plain-specific"}));
     await new Promise(resolve => setTimeout(resolve, 0));
 
     frame.remove();
+
+    reader.onload = () => assert_unreached("load");
+    reader.onerror = () => assert_unreached("error");
     try {
         reader.readAsText(new Blob(["123"], {type: "text/plain-specific"}));
     } catch (e) {
