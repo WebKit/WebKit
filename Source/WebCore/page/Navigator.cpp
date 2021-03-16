@@ -186,6 +186,11 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
     auto* frame = this->frame();
     if (!frame || !frame->page())
         return;
+
+    if (frame->page()->isControlledByAutomation()) {
+        promise->resolve();
+        return;
+    }
     
     m_hasPendingShare = true;
     auto shareData = readData.returnValue();
