@@ -4022,10 +4022,6 @@ IGNORE_WARNINGS_END
 
 - (NSArray *)_touchEventRegions
 {
-#if PLATFORM(IOS_FAMILY)
-    WebThreadLock();
-#endif
-    
     auto* frame = [self _mainCoreFrame];
     if (!frame)
         return nil;
