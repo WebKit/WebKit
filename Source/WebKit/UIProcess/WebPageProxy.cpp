@@ -7167,8 +7167,18 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
-    updateEditorState(editorState);
-    dispatchDidUpdateEditorState();
+    if (updateEditorState(editorState))
+        dispatchDidUpdateEditorState();
+}
+
+bool WebPageProxy::updateEditorState(const EditorState& newEditorState)
+{
+    if (newEditorState.transactionID < m_editorState.transactionID)
+        return false;
+
+    auto oldEditorState = std::exchange(m_editorState, newEditorState);
+    didUpdateEditorState(oldEditorState, newEditorState);
+    return true;
 }
 
 #if !PLATFORM(IOS_FAMILY)

@@ -2176,6 +2176,7 @@ private:
 
     enum class EditorStateIsContentEditable { No, Yes, Unset };
     mutable EditorStateIsContentEditable m_lastEditorStateWasContentEditable { EditorStateIsContentEditable::Unset };
+    mutable TransactionID m_lastEditorStateTransactionID;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     Optional<InputMethodState> m_inputMethodState;

@@ -64,9 +64,8 @@ void WebPageProxy::loadRecentSearches(const String&, CompletionHandler<void(Vect
     completionHandler({ });
 }
 
-void WebPageProxy::updateEditorState(const EditorState& editorState)
+void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState&)
 {
-    m_editorState = editorState;
 }
 
 } // namespace WebKit

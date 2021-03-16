@@ -1,3 +1,85 @@
+2021-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WebPageProxy's EditorState may be stale until the next remote layer tree commit
+        https://bugs.webkit.org/show_bug.cgi?id=223207
+        <rdar://problem/75410700>
+
+        Reviewed by Tim Horton.
+
+        Fixes a race condition wherein it's possible for the cached `EditorState` in the UI process (on `WebPageProxy`)
+        to be set to a stale (older) value after being set to a newer value. This can happen in the case where:
+
+        1.  An editor state update is computed and set on a remote layer tree transaction in the web process, inside
+            `WebPage::willCommitLayerTree`. A pending `BackingStoreFlusher` is created, and we dispatch a task onto a
+            background queue to flush the layer tree commit.
+
+        2.  IPC that updates the selection arrives in the web process (e.g. WebPage::selectTextWithGranularityAtPoint),
+            and causes us to send an `EditorStateChanged` message to the UI process with this new selection.
+
+        3.  The pending `BackingStoreFlusher` created in step (1) dispatches on the background queue, and sends its
+            editor state over to the UI process.
+
+        As a result, the UI process receives the `EditorStateChanged` message in step (2) before it receives the remote
+        layer tree transaction sent in step (3), which contains the editor state computed prior to step (2); we then set
+        `WebPageProxy::m_editorState` from its value computed in step (2) to the value computed in step (1).
+
+        To fix this (and any similar issues involving out-of-band editor state updates), we introduce a monotonically
+        increasing transaction ID on editor state that's similar to the one used for remote layer tree commits; we then
+        avoid updating the editor state in `WebPageProxy` if we receive an `EditorState` whose transaction ID is less
+        than our current ID.
+
+        Test: fast/images/image-extraction/ios/reselect-word-in-image-overlay.html
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode const):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+
+        Add the TransactionID, and add encoding/decoding support for the new member.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        (WebKit::WebPageProxy::updateEditorState):
+
+        Refactor this to return a `bool`, indicating whether the editor state was modified (this only returns `false` in
+        the case where the incoming editor state was older than the one we currently have). We also make this method
+        platform-agnostic, and move the platform-dependent logic previously implemented by individual `updateEditorState`
+        implementations into `WebPageProxy::didUpdateEditorState` instead.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::didUpdateEditorState):
+        (WebKit::WebPageProxy::updateEditorState): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didUpdateEditorState):
+
+        Add a new platform method hook that is called when `m_editorState` is updated due to an incoming `EditorState`
+        from the web process. The old and new cached `EditorState` values are passed into this method; note that even
+        though only the previous value is necessary as an argument (since `m_editorState` is already equal to the new
+        value here), I chose to pass in both to make it clear that both old and new values can be consulted here.
+
+        (WebKit::WebPageProxy::updateEditorState): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::didUpdateEditorState):
+        (WebKit::WebPageProxy::updateEditorState): Deleted.
+        * UIProcess/playstation/WebPageProxyPlayStation.cpp:
+        (WebKit::WebPageProxy::didUpdateEditorState):
+        (WebKit::WebPageProxy::updateEditorState): Deleted.
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::didUpdateEditorState):
+        (WebKit::WebPageProxy::updateEditorState): Deleted.
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::didUpdateEditorState):
+        (WebKit::WebPageProxy::updateEditorState): Deleted.
+
+        Rename these method implementations, and adjust them to use `oldEditorState` and `newEditorState`.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-03-15  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r271642) Another app was relying on DOMWindow reuse

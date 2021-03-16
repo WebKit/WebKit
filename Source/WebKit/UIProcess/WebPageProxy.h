@@ -1600,7 +1600,7 @@ public:
     void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, SandboxExtension::HandleArray& fileUploadHandles);
 #endif
     void editorStateChanged(const EditorState&);
-    void updateEditorState(const EditorState&);
+    bool updateEditorState(const EditorState& newEditorState);
     void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();
 
@@ -2252,7 +2252,6 @@ private:
     void updateInputContextAfterBlurringAndRefocusingElement();
     void focusedElementDidChangeInputMode(WebCore::InputMode);
     void didReleaseAllTouchPoints();
-    void didUpdateEditorState();
 
     void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&);
     void hideInspectorHighlight();
@@ -2416,6 +2415,8 @@ private:
     static SandboxExtension::HandleArray createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
 
     static SandboxExtension::Handle fontdMachExtensionHandle();
+
+    void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
 
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;
