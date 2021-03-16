@@ -1,3 +1,51 @@
+2021-03-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Make WebGL conformance test update script more usable and consistent
+        https://bugs.webkit.org/show_bug.cgi?id=223112
+
+        Reviewed by Kenneth Russell.
+
+        Moves the script LayoutTests/webgl/generate-webgl-tests over
+        unused and stale Tools/Scripts/update-webgl-conformance-tests
+
+        Fixes the script to:
+          - to support generation of the test driver .html files with webglVersion=2
+          - copy the webgl conformance test files once to webgl/resources/webgl_test_files.
+            Previously they were copied twice, 1.0.3/resources/.. and 2.0.0/resources
+          - to support copying all the tests at the same time. Previously each
+            individual suites (1.0.3, 2.0.0) would be copied
+            in different invocations, leading to errors and omissions to run when
+            something changes, such as the templates.
+          - supports generation of the directories from scratch, so that no stale files
+            such as expectations, driver .html files or test suite content is left.
+          - automatically filter files that do not need to be copied (deqp/compiler.jar, ...)
+          - try to adopt a style somewhat consistent with other WebKit python scripts
+          - copy to upcoming 1.0.4 and 2.0.1 instead of old 1.0.3/2.0.0.
+
+        * Scripts/update-webgl-conformance-tests:
+        * Scripts/webkitpy/to_be_moved/__init__.py: Removed.
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests.py: Removed.
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests_unittest.py: Removed.
+        * Scripts/webkitpy/update_webgl_conformance_tests_lib/main.py: Added.
+        (_make_ignore_fnmatch_rule_matcher):
+        (_make_ignore_fnmatch_rule_matcher.match_rules):
+        (_copy_tree):
+        (_WebGLTest):
+        (_parse_webgl_tests):
+        (_filter_webgl_test_paths_for_suite_version):
+        (_generate_webkit_webgl_tests):
+        (_find_expectations_for_removed_tests):
+        (main):
+        * Scripts/webkitpy/update_webgl_conformance_tests_lib/webgl-expectation-template.txt: Renamed from LayoutTests/webgl/resources/webgl-expectation-template.txt.
+        * Scripts/webkitpy/update_webgl_conformance_tests_lib/webgl-test-driver-template.html: Renamed from LayoutTests/webgl/resources/webgl-wrapper-template.html.
+        * Scripts/webkitpy/update_webgl_conformance_tests_lib/webkit-webgl-test-harness-template.js: Added.
+        (window.layoutTestController.window.console.log):
+        (window.layoutTestController.window.console.error):
+        (list):
+        (log):
+        (window.webglTestHarness.reportResults):
+        (window.webglTestHarness.notifyFinished):
+
 2021-03-16  John Wilander  <wilander@apple.com>
 
         PCM: Test infrastructure for sending attribution reports to attribution website too

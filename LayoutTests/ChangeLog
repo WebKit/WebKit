@@ -1,3 +1,14 @@
+2021-03-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Make WebGL conformance test update script more usable and consistent
+        https://bugs.webkit.org/show_bug.cgi?id=223112
+
+        Reviewed by Kenneth Russell.
+
+        Move the script over the existing but unused Tools/Scripts/update-webgl-conformance-tests.
+
+        * webgl/generate-webgl-tests: Removed.
+
 2021-03-16  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur arm64] compositing/z-order/rebuild-sibling-of-layer-with-foreground-layer.html is a flakey image failure
