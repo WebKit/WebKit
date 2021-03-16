@@ -1,3 +1,23 @@
+2021-03-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Add GTK4 tests expectations
+        https://bugs.webkit.org/show_bug.cgi?id=222907
+
+        Reviewed by Carlos Garcia Campos.
+
+        Check whether we are using a GTK4 build to automatically enable the
+        platform/gtk4 expectations. This is done checking the
+        presence of either libwebkit2gtk-4.0.so or libwebkit2gtk-5.0.so, so it
+        works on binary-only deployments like the testing bots.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._search_paths):
+        (GtkPort._is_gtk4_build):
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest.test_gtk4_expectations_binary_only):
+        (GtkPortTest.test_gtk3_expectations_binary_only):
+        (GtkPortTest.test_gtk_expectations_both_binaries):
+
 2021-03-16  Youenn Fablet  <youenn@apple.com>
 
         Add a new delegate for geolocation permission

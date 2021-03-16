@@ -1,3 +1,12 @@
+2021-03-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Add GTK4 tests expectations
+        https://bugs.webkit.org/show_bug.cgi?id=222907
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk4/TestExpectations: Added.
+
 2021-03-16  Frederic Wang  <fwang@igalia.com>
 
         Crash in makeBoundaryPoint via ReplaceSelectionCommand::insertedContentRange

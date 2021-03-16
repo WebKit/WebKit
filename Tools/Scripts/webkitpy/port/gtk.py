@@ -33,6 +33,7 @@ import uuid
 import logging
 import shlex
 
+import webkitpy
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -210,8 +211,13 @@ class GtkPort(Port):
 
     def _search_paths(self):
         search_paths = []
+
+        if self._is_gtk4_build():
+            search_paths.append(self.port_name + "4")
+
         if self._driver_class() in [WaylandDriver, WestonDriver]:
             search_paths.append(self.port_name + "-wayland")
+
         search_paths.append(self.port_name)
         search_paths.append('glib')
         search_paths.append('wk2')
@@ -277,3 +283,19 @@ class GtkPort(Port):
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
         return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False)
+
+    @memoized
+    def _is_gtk4_build(self):
+        try:
+            libdir = self._build_path('lib')
+            candidates = self._filesystem.glob(os.path.join(libdir, 'libwebkit2gtk-*.so'))
+            if not candidates:
+                return False
+            if len(candidates) > 1:
+                _log.warning("Multiple WebKit2GTK libraries found. Skipping GTK4 detection.")
+                return False
+            return os.path.basename(candidates[0]) == 'libwebkit2gtk-5.0.so'
+
+        except (webkitpy.common.system.executive.ScriptError, IOError, OSError):
+            return False
+        return False

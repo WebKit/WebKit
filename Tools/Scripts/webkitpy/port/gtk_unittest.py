@@ -101,3 +101,44 @@ class GtkPortTest(port_testcase.PortTestCase):
         self.assertEqual(configuration['platform'], 'GTK')
         self.assertEqual(configuration['style'], 'release')
         self.assertEqual(configuration['version_name'], 'Xvfb')
+
+    def test_gtk4_expectations_binary_only(self):
+        port = self.make_port()
+        port._filesystem = MockFileSystem({
+            "/mock-build/lib/libwebkit2gtk-5.0.so": ""
+        })
+        with OutputCapture() as _:
+            self.assertEquals(port.expectations_files(),
+                              ['/mock-checkout/LayoutTests/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/gtk/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/gtk4/TestExpectations'])
+
+    def test_gtk3_expectations_binary_only(self):
+        port = self.make_port()
+        port._filesystem = MockFileSystem({
+            "/mock-build/lib/libwebkit2gtk-4.0.so": ""
+        })
+
+        with OutputCapture() as _:
+            self.assertEquals(port.expectations_files(),
+                              ['/mock-checkout/LayoutTests/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
+
+    def test_gtk_expectations_both_binaries(self):
+        port = self.make_port()
+        port._filesystem = MockFileSystem({
+            "/mock-build/lib/libwebkit2gtk-4.0.so": "",
+            "/mock-build/lib/libwebkit2gtk-5.0.so": ""
+        })
+
+        with OutputCapture() as captured:
+            self.assertEquals(port.expectations_files(),
+                              ['/mock-checkout/LayoutTests/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/glib/TestExpectations',
+                               '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
+            self.assertEquals(captured.root.log.getvalue(), 'Multiple WebKit2GTK libraries found. Skipping GTK4 detection.\n')
