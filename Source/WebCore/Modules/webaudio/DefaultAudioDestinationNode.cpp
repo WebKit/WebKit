@@ -134,7 +134,7 @@ Function<void(Function<void()>&&)> DefaultAudioDestinationNode::dispatchToRender
             }, WorkerRunLoop::defaultMode());
         };
     }
-    return [](Function<void()>&& function) { function(); };
+    return nullptr;
 }
 
 void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)

@@ -222,16 +222,25 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
 
     // When there is a AudioWorklet, we do rendering on the AudioWorkletThread.
     auto locker = tryHoldLock(m_dispatchToRenderThreadLock);
-    if (!locker || !m_dispatchToRenderThread)
+    if (!locker)
         return -1;
 
-    m_dispatchToRenderThread([this, protectedThis = makeRef(*this), framesToRender]() mutable {
-        auto locker = tryHoldLock(m_isPlayingLock);
-        if (locker && m_isPlaying)
-            renderOnRenderingThead(framesToRender);
-    });
+    if (!m_dispatchToRenderThread)
+        renderOnRenderingTheadIfPlaying(framesToRender);
+    else {
+        m_dispatchToRenderThread([protectedThis = makeRef(*this), framesToRender]() mutable {
+            protectedThis->renderOnRenderingTheadIfPlaying(framesToRender);
+        });
+    }
 
     return noErr;
+}
+
+void AudioDestinationCocoa::renderOnRenderingTheadIfPlaying(size_t framesToRender)
+{
+    auto locker = tryHoldLock(m_isPlayingLock);
+    if (locker && m_isPlaying)
+        renderOnRenderingThead(framesToRender);
 }
 
 // This runs on the AudioWorkletThread when AudioWorklet is enabled, on the audio device's rendering thread otherwise.

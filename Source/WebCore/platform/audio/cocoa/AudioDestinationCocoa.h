@@ -71,6 +71,7 @@ private:
     virtual void startRendering(CompletionHandler<void(bool)>&&);
     virtual void stopRendering(CompletionHandler<void(bool)>&&);
 
+    void renderOnRenderingTheadIfPlaying(size_t framesToRender);
     void renderOnRenderingThead(size_t framesToRender);
 
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
