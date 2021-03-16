@@ -1,3 +1,18 @@
+2021-03-16  Alex Christensen  <achristensen@webkit.org>
+
+        Terminate network process when making new WebProcessPool in Lutron App
+        https://bugs.webkit.org/show_bug.cgi?id=223194
+        <rdar://74674915>
+
+        Reviewed by Geoff Garen.
+
+        The Lutron App uses allocation of a new WKProcessPool as a way to stop using old session cookies.
+        Since r267763 we keep the session cookies for the lifetime of a WKWebsiteDataStore instead of making a new process for each WKProcessPool.
+        Add a quirk for this app until they update to use a new WKWebsiteDataStore or use WKHTTPCookieStore API to clear the cookies properly.
+        I manually verified this causes the logging out to succeed.
+
+        * UIProcess/WebProcessPool.cpp:
+
 2021-03-16  Kate Cheney  <katherine_cheney@apple.com>
 
         Add internal additions for WebAuthn compatibility

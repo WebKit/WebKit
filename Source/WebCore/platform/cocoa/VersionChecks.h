@@ -70,6 +70,7 @@ enum class SDKVersion : uint32_t {
     FirstWithNullOriginForNonSpecialSchemedURLs = DYLD_IOS_VERSION_15_0,
     FirstWithoutWeChatScrollingQuirk = DYLD_IOS_VERSION_14_5,
     FirstWithDOMWindowReuseRestriction  = DYLD_IOS_VERSION_14_5,
+    FirstWithSharedNetworkProcess = DYLD_IOS_VERSION_14_5,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
