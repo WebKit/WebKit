@@ -1,5 +1,14 @@
 2021-03-16  Robert Jenner  <jenner@apple.com>
 
+        [ macOS debug arm64 ] ASSERTION FAILED: count >= 1 ./rendering/RenderMultiColumnSet.cpp(450) : unsigned int WebCore::RenderMultiColumnSet::columnCount() const
+        https://bugs.webkit.org/show_bug.cgi?id=223144
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: updating expectations to crash while test is being reviewed.
+
+2021-03-16  Robert Jenner  <jenner@apple.com>
+
         [ BigSur wk2 arm64 ] 4 webrtc/ Layout-tests are consistently timing out
         https://bugs.webkit.org/show_bug.cgi?id=223043
 

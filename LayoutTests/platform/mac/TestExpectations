@@ -2324,3 +2324,5 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 webkit.org/b/223259 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels.html [ Failure ]
 
 webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.worker.html [ Pass Failure ]
+
+webkit.org/b/223144 [ Debug arm64 ] fast/multicol/crash-when-spanner-candidate-is-out-of-flow.html [ Crash ]
