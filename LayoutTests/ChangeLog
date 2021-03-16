@@ -1,3 +1,30 @@
+2021-03-16  John Wilander  <wilander@apple.com>
+
+        PCM: Test infrastructure for sending attribution reports to attribution website too
+        https://bugs.webkit.org/show_bug.cgi?id=223238
+        <rdar://problem/75462031>
+
+        Reviewed by Brent Fulgham.
+
+        setPrivateClickMeasurementAttributionReportURLForTesting() now is named
+        setPrivateClickMeasurementAttributionReportURLsForTesting() in the layers that
+        eventually reach WebKit::PrivateClickMeasurementManager. It takes two URLs
+        attributionReportSourceURL and attributionReportAttributeOnURL and sets them
+        in a new struct AttributionReportTestConfig.
+
+        * http/tests/contentextensions/block-private-click-measurement.html:
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session.html:
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html:
+        * http/tests/privateClickMeasurement/resources/getConversionData.php:
+        * http/tests/privateClickMeasurement/resources/util.js:
+        (tearDownAndFinish):
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html:
+        * platform/mac-wk2/TestExpectations:
+            This was marked as an old flaky failure and tracked in rdar://63357481.
+            I've kept my eye on it and it does not seem flaky anymore. Removed failure
+            expectation to get better test coverage.
+
 2021-03-16  Truitt Savell  <tsavell@apple.com>
 
         Many media/media-fragments/ tests are crashing due to other tests that run before them.

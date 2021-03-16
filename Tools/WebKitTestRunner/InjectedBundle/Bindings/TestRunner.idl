@@ -406,7 +406,7 @@ interface TestRunner {
     undefined simulateResourceLoadStatisticsSessionRestart();
     undefined setPrivateClickMeasurementTokenPublicKeyURLForTesting(DOMString url);
     undefined setPrivateClickMeasurementTokenSignatureURLForTesting(DOMString url);
-    undefined setPrivateClickMeasurementAttributionReportURLForTesting(DOMString url);
+    undefined setPrivateClickMeasurementAttributionReportURLsForTesting(DOMString sourceURLString, DOMString attributeOnURLString);
     undefined markPrivateClickMeasurementsAsExpiredForTesting();
     undefined setPrivateClickMeasurementFraudPreventionValuesForTesting(DOMString unlinkableToken, DOMString secretToken, DOMString signature, DOMString keyID);
 

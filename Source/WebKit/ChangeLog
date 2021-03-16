@@ -1,3 +1,46 @@
+2021-03-16  John Wilander  <wilander@apple.com>
+
+        PCM: Test infrastructure for sending attribution reports to attribution website too
+        https://bugs.webkit.org/show_bug.cgi?id=223238
+        <rdar://problem/75462031>
+
+        Reviewed by Brent Fulgham.
+
+        setPrivateClickMeasurementAttributionReportURLForTesting() now is named
+        setPrivateClickMeasurementAttributionReportURLsForTesting() in the layers that
+        eventually reach WebKit::PrivateClickMeasurementManager. It takes two URLs
+        attributionReportSourceURL and attributionReportAttributeOnURL and sets them
+        in a new struct AttributionReportTestConfig.
+
+        No new tests. This patch just adds test infrastructure for a coming patch.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAttributionReportURLForTesting): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        (WebKit::NetworkSession::setPrivateClickMeasurementAttributionReportURLForTesting): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        (WebKit::PrivateClickMeasurementManager::setAttributionReportURLsForTesting):
+        (WebKit::PrivateClickMeasurementManager::setAttributionReportURLForTesting): Deleted.
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting):
+        (WKPageSetPrivateClickMeasurementAttributionReportURLForTesting): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _setPrivateClickMeasurementAttributionReportURLsForTesting:attributeOnURL:completionHandler:]):
+        (-[WKWebView _setPrivateClickMeasurementAttributionReportURLForTesting:completionHandler:]): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        (WebKit::WebPageProxy::setPrivateClickMeasurementAttributionReportURLForTesting): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2021-03-16  Per Arne Vollan  <pvollan@apple.com>
 
         The WebContent process crashes when launching Safari

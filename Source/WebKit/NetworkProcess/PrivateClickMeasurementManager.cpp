@@ -324,7 +324,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
 
 void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClickMeasurement& attribution)
 {
-    auto attributionURL = m_attributionReportBaseURLForTesting ? *m_attributionReportBaseURLForTesting : attribution.attributionReportSourceURL();
+    auto attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportSourceURL : attribution.attributionReportSourceURL();
     if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
 
@@ -474,12 +474,12 @@ void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testUR
         m_tokenSignatureURLForTesting = WTFMove(testURL);
 }
 
-void PrivateClickMeasurementManager::setAttributionReportURLForTesting(URL&& testURL)
+void PrivateClickMeasurementManager::setAttributionReportURLsForTesting(URL&& sourceURL, URL&& attributeOnURL)
 {
-    if (testURL.isEmpty())
-        m_attributionReportBaseURLForTesting = { };
+    if (sourceURL.isEmpty() || attributeOnURL.isEmpty())
+        m_attributionReportTestConfig = WTF::nullopt;
     else
-        m_attributionReportBaseURLForTesting = WTFMove(testURL);
+        m_attributionReportTestConfig = AttributionReportTestConfig { WTFMove(sourceURL), WTFMove(attributeOnURL) };
 }
 
 void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()

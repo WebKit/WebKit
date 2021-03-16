@@ -11,7 +11,7 @@ function tearDownAndFinish() {
     if (window.testRunner) {
         testRunner.setAllowsAnySSLCertificate(false);
         testRunner.setPrivateClickMeasurementOverrideTimerForTesting(false);
-        testRunner.setPrivateClickMeasurementAttributionReportURLForTesting("");
+        testRunner.setPrivateClickMeasurementAttributionReportURLsForTesting("", "");
         testRunner.setPrivateClickMeasurementTokenSignatureURLForTesting("");
         testRunner.setPrivateClickMeasurementTokenPublicKeyURLForTesting("");
         testRunner.notifyDone();

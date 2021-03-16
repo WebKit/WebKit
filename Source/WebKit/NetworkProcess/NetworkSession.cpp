@@ -348,9 +348,9 @@ void NetworkSession::setPrivateClickMeasurementTokenSignatureURLForTesting(URL&&
     privateClickMeasurement().setTokenSignatureURLForTesting(WTFMove(url));
 }
 
-void NetworkSession::setPrivateClickMeasurementAttributionReportURLForTesting(URL&& url)
+void NetworkSession::setPrivateClickMeasurementAttributionReportURLsForTesting(URL&& sourceURL, URL&& attributeOnURL)
 {
-    privateClickMeasurement().setAttributionReportURLForTesting(WTFMove(url));
+    privateClickMeasurement().setAttributionReportURLsForTesting(WTFMove(sourceURL), WTFMove(attributeOnURL));
 }
 
 void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()

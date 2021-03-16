@@ -53,7 +53,7 @@
             if (!window.location.search) {
                 testRunner.setPrivateClickMeasurementTokenPublicKeyURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/fraudPreventionTestURL.php?dummy=" + dummy);
                 testRunner.setPrivateClickMeasurementTokenSignatureURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/fraudPreventionTestURL.php?dummy=" + dummy);
-                testRunner.setPrivateClickMeasurementAttributionReportURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/fraudPreventionTestURL.php?dummy=" + dummy + "&last=true");
+                testRunner.setPrivateClickMeasurementAttributionReportURLsForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/fraudPreventionTestURL.php?dummy=" + dummy + "&last=true", "http://localhost:8000/privateClickMeasurement/resources/fraudPreventionTestURL.php?dummy=" + dummy + "&last=true");
                 testRunner.setPrivateClickMeasurementOverrideTimerForTesting(true);
                 testRunner.setPrivateClickMeasurementFraudPreventionValuesForTesting("unlinkableToken", "secretToken", "signature", "WF3Ugg");
 
