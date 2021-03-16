@@ -1,4 +1,4 @@
-// Copyright (C) 2019, 2020 Apple Inc. All rights reserved.
+// Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -147,10 +147,22 @@ class Commit {
         return this.uuid - commit.uuid;
     }
     label() {
-        // Per the birthday paradox, 10% chance of collision with 7.7 million commits with 12 character commits
-        return this.identifier.substring(0,12);
+        const preference = CommitBank._representationCache ? CommitBank._representationCache[this.repository_id].representation : null;
+
+        if (preference === 'identifier')
+            return this.identifier;
+        if (preference === 'hash') {
+            // Per the birthday paradox, 10% chance of collision with 7.7 million commits with 12 character commits
+            return this.hash.substring(0,12)
+        }
+        if (preference === 'revision')
+            return `r${this.revision}`;
+
+        return this.revision ? `r${this.revision}` : this.hash.substring(0,12);
     }
 };
+
+const COOKIE_NAME = 'commitRepresentation';
 
 class _CommitBank {
     constructor() {
@@ -163,7 +175,45 @@ class _CommitBank {
         this._beginUuid = null;
         this._endUuid = null;
         this.callbacks = [];
+        this._representationCache = null;
+    }
+    commitRepresentations(callback) {
+        if (this._representationCache != null) {
+            callback(this._representationCache)
+            return;
+        }
+        const cookies = decodeURIComponent(document.cookie).split(';')
+        for (let index = 0; index < cookies.length; ++index) {
+            if (cookies[index].indexOf(`${COOKIE_NAME}=`))
+                continue;
 
+            this._representationCache = JSON.parse(cookies[index].substring(COOKIE_NAME.length + 1));
+            callback(this._representationCache);
+            return;
+        }
+
+        fetch('api/commits/representations').then(response => {
+            response.json().then(json => {
+                this._representationCache = {};
+                Object.keys(json).forEach(repository => {
+                    if (!json[repository].length)
+                        return;
+                    this._representationCache[repository] = {
+                        'representation': json[repository][0],
+                        'candidates': json[repository],
+                    }
+                });
+                document.cookie = `${COOKIE_NAME}=${JSON.stringify(this._representationCache)}`;
+                callback(this._representationCache);
+            });
+        }).catch(error => {
+            // If the load fails, log the error and continue
+            console.error(JSON.stringify(error, null, 4));
+        });
+    }
+    setCommitRepresentation(repository, representation) {
+        this._representationCache[repository].representation = representation;
+        document.cookie = `${COOKIE_NAME}=${JSON.stringify(this._representationCache)}`;
     }
     latest(params) {
         this._branches = new Set(params.branch);

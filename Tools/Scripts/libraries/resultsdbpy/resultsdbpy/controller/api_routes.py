@@ -55,6 +55,7 @@ class APIRoutes(AuthedBlueprint):
         self.add_url_rule('/commits', 'commit_controller', self.commit_controller.default, methods=('GET', 'POST'))
         self.add_url_rule('/commits/find', 'commit_controller_find', self.commit_controller.find, methods=('GET',))
         self.add_url_rule('/commits/repositories', 'commit_controller_repositories', self.commit_controller.repositories, methods=('GET',))
+        self.add_url_rule('/commits/representations', 'commit_controller_representations', self.commit_controller.representations, methods=('GET',))
         self.add_url_rule('/commits/branches', 'commit_controller_branches',  self.commit_controller.branches, methods=('GET',))
         self.add_url_rule('/commits/siblings', 'commit_controller_siblings', self.commit_controller.siblings, methods=('GET',))
         self.add_url_rule('/commits/next', 'commit_controller_next', self.commit_controller.next, methods=('GET',))

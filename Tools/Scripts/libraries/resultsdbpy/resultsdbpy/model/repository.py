@@ -36,6 +36,9 @@ class Repository(object):
     def url_for_commit(self, commit):
         return None
 
+    def representations(self):
+        return []
+
 
 class StashRepository(Repository):
 
@@ -61,6 +64,9 @@ class StashRepository(Repository):
     def url_for_commit(self, commit):
         return f'{self.remote.url}/commits/{commit}'
 
+    def representations(self):
+        return ['hash', 'identifier']
+
 
 class WebKitRepository(Repository):
 
@@ -85,3 +91,6 @@ class WebKitRepository(Repository):
 
     def url_for_commit(self, commit):
         return f'https://commits.webkit.org/r{commit}'
+
+    def representations(self):
+        return ['identifier', 'revision']

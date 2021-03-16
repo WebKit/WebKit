@@ -191,6 +191,13 @@ class CommitController(HasCommitContext):
         AssertRequest.no_query()
         return jsonify(sorted(self.commit_context.repositories.keys()))
 
+    def representations(self):
+        AssertRequest.is_type()
+        AssertRequest.no_query()
+        return jsonify({
+            key: repository.representations() for key, repository in self.commit_context.repositories.items()
+        })
+
     @query_as_kwargs()
     @limit_for_query(DEFAULT_LIMIT)
     def branches(self, repository_id=None, branch=None, limit=None, **kwargs):

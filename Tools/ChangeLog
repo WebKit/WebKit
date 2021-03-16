@@ -1,3 +1,34 @@
+2021-03-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Allow user to change commit representation
+        https://bugs.webkit.org/show_bug.cgi?id=223215
+        <rdar://problem/75446602>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/api_routes.py:
+        (APIRoutes.__init__): Add commit representations endpoint.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_controller.py:
+        (CommitController.representations): Add commit representations endpoint.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/repository.py:
+        (Repository.representations): Return prioritized commit representation.
+        (StashRepository.representations): Ditto.
+        (WebKitRepository.representations): Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (Commit.prototype.label): Change the commit representation based on global settings.
+        (_CommitBank):
+        (_CommitBank.prototype.commitRepresentations): Check the commit representation cookie, then
+        the representation endpoint.
+        (_CommitBank.prototype.setCommitRepresentation): Set the commit representation cookie.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/drawer.js:
+        (CommitRepresentation): Drawer control allowing user to change commit representation for repositories.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/commits.html: Add new control.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/documentation.html: Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/search.html: Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/suite_results.html: Ditto.
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+
 2021-03-16  Devin Rousso  <drousso@apple.com>
 
         [macOS] change for the language/subtitle tracks button to use an `NSMenu` instead of web content
