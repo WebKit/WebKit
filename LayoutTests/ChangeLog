@@ -1,3 +1,12 @@
+2021-03-16  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur wk2 arm64 ] 4 webrtc/ Layout-tests are consistently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=223043
+
+        Uneviewed test gadening.
+
+        * platform/mac/TestExpectations: Re-updating expectations for one test that started timing out when marked as Failure.
+
 2021-03-16  John Wilander  <wilander@apple.com>
 
         PCM: Test infrastructure for sending attribution reports to attribution website too
