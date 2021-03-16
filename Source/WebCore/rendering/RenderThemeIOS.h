@@ -186,6 +186,8 @@ private:
     void paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox&, const PaintInfo&, const FloatRect&);
 #endif
 
+    void adjustPressedStyle(RenderStyle&, const Element&) const;
+
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 
     Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const override;

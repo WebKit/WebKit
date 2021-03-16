@@ -343,8 +343,19 @@ FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, Graphics
     return border.rect();
 }
 
-void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element*) const
+void RenderThemeIOS::adjustPressedStyle(RenderStyle& style, const Element& element) const
 {
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (element.document().settings().iOSFormControlRefreshEnabled() && element.active())
+        style.setOpacity(0.75f);
+#endif
+}
+
+void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
+{
+    if (element)
+        adjustPressedStyle(style, *element);
+
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
@@ -485,8 +496,11 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
     return RenderTheme::isControlStyled(style, userAgentStyle);
 }
 
-void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
+void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
+    if (element)
+        adjustPressedStyle(style, *element);
+
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
@@ -695,6 +709,8 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
 
     if (!element)
         return;
+
+    adjustPressedStyle(style, *element);
 
     // Enforce some default styles in the case that this is a non-multiple <select> element,
     // or a date input. We don't force these if this is just an element with
@@ -1107,6 +1123,8 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
 
     if (!element)
         return;
+
+    adjustPressedStyle(style, *element);
 
     RenderBox* box = element->renderBox();
     if (!box)
