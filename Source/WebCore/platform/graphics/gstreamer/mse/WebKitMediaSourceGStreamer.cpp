@@ -102,7 +102,7 @@ static void enabledAppsrcNeedData(GstAppSrc* appsrc, guint, gpointer userData)
         }
         int numAppsrcs = webKitMediaSrc->priv->streams.size();
         if (webKitMediaSrc->priv->appsrcSeekDataCount == numAppsrcs && webKitMediaSrc->priv->appsrcNeedDataCount == numAppsrcs) {
-            GST_DEBUG("All needDatas completed");
+            GST_DEBUG_OBJECT(webKitMediaSrc, "All needDatas completed");
             allAppsrcNeedDataAfterSeek = true;
             webKitMediaSrc->priv->appsrcSeekDataCount = 0;
             webKitMediaSrc->priv->appsrcNeedDataCount = 0;
@@ -115,7 +115,7 @@ static void enabledAppsrcNeedData(GstAppSrc* appsrc, guint, gpointer userData)
     GST_OBJECT_UNLOCK(webKitMediaSrc);
 
     if (allAppsrcNeedDataAfterSeek) {
-        GST_DEBUG("All expected appsrcSeekData() and appsrcNeedData() calls performed. Running next action (%d)", static_cast<int>(appsrcSeekDataNextAction));
+        GST_DEBUG_OBJECT(webKitMediaSrc, "All expected appsrcSeekData() and appsrcNeedData() calls performed. Running next action (%d)", static_cast<int>(appsrcSeekDataNextAction));
 
         switch (appsrcSeekDataNextAction) {
         case MediaSourceSeekToTime:
@@ -758,7 +758,7 @@ void webKitMediaSrcPrepareInitialSeek(WebKitMediaSrc* source, double rate, const
     }
 
     // The pending action will be performed in enabledAppsrcSeekData().
-    source->priv->appsrcSeekDataNextAction = MediaSourceSeekToTime;
+    source->priv->appsrcSeekDataNextAction = Nothing;
 
     GUniquePtr<GstSegment> segment(gst_segment_new());
     segment->format = GST_FORMAT_TIME;
