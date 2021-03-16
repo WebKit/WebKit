@@ -1,3 +1,21 @@
+2021-03-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EWS] run-layout-tests-without-patch step should only retry the tests that failed on the previous steps.
+        https://bugs.webkit.org/show_bug.cgi?id=219500
+
+        Reviewed by Aakash Jain.
+
+        On the step to retry running the layout tests without patch only
+        run the subset of tests that failed on the previous steps.
+        But only do that if the previous steps didn't exceed the test
+        failure limit and the patch doesn't modify the TestExpectations files.
+
+        This helps to speed up the test times on the EWS when the patch
+        doesn't pass on the first try.
+
+        * CISupport/ews-build/steps.py:
+        (RunWebKitTests.start):
+
 2021-03-16  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Add GTK4 tests expectations

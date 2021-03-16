@@ -2028,6 +2028,12 @@ class RunWebKitTests(shell.Test):
         shell.Test.__init__(self, logEnviron=False, **kwargs)
         self.incorrectLayoutLines = []
 
+    def _get_patch(self):
+        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
+        if not sourcestamp or not sourcestamp.patch:
+            return None
+        return sourcestamp.patch[1]
+
     def doStepIf(self, step):
         return not ((self.getProperty('buildername', '').lower() == 'commit-queue') and
                     (self.getProperty('revert') or self.getProperty('passed_mac_wk2')))
@@ -2056,6 +2062,32 @@ class RunWebKitTests(shell.Test):
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
+
+        if self.name == 'run-layout-tests-without-patch':
+            # In order to speed up testing, on the step that retries running the layout tests without patch
+            # only run the subset of tests that failed on the previous steps.
+            # But only do that if the previous steps didn't exceed the test failure limit and the patch doesn't
+            # modify the TestExpectations files (there are corner cases where we can't guarantee the correctnes
+            # of this optimization if the patch modifies the TestExpectations files, for example, if the patch
+            # removes skipped tests but those tests still fail).
+            first_results_did_exceed_test_failure_limit = self.getProperty('first_results_exceed_failure_limit', False)
+            second_results_did_exceed_test_failure_limit = self.getProperty('second_results_exceed_failure_limit', False)
+            if not first_results_did_exceed_test_failure_limit and not second_results_did_exceed_test_failure_limit:
+                patch_modifies_expectation_files = False
+                patch = self._get_patch()
+                if patch:
+                    for line in patch.splitlines():
+                        line = line.strip()
+                        # patch is stored by buildbot as bytes: https://github.com/buildbot/buildbot/issues/5812#issuecomment-790175979
+                        if (b'LayoutTests/' in line and b'TestExpectations' in line) and (line.startswith(b'---') or line.startswith(b'+++')):
+                            patch_modifies_expectation_files = True
+                            break
+                if not patch_modifies_expectation_files:
+                    first_results_failing_tests = set(self.getProperty('first_run_failures', set()))
+                    second_results_failing_tests = set(self.getProperty('second_run_failures', set()))
+                    list_retry_tests = sorted(first_results_failing_tests.union(second_results_failing_tests))
+                    self.setCommand(self.command + list_retry_tests)
+
         return shell.Test.start(self)
 
     # FIXME: This will break if run-webkit-tests changes its default log formatter.
