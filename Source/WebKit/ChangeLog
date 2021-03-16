@@ -1,3 +1,19 @@
+2021-03-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        [Swift] Ambiguous use of 'closeAllMediaPresentations'
+        https://bugs.webkit.org/show_bug.cgi?id=223275
+        <rdar://problem/75447989>
+
+        Reviewed by Tim Horton.
+
+        We added back deprecated media playback control APIs in
+        https://trac.webkit.org/changeset/273186/webkit after a name change
+        to support early adoptors. Importing these methods to Swift causes
+        a method redefinition error because the completion handler in both
+        cases is nullable. We should ignore the deprecated APIs for Swift.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+
 2021-03-16  John Wilander  <wilander@apple.com>
 
         PCM: Test infrastructure for sending attribution reports to attribution website too
