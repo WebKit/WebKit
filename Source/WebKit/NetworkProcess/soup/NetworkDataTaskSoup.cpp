@@ -480,7 +480,7 @@ gboolean NetworkDataTaskSoup::acceptCertificateCallback(SoupMessage* message, GT
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client)
         return FALSE;
 
-    ASSERT(task->m_soupMessage.get() == soupMessage);
+    ASSERT(task->m_soupMessage.get() == message);
 
     return task->acceptCertificate(certificate, errors);
 }

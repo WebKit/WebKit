@@ -1,3 +1,13 @@
+2021-03-16  Lauro Moura  <lmoura@igalia.com>
+
+        [SOUP] Fix SOUP3 debug build
+        https://bugs.webkit.org/show_bug.cgi?id=223237
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::acceptCertificateCallback):
+
 2021-03-16  Youenn Fablet  <youenn@apple.com>
 
         Add a new delegate for geolocation permission
