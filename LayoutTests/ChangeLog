@@ -1,3 +1,12 @@
+2021-03-16  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur arm64] compositing/z-order/rebuild-sibling-of-layer-with-foreground-layer.html is a flakey image failure
+        https://bugs.webkit.org/show_bug.cgi?id=223265
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-03-16  Robert Jenner  <jenner@apple.com>
 
         [ macOS debug arm64 ] ASSERTION FAILED: count >= 1 ./rendering/RenderMultiColumnSet.cpp(450) : unsigned int WebCore::RenderMultiColumnSet::columnCount() const
