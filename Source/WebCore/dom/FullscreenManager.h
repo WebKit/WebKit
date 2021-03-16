@@ -74,10 +74,10 @@ public:
     };
     WEBCORE_EXPORT void requestFullscreenForElement(Element*, FullscreenCheckType);
 
-    WEBCORE_EXPORT void willEnterFullscreen(Element&);
-    WEBCORE_EXPORT void didEnterFullscreen();
-    WEBCORE_EXPORT void willExitFullscreen();
-    WEBCORE_EXPORT void didExitFullscreen();
+    WEBCORE_EXPORT bool willEnterFullscreen(Element&);
+    WEBCORE_EXPORT bool didEnterFullscreen();
+    WEBCORE_EXPORT bool willExitFullscreen();
+    WEBCORE_EXPORT bool didExitFullscreen();
 
     void setFullscreenRenderer(RenderTreeBuilder&, RenderFullScreen&);
     RenderFullScreen* fullscreenRenderer() const;

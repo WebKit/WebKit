@@ -1,3 +1,22 @@
+2021-03-15  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Can get stuck in fullscreen mode if node is removed prior to receiving willEnterFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=223218
+        <rdar://75009548>
+
+        Reviewed by Eric Carlson.
+
+        There are a number of preflight checks made in each of the listed functions below,
+        and those preflights can corrupt the state machine of the UIProcess's fullscreen
+        code. If any of the preflights fail, use the new return value of those methods to
+        close() the fullscreen presentation.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::willEnterFullScreen):
+        (WebKit::WebFullScreenManager::didEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+        (WebKit::WebFullScreenManager::requestExitFullScreen):
+
 2021-03-15  Chris Dumez  <cdumez@apple.com>
 
         Avoid heap allocation in RemoteAudioDestinationProxy::renderQuantum()

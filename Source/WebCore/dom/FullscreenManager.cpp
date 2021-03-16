@@ -350,20 +350,20 @@ static void unwrapFullscreenRenderer(RenderFullScreen* fullscreenRenderer, Eleme
         fullscreenElement->parentElement()->invalidateStyleAndRenderersForSubtree();
 }
 
-void FullscreenManager::willEnterFullscreen(Element& element)
+bool FullscreenManager::willEnterFullscreen(Element& element)
 {
     if (!document().hasLivingRenderTree() || document().backForwardCacheState() != Document::NotInBackForwardCache)
-        return;
+        return false;
 
     // Protect against being called after the document has been removed from the page.
     if (!page())
-        return;
+        return false;
 
     // If pending fullscreen element is unset or another element's was requested,
     // issue a cancel fullscreen request to the client
     if (m_pendingFullscreenElement != &element) {
         page()->chrome().client().exitFullScreenForElement(&element);
-        return;
+        return true;
     }
 
     ASSERT(page()->settings().fullScreenEnabled());
@@ -394,40 +394,44 @@ void FullscreenManager::willEnterFullscreen(Element& element)
 
     document().resolveStyle(Document::ResolveStyleType::Rebuild);
     dispatchFullscreenChangeEvents();
+
+    return true;
 }
 
-void FullscreenManager::didEnterFullscreen()
+bool FullscreenManager::didEnterFullscreen()
 {
     if (!m_fullscreenElement)
-        return;
+        return false;
 
     if (!hasLivingRenderTree() || backForwardCacheState() != Document::NotInBackForwardCache)
-        return;
+        return false;
 
     m_fullscreenElement->didBecomeFullscreenElement();
+    return true;
 }
 
-void FullscreenManager::willExitFullscreen()
+bool FullscreenManager::willExitFullscreen()
 {
     auto fullscreenElement = fullscreenOrPendingElement();
     if (!fullscreenElement)
-        return;
+        return false;
 
     if (!hasLivingRenderTree() || backForwardCacheState() != Document::NotInBackForwardCache)
-        return;
+        return false;
 
     fullscreenElement->willStopBeingFullscreenElement();
+    return true;
 }
 
-void FullscreenManager::didExitFullscreen()
+bool FullscreenManager::didExitFullscreen()
 {
     m_pendingExitFullscreen = false;
     auto fullscreenElement = fullscreenOrPendingElement();
     if (!fullscreenElement)
-        return;
+        return false;
 
     if (!hasLivingRenderTree() || backForwardCacheState() != Document::NotInBackForwardCache)
-        return;
+        return false;
     fullscreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 
     if (m_fullscreenElement)
@@ -448,6 +452,7 @@ void FullscreenManager::didExitFullscreen()
     Document& exitingDocument = eventTargetQueuesEmpty ? topDocument() : document();
 
     exitingDocument.fullscreenManager().dispatchFullscreenChangeEvents();
+    return true;
 }
 
 void FullscreenManager::setFullscreenRenderer(RenderTreeBuilder& builder, RenderFullScreen& renderer)

@@ -1065,6 +1065,7 @@
 		CDCFA7AA1E45183200C2433D /* SampleMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCFA7A91E45122F00C2433D /* SampleMap.cpp */; };
 		CDCFFEC122E26A1500DF4223 /* NoPauseWhenSwitchingTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCFFEC022E268D500DF4223 /* NoPauseWhenSwitchingTabs.mm */; };
 		CDD68F0D22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */; };
+		CDDC7C6925FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDDC7C6825FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm */; };
 		CDE195B51CFE0B880053D256 /* FullscreenTopContentInset.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */; };
 		CDE77D2525A6591C00D4115E /* FullscreenPointerLeave.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE77D2425A6591C00D4115E /* FullscreenPointerLeave.mm */; };
 		CDED342F249DDE0E0002AE7A /* AudioRoutingArbitration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDED342E249DDD9D0002AE7A /* AudioRoutingArbitration.mm */; };
@@ -2820,6 +2821,8 @@
 		CDCFA7A91E45122F00C2433D /* SampleMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleMap.cpp; sourceTree = "<group>"; };
 		CDCFFEC022E268D500DF4223 /* NoPauseWhenSwitchingTabs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NoPauseWhenSwitchingTabs.mm; sourceTree = "<group>"; };
 		CDD68F0C22C18317000CF0AE /* WKWebViewCloseAllMediaPresentations.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCloseAllMediaPresentations.mm; sourceTree = "<group>"; };
+		CDDC7C6725FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FullscreenRemoveNodeBeforeEnter.h; sourceTree = "<group>"; };
+		CDDC7C6825FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenRemoveNodeBeforeEnter.mm; sourceTree = "<group>"; };
 		CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenTopContentInset.html; sourceTree = "<group>"; };
 		CDE195B31CFE0ADE0053D256 /* TopContentInset.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TopContentInset.mm; sourceTree = "<group>"; };
 		CDE77D2425A6591C00D4115E /* FullscreenPointerLeave.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenPointerLeave.mm; sourceTree = "<group>"; };
@@ -3351,6 +3354,8 @@
 				CDCF78A7244A2EDB00480311 /* FullscreenAlert.mm */,
 				CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */,
 				3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */,
+				CDDC7C6725FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.h */,
+				CDDC7C6825FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm */,
 				631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */,
 				07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */,
 				2DADF26221CB8F32003D3E3A /* GetResourceData.mm */,
@@ -5331,6 +5336,7 @@
 				CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */,
 				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
 				CDE77D2525A6591C00D4115E /* FullscreenPointerLeave.mm in Sources */,
+				CDDC7C6925FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm in Sources */,
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,
 				83DB79691EF63B3C00BFA5E5 /* Function.cpp in Sources */,
 				7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */,
