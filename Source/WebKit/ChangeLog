@@ -1,3 +1,25 @@
+2021-03-16  Peng Liu  <peng.liu6@apple.com>
+
+        [iOS] Scroll event is fired before webkitfullscreenchange event when an element enters fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=223221
+
+        Reviewed by Eric Carlson.
+
+        Defer the "scroll" event until the "webkitfullscreenchange" event is fired
+        when an element enters fullscreen. We have to do that because some sites use
+        "scroll" event handler to remove elements out of visible area, which may
+        conflict with the entering fullscreen process.
+
+        No new tests. We cannot test this patch with a layout test because
+        `InjectedBundlePageFullScreenClient` in WKTR does not support testing the
+        fullscreen implementation in the UI process, which is related to the "scroll"
+        event. We cannot add an API test on iOS for it either because the test binary
+        is not a real "app" (webkit.org/b/212654).
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+
 2021-03-16  Per Arne  <pvollan@apple.com>
 
         Add signpost for injected bundle creation

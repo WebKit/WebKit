@@ -605,8 +605,6 @@ private:
         
         [[_webViewPlaceholder layer] setContents:(id)[snapshotImage CGImage]];
         WebKit::replaceViewWithView(webView.get(), _webViewPlaceholder.get());
-
-        WebKit::WKWebViewState().applyTo(webView.get());
         
         [webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
         [webView setFrame:[_window bounds]];
@@ -680,6 +678,7 @@ private:
             return;
         }
 
+        WebKit::WKWebViewState().applyTo(webView.get());
         auto page = [self._webView _page];
         auto* manager = self._manager;
         if (page && manager) {
