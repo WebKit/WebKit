@@ -73,6 +73,10 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
     else:
         repository = local.Scm.from_path(path=parsed.repository, contributors=contributors)
 
+    if not getattr(parsed, 'main', None):
+        parser.print_help()
+        return -1
+
     return parsed.main(
         args=parsed,
         repository=repository,
