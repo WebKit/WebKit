@@ -128,6 +128,7 @@
 #include "MediaEngineConfigurationFactory.h"
 #include "MediaKeySession.h"
 #include "MediaKeys.h"
+#include "MediaMetadata.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
 #include "MediaRecorderProvider.h"
@@ -485,6 +486,10 @@ Internals::~Internals()
 {
 #if ENABLE(MEDIA_STREAM)
     stopObservingRealtimeMediaSource();
+#endif
+#if ENABLE(MEDIA_SESSION)
+    if (m_artworkImagePromise)
+        m_artworkImagePromise->reject(Exception { InvalidStateError });
 #endif
 }
 
@@ -5252,7 +5257,7 @@ void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
 
 void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
 {
-    m_nextTrackFramePromise = WTF::makeUnique<TrackFramePromise>(promise);
+    m_nextTrackFramePromise = makeUnique<TrackFramePromise>(WTFMove(promise));
 }
 
 void Internals::videoSampleAvailable(MediaSample& sample)
@@ -6081,6 +6086,32 @@ ExceptionOr<void> Internals::sendMediaSessionAction(MediaSession& session, const
     }
     return Exception { InvalidStateError };
 }
+
+void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
+{
+    if (!contextDocument()) {
+        promise.reject(Exception { InvalidStateError, "No document." });
+        return;
+    }
+    if (m_artworkImagePromise) {
+        promise.reject(Exception { InvalidStateError, "Another download is currently pending." });
+        return;
+    }
+    m_artworkImagePromise = makeUnique<ArtworkImagePromise>(WTFMove(promise));
+    m_artworkLoader = makeUnique<ArtworkImageLoader>(*contextDocument(), url, [this](Image* image) {
+        if (image) {
+            auto imageData = ImageData::create(unsigned(image->width()), unsigned(image->height()));
+            if (!imageData.hasException())
+                m_artworkImagePromise->resolve(imageData.releaseReturnValue());
+            else
+                m_nextTrackFramePromise->reject(imageData.exception().code());
+        } else
+            m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieve."  });
+        m_artworkImagePromise = nullptr;
+    });
+    m_artworkLoader->requestImageResource();
+}
+
 #endif
 
 constexpr ASCIILiteral string(PartialOrdering ordering)

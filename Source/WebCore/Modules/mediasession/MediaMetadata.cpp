@@ -28,12 +28,49 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "CachedImage.h"
+#include "CachedResourceLoader.h"
 #include "Document.h"
+#include "Image.h"
 #include "MediaImage.h"
 #include "MediaMetadataInit.h"
+#include "SpaceSplitString.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+ArtworkImageLoader::ArtworkImageLoader(Document& document, const String& src, ArtworkImageLoaderCallback&& callback)
+    : m_document(document)
+    , m_src(src)
+    , m_callback(WTFMove(callback))
+{
+}
+
+ArtworkImageLoader::~ArtworkImageLoader()
+{
+    if (m_cachedImage)
+        m_cachedImage->removeClient(*this);
+}
+
+void ArtworkImageLoader::requestImageResource()
+{
+    ASSERT(!m_cachedImage, "Can only call requestImageResource once");
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.contentSecurityPolicyImposition = m_document.isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+
+    CachedResourceRequest request(ResourceRequest(m_document.completeURL(m_src)), options);
+    request.setInitiator(m_document.documentURI());
+    m_cachedImage = m_document.cachedResourceLoader().requestImage(WTFMove(request)).value_or(nullptr);
+
+    if (m_cachedImage)
+        m_cachedImage->addClient(*this);
+}
+
+void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+{
+    ASSERT_UNUSED(resource, &resource == m_cachedImage);
+    m_callback(m_cachedImage->loadFailedOrCanceled() ? nullptr : m_cachedImage->image());
+}
 
 ExceptionOr<Ref<MediaMetadata>> MediaMetadata::create(ScriptExecutionContext& context, Optional<MediaMetadataInit>&& init)
 {
@@ -55,11 +92,14 @@ MediaMetadata::~MediaMetadata() = default;
 void MediaMetadata::setMediaSession(MediaSession& session)
 {
     m_session = makeWeakPtr(session);
+    refreshArtworkImage();
 }
 
 void MediaMetadata::resetMediaSession()
 {
     m_session.clear();
+    m_artworkLoader = nullptr;
+    m_artworkImage = nullptr;
 }
 
 void MediaMetadata::setTitle(const String& title)
@@ -101,8 +141,34 @@ ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vec
     }
 
     m_metadata.artwork = WTFMove(resolvedArtwork);
+
+    refreshArtworkImage();
+
     metadataUpdated();
     return { };
+}
+
+void MediaMetadata::refreshArtworkImage()
+{
+    const auto& mediaImages = m_metadata.artwork;
+    if (mediaImages.isEmpty()) {
+        m_artworkLoader = nullptr;
+        return;
+    }
+    if (!m_session || !m_session->document() || mediaImages[0].src == m_artworkImageSrc)
+        return;
+    // FIXME: Implement a heuristic to retrieve the "best" image.
+    m_artworkImageSrc = mediaImages[0].src;
+    m_artworkLoader = makeUnique<ArtworkImageLoader>(*m_session->document(), m_artworkImageSrc, [this](Image* image) {
+        setArtworkImage(image);
+        metadataUpdated();
+    });
+    m_artworkLoader->requestImageResource();
+}
+
+void MediaMetadata::setArtworkImage(Image* image)
+{
+    m_artworkImage = image;
 }
 
 void MediaMetadata::metadataUpdated()

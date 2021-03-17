@@ -27,17 +27,44 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "CachedImageClient.h"
+#include "CachedResourceHandle.h"
 #include "MediaMetadataInit.h"
 #include "MediaSession.h"
+#include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class CachedImage;
+class Document;
+class Image;
 struct MediaImage;
 
 using MediaSessionMetadata = MediaMetadataInit;
+
+class ArtworkImageLoader final : public CachedImageClient {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    using ArtworkImageLoaderCallback = Function<void(Image*)>;
+    // The callback will only be called upon success or explicit failure to retrieve the image. If the operation is interrupted following the
+    // destruction of the ArtworkImageLoader, the callback won't be called.
+    WEBCORE_EXPORT ArtworkImageLoader(Document&, const String& src, ArtworkImageLoaderCallback&&);
+    WEBCORE_EXPORT ~ArtworkImageLoader();
+
+    WEBCORE_EXPORT void requestImageResource();
+
+protected:
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
+
+private:
+    Document& m_document;
+    const String m_src;
+    ArtworkImageLoaderCallback m_callback;
+    CachedResourceHandle<CachedImage> m_cachedImage;
+};
 
 class MediaMetadata : public RefCounted<MediaMetadata> {
 public:
@@ -59,14 +86,22 @@ public:
     const Vector<MediaImage>& artwork() const { return m_metadata.artwork; }
     ExceptionOr<void> setArtwork(ScriptExecutionContext&, Vector<MediaImage>&&);
 
+    const String& artworkSrc() const { return m_artworkImageSrc; }
+    RefPtr<Image> artworkImage() const { return m_artworkImage; }
+
     const MediaSessionMetadata& metadata() const { return m_metadata; }
 
 private:
     MediaMetadata();
+    void setArtworkImage(Image*);
     void metadataUpdated();
+    void refreshArtworkImage();
 
     WeakPtr<MediaSession> m_session;
     MediaSessionMetadata m_metadata;
+    std::unique_ptr<ArtworkImageLoader> m_artworkLoader;
+    String m_artworkImageSrc;
+    RefPtr<Image> m_artworkImage;
 };
 
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <body>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+        <script>
+
+const IMAGE_SRC = '../../images/resources/test-load.jpg';
+
+promise_test((test) => {
+    if (!window.internals)
+        var promise = Promise.resolve();
+    else {
+        var promise = internals.loadArtworkImage(IMAGE_SRC).then((data) => {
+            assert_equals(data.width, 16);
+            assert_equals(data.height, 16);
+        });;
+    }
+    return promise;
+}, "ensure loading artwork image method operates properly");
+
+        </script>
+    </body>
+</html>
