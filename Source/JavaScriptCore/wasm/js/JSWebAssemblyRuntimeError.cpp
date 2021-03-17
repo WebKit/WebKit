@@ -36,7 +36,7 @@ JSWebAssemblyRuntimeError* JSWebAssemblyRuntimeError::create(JSGlobalObject* glo
 {
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyRuntimeError>(vm.heap)) JSWebAssemblyRuntimeError(vm, structure);
     bool useCurrentFrame = true;
-    instance->finishCreation(vm, globalObject, message, defaultSourceAppender, TypeNothing, useCurrentFrame);
+    instance->finishCreation(vm, globalObject, message, jsUndefined(), defaultSourceAppender, TypeNothing, useCurrentFrame);
     return instance;
 }
 

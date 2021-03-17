@@ -1,3 +1,14 @@
+2021-03-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement Error#cause
+        https://bugs.webkit.org/show_bug.cgi?id=223302
+
+        Reviewed by Yusuke Suzuki.
+
+        Add tests. test262 doesn't currently have any, but the spec is exceedingly simple anyway.
+
+        * stress/error-cause.js: Added.
+
 2021-03-16  Saam Barati  <sbarati@apple.com>
 
         Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies

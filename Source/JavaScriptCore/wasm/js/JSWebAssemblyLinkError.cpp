@@ -36,7 +36,7 @@ JSWebAssemblyLinkError* JSWebAssemblyLinkError::create(JSGlobalObject* globalObj
 {
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyLinkError>(vm.heap)) JSWebAssemblyLinkError(vm, structure);
     bool useCurrentFrame = true;
-    instance->finishCreation(vm, globalObject, message, defaultSourceAppender, TypeNothing, useCurrentFrame);
+    instance->finishCreation(vm, globalObject, message, jsUndefined(), defaultSourceAppender, TypeNothing, useCurrentFrame);
     return instance;
 }
 

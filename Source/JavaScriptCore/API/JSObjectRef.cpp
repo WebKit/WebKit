@@ -231,8 +231,9 @@ JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSVa
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue message = argumentCount ? toJS(globalObject, arguments[0]) : jsUndefined();
+    JSValue options = argumentCount > 1 ? toJS(globalObject, arguments[1]) : jsUndefined();
     Structure* errorStructure = globalObject->errorStructure();
-    JSObject* result = ErrorInstance::create(globalObject, errorStructure, message);
+    JSObject* result = ErrorInstance::create(globalObject, errorStructure, message, options);
 
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         result = nullptr;

@@ -1,3 +1,62 @@
+2021-03-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement Error#cause
+        https://bugs.webkit.org/show_bug.cgi?id=223302
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch implements the Error.prototype.cause proposal, which reached Stage 3 at last week's TC39 meeting:
+        https://github.com/tc39/proposal-error-cause
+
+        This very simple proposal allows to one reference the "error that caused this one" in a cascading scenario.
+        It does so by adding an options bag parameter to the Error, _NativeError_, and AggregateError constructors.
+        If it is an object with a `cause` property, the property will be used; if not, nothing happens at all.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeError):
+        * runtime/AggregateError.cpp:
+        (JSC::AggregateError::finishCreation):
+        (JSC::AggregateError::create):
+        * runtime/AggregateError.h:
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        (JSC::createGetterTypeError):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::create):
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructImpl):
+        (JSC::NativeErrorConstructor<errorType>::callImpl):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunctionInternal::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::JSWebAssemblyCompileError::create):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::JSWebAssemblyLinkError::create):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::JSWebAssemblyRuntimeError::create):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-03-16  Saam Barati  <sbarati@apple.com>
 
         Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies

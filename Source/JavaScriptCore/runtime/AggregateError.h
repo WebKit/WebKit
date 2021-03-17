@@ -49,16 +49,16 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
     }
 
-    static AggregateError* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const MarkedArgumentBuffer& errors, const String& message, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
+    static AggregateError* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const MarkedArgumentBuffer& errors, const String& message, JSValue cause, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
     {
         auto* instance = new (NotNull, allocateCell<AggregateError>(vm.heap)) AggregateError(vm, structure);
-        instance->finishCreation(vm, globalObject, errors, message, appender, type, useCurrentFrame);
+        instance->finishCreation(vm, globalObject, errors, message, cause, appender, type, useCurrentFrame);
         return instance;
     }
 
-    static AggregateError* create(JSGlobalObject*, VM&, Structure*, JSValue errors, JSValue message, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
+    static AggregateError* create(JSGlobalObject*, VM&, Structure*, JSValue errors, JSValue message, JSValue options, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
-    void finishCreation(VM&, JSGlobalObject*, const MarkedArgumentBuffer& errors, const String& message, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
+    void finishCreation(VM&, JSGlobalObject*, const MarkedArgumentBuffer& errors, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
 private:
     explicit AggregateError(VM&, Structure*);

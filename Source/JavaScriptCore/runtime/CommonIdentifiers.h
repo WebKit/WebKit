@@ -84,6 +84,7 @@
     macro(callee) \
     macro(caller) \
     macro(caseFirst) \
+    macro(cause) \
     macro(clear) \
     macro(collation) \
     macro(column) \
