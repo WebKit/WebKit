@@ -52,6 +52,15 @@ static IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
     return instance.get();
 }
 
+static constexpr Seconds dispatchReleaseAllResourcesIfUnusedTimeout = 0.2_s;
+static unsigned remoteGraphicsContextCount;
+static void dispatchReleaseAllResourcesIfUnused()
+{
+#if PLATFORM(COCOA)
+    remoteGraphicsContextGLStreamWorkQueue().dispatch(GraphicsContextGLOpenGL::releaseAllResourcesIfUnused);
+#endif
+}
+
 #if !PLATFORM(COCOA)
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
@@ -80,6 +89,7 @@ RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
 void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
 {
     ASSERT(RunLoop::isMain());
+    ++remoteGraphicsContextCount;
     remoteGraphicsContextGLStreamWorkQueue().dispatch([attributes = WTFMove(attributes), protectedThis = makeRef(*this)]() mutable {
         protectedThis->workQueueInitialize(WTFMove(attributes));
     });
@@ -93,6 +103,9 @@ void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&&
     remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
         protectedThis->workQueueUninitialize();
     });
+    --remoteGraphicsContextCount;
+    if (!remoteGraphicsContextCount)
+        RunLoop::current().dispatchAfter(dispatchReleaseAllResourcesIfUnusedTimeout, dispatchReleaseAllResourcesIfUnused);
 }
 
 #if PLATFORM(MAC)

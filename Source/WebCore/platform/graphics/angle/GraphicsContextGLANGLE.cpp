@@ -2844,6 +2844,7 @@ GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
     return m_cv.get();
 }
 #endif
+
 }
 
 #endif // ENABLE(WEBGL) && USE(ANGLE)

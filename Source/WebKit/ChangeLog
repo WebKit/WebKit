@@ -1,3 +1,24 @@
+2021-03-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Shutdown ANGLE on GPU process when last WebGL context is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=223082
+
+        Reviewed by Kenneth Russell.
+
+        Schedule a check for releasing the ANGLE default display when global
+        count of remote graphics contexts reach zero. This should decrease the
+        memory use of sessions where WebGL is not always on.
+
+        Dispatch the check 0.2s after hitting zero, so that the optimization still
+        affects page navigations but maybe does not redundantly deinitialize /
+        reinitialize ANGLE in the cases where the context #1 is created and destroyed
+        frequently.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::dispatchReleaseAllResourcesIfUnused):
+        (WebKit::RemoteGraphicsContextGL::initialize):
+        (WebKit::RemoteGraphicsContextGL::stopListeningForIPC):
+
 2021-03-17  Youenn Fablet  <youenn@apple.com>
 
         Protect RemoteCaptureSampleManager and RemoteAudioSourceProviderManager when hopping to background threads

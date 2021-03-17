@@ -1644,6 +1644,7 @@ if (ENABLE_WEBGL)
         list(APPEND WebCore_SOURCES
             platform/graphics/angle/ExtensionsGLANGLE.cpp
             platform/graphics/angle/GraphicsContextGLANGLE.cpp
+            platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.cpp
             platform/graphics/angle/TemporaryANGLESetting.cpp
         )
     else ()
