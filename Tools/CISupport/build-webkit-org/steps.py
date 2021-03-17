@@ -125,9 +125,6 @@ class ConfigureBuild(buildstep.BuildStep):
         self.setProperty("buildOnly", self.buildOnly)
         self.setProperty("additionalArguments", self.additionalArguments)
         self.setProperty("device_model", self.device_model)
-        worker_name = self.getProperty("slavename")
-        if worker_name:
-            self.setProperty("workername", worker_name)  # Temporary workaround for supporting both older and newer buildbot versions.
         self.finished(SUCCESS)
         return defer.succeed(None)
 
