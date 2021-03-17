@@ -557,7 +557,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
     if (offset > m_end)
         offset = m_end;
 
-    if (offset <= m_currentCharacter) {
+    if (offset < m_currentCharacter) {
         m_runWidthSoFar = 0;
         m_numGlyphsSoFar = 0;
         m_currentRun = 0;
