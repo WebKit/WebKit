@@ -1,3 +1,13 @@
+2021-03-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][WPE] Enable CSS scroll snap support by default
+        https://bugs.webkit.org/show_bug.cgi?id=222641
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Enable CSS scroll snap by default.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2021-03-16  Khem Raj  <raj.khem@gmail.com>
 
         [CMake] Build fails on RISC-V with GCC 11
