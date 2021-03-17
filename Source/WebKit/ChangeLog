@@ -1,3 +1,34 @@
+2021-03-17  Chris Dumez  <cdumez@apple.com>
+
+        Maybe-regression(STP121): window.open flakily returning null
+        https://bugs.webkit.org/show_bug.cgi?id=222590
+        <rdar://problem/75211786>
+
+        Reviewed by Geoffrey Garen.
+
+        This was an IPC ordering bug. WebPageProxy::DidCommitLoadForFrame is async and WebPageProxy::CreateNewPage is
+        sync. As a result, it was possible for the WebPageProxy::CreateNewPage to get processed *BEFORE* the
+        WebPageProxy::DidCommitLoadForFrame IPC. This was causing trouble because Safari rejects the popup opening if
+        the main frame is doing a provisional load.
+
+        To address the issue, introduce a new IPC::SendSyncOption::MaintainOrderingWithAsyncMessages flag and
+        use it on WebPageProxy::CreateNewPage sync IPC so that it gets processed in order with surrounding async
+        messages.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        (IPC::Connection::sendSyncMessage):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::shouldMaintainOrderingWithAsyncMessages const):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::setShouldMaintainOrderingWithAsyncMessages):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/MessageFlags.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+
 2021-03-17  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Some media-source tests fail/timeout when media in GPU Process is enabled

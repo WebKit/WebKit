@@ -31,6 +31,7 @@ enum class MessageFlags : uint8_t {
     DispatchMessageWhenWaitingForSyncReply = 1 << 0,
     DispatchMessageWhenWaitingForUnboundedSyncReply = 1 << 1,
     UseFullySynchronousModeForTesting = 1 << 2,
+    MaintainOrderingWithAsyncMessages = 1 << 3,
 };
 
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t {
@@ -48,7 +49,8 @@ template<> struct EnumTraits<IPC::MessageFlags> {
         IPC::MessageFlags,
         IPC::MessageFlags::DispatchMessageWhenWaitingForSyncReply,
         IPC::MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply,
-        IPC::MessageFlags::UseFullySynchronousModeForTesting
+        IPC::MessageFlags::UseFullySynchronousModeForTesting,
+        IPC::MessageFlags::MaintainOrderingWithAsyncMessages
     >;
 };
 

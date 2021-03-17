@@ -123,6 +123,11 @@ void Encoder::setFullySynchronousModeForTesting()
     messageFlags().add(MessageFlags::UseFullySynchronousModeForTesting);
 }
 
+void Encoder::setShouldMaintainOrderingWithAsyncMessages()
+{
+    messageFlags().add(MessageFlags::MaintainOrderingWithAsyncMessages);
+}
+
 void Encoder::wrapForTesting(UniqueRef<Encoder>&& original)
 {
     ASSERT(isSyncMessage());

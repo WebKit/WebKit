@@ -71,6 +71,7 @@ enum class SendSyncOption {
     InformPlatformProcessWillSuspend = 1 << 0,
     UseFullySynchronousModeForTesting = 1 << 1,
     ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply = 1 << 2,
+    MaintainOrderingWithAsyncMessages = 1 << 3,
 };
 
 enum class WaitForOption {
