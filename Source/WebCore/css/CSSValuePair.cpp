@@ -36,7 +36,7 @@ String CSSValuePair::customCSSText() const
     String second = this->second()->cssText();
     if (m_encoding == IdenticalValueEncoding::Coalesce && first == second)
         return first;
-    return makeString(first, separatorCssText(), second);
+    return makeString(first, separatorCSSText(), second);
 }
 
 bool CSSValuePair::equals(const CSSValuePair &other) const

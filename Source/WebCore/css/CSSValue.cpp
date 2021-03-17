@@ -341,7 +341,7 @@ String CSSValue::cssText() const
     return String();
 }
 
-String CSSValue::separatorCssText() const
+ASCIILiteral CSSValue::separatorCSSText() const
 {
     switch (m_valueSeparator) {
     case SpaceSeparator:

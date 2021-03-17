@@ -86,7 +86,7 @@ Ref<CSSValueList> CSSValueList::copy()
 String CSSValueList::customCSSText() const
 {
     StringBuilder result;
-    String separator = separatorCssText();
+    auto separator = separatorCSSText();
     for (auto& value : m_values) {
         if (!result.isEmpty())
             result.append(separator);

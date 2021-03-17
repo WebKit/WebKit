@@ -27,6 +27,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/URLHash.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
@@ -77,7 +78,7 @@ public:
 
     Type cssValueType() const;
     String cssText() const;
-    String separatorCssText() const;
+    ASCIILiteral separatorCSSText() const;
 
     bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
     bool isValueList() const { return m_classType >= ValueListClass; }
