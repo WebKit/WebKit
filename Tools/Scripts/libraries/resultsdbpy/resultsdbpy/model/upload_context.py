@@ -34,6 +34,8 @@ from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 
+from webkitscmpy import Commit as ScmCommit
+
 
 class UploadContext(object):
     QUEUE_NAME = 'upload_queue'
@@ -61,7 +63,7 @@ class UploadContext(object):
 
         def unpack(self):
             return dict(
-                commits=[Commit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
+                commits=[ScmCommit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
                 sdk=None if self.sdk == '?' else self.sdk,
                 test_results=json.loads(UploadContext.from_zip(bytearray(self.test_results))),
                 timestamp=calendar.timegm(self.time_uploaded.timetuple()),
@@ -81,7 +83,7 @@ class UploadContext(object):
 
         def unpack(self):
             return dict(
-                commits=[Commit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
+                commits=[ScmCommit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
                 sdk=None if self.sdk == '?' else self.sdk,
                 test_results=json.loads(UploadContext.from_zip(bytearray(self.test_results))),
                 timestamp=calendar.timegm(self.time_uploaded.timetuple()),
@@ -179,7 +181,7 @@ class UploadContext(object):
                 data = json.loads(raw_data)
                 self.synchronously_process_test_results(
                     configuration=Configuration.from_json(data['configuration']),
-                    commits=[Commit.from_json(commit_json) for commit_json in data['commits']],
+                    commits=[ScmCommit.from_json(commit_json) for commit_json in data['commits']],
                     suite=data['suite'],
                     timestamp=data['timestamp'],
                     test_results=data['test_results'],
@@ -229,7 +231,7 @@ class UploadContext(object):
                 json.dumps(dict(
                     configuration=Configuration.Encoder().default(configuration),
                     suite=suite,
-                    commits=Commit.Encoder().default(commits),
+                    commits=[commit.Encoder().default(commit) for commit in commits],
                     timestamp=timestamp,
                     test_results=test_results,
                 )),
@@ -241,7 +243,7 @@ class UploadContext(object):
         if not isinstance(suite, str):
             raise TypeError(f'Expected type {str}, got {type(suite)}')
         for commit in commits:
-            if not isinstance(commit, Commit):
+            if not isinstance(commit, ScmCommit) and not isinstance(commit, Commit):
                 raise TypeError(f'Expected type {Commit}, got {type(commit)}')
         if len(commits) < 1:
             raise ValueError('Each test result must have at least 1 associated commit')
@@ -265,7 +267,7 @@ class UploadContext(object):
                 self.configuration_context.insert_row_with_configuration(
                     self.UploadsByConfiguration.__table_name__, configuration=configuration,
                     suite=suite, branch=branch, uuid=uuid, sdk=configuration.sdk or '?', time_uploaded=timestamp,
-                    commits=self.to_zip(json.dumps(commits, cls=Commit.Encoder)),
+                    commits=self.to_zip(json.dumps(commits, cls=commits[0].Encoder)),
                     test_results=self.to_zip(json.dumps(test_results)),
                     upload_version=version,
                     ttl=int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None,

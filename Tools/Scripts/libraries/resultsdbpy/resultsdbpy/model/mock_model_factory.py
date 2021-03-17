@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -92,8 +92,8 @@ class MockModelFactory(object):
                 for key, repository in dict(safari=safari, webkit=webkit).items():
                     for branch, commits in repository.commits.items():
                         for commit in commits:
-                            model.commit_context.register_commit_with_repo_and_id(
-                                key, branch, commit.hash or commit.revision,
+                            model.commit_context.register_partial_commit(
+                                key, hash=commit.hash, revision=commit.revision,
                             )
         return model
 

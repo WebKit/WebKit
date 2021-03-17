@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@ from collections import defaultdict
 from flask import abort, jsonify, request
 from resultsdbpy.controller.commit import Commit
 from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query
-from webkitscmpy import ScmBase
+from webkitscmpy import ScmBase, Commit as ScmCommit
 
 
 def _find_comparison(commit_context, repository_id, branch, id, uuid, timestamp, priority=min):
@@ -265,7 +265,7 @@ class CommitController(HasCommitContext):
             commit = self.commit_context.previous_commit(commits[0])
             return jsonify(Commit.Encoder().default([commit] if commit else []))
 
-    def register(self, commit=None):
+    def register(self, commit=None, fast=True):
         is_endpoint = not bool(commit)
         if is_endpoint:
             AssertRequest.is_type(['POST'])
@@ -280,35 +280,60 @@ class CommitController(HasCommitContext):
                 abort(400, description='Expected uploaded data to be json')
 
         try:
-            self.commit_context.register_commit(Commit.from_json(commit))
-            if is_endpoint:
-                return jsonify({'status': 'ok'})
-            return Commit.from_json(commit)
+            candidate = ScmCommit.from_json(commit)
+
+            # Commit needs to be sufficiently defined
+            if candidate.repository_id and candidate.branch and candidate.timestamp and (candidate.revision or candidate.hash):
+                self.commit_context.register_commit(candidate)
+                if is_endpoint:
+                    return jsonify({'status': 'ok'})
+                return candidate
         except ValueError:
             pass
 
-        required_args = ['repository_id', 'id']
-        optional_args = ['branch']
+        required_args = ['repository_id']
         for arg in required_args:
             if arg not in commit:
                 abort(400, description=f"'{arg}' required to define commit")
 
+        has_ref = False
+        one_of_args = ['id', 'ref', 'hash', 'revision', 'identifier']
+        for arg in one_of_args:
+            if arg in commit:
+                if has_ref:
+                    abort(400, description='Multiple commit references specified')
+                has_ref = True
+        if not has_ref:
+            abort(400, description='No commit reference specified')
+
+
         for arg in commit.keys():
-            if arg in required_args + optional_args:
+            if arg in required_args or arg in one_of_args:
                 continue
-            if arg in ['timestamp', 'order', 'committer', 'message']:
+            if arg in ['branch', 'timestamp', 'order', 'committer', 'message']:
                 abort(400, description='Not enough arguments provided to define a commit, but too many to search for a commit')
             abort(400, description=f"'{arg}' is not valid for defining commits")
 
         try:
-            commit = self.commit_context.register_commit_with_repo_and_id(
+            commit = self.commit_context.register_partial_commit(
                 repository_id=commit.get('repository_id'),
-                branch=commit.get('branch'),
-                commit_id=commit.get('id'),
+                ref=commit.get('id') or commit.get('ref'),
+                hash=commit.get('hash'),
+                revision=commit.get('revision'),
+                identifier=commit.get('identifier'),
+                fast=fast,
             )
         except (RuntimeError, ScmBase.Exception) as error:
             abort(404, description=str(error))
 
         if is_endpoint:
             return jsonify({'status': 'ok'})
-        return commit
+        return Commit(
+            repository_id=commit.repository_id,
+            id=commit.revision or commit.hash,
+            branch=commit.branch,
+            timestamp=commit.timestamp,
+            order=commit.order,
+            committer=commit.author.email if commit.author else None,
+            message=commit.message,
+        )

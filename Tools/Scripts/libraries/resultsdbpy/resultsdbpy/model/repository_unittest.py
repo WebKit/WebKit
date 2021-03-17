@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,15 +31,15 @@ class RepositoryTest(WaitForDockerTestCase):
         with MockModelFactory.webkit():
             svn_repo = WebKitRepository()
             self.assertTrue('webkit', svn_repo.key)
-            commit = svn_repo.commit_for_id(6)
+            commit = svn_repo.commit(revision=6)
             self.assertEqual(commit.uuid, 160163990000)
             self.assertEqual(commit.message, '6th commit')
             self.assertEqual(commit.branch, 'trunk')
 
-    def test_branch_svn(self):
+    def test_ref_svn(self):
         with MockModelFactory.webkit():
             svn_repo = WebKitRepository()
-            commit = svn_repo.commit_for_id(7)
+            commit = svn_repo.commit(ref=7)
             self.assertEqual(commit.uuid, 160164090000)
             self.assertEqual(commit.message, '7th commit')
             self.assertEqual(commit.branch, 'branch-a')
@@ -48,15 +48,23 @@ class RepositoryTest(WaitForDockerTestCase):
         with MockModelFactory.safari() as safari:
             git_repo = StashRepository('https://{}'.format(safari.remote))
             self.assertEqual('safari', git_repo.key)
-            commit = git_repo.commit_for_id('1abe25b443e9')
+            commit = git_repo.commit(hash='1abe25b443e9')
+            self.assertEqual(commit.uuid, 160166300000)
+            self.assertEqual(commit.branch, 'main')
+
+    def test_ref_stash(self):
+        with MockModelFactory.safari() as safari:
+            git_repo = StashRepository('https://{}'.format(safari.remote))
+            self.assertEqual('safari', git_repo.key)
+            commit = git_repo.commit(ref='1abe25b443e9')
             self.assertEqual(commit.uuid, 160166300000)
             self.assertEqual(commit.branch, 'main')
 
     def test_colliding_timestamps_stash(self):
         with MockModelFactory.safari() as safari:
             git_repo = StashRepository('https://{}'.format(safari.remote))
-            commit1 = git_repo.commit_for_id('bae5d1e90999')
-            commit2 = git_repo.commit_for_id('d8bce26fa65c')
+            commit1 = git_repo.commit(hash='bae5d1e90999')
+            commit2 = git_repo.commit(hash='d8bce26fa65c')
 
             self.assertEqual(commit1.timestamp, commit2.timestamp)
             self.assertNotEqual(commit1.uuid, commit2.uuid)
@@ -67,6 +75,6 @@ class RepositoryTest(WaitForDockerTestCase):
     def test_branch_stash(self):
         with MockModelFactory.safari() as safari:
             git_repo = StashRepository('https://{}'.format(safari.remote))
-            commit = git_repo.commit_for_id('621652add7fc')
+            commit = git_repo.commit(hash='621652add7fc')
             self.assertEqual(commit.uuid, 160166600000)
             self.assertEqual(commit.branch, 'branch-a')

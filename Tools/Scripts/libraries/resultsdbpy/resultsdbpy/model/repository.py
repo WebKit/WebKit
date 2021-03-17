@@ -33,6 +33,9 @@ class Repository(object):
     def commit_for_id(self, id):
         raise NotImplementedError()
 
+    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=True):
+        raise NotImplementedError()
+
     def url_for_commit(self, commit):
         return None
 
@@ -61,6 +64,13 @@ class StashRepository(Repository):
             message=commit.message,
         )
 
+    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=True):
+        if identifier:
+            fast = False
+        if ref:
+            return self.remote.find(ref, include_identifier=not fast)
+        return self.remote.commit(revision=revision, hash=hash, identifier=identifier, include_identifier=not fast)
+
     def url_for_commit(self, commit):
         return f'{self.remote.url}/commits/{commit}'
 
@@ -88,6 +98,15 @@ class WebKitRepository(Repository):
             committer=commit.author.email,
             message=commit.message,
         )
+
+    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=True):
+        if identifier:
+            fast = False
+        if ref:
+            if isinstance(ref, int) or ref.isdigit():
+                ref = 'r{}'.format(ref)
+            return self.remote.find(ref, include_identifier=not fast)
+        return self.remote.commit(revision=revision, hash=hash, identifier=identifier, include_identifier=not fast)
 
     def url_for_commit(self, commit):
         return f'https://commits.webkit.org/r{commit}'

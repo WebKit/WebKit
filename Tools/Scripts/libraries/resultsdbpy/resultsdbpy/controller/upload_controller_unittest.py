@@ -49,7 +49,7 @@ class UploadControllerPostTest(FlaskTestCase, WaitForDockerTestCase):
     def test_upload(self, client, **kwargs):
         upload_dict = dict(
             suite='layout-tests',
-            commits=[dict(repository_id='safari', id='d8bce26fa65c6fc8f39c17927abb77f69fab82fc'), dict(repository_id='webkit', id='6')],
+            commits=[dict(repository_id='safari', id='d8bce26fa65c6fc8f39c17927abb77f69fab82fc'), dict(repository_id='webkit', id=6)],
             configuration=Configuration.Encoder().default(Configuration(
                 platform='Mac', version='10.14.0', sdk='18A391',
                 is_simulator=False, architecture='x86_64',
@@ -67,7 +67,7 @@ class UploadControllerPostTest(FlaskTestCase, WaitForDockerTestCase):
         self.assertEqual(response.status_code, 200)
 
         retrieved = response.json()[0]
-        retrieved['commits'] = [dict(repository_id=commit['repository_id'], id=commit['id']) for commit in retrieved['commits']]
+        retrieved['commits'] = [dict(repository_id=commit['repository_id'], id=commit.get('hash', commit.get('revision'))) for commit in retrieved['commits']]
         self.assertEqual(retrieved, upload_dict)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -180,7 +180,7 @@ class UploadControllerTest(FlaskTestCase, WaitForDockerTestCase):
             'd8bce26fa65c6fc8f39c17927abb77f69fab82fc',
             'bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
             '1abe25b443e985f93b90d830e4a7e3731336af4d',
-        ]), sorted([result['commits'][1]['id'] for result in response.json()]))
+        ]), sorted([result['commits'][1]['hash'] for result in response.json()]))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
@@ -188,26 +188,28 @@ class UploadControllerTest(FlaskTestCase, WaitForDockerTestCase):
         response = client.get(self.URL + '/api/upload?platform=Mac&style=Release&flavor=wk2&id=d8bce26fa65c')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(1, len(response.json()))
-        self.assertEqual(['d8bce26fa65c6fc8f39c17927abb77f69fab82fc'], [result['commits'][1]['id'] for result in response.json()])
+        self.assertEqual(['d8bce26fa65c6fc8f39c17927abb77f69fab82fc'], [result['commits'][1]['hash'] for result in response.json()])
 
         response = client.get(self.URL + '/api/upload?platform=Mac&style=Release&flavor=wk2&id=6')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(5, len(response.json()))
-        self.assertEqual(['6'] * 5, [result['commits'][0]['id'] for result in response.json()])
+        self.assertEqual([6] * 5, [result['commits'][0]['revision'] for result in response.json()])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_process(self, client, **kwargs):
-        response = client.post(self.URL + '/api/upload/process?platform=Mac&style=Release&flavor=wk2')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(5, len(response.json()))
-        self.assertEqual([dict(status='ok')] * 5, [element['processing']['python-tests'] for element in response.json()])
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            response = client.post(self.URL + '/api/upload/process?platform=Mac&style=Release&flavor=wk2')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(5, len(response.json()))
+            self.assertEqual([dict(status='ok')] * 5, [element['processing']['python-tests'] for element in response.json()])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_process_commit(self, client, **kwargs):
-        response = client.post(self.URL + '/api/upload/process?platform=Mac&style=Release&flavor=wk2&id=d8bce26fa65c')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(1, len(response.json()))
-        self.assertEqual(['d8bce26fa65c6fc8f39c17927abb77f69fab82fc'], [result['commits'][1]['id'] for result in response.json()])
-        self.assertEqual([dict(status='ok')], [element['processing']['python-tests'] for element in response.json()])
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            response = client.post(self.URL + '/api/upload/process?platform=Mac&style=Release&flavor=wk2&id=d8bce26fa65c')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(1, len(response.json()))
+            self.assertEqual(['d8bce26fa65c6fc8f39c17927abb77f69fab82fc'], [result['commits'][1]['hash'] for result in response.json()])
+            self.assertEqual([dict(status='ok')], [element['processing']['python-tests'] for element in response.json()])

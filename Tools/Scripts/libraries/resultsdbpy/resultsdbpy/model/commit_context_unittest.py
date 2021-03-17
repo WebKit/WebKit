@@ -53,8 +53,8 @@ class CommitContextTest(WaitForDockerTestCase):
                 for key, repository in dict(safari=safari, webkit=webkit).items():
                     for branch, commits in repository.commits.items():
                         for commit in commits:
-                            self.database.register_commit_with_repo_and_id(
-                                key, branch, commit.hash or commit.revision,
+                            self.database.register_partial_commit(
+                                key, ref=commit.hash or commit.revision,
                             )
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -183,7 +183,7 @@ class CommitContextTest(WaitForDockerTestCase):
     def test_commit_from_stash_repo(self, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             self.init_database(redis=redis, cassandra=cassandra)
-            self.database.register_commit_with_repo_and_id('safari', 'main', 'd8bce26fa65c')
+            self.database.register_partial_commit('safari', hash='d8bce26fa65c')
             self.assertEqual(
                 [self.stash_repository.commit_for_id(id='d8bce26fa65c')],
                 self.database.find_commits_by_id(repository_id='safari', branch='main', commit_id='d8bce26fa65c'),
@@ -193,7 +193,7 @@ class CommitContextTest(WaitForDockerTestCase):
     def test_commit_from_svn_repo(self, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             self.init_database(redis=redis, cassandra=cassandra)
-            self.database.register_commit_with_repo_and_id('webkit', 'trunk', 6)
+            self.database.register_partial_commit('webkit', revision=6)
             self.assertEqual(
                 [self.svn_repository.commit_for_id(id=6)],
                 self.database.find_commits_by_id(repository_id='webkit', branch='trunk', commit_id=6),

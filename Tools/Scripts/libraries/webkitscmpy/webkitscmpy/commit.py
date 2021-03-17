@@ -220,7 +220,7 @@ class Commit(object):
         if author and isinstance(author, dict) and author.get('name'):
             self.author = Contributor(author.get('name'), author.get('emails'))
         elif author and isinstance(author, six.string_types) and '@' in author:
-            self.author = Contributor(author, author)
+            self.author = Contributor(author, [author])
         elif author and not isinstance(author, Contributor):
             raise TypeError("Expected 'author' to be of type {}, got '{}'".format(Contributor, author))
         else:

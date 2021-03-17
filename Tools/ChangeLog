@@ -1,5 +1,61 @@
 2021-03-16  Jonathan Bedard  <jbedard@apple.com>
 
+        [resultsdbpy] Save identifiers in commit table
+        https://bugs.webkit.org/show_bug.cgi?id=223101
+        <rdar://problem/75338338>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_controller.py:
+        (CommitController.register): Accept uploaded new commit objects, continue to return old-style commits.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/upload_controller.py:
+        (UploadController.upload): Register commits using the fast path when uploading results.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/upload_controller_unittest.py:
+        (UploadControllerTest.test_process): Mock safari and WebKit when processing results.
+        (UploadControllerTest.test_process_commit): Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/commit_context.py:
+        (CommitContext.CommitModelMk2): Add new style commit model base.
+        (CommitContext.CommitByRef): Sort commits by hash, revision and identifier references.
+        (CommitContext.CommitByUuidAscendingMk2): New commit style UUID table.
+        (CommitContext.CommitByUuidDescendingMk2): Ditto.
+        (CommitContext.__init__): Create new tables.
+        (CommitContext.find_commits_by_ref): Search for commits in the new ref table.
+        (CommitContext.register): Post-process commits to populate identifier field.
+        (CommitContext.register_commit): Only register new-style commits.
+        (CommitContext.register_partial_commit): Register new-style commits, allow caller to opt-out of expensive
+        Identifier computation.
+        (CommitContext.url): Accept old and new style commits.
+        (CommitContext.register_commit_with_repo_and_id): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/commit_context_unittest.py:
+        (CommitContextTest.add_all_commits_to_database): Update commit registration call.
+        (CommitContextTest.test_commit_from_stash_repo): Ditto.
+        (CommitContextTest.test_commit_from_svn_repo): Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/mock_model_factory.py:
+        (MockModelFactory.create): Update commit registration call.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/model.py:
+        (Model.__init__): commit_context may now post-process uploads.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/repository.py:
+        (Repository.commit): Add call to return new-style commits.
+        (StashRepository.commit): Ditto.
+        (WebKitRepository.commit): Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/repository_unittest.py:
+        (RepositoryTest.test_svn):
+        (RepositoryTest.test_ref_svn):
+        (RepositoryTest.test_stash):
+        (RepositoryTest.test_ref_stash):
+        (RepositoryTest.test_colliding_timestamps_stash):
+        (RepositoryTest.test_branch_stash):
+        (RepositoryTest.test_branch_svn): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/upload_context_unittest.py:
+        (UploadContextTest.test_callback):
+        (UploadContextTest.test_async_callback):
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/commit.py:
+        (Commit): Handle single email passed to contributor.
+
+2021-03-16  Jonathan Bedard  <jbedard@apple.com>
+
         [resultsdbpy] Allow user to change commit representation
         https://bugs.webkit.org/show_bug.cgi?id=223215
         <rdar://problem/75446602>

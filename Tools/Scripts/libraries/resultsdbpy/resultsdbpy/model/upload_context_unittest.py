@@ -135,35 +135,38 @@ class UploadContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
-        configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
-        configuration, uploads = next(iter(self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False).items()))
-        self.model.upload_context.process_test_results(
-            configuration=configuration,
-            commits=uploads[0]['commits'],
-            suite='layout-tests',
-            test_results=uploads[0]['test_results'],
-            timestamp=uploads[0]['timestamp'],
-        )
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
+            configuration, uploads = next(iter(self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False).items()))
+            self.model.upload_context.process_test_results(
+                configuration=configuration,
+                commits=uploads[0]['commits'],
+                suite='layout-tests',
+                test_results=uploads[0]['test_results'],
+                timestamp=uploads[0]['timestamp'],
+            )
 
-        # Using suite results as a proxy to tell if callbacks were triggered
-        self.assertEqual(1, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))
+            # Using suite results as a proxy to tell if callbacks were triggered
+            self.assertEqual(1, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_async_callback(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra, async_processing=True)
         MockModelFactory.add_mock_results(self.model)
 
-        configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
-        configuration, uploads = next(iter(self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False).items()))
-        self.model.upload_context.process_test_results(
-            configuration=configuration,
-            commits=uploads[0]['commits'],
-            suite='layout-tests',
-            test_results=uploads[0]['test_results'],
-            timestamp=uploads[0]['timestamp'],
-        )
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
+            configuration, uploads = next(iter(self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False).items()))
 
-        # Using suite results as a proxy to tell if callbacks were triggered
-        self.assertEqual(0, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))
-        self.assertTrue(self.model.upload_context.do_processing_work())
-        self.assertEqual(1, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))
+            self.model.upload_context.process_test_results(
+                configuration=configuration,
+                commits=uploads[0]['commits'],
+                suite='layout-tests',
+                test_results=uploads[0]['test_results'],
+                timestamp=uploads[0]['timestamp'],
+            )
+
+            # Using suite results as a proxy to tell if callbacks were triggered
+            self.assertEqual(0, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))
+            self.assertTrue(self.model.upload_context.do_processing_work())
+            self.assertEqual(1, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))

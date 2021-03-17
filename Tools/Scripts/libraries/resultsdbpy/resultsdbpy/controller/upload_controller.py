@@ -25,7 +25,6 @@ import time
 
 from collections import defaultdict
 from flask import abort, jsonify, request
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.controller.commit_controller import uuid_range_for_query, HasCommitContext
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.controller.configuration_controller import configuration_for_query
@@ -84,7 +83,7 @@ class UploadController(HasCommitContext):
                         response.append(dict(
                             configuration=Configuration.Encoder().default(config),
                             suite=suite,
-                            commits=Commit.Encoder().default(result['commits']),
+                            commits=[commit.Encoder().default(commit) for commit in result['commits']],
                             timestamp=result['timestamp'],
                             test_results=result['test_results'],
                         ))
@@ -113,7 +112,7 @@ class UploadController(HasCommitContext):
             if not suite:
                 abort(400, description='No test suite specified')
 
-            commits = [self.commit_controller.register(commit=commit) for commit in data.get('commits', [])]
+            commits = [self.commit_controller.register(commit=commit, fast=True) for commit in data.get('commits', [])]
 
             test_results = data.get('test_results', {})
             if not test_results:
@@ -150,7 +149,7 @@ class UploadController(HasCommitContext):
                         response.append(dict(
                             configuration=Configuration.Encoder().default(config),
                             suite=suite,
-                            commits=Commit.Encoder().default(result['commits']),
+                            commits=[commit.Encoder().default(commit) for commit in result['commits']],
                             timestamp=result['timestamp'],
                             processing=processing_results,
                         ))

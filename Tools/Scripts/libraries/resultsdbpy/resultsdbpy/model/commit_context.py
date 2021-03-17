@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ from datetime import datetime
 from resultsdbpy.controller.commit import Commit
 from resultsdbpy.model.repository import Repository
 
-from webkitscmpy import ScmBase
+from webkitscmpy import ScmBase, Commit as ScmCommit, Contributor
 
 
 class CommitContext(object):
@@ -65,6 +65,43 @@ class CommitContext(object):
         uuid = columns.BigInt(primary_key=True, required=True, clustering_order='DESC')
         commit_id = columns.Text(required=True)
 
+    class CommitModelMk2(Model):
+        repository_id = columns.Text(partition_key=True, required=True)
+        people = columns.Text(required=False)
+        message = columns.Text(required=False)
+
+        identifier = columns.Text(required=False)
+        hash = columns.Text(required=False)
+        revision = columns.Integer(required=False)
+
+        def to_commit(self):
+            return ScmCommit(
+                repository_id=self.repository_id, branch=self.branch,
+                timestamp=self.uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER,
+                order=self.uuid % Commit.TIMESTAMP_TO_UUID_MULTIPLIER,
+                author=self.people.get('author') if self.people else None,
+                message=self.message,
+                identifier=self.identifier,
+                hash=self.hash,
+                revision=self.revision,
+            )
+
+    class CommitByRef(CommitModelMk2):
+        __table_name__ = 'commits_ref_to_object'
+        ref = columns.Text(primary_key=True, required=True)
+        uuid = columns.BigInt(required=True)
+        branch = columns.Text(required=True)
+
+    class CommitByUuidAscendingMk2(CommitModelMk2):
+        __table_name__ = 'commits_uuid_to_object_ascending'
+        branch = columns.Text(partition_key=True, required=True)
+        uuid = columns.BigInt(primary_key=True, required=True, clustering_order='ASC')
+
+    class CommitByUuidDescendingMk2(CommitModelMk2):
+        __table_name__ = 'commits_uuid_to_object_descending'
+        branch = columns.Text(partition_key=True, required=True)
+        uuid = columns.BigInt(primary_key=True, required=True, clustering_order='DESC')
+
     class Branches(Model):
         __table_name__ = 'commit_branches'
         repository_id = columns.Text(partition_key=True, required=True)
@@ -80,12 +117,14 @@ class CommitContext(object):
         self.cassandra = cassandra
         self.repositories = {}
         self.cache_timeout = cache_timeout
+        self.name = 'commit-identifiers'
 
         with self:
-            self.cassandra.create_table(self.CommitByID)
-            self.cassandra.create_table(self.CommitByUuidAscending)
-            self.cassandra.create_table(self.CommitByUuidDescending)
-            self.cassandra.create_table(self.Branches)
+            for old in [self.CommitByID, self.CommitByUuidAscending, self.CommitByUuidDescending]:
+                self.cassandra.create_table(old)
+
+            for table in [self.CommitByRef, self.CommitByUuidAscendingMk2, self.CommitByUuidDescendingMk2, self.Branches]:
+                self.cassandra.create_table(table)
 
     def __enter__(self):
         self.cassandra.__enter__()
@@ -168,6 +207,22 @@ class CommitContext(object):
             f'repository_id={repository_id}:branch={branch}:commit_id={str(commit_id).lower()}',
             callback,
         )
+
+    def find_commits_by_ref(self, repository_id, ref, limit=100):
+        # FIXME: Should use the redis cache, but the redis cache doesn't support new-style commits yet
+        with self:
+            if isinstance(ref, int) or ref.isdigit():
+                return [model.to_commit() for model in self.cassandra.select_from_table(
+                    self.CommitByRef.__table_name__, limit=limit,
+                    repository_id=repository_id, ref='r{}'.format(ref),
+                )]
+
+            # FIXME: SASI indecies are the canoical way to solve this problem, but require Cassandra 3.4 which
+            # hasn't been deployed to our datacenters yet. This works for commits, but is less transparent.
+            return [model.to_commit() for model in self.cassandra.select_from_table(
+                self.CommitByRef.__table_name__, limit=limit,
+                repository_id=repository_id, ref__gte=ref.lower(), ref__lte=(ref.lower() + 'g'),
+            )]
 
     def find_commits_by_uuid(self, repository_id, branch, uuid, limit=100):
         if branch is None:
@@ -298,47 +353,101 @@ class CommitContext(object):
                 self.Branches.__table_name__, limit=limit, repository_id=repository_id,
             )]
 
+    def register(self, configuration, commits, suite, test_results, timestamp=None):
+        try:
+            for commit in commits:
+                self.register_partial_commit(
+                    repository_id=commit.repository_id,
+                    ref=commit.id,
+                    revision=commit.revision,
+                    hash=commit.hash,
+                    fast=False,
+                )
+        except Exception as e:
+            return dict(
+                status='error',
+                description=str(e),
+            )
+
+        return dict(status='ok')
+
     def register_commit(self, commit):
-        if not isinstance(commit, Commit):
-            raise TypeError(f'Expected type {Commit}, got {type(commit)}')
+        if not isinstance(commit, ScmCommit):
+            raise TypeError(f'Expected type {ScmCommit}, got {type(commit)}')
 
         with self:
             if commit.repository_id not in self.repositories:
                 self.repositories[commit.repository_id] = Repository(key=commit.repository_id)
 
-            for table in [self.CommitByID, self.CommitByUuidAscending, self.CommitByUuidDescending]:
+            for old in [self.CommitByID, self.CommitByUuidAscending, self.CommitByUuidDescending]:
+                self.cassandra.insert_row(
+                    old.__table_name__,
+                    repository_id=commit.repository_id,
+                    branch=commit.branch,
+                    commit_id=str(commit.revision).lower() if commit.revision else commit.hash,
+                    uuid=commit.uuid,
+                    committer=commit.author.email if commit.author else None,
+                    message=commit.message,
+                )
+
+            for table in [self.CommitByUuidAscendingMk2, self.CommitByUuidDescendingMk2, self.Branches]:
                 self.cassandra.insert_row(
                     table.__table_name__,
-                    repository_id=commit.repository_id, branch=commit.branch,
-                    commit_id=str(commit.id).lower(), uuid=commit.uuid,
-                    committer=commit.committer, message=commit.message,
+                    repository_id=commit.repository_id,
+                    branch=commit.branch,
+                    revision=commit.revision,
+                    hash=commit.hash,
+                    identifier=str(commit) if commit.identifier else None,
+                    uuid=commit.uuid,
+                    committer=json.dumps(commit.author, cls=Contributor.Encoder) if commit.author else None,
+                    message=commit.message,
                 )
+
+            for key, ref_gen in (
+                ('revision', lambda commit: 'r{}'.format(commit.revision)),
+                ('hash', lambda commit: commit.hash),
+                ('identifier', str),
+            ):
+                if not getattr(commit, key):
+                    continue
+
+                self.cassandra.insert_row(
+                    self.CommitByRef.__table_name__,
+                    ref=ref_gen(commit),
+                    repository_id=commit.repository_id,
+                    branch=commit.branch,
+                    revision=commit.revision,
+                    hash=commit.hash,
+                    identifier=str(commit) if commit.identifier else None,
+                    uuid=commit.uuid,
+                    committer=json.dumps(commit.author, cls=Contributor.Encoder) if commit.author else None,
+                    message=commit.message,
+                )
+
             self.cassandra.insert_row(
                 self.Branches.__table_name__,
                 repository_id=commit.repository_id, branch=commit.branch,
             )
             return commit
 
-    def register_commit_with_repo_and_id(self, repository_id, branch, commit_id):
-        if branch is None:
-            branch = self.repositories[repository_id].default_branch
+    def register_partial_commit(self, repository_id, ref=None, revision=None, hash=None, identifier=None, fast=True):
         if repository_id not in self.repositories:
             raise RuntimeError('{} is not a recognized repository')
 
         with self:
-            commits = self.find_commits_by_id(repository_id=repository_id, branch=branch, commit_id=commit_id)
+            commits = self.find_commits_by_ref(repository_id=repository_id, ref=ref or revision or hash or identifier)
             if len(commits) > 1:
-                raise ScmBase.Exception(f'Multiple commits with the id {commit_id} exist in {repository_id} on {branch}')
-            if commits:
+                raise ScmBase.Exception(f'Multiple commits with the id {ref or revision or hash or identifier} exist in {repository_id}')
+            if commits and (fast or commits[0].identifier):
                 return commits[0]
-            commit = self.repositories[repository_id].commit_for_id(commit_id)
+            commit = self.repositories[repository_id].commit(ref=ref, revision=revision, hash=hash, identifier=identifier, fast=fast)
             return self.register_commit(commit)
 
     def url(self, commit):
-        if not isinstance(commit, Commit):
+        if not isinstance(commit, Commit) and not isinstance(commit, ScmCommit):
             raise TypeError(f'Expected type {Commit}, got {type(commit)}')
 
         repo = self.repositories.get(commit.repository_id)
         if repo:
-            return repo.url_for_commit(commit.id)
+            return repo.url_for_commit(commit.id if isinstance(commit, Commit) else commit.hash or commit.revision)
         return None
