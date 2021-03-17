@@ -30,7 +30,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFoundation.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
 

@@ -1,3 +1,23 @@
+2021-03-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Move loadSimulatedRequest API from Private to Public WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=223279
+        <rdar://problem/75494316>
+
+        Reviewed by Darin Adler.
+
+        Just moving from SPI headers to API headers (and implementation).
+
+        No new tests, since this just changes the visibility of the functionality. The features are
+        tested with existing TestWebKitAPI tests.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadSimulatedRequest:withResponse:responseData:]):
+        (-[WKWebView loadSimulatedRequest:withResponseHTMLString:]):
+        (-[WKWebView loadFileRequest:allowingReadAccessToURL:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2021-03-17  Youenn Fablet  <youenn@apple.com>
 
         Align device orientation delegate to getUserMedia/geolocation delegates

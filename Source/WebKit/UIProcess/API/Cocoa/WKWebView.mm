@@ -1568,6 +1568,32 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
 }
 
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
+{
+    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
+}
+
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
+{
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
+
+    return [self loadSimulatedRequest:request withResponse:response.get() responseData:data];
+}
+
+- (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
+{
+    auto URL = request.URL;
+
+    if (![URL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
+
+    if (![readAccessURL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
+
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
+}
+
 @end
 
 #pragma mark -
@@ -2181,32 +2207,6 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         break;
     }
     return wrapper(_page->loadRequest(request, policy));
-}
-
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
-{
-    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
-}
-
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
-{
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
-
-    return [self loadSimulatedRequest:request withResponse:response.get() responseData:data];
-}
-
-- (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
-{
-    auto URL = request.URL;
-
-    if (![URL isFileURL])
-        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
-
-    if (![readAccessURL isFileURL])
-        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
-
-    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
 }
 
 - (void)_grantAccessToAssetServices
