@@ -99,9 +99,7 @@ static const char* toString(MemoryUsagePolicy policy)
 static size_t thresholdForMemoryKillOfInactiveProcess(unsigned tabCount)
 {
 #if CPU(X86_64) || CPU(ARM64)
-    size_t baseThreshold = 4 * GB;
-    if (tabCount > 1)
-        baseThreshold += std::min(tabCount - 1, 4u) * 1 * GB;
+    size_t baseThreshold = 3 * GB + tabCount * GB;
 #else
     size_t baseThreshold = tabCount > 1 ? 3 * GB : 2 * GB;
 #endif

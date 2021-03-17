@@ -1,3 +1,17 @@
+2021-03-17  Chris Dumez  <cdumez@apple.com>
+
+        Memory limit per tab shrinks as you open tabs in the same WebContent process (may affect Google Drive, Dropbox, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=223394
+        <rdar://75499387>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure the process memory limit scales with the number of web pages it holds (without cap on the number of
+        pages).
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForMemoryKillOfInactiveProcess):
+
 2021-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Populate NSURLSession with attributed bundle ID
