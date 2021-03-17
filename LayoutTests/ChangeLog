@@ -1,3 +1,12 @@
+2021-03-17  Robert Jenner  <jenner@apple.com>
+
+        [ macOS wk2 ARM64 ] 2 imported/w3c/web-platform-tests/webrtc are flakey text failures
+        https://bugs.webkit.org/show_bug.cgi?id=223385
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass Failure for Apple Silicon systems, and removing the Mojave test expectation while tests are being reviewed.
+
 2021-03-17  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Some media-source tests fail/timeout when media in GPU Process is enabled
