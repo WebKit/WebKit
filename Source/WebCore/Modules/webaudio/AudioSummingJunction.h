@@ -84,6 +84,7 @@ private:
     // m_outputs contains the AudioNodeOutputs representing current connections which are not disabled.
     // The rendering code should never use this directly, but instead uses m_renderingOutputs.
     HashSet<AudioNodeOutput*> m_outputs;
+    Vector<AudioNodeOutput*> m_pendingRenderingOutputs;
 };
 
 } // namespace WebCore
