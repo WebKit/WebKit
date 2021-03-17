@@ -1,5 +1,14 @@
 2021-03-16  Robert Jenner  <jenner@apple.com>
 
+        [ macOS wk2 ARM64 ] fast/table/multiple-captions-crash4.htmlis a flakey Image failure
+        https://bugs.webkit.org/show_bug.cgi?id=223292
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test results to PASS IMAGEONLYFAILURE while test is being reviewed.
+
+2021-03-16  Robert Jenner  <jenner@apple.com>
+
         [ macOS wk2 ARM 64 ] 2 accessibility/mac/value-change/ layout-tests are flakey text failures
         https://bugs.webkit.org/show_bug.cgi?id=223291
 

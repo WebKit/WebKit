@@ -1373,3 +1373,5 @@ webkit.org/b/223206 http/tests/local/loading-stylesheet-import-remove.html [ Pas
 # webkit.org/b/223291 Two accesability tests are flakey text failing only on Apple Silicon
 [ arm64 ] accessibility/mac/value-change/value-change-user-info-textfield.html [ Pass Failure ]
 [ arm64 ] accessibility/mac/value-change/value-change-user-info-textarea.html [ Pass Failure ]
+
+webkit.org/b/223292 [ arm64 ] fast/table/multiple-captions-crash4.html [ Pass ImageOnlyFailure ]
