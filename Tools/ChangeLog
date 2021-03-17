@@ -1,3 +1,17 @@
+2021-03-17  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Include cog build artefacts in built product archive
+        https://bugs.webkit.org/show_bug.cgi?id=217477
+
+        Reviewed by Adrian Perez de Castro.
+
+        Include Cog files in the zip file if they're present, so the nightly runner would be able to
+        start Cog instead of the WPE MiniBrowser.
+
+        * CISupport/built-product-archive:
+        (createZipFromList):
+        (archiveBuiltProduct):
+
 2021-03-16  John Wilander  <wilander@apple.com>
 
         PCM: Use adoptWK in TestInvocation::didReceiveSynchronousMessageFromInjectedBundle()'s handling of "SetPrivateClickMeasurementAttributionReportURLsForTesting"

@@ -111,7 +111,9 @@ def copyBuildFiles(source, destination, patterns):
 
 
 def createZipFromList(listToZip, configuration, excludePattern=None):
-    archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'WebKitBuild'))
+    global _topLevelBuildDirectory
+    global _configurationBuildDirectory
+    archiveDir = _topLevelBuildDirectory
     archiveFile = os.path.join(archiveDir, configuration + '.zip')
 
     try:
@@ -195,6 +197,7 @@ def minifyDirectory(platform, directory):
 
 def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
     assert platform in ('gtk', 'ios', 'jsc', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
+    global _configurationBuildDirectory
 
     if platform in ['ios', 'tvos', 'watchos']:
         combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-{}'.format(platform))
@@ -237,14 +240,24 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         # On GTK+/WPE/JSC we don't need the intermediate step of creating a thinDirectory
         # to be compressed in a ZIP file, because we can create the ZIP directly.
         # This is faster and requires less disk resources.
-        neededDirectories = ['bin', 'lib']
+        contents = ['bin', 'lib']
+
+        # For WPE pack the Cog browser as well if it's present.
+        cogDirectory = os.path.join('Tools', 'cog-prefix', 'src', 'cog-build')
+        absoluteCogDirectory = os.path.join(_configurationBuildDirectory, cogDirectory)
+        if platform == 'wpe' and os.path.isdir(absoluteCogDirectory):
+            contents.extend([os.path.join(cogDirectory, filename) for filename in ['cog', 'cogctl']])
+            for filename in os.listdir(absoluteCogDirectory):
+                if filename.startswith('libcogcore') or filename.startswith('libcogplatform'):
+                    contents.append(os.path.join(cogDirectory, filename))
+
         # When debug fission is enabled the directories below contain dwo files
         # with the debug information needed to generate backtraces with GDB.
         for objectDir in ['Tools', 'Source']:
             if dirContainsdwo(objectDir):
-                neededDirectories.append(objectDir)
+                contents.append(objectDir)
 
-        if createZipFromList(neededDirectories, configuration, excludePattern='*.o'):
+        if createZipFromList(contents, configuration, excludePattern='*.o'):
             return 1
 
 def unzipArchive(directoryToExtractTo, configuration):
