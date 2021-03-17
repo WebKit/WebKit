@@ -377,6 +377,12 @@ static const char *GetOperatorString(TOperator op,
             return "!=";
 
         case TOperator::EOpEqual:
+            if((argType0->getStruct() && argType1->getStruct()) &&
+               (argType0->isArray() && argType1->isArray()))
+            {
+                return "ANGLE_equalStructArray";
+            }
+           
             if ((argType0->isVector() && argType1->isVector()) ||
                 (argType0->getStruct() && argType1->getStruct()) ||
                 (argType0->isArray() && argType1->isArray()) ||
@@ -389,6 +395,12 @@ static const char *GetOperatorString(TOperator op,
             return "==";
 
         case TOperator::EOpNotEqual:
+            if((argType0->getStruct() && argType1->getStruct()) &&
+               (argType0->isArray() && argType1->isArray()))
+            {
+                return "ANGLE_notEqualStructArray";
+            }
+           
             if ((argType0->isVector() && argType1->isVector()) ||
                 (argType0->isArray() && argType1->isArray()) ||
                 (argType0->isMatrix() && argType1->isMatrix()))

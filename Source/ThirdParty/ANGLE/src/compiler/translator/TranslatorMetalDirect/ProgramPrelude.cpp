@@ -151,8 +151,10 @@ class ProgramPrelude : public TIntermTraverser
     void equalMatrix();
     void notEqualVector();
     void notEqualStruct();
+    void notEqualStructArray();
     void notEqualMatrix();
     void equalArray();
+    void equalStructArray();
     void notEqualArray();
     void sign();
     void pack_half_2x16();
@@ -1058,6 +1060,22 @@ ANGLE_ALWAYS_INLINE bool ANGLE_equal(metal::array<T, N> u, metal::array<T, N> v)
 }
 )")
 
+PROGRAM_PRELUDE_DECLARE(equalStructArray,
+                        R"(
+template <typename T, size_t N>
+ANGLE_ALWAYS_INLINE bool ANGLE_equalStructArray(metal::array<T, N> u, metal::array<T, N> v)
+{
+    for(size_t i = 0; i < N; i++)
+    {
+        if (ANGLE_equal(u[i], v[i]) == false) 
+            return false;
+    }
+    return true;
+}
+)")
+
+
+
 PROGRAM_PRELUDE_DECLARE(notEqualArray,
                         R"(
 template <typename T, size_t N>
@@ -1125,6 +1143,21 @@ ANGLE_ALWAYS_INLINE bool ANGLE_notEqualStruct(thread const T &a, thread const T 
 )",
                         equalVector(),
                         equalMatrix())
+
+PROGRAM_PRELUDE_DECLARE(notEqualStructArray,
+                        R"(
+template <typename T, size_t N>
+ANGLE_ALWAYS_INLINE bool ANGLE_notEqualStructArray(metal::array<T, N> u, metal::array<T, N> v)
+{
+    for(size_t i = 0; i < N; i++)
+    {
+        if (ANGLE_notEqualStruct(u[i], v[i]))
+            return true;
+    }
+    return false;
+}
+)",
+                        notEqualStruct())
 
 PROGRAM_PRELUDE_DECLARE(vectorElemRef, R"(
 template <typename T, int N>
@@ -2058,9 +2091,9 @@ template <typename Texture, int N>
 ANGLE_ALWAYS_INLINE auto ANGLE_textureGrad_impl(
     thread Texture &texture,
     thread metal::sampler const &sampler,
-    thread metal::vec<float, N> const &coord,
-    thread metal::vec<float, N> const &dPdx,
-    thread metal::vec<float, N> const &dPdy)
+    metal::vec<float, N> const coord,
+    metal::vec<float, N> const dPdx,
+    metal::vec<float, N> const dPdy)
 {
     return texture.sample(sampler, coord, ANGLE_gradient<N>(dPdx, dPdy));
 }
@@ -2194,10 +2227,10 @@ template <typename Texture, int N>
 ANGLE_ALWAYS_INLINE auto ANGLE_textureGradOffset_impl(
     thread Texture &texture,
     thread metal::sampler const &sampler,
-    thread metal::vec<float, N> const &coord,
-    thread metal::vec<float, N> const &dPdx,
-    thread metal::vec<float, N> const &dPdy,
-    thread metal::vec<int, N> const &offset)
+    metal::vec<float, N> const coord,
+    metal::vec<float, N> const dPdx,
+    metal::vec<float, N> const dPdy,
+    metal::vec<int, N> const offset)
 {
     return texture.sample(sampler, coord, ANGLE_gradient<N>(dPdx, dPdy), offset);
 }
@@ -3432,6 +3465,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             {
                 equalArray();
             }
+            if(argType0->getStruct() && argType1->getStruct() && argType0->isArray() && argType1->isArray())
+            {
+                equalStructArray();
+            }
             if(argType0->isMatrix() && argType1->isMatrix())
             {
                 equalMatrix();
@@ -3451,6 +3488,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             if (argType0->isArray() && argType1->isArray())
             {
                 notEqualArray();
+            }
+            if(argType0->getStruct() && argType1->getStruct() && argType0->isArray() && argType1->isArray())
+            {
+                notEqualStructArray();
             }
             if(argType0->isMatrix() && argType1->isMatrix())
             {

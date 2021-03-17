@@ -1,3 +1,21 @@
+2021-03-17  Kyle Piddington  <kpiddington@apple.com>
+
+        ANGLE Metal fixups for program generation, readPixels
+        https://bugs.webkit.org/show_bug.cgi?id=223260
+
+        Reviewed by Dean Jackson.
+
+        This diff fixes the following tests:
+        webgl/2.0.0/conformance2/glsl3/texture-offset-uniform-texture-coordinate.html Is fixed by dropping 'thread' qualifiers on our intermediate texture sampling helper functions. Previously, any uniforms used in sampling textures would have had issues with their namespace.
+        webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html is fixed by correcting an issue with reading from outside the framebuffer. ANGLE Metal was previously reading to the start of the output array, rather than a proper offset.
+        webgl/2.0.0/conformance2/glsl3/array-equality.html is fixed by adding additional equality functions for handling arrays of structs.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GetOperatorString):
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+        * src/libANGLE/renderer/metal/FrameBufferMtl.mm:
+        (rx::FramebufferMtl::readPixels):
+
 2021-03-16  Kyle Piddington  <kpiddington@apple.com>
 
         Regressions from ANGLE Metal enablement

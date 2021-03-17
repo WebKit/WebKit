@@ -80,6 +80,7 @@ class TranslatorMetalReflection
         {
             return it->second;
         }
+        //If we can't find a matching sampler, assert out on Debug, and return an invalid value on release.
         ASSERT(0);
         return std::numeric_limits<size_t>::max();
     }
@@ -90,6 +91,7 @@ class TranslatorMetalReflection
         {
             return it->second;
         }
+        //If we can't find a matching texture, assert out on Debug, and return an invalid value on release.
         ASSERT(0);
         return std::numeric_limits<size_t>::max();
     }
@@ -100,6 +102,7 @@ class TranslatorMetalReflection
         {
             return it->second;
         }
+        //If we can't find a matching Uniform binding, assert out on Debug, and return an invalid value.
         ASSERT(0);
         return std::numeric_limits<size_t>::max();
     }
@@ -110,6 +113,7 @@ class TranslatorMetalReflection
         {
             return it->second;
         }
+        //If we can't find a matching UBO binding by name, assert out on Debug, and return an invalid value.
         ASSERT(0);
         return {.bindIndex = std::numeric_limits<size_t>::max(),
                 .arraySize = std::numeric_limits<size_t>::max()};
