@@ -1,3 +1,21 @@
+2021-03-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: use native datetime-local picker for changing `expires` value in cookie popover
+        https://bugs.webkit.org/show_bug.cgi?id=209389
+
+        Reviewed by BJ Burg.
+
+        r259173 already made it so that the `<input>` for Expires used `datetime-local`, so nothing
+        needs to be changed to adopt that. We still want to keep the `"input"` event listener that
+        parses and validates the `value` (or `placeholder`) of the `<input type="datetime-local">`
+        because dates in the past should be considered invalid.
+
+        * UserInterface/Views/CookiePopover.js:
+        (WI.CookiePopover.prototype.show): Add `step = 1` so that the seconds field is shown.
+        (WI.CookiePopover.prototype.show.formatDate): Added.
+        (WI.CookiePopover.prototype.show.formatDate.pad): Added.
+        * UserInterface/Views/CookiePopover.css: Remove the FIXME comment.
+
 2021-03-17  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: add GridOverlay diagnostic event and related hooks

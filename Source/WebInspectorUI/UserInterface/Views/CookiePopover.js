@@ -107,13 +107,32 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         this._targetElement = targetElement;
         this._preferredEdges = preferredEdges;
 
+        function formatDate(date) {
+            function pad(number) {
+                return String(number).padStart(2, "0");
+            }
+            return [
+                date.getFullYear(),
+                "-",
+                pad(date.getMonth() + 1),
+                "-",
+                pad(date.getDate()),
+                "T",
+                pad(date.getHours()),
+                ":",
+                pad(date.getMinutes()),
+                ":",
+                pad(date.getSeconds()),
+            ].join("");
+        }
+
         let data = {};
         if (cookie) {
             data.name = cookie.name;
             data.value = cookie.value;
             data.domain = cookie.domain;
             data.path = cookie.path;
-            data.expires = (cookie.expires || this._defaultExpires()).toLocaleString();
+            data.expires = formatDate(cookie.expires || this._defaultExpires());
             data.session = cookie.session;
             data.httpOnly = cookie.httpOnly;
             data.secure = cookie.secure;
@@ -124,7 +143,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             data.value = "";
             data.domain = urlComponents.host;
             data.path = urlComponents.path;
-            data.expires = this._defaultExpires().toLocaleString();
+            data.expires = formatDate(this._defaultExpires());
             data.session = true;
             data.httpOnly = false;
             data.secure = false;
@@ -196,6 +215,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
 
         let expiresInputRow = createInputRow("expires", WI.unlocalizedString("Expires"), "datetime-local", data.expires);
         this._expiresInputElement = expiresInputRow.inputElement;
+        this._expiresInputElement.step = 1; // Causes the seconds field to be shown.
         this._expiresInputElement.addEventListener("input", (event) => {
             this._expiresInputElement.classList.toggle("invalid", isNaN(this._parseExpires()));
         });
