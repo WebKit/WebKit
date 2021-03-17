@@ -349,7 +349,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
     if (style.hasAutoUsedZIndex()) {
         if ((m_element && m_document.documentElement() == m_element)
-            || style.opacity() < 1.0f
+            || style.hasOpacity()
             || style.hasTransformRelatedProperty()
             || style.hasMask()
             || style.clipPath()

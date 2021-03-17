@@ -396,9 +396,11 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
             // Can't resolve absolute coordinates.
             return RequiredRepaint::None;
         }
+
         if (is<RenderLayerModelObject>(this) && hasLayer()) {
             if (diff == StyleDifference::RepaintLayer)
                 return RequiredRepaint::RendererAndDescendantsRenderersWithLayers;
+
             if (diff == StyleDifference::Layout || diff == StyleDifference::SimplifiedLayout) {
                 // Certain style changes require layer repaint, since the layer could end up being destroyed.
                 auto layerMayGetDestroyed = oldStyle.position() != newStyle.position()
@@ -406,28 +408,33 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
                     || oldStyle.hasAutoUsedZIndex() != newStyle.hasAutoUsedZIndex()
                     || oldStyle.clip() != newStyle.clip()
                     || oldStyle.hasClip() != newStyle.hasClip()
-                    || oldStyle.opacity() != newStyle.opacity()
-                    || oldStyle.transform() != newStyle.transform()
-                    || oldStyle.filter() != newStyle.filter();
+                    || oldStyle.hasOpacity() != newStyle.hasOpacity()
+                    || oldStyle.hasTransform() != newStyle.hasTransform()
+                    || oldStyle.hasFilter() != newStyle.hasFilter();
                 if (layerMayGetDestroyed)
                     return RequiredRepaint::RendererAndDescendantsRenderersWithLayers;
             }
         }
+
         if (shouldRepaintForStyleDifference(diff))
             return RequiredRepaint::RendererOnly;
+
         if (newStyle.outlineSize() < oldStyle.outlineSize())
             return RequiredRepaint::RendererOnly;
+
         if (is<RenderLayerModelObject>(*this)) {
             // If we don't have a layer yet, but we are going to get one because of transform or opacity, then we need to repaint the old position of the object.
             bool hasLayer = downcast<RenderLayerModelObject>(*this).hasLayer();
-            bool willHaveLayer = newStyle.hasTransform() || newStyle.opacity() < 1 || newStyle.hasFilter() || newStyle.hasBackdropFilter();
+            bool willHaveLayer = newStyle.hasTransform() || newStyle.hasOpacity() || newStyle.hasFilter() || newStyle.hasBackdropFilter();
             if (!hasLayer && willHaveLayer)
                 return RequiredRepaint::RendererOnly;
         }
+
         if (is<RenderBox>(*this)) {
             if (diff == StyleDifference::Layout && oldStyle.position() != newStyle.position() && oldStyle.position() == PositionType::Static)
                 return RequiredRepaint::RendererOnly;
         }
+
         if (diff > StyleDifference::RepaintLayer && oldStyle.visibility() != newStyle.visibility()) {
             if (auto* enclosingLayer = this->enclosingLayer()) {
                 auto rendererWillBeHidden = newStyle.visibility() != Visibility::Visible;
@@ -435,17 +442,21 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
                     return RequiredRepaint::RendererOnly;
             }
         }
+
         return RequiredRepaint::None;
     }();
+
     if (shouldRepaintBeforeStyleChange == RequiredRepaint::RendererAndDescendantsRenderersWithLayers) {
         ASSERT(hasLayer());
         downcast<RenderLayerModelObject>(*this).layer()->repaintIncludingDescendants();
         return true;
     }
+
     if (shouldRepaintBeforeStyleChange == RequiredRepaint::RendererOnly) {
         repaint();
         return true;
     }
+
     return false;
 }
 

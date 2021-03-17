@@ -502,6 +502,7 @@ public:
 
     float textStrokeWidth() const { return m_rareInheritedData->textStrokeWidth; }
     float opacity() const { return m_rareNonInheritedData->opacity; }
+    bool hasOpacity() const { return m_rareNonInheritedData->opacity < 1; }
     ControlPart appearance() const { return static_cast<ControlPart>(m_rareNonInheritedData->appearance); }
     AspectRatioType aspectRatioType() const { return static_cast<AspectRatioType>(m_rareNonInheritedData->aspectRatioType); }
     double aspectRatioWidth() const { return m_rareNonInheritedData->aspectRatioWidth; }
