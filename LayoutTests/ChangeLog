@@ -1,3 +1,113 @@
+2021-03-17  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/cache convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222935
+        <rdar://problem/75183314>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cache/cache-redirections.html:
+        * http/tests/cache/cached-main-resource.html:
+        * http/tests/cache/cachedEntry-waits-for-response-policy.html:
+        * http/tests/cache/content-type-ignored-during-revalidation.html:
+        * http/tests/cache/disk-cache/disk-cache-redirect-to-data.html:
+        * http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html:
+        * http/tests/cache/disk-cache/redirect-chain-limits.html:
+        * http/tests/cache/disk-cache/resources/json.php: Removed.
+        * http/tests/cache/disk-cache/resources/json.py: Added.
+        (send304):
+        * http/tests/cache/disk-cache/resources/make-sha1-collision.php: Removed.
+        * http/tests/cache/disk-cache/resources/make-sha1-collision.py: Added.
+        * http/tests/cache/disk-cache/resources/redirect-chain.php: Removed.
+        * http/tests/cache/disk-cache/resources/redirect-chain.py: Added.
+        * http/tests/cache/disk-cache/resources/redirect-to-data.php: Removed.
+        * http/tests/cache/disk-cache/resources/redirect-to-data.py: Added.
+        * http/tests/cache/disk-cache/shattered-deduplication.html:
+        * http/tests/cache/disk-cache/speculative-validation/cacheable-redirect.html:
+        * http/tests/cache/disk-cache/speculative-validation/http-auth.html:
+        * http/tests/cache/disk-cache/speculative-validation/resources/cacheable-redirect-frame.php: Removed.
+        * http/tests/cache/disk-cache/speculative-validation/resources/cacheable-redirect-frame.py: Added.
+        * http/tests/cache/disk-cache/speculative-validation/resources/css-to-revalidate.php: Removed.
+        * http/tests/cache/disk-cache/speculative-validation/resources/css-to-revalidate.py: Added.
+        * http/tests/cache/disk-cache/speculative-validation/resources/frame-with-authenticated-resource.php: Removed.
+        * http/tests/cache/disk-cache/speculative-validation/resources/frame-with-authenticated-resource.py: Added.
+        * http/tests/cache/disk-cache/speculative-validation/resources/redirect-to-css.php: Removed.
+        * http/tests/cache/disk-cache/speculative-validation/resources/redirect-to-css.py: Added.
+        * http/tests/cache/disk-cache/speculative-validation/resources/request-headers-script.php: Removed.
+        * http/tests/cache/disk-cache/speculative-validation/resources/request-headers-script.py: Added.
+        * http/tests/cache/disk-cache/speculative-validation/resources/resource-with-auth.php: Removed.
+        * http/tests/cache/disk-cache/speculative-validation/resources/resource-with-auth.py: Added.
+        * http/tests/cache/disk-cache/speculative-validation/resources/validation-request-frame.php: Removed.
+        * http/tests/cache/disk-cache/speculative-validation/resources/validation-request-frame.py: Added.
+        * http/tests/cache/disk-cache/speculative-validation/validation-request.html:
+        * http/tests/cache/history-navigation-no-resource-revalidation.html:
+        * http/tests/cache/iframe-304-crash-expected.txt:
+        * http/tests/cache/iframe-304-crash.html:
+        * http/tests/cache/iframe-detach.html:
+        * http/tests/cache/link-prefetch-main-resource-iframe.html:
+        * http/tests/cache/link-prefetch-main-resource.html:
+        * http/tests/cache/main-resource-304-reload.html:
+        * http/tests/cache/post-redirect-get.php: Removed.
+        * http/tests/cache/post-redirect-get.py: Added.
+        * http/tests/cache/post-with-cached-subresources.php: Removed.
+        * http/tests/cache/post-with-cached-subresources.py: Added.
+        * http/tests/cache/recursive-validation.html:
+        * http/tests/cache/redirect-referer.html:
+        * http/tests/cache/reload-main-resource.php: Removed.
+        * http/tests/cache/reload-main-resource.py: Added.
+        * http/tests/cache/resources/body.php: Removed.
+        * http/tests/cache/resources/body.py: Added.
+        * http/tests/cache/resources/cacheable-iframe.php: Removed.
+        * http/tests/cache/resources/cacheable-iframe.py: Added.
+        * http/tests/cache/resources/cacheable-random-text.php: Removed.
+        * http/tests/cache/resources/cacheable-random-text.py: Added.
+        * http/tests/cache/resources/iframe304.php: Removed.
+        * http/tests/cache/resources/iframe304.py: Added.
+        * http/tests/cache/resources/iframe304body.php: Removed.
+        * http/tests/cache/resources/iframe304body.py: Added.
+        * http/tests/cache/resources/load-and-check-referer.php: Removed.
+        * http/tests/cache/resources/load-and-check-referer.py: Added.
+        (contentType):
+        * http/tests/cache/resources/no-cache-main-resource-next.php: Removed.
+        * http/tests/cache/resources/no-cache-main-resource-next.py: Added.
+        * http/tests/cache/resources/no-cache-main-resource.php: Removed.
+        * http/tests/cache/resources/no-cache-main-resource.py: Added.
+        * http/tests/cache/resources/no-cache-with-validation.php: Removed.
+        * http/tests/cache/resources/no-cache-with-validation.py: Added.
+        * http/tests/cache/resources/partitioned-cache-echo-state.php: Removed.
+        * http/tests/cache/resources/partitioned-cache-echo-state.py: Added.
+        * http/tests/cache/resources/partitioned-cache-loader.html:
+        * http/tests/cache/resources/permanent-redirect.py: Added.
+        * http/tests/cache/resources/post-image-to-verify.php: Removed.
+        * http/tests/cache/resources/post-image-to-verify.py: Added.
+        * http/tests/cache/resources/prefetched-main-resource-iframe.php: Removed.
+        * http/tests/cache/resources/prefetched-main-resource-iframe.py: Added.
+        * http/tests/cache/resources/prefetched-main-resource.php: Removed.
+        * http/tests/cache/resources/prefetched-main-resource.py: Added.
+        * http/tests/cache/resources/redirect-referer-iframe.html:
+        * http/tests/cache/resources/reload-main-resource-iframe.php: Removed.
+        * http/tests/cache/resources/reload-main-resource-iframe.py: Added.
+        * http/tests/cache/resources/slow-iframe.php: Removed.
+        * http/tests/cache/resources/slow-iframe.py: Added.
+        * http/tests/cache/resources/stylesheet-html.php: Removed.
+        * http/tests/cache/resources/stylesheet-html.py: Added.
+        * http/tests/cache/resources/stylesheet304-bad-content-type.php: Removed.
+        * http/tests/cache/resources/stylesheet304-bad-content-type.py: Added.
+        * http/tests/cache/resources/stylesheet304.php: Removed.
+        * http/tests/cache/resources/svg-defs-vary.php: Removed.
+        * http/tests/cache/resources/svg-defs-vary.py: Added.
+        * http/tests/cache/resources/xhr-vary-header-response.php: Removed.
+        * http/tests/cache/resources/xhr-vary-header-response.py: Added.
+        * http/tests/cache/resources/xhr-vary-header-subframe.html:
+        * http/tests/cache/stylesheet-sharing.html:
+        * http/tests/cache/vary-frameless-document.html:
+        * http/tests/cache/xhr-body.html:
+        * http/tests/cache/xhr-vary-header.html:
+        * http/tests/resources/touch-temp-file.py: Added.
+        * http/tests/resources/write-temp-file.py: Added.
+        * http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash.html:
+        * platform/win/TestExpectations:
+
 2021-03-17  Robert Jenner  <jenner@apple.com>
 
         [ macOS wk2 ARM64 ] 2 imported/w3c/web-platform-tests/webrtc are flakey text failures

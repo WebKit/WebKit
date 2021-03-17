@@ -10,7 +10,7 @@ if (window.testRunner) {
 function removeAndReplaceIframe() {
     document.body.removeChild(document.getElementById("iframe"));
     var newIframe = document.createElement("iframe");
-    newIframe.src = "resources/iframe304.php";
+    newIframe.src = "resources/iframe304.py";
     newIframe.onload = function() { setTimeout(finish, 0); }
     document.body.appendChild(newIframe);
 }
@@ -22,6 +22,6 @@ function finish() {
 </script>
 </head>
 <body onload="setTimeout(removeAndReplaceIframe, 0)">
-<iframe id="iframe" src="resources/iframe304.php"></iframe>
+<iframe id="iframe" src="resources/iframe304.py"></iframe>
 </body>
 </html>

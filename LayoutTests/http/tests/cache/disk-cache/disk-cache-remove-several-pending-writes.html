@@ -22,7 +22,7 @@ function fetch(url) {
 
 function fetchResource() {
   internals.clearMemoryCache();
-  return fetch('resources/json.php?id=' + id).then(function (resp) {
+  return fetch('resources/json.py?id=' + id).then(function (resp) {
     if (resp.body.version === 2) {
       bugReproduced = false;
     }

@@ -31,7 +31,7 @@ function frameLoaded()
         // Navigate frame to its original location again. This time it should speculatively
         // validate subresources as we have subresource loads metadata in the disk cache.
         state = "speculativeRevalidation";
-        document.getElementById("testFrame").src = "resources/validation-request-frame.php";
+        document.getElementById("testFrame").src = "resources/validation-request-frame.py";
         return;
     }
     if (state == "speculativeRevalidation") {
@@ -50,5 +50,5 @@ function frameLoaded()
 }
 
 </script>
-<iframe id="testFrame" src="resources/validation-request-frame.php" onload="frameLoaded()"></iframe>
+<iframe id="testFrame" src="resources/validation-request-frame.py" onload="frameLoaded()"></iframe>
 <script src="/js-test-resources/js-test-post.js"></script>

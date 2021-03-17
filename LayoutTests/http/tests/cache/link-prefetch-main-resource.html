@@ -7,13 +7,13 @@ if (window.testRunner) {
 
 function loadAfterPrefetch()
 {
-     window.location.assign('http://localhost:8000/cache/resources/prefetched-main-resource.php');
+     window.location.assign('http://localhost:8000/cache/resources/prefetched-main-resource.py');
 }
 
 function runTest() {
     var link = document.createElement("link");
     link.rel = "prefetch";
-    link.href = "http://localhost:8000/cache/resources/prefetched-main-resource.php";
+    link.href = "http://localhost:8000/cache/resources/prefetched-main-resource.py";
     if (internals)
         internals.addPrefetchLoadEventListener(link, () => { loadAfterPrefetch(); });
     document.body.appendChild(link);

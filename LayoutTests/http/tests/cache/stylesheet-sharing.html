@@ -16,7 +16,7 @@ function waitForStylesheet(iframe, completionHandler)
 function load(src, completionHandler)
 {
     var iframe = document.createElement("iframe");
-    iframe.src = "resources/stylesheet-html.php?sheet=" + src;
+    iframe.src = "resources/stylesheet-html.py?sheet=" + src;
     iframe.onload = function () {
         iframe.contentDocument.body.offsetWidth;
         waitForStylesheet(iframe, completionHandler);

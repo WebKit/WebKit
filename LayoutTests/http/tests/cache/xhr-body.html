@@ -18,7 +18,7 @@ function test() {
     request.addEventListener("load", function() { log("load"); repeat(); }, false);
     request.addEventListener("error", function() { log("error"); repeat(); }, false);
     request.addEventListener("abort", function() { log("abort"); repeat(); }, false);
-    request.open("GET", "resources/body.php", true);
+    request.open("GET", "resources/body.py", true);
     request.send();
 }
 
@@ -36,7 +36,7 @@ function repeat() {
     secondRequest.addEventListener("load", function() { secondRequestFinished(); }, false);
     secondRequest.addEventListener("error", function() { log("error"); end(); }, false);
     secondRequest.addEventListener("abort", function() { log("abort"); end(); }, false);
-    secondRequest.open("POST", "resources/body.php", true);
+    secondRequest.open("POST", "resources/body.py", true);
     secondRequest.send("This http body should be visible");
 }
 

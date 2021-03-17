@@ -6,7 +6,7 @@ description("Test that recursively loading resource that requires validation doe
 
 function load(completion) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', "resources/no-cache-with-validation.php");
+    xhr.open('GET', "resources/no-cache-with-validation.py");
     xhr.onload = completion;
     xhr.send();
 }
