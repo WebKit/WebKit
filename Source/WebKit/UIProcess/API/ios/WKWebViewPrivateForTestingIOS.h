@@ -46,6 +46,7 @@
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;
 - (void)dismissFormAccessoryView;
+- (NSArray<NSString *> *)_filePickerAcceptedTypeIdentifiers;
 - (void)_dismissFilePicker;
 - (void)selectFormAccessoryPickerRow:(int)rowIndex;
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex;

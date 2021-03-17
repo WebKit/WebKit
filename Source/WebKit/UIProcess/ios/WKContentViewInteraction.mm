@@ -5676,6 +5676,14 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return NO;
 }
 
+- (NSArray<NSString *> *)filePickerAcceptedTypeIdentifiers
+{
+    if (!_fileUploadPanel)
+        return @[];
+
+    return [_fileUploadPanel acceptedTypeIdentifiers];
+}
+
 - (void)dismissFilePicker
 {
     [_fileUploadPanel dismiss];

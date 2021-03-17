@@ -553,6 +553,12 @@ void UIScriptControllerIOS::dismissFormAccessoryView()
     [webView() dismissFormAccessoryView];
 }
 
+JSObjectRef UIScriptControllerIOS::filePickerAcceptedTypeIdentifiers()
+{
+    NSArray *acceptedTypeIdentifiers = [webView() _filePickerAcceptedTypeIdentifiers];
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:acceptedTypeIdentifiers inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
 void UIScriptControllerIOS::dismissFilePicker(JSValueRef callback)
 {
     TestRunnerWKWebView *webView = this->webView();

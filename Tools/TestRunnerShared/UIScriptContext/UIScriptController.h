@@ -211,6 +211,7 @@ public:
 
     // Form Controls
     
+    virtual JSObjectRef filePickerAcceptedTypeIdentifiers() { notImplemented(); return nullptr; }
     virtual void dismissFilePicker(JSValueRef) { notImplemented(); }
     virtual void dismissFormAccessoryView() { notImplemented(); }
     virtual void selectFormAccessoryPickerRow(long) { notImplemented(); }

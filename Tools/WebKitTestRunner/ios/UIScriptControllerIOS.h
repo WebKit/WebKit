@@ -80,6 +80,7 @@ private:
     void rawKeyUp(JSStringRef) override;
 
     void dismissFormAccessoryView() override;
+    JSObjectRef filePickerAcceptedTypeIdentifiers() override;
     void dismissFilePicker(JSValueRef) override;
     JSRetainPtr<JSStringRef> selectFormPopoverTitle() const override;
     JSRetainPtr<JSStringRef> textContentType() const override;

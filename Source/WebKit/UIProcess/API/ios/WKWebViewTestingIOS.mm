@@ -127,6 +127,11 @@
     [_contentView accessoryDone];
 }
 
+- (NSArray<NSString *> *)_filePickerAcceptedTypeIdentifiers
+{
+    return [_contentView filePickerAcceptedTypeIdentifiers];
+}
+
 - (void)_dismissFilePicker
 {
     [_contentView dismissFilePicker];
