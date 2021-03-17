@@ -4927,8 +4927,9 @@ const std::array<std::pair<uint16_t, UChar32>, 18590>& big5()
     return *array;
 }
 
+#if ASSERT_ENABLED
 // From https://encoding.spec.whatwg.org/index-euc-kr.txt
-const std::array<std::pair<uint16_t, UChar>, 17048> eucKRDecodingIndex {{
+const std::array<std::pair<uint16_t, UChar>, 17048> eucKRDecodingIndexReference {{
     { 0, 0xAC02 }, { 1, 0xAC03 }, { 2, 0xAC05 }, { 3, 0xAC06 }, { 4, 0xAC0B }, { 5, 0xAC0C }, { 6, 0xAC0D }, { 7, 0xAC0E },
     { 8, 0xAC0F }, { 9, 0xAC18 }, { 10, 0xAC1E }, { 11, 0xAC1F }, { 12, 0xAC21 }, { 13, 0xAC22 }, { 14, 0xAC23 }, { 15, 0xAC25 },
     { 16, 0xAC26 }, { 17, 0xAC27 }, { 18, 0xAC28 }, { 19, 0xAC29 }, { 20, 0xAC2A }, { 21, 0xAC2B }, { 22, 0xAC2E }, { 23, 0xAC32 },
@@ -7061,10 +7062,42 @@ const std::array<std::pair<uint16_t, UChar>, 17048> eucKRDecodingIndex {{
     { 23734, 0x59EC }, { 23735, 0x5B09 }, { 23736, 0x5E0C }, { 23737, 0x6199 }, { 23738, 0x6198 }, { 23739, 0x6231 }, { 23740, 0x665E }, { 23741, 0x66E6 },
     { 23742, 0x7199 }, { 23743, 0x71B9 }, { 23744, 0x71BA }, { 23745, 0x72A7 }, { 23746, 0x79A7 }, { 23747, 0x7A00 }, { 23748, 0x7FB2 }, { 23749, 0x8A70 },
 }};
+#endif
 
 const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR()
 {
-    return eucKRDecodingIndex;
+    // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
+    static std::array<std::pair<uint16_t, UChar>, 17048>* array;
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        array = new std::array<std::pair<uint16_t, UChar>, 17048>;
+        UErrorCode error = U_ZERO_ERROR;
+        auto icuConverter = ICUConverterPtr { ucnv_open("windows-949", &error), ucnv_close };
+        ASSERT(U_SUCCESS(error));
+        auto getPair = [icuConverter = WTFMove(icuConverter)] (uint16_t pointer) -> Optional<std::pair<uint16_t, UChar>> {
+            std::array<uint8_t, 2> icuInput { static_cast<uint8_t>(pointer / 190u + 0x81), static_cast<uint8_t>(pointer % 190u + 0x41) };
+            const char* input = reinterpret_cast<const char*>(icuInput.data());
+            UChar icuOutput[2];
+            UChar* output = icuOutput;
+            UErrorCode error = U_ZERO_ERROR;
+            ucnv_toUnicode(icuConverter.get(), &output, output + 2, &input, input + sizeof(icuInput), nullptr, true, &error);
+            if (icuOutput[0] == 0xFFFD)
+                return WTF::nullopt;
+            return {{ pointer, icuOutput[0] }};
+        };
+        size_t arrayIndex = 0;
+        for (uint16_t pointer = 0; pointer < 13776; pointer++) {
+            if (auto pair = getPair(pointer))
+                (*array)[arrayIndex++] = WTFMove(*pair);
+        }
+        for (uint16_t pointer = 13870; pointer < 23750; pointer++) {
+            if (auto pair = getPair(pointer))
+                (*array)[arrayIndex++] = WTFMove(*pair);
+        }
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(arrayIndex == 17048);
+        ASSERT(*array == eucKRDecodingIndexReference);
+    });
+    return *array;
 }
 
 #if ASSERT_ENABLED
@@ -8617,8 +8650,8 @@ void checkEncodingTableInvariants()
         ASSERT(isSortedByFirst(big5()));
         ASSERT(sortedFirstsAreUnique(big5()));
 
-        ASSERT(isSortedByFirst(eucKRDecodingIndex));
-        ASSERT(sortedFirstsAreUnique(eucKRDecodingIndex));
+        ASSERT(isSortedByFirst(eucKR()));
+        ASSERT(sortedFirstsAreUnique(eucKR()));
     });
 }
 
