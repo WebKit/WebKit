@@ -152,7 +152,9 @@ class GitHub(mocks.Requests):
                     'name': commit.author.name,
                     'email': commit.author.email,
                     'date': datetime.fromtimestamp(commit.timestamp).strftime('%Y-%m-%dT%H:%M:%SZ'),
-                }, 'message': commit.message,
+                }, 'message': commit.message + '\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
+                    'trunk' if commit.branch == self.default_branch else commit.branch, commit.revision,
+                ) if commit.revision else '',
                 'url': 'https://{}/git/commits/{}'.format(self.api_remote, commit.hash),
             }, 'url': 'https://{}/commits/{}'.format(self.api_remote, commit.hash),
             'html_url': 'https://{}/commit/{}'.format(self.remote, commit.hash),

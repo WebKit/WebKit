@@ -314,7 +314,7 @@ class TestGitHub(unittest.TestCase):
         self.assertFalse(remote.GitHub(self.remote).is_svn)
         self.assertTrue(remote.GitHub(self.remote).is_git)
 
-    def test_commit_revision(self):
+    def test_commit_hash(self):
         with mocks.remote.GitHub():
             self.assertEqual('1@main', str(remote.GitHub(self.remote).commit(hash='9b8311f2')))
             self.assertEqual('2@main', str(remote.GitHub(self.remote).commit(hash='fff83bb2')))
@@ -324,6 +324,17 @@ class TestGitHub(unittest.TestCase):
             self.assertEqual('4@main', str(remote.GitHub(self.remote).commit(hash='bae5d1e9')))
             self.assertEqual('2.2@branch-a', str(remote.GitHub(self.remote).commit(hash='621652ad')))
             self.assertEqual('2.3@branch-b', str(remote.GitHub(self.remote).commit(hash='790725a6')))
+
+    def test_commit_revision(self):
+        with mocks.remote.GitHub(git_svn=True):
+            self.assertEqual(1, remote.GitHub(self.remote).commit(hash='9b8311f2').revision)
+            self.assertEqual(2, remote.GitHub(self.remote).commit(hash='fff83bb2').revision)
+            self.assertEqual(3, remote.GitHub(self.remote).commit(hash='a30ce849').revision)
+            self.assertEqual(4, remote.GitHub(self.remote).commit(hash='1abe25b4').revision)
+            self.assertEqual(5, remote.GitHub(self.remote).commit(hash='3cd32e35').revision)
+            self.assertEqual(6, remote.GitHub(self.remote).commit(hash='621652ad').revision)
+            self.assertEqual(7, remote.GitHub(self.remote).commit(hash='790725a6').revision)
+            self.assertEqual(8, remote.GitHub(self.remote).commit(hash='bae5d1e9').revision)
 
     def test_commit_from_branch(self):
         with mocks.remote.GitHub():
@@ -435,7 +446,7 @@ class TestBitBucket(unittest.TestCase):
         self.assertFalse(remote.BitBucket(self.remote).is_svn)
         self.assertTrue(remote.BitBucket(self.remote).is_git)
 
-    def test_commit_revision(self):
+    def test_commit_hash(self):
         with mocks.remote.BitBucket():
             self.assertEqual('1@main', str(remote.BitBucket(self.remote).commit(hash='9b8311f2')))
             self.assertEqual('2@main', str(remote.BitBucket(self.remote).commit(hash='fff83bb2')))
@@ -445,6 +456,17 @@ class TestBitBucket(unittest.TestCase):
             self.assertEqual('4@main', str(remote.BitBucket(self.remote).commit(hash='bae5d1e9')))
             self.assertEqual('2.2@branch-a', str(remote.BitBucket(self.remote).commit(hash='621652ad')))
             self.assertEqual('2.3@branch-b', str(remote.BitBucket(self.remote).commit(hash='790725a6')))
+
+    def test_commit_revision(self):
+        with mocks.remote.BitBucket(git_svn=True):
+            self.assertEqual(1, remote.BitBucket(self.remote).commit(hash='9b8311f2').revision)
+            self.assertEqual(2, remote.BitBucket(self.remote).commit(hash='fff83bb2').revision)
+            self.assertEqual(3, remote.BitBucket(self.remote).commit(hash='a30ce849').revision)
+            self.assertEqual(4, remote.BitBucket(self.remote).commit(hash='1abe25b4').revision)
+            self.assertEqual(5, remote.BitBucket(self.remote).commit(hash='3cd32e35').revision)
+            self.assertEqual(6, remote.BitBucket(self.remote).commit(hash='621652ad').revision)
+            self.assertEqual(7, remote.BitBucket(self.remote).commit(hash='790725a6').revision)
+            self.assertEqual(8, remote.BitBucket(self.remote).commit(hash='bae5d1e9').revision)
 
     def test_commit_from_branch(self):
         with mocks.remote.BitBucket():
