@@ -1,3 +1,18 @@
+2021-03-16  Mark Lam  <mark.lam@apple.com>
+
+        Fixed undefined behavior bug in Const32Value::checkNegConstant().
+        https://bugs.webkit.org/show_bug.cgi?id=223284
+
+        Reviewed by Darin Adler.
+
+        This was causing a failure in testb3 on a release build.
+        Also do the same for Const64Value::checkNegConstant().
+
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::checkNegConstant const):
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::checkNegConstant const):
+
 2021-03-16  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Cache cross-origin methods / accessors of Window and Location per lexical global object

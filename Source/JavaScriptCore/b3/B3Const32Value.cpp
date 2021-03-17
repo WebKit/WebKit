@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,7 +100,7 @@ Value* Const32Value::checkMulConstant(Procedure& proc, const Value* other) const
 
 Value* Const32Value::checkNegConstant(Procedure& proc) const
 {
-    if (m_value == -m_value)
+    if (m_value == std::numeric_limits<int32_t>::min())
         return nullptr;
     return negConstant(proc);
 }
