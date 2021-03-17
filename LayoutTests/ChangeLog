@@ -1,5 +1,14 @@
 2021-03-16  Robert Jenner  <jenner@apple.com>
 
+        [ macOS wk2 ] media/media-fullscreen-return-to-inline.html is a flakey text failure and flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223293
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass Failure Timeout while test is being reviewed. 
+
+2021-03-16  Robert Jenner  <jenner@apple.com>
+
         [ macOS wk2 ARM64 ] fast/table/multiple-captions-crash4.htmlis a flakey Image failure
         https://bugs.webkit.org/show_bug.cgi?id=223292
 
