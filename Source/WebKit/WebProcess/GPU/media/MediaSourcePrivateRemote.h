@@ -73,6 +73,8 @@ public:
     void seekCompleted() final;
     void setTimeFudgeFactor(const MediaTime&) final;
 
+    MediaTime duration() const { return m_client->duration(); }
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
@@ -90,8 +92,6 @@ private:
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     RefPtr<WebCore::MediaSourcePrivateClient> m_client;
     Vector<RefPtr<SourceBufferPrivateRemote>> m_sourceBuffers;
-
-    MediaTime m_duration;
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSourcePrivateRemote"; }

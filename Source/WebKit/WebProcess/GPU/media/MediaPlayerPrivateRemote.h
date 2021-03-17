@@ -239,7 +239,7 @@ private:
 
     void setVisible(bool) final;
 
-    MediaTime durationMediaTime() const final { return m_cachedState.duration; }
+    MediaTime durationMediaTime() const final;
     MediaTime currentMediaTime() const final;
 
     MediaTime getStartDate() const final;

@@ -236,6 +236,16 @@ void MediaPlayerPrivateRemote::setPrivateBrowsingMode(bool privateMode)
     connection().send(Messages::RemoteMediaPlayerProxy::SetPrivateBrowsingMode(privateMode), m_id);
 }
 
+MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
+{
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSourcePrivate)
+        return m_mediaSourcePrivate->duration();
+#endif
+
+    return m_cachedState.duration;
+}
+
 MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 {
     return m_cachedState.currentTime;

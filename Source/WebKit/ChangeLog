@@ -1,3 +1,20 @@
+2021-03-17  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Some media-source tests fail/timeout when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=221686
+
+        Reviewed by Jer Noble.
+
+        For a `MediaPlayerPrivateRemote`, if it is owned by a video element with a reference
+        to a `MediaSource`, it needs to use the duration information from the `MediaSource`.
+
+        Covered by existing tests.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::durationMediaTime const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h:
+
 2021-03-17  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Refactor WKFileUploadPanel to use UniformTypeIdentifiers
