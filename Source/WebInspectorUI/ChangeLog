@@ -1,3 +1,17 @@
+2021-03-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: remove experimental setting and enable "grid" badges
+        https://bugs.webkit.org/show_bug.cgi?id=223209
+        <rdar://problem/75442185>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._updateGridBadge):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2021-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: remove experimental setting and enable Layout sidebar

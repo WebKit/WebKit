@@ -398,7 +398,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles:"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show jump to effective property button"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToVariableDeclaration, WI.UIString("Show jump to variable declaration button"));
-            stylesGroup.addSetting(WI.settings.experimentalEnableGridBadges, WI.unlocalizedString("Show \"grid\" badges"));
 
             experimentalSettingsView.addSeparator();
         }
@@ -428,7 +427,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         listenForChange(WI.settings.experimentalEnablePreviewFeatures);
 
         if (hasCSSDomain) {
-            listenForChange(WI.settings.experimentalEnableGridBadges);
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
             listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
         }

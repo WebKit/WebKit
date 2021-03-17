@@ -2012,9 +2012,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     _updateGridBadge()
     {
-        if (!WI.settings.experimentalEnableGridBadges.value)
-            return;
-
         if (!this.listItemElement || this._elementCloseTag)
             return;
 
