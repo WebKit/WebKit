@@ -135,6 +135,8 @@ static NSString *alertMessageText(MediaPermissionReason reason, const WebCore::S
         return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleOrigin];
     case MediaPermissionReason::Microphone:
         return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleOrigin];
+    case MediaPermissionReason::DeviceOrientation:
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"“%@” Would Like to Access Motion and Orientation", @"Message for requesting access to the device motion and orientation"), visibleOrigin];
     case MediaPermissionReason::Geolocation:
         return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your current location?", @"Message for geolocation prompt"), visibleDomain(origin.host)];
     case MediaPermissionReason::SpeechRecognition:
@@ -149,6 +151,8 @@ static NSString *allowButtonText(MediaPermissionReason reason)
     case MediaPermissionReason::CameraAndMicrophone:
     case MediaPermissionReason::Microphone:
         return WEB_UI_STRING_KEY(@"Allow", "Allow (usermedia)", @"Allow button title in user media prompt");
+    case MediaPermissionReason::DeviceOrientation:
+        return WEB_UI_STRING_KEY(@"Allow", "Allow (device motion and orientation access)", @"Button title in Device Orientation Permission API prompt");
     case MediaPermissionReason::Geolocation:
         return WEB_UI_STRING_KEY(@"Allow", "Allow (geolocation)", @"Allow button title in geolocation prompt");
     case MediaPermissionReason::SpeechRecognition:
@@ -163,6 +167,8 @@ static NSString *doNotAllowButtonText(MediaPermissionReason reason)
     case MediaPermissionReason::CameraAndMicrophone:
     case MediaPermissionReason::Microphone:
         return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (usermedia)", @"Disallow button title in user media prompt");
+    case MediaPermissionReason::DeviceOrientation:
+        return WEB_UI_STRING_KEY(@"Cancel", "Cancel (device motion and orientation access)", @"Button title in Device Orientation Permission API prompt");
     case MediaPermissionReason::Geolocation:
         return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (geolocation)", @"Disallow button title in geolocation prompt");
     case MediaPermissionReason::SpeechRecognition:
@@ -172,6 +178,13 @@ static NSString *doNotAllowButtonText(MediaPermissionReason reason)
 
 void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
+#if PLATFORM(IOS_FAMILY)
+    if (reason == MediaPermissionReason::DeviceOrientation) {
+        if (auto& userPermissionHandler = page.deviceOrientationUserPermissionHandlerForTesting())
+            return completionHandler(userPermissionHandler());
+    }
+#endif
+
     auto *webView = fromWebPageProxy(page);
     if (!webView) {
         completionHandler(false);

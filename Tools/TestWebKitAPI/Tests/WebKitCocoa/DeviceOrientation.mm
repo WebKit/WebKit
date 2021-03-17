@@ -27,6 +27,7 @@
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -75,9 +76,9 @@ Function<bool()> _decisionHandler;
     return self;
 }
 
-- (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(BOOL))decisionHandler
+- (void)_webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(_WKPermissionDecision))decisionHandler
 {
-    decisionHandler(_decisionHandler());
+    decisionHandler(_decisionHandler() ? _WKPermissionDecisionGrant : _WKPermissionDecisionDeny);
     askedClientForPermission = true;
 }
 
@@ -400,6 +401,90 @@ TEST(DeviceOrientation, PermissionSecureContextCheck)
 TEST(DeviceOrientation, PermissionSecureContextCheckDisabled)
 {
     runPermissionSecureContextCheckTest(ShouldEnableSecureContextChecks::No);
+}
+
+@interface DeviceOrientationPermissionValidationDelegate : NSObject <WKUIDelegatePrivate>
+- (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler;
+@end
+
+@implementation DeviceOrientationPermissionValidationDelegate {
+Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
+}
+- (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler {
+    _validationHandler = WTFMove(validationHandler);
+}
+
+- (void)_webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler {
+    if (_validationHandler)
+        _validationHandler(origin, frame);
+
+    askedClientForPermission  = true;
+    decisionHandler(_WKPermissionDecisionGrant);
+}
+@end
+
+static const char* mainFrameText = R"DOCDOCDOC(
+<html><body>
+<iframe src='https://127.0.0.1:9091/frame' allow='accelerometer:https://127.0.0.1:9091;gyroscope:https://127.0.0.1:9091;magnetometer:https://127.0.0.1:9091'></iframe>
+</body></html>
+)DOCDOCDOC";
+static const char* frameText = R"DOCDOCDOC(
+<html><body></body></html>
+)DOCDOCDOC";
+
+TEST(WebKit, DeviceOrientationPermissionInIFrame)
+{
+    TestWebKitAPI::HTTPServer server1({
+        { "/", { mainFrameText } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9090);
+
+    TestWebKitAPI::HTTPServer server2({
+        { "/frame", { frameText } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto permissionDelegate = adoptNS([[DeviceOrientationPermissionValidationDelegate alloc] init]);
+    [webView setUIDelegate:permissionDelegate.get()];
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    __block bool didFinishNavigation = false;
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+    RetainPtr<WKFrameInfo> frame;
+    [navigationDelegate setDecidePolicyForNavigationAction:[&](WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        if (action.targetFrame && !action.targetFrame.isMainFrame)
+            frame = action.targetFrame;
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }];
+
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:server1.request()];
+    TestWebKitAPI::Util::run(&didFinishNavigation);
+
+    [permissionDelegate setValidationHandler:[&webView](WKSecurityOrigin *origin, WKFrameInfo *frame) {
+        EXPECT_WK_STREQ(origin.protocol, @"https");
+        EXPECT_WK_STREQ(origin.host, @"127.0.0.1");
+        EXPECT_EQ(origin.port, 9090);
+
+        EXPECT_WK_STREQ(frame.securityOrigin.protocol, @"https");
+        EXPECT_WK_STREQ(frame.securityOrigin.host, @"127.0.0.1");
+        EXPECT_EQ(frame.securityOrigin.port, 9091);
+        EXPECT_FALSE(frame.isMainFrame);
+        EXPECT_TRUE(frame.webView == webView);
+    }];
+
+    [webView evaluateJavaScript:@"DeviceOrientationEvent.requestPermission()" inFrame:frame.get() inContentWorld:WKContentWorld.pageWorld completionHandler: [&] (id result, NSError *error) { }];
+
+    TestWebKitAPI::Util::run(&askedClientForPermission);
+
 }
 
 #endif // ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)

@@ -151,7 +151,7 @@ public:
     void resetUserMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
 
     // Device Orientation / Motion.
-    bool handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef);
+    bool handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef, WKFrameInfoRef);
 
     // Content Extensions.
     void configureContentExtensionForTest(const TestInvocation&);
@@ -204,7 +204,7 @@ public:
     void setIgnoresViewportScaleLimits(bool);
 
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
-    void setShouldAllowDeviceOrientationAndMotionAccess(bool value) { m_shouldAllowDeviceOrientationAndMotionAccess = value; }
+    void setShouldAllowDeviceOrientationAndMotionAccess(bool);
 
     void clearStatisticsDataForDomain(WKStringRef domain);
     bool doesStatisticsDomainIDExistInDatabase(unsigned domainID);

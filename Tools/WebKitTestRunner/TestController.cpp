@@ -319,9 +319,9 @@ static void printFrame(WKPageRef page, WKFrameRef frame, const void*)
     WKPageEndPrinting(page);
 }
 
-static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOriginRef origin, const void*)
+static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOriginRef origin, WKFrameInfoRef frame, const void*)
 {
-    return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin);
+    return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin, frame);
 }
 
 // A placeholder to tell WebKit the client is WebKitTestRunner.
@@ -2401,9 +2401,10 @@ void TestController::handleCheckOfUserMediaPermissionForOrigin(WKFrameRef frame,
     WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, toWK(salt).get(), settingsForOrigin(originHash).persistentPermission());
 }
 
-bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef origin)
+bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef origin, WKFrameInfoRef frame)
 {
-    m_currentInvocation->outputText(makeString("Received device orientation & motion access request for security origin \"", originUserVisibleName(origin), "\".\n"));
+    auto frameOrigin = adoptWK(WKFrameInfoCopySecurityOrigin(frame));
+    m_currentInvocation->outputText(makeString("Received device orientation & motion access request for top level origin \"", originUserVisibleName(origin), "\", with frame origin \"", originUserVisibleName(frameOrigin.get()), "\".\n"));
     return m_shouldAllowDeviceOrientationAndMotionAccess;
 }
 
@@ -3675,6 +3676,12 @@ void TestController::setPCMFraudPreventionValuesForTesting(WKStringRef unlinkabl
 WKURLRef TestController::currentTestURL() const
 {
     return m_currentInvocation ? m_currentInvocation->url() : nullptr;
+}
+
+void TestController::setShouldAllowDeviceOrientationAndMotionAccess(bool value)
+{
+    m_shouldAllowDeviceOrientationAndMotionAccess = value;
+    WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
 }
 
 } // namespace WTR

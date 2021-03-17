@@ -1,3 +1,40 @@
+2021-03-17  Youenn Fablet  <youenn@apple.com>
+
+        Align device orientation delegate to getUserMedia/geolocation delegates
+        https://bugs.webkit.org/show_bug.cgi?id=223247
+
+        Reviewed by Eric Carlson.
+
+        Refactor code to move device orientation prompt implementation with other prompts in MediaPermissionUtilities.
+        Update code to use top level origin for prompt.
+        Update delegate to provide both top level origin and initiating iframe as parameters.
+        Update the decision handler to take grant, deny or prompt parameter.
+
+        Covered by API tests.
+
+        * UIProcess/API/C/WKFrameInfoRef.cpp:
+        (WKFrameInfoCopySecurityOrigin):
+        * UIProcess/API/C/WKFrameInfoRef.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::alertMessageText):
+        (WebKit::allowButtonText):
+        (WebKit::doNotAllowButtonText):
+        (WebKit::alertForPermission):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+        * UIProcess/Cocoa/WKOrientationAccessAlert.h: Removed.
+        * UIProcess/Cocoa/WKOrientationAccessAlert.mm: Removed.
+        * UIProcess/MediaPermissionUtilities.h:
+        * UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp:
+        (WebKit::WebDeviceOrientationAndMotionAccessController::shouldAllowAccess):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-03-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Shutdown ANGLE on GPU process when last WebGL context is destroyed

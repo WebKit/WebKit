@@ -220,11 +220,10 @@ struct UIEdgeInsets;
 
 /*! @abstract Allows your app to determine whether or not the given security origin should have access to the device's orientation and motion.
  @param securityOrigin The security origin which requested access to the device's orientation and motion.
- @param decisionHandler The decision handler to call once the app has made its decision. Pass YES to allow the origin access, NO otherwise.
-
- If you do not implement this method, access to the device's orientation and motion will be granted.
+ @param frame The frame that initiated the request.
+ @param decisionHandler The decision handler to call once the app has made its decision.
  */
-- (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(ios(13.0));
+- (void)_webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #else // !TARGET_OS_IPHONE
 

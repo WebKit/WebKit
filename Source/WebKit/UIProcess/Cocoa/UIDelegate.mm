@@ -43,7 +43,6 @@
 #import "WKNSDictionary.h"
 #import "WKNavigationActionInternal.h"
 #import "WKOpenPanelParametersInternal.h"
-#import "WKOrientationAccessAlert.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKStorageAccessAlert.h"
 #import "WKUIDelegatePrivate.h"
@@ -140,7 +139,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewWillCloseLocalInspector = [delegate respondsToSelector:@selector(_webView:willCloseLocalInspector:)];
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    m_delegateMethods.webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:)];
+    m_delegateMethods.webViewRequestDeviceOrientationAndMotionPermissionForOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:)];
 #endif
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginDatabaseNameDisplayNameCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:databaseName:displayName:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
@@ -1042,25 +1041,35 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFr
 #if ENABLE(DEVICE_ORIENTATION)
 void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy& page, WebFrameProxy& webFrameProxy, FrameInfoData&& frameInfo, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!m_uiDelegate)
-        return completionHandler(false);
-
-    if (!m_uiDelegate->m_delegateMethods.webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler) {
-        presentOrientationAccessAlert(m_uiDelegate->m_webView.get().get(), frameInfo.securityOrigin.host, WTFMove(completionHandler));
+    auto securityOrigin = WebCore::SecurityOrigin::createFromString(page.pageLoadState().activeURL());
+    if (!m_uiDelegate || !m_uiDelegate->m_delegate.get() || !m_uiDelegate->m_delegateMethods.webViewRequestDeviceOrientationAndMotionPermissionForOriginDecisionHandler) {
+        alertForPermission(page, MediaPermissionReason::DeviceOrientation, securityOrigin->data(), WTFMove(completionHandler));
         return;
     }
 
     auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate)
-        return completionHandler(false);
-
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:));
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) decisionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL granted) mutable {
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:));
+    auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler), securityOrigin = securityOrigin->data(), checker = WTFMove(checker), page = makeWeakPtr(page)](_WKPermissionDecision decision) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
-        completionHandler(granted);
-    }).get()];
+        if (!page) {
+            completionHandler(false);
+            return;
+        }
+        switch (decision) {
+        case _WKPermissionDecisionPrompt:
+            alertForPermission(*page, MediaPermissionReason::DeviceOrientation, securityOrigin, WTFMove(completionHandler));
+            break;
+        case _WKPermissionDecisionGrant:
+            completionHandler(true);
+            break;
+        case _WKPermissionDecisionDeny:
+            completionHandler(false);
+            break;
+        }
+    });
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestDeviceOrientationAndMotionPermissionForOrigin:wrapper(API::SecurityOrigin::create(securityOrigin.get())) initiatedByFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) decisionHandler:decisionHandler.get()];
 }
 #endif
 

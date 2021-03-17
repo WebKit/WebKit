@@ -212,7 +212,7 @@ private:
         bool webViewWillCloseLocalInspector : 1;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-        bool webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler : 1;
+        bool webViewRequestDeviceOrientationAndMotionPermissionForOriginDecisionHandler : 1;
 #endif
         bool webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;
         bool webViewDecideDatabaseQuotaForSecurityOriginDatabaseNameDisplayNameCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;

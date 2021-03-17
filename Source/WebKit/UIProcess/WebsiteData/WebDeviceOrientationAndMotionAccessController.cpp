@@ -38,7 +38,7 @@ using namespace WebCore;
 
 void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
-    SecurityOriginData originData = frameInfo.securityOrigin;
+    auto originData = SecurityOrigin::createFromString(page.pageLoadState().activeURL())->data();
     auto currentPermission = cachedDeviceOrientationPermission(originData);
     if (currentPermission != DeviceOrientationOrMotionPermissionState::Prompt || !mayPrompt)
         return completionHandler(currentPermission);

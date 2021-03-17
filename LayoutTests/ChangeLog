@@ -1,3 +1,21 @@
+2021-03-17  Youenn Fablet  <youenn@apple.com>
+
+        Align device orientation delegate to getUserMedia/geolocation delegates
+        https://bugs.webkit.org/show_bug.cgi?id=223247
+
+        Reviewed by Eric Carlson.
+
+        * fast/device-orientation/device-motion-request-permission-denied-expected.txt:
+        * fast/device-orientation/device-motion-request-permission-granted-expected.txt:
+        * fast/device-orientation/device-orientation-request-permission-denied-expected.txt:
+        * fast/device-orientation/device-orientation-request-permission-granted-expected.txt:
+        * http/tests/device-orientation/device-motion-allowed-in-first-party-only-expected.txt:
+        * http/tests/device-orientation/device-motion-third-party-iframe-allowed-by-feature-policy-expected.txt:
+        * http/tests/device-orientation/device-orientation-allowed-in-first-party-only-expected.txt:
+        * http/tests/device-orientation/device-orientation-permission-granted-in-other-iframes-from-same-origin-expected.txt:
+        * http/tests/device-orientation/device-orientation-third-party-iframe-allowed-by-feature-policy-expected.txt:
+        * platform/ios/http/tests/events/device-orientation-motion-secure-context-expected.txt:
+
 2021-03-16  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening some consistent WPE failures and GTK4 crashes
