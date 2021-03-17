@@ -1335,41 +1335,43 @@ static const Vector<CSSValueIDAndSelector>& cssValueIDSelectorList()
         initializeOnce,
         [] {
         cssValueIDSelectorList.get() = Vector(std::initializer_list<CSSValueIDAndSelector> {
-#if HAVE(OS_DARK_MODE_SUPPORT)
             { CSSValueText, @selector(labelColor) },
-            { CSSValueAppleSystemLabel, @selector(labelColor) },
-            { CSSValueAppleSystemHeaderText, @selector(labelColor) },
-            { CSSValueAppleSystemSecondaryLabel, @selector(secondaryLabelColor) },
-            { CSSValueAppleSystemTertiaryLabel, @selector(tertiaryLabelColor) },
-            { CSSValueAppleSystemQuaternaryLabel, @selector(quaternaryLabelColor) },
-            { CSSValueAppleSystemPlaceholderText, @selector(placeholderTextColor) },
             { CSSValueWebkitControlBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemControlBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemTextBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
-            { CSSValueAppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
-            { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
-            { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
-            { CSSValueAppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
-            { CSSValueAppleSystemGrid, @selector(separatorColor) },
-            { CSSValueAppleSystemSeparator, @selector(separatorColor) },
-            { CSSValueAppleSystemContainerBorder, @selector(separatorColor) },
-            { CSSValueAppleSystemSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleSystemUnemphasizedSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleSystemBrown, @selector(systemBrownColor) },
-            { CSSValueAppleSystemIndigo, @selector(systemIndigoColor) },
-#endif
-            { CSSValueAppleSystemTeal, @selector(systemTealColor) },
-            { CSSValueAppleWirelessPlaybackTargetActive, @selector(systemBlueColor) },
             { CSSValueAppleSystemBlue, @selector(systemBlueColor) },
+            { CSSValueAppleSystemBrown, @selector(systemBrownColor) },
             { CSSValueAppleSystemGray, @selector(systemGrayColor) },
             { CSSValueAppleSystemGreen, @selector(systemGreenColor) },
+            { CSSValueAppleSystemIndigo, @selector(systemIndigoColor) },
             { CSSValueAppleSystemOrange, @selector(systemOrangeColor) },
             { CSSValueAppleSystemPink, @selector(systemPinkColor) },
             { CSSValueAppleSystemPurple, @selector(systemPurpleColor) },
             { CSSValueAppleSystemRed, @selector(systemRedColor) },
-            { CSSValueAppleSystemYellow, @selector(systemYellowColor) }
+            { CSSValueAppleSystemTeal, @selector(systemTealColor) },
+            { CSSValueAppleSystemYellow, @selector(systemYellowColor) },
+            { CSSValueAppleSystemBackground, @selector(systemBackgroundColor) },
+            { CSSValueAppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
+            { CSSValueAppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
+            { CSSValueAppleSystemFill, @selector(systemFillColor) },
+            { CSSValueAppleSystemSecondaryFill, @selector(secondarySystemFillColor) },
+            { CSSValueAppleSystemTertiaryFill, @selector(tertiarySystemFillColor) },
+            { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
+            { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
+            { CSSValueAppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
+            { CSSValueAppleSystemLabel, @selector(labelColor) },
+            { CSSValueAppleSystemSecondaryLabel, @selector(secondaryLabelColor) },
+            { CSSValueAppleSystemTertiaryLabel, @selector(tertiaryLabelColor) },
+            { CSSValueAppleSystemQuaternaryLabel, @selector(quaternaryLabelColor) },
+            { CSSValueAppleSystemPlaceholderText, @selector(placeholderTextColor) },
+            { CSSValueAppleSystemSeparator, @selector(separatorColor) },
+            { CSSValueAppleSystemOpaqueSeparator, @selector(opaqueSeparatorColor) },
+            { CSSValueAppleSystemContainerBorder, @selector(separatorColor) },
+            { CSSValueAppleSystemControlBackground, @selector(systemBackgroundColor) },
+            { CSSValueAppleSystemGrid, @selector(separatorColor) },
+            { CSSValueAppleSystemHeaderText, @selector(labelColor) },
+            { CSSValueAppleSystemSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
+            { CSSValueAppleSystemTextBackground, @selector(systemBackgroundColor) },
+            { CSSValueAppleSystemUnemphasizedSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
+            { CSSValueAppleWirelessPlaybackTargetActive, @selector(systemBlueColor) },
         });
     });
 
@@ -1449,6 +1451,10 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         return RenderTheme::systemColor(cssValueID, options);
 
     ASSERT(!forVisitedLink);
+
+    // FIXME: <rdar://problem/75538507> UIKit should expose this color so that we maintain parity with system buttons.
+    if (cssValueID == CSSValueAppleSystemSecondaryFillDisabled)
+        return systemColor(CSSValueAppleSystemSecondaryFill, options).colorWithAlphaMultipliedBy(0.75f);
 
     auto& cache = colorCache(options);
     return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
@@ -2057,16 +2063,6 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 
-// Colors
-constexpr auto controlColor = SRGBA<uint8_t> { 0, 122, 255 };
-constexpr auto controlDisabledColor = SRGBA<uint8_t> { 60, 60, 67, 76 };
-constexpr auto controlBackgroundColor = SRGBA<uint8_t> { 238, 238, 238 };
-constexpr auto controlDisabledBackgroundColor = SRGBA<uint8_t> { 238, 238, 238, 191 };
-
-constexpr auto meterOptimalColor = SRGBA<uint8_t> { 52, 199, 89 };
-constexpr auto meterSuboptimalColor = SRGBA<uint8_t> { 247, 206, 70 };
-constexpr auto meterEvenLessGoodColor = SRGBA<uint8_t> { 255, 59, 48 };
-
 bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
@@ -2075,6 +2071,8 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver { context };
 
+    auto styleColorOptions = box.styleColorOptions();
+
     constexpr auto checkboxHeight = 16.0f;
     constexpr auto checkboxCornerRadius = 5.0f;
 
@@ -2082,8 +2080,13 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
 
     auto checked = isChecked(box);
     auto indeterminate = isIndeterminate(box);
+    auto enabled = isEnabled(box);
+
     if (checked || indeterminate) {
-        context.fillRoundedRect(checkboxRect, isEnabled(box) ? controlColor : controlDisabledBackgroundColor);
+        if (enabled)
+            context.fillRoundedRect(checkboxRect, systemColor(CSSValueAppleSystemBlue, styleColorOptions));
+        else
+            context.fillRoundedRect(checkboxRect, systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions));
 
         Path path;
         if (checked) {
@@ -2117,10 +2120,18 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
             path.addRoundedRect(indeterminateBarRect, indeterminateBarRoundingRadii);
         }
 
-        context.setFillColor(isEnabled(box) ? Color::white : controlDisabledColor);
+        if (enabled)
+            context.setFillColor(systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColor::Options::UseDarkAppearance));
+        else
+            context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions));
+
         context.fillPath(path);
-    } else
-        context.fillRoundedRect(checkboxRect, isEnabled(box) ? controlBackgroundColor : controlDisabledBackgroundColor);
+    } else {
+        if (enabled)
+            context.fillRoundedRect(checkboxRect, systemColor(CSSValueAppleSystemSecondaryFill, styleColorOptions));
+        else
+            context.fillRoundedRect(checkboxRect, systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions));
+    }
 
     return false;
 }
@@ -2133,8 +2144,15 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
+    auto styleColorOptions = box.styleColorOptions();
+    auto enabled = isEnabled(box);
+
     if (isChecked(box)) {
-        context.setFillColor(isEnabled(box) ? controlColor : controlDisabledBackgroundColor);
+        if (enabled)
+            context.setFillColor(systemColor(CSSValueAppleSystemBlue, styleColorOptions));
+        else
+            context.setFillColor(systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions));
+
         context.fillEllipse(rect);
 
         // The inner circle is 6 / 14 the size of the surrounding circle,
@@ -2145,10 +2163,18 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
         innerCircleRect.inflateX(-innerCircleRect.width() * innerInverseRatio);
         innerCircleRect.inflateY(-innerCircleRect.height() * innerInverseRatio);
 
-        context.setFillColor(isEnabled(box) ? Color::white : controlDisabledColor);
+        if (enabled)
+            context.setFillColor(systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColor::Options::UseDarkAppearance));
+        else
+            context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions));
+
         context.fillEllipse(innerCircleRect);
     } else {
-        context.setFillColor(isEnabled(box) ? controlBackgroundColor : controlDisabledBackgroundColor);
+        if (enabled)
+            context.setFillColor(systemColor(CSSValueAppleSystemSecondaryFill, styleColorOptions));
+        else
+            context.setFillColor(systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions));
+
         context.fillEllipse(rect);
     }
 
@@ -2180,6 +2206,8 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
+    auto styleColorOptions = renderer.styleColorOptions();
+
     constexpr auto barHeight = 4.0f;
     FloatRoundedRect::Radii barCornerRadii(2.5f, 1.5f);
 
@@ -2193,7 +2221,7 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
 
     FloatRect trackRect(rect.x(), barTop, rect.width(), barHeight);
     FloatRoundedRect roundedTrackRect(trackRect, barCornerRadii);
-    context.fillRoundedRect(roundedTrackRect, controlBackgroundColor);
+    context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueAppleSystemFill, styleColorOptions));
 
     float barWidth;
     float barLeft = rect.x();
@@ -2231,7 +2259,7 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
     }
 
     FloatRect barRect(barLeft, barTop, barWidth, barHeight);
-    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlColor.colorWithAlphaByte(alpha * 255.0f));
+    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), systemColor(CSSValueAppleSystemBlue, styleColorOptions).colorWithAlphaMultipliedBy(alpha));
 
     return false;
 }
@@ -2255,9 +2283,11 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
+    auto styleColorOptions = renderer.styleColorOptions();
+
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
     FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
-    context.fillRoundedRect(roundedFillRect, controlBackgroundColor);
+    context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemTertiaryFill, styleColorOptions));
     context.clipRoundedRect(roundedFillRect);
 
     FloatRect fillRect(rect);
@@ -2269,13 +2299,13 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
 
     switch (element->gaugeRegion()) {
     case HTMLMeterElement::GaugeRegionOptimum:
-        context.fillRoundedRect(roundedFillRect, meterOptimalColor);
+        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemGreen, styleColorOptions));
         break;
     case HTMLMeterElement::GaugeRegionSuboptimal:
-        context.fillRoundedRect(roundedFillRect, meterSuboptimalColor);
+        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemYellow, styleColorOptions));
         break;
     case HTMLMeterElement::GaugeRegionEvenLessGood:
-        context.fillRoundedRect(roundedFillRect, meterEvenLessGoodColor);
+        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemRed, styleColorOptions));
         break;
     }
 
@@ -2325,11 +2355,12 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
         tickRect.setX(rect.center().x() - tickRect.width() / 2.0f);
     }
 
-    auto value = input.valueAsNumber();
     auto deviceScaleFactor = box.document().deviceScaleFactor();
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
+
+    auto styleColorOptions = box.styleColorOptions();
 
     for (auto& optionElement : dataList->suggestions()) {
         if (auto optionValue = input.listOptionValueAsDouble(optionElement)) {
@@ -2341,7 +2372,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
                 tickRect.setY(rect.y() + tickRatio * (rect.height() - tickRect.height()));
 
             FloatRoundedRect roundedTickRect(snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor), tickCornerRadii);
-            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlColor : controlBackgroundColor);
+            context.fillRoundedRect(roundedTickRect, systemColor(CSSValueAppleSystemOpaqueSeparator, styleColorOptions));
         }
     }
 }
@@ -2384,16 +2415,18 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
         ASSERT_NOT_REACHED();
     }
 
-#if ENABLE(DATALIST_ELEMENT)
-    paintSliderTicks(box, paintInfo, trackClip);
-#endif
+    auto styleColorOptions = box.styleColorOptions();
 
     auto cornerWidth = trackClip.width() < kTrackThickness ? trackClip.width() / 2.0f : kTrackRadius;
     auto cornerHeight = trackClip.height() < kTrackThickness ? trackClip.height() / 2.0f : kTrackRadius;
 
     FloatRoundedRect::Radii cornerRadii(cornerWidth, cornerHeight);
     FloatRoundedRect innerBorder(trackClip, cornerRadii);
-    context.fillRoundedRect(innerBorder, controlBackgroundColor);
+    context.fillRoundedRect(innerBorder, systemColor(CSSValueAppleSystemFill, styleColorOptions));
+
+#if ENABLE(DATALIST_ELEMENT)
+    paintSliderTicks(box, paintInfo, trackClip);
+#endif
 
     double valueRatio = renderSlider.valueRatio();
     if (isHorizontal) {
@@ -2410,7 +2443,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     }
 
     FloatRoundedRect fillRect(trackClip, cornerRadii);
-    context.fillRoundedRect(fillRect, controlColor);
+    context.fillRoundedRect(fillRect, systemColor(CSSValueAppleSystemBlue, styleColorOptions));
 
     return false;
 }
@@ -2552,7 +2585,12 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
     transform.scale(glyphScale);
     glyphPath.transform(transform);
 
-    context.setFillColor(isEnabled(box) ? controlColor : controlDisabledColor);
+    auto styleColorOptions = box.styleColorOptions();
+    if (isEnabled(box))
+        context.setFillColor(systemColor(CSSValueAppleSystemBlue, styleColorOptions));
+    else
+        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions));
+
     context.fillPath(glyphPath);
 }
 

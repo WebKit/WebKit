@@ -111,12 +111,35 @@ typedef enum {
 + (UIColor *)systemBrownColor;
 + (UIColor *)systemGrayColor;
 + (UIColor *)systemGreenColor;
++ (UIColor *)systemIndigoColor;
 + (UIColor *)systemOrangeColor;
 + (UIColor *)systemPinkColor;
 + (UIColor *)systemPurpleColor;
 + (UIColor *)systemRedColor;
-+ (UIColor *)systemYellowColor;
 + (UIColor *)systemTealColor;
++ (UIColor *)systemYellowColor;
+
++ (UIColor *)systemBackgroundColor;
++ (UIColor *)secondarySystemBackgroundColor;
++ (UIColor *)tertiarySystemBackgroundColor;
+
++ (UIColor *)systemFillColor;
++ (UIColor *)secondarySystemFillColor;
++ (UIColor *)tertiarySystemFillColor;
+
++ (UIColor *)systemGroupedBackgroundColor;
++ (UIColor *)secondarySystemGroupedBackgroundColor;
++ (UIColor *)tertiarySystemGroupedBackgroundColor;
+
++ (UIColor *)labelColor;
++ (UIColor *)secondaryLabelColor;
++ (UIColor *)tertiaryLabelColor;
++ (UIColor *)quaternaryLabelColor;
+
++ (UIColor *)placeholderTextColor;
+
++ (UIColor *)separatorColor;
++ (UIColor *)opaqueSeparatorColor;
 
 + (UIColor *)_disambiguated_due_to_CIImage_colorWithCGColor:(CGColorRef)cgColor;
 
@@ -154,12 +177,7 @@ typedef enum {
 
 @interface UIColor (IPI)
 + (UIColor *)keyboardFocusIndicatorColor;
-@end
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
-@interface UIColor (UIColorInternal)
 + (UIColor *)tableCellDefaultSelectionTintColor;
 @end
-#endif
 
 #endif // PLATFORM(IOS_FAMILY)
