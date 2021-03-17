@@ -441,6 +441,7 @@ webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 
 # Times out due to missing event 'callAfterScrollingCompletes'.
 webkit.org/b/212202 fast/events/wheel/platform-wheelevent-in-scrolling-div.html [ Skip ]
+webkit.org/b/212202 fast/events/wheel/redispatched-wheel-event.html [ Skip ]
 
 webkit.org/b/218931 fast/events/wheel/first-wheel-event-cancelable.html [ Timeout ]
 webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Timeout ]
@@ -2021,8 +2022,6 @@ webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
 
-# Should pass once ICU >= 64.
-fast/text/mending-heart.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

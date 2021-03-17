@@ -20,6 +20,20 @@
 # End of PASSING tests. See below where to put expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# SOUP
+webkit.org/b/223236 http/tests/xmlhttprequest/loadstart-event-init.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/redirect-cross-origin-post.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/response-access-on-error.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onabort-progressevent-attributes.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onload-event.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onload-progressevent-attributes.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadend-event-after-load.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadstart-event.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onprogress-event.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-progress-events.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events.html [ Crash ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations

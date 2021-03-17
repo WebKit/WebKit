@@ -1,3 +1,19 @@
+2021-03-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some consistent WPE failures and GTK4 crashes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt: Rebaselined after r274167.
+        * platform/gtk/imported/w3c/web-platform-tests/dom/slot-recalc-expected.txt: Added. Needed after r274167.
+        * platform/gtk4/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Rebaselined. Needed after
+          somewhere between r273067 (last good) and r273071 (first bad).
+        * platform/wpe/imported/w3c/web-platform-tests/css/selectors/focus-visible-003-expected.txt: Added. WPE does not support color popup yet.
+        * platform/wpe/imported/w3c/web-platform-tests/css/selectors/focus-visible-004-expected.txt: Ditto.
+        * platform/wpe/imported/w3c/web-platform-tests/dom/slot-recalc-expected.txt: Added. Needed fater r274167.
+
 2021-03-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update test expectations after r273539.
