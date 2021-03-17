@@ -2021,6 +2021,9 @@ webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
 
+# Should pass once ICU >= 64.
+fast/text/mending-heart.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

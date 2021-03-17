@@ -1,3 +1,9 @@
+2021-03-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update test expectations after r273539.
+
+        * platform/glib/TestExpectations:
+
 2021-03-16  Robert Jenner  <jenner@apple.com>
 
         [ macOS wk2 ] media/media-fullscreen-return-to-inline.html is a flakey text failure and flakey timeout
