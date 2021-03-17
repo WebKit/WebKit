@@ -62,6 +62,7 @@
 #include "CSSUnicodeRangeValue.h"
 #include "CSSUnsetValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
 
 #include "CSSGridAutoRepeatValue.h"
@@ -312,6 +313,8 @@ String CSSValue::cssText() const
         return downcast<CSSUnicodeRangeValue>(*this).customCSSText();
     case ValueListClass:
         return downcast<CSSValueList>(*this).customCSSText();
+    case ValuePairClass:
+        return downcast<CSSValuePair>(*this).customCSSText();
     case LineBoxContainClass:
         return downcast<CSSLineBoxContainValue>(*this).customCSSText();
     case CalculationClass:
@@ -336,6 +339,21 @@ String CSSValue::cssText() const
 
     ASSERT_NOT_REACHED();
     return String();
+}
+
+String CSSValue::separatorCssText() const
+{
+    switch (m_valueSeparator) {
+    case SpaceSeparator:
+        return " "_s;
+    case CommaSeparator:
+        return ", "_s;
+    case SlashSeparator:
+        return " / "_s;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return " "_s;
 }
 
 void CSSValue::destroy()
@@ -433,6 +451,9 @@ void CSSValue::destroy()
         return;
     case ValueListClass:
         delete downcast<CSSValueList>(this);
+        return;
+    case ValuePairClass:
+        delete downcast<CSSValuePair>(this);
         return;
     case LineBoxContainClass:
         delete downcast<CSSLineBoxContainValue>(this);

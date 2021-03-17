@@ -48,7 +48,7 @@ protected:
     DeprecatedCSSOMValueList(const CSSValueList& value, CSSStyleDeclaration& owner)
         : DeprecatedCSSOMValue(DeprecatedValueListClass, owner)
     {
-        m_valueListSeparator = value.separator();
+        m_valueSeparator = value.separator();
         m_values.reserveInitialCapacity(value.length());
         for (unsigned i = 0, size = value.length(); i < size; ++i)
             m_values.uncheckedAppend(value.itemWithoutBoundsCheck(i)->createDeprecatedCSSOMWrapper(owner));

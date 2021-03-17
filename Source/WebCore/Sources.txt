@@ -780,6 +780,7 @@ css/CSSUnits.cpp
 css/CSSUnsetValue.cpp
 css/CSSValue.cpp
 css/CSSValueList.cpp
+css/CSSValuePair.cpp
 css/CSSValuePool.cpp
 css/CSSVariableData.cpp
 css/CSSVariableReferenceValue.cpp
