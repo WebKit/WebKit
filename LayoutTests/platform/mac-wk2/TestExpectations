@@ -1369,3 +1369,7 @@ webkit.org/b/223131 [ Debug ] imported/w3c/web-platform-tests/wasm/webapi/instan
 webkit.org/b/221759 [ Release ] inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Pass Timeout ]
 
 webkit.org/b/223206 http/tests/local/loading-stylesheet-import-remove.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/223291 Two accesability tests are flakey text failing only on Apple Silicon
+[ arm64 ] accessibility/mac/value-change/value-change-user-info-textfield.html [ Pass Failure ]
+[ arm64 ] accessibility/mac/value-change/value-change-user-info-textarea.html [ Pass Failure ]
