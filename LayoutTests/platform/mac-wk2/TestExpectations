@@ -1379,3 +1379,5 @@ webkit.org/b/223293 media/media-fullscreen-return-to-inline.html [ Pass Failure 
 # webkit.org/b/223385 Two imported webrtc tests are flakey text failing only on Apple Silicon
 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
+
+webkit.org/b/223387 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
