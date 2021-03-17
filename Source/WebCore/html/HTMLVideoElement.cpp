@@ -203,7 +203,6 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
 #endif // PLATFORM(IOS_FAMILY)
 }
 
-
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 void HTMLVideoElement::webkitRequestFullscreen()
 {

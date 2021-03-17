@@ -473,7 +473,7 @@ void HitTestResult::enterFullscreenForVideo() const
         HTMLVideoElement& videoElement = downcast<HTMLVideoElement>(*mediaElement);
         if (!videoElement.isFullscreen() && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
             UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
-            videoElement.enterFullscreen();
+            videoElement.webkitEnterFullscreen();
         }
     }
 #endif
@@ -783,10 +783,10 @@ void HitTestResult::toggleEnhancedFullscreenForVideo() const
 
     HTMLVideoElement& videoElement = downcast<HTMLVideoElement>(*mediaElement);
     UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
-    if (videoElement.fullscreenMode() == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
-        videoElement.exitFullscreen();
+    if (videoElement.webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::PictureInPicture)
+        videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
     else
-        videoElement.enterFullscreen(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+        videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
 #endif
 }
 
