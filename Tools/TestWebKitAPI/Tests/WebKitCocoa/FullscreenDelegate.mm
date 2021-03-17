@@ -114,7 +114,8 @@ TEST(Fullscreen, Delegate)
     ASSERT_FALSE([webView _isInFullscreen]);
 }
 
-TEST(Fullscreen, WKViewDelegate)
+// FIXME: Re-enable this test once webkit.org/b/223282 is resolved
+TEST(Fullscreen, DISABLED_WKViewDelegate)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("FullscreenDelegate").get()));
