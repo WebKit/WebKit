@@ -86,7 +86,7 @@ class PlacardSupport extends MediaControllerSupport
         
         switch(this.mediaController.host.externalDeviceType) {
             case 'airplay':
-                deviceName = UIString("This video is playing on “%s”.", escapeHTML(this.mediaController.host.externalDeviceDisplayName) || UIString("Apple TV"));
+                deviceName = UIString("This video is playing on \u201C%s\u201D.", escapeHTML(this.mediaController.host.externalDeviceDisplayName) || UIString("Apple TV"));
                 break;
             case 'tvout':
                 deviceName = UIString("This video is playing on the TV.");
