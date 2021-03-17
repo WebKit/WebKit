@@ -34,6 +34,7 @@
 #include <string>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringHash.h>
 
@@ -304,6 +305,25 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
+}
+
+TEST(WTF_HashMap, UniqueRefValue)
+{
+    HashMap<int, UniqueRef<int>> map;
+    UniqueRef<int> five = makeUniqueRefWithoutFastMallocCheck<int>(5);
+    map.add(5, WTFMove(five));
+    EXPECT_TRUE(map.contains(5));
+    int* shouldBeFive = map.get(5);
+    EXPECT_EQ(*shouldBeFive, 5);
+    std::unique_ptr<int> takenFive = map.take(5);
+    EXPECT_EQ(*takenFive, 5);
+    map.ensure(6, [] {
+        return makeUniqueRefWithoutFastMallocCheck<int>(6);
+    });
+    EXPECT_FALSE(map.contains(5));
+    EXPECT_TRUE(map.contains(6));
+    for (UniqueRef<int>& a : map.values())
+        EXPECT_EQ(a.get(), 6);
 }
 
 TEST(WTF_HashMap, RefPtrKey_Add)

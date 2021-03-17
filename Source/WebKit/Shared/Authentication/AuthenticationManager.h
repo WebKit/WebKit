@@ -98,14 +98,14 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    uint64_t addChallengeToChallengeMap(std::unique_ptr<Challenge>&&);
+    uint64_t addChallengeToChallengeMap(UniqueRef<Challenge>&&);
     bool shouldCoalesceChallenge(WebPageProxyIdentifier, uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;
 
     Vector<uint64_t> coalesceChallengesMatching(uint64_t challengeID) const;
 
     NetworkProcess& m_process;
 
-    HashMap<uint64_t, std::unique_ptr<Challenge>> m_challenges;
+    HashMap<uint64_t, UniqueRef<Challenge>> m_challenges;
 };
 
 } // namespace WebKit

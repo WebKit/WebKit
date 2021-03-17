@@ -1,3 +1,21 @@
+2021-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        Allow UniqueRef to be the value of a HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=223240
+
+        Reviewed by Youenn Fablet.
+
+        This has the advantage over std::unique_ptr of never providing a null value when you iterate HashMap.values
+
+        * wtf/HashIterators.h:
+        (WTF::HashTableConstValuesIterator::get const):
+        * wtf/HashTraits.h:
+        (WTF::HashTraits<UniqueRef<T>>::emptyValue):
+        (WTF::HashTraits<UniqueRef<T>>::constructDeletedValue):
+        (WTF::HashTraits<UniqueRef<T>>::isDeletedValue):
+        (WTF::HashTraits<UniqueRef<T>>::peek):
+        (WTF::HashTraits<UniqueRef<T>>::take):
+
 2021-03-16  Devin Rousso  <drousso@apple.com>
 
         [macOS] change for the language/subtitle tracks button to use an `NSMenu` instead of web content

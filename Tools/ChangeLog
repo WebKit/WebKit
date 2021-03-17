@@ -1,3 +1,13 @@
+2021-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        Allow UniqueRef to be the value of a HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=223240
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-03-17  Chris Dumez  <cdumez@apple.com>
 
         Maybe-regression(STP121): window.open flakily returning null

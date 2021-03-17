@@ -67,7 +67,7 @@ AuthenticationManager::AuthenticationManager(NetworkProcess& process)
     m_process.addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), *this);
 }
 
-uint64_t AuthenticationManager::addChallengeToChallengeMap(std::unique_ptr<Challenge>&& challenge)
+uint64_t AuthenticationManager::addChallengeToChallengeMap(UniqueRef<Challenge>&& challenge)
 {
     ASSERT(RunLoop::isMain());
 
@@ -115,7 +115,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID ses
     if (!pageID)
         return completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
 
-    uint64_t challengeID = addChallengeToChallengeMap(makeUnique<Challenge>(pageID, authenticationChallenge, WTFMove(completionHandler)));
+    uint64_t challengeID = addChallengeToChallengeMap(makeUniqueRef<Challenge>(pageID, authenticationChallenge, WTFMove(completionHandler)));
 
     // Coalesce challenges in the same protection space and in the same page.
     if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
@@ -130,7 +130,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID ses
 void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
     WebPageProxyIdentifier dummyPageID;
-    uint64_t challengeID = addChallengeToChallengeMap(makeUnique<Challenge>(dummyPageID, authenticationChallenge, WTFMove(completionHandler)));
+    uint64_t challengeID = addChallengeToChallengeMap(makeUniqueRef<Challenge>(dummyPageID, authenticationChallenge, WTFMove(completionHandler)));
     
     // Coalesce challenges in the same protection space and in the same page.
     if (shouldCoalesceChallenge(dummyPageID, challengeID, authenticationChallenge))

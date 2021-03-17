@@ -57,7 +57,7 @@ struct StatisticsLastSeen {
     WallTime lastSeen;
 };
 
-static void pruneResources(HashMap<RegistrableDomain, std::unique_ptr<ResourceLoadStatistics>>& statisticsMap, Vector<StatisticsLastSeen>& statisticsToPrune, size_t& numberOfEntriesToPrune)
+static void pruneResources(HashMap<RegistrableDomain, UniqueRef<ResourceLoadStatistics>>& statisticsMap, Vector<StatisticsLastSeen>& statisticsToPrune, size_t& numberOfEntriesToPrune)
 {
     if (statisticsToPrune.size() > numberOfEntriesToPrune) {
         std::sort(statisticsToPrune.begin(), statisticsToPrune.end(), [](const StatisticsLastSeen& a, const StatisticsLastSeen& b) {
@@ -115,9 +115,9 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsMem
     ASSERT(!RunLoop::isMain());
 
     Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
-    for (auto& statistics : m_resourceStatisticsMap.values()) {
-        if (hasBeenThirdParty(*statistics) && (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All || statistics->isPrevalentResource))
-            thirdPartyDataList.append(WebResourceLoadStatisticsStore::ThirdPartyData { statistics->registrableDomain, getThirdPartyDataForSpecificFirstPartyDomains(*statistics) });
+    for (const auto& statistics : m_resourceStatisticsMap.values()) {
+        if (hasBeenThirdParty(statistics) && (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All || statistics->isPrevalentResource))
+            thirdPartyDataList.append(WebResourceLoadStatisticsStore::ThirdPartyData { statistics->registrableDomain, getThirdPartyDataForSpecificFirstPartyDomains(statistics) });
     }
     std::sort(thirdPartyDataList.rbegin(), thirdPartyDataList.rend());
     return thirdPartyDataList;
@@ -204,14 +204,14 @@ void ResourceLoadStatisticsMemoryStore::classifyPrevalentResources()
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
         if (shouldSkip(resourceStatistic->registrableDomain))
             continue;
-        if (isPrevalentDueToDebugMode(*resourceStatistic))
-            setPrevalentResource(*resourceStatistic, ResourceLoadPrevalence::High);
+        if (isPrevalentDueToDebugMode(resourceStatistic))
+            setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
         else if (!resourceStatistic->isVeryPrevalentResource) {
-            markAsPrevalentIfHasRedirectedToPrevalent(*resourceStatistic);
+            markAsPrevalentIfHasRedirectedToPrevalent(resourceStatistic);
             auto currentPrevalence = resourceStatistic->isPrevalentResource ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low;
-            auto newPrevalence = classifier().calculateResourcePrevalence(*resourceStatistic, currentPrevalence);
+            auto newPrevalence = classifier().calculateResourcePrevalence(resourceStatistic, currentPrevalence);
             if (newPrevalence != currentPrevalence)
-                setPrevalentResource(*resourceStatistic, newPrevalence);
+                setPrevalentResource(resourceStatistic, newPrevalence);
         }
     }
 }
@@ -702,8 +702,8 @@ ResourceLoadStatistics& ResourceLoadStatisticsMemoryStore::ensureResourceStatist
 {
     ASSERT(!RunLoop::isMain());
 
-    return *m_resourceStatisticsMap.ensure(domain, [&domain] {
-        return makeUnique<ResourceLoadStatistics>(domain);
+    return m_resourceStatisticsMap.ensure(domain, [&domain] {
+        return makeUniqueRef<ResourceLoadStatistics>(domain);
     }).iterator->value;
 }
 
@@ -795,7 +795,7 @@ void ResourceLoadStatisticsMemoryStore::mergeStatistics(Vector<ResourceLoadStati
 
     for (auto& statistic : statistics) {
         auto result = m_resourceStatisticsMap.ensure(statistic.registrableDomain, [&statistic] {
-            return makeUnique<ResourceLoadStatistics>(WTFMove(statistic));
+            return makeUniqueRef<ResourceLoadStatistics>(WTFMove(statistic));
         });
         if (!result.isNewEntry)
             result.iterator->value->merge(statistic);
@@ -825,7 +825,7 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor;
     Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-        if (hasHadUnexpiredRecentUserInteraction(*resourceStatistic, OperatingDatesWindow::Long)) {
+        if (hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long)) {
             if (resourceStatistic->isPrevalentResource)
                 domainsToBlockButKeepCookiesFor.append(resourceStatistic->registrableDomain.isolatedCopy());
             domainsWithUserInteractionAsFirstParty.append(resourceStatistic->registrableDomain);
@@ -864,8 +864,8 @@ void ResourceLoadStatisticsMemoryStore::processStatistics(const Function<void(co
 {
     ASSERT(!RunLoop::isMain());
 
-    for (auto& resourceStatistic : m_resourceStatisticsMap.values())
-        processFunction(*resourceStatistic);
+    for (const auto& resourceStatistic : m_resourceStatisticsMap.values())
+        processFunction(resourceStatistic.get());
 }
 
 bool ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics& resourceStatistic, OperatingDatesWindow operatingDatesWindow) const
@@ -953,17 +953,17 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
     for (auto& statistic : m_resourceStatisticsMap.values()) {
         if (shouldExemptFromWebsiteDataDeletion(statistic->registrableDomain))
             continue;
-        if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(*statistic))
+        if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(statistic))
             oldestUserInteraction = std::min(oldestUserInteraction, *mostRecentUserInteractionTime);
-        if (shouldRemoveAllWebsiteDataFor(*statistic, shouldCheckForGrandfathering)) {
+        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic->registrableDomain);
             toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic->registrableDomain);
         } else {
-            if (shouldRemoveAllButCookiesFor(*statistic, shouldCheckForGrandfathering)) {
+            if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic->registrableDomain);
                 statistic->gotLinkDecorationFromPrevalentResource = false;
             }
-            if (shouldEnforceSameSiteStrictFor(*statistic, shouldCheckForGrandfathering)) {
+            if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic->registrableDomain);
 
                 if (UNLIKELY(debugLoggingEnabled())) {
@@ -998,7 +998,7 @@ void ResourceLoadStatisticsMemoryStore::pruneStatisticsIfNeeded()
 
     Vector<StatisticsLastSeen> resourcesToPrunePerImportance[maxImportance + 1];
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
-        resourcesToPrunePerImportance[computeImportance(*resourceStatistic)].append({ resourceStatistic->registrableDomain, resourceStatistic->lastSeen });
+        resourcesToPrunePerImportance[computeImportance(resourceStatistic)].append({ resourceStatistic->registrableDomain, resourceStatistic->lastSeen });
 
     for (unsigned importance = 0; numberOfEntriesLeftToPrune && importance <= maxImportance; ++importance)
         pruneResources(m_resourceStatisticsMap, resourcesToPrunePerImportance[importance], numberOfEntriesLeftToPrune);
@@ -1159,7 +1159,7 @@ void ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting(const R
     statistic.gotLinkDecorationFromPrevalentResource = isScheduledForAllButCookieDataRemoval;
 
     m_resourceStatisticsMap.ensure(statistic.registrableDomain, [&statistic] {
-        return makeUnique<ResourceLoadStatistics>(WTFMove(statistic));
+        return makeUniqueRef<ResourceLoadStatistics>(WTFMove(statistic));
     });
 }
 
