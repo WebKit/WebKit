@@ -2309,6 +2309,20 @@ angle::Result ContextMtl::handleDirtyDriverUniforms(const gl::Context *context,
     }
     mDriverUniforms.coverageMask = coverageMask;
 
+    uint32_t xfbActiveUnpaused = mState.isTransformFeedbackActiveUnpaused();
+
+    mDriverUniforms.xfbActiveUnpaused = xfbActiveUnpaused;
+    mDriverUniforms.xfbVerticesPerDraw = mXfbVertexCountPerInstance;
+
+    if (xfbActiveUnpaused)
+    {
+        TransformFeedbackMtl *transformFeedbackMtl =
+            mtl::GetImpl(mState.getCurrentTransformFeedback());
+        transformFeedbackMtl->getBufferOffsets(this, mXfbBaseVertex,
+                                               mDriverUniforms.xfbBufferOffsets.data(),
+                                               mDriverUniforms.xfbBufferOffsets.size());
+    }
+
     ASSERT(mRenderEncoder.valid());
     mRenderEncoder.setFragmentData(mDriverUniforms, mtl::kDriverUniformsBindingIndex);
     mRenderEncoder.setVertexData(mDriverUniforms, mtl::kDriverUniformsBindingIndex);
@@ -2331,15 +2345,16 @@ angle::Result ContextMtl::handleDirtyGraphicsTransformFeedbackBuffersEmulation(
     size_t bufferCount                         = executable->getTransformFeedbackBufferCount();
     const gl::TransformFeedbackBuffersArray<BufferMtl *> &bufferHandles =
         transformFeedbackMtl->getBufferHandles();
-
+    const std::array<uint32_t, mtl::kMaxShaderXFBs> &actualXfbBindings = mProgram->getXfbBindings();
     for (size_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
     {
         BufferMtl *bufferHandle = bufferHandles[bufferIndex];
         ASSERT(bufferHandle);
         ASSERT(mRenderEncoder.valid());
+        uint32_t actualBufferIdx = actualXfbBindings[bufferIndex];
+        assert(actualBufferIdx < mtl::kMaxShaderBuffers && "Transform Feedback Buffer Index should be initialized.");
         mRenderEncoder.setBufferForWrite(
-            gl::ShaderType::Vertex, bufferHandle->getCurrentBuffer(), 0,
-            mtl::kTransformFeedbackBindingIndex + (uint32_t)bufferIndex);
+            gl::ShaderType::Vertex, bufferHandle->getCurrentBuffer(), 0, actualBufferIdx);
     }
 
     return angle::Result::Continue;
@@ -2373,7 +2388,7 @@ angle::Result ContextMtl::handleDirtyDepthStencilState(const gl::Context *contex
 
 angle::Result ContextMtl::handleDirtyDepthBias(const gl::Context *context)
 {
-    const gl::RasterizerState &raserState = mState.getRasterizerState();
+    const gl::RasterizerState &rasterState = mState.getRasterizerState();
     ASSERT(mRenderEncoder.valid());
     if (!mState.isPolygonOffsetFillEnabled())
     {
@@ -2381,7 +2396,7 @@ angle::Result ContextMtl::handleDirtyDepthBias(const gl::Context *context)
     }
     else
     {
-        mRenderEncoder.setDepthBias(raserState.polygonOffsetUnits, raserState.polygonOffsetFactor,
+        mRenderEncoder.setDepthBias(rasterState.polygonOffsetUnits, rasterState.polygonOffsetFactor,
                                     0);
     }
 

@@ -132,6 +132,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
     compileOptions |= SH_CLAMP_FRAG_DEPTH;
 #endif
 
+    if (contextMtl->getDisplay()->getFeatures().rewriteRowMajorMatrices.enabled)
+    {
+        compileOptions |= SH_REWRITE_ROW_MAJOR_MATRICES;
+    }
+
     return compileImplMtl(context, compilerInstance, getState().getSource(), compileOptions | options);
 }
 

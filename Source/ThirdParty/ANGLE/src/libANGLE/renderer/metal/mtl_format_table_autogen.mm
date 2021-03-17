@@ -45,27 +45,6 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-        case angle::FormatID::B8G8R8A8_UNORM:
-            
-            if (metalDevice.depth24Stencil8PixelFormatSupported &&
-               !display->getFeatures().forceD24S8AsUnsupported.enabled)
-            {
-                this->metalFormat = MTLPixelFormatBGRA8Unorm;
-                this->actualFormatId = angle::FormatID::B8G8R8A8_UNORM;
-                this->initFunction = nullptr;
-            }
-            else
-            {
-                this->metalFormat = MTLPixelFormatRGBA8Unorm;
-                this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
-                this->initFunction = nullptr;
-            }
-
-            this->swizzled = false;
-            break;
-
-#else  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::B8G8R8A8_UNORM:
             
             this->metalFormat = MTLPixelFormatBGRA8Unorm;
@@ -75,7 +54,6 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
-#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::B8G8R8A8_UNORM_SRGB:
             
             this->metalFormat = MTLPixelFormatBGRA8Unorm_sRGB;
@@ -1373,15 +1351,6 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             
             this->metalFormat = MTLPixelFormatETC2_RGB8;
             this->actualFormatId = angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
-            this->initFunction = nullptr;
-
-            this->swizzled = false;
-            break;
-
-        case angle::FormatID::D24_UNORM_S8_UINT:
-            
-            this->metalFormat = MTLPixelFormatDepth32Float_Stencil8;
-            this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
             this->initFunction = nullptr;
 
             this->swizzled = false;

@@ -60,14 +60,22 @@ ConversionBufferMtl::~ConversionBufferMtl() = default;
 IndexConversionBufferMtl::IndexConversionBufferMtl(ContextMtl *context,
                                                    gl::DrawElementsType elemTypeIn,
                                                    bool primitiveRestartEnabledIn,
-                                                   size_t offsetIn)
+                                                   size_t offsetIn,
+                                                   std::vector<IndexRange> restartRangesIn)
     : ConversionBufferMtl(context,
                           kConvertedElementArrayBufferInitialSize,
                           mtl::kIndexBufferOffsetAlignment),
       elemType(elemTypeIn),
       offset(offsetIn),
-      primitiveRestartEnabled(primitiveRestartEnabledIn)
+      primitiveRestartEnabled(primitiveRestartEnabledIn),
+      restartRanges(restartRangesIn)
+
 {}
+
+IndexRange IndexConversionBufferMtl::getRangeForConvertedBuffer(size_t count)
+{
+    return IndexRange{0, count};
+}
 
 // UniformConversionBufferMtl implementation
 UniformConversionBufferMtl::UniformConversionBufferMtl(ContextMtl *context, size_t offsetIn)

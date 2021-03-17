@@ -177,7 +177,7 @@ angle::Result FormatTable::initialize(const DisplayMtl *display)
     mMaxSamples = 0;
 
     // Initialize native format caps
-    initNativeFormatCaps(display);
+     initNativeFormatCaps(display);
 
     for (size_t i = 0; i < angle::kNumANGLEFormats; ++i)
     {

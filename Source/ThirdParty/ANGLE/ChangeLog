@@ -1,3 +1,191 @@
+2021-03-16  Kyle Piddington  <kpiddington@apple.com>
+
+        Regressions from ANGLE Metal enablement
+        https://bugs.webkit.org/show_bug.cgi?id=222239
+        
+        This patch addressed several large bits of funcitonality that was missing from the original patch.
+        1) Introduce support for UBO's. This patch adds a DEQP-conformant implementation for UBO structs. This includes changes to the translator,
+and the frontend.
+        2) Introduce support for Transform feedback to the translator. We use a series of substitution macros at program link time to produce a transform-feedback varient shader, and use a vertex pre-pass to emulate transform feedback.
+        3) Various fixes to handle a few webgl2 asserts, such as large uniform buffers. This change  (in ProgramMtl.mm) will reserve a uniform buffer of twice the normal size (4kb) if the program uniforms exceed that limit. (Fixes webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html webgl/2.0.0/conformance/glsl/misc/shader-with-too-many-uniforms.html webgl/2.0.0/conformance/uniforms/gl-uniform-arrays.html)
+
+        Reviewed by Jon Lee.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * include/platform/FeaturesMtl.h:
+        * src/compiler.gni:
+        * src/compiler/translator/BaseTypes.h:
+        (sh::getQualifierString):
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::insertSampleMaskWritingLogic):
+        (sh::metalShaderTypeFromGLSL):
+        (sh::TranslatorMetalDirect::translateImpl):
+        (sh::TranslatorMetalDirect::translate):
+        * src/compiler/translator/TranslatorMetalDirect.h:
+        (sh::TranslatorMetalReflection::TranslatorMetalReflection):
+        (sh::TranslatorMetalReflection::addUserUniformBufferBinding):
+        (sh::TranslatorMetalReflection::addUniformBufferBinding):
+        (sh::TranslatorMetalReflection::getUserUniformBufferBindings const):
+        (sh::TranslatorMetalReflection::getUserUniformBufferBinding const):
+        (sh::TranslatorMetalReflection::getUniformBufferBinding const):
+        (sh::TranslatorMetalReflection::reset):
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::~GenMetalTraverser):
+        (GenMetalTraverser::emitOpeningPointerParen):
+        (GenMetalTraverser::emitClosingPointerParen):
+        (GetOperatorString):
+        (GenMetalTraverser::emitPostQualifier):
+        (GenMetalTraverser::emitType):
+        (GenMetalTraverser::emitFieldDeclaration):
+        (GenMetalTraverser::emitAttributeDeclaration):
+        (GenMetalTraverser::emitUniformBufferDeclaration):
+        (GenMetalTraverser::emitStructDeclaration):
+        (GenMetalTraverser::emitOrdinaryVariableDeclaration):
+        (GenMetalTraverser::visitSymbol):
+        (GenMetalTraverser::visitBinary):
+        (GenMetalTraverser::emitFunctionSignature):
+        (GenMetalTraverser::emitFunctionReturn):
+        (GenMetalTraverser::emitFunctionParameter):
+        (GenMetalTraverser::visitFunctionDefinition):
+        (GenMetalTraverser::visitAggregate):
+        (RequiresSemicolonTerminator):
+        (GenMetalTraverser::visitBlock):
+        (GenMetalTraverser::visitBranch):
+        * src/compiler/translator/TranslatorMetalDirect/FixTypeConstructors.cpp:
+        * src/compiler/translator/TranslatorMetalDirect/IntroduceVertexIndexID.cpp: Added.
+        (sh::Rewriter::Rewriter):
+        (sh::IntroduceVertexAndInstanceIndex):
+        * src/compiler/translator/TranslatorMetalDirect/IntroduceVertexIndexID.h: Added.
+        * src/compiler/translator/TranslatorMetalDirect/Layout.cpp:
+        * src/compiler/translator/TranslatorMetalDirect/Layout.h:
+        * src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp:
+        (sh::TryCreateModifiedStruct):
+        * src/compiler/translator/TranslatorMetalDirect/ModifyStruct.h:
+        * src/compiler/translator/TranslatorMetalDirect/Pipeline.cpp:
+        (Pipeline::uses const):
+        (Pipeline::getStructTypeName const):
+        (Pipeline::getStructInstanceName const):
+        (AllowPacking):
+        (AllowPadding):
+        (SaturateVectorOf):
+        (Pipeline::externalStructModifyConfig const):
+        (Pipeline::alwaysRequiresLocalVariableDeclarationInMain const):
+        (Pipeline::isPipelineOut const):
+        (Pipeline::externalAddressSpace const):
+        (PipelineStructs::matches const):
+        * src/compiler/translator/TranslatorMetalDirect/Pipeline.h:
+        (sh::PipelineScoped::matches const):
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+        (sh::ProgramPrelude::ProgramPrelude):
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.h:
+        (sh::ProgramPreludeConfig::ProgramPreludeConfig):
+        * src/compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.cpp:
+        (sh::Reducer::Reducer):
+        * src/compiler/translator/TranslatorMetalDirect/RewritePipelines.cpp:
+        (sh::GeneratePipelineStruct::exec):
+        (sh::GeneratePipelineStruct::createInternalPipelineStruct):
+        (sh::PipelineFunctionEnv::getUpdatedFunction):
+        (sh::RewritePipelines):
+        * src/compiler/translator/TranslatorMetalDirect/SymbolEnv.cpp:
+        (SymbolEnv::removeSpace):
+        (SymbolEnv::removePointer):
+        (SymbolEnv::markAsUBO):
+        (SymbolEnv::isUBO const):
+        * src/compiler/translator/TranslatorMetalDirect/SymbolEnv.h:
+        * src/compiler/translator/tree_ops/NameNamelessUniformBuffers.cpp: Added.
+        (sh::NameNamelessUniformBuffers):
+        * src/compiler/translator/tree_ops/NameNamelessUniformBuffers.h: Added.
+        * src/compiler/translator/util.cpp:
+        (sh::IsBuiltinOutputVariable):
+        * src/libANGLE/renderer/gl/cgl/ContextCGL.cpp:
+        * src/libANGLE/renderer/metal/BufferMtl.h:
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::IndexConversionBufferMtl::IndexConversionBufferMtl):
+        (rx::IndexConversionBufferMtl::getRangeForConvertedBuffer):
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::handleDirtyDriverUniforms):
+        (rx::ContextMtl::handleDirtyGraphicsTransformFeedbackBuffersEmulation):
+        (rx::ContextMtl::handleDirtyDepthBias):
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::getMaxSupportedESVersion const):
+        (rx::DisplayMtl::generateConfigs):
+        (rx::DisplayMtl::ensureCapsInitialized const):
+        (rx::DisplayMtl::initializeFeatures):
+        (rx::DisplayMtl::initializeShaderLibrary):
+        * src/libANGLE/renderer/metal/FrameBufferMtl.h:
+        * src/libANGLE/renderer/metal/ProgramMtl.h:
+        (rx::ProgramMtl::createMslShaderLib):
+        (rx::ProgramMtl::getXfbBindings const):
+        (rx::ProgramMtl::getTranslatedShaderSource const):
+        (rx::ProgramMtl::getXfbMslSource const): Deleted.
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        (rx::ProgramMtl::ProgramMtl):
+        (rx::ProgramMtl::destroy):
+        (rx::ProgramMtl::reset):
+        (rx::ProgramMtl::saveTranslatedShaders):
+        (rx::ProgramMtl::loadTranslatedShaders):
+        (rx::ProgramMtl::linkImplSpirv):
+        (rx::ProgramMtl::linkImplDirect):
+        (rx::ProgramMtl::linkImpl):
+        (rx::ProgramMtl::linkTranslatedShaders):
+        (rx::ProgramMtl::getBufferPool):
+        (rx::ProgramMtl::resizeDefaultUniformBlocksMemory):
+        (rx::ProgramMtl::getSpecializedShader):
+        (rx::ProgramMtl::createMslShaderLib):
+        (rx::ProgramMtl::commitUniforms):
+        * src/libANGLE/renderer/metal/QueryMtl.h:
+        * src/libANGLE/renderer/metal/RenderBufferMtl.mm:
+        (rx::RenderbufferMtl::setStorageImpl):
+        * src/libANGLE/renderer/metal/RenderTargetMtl.mm:
+        (rx::RenderTargetMtl::setWithImplicitMSTexture):
+        (rx::RenderTargetMtl::reset):
+        * src/libANGLE/renderer/metal/ShaderMtl.mm:
+        (rx::ShaderMtl::compile):
+        * src/libANGLE/renderer/metal/SurfaceMtl.mm:
+        (rx::WindowSurfaceMtl::initialize):
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::ensureSamplerStateCreated):
+        (rx::TextureMtl::setPerSliceSubImage):
+        (rx::TextureMtl::initializeContents):
+        * src/libANGLE/renderer/metal/TransformFeedbackMtl.mm:
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::getIndexBuffer):
+        * src/libANGLE/renderer/metal/mtl_common.h:
+        * src/libANGLE/renderer/metal/mtl_constants.h:
+        * src/libANGLE/renderer/metal/mtl_format_map.json:
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::init):
+        * src/libANGLE/renderer/metal/mtl_format_utils.mm:
+        (rx::mtl::FormatTable::initialize):
+        * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.h:
+        * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+        (rx::mtl::updateShaderAttributes):
+        (rx::mtl::SubstituteTransformFeedbackMarkers):
+        (rx::mtl::GenerateTransformFeedbackVaryingOutput):
+        (rx::mtl::GenerateTransformFeedbackEmulationOutputs):
+        (rx::mtl::getReflectionFromCompiler):
+        (rx::mtl::GlslangGetMSL):
+        * src/libANGLE/renderer/metal/mtl_render_utils.mm:
+        (rx::mtl::TransformFeedbackUtils::createMslXfbLibrary):
+        (rx::mtl::TransformFeedbackUtils::getTransformFeedbackRenderPipeline):
+        * src/libANGLE/renderer/metal/mtl_resources.h:
+        * src/libANGLE/renderer/metal/mtl_resources.mm:
+        (rx::mtl::Texture::Texture):
+        * src/libANGLE/renderer/metal/mtl_state_cache.mm:
+        (rx::mtl::SamplerDesc::SamplerDesc):
+        (rx::mtl::SamplerDesc::reset):
+        (rx::mtl::RenderPipelineCache::RenderPipelineCache):
+        (rx::mtl::RenderPipelineCache::createRenderPipelineState):
+        * src/libANGLE/renderer/metal/mtl_utils.h:
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::GetUserSetOrHighestMSLVersion):
+        (rx::mtl::CreateShaderLibrary):
+        (rx::mtl::GetHighestSupportedMSLVersion): Deleted.
+        * src/libANGLE/renderer/metal/shaders/blit.metal:
+        * src/libANGLE/renderer/metal/shaders/format_autogen.h:
+        * src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc:
+
 2021-03-03  Kyle Piddington  <kpiddington@apple.com>
 
         Support Depth24_Stencil8 simulation in the MTLSimulator

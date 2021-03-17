@@ -3,9 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// mtl_common.h:
-//      Declares numerical constants used in Metal.
-//      error handler base class.
+// mtl_constnats.h:
+//      Declares numerical and string constants used in Metal
 //
 
 #ifndef LIBANGLE_RENDERER_METAL_MTL_CONSTANTS_H

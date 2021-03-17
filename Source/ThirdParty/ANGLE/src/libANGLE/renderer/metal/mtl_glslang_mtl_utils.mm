@@ -11,9 +11,30 @@
 #include "libANGLE/renderer/metal/ShaderMtl.h"
 #include "libANGLE/renderer/metal/mtl_glslang_mtl_utils.h"
 #include "common/utilities.h"
-
 namespace rx
 {
+namespace
+{
+    constexpr char kXfbBindingsMarker[]    = "@@XFB-Bindings@@";
+    constexpr char kXfbOutMarker[]     = "ANGLE_@@XFB-OUT@@";
+
+template <size_t N>
+constexpr size_t ConstStrLen(const char (&)[N])
+{
+    static_assert(N > 0, "C++ shouldn't allow N to be zero");
+
+    // The length of a string defined as a char array is the size of the array minus 1 (the
+    // terminating '\0').
+    return N - 1;
+}
+
+std::string GetXfbBufferNameMtl(const uint32_t bufferIndex)
+{
+    return "xfbBuffer" + Str(bufferIndex);
+}
+
+}   //
+
 namespace mtl
 {
 
@@ -136,16 +157,6 @@ sh::TranslatorMetalReflection *getReflectionFromShader(gl::Shader *shader)
     return shaderInstance->getTranslatorMetalReflection();
 }
 
-sh::TranslatorMetalReflection *getReflectionFromCompiler(gl::Compiler *compiler,
-                                                         gl::ShaderType type)
-{
-    auto compilerInstance      = compiler->getInstance(type);
-    sh::TShHandleBase *base    = static_cast<sh::TShHandleBase *>(compilerInstance.getHandle());
-    auto translatorMetalDirect = base->getAsTranslatorMetalDirect();
-    compiler->putInstance(std::move(compilerInstance));
-    return translatorMetalDirect->getTranslatorMetalReflection();
-}
-
 std::string updateShaderAttributes(std::string shaderSourceIn, const gl::ProgramState &programState)
 {
     // Build string to attrib map.
@@ -160,18 +171,17 @@ std::string updateShaderAttributes(std::string shaderSourceIn, const gl::Program
             for(int i = 0; i < regs; i++)
             {
                 stream.str("");
-                stream << attribute.name << "_" << std::to_string(i) << kUnassignedAttributeString;
+                stream << attribute.name << "_" << std::to_string(i) << sh::kUnassignedAttributeString;
                 attributeBindings.insert({std::string(stream.str()), i+attribute.location});
             }
         }
         else
         {
             stream.str("");
-            stream << attribute.name << kUnassignedAttributeString;
+            stream << attribute.name << sh::kUnassignedAttributeString;
             attributeBindings.insert({std::string(stream.str()),attribute.location});
         }
     }
-
     //Rewrite attributes
     std::string outputSource = shaderSourceIn;
     for(auto it = attributeBindings.begin(); it!=attributeBindings.end(); ++it)
@@ -181,10 +191,167 @@ std::string updateShaderAttributes(std::string shaderSourceIn, const gl::Program
         {
             stream.str("");
             stream << "[[attribute(" << it->second << ")]]";
-            outputSource = outputSource.replace(attribFound+it->first.length()-strlen(kUnassignedAttributeString), strlen(kUnassignedAttributeString), stream.str());
+            outputSource = outputSource.replace(attribFound+it->first.length()-strlen(sh::kUnassignedAttributeString), strlen(sh::kUnassignedAttributeString), stream.str());
         }
     }
     return outputSource;
+}
+
+std::string SubstituteTransformFeedbackMarkers(const std::string &originalSource,
+                                               const std::string &xfbBindings,
+                                               const std::string &xfbOut)
+{
+    const size_t xfbBindingsMarkerStart = originalSource.find(kXfbBindingsMarker);
+    bool hasBindingsMarker = xfbBindingsMarkerStart != std::string::npos;
+    const size_t xfbBindingsMarkerEnd = xfbBindingsMarkerStart + ConstStrLen(kXfbBindingsMarker);
+
+    const size_t xfbOutMarkerStart = originalSource.find(kXfbOutMarker, xfbBindingsMarkerStart);
+    bool hasOutMarker = xfbOutMarkerStart != std::string::npos;
+    const size_t xfbOutMarkerEnd = xfbOutMarkerStart + ConstStrLen(kXfbOutMarker);
+
+    // The shader is the following form:
+    //
+    // ..part1..
+    // @@ XFB-BINDINGS @@
+    // ..part2..
+    // @@ XFB-OUT @@;
+    // ..part3..
+    //
+    // Construct the string by concatenating these five pieces, replacing the markers with the given
+    // values.
+    std::string result;
+    if(hasBindingsMarker && hasOutMarker)
+    {
+        result.append(&originalSource[0], &originalSource[xfbBindingsMarkerStart]);
+        result.append(xfbBindings);
+        result.append(&originalSource[xfbBindingsMarkerEnd], &originalSource[xfbOutMarkerStart]);
+        result.append(xfbOut);
+        result.append(&originalSource[xfbOutMarkerEnd], &originalSource[originalSource.size()]);
+        return result;
+    }
+    return originalSource;
+}
+
+std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVarying &varying,
+                                                   const gl::UniformTypeInfo &info,
+                                                   size_t strideBytes,
+                                                   size_t offset,
+                                                   const std::string &bufferIndex)
+{
+    std::ostringstream result;
+
+    ASSERT(strideBytes % 4 == 0);
+    size_t stride = strideBytes / 4;
+
+    const size_t arrayIndexStart = varying.arrayIndex == GL_INVALID_INDEX ? 0 : varying.arrayIndex;
+    const size_t arrayIndexEnd   = arrayIndexStart + varying.size();
+
+    for (size_t arrayIndex = arrayIndexStart; arrayIndex < arrayIndexEnd; ++arrayIndex)
+    {
+        for (int col = 0; col < info.columnCount; ++col)
+        {
+            for (int row = 0; row < info.rowCount; ++row)
+            {
+                result << "        ";
+                result << "ANGLE_" << "xfbBuffer" << bufferIndex << "["
+                       << "ANGLE_" << std::string(sh::kUniformsVar)<< ".ANGLE_xfbBufferOffsets[" << bufferIndex
+                       << "] + (gl_VertexID + ANGLE_instanceIdMod * "
+                       << "ANGLE_" << std::string(sh::kUniformsVar) << ".ANGLE_xfbVerticesPerDraw) * " << stride
+                       << " + " << offset << "] = " << "as_type<float>" << "("
+                       << "ANGLE_vertexOut." << varying.name;
+
+                if (varying.isArray())
+                {
+                    result << "[" << arrayIndex << "]";
+                }
+
+                if (info.columnCount > 1)
+                {
+                    result << "[" << col << "]";
+                }
+
+                if (info.rowCount > 1)
+                {
+                    result << "[" << row << "]";
+                }
+
+                result << ");\n";
+                ++offset;
+            }
+        }
+    }
+
+    return result.str();
+}
+
+void GenerateTransformFeedbackEmulationOutputs(const GlslangSourceOptions &options,
+                                               const gl::ProgramState &programState,
+                                               std::string *vertexShader,
+                                               bool earlyReturn,
+                                               std::array<uint32_t, kMaxShaderXFBs> *xfbBindingRemapOut)
+{
+    const std::vector<gl::TransformFeedbackVarying> &varyings =
+        programState.getLinkedTransformFeedbackVaryings();
+    const std::vector<GLsizei> &bufferStrides = programState.getTransformFeedbackStrides();
+    const bool isInterleaved =
+        programState.getTransformFeedbackBufferMode() == GL_INTERLEAVED_ATTRIBS;
+    const size_t bufferCount = isInterleaved ? 1 : varyings.size();
+
+    std::vector<std::string> xfbIndices(bufferCount);
+
+    std::string xfbBindings;
+
+    for (uint32_t bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
+    {
+        const std::string xfbBinding = Str(0);
+        xfbIndices[bufferIndex]      = Str(bufferIndex);
+
+        std::string bufferName = GetXfbBufferNameMtl(bufferIndex);
+
+        xfbBindings += ", ";
+        // TODO: offset from last used buffer binding from front end
+        // XFB buffer is allocated slot starting from last discrete Metal buffer slot.
+        uint32_t bindingPoint = kMaxShaderBuffers - 1 - bufferIndex;
+        xfbBindingRemapOut->at(bufferIndex) = bindingPoint;
+        xfbBindings += "device float* ANGLE_" + bufferName + " [[buffer(" + Str(bindingPoint) + ")]]";
+    }
+
+    std::string xfbOut = "#if TRANSFORM_FEEDBACK_ENABLED\n    if (ANGLE_" + std::string(sh::kUniformsVar) + ".ANGLE_xfbActiveUnpaused != 0)\n    {\n";
+    size_t outputOffset = 0;
+    for (size_t varyingIndex = 0; varyingIndex < varyings.size(); ++varyingIndex)
+    {
+        const size_t bufferIndex                    = isInterleaved ? 0 : varyingIndex;
+        const gl::TransformFeedbackVarying &varying = varyings[varyingIndex];
+
+        // For every varying, output to the respective buffer packed.  If interleaved, the output is
+        // always to the same buffer, but at different offsets.
+        const gl::UniformTypeInfo &info = gl::GetUniformTypeInfo(varying.type);
+        xfbOut += GenerateTransformFeedbackVaryingOutput(varying, info, bufferStrides[bufferIndex],
+                                                         outputOffset, xfbIndices[bufferIndex]);
+
+        if (isInterleaved)
+        {
+            outputOffset += info.columnCount * info.rowCount * varying.size();
+        }
+    }
+    if (earlyReturn)
+    {
+        xfbOut += "return;";
+    }
+    xfbOut += "    }\n#endif\n";
+
+    *vertexShader = SubstituteTransformFeedbackMarkers(*vertexShader, xfbBindings, xfbOut);
+}
+
+
+sh::TranslatorMetalReflection *getReflectionFromCompiler(gl::Compiler *compiler,
+                                                         gl::ShaderType type)
+{
+    auto compilerInstance      = compiler->getInstance(type);
+    sh::TShHandleBase *base    = static_cast<sh::TShHandleBase *>(compilerInstance.getHandle());
+    auto translatorMetalDirect = base->getAsTranslatorMetalDirect();
+    compiler->putInstance(std::move(compilerInstance));
+    return translatorMetalDirect->getTranslatorMetalReflection();
 }
 
 angle::Result GlslangGetMSL(const gl::Context *glContext,
@@ -196,15 +363,16 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
                             gl::ShaderMap<std::string> *mslCodeOut,
                             size_t xfbBufferCount)
 {
+    const GlslangSourceOptions options;
     // Retrieve original uniform buffer bindings generated by front end. We will need to do a remap.
     std::unordered_map<std::string, uint32_t> uboOriginalBindings;
     const std::vector<gl::InterfaceBlock> &blocks = programState.getUniformBlocks();
     for (uint32_t bufferIdx = 0; bufferIdx < blocks.size(); ++bufferIdx)
     {
         const gl::InterfaceBlock &block = blocks[bufferIdx];
-        if (!uboOriginalBindings.count(block.mappedName))
+        if (!uboOriginalBindings.count(block.name))
         {
-            uboOriginalBindings[block.mappedName] = bufferIdx;
+            uboOriginalBindings[block.name] = bufferIdx;
         }
     }
     // Retrieve original sampler bindings produced by front end.
@@ -231,12 +399,27 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
     }
     for (gl::ShaderType type : {gl::ShaderType::Vertex, gl::ShaderType::Fragment})
     {
-        (*mslCodeOut)[type]                         = shaderSources[type];
-        (*mslShaderInfoOut)[type].metalShaderSource = shaderSources[type];
         std::string source;
         if(type == gl::ShaderType::Vertex)
         {
             source = updateShaderAttributes(shaderSources[type], programState);
+            // Write transform feedback output code.
+            if (!source.empty())
+            {
+                if (programState.getLinkedTransformFeedbackVaryings().empty())
+                {
+                    source = SubstituteTransformFeedbackMarkers(source, "", "");
+                }
+                else
+                {
+                    GenerateTransformFeedbackEmulationOutputs(
+                        options, programState, &source,
+                        options.transformFeedbackEarlyReturn,
+                        &(*mslShaderInfoOut)[type].actualXFBBindings);
+                }
+            }
+
+
         }
         else
         {
@@ -246,6 +429,25 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
         (*mslShaderInfoOut)[type].metalShaderSource = source;
         gl::Shader *shader                        = programState.getAttachedShader(type);
         sh::TranslatorMetalReflection *reflection = getReflectionFromShader(shader);
+        if(reflection->hasUBOs)
+        {
+            (*mslShaderInfoOut)[type].hasUBOArgumentBuffer = true;
+
+            for (auto &uboBinding : reflection->getUniformBufferBindings())
+            {
+                const std::string &uboName         = uboBinding.first;
+                const sh::UBOBindingInfo &bindInfo = uboBinding.second;
+                const uint32_t uboBindIndex        = static_cast<uint32_t>(bindInfo.bindIndex);
+                const uint32_t uboArraySize        = static_cast<uint32_t>(bindInfo.arraySize);
+                const uint32_t originalBinding     = uboOriginalBindings.at(uboName);
+                uint32_t currentSlot = static_cast<uint>(uboBindIndex);
+                for (uint32_t i = 0; i < uboArraySize; ++i)
+                {
+                    // Use consecutive slot for member in array
+                    (*mslShaderInfoOut)[type].actualUBOBindings[originalBinding + i] = currentSlot + i;
+                }
+            }
+        }
         // Retrieve automatic texture slot assignments
         if (originalSamplerBindings.size() > 0)
         {

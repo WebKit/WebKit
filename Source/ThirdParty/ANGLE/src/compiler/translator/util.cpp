@@ -730,6 +730,7 @@ bool IsBuiltinOutputVariable(TQualifier qualifier)
         case EvqFragData:
         case EvqSecondaryFragDataEXT:
         case EvqClipDistance:
+        case EvqSampleMask:
             return true;
         default:
             break;

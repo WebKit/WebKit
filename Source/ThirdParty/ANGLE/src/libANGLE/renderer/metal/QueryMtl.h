@@ -12,6 +12,7 @@
 
 #include "libANGLE/renderer/QueryImpl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
+#include "libANGLE/renderer/metal/mtl_constants.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 
 namespace rx

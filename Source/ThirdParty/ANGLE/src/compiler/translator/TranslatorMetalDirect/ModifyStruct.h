@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "compiler/translator/Compiler.h"
 #include "compiler/translator/TranslatorMetalDirect/IdGen.h"
 #include "compiler/translator/TranslatorMetalDirect/Layout.h"
 #include "compiler/translator/TranslatorMetalDirect/Name.h"
@@ -123,12 +124,15 @@ class ModifiedStructMachineries
 
 // Returns true and `outMachinery` populated if modifications were performed.
 // Returns false otherwise.
-bool TryCreateModifiedStruct(SymbolEnv &symbolEnv,
+bool TryCreateModifiedStruct(TCompiler &compiler,
+                             SymbolEnv &symbolEnv,
                              IdGen &idGen,
                              const ModifyStructConfig &config,
                              const TStructure &originalStruct,
                              const Name &modifiedStructName,
-                             ModifiedStructMachineries &outMachineries);
+                             ModifiedStructMachineries &outMachineries,
+                             const bool isUBO,
+                             const bool allowPadding);
 
 }  // namespace sh
 

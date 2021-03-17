@@ -607,15 +607,15 @@ egl::Error WindowSurfaceMtl::initialize(const egl::Display *display)
         mMetalLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
 #endif
 
-        // ensure drawableSize is set to correct value:
-        mMetalLayer.get().drawableSize = mCurrentKnownDrawableSize = calcExpectedDrawableSize();
-
         if (mMetalLayer.get() != mLayer)
         {
             mMetalLayer.get().contentsScale = mLayer.contentsScale;
 
             [mLayer addSublayer:mMetalLayer.get()];
         }
+
+        // ensure drawableSize is set to correct value:
+        mMetalLayer.get().drawableSize = mCurrentKnownDrawableSize = calcExpectedDrawableSize();
     }
 
     return egl::NoError();

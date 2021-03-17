@@ -115,6 +115,11 @@ struct FeaturesMtl : FeatureSetBase
     Feature emulateTransformFeedback = {
         "emulate_transform_feedback", FeatureCategory::MetalFeatures,
         "Turn this on to allow transform feedback in Metal using a 2-pass VS for GLES3.", &members};
+    
+    Feature rewriteRowMajorMatrices = {
+            "rewrite_row_major_matrices", FeatureCategory::MetalFeatures,
+            "Rewrite row major matrices in shaders as column major.",
+            &members};
 };
 
 }  // namespace angle

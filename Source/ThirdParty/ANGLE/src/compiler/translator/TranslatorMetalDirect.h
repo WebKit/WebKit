@@ -11,17 +11,41 @@
 
 namespace sh
 {
+
+constexpr const char kUniformsVar[]               = "angleUniforms";
+constexpr const char kViewport[]                  = "viewport";
+constexpr const char kHalfRenderArea[]            = "halfRenderArea";
+constexpr const char kFlipXY[]                    = "flipXY";
+constexpr const char kNegFlipXY[]                 = "negFlipXY";
+constexpr const char kClipDistancesEnabled[]      = "clipDistancesEnabled";
+constexpr const char kXfbActiveUnpaused[]         = "xfbActiveUnpaused";
+constexpr const char kXfbVerticesPerDraw[]        = "xfbVerticesPerDraw";
+constexpr const char kXfbBufferOffsets[]          = "xfbBufferOffsets";
+constexpr const char kAcbBufferOffsets[]          = "acbBufferOffsets";
+constexpr const char kDepthRange[]                = "depthRange";
+constexpr const char kPreRotation[]               = "preRotation";
+constexpr const char kFragRotation[]              = "fragRotation";
+constexpr const char kUnassignedAttributeString[] = " __unassigned_attribute__";
+
 class TOutputMSL;
 
 typedef std::unordered_map<size_t, std::string> originalNamesMap;
 typedef std::unordered_map<std::string, size_t> samplerBindingMap;
 typedef std::unordered_map<std::string, size_t> textureBindingMap;
-typedef std::unordered_map<std::string, size_t> uniformBufferBindingMap;
+typedef std::unordered_map<std::string, size_t> userUniformBufferBindingMap;
+typedef std::pair<size_t, size_t> uboBindingInfo;
+struct UBOBindingInfo
+{
+    size_t bindIndex = 0;
+    size_t arraySize = 0;
+};
+typedef std::unordered_map<std::string, UBOBindingInfo> uniformBufferBindingMap;
 
 class TranslatorMetalReflection
 {
   public:
-    TranslatorMetalReflection() {}
+    TranslatorMetalReflection():
+        hasUBOs(false), hasFlatInput(false)  {}
     ~TranslatorMetalReflection() {}
 
     void addOriginalName(const size_t id, const std::string &name)
@@ -36,13 +60,18 @@ class TranslatorMetalReflection
     {
         textureBindings.insert({name, textureBinding});
     }
-    void addUniformBufferBinding(const std::string &name, size_t uniformBufferBinding)
+    void addUserUniformBufferBinding(const std::string &name, size_t userUniformBufferBinding)
     {
-        uniformBufferBindings.insert({name, uniformBufferBinding});
+        userUniformBufferBindings.insert({name, userUniformBufferBinding});
+    }
+    void addUniformBufferBinding(const std::string &name, UBOBindingInfo bindingInfo)
+    {
+        uniformBufferBindings.insert({name, bindingInfo});
     }
     std::string getOriginalName(const size_t id) { return originalNames.at(id); }
     samplerBindingMap getSamplerBindings() const { return samplerBindings; }
     textureBindingMap getTextureBindings() const { return textureBindings; }
+    userUniformBufferBindingMap getUserUniformBufferBindings() const { return userUniformBufferBindings; }
     uniformBufferBindingMap getUniformBufferBindings() const { return uniformBufferBindings; }
     size_t getSamplerBinding(const std::string &name) const
     {
@@ -64,7 +93,17 @@ class TranslatorMetalReflection
         ASSERT(0);
         return std::numeric_limits<size_t>::max();
     }
-    size_t getUniformBufferBinding(const std::string &name) const
+    size_t getUserUniformBufferBinding(const std::string &name) const
+    {
+        auto it = userUniformBufferBindings.find(name);
+        if (it != userUniformBufferBindings.end())
+        {
+            return it->second;
+        }
+        ASSERT(0);
+        return std::numeric_limits<size_t>::max();
+    }
+    UBOBindingInfo getUniformBufferBinding(const std::string &name) const
     {
         auto it = uniformBufferBindings.find(name);
         if (it != uniformBufferBindings.end())
@@ -72,20 +111,28 @@ class TranslatorMetalReflection
             return it->second;
         }
         ASSERT(0);
-        return std::numeric_limits<size_t>::max();
+        return {.bindIndex = std::numeric_limits<size_t>::max(),
+                .arraySize = std::numeric_limits<size_t>::max()};
     }
     void reset()
     {
+        hasUBOs = false;
+        hasFlatInput = false;
         originalNames.clear();
         samplerBindings.clear();
         textureBindings.clear();
+        userUniformBufferBindings.clear();
         uniformBufferBindings.clear();
     }
+
+    bool hasUBOs = false;
+    bool hasFlatInput = false;
 
   private:
     originalNamesMap originalNames;
     samplerBindingMap samplerBindings;
     textureBindingMap textureBindings;
+    userUniformBufferBindingMap userUniformBufferBindings;
     uniformBufferBindingMap uniformBufferBindings;
 };
 
@@ -115,6 +162,8 @@ class TranslatorMetalDirect : public TCompiler
 
     ANGLE_NO_DISCARD bool transformDepthBeforeCorrection(TIntermBlock &root,
                                                          const TVariable &driverUniforms);
+    ANGLE_NO_DISCARD bool insertSampleMaskWritingLogic(TIntermBlock &root,
+                                                       const TVariable &driverUniforms);
     ANGLE_NO_DISCARD bool insertRasterizationDiscardLogic(TIntermBlock &root);
 
     void createAdditionalGraphicsDriverUniformFields(std::vector<TField *> &fieldsOut);

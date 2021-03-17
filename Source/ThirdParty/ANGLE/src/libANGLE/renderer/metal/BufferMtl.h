@@ -24,7 +24,11 @@
 
 namespace rx
 {
-
+struct IndexRange
+{
+    size_t restartBegin;
+    size_t restartEnd;
+};
 // Conversion buffers hold translated index and vertex data.
 struct ConversionBufferMtl
 {
@@ -36,7 +40,6 @@ struct ConversionBufferMtl
 
     // The conversion is stored in a dynamic buffer.
     mtl::BufferPool data;
-
     // These properties are to be filled by user of this buffer conversion
     mtl::BufferRef convertedBuffer;
     size_t convertedOffset;
@@ -60,11 +63,14 @@ struct IndexConversionBufferMtl : public ConversionBufferMtl
     IndexConversionBufferMtl(ContextMtl *context,
                              gl::DrawElementsType elemType,
                              bool primitiveRestartEnabled,
-                             size_t offsetIn);
-
+                             size_t offsetIn,
+                             std::vector<IndexRange> restartRangesIn = std::vector<IndexRange>());
     const gl::DrawElementsType elemType;
     const size_t offset;
     bool primitiveRestartEnabled;
+    std::vector<IndexRange> restartRanges;
+    IndexRange getRangeForConvertedBuffer(size_t count);
+
 };
 
 struct UniformConversionBufferMtl : public ConversionBufferMtl

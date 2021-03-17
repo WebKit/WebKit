@@ -21,6 +21,7 @@
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_glslang_mtl_utils.h"
+#include "libANGLE/renderer/metal/mtl_common.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
 
@@ -138,7 +139,8 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
     angle::Result createMslShaderLib(mtl::Context *context,
                                      gl::ShaderType shaderType,
                                      gl::InfoLog &infoLog,
-                                     mtl::TranslatedShaderInfo *translatedMslInfo);
+                                     mtl::TranslatedShaderInfo *translatedMslInfo,
+                                     NSDictionary<NSString*, NSObject*> * subtitutionDictionary = @{});
     // Calls this before drawing, changedPipelineDesc is passed when vertex attributes desc and/or
     // shader program changed.
     angle::Result setupDraw(const gl::Context *glContext,
@@ -149,7 +151,8 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
                             bool uniformBuffersDirty,
                             bool transformFeedbackDraw);
 
-    std::string getXfbMslSource() const { return mXfbMslSource; }
+    std::array<uint32_t, mtl::kMaxShaderXFBs> getXfbBindings() const { return mXfbBindings; }
+    std::string getTranslatedShaderSource(const gl::ShaderType shaderType) const { return mMslShaderTranslateInfo[shaderType].metalShaderSource; }
 
     mtl::RenderPipelineCache *mMetalXfbRenderPipelineCache;
 
@@ -191,7 +194,7 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
         mtl::RenderCommandEncoder *cmdEncoder,
         const std::vector<gl::InterfaceBlock> &blocks,
         gl::ShaderType shaderType);
-
+    
     void reset(ContextMtl *context);
 
     void saveTranslatedShaders(gl::BinaryOutputStream *stream);
@@ -219,7 +222,9 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
     angle::Result linkTranslatedShaders(const gl::Context *glContext,
                                         gl::BinaryInputStream *stream,
                                         gl::InfoLog &infoLog);
-
+    
+    mtl::BufferPool * getBufferPool(ContextMtl * context);
+    
     // State for the default uniform blocks.
     struct DefaultUniformBlock final : private angle::NonCopyable
     {
@@ -269,7 +274,9 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
     uint32_t mShadowCompareModes[mtl::kMaxShaderSamplers] = {0};
 
     mtl::RenderPipelineCache mMetalRenderPipelineCache;
-    std::string mXfbMslSource;
+    std::array<uint32_t, mtl::kMaxShaderXFBs> mXfbBindings;
+    NSDictionary<NSString *, NSObject *> * mDefaultSubstitutionDictionary;
+    mtl::BufferPool * mAuxBufferPool;
 };
 
 }  // namespace rx
