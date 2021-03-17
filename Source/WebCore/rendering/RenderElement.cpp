@@ -914,7 +914,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         return;
     
     if (diff == StyleDifference::Layout || diff == StyleDifference::SimplifiedLayout) {
-        RenderCounter::rendererStyleChanged(*this, oldStyle, &m_style);
+        RenderCounter::rendererStyleChanged(*this, oldStyle, m_style);
 
         // If the object already needs layout, then setNeedsLayout won't do
         // any work. But if the containing block has changed, then we may need
