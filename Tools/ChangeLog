@@ -1,3 +1,14 @@
+2021-03-17  Matt Lewis  <jlewis3@apple.com>
+
+        Add AppleSilicon and Debug WK2 Support to EWS
+        https://bugs.webkit.org/show_bug.cgi?id=223393
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+        * CISupport/ews-build/config.json:
+
 2021-03-17  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Support git-svn in remote mocks
