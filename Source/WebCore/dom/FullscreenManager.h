@@ -106,6 +106,13 @@ protected:
     void addDocumentToFullscreenChangeEventQueue(Document&);
 
 private:
+#if !RELEASE_LOG_DISABLED
+    const WTF::Logger& logger() const { return m_document.logger(); }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "FullscreenManager"; }
+    WTFLogChannel& logChannel() const;
+#endif
+
     Document& m_document;
 
     RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }
@@ -124,6 +131,10 @@ private:
     bool m_areKeysEnabledInFullscreen { false };
     bool m_isAnimatingFullscreen { false };
     bool m_areFullscreenControlsHidden { false };
+
+#if !RELEASE_LOG_DISABLED
+    const void* m_logIdentifier;
+#endif
 };
 
 }
