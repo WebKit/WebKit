@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+WEBCORE_EXPORT String identifierToString(JSC::JSGlobalObject&, const JSC::Identifier&);
 WEBCORE_EXPORT String identifierToByteString(JSC::JSGlobalObject&, const JSC::Identifier&);
 WEBCORE_EXPORT String valueToByteString(JSC::JSGlobalObject&, JSC::JSValue);
 WEBCORE_EXPORT String identifierToUSVString(JSC::JSGlobalObject&, const JSC::Identifier&);

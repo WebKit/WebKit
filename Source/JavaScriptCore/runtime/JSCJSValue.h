@@ -133,6 +133,8 @@ enum class SourceCodeRepresentation : uint8_t {
     LinkTimeConstant,
 };
 
+extern JS_EXPORT_PRIVATE const ASCIILiteral SymbolCoercionError;
+
 class JSValue {
     friend struct EncodedJSValueHashTraits;
     friend struct EncodedJSValueWithRepresentationHashTraits;

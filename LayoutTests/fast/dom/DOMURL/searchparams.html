@@ -18,4 +18,10 @@ let b = new URLSearchParams("a=b");
 b.delete("a");
 console.log(b == "" ? "PASS" : "FAIL");
 
+try {
+    new URLSearchParams({ [Symbol()]: "a" });
+    console.log("FAIL");
+} catch (err) {
+    console.log(`PASS threw exception ${err}.`);
+}
 </script>

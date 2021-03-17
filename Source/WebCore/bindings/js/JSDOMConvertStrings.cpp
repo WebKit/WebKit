@@ -32,6 +32,17 @@
 namespace WebCore {
 using namespace JSC;
 
+String identifierToString(JSGlobalObject& lexicalGlobalObject, const Identifier& identifier)
+{
+    if (UNLIKELY(identifier.isSymbol())) {
+        auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+        throwTypeError(&lexicalGlobalObject, scope, SymbolCoercionError);
+        return { };
+    }
+
+    return identifier.string();
+}
+
 static inline String stringToByteString(JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, String&& string)
 {
     if (!string.isAllLatin1()) {
@@ -47,7 +58,8 @@ String identifierToByteString(JSGlobalObject& lexicalGlobalObject, const Identif
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto string = identifier.string();
+    auto string = identifierToString(lexicalGlobalObject, identifier);
+    RETURN_IF_EXCEPTION(scope, { });
     return stringToByteString(lexicalGlobalObject, scope, WTFMove(string));
 }
 
@@ -82,10 +94,9 @@ static inline String stringToUSVString(String&& string)
     return result.toString();
 }
 
-String identifierToUSVString(JSGlobalObject&, const Identifier& identifier)
+String identifierToUSVString(JSGlobalObject& lexicalGlobalObject, const Identifier& identifier)
 {
-    auto string = identifier.string();
-    return stringToUSVString(WTFMove(string));
+    return stringToUSVString(identifierToString(lexicalGlobalObject, identifier));
 }
 
 String valueToUSVString(JSGlobalObject& lexicalGlobalObject, JSValue value)

@@ -38,9 +38,9 @@ template<typename IDLStringType>
 struct IdentifierConverter;
 
 template<> struct IdentifierConverter<IDLDOMString> {
-    static String convert(JSC::JSGlobalObject&, const JSC::Identifier& identifier)
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier)
     {
-        return identifier.string();
+        return identifierToString(lexicalGlobalObject, identifier);
     }
 };
 
@@ -99,9 +99,8 @@ private:
         HashMap<KeyType, size_t> resultMap;
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
-        JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
+        JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::StringsAndSymbols, JSC::PrivateSymbolMode::Exclude);
         object->methodTable(vm)->getOwnPropertyNames(object, &lexicalGlobalObject, keys, JSC::DontEnumPropertiesMode::Include);
-
         RETURN_IF_EXCEPTION(scope, { });
 
         // 5. Repeat, for each element key of keys in List order:
