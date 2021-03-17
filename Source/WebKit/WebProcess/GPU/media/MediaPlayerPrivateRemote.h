@@ -90,6 +90,7 @@ public:
     WebCore::MediaPlayer* player() const { return m_player; }
 
     WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
+    void setReadyState(WebCore::MediaPlayer::ReadyState);
 
     void networkStateChanged(RemoteMediaPlayerState&&);
     void readyStateChanged(RemoteMediaPlayerState&&);

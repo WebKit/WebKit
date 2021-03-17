@@ -120,6 +120,9 @@ void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState state)
     if (!m_mediaSourcePrivate)
         return;
 
+    if (m_mediaPlayerPrivate)
+        m_mediaPlayerPrivate->setReadyState(state);
+
     if (!m_gpuProcessConnection)
         return;
 

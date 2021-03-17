@@ -287,6 +287,12 @@ void MediaPlayerPrivateRemote::networkStateChanged(RemoteMediaPlayerState&& stat
     m_player->networkStateChanged();
 }
 
+void MediaPlayerPrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
+{
+    m_cachedState.readyState = readyState;
+    m_player->readyStateChanged();
+}
+
 void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state)
 {
     updateCachedState(WTFMove(state));

@@ -1,3 +1,17 @@
+2021-03-17  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Some media-source tests fail/timeout when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=221686
+
+        Reviewed by Eric Carlson.
+
+        Fix the wrong description of a test.
+
+        * media/media-source/media-source-resize-expected.txt:
+        * media/media-source/media-source-resize.html:
+        * platform/gtk/media/media-source/media-source-resize-expected.txt:
+        * platform/mac/TestExpectations:
+
 2021-03-17  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Fix convertRecord() to throw on enumerable symbol |key|

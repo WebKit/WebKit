@@ -1,3 +1,25 @@
+2021-03-17  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Some media-source tests fail/timeout when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=221686
+
+        Reviewed by Eric Carlson.
+
+        With "GPU Process: Media" enabled, a video element with a reference to a `MediaSource`
+        object will schedule a "resize" event after the source buffer scheduling an "update" event.
+        The root cause is that the `MediaPlayerPrivateRemote` does not notify its `HTMLMediaElement`
+        to change its ready state to HAVE_METADATA after the source buffer receives the initialization
+        segment (in `SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment()`).
+        The requirement is defined in section 3.5.7.6.2 of the specification:
+        [Initialization Segment Received](https://www.w3.org/TR/media-source/#sourcebuffer-init-segment-received).
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::setReadyState):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::setReadyState):
+
 2021-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Move loadSimulatedRequest API from Private to Public WKWebView
