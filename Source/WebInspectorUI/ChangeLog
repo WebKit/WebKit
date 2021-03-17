@@ -1,3 +1,36 @@
+2021-03-17  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: add GridOverlay diagnostic event and related hooks
+        https://bugs.webkit.org/show_bug.cgi?id=223256
+        <rdar://problem/75478239>
+
+        Reviewed by BJ Burg.
+
+        Add instrumentation to log telemetry for the CSS Grid Inspector.
+
+        We want to answer these questions:
+        - How do users prefer to toggle the overlay, in-context from grid badges in the DOM tree
+          or from the aggregated grid node overlay list in Layout sidebar panel?
+        - Which overlay options are most used? Did we pick good defaults or do users prefer others?
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Controllers/GridOverlayDiagnosticEventRecorder.js: Added.
+        (WI.GridOverlayDiagnosticEventRecorder):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype.setup):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype.teardown):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype._handleGridOverlayShown):
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager.prototype.showGridOverlay):
+        (WI.OverlayManager.prototype.toggleGridOverlay):
+        (WI.OverlayManager.prototype._handleGridSettingChanged):
+        * UserInterface/Main.html:
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype._handleToggleAllCheckboxChanged):
+        (WI.CSSGridSection.prototype.layout):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._gridBadgeClicked):
+
 2021-03-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: remove experimental setting and enable "grid" badges

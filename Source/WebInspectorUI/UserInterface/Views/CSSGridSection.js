@@ -98,7 +98,7 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
         this._suppressUpdateToggleAllCheckbox = true;
         for (let domNode of this._gridNodeSet) {
             if (isChecked)
-                WI.overlayManager.showGridOverlay(domNode);
+                WI.overlayManager.showGridOverlay(domNode, {initiator: WI.GridOverlayDiagnosticEventRecorder.Initiator.Panel});
             else
                 WI.overlayManager.hideGridOverlay(domNode);
         }
@@ -129,7 +129,7 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
             checkboxElement.addEventListener("change", (event) => {
                 if (checkboxElement.checked)
-                    WI.overlayManager.showGridOverlay(domNode, {color: swatch.value});
+                    WI.overlayManager.showGridOverlay(domNode, {color: swatch.value, initiator: WI.GridOverlayDiagnosticEventRecorder.Initiator.Panel});
                 else
                     WI.overlayManager.hideGridOverlay(domNode);
             });
@@ -140,6 +140,8 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
                 if (checkboxElement.checked)
+                    // While changing the overlay color, WI.OverlayManager.Event.GridOverlayShown is dispatched with high frequency.
+                    // An initiator is not provided so as not to skew usage count of overlay options when logging diagnostics in WI.GridOverlayDiagnosticEventRecorder.
                     WI.overlayManager.showGridOverlay(domNode, {color: event.data.value});
             }, swatch);
 

@@ -44,7 +44,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
 
     // Public
 
-    showGridOverlay(domNode, {color} = {})
+    showGridOverlay(domNode, {color, initiator} = {})
     {
         console.assert(!domNode.destroyed, domNode);
         if (domNode.destroyed)
@@ -67,7 +67,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         };
         target.DOMAgent.showGridOverlay.invoke(commandArguments);
 
-        let overlay = {domNode, ...commandArguments};
+        let overlay = {domNode, ...commandArguments, initiator};
 
         // The method to show the overlay will be called repeatedly while updating the grid overlay color. Avoid adding duplicate event listeners
         if (!this._gridOverlayForNodeMap.has(domNode))
@@ -102,12 +102,12 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         return this._gridOverlayForNodeMap.has(domNode);
     }
 
-    toggleGridOverlay(domNode)
+    toggleGridOverlay(domNode, options)
     {
         if (this.isGridOverlayVisible(domNode))
             this.hideGridOverlay(domNode);
         else
-            this.showGridOverlay(domNode);
+            this.showGridOverlay(domNode, options);
     }
 
     getGridColorForNode(domNode)
@@ -170,7 +170,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
     {
         for (let [domNode, overlay] of this._gridOverlayForNodeMap) {
             // Refresh all shown overlays. Latest settings values will be used.
-            this.showGridOverlay(domNode, {color: overlay.color});
+            this.showGridOverlay(domNode, {color: overlay.color, initiator: overlay.initiator});
         }
     }
 

@@ -2041,7 +2041,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         // Don't expand or collapse a tree element when clicking on the grid badge.
         event.stop();
 
-        WI.overlayManager.toggleGridOverlay(this.representedObject);
+        WI.overlayManager.toggleGridOverlay(this.representedObject, {initiator: WI.GridOverlayDiagnosticEventRecorder.Initiator.Badge});
     }
 
     _gridBadgeDoubleClicked(event)
