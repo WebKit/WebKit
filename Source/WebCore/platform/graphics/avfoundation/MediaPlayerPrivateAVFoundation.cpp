@@ -669,12 +669,11 @@ void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
     // so report duration changed when the estimate is upated.
     MediaTime duration = this->durationMediaTime();
     if (duration != m_reportedDuration) {
-        INFO_LOG(LOGIDENTIFIER, "- ", m_cachedDuration);
+        INFO_LOG(LOGIDENTIFIER, duration);
         if (m_reportedDuration.isValid())
             m_player->durationChanged();
         m_reportedDuration = duration;
     }
-    
 }
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const

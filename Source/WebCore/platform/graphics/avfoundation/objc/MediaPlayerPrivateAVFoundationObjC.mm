@@ -1436,7 +1436,6 @@ void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
 void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate)
 {
     setDelayCallbacks(true);
-    m_cachedRate = rate;
 
     [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_cachedRate)];
 
@@ -3249,8 +3248,10 @@ void MediaPlayerPrivateAVFoundationObjC::durationDidChange(const MediaTime& dura
 
 void MediaPlayerPrivateAVFoundationObjC::rateDidChange(double rate)
 {
-    m_cachedRate = rate;
+    if (m_cachedRate == rate)
+        return;
 
+    m_cachedRate = rate;
     updateStates();
     rateChanged();
 }
