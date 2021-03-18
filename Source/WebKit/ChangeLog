@@ -1,3 +1,19 @@
+2021-03-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebsiteDataStore::terminateNetworkProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=223482
+        <rdar://75326967>
+
+        Reviewed by Alex Christensen.
+
+        Calling WebProcessPool::terminateServiceWorkers() may destroy the WebProcessPool, which would
+        remove the WebProcessPool from the WebProcessPool::allProcessPools() vector we're iterating
+        on. To make this safe, I now copy the WebProcessPool into a separate vector and hold a RefPtr
+        to them. I now iterate over this new vector instead.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::terminateNetworkProcess):
+
 2021-03-18  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Remove plugin process leftover arg from ProcessLauncher
