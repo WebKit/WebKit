@@ -325,7 +325,7 @@ bool DisplayList::iterator::atEnd() const
     if (m_displayList.isEmpty() || !m_isValid)
         return true;
 
-    auto& items = *m_displayList.m_items;
+    auto& items = *itemBuffer();
     auto endCursor = items.m_writableBuffer.data + items.m_writtenNumberOfBytes;
     return m_cursor == endCursor;
 }
@@ -337,7 +337,7 @@ void DisplayList::iterator::updateCurrentItem()
     if (atEnd())
         return;
 
-    auto& items = *m_displayList.m_items;
+    auto& items = *itemBuffer();
     auto itemType = static_cast<ItemType>(m_cursor[0]);
     if (isDrawingItem(itemType) && !m_displayList.m_drawingItemExtents.isEmpty()) {
         m_currentExtent = m_displayList.m_drawingItemExtents[m_drawingItemIndex];
@@ -347,20 +347,25 @@ void DisplayList::iterator::updateCurrentItem()
 
     auto* client = items.m_readingClient;
     auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);
-    m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
-    if (!isInlineItem(itemType) && client) {
-        auto dataLength = reinterpret_cast<uint64_t*>(m_cursor)[1];
-        auto* startOfData = m_cursor + 2 * sizeof(uint64_t);
-        auto decodedItemHandle = client->decodeItem(startOfData, dataLength, itemType, m_currentBufferForItem);
-        if (UNLIKELY(!decodedItemHandle))
-            m_isValid = false;
+    if (client) {
+        m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
+        if (isInlineItem(itemType)) {
+            if (UNLIKELY(!ItemHandle { m_cursor }.safeCopy({ m_currentBufferForItem })))
+                m_isValid = false;
 
-        m_currentBufferForItem[0] = static_cast<uint8_t>(itemType);
-        m_currentItemSizeInBuffer = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
+            m_currentItemSizeInBuffer = paddedSizeOfTypeAndItem;
+        } else {
+            auto dataLength = reinterpret_cast<uint64_t*>(m_cursor)[1];
+            auto* startOfData = m_cursor + 2 * sizeof(uint64_t);
+            auto decodedItemHandle = client->decodeItem(startOfData, dataLength, itemType, m_currentBufferForItem);
+            if (UNLIKELY(!decodedItemHandle))
+                m_isValid = false;
+
+            m_currentBufferForItem[0] = static_cast<uint8_t>(itemType);
+            m_currentItemSizeInBuffer = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
+        }
     } else {
-        if (UNLIKELY(!ItemHandle { m_cursor }.safeCopy({ m_currentBufferForItem })))
-            m_isValid = false;
-
+        m_currentBufferForItem = m_cursor;
         m_currentItemSizeInBuffer = paddedSizeOfTypeAndItem;
     }
 }
@@ -372,7 +377,7 @@ void DisplayList::iterator::advance()
 
     m_cursor += m_currentItemSizeInBuffer;
 
-    if (m_cursor == m_currentEndOfBuffer && m_readOnlyBufferIndex < m_displayList.m_items->m_readOnlyBuffers.size()) {
+    if (m_cursor == m_currentEndOfBuffer && m_readOnlyBufferIndex < itemBuffer()->m_readOnlyBuffers.size()) {
         m_readOnlyBufferIndex++;
         moveCursorToStartOfCurrentBuffer();
     }
@@ -382,7 +387,8 @@ void DisplayList::iterator::advance()
 
 void DisplayList::iterator::clearCurrentItem()
 {
-    if (m_currentBufferForItem) {
+    auto items = itemBuffer();
+    if (items && items->m_readingClient && m_currentBufferForItem) {
         if (LIKELY(m_isValid))
             ItemHandle { m_currentBufferForItem }.destroy();
 
@@ -396,7 +402,7 @@ void DisplayList::iterator::clearCurrentItem()
 
 void DisplayList::iterator::moveToEnd()
 {
-    if (auto& items = m_displayList.m_items) {
+    if (auto items = itemBuffer()) {
         m_cursor = items->m_writableBuffer.data + items->m_writtenNumberOfBytes;
         m_currentEndOfBuffer = m_cursor;
         m_readOnlyBufferIndex = items->m_readOnlyBuffers.size();
@@ -405,7 +411,7 @@ void DisplayList::iterator::moveToEnd()
 
 void DisplayList::iterator::moveCursorToStartOfCurrentBuffer()
 {
-    auto& items = m_displayList.m_items;
+    auto items = itemBuffer();
     if (!items)
         return;
 

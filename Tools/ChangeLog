@@ -1,3 +1,19 @@
+2021-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid copying item data when iterating in-process display lists
+        https://bugs.webkit.org/show_bug.cgi?id=223471
+
+        Reviewed by Simon Fraser.
+
+        Adjust an existing API test that exercises inline display list item validation by assigning a reading client to
+        the display list.
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
+        Move the `ReadingClient` and `WritingClient` out of the scope of `OutOfLineItemDecodingFailure`, so that the
+        other API test (`InlineItemValidationFailure`) can also use it.
+
 2021-03-18  Cameron McCormack  <heycam@apple.com>
 
         Add another email for myself in contributors.json

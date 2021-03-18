@@ -81,31 +81,31 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     }
 }
 
+static ItemBufferIdentifier globalBufferIdentifier = ItemBufferIdentifier::generate();
+
+class ReadingClient : public ItemBufferReadingClient {
+private:
+    Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
+    {
+        EXPECT_EQ(type, ItemType::FillPath);
+        return WTF::nullopt;
+    }
+};
+
+class WritingClient : public ItemBufferWritingClient {
+private:
+    ItemBufferHandle createItemBuffer(size_t capacity) final
+    {
+        EXPECT_LT(capacity, globalItemBufferCapacity);
+        return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
+    }
+
+    RefPtr<SharedBuffer> encodeItem(ItemHandle) const final { return SharedBuffer::create(); }
+    void didAppendData(const ItemBufferHandle&, size_t, DidChangeItemBuffer) final { }
+};
+
 TEST(DisplayListTests, OutOfLineItemDecodingFailure)
 {
-    static ItemBufferIdentifier globalBufferIdentifier = ItemBufferIdentifier::generate();
-
-    class ReadingClient : public ItemBufferReadingClient {
-    private:
-        Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
-        {
-            EXPECT_EQ(type, ItemType::FillPath);
-            return WTF::nullopt;
-        }
-    };
-
-    class WritingClient : public ItemBufferWritingClient {
-    private:
-        ItemBufferHandle createItemBuffer(size_t capacity) final
-        {
-            EXPECT_LT(capacity, globalItemBufferCapacity);
-            return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
-        }
-
-        RefPtr<SharedBuffer> encodeItem(ItemHandle) const final { return SharedBuffer::create(); }
-        void didAppendData(const ItemBufferHandle&, size_t, DidChangeItemBuffer) final { }
-    };
-
     FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
@@ -144,6 +144,8 @@ TEST(DisplayListTests, InlineItemValidationFailure)
     GraphicsContext context { cgContext.get() };
 
     DisplayList list;
+    ReadingClient reader;
+    list.setItemBufferClient(&reader);
     list.append<FlushContext>(FlushIdentifier { });
 
     Replayer replayer { context, list };
