@@ -34,10 +34,7 @@ function createControls(shadowRoot, media, host)
 {
     if (host) {
         mediaControlsHost = host;
-
-        iconService.shadowRoot = shadowRoot;
         iconService.mediaControlsHost = host;
-
         shadowRoot.appendChild(document.createElement("style")).textContent = host.shadowRootCSSText;
     }
 
