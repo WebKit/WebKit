@@ -32,7 +32,6 @@
 #include "Distance.h"
 #include "FloatPoint3D.h"
 #include "Panner.h"
-#include "PannerNode.h"
 #include "WebKitAudioContext.h"
 #include "WebKitAudioListener.h"
 #include <memory>
@@ -50,7 +49,7 @@ class HRTFDatabaseLoader;
 // A cone effect will attenuate the gain as the orientation moves away from the listener.
 // All of these effects follow the OpenAL specification very closely.
 
-class WebKitAudioPannerNode final : public PannerNodeBase {
+class WebKitAudioPannerNode final : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(WebKitAudioPannerNode);
 public:
     static Ref<WebKitAudioPannerNode> create(WebKitAudioContext& context)
@@ -112,7 +111,7 @@ public:
     void setConeOuterGain(double angle) { m_coneEffect.setOuterGain(angle); }
 
     void getAzimuthElevation(double* outAzimuth, double* outElevation);
-    float dopplerRate() final;
+    float dopplerRate();
 
     double tailTime() const override { return m_panner ? m_panner->tailTime() : 0; }
     double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }

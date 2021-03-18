@@ -44,16 +44,6 @@ namespace WebCore {
 class HRTFDatabaseLoader;
 class BaseAudioContext;
 
-class PannerNodeBase : public AudioNode {
-public:
-    virtual ~PannerNodeBase() = default;
-
-    virtual float dopplerRate() = 0;
-
-protected:
-    PannerNodeBase(BaseAudioContext&);
-};
-
 // PannerNode is an AudioNode with one input and one output.
 // It positions a sound in 3D space, with the exact effect dependent on the panning model.
 // It has a position and an orientation in 3D space which is relative to the position and orientation of the context's AudioListener.
@@ -61,7 +51,7 @@ protected:
 // A cone effect will attenuate the gain as the orientation moves away from the listener.
 // All of these effects follow the OpenAL specification very closely.
 
-class PannerNode final : public PannerNodeBase {
+class PannerNode final : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(PannerNode);
 public:
     static ExceptionOr<Ref<PannerNode>> create(BaseAudioContext&, const PannerOptions& = { });
@@ -71,7 +61,6 @@ public:
     // AudioNode
     void process(size_t framesToProcess) override;
     void processOnlyAudioParams(size_t framesToProcess) final;
-    void pullInputs(size_t framesToProcess) override;
     void initialize() override;
     void uninitialize() override;
 
@@ -123,7 +112,6 @@ public:
     ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
 
     void azimuthElevation(double* outAzimuth, double* outElevation);
-    float dopplerRate() final;
 
     double tailTime() const override { return m_panner ? m_panner->tailTime() : 0; }
     double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }
@@ -138,10 +126,6 @@ private:
     float distanceConeGain();
 
     bool requiresTailProcessing() const final;
-
-    // Notifies any AudioBufferSourceNodes connected to us either directly or indirectly about our existence.
-    // This is in order to handle the pitch change necessary for the doppler shift.
-    void notifyAudioSourcesConnectedToNode(AudioNode*, HashSet<AudioNode*>& visitedNodes);
 
     void processSampleAccurateValues(AudioBus* destination, const AudioBus* source, size_t framesToProcess);
     bool hasSampleAccurateValues() const;
@@ -164,8 +148,6 @@ private:
 
     // HRTF Database loader
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
-
-    unsigned m_connectionCount { 0 };
 
     // Synchronize process() with setting of the panning model, source's location
     // information, listener, distance parameters and sound cones.

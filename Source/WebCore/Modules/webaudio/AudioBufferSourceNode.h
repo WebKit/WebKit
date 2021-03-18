@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class AudioBuffer;
-class PannerNodeBase;
+class WebKitAudioPannerNode;
 struct AudioBufferSourceOptions;
 
 // AudioBufferSourceNode is an AudioNode representing an audio source from an in-memory audio asset represented by an AudioBuffer.
@@ -77,7 +77,7 @@ public:
     AudioParam& playbackRate() { return m_playbackRate.get(); }
 
     // If a panner node is set, then we can incorporate doppler shift into the playback pitch rate.
-    void setPannerNode(PannerNodeBase*);
+    void setPannerNode(WebKitAudioPannerNode*);
     void clearPannerNode();
 
     // If we are no longer playing, propogate silence ahead to downstream nodes.
@@ -142,7 +142,7 @@ private:
 
     // We optionally keep track of a panner node which has a doppler shift that is incorporated into
     // the pitch rate.
-    AudioConnectionRefPtr<PannerNodeBase> m_pannerNode;
+    AudioConnectionRefPtr<WebKitAudioPannerNode> m_legacyPannerNode;
 
     // This synchronizes process() with setBuffer() which can cause dynamic channel count changes.
     mutable Lock m_processLock;
