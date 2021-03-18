@@ -291,8 +291,9 @@ public:
     const HashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
 
 protected:
-    explicit BaseAudioContext(Document&, const AudioContextOptions& = { });
-    BaseAudioContext(Document&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    enum class IsLegacyWebKitAudioContext : bool { No, Yes };
+    explicit BaseAudioContext(Document&, IsLegacyWebKitAudioContext, const AudioContextOptions& = { });
+    BaseAudioContext(Document&, IsLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
     
     void clearPendingActivity();
     void makePendingActivity();
@@ -383,7 +384,7 @@ private:
 
     RefPtr<AudioBuffer> m_renderTarget;
     RefPtr<AudioDestinationNode> m_destinationNode;
-    RefPtr<AudioListener> m_listener;
+    Ref<AudioListener> m_listener;
 
     unsigned m_connectionCount { 0 };
 

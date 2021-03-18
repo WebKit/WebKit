@@ -118,13 +118,14 @@ bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
 unsigned BaseAudioContext::s_hardwareContextCount = 0;
 
 // Constructor for rendering to the audio hardware.
-BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions& contextOptions)
+BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, const AudioContextOptions& contextOptions)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_worklet(AudioWorklet::create(*this))
+    , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
 {
     // According to spec AudioContext must die only after page navigate.
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
@@ -146,7 +147,7 @@ BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions
 }
 
 // Constructor for offline (non-realtime) rendering.
-BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -155,6 +156,7 @@ BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels
     , m_worklet(AudioWorklet::create(*this))
     , m_isOfflineContext(true)
     , m_renderTarget(WTFMove(renderTarget))
+    , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
 {
     FFTFrame::initialize();
 
@@ -365,13 +367,7 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
 
 AudioListener& WebCore::BaseAudioContext::listener()
 {
-    if (!m_listener) {
-        if (isWebKitAudioContext())
-            m_listener = WebKitAudioListener::create(*this);
-        else
-            m_listener = AudioListener::create(*this);
-    }
-    return *m_listener;
+    return m_listener;
 }
 
 ExceptionOr<Ref<AudioBufferSourceNode>> BaseAudioContext::createBufferSource()
