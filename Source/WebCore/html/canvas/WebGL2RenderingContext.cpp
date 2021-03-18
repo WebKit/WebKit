@@ -2815,6 +2815,14 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
             return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
         }
     }
+
+#if ENABLE(WEBXR)
+    if (targetFramebuffer->isOpaque()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getFramebufferAttachmentParameter", "An opaque framebuffer's attachments cannot be inspected or changed");
+        return nullptr;
+    }
+#endif
+
     if (!validateNonDefaultFramebufferAttachment(functionName, attachment))
         return nullptr;
 

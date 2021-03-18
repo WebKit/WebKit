@@ -1,3 +1,15 @@
+2021-03-18  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR Opaque Framebuffer
+        https://bugs.webkit.org/show_bug.cgi?id=222607
+
+        Reviewed by Youenn Fablet.
+
+        Update WebXR Opaque Framebuffer test expectations.
+
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https-expected.txt: Added.
+
 2021-03-18  Cathie Chen  <cathiechen@igalia.com>
 
         Import css/css-contain test from WPT

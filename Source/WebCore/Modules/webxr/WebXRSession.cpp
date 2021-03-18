@@ -514,7 +514,11 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
             applyPendingRenderState();
 
         // 6. If the frame should be rendered for session:
-        if (frameShouldBeRendered()) {
+        if (frameShouldBeRendered() && m_frameData.shouldRender) {
+            // Prepare all layers for render
+            if (m_mode == XRSessionMode::ImmersiveVr && m_activeRenderState->baseLayer())
+                m_activeRenderState->baseLayer()->startFrame(m_frameData);
+
             // 6.1.Set session’s list of currently running animation frame callbacks to be session’s list of animation frame callbacks.
             // 6.2.Set session’s list of animation frame callbacks to the empty list.
             auto callbacks = m_callbacks;
@@ -545,9 +549,17 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
             // If the session is ended, m_animationFrame->setActive false is set in shutdown().
             frame->setActive(false);
 
-            if (!m_callbacks.isEmpty())
-                requestFrame();
+
+            // Submit current frame layers to the device.
+            Vector<PlatformXR::Device::Layer> frameLayers;
+            if (m_mode == XRSessionMode::ImmersiveVr && m_activeRenderState->baseLayer())
+                frameLayers.append(m_activeRenderState->baseLayer()->endFrame());
+
+            m_device->submitFrame(WTFMove(frameLayers));
         }
+
+        if (!m_callbacks.isEmpty())
+            requestFrame();
 
     });
 }
