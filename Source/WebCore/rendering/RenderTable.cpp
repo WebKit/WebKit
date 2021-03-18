@@ -437,6 +437,7 @@ void RenderTable::layout()
     recalcBordersInRowDirection();
     bool sectionMoved = false;
     LayoutUnit movedSectionLogicalTop;
+    unsigned sectionCount = 0;
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     {
@@ -537,6 +538,7 @@ void RenderTable::layout()
         // position the table sections
         RenderTableSection* section = topSection();
         while (section) {
+            sectionCount++;
             if (!sectionMoved && section->logicalTop() != logicalHeight()) {
                 sectionMoved = true;
                 movedSectionLogicalTop = std::min(logicalHeight(), section->logicalTop()) + (style().isHorizontalWritingMode() ? section->visualOverflowRect().y() : section->visualOverflowRect().x());
@@ -585,8 +587,8 @@ void RenderTable::layout()
     bool paginated = layoutState && layoutState->isPaginated();
     if (sectionMoved && paginated) {
         // FIXME: Table layout should always stabilize even when section moves (see webkit.org/b/174412).
-        if (!m_inRecursiveSectionMovedWithPagination) {
-            SetForScope<bool> paginatedSectionMoved(m_inRecursiveSectionMovedWithPagination, true);
+        if (m_recursiveSectionMovedWithPaginationLevel < sectionCount) {
+            SetForScope<unsigned> recursiveSectionMovedWithPaginationLevel(m_recursiveSectionMovedWithPaginationLevel, m_recursiveSectionMovedWithPaginationLevel + 1);
             markForPaginationRelayoutIfNeeded();
             layoutIfNeeded();
         } else

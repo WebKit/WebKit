@@ -369,7 +369,7 @@ private:
     LayoutUnit m_borderEnd;
     mutable LayoutUnit m_columnOffsetTop;
     mutable LayoutUnit m_columnOffsetHeight;
-    bool m_inRecursiveSectionMovedWithPagination { false };
+    unsigned m_recursiveSectionMovedWithPaginationLevel { 0 };
 };
 
 inline bool isDirectionSame(const RenderBox* tableItem, const RenderBox* otherTableItem) { return tableItem && otherTableItem ? tableItem->style().direction() == otherTableItem->style().direction() : true; }
