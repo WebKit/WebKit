@@ -1,3 +1,15 @@
+2021-03-18  Rob Buis  <rbuis@igalia.com>
+
+        Use double division
+        https://bugs.webkit.org/show_bug.cgi?id=223366
+
+        Reviewed by Zalan Bujtas.
+
+        Add test for this.
+
+        * fast/css/aspect-ratio-division-crash-expected.txt: Added.
+        * fast/css/aspect-ratio-division-crash.html: Added.
+
 2021-03-18  Frédéric Wang  <fwang@igalia.com>
 
         Nullptr crash in RenderStyle::shapeOutside()
