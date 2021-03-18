@@ -2,20 +2,8 @@ include(GNUInstallDirs)
 include(VersioningUtils)
 
 SET_PROJECT_VERSION(2 31 1)
-set(WPE_API_VERSION 1.0)
-
-CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 16 0 13)
-
-# These are shared variables, but we special case their definition so that we can use the
-# CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
-set(LIB_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE PATH "Absolute path to library installation directory")
-set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE PATH "Absolute path to executable installation directory")
-set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/wpe-webkit-${WPE_API_VERSION}" CACHE PATH "Absolute path to install executables executed by the library")
 
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
-if (USER_AGENT_BRANDING)
-    add_definitions(-DUSER_AGENT_BRANDING=${USER_AGENT_BRANDING})
-endif ()
 
 find_package(Cairo 1.14.0 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
@@ -130,10 +118,29 @@ WEBKIT_OPTION_END()
 
 if (USE_SOUP2)
     set(SOUP_MINIMUM_VERSION 2.54.0)
+    set(SOUP_API_VERSION 2.4)
+    set(WPE_API_VERSION 1.0)
+    set(WPE_API_DOC_VERSION 1.0)
 else ()
     set(SOUP_MINIMUM_VERSION 2.99.2)
+    set(SOUP_API_VERSION 3.0)
+    set(WPE_API_VERSION 1.1)
+    # No API changes in 1.1, so keep using the same API documentation.
+    set(WPE_API_DOC_VERSION 1.0)
 endif ()
 find_package(LibSoup ${SOUP_MINIMUM_VERSION} REQUIRED)
+
+if (WPE_API_VERSION VERSION_EQUAL "1.0")
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 16 0 13)
+else ()
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 0 0 0)
+endif ()
+
+# These are shared variables, but we special case their definition so that we can use the
+# CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
+set(LIB_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE PATH "Absolute path to library installation directory")
+set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE PATH "Absolute path to executable installation directory")
+set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/wpe-webkit-${WPE_API_VERSION}" CACHE PATH "Absolute path to install executables executed by the library")
 
 if (ENABLE_ACCESSIBILITY)
     find_package(ATK 2.16.0)
@@ -225,6 +232,10 @@ endif ()
 add_definitions(-DBUILDING_WPE__=1)
 add_definitions(-DGETTEXT_PACKAGE="WPE")
 add_definitions(-DJSC_GLIB_API_ENABLED)
+
+if (USER_AGENT_BRANDING)
+    add_definitions(-DUSER_AGENT_BRANDING=${USER_AGENT_BRANDING})
+endif ()
 
 if (EXISTS "${TOOLS_DIR}/glib/svn-revision")
     execute_process(COMMAND ${TOOLS_DIR}/glib/svn-revision ERROR_QUIET OUTPUT_VARIABLE SVN_REVISION OUTPUT_STRIP_TRAILING_WHITESPACE)

@@ -1,3 +1,15 @@
+2021-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Bump API version when building with libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=223437
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use 1.1 as the API version when building with soup3.
+
+        * Source/PlatformWPE.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-03-17  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][WPE] Enable CSS scroll snap support by default

@@ -94,5 +94,5 @@ file CMakeLists.txt
 file Tools/CMakeLists.txt
 file Tools/PlatformWPE.cmake
 
-directory ${CMAKE_BINARY_DIR}/Documentation/wpe-${WPE_API_VERSION}/html/wpe-${WPE_API_VERSION} Documentation/wpe-${WPE_API_VERSION}/html
-directory ${CMAKE_BINARY_DIR}/Documentation/wpe-webextensions-${WPE_API_VERSION}/html/wpe-webextensions-${WPE_API_VERSION} Documentation/wpe-webextensions-${WPE_API_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/wpe-${WPE_API_DOC_VERSION}/html/wpe-${WPE_API_DOC_VERSION} Documentation/wpe-${WPE_API_DOC_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/wpe-webextensions-${WPE_API_DOC_VERSION}/html/wpe-webextensions-${WPE_API_DOC_VERSION} Documentation/wpe-webextensions-${WPE_API_DOC_VERSION}/html

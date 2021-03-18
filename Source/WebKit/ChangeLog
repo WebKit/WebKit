@@ -1,3 +1,16 @@
+2021-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Bump API version when building with libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=223437
+
+        Reviewed by Adrian Perez de Castro.
+
+        * PlatformWPE.cmake: Use WPE_API_DOC_VERSION instead of WPE_API_VERSION for gtkdoc config files.
+        * wpe/wpe-web-extension-uninstalled.pc.in: Add variable for libsoup version.
+        * wpe/wpe-web-extension.pc.in: Ditto.
+        * wpe/wpe-webkit-uninstalled.pc.in: Ditto.
+        * wpe/wpe-webkit.pc.in: Ditto.
+
 2021-03-18  Youenn Fablet  <youenn@apple.com>
 
         Geolocation API does not work in WKWebView with custom URL scheme handler
