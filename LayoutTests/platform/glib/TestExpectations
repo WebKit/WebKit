@@ -910,6 +910,11 @@ webkit.org/b/220680 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageO
 
 webkit.org/b/222753 fast/text/multi-code-unit-simple-path.html [ ImageOnlyFailure ]
 
+webkit.org/b/223402 fast/inline/hyphenation-when-overflow-wrap-is-break-word.html [ ImageOnlyFailure ]
+
+webkit.org/b/223416 fast/text/image-alt-text-bidi.html [ ImageOnlyFailure ]
+webkit.org/b/223416 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Text-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

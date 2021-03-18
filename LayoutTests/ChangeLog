@@ -1,3 +1,19 @@
+2021-03-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening more consistent failures
+
+        Unreviewed test gardening.
+
+        Added some WPE baselines for tests that just check if no crash
+        happens.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/css1/text_properties/vertical_align-expected.txt: After r271110
+        * platform/wpe/fast/editing/mutation-with-display-contents-container-crash-expected.txt: Added.
+        * platform/wpe/fast/editing/paste-and-match-style-with-table-crash-expected.txt: Added.
+        * platform/wpe/fast/editing/replace-selection-and-apply-style-crash-expected.txt: Added.
+
 2021-03-17  Robert Jenner  <jenner@apple.com>
 
         REGRESSION (r274264): [ macOS wk2 ] compositing/video/video-border-radius.html is a flakey image failure

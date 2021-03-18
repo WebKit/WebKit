@@ -159,6 +159,9 @@ fast/events/keyboardevent-modifier.html [ Pass ]
 webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
 webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ ImageOnlyFailure ]
 
+# CSS counter styles
+webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-028.html [ ImageOnlyFailure ]
+
 # CSS-masking and clip-path.
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-002.html [ ImageOnlyFailure ]
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/reference-mutated.html [ ImageOnlyFailure ]
@@ -177,6 +180,7 @@ webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailur
 
 # Flexbox layout
 webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ImageOnlyFailure ]
+webkit.org/b/223414 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001.xhtml [ ImageOnlyFailure ]
 
 # Hyphenation
 webkit.org/b/221377 [ Debug ] fast/text/hyphenation-unknown-locale.html [ Skip ]
