@@ -795,6 +795,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _imageExtractionDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
     [_imageExtractionDeferringGestureRecognizer setName:@"Deferrer for image extraction"];
     [_imageExtractionDeferringGestureRecognizer setImmediatelyFailsAfterTouchEnd:YES];
+    [_imageExtractionDeferringGestureRecognizer setEnabled:self._imageExtractionEnabled];
 #endif
 
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {

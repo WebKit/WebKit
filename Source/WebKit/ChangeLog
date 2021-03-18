@@ -1,3 +1,29 @@
+2021-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] editing/selection/character-granularity-rect.html fails on certain internal configurations after r274610
+        https://bugs.webkit.org/show_bug.cgi?id=223447
+
+        Reviewed by Devin Rousso.
+
+        On versions of iOS where `ENABLE(IMAGE_EXTRACTION)` is defined but the system feature is disabled, this test
+        began failing after r274610. This is because the new image extraction deferral gesture now blocks text
+        interaction gestures, but the code to actually fail this deferring gesture (and thus, "lift" the deferring
+        gesture gate) is still behind the system flag. As a result, text interactions when the image extraction flag is
+        disabled will only begin after the touch ends.
+
+        This means that when selecting text via a long press, the text selection doesn't appear until lifting the touch
+        if image extraction is disabled. To fix this, we only enable this deferring gesture in the case where the system
+        feature is enabled.
+
+        * UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm:
+        (WebKit::GestureRecognizerConsistencyEnforcer::timerFired):
+
+        Additionally tweak the `GestureRecognizerConsistencyEnforcer` to only forcibly reset lingering unlifted gesture
+        recognizers if they are enabled.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+
 2021-03-18  Antti Koivisto  <antti@apple.com>
 
         Don't delay conditional requests in resource load scheduler
