@@ -110,6 +110,7 @@ public:
     MediaTime timestampOffset() const { return m_timestampOffset; }
 
     struct TrackBuffer {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         MediaTime lastDecodeTimestamp;
         MediaTime greatestDecodeDuration;
         MediaTime lastFrameDuration;
@@ -183,7 +184,7 @@ private:
     bool m_hasAudio { false };
     bool m_hasVideo { false };
 
-    HashMap<AtomString, TrackBuffer> m_trackBufferMap;
+    HashMap<AtomString, UniqueRef<TrackBuffer>> m_trackBufferMap;
 
     SourceBufferAppendMode m_appendMode { SourceBufferAppendMode::Segments };
 
