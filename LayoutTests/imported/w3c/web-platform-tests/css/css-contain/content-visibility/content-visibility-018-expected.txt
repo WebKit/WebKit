@@ -1,0 +1,3 @@
+
+FAIL Content Visibility: hit testing (composited with a composited child) assert_equals: center hits outer expected "outer" but got "inner"
+

@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: IntersectionObserver
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: IntersectionObserver
+
+TIMEOUT IntersectionObserver interactions Test timed out
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: IntersectionObserver
+
+TIMEOUT IntersectionObserver interactions Test timed out
+
