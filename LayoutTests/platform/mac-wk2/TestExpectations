@@ -1381,3 +1381,5 @@ webkit.org/b/223293 media/media-fullscreen-return-to-inline.html [ Pass Failure 
 webkit.org/b/223387 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223383 compositing/video/video-border-radius.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223453 [ arm64 ] storage/indexeddb/IDBObject-leak.html [ Pass Failure ]
