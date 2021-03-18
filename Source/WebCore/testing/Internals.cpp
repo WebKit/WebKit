@@ -6103,8 +6103,12 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
             auto imageData = ImageData::create(unsigned(image->width()), unsigned(image->height()));
             if (!imageData.hasException())
                 m_artworkImagePromise->resolve(imageData.releaseReturnValue());
-            else
+            else {
+#if ENABLE(MEDIA_STREAM)
+                // FIXME: This seems out of place. Should this be rejecting m_artworkImagePromise instead?
                 m_nextTrackFramePromise->reject(imageData.exception().code());
+#endif
+            }
         } else
             m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieve."  });
         m_artworkImagePromise = nullptr;
