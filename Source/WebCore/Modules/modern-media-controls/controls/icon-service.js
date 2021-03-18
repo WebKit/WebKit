@@ -82,10 +82,19 @@ const iconService = new class IconService {
 
         image = this.images[path] = new Image;
 
+        // Prevent this image from being shown if it's ever attached to the DOM.
+        image.style.display = "none";
+
+        // Must attach the `<img>` to the UA shadow root before setting `src` so that `isInUserAgentShadowTree` is correct.
+        this.shadowRoot?.appendChild(image);
+
         if (this.mediaControlsHost)
             image.src = `data:${MimeTypes[icon.type]};base64,${this.mediaControlsHost.base64StringForIconNameAndType(fileName, icon.type)}`;
         else
             image.src = `${this.directoryPath}/${path}`;
+
+        // Remove the `<img>` from the shadow root once the `src` has been set as `isInUserAgentShadowTree` has already been checked by this point.
+        image.remove();
 
         return image;
     }
