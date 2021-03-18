@@ -1,0 +1,15 @@
+<html>
+<body>
+<script>
+window.addEventListener("load", e => {
+    try {
+        var x = '<html><body>Success! The navigation was blocked<script type="text/javascript"> window.top.location = "http://localhost:8000/security/resources/should-not-have-loaded.html";' + '</scr' + 'ipt></body></html>';
+        var bs64 = btoa(x);
+        document.write('<iframe sandbox="allow-top-navigation allow-scripts" src="data:text/html;base64,' + bs64 + '"></iframe>')
+    } catch (e) {
+        console.log(e);
+    }
+});
+</script>
+</body>
+</html>
