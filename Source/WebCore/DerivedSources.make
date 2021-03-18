@@ -1521,6 +1521,34 @@ LocalizableAdditions.strings.out : $(WebCore)/preprocess-localizable-strings.pl 
 
 # --------
 
+# modern media controls
+
+MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
+    $(WebCore)/Modules/modern-media-controls/controls/activity-indicator.css \
+    $(WebCore)/Modules/modern-media-controls/controls/airplay-button.css \
+    $(WebCore)/Modules/modern-media-controls/controls/background-tint.css \
+    $(WebCore)/Modules/modern-media-controls/controls/button.css \
+    $(WebCore)/Modules/modern-media-controls/controls/buttons-container.css \
+    $(WebCore)/Modules/modern-media-controls/controls/controls-bar.css \
+    $(WebCore)/Modules/modern-media-controls/controls/inline-media-controls.css \
+    $(WebCore)/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css \
+    $(WebCore)/Modules/modern-media-controls/controls/macos-inline-media-controls.css \
+    $(WebCore)/Modules/modern-media-controls/controls/media-controls.css \
+    $(WebCore)/Modules/modern-media-controls/controls/media-document.css \
+    $(WebCore)/Modules/modern-media-controls/controls/placard.css \
+    $(WebCore)/Modules/modern-media-controls/controls/slider.css \
+    $(WebCore)/Modules/modern-media-controls/controls/status-label.css \
+    $(WebCore)/Modules/modern-media-controls/controls/text-tracks.css \
+    $(WebCore)/Modules/modern-media-controls/controls/time-label.css \
+    $(WebCore)/Modules/modern-media-controls/controls/watchos-activity-indicator.css \
+    $(WebCore)/Modules/modern-media-controls/controls/watchos-media-controls.css \
+#
+
+all : ModernMediaControls.css
+
+ModernMediaControls.css : $(MODERN_MEDIA_CONTROLS_STYLE_SHEETS)
+	cat $? > ModernMediaControls.css
+
 # user agent style sheets
 
 USER_AGENT_STYLE_SHEETS = \
@@ -1536,6 +1564,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/html/shadow/imageOverlay.css \
     $(WebCore)/html/shadow/meterElementShadow.css \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css \
+    ModernMediaControls.css \
 #
 
 UserAgentStyleSheets.h : $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)

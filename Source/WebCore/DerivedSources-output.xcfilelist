@@ -2654,6 +2654,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLElementFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLElementTypeHelpers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/MathMLNames.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ModernMediaControls.css
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ModernMediaControls.js
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PaintWorkletGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PlugInsResources.h
