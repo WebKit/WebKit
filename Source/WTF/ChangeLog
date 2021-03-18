@@ -1,3 +1,14 @@
+2021-03-17  Saam Barati  <sbarati@apple.com>
+
+        Determine if we have useFastJITPermissions on arm64e at runtime instead of hardcoding it as always enabled
+        https://bugs.webkit.org/show_bug.cgi?id=223388
+        <rdar://74819266>
+
+        Reviewed by Mark Lam.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformUse.h:
+
 2021-03-17  Chris Dumez  <cdumez@apple.com>
 
         Memory limit per tab shrinks as you open tabs in the same WebContent process (may affect Google Drive, Dropbox, etc.)
