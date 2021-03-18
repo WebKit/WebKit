@@ -58,14 +58,20 @@ class VerifierSlotVisitor : public AbstractSlotVisitor {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = AbstractSlotVisitor;
 public:
+    using ReferrerToken = AbstractSlotVisitor::ReferrerToken;
+
     struct MarkerData {
         MarkerData() = default;
         MarkerData(MarkerData&&) = default;
-        MarkerData(HeapCell*, std::unique_ptr<StackTrace>&&);
+        MarkerData(ReferrerToken, std::unique_ptr<StackTrace>&&);
         MarkerData& operator=(MarkerData&&) = default;
 
-        HeapCell* parent { nullptr };
-        std::unique_ptr<StackTrace> stack;
+        ReferrerToken referrer() const { return m_referrer; }
+        StackTrace* stack() const { return m_stack.get(); }
+
+    private:
+        ReferrerToken m_referrer;
+        std::unique_ptr<StackTrace> m_stack;
     };
 
     VerifierSlotVisitor(Heap&);
@@ -89,8 +95,11 @@ public:
 
     bool mutatorIsStopped() const final;
 
+    void didAddOpaqueRoot(void*) final;
+    void didFindOpaqueRoot(void*) final;
+
     void didRace(const VisitRaceKey&) final { }
-    void dump(PrintStream&) const final { }
+    void dump(PrintStream&) const final;
 
     void visitAsConstraint(const JSCell*) final;
 
@@ -145,8 +154,22 @@ private:
         MarkerData m_marker;
     };
 
+    class OpaqueRootData {
+        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_NONCOPYABLE(OpaqueRootData);
+    public:
+        OpaqueRootData() = default;
+
+        void addMarkerData(MarkerData&&);
+        const MarkerData* markerData() const;
+
+    private:
+        MarkerData m_marker;
+    };
+
     using MarkedBlockMap = HashMap<MarkedBlock*, std::unique_ptr<MarkedBlockData>>;
     using PreciseAllocationMap = HashMap<PreciseAllocation*, std::unique_ptr<PreciseAllocationData>>;
+    using OpaqueRootMap = HashMap<void*, std::unique_ptr<OpaqueRootData>>;
 
     void appendToMarkStack(JSCell*);
     void appendSlow(JSCell* cell) { setMarkedAndAppendToMarkStack(cell); }
@@ -159,10 +182,7 @@ private:
 
     void visitChildren(const JSCell*);
 
-    void dumpMarkerData(PreciseAllocation&, HeapCell*);
-    void dumpMarkerData(MarkedBlock&, HeapCell*);
-    void dumpMarkerData(HeapCell*, const MarkerData*);
-
+    OpaqueRootMap m_opaqueRootMap;
     PreciseAllocationMap m_preciseAllocationMap;
     MarkedBlockMap m_markedBlockMap;
     ConcurrentPtrHashSet m_opaqueRootStorage;

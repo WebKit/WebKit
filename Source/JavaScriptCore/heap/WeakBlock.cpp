@@ -121,6 +121,8 @@ void WeakBlock::specializedVisit(ContainerType& container, Visitor& visitor)
         if (UNLIKELY(heapAnalyzer))
             reasonPtr = &reason;
 
+        typename Visitor::ReferrerContext context(visitor, Visitor::OpaqueRoot);
+
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor, reasonPtr))
             continue;
 

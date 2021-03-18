@@ -431,6 +431,7 @@ private:
     friend class SweepingScope;
     friend class IncrementalSweeper;
     friend class VM;
+    friend class VerifierSlotVisitor;
     friend class WeakSet;
 
     class HeapThread;

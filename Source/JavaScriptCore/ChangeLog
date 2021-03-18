@@ -1,3 +1,221 @@
+2021-03-17  Mark Lam  <mark.lam@apple.com>
+
+        Enhance --verboseVerifyGC=true to make it easier to debug GC verifier errors.
+        https://bugs.webkit.org/show_bug.cgi?id=223401
+
+        Reviewed by Saam Barati.
+
+        Previously, --verboseVerifyGC=true only dumps the stack trace of the immediate code
+        path (in the verifier GC) that marked the object that the real GC did not.  With
+        this patch, we'll also dump the trace of the marking chain all the way back to a
+        GC root.  This patch also adds support for tracing the marking chain through opaque
+        roots.
+
+        The marking chain provided is the one that the verifier GC walked.  To debug the
+        error, we use this info and check where the real GC deviates.
+
+        Here's an example of the new dump of a GC verifier error:
+
+            GC Verifier: ERROR cell 0x12c570500 was not marked
+            Object: 0x12c570500 with butterfly 0x0 (Structure 0x108eb6d10:[0x3ba8, ArrayBuffer, {}, NonArray, Proto:0x108ed7d90, Leaf]), StructureID: 15272
+            Cell 0x12c570500 was visited via opaque root 0x10e4b52c0 at:
+                1   0x100acccdc JSC::VerifierSlotVisitor::appendUnbarriered(JSC::JSCell*)
+                2   0x100ad0c2f void JSC::WeakBlock::specializedVisit<JSC::MarkedBlock, JSC::AbstractSlotVisitor>(JSC::MarkedBlock&, JSC::AbstractSlotVisitor&)
+                3   0x100abec2b void JSC::MarkedSpace::visitWeakSets<JSC::AbstractSlotVisitor>(JSC::AbstractSlotVisitor&)
+                4   0x100aa5167 WTF::Detail::CallableWrapper<JSC::Heap::addCoreConstraints()::$_38, void, JSC::AbstractSlotVisitor&>::call(JSC::AbstractSlotVisitor&)
+                5   0x100ac1411 JSC::MarkingConstraintSet::executeAllSynchronously(JSC::AbstractSlotVisitor&)
+                6   0x100a9bd7b JSC::Heap::verifyGC()
+                7   0x100a9b2f7 JSC::Heap::runEndPhase(JSC::GCConductor)
+                8   0x100a99434 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                9   0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                10  0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                11  0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                12  0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                13  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                14  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                15  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                16  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                17  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                18  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                19  0x5e4a38a010c7
+                20  0x5e4a38a02095
+                21  0x1004888d6 vmEntryToJavaScript
+                22  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                23  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                24  0x100007606 jscmain(int, char**)
+                25  0x10000644b main
+
+            In the real GC, opaque root0x10e4b52c0 was NOT added to the heap's opaque roots.
+            Opaque root 0x10e4b52c0 was added via cell 0x12c577720 at:
+                1   0x100ea4fc9 JSC::JSArrayBufferView::visitChildren(JSC::JSCell*, JSC::AbstractSlotVisitor&)
+                2   0x100acd4e9 JSC::VerifierSlotVisitor::drain()
+                3   0x100a9bd48 JSC::Heap::verifyGC()
+                4   0x100a9b2f7 JSC::Heap::runEndPhase(JSC::GCConductor)
+                5   0x100a99434 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                6   0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                7   0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                8   0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                9   0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                10  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                11  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                12  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                13  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                14  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                15  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                16  0x5e4a38a010c7
+                17  0x5e4a38a02095
+                18  0x1004888d6 vmEntryToJavaScript
+                19  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                20  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                21  0x100007606 jscmain(int, char**)
+                22  0x10000644b main
+                23  0x7fff203b4f3d start
+
+            Object: 0x12c577720 with butterfly 0x0 (Structure 0x108eb6e60:[0xe135, DataView, {}, NonArray, Proto:0x108ed7da0, Leaf]), StructureID: 57653
+            Cell 0x12c577720 was visited via cell 0x108b528e8 at:
+                1   0x100acccdc JSC::VerifierSlotVisitor::appendUnbarriered(JSC::JSCell*)
+                2   0x100f1623c JSC::JSObject::visitChildren(JSC::JSCell*, JSC::AbstractSlotVisitor&)
+                3   0x100acd4e9 JSC::VerifierSlotVisitor::drain()
+                4   0x100a9bd48 JSC::Heap::verifyGC()
+                5   0x100a9b2f7 JSC::Heap::runEndPhase(JSC::GCConductor)
+                6   0x100a99434 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                7   0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                8   0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                9   0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                10  0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                11  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                12  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                13  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                14  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                15  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                16  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                17  0x5e4a38a010c7
+                18  0x5e4a38a02095
+                19  0x1004888d6 vmEntryToJavaScript
+                20  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                21  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                22  0x100007606 jscmain(int, char**)
+                23  0x10000644b main
+
+            Object: 0x108b528e8 with butterfly 0x1806e93070 (Structure 0x108efb090:[0xde87, Array, {}, ArrayWithContiguous, Proto:0x108baf5e8]), StructureID: 56967
+            Cell 0x108b528e8 was visited via cell 0x108e8fcc0 at:
+                1   0x100accdd8 JSC::VerifierSlotVisitor::appendUnbarriered(JSC::JSCell*)
+                2   0x10070634e void JSC::CodeBlock::stronglyVisitWeakReferences<JSC::AbstractSlotVisitor>(JSC::ConcurrentJSLocker const&, JSC::AbstractSlotVisitor&)
+                3   0x1006eacd7 JSC::CodeBlock::visitChildren(JSC::JSCell*, JSC::AbstractSlotVisitor&)
+                4   0x100acd4e9 JSC::VerifierSlotVisitor::drain()
+                5   0x100a9bd48 JSC::Heap::verifyGC()
+                6   0x100a9b2f7 JSC::Heap::runEndPhase(JSC::GCConductor)
+                7   0x100a99434 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                8   0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                9   0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                10  0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                11  0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                12  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                13  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                14  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                15  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                16  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                17  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                18  0x5e4a38a010c7
+                19  0x5e4a38a02095
+                20  0x1004888d6 vmEntryToJavaScript
+                21  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                22  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                23  0x100007606 jscmain(int, char**)
+                24  0x10000644b main
+
+            Cell: 0x108e8fcc0 (0x108ef8c40:[0xc0e7, ProgramCodeBlock, {}, NonArray, Leaf]), StructureID: 49383
+            Cell 0x108e8fcc0 was visited from scan of ConservativeScan roots at:
+                1   0x100accaf8 JSC::VerifierSlotVisitor::append(JSC::ConservativeRoots const&)
+                2   0x100aa42a2 WTF::Detail::CallableWrapper<JSC::Heap::addCoreConstraints()::$_31, void, JSC::SlotVisitor&>::call(JSC::SlotVisitor&)
+                3   0x100ac1db2 JSC::MarkingConstraintSolver::runExecutionThread(JSC::SlotVisitor&, JSC::MarkingConstraintSolver::SchedulerPreference, WTF::ScopedLambda<WTF::Optional<unsigned int> ()>)
+                4   0x100a9f2de JSC::Heap::runTaskInParallel(WTF::RefPtr<WTF::SharedTask<void (JSC::SlotVisitor&)>, WTF::RawPtrTraits<WTF::SharedTask<void (JSC::SlotVisitor&)> >, WTF::DefaultRefDerefTraits<WTF::SharedTask<void (JSC::SlotVisitor&)> > >)
+                5   0x100ac188f JSC::MarkingConstraintSolver::execute(JSC::MarkingConstraintSolver::SchedulerPreference, WTF::ScopedLambda<WTF::Optional<unsigned int> ()>)
+                6   0x100ac125c JSC::MarkingConstraintSet::executeConvergenceImpl(JSC::SlotVisitor&)
+                7   0x100ac0f9b JSC::MarkingConstraintSet::executeConvergence(JSC::SlotVisitor&)
+                8   0x100a99f24 JSC::Heap::runFixpointPhase(JSC::GCConductor)
+                9   0x100a99418 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                10  0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                11  0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                12  0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                13  0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                14  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                15  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                16  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                17  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                18  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                19  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                20  0x5e4a38a010c7
+                21  0x5e4a38a02095
+                22  0x1004888d6 vmEntryToJavaScript
+                23  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                24  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                25  0x100007606 jscmain(int, char**)
+                26  0x10000644b main
+
+        Note that in this example, the 2nd stack trace was for an opaque root.  The verifier
+        also noted that the opaque root (which was added for the verifier GC) was not added
+        for the real GC.  This pointed to the bug that caused the error (this bug was fixed
+        in https://bugs.webkit.org/show_bug.cgi?id=223241).
+
+        Additional changes in this patch:
+
+        1. Renamed AbstractSlotVisitor::Context to ReferrerContext.
+
+        2. Introduced AbstractSlotVisitor::ReferrerToken, which is an abstraction for
+           either a HeapCell*, an opaque root, or a GC root.  ReferrerContext now tracks
+           a ReferrerToken instead of a HeapCell*.
+
+        * heap/AbstractSlotVisitor.h:
+        (JSC::AbstractSlotVisitor::ReferrerToken::ReferrerToken):
+        (JSC::AbstractSlotVisitor::ReferrerToken::operator bool const):
+        (JSC::AbstractSlotVisitor::ReferrerToken::operator! const):
+        (JSC::AbstractSlotVisitor::ReferrerToken::isHeapCell const):
+        (JSC::AbstractSlotVisitor::ReferrerToken::isOpaqueRoot const):
+        (JSC::AbstractSlotVisitor::ReferrerToken::isRootMarkReason const):
+        (JSC::AbstractSlotVisitor::ReferrerContext::referrer const):
+        (JSC::AbstractSlotVisitor::ReferrerContext::setReferrer):
+        (JSC::AbstractSlotVisitor::ReferrerContext::isOpaqueRootContext const):
+        (JSC::AbstractSlotVisitor::didAddOpaqueRoot):
+        (JSC::AbstractSlotVisitor::didFindOpaqueRoot):
+        (JSC::SetRootMarkReasonScope::SetRootMarkReasonScope):
+        (JSC::AbstractSlotVisitor::Context::cell const): Deleted.
+        * heap/AbstractSlotVisitorInlines.h:
+        (JSC::ReferrerToken::ReferrerToken):
+        (JSC::ReferrerToken::asCell const):
+        (JSC::ReferrerToken::asOpaqueRoot const):
+        (JSC::ReferrerToken::asRootMarkReason const):
+        (JSC::AbstractSlotVisitor::ReferrerContext::ReferrerContext):
+        (JSC::AbstractSlotVisitor::ReferrerContext::~ReferrerContext):
+        (JSC::AbstractSlotVisitor::addOpaqueRoot):
+        (JSC::AbstractSlotVisitor::containsOpaqueRoot const):
+        (JSC::AbstractSlotVisitor::referrer const):
+        (JSC::AbstractSlotVisitor::Context::Context): Deleted.
+        (JSC::AbstractSlotVisitor::Context::~Context): Deleted.
+        (JSC::AbstractSlotVisitor::parentCell const): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorMacros.h:
+        * heap/VerifierSlotVisitor.cpp:
+        (JSC::MarkerData::MarkerData):
+        (JSC::VerifierSlotVisitor::MarkedBlockData::markerData const):
+        (JSC::VerifierSlotVisitor::PreciseAllocationData::markerData const):
+        (JSC::VerifierSlotVisitor::OpaqueRootData::markerData const):
+        (JSC::VerifierSlotVisitor::OpaqueRootData::addMarkerData):
+        (JSC::VerifierSlotVisitor::VerifierSlotVisitor):
+        (JSC::VerifierSlotVisitor::didAddOpaqueRoot):
+        (JSC::VerifierSlotVisitor::didFindOpaqueRoot):
+        (JSC::VerifierSlotVisitor::dump const):
+        (JSC::VerifierSlotVisitor::dumpMarkerData):
+        (JSC::VerifierSlotVisitor::testAndSetMarked):
+        * heap/VerifierSlotVisitor.h:
+        (JSC::VerifierSlotVisitor::MarkerData::referrer const):
+        (JSC::VerifierSlotVisitor::MarkerData::stack const):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+
 2021-03-17  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Fix convertRecord() to throw on enumerable symbol |key|

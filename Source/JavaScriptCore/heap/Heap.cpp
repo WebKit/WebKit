@@ -2761,8 +2761,10 @@ void Heap::addCoreConstraints()
 
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ConservativeScan);
                 visitor.append(conservativeRoots);
-                if (UNLIKELY(m_verifierSlotVisitor))
+                if (UNLIKELY(m_verifierSlotVisitor)) {
+                    SetRootMarkReasonScope rootScope(*m_verifierSlotVisitor, RootMarkReason::ConservativeScan);
                     m_verifierSlotVisitor->append(conservativeRoots);
+                }
             }
             if (Options::useJIT()) {
                 // JITStubRoutines must be visited after scanning ConservativeRoots since JITStubRoutines depend on the hook executed during gathering ConservativeRoots.
