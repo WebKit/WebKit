@@ -1,3 +1,15 @@
+2021-03-18  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Remove plugin process leftover arg from ProcessLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=223460
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove extra nullptr arg.
+
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2021-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] editing/selection/character-granularity-rect.html fails on certain internal configurations after r274610
