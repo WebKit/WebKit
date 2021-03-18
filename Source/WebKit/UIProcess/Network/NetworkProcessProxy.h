@@ -212,6 +212,7 @@ public:
 #endif
 
     void addSession(Ref<WebsiteDataStore>&&);
+    bool hasSession(PAL::SessionID) const;
     void removeSession(PAL::SessionID);
     
 #if ENABLE(INDEXED_DATABASE)
@@ -347,6 +348,8 @@ private:
         WeakPtr<NetworkProcessProxy> m_networkProcess;
     };
 #endif
+
+    HashSet<PAL::SessionID> m_sessionIDs;
 };
 
 } // namespace WebKit

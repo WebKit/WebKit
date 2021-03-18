@@ -1995,6 +1995,8 @@ bool WebsiteDataStore::isAssociatedProcessPool(WebProcessPool& processPool) cons
 {
     if (auto* processPoolDataStore = processPool.websiteDataStore())
         return processPoolDataStore == this;
+    if (auto* networkProcessProxy = processPool.networkProcess())
+        return networkProcessProxy->hasSession(m_sessionID);
     return false;
 }
 
