@@ -4652,3 +4652,26 @@ fast/text/letter-spacing-produces-nan-width.html [ Timeout ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=221569
 crypto/crypto-random-values-oom.html [ Skip ]
+
+fast/events/selectstart-by-drag.html [ Failure Pass ]
+fast/text/selection-is-prevent-defaulted.html [ Failure Pass ]
+
+fast/events/page-visibility-iframe-propagation-test.html [ Timeout Pass ]
+http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Timeout Pass ]
+
+fast/css/aspect-ratio-invalidate-if-disabled.html [ Failure ]
+fast/css/parsing-color-contrast.html [ Failure ]
+fast/images/missing-content-image-crash.html [ Failure ]
+fast/mediasession/metadata/artworkdownload.html [ Failure ]
+fast/text/mending-heart.html [ Failure ]
+http/tests/misc/webtiming-ssl.py [ Failure ]
+http/tests/security/contentSecurityPolicy/media-src-blocked.html [ Failure ]
+security/contentSecurityPolicy/blocks-video.html [ Failure ]
+
+fast/inline/hyphenation-when-overflow-wrap-is-break-word.html [ ImageOnlyFailure ]
+fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
+
+fast/dom/focus-shift-crash.html [ Timeout ]
+fast/events/wheel/redispatched-wheel-event.html [ Timeout ]
+fast/inline/crash-when-negative-spacing-produce-nan.html [ Timeout ]
+imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Timeout ]
