@@ -38,30 +38,46 @@
 
 namespace WebCore {
 
+static bool hasConstantValue(float* values, size_t framesToProcess)
+{
+    if (framesToProcess <= 1)
+        return true;
+
+    float constant = values[0];
+    for (size_t i = 1; i < framesToProcess; ++i) {
+        if (values[i] != constant)
+            return false;
+    }
+    return true;
+}
+
 void BiquadDSPKernel::updateCoefficientsIfNecessary(size_t framesToProcess)
 {
     if (biquadProcessor()->filterCoefficientsDirty()) {
         if (biquadProcessor()->hasSampleAccurateValues() && biquadProcessor()->shouldUseARate()) {
-            AudioFloatArray cutoffFrequency(framesToProcess);
-            AudioFloatArray q(framesToProcess);
-            AudioFloatArray gain(framesToProcess);
-            AudioFloatArray detune(framesToProcess); // in Cents
+            // Use float arrays instead of AudioFloatArray to avoid heap allocations on the audio thread.
+            float cutoffFrequency[AudioUtilities::renderQuantumSize];
+            float q[AudioUtilities::renderQuantumSize];
+            float gain[AudioUtilities::renderQuantumSize];
+            float detune[AudioUtilities::renderQuantumSize]; // in Cents
 
-            ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
+            RELEASE_ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
-            biquadProcessor()->parameter1().calculateSampleAccurateValues(cutoffFrequency.data(), framesToProcess);
-            biquadProcessor()->parameter2().calculateSampleAccurateValues(q.data(), framesToProcess);
-            biquadProcessor()->parameter3().calculateSampleAccurateValues(gain.data(), framesToProcess);
-            biquadProcessor()->parameter4().calculateSampleAccurateValues(detune.data(), framesToProcess);
+            biquadProcessor()->parameter1().calculateSampleAccurateValues(cutoffFrequency, framesToProcess);
+            biquadProcessor()->parameter2().calculateSampleAccurateValues(q, framesToProcess);
+            biquadProcessor()->parameter3().calculateSampleAccurateValues(gain, framesToProcess);
+            biquadProcessor()->parameter4().calculateSampleAccurateValues(detune, framesToProcess);
 
             // If all the values are actually constant for this render (or the
             // automation rate is "k-rate" for all of the AudioParams), we don't need
             // to compute filter coefficients for each frame since they would be the
             // same as the first.
-            bool isConstant = cutoffFrequency.containsConstantValue() && q.containsConstantValue()
-                && gain.containsConstantValue() && detune.containsConstantValue();
+            bool isConstant = hasConstantValue(cutoffFrequency, framesToProcess)
+                && hasConstantValue(q, framesToProcess)
+                && hasConstantValue(gain, framesToProcess)
+                && hasConstantValue(detune, framesToProcess);
 
-            updateCoefficients(isConstant ? 1 : framesToProcess, cutoffFrequency.data(), q.data(), gain.data(), detune.data());
+            updateCoefficients(isConstant ? 1 : framesToProcess, cutoffFrequency, q, gain, detune);
         } else {
             float cutoffFrequency = biquadProcessor()->parameter1().finalValue();
             float q = biquadProcessor()->parameter2().finalValue();
