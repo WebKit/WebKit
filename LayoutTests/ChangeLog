@@ -1,5 +1,14 @@
 2021-03-18  Robert Jenner  <jenner@apple.com>
 
+        [ macOS Wk2 ARM64 ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223474
+
+        Uneviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations to include Timeout for arm64 systems. 
+
+2021-03-18  Robert Jenner  <jenner@apple.com>
+
         [ macOS wk2 ARM64 ] fast/images/async-image-background-change.html is a flakey timeout
         https://bugs.webkit.org/show_bug.cgi?id=223469
 
