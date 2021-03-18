@@ -1,3 +1,12 @@
+2021-03-18  Cameron McCormack  <heycam@apple.com>
+
+        Add another email for myself in contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=222700
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Bump API version when building with libsoup3
