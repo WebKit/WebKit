@@ -1,4 +1,13 @@
 ================
+WebKitGTK 2.30.6
+================
+
+What's new in WebKitGTK 2.30.6?
+
+  - Update user agent quirks again for Google Docs and Google Drive
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.30.5
 ================
 

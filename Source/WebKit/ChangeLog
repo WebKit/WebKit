@@ -1,3 +1,9 @@
+2021-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.30.6 release
+
+        * gtk/NEWS: Add release notes for 2.30.6.
+
 2020-09-09  Brady Eidson  <beidson@apple.com>
 
         Make sure WKWebsiteDataStore operations reuse existing process pools even when all WKWebViews have closed.
