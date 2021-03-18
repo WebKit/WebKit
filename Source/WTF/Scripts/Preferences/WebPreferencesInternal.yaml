@@ -168,17 +168,6 @@ CaptureAudioInUIProcessEnabled:
     WebKit:
       default: WebKit::defaultCaptureAudioInUIProcessEnabled()
 
-CaptureVideoInGPUProcessEnabled:
-  type: bool
-  humanReadableName: "GPU Process: Video Capture"
-  humanReadableDescription: "Enable video capture in GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: WebKit::defaultCaptureVideoInGPUProcessEnabled()
-
 CaptureVideoInUIProcessEnabled:
   type: bool
   humanReadableName: "Capture video in UI Process"
