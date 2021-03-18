@@ -492,7 +492,8 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
             case 1:
                 switch (minor)
                 {
-#if (defined(__IPHONE_9_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0)
+#if (defined(__IPHONE_9_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0) &&\
+    (TARGET_OS_IOS || TARGET_OS_TV) && !TARGET_OS_MACCATALYST
                     case 0: return MTLLanguageVersion1_0;
 #endif
 #if (defined(__MAC_10_11) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_11) ||\
