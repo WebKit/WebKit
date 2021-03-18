@@ -2317,3 +2317,5 @@ webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 webkit.org/b/223144 [ Debug arm64 ] fast/multicol/crash-when-spanner-candidate-is-out-of-flow.html [ Crash ]
 
 webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-change.html [ Pass ImageOnlyFailure ]
