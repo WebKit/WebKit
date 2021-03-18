@@ -438,6 +438,10 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.canSaveMediaData = state.canSaveMediaData;
     m_cachedState.hasAudio = state.hasAudio;
     m_cachedState.hasVideo = state.hasVideo;
+
+    if (m_wantPlaybackQualityMetrics)
+        m_cachedState.videoMetrics = state.videoMetrics;
+
     m_cachedState.hasClosedCaptions = state.hasClosedCaptions;
     m_cachedState.hasAvailableVideoFrame = state.hasAvailableVideoFrame;
     m_cachedState.wirelessVideoPlaybackDisabled = state.wirelessVideoPlaybackDisabled;
