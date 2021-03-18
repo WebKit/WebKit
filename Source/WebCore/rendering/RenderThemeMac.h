@@ -108,7 +108,7 @@ private:
     // Media controls
     String mediaControlsStyleSheet() final;
     String modernMediaControlsStyleSheet() final;
-    String mediaControlsScript() final;
+    Vector<String, 3> mediaControlsScripts() final;
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
 #endif
 
@@ -238,7 +238,9 @@ private:
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 
     String m_legacyMediaControlsScript;
+    String m_mediaControlsLocalizedStringsScript;
     String m_mediaControlsScript;
+    String m_mediaControlsAdditionalScript;
     String m_legacyMediaControlsStyleSheet;
     String m_mediaControlsStyleSheet;
 };

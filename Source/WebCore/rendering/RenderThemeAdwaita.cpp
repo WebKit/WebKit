@@ -172,9 +172,9 @@ String RenderThemeAdwaita::extraMediaControlsStyleSheet()
     return String(mediaControlsAdwaitaUserAgentStyleSheet, sizeof(mediaControlsAdwaitaUserAgentStyleSheet));
 }
 
-String RenderThemeAdwaita::mediaControlsScript()
+Vector<String, 3> RenderThemeAdwaita::mediaControlsScripts()
 {
-    return String(mediaControlsAdwaitaJavaScript, sizeof(mediaControlsAdwaitaJavaScript));
+    return { String(mediaControlsAdwaitaJavaScript, sizeof(mediaControlsAdwaitaJavaScript)) };
 }
 #endif
 

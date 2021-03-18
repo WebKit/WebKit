@@ -7148,11 +7148,11 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     if (!page)
         return false;
 
-    String mediaControlsScript = RenderTheme::singleton().mediaControlsScript();
-    if (!mediaControlsScript.length())
+    auto mediaControlsScripts = RenderTheme::singleton().mediaControlsScripts();
+    if (mediaControlsScripts.isEmpty())
         return false;
 
-    return setupAndCallJS([mediaControlsScript](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController& scriptController, DOMWrapperWorld& world) {
+    return setupAndCallJS([mediaControlsScripts = WTFMove(mediaControlsScripts)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController& scriptController, DOMWrapperWorld& world) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
@@ -7160,16 +7160,20 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
         if (functionValue.isCallable(vm))
             return true;
 
-#if !defined(NDEBUG)
-        // Setting a scriptURL allows the source to be debuggable in the inspector.
-        URL scriptURL = URL({ }, "mediaControlsScript"_s);
-#else
-        URL scriptURL;
-#endif
-        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, WTFMove(scriptURL)), world);
-        if (UNLIKELY(scope.exception())) {
-            scope.clearException();
-            return false;
+        unsigned index = 0;
+        for (auto& mediaControlsScript : mediaControlsScripts) {
+            if (mediaControlsScript.isEmpty())
+                continue;
+            // Setting a scriptURL allows the source to be debuggable in the inspector.
+            URL scriptURL = URL({ }, makeString("__InjectedScript_mediaControlsScript"_s, index, ".js"));
+            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, WTFMove(scriptURL)), world);
+            if (UNLIKELY(scope.exception())) {
+                auto* exception = scope.exception();
+                scope.clearException();
+                reportException(&globalObject, exception);
+                return false;
+            }
+            ++index;
         }
 
         return true;

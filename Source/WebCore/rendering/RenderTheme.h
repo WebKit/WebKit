@@ -87,7 +87,7 @@ public:
     virtual String mediaControlsStyleSheet() { return String(); }
     virtual String modernMediaControlsStyleSheet() { return String(); }
     virtual String extraMediaControlsStyleSheet() { return String(); }
-    virtual String mediaControlsScript() { return String(); }
+    virtual Vector<String, 3> mediaControlsScripts() { return { }; }
     virtual String mediaControlsBase64StringForIconNameAndType(const String&, const String&) { return String(); }
     virtual String mediaControlsFormattedStringForDuration(double) { return String(); }
 #endif

@@ -1276,26 +1276,36 @@ String RenderThemeIOS::modernMediaControlsStyleSheet()
 void RenderThemeIOS::purgeCaches()
 {
     m_legacyMediaControlsScript.clearImplIfNotShared();
+    m_mediaControlsLocalizedStringsScript.clearImplIfNotShared();
     m_mediaControlsScript.clearImplIfNotShared();
+    m_mediaControlsAdditionalScript.clearImplIfNotShared();
     m_legacyMediaControlsStyleSheet.clearImplIfNotShared();
     m_mediaControlsStyleSheet.clearImplIfNotShared();
 }
 
-String RenderThemeIOS::mediaControlsScript()
+Vector<String, 3> RenderThemeIOS::mediaControlsScripts()
 {
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
-        if (m_mediaControlsScript.isEmpty()) {
-            NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
+        if (m_mediaControlsLocalizedStringsScript.isEmpty() || m_mediaControlsScript.isEmpty() || m_mediaControlsAdditionalScript.isEmpty()) {
+            // FIXME: Localized strings are not worth having a script. We should make it JSON data etc. instead.
+            if (m_mediaControlsLocalizedStringsScript.isEmpty()) {
+                NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
+                m_mediaControlsLocalizedStringsScript = [NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+            }
 
-            StringBuilder scriptBuilder;
-            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
+            if (m_mediaControlsScript.isEmpty())
+                m_mediaControlsScript = StringImpl::createStaticStringImpl(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript));
+
 #if defined(RenderThemeIOSAdditions_mediaControlsScript)
-            RenderThemeIOSAdditions_mediaControlsScript
+            if (m_mediaControlsAdditionalScript.isEmpty())
+                m_mediaControlsAdditionalScript = String(RenderThemeIOSAdditions_mediaControlsScript);
 #endif
-            m_mediaControlsScript = scriptBuilder.toString();
         }
-        return m_mediaControlsScript;
+        return {
+            m_mediaControlsLocalizedStringsScript,
+            m_mediaControlsScript,
+            m_mediaControlsAdditionalScript,
+        };
     }
 
     if (m_legacyMediaControlsScript.isEmpty()) {
@@ -1308,7 +1318,7 @@ String RenderThemeIOS::mediaControlsScript()
 
         m_legacyMediaControlsScript = scriptBuilder.toString();
     }
-    return m_legacyMediaControlsScript;
+    return { m_legacyMediaControlsScript };
 }
 
 String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)

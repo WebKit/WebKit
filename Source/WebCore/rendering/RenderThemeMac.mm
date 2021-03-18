@@ -316,28 +316,38 @@ String RenderThemeMac::modernMediaControlsStyleSheet()
 void RenderThemeMac::purgeCaches()
 {
     m_legacyMediaControlsScript.clearImplIfNotShared();
+    m_mediaControlsLocalizedStringsScript.clearImplIfNotShared();
     m_mediaControlsScript.clearImplIfNotShared();
+    m_mediaControlsAdditionalScript.clearImplIfNotShared();
     m_legacyMediaControlsStyleSheet.clearImplIfNotShared();
     m_mediaControlsStyleSheet.clearImplIfNotShared();
 
     RenderTheme::purgeCaches();
 }
 
-String RenderThemeMac::mediaControlsScript()
+Vector<String, 3> RenderThemeMac::mediaControlsScripts()
 {
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
-        if (m_mediaControlsScript.isEmpty()) {
-            NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
+        if (m_mediaControlsLocalizedStringsScript.isEmpty() || m_mediaControlsScript.isEmpty() || m_mediaControlsAdditionalScript.isEmpty()) {
+            // FIXME: Localized strings are not worth having a script. We should make it JSON data etc. instead.
+            if (m_mediaControlsLocalizedStringsScript.isEmpty()) {
+                NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
+                m_mediaControlsLocalizedStringsScript = [NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+            }
 
-            StringBuilder scriptBuilder;
-            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
+            if (m_mediaControlsScript.isEmpty())
+                m_mediaControlsScript = StringImpl::createStaticStringImpl(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript));
+
 #if defined(RenderThemeMacAdditions_mediaControlsScript)
-            RenderThemeMacAdditions_mediaControlsScript
+            if (m_mediaControlsAdditionalScript.isEmpty())
+                m_mediaControlsAdditionalScript = String(RenderThemeMacAdditions_mediaControlsScript);
 #endif
-            m_mediaControlsScript = scriptBuilder.toString();
         }
-        return m_mediaControlsScript;
+        return {
+            m_mediaControlsLocalizedStringsScript,
+            m_mediaControlsScript,
+            m_mediaControlsAdditionalScript,
+        };
     }
 
     if (m_legacyMediaControlsScript.isEmpty()) {
@@ -346,7 +356,7 @@ String RenderThemeMac::mediaControlsScript()
         NSString *script = [NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
         m_legacyMediaControlsScript = makeString(String { localizedStrings }, String { script });
     }
-    return m_legacyMediaControlsScript;
+    return { m_legacyMediaControlsScript };
 }
 
 String RenderThemeMac::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)

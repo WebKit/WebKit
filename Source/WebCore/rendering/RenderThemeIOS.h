@@ -156,7 +156,7 @@ private:
 #if ENABLE(VIDEO)
     String mediaControlsStyleSheet() override;
     String modernMediaControlsStyleSheet() override;
-    String mediaControlsScript() override;
+    Vector<String, 3> mediaControlsScripts() override;
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) override;
 #endif
 
@@ -191,7 +191,9 @@ private:
     Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const override;
 
     String m_legacyMediaControlsScript;
+    String m_mediaControlsLocalizedStringsScript;
     String m_mediaControlsScript;
+    String m_mediaControlsAdditionalScript;
     String m_legacyMediaControlsStyleSheet;
     String m_mediaControlsStyleSheet;
 
