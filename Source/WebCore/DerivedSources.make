@@ -1547,7 +1547,7 @@ MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
 all : ModernMediaControls.css
 
 ModernMediaControls.css : $(MODERN_MEDIA_CONTROLS_STYLE_SHEETS)
-	cat $? > ModernMediaControls.css
+	cat $^ > ModernMediaControls.css
 
 # user agent style sheets
 
@@ -1645,7 +1645,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
 all : ModernMediaControls.js
 
 ModernMediaControls.js : $(MODERN_MEDIA_CONTROLS_SCRIPTS)
-	cat $? > ModernMediaControls.js
+	cat $^ > ModernMediaControls.js
 
 # user agent scripts
 
