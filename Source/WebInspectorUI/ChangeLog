@@ -1,5 +1,17 @@
 2021-03-18  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Use 1000-based units for file sizes, per HIG
+        https://bugs.webkit.org/show_bug.cgi?id=208190
+        <rdar://problem/71045696>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Base/Utilities.js:
+        * UserInterface/Views/ResourceSizesContentView.js:
+        (WI.ResourceSizesContentView.prototype._formattedSizeComponent):
+
+2021-03-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: REGRESSION(r271348): Console: message source code location is not vertically aligned with containing function name
         https://bugs.webkit.org/show_bug.cgi?id=223288
         <rdar://problem/75498577>

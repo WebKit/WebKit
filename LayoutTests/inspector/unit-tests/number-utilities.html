@@ -68,8 +68,8 @@ function test()
     suite.addTestCase({
         name: "Number.bytesToString",
         test() {
-            const kb = 1024;
-            const mb = kb * 1024;
+            const kb = 1000;
+            const mb = kb * 1000;
 
             // Normal resolution.
             InspectorTest.expectEqual(Number.bytesToString(123, false), "123 B", "normal resolution of sub 1k should be bytes");

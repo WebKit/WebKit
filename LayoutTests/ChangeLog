@@ -1,3 +1,13 @@
+2021-03-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Use 1000-based units for file sizes, per HIG
+        https://bugs.webkit.org/show_bug.cgi?id=208190
+        <rdar://problem/71045696>
+
+        Reviewed by BJ Burg.
+
+        * inspector/unit-tests/number-utilities.html:
+
 2021-03-18  Chris Gambrell  <cgambrell@apple.com>
 
         [ macOS Wk2 ] http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.php is constantly text failing
