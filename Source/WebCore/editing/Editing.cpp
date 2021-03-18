@@ -628,12 +628,12 @@ Node* highestNodeToRemoveInPruning(Node* node)
 {
     Node* previousNode = nullptr;
     auto* rootEditableElement = node ? node->rootEditableElement() : nullptr;
-    for (; node; node = node->parentNode()) {
-        if (auto* renderer = node->renderer()) {
-            if (!renderer->canHaveChildren() || hasARenderedDescendant(node, previousNode) || rootEditableElement == node)
+    for (auto currentNode = makeRefPtr(node); currentNode; currentNode = currentNode->parentNode()) {
+        if (auto* renderer = currentNode->renderer()) {
+            if (!renderer->canHaveChildren() || hasARenderedDescendant(currentNode.get(), previousNode) || rootEditableElement == currentNode.get())
                 return previousNode;
         }
-        previousNode = node;
+        previousNode = currentNode.get();
     }
     return nullptr;
 }
