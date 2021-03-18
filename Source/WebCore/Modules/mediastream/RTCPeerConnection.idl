@@ -116,7 +116,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     attribute EventHandler oniceconnectionstatechange;
     attribute EventHandler onicegatheringstatechange;
     attribute EventHandler onconnectionstatechange;
-    // FIXME 169644: missing onfingerprintfailure and onicecandidateerror
+    attribute EventHandler onicecandidateerror;
 
     // Private API used to implement the overloaded operations above. Queued functions are called by runQueuedOperation().
     // See RTCPeerConnectionInternals.js.

@@ -161,6 +161,7 @@ Modules/mediastream/RTCIceCandidate.cpp
 Modules/mediastream/RTCIceTransport.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCPeerConnectionIceEvent.cpp
+Modules/mediastream/RTCPeerConnectionIceErrorEvent.cpp
 Modules/mediastream/RTCRtpReceiver.cpp
 Modules/mediastream/RTCRtpSender.cpp
 Modules/mediastream/RTCRtpTransceiver.cpp
@@ -3231,6 +3232,7 @@ JSRTCOfferAnswerOptions.cpp
 JSRTCOfferOptions.cpp
 JSRTCPeerConnection.cpp
 JSRTCPeerConnectionIceEvent.cpp
+JSRTCPeerConnectionIceErrorEvent.cpp
 JSRTCPeerConnectionState.cpp
 JSRTCPriorityType.cpp
 JSRTCRtpCapabilities.cpp
