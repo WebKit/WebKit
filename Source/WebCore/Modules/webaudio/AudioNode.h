@@ -191,6 +191,9 @@ public:
     ChannelInterpretation channelInterpretation() const { return m_channelInterpretation; }
     virtual ExceptionOr<void> setChannelInterpretation(ChannelInterpretation);
 
+    bool isFinishedSourceNode() const { return m_isFinishedSourceNode; }
+    void setIsFinishedSourceNode() { m_isFinishedSourceNode = true; }
+
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
     void addInput();
@@ -248,6 +251,7 @@ private:
     
     bool m_isMarkedForDeletion { false };
     bool m_isDisabled { false };
+    bool m_isFinishedSourceNode { false };
 
 #if DEBUG_AUDIONODE_REFERENCES
     static bool s_isNodeCountInitialized;

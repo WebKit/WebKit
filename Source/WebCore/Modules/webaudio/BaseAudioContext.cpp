@@ -171,7 +171,6 @@ BaseAudioContext::~BaseAudioContext()
     ASSERT(m_isStopScheduled);
     ASSERT(m_nodesToDelete.isEmpty());
     ASSERT(m_referencedSourceNodes.isEmpty());
-    ASSERT(m_finishedSourceNodes.isEmpty());
     ASSERT(m_automaticPullNodes.isEmpty());
     if (m_automaticPullNodesNeedUpdating)
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
@@ -244,7 +243,7 @@ void BaseAudioContext::uninitialize()
         AutoLocker locker(*this);
         // This should have been called from handlePostRenderTasks() at the end of rendering.
         // However, in case of lock contention, the tryLock() call could have failed in handlePostRenderTasks(),
-        // leaving nodes in m_finishedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
+        // leaving nodes in m_referencedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
         // before the BaseAudioContext gets destroyed.
         derefFinishedSourceNodes();
     }
@@ -575,14 +574,21 @@ ExceptionOr<Ref<IIRFilterNode>> BaseAudioContext::createIIRFilter(ScriptExecutio
     return IIRFilterNode::create(scriptExecutionContext, *this, WTFMove(options));
 }
 
+static bool isFinishedSourceNode(const AudioConnectionRefPtr<AudioNode>& node)
+{
+    return node->isFinishedSourceNode();
+}
+
 void BaseAudioContext::derefFinishedSourceNodes()
 {
     ASSERT(isGraphOwner());
     ASSERT(isAudioThread() || isAudioThreadFinished());
-    for (auto& node : m_finishedSourceNodes)
-        derefSourceNode(*node);
 
-    m_finishedSourceNodes.clear();
+    if (!m_hasFinishedAudioSourceNodes)
+        return;
+
+    m_referencedSourceNodes.removeAllMatching(isFinishedSourceNode);
+    m_hasFinishedAudioSourceNodes = false;
 }
 
 void BaseAudioContext::refSourceNode(AudioNode& node)
@@ -1055,7 +1061,8 @@ void BaseAudioContext::sourceNodeDidFinishPlayback(AudioNode& node)
 {
     ASSERT(isAudioThread());
 
-    m_finishedSourceNodes.append(&node);
+    node.setIsFinishedSourceNode();
+    m_hasFinishedAudioSourceNodes = true;
 }
 
 void BaseAudioContext::workletIsReady()

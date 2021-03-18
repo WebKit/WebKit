@@ -319,9 +319,9 @@ private:
     void workletIsReady();
 
     // When source nodes begin playing, the BaseAudioContext keeps them alive inside m_referencedSourceNodes.
-    // When the nodes stop playing, they get added to m_finishedSourceNodes. After each rendering quantum,
-    // we call derefSourceNode() on every node in m_finishedSourceNodes since we no longer need to keep them
-    // alive.
+    // When the nodes stop playing, a flag gets set on the AudioNode accordingly. After each rendering quantum,
+    // we call derefFinishedSourceNodes() to remove those nodes from m_referencedSourceNodes since we no longer
+    // need to keep them alive.
     void refSourceNode(AudioNode&);
     void derefSourceNode(AudioNode&);
 
@@ -349,9 +349,6 @@ private:
 #endif
 
     Ref<AudioWorklet> m_worklet;
-
-    // Only accessed in the audio thread.
-    Vector<AudioNode*> m_finishedSourceNodes;
 
     // Either accessed when the graph lock is held, or on the main thread when the audio thread has finished.
     Vector<AudioConnectionRefPtr<AudioNode>> m_referencedSourceNodes;
@@ -412,6 +409,7 @@ private:
     AudioIOPosition m_outputPosition;
 
     HashMap<String, Vector<AudioParamDescriptor>> m_parameterDescriptorMap;
+    bool m_hasFinishedAudioSourceNodes { false };
 
     // These are cached per audio context for performance reasons. They cannot be
     // static because they rely on the sample rate.
