@@ -239,18 +239,11 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
 
         m_outputSampleOffset = (endFrame - sampleCount) - timeStamp;
         m_outputSampleOffset -= computeOffsetDelay(m_outputDescription->sampleRate(), m_lastPushedSampleCount);
-        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
-            ALWAYS_LOG(logIdentifier, "setting new offset to ", outputSampleOffset);
-        });
     }
 
     timeStamp += m_outputSampleOffset;
 
     if (timeStamp < startFrame || timeStamp + sampleCount > endFrame) {
-        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
-            ERROR_LOG(logIdentifier, "not enough data, sample ", timeStamp, " with offset ", outputSampleOffset, ", trying to get ", sampleCount, " samples, but not completely in range [", startFrame, " .. ", endFrame, "]");
-        });
-
         if (timeStamp < startFrame || timeStamp >= endFrame) {
             // We are out of the window, let's restart the offset computation.
             m_shouldComputeOutputSampleOffset = true;
@@ -260,9 +253,6 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
         } else {
             // We are too close from endFrame, let's wait for more data to be pushed.
             m_outputSampleOffset -= sampleCount;
-            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
-                ALWAYS_LOG(logIdentifier, "updating offset to ", outputSampleOffset);
-            });
         }
         AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
