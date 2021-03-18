@@ -1,3 +1,61 @@
+2021-03-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Error#cause should apply to WebAssembly error constructors too
+        https://bugs.webkit.org/show_bug.cgi?id=223404
+
+        Reviewed by Yusuke Suzuki.
+
+        Per https://www.w3.org/TR/wasm-js-api-1/#error-objects:
+        > The constructor and properties of WebAssembly errors is as specified for NativeError.
+
+        So Error#cause should "just work" for WebAssembly.{CompileError, LinkError, RuntimeError} too.
+
+        In the process:
+         - Eliminate JSWebAssemblyCompileError and kin since they add no functionality on top of ErrorInstance.
+         - Add an on-by-default feature flag (belated from the last patch).
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeError):
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObject.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructImpl):
+        (JSC::NativeErrorConstructor<errorType>::callImpl):
+        * runtime/OptionsList.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::createJSWebAssemblyCompileError):
+        (JSC::JSWebAssemblyCompileError::create): Deleted.
+        (JSC::JSWebAssemblyCompileError::JSWebAssemblyCompileError): Deleted.
+        * wasm/js/JSWebAssemblyCompileError.h:
+        (): Deleted.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::createJSWebAssemblyLinkError):
+        (JSC::JSWebAssemblyLinkError::create): Deleted.
+        (JSC::JSWebAssemblyLinkError::JSWebAssemblyLinkError): Deleted.
+        * wasm/js/JSWebAssemblyLinkError.h:
+        (): Deleted.
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::createJSWebAssemblyRuntimeError):
+        (JSC::JSWebAssemblyRuntimeError::create): Deleted.
+        (JSC::JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError): Deleted.
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        (): Deleted.
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-03-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         modern-media-controls script should not be allocated in heap

@@ -28,29 +28,14 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCellInlines.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
-
-JSWebAssemblyRuntimeError* JSWebAssemblyRuntimeError::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message)
-{
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyRuntimeError>(vm.heap)) JSWebAssemblyRuntimeError(vm, structure);
-    bool useCurrentFrame = true;
-    instance->finishCreation(vm, globalObject, message, jsUndefined(), defaultSourceAppender, TypeNothing, useCurrentFrame);
-    return instance;
-}
-
-JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError(VM& vm, Structure* structure)
-    : Base(vm, structure, ErrorType::Error)
-{
-}
-
-const ClassInfo JSWebAssemblyRuntimeError::s_info = { "WebAssembly.RuntimeError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyRuntimeError) };
 
 JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject* globalObject, VM& vm, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return JSWebAssemblyRuntimeError::create(globalObject, vm, globalObject->webAssemblyRuntimeErrorStructure(), message);
+    return ErrorInstance::create(globalObject, vm, globalObject->webAssemblyRuntimeErrorStructure(), message, jsUndefined(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
 }
     
 } // namespace JSC

@@ -934,7 +934,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFram
         if (type == ExceptionType::StackOverflow)
             error = createStackOverflowError(globalObject);
         else
-            error = JSWebAssemblyRuntimeError::create(globalObject, vm, globalObject->webAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
+            error = createJSWebAssemblyRuntimeError(globalObject, vm, Wasm::errorMessageForExceptionType(type));
         throwException(globalObject, throwScope, error);
     }
 

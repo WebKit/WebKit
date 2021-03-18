@@ -112,7 +112,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!wasmCodeBlock->runnable()) {
-        throwException(globalObject, scope, JSWebAssemblyLinkError::create(globalObject, vm, this->globalObject()->webAssemblyLinkErrorStructure(), wasmCodeBlock->errorMessage()));
+        throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, wasmCodeBlock->errorMessage()));
         return;
     }
 
@@ -128,7 +128,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
     } else {
         jsCodeBlock = JSWebAssemblyCodeBlock::create(vm, WTFMove(wasmCodeBlock), module()->module().moduleInformation());
         if (UNLIKELY(!jsCodeBlock->runnable())) {
-            throwException(globalObject, scope, JSWebAssemblyLinkError::create(globalObject, vm, this->globalObject()->webAssemblyLinkErrorStructure(), jsCodeBlock->errorMessage()));
+            throwException(globalObject, scope, createJSWebAssemblyLinkError(globalObject, vm, jsCodeBlock->errorMessage()));
             return;
         }
         m_codeBlock.set(vm, this, jsCodeBlock);

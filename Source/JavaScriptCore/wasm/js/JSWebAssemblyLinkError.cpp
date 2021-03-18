@@ -28,30 +28,14 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCellInlines.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
 
-JSWebAssemblyLinkError* JSWebAssemblyLinkError::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message)
-{
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyLinkError>(vm.heap)) JSWebAssemblyLinkError(vm, structure);
-    bool useCurrentFrame = true;
-    instance->finishCreation(vm, globalObject, message, jsUndefined(), defaultSourceAppender, TypeNothing, useCurrentFrame);
-    return instance;
-}
-
-JSWebAssemblyLinkError::JSWebAssemblyLinkError(VM& vm, Structure* structure)
-    : Base(vm, structure, ErrorType::Error)
-{
-}
-
-const ClassInfo JSWebAssemblyLinkError::s_info = { "WebAssembly.LinkError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyLinkError) };
-
-    
 JSObject* createJSWebAssemblyLinkError(JSGlobalObject* globalObject, VM& vm, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return JSWebAssemblyLinkError::create(globalObject, vm, globalObject->webAssemblyLinkErrorStructure(), message);
+    return ErrorInstance::create(globalObject, vm, globalObject->webAssemblyLinkErrorStructure(), message, jsUndefined(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
 }
 
 } // namespace JSC

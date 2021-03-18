@@ -4,6 +4,9 @@ function shouldBe(actual, expected) {
 }
 
 const errorConstructors = [Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError, AggregateError];
+if (typeof WebAssembly !== 'undefined')
+    errorConstructors.push(WebAssembly.CompileError, WebAssembly.LinkError, WebAssembly.RuntimeError);
+
 const constructError = (E, ...args) => E === AggregateError ? new E([], '', ...args) : new E('', ...args);
 
 for (const E of errorConstructors) {
