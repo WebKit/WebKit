@@ -43,7 +43,6 @@ public:
     int y() const { return m_viewport.y(); }
     int width() const { return m_viewport.width(); }
     int height() const { return m_viewport.height(); }
-    IntRect rect() { return m_viewport; }
 
     void updateViewport(const IntRect& viewport) { m_viewport = viewport; }
 

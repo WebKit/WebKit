@@ -1,3 +1,15 @@
+2021-03-18  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r274644.
+
+        Broke internal Mac Builds
+
+        Reverted changeset:
+
+        "Implement WebXR Opaque Framebuffer"
+        https://bugs.webkit.org/show_bug.cgi?id=222607
+        https://commits.webkit.org/r274644
+
 2021-03-18  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement WebXR Opaque Framebuffer

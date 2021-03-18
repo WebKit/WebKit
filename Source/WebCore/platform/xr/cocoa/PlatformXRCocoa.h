@@ -37,8 +37,6 @@ public:
     void initializeReferenceSpace(ReferenceSpaceType) override { }
     Vector<ViewData> views(SessionMode) const override { return { }; }
     void requestFrame(RequestFrameCallback&&) override { }
-    Optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) override { return WTF::nullopt; };
-    void deleteLayer(LayerHandle) override { };
 };
 
 }
