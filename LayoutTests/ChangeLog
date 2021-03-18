@@ -1,5 +1,14 @@
 2021-03-18  Robert Jenner  <jenner@apple.com>
 
+        [ macOS wk2 Release ARM64 ] 3 http/wpt/beacon/cors/cors-preflight-blob are flakey text failures
+        https://bugs.webkit.org/show_bug.cgi?id=223488
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating expectations to Pass Failure while tests are being reviewed.
+
+2021-03-18  Robert Jenner  <jenner@apple.com>
+
         [ macOS Release Wk2 ARM64 ] inspector/css/modify-inline-style.html is a flakey text failure
         https://bugs.webkit.org/show_bug.cgi?id=223486
 
