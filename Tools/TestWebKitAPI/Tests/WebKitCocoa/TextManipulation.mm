@@ -188,7 +188,7 @@ TEST(TextManipulation, StartTextManipulationFindMultipleParagraphsInSingleTextNo
     EXPECT_STREQ("WebKit", items[0].tokens[4].content.UTF8String);
 }
 
-TEST(TextManipulation, StartTextManipulationFindParagraphsWithMultileTokens)
+TEST(TextManipulation, StartTextManipulationFindParagraphsWithMultipleTokens)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
