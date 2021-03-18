@@ -173,7 +173,7 @@ void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescript
     }
 
     for (auto& parameterName : m_parameters->map().keys())
-        m_paramValuesMap.add(parameterName, makeUnique<AudioFloatArray>());
+        m_paramValuesMap.add(parameterName, makeUnique<AudioFloatArray>(AudioUtilities::renderQuantumSize));
 }
 
 void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
@@ -208,15 +208,11 @@ void AudioWorkletNode::process(size_t framesToProcess)
     for (auto& audioParam : m_parameters->map().values()) {
         auto* paramValues = m_paramValuesMap.get(audioParam->name());
         ASSERT(paramValues);
-        if (audioParam->hasSampleAccurateValues() && audioParam->automationRate() == AutomationRate::ARate) {
-            paramValues->resize(framesToProcess);
+        RELEASE_ASSERT(paramValues->size() >= framesToProcess);
+        if (audioParam->hasSampleAccurateValues() && audioParam->automationRate() == AutomationRate::ARate)
             audioParam->calculateSampleAccurateValues(paramValues->data(), framesToProcess);
-        } else {
-            // If no automation is scheduled during this render quantum, the array may have length 1
-            // with the array element being the constant value of the AudioParam for the render quantum.
-            paramValues->resize(1);
-            *paramValues->data() = audioParam->finalValue();
-        }
+        else
+            std::fill_n(paramValues->data(), framesToProcess, audioParam->finalValue());
     }
 
     bool threwException = false;
