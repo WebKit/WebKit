@@ -62,7 +62,11 @@ static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& ur
     if (redirectFrom.host() == url.host() && redirectFrom.protocolIs("https"))
         return;
 
-    if (url.protocolIs("http") && (url.host() == "www.opengl.org" || url.host() == "download"))
+    if (!url.protocolIs("http"))
+        return;
+    if (url.host() == "www.opengl.org"
+        || url.host() == "webkit.org"
+        || url.host() == "download")
         results.summary.madeHTTPS = true;
 }
 #endif
