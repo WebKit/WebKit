@@ -1,3 +1,117 @@
+2021-03-17  Mark Lam  <mark.lam@apple.com>
+
+        Fix race condition in ConcurrentPtrHashSet.
+        https://bugs.webkit.org/show_bug.cgi?id=223241
+        rdar://74637896
+
+        Reviewed by Yusuke Suzuki.
+
+        There exists a race condition where ConcurrentPtrHashSet::resizeIfNecessary() may
+        not capture an entry added by ConcurrentPtrHashSet::addSlow() concurrently.
+
+        ConcurrentPtrHashSet::addSlow() currently does the following:
+
+            {
+                if (table->load.exchangeAdd(1) >= table->maxLoad())     // (a1)
+                    return resizeAndAdd(ptr);                           // (a2)
+    
+                for (;;) {
+                    void* oldEntry = table->array[index].compareExchangeStrong(nullptr, ptr);   // (a3)
+                    if (!oldEntry) {
+                        if (m_table.load() != table) {                  // (a4)
+                            // We added an entry to an old table! We need to reexecute the add on the new table.
+                            return add(ptr);                            // (a5)
+                        }
+                        return true;                                    // (a6)
+                    }
+                    if (oldEntry == ptr)
+                        return false;
+
+                    ... // set index to next entry slot to try.
+                }
+            }
+
+        ConcurrentPtrHashSet::resizeIfNecessary() currently does the following:
+
+            {
+                auto locker = holdLock(m_lock);                         // (r1)
+                Table* table = m_table.loadRelaxed();
+                if (table->load.loadRelaxed() < table->maxLoad())
+                    return;
+
+                // (r2)
+
+                std::unique_ptr<Table> newTable = Table::create(table->size * 2);
+                ...
+                for (unsigned i = 0; i < table->size; ++i) {            // (r3)
+                    void* ptr = table->array[i].loadRelaxed();
+                    if (!ptr)
+                        continue;
+        
+                    ... // copy ptr to newTable.                        // (r4)
+                }
+    
+                ...
+                m_table.store(newTable.get());                          // (r5)
+                ...
+            }
+
+        Let's say thread T1 is executing addSlow(), and thread T2 is concurrently executing
+        resizeIfNecessary().
+
+        Consider the following scenario (in chronological order):
+        1. T2 has arrived at just before (r5) i.e. it is already done copying the entries
+           in the old m_table.  
+        2. T1 executes (a3) and writes a new entry into m_table.
+        3. T1 checks that the table hasn't been replaced at (a4), and sees that it has
+           not.
+        4. T1 returns at (a6), thinking that its new entry is committed.
+        5. T2 sets the new m_table at (r5), thereby discarding the new entry that T1 has
+           just written.
+
+        The fix is to set m_table to a newly introduced m_stubTable at (r2).  m_stubTable
+        is set up with a size of 0, and load value of 10.  This means it is always full.
+        With this, the following scenarios can play out:
+
+        Scenario 1: T2 installs m_stubTable before T1 reaches (a1)
+
+        1. At (a1), T1 sees that m_table (which is m_stubTable) is full.
+        2. T1 calls resizeAndAdd() at (a2), which ends up calling resizeIfNecessary()
+           and blocking on the lock at (r1).
+
+        Scenario 2: T2 installs m_stubTable after T1 reaches just before (a3)
+
+        1. T1 writes the new entry at (a3).
+        2. T1 checks m_table at (a4), and sees that it has changed (now pointing to
+           m_stubTable).
+        3. T1 calls add() again at (a5) to redo the operation, and ends with scenario 1.
+
+        Scenario 3: T2 installs m_stubTable after T1 reaches (a3), but before (a4)
+
+        1. The new entry has already been added, but we don't know if it made the cut off
+           for T2 to copy it or not.  But, it doesn't matter because ...
+        2. T1 checks m_table at (a4), and sees that it has changed (now pointing to
+           m_stubTable).
+        3. T1 calls add() again at (a5) to redo the operation, and ends with scenario 1.
+
+        Scenario 4: T2 installs m_stubTable after T1 reaches (a4)
+
+        1. The new entry has already been added.
+        2. T1 checks m_table at (a4), and sees that it has NOT changed (because T2 hasn't
+           installed m_stubTable yet).  This means T2's copy loop is guaranteed to not
+           have started yet i.e. the new entry will definitely be picked up by the copy
+           loop.
+        3. T1 returns at (a6), and all is well.
+
+        * wtf/ConcurrentPtrHashSet.cpp:
+        (WTF::ConcurrentPtrHashSet::deleteOldTables):
+        (WTF::ConcurrentPtrHashSet::initialize):
+        (WTF::ConcurrentPtrHashSet::containsImplSlow const):
+        (WTF::ConcurrentPtrHashSet::sizeSlow const):
+        (WTF::ConcurrentPtrHashSet::resizeIfNecessary):
+        (WTF::ConcurrentPtrHashSet::Table::initializeStub):
+        * wtf/ConcurrentPtrHashSet.h:
+
 2021-03-17  Alex Christensen  <achristensen@webkit.org>
 
         Reduce maximum HashTable entry size to 250 bytes
