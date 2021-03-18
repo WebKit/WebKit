@@ -1383,3 +1383,5 @@ webkit.org/b/223387 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
 webkit.org/b/223383 compositing/video/video-border-radius.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223453 [ arm64 ] storage/indexeddb/IDBObject-leak.html [ Pass Failure ]
+
+webkit.org/b/223462 [ Debug arm64 ] imported/w3c/web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html [ Pass Crash ]
