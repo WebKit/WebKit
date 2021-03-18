@@ -1385,3 +1385,5 @@ webkit.org/b/223383 compositing/video/video-border-radius.html [ Pass ImageOnlyF
 webkit.org/b/223453 [ arm64 ] storage/indexeddb/IDBObject-leak.html [ Pass Failure ]
 
 webkit.org/b/223462 [ Debug arm64 ] imported/w3c/web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html [ Pass Crash ]
+
+webkit.org/b/223469 [ arm64 ] fast/images/async-image-background-change.html [ Pass Timeout ]
