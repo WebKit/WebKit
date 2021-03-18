@@ -237,6 +237,9 @@ void RenderTreeUpdater::popParent()
     if (parent.element)
         updateAfterDescendants(*parent.element, parent.updates);
 
+    if (&parent != &renderingParent())
+        renderTreePosition().invalidateNextSibling();
+
     m_parentStack.removeLast();
 }
 
