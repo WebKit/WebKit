@@ -1,3 +1,15 @@
+2021-03-18  Antti Koivisto  <antti@apple.com>
+
+        Don't delay conditional requests in resource load scheduler
+        https://bugs.webkit.org/show_bug.cgi?id=223450
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkLoadScheduler.cpp:
+        (WebKit::NetworkLoadScheduler::HostContext::schedule):
+
+        Conditional requests usually come back as 304s and don't slow other resource loads down.
+
 2021-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Bump API version when building with libsoup3
