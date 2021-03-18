@@ -1,3 +1,16 @@
+2021-03-18  Youenn Fablet  <youenn@apple.com>
+
+        Geolocation API does not work in WKWebView with custom URL scheme handler
+        https://bugs.webkit.org/show_bug.cgi?id=222861
+        <rdar://problem/75394695>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[GeolocationDelegate setValidationHandler:]):
+        (-[GeolocationDelegate _webView:requestGeolocationPermissionForFrame:decisionHandler:]):
+        (TEST):
+
 2021-03-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL conformance test update script does not use min_version and max_version in all cases

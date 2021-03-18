@@ -1,3 +1,15 @@
+2021-03-18  Youenn Fablet  <youenn@apple.com>
+
+        Geolocation API does not work in WKWebView with custom URL scheme handler
+        https://bugs.webkit.org/show_bug.cgi?id=222861
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations: Skip WPT test that is using localhost so is actually secure.
+        Validated that behavior is consistent with Chrome and Firefox.
+        * http/tests/security/resources/geolocation-over-insecure-content.html:
+        Use internals API to mimick insecure context.
+
 2021-03-18  Cathie Chen  <cathiechen@igalia.com>
 
         Import css/css-contain test from WPT

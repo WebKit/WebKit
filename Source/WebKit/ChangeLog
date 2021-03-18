@@ -1,3 +1,16 @@
+2021-03-18  Youenn Fablet  <youenn@apple.com>
+
+        Geolocation API does not work in WKWebView with custom URL scheme handler
+        https://bugs.webkit.org/show_bug.cgi?id=222861
+        <rdar://problem/75394695>
+
+        Reviewed by Eric Carlson.
+
+        Update geolocation prompt origin to match getUserMedia and show the app name instead of custom scheme origin.
+
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::alertMessageText):
+
 2021-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web process sometimes crashes under WebPage::positionInformation() after r274031

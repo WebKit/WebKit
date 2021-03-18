@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -102,10 +103,11 @@ TEST(WebKit, WindowOpenWithoutUIDelegate)
 
 @interface GeolocationDelegate : NSObject <WKUIDelegatePrivate> {
     bool _allowGeolocation;
+    Function<void(WKFrameInfo*)> _validationHandler;
 }
 
 - (id)initWithAllowGeolocation:(bool)allowGeolocation;
-
+- (void)setValidationHandler:(Function<void(WKFrameInfo*)>&&)validationHandler;
 @end
 
 @implementation GeolocationDelegate
@@ -118,13 +120,14 @@ TEST(WebKit, WindowOpenWithoutUIDelegate)
     return self;
 }
 
+- (void)setValidationHandler:(Function<void(WKFrameInfo*)>&&)validationHandler {
+    _validationHandler = WTFMove(validationHandler);
+}
+
 - (void)_webView:(WKWebView *)webView requestGeolocationPermissionForFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL allowed))decisionHandler
 {
-    EXPECT_TRUE(frame.isMainFrame);
-    EXPECT_STREQ(frame.request.URL.absoluteString.UTF8String, _allowGeolocation ? "https://example.org/" : "https://example.com/");
-    EXPECT_EQ(frame.securityOrigin.port, 0);
-    EXPECT_STREQ(frame.securityOrigin.protocol.UTF8String, "https");
-    EXPECT_STREQ(frame.securityOrigin.host.UTF8String, _allowGeolocation ? "example.org" : "example.com");
+    if (_validationHandler)
+        _validationHandler(frame);
     decisionHandler(_allowGeolocation);
 }
 
@@ -159,16 +162,55 @@ TEST(WebKit, GeolocationPermission)
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().processPool = pool.get();
+
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSURL *requestURL = [task request].URL;
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:[html length] textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"custom"];
+
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
     auto delegate1 = adoptNS([[GeolocationDelegate alloc] initWithAllowGeolocation:false]);
     [webView setUIDelegate:delegate1.get()];
+
+    done = false;
+    [delegate1 setValidationHandler:[](WKFrameInfo *frame) {
+        EXPECT_TRUE(frame.isMainFrame);
+        EXPECT_STREQ(frame.request.URL.absoluteString.UTF8String, "https://example.com/");
+        EXPECT_EQ(frame.securityOrigin.port, 0);
+        EXPECT_STREQ(frame.securityOrigin.protocol.UTF8String, "https");
+        EXPECT_STREQ(frame.securityOrigin.host.UTF8String, "example.com");
+    }];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com/"]];
     TestWebKitAPI::Util::run(&done);
 
     done = false;
     auto delegate2 = adoptNS([[GeolocationDelegate alloc] initWithAllowGeolocation:true]);
+    [delegate2 setValidationHandler:[](WKFrameInfo *frame) {
+        EXPECT_TRUE(frame.isMainFrame);
+        EXPECT_STREQ(frame.request.URL.absoluteString.UTF8String, "https://example.org/");
+        EXPECT_EQ(frame.securityOrigin.port, 0);
+        EXPECT_STREQ(frame.securityOrigin.protocol.UTF8String, "https");
+        EXPECT_STREQ(frame.securityOrigin.host.UTF8String, "example.org");
+    }];
     [webView setUIDelegate:delegate2.get()];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org/"]];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [delegate2 setValidationHandler:[](WKFrameInfo *frame) {
+        EXPECT_TRUE(frame.isMainFrame);
+        EXPECT_STREQ(frame.request.URL.absoluteString.UTF8String, "custom://localhost/mainframe.html");
+        EXPECT_EQ(frame.securityOrigin.port, 0);
+        EXPECT_STREQ(frame.securityOrigin.protocol.UTF8String, "custom");
+        EXPECT_STREQ(frame.securityOrigin.host.UTF8String, "localhost");
+    }];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"custom://localhost/mainframe.html"]];
     TestWebKitAPI::Util::run(&done);
 }
 

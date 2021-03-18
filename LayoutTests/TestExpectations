@@ -417,6 +417,7 @@ imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/cli
 imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy-cross-origin-tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-by-feature-policy.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-enabled-on-self-origin-by-feature-policy.tentative.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/geolocation-API/non-secure-contexts.http.html [ Skip ]
 imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_permission_allow.https.html [ Skip ]
 imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_permission_deny.https.html [ Skip ]
 imported/w3c/web-platform-tests/geolocation-API/watchPosition_permission_deny.https.html [ Skip ]

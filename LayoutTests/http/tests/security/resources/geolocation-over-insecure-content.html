@@ -1,5 +1,7 @@
 <body onload="loaded()">
     <script>
+        if (window.internals)
+            internals.markContextAsInsecure();
         if (navigator.geolocation) {
 	    navigator.geolocation.getCurrentPosition(showPosition);
 	} 

@@ -138,7 +138,7 @@ static NSString *alertMessageText(MediaPermissionReason reason, const WebCore::S
     case MediaPermissionReason::DeviceOrientation:
         return [NSString stringWithFormat:WEB_UI_NSSTRING(@"“%@” Would Like to Access Motion and Orientation", @"Message for requesting access to the device motion and orientation"), visibleOrigin];
     case MediaPermissionReason::Geolocation:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your current location?", @"Message for geolocation prompt"), visibleDomain(origin.host)];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your current location?", @"Message for geolocation prompt"), visibleOrigin];
     case MediaPermissionReason::SpeechRecognition:
         return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host)];
     }
