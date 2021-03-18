@@ -81,6 +81,10 @@ static bool urlRequiresChromeBrowser(const URL& url)
     if (baseDomain == "bankofamerica.com")
         return true;
 
+    // Google Docs shows an unsupported browser warning with WebKitGTK's
+    // standard user agent.
+    if (domain == "docs.google.com")
+        return true;
 
     return false;
 }
@@ -96,31 +100,6 @@ static bool urlRequiresFirefoxBrowser(const URL& url)
     // Red Hat Bugzilla displays a warning page when performing searches with WebKitGTK's standard
     // user agent.
     if (domain == "bugzilla.redhat.com")
-        return true;
-
-    return false;
-}
-
-static bool urlRequiresInternetExplorerBrowser(const URL& url)
-{
-    String domain = url.host().toString();
-
-    // This quirk actually has nothing to do with YouTube. It's needed to avoid
-    // unsupported browser warnings on Google Docs. Why do we need this weird
-    // quirk? We cannot use Chrome or Firefox quirks because Google then uses
-    // features that don't work in WebKit. And we can't use our macOS platform
-    // quirk because Google then expects command keys and doesn't support basic
-    // keyboard shortcuts. We could pretend to be Edge, but adding Chromium is
-    // likely to break in the same way as a Chrome quirk. So that leaves us
-    // with IE browser as the final reasonable option. This will break
-    // eventually, but hopefully not for a long time, because we are probably
-    // out of options when it does.
-    if (domain == "accounts.youtube.com" || domain == "docs.google.com")
-        return true;
-
-    // Google Drive shows an unsupported browser warning with WebKitGTK's
-    // standard user agent.
-    if (domain == "drive.google.com")
         return true;
 
     return false;
@@ -163,14 +142,9 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     return false;
 }
 
-static bool urlRequiresWindowsPlatform(const URL& url)
-{
-    return urlRequiresInternetExplorerBrowser(url);
-}
-
 static bool urlRequiresLinuxDesktopPlatform(const URL& url)
 {
-    return isGoogle(url) && !urlRequiresInternetExplorerBrowser(url) && chassisType() != WTF::ChassisType::Mobile;
+    return isGoogle(url) && chassisType() != WTF::ChassisType::Mobile;
 }
 
 UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
@@ -183,13 +157,9 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);
     else if (urlRequiresFirefoxBrowser(url))
         quirks.add(UserAgentQuirks::NeedsFirefoxBrowser);
-    else if (urlRequiresInternetExplorerBrowser(url))
-        quirks.add(UserAgentQuirks::NeedsInternetExplorerBrowser);
 
     if (urlRequiresMacintoshPlatform(url))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
-    else if (urlRequiresWindowsPlatform(url))
-        quirks.add(UserAgentQuirks::NeedsWindowsPlatform);
     else if (urlRequiresLinuxDesktopPlatform(url))
         quirks.add(UserAgentQuirks::NeedsLinuxDesktopPlatform);
 
@@ -201,15 +171,11 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
     switch (quirk) {
     case NeedsChromeBrowser:
         // Get versions from https://chromium.googlesource.com/chromium/src.git
-        return "Chrome/86.0.4208.2"_s;
+        return "Chrome/90.0.4419.1"_s;
     case NeedsFirefoxBrowser:
-        return "; rv:80.0) Gecko/20100101 Firefox/80.0"_s;
-    case NeedsInternetExplorerBrowser:
-        return "; Trident/7.0; rv:11.0) like Gecko"_s;
+        return "; rv:87.0) Gecko/20100101 Firefox/87.0"_s;
     case NeedsMacintoshPlatform:
         return "Macintosh; Intel Mac OS X 10_15"_s;
-    case NeedsWindowsPlatform:
-        return "Windows NT 10.0"_s;
     case NeedsLinuxDesktopPlatform:
         return "X11; Linux x86_64"_s;
     case NumUserAgentQuirks:

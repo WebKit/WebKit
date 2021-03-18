@@ -1,3 +1,26 @@
+2021-02-16  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Need new user agent quirk for Google Docs and Google Drive
+        https://bugs.webkit.org/show_bug.cgi?id=221845
+
+        Reviewed by Adrian Perez de Castro.
+
+        Switch Google Docs to use a Chrome browser quirk instead of an Internet Explorer quirk.
+        Remove the Google Drive quirk altogether. Remove the Internet Explorer and Windows platform
+        quirks, which are no longer used. Retarget the Google Docs quirk to apply only to
+        docs.google.com because we no longer need to send the quirk to accounts.youtube.com for it
+        to be effective. Lastly, update Chrome and Firefox version strings for good measure.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresChromeBrowser):
+        (WebCore::urlRequiresLinuxDesktopPlatform):
+        (WebCore::UserAgentQuirks::quirksForURL):
+        (WebCore::UserAgentQuirks::stringForQuirk):
+        (WebCore::urlRequiresInternetExplorerBrowser): Deleted.
+        (WebCore::urlRequiresWindowsPlatform): Deleted.
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::buildUserAgentString):
+
 2021-02-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Make m_client WeakPtr in AudioSourceProviderGStreamer
