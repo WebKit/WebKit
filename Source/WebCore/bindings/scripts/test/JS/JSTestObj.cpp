@@ -1742,15 +1742,12 @@ static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_conditionalAttr3);
 #endif
 #if ENABLE(Condition1)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_conditionalAttr4Constructor);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_conditionalAttr4Constructor);
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_conditionalAttr5Constructor);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_conditionalAttr5Constructor);
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_conditionalAttr6Constructor);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_conditionalAttr6Constructor);
 #endif
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_cachedAttribute1);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_cachedAttribute2);
@@ -1872,17 +1869,17 @@ static const HashTableValue JSTestObjTableValues[] =
 {
     { "unforgeableAttr", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_unforgeableAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(Condition1)
-    { "conditionalAttr4", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_conditionalAttr4Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_conditionalAttr4Constructor) } },
+    { "conditionalAttr4", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_conditionalAttr4Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
-    { "conditionalAttr5", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_conditionalAttr5Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_conditionalAttr5Constructor) } },
+    { "conditionalAttr5", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_conditionalAttr5Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    { "conditionalAttr6", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_conditionalAttr6Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_conditionalAttr6Constructor) } },
+    { "conditionalAttr6", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_conditionalAttr6Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -4477,21 +4474,6 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestObj_conditionalAttr4Constructor, (JSGlobalObject*
 
 #endif
 
-#if ENABLE(Condition1)
-static inline bool setJSTestObj_conditionalAttr4ConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    // Shadowing a built-in constructor.
-    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr4"), strlen("conditionalAttr4")), value);
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_conditionalAttr4Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObj_conditionalAttr4ConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr4");
-}
-
-#endif
-
 #if ENABLE(Condition1) && ENABLE(Condition2)
 static inline JSValue jsTestObj_conditionalAttr5ConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
 {
@@ -4506,21 +4488,6 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestObj_conditionalAttr5Constructor, (JSGlobalObject*
 
 #endif
 
-#if ENABLE(Condition1) && ENABLE(Condition2)
-static inline bool setJSTestObj_conditionalAttr5ConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    // Shadowing a built-in constructor.
-    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr5"), strlen("conditionalAttr5")), value);
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_conditionalAttr5Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObj_conditionalAttr5ConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr5");
-}
-
-#endif
-
 #if ENABLE(Condition1) || ENABLE(Condition2)
 static inline JSValue jsTestObj_conditionalAttr6ConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
 {
@@ -4531,21 +4498,6 @@ static inline JSValue jsTestObj_conditionalAttr6ConstructorGetter(JSGlobalObject
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_conditionalAttr6Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObj_conditionalAttr6ConstructorGetter>(*lexicalGlobalObject, thisValue, "conditionalAttr6");
-}
-
-#endif
-
-#if ENABLE(Condition1) || ENABLE(Condition2)
-static inline bool setJSTestObj_conditionalAttr6ConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    // Shadowing a built-in constructor.
-    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr6"), strlen("conditionalAttr6")), value);
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_conditionalAttr6Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObj_conditionalAttr6ConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr6");
 }
 
 #endif

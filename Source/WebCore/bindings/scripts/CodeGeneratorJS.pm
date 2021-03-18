@@ -1871,7 +1871,6 @@ sub GetAttributeSetterName
 
     return "set" . $codeGenerator->WK_ucfirst(GetJSBuiltinFunctionName($className, $attribute)) if IsJSBuiltin($interface, $attribute);
     return "set" . $codeGenerator->WK_ucfirst($className) . "Constructor" . MangleAttributeOrFunctionName($attribute->name) if $attribute->isStatic;
-    return "set" . $codeGenerator->WK_ucfirst($className) . MangleAttributeOrFunctionName($attribute->name) . "Constructor" if $codeGenerator->IsConstructorType($attribute->type);
     return "set" . $codeGenerator->WK_ucfirst($className) . MangleAttributeOrFunctionName($attribute->name);
 }
 
@@ -3383,7 +3382,7 @@ sub GeneratePropertiesHashTable
             push(@$hashValue1, $getter);
         }
 
-        if (IsReadonly($attribute)) {
+        if (IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type)) {
             push(@$hashValue2, "0");
         } else {
             my $setter = GetAttributeSetterName($interface, $className, $attribute);
@@ -4306,7 +4305,7 @@ sub GenerateImplementation
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interface, $className, $attribute);
             push(@implContent, "static JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
-            if (!IsReadonly($attribute)) {
+            unless (IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type)) {
                 my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
                 if ($readWriteConditional) {
                     my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
@@ -4715,7 +4714,7 @@ sub GenerateImplementation
         my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $attribute, "globalObject()");
         my $attributeName = $attribute->name;
         my $getter = GetAttributeGetterName($interface, $className, $attribute);
-        my $setter = IsReadonly($attribute) ? "nullptr" : GetAttributeSetterName($interface, $className, $attribute);
+        my $setter = IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type) ? "nullptr" : GetAttributeSetterName($interface, $className, $attribute);
         my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
         my $isPrivateAndPublic = $attribute->extendedAttributes->{PublicIdentifier} && $attribute->extendedAttributes->{PrivateIdentifier};
 
@@ -5269,14 +5268,19 @@ sub GenerateAttributeGetterBodyDefinition
 
         # Strip off any trailing "Constructor" or "LegacyFactoryFunctionConstructor" to get the real type.
         $constructorType =~ s/Constructor$//;
+
+        # $constructorType ~= /LegacyFactoryFunction$/ indicates that it is LegacyFactoryFunction.
+        # We do not generate the header file for LegacyFactoryFunction of class X,
+        # since we generate the LegacyFactoryFunction declaration into the header file of class X.
+        if ($constructorType ne "any" and $constructorType !~ /LegacyFactoryFunction$/) {
+            AddToImplIncludes("JS" . $constructorType . ".h", $conditional);
+        }
+
         $constructorType =~ s/LegacyFactoryFunction$//;
 
-        # When Constructor attribute is used by DOMWindow.idl, it's correct to pass thisObject as the global object
-        # When JSDOMWrappers have a back-pointer to the globalObject we can pass thisObject->globalObject()
-        if ($interface->type->name eq "DOMWindow") {
+        if (IsDOMGlobalObject($interface)) {
             push(@$outputArray, "    return JS" . $constructorType . "::${constructorGetter}(JSC::getVM(&lexicalGlobalObject), &thisObject);\n");
         } else {
-            AddToImplIncludes("JS" . $constructorType . ".h", $conditional);
             push(@$outputArray, "    return JS" . $constructorType . "::${constructorGetter}(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());\n");
         }
     } elsif ($attribute->extendedAttributes->{CSSProperty}) {
@@ -5384,10 +5388,9 @@ sub GenerateAttributeSetterBodyDefinition
     my $needSecurityCheck = $interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnSetter};
     my $hasCustomSetter = HasCustomSetter($attribute);
     my $isEventHandler = $attribute->type->name eq "EventHandler";
-    my $isConstructor = $codeGenerator->IsConstructorType($attribute->type);
     my $isReplaceable = $attribute->extendedAttributes->{Replaceable};
 
-    my $needThrowScope = $needSecurityCheck || (!$hasCustomSetter && !$isEventHandler && !$isConstructor && !$isReplaceable);
+    my $needThrowScope = $needSecurityCheck || (!$hasCustomSetter && !$isEventHandler && !$isReplaceable);
 
     push(@$outputArray, "static inline bool ${attributeSetterBodyName}(" . join(", ", @signatureArguments) . ")\n");
     push(@$outputArray, "{\n");
@@ -5445,18 +5448,6 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "        return impl.setPropertyInternal(CSSProperty${propertyID}, WTFMove(nativeValue), false);\n");
         push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");
-    } elsif ($isConstructor) {
-        my $constructorType = $attribute->type->name;
-        $constructorType =~ s/Constructor$//;
-        # $constructorType ~= /LegacyFactoryFunction$/ indicates that it is LegacyFactoryFunction.
-        # We do not generate the header file for LegacyFactoryFunction of class XXXX,
-        # since we generate the LegacyFactoryFunction declaration into the header file of class XXXX.
-        if ($constructorType ne "any" and $constructorType !~ /LegacyFactoryFunction$/) {
-            AddToImplIncludes("JS" . $constructorType . ".h", $conditional);
-        }
-        my $id = $attribute->name;
-        push(@$outputArray, "    // Shadowing a built-in constructor.\n");
-        push(@$outputArray, "    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"${id}\"), strlen(\"${id}\")), value);\n");
     } elsif ($isReplaceable) {
         my $id = $attribute->name;
         push(@$outputArray, "    // Shadowing a built-in property.\n");
@@ -5560,6 +5551,7 @@ sub GenerateAttributeSetterDefinition
     my ($outputArray, $interface, $className, $attribute) = @_;
     
     return if IsReadonly($attribute);
+    return if $codeGenerator->IsConstructorType($attribute->type);
     return if IsJSBuiltin($interface, $attribute);
     
     my $conditional = $attribute->extendedAttributes->{Conditional};
