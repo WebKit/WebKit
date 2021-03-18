@@ -1757,7 +1757,7 @@ public:
     void grantAccessToPreferenceService();
 #endif
 
-    void setShouldFireEvents(bool);
+    void setIsTakingSnapshotsForApplicationSuspension(bool);
     void setNeedsDOMWindowResizeEvent();
 
     void isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&&);

@@ -605,7 +605,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     UpdateCORSDisablingPatterns(Vector<String> patterns)
 
-    SetShouldFireEvents(bool shouldFireEvents)
+    SetIsTakingSnapshotsForApplicationSuspension(bool isTakingSnapshotsForApplicationSuspension)
     SetNeedsDOMWindowResizeEvent()
 
     SetHasResourceLoadClient(bool has)

@@ -44,6 +44,8 @@ public:
     Quirks(Document&);
     ~Quirks();
 
+    bool shouldSilenceWindowResizeEvents() const;
+    bool shouldSilenceMediaQueryListChangeEvents() const;
     bool shouldIgnoreInvalidSignal() const;
     bool needsFormControlToBeMouseFocusable() const;
     bool needsAutoplayPlayPauseEvents() const;
