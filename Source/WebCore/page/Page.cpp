@@ -116,6 +116,7 @@
 #include "SVGImage.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptRunner.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollLatchingController.h"
 #include "ScrollingCoordinator.h"
@@ -1717,14 +1718,28 @@ void Page::prioritizeVisibleResources()
     forEachDocument([&] (Document& document) {
         toPrioritize.appendVector(document.cachedResourceLoader().visibleResourcesToPrioritize());
     });
+    
+    auto computeSchedulingMode = [&] {
+        auto& document = *mainFrame().document();
+        // Parsing generates resource loads.
+        if (document.parsing())
+            return LoadSchedulingMode::Prioritized;
+        
+        // Async script execution may generate more resource loads that benefit from prioritization.
+        if (document.scriptRunner().hasPendingScripts())
+            return LoadSchedulingMode::Prioritized;
+        
+        // We still haven't finished loading the visible resources.
+        if (!toPrioritize.isEmpty())
+            return LoadSchedulingMode::Prioritized;
+        
+        return LoadSchedulingMode::Direct;
+    };
+    
+    setLoadSchedulingMode(computeSchedulingMode());
 
-    if (toPrioritize.isEmpty()) {
-        if (!mainFrame().document()->parsing()) {
-            // All visible resources have been loaded and we are done with parsing. Stop scheduling.
-            setLoadSchedulingMode(LoadSchedulingMode::Direct);
-        }
+    if (toPrioritize.isEmpty())
         return;
-    }
 
     auto resourceLoaders = toPrioritize.map([](auto* resource) {
         return resource->loader();
