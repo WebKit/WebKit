@@ -1,3 +1,47 @@
+2021-03-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Refactor some gesture deferral logic to account for image extraction
+        https://bugs.webkit.org/show_bug.cgi?id=223400
+        <rdar://problem/75502285>
+
+        Reviewed by Tim Horton.
+
+        Refactor some logic around deferring gestures. See below for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+
+        Rename a few existing deferring gestures, to better reflect that the names are deferral reasons (i.e. touch
+        start, touch end, or image extraction), rather than the names of the things being deferred.
+
+        (-[WKContentView deferringGestures]):
+        (-[WKContentView _doneDeferringTouchStart:]):
+        (-[WKContentView _doneDeferringTouchEnd:]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+        (-[WKContentView _endImageExtractionGestureDeferral:]):
+        * UIProcess/ios/WKDeferringGestureRecognizer.h:
+
+        Add a property to indicate that the deferring gesture recognizer should immediately fail upon touchend.
+
+        * UIProcess/ios/WKDeferringGestureRecognizer.mm:
+        (-[WKDeferringGestureRecognizer touchesEnded:withEvent:]):
+        (-[WKDeferringGestureRecognizer endDeferral:]):
+        (-[WKDeferringGestureRecognizer setDefaultPrevented:]): Deleted.
+
+        Rename `-setDefaultPrevented:` to `-endDeferral:` to decouple this terminology from `Event.preventDefault()` in
+        bindings (which is important, now that we have a new deferrer that is not associated with touch events).
+        Additionally, change this take an `enum class` instead of a `BOOL` to help clarify the intent of the given flag.
+
+        * UIProcess/ios/WKImageExtractionGestureRecognizer.h:
+        * UIProcess/ios/WKImageExtractionGestureRecognizer.mm:
+        (-[WKImageExtractionGestureRecognizer setState:]):
+
+        Add support for a new image extraction gesture delegate method which informs the client that the gesture has
+        transitioned to Failed state.
+
 2021-03-17  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Some media-source tests fail/timeout when media in GPU Process is enabled

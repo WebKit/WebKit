@@ -246,6 +246,9 @@ enum class ProceedWithImageExtraction : bool {
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForSyntheticTapGestures;
+#if ENABLE(IMAGE_EXTRACTION)
+    RetainPtr<WKDeferringGestureRecognizer> _imageExtractionDeferringGestureRecognizer;
+#endif
     std::unique_ptr<WebKit::GestureRecognizerConsistencyEnforcer> _gestureRecognizerConsistencyEnforcer;
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
@@ -695,6 +698,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(APP_HIGHLIGHTS)
 - (void)setUpAppHighlightMenusIfNeeded;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+- (void)_endImageExtractionGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;
 #endif
 
 @end

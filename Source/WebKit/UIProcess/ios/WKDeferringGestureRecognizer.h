@@ -30,6 +30,7 @@
 namespace WebKit {
 
 enum class ShouldDeferGestures : bool { No, Yes };
+enum class ShouldPreventGestures : bool { No, Yes };
 
 } // namespace WebKit
 
@@ -45,8 +46,11 @@ enum class ShouldDeferGestures : bool { No, Yes };
 @interface WKDeferringGestureRecognizer : UIGestureRecognizer
 
 - (instancetype)initWithDeferringGestureDelegate:(id <WKDeferringGestureRecognizerDelegate>)deferringGestureDelegate;
-- (void)setDefaultPrevented:(BOOL)defaultPrevented;
+
 - (BOOL)shouldDeferGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
+- (void)endDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;
+
+@property (nonatomic) BOOL immediatelyFailsAfterTouchEnd;
 
 @end
 

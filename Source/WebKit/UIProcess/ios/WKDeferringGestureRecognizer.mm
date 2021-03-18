@@ -54,6 +54,9 @@
 {
     [super touchesEnded:touches withEvent:event];
 
+    if (self.immediatelyFailsAfterTouchEnd)
+        self.state = UIGestureRecognizerStateFailed;
+
     [_deferringGestureDelegate deferringGestureRecognizer:self didEndTouchesWithEvent:event];
 }
 
@@ -63,9 +66,9 @@
     self.state = UIGestureRecognizerStateFailed;
 }
 
-- (void)setDefaultPrevented:(BOOL)defaultPrevented
+- (void)endDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures
 {
-    if (defaultPrevented)
+    if (shouldPreventGestures == WebKit::ShouldPreventGestures::Yes)
         self.state = UIGestureRecognizerStateEnded;
     else
         self.state = UIGestureRecognizerStateFailed;

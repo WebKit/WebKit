@@ -51,8 +51,13 @@
     super.state = state;
 
     auto newState = self.state;
-    if (previousState != newState && newState == UIGestureRecognizerStateBegan)
+    if (previousState == newState)
+        return;
+
+    if (newState == UIGestureRecognizerStateBegan)
         [_imageExtractionDelegate imageExtractionGestureDidBegin:self];
+    else if (newState == UIGestureRecognizerStateFailed)
+        [_imageExtractionDelegate imageExtractionGestureDidFail:self];
 }
 
 @end

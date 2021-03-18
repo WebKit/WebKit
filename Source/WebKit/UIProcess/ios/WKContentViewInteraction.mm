@@ -774,22 +774,28 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
 
     _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchStartDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch start deferrer (immediate reset)"];
+    [_touchStartDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Deferrer for touch start (immediate reset)"];
 
     _touchStartDeferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchStartDeferringGestureRecognizerForDelayedResettableGestures setName:@"Touch start deferrer (delayed reset)"];
+    [_touchStartDeferringGestureRecognizerForDelayedResettableGestures setName:@"Deferrer for touch start (delayed reset)"];
 
     _touchStartDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchStartDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch start deferrer (synthetic tap)"];
+    [_touchStartDeferringGestureRecognizerForSyntheticTapGestures setName:@"Deferrer for touch start (synthetic tap)"];
 
     _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch end deferrer (immediate reset)"];
+    [_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Deferrer for touch end (immediate reset)"];
 
     _touchEndDeferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchEndDeferringGestureRecognizerForDelayedResettableGestures setName:@"Touch end deferrer (delayed reset)"];
+    [_touchEndDeferringGestureRecognizerForDelayedResettableGestures setName:@"Deferrer for touch end (delayed reset)"];
 
     _touchEndDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchEndDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch end deferrer (synthetic tap)"];
+    [_touchEndDeferringGestureRecognizerForSyntheticTapGestures setName:@"Deferrer for touch end (synthetic tap)"];
+
+#if ENABLE(IMAGE_EXTRACTION)
+    _imageExtractionDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_imageExtractionDeferringGestureRecognizer setName:@"Deferrer for image extraction"];
+    [_imageExtractionDeferringGestureRecognizer setImmediatelyFailsAfterTouchEnd:YES];
+#endif
 
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {
         gesture.delegate = self;
@@ -1760,9 +1766,12 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 
 - (NSArray<WKDeferringGestureRecognizer *> *)deferringGestures
 {
-    auto gestures = [NSMutableArray arrayWithCapacity:6];
+    auto gestures = [NSMutableArray arrayWithCapacity:7];
     [gestures addObjectsFromArray:self._touchStartDeferringGestures];
     [gestures addObjectsFromArray:self._touchEndDeferringGestures];
+#if ENABLE(IMAGE_EXTRACTION)
+    [gestures addObject:_imageExtractionDeferringGestureRecognizer.get()];
+#endif
     return gestures;
 }
 
@@ -1797,13 +1806,13 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 - (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures
 {
     for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
-        [gesture setDefaultPrevented:preventNativeGestures];
+        [gesture endDeferral:preventNativeGestures ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
 }
 
 - (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures
 {
     for (WKDeferringGestureRecognizer *gesture in self._touchEndDeferringGestures)
-        [gesture setDefaultPrevented:preventNativeGestures];
+        [gesture endDeferral:preventNativeGestures ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
 }
 
 - (BOOL)_isTouchStartDeferringGesture:(WKDeferringGestureRecognizer *)gesture
@@ -2667,7 +2676,7 @@ static Class tapAndAHalfRecognizerClass()
 
 #if ENABLE(IMAGE_EXTRACTION)
     if (_elementPendingImageExtraction && _positionInformation.elementContext == _elementPendingImageExtraction)
-        return NO;
+        return YES;
 #endif
 
     return _positionInformation.isSelectable;
@@ -2745,7 +2754,7 @@ static Class tapAndAHalfRecognizerClass()
 
 #if ENABLE(IMAGE_EXTRACTION)
     if (_elementPendingImageExtraction && _positionInformation.elementContext == _elementPendingImageExtraction)
-        return NO;
+        return YES;
 #endif
 
     // If we're currently focusing an editable element, only allow the selection to move within that focused element.
@@ -7616,6 +7625,14 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (gestureRecognizer == _touchEventGestureRecognizer)
         return NO;
 
+    BOOL isLoupeGesture = gestureRecognizer == [_textInteractionAssistant loupeGesture];
+    BOOL isTapAndAHalfGesture = [gestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()];
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (deferringGestureRecognizer == _imageExtractionDeferringGestureRecognizer)
+        return isLoupeGesture || isTapAndAHalfGesture || gestureRecognizer == [_textInteractionAssistant forcePressGesture];
+#endif
+
     auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
 #if USE(UICONTEXTMENU) && HAVE(LINK_PREVIEW)
         if (gesture == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
@@ -7627,10 +7644,10 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
             return YES;
 #endif
 
-        if ([gesture isKindOfClass:tapAndAHalfRecognizerClass()])
+        if (isTapAndAHalfGesture)
             return YES;
 
-        if (gesture == [_textInteractionAssistant loupeGesture])
+        if (isLoupeGesture)
             return YES;
 
         if ([gesture isKindOfClass:UITapGestureRecognizer.class]) {
@@ -9409,6 +9426,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(IMAGE_EXTRACTION)
+
+- (void)_endImageExtractionGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures
+{
+    [_imageExtractionDeferringGestureRecognizer endDeferral:shouldPreventGestures];
+}
 
 - (void)_doAfterPendingImageExtraction:(void(^)(WebKit::ProceedWithImageExtraction proceedWithImageExtraction))block
 {
