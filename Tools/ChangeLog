@@ -1,3 +1,16 @@
+2021-03-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL conformance test update script does not use min_version and max_version in all cases
+        https://bugs.webkit.org/show_bug.cgi?id=223376
+
+        Reviewed by Kenneth Russell.
+
+        Make the update script respect min_version and max_version when the version is specified
+        per test.
+
+        * Scripts/webkitpy/update_webgl_conformance_tests_lib/main.py:
+        (_parse_webgl_tests):
+
 2021-03-17  Alex Christensen  <achristensen@webkit.org>
 
         Make fast/images/missing-content-image-crash.html results consistent with internal build

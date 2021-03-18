@@ -165,8 +165,8 @@ def _parse_webgl_tests(test_list_root: Path, test_list: Path, min_version: Versi
         else:
             yield _WebGLTest(
                 (prefix / test_name).relative_to(test_list_root),
-                min_version,
-                max_version,
+                test_min_version,
+                test_max_version,
             )
 
 
