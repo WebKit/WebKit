@@ -2741,7 +2741,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     if (auto* renderer = element.renderer()) {
         bool shouldCollectImagePositionInformation = renderer->isRenderImage();
 #if ENABLE(IMAGE_EXTRACTION)
-        if (HTMLElement::isImageOverlayText(*innerNonSharedNode))
+        if (innerNonSharedNode && HTMLElement::isImageOverlayText(*innerNonSharedNode))
             shouldCollectImagePositionInformation = false;
 #else
         UNUSED_PARAM(innerNonSharedNode);
