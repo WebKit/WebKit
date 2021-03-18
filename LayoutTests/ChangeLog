@@ -1,3 +1,34 @@
+2021-03-18  Chris Gambrell  <cgambrell@apple.com>
+
+        [ macOS Wk2 ] http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.php is constantly text failing
+        https://bugs.webkit.org/show_bug.cgi?id=223079
+        <rdar://problem/75323779>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked.html:
+        * http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect.html:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.php:
+        * http/tests/security/contentSecurityPolicy/resources/go-to-echo-report.py:
+        * http/tests/security/contentSecurityPolicy/resources/redirect.pl:
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-allowed.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-importScript-redirect-cross-origin-blocked.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-allowed.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-allowed.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-blocked.py:
+        * http/tests/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.py: Added.
+        * http/tests/security/no-javascript-refresh.py:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect-expected.txt:
+        * platform/win/http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * platform/win/http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect-expected.txt:
+
 2021-03-18  Robert Jenner  <jenner@apple.com>
 
         [ macOS Wk2 ARM64 ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html is a flakey timeout

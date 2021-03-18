@@ -4,8 +4,8 @@ import sys
 
 sys.stdout.write(
     'status: 200\r\n'
-    'Refresh: 0;URL=javascript:window.top.location="about:blank"\r\n'
-    'Content-Type: text/html\r\n\r\n'
+    'Content-Type: text/html\r\n'
+    'Refresh: 0;URL=javascript:window.top.location="about:blank"\r\n\r\n'
     '<!DOCTYPE html>\n'
     '<body>\n'
     '<script>\n'
