@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/gain-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/input-count-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/input-length-processor.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/invalid-param-array-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/one-pole-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/option-test-processor.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/param-size-processor.js

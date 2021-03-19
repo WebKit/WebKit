@@ -57,7 +57,8 @@ PASS   node1.channelCountMode is equal to max.
 PASS   node1.channelInterpretation is equal to speakers.
 PASS   new OscillatorNode(c, {"type":"sine","periodicWave":{}}) did not throw an exception.
 PASS   new OscillatorNode(c, {"type":"custom"}) threw InvalidStateError: "Must provide periodicWave when using custom type.".
-PASS   new OscillatorNode(, {"type":"custom","periodicWave":{}}) did not throw an exception.
-PASS < [constructor options] All assertions passed. (total 10 assertions)
+PASS   new OscillatorNode(c, {"type":"custom","periodicWave":{}}) did not throw an exception.
+PASS   new OscillatorNode(c, {periodicWave: null} threw TypeError: "Type error".
+PASS < [constructor options] All assertions passed. (total 11 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

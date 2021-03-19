@@ -47,6 +47,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/nan-param.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-exponentialRampToValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-linearRampToValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setTargetAtTime.html
