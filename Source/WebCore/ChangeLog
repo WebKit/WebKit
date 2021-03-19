@@ -1,3 +1,36 @@
+2021-03-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Make {main|cross}SizeForPercentageResolution() return booleans instead of actual sizes
+        https://bugs.webkit.org/show_bug.cgi?id=223377
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        These two methods were only called by childLogicalHeightForPercentageResolution() and they either returned
+        WTF::nullopt or the overridingContentLogicalHeight(). We could simplify a bit the code by returning a boolean
+        which means whether the overriding content logical height should be used to resolve a percentage or not. Apart
+        from changing the return value we're also improving the naming so it becomes obvious that we are dealing with
+        flex items and not the flex container.
+
+        We're also removing some comments in those methods that were not really accurate.
+
+        No new tests as there is no change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::availableLogicalHeightForPercentageComputation const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing const):
+        (WebCore::RenderBox::availableLogicalHeightUsing const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight const):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::useChildOverridingCrossSizeForPercentageResolution): Renamed from crossSizeForPercentageResolution.
+        (WebCore::RenderFlexibleBox::useChildOverridingMainSizeForPercentageResolution): Renamed from mainSizeForPercentageResolution.
+        (WebCore::RenderFlexibleBox::useChildOverridingLogicalHeightForPercentageResolution): Renamed from childLogicalHeightForPercentageResolution.
+        (WebCore::RenderFlexibleBox::crossSizeForPercentageResolution): Deleted.
+        (WebCore::RenderFlexibleBox::mainSizeForPercentageResolution): Deleted.
+        (WebCore::RenderFlexibleBox::childLogicalHeightForPercentageResolution): Deleted.
+        * rendering/RenderFlexibleBox.h:
+
 2021-03-19  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix WPE debug build after r274695

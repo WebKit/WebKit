@@ -1234,42 +1234,32 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
     return std::max(0_lu, childSize);
 }
     
-Optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(const RenderBox& child)
+bool RenderFlexibleBox::useChildOverridingCrossSizeForPercentageResolution(const RenderBox& child)
 {
     ASSERT(mainAxisIsChildInlineAxis(child));
     if (alignmentForChild(child) != ItemPosition::Stretch)
-        return WTF::nullopt;
+        return false;
 
-    // Here we implement https://drafts.csswg.org/css-flexbox/#algo-stretch
-    if (child.hasOverridingLogicalHeight())
-        return child.overridingContentLogicalHeight();
-
-    // We don't currently implement the optimization from
-    // https://drafts.csswg.org/css-flexbox/#definite-sizes case 1. While that
-    // could speed up a specialized case, it requires determining if we have a
-    // definite size, which itself is not cheap. We can consider implementing it
-    // at a later time. (The correctness is ensured by redoing layout in
-    // applyStretchAlignmentToChild)
-    return WTF::nullopt;
+    return child.hasOverridingLogicalHeight();
 }
 
-Optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(const RenderBox& child)
+bool RenderFlexibleBox::useChildOverridingMainSizeForPercentageResolution(const RenderBox& child)
 {
     ASSERT(!mainAxisIsChildInlineAxis(child));
     // This function implements section 9.8. Definite and Indefinite Sizes, case 2) of the flexbox spec.
     // If the flex container has a definite main size the flex item post-flexing main size is also treated
     // as definite. We make up a percentage to check whether we have a definite size.
     if (!childMainSizeIsDefinite(child, Length(0, LengthType::Percent)))
-        return WTF::nullopt;
+        return false;
 
-    return child.hasOverridingLogicalHeight() ? Optional<LayoutUnit>(child.overridingContentLogicalHeight()) : WTF::nullopt;
+    return child.hasOverridingLogicalHeight();
 }
 
-Optional<LayoutUnit> RenderFlexibleBox::childLogicalHeightForPercentageResolution(const RenderBox& child)
+bool RenderFlexibleBox::useChildOverridingLogicalHeightForPercentageResolution(const RenderBox& child)
 {
     if (mainAxisIsChildInlineAxis(child))
-        return crossSizeForPercentageResolution(child);
-    return mainSizeForPercentageResolution(child);
+        return useChildOverridingCrossSizeForPercentageResolution(child);
+    return useChildOverridingMainSizeForPercentageResolution(child);
 }
 
 LayoutUnit RenderFlexibleBox::adjustChildSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& child, LayoutUnit childSize)

@@ -69,7 +69,7 @@ public:
 
     virtual bool isFlexibleBoxImpl() const { return false; };
     
-    Optional<LayoutUnit> childLogicalHeightForPercentageResolution(const RenderBox&);
+    bool useChildOverridingLogicalHeightForPercentageResolution(const RenderBox&);
     
     void clearCachedMainSizeForChild(const RenderBox& child);
     
@@ -156,8 +156,8 @@ private:
     Overflow mainAxisOverflowForChild(const RenderBox& child) const;
     Overflow crossAxisOverflowForChild(const RenderBox& child) const;
     void cacheChildMainSize(const RenderBox& child);
-    Optional<LayoutUnit> crossSizeForPercentageResolution(const RenderBox&);
-    Optional<LayoutUnit> mainSizeForPercentageResolution(const RenderBox&);
+    bool useChildOverridingCrossSizeForPercentageResolution(const RenderBox&);
+    bool useChildOverridingMainSizeForPercentageResolution(const RenderBox&);
 
     void layoutFlexItems(bool relayoutChildren);
     LayoutUnit autoMarginOffsetInMainAxis(const Vector<FlexItem>&, LayoutUnit& availableFreeSpace);

@@ -275,11 +275,8 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
     if (logicalHeightLength.isPercentOrCalculated() && cb && isBox())
         cb->addPercentHeightDescendant(*const_cast<RenderBox*>(downcast<RenderBox>(this)));
 
-    if (thisBox && thisBox->isFlexItem()) {
-        auto& flexBox = downcast<RenderFlexibleBox>(*parent());
-        if (flexBox.childLogicalHeightForPercentageResolution(*thisBox))
-            return false;
-    }
+    if (thisBox && thisBox->isFlexItem() && downcast<RenderFlexibleBox>(*parent()).useChildOverridingLogicalHeightForPercentageResolution(*thisBox))
+        return false;
     
     if (thisBox && thisBox->isGridItem() && thisBox->hasOverridingContainingBlockContentLogicalHeight())
         return thisBox->overridingContainingBlockContentLogicalHeight() == WTF::nullopt;

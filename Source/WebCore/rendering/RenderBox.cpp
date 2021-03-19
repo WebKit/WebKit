@@ -3311,8 +3311,8 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
         if (is<RenderBlock>(container)) {
             auto* block = downcast<RenderBlock>(container);
             block->addPercentHeightDescendant(*const_cast<RenderBox*>(this));
-            if (block->isFlexItem())
-                stretchedHeight = downcast<RenderFlexibleBox>(block->parent())->childLogicalHeightForPercentageResolution(*block);
+            if (block->isFlexItem() && downcast<RenderFlexibleBox>(block->parent())->useChildOverridingLogicalHeightForPercentageResolution(*block))
+                stretchedHeight = block->overridingContentLogicalHeight();
             else if (block->isGridItem() && block->hasOverridingLogicalHeight() && !hasPerpendicularContainingBlock)
                 stretchedHeight = block->overridingContentLogicalHeight();
         }
@@ -3384,12 +3384,8 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
         return logicalHeight() - borderAndPaddingLogicalHeight();
     }
 
-    if (isFlexItem()) {
-        auto& flexBox = downcast<RenderFlexibleBox>(*parent());
-        auto stretchedHeight = flexBox.childLogicalHeightForPercentageResolution(*this);
-        if (stretchedHeight)
-            return stretchedHeight.value();
-    }
+    if (isFlexItem() && downcast<RenderFlexibleBox>(*parent()).useChildOverridingLogicalHeightForPercentageResolution(*this))
+        return overridingContentLogicalHeight();
 
     if (shouldComputeLogicalHeightFromAspectRatio())
         return blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit(style().logicalAspectRatio()), style().boxSizingForAspectRatio(), logicalWidth());

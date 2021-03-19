@@ -3207,12 +3207,8 @@ Optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComputation
     // that can be used for any percentage computations.
     bool isOutOfFlowPositionedWithSpecifiedHeight = isOutOfFlowPositioned() && (!styleToUse.logicalHeight().isAuto() || (!styleToUse.logicalTop().isAuto() && !styleToUse.logicalBottom().isAuto()));
     
-    Optional<LayoutUnit> stretchedFlexHeight;
-    if (isFlexItem())
-        stretchedFlexHeight = downcast<RenderFlexibleBox>(parent())->childLogicalHeightForPercentageResolution(*this);
-    
-    if (stretchedFlexHeight)
-        availableHeight = stretchedFlexHeight;
+    if (isFlexItem() && downcast<RenderFlexibleBox>(parent())->useChildOverridingLogicalHeightForPercentageResolution(*this))
+        availableHeight = overridingContentLogicalHeight();
     else if (isGridItem() && hasOverridingLogicalHeight())
         availableHeight = overridingContentLogicalHeight();
     else if (styleToUse.logicalHeight().isFixed()) {
