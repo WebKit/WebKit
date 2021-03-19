@@ -38,11 +38,14 @@
 #import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCV.h"
 #endif
+
+WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
 
 namespace WebCore {
 
@@ -127,9 +130,19 @@ static bool needsEAGLOnMac()
 }
 #endif
 
+static bool isANGLEAvailable()
+{
+    return !!EGL_Initialize;
+}
 
 RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attrs, HostWindow* hostWindow)
 {
+    // If ANGLE is not loaded, we can fail immediately.
+    if (!isANGLEAvailable()) {
+        LOG(WebGL, "ANGLE shared library was not loaded. Can't make GraphicsContextGL.");
+        return nullptr;
+    }
+
     // Make space for the incoming context if we're full.
     GraphicsContextGLOpenGLManager::sharedManager().recycleContextIfNecessary();
     if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())

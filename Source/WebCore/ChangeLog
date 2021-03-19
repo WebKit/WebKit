@@ -1,3 +1,22 @@
+2021-03-19  Dean Jackson  <dino@apple.com>
+
+        Link against the ANGLE Shared Library
+        https://bugs.webkit.org/show_bug.cgi?id=218539
+        <rdar://problem/69062211>
+
+        Reviewed by Tim Horton.
+
+        Weak link against libANGLE-shared.dylib.
+
+        * Configurations/WebCore.xcconfig:
+        * Configurations/WebCoreTestSupport.xcconfig:
+        * Sources.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::isANGLEAvailable):
+        (WebCore::GraphicsContextGLOpenGL::create):
+
 2021-03-19  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed. WPE Debug build fix after r274695

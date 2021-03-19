@@ -1923,7 +1923,6 @@ platform/encryptedmedia/clearkey/CDMClearKey.cpp
 platform/gamepad/EmptyGamepadProvider.cpp
 platform/gamepad/GamepadConstants.cpp
 platform/gamepad/GamepadProvider.cpp
-platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/AnimationFrameRate.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
