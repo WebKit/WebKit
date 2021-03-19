@@ -4653,6 +4653,7 @@ fast/text/letter-spacing-produces-nan-width.html [ Timeout ]
 # https://bugs.webkit.org/show_bug.cgi?id=221569
 crypto/crypto-random-values-oom.html [ Skip ]
 
+# https://bugs.webkit.org/show_bug.cgi?id=223456
 fast/events/selectstart-by-drag.html [ Failure Pass ]
 fast/text/selection-is-prevent-defaulted.html [ Failure Pass ]
 
@@ -4668,8 +4669,18 @@ http/tests/misc/webtiming-ssl.py [ Failure ]
 http/tests/security/contentSecurityPolicy/media-src-blocked.html [ Failure ]
 security/contentSecurityPolicy/blocks-video.html [ Failure ]
 
+animations/z-index-in-keyframe.html [ ImageOnlyFailure ]
+fast/filter-image/clipped-filter.html [ ImageOnlyFailure ]
 fast/inline/hyphenation-when-overflow-wrap-is-break-word.html [ ImageOnlyFailure ]
+fast/overflow/animation-recompute-overflow.html [ ImageOnlyFailure ]
 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
+http/tests/css/filters-on-iframes-transform.html [ ImageOnlyFailure ]
+imported/blink/compositing/repaint/end-of-opacity-transition.html [ ImageOnlyFailure ]
+webanimations/accelerated-animation-renderer-change.html [ ImageOnlyFailure ]
+webanimations/opacity-animation.html [ ImageOnlyFailure ]
+webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated.html [ ImageOnlyFailure ]
+webanimations/relative-ordering-of-translate-and-scale-properties-accelerated.html [ ImageOnlyFailure ]
+webanimations/transform-transition-with-delay-on-forced-layer-with-transform.html [ ImageOnlyFailure ]
 
 fast/dom/focus-shift-crash.html [ Timeout ]
 fast/events/wheel/redispatched-wheel-event.html [ Timeout ]
