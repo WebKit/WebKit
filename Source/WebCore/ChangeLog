@@ -1,3 +1,10 @@
+2021-03-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix WPE debug build after r274695
+
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::OpenXRDevice::submitFrame):
+
 2021-03-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         WebCore::ThreadGlobalData should not initialize fields eagerly

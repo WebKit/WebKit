@@ -259,12 +259,12 @@ void OpenXRDevice::submitFrame(Vector<Device::Layer>&& layers)
             for (auto& layer : layers) {
                 auto it = m_layers.find(layer.handle);
                 if (it == m_layers.end()) {
-                    LOG("Didn't find a OpenXRLayer with %d handle", layer.handle);
+                    LOG(XR, "Didn't find a OpenXRLayer with %d handle", layer.handle);
                     continue;
                 }
                 auto header = it->value->endFrame(layer, m_viewSpace, m_frameViews);
                 if (!header) {
-                    LOG("endFrame() call failed in OpenXRLayer with %d handle", layer.handle());
+                    LOG(XR, "endFrame() call failed in OpenXRLayer with %d handle", layer.handle());
                     continue;
                 }
 
