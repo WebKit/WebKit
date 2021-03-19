@@ -1,3 +1,31 @@
+2021-03-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebCore::ThreadGlobalData should not initialize fields eagerly
+        https://bugs.webkit.org/show_bug.cgi?id=223481
+
+        Reviewed by Chris Dumez.
+
+        ThreadGlobalData is used in various cases. For example, WebCore::Timer uses it, and
+        this is even also used in GPUProcess. We observed something (e.g. EventNames, QualifiedNameCache etc.)
+        is initialized even in GPUProcess just because GPUProcess's audio stack uses WebCore::Timer.
+
+        This patch makes these fields lazily-allocated to avoid initializing eagerly in the threads that
+        are not interested in DOM etc.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::initializeCachedResourceRequestInitiators):
+        (WebCore::ThreadGlobalData::initializeEventNames):
+        (WebCore::ThreadGlobalData::initializeQualifiedNameCache):
+        (WebCore::ThreadGlobalData::initializeMimeTypeRegistryThreadGlobalData):
+        (WebCore::ThreadGlobalData::mimeTypeRegistryThreadGlobalData): Deleted.
+        * platform/ThreadGlobalData.h:
+        (WebCore::ThreadGlobalData::ThreadGlobalData::cachedResourceRequestInitiators):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::eventNames):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::qualifiedNameCache):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::mimeTypeRegistryThreadGlobalData):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::threadTimers):
+
 2021-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Attempt to fix the macOS build after r274695.

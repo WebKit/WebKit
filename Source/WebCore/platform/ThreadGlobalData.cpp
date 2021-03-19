@@ -41,14 +41,11 @@
 namespace WebCore {
 
 ThreadGlobalData::ThreadGlobalData()
-    : m_cachedResourceRequestInitiators(makeUnique<CachedResourceRequestInitiators>())
-    , m_eventNames(EventNames::create())
-    , m_threadTimers(makeUnique<ThreadTimers>())
-    , m_qualifiedNameCache(makeUnique<QualifiedNameCache>())
+    : m_threadTimers(makeUnique<ThreadTimers>())
+    , m_cachedConverterICU(makeUnique<ICUConverterWrapper>())
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
 #endif
-    , m_cachedConverterICU(makeUnique<ICUConverterWrapper>())
 {
     // This constructor will have been called on the main thread before being called on
     // any other thread, and is only called once per thread - this makes this a convenient
@@ -118,11 +115,28 @@ ThreadGlobalData& threadGlobalData()
 
 #endif
 
-const MIMETypeRegistryThreadGlobalData& ThreadGlobalData::mimeTypeRegistryThreadGlobalData()
+void ThreadGlobalData::initializeCachedResourceRequestInitiators()
 {
-    if (UNLIKELY(!m_MIMETypeRegistryThreadGlobalData))
-        m_MIMETypeRegistryThreadGlobalData = MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData();
-    return *m_MIMETypeRegistryThreadGlobalData;
+    ASSERT(!m_cachedResourceRequestInitiators);
+    m_cachedResourceRequestInitiators = makeUnique<CachedResourceRequestInitiators>();
+}
+
+void ThreadGlobalData::initializeEventNames()
+{
+    ASSERT(!m_eventNames);
+    m_eventNames = EventNames::create();
+}
+
+void ThreadGlobalData::initializeQualifiedNameCache()
+{
+    ASSERT(!m_qualifiedNameCache);
+    m_qualifiedNameCache = makeUnique<QualifiedNameCache>();
+}
+
+void ThreadGlobalData::initializeMimeTypeRegistryThreadGlobalData()
+{
+    ASSERT(!m_MIMETypeRegistryThreadGlobalData);
+    m_MIMETypeRegistryThreadGlobalData = MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData();
 }
 
 } // namespace WebCore

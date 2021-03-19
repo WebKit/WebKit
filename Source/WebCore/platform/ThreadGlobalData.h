@@ -57,11 +57,32 @@ public:
     WEBCORE_EXPORT ~ThreadGlobalData();
     void destroy(); // called on workers to clean up the ThreadGlobalData before the thread exits.
 
-    const CachedResourceRequestInitiators& cachedResourceRequestInitiators() { return *m_cachedResourceRequestInitiators; }
-    EventNames& eventNames() { return *m_eventNames; }
-    ThreadTimers& threadTimers() { return *m_threadTimers; }
-    QualifiedNameCache& qualifiedNameCache() { return *m_qualifiedNameCache; }
+    const CachedResourceRequestInitiators& cachedResourceRequestInitiators()
+    {
+        if (UNLIKELY(!m_cachedResourceRequestInitiators))
+            initializeCachedResourceRequestInitiators();
+        return *m_cachedResourceRequestInitiators;
+    }
+    EventNames& eventNames()
+    {
+        if (UNLIKELY(!m_eventNames))
+            initializeEventNames();
+        return *m_eventNames;
+    }
+    QualifiedNameCache& qualifiedNameCache()
+    {
+        if (UNLIKELY(!m_qualifiedNameCache))
+            initializeQualifiedNameCache();
+        return *m_qualifiedNameCache;
+    }
+    const MIMETypeRegistryThreadGlobalData& mimeTypeRegistryThreadGlobalData()
+    {
+        if (UNLIKELY(!m_MIMETypeRegistryThreadGlobalData))
+            initializeMimeTypeRegistryThreadGlobalData();
+        return *m_MIMETypeRegistryThreadGlobalData;
+    }
 
+    ThreadTimers& threadTimers() { return *m_threadTimers; }
     ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
 
     JSC::JSGlobalObject* currentState() const { return m_currentState; }
@@ -74,23 +95,25 @@ public:
     bool isInRemoveAllEventListeners() const { return m_isInRemoveAllEventListeners; }
     void setIsInRemoveAllEventListeners(bool value) { m_isInRemoveAllEventListeners = value; }
 
-    const MIMETypeRegistryThreadGlobalData& mimeTypeRegistryThreadGlobalData();
-
 private:
+    WEBCORE_EXPORT void initializeCachedResourceRequestInitiators();
+    WEBCORE_EXPORT void initializeEventNames();
+    WEBCORE_EXPORT void initializeQualifiedNameCache();
+    WEBCORE_EXPORT void initializeMimeTypeRegistryThreadGlobalData();
+
     std::unique_ptr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
     std::unique_ptr<EventNames> m_eventNames;
     std::unique_ptr<ThreadTimers> m_threadTimers;
     std::unique_ptr<QualifiedNameCache> m_qualifiedNameCache;
     JSC::JSGlobalObject* m_currentState { nullptr };
+    std::unique_ptr<ICUConverterWrapper> m_cachedConverterICU;
+    std::unique_ptr<MIMETypeRegistryThreadGlobalData> m_MIMETypeRegistryThreadGlobalData;
 
 #ifndef NDEBUG
     bool m_isMainThread;
 #endif
 
     bool m_isInRemoveAllEventListeners { false };
-
-    std::unique_ptr<ICUConverterWrapper> m_cachedConverterICU;
-    std::unique_ptr<MIMETypeRegistryThreadGlobalData> m_MIMETypeRegistryThreadGlobalData;
 
     WEBCORE_EXPORT friend ThreadGlobalData& threadGlobalData();
 };
