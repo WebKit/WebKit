@@ -1,1 +1,22 @@
+2021-03-19  Antti Koivisto  <antti@apple.com>
+
+        Reduce the number of allowed parallel low priority resource loads before visual completion
+        https://bugs.webkit.org/show_bug.cgi?id=223448
+
+        Reviewed by Geoff Garen.
+
+        More aggressive scheduling during early page load seems like a win.
+
+        * NetworkProcess/NetworkLoadScheduler.cpp:
+        
+        Reduce from six to two.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+
+        This revealed an issue where allowing scheduling for synchronous XHR can end up in a deadlock
+        (since the web process won't be able to process redirect requests).
+        
+        Tested by imported/w3c/web-platform-tests/xhr/responsexml-document-properties.htm.
+
 == Rolled over to ChangeLog-2021-03-18 ==
