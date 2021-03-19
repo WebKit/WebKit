@@ -1,3 +1,29 @@
+2021-03-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening yet more consistent failures
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/webgl/webgl-allow-shared-expected.txt: Added with
+        webgl2 failures, to avoid missihg the webgl checks.
+        * platform/gtk/TestExpectations: A bunch of ruby tests were marked as
+        very old failures but needed only to be rebaselined.
+        * platform/gtk/fast/ruby/nested-ruby-expected.txt:
+        * platform/gtk/fast/ruby/ruby-beforeafter-expected.txt:
+        * platform/gtk/fast/ruby/ruby-empty-rt-expected.txt:
+        * platform/gtk/fast/ruby/ruby-runs-spans-expected.txt:
+        * platform/gtk/fast/ruby/ruby-trailing-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-rt-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-text1-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-text2-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-text3-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-remove-rt1-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-remove-rt2-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-remove-text1-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-remove-text2-expected.txt:
+        * platform/wpe/fast/ruby/rubyDOM-remove-rt1-expected.txt:
+
 2021-03-18  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Update strings and icons in the file upload panel

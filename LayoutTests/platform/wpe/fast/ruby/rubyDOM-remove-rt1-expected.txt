@@ -24,8 +24,9 @@ layer at (0,0) size 800x600
               RenderText {#text} at (34,0) size 46x17
                 text run at (34,0) width 46: "HTML"
           RenderRubyRun (anonymous) at (264,10) size 9x18
-            RenderText {#text} at (0,0) size 8x17
-              text run at (0,0) width 8: "5"
+            RenderRubyBase (anonymous) at (0,0) size 8x18
+              RenderText {#text} at (0,0) size 8x17
+                text run at (0,0) width 8: "5"
         RenderText {#text} at (272,10) size 37x17
           text run at (272,10) width 37: " spec."
       RenderBlock {P} at (0,164) size 784x28
