@@ -1014,6 +1014,7 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html [ Failure ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
+webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure ]
 
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--cover--height.html [ Pass ]
 

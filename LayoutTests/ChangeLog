@@ -1,3 +1,10 @@
+2021-03-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Mark MediaStream-MediaElement-srcObject.https.html as failure.
+
+        * platform/glib/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+
 2021-03-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Add WebGL 1.0.4 and 2.0.1 test files to the repository
