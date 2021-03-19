@@ -3465,6 +3465,9 @@ webkit.org/b/220753 webgl/conformance/extensions/webgl-multi-draw.html [ Pass Fa
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ]
 fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
 
+# WebGL conformance test suite 1.0.x is skipped until 1.0.3 is retired.
+webgl/1.0.x [ Skip ]
+
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]
 
