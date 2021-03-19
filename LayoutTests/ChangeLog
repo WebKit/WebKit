@@ -1,3 +1,7 @@
+2021-03-19  Ruben Turcios  <rubent_22@apple.com>
+
+        Revert r274596. rdar://problem/75635768
+
 2021-03-18  Youenn Fablet  <youenn@apple.com>
 
         Geolocation API does not work in WKWebView with custom URL scheme handler
