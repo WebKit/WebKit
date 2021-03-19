@@ -1,3 +1,14 @@
+2021-03-19  Jer Noble  <jer.noble@apple.com>
+
+        Many media/media-fragments/ tests are crashing due to other tests that run before them.
+        https://bugs.webkit.org/show_bug.cgi?id=223277
+        <rdar://problem/75492360>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2021-03-17  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Use system colors for the new appearance

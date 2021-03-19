@@ -809,6 +809,77 @@ static bool willUseWebMFormatReaderForType(const String& type)
 #endif
 }
 
+static bool hasBrokenFragmentSupport()
+{
+#if PLATFORM(MAC)
+    // On some versions of macOS, Photos.framework has overriden utility methods from AVFoundation that cause
+    // a exception to be thrown when parsing fragment identifiers from a URL. Their implementation requires
+    // an even number of components when splitting the fragment identifier with separator characters ['&','='].
+    // Work around this broken implementation by pre-parsing the fragment and ensuring that it meets their
+    // criteria. Problematic strings from the TC0051.html test include "t=3&", and this problem generally is
+    // with subtrings between the '&' character not including an equal sign.
+    static bool hasBrokenFragmentSupport = false;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        @try {
+            auto selector = NSSelectorFromString(@"isURLForAssetInCollection:");
+            auto theClass = PAL::getAVAssetCollectionClass();
+            if (![theClass respondsToSelector:selector])
+                return;
+            [theClass performSelector:selector withObject:[NSURL URLWithString:@"file:///invalid-file.mp4#t=3&"]];
+        } @catch (NSException *exception) {
+            hasBrokenFragmentSupport = true;
+        }
+    });
+    return hasBrokenFragmentSupport;
+#else
+    return false;
+#endif
+}
+
+static URL conformFragmentIdentifierForURL(const URL& url)
+{
+#if PLATFORM(MAC)
+    ASSERT(hasBrokenFragmentSupport());
+
+    auto hasInvalidNumberOfEqualCharacters = [](const StringView& fragmentParameter) {
+        auto results = fragmentParameter.splitAllowingEmptyEntries('=');
+        auto iterator = results.begin();
+        return iterator == results.end() || ++iterator == results.end() || ++iterator != results.end();
+    };
+
+    StringBuilder replacementFragmentIdentifierBuilder;
+    bool firstParameter = true;
+    bool hasInvalidFragmentIdentifier = false;
+
+    for (auto fragmentParameter : url.fragmentIdentifier().splitAllowingEmptyEntries('&')) {
+        if (hasInvalidNumberOfEqualCharacters(fragmentParameter)) {
+            hasInvalidFragmentIdentifier = true;
+            continue;
+        }
+        if (!firstParameter)
+            replacementFragmentIdentifierBuilder.append('&');
+        else
+            firstParameter = false;
+        replacementFragmentIdentifierBuilder.append(fragmentParameter);
+    }
+
+    if (!hasInvalidFragmentIdentifier)
+        return url;
+
+    URL validURL = url;
+    if (replacementFragmentIdentifierBuilder.isEmpty())
+        validURL.removeFragmentIdentifier();
+    else
+        validURL.setFragmentIdentifier(replacementFragmentIdentifierBuilder.toString());
+
+    return validURL;
+#else
+    ASSERT_NOT_REACHED();
+    return url;
+#endif
+}
+
 void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, RetainPtr<NSMutableDictionary> options)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -900,7 +971,12 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     if (willUseWebMFormatReader)
         registerFormatReaderIfNecessary();
 
-    NSURL *cocoaURL = canonicalURL(url);
+    NSURL *cocoaURL = nil;
+    if (hasBrokenFragmentSupport() && url.hasFragmentIdentifier())
+        cocoaURL = canonicalURL(conformFragmentIdentifierForURL(url));
+    else
+        cocoaURL = canonicalURL(url);
+
     m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
 
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
