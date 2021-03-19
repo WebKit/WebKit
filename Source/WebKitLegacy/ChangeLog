@@ -1,3 +1,15 @@
+2021-03-19  Per Arne  <pvollan@apple.com>
+
+        [Win] Fix build issue
+        https://bugs.webkit.org/show_bug.cgi?id=223451
+        <rdar://75545172>
+
+        Reviewed by Brent Fulgham.
+
+        Specify that WebKitLegacy links WebCore and PAL statically, since the correctness of the WEBCORE_EXPORT macro depends on that.
+
+        * PlatformWin.cmake:
+
 2021-03-11  Chris Dumez  <cdumez@apple.com>
 
         Introduce ensureOnMainThread()
