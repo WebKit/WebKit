@@ -1,3 +1,13 @@
+2021-03-19  Cameron McCormack  <heycam@apple.com>
+
+        Anonymous table rows do not collapse if there are any other non-anonymous table row siblings
+        https://bugs.webkit.org/show_bug.cgi?id=223490
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/table/table-anonymous-row-collapse-expected.html: Added.
+        * fast/table/table-anonymous-row-collapse.html: Added.
+
 2021-03-19  Jer Noble  <jer.noble@apple.com>
 
         Many media/media-fragments/ tests are crashing due to other tests that run before them.

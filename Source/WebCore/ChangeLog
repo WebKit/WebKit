@@ -1,3 +1,27 @@
+2021-03-19  Cameron McCormack  <heycam@apple.com>
+
+        Anonymous table rows do not collapse if there are any other non-anonymous table row siblings.
+        https://bugs.webkit.org/show_bug.cgi?id=223490
+
+        Reviewed by Zalan Bujtas.
+
+        Currently, when a RenderTableRow is detached from its parent, we will
+        check whether all of the remaining RenderTableRow siblings are anonymous
+        before deciding to merge them.  This means that if removing the
+        RenderTableRow would produce a sequence of anonymous RenderTableRows
+        that could be collapsed, but we have some other non-anonymous
+        RenderTableRow as a sibling, then we'll incorrectly skip the collapsing.
+
+        Instead we should look only to the previous and next sibling, and
+        collapse them together if they're both anonymous.
+
+        Test: fast/table/table-anonymous-row-collapse.html
+
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows):
+        Change from requiring all siblings after the detachment to be anonymous, to
+        looking only at the previous and following siblings.
+
 2021-03-19  Jer Noble  <jer.noble@apple.com>
 
         Many media/media-fragments/ tests are crashing due to other tests that run before them.

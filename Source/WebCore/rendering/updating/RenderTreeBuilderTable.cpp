@@ -253,32 +253,20 @@ void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(RenderTabl
     if (!section)
         return;
 
-    // All siblings generated?
-    for (auto* current = section->firstRow(); current; current = current->nextRow()) {
-        if (current == &row)
-            continue;
-        if (!current->isAnonymous())
-            return;
+    auto* before = row.previousRow();
+    if (!before)
+        return;
+
+    auto* after = row.nextRow();
+    if (!after)
+        return;
+
+    if (before->isAnonymous() && after->isAnonymous()) {
+        m_builder.moveAllChildren(*after, *before, RenderTreeBuilder::NormalizeAfterInsertion::No);
+        auto toDestroy = m_builder.detach(*section, *after);
     }
 
-    RenderTableRow* rowToInsertInto = nullptr;
-    auto* currentRow = section->firstRow();
-    while (currentRow) {
-        if (currentRow == &row) {
-            currentRow = currentRow->nextRow();
-            continue;
-        }
-        if (!rowToInsertInto) {
-            rowToInsertInto = currentRow;
-            currentRow = currentRow->nextRow();
-            continue;
-        }
-        m_builder.moveAllChildren(*currentRow, *rowToInsertInto, RenderTreeBuilder::NormalizeAfterInsertion::No);
-        auto toDestroy = m_builder.detach(*section, *currentRow);
-        currentRow = currentRow->nextRow();
-    }
-    if (rowToInsertInto)
-        rowToInsertInto->setNeedsLayout();
+    before->setNeedsLayout();
 }
 
 }
