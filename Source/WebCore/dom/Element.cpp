@@ -2354,13 +2354,13 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
         notifyChildNodeInserted(*this, shadowRoot);
 #endif
 
+        InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
+
         invalidateStyleAndRenderersForSubtree();
     }
 
     if (shadowRoot.mode() == ShadowRootMode::UserAgent)
         didAddUserAgentShadowRoot(shadowRoot);
-
-    InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
 }
 
 void Element::removeShadowRoot()

@@ -1,3 +1,25 @@
+2021-03-19  Devin Rousso  <drousso@apple.com>
+
+        CSP headers can block default <video> controls
+        https://bugs.webkit.org/show_bug.cgi?id=223422
+        <rdar://problem/41192193>
+
+        Reviewed by Antoine Quint.
+
+        Covered by existing tests.
+
+        * Modules/modern-media-controls/controls/icon-service.js:
+        (IconService.prototype.imageForIconAndLayoutTraits):
+        In order for an `<img>` to skip CSP checks it must be `isInUserAgentShadowTree` before setting `src`.
+
+        * Modules/modern-media-controls/main.js:
+        (createControls):
+        Provide the UA `shadowRoot` to the `iconService` so it can temporarily attach the `<img>`.
+
+        * dom/Element.cpp:
+        (WebCore::Element::addShadowRoot):
+        Web Inspector should be notified about new UA shadow roots before they're modified.
+
 2021-03-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r274706.
