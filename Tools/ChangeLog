@@ -1,3 +1,58 @@
+2021-03-19  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r273875. rdar://problem/75635901
+
+    WKRemoteObjectCoder should be able to handle NSErrors from TLS failures
+    https://bugs.webkit.org/show_bug.cgi?id=222401
+    Source/WebKit:
+    
+    <rdar://problem/72103865>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-03-03
+    Reviewed by Chris Dumez.
+    
+    NSErrors from TLS failures contain values like a SecTrustRef or a SecCertificateRef,
+    which are not ObjC objects, and they don't like it when you call encodeWithCoder: on them.
+    Until r273141 it would crash when we do, but even after that we just decode a nil NSError.
+    Add a special case like we did in encodeNSError to successfully encode and decode these errors.
+    
+    * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+    (decodeObjCObject):
+    (transformCertificatesToData):
+    (transformTrustToData):
+    (encodeError):
+    (transformDataToCertificates):
+    (transformDataToTrust):
+    (decodeError):
+    (encodeObject):
+    (decodeObject):
+    
+    Tools:
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-03-03
+    Reviewed by Chris Dumez.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+    * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+    (TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+    (-[RemoteObjectRegistryPlugIn sendError:completionHandler:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273875 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-03  Alex Christensen  <achristensen@webkit.org>
+
+            WKRemoteObjectCoder should be able to handle NSErrors from TLS failures
+            https://bugs.webkit.org/show_bug.cgi?id=222401
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+            * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+            (TEST):
+            * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+            (-[RemoteObjectRegistryPlugIn sendError:completionHandler:]):
+
 2021-03-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r273997. rdar://problem/75180339
