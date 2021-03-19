@@ -1,3 +1,10 @@
+2021-03-19  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed. WPE Debug build fix after r274695
+
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::OpenXRDevice::submitFrame):
+
 2021-03-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Cannot login to microsoftonline.com without allowing storage access
