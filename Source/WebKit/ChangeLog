@@ -1,3 +1,21 @@
+2021-03-18  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Update strings and icons in the file upload panel
+        https://bugs.webkit.org/show_bug.cgi?id=223463
+        <rdar://problem/74999459>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel currentAvailableActionTitles]):
+
+        Expose the new string for testing.
+
+        (-[WKFileUploadPanel _chooseFilesButtonLabel]):
+        (-[WKFileUploadPanel contextMenuInteraction:configurationForMenuAtLocation:]):
+
+        Use the "folder" SF symbol as the icon for the "Choose File" action.
+
 2021-03-18  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: load inspector resources using a custom scheme handler

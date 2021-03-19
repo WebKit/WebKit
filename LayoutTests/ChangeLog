@@ -1,3 +1,18 @@
+2021-03-18  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Update strings and icons in the file upload panel
+        https://bugs.webkit.org/show_bug.cgi?id=223463
+        <rdar://problem/74999459>
+
+        Reviewed by Tim Horton.
+
+        Updated existing tests to use async/await rather than promise chaining,
+        and added new tests that exercise the "multiple" attribute on file
+        inputs.
+
+        * fast/forms/ios/file-upload-panel-expected.txt:
+        * fast/forms/ios/file-upload-panel.html:
+
 2021-03-18  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement WebXR Opaque Framebuffer
