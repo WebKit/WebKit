@@ -19,9 +19,9 @@ function loadImage(url) {
   });
 }
 
-function checkPixel(buf, width, x, y, color) {
-  var off = (y * width + x) * 4;
-  var msg = "pixel " + x + ", " + y + " should be " +
+function checkPixel(buf, width, x, y, color, tolerance) {
+  function msgFailed() {
+    return "pixel " + x + ", " + y + " should be " +
             color[0] + ", " +
             color[1] + ", " +
             color[2] + ", " +
@@ -30,14 +30,23 @@ function checkPixel(buf, width, x, y, color) {
             buf[off + 1] + ", " +
             buf[off + 2] + ", " +
             buf[off + 3];
-
+  }
+  function msgPassed() {
+    return "pixel " + x + ", " + y + " was " +
+            color[0] + ", " +
+            color[1] + ", " +
+            color[2] + ", " +
+            color[3];
+  }
+  var off = (y * width + x) * 4;
   for (var ii = 0; ii < 4; ++ii) {
-    if (buf[off + ii] != color[ii]) {
-      testFailed(msg);
+    var delta = Math.abs(buf[off + ii] - color[ii]);
+    if (delta > tolerance) {
+      testFailed(msgFailed());
       return;
     }
   }
-  testPassed(msg);
+  testPassed(msgPassed());
 }
 
 function checkPixelRange(buf, width, x, y, color, allowedRange) {
@@ -102,6 +111,7 @@ async function test() {
   var buf = new Uint8Array(width * height * 4);
   gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
 
+  var tolerance = 1;
   var left = 0;
   var middle = Math.floor(width / 2);
   var right = width - 1;
@@ -113,7 +123,7 @@ async function test() {
   checkPixel(buf, width, right,  top,    [255,   0,   0, 255]);
   checkPixel(buf, width, left,   center, [255,   0, 255, 255]);
   checkPixel(buf, width, middle, center, [255,   0,   0, 255]);
-  checkPixel(buf, width, right,  center, [  0, 255,   0, 255]);
+  checkPixel(buf, width, right,  center, [  0, 255,   0, 255], tolerance);
   checkPixel(buf, width, left,   bottom, [255,   0,   0, 255]);
   checkPixel(buf, width, middle, bottom, [255, 255,   0, 255]);
   checkPixel(buf, width, right,  bottom, [255,   0,   0, 255]);
