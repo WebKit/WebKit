@@ -622,6 +622,16 @@
          "wingo"
       ]
    },
+   "Angelos Oikonomopoulos" : [
+      "emails" : [
+         "angelos@igalia.com"
+      ],
+      "expertise" : "JavaScriptCore",
+      "nicks" : [
+         "angelos"
+      ],
+      "status" : "committer"
+   },
    "Anna Cavender" : {
       "emails" : [
          "annacc@chromium.org"
