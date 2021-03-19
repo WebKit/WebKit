@@ -215,12 +215,6 @@ bool CDMProxyClearKey::cencDecrypt(CDMProxyClearKey::cencDecryptContext& input)
     return input.isSubsampled() ? cencDecryptSubsampled(input) : cencDecryptFullSample(input);
 }
 
-void CDMProxyClearKey::releaseDecryptionResources()
-{
-    closeGCryptHandle();
-    CDMProxy::releaseDecryptionResources();
-}
-
 void CDMProxyClearKey::closeGCryptHandle()
 {
     if (m_gCryptHandle) {

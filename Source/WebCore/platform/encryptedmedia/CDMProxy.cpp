@@ -373,22 +373,9 @@ void CDMInstanceProxy::removeAllKeysFrom(const KeyStore& keyStore)
     m_keyStore.removeAllKeysFrom(keyStore);
 }
 
-void CDMInstanceProxy::trackSession(const CDMInstanceSessionProxy& session)
-{
-    ASSERT(!m_sessions.contains(session));
-    m_sessions.add(session);
-}
-
 CDMInstanceSessionProxy::CDMInstanceSessionProxy(CDMInstanceProxy& instance)
     : m_instance(makeWeakPtr(instance))
 {
-}
-
-void CDMInstanceSessionProxy::removeFromInstanceProxy()
-{
-    if (!m_instance)
-        return;
-    m_instance->removeSession(*this);
 }
 
 } // namespace WebCore

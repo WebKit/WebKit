@@ -36,6 +36,7 @@
 #include "CDMPrivate.h"
 #include "CDMProxy.h"
 #include "GStreamerEMEUtilities.h"
+#include "MediaKeyStatus.h"
 #include "SharedBuffer.h"
 #include <wtf/WeakPtr.h>
 
@@ -119,13 +120,6 @@ public:
 
     OpenCDMSystem& thunderSystem() const { return *m_thunderSystem.get(); };
 
-    void releaseDecryptionResources() final
-    {
-        ASSERT(isMainThread());
-        CDMInstanceProxy::releaseDecryptionResources();
-        m_thunderSystem.reset(nullptr);
-    }
-
 private:
     Thunder::UniqueThunderSystem m_thunderSystem;
     String m_keySystem;
@@ -146,14 +140,6 @@ public:
 
     void setClient(WeakPtr<CDMInstanceSessionClient>&& client) final { m_client = WTFMove(client); }
     void clearClient() final { m_client.clear(); }
-
-    void releaseDecryptionResources() final
-    {
-        ASSERT(isMainThread());
-        m_keyStore.removeAllKeys();
-        m_session.reset(nullptr);
-        CDMInstanceSessionProxy::releaseDecryptionResources();
-    }
 
 private:
     Optional<CDMInstanceThunder&> cdmInstanceThunder() const;
