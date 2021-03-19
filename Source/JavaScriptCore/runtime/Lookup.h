@@ -43,8 +43,6 @@ struct CompactHashIndex {
     const int16_t next;
 };
 
-// FIXME: There is no reason this get function can't be simpler.
-// ie. typedef JSValue (*GetFunction)(JSGlobalObject*, JSObject* baseObject)
 typedef PropertySlot::GetValueFunc GetFunction;
 typedef PutPropertySlot::PutValueFunc PutFunction;
 typedef FunctionExecutable* (*BuiltinGenerator)(VM&);
@@ -298,7 +296,7 @@ inline bool putEntry(JSGlobalObject* globalObject, const ClassInfo*, const HashT
         else
             slot.setCustomValue(base, entry->propertyPutter());
 
-        auto result = callCustomSetter(globalObject, entry->propertyPutter(), isAccessor, base, slot.thisValue(), value);
+        auto result = callCustomSetter(globalObject, entry->propertyPutter(), isAccessor, base, slot.thisValue(), value, propertyName);
         RETURN_IF_EXCEPTION(scope, false);
         if (result != TriState::Indeterminate)
             return result == TriState::True;

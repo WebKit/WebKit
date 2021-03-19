@@ -198,7 +198,7 @@ static inline bool setJSTestCSSProperty_propertySetter(JSGlobalObject& lexicalGl
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCSSProperty_property, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCSSProperty_property, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCSSProperty>::set<setJSTestCSSProperty_propertySetter>(*lexicalGlobalObject, thisValue, encodedValue, "property");
 }

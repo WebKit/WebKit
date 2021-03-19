@@ -207,7 +207,7 @@ static inline bool setJSTestLegacyNoInterfaceObject_readWriteStringAttributeSett
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObject_readWriteStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObject_readWriteStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestLegacyNoInterfaceObject>::set<setJSTestLegacyNoInterfaceObject_readWriteStringAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "readWriteStringAttribute");
 }
@@ -230,7 +230,7 @@ static inline bool setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttr
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestLegacyNoInterfaceObject>::set<setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "customGetterSetterStringAttribute");
 }
@@ -261,7 +261,7 @@ static inline bool setJSTestLegacyNoInterfaceObject_nodeAttributeSetter(JSGlobal
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObject_nodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObject_nodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestLegacyNoInterfaceObject>::set<setJSTestLegacyNoInterfaceObject_nodeAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "nodeAttribute");
 }
@@ -290,7 +290,7 @@ static inline bool setJSTestLegacyNoInterfaceObjectConstructor_staticStringAttri
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObjectConstructor_staticStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyNoInterfaceObjectConstructor_staticStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestLegacyNoInterfaceObject>::setStatic<setJSTestLegacyNoInterfaceObjectConstructor_staticStringAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "staticStringAttribute");
 }

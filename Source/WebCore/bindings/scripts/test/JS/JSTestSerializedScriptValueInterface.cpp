@@ -226,7 +226,7 @@ static inline bool setJSTestSerializedScriptValueInterface_valueSetter(JSGlobalO
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterface_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterface_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestSerializedScriptValueInterface>::set<setJSTestSerializedScriptValueInterface_valueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "value");
 }
@@ -275,7 +275,7 @@ static inline bool setJSTestSerializedScriptValueInterface_cachedValueSetter(JSG
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterface_cachedValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestSerializedScriptValueInterface_cachedValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestSerializedScriptValueInterface>::set<setJSTestSerializedScriptValueInterface_cachedValueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "cachedValue");
 }

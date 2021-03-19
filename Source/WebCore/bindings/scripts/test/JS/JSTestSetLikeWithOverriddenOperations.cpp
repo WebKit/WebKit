@@ -225,7 +225,7 @@ static inline bool setJSTestSetLikeWithOverriddenOperations_addSetter(JSGlobalOb
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestSetLikeWithOverriddenOperations_add, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestSetLikeWithOverriddenOperations_add, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestSetLikeWithOverriddenOperations>::set<setJSTestSetLikeWithOverriddenOperations_addSetter>(*lexicalGlobalObject, thisValue, encodedValue, "add");
 }

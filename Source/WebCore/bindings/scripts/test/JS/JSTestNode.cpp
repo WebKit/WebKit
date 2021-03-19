@@ -300,7 +300,7 @@ static inline bool setJSTestNode_nameSetter(JSGlobalObject& lexicalGlobalObject,
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestNode_name, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestNode_name, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestNode>::set<setJSTestNode_nameSetter>(*lexicalGlobalObject, thisValue, encodedValue, "name");
 }

@@ -211,7 +211,7 @@ static inline bool setJSTestCEReactionsStringifier_valueSetter(JSGlobalObject& l
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_value, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifier_valueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "value");
 }
@@ -243,7 +243,7 @@ static inline bool setJSTestCEReactionsStringifier_valueWithoutReactionsSetter(J
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_valueWithoutReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactionsStringifier_valueWithoutReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifier_valueWithoutReactionsSetter>(*lexicalGlobalObject, thisValue, encodedValue, "valueWithoutReactions");
 }

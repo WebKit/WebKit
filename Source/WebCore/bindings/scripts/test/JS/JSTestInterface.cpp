@@ -570,7 +570,7 @@ static inline bool setJSTestInterface_mixinAttributeSetter(JSGlobalObject& lexic
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinAttribute");
 }
@@ -599,7 +599,7 @@ static inline bool setJSTestInterface_mixinCustomAttributeSetter(JSGlobalObject&
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinCustomAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinCustomAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinCustomAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinCustomAttribute");
 }
@@ -636,7 +636,7 @@ static inline bool setJSTestInterface_mixinNodeAttributeSetter(JSGlobalObject& l
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinNodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinNodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinNodeAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinNodeAttribute");
 }
@@ -702,7 +702,7 @@ static inline bool setJSTestInterfaceConstructor_supplementalStaticAttrSetter(JS
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterfaceConstructor_supplementalStaticAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterfaceConstructor_supplementalStaticAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructor_supplementalStaticAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStaticAttr");
 }
@@ -755,7 +755,7 @@ static inline bool setJSTestInterface_supplementalStr2Setter(JSGlobalObject& lex
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalStr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalStr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalStr2Setter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStr2");
 }
@@ -784,7 +784,7 @@ static inline bool setJSTestInterface_supplementalStr3Setter(JSGlobalObject& lex
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalStr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalStr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalStr3Setter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStr3");
 }
@@ -821,7 +821,7 @@ static inline bool setJSTestInterface_supplementalNodeSetter(JSGlobalObject& lex
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalNode, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalNode, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalNodeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalNode");
 }
@@ -858,7 +858,7 @@ static inline bool setJSTestInterface_reflectAttributeSetter(JSGlobalObject& lex
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_reflectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_reflectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestInterface>::set<setJSTestInterface_reflectAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectAttribute");
 }

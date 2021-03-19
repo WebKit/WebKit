@@ -5540,7 +5540,7 @@ sub GenerateAttributeSetterTrampolineDefinition
     push(@templateParameters, $attributeSetterBodyName);
     push(@templateParameters, "CastedThisErrorBehavior::ReturnEarly") if $attribute->extendedAttributes->{LegacyLenientThis};
     
-    push(@$outputArray, "JSC_DEFINE_CUSTOM_SETTER(${attributeSetterName}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))\n");
+    push(@$outputArray, "JSC_DEFINE_CUSTOM_SETTER(${attributeSetterName}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeSetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, encodedValue, \"" . $attribute->name . "\");\n");
     push(@$outputArray, "}\n\n");

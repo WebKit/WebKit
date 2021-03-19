@@ -50,11 +50,13 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    const PropertyName& propertyName() const { return m_propertyName; }
     PutValueFunc setter() const { return m_setter; };
 
 private:
-    JSCustomSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, PutValueFunc);
+    JSCustomSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, PutValueFunc);
 
+    PropertyName m_propertyName;
     PutValueFunc m_setter;
 };
 

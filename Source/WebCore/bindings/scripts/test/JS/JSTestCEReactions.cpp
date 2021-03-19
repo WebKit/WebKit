@@ -229,7 +229,7 @@ static inline bool setJSTestCEReactions_attributeWithCEReactionsSetter(JSGlobalO
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_attributeWithCEReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_attributeWithCEReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactions_attributeWithCEReactionsSetter>(*lexicalGlobalObject, thisValue, encodedValue, "attributeWithCEReactions");
 }
@@ -261,7 +261,7 @@ static inline bool setJSTestCEReactions_reflectAttributeWithCEReactionsSetter(JS
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_reflectAttributeWithCEReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_reflectAttributeWithCEReactions, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactions_reflectAttributeWithCEReactionsSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectAttributeWithCEReactions");
 }
@@ -297,7 +297,7 @@ static inline bool setJSTestCEReactions_stringifierAttributeSetter(JSGlobalObjec
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_stringifierAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_stringifierAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactions_stringifierAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringifierAttribute");
 }
@@ -329,7 +329,7 @@ static inline bool setJSTestCEReactions_attributeWithCEReactionsNotNeededSetter(
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_attributeWithCEReactionsNotNeeded, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_attributeWithCEReactionsNotNeeded, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactions_attributeWithCEReactionsNotNeededSetter>(*lexicalGlobalObject, thisValue, encodedValue, "attributeWithCEReactionsNotNeeded");
 }
@@ -361,7 +361,7 @@ static inline bool setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeeded
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeeded, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeeded, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeededSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectAttributeWithCEReactionsNotNeeded");
 }
@@ -397,7 +397,7 @@ static inline bool setJSTestCEReactions_stringifierAttributeNotNeededSetter(JSGl
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_stringifierAttributeNotNeeded, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCEReactions_stringifierAttributeNotNeeded, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestCEReactions>::set<setJSTestCEReactions_stringifierAttributeNotNeededSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringifierAttributeNotNeeded");
 }

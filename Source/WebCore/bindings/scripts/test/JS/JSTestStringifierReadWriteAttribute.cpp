@@ -206,7 +206,7 @@ static inline bool setJSTestStringifierReadWriteAttribute_identifierSetter(JSGlo
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestStringifierReadWriteAttribute_identifier, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestStringifierReadWriteAttribute_identifier, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestStringifierReadWriteAttribute>::set<setJSTestStringifierReadWriteAttribute_identifierSetter>(*lexicalGlobalObject, thisValue, encodedValue, "identifier");
 }

@@ -1,1 +1,39 @@
+2021-03-19  Sam Weinig  <weinig@apple.com>
+
+        Add PropertyName parameter to custom setters to allow shared implementations to do late name lookup
+        https://bugs.webkit.org/show_bug.cgi?id=223413
+
+        Reviewed by Alexey Shvayka.
+
+        Make custom setters match custom getters by adding a PropertyName parameter.
+        
+        This will be used by the CSSStyleDeclaration bindings to avoid > 1000 copies
+        of the same getter/setter code, which will instead be able to differentiate
+        using the name.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * jsc.cpp:
+        (JSC_DEFINE_CUSTOM_SETTER):
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter):
+        * runtime/CustomGetterSetter.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomSetterFunction::JSCustomSetterFunction):
+        (JSC::JSCustomSetterFunction::create):
+        * runtime/JSCustomSetterFunction.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        * runtime/PropertySlot.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_SETTER):
+        * runtime/RegExpObject.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_SETTER):
+        * tools/JSDollarVM.cpp:
+
 == Rolled over to ChangeLog-2021-03-18 ==

@@ -216,7 +216,7 @@ static inline bool setJSTestDefaultToJSONInherit_inheritLongAttributeSetter(JSGl
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInherit_inheritLongAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONInherit_inheritLongAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSONInherit>::set<setJSTestDefaultToJSONInherit_inheritLongAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "inheritLongAttribute");
 }

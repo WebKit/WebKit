@@ -752,7 +752,7 @@ static inline bool setJSTestGlobalObject_regularAttributeSetter(JSGlobalObject& 
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_regularAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_regularAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObject_regularAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "regularAttribute");
 }
@@ -783,7 +783,7 @@ static inline bool setJSTestGlobalObject_publicAndPrivateAttributeSetter(JSGloba
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_publicAndPrivateAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_publicAndPrivateAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObject_publicAndPrivateAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "publicAndPrivateAttribute");
 }
@@ -818,7 +818,7 @@ static inline bool setJSTestGlobalObject_publicAndPrivateConditionalAttributeSet
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_publicAndPrivateConditionalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_publicAndPrivateConditionalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObject_publicAndPrivateConditionalAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "publicAndPrivateConditionalAttribute");
 }
@@ -855,7 +855,7 @@ static inline bool setJSTestGlobalObject_enabledAtRuntimeAttributeSetter(JSGloba
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_enabledAtRuntimeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestGlobalObject_enabledAtRuntimeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObject_enabledAtRuntimeAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "enabledAtRuntimeAttribute");
 }

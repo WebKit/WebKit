@@ -1,3 +1,71 @@
+2021-03-19  Sam Weinig  <weinig@apple.com>
+
+        Add PropertyName parameter to custom setters to allow shared implementations to do late name lookup
+        https://bugs.webkit.org/show_bug.cgi?id=223413
+
+        Reviewed by Alexey Shvayka.
+
+        Update bindings to account for new PropertyName parameter being passed to custom setters.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeSetterTrampolineDefinition):
+        * bindings/scripts/test/JS/JSDOMWindow.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSDedicatedWorkerGlobalScope.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSPaintWorkletGlobalScope.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSServiceWorkerGlobalScope.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestCSSProperty.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestConditionallyReadWrite.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestDefaultToJSON.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInherit.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInheritFinal.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestEnabledForContext.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestLegacyNoInterfaceObject.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestMapLikeWithOverriddenOperations.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestSetLikeWithOverriddenOperations.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSWorkerGlobalScope.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+        * bindings/scripts/test/JS/JSWorkletGlobalScope.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_SETTER):
+
 2021-03-19  Rob Buis  <rbuis@igalia.com>
 
         Protect frame before calling didBeginDocument

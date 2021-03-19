@@ -839,7 +839,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 else
                     slot.setCustomValue(obj, setter);
 
-                auto result = callCustomSetter(globalObject, setter, isAccessor, obj, slot.thisValue(), value);
+                auto result = callCustomSetter(globalObject, setter, isAccessor, obj, slot.thisValue(), value, propertyName);
                 RETURN_IF_EXCEPTION(scope, false);
                 if (result != TriState::Indeterminate)
                     return result == TriState::True;

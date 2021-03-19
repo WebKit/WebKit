@@ -1,1 +1,11 @@
+2021-03-19  Sam Weinig  <weinig@apple.com>
+
+        Add PropertyName parameter to custom setters to allow shared implementations to do late name lookup
+        https://bugs.webkit.org/show_bug.cgi?id=223413
+
+        Reviewed by Alexey Shvayka.
+
+        * wtf/PlatformCallingConventions.h:
+        Update JSC_DECLARE_CUSTOM_SETTER to account for the new PropertyName parameter.
+
 == Rolled over to ChangeLog-2021-03-18 ==

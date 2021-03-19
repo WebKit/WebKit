@@ -1758,7 +1758,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             GPRReg receiverForCustomGetGPR = baseGPR != thisGPR ? thisGPR : receiverGPR;
 
             // getter: EncodedJSValue (*GetValueFunc)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
-            // setter: bool (*PutValueFunc)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value);
+            // setter: bool (*PutValueFunc)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value, PropertyName);
             // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisValue (receiver).
             GPRReg baseForCustom = takesPropertyOwnerAsCFunctionArgument ? propertyOwnerGPR : receiverForCustomGetGPR; 
             // We do not need to keep globalObject alive since the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock)
@@ -1783,12 +1783,14 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                         CCallHelpers::TrustedImmPtr(globalObject),
                         CCallHelpers::CellValue(baseForCustom),
                         valueRegs,
+                        CCallHelpers::TrustedImmPtr(uid()),
                         CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.executableAddress()));
                 } else {
                     jit.setupArguments<PutPropertySlot::PutValueFunc>(
                         CCallHelpers::TrustedImmPtr(globalObject),
                         CCallHelpers::CellValue(baseForCustom),
-                        valueRegs);
+                        valueRegs,
+                        CCallHelpers::TrustedImmPtr(uid()));
                 }
             }
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
