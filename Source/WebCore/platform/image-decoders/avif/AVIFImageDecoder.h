@@ -43,6 +43,8 @@ public:
 
     // ScalableImageDecoder
     String filenameExtension() const final { return "avif"_s; }
+    size_t frameCount() const final { return m_frameCount; };
+    RepetitionCount repetitionCount() const final;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final;
     bool setFailed() final;
 
@@ -50,9 +52,13 @@ private:
     AVIFImageDecoder(AlphaOption, GammaAndColorProfileOption);
 
     void tryDecodeSize(bool allDataReceived) final;
-    void decode(ScalableImageDecoderFrame&, bool allDataReceived);
+    void decode(size_t frameIndex, bool allDataReceived);
+    bool isComplete();
+    size_t findFirstRequiredFrameToDecode(size_t frameIndex);
 
     std::unique_ptr<AVIFImageReader> m_reader { nullptr };
+
+    size_t m_frameCount { 0 };
 };
 
 } // namespace WebCore

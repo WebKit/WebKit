@@ -1,3 +1,39 @@
+2021-03-19  ChangSeok Oh  <changseok@webkit.org>
+
+        Animated AVIF support
+        https://bugs.webkit.org/show_bug.cgi?id=222804
+        <rdar://problem/75362181>
+
+        Reviewed by Philippe Normand.
+
+        This change implements animation of the avif sequence. The decoding approach
+        is similar to ones for other image formats, i.e., decoding frames in BGRA pixels
+        then bit-copying them into ScalableImageDecoderFrame. The decoded frames are cached
+        for future use. The repetition is missing in this change. It will be addressed
+        in separate patches.
+
+        The added avif animation test compares the last frame of each avifs and a static
+        avif image. The embeded avifs images are originated from corresponding webp images
+        for animated-webp.html, and encoded with timescale 100 (i.e., the duration of each frame
+        is 0.01s). The total duration and the track duration are same so the added avifs samples
+        are supposed to be played one time.
+
+        Test: fast/images/animated-avif.html
+
+        * platform/image-decoders/avif/AVIFImageDecoder.cpp:
+        (WebCore::AVIFImageDecoder::repetitionCount const):
+        (WebCore::AVIFImageDecoder::findFirstRequiredFrameToDecode):
+        (WebCore::AVIFImageDecoder::frameBufferAtIndex):
+        (WebCore::AVIFImageDecoder::isComplete):
+        (WebCore::AVIFImageDecoder::tryDecodeSize):
+        (WebCore::AVIFImageDecoder::decode):
+        * platform/image-decoders/avif/AVIFImageDecoder.h:
+        * platform/image-decoders/avif/AVIFImageReader.cpp:
+        (WebCore::AVIFImageReader::decodeFrame):
+        (WebCore::AVIFImageReader::imageCount const):
+        (WebCore::AVIFImageReader::~AVIFImageReader): Deleted.
+        * platform/image-decoders/avif/AVIFImageReader.h:
+
 2021-03-19  Martin Robinson  <mrobinson@igalia.com>
 
         scroll-snap-stop: always not respected during momentum scrolling

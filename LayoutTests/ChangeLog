@@ -1,3 +1,34 @@
+2021-03-19  ChangSeok Oh  <changseok@webkit.org>
+
+        Animated AVIF support
+        https://bugs.webkit.org/show_bug.cgi?id=222804
+        <rdar://problem/75362181>
+
+        Reviewed by Philippe Normand.
+
+        This change implements animation of the avif sequence. The decoding approach
+        is similar to ones for other image formats, i.e., decoding frames in BGRA pixels
+        then bit-copying them into ScalableImageDecoderFrame. The decoded frames are cached
+        for future use. The repetition is missing in this change. It will be addressed
+        in separate patches.
+
+        The added avif animation test compares the last frame of each avifs and a static
+        avif image. The embeded avifs images are originated from corresponding webp images
+        for animated-webp.html, and encoded with timescale 100 (i.e., the duration of each frame
+        is 0.01s). The total duration and the track duration are same so the added avifs samples
+        are supposed to be played one time.
+
+        * TestExpectations:
+        * fast/images/animated-avif-expected.html: Added.
+        * fast/images/animated-avif.html: Added.
+        * fast/images/resources/avifs00-ref.avif: Added.
+        * fast/images/resources/avifs00.avifs: Added.
+        * fast/images/resources/avifs01-ref.avif: Added.
+        * fast/images/resources/avifs01.avifs: Added.
+        * fast/images/resources/avifs02-ref.avif: Added.
+        * fast/images/resources/avifs02.avifs: Added.
+        * platform/gtk/TestExpectations:
+
 2021-03-19  Martin Robinson  <mrobinson@igalia.com>
 
         scroll-snap-stop: always not respected during momentum scrolling
