@@ -142,6 +142,7 @@ public:
     void acceleratedRenderingStateChanged(bool);
     void setShouldDisableSleep(bool);
     void setRate(double);
+    void didLoadingProgress(CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(COCOA)
     void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);

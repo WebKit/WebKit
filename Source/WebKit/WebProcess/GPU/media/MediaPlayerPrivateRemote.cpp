@@ -265,7 +265,9 @@ void MediaPlayerPrivateRemote::seekWithTolerance(const MediaTime& time, const Me
 
 bool MediaPlayerPrivateRemote::didLoadingProgress() const
 {
-    return m_cachedState.loadingProgressed;
+    bool flag = false;
+    connection().sendSync(Messages::RemoteMediaPlayerProxy::DidLoadingProgress(), Messages::RemoteMediaPlayerProxy::DidLoadingProgress::Reply(flag), m_id);
+    return flag;
 }
 
 bool MediaPlayerPrivateRemote::hasVideo() const
@@ -422,7 +424,6 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.networkState = state.networkState;
     m_cachedState.readyState = state.readyState;
     m_cachedState.paused = state.paused;
-    m_cachedState.loadingProgressed = state.loadingProgressed;
     m_cachedState.naturalSize = state.naturalSize;
     m_cachedState.movieLoadType = state.movieLoadType;
     m_cachedState.wirelessPlaybackTargetType = state.wirelessPlaybackTargetType;

@@ -58,7 +58,6 @@ struct RemoteMediaPlayerState {
     Optional<WebCore::VideoPlaybackQualityMetrics> videoMetrics;
     Optional<bool> wouldTaintDocumentSecurityOrigin { true };
     bool paused { true };
-    bool loadingProgressed { false };
     bool canSaveMediaData { false };
     bool hasAudio { false };
     bool hasVideo { false };
@@ -93,7 +92,6 @@ struct RemoteMediaPlayerState {
         encoder << videoMetrics;
         encoder << wouldTaintDocumentSecurityOrigin;
         encoder << paused;
-        encoder << loadingProgressed;
         encoder << canSaveMediaData;
         encoder << hasAudio;
         encoder << hasVideo;
@@ -213,11 +211,6 @@ struct RemoteMediaPlayerState {
         if (!paused)
             return WTF::nullopt;
 
-        Optional<bool> loadingProgressed;
-        decoder >> loadingProgressed;
-        if (!loadingProgressed)
-            return WTF::nullopt;
-
         Optional<bool> canSaveMediaData;
         decoder >> canSaveMediaData;
         if (!canSaveMediaData)
@@ -281,7 +274,6 @@ struct RemoteMediaPlayerState {
             WTFMove(*videoMetrics),
             WTFMove(*wouldTaintDocumentSecurityOrigin),
             *paused,
-            *loadingProgressed,
             *canSaveMediaData,
             *hasAudio,
             *hasVideo,

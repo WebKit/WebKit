@@ -239,8 +239,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-inter
 
 webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 
-webkit.org/b/221817 imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]
-
 webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
 
 webkit.org/b/222569 fast/mediastream/media-stream-track-interrupted.html [ Crash Pass ]

@@ -255,6 +255,11 @@ void RemoteMediaPlayerProxy::setRate(double rate)
     m_player->setRate(rate);
 }
 
+void RemoteMediaPlayerProxy::didLoadingProgress(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(m_player->didLoadingProgress());
+}
+
 RefPtr<PlatformMediaResource> RemoteMediaPlayerProxy::requestResource(ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options)
 {
     ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
@@ -817,7 +822,6 @@ void RemoteMediaPlayerProxy::updateCachedState()
     m_cachedState.readyState = m_player->readyState();
     m_cachedState.movieLoadType = m_player->movieLoadType();
     m_cachedState.paused = m_player->paused();
-    m_cachedState.loadingProgressed = m_player->didLoadingProgress();
     m_cachedState.hasAudio = m_player->hasAudio();
     m_cachedState.hasVideo = m_player->hasVideo();
 
