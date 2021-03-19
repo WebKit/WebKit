@@ -1,3 +1,17 @@
+2021-03-19  Rob Buis  <rbuis@igalia.com>
+
+        Protect frame before calling didBeginDocument
+        https://bugs.webkit.org/show_bug.cgi?id=217185
+
+        Reviewed by Alex Christensen.
+
+        Protect frame before calling didBeginDocument
+        since it could potentially delete the frame
+        through event handling.
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+
 2021-03-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Remove DRM resources release
