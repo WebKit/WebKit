@@ -83,6 +83,7 @@ our $outputFormat = "text";
 our $unfilteredOutputPath = "build.log";
 our $useColor = -t STDOUT;
 our $inEntitlements = 0;
+our $inDevicePreparationWarnings = 0;
 
 sub usageAndExit()
 {
@@ -147,7 +148,7 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
         printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
         my ($command, $path) = ($2, basename($4));
         $path =~ s/("|\\|\.[ah]$)//g;
         printLine("$command $path", STYLE_PLAIN);
@@ -300,6 +301,17 @@ sub shouldIgnoreLine($$)
         return 1
     }
 
+    # iPhone preparation errors always start and end with lines containing 'iPhoneConnect:'.
+    if ($inDevicePreparationWarnings) {
+        $inDevicePreparationWarnings = 0 if $line =~ /== END: Underlying device preparation warnings ==/;
+        return 1
+    }
+
+    if ($line =~ /iPhoneConnect:/) {
+        $inDevicePreparationWarnings = 1;
+        return 1
+    }
+
     return 1 if $line =~ /^\s*$/;
     return 1 if $line =~ /^Command line invocation:/;
     return 1 if $line =~ /^Build settings from command line:/;
@@ -313,7 +325,7 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^note: Using eager compilation/;
     return 1 if $line =~ /^note: Execution policy exception registration failed and was skipped: Error Domain=NSPOSIXErrorDomain Code=1 "Operation not permitted"/;
     return 1 if $line =~ /^note: detected encoding of input file as Unicode \(.*\)/;
-    return 1 if $line =~ /make(\[\d+\])?: Nothing to be done for `all'\./;
+    return 1 if $line =~ /make(\[\d+\])?: Nothing to be done for/;
     return 1 if $line =~ /^JavaScriptCore\/create_hash_table/;
     return 1 if $line =~ /JavaScriptCore.framework\/PrivateHeaders\/create_hash_table/;
     return 1 if $line =~ /^JavaScriptCore\/pcre\/dftables/;
@@ -333,10 +345,12 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /One of the two will be used\. Which one is undefined\./;
     return 1 if $line =~ /The Legacy Build System will be removed in a future release/;
     return 1 if $line =~ /^\( (xcodebuild|if) /;
+    return 1 if $line =~ /^warning: can't find additional SDK/;
+    return 1 if $line =~ /^warning: no umbrella header found for target '.*', module map will not be generated$/;
     return 1 if $line =~ /^warning\: detected internal install, passing entitlements to simulator anyway\./;
     return 1 if $line =~ /may not function in the Simulator because Ad Hoc/;
     return 1 if $line =~ /\/usr\/bin\/clang .*? \> \S+.sb/;
-    return 1 if $line =~ / xcodebuild\[[0-9]+:[0-9a-f]+\]\s+DVTAssertions: Warning in .*XCClangResultsPostprocessor.m/;
+    return 1 if $line =~ / xcodebuild\[[0-9]+:[0-9a-f]+\]\s+DVTAssertions: Warning in .*/;
     return 1 if $line =~ /^(Details|Object|Method|Function|Thread):/;
     return 1 if $line =~ /^Please file a bug at /;
     return 1 if $line =~ /created by an unsupported XCDependencyGraph build$/;
@@ -344,7 +358,19 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /.* com.apple.actool.compilation-results .*/;
     return 1 if $line =~ /.*\/Assets.car/;
     return 1 if $line =~ /.*\/assetcatalog_generated_info.plist/;
-
+    return 1 if $line =~ /^mount: .+ failed with/;
+    return 1 if $line =~ /^Using .+ production environment.$/;
+    return 1 if $line =~ /replacing existing signature$/;
+    return 1 if $line =~ /^Unlocking '.*\.keychain-db'$/;
+    return 1 if $line =~ /^\d+ localizable strings$/;
+    return 1 if $line =~ /^\d+ plural rules$/;
+    return 1 if $line =~ /^The list of exported symbols did not change.$/;
+    return 1 if $line =~ /^ditto: Cannot get the real path for source/;
+    return 1 if $line =~ /^Duplicate Entry Was Skipped:/;
+    return 1 if $line =~ /^Adding .*?entitlements/;
+    return 1 if $line =~ /^Making app bundle launchable/;
+    return 1 if $line =~ /^Finished adding entitlements\.$/;
+    return 1 if $line =~ /^.* will not be code signed because its settings don't specify a development team.$/;
 
     if ($platform eq "win") {
         return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|del|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;

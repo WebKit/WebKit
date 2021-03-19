@@ -1,3 +1,18 @@
+2021-03-19  BJ Burg  <bburg@apple.com>
+
+        Update filter-build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=223528
+
+        Reviewed by Simon Fraser.
+
+        - Remove a bunch of informational messages that clog up output.
+        - Remove some linker/loader warnings that are non-actionable.
+        - Generalize a few existing filters to work with more targets.
+        - Remove super-noisy and meaningless device preparation warnings.
+
+        * Scripts/filter-build-webkit:
+        (shouldIgnoreLine):
+
 2021-03-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         update-webgl-conformance-tests script should use webgl/1.0.x and webgl/2.0.y directories
