@@ -1,1 +1,9 @@
+2021-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to fix the macOS build after r274695.
+
+        * platform/graphics/GraphicsContextGL.h:
+        * testing/WebFakeXRDevice.cpp:
+        * testing/WebFakeXRDevice.h:
+
 == Rolled over to ChangeLog-2021-03-18 ==

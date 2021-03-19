@@ -38,7 +38,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class GLContext;
 class GraphicsContextGL;
 
 class FakeXRView final : public RefCounted<FakeXRView> {

@@ -29,7 +29,6 @@
 #if ENABLE(WEBXR)
 
 #include "DOMPointReadOnly.h"
-#include "GLContext.h"
 #include "GraphicsContextGL.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WebFakeXRInputController.h"
