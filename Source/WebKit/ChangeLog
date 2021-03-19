@@ -1,3 +1,30 @@
+2021-03-18  Sihui Liu  <sihui_liu@appe.com>
+
+        Handle empty bound size during animated resizing
+        https://bugs.webkit.org/show_bug.cgi?id=223446
+
+        Reviewed by Tim Horton.
+
+        We don't allow empty bounds in animated resizing: when that happens, we would cancel it. However, a set of 
+        updates involving empty bounds can be merged to a valid update. For example, two changes of frame size 
+        [1] (0, 0, 100, 100) => (0, 0, 0, 50) [2] (0, 0, 0, 50) => (0, 0, 50, 50) can be viewed as single change 
+        (0, 0, 100, 100) => (0, 0, 50, 50), which is valid. We used to ask SPI clients to ensure each update is valid, 
+        but sometimes the frame change is not under client's control. For example when client uses auto layout, empty 
+        frame seems to be a valid mid product.
+
+        To handle this case, we can store the old bounds, and actually perform animated resizing on when new valid 
+        bounds show up. For the example above, we would store (0, 0, 100, 100) on [1] and use it to resize from 
+        (0, 0, 100, 100) to (0, 0, 50, 50) on [2].
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _processWillSwapOrDidExit]):
+        (-[WKWebView _updateVisibleContentRects]): If we still have stored old bounds in _updateVisibleContentRects, it 
+        means they are not consumed in this cycle. In this case let's just cancel animated resizing and send out updates. 
+        (-[WKWebView _cancelAnimatedResize]):
+        (-[WKWebView _didCompleteAnimatedResize]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+
 2021-03-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update Keychain queries according to internal needs

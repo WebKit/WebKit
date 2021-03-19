@@ -655,6 +655,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _waitingForEndAnimatedResize = NO;
     _waitingForCommitAfterAnimatedResize = NO;
     _animatedResizeOriginalContentWidth = 0;
+    _animatedResizeOldBounds = { };
     [_contentView setHidden:NO];
     _scrollOffsetToRestore = WTF::nullopt;
     _unobscuredCenterToRestore = WTF::nullopt;
@@ -2092,6 +2093,9 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         return;
     }
 
+    if (!CGRectIsEmpty(_animatedResizeOldBounds))
+        [self _cancelAnimatedResize];
+
     if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing
         || (_needsResetViewStateAfterCommitLoadForMainFrame && ![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
         || [_scrollView isZoomBouncing]
@@ -2203,6 +2207,7 @@ static int32_t activeOrientation(WKWebView *webView)
     }
 
     _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::NotResizing;
+    _animatedResizeOldBounds = { };
     [self _scheduleVisibleContentRectUpdate];
 }
 
@@ -2255,6 +2260,7 @@ static int32_t activeOrientation(WKWebView *webView)
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
     _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::NotResizing;
+    _animatedResizeOldBounds = { };
     [self _scheduleVisibleContentRectUpdate];
 
     CGRect newBounds = self.bounds;
@@ -2878,7 +2884,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     CGRect oldBounds = self.bounds;
     WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
 
-    if (![self usesStandardContentView] || !_hasCommittedLoadForMainFrame || CGRectIsEmpty(oldBounds) || oldUnobscuredContentRect.isEmpty()) {
+    auto isOldBoundsValid = !CGRectIsEmpty(oldBounds) || !CGRectIsEmpty(_animatedResizeOldBounds);
+    if (![self usesStandardContentView] || !_hasCommittedLoadForMainFrame || !isOldBoundsValid || oldUnobscuredContentRect.isEmpty()) {
         if ([_customContentView respondsToSelector:@selector(web_beginAnimatedResizeWithUpdates:)])
             [_customContentView web_beginAnimatedResizeWithUpdates:updateBlock];
         else
@@ -2890,11 +2897,22 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
     _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::ResizingWithAnimation;
 
-    auto oldMinimumEffectiveDeviceWidth = [self _minimumEffectiveDeviceWidth];
-    auto oldViewLayoutSize = [self activeViewLayoutSize:self.bounds];
+    CGFloat oldMinimumEffectiveDeviceWidth;
+    int32_t oldOrientation;
+    UIEdgeInsets oldObscuredInsets;
+    if (!CGRectIsEmpty(_animatedResizeOldBounds)) {
+        oldBounds = _animatedResizeOldBounds;
+        oldMinimumEffectiveDeviceWidth = _animatedResizeOldMinimumEffectiveDeviceWidth;
+        oldOrientation = _animatedResizeOldOrientation;
+        oldObscuredInsets = _animatedResizeOldObscuredInsets;
+        _animatedResizeOldBounds = { };
+    } else {
+        oldMinimumEffectiveDeviceWidth = [self _minimumEffectiveDeviceWidth];
+        oldOrientation = activeOrientation(self);
+        oldObscuredInsets = _obscuredInsets;
+    }
+    auto oldViewLayoutSize = [self activeViewLayoutSize:oldBounds];
     auto oldMaximumUnobscuredSize = activeMaximumUnobscuredSize(self, oldBounds);
-    int32_t oldOrientation = activeOrientation(self);
-    UIEdgeInsets oldObscuredInsets = _obscuredInsets;
 
     updateBlock();
 
@@ -2907,9 +2925,18 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     CGRect futureUnobscuredRectInSelfCoordinates = UIEdgeInsetsInsetRect(newBounds, _obscuredInsets);
     CGRect contentViewBounds = [_contentView bounds];
 
-    ASSERT_WITH_MESSAGE(!(_viewLayoutSizeOverride && newViewLayoutSize.isEmpty()), "Clients controlling the layout size should maintain a valid layout size to minimize layouts.");
     if (CGRectIsEmpty(newBounds) || newViewLayoutSize.isEmpty() || CGRectIsEmpty(futureUnobscuredRectInSelfCoordinates) || CGRectIsEmpty(contentViewBounds)) {
-        [self _cancelAnimatedResize];
+        if (!CGRectIsEmpty(newBounds))
+            [self _cancelAnimatedResize];
+        else {
+            _animatedResizeOldBounds = oldBounds;
+            _animatedResizeOldMinimumEffectiveDeviceWidth = oldMinimumEffectiveDeviceWidth;
+            _animatedResizeOldOrientation = oldOrientation;
+            _animatedResizeOldObscuredInsets = oldObscuredInsets;
+            _waitingForCommitAfterAnimatedResize = YES;
+            _waitingForEndAnimatedResize = YES;
+        }
+
         [self _frameOrBoundsChanged];
         if (_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:newViewLayoutSize];
