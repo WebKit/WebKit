@@ -1,3 +1,15 @@
+2021-03-19  Alex Christensen  <achristensen@webkit.org>
+
+        libANGLE-shared.dylib needs INSTALL_PATH when building Catalyst roots
+        https://bugs.webkit.org/show_bug.cgi?id=223499
+
+        Reviewed by Dean Jackson.
+
+        INSTALL_PATH was empty, so no dylib was being included in the root.
+        This is needed to fix the Catalyst build after bug 218539
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+
 2021-03-06  Dean Jackson  <dino@apple.com>
 
         Metal-ANGLE can ASSERT because MTL signal event code is compiled out
