@@ -288,6 +288,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-010-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-item-margins-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-item-margins-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-box-wrap-expected.html
@@ -1220,6 +1222,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-center.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-end-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-end-rtl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-end-rtl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-end.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-flex-end-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-flex-end.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-flex-start-expected.html
@@ -1236,6 +1242,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween-only-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween-only.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-start-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-start-rtl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-start-rtl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-start.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_margin-auto-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_margin-auto-overflow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox_margin-auto-overflow.html
