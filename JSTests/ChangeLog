@@ -1,3 +1,16 @@
+2021-03-18  Mark Lam  <mark.lam@apple.com>
+
+        JSTests/stress/heap-analyzer-taking-lock.js intermittently fails --verifyGC=true.
+        https://bugs.webkit.org/show_bug.cgi?id=222947
+        rdar://75454308
+
+        Reviewed by Michael Saboff.
+
+        The issue was already fixed in https://bugs.webkit.org/show_bug.cgi?id=223241.
+        Removing skipped test option.
+
+        * stress/heap-analyzer-taking-lock.js:
+
 2021-03-18  Saam Barati  <sbarati@apple.com>
 
         JS->Wasm IC must save the tag registers if it uses them
