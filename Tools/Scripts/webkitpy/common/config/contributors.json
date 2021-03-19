@@ -1038,12 +1038,13 @@
    },
    "Caio Araujo Neponoceno de Lima" : {
       "emails" : [
-         "ticaiolima@gmail.com"
+         "ticaiolima@gmail.com",
+         "clima@igalia.com"
       ],
       "nicks" : [
          "caiolima"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    "Caio Marcelo de Oliveira Filho" : {
       "emails" : [
