@@ -120,16 +120,23 @@ Vector<StyledMarkedText> subdivideAndResolveStyle(const Vector<MarkedText>& text
     if (textsToSubdivide.isEmpty())
         return { };
 
+    Vector<StyledMarkedText> frontmostMarkedTexts;
+
+    auto& lineStyle = isFirstLine ? renderer.firstLineStyle() : renderer.style();
+    auto baseStyle = computeStyleForUnmarkedMarkedText(renderer, lineStyle, isFirstLine, paintInfo);
+
+    if (textsToSubdivide.size() == 1 && textsToSubdivide[0].type == MarkedText::Unmarked) {
+        StyledMarkedText styledMarkedText = textsToSubdivide[0];
+        styledMarkedText.style = WTFMove(baseStyle);
+        return { styledMarkedText };
+    }
+
     auto markedTexts = subdivide(textsToSubdivide);
     ASSERT(!markedTexts.isEmpty());
     if (UNLIKELY(markedTexts.isEmpty()))
         return { };
 
-    auto& lineStyle = isFirstLine ? renderer.firstLineStyle() : renderer.style();
-    auto baseStyle = computeStyleForUnmarkedMarkedText(renderer, lineStyle, isFirstLine, paintInfo);
-
     // Compute frontmost overlapping styled marked texts.
-    Vector<StyledMarkedText> frontmostMarkedTexts;
     frontmostMarkedTexts.reserveInitialCapacity(markedTexts.size());
     frontmostMarkedTexts.uncheckedAppend(resolveStyleForMarkedText(markedTexts[0], baseStyle, renderer, lineStyle, paintInfo));
     for (auto it = markedTexts.begin() + 1, end = markedTexts.end(); it != end; ++it) {
@@ -147,8 +154,8 @@ Vector<StyledMarkedText> subdivideAndResolveStyle(const Vector<MarkedText>& text
 
 Vector<StyledMarkedText> coalesceAdjacentMarkedTexts(const Vector<StyledMarkedText>& textsToCoalesce, MarkedTextStylesEqualityFunction areMarkedTextStylesEqual)
 {
-    if (textsToCoalesce.isEmpty())
-        return { };
+    if (textsToCoalesce.size() <= 1)
+        return textsToCoalesce;
 
     auto areAdjacentMarkedTextsWithSameStyle = [&] (const StyledMarkedText& a, const StyledMarkedText& b) {
         return a.endOffset == b.startOffset && areMarkedTextStylesEqual(a.style, b.style);
