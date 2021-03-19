@@ -1,3 +1,15 @@
+2021-03-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Allow opendirectoryd access in base system
+        https://bugs.webkit.org/show_bug.cgi?id=223527
+        <rdar://problem/75492699>
+
+        Reviewed by Per Arne Vollan.
+
+        Allow the WebContent process to communicate with opendirectoryd when running in the base system.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-03-19  BJ Burg  <bburg@apple.com>
 
         Web Inspector: remove unnecessary inspectorBaseURL() and assumed read access
