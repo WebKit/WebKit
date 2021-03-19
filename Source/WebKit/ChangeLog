@@ -1,3 +1,27 @@
+2021-03-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Cannot login to microsoftonline.com without allowing storage access
+        https://bugs.webkit.org/show_bug.cgi?id=223510
+        <rdar://problem/75619058>
+
+        Reviewed by John Wilander.
+
+        Disable the storage access quirk for non-default web browsers and
+        don't cancel the login click on sites even if the user denies storage
+        access. See WebCore changelog for more details.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::isParentProcessAFullWebBrowser const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::hasDeniedCrossPageStorageAccess const):
+        (WebKit::WebResourceLoadObserver::setHasDeniedCrossPageStorageAccess):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pageIsParentProcessAFullWebBrowser):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Allow opendirectoryd access in base system

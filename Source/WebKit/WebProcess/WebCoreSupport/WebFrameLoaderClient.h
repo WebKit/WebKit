@@ -294,6 +294,7 @@ private:
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const final;
 #endif
 
+    bool isParentProcessAFullWebBrowser() const final;
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.

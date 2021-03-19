@@ -1,3 +1,56 @@
+2021-03-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Cannot login to microsoftonline.com without allowing storage access
+        https://bugs.webkit.org/show_bug.cgi?id=223510
+        <rdar://problem/75619058>
+
+        Reviewed by John Wilander.
+
+        This patch introduces two changes: 
+
+        1. Activate the storage access quirks for default browsers only. This
+        is the main place we test them, and can lead to unexpected behavior in
+        apps otherwise.
+
+        2. Doesn't cancel the click even if the user denies storage access.
+        Previously we we were not allowing the click because it produces
+        unexpected behavior. But, sites like login.microsoftonline.com are used
+        by multiple Microsoft login flows. Since only a subset require storage
+        access, canceling the click across the board could be considered
+        regressing behavior.
+
+        Since storage access data is stored in the network process, we
+        currently cancel the user's click on quirked sites while we wait
+        asyncronously for the IPC response. If the user grants storage access,
+        we store this in the web content process and dispatch a synthetic
+        click. In this case, when the click triggers another storage access
+        check, we can allow the click because we no longer need to wait for
+        information from the network process.
+
+        We need some heuristic in the web content process to handle the case
+        of the user denying storage access to know whether to allow a
+        synthetic click to happen. This patch introduces
+        hasDeniedCrossPageStorageAccess which stores domains in the web
+        content process which have been denied storage access via quirk. If
+        a user has previously denied storage access in that web content
+        process, we don't prompt again. A new web content process will give them
+        another opportunity to allow/deny storage access.
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent):
+        * loader/FrameLoaderClient.h:
+        Add a client function to check if the parent process is a full web
+        browser, and pass this to the place we apply the quirks.
+
+        * loader/ResourceLoadObserver.h:
+        (WebCore::ResourceLoadObserver::setHasDeniedCrossPageStorageAccess):
+        (WebCore::ResourceLoadObserver::hasDeniedCrossPageStorageAccess const):
+        * page/Quirks.cpp:
+        (WebCore::hasDeniedCrossPageStorageAccess):
+        (WebCore::Quirks::requestStorageAccessAndHandleClick const):
+        (WebCore::Quirks::triggerOptionalStorageAccessQuirk const):
+        * page/Quirks.h:
+
 2021-03-19  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed, reverting r274596.

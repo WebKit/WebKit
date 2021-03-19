@@ -3826,6 +3826,15 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
     updatePreferences(store);
 }
 
+bool WebPage::isParentProcessAWebBrowser() const
+{
+#if HAVE(AUDIT_TOKEN)
+    if (auto* connection = WebProcess::singleton().parentProcessConnection())
+        return isParentProcessAFullWebBrowser(connection->getAuditToken());
+#endif
+    return false;
+}
+
 void WebPage::updatePreferences(const WebPreferencesStore& store)
 {
     updatePreferencesGenerated(store);
@@ -3932,10 +3941,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(IOS)
-    if (auto* connection = WebProcess::singleton().parentProcessConnection()) {
-        if (isParentProcessAFullWebBrowser(connection->getAuditToken()))
-            settings.setWebAuthenticationEnabled(true);
-    }
+    if (isParentProcessAWebBrowser())
+        settings.setWebAuthenticationEnabled(true);
 #endif
 
 #if ENABLE(WEBM_FORMAT_READER)

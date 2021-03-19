@@ -384,6 +384,8 @@ public:
 #if ENABLE(PDFKIT_PLUGIN)
     virtual bool shouldUsePDFPlugin(const String&, StringView) const { return false; }
 #endif
+    
+    virtual bool isParentProcessAFullWebBrowser() const { return false; }
 };
 
 } // namespace WebCore
