@@ -1,3 +1,10 @@
+2021-03-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fixes
+
+        * GPUProcess/media/RemoteMediaResourceLoader.cpp:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+
 2021-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.30.6 release
