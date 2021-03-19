@@ -1,3 +1,17 @@
+2021-03-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        update-webgl-conformance-tests script should use webgl/1.0.x and webgl/2.0.y directories
+        https://bugs.webkit.org/show_bug.cgi?id=223516
+
+        Reviewed by Kenneth Russell.
+
+        Import the tests to 1.0.x/2.0.y instead of 1.0.4/2.0.1 since we track the development
+        versions, not the upcoming snapshots.
+
+        * Scripts/webkitpy/update_webgl_conformance_tests_lib/main.py:
+        (_generate_webkit_webgl_tests):
+        (main):
+
 2021-03-19  Youenn Fablet  <youenn@apple.com>
 
         Custom scheme handled origins should be considered secure

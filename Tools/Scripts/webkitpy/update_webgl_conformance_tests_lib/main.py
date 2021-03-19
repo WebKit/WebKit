@@ -34,7 +34,7 @@
    cd ~/temp
    git clone git://github.com/KhronosGroup/WebGL.git
    mkdir backup
-   mv ~/WebKit/LayoutTests/webgl/{1.0.4,2.0.1,resources/webgl_test_files} backup
+   mv ~/WebKit/LayoutTests/webgl/{1.0.x,2.0.y,resources/webgl_test_files} backup
    generate-webgl-tests ~/temp/WebGL
    run-webkit-tests --debug --webgl --order=random webgl
    run-webkit-tests --release --webgl --order=random webgl
@@ -195,6 +195,7 @@ def _generate_webkit_webgl_tests(
     suite_version: Version,
     use_webgl2_context: bool,
     target_dir: Path,
+    target_version_name: str,
 ):
     target_test_files_dir = target_dir / "resources" / "webgl_test_files"
 
@@ -208,7 +209,7 @@ def _generate_webkit_webgl_tests(
 
     tests = _parse_webgl_tests(source_tests_dir, (source_tests_dir / "00_test_list.txt"), suite_version, suite_version)
 
-    target_tests_dir = target_dir / str(suite_version)
+    target_tests_dir = target_dir / target_version_name
     for test_path in _filter_webgl_test_paths_for_suite_version(tests, suite_version):
         target_test = target_tests_dir / test_path
         target_test_impl = target_test_files_dir / test_path
@@ -266,8 +267,8 @@ def main():
     target_dir = Path(options.layout_tests_dir) / "webgl"
 
     _copy_webgl_test_files(source_tests_dir=source_dir / "sdk" / "tests", source_patterns=_conformance_patterns, target_dir=target_dir)
-    _generate_webkit_webgl_tests(source_tests_dir=source_dir / "sdk" / "tests", suite_version=Version("1.0.4"), use_webgl2_context=False, target_dir=target_dir)
-    _generate_webkit_webgl_tests(source_tests_dir=source_dir / "sdk" / "tests", suite_version=Version("2.0.1"), use_webgl2_context=True, target_dir=target_dir)
+    _generate_webkit_webgl_tests(source_tests_dir=source_dir / "sdk" / "tests", suite_version=Version("1.0.4"), use_webgl2_context=False, target_dir=target_dir, target_version_name="1.0.x")
+    _generate_webkit_webgl_tests(source_tests_dir=source_dir / "sdk" / "tests", suite_version=Version("2.0.1"), use_webgl2_context=True, target_dir=target_dir, target_version_name="2.0.y")
     layout_tests_dir = Path(options.layout_tests_dir)
 
     old_expectations = _find_expectations_for_removed_tests(layout_tests_dir)
