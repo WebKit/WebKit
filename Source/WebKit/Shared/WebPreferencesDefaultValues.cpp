@@ -185,7 +185,7 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
 #if PLATFORM(MAC)
-    return true;
+    return isFeatureFlagEnabled("gpu_process_webrtc");
 #elif PLATFORM(IOS_FAMILY)
     return isFeatureFlagEnabled("gpu_process_media");
 #endif
