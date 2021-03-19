@@ -1,3 +1,17 @@
+2021-03-19  Martin Robinson  <mrobinson@igalia.com>
+
+        scroll-snap-stop: always not respected during momentum scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=223406
+
+        Reviewed by Simon Fraser.
+
+        Test: tiled-drawing/scrolling/scroll-snap/scroll-snap-stop-momentum-scroll.html
+
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::targetOffsetForStartOffset const): Enable directional scroll
+        snapping when handling momentum scrolling. This turns on scroll-snap-stop as well as a few other
+        features.
+
 2021-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=223141
