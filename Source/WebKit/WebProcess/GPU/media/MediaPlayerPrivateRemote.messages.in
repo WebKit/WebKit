@@ -74,7 +74,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     ActiveSourceBuffersChanged()
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    WaitingForKeyChanged()
+    WaitingForKeyChanged(bool waitingForKey)
     InitializationDataEncountered(String initDataType, IPC::DataReference initData)
 #endif
 

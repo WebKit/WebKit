@@ -1085,8 +1085,9 @@ void MediaPlayerPrivateRemote::attemptToDecryptWithInstance(CDMInstance& instanc
         connection().send(Messages::RemoteMediaPlayerProxy::AttemptToDecryptWithInstance(downcast<RemoteCDMInstance>(instance).identifier()), m_id);
 }
 
-void MediaPlayerPrivateRemote::waitingForKeyChanged()
+void MediaPlayerPrivateRemote::waitingForKeyChanged(bool waitingForKey)
 {
+    m_waitingForKey = waitingForKey;
     m_player->waitingForKeyChanged();
 }
 
@@ -1098,8 +1099,7 @@ void MediaPlayerPrivateRemote::initializationDataEncountered(const String& initD
 
 bool MediaPlayerPrivateRemote::waitingForKey() const
 {
-    notImplemented();
-    return false;
+    return m_waitingForKey;
 }
 #endif
 

@@ -672,7 +672,7 @@ void RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered(const Stri
 
 void RemoteMediaPlayerProxy::mediaPlayerWaitingForKeyChanged()
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::WaitingForKeyChanged(), m_id);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::WaitingForKeyChanged(m_player->waitingForKey()), m_id);
 }
 #endif
 

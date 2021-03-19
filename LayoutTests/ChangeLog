@@ -1,3 +1,13 @@
+2021-03-19  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] platform/mac/media/encrypted-media/fps-clearkey-crash.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=221687
+        <rdar://problem/74438911>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-03-19  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Test imported/w3c/web-platform-tests/fetch/range/general.window.html fails when media in GPU process is enabled.
