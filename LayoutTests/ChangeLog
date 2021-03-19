@@ -1,3 +1,16 @@
+2021-03-19  Youenn Fablet  <youenn@apple.com>
+
+        Custom scheme handled origins should be considered secure
+        https://bugs.webkit.org/show_bug.cgi?id=223423
+
+        Reviewed by Alex Christensen.
+
+        Add a new test to check device orientation in insecure context now that we cannot do that anymore with custom schemes.
+
+        * http/tests/events/device-orientation-motion-insecure-context-expected.txt: Added.
+        * http/tests/events/device-orientation-motion-insecure-context.html: Added.
+        * platform/ios/http/tests/events/device-orientation-motion-insecure-context-expected.txt: Added.
+
 2021-03-19  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] platform/mac/media/encrypted-media/fps-clearkey-crash.html is a flaky timeout
