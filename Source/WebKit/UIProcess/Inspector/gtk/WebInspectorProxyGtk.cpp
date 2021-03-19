@@ -385,17 +385,12 @@ void WebInspectorProxy::platformShowCertificate(const WebCore::CertificateInfo&)
 
 String WebInspectorProxy::inspectorPageURL()
 {
-    return String("resource:///org/webkit/inspector/UserInterface/Main.html");
+    return "resource:///org/webkit/inspector/UserInterface/Main.html"_s;
 }
 
 String WebInspectorProxy::inspectorTestPageURL()
 {
-    return String("resource:///org/webkit/inspector/UserInterface/Test.html");
-}
-
-String WebInspectorProxy::inspectorBaseURL()
-{
-    return String("resource:///org/webkit/inspector/UserInterface/");
+    return "resource:///org/webkit/inspector/UserInterface/Test.html"_s;
 }
 
 DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()

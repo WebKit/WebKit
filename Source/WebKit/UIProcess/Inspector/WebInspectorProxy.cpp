@@ -423,7 +423,6 @@ void WebInspectorProxy::createFrontendPage()
     m_inspectedPage->launchInitialProcessIfNecessary();
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->identifier(), *this);
-    m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = WebInspectorUIExtensionControllerProxy::create(*m_inspectorPage);
@@ -865,12 +864,6 @@ String WebInspectorProxy::inspectorPageURL()
 }
 
 String WebInspectorProxy::inspectorTestPageURL()
-{
-    notImplemented();
-    return String();
-}
-
-String WebInspectorProxy::inspectorBaseURL()
 {
     notImplemented();
     return String();

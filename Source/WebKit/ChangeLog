@@ -1,3 +1,31 @@
+2021-03-19  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: remove unnecessary inspectorBaseURL() and assumed read access
+        https://bugs.webkit.org/show_bug.cgi?id=223526
+
+        Reviewed by Devin Rousso.
+
+        inspectorBaseURL() is only used to call WebProcess::assumeReadAccessToBaseURL, which
+        generates a sandbox extension. However, after r274697, all ports now use non-file:///
+        schemes to load inspector resources, so any needed sandbox extensions are handled in
+        port-specific code or by the URL scheme handler.
+
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::createFrontendPageAndWindow):
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createFrontendPage):
+        (WebKit::WebInspectorProxy::inspectorBaseURL): Deleted.
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL): Deleted.
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectorBaseURL): Deleted.
+        * UIProcess/Inspector/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::inspectorBaseURL): Deleted.
+        * mac/WebKit2.order:
+
 2021-03-19  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] platform/mac/media/encrypted-media/fps-clearkey-crash.html is a flaky timeout

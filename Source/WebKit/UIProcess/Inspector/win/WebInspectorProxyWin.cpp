@@ -287,16 +287,6 @@ String WebInspectorProxy::inspectorTestPageURL()
 #endif
 }
 
-String WebInspectorProxy::inspectorBaseURL()
-{
-#if USE(CF)
-    RetainPtr<CFURLRef> baseURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("WebInspectorUI"), nullptr, nullptr));
-    return CFURLGetString(baseURLRef.get());
-#else
-    return { };
-#endif
-}
-
 DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
 {
     // FIXME <https://webkit.org/b/205537>: this should infer more useful data.

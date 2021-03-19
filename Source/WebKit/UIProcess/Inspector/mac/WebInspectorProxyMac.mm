@@ -787,11 +787,6 @@ String WebInspectorProxy::inspectorTestPageURL()
     return [WKInspectorViewController URLForInspectorResource:@"Test.html"].absoluteString;
 }
 
-String WebInspectorProxy::inspectorBaseURL()
-{
-    return [WKInspectorViewController URLForInspectorResource:@""].absoluteString;
-}
-
 static NSDictionary *systemVersionPlist()
 {
     NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES) objectAtIndex:0];

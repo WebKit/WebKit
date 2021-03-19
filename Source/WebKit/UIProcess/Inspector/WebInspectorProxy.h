@@ -186,7 +186,6 @@ public:
     // Provided by platform WebInspectorProxy implementations.
     static String inspectorPageURL();
     static String inspectorTestPageURL();
-    static String inspectorBaseURL();
     static bool isMainOrTestInspectorPage(const URL&);
     static DebuggableInfoData infoForLocalDebuggable();
 
