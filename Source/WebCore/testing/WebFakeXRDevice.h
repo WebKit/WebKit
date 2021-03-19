@@ -38,6 +38,9 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+class GLContext;
+class GraphicsContextGL;
+
 class FakeXRView final : public RefCounted<FakeXRView> {
 public:
     static Ref<FakeXRView> create(XREye eye) { return adoptRef(*new FakeXRView(eye)); }
@@ -81,12 +84,14 @@ public:
     void scheduleOnNextFrame(Function<void()>&&);
 private:
     WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final;
-    void initializeTrackingAndRendering(PlatformXR::SessionMode) final { }
+    void initializeTrackingAndRendering(PlatformXR::SessionMode) final;
     void shutDownTrackingAndRendering() final;
     bool supportsSessionShutdownNotification() const final { return m_supportsShutdownNotification; }
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
     Vector<PlatformXR::Device::ViewData> views(PlatformXR::SessionMode) const final;
     void requestFrame(RequestFrameCallback&&) final;
+    Optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) final;
+    void deleteLayer(PlatformXR::LayerHandle) final;
 
     void stopTimer();
     void frameTimerFired();
@@ -101,6 +106,9 @@ private:
     RequestFrameCallback m_FrameCallback;
     Vector<Function<void()>> m_pendingUpdates;
     FrameData::StageParameters m_stageParameters;
+    RefPtr<WebCore::GraphicsContextGL> m_gl;
+    HashMap<PlatformXR::LayerHandle, PlatformGLObject> m_layers;
+    uint32_t m_layerIndex { 0 };
 };
 
 class WebFakeXRDevice final : public RefCounted<WebFakeXRDevice> {

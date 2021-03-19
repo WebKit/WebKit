@@ -534,6 +534,7 @@ void WebXRSystem::DummyInlineDevice::requestFrame(PlatformXR::Device::RequestFra
         PlatformXR::Device::FrameData data;
         data.isTrackingValid = true;
         data.isPositionValid = true;
+        data.shouldRender = true;
         data.views.append({ });
         callback(WTFMove(data));
     });

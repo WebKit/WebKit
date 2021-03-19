@@ -19,6 +19,8 @@
 #pragma once
 
 #include "FloatPoint3D.h"
+#include "GraphicsTypesGL.h"
+#include "IntRect.h"
 #include "IntSize.h"
 #include <memory>
 #include <wtf/CompletionHandler.h>
@@ -51,6 +53,8 @@ enum class Eye {
     Right,
 };
 
+using LayerHandle = int;
+
 #if ENABLE(WEBXR)
 
 class TrackingAndRenderingClient : public CanMakeWeakPtr<TrackingAndRenderingClient> {
@@ -80,6 +84,15 @@ public:
     bool supportsOrientationTracking() const { return m_supportsOrientationTracking; }
     bool supportsViewportScaling() const { return m_supportsViewportScaling; }
 
+    // Returns the value that the device's recommended resolution must be multiplied by
+    // to yield the device's native framebuffer resolution.
+    virtual double nativeFramebufferScalingFactor() const { return 1.0; }
+    // Returns the value that the device's recommended resolution must be multiplied by
+    // to yield the device's max framebuffer resolution. This resolution can be larger than
+    // the native resolution if the device supports supersampling.
+    virtual double maxFramebufferScalingFactor() const { return nativeFramebufferScalingFactor(); }
+
+
     virtual void initializeTrackingAndRendering(SessionMode) = 0;
     virtual void shutDownTrackingAndRendering() = 0;
     void setTrackingAndRenderingClient(WeakPtr<TrackingAndRenderingClient>&& client) { m_trackingAndRenderingClient = WTFMove(client); }
@@ -88,6 +101,8 @@ public:
     // when the platform has completed all steps to shut down the XR session.
     virtual bool supportsSessionShutdownNotification() const { return false; }
     virtual void initializeReferenceSpace(ReferenceSpaceType) = 0;
+    virtual Optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
+    virtual void deleteLayer(LayerHandle) = 0;
 
     struct FrameData {
         struct FloatQuaternion {
@@ -122,14 +137,31 @@ public:
             Vector<WebCore::FloatPoint> bounds;
         };
 
+        struct LayerData {
+            PlatformGLObject opaqueTexture { 0 };
+        };
+
         bool isTrackingValid { false };
         bool isPositionValid { false };
         bool isPositionEmulated { false };
+        bool shouldRender { false };
         long predictedDisplayTime { 0 };
         Pose origin;
         Optional<Pose> floorTransform;
         StageParameters stageParameters;
         Vector<View> views;
+        HashMap<LayerHandle, LayerData> layers;
+    };
+
+    struct LayerView {
+        Eye eye { Eye::None };
+        WebCore::IntRect viewport;
+    };
+
+    struct Layer {
+        LayerHandle handle { 0 };
+        bool visible { true };
+        Vector<LayerView> views;
     };
 
     struct ViewData {
@@ -141,6 +173,7 @@ public:
 
     using RequestFrameCallback = Function<void(FrameData&&)>;
     virtual void requestFrame(RequestFrameCallback&&) = 0;
+    virtual void submitFrame(Vector<Layer>&&) { };
 protected:
     Device() = default;
 

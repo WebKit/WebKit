@@ -29,6 +29,8 @@
 #if ENABLE(WEBXR)
 
 #include "DOMPointReadOnly.h"
+#include "GLContext.h"
+#include "GraphicsContextGL.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WebFakeXRInputController.h"
 #include <wtf/CompletionHandler.h>
@@ -75,8 +77,17 @@ void SimulatedXRDevice::simulateShutdownCompleted()
 
 WebCore::IntSize SimulatedXRDevice::recommendedResolution(PlatformXR::SessionMode)
 {
-    // Return at least a 2 pixel size so we can have different viewports for left and right eyes
-    return IntSize(2, 2);
+    // Return at least a valid size for a framebuffer.
+    return IntSize(32, 32);
+}
+
+void SimulatedXRDevice::initializeTrackingAndRendering(PlatformXR::SessionMode)
+{
+    GraphicsContextGLAttributes attributes;
+    attributes.depth = false;
+    attributes.stencil = false;
+    attributes.antialias = false;
+    m_gl = GraphicsContextGL::create(attributes, nullptr);
 }
 
 void SimulatedXRDevice::shutDownTrackingAndRendering()
@@ -84,6 +95,11 @@ void SimulatedXRDevice::shutDownTrackingAndRendering()
     if (m_supportsShutdownNotification)
         simulateShutdownCompleted();
     stopTimer();
+    if (m_gl) {
+        for (auto layer : m_layers)
+            m_gl->deleteTexture(layer.value);
+    }
+    m_layers.clear();
 }
 
 void SimulatedXRDevice::stopTimer()
@@ -99,6 +115,7 @@ void SimulatedXRDevice::frameTimerFired()
         update();
 
     FrameData data;
+    data.shouldRender = true;
     if (m_viewerOrigin) {
         data.origin = *m_viewerOrigin;
         data.isTrackingValid = true;
@@ -122,6 +139,9 @@ void SimulatedXRDevice::frameTimerFired()
         data.views.append(view);
     }
 
+    for (auto& layer : m_layers)
+        data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
+
     if (m_FrameCallback)
         m_FrameCallback(WTFMove(data));
 }
@@ -131,6 +151,36 @@ void SimulatedXRDevice::requestFrame(RequestFrameCallback&& callback)
     m_FrameCallback = WTFMove(callback);
     if (!m_frameTimer.isActive())
         m_frameTimer.startOneShot(FakeXRFrameTime);
+}
+
+Optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
+{
+    using GL = GraphicsContextGL;
+    if (!m_gl)
+        return WTF::nullopt;
+    PlatformXR::LayerHandle handle = ++m_layerIndex;
+    auto texture = m_gl->createTexture();
+    auto colorFormat = alpha ? GL::RGBA8 : GL::RGB8;
+
+    m_gl->bindTexture(GL::TEXTURE_2D, texture);
+    m_gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
+    m_gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
+    m_gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::LINEAR);
+    m_gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
+    m_gl->texStorage2D(GL::TEXTURE_2D, 1, colorFormat, width, height);
+
+    m_layers.add(handle, texture);
+    return handle;    
+}
+
+void SimulatedXRDevice::deleteLayer(PlatformXR::LayerHandle handle)
+{
+    auto it = m_layers.find(handle);
+    if (it != m_layers.end()) {
+        if (m_gl)
+            m_gl->deleteTexture(it->value);
+        m_layers.remove(it);
+    }
 }
 
 Vector<PlatformXR::Device::ViewData> SimulatedXRDevice::views(PlatformXR::SessionMode mode) const

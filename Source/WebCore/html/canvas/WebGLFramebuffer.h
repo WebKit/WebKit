@@ -74,6 +74,9 @@ public:
     virtual ~WebGLFramebuffer();
 
     static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase&);
+#if ENABLE(WEBXR)
+    static Ref<WebGLFramebuffer> createOpaque(WebGLRenderingContextBase&);
+#endif
 
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level, GCGLint layer);
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, WebGLRenderbuffer*);
@@ -116,6 +119,11 @@ public:
 
     void addMembersToOpaqueRoots(const WTF::AbstractLocker&, JSC::AbstractSlotVisitor&);
 
+#if ENABLE(WEBXR)
+    bool isOpaque() const { return m_opaque; }
+    void setOpaqueActive(bool active) { m_opaqueActive = active; }
+#endif
+
 private:
     WebGLFramebuffer(WebGLRenderingContextBase&);
 
@@ -151,6 +159,11 @@ private:
 
     Vector<GCGLenum> m_drawBuffers;
     Vector<GCGLenum> m_filteredDrawBuffers;
+
+#if ENABLE(WEBXR)
+    bool m_opaque { false };
+    bool m_opaqueActive { false };
+#endif
 };
 
 } // namespace WebCore

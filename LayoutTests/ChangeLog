@@ -1,3 +1,14 @@
+2021-03-18  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR Opaque Framebuffer
+        https://bugs.webkit.org/show_bug.cgi?id=222607
+
+        Reviewed by Youenn Fablet.
+
+        Update WebXR Opaque Framebuffer test expectations.
+
+        * platform/wpe/TestExpectations:
+
 2021-03-18  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] REGRESSION(r274273): fast/canvas/webgl/gl-teximage-imagebitmap.html is failing

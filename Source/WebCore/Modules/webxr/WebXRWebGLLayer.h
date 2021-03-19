@@ -30,6 +30,8 @@
 #include "CanvasBase.h"
 #include "ExceptionOr.h"
 #include "FloatRect.h"
+#include "GraphicsTypesGL.h"
+#include "PlatformXR.h"
 #include "WebXRLayer.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Optional.h>
@@ -43,9 +45,11 @@ class HTMLCanvasElement;
 class IntSize;
 class WebGLFramebuffer;
 class WebGLRenderingContext;
+class WebGLRenderingContextBase;
 #if ENABLE(WEBGL2)
 class WebGL2RenderingContext;
 #endif
+class WebXROpaqueFramebuffer;
 class WebXRSession;
 class WebXRView;
 class WebXRViewport;
@@ -68,7 +72,7 @@ public:
     bool antialias() const;
     bool ignoreDepthValues() const;
 
-    WebGLFramebuffer* framebuffer() const;
+    const WebGLFramebuffer* framebuffer() const;
     unsigned framebufferWidth() const;
     unsigned framebufferHeight() const;
 
@@ -82,8 +86,12 @@ public:
 
     HTMLCanvasElement* canvas() const;
 
+    // WebXRLayer
+    void startFrame(const PlatformXR::Device::FrameData&) final;
+    PlatformXR::Device::Layer endFrame() final;
+
 private:
-    WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
+    WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, std::unique_ptr<WebXROpaqueFramebuffer>&&, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled);
 
     void computeViewports();
     static IntSize computeNativeWebGLFramebufferResolution();
@@ -92,7 +100,6 @@ private:
     void canvasChanged(CanvasBase&, const Optional<FloatRect>&) final { };
     void canvasResized(CanvasBase&) final;
     void canvasDestroyed(CanvasBase&) final { };
-
     Ref<WebXRSession> m_session;
     WebXRRenderingContext m_context;
 
@@ -103,16 +110,50 @@ private:
 
     ViewportData m_leftViewportData;
     ViewportData m_rightViewportData;
+    std::unique_ptr<WebXROpaqueFramebuffer> m_framebuffer;
     bool m_antialias { false };
     bool m_ignoreDepthValues { false };
     bool m_isCompositionEnabled { true };
     bool m_viewportsDirty { true };
+};
 
-    struct {
-        RefPtr<WebGLFramebuffer> object;
-        unsigned width { 0 };
-        unsigned height { 0 };
-    } m_framebuffer;
+class WebXROpaqueFramebuffer {
+public:
+    struct Attributes {
+        bool alpha { true };
+        bool antialias { true };
+        bool depth { true };
+        bool stencil { false };
+    };
+
+    static std::unique_ptr<WebXROpaqueFramebuffer> create(PlatformXR::LayerHandle, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
+    ~WebXROpaqueFramebuffer();
+
+    PlatformXR::LayerHandle handle() const { return m_handle; }
+    const WebGLFramebuffer& framebuffer() const { return m_framebuffer.get(); }
+    uint32_t width() const { return m_width; }
+    uint32_t height() const { return m_height; }
+
+    void startFrame(const PlatformXR::Device::FrameData::LayerData&);
+    void endFrame();
+
+private:
+    WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
+
+    bool setupFramebuffer();
+
+    PlatformXR::LayerHandle m_handle;
+    Ref<WebGLFramebuffer> m_framebuffer;
+    WebGLRenderingContextBase& m_context;
+    Attributes m_attributes;
+    uint32_t m_width { 0 };
+    uint32_t m_height { 0 };
+    PlatformGLObject m_depthStencilBuffer { 0 };
+    PlatformGLObject m_stencilBuffer { 0 };
+    PlatformGLObject m_multisampleColorBuffer { 0 };
+    PlatformGLObject m_resolvedFBO { 0 };
+    GCGLint m_sampleCount { 0 };
+    PlatformGLObject m_opaqueTexture { 0 };
 };
 
 } // namespace WebCore

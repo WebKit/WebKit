@@ -2054,6 +2054,13 @@ void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 {
     auto locker = holdLock(objectGraphLock());
 
+#if ENABLE(WEBXR)
+    if (framebuffer && framebuffer->isOpaque()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "deleteFramebuffer", "An opaque framebuffer's attachments cannot be inspected or changed");
+        return;
+    }
+#endif
+
     if (!deleteObject(locker, framebuffer))
         return;
 
@@ -2734,6 +2741,14 @@ void WebGLRenderingContextBase::framebufferRenderbuffer(GCGLenum target, GCGLenu
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "framebufferRenderbuffer", "no framebuffer bound");
         return;
     }
+
+#if ENABLE(WEBXR)
+    if (framebufferBinding->isOpaque()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "framebufferRenderbuffer", "An opaque framebuffer's attachments cannot be inspected or changed");
+        return;
+    }
+#endif
+
     framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, buffer);
     applyStencilTest();
 }
@@ -2757,6 +2772,13 @@ void WebGLRenderingContextBase::framebufferTexture2D(GCGLenum target, GCGLenum a
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "framebufferTexture2D", "no framebuffer bound");
         return;
     }
+#if ENABLE(WEBXR)
+    if (framebufferBinding->isOpaque()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "framebufferTexture2D", "An opaque framebuffer's attachments cannot be inspected or changed");
+        return;
+    }
+#endif
+
     framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, textarget, texture, level, 0);
     applyStencilTest();
 }
