@@ -1,3 +1,50 @@
+2021-03-18  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: load inspector resources using a custom scheme handler
+        https://bugs.webkit.org/show_bug.cgi?id=179904
+        <rdar://problem/10887211>
+
+        Reviewed by Geoff Garen.
+
+        Load WebInspectorUI resources via the inspector-resource:// scheme.
+        Moving off of file:// URLs will allow for a tighter sandbox and
+        will fix the longstanding issue that Web Inspector's settings are
+        part of the file:// scheme and cleared when Safari clears website data.
+
+        This also has the effect of resetting Web Inspector settings since
+        they are no longer associated with file:///.
+
+        Loading via this scheme is exercised by existing inspector tests.
+
+        * SourcesCocoa.txt: Added new file.
+        * WebKit.xcodeproj/project.pbxproj:
+        * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.h: Copied from Source/WebKit/WebProcess/Inspector/mac/WebInspectorUIMac.mm.
+        * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm: Added.
+        (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+        Use a global concurrent queue and NSOperation / NSOperationQueue to support
+        reading files off the main queue.
+
+        (-[WKInspectorResourceURLSchemeHandler webView:stopURLSchemeTask:]):
+        Translate the request URL to a bundle resource URL, read the data, and send a response
+        with the file data. Return an error if the file could not be found or read.
+
+        * UIProcess/Inspector/mac/WKInspectorViewController.h:
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController webViewConfiguration]):
+        (+[WKInspectorViewController URLForInspectorResource:]):
+        (-[WKInspectorViewController webView:decidePolicyForNavigationAction:decisionHandler:]):
+        Allow navigations to URIs with the inspector-resource:// scheme.
+
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        Updated.
+
+        * WebProcess/Inspector/mac/WebInspectorUIMac.mm:
+        (WebKit::webInspectorUILocalizedStringsURL):
+        Updated.
+
 2021-03-18  Sihui Liu  <sihui_liu@appe.com>
 
         Handle empty bound size during animated resizing
