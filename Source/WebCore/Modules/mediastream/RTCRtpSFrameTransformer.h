@@ -28,6 +28,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "ExceptionOr.h"
+#include "RTCRtpTransformBackend.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -45,6 +46,7 @@ public:
 
     void setIsEncrypting(bool);
     void setAuthenticationSize(uint64_t);
+    void setMediaType(RTCRtpTransformBackend::MediaType);
 
     WEBCORE_EXPORT ExceptionOr<void> setEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t>);
     WEBCORE_EXPORT ExceptionOr<Vector<uint8_t>> transform(const uint8_t*, size_t);
@@ -102,6 +104,16 @@ inline void RTCRtpSFrameTransformer::setIsEncrypting(bool isEncrypting)
 inline void RTCRtpSFrameTransformer::setAuthenticationSize(uint64_t size)
 {
     m_authenticationSize = size;
+}
+
+inline void RTCRtpSFrameTransformer::setMediaType(RTCRtpTransformBackend::MediaType mediaType)
+{
+    if (mediaType == RTCRtpTransformBackend::MediaType::Video) {
+        m_authenticationSize = 10;
+        return;
+    }
+    m_authenticationSize = 4;
+    m_compatibilityMode = CompatibilityMode::None;
 }
 
 } // namespace WebCore

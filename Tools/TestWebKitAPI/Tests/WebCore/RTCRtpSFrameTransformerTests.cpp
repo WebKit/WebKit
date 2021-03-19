@@ -75,9 +75,26 @@ static Ref<WebCore::RTCRtpSFrameTransformer> createVideoTransformer(bool isEncry
 {
     auto transformer = WebCore::RTCRtpSFrameTransformer::create();
     transformer->setIsEncrypting(isEncrypting);
-    transformer->setAuthenticationSize(10);
+    transformer->setMediaType(WebCore::RTCRtpTransformBackend::MediaType::Video);
 
     auto keyId = Vector<uint8_t>::from(198, 31, 251, 197, 48, 139, 91, 51);
+    uint64_t keyIdValue = 0;
+    for (auto value : keyId)
+        keyIdValue = value + (keyIdValue << 8);
+
+    auto keyResult = transformer->setEncryptionKey(getRawKey(), keyIdValue);
+    EXPECT_FALSE(keyResult.hasException());
+
+    return transformer;
+}
+
+static Ref<WebCore::RTCRtpSFrameTransformer> createAudioTransformer(bool isEncrypting, WebCore::RTCRtpSFrameTransformer::CompatibilityMode mode)
+{
+    auto transformer = WebCore::RTCRtpSFrameTransformer::create(mode);
+    transformer->setIsEncrypting(isEncrypting);
+    transformer->setMediaType(WebCore::RTCRtpTransformBackend::MediaType::Audio);
+
+    auto keyId = Vector<uint8_t>::from(31, 251, 197, 48, 139, 91, 51);
     uint64_t keyIdValue = 0;
     for (auto value : keyId)
         keyIdValue = value + (keyIdValue << 8);
@@ -205,6 +222,28 @@ TEST(RTCRtpSFrameTransformer, EncryptDecryptKeyID0)
     decryptor->setEncryptionKey(getRawKey(), 0);
 
     auto frame = Vector<uint8_t>::from(135, 89, 51, 166, 248, 129, 157, 111, 190, 134, 220);
+
+    auto encryptedResult = encryptor->transform(frame.data(), frame.size());
+    EXPECT_FALSE(encryptedResult.hasException());
+
+    auto encrypted = encryptedResult.releaseReturnValue();
+    auto decryptedResult = decryptor->transform(encrypted.data(), encrypted.size());
+    EXPECT_FALSE(decryptedResult.hasException());
+
+    checkVectorsAreEqual(decryptedResult.returnValue(), frame);
+}
+
+TEST(RTCRtpSFrameTransformer, EncryptDecryptAudio)
+{
+    // We ignore compatiblity mode for audio.
+    uint64_t keyId = 1255995222;
+    auto encryptor = createAudioTransformer(true, WebCore::RTCRtpSFrameTransformer::CompatibilityMode::H264);
+    encryptor->setEncryptionKey(getRawKey(), keyId);
+
+    auto decryptor = createAudioTransformer(false, WebCore::RTCRtpSFrameTransformer::CompatibilityMode::None);
+    decryptor->setEncryptionKey(getRawKey(), keyId);
+
+    auto frame = Vector<uint8_t>::from(135, 89, 51, 166, 248, 129, 157, 111, 190, 134, 220, 56);
 
     auto encryptedResult = encryptor->transform(frame.data(), frame.size());
     EXPECT_FALSE(encryptedResult.hasException());

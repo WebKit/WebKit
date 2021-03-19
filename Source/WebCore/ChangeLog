@@ -1,3 +1,21 @@
+2021-03-19  Youenn Fablet  <youenn@apple.com>
+
+        Disable SFrame compatibility mode for audio senders and receivers
+        https://bugs.webkit.org/show_bug.cgi?id=223391
+        <rdar://problem/75538500>
+
+        Reviewed by Eric Carlson.
+
+        Add RTCRtpSFrameTransformer::setMediaType to allow setting the authentication size.
+        In case mode is H264/VP8 and media type is audio, set back mode to none.
+        Covered by API test.
+
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::RTCRtpSFrameTransform::initializeTransformer):
+        * Modules/mediastream/RTCRtpSFrameTransformer.h:
+        (WebCore::RTCRtpSFrameTransformer::setMediaType):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-03-17  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Make {main|cross}SizeForPercentageResolution() return booleans instead of actual sizes
