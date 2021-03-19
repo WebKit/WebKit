@@ -1,1 +1,17 @@
+2021-03-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add WebGL 1.0.4 and 2.0.1 test files to the repository
+        https://bugs.webkit.org/show_bug.cgi?id=223425
+
+        Reviewed by Kenneth Russell.
+
+        Add WebGL conformance test suite files to the repository.
+        The content from WebGL repo is based on aeea582f62e5b161e715cac9a27193a04edd9d98
+        with WebKit changes applied.
+        WebKit changes (to be upstreamed):
+          - Use inclusive terminology
+          - Remove testRunner.overridePreference use.
+
+        * webgl/resources/webgl_test_files/*: Added.
+
 == Rolled over to ChangeLog-2021-03-18 ==
