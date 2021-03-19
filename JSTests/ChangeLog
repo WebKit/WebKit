@@ -1,1 +1,11 @@
+2021-03-19  Mark Lam  <mark.lam@apple.com>
+
+        BrandedStructure should keep its members alive.
+        https://bugs.webkit.org/show_bug.cgi?id=223495
+        rdar://75565765
+
+        Reviewed by Saam Barati.
+
+        * stress/BrandedStructure-should-keep-its-members-alive.js: Added.
+
 == Rolled over to ChangeLog-2021-03-18 ==

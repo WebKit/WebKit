@@ -1,3 +1,49 @@
+2021-03-19  Mark Lam  <mark.lam@apple.com>
+
+        BrandedStructure should keep its members alive.
+        https://bugs.webkit.org/show_bug.cgi?id=223495
+        rdar://75565765
+
+        Reviewed by Saam Barati.
+
+        Normally, each type of JSCell would have its own structure (and therefore, its own
+        ClassInfo, MethodTable, etc), which would have handled visiting m_parentBrand.
+        Similarly, it would have its own destructor, which would deref m_brand.
+
+        However, the design of BrandedStructure is not like other JSCells.  As present,
+        we have chosen to go with having BrandedStructure look exactly like a regular
+        Structure, except that its isBrandedStructure flag is set to true.
+
+        This design has advantages because we do checks all over the system for whether
+        a cell is a Structure by simply comparing its structureID to structureStructure's
+        structureID.  By virtue of BrandedStructure having the same structure as Structure,
+        none of this code need to change.
+
+        The downside is that we need to enhance Structure's methods to check if it is
+        actually working on an instance of BrandedStructure, and do some additional work.
+
+        This patch fixes 2 bugs:
+
+        1. m_parentBrand was not visited by visitChildren().
+
+           Structure::visitChildrenImpl() now calls BrandedStructure::visitAdditionalChildren()
+           to handle this.
+
+        2. m_brand needs to be ref'ed.
+
+           In Structure::setBrandTransition(), if the BrandedStructure is a dictionary,
+           then its m_transitionPropertyName will be cleared.  m_transitionPropertyName
+           was the only means by which the UniqueStringImpl pointed to by m_brand was
+           ref'ed.  The fix is to make m_brand a RefPtr.
+
+           Hence, it follows that we also need to deref m_brand on destruction.
+           Structure's destructor now calls BrandedStructure::destruct() to handle this.
+
+        * runtime/BrandedStructure.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure):
+        (JSC::Structure::visitChildrenImpl):
+
 2021-03-19  Sam Weinig  <weinig@apple.com>
 
         Add PropertyName parameter to custom setters to allow shared implementations to do late name lookup

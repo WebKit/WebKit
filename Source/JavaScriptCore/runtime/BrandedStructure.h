@@ -60,13 +60,25 @@ public:
         return false;
     }
 
-private: 
+    template<typename Visitor>
+    static void visitAdditionalChildren(JSCell* cell, Visitor& visitor)
+    {
+        BrandedStructure* thisObject = jsCast<BrandedStructure*>(cell);
+        visitor.append(thisObject->m_parentBrand);
+    }
+
+private:
     BrandedStructure(VM&, Structure*, UniquedStringImpl* brand, DeferredStructureTransitionWatchpointFire*);
     BrandedStructure(VM&, BrandedStructure*, DeferredStructureTransitionWatchpointFire*);
 
     static Structure* create(VM&, Structure*, UniquedStringImpl* brand, DeferredStructureTransitionWatchpointFire* = nullptr);
 
-    UniquedStringImpl* m_brand;
+    void destruct()
+    {
+        m_brand = nullptr;
+    }
+
+    RefPtr<UniquedStringImpl> m_brand;
     WriteBarrier<BrandedStructure> m_parentBrand;
 
     friend class Structure;

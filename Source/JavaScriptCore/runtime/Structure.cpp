@@ -342,6 +342,9 @@ Structure::~Structure()
 {
     if (typeInfo().structureIsImmortal())
         return;
+
+    if (isBrandedStructure())
+        static_cast<BrandedStructure*>(this)->destruct();
     Heap::heap(this)->structureIDTable().deallocateID(this, m_blob.structureID());
 }
 
@@ -1295,6 +1298,9 @@ void Structure::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.append(thisObject->m_propertyTableUnsafe);
     else if (thisObject->m_propertyTableUnsafe)
         thisObject->m_propertyTableUnsafe.clear();
+
+    if (thisObject->isBrandedStructure())
+        BrandedStructure::visitAdditionalChildren(cell, visitor);
 }
 
 DEFINE_VISIT_CHILDREN(Structure);
