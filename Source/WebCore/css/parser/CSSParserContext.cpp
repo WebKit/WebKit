@@ -152,13 +152,9 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
         return !overscrollBehaviorEnabled;
     case CSSPropertyScrollBehavior:
         return !scrollBehaviorEnabled;
-#if ENABLE(TEXT_AUTOSIZING)
-    case CSSPropertyWebkitTextSizeAdjust:
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
         return !textAutosizingEnabled;
 #endif
-        return false;
-#endif // ENABLE(TEXT_AUTOSIZING)
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:
         return !legacyOverflowScrollingTouchEnabled;
@@ -166,7 +162,6 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     default:
         return false;
     }
-    return false;
 }
 
 URL CSSParserContext::completeURL(const String& url) const
