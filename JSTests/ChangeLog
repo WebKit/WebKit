@@ -1,3 +1,13 @@
+2021-03-22  Saam Barati  <sbarati@apple.com>
+
+        LiteralParser shouldn't make error messages of length ~2^31
+        https://bugs.webkit.org/show_bug.cgi?id=223483
+        <rdar://75572255>
+
+        Reviewed by Robin Morisset.
+
+        * stress/literal-parser-error-message-oom.js: Added.
+
 2021-03-22  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Interpreter incorrectly matches non-BMP characters with multiple .

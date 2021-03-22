@@ -9,5 +9,5 @@ try {
     exception = e;
 }
 
-if (exception != 'SyntaxError: JSON Parse error: Unexpected identifier "aaaaaaaaaa..."')
+if (exception != 'SyntaxError: JSON Parse error: Unexpected identifier "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..."')
     throw "FAIL: actual " + exception;
