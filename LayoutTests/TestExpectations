@@ -1225,7 +1225,6 @@ webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10.html [ ImageOnlyFailure ]
 webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Failure ]
 webkit.org/b/149890 fast/css-grid-layout/grid-shorthands-style-format.html [ Failure ]
-webkit.org/b/191507 fast/css-grid-layout/positioned-grid-container-percentage-tracks.html [ Failure ]
 webkit.org/b/191508 fast/css-grid-layout/crash-large-positions.html [ Skip ]
 
 # Flaky tests at import time
@@ -2383,7 +2382,6 @@ fast/text/letterpress-different.html [ ImageOnlyFailure ]
 webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-010.html [ Skip ]
 webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-024.html [ Skip ]
 webkit.org/b/172537 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass Failure ]
-imported/blink/http/tests/security/shape-image-cors-disallow-origin.html [ ImageOnlyFailure ]
 imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure ]
 webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass Crash ]
 
@@ -4404,9 +4402,7 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/fon
 
 webkit.org/b/214387 imported/w3c/web-platform-tests/svg/animations/seeking-events-4.html [ Pass Failure ]
 
-webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1a.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1b.html [ ImageOnlyFailure ]
-webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-2.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-table-cell-001.html [ ImageOnlyFailure ]

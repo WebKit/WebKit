@@ -1,3 +1,13 @@
+2021-03-22  Lauro Moura  <lmoura@igalia.com>
+
+        Gardening some passing tests
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip audioworkletprocessor-param-getter-overridden.https.html WPT test as it is no longer failing.

@@ -236,6 +236,13 @@ media/video-object-fit.html [ Pass ]
 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Pass ]
 webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass ]
 
+# Passing since updated in r272644
+imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-overflow.html
+
+# Pass since r273206
+imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2.html
+imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a.html
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -592,8 +599,6 @@ webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.htm
 
 webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 
-webkit.org/b/220610 storage/indexeddb/result-request-cycle.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IndexedDB-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -875,7 +880,6 @@ webkit.org/b/203676 svg/custom/pointer-events-text.svg [ Failure ]
 
 webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
 
 webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
@@ -951,8 +955,6 @@ webkit.org/b/215945 webanimations/accelerated-css-animation-with-easing.html [ I
 
 webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-update.html [ ImageOnlyFailure ]
 
-webkit.org/b/218176 webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ ImageOnlyFailure ]
-
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html [ Skip ]
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html [ Skip ]
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities.html [ Skip ]
@@ -996,7 +998,6 @@ webkit.org/b/219885 fast/mediastream/getUserMedia-webaudio.html [ Failure Pass ]
 webkit.org/b/211942 webgl/1.0.3/conformance/more/functions/copyTexImage2DBadArgs.html [ Crash ]
 
 webkit.org/b/169917 fast/canvas/webgl/unprefixed-anisotropic-extension.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure ]
 webkit.org/b/169917 webgl/many-contexts.html [ Timeout Pass ]
 
 webkit.org/b/211887 [ Debug ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Crash ]
@@ -1128,7 +1129,6 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
-webkit.org/b/175586 webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure Crash ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Pass Timeout ]
@@ -1730,7 +1730,6 @@ webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
-webkit.org/b/153707 imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html [ Failure ]
 webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
 webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
 

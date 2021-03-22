@@ -145,6 +145,24 @@ imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ Pass ]
 
 fast/events/keyboardevent-modifier.html [ Pass ]
 
+# WPE pass since imported in 273065
+imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-007.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-009.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-010.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-011.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-012.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/georgian/css3-counter-styles-014.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-111.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-115.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-107.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-108.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-counter-styles-110.html [ Pass ]
+
+# WPE Pass but marked as fail in wk2
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
 # * KEEP THE SECTIONS SORTED ALPHABETICALLY.
@@ -913,7 +931,6 @@ Bug(WPE) canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
-Bug(WPE) canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
@@ -1056,8 +1073,6 @@ webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm 
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-non-cors.htm [ Skip ]
 
-webkit.org/b/175586 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
-
 Bug(WPE) fast/css-grid-layout/flex-content-sized-columns-resize.html [ Timeout ]
 Bug(WPE) fast/css-intrinsic-dimensions/height-css-tables.html [ ImageOnlyFailure ]
 Bug(WPE) fast/css-intrinsic-dimensions/height-tables.html [ ImageOnlyFailure ]
@@ -1115,7 +1130,6 @@ webkit.org/b/173419 fast/events/autoscroll-in-textarea.html [ Failure ]
 webkit.org/b/173419 fast/events/autoscroll-in-textfield.html [ Failure ]
 webkit.org/b/173419 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html [ Failure ]
 webkit.org/b/173419 fast/events/before-input-prevent-paste.html [ Failure ]
-webkit.org/b/173419 fast/events/click-focus-control.html [ Failure ]
 webkit.org/b/173419 fast/events/content-changed-during-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/context-activated-by-key-event.html [ Failure ]
 webkit.org/b/173419 fast/events/crash-on-mutate-during-drop.html [ Failure ]
