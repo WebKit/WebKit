@@ -262,6 +262,9 @@ private:
 
     RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 
+    Lock m_currentVideoSampleLock;
+    RefPtr<MediaSample> m_currentVideoSample;
+
     bool m_playing { false };
     bool m_muted { false };
     bool m_ended { false };

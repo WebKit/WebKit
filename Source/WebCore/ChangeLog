@@ -1,3 +1,22 @@
+2021-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Async Clipboard read prevents WebRTC IOSurfaces from being released
+        https://bugs.webkit.org/show_bug.cgi?id=223489
+        <rdar://problem/75601433>
+
+        Reviewed by Eric Carlson.
+
+        Instead of dispatching a task to main thread, the task refing a MediaSample,
+        we store the MediaSample in MediaPlayerPrivateMediaStreamAVFObjC on the background thread and
+        access it on main thread with a lock.
+        This ensures that we do not keep more than one media sample per MediaPlayerPrivateMediaStreamAVFObjC, even if main thread is blocked.
+        Make sure to reset the video transformation according hasChangedOrientation even if there is no media sample available anymore.
+        Covered by existing tests.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample):
+
 2021-03-22  Jean-Yves Avenard  <jya@apple.com>
 
         Fix typo introduced in r274586 and revert fix from r274667 to get around compilation error following typo.

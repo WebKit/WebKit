@@ -268,12 +268,29 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sampl
     m_sampleBufferDisplayLayer->enqueueSample(sample);
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample,  bool hasChangedOrientation)
+void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample, bool hasChangedOrientation)
 {
     if (!isMainThread()) {
-        callOnMainThread([weakThis = makeWeakPtr(this), sample = makeRef(sample), hasChangedOrientation]() mutable {
-            if (weakThis)
-                weakThis->processNewVideoSample(sample.get(), hasChangedOrientation);
+        {
+            auto locker = holdLock(m_currentVideoSampleLock);
+            m_currentVideoSample = &sample;
+        }
+        callOnMainThread([weakThis = makeWeakPtr(this), hasChangedOrientation]() mutable {
+            if (!weakThis)
+                return;
+
+            if (hasChangedOrientation)
+                weakThis->m_videoTransform = { };
+
+            RefPtr<MediaSample> sample;
+            {
+                auto locker = holdLock(weakThis->m_currentVideoSampleLock);
+                sample = WTFMove(weakThis->m_currentVideoSample);
+            }
+            if (!sample)
+                return;
+
+            weakThis->processNewVideoSample(*sample, hasChangedOrientation);
         });
         return;
     }
