@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSGlobalObject.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

@@ -1,3 +1,15 @@
+2021-03-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, fix Mac and non-unified JSCOnly builds
+        https://bugs.webkit.org/show_bug.cgi?id=223546
+
+        * wasm/WasmGlobal.h:
+        * wasm/WasmTable.h:
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        Add missing includes for non-unified JSC build.
+
 2021-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Intl.Locale should not assume is8Bit

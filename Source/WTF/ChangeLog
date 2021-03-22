@@ -1,3 +1,11 @@
+2021-03-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, fix Mac and non-unified JSCOnly builds
+        https://bugs.webkit.org/show_bug.cgi?id=223546
+
+        * wtf/PlatformJSCOnly.cmake:
+        Add missing file for JSCOnly build on Mac.
+
 2021-03-19  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make it possible to release a WKWebView on a non-main thread without a crash due to WKScriptMessage race
