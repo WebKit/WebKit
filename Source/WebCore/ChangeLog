@@ -1,3 +1,19 @@
+2021-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Style: Remove unnecessary { }s from case statements in DisplayListItemBuffer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=223550
+
+        Reviewed by Wenson Hsieh.
+
+        They're unnecessary, and none of the other case statements in displaylists/ have them.
+        Deleting them allows more of the program to fit on the screen at a time.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemHandle::apply):
+        (WebCore::DisplayList::ItemHandle::destroy):
+
 2021-03-19  Dean Jackson  <dino@apple.com>
 
         Link against the ANGLE Shared Library

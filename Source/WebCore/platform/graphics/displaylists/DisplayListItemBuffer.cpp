@@ -44,506 +44,387 @@ CString ItemHandle::description() const
 void ItemHandle::apply(GraphicsContext& context)
 {
     switch (type()) {
-    case ItemType::Save: {
+    case ItemType::Save:
         get<Save>().apply(context);
         return;
-    }
-    case ItemType::Restore: {
+    case ItemType::Restore:
         get<Restore>().apply(context);
         return;
-    }
-    case ItemType::Translate: {
+    case ItemType::Translate:
         get<Translate>().apply(context);
         return;
-    }
-    case ItemType::Rotate: {
+    case ItemType::Rotate:
         get<Rotate>().apply(context);
         return;
-    }
-    case ItemType::Scale: {
+    case ItemType::Scale:
         get<Scale>().apply(context);
         return;
-    }
-    case ItemType::ConcatenateCTM: {
+    case ItemType::ConcatenateCTM:
         get<ConcatenateCTM>().apply(context);
         return;
-    }
-    case ItemType::SetCTM: {
+    case ItemType::SetCTM:
         get<SetCTM>().apply(context);
         return;
-    }
-    case ItemType::SetInlineFillGradient: {
+    case ItemType::SetInlineFillGradient:
         get<SetInlineFillGradient>().apply(context);
         return;
-    }
-    case ItemType::SetInlineFillColor: {
+    case ItemType::SetInlineFillColor:
         get<SetInlineFillColor>().apply(context);
         return;
-    }
-    case ItemType::SetInlineStrokeColor: {
+    case ItemType::SetInlineStrokeColor:
         get<SetInlineStrokeColor>().apply(context);
         return;
-    }
-    case ItemType::SetStrokeThickness: {
+    case ItemType::SetStrokeThickness:
         get<SetStrokeThickness>().apply(context);
         return;
-    }
-    case ItemType::SetState: {
+    case ItemType::SetState:
         ASSERT_NOT_REACHED();
         return;
-    }
-    case ItemType::SetLineCap: {
+    case ItemType::SetLineCap:
         get<SetLineCap>().apply(context);
         return;
-    }
-    case ItemType::SetLineDash: {
+    case ItemType::SetLineDash:
         get<SetLineDash>().apply(context);
         return;
-    }
-    case ItemType::SetLineJoin: {
+    case ItemType::SetLineJoin:
         get<SetLineJoin>().apply(context);
         return;
-    }
-    case ItemType::SetMiterLimit: {
+    case ItemType::SetMiterLimit:
         get<SetMiterLimit>().apply(context);
         return;
-    }
-    case ItemType::ClearShadow: {
+    case ItemType::ClearShadow:
         get<ClearShadow>().apply(context);
         return;
-    }
-    case ItemType::Clip: {
+    case ItemType::Clip:
         get<Clip>().apply(context);
         return;
-    }
-    case ItemType::ClipOut: {
+    case ItemType::ClipOut:
         get<ClipOut>().apply(context);
         return;
-    }
-    case ItemType::ClipToImageBuffer: {
+    case ItemType::ClipToImageBuffer:
         get<ClipToImageBuffer>().apply(context);
         return;
-    }
-    case ItemType::ClipOutToPath: {
+    case ItemType::ClipOutToPath:
         get<ClipOutToPath>().apply(context);
         return;
-    }
-    case ItemType::ClipPath: {
+    case ItemType::ClipPath:
         get<ClipPath>().apply(context);
         return;
-    }
-    case ItemType::BeginClipToDrawingCommands: {
+    case ItemType::BeginClipToDrawingCommands:
         ASSERT_NOT_REACHED();
         return;
-    }
-    case ItemType::EndClipToDrawingCommands: {
+    case ItemType::EndClipToDrawingCommands:
         ASSERT_NOT_REACHED();
         return;
-    }
     case ItemType::DrawGlyphs:
         ASSERT_NOT_REACHED();
         return;
-    case ItemType::DrawImageBuffer: {
+    case ItemType::DrawImageBuffer:
         get<DrawImageBuffer>().apply(context);
         return;
-    }
-    case ItemType::DrawNativeImage: {
+    case ItemType::DrawNativeImage:
         get<DrawNativeImage>().apply(context);
         return;
-    }
-    case ItemType::DrawPattern: {
+    case ItemType::DrawPattern:
         get<DrawPattern>().apply(context);
         return;
-    }
-    case ItemType::DrawRect: {
+    case ItemType::DrawRect:
         get<DrawRect>().apply(context);
         return;
-    }
-    case ItemType::DrawLine: {
+    case ItemType::DrawLine:
         get<DrawLine>().apply(context);
         return;
-    }
-    case ItemType::DrawLinesForText: {
+    case ItemType::DrawLinesForText:
         get<DrawLinesForText>().apply(context);
         return;
-    }
-    case ItemType::DrawDotsForDocumentMarker: {
+    case ItemType::DrawDotsForDocumentMarker:
         get<DrawDotsForDocumentMarker>().apply(context);
         return;
-    }
-    case ItemType::DrawEllipse: {
+    case ItemType::DrawEllipse:
         get<DrawEllipse>().apply(context);
         return;
-    }
-    case ItemType::DrawPath: {
+    case ItemType::DrawPath:
         get<DrawPath>().apply(context);
         return;
-    }
-    case ItemType::DrawFocusRingPath: {
+    case ItemType::DrawFocusRingPath:
         get<DrawFocusRingPath>().apply(context);
         return;
-    }
-    case ItemType::DrawFocusRingRects: {
+    case ItemType::DrawFocusRingRects:
         get<DrawFocusRingRects>().apply(context);
         return;
-    }
-    case ItemType::FillRect: {
+    case ItemType::FillRect:
         get<FillRect>().apply(context);
         return;
-    }
-    case ItemType::FillRectWithColor: {
+    case ItemType::FillRectWithColor:
         get<FillRectWithColor>().apply(context);
         return;
-    }
-    case ItemType::FillRectWithGradient: {
+    case ItemType::FillRectWithGradient:
         get<FillRectWithGradient>().apply(context);
         return;
-    }
-    case ItemType::FillCompositedRect: {
+    case ItemType::FillCompositedRect:
         get<FillCompositedRect>().apply(context);
         return;
-    }
-    case ItemType::FillRoundedRect: {
+    case ItemType::FillRoundedRect:
         get<FillRoundedRect>().apply(context);
         return;
-    }
-    case ItemType::FillRectWithRoundedHole: {
+    case ItemType::FillRectWithRoundedHole:
         get<FillRectWithRoundedHole>().apply(context);
         return;
-    }
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillInlinePath: {
+    case ItemType::FillInlinePath:
         get<FillInlinePath>().apply(context);
         return;
-    }
 #endif
-    case ItemType::FillPath: {
+    case ItemType::FillPath:
         get<FillPath>().apply(context);
         return;
-    }
-    case ItemType::FillEllipse: {
+    case ItemType::FillEllipse:
         get<FillEllipse>().apply(context);
         return;
-    }
-    case ItemType::FlushContext: {
+    case ItemType::FlushContext:
         get<FlushContext>().apply(context);
         return;
-    }
     case ItemType::MetaCommandChangeDestinationImageBuffer:
     case ItemType::MetaCommandChangeItemBuffer:
         return;
-    case ItemType::PutImageData: {
+    case ItemType::PutImageData:
         get<PutImageData>().apply(context);
         return;
-    }
-    case ItemType::PaintFrameForMedia: {
+    case ItemType::PaintFrameForMedia:
         get<PaintFrameForMedia>().apply(context);
         return;
-    }
-    case ItemType::StrokeRect: {
+    case ItemType::StrokeRect:
         get<StrokeRect>().apply(context);
         return;
-    }
-    case ItemType::StrokeLine: {
+    case ItemType::StrokeLine:
         get<StrokeLine>().apply(context);
         return;
-    }
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeInlinePath: {
+    case ItemType::StrokeInlinePath:
         get<StrokeInlinePath>().apply(context);
         return;
-    }
 #endif
-    case ItemType::StrokePath: {
+    case ItemType::StrokePath:
         get<StrokePath>().apply(context);
         return;
-    }
-    case ItemType::StrokeEllipse: {
+    case ItemType::StrokeEllipse:
         get<StrokeEllipse>().apply(context);
         return;
-    }
-    case ItemType::ClearRect: {
+    case ItemType::ClearRect:
         get<ClearRect>().apply(context);
         return;
-    }
-    case ItemType::BeginTransparencyLayer: {
+    case ItemType::BeginTransparencyLayer:
         get<BeginTransparencyLayer>().apply(context);
         return;
-    }
-    case ItemType::EndTransparencyLayer: {
+    case ItemType::EndTransparencyLayer:
         get<EndTransparencyLayer>().apply(context);
         return;
-    }
 #if USE(CG)
-    case ItemType::ApplyStrokePattern: {
+    case ItemType::ApplyStrokePattern:
         get<ApplyStrokePattern>().apply(context);
         return;
-    }
-    case ItemType::ApplyFillPattern: {
+    case ItemType::ApplyFillPattern:
         get<ApplyFillPattern>().apply(context);
         return;
-    }
 #endif
-    case ItemType::ApplyDeviceScaleFactor: {
+    case ItemType::ApplyDeviceScaleFactor:
         get<ApplyDeviceScaleFactor>().apply(context);
         return;
-    }
     }
 }
 
 void ItemHandle::destroy()
 {
     switch (type()) {
-    case ItemType::ClipOutToPath: {
+    case ItemType::ClipOutToPath:
         get<ClipOutToPath>().~ClipOutToPath();
         return;
-    }
-    case ItemType::ClipPath: {
+    case ItemType::ClipPath:
         get<ClipPath>().~ClipPath();
         return;
-    }
-    case ItemType::DrawFocusRingPath: {
+    case ItemType::DrawFocusRingPath:
         get<DrawFocusRingPath>().~DrawFocusRingPath();
         return;
-    }
-    case ItemType::DrawFocusRingRects: {
+    case ItemType::DrawFocusRingRects:
         get<DrawFocusRingRects>().~DrawFocusRingRects();
         return;
-    }
-    case ItemType::DrawGlyphs: {
+    case ItemType::DrawGlyphs:
         get<DrawGlyphs>().~DrawGlyphs();
         return;
-    }
-    case ItemType::DrawLinesForText: {
+    case ItemType::DrawLinesForText:
         get<DrawLinesForText>().~DrawLinesForText();
         return;
-    }
-    case ItemType::DrawPath: {
+    case ItemType::DrawPath:
         get<DrawPath>().~DrawPath();
         return;
-    }
-    case ItemType::FillCompositedRect: {
+    case ItemType::FillCompositedRect:
         get<FillCompositedRect>().~FillCompositedRect();
         return;
-    }
-    case ItemType::FillPath: {
+    case ItemType::FillPath:
         get<FillPath>().~FillPath();
         return;
-    }
-    case ItemType::FillRectWithColor: {
+    case ItemType::FillRectWithColor:
         get<FillRectWithColor>().~FillRectWithColor();
         return;
-    }
-    case ItemType::FillRectWithGradient: {
+    case ItemType::FillRectWithGradient:
         get<FillRectWithGradient>().~FillRectWithGradient();
         return;
-    }
-    case ItemType::FillRectWithRoundedHole: {
+    case ItemType::FillRectWithRoundedHole:
         get<FillRectWithRoundedHole>().~FillRectWithRoundedHole();
         return;
-    }
-    case ItemType::FillRoundedRect: {
+    case ItemType::FillRoundedRect:
         get<FillRoundedRect>().~FillRoundedRect();
         return;
-    }
-    case ItemType::PutImageData: {
+    case ItemType::PutImageData:
         get<PutImageData>().~PutImageData();
         return;
-    }
-    case ItemType::SetLineDash: {
+    case ItemType::SetLineDash:
         get<SetLineDash>().~SetLineDash();
         return;
-    }
-    case ItemType::SetState: {
+    case ItemType::SetState:
         get<SetState>().~SetState();
         return;
-    }
-    case ItemType::StrokePath: {
+    case ItemType::StrokePath:
         get<StrokePath>().~StrokePath();
         return;
-    }
-    case ItemType::ApplyDeviceScaleFactor: {
+    case ItemType::ApplyDeviceScaleFactor:
         static_assert(std::is_trivially_destructible<ApplyDeviceScaleFactor>::value);
         return;
-    }
 #if USE(CG)
-    case ItemType::ApplyFillPattern: {
+    case ItemType::ApplyFillPattern:
         static_assert(std::is_trivially_destructible<ApplyFillPattern>::value);
         return;
-    }
-    case ItemType::ApplyStrokePattern: {
+    case ItemType::ApplyStrokePattern:
         static_assert(std::is_trivially_destructible<ApplyStrokePattern>::value);
         return;
-    }
 #endif
-    case ItemType::BeginClipToDrawingCommands: {
+    case ItemType::BeginClipToDrawingCommands:
         static_assert(std::is_trivially_destructible<BeginClipToDrawingCommands>::value);
         return;
-    }
-    case ItemType::BeginTransparencyLayer: {
+    case ItemType::BeginTransparencyLayer:
         static_assert(std::is_trivially_destructible<BeginTransparencyLayer>::value);
         return;
-    }
-    case ItemType::ClearRect: {
+    case ItemType::ClearRect:
         static_assert(std::is_trivially_destructible<ClearRect>::value);
         return;
-    }
-    case ItemType::ClearShadow: {
+    case ItemType::ClearShadow:
         static_assert(std::is_trivially_destructible<ClearShadow>::value);
         return;
-    }
-    case ItemType::Clip: {
+    case ItemType::Clip:
         static_assert(std::is_trivially_destructible<Clip>::value);
         return;
-    }
-    case ItemType::ClipOut: {
+    case ItemType::ClipOut:
         static_assert(std::is_trivially_destructible<ClipOut>::value);
         return;
-    }
-    case ItemType::ClipToImageBuffer: {
+    case ItemType::ClipToImageBuffer:
         static_assert(std::is_trivially_destructible<ClipToImageBuffer>::value);
         return;
-    }
-    case ItemType::ConcatenateCTM: {
+    case ItemType::ConcatenateCTM:
         static_assert(std::is_trivially_destructible<ConcatenateCTM>::value);
         return;
-    }
-    case ItemType::DrawDotsForDocumentMarker: {
+    case ItemType::DrawDotsForDocumentMarker:
         static_assert(std::is_trivially_destructible<DrawDotsForDocumentMarker>::value);
         return;
-    }
-    case ItemType::DrawEllipse: {
+    case ItemType::DrawEllipse:
         static_assert(std::is_trivially_destructible<DrawEllipse>::value);
         return;
-    }
-    case ItemType::DrawImageBuffer: {
+    case ItemType::DrawImageBuffer:
         static_assert(std::is_trivially_destructible<DrawImageBuffer>::value);
         return;
-    }
-    case ItemType::DrawNativeImage: {
+    case ItemType::DrawNativeImage:
         static_assert(std::is_trivially_destructible<DrawNativeImage>::value);
         return;
-    }
-    case ItemType::DrawPattern: {
+    case ItemType::DrawPattern:
         static_assert(std::is_trivially_destructible<DrawPattern>::value);
         return;
-    }
-    case ItemType::DrawLine: {
+    case ItemType::DrawLine:
         static_assert(std::is_trivially_destructible<DrawLine>::value);
         return;
-    }
-    case ItemType::DrawRect: {
+    case ItemType::DrawRect:
         static_assert(std::is_trivially_destructible<DrawRect>::value);
         return;
-    }
-    case ItemType::EndClipToDrawingCommands: {
+    case ItemType::EndClipToDrawingCommands:
         static_assert(std::is_trivially_destructible<EndClipToDrawingCommands>::value);
         return;
-    }
-    case ItemType::EndTransparencyLayer: {
+    case ItemType::EndTransparencyLayer:
         static_assert(std::is_trivially_destructible<EndTransparencyLayer>::value);
         return;
-    }
-    case ItemType::FillEllipse: {
+    case ItemType::FillEllipse:
         static_assert(std::is_trivially_destructible<FillEllipse>::value);
         return;
-    }
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillInlinePath: {
+    case ItemType::FillInlinePath:
         static_assert(std::is_trivially_destructible<FillInlinePath>::value);
         return;
-    }
 #endif
-    case ItemType::FillRect: {
+    case ItemType::FillRect:
         static_assert(std::is_trivially_destructible<FillRect>::value);
         return;
-    }
-    case ItemType::FlushContext: {
+    case ItemType::FlushContext:
         static_assert(std::is_trivially_destructible<FlushContext>::value);
         return;
-    }
-    case ItemType::MetaCommandChangeDestinationImageBuffer: {
+    case ItemType::MetaCommandChangeDestinationImageBuffer:
         static_assert(std::is_trivially_destructible<MetaCommandChangeDestinationImageBuffer>::value);
         return;
-    }
-    case ItemType::MetaCommandChangeItemBuffer: {
+    case ItemType::MetaCommandChangeItemBuffer:
         static_assert(std::is_trivially_destructible<MetaCommandChangeItemBuffer>::value);
         return;
-    }
-    case ItemType::PaintFrameForMedia: {
+    case ItemType::PaintFrameForMedia:
         static_assert(std::is_trivially_destructible<PaintFrameForMedia>::value);
         return;
-    }
-    case ItemType::Restore: {
+    case ItemType::Restore:
         static_assert(std::is_trivially_destructible<Restore>::value);
         return;
-    }
-    case ItemType::Rotate: {
+    case ItemType::Rotate:
         static_assert(std::is_trivially_destructible<Rotate>::value);
         return;
-    }
-    case ItemType::Save: {
+    case ItemType::Save:
         static_assert(std::is_trivially_destructible<Save>::value);
         return;
-    }
-    case ItemType::Scale: {
+    case ItemType::Scale:
         static_assert(std::is_trivially_destructible<Scale>::value);
         return;
-    }
-    case ItemType::SetCTM: {
+    case ItemType::SetCTM:
         static_assert(std::is_trivially_destructible<SetCTM>::value);
         return;
-    }
-    case ItemType::SetInlineFillColor: {
+    case ItemType::SetInlineFillColor:
         static_assert(std::is_trivially_destructible<SetInlineFillColor>::value);
         return;
-    }
-    case ItemType::SetInlineFillGradient: {
+    case ItemType::SetInlineFillGradient:
         static_assert(std::is_trivially_destructible<SetInlineFillGradient>::value);
         return;
-    }
-    case ItemType::SetInlineStrokeColor: {
+    case ItemType::SetInlineStrokeColor:
         static_assert(std::is_trivially_destructible<SetInlineStrokeColor>::value);
         return;
-    }
-    case ItemType::SetLineCap: {
+    case ItemType::SetLineCap:
         static_assert(std::is_trivially_destructible<SetLineCap>::value);
         return;
-    }
-    case ItemType::SetLineJoin: {
+    case ItemType::SetLineJoin:
         static_assert(std::is_trivially_destructible<SetLineJoin>::value);
         return;
-    }
-    case ItemType::SetMiterLimit: {
+    case ItemType::SetMiterLimit:
         static_assert(std::is_trivially_destructible<SetMiterLimit>::value);
         return;
-    }
-    case ItemType::SetStrokeThickness: {
+    case ItemType::SetStrokeThickness:
         static_assert(std::is_trivially_destructible<SetStrokeThickness>::value);
         return;
-    }
-    case ItemType::StrokeEllipse: {
+    case ItemType::StrokeEllipse:
         static_assert(std::is_trivially_destructible<StrokeEllipse>::value);
         return;
-    }
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeInlinePath: {
+    case ItemType::StrokeInlinePath:
         static_assert(std::is_trivially_destructible<StrokeInlinePath>::value);
         return;
-    }
 #endif
-    case ItemType::StrokeRect: {
+    case ItemType::StrokeRect:
         static_assert(std::is_trivially_destructible<StrokeRect>::value);
         return;
-    }
-    case ItemType::StrokeLine: {
+    case ItemType::StrokeLine:
         static_assert(std::is_trivially_destructible<StrokeLine>::value);
         return;
-    }
-    case ItemType::Translate: {
+    case ItemType::Translate:
         static_assert(std::is_trivially_destructible<Translate>::value);
         return;
-    }
     }
 }
 
