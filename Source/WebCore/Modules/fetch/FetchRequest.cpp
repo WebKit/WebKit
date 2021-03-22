@@ -179,7 +179,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 
     if (init.signal) {
         if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
-            m_signal->follow(*signal);
+            m_signal->signalFollow(*signal);
         else if (!init.signal.isUndefinedOrNull())  {
             if (auto exception = processInvalidSignal(*scriptExecutionContext()))
                 return WTFMove(*exception);
@@ -214,14 +214,14 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 
     if (init.signal && !init.signal.isUndefined()) {
         if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
-            m_signal->follow(*signal);
+            m_signal->signalFollow(*signal);
         else if (!init.signal.isNull()) {
             if (auto exception = processInvalidSignal(*scriptExecutionContext()))
                 return WTFMove(*exception);
         }
 
     } else
-        m_signal->follow(input.m_signal.get());
+        m_signal->signalFollow(input.m_signal.get());
 
     if (init.hasMembers()) {
         auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
@@ -324,7 +324,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(ScriptExecutionContext& conte
 
     auto clone = adoptRef(*new FetchRequest(context, WTF::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options}, String { m_referrer }));
     clone->cloneBody(*this);
-    clone->m_signal->follow(m_signal);
+    clone->m_signal->signalFollow(m_signal);
     return clone;
 }
 

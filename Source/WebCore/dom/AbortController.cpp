@@ -52,7 +52,7 @@ AbortSignal& AbortController::signal()
 
 void AbortController::abort()
 {
-    m_signal->abort();
+    m_signal->signalAbort();
 }
 
 }

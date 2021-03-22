@@ -1,3 +1,23 @@
+2021-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Implement AbortSignal.abort()
+        https://bugs.webkit.org/show_bug.cgi?id=223071
+        <rdar://problem/75575483>
+
+        Reviewed by Darin Adler.
+
+        Implement AbortSignal.abort() which creates and returns an already aborted AbortSignal:
+        - https://github.com/whatwg/dom/pull/960
+        - https://github.com/web-platform-tests/wpt/pull/28003
+
+        No new tests, covered by updated test.
+
+        * dom/AbortSignal.cpp:
+        (WebCore::AbortSignal::createAborted):
+        (WebCore::AbortSignal::AbortSignal):
+        * dom/AbortSignal.h:
+        * dom/AbortSignal.idl:
+
 2021-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Context menu should account for image overlay content

@@ -43,9 +43,12 @@ class AbortSignal final : public RefCounted<AbortSignal>, public EventTargetWith
 public:
     static Ref<AbortSignal> create(ScriptExecutionContext&);
 
+    static Ref<AbortSignal> abort(ScriptExecutionContext&);
+
     static bool whenSignalAborted(AbortSignal&, Ref<AbortAlgorithm>&&);
 
-    void abort();
+    void signalAbort();
+    void signalFollow(AbortSignal&);
 
     bool aborted() const { return m_aborted; }
 
@@ -55,13 +58,13 @@ public:
     using Algorithm = Function<void()>;
     void addAlgorithm(Algorithm&& algorithm) { m_algorithms.append(WTFMove(algorithm)); }
 
-    void follow(AbortSignal&);
-
     bool isFollowingSignal() const { return !!m_followingSignal; }
 
 private:
-    explicit AbortSignal(ScriptExecutionContext&);
+    enum class Aborted : bool { No, Yes };
+    explicit AbortSignal(ScriptExecutionContext&, Aborted = Aborted::No);
 
+    // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return AbortSignalEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }

@@ -41,13 +41,20 @@ Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext& context)
     return adoptRef(*new AbortSignal(context));
 }
 
-AbortSignal::AbortSignal(ScriptExecutionContext& context)
+// https://dom.spec.whatwg.org/#dom-abortsignal-abort
+Ref<AbortSignal> AbortSignal::abort(ScriptExecutionContext& context)
+{
+    return adoptRef(*new AbortSignal(context, Aborted::Yes));
+}
+
+AbortSignal::AbortSignal(ScriptExecutionContext& context, Aborted aborted)
     : ContextDestructionObserver(&context)
+    , m_aborted(aborted == Aborted::Yes)
 {
 }
 
 // https://dom.spec.whatwg.org/#abortsignal-signal-abort
-void AbortSignal::abort()
+void AbortSignal::signalAbort()
 {
     // 1. If signal's aborted flag is set, then return.
     if (m_aborted)
@@ -57,7 +64,7 @@ void AbortSignal::abort()
     m_aborted = true;
 
     auto protectedThis = makeRef(*this);
-    auto algorithms = WTFMove(m_algorithms);
+    auto algorithms = std::exchange(m_algorithms, { });
     for (auto& algorithm : algorithms)
         algorithm();
 
@@ -66,22 +73,21 @@ void AbortSignal::abort()
 }
 
 // https://dom.spec.whatwg.org/#abortsignal-follow
-void AbortSignal::follow(AbortSignal& signal)
+void AbortSignal::signalFollow(AbortSignal& signal)
 {
     if (aborted())
         return;
 
     if (signal.aborted()) {
-        abort();
+        signalAbort();
         return;
     }
 
     ASSERT(!m_followingSignal);
     m_followingSignal = makeWeakPtr(signal);
     signal.addAlgorithm([weakThis = makeWeakPtr(this)] {
-        if (!weakThis)
-            return;
-        weakThis->abort();
+        if (weakThis)
+            weakThis->signalAbort();
     });
 }
 
