@@ -57,7 +57,7 @@ This will define the following variables in your project:
 find_package(PkgConfig QUIET)
 pkg_check_modules(PC_FONTCONFIG QUIET fontconfig)
 set(Fontconfig_COMPILE_OPTIONS ${PC_FONTCONFIG_CFLAGS_OTHER})
-set(Fontconfig_VERSION ${PC_FONTCONFIG_CFLAGS_VERSION})
+set(Fontconfig_VERSION ${PC_FONTCONFIG_VERSION})
 
 find_path(Fontconfig_INCLUDE_DIR
     NAMES fontconfig/fontconfig.h

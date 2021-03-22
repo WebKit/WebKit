@@ -1,3 +1,12 @@
+2021-03-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Wrong variable used in FindFontconfig used to pick version from pkg-config
+        https://bugs.webkit.org/show_bug.cgi?id=223557
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindFontconfig.cmake: Fix to use ${PC_FONTCONFIG_VERSION}.
+
 2021-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Bump API version when building with libsoup3
