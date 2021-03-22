@@ -1,3 +1,13 @@
+2021-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl.Locale should not assume is8Bit
+        https://bugs.webkit.org/show_bug.cgi?id=223553
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-locale-non-8bit.js: Added.
+        (shouldBe):
+
 2021-03-19  Mark Lam  <mark.lam@apple.com>
 
         BrandedStructure should keep its members alive.

@@ -1,3 +1,17 @@
+2021-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl.Locale should not assume is8Bit
+        https://bugs.webkit.org/show_bug.cgi?id=223553
+
+        Reviewed by Ross Kirsling.
+
+        is8Bit or not is not guaranteed if it is an user-input. For example, "test日本語".substring(0, 3) should be non 8Bit string.
+        Intl.Locale has several places that assumed that input should be 8Bit if they are ASCII. This patch fixes it.
+
+        * runtime/IntlLocale.cpp:
+        (JSC::LocaleIDBuilder::overrideLanguageScriptRegion):
+        (JSC::LocaleIDBuilder::setKeywordValue):
+
 2021-03-22  Sam Weinig  <weinig@apple.com>
 
         Use the PropertyName parameter passed to custom getters/setters rather than a redundant const char* in DOM attribute prologues
