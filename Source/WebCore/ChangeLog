@@ -1,3 +1,64 @@
+2021-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Avoid heap allocation under AudioNodeInput::disable() / AudioNodeInput::enable()
+        https://bugs.webkit.org/show_bug.cgi?id=223529
+
+        Reviewed by Eric Carlson.
+
+        Avoid heap allocation under AudioNodeInput::disable() / AudioNodeInput::enable() since those can
+        get called on the audio thread.
+
+        AudioNodeInput used to have a m_disabledOutputs container to keep disabled outputs separated
+        from enabled ones (in m_outputs). Instead, we now store all outputs in m_outputs with a 'isEnabled'
+        flag. As a result, we no longer need to make any heap allocations when enabling/disabling an
+        output, we merely need to flip a flag in m_outputs.
+
+        For convenience, since clients of rendering outputs only care about enabled outputs, I introduced
+        a new RenderingOutputCollection container with iterators. This way clients do not need to worry
+        about disabled outputs.
+
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::connect):
+        (WebCore::AudioNodeInput::disconnect):
+        (WebCore::AudioNodeInput::didDisableOutput):
+        (WebCore::AudioNodeInput::didEnableOutput):
+        (WebCore::AudioNodeInput::bus):
+        (WebCore::AudioNodeInput::sumAllConnections):
+        (WebCore::AudioNodeInput::pull):
+        * Modules/webaudio/AudioNodeInput.h:
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::disable):
+        (WebCore::AudioNodeOutput::enable):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::calculateFinalValues):
+        * Modules/webaudio/AudioSummingJunction.cpp:
+        (WebCore::AudioSummingJunction::numberOfConnections const):
+        (WebCore::AudioSummingJunction::addOutput):
+        (WebCore::AudioSummingJunction::removeOutput):
+        (WebCore::AudioSummingJunction::updateRenderingState):
+        (WebCore::AudioSummingJunction::maximumNumberOfChannels const):
+        (WebCore::AudioSummingJunction::didDisableOutput):
+        (WebCore::AudioSummingJunction::didEnableOutput):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::RenderingOutput::RenderingOutput):
+        (WebCore::WebCore::AudioSummingJunction::RenderingOutputCollection::remove):
+        (WebCore::WebCore::AudioSummingJunction::RenderingOutputCollection::setEnabled):
+        (WebCore::WebCore::AudioSummingJunction::RenderingOutputCollection::RenderingOutputCollection):
+        * Modules/webaudio/AudioSummingJunction.h:
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::isEmpty const):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::size const):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::clear):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::append):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::ConstIterator::ConstIterator):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::ConstIterator::operator* const):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::ConstIterator::operator!= const):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::ConstIterator::operator++):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::begin const):
+        (WebCore::AudioSummingJunction::RenderingOutputCollection::end const):
+        (WebCore::AudioSummingJunction::renderingOutputs const):
+        (WebCore::AudioSummingJunction::isConnected const):
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::notifyAudioSourcesConnectedToNode):
+
 2021-03-22  Youenn Fablet  <youenn@apple.com>
 
         Implement RTCDataChannel transfer out of process

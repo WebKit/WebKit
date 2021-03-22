@@ -60,10 +60,13 @@ bool AudioSummingJunction::addOutput(AudioNodeOutput& output)
     if (!m_outputs.add(&output).isNewEntry)
         return false;
 
-    if (m_pendingRenderingOutputs.isEmpty())
-        m_pendingRenderingOutputs = copyToVector(m_outputs);
+    if (!output.isEnabled())
+        return true;
+
+    if (!m_pendingRenderingOutputs)
+        m_pendingRenderingOutputs.emplace(m_outputs);
     else
-        m_pendingRenderingOutputs.append(&output);
+        m_pendingRenderingOutputs->append(output);
 
     markRenderingStateAsDirty();
     return true;
@@ -75,10 +78,15 @@ bool AudioSummingJunction::removeOutput(AudioNodeOutput& output)
     if (!m_outputs.remove(&output))
         return false;
 
-    if (m_pendingRenderingOutputs.isEmpty())
-        m_pendingRenderingOutputs = copyToVector(m_outputs);
-    else
-        m_pendingRenderingOutputs.removeFirst(&output);
+    if (!output.isEnabled())
+        return true;
+
+    if (!m_pendingRenderingOutputs)
+        m_pendingRenderingOutputs.emplace(m_outputs);
+    else {
+        bool wasRemoved = m_pendingRenderingOutputs->remove(output);
+        ASSERT_UNUSED(wasRemoved, wasRemoved);
+    }
 
     markRenderingStateAsDirty();
     return true;
@@ -90,9 +98,13 @@ void AudioSummingJunction::updateRenderingState()
 
     if (m_renderingStateNeedUpdating && canUpdateState()) {
         // Copy from m_outputs to m_renderingOutputs.
-        m_renderingOutputs = std::exchange(m_pendingRenderingOutputs, { });
-        for (auto& output : m_renderingOutputs)
-            output->updateRenderingState();
+        if (!m_pendingRenderingOutputs)
+            m_renderingOutputs = { };
+        else {
+            m_renderingOutputs = *std::exchange(m_pendingRenderingOutputs, WTF::nullopt);
+            for (auto* output : m_renderingOutputs)
+                output->updateRenderingState();
+        }
 
         didUpdate();
 
@@ -104,11 +116,38 @@ unsigned AudioSummingJunction::maximumNumberOfChannels() const
 {
     unsigned maxChannels = 0;
     for (auto* output : m_outputs) {
+        if (!output->isEnabled())
+            continue;
+
         // Use output()->numberOfChannels() instead of output->bus()->numberOfChannels(),
         // because the calling of AudioNodeOutput::bus() is not safe here.
         maxChannels = std::max(maxChannels, output->numberOfChannels());
     }
     return maxChannels;
+}
+
+void AudioSummingJunction::outputEnabledStateChanged(AudioNodeOutput& output)
+{
+    ASSERT(context().isGraphOwner());
+    if (!m_pendingRenderingOutputs)
+        m_pendingRenderingOutputs.emplace(m_outputs);
+    else
+        m_pendingRenderingOutputs->updatedEnabledState(output);
+    markRenderingStateAsDirty();
+}
+
+inline AudioSummingJunction::RenderingOutputCollection::RenderingOutput::RenderingOutput(AudioNodeOutput* output)
+    : output(output)
+    , isEnabled(output->isEnabled())
+{ }
+
+void WebCore::AudioSummingJunction::RenderingOutputCollection::updatedEnabledState(AudioNodeOutput& output)
+{
+    auto index = m_outputs.find(&output);
+    ASSERT(index != notFound);
+    if (index == notFound)
+        return;
+    m_outputs[index].isEnabled = output.isEnabled();
 }
 
 } // namespace WebCore
