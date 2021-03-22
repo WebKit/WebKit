@@ -1,3 +1,17 @@
+2021-03-22  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Add a "wallTime" field to struct RemoteMediaPlayerState
+        https://bugs.webkit.org/show_bug.cgi?id=223523
+
+        Reviewed by Eric Carlson.
+
+        No new tests. Fix test failures:
+        - media/video-controller-child-rate.html
+        - media/media-controller-unpause.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::currentMediaTime const): A minor fix for the comment.
+
 2021-03-22  Rob Buis  <rbuis@igalia.com>
 
         Enable ability to prevent scrolling in Element.focus()

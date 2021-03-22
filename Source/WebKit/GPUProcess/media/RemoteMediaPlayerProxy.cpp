@@ -88,7 +88,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
 RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
 {
     if (m_performTaskAtMediaTimeCompletionHandler)
-        m_performTaskAtMediaTimeCompletionHandler(WTF::nullopt);
+        m_performTaskAtMediaTimeCompletionHandler(WTF::nullopt, WTF::nullopt);
     setShouldEnableAudioSourceProvider(false);
 }
 
@@ -455,10 +455,9 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsVideo() const
     return m_configuration.isVideo;
 }
 
-// FIXME: Unimplemented
 void RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged()
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_player->paused()), m_id);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_player->paused(), m_player->currentTime(), WallTime::now()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerBufferedTimeRangesChanged()
@@ -816,6 +815,7 @@ void RemoteMediaPlayerProxy::timerFired()
 
 void RemoteMediaPlayerProxy::updateCachedState()
 {
+    m_cachedState.wallTime = WallTime::now();
     m_cachedState.currentTime = m_player->currentTime();
     m_cachedState.duration = m_player->duration();
     m_cachedState.networkState = m_player->networkState();
@@ -952,21 +952,21 @@ void RemoteMediaPlayerProxy::tracksChanged()
     m_player->tracksChanged();
 }
 
-void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, WallTime messageTime, CompletionHandler<void(Optional<MediaTime>)>&& completionHandler)
+void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, WallTime messageTime, PerformTaskAtMediaTimeCompletionHandler&& completionHandler)
 {
     if (m_performTaskAtMediaTimeCompletionHandler) {
         // A media player is only expected to track one pending task-at-time at once (e.g. see
         // MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime), so cancel the existing
         // CompletionHandler.
         auto handler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
-        handler(WTF::nullopt);
+        handler(WTF::nullopt, WTF::nullopt);
     }
 
     auto transmissionTime = MediaTime::createWithDouble((WallTime::now() - messageTime).value(), 1);
     auto adjustedTaskTime = taskTime - transmissionTime;
     auto currentTime = m_player->currentTime();
     if (adjustedTaskTime <= currentTime) {
-        completionHandler(currentTime);
+        completionHandler(currentTime, WallTime::now());
         return;
     }
 
@@ -976,7 +976,7 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, W
             return;
 
         auto completionHandler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
-        completionHandler(m_player->currentTime());
+        completionHandler(m_player->currentTime(), WallTime::now());
     }, adjustedTaskTime);
 }
 

@@ -99,7 +99,7 @@ public:
     void timeChanged(RemoteMediaPlayerState&&);
     void durationChanged(RemoteMediaPlayerState&&);
     void rateChanged(double);
-    void playbackStateChanged(bool);
+    void playbackStateChanged(bool, MediaTime&&, WallTime&&);
     void engineFailedToLoad(long);
     void updateCachedState(RemoteMediaPlayerState&&);
     void characteristicChanged(RemoteMediaPlayerState&&);

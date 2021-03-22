@@ -3170,7 +3170,7 @@ MediaTime HTMLMediaElement::currentMediaTime() const
         return m_cachedTime;
     }
 
-    // Is it too soon use a cached time?
+    // Is it too soon to use a cached time?
     MonotonicTime now = MonotonicTime::now();
     double maximumDurationToCacheMediaTime = m_player->maximumDurationToCacheMediaTime();
 

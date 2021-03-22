@@ -185,7 +185,8 @@ public:
     void videoTrackSetSelected(const TrackPrivateRemoteIdentifier&, bool);
     void textTrackSetMode(const TrackPrivateRemoteIdentifier&, WebCore::InbandTextTrackPrivate::Mode);
 
-    void performTaskAtMediaTime(const MediaTime&, WallTime, CompletionHandler<void(Optional<MediaTime>)>&&);
+    using PerformTaskAtMediaTimeCompletionHandler = CompletionHandler<void(Optional<MediaTime>, Optional<WallTime>)>;
+    void performTaskAtMediaTime(const MediaTime&, WallTime, PerformTaskAtMediaTimeCompletionHandler&&);
     void wouldTaintOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(Optional<bool>)>&&);
     void setShouldUpdatePlaybackMetrics(bool);
 
@@ -313,7 +314,7 @@ private:
     RunLoop::Timer<RemoteMediaPlayerProxy> m_updateCachedStateMessageTimer;
     RemoteMediaPlayerState m_cachedState;
     RemoteMediaPlayerProxyConfiguration m_configuration;
-    CompletionHandler<void(Optional<MediaTime>)> m_performTaskAtMediaTimeCompletionHandler;
+    PerformTaskAtMediaTimeCompletionHandler m_performTaskAtMediaTimeCompletionHandler;
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<RemoteMediaSourceProxy> m_mediaSourceProxy;
 #endif

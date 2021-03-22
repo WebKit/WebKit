@@ -1,3 +1,38 @@
+2021-03-22  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Add a "wallTime" field to struct RemoteMediaPlayerState
+        https://bugs.webkit.org/show_bug.cgi?id=223523
+
+        Reviewed by Eric Carlson.
+
+        Function `MediaPlayerPrivateRemote::currentMediaTime()` returns the
+        current media time in the cached state, which is not the "current"
+        media time of the media player. This patch adds a "wallTime" field
+        to struct `RemoteMediaPlayerState`, so that `MediaPlayerPrivateRemote`
+        can adjust the `currentTime` in the cached state based on `m_rate`
+        and `WallTime::now()` and returns a more accurate value.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState):
+        (WebKit::RemoteMediaPlayerProxy::performTaskAtMediaTime):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::pause):
+        (WebKit::MediaPlayerPrivateRemote::currentMediaTime const):
+        (WebKit::MediaPlayerPrivateRemote::playbackStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::updateCachedState):
+        (WebKit::MediaPlayerPrivateRemote::performTaskAtMediaTime):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+
+        * WebProcess/GPU/media/RemoteMediaPlayerState.h:
+        (WebKit::RemoteMediaPlayerState::encode const):
+        (WebKit::RemoteMediaPlayerState::decode):
+
 2021-03-22  BJ Burg  <bburg@apple.com>
 
         Web Inspector: rename WebInspectorProxy to WebInspectorUIProxy

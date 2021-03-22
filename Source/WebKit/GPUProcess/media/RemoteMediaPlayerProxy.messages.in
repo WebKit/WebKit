@@ -111,7 +111,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)
 #endif
 
-    PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime) Async
+    PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<WallTime> wallTime) Async
     WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous
     SetShouldUpdatePlaybackMetrics(bool should)
 

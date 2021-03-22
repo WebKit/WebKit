@@ -225,8 +225,6 @@ media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeou
 
 # webkit.org/b/221693
 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash ]
-media/media-controller-unpause.html [ Timeout ]
-media/video-controller-child-rate.html [ Failure Pass ]
 
 # webkit.org/b/220805
 webaudio/Panner/hrtf-database.html [ Timeout ]
