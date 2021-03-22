@@ -113,6 +113,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/win/FrameWin.h
 
     platform/graphics/win/DIBPixelData.h
+    platform/graphics/win/FontCustomPlatformData.h
     platform/graphics/win/FullScreenController.h
     platform/graphics/win/FullScreenControllerClient.h
     platform/graphics/win/LocalWindowsContext.h

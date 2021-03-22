@@ -111,7 +111,7 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     fontReference = renameAndActivateFont(buffer, fontName);
     if (!fontReference)
         return nullptr;
-    auto result = makeUnique<FontCustomPlatformData>(fontReference, fontName);
+    auto result = makeUnique<FontCustomPlatformData>(fontReference, fontName, { });
 #if USE(CORE_TEXT)
     result->fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(buffer.createCFData().get()));
 #endif

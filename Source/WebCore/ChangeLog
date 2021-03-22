@@ -1,3 +1,26 @@
+2021-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] ASSERTION FAILED: isMainThread() in GPU process for some canvas/philip/tests tests
+        https://bugs.webkit.org/show_bug.cgi?id=223500
+
+        Reviewed by Alex Christensen.
+
+        Added a new member of FontPlatformData::CreationData to
+        FontCustomPlatformData struct to transfer custom fonts to GPU
+        process for WinCairo port.
+
+        * PlatformWin.cmake:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2021-03-22  Youenn Fablet  <youenn@apple.com>
 
         RealtimeMediaSource does not need to be a WeakPtr

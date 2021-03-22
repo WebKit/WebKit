@@ -122,7 +122,7 @@ public:
     FontPlatformData(GDIObject<HFONT>&&, COMPtr<IDWriteFont>&&, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #endif
 #if USE(CAIRO)
-    FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic);
+    FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic, CreationData* = nullptr);
 #endif
 #endif
 

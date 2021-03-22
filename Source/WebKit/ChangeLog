@@ -1,3 +1,32 @@
+2021-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] ASSERTION FAILED: isMainThread() in GPU process for some canvas/philip/tests tests
+        https://bugs.webkit.org/show_bug.cgi?id=223500
+
+        Reviewed by Alex Christensen.
+
+        In WinCairo GPU process mode, WebCore::Font IPC decoder was using
+        FontCache::fontForFamily that should be called only in the main
+        thread. However, It is was called in IPC thread. Reimplemented the
+        decoder without using FontCache::fontForFamily.
+
+        Encode LOGFONT for WebCore::Font, and decode it and create a font
+        directly from it.
+
+        This change also encodes and decodes the
+        FontPlatformData::CreationData of custom fonts. However, custom
+        fonts still don't work in GPU process mode because
+        FontCustomPlatformData is destructed soon. In non-GPU process
+        mode, FontCustomPlatformData is retained by CachedFont. In GPU
+        process mode, fontReference of FontCustomPlatformData should be
+        refcounted and retained by WebCore::Font.
+
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (IPC::ArgumentCoder<LOGFONT>::encode):
+        (IPC::ArgumentCoder<LOGFONT>::decode):
+        (IPC::ArgumentCoder<Ref<Font>>::encodePlatformData):
+        (IPC::ArgumentCoder<Ref<Font>>::decodePlatformData):
+
 2021-03-22  Per Arne  <pvollan@apple.com>
 
         Allow additional fcntl

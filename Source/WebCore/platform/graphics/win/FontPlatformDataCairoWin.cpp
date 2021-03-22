@@ -60,11 +60,11 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
         m_isSystemFont = !wcscmp(faceName, L"Lucida Grande");
 }
 
-FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fontFace, float size, bool bold, bool oblique)
-    : m_font(SharedGDIObject<HFONT>::create(WTFMove(font)))
-    , m_size(size)
-    , m_syntheticOblique(oblique)
+FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fontFace, float size, bool bold, bool oblique, CreationData* creationData)
+    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::AutoTextRendering, creationData)
 {
+    m_font = SharedGDIObject<HFONT>::create(WTFMove(font));
+
     cairo_matrix_t fontMatrix;
     cairo_matrix_init_scale(&fontMatrix, size, size);
     cairo_matrix_t ctm;
