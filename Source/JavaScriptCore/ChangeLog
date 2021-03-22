@@ -1,3 +1,19 @@
+2021-03-22  Michael Saboff  <msaboff@apple.com>
+
+        [YARR] Interpreter incorrectly matches non-BMP characters with multiple .
+        https://bugs.webkit.org/show_bug.cgi?id=223498
+
+        Reviewed by Yusuke Suzuki.
+
+        We need to check that we read an actual character before seeing if it is part of a character class.
+        In the case where we are checking that a character is not in a character class, like .,
+        the failed to read result from input.readChecked(), -1, is not part of the newline character class.
+        This will allow regular expressions that require more than the number of characters in a string
+        to match.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::checkCharacterClass):
+
 2021-03-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, fix Mac and non-unified JSCOnly builds

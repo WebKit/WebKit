@@ -1,3 +1,16 @@
+2021-03-22  Michael Saboff  <msaboff@apple.com>
+
+        [YARR] Interpreter incorrectly matches non-BMP characters with multiple .
+        https://bugs.webkit.org/show_bug.cgi?id=223498
+
+        Reviewed by Yusuke Suzuki.
+
+        New test.
+
+        * stress/regexp-dot-match-nonBMP.js: Added.
+        (shouldMatch):
+        (shouldntMatch):
+
 2021-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Intl.Locale should not assume is8Bit

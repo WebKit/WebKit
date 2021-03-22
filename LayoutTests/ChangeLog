@@ -1,3 +1,15 @@
+2021-03-22  Michael Saboff  <msaboff@apple.com>
+
+        [YARR] Interpreter incorrectly matches non-BMP characters with multiple .
+        https://bugs.webkit.org/show_bug.cgi?id=223498
+
+        Reviewed by Yusuke Suzuki.
+
+        Updated test.
+
+        * fast/forms/ValidityState-patternMismatch-expected.txt:
+        * fast/forms/ValidityState-patternMismatch.html:
+
 2021-03-22  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/multipart convert PHP to Python
