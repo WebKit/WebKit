@@ -1,3 +1,49 @@
+2021-03-22  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/privateClickMeasurement convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223575
+        <rdar://problem/75691545>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/contentextensions/block-private-click-measurement-expected.txt:
+        * http/tests/contentextensions/block-private-click-measurement.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority.html:
+        * http/tests/privateClickMeasurement/clear-through-website-data-removal.html:
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session.html:
+        * http/tests/privateClickMeasurement/expired-ad-click-gets-removed-on-session-start.html:
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start-expected.txt:
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html:
+        * http/tests/privateClickMeasurement/expired-attributions-removed.html:
+        * http/tests/privateClickMeasurement/resources/conversionFilePath.php: Removed.
+        * http/tests/privateClickMeasurement/resources/conversionFilePath.py: Added.
+        * http/tests/privateClickMeasurement/resources/conversionReport.php: Removed.
+        * http/tests/privateClickMeasurement/resources/conversionReport.py: Added.
+        * http/tests/privateClickMeasurement/resources/convertAndPostMessageBack.html:
+        * http/tests/privateClickMeasurement/resources/fraudPreventionTestURL.php: Removed.
+        * http/tests/privateClickMeasurement/resources/fraudPreventionTestURL.py: Added.
+        * http/tests/privateClickMeasurement/resources/getConversionData.php: Removed.
+        * http/tests/privateClickMeasurement/resources/getConversionData.py: Added.
+        * http/tests/privateClickMeasurement/resources/getTokenSigningData.php: Removed.
+        * http/tests/privateClickMeasurement/resources/getTokenSigningData.py: Added.
+        * http/tests/privateClickMeasurement/resources/redirectToConversion.php: Removed.
+        * http/tests/privateClickMeasurement/resources/redirectToConversion.py: Added.
+        * http/tests/privateClickMeasurement/resources/redirectToConversionOnIPAddress.php: Removed.
+        * http/tests/privateClickMeasurement/resources/redirectToConversionOnIPAddress.py: Added.
+        * http/tests/privateClickMeasurement/resources/tokenSigningFilePath.php: Removed.
+        * http/tests/privateClickMeasurement/resources/tokenSigningFilePath.py: Added.
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority.html:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority.html:
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority.html:
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority.html:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request-expected.txt:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce-expected.txt:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html:
+
 2021-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Composition text is not initially highlighted when typing in text fields using Pinyin keyboard
