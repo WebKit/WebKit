@@ -1,3 +1,15 @@
+2021-03-22  Jean-Yves Avenard  <jya@apple.com>
+
+        Fix typo introduced in r274586 and revert fix from r274667 to get around compilation error following typo.
+        https://bugs.webkit.org/show_bug.cgi?id=223554
+
+        Reviewed by Eric Carlson.
+
+        No test needed.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::loadArtworkImage):
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         Better validate JSArrays in AudioWorkletProcessor
