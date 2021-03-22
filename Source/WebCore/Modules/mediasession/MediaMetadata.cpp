@@ -28,10 +28,13 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "BitmapImage.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "GraphicsContext.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "MediaImage.h"
 #include "MediaMetadataInit.h"
 #include "SpaceSplitString.h"
@@ -69,7 +72,21 @@ void ArtworkImageLoader::requestImageResource()
 void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT_UNUSED(resource, &resource == m_cachedImage);
-    m_callback(m_cachedImage->loadFailedOrCanceled() ? nullptr : m_cachedImage->image());
+    if (m_cachedImage->loadFailedOrCanceled() || !m_cachedImage->image() || !m_cachedImage->image()->data() || m_cachedImage->image()->data()->isEmpty()) {
+        m_callback(nullptr);
+        return;
+    }
+    // Sanitize the image by decoding it into a BitmapImage.
+    RefPtr<SharedBuffer> bufferToSanitize = m_cachedImage->image()->data();
+    auto bitmapImage = BitmapImage::create();
+    bitmapImage->setData(WTFMove(bufferToSanitize), true);
+    auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingMode::Unaccelerated);
+    if (!imageBuffer) {
+        m_callback(nullptr);
+        return;
+    }
+    imageBuffer->context().drawImage(bitmapImage.get(), FloatPoint::zero());
+    m_callback(bitmapImage.ptr());
 }
 
 ExceptionOr<Ref<MediaMetadata>> MediaMetadata::create(ScriptExecutionContext& context, Optional<MediaMetadataInit>&& init)

@@ -309,8 +309,6 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoElapsedTime, cfCurrentTime.get());
     }
     if (nowPlayingInfo.artwork) {
-        // FIXME: we should only pass a decompressed image here and have the decompression performed in the webcontent process.
-        // see https://bugs.webkit.org/show_bug.cgi?id=223290.
         auto nsArtwork = nowPlayingInfo.artwork->imageData->createNSData();
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkData, nsArtwork.get());
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkMIMEType, nowPlayingInfo.artwork->mimeType.createCFString().get());

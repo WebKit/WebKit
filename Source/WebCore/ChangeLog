@@ -1,3 +1,18 @@
+2021-03-22  Jean-Yves Avenard  <jya@apple.com>
+
+        Always perform image decoding in the web content process.
+        https://bugs.webkit.org/show_bug.cgi?id=223290
+        <rdar://problem/75559243>
+
+        Reviewed by Eric Carlson.
+
+        No change in externally observable behaviour.
+
+        * Modules/mediasession/MediaMetadata.cpp:
+        (WebCore::ArtworkImageLoader::notifyFinished): We decode the image into a BitmapImage and handle all potential failures getting there.
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::setNowPlayingInfo): remove FIXME comment.
+
 2021-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Composition text is not initially highlighted when typing in text fields using Pinyin keyboard
