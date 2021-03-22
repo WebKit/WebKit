@@ -1,3 +1,18 @@
+2021-03-22  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        AppleWin can't start due to "Failed to determine path to AAS directory." because iTunes changed the registry key
+        https://bugs.webkit.org/show_bug.cgi?id=219015
+
+        Reviewed by Alex Christensen.
+
+        It appears that iTunes no longer sets the Apple Application Support
+        registry entry.  Fall back to trying to find the iTunes installation
+        directory if the AAS directory is not present.
+
+        * shell/DLLLauncherMain.cpp:
+        (iTunesDirectory): Added.
+        (modifyPath):
+
 2021-03-19  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make it possible to release a WKWebView on a non-main thread without a crash due to WKScriptMessage race
