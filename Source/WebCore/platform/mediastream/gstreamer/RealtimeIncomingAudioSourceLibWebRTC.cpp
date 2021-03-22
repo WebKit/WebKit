@@ -67,7 +67,7 @@ void RealtimeIncomingAudioSourceLibWebRTC::OnData(const void* audioData, int, in
     auto bufferSize = GST_AUDIO_INFO_BPF(&info) * numberOfFrames;
     gpointer bufferData = fastMalloc(bufferSize);
     if (muted())
-        gst_audio_format_fill_silence(info.finfo, bufferData, bufferSize);
+        webkitGstAudioFormatFillSilence(info.finfo, bufferData, bufferSize);
     else
         memcpy(bufferData, audioData, bufferSize);
 

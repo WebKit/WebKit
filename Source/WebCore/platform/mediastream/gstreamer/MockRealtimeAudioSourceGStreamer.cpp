@@ -88,7 +88,7 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
             GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
 
             if (muted())
-                gst_audio_format_fill_silence(info.finfo, map.data(), map.size());
+                webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
             else {
                 memcpy(map.data(), &m_bipBopBuffer[bipBopStart], sizeof(float) * bipBopCount);
                 addHum(s_HumVolume, s_HumFrequency, sampleRate(), m_samplesRendered, reinterpret_cast<float*>(map.data()), bipBopCount);
