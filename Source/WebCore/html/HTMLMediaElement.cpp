@@ -7165,7 +7165,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
             if (mediaControlsScript.isEmpty())
                 continue;
             // Setting a scriptURL allows the source to be debuggable in the inspector.
-            URL scriptURL = URL({ }, makeString("__InjectedScript_mediaControlsScript"_s, index, ".js"));
+            URL scriptURL = URL({ }, makeString("__InjectedScript_mediaControlsScript"_s, ++index, ".js"));
             scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, WTFMove(scriptURL)), world);
             if (UNLIKELY(scope.exception())) {
                 auto* exception = scope.exception();
@@ -7173,7 +7173,6 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
                 reportException(&globalObject, exception);
                 return false;
             }
-            ++index;
         }
 
         return true;
@@ -7315,9 +7314,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
     if (!m_mediaControlsHost || document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped())
         return;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
-        return;
-
+#if !ENABLE(MODERN_MEDIA_CONTROLS)
     setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -7343,6 +7340,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 
         return true;
     });
+#endif // !ENABLE(MODERN_MEDIA_CONTROLS)
 }
 
 void HTMLMediaElement::pageScaleFactorChanged()

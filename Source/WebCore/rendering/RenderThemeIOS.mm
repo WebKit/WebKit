@@ -72,8 +72,6 @@
 #import "Settings.h"
 #import "Theme.h"
 #import "UTIUtilities.h"
-#import "UserAgentScripts.h"
-#import "UserAgentStyleSheets.h"
 #import "WebCoreThreadRun.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreImage/CoreImage.h>
@@ -92,17 +90,7 @@
 
 #import <pal/ios/UIKitSoftLink.h>
 
-@interface WebCoreRenderThemeBundle : NSObject
-@end
-
-@implementation WebCoreRenderThemeBundle
-@end
-
 namespace WebCore {
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/RenderThemeIOSAdditions.cpp>
-#endif
 
 using namespace HTMLNames;
 
@@ -1254,81 +1242,6 @@ bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
     default:
         return false;
     }
-}
-
-String RenderThemeIOS::mediaControlsStyleSheet()
-{
-    if (m_legacyMediaControlsStyleSheet.isEmpty())
-        m_legacyMediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsiOS" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
-    return m_legacyMediaControlsStyleSheet;
-}
-
-String RenderThemeIOS::modernMediaControlsStyleSheet()
-{
-    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
-        if (m_mediaControlsStyleSheet.isEmpty())
-            m_mediaControlsStyleSheet = StringImpl::createStaticStringImpl(ModernMediaControlsUserAgentStyleSheet, sizeof(ModernMediaControlsUserAgentStyleSheet));
-        return m_mediaControlsStyleSheet;
-    }
-    return emptyString();
-}
-
-void RenderThemeIOS::purgeCaches()
-{
-    m_legacyMediaControlsScript.clearImplIfNotShared();
-    m_mediaControlsLocalizedStringsScript.clearImplIfNotShared();
-    m_mediaControlsScript.clearImplIfNotShared();
-    m_mediaControlsAdditionalScript.clearImplIfNotShared();
-    m_legacyMediaControlsStyleSheet.clearImplIfNotShared();
-    m_mediaControlsStyleSheet.clearImplIfNotShared();
-}
-
-Vector<String, 3> RenderThemeIOS::mediaControlsScripts()
-{
-    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
-        if (m_mediaControlsLocalizedStringsScript.isEmpty() || m_mediaControlsScript.isEmpty() || m_mediaControlsAdditionalScript.isEmpty()) {
-            // FIXME: Localized strings are not worth having a script. We should make it JSON data etc. instead.
-            if (m_mediaControlsLocalizedStringsScript.isEmpty()) {
-                NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-                m_mediaControlsLocalizedStringsScript = [NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
-            }
-
-            if (m_mediaControlsScript.isEmpty())
-                m_mediaControlsScript = StringImpl::createStaticStringImpl(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript));
-
-#if defined(RenderThemeIOSAdditions_mediaControlsScript)
-            if (m_mediaControlsAdditionalScript.isEmpty())
-                m_mediaControlsAdditionalScript = String(RenderThemeIOSAdditions_mediaControlsScript);
-#endif
-        }
-        return {
-            m_mediaControlsLocalizedStringsScript,
-            m_mediaControlsScript,
-            m_mediaControlsAdditionalScript,
-        };
-    }
-
-    if (m_legacyMediaControlsScript.isEmpty()) {
-        NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-
-        StringBuilder scriptBuilder;
-        scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsLocalizedStrings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-        scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-        scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsiOS" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-
-        m_legacyMediaControlsScript = scriptBuilder.toString();
-    }
-    return { m_legacyMediaControlsScript };
-}
-
-String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
-{
-    if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
-        return emptyString();
-
-    String directory = "modern-media-controls/images";
-    NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-    return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
 }
 
 struct CSSValueIDAndSelector {

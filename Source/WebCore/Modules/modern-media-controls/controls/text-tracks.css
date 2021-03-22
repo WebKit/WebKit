@@ -57,7 +57,7 @@ video::-webkit-media-text-track-display {
     overflow: hidden;
     white-space: pre-wrap;
     box-sizing: border-box;
-    font: 22px sans-serif;
+    font: 22px sans-serif; /* Keep in sync with `DEFAULTCAPTIONFONTSIZE`. */
 }
 
 video::-webkit-media-text-track-display-backdrop {

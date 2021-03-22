@@ -5,17 +5,13 @@
 
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
-        <script src=../media-controls.js></script>
         <script>
 
             function seeked()
             {
-                testExpected("textTrackDisplayElement(video, 'cue')", null);
-
                 consoleWrite("<br><i>** Showing a track should show active cues immediately<" + "/i>");
                 run("inbandTrack1.mode = 'showing'");
 
-                testExpected("textTrackDisplayElement(video, 'cue').textContent", null, '!=');
                 testExpected("inbandTrack1.activeCues.length", 1);
 
                 consoleWrite("");

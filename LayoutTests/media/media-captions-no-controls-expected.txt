@@ -19,7 +19,6 @@ RUN(video.setAttribute('controls','controls'))
 EXPECTED (video.textTracks.length == '1') OK
 EXPECTED (video.controls == 'true') OK
 EXPECTED (internals.shadowRoot(video) != 'null') OK
-EXPECTED (controlsElement.style['display'] != 'none') OK
 
 END OF TEST
 

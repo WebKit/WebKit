@@ -1,3 +1,468 @@
+2021-03-22  Devin Rousso  <drousso@apple.com>
+
+        Remove unused JS and CSS files of media controls
+        https://bugs.webkit.org/show_bug.cgi?id=214955
+        <rdar://problem/66604040>
+
+        Reviewed by Eric Carlson.
+
+        Remove tests (and their expectations) that used `ModernMediaControlsEnabled=false`.
+
+        * accessibility/ios-simulator/has-touch-event-listener-with-shadow.html:
+        * accessibility/ios-simulator/media-with-aria-label.html: Removed.
+        * accessibility/ios-simulator/media-with-aria-label-expected.txt: Removed.
+        * accessibility/mac/media-emits-object-replacement.html: Removed.
+        * accessibility/mac/media-emits-object-replacement-expected.txt: Removed.
+        * accessibility/mac/video-tag-hit-test.html: Removed.
+        * accessibility/mac/video-tag-hit-test-expected.txt: Removed.
+        * accessibility/mac/video-volume-slider-accessibility.html: Removed.
+        * accessibility/mac/video-volume-slider-accessibility-expected.txt: Removed.
+        * accessibility/media-element.html: Removed.
+        * platform/gtk/accessibility/media-element-expected.txt: Removed.
+        * platform/mac/accessibility/media-element-expected.txt: Removed.
+        * platform/wincairo/accessibility/media-element-expected.txt: Removed.
+        * accessibility/media-emits-object-replacement.html: Removed.
+        * accessibility/media-emits-object-replacement-expected.txt: Removed.
+        * platform/glib/accessibility/media-emits-object-replacement-expected.txt: Removed.
+        * accessibility/media-with-aria-label.html: Removed.
+        * accessibility/media-with-aria-label-expected.txt: Removed.
+        * compositing/video/poster.html:
+        * compositing/video/poster-expected.html:
+        * fast/hidpi/video-controls-in-hidpi.html: Removed.
+        * platform/gtk/fast/hidpi/video-controls-in-hidpi-expected.txt: Removed.
+        * platform/ios/fast/hidpi/video-controls-in-hidpi-expected.txt: Removed.
+        * platform/mac/fast/hidpi/video-controls-in-hidpi-expected.txt: Removed.
+        * platform/win/fast/hidpi/video-controls-in-hidpi-expected.txt: Removed.
+        * platform/wincairo/fast/hidpi/video-controls-in-hidpi-expected.txt: Removed.
+        * platform/wpe/fast/hidpi/video-controls-in-hidpi-expected.txt: Removed.
+        * fast/layers/video-layer.html: Removed.
+        * platform/gtk/fast/layers/video-layer-expected.png: Removed.
+        * platform/gtk/fast/layers/video-layer-expected.txt: Removed.
+        * platform/ios/fast/layers/video-layer-expected.txt: Removed.
+        * platform/mac/fast/layers/video-layer-expected.png: Removed.
+        * platform/mac/fast/layers/video-layer-expected.txt: Removed.
+        * platform/win/fast/layers/video-layer-expected.txt: Removed.
+        * platform/wincairo/fast/layers/video-layer-expected.txt: Removed.
+        * platform/wpe/fast/layers/video-layer-expected.txt: Removed.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled.html:
+        * fullscreen/video-controls-drag.html: Removed.
+        * fullscreen/video-controls-drag-expected.txt: Removed.
+        * fullscreen/video-controls-override.html: Removed.
+        * fullscreen/video-controls-override-expected.txt: Removed.
+        * fullscreen/video-controls-rtl.html: Removed.
+        * fullscreen/video-controls-rtl-expected.txt: Removed.
+        * fullscreen/video-controls-timeline.html: Removed.
+        * fullscreen/video-controls-timeline-expected.txt: Removed.
+        * http/tests/media/hls/hls-accessiblity-describes-video-menu.html: Removed.
+        * http/tests/media/hls/hls-accessiblity-describes-video-menu-expected.txt: Removed.
+        * http/tests/media/hls/hls-audio-tracks-has-audio.html:
+        * http/tests/media/hls/hls-audio-tracks-locale-selection.html:
+        * http/tests/media/hls/hls-audio-tracks.html:
+        * http/tests/media/hls/hls-progress.html:
+        * http/tests/media/hls/hls-webvtt-tracks.html:
+        * http/tests/media/hls/range-request.html:
+        * http/tests/media/hls/video-controls-live-stream.html: Removed.
+        * platform/gtk/http/tests/media/hls/video-controls-live-stream-expected.txt: Removed.
+        * platform/mac/http/tests/media/hls/video-controls-live-stream-expected.txt: Removed.
+        * http/tests/media/hls/video-cookie.html:
+        * http/tests/media/hls/video-duration-accessibility.html: Removed.
+        * http/tests/media/hls/video-duration-accessibility-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-allowed.html:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked.html:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2.html:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/video-controls-allowed.html:
+        * inspector/css/pseudo-element-matches.html:
+        * inspector/css/pseudo-element-matches-expected.txt:
+        * media/accessibility-closed-captions-has-aria-owns.html: Removed.
+        * media/accessibility-closed-captions-has-aria-owns-expected.txt: Removed.
+        * media/adopt-node-crash.html:
+        * media/airplay-allows-buffering.html:
+        * media/airplay-autoplay.html:
+        * media/audio-as-video-fullscreen.html: Removed.
+        * media/audio-as-video-fullscreen-expected.txt: Removed.
+        * media/audio-controls-do-not-fade-out.html: Removed.
+        * media/audio-controls-do-not-fade-out-expected.txt: Removed.
+        * media/audio-controls-rendering.html: Removed.
+        * platform/gtk/media/audio-controls-rendering-expected.txt: Removed.
+        * platform/ios/media/audio-controls-rendering-expected.txt: Removed.
+        * platform/mac/media/audio-controls-rendering-expected.txt: Removed.
+        * platform/win/media/audio-controls-rendering-expected.txt: Removed.
+        * platform/wincairo/media/audio-controls-rendering-expected.txt: Removed.
+        * media/audio-controls-timeline-in-media-document.html: Removed.
+        * media/audio-controls-timeline-in-media-document-expected.txt: Removed.
+        * media/audio-delete-while-slider-thumb-clicked.html: Removed.
+        * media/audio-delete-while-slider-thumb-clicked-expected.txt: Removed.
+        * media/audio-delete-while-step-button-clicked.html: Removed.
+        * media/audio-delete-while-step-button-clicked-expected.txt: Removed.
+        * media/audio-repaint.html: Removed.
+        * platform/gtk/media/audio-repaint-expected.txt: Removed.
+        * platform/ios/media/audio-repaint-expected.txt: Removed.
+        * platform/mac/media/audio-repaint-expected.txt: Removed.
+        * platform/wincairo/media/audio-repaint-expected.txt: Removed.
+        * media/click-placeholder-not-pausing.html: Removed.
+        * media/click-placeholder-not-pausing-expected.txt: Removed.
+        * media/click-volume-bar-not-pausing.html: Removed.
+        * media/click-volume-bar-not-pausing-expected.txt: Removed.
+        * media/controls-after-reload.html: Removed.
+        * platform/gtk/media/controls-after-reload-expected.txt: Removed.
+        * platform/mac-catalina/media/controls-after-reload-expected.txt: Removed.
+        * platform/mac/media/controls-after-reload-expected.txt: Removed.
+        * platform/win/media/controls-after-reload-expected.txt: Removed.
+        * platform/wincairo/media/controls-after-reload-expected.txt: Removed.
+        * media/controls-drag-timebar.html: Removed.
+        * media/controls-drag-timebar-expected.txt: Removed.
+        * media/controls-right-click-on-timebar.html: Removed.
+        * media/controls-right-click-on-timebar-expected.txt: Removed.
+        * media/controls-strict.html: Removed.
+        * platform/gtk/media/controls-strict-expected.txt: Removed.
+        * platform/ios/media/controls-strict-expected.txt: Removed.
+        * platform/mac/media/controls-strict-expected.txt: Removed.
+        * platform/mac/media/controls-strict-mode-expected.txt: Removed.
+        * platform/win/media/controls-strict-expected.txt: Removed.
+        * platform/wincairo/media/controls-strict-expected.txt: Removed.
+        * media/controls-styling.html: Removed.
+        * platform/gtk/media/controls-styling-expected.txt: Removed.
+        * platform/mac/media/controls-styling-expected.txt: Removed.
+        * platform/win/media/controls-styling-expected.txt: Removed.
+        * platform/wincairo/media/controls-styling-expected.txt: Removed.
+        * media/controls-styling-strict.html: Removed.
+        * platform/gtk/media/controls-styling-strict-expected.txt: Removed.
+        * platform/mac/media/controls-styling-strict-expected.txt: Removed.
+        * platform/wincairo/media/controls-styling-strict-expected.txt: Removed.
+        * media/controls-without-preload.html: Removed.
+        * platform/gtk/media/controls-without-preload-expected.txt: Removed.
+        * platform/ios/media/controls-without-preload-expected.txt: Removed.
+        * platform/mac/media/controls-without-preload-expected.txt: Removed.
+        * platform/win/media/controls-without-preload-expected.txt: Removed.
+        * platform/wincairo/media/controls-without-preload-expected.txt: Removed.
+        * media/controls/airplay-controls.html: Removed.
+        * media/controls/airplay-controls-expected.txt: Removed.
+        * media/controls/airplay-picker.html: Removed.
+        * media/controls/airplay-picker-expected.txt: Removed.
+        * media/controls/basic.html: Removed.
+        * media/controls/basic-expected.txt: Removed.
+        * media/controls/controls-test-helpers.js: Removed.
+        * media/controls/default-size-should-show-scrubber.html: Removed.
+        * media/controls/default-size-should-show-scrubber-expected.txt: Removed.
+        * media/controls/elementOrder.html: Removed.
+        * media/controls/elementOrder-expected.txt: Removed.
+        * media/controls/forced-tracks-only.html: Removed.
+        * media/controls/forced-tracks-only-expected.txt: Removed.
+        * media/controls/fullscreen-button-inline-layout.html: Removed.
+        * media/controls/fullscreen-button-inline-layout-expected.txt: Removed.
+        * media/controls/inline-elements-dropoff-order.html: Removed.
+        * media/controls/inline-elements-dropoff-order-expected.txt: Removed.
+        * media/controls/picture-in-picture.html: Removed.
+        * media/controls/picture-in-picture-expected.txt: Removed.
+        * media/controls/pip-placeholder-without-video-controls.html: Removed.
+        * media/controls/pip-placeholder-without-video-controls-expected.txt: Removed.
+        * media/controls/showControlsButton.html: Removed.
+        * media/controls/showControlsButton-expected.txt: Removed.
+        * media/controls/statusDisplay.html: Removed.
+        * media/controls/statusDisplay-expected.txt: Removed.
+        * media/controls/statusDisplayBad.html: Removed.
+        * media/controls/statusDisplayBad-expected.txt: Removed.
+        * media/controls/track-menu.html: Removed.
+        * media/controls/track-menu-expected.txt: Removed.
+        * media/in-band-tracks.js:
+        (seeked): Deleted.
+        (testTextTrackMode): Deleted.
+        (testCueStyle.seeked): Deleted.
+        (testCueStyle.canplaythrough): Deleted.
+        (testCueStyle): Deleted.
+        * media/mac/controls-panel-not-clipped-out.html: Removed.
+        * media/mac/controls-panel-not-clipped-out-expected.html: Removed.
+        * media/media-captions-no-controls.html:
+        * media/media-captions-no-controls-expected.txt:
+        * media/media-controller-drag-crash.html: Removed.
+        * media/media-controller-drag-crash-expected.txt: Removed.
+        * media/media-controls-accessibility.html: Removed.
+        * media/media-controls-accessibility-expected.txt: Removed.
+        * media/media-controls-cancel-events.html: Removed.
+        * media/media-controls-cancel-events-expected.txt: Removed.
+        * media/media-controls-clone.html: Removed.
+        * platform/gtk/media/media-controls-clone-expected.txt: Removed.
+        * platform/ios/media/media-controls-clone-expected.txt: Removed.
+        * platform/mac/media/media-controls-clone-expected.txt: Removed.
+        * platform/wincairo/media/media-controls-clone-expected.txt: Removed.
+        * media/media-controls-drag-timeline-set-controls-property.html: Removed.
+        * media/media-controls-drag-timeline-set-controls-property-expected.txt: Removed.
+        * media/media-controls-invalid-url.html: Removed.
+        * media/media-controls-invalid-url-expected.txt: Removed.
+        * platform/win/media/media-controls-invalid-url-expected.txt: Removed.
+        * media/media-controls-play-button-updates.html: Removed.
+        * platform/gtk/media/media-controls-play-button-updates-expected.png: Removed.
+        * platform/gtk/media/media-controls-play-button-updates-expected.txt: Removed.
+        * media/media-controls-play-button-updates-expected.txt: Removed.
+        * media/media-controls-play-button-updates-expected.png: Removed.
+        * media/media-controls-timeline-updates.html: Removed.
+        * media/media-controls-timeline-updates-expected.txt: Removed.
+        * media/media-controls-timeline-updates-after-playing.html: Removed.
+        * media/media-controls-timeline-updates-after-playing-expected.txt: Removed.
+        * media/media-controls-timeline-updates-when-hovered.html: Removed.
+        * media/media-controls-timeline-updates-when-hovered-expected.txt: Removed.
+        * media/media-controls.js: Removed.
+        * media/media-document-audio-controls-visible.html: Removed.
+        * media/media-document-audio-controls-visible-expected.txt: Removed.
+        * media/media-document-audio-repaint.html: Removed.
+        * platform/gtk/media/media-document-audio-repaint-expected.txt: Removed.
+        * platform/mac/media/media-document-audio-repaint-expected.txt: Removed.
+        * media/media-document-audio-repaint-expected.txt: Removed.
+        * media/media-fullscreen-loop-inline.html:
+        * media/media-fullscreen-pause-inline.html:
+        * media/media-fullscreen-return-to-inline.html:
+        * media/media-source/only-bcp47-language-tags-accepted-as-valid.html:
+        * media/media-volume-slider-rendered-below.html: Removed.
+        * media/media-volume-slider-rendered-below-expected.txt: Removed.
+        * media/media-volume-slider-rendered-normal.html: Removed.
+        * media/media-volume-slider-rendered-normal-expected.txt: Removed.
+        * media/nodesFromRect-shadowContent.html: Removed.
+        * media/nodesFromRect-shadowContent-expected.txt: Removed.
+        * media/progress-events-generated-correctly.html:
+        * media/require-user-gesture-to-load-video.html: Removed.
+        * media/require-user-gesture-to-load-video-expected.txt: Removed.
+        * media/tab-focus-inside-media-elements.html: Removed.
+        * media/tab-focus-inside-media-elements-expected.txt: Removed.
+        * media/track/in-band/track-in-band-kate-ogg-mode.html: Removed.
+        * media/track/in-band/track-in-band-kate-ogg-mode-expected.txt: Removed.
+        * media/track/in-band/track-in-band-kate-ogg-style.html: Removed.
+        * media/track/in-band/track-in-band-kate-ogg-style-expected.txt: Removed.
+        * media/track/in-band/track-in-band-srt-mkv-mode.html: Removed.
+        * media/track/in-band/track-in-band-srt-mkv-mode-expected.txt: Removed.
+        * media/track/in-band/track-in-band-srt-mkv-style.html: Removed.
+        * media/track/in-band/track-in-band-srt-mkv-style-expected.txt: Removed.
+        * media/track/regions-webvtt/vtt-region-display.html: Removed.
+        * media/track/regions-webvtt/vtt-region-display-expected.txt: Removed.
+        * media/track/regions-webvtt/vtt-region-dom-layout.html: Removed.
+        * media/track/regions-webvtt/vtt-region-dom-layout-expected.txt: Removed.
+        * media/track/texttrackcue/texttrackcue-addcue.html:
+        * media/track/texttrackcue/texttrackcue-displaycue.html: Removed.
+        * media/track/texttrackcue/texttrackcue-displaycue-expected.txt: Removed.
+        * media/track/track-automatic-subtitles.html:
+        * media/track/track-css-all-cues.html: Removed.
+        * media/track/track-css-all-cues-expected.txt: Removed.
+        * media/track/track-css-cue-lifetime.html: Removed.
+        * media/track/track-css-cue-lifetime-expected.txt: Removed.
+        * media/track/track-css-matching.html: Removed.
+        * media/track/track-css-matching-expected.txt: Removed.
+        * media/track/track-css-matching-default.html: Removed.
+        * media/track/track-css-matching-default-expected.txt: Removed.
+        * media/track/track-css-matching-lang.html: Removed.
+        * media/track/track-css-matching-lang-expected.txt: Removed.
+        * media/track/track-css-matching-timestamps.html: Removed.
+        * media/track/track-css-matching-timestamps-expected.txt: Removed.
+        * media/track/track-css-property-allowlist-expected.txt: Removed.
+        * media/track/track-css-property-allowlist.html: Removed.
+        * media/track/track-css-stroke-cues.html: Removed.
+        * media/track/track-css-stroke-cues-expected.txt: Removed.
+        * media/track/track-css-user-override.html: Removed.
+        * media/track/track-css-user-override-expected.txt: Removed.
+        * media/track/track-css-visible-stroke.html:
+        * media/track/track-cue-container-rendering-position.html: Removed.
+        * media/track/track-cue-container-rendering-position-expected.txt: Removed.
+        * media/track/track-cue-css.html:
+        * media/track/track-cue-css-expected.html:
+        * media/track/track-cue-left-align.html:
+        * media/track/track-cue-left-align-expected-mismatch.html:
+        * media/track/track-cue-line-position.html:
+        * media/track/track-cue-line-position-expected-mismatch.html:
+        * media/track/track-cue-mutable-fragment.html:
+        * media/track/track-cue-mutable-text.html: Removed.
+        * media/track/track-cue-mutable-text-expected.txt: Removed.
+        * media/track/track-cue-nothing-to-render.html: Removed.
+        * media/track/track-cue-nothing-to-render-expected.txt: Removed.
+        * media/track/track-cue-overlap-snap-to-lines-not-set.html: Removed.
+        * media/track/track-cue-overlap-snap-to-lines-not-set-expected.txt: Removed.
+        * media/track/track-cue-rendering.html: Removed.
+        * media/track/track-cue-rendering-expected.txt: Removed.
+        * media/track/track-cue-rendering-horizontal.html: Removed.
+        * platform/gtk/media/track/track-cue-rendering-horizontal-expected.png: Removed.
+        * platform/gtk/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/ios/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.png: Removed.
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/win/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/wincairo/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * media/track/track-cue-rendering-mode-changed.html: Removed.
+        * media/track/track-cue-rendering-mode-changed-expected.txt: Removed.
+        * media/track/track-cue-rendering-on-resize.html: Removed.
+        * media/track/track-cue-rendering-on-resize-expected.txt: Removed.
+        * media/track/track-cue-rendering-rtl.html: Removed.
+        * media/track/track-cue-rendering-rtl-expected.txt: Removed.
+        * media/track/track-cue-rendering-snap-to-lines-not-set.html: Removed.
+        * media/track/track-cue-rendering-snap-to-lines-not-set-expected.txt: Removed.
+        * media/track/track-cue-rendering-tree-is-removed-properly.html: Removed.
+        * media/track/track-cue-rendering-tree-is-removed-properly-expected.txt: Removed.
+        * media/track/track-cue-rendering-vertical.html: Removed.
+        * platform/gtk/media/track/track-cue-rendering-vertical-expected.png: Removed.
+        * platform/gtk/media/track/track-cue-rendering-vertical-expected.txt: Removed.
+        * platform/ios/media/track/track-cue-rendering-vertical-expected.txt: Removed.
+        * platform/mac/media/track/track-cue-rendering-vertical-expected.txt: Removed.
+        * platform/wincairo/media/track/track-cue-rendering-vertical-expected.txt: Removed.
+        * media/track/track-cue-rendering-with-padding.html: Removed.
+        * media/track/track-cue-rendering-with-padding-expected.txt: Removed.
+        * media/track/track-cues-cuechange.html:
+        * media/track/track-cues-enter-exit.html:
+        * media/track/track-forced-subtitles-in-band.html:
+        * media/track/track-forced-subtitles-in-band-expected.txt:
+        * media/track/track-in-band-duplicate-tracks-when-source-changes.html:
+        * media/track/track-in-band-legacy-api.html:
+        * media/track/track-in-band-legacy-api-expected.txt:
+        * media/track/track-in-band-metadata-display-order.html: Removed.
+        * media/track/track-in-band-metadata-display-order-expected.txt: Removed.
+        * media/track/track-in-band-mode.html:
+        * media/track/track-in-band-mode-expected.txt:
+        * media/track/track-in-band-style.html: Removed.
+        * media/track/track-in-band-style-expected.txt: Removed.
+        * media/track/track-in-band-subtitles-too-large.html: Removed.
+        * media/track/track-in-band-subtitles-too-large-expected.txt: Removed.
+        * media/track/track-kind.html:
+        * media/track/track-kind-expected.txt:
+        * media/track/track-legacyapi-with-automatic-mode.html:
+        * media/track/track-legacyapi-with-automatic-mode-expected.txt:
+        * media/track/track-long-word-container-sizing.html: Removed.
+        * media/track/track-long-word-container-sizing-expected.txt: Removed.
+        * media/track/track-manual-mode.html:
+        * media/track/track-manual-mode-expected.txt:
+        * media/track/track-user-preferences.html: Removed.
+        * media/track/track-user-preferences-expected.txt: Removed.
+        * media/track/track-user-stylesheet.html:
+        * media/track/track-user-stylesheet-expected.txt:
+        * media/trackmenu-test.js: Removed.
+        * media/video-click-dblckick-standalone.html: Removed.
+        * media/video-click-dblckick-standalone-expected.txt: Removed.
+        * media/video-controls-audiotracks-trackmenu.html: Removed.
+        * media/video-controls-audiotracks-trackmenu-expected.txt: Removed.
+        * media/video-controls-captions.html: Removed.
+        * media/video-controls-captions-expected.txt: Removed.
+        * media/video-controls-captions-trackmenu.html: Removed.
+        * platform/gtk/media/video-controls-captions-trackmenu-expected.txt: Removed.
+        * platform/ios/media/video-controls-captions-trackmenu-expected.txt: Removed.
+        * platform/mac/media/video-controls-captions-trackmenu-expected.txt: Removed.
+        * platform/wincairo/media/video-controls-captions-trackmenu-expected.txt: Removed.
+        * media/video-controls-captions-trackmenu-hide-on-click.html: Removed.
+        * platform/gtk/media/video-controls-captions-trackmenu-hide-on-click-expected.txt: Removed.
+        * platform/ios/media/video-controls-captions-trackmenu-hide-on-click-expected.txt: Removed.
+        * platform/mac/media/video-controls-captions-trackmenu-hide-on-click-expected.txt: Removed.
+        * platform/wincairo/media/video-controls-captions-trackmenu-hide-on-click-expected.txt: Removed.
+        * media/video-controls-captions-trackmenu-hide-on-click-outside.html: Removed.
+        * media/video-controls-captions-trackmenu-hide-on-click-outside-expected.txt: Removed.
+        * media/video-controls-captions-trackmenu-includes-enabled-track.html: Removed.
+        * media/video-controls-captions-trackmenu-includes-enabled-track-expected.txt: Removed.
+        * media/video-controls-captions-trackmenu-localized.html: Removed.
+        * platform/gtk/media/video-controls-captions-trackmenu-localized-expected.txt: Removed.
+        * platform/ios/media/video-controls-captions-trackmenu-localized-expected.txt: Removed.
+        * platform/mac/media/video-controls-captions-trackmenu-localized-expected.txt: Removed.
+        * platform/wincairo/media/video-controls-captions-trackmenu-localized-expected.txt: Removed.
+        * media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html: Removed.
+        * media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles-expected.txt: Removed.
+        * platform/gtk/media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles-expected.txt: Removed.
+        * platform/mac/media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles-expected.txt: Removed.
+        * media/video-controls-captions-trackmenu-sorted.html: Removed.
+        * platform/gtk/media/video-controls-captions-trackmenu-sorted-expected.txt: Removed.
+        * platform/ios/media/video-controls-captions-trackmenu-sorted-expected.txt: Removed.
+        * platform/mac/media/video-controls-captions-trackmenu-sorted-expected.txt: Removed.
+        * platform/win/media/video-controls-captions-trackmenu-sorted-expected.txt: Removed.
+        * platform/wincairo/media/video-controls-captions-trackmenu-sorted-expected.txt: Removed.
+        * media/video-controls-drop-and-restore-timeline.html: Removed.
+        * media/video-controls-drop-and-restore-timeline-expected.txt: Removed.
+        * media/video-controls-fullscreen-volume.html: Removed.
+        * media/video-controls-fullscreen-volume-expected.txt: Removed.
+        * media/video-controls-in-media-document.html: Removed.
+        * media/video-controls-in-media-document-expected.txt: Removed.
+        * media/video-controls-no-display-with-text-track.html: Removed.
+        * media/video-controls-no-display-with-text-track-expected.txt: Removed.
+        * media/video-controls-rendering.html: Removed.
+        * platform/gtk/media/video-controls-rendering-expected.txt: Removed.
+        * platform/ios/media/video-controls-rendering-expected.txt: Removed.
+        * platform/mac/media/video-controls-rendering-expected.txt: Removed.
+        * platform/win/media/video-controls-rendering-expected.txt: Removed.
+        * platform/wincairo/media/video-controls-rendering-expected.txt: Removed.
+        * media/video-controls-show-on-kb-or-ax-event.html: Removed.
+        * media/video-controls-show-on-kb-or-ax-event-expected.txt: Removed.
+        * media/video-controls-toggling.html: Removed.
+        * media/video-controls-toggling-expected.txt: Removed.
+        * media/video-controls-transformed.html: Removed.
+        * media/video-controls-transformed-expected.txt: Removed.
+        * media/video-controls-visible-audio-only.html: Removed.
+        * media/video-controls-visible-audio-only-expected.txt: Removed.
+        * media/video-controls-visible-exiting-fullscreen.html: Removed.
+        * media/video-controls-visible-exiting-fullscreen-expected.txt: Removed.
+        * media/video-controls-zoomed.html: Removed.
+        * media/video-controls-zoomed-expected.txt: Removed.
+        * media/video-display-toggle.html: Removed.
+        * platform/gtk/media/video-display-toggle-expected.txt: Removed.
+        * platform/ios/media/video-display-toggle-expected.txt: Removed.
+        * platform/mac-catalina/media/video-display-toggle-expected.txt: Removed.
+        * platform/mac-mojave/media/video-display-toggle-expected.txt: Removed.
+        * platform/mac/media/video-display-toggle-expected.txt: Removed.
+        * platform/win/media/video-display-toggle-expected.txt: Removed.
+        * platform/wincairo/media/video-display-toggle-expected.txt: Removed.
+        * media/video-empty-source.html: Removed.
+        * platform/gtk/media/video-empty-source-expected.txt: Removed.
+        * platform/ios/media/video-empty-source-expected.txt: Removed.
+        * platform/mac/media/video-empty-source-expected.txt: Removed.
+        * platform/win/media/video-empty-source-expected.txt: Removed.
+        * platform/wincairo/media/video-empty-source-expected.txt: Removed.
+        * media/video-fullscreen-only-controls.html: Removed.
+        * media/video-fullscreen-only-controls-expected.txt: Removed.
+        * media/video-fullscreen-only-playback.html:
+        * media/video-initially-hidden-volume-slider-up.html: Removed.
+        * media/video-initially-hidden-volume-slider-up-expected.txt: Removed.
+        * media/video-no-audio.html: Removed.
+        * platform/gtk/media/video-no-audio-expected.txt: Removed.
+        * platform/ios/media/video-no-audio-expected.txt: Removed.
+        * platform/mac-catalina/media/video-no-audio-expected.txt: Removed.
+        * platform/mac/media/video-no-audio-expected.txt: Removed.
+        * platform/win/media/video-no-audio-expected.txt: Removed.
+        * platform/wincairo/media/video-no-audio-expected.txt: Removed.
+        * media/video-play-audio-require-user-gesture.html: Removed.
+        * media/video-play-audio-require-user-gesture-expected.txt: Removed.
+        * media/video-play-require-user-gesture.html: Removed.
+        * media/video-play-require-user-gesture-expected.txt: Removed.
+        * media/video-trackmenu-selection.html: Removed.
+        * media/video-trackmenu-selection-expected.txt: Removed.
+        * media/video-volume-slider.html: Removed.
+        * platform/gtk/media/video-volume-slider-expected.txt: Removed.
+        * platform/ios/media/video-volume-slider-expected.txt: Removed.
+        * platform/mac-catalina/media/video-volume-slider-expected.txt: Removed.
+        * platform/mac-mojave/media/video-volume-slider-expected.txt: Removed.
+        * platform/mac/media/video-volume-slider-expected.txt: Removed.
+        * platform/win/media/video-volume-slider-expected.txt: Removed.
+        * platform/wincairo/media/video-volume-slider-expected.txt: Removed.
+        * media/video-volume-slider-drag.html: Removed.
+        * media/video-volume-slider-drag-expected.txt: Removed.
+        * media/video-zoom-controls.html: Removed.
+        * platform/gtk/media/video-zoom-controls-expected.txt: Removed.
+        * platform/ios/media/video-zoom-controls-expected.txt: Removed.
+        * platform/mac/media/video-zoom-controls-expected.txt: Removed.
+        * platform/win/media/video-zoom-controls-expected.txt: Removed.
+        * platform/wincairo/media/video-zoom-controls-expected.txt: Removed.
+        * media/volume-bar-empty-when-muted.html: Removed.
+        * media/volume-bar-empty-when-muted-expected.txt: Removed.
+        * platform/gtk/media/volume-bar-empty-when-muted-expected.txt: Removed.
+        * platform/mac/media/volume-bar-empty-when-muted-expected.txt: Removed.
+        * platform/ios/media/video-play-glyph-composited-outside-overflow-scrolling-touch-container.html: Removed.
+        * platform/ios/media/video-play-glyph-composited-outside-overflow-scrolling-touch-container-expected.txt: Removed.
+        * platform/mac/media/video-layer-crash-expected.txt:
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk-wayland/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios-device/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ipad/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-03-22  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Interpreter incorrectly matches non-BMP characters with multiple .

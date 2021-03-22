@@ -143,9 +143,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions&)
 
 TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
 {
-    TestFeatures features;
-    features.boolWebPreferenceFeatures.insert({ "ModernMediaControlsEnabled", false });
-    return features;
+    return { };
 }
 
 } // namespace WTR

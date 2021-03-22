@@ -115,14 +115,9 @@ void MediaDocumentParser::createDocumentStructure()
     if (auto loader = makeRefPtr(document.loader()))
         videoElement->setAttributeWithoutSynchronization(typeAttr, loader->responseMIMEType());
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
-        StringBuilder elementStyle;
-        elementStyle.appendLiteral("max-width: 100%; max-height: 100%;");
-#if PLATFORM(IOS_FAMILY)
-        elementStyle.appendLiteral("width: 100%; height: auto;");
-#endif
-        videoElement->setAttribute(styleAttr, elementStyle.toString());
-    }
+#if !ENABLE(MODERN_MEDIA_CONTROLS)
+    videoElement->setAttribute(styleAttr, AtomString("max-width: 100%; max-height: 100%;", AtomString::ConstructFromLiteral));
+#endif // !ENABLE(MODERN_MEDIA_CONTROLS)
 
     body->appendChild(videoElement);
     document.setHasVisuallyNonEmptyCustomContent();
@@ -180,11 +175,7 @@ static inline HTMLVideoElement* ancestorVideoElement(Node* node)
 
 void MediaDocument::defaultEventHandler(Event& event)
 {
-    // Modern media controls have their own event handling to determine when to
-    // pause or resume playback.
-    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
-        return;
-    
+#if !ENABLE(MODERN_MEDIA_CONTROLS)
     // Match the default Quicktime plugin behavior to allow
     // clicking and double-clicking to pause and play the media.
     if (!is<Node>(event.target()))
@@ -224,6 +215,9 @@ void MediaDocument::defaultEventHandler(Event& event)
             keyboardEvent.setDefaultHandled();
         }
     }
+#else // !ENABLE(MODERN_MEDIA_CONTROLS)
+    UNUSED_PARAM(event);
+#endif
 }
 
 void MediaDocument::replaceMediaElementTimerFired()

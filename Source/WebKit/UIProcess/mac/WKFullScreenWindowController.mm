@@ -344,7 +344,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [self.window enterFullScreenMode:self];
 }
 
-static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with mediaControlsApple.css (video:-webkit-full-screen::-webkit-media-controls-panel)
+static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-width`.
 
 - (void)finishedEnterFullScreenAnimation:(bool)completed
 {

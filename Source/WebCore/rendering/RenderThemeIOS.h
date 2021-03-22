@@ -153,13 +153,6 @@ private:
 
     bool shouldHaveSpinButton(const HTMLInputElement&) const override;
 
-#if ENABLE(VIDEO)
-    String mediaControlsStyleSheet() override;
-    String modernMediaControlsStyleSheet() override;
-    Vector<String, 3> mediaControlsScripts() override;
-    String mediaControlsBase64StringForIconNameAndType(const String&, const String&) override;
-#endif
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const override;
     int attachmentBaseline(const RenderAttachment&) const override;
@@ -174,8 +167,6 @@ private:
     RenderThemeIOS();
     virtual ~RenderThemeIOS() = default;
 
-    void purgeCaches() override;
-
 #if PLATFORM(WATCHOS)
     String extraDefaultStyleSheet() final;
 #endif
@@ -189,13 +180,6 @@ private:
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 
     Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const override;
-
-    String m_legacyMediaControlsScript;
-    String m_mediaControlsLocalizedStringsScript;
-    String m_mediaControlsScript;
-    String m_mediaControlsAdditionalScript;
-    String m_legacyMediaControlsStyleSheet;
-    String m_mediaControlsStyleSheet;
 
 #if USE(SYSTEM_PREVIEW)
     RetainPtr<CIContext> m_ciContext;

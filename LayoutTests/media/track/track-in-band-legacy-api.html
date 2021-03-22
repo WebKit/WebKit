@@ -5,7 +5,6 @@
 
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
-        <script src=../media-controls.js></script>
         <script>
 
             function seeked()
@@ -13,7 +12,6 @@
                 consoleWrite("<br><i>** Test to make sure captions are displaying<" + "/i>");
 
                 testExpected("inbandTrack1.cues", null, '!=');
-                testExpected("textTrackDisplayElement(video, 'cue').textContent", null, '!=');
 
                 consoleWrite("<br><i>** Disable captions, cues should be flushed<" + "/i>");
                 run("video.webkitClosedCaptionsVisible = false");

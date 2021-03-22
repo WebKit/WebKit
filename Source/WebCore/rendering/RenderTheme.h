@@ -85,12 +85,13 @@ public:
     virtual String extraPlugInsStyleSheet() { return String(); }
 #if ENABLE(VIDEO)
     virtual String mediaControlsStyleSheet() { return String(); }
-    virtual String modernMediaControlsStyleSheet() { return String(); }
     virtual String extraMediaControlsStyleSheet() { return String(); }
     virtual Vector<String, 3> mediaControlsScripts() { return { }; }
+#if ENABLE(MODERN_MEDIA_CONTROLS)
     virtual String mediaControlsBase64StringForIconNameAndType(const String&, const String&) { return String(); }
     virtual String mediaControlsFormattedStringForDuration(double) { return String(); }
-#endif
+#endif // ENABLE(MODERN_MEDIA_CONTROLS)
+#endif // ENABLE(VIDEO)
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet() { return String(); }
 #endif

@@ -18,7 +18,6 @@ EVENT(seeked)
 
 ** Test to make sure captions are displaying
 EXPECTED (inbandTrack1.cues != 'null') OK
-EXPECTED (textTrackDisplayElement(video, 'cue').textContent != 'null') OK
 
 ** Disable captions, cues should be flushed
 RUN(video.webkitClosedCaptionsVisible = false)

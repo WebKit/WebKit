@@ -337,9 +337,11 @@ String MediaControlsHost::generateUUID()
     return createCanonicalUUIDString();
 }
 
+#if ENABLE(MODERN_MEDIA_CONTROLS)
+
 String MediaControlsHost::shadowRootCSSText()
 {
-    return RenderTheme::singleton().modernMediaControlsStyleSheet();
+    return RenderTheme::singleton().mediaControlsStyleSheet();
 }
 
 String MediaControlsHost::base64StringForIconNameAndType(const String& iconName, const String& iconType)
@@ -634,6 +636,8 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
-}
+#endif // ENABLE(MODERN_MEDIA_CONTROLS)
+
+} // namespace WebCore
 
 #endif // ENABLE(VIDEO)

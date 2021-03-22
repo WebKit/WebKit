@@ -684,15 +684,9 @@ media/track/video [ WontFix ]
 # This test requires alpha-channel video support.
 compositing/video/video-background-color.html [ WontFix ]
 
-# Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
-media/video-controls-captions.html [ WontFix ]
-
 # Mac doesn't support YUV 420/422 colorspace
 media/video-colorspace-yuv420.html [ WontFix ]
 media/video-colorspace-yuv422.html [ WontFix ]
-
-# The logic in this test is no longer correct for Apple ports
-media/track/track-user-preferences.html [ WontFix ]
 
 # This test requires the QuickTime LOOP user data property, which AVFoundation and QTKit64 do not support.
 media/video-does-not-loop.html [ WontFix ]
@@ -713,9 +707,6 @@ webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 # HTML sandboxing produces two or three messages flakily.
 webkit.org/b/137368 media/video-controls-no-scripting.html [ Pass Failure ]
 
-# Yosemite has different expected results. It needs to rebase.
-webkit.org/b/149113 media/media-controls-play-button-updates.html [ Pass Failure ]
-
 ## --- Start flaky media tests ---
 webkit.org/b/34331 http/tests/media/video-referer.html [ Pass Timeout ]
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
@@ -729,17 +720,12 @@ webkit.org/b/121803 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/121803 media/video-object-fit.html [ Pass ImageOnlyFailure ]
 webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Timeout ]
 webkit.org/b/122042 media/media-controller-playback.html [ Pass Timeout ]
-webkit.org/b/122126 media/click-volume-bar-not-pausing.html [ Pass Timeout ]
-webkit.org/b/122507 media/track/track-cue-rendering.html [ Pass Failure ]
 webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Timeout ]
 webkit.org/b/123522 media/track/track-in-band-legacy-api.html [ Pass Failure Crash ]
 webkit.org/b/131855 media/event-attributes.html [ Pass Failure Timeout ]
 webkit.org/b/133363 media/video-rtl.html [ Pass ImageOnlyFailure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/align.html [ Pass Failure ]
 webkit.org/b/135071 media/video-seek-with-negative-playback.html [ Pass Timeout ]
-webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Failure ]
-webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Failure ]
-webkit.org/b/139789 media/media-controls-timeline-updates.html [ Pass Failure ]
 webkit.org/b/139825 media/video-seek-past-end-paused.html [ Pass Timeout ]
 webkit.org/b/141084 http/tests/media/video-preload.html [ Pass Timeout ]
 webkit.org/b/141294 compositing/reflections/masked-reflection-on-composited.html [ Pass Crash ]
@@ -749,9 +735,6 @@ webkit.org/b/150408 http/tests/media/video-load-suspend.html [ Pass Timeout ]
 webkit.org/b/155956 media/track/track-remove-track.html [ Pass Failure Timeout ]
 webkit.org/b/187476 media/video-background-playback.html [ Pass Failure ]
 ## --- End flaky media tests
-
-# Skipped while Eric Carlson works on a fix.
-webkit.org/b/28221 media/audio-delete-while-step-button-clicked.html [ Failure ]
 
 # These tests always time out.
 webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
@@ -794,11 +777,6 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_ev
 # They are also flakily failing on WebKit2, as snapshot sometimes has a black rectangle for video element instead of white one.
 webkit.org/b/131476 media/track/w3c/track/webvtt [ Skip ]
 
-# VTTRegion height doesn't adjust when cue font size changes.
-webkit.org/b/203621 media/track/regions-webvtt/vtt-region-display.html [ Pass Failure ]
-
-webkit.org/b/67716 media/media-controls-invalid-url.html [ Failure ]
-
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_codecs_order_2.html [ Failure ]
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_codecs_order_3.html [ Failure ]
 webkit.org/b/75184 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Pass Failure ]
@@ -808,23 +786,8 @@ webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_4.htm
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html [ Failure ]
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 
-webkit.org/b/84357 media/audio-repaint.html [ Failure ]
-
-webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
-webkit.org/b/121992 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Skip ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Skip ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Skip ]
-
 # REGRESSION(r156546): 6 media tests broken (122021)
-webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Pass Failure ]
-webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Timeout ]
 webkit.org/b/122021 media/track/track-in-band-mode.html [ Failure ]
-webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Skip ]
-webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Skip ]
-webkit.org/b/116266 media/video-controls-toggling.html [ Skip ]
-
-webkit.org/b/163231 media/controls/airplay-picker.html [ Pass Failure ]
 
 # --- End media tests ---
 
@@ -1072,10 +1035,6 @@ webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM
 
 webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
 
-webkit.org/b/156112 media/audio-controls-rendering.html [ Pass Failure ]
-webkit.org/b/156112 media/controls-strict.html [ Pass Failure ]
-webkit.org/b/156112 media/controls-without-preload.html [ Pass Failure ]
-
 webkit.org/b/156351 storage/indexeddb/modern/autoincrement-abort-private.html [ Pass Timeout ]
 
 webkit.org/b/156983 media/video-fullscreen-restriction-removed.html [ Pass Failure ]
@@ -1091,8 +1050,6 @@ webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ 
 
 # These tests hardcode platform-specific font aliases.
 webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
-
-webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure Timeout ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
@@ -1129,9 +1086,6 @@ editing/selection/triple-click-in-pre.html [ Failure ]
 # rdar://problem/31243824
 webkit.org/b/158747 media/restore-from-page-cache.html [ Pass Failure Crash ]
 
-# See also https://bugs.webkit.org/show_bug.cgi?id=162494
-webkit.org/b/151287 media/controls/inline-elements-dropoff-order.html [ Failure ]
-
 webkit.org/b/158500 storage/indexeddb/database-close-private.html [ Pass Failure ]
 
 webkit.org/b/163122 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Pass Timeout ]
@@ -1142,8 +1096,6 @@ webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
-
-webkit.org/b/161144 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
 
 webkit.org/b/161883 imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-escapes-1.xhtml [ Pass Failure ]
 
@@ -1241,10 +1193,6 @@ webkit.org/b/170177 fast/images/reset-image-animation.html [ Pass Failure ]
 
 webkit.org/b/168390 fast/images/slower-animation-than-decoding-image.html [ Pass Failure ]
 
-webkit.org/b/170831 media/track/track-cue-rendering-rtl.html [ Pass Timeout ]
-
-webkit.org/b/165553 media/media-controls-timeline-updates-when-hovered.html [ Pass Failure ]
-
 webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 
 # These tests are iOS-specific
@@ -1282,8 +1230,6 @@ webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Ti
 
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
-
-webkit.org/b/175700 media/video-controls-rendering.html [ Pass Failure ]
 
 webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass Timeout ]
 
@@ -1448,8 +1394,6 @@ webkit.org/b/184116 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_cre
 
 webkit.org/b/177616 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
 
-webkit.org/b/184610 media/video-volume-slider-drag.html [ Pass Timeout ]
-
 webkit.org/b/184612 media/audio-concurrent-supported.html [ Pass Failure ]
 
 webkit.org/b/184457 media/video-aspect-ratio.html [ Pass Failure ]
@@ -1592,8 +1536,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementx
 imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html [ Skip ]
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
-
-webkit.org/b/136627 media/track/track-cue-rendering-vertical.html [ Failure ]
 
 webaudio/oscillator-sine.html [ Skip ]
 
@@ -1831,10 +1773,6 @@ webkit.org/b/210517 storage/indexeddb/result-request-cycle.html [ Pass Failure ]
 
 webkit.org/b/211856 media/video-poster-set-after-playback.html [ Pass Failure ]
 
-# These media controls tests are not relevant on macOS and iOS.
-media/media-document-audio-repaint.html [ Skip ]
-media/controls-styling.html [ Skip ]
-
 http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html [ Pass Failure ]
 
 # These tests fail due to slight differences in font rendering.
@@ -1848,8 +1786,6 @@ webkit.org/b/212215 media/video-isplayingtoautomotiveheadunit.html [ Pass Failur
 webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
 
 webkit.org/b/212226 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-008.html [ ImageOnlyFailure ]
-
-webkit.org/b/212488 [ Catalina ] media/video-play-audio-require-user-gesture.html [ Pass Timeout ]
 
 fast/text/text-styles/-apple-system [ Pass ]
 
@@ -1879,8 +1815,6 @@ webkit.org/b/215177 [ Release ] editing/selection/navigation-clears-editor-state
 webkit.org/b/215247 webgpu/whlsl/dont-crash-parsing-enum.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/215271 [ Debug ] storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
-
-webkit.org/b/214412 fullscreen/video-controls-rtl.html [ Pass Failure Crash ]
 
 webkit.org/b/215450 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Pass Failure ]
 
@@ -2123,8 +2057,6 @@ webkit.org/b/215506 imported/w3c/web-platform-tests/html/webappapis/scripting/pr
 media/vp9.html [ Skip ]
 
 webkit.org/b/215515 imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html [ Pass Failure ]
-
-webkit.org/b/215583 media/track/track-in-band-style.html [ Pass Failure Timeout ] 
 
 webkit.org/b/215723 fast/repaint/list-item-equal-style-change-no-repaint.html [ Pass Failure ]
 

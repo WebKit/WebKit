@@ -1016,7 +1016,6 @@ webkit.org/b/201983 accessibility/math-fenced.html [ Missing ]
 webkit.org/b/201983 accessibility/math-foreign-content.html [ Missing ]
 webkit.org/b/201983 accessibility/math-mo-fences-and-separators.html [ Missing ]
 webkit.org/b/201983 accessibility/math-text.html [ Missing ]
-webkit.org/b/201983 accessibility/media-element.html [ Missing ]
 webkit.org/b/201983 accessibility/meter-element.html [ Missing ]
 webkit.org/b/201983 accessibility/platform-name.html [ Missing ]
 webkit.org/b/201983 accessibility/svg-element-with-aria-role.html [ Missing ]
@@ -1261,7 +1260,6 @@ webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-co
 
 # This 3 fullscreen tests are still not passing.
 webkit.org/b/185676 fullscreen/requestFullscreen-escape-key.html [ Failure ]
-webkit.org/b/185676 fullscreen/video-controls-rtl.html [ Failure ]
 
 webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
 

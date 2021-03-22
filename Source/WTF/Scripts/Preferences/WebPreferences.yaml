@@ -1508,18 +1508,6 @@ MockScrollbarsEnabled:
     WebKit:
       default: false
 
-ModernMediaControlsEnabled:
-  type: bool
-  humanReadableName: "Modern Media Controls"
-  humanReadableDescription: "Use modern media controls look"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      "PLATFORM(COCOA)": true
-      default: false
-
 NeedsAdobeFrameReloadingQuirk:
   comment: 'FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need
     to phase it out once Adobe can fix the bug from their end.'

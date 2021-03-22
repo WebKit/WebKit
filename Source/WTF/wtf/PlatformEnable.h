@@ -380,6 +380,10 @@
 #define ENABLE_MHTML 0
 #endif
 
+#if !defined(ENABLE_MODERN_MEDIA_CONTROLS)
+#define ENABLE_MODERN_MEDIA_CONTROLS 0
+#endif
+
 #if !defined(ENABLE_MOUSE_CURSOR_SCALE)
 #define ENABLE_MOUSE_CURSOR_SCALE 0
 #endif

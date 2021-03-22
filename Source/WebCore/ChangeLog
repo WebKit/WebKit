@@ -1,3 +1,84 @@
+2021-03-22  Devin Rousso  <drousso@apple.com>
+
+        Remove unused JS and CSS files of media controls
+        https://bugs.webkit.org/show_bug.cgi?id=214955
+        <rdar://problem/66604040>
+
+        Reviewed by Eric Carlson.
+
+        Cocoa platforms are already using modern media controls so there's no reason to keep the old
+        media controls resources/logic around any longer. It just wastes space.
+
+        The non-iOS Apple controls must be kept though as they are still used on Windows.
+
+        * Modules/mediacontrols/assets-apple-iOS.svg: Removed.
+        * Modules/mediacontrols/mediaControlsiOS.css: Removed.
+        * Modules/mediacontrols/mediaControlsiOS.js: Removed.
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::modernMediaControlsStyleSheet): Deleted.
+        * rendering/RenderThemeCocoa.h:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::purgeCaches): Added.
+        (WebCore::RenderThemeCocoa::mediaControlsStyleSheet): Added.
+        (WebCore::RenderThemeCocoa::mediaControlsScripts): Added.
+        (WebCore::RenderThemeCocoa::mediaControlsBase64StringForIconNameAndType): Added.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsStyleSheet): Deleted.
+        (WebCore::RenderThemeIOS::modernMediaControlsStyleSheet): Deleted.
+        (WebCore::RenderThemeIOS::purgeCaches): Deleted.
+        (WebCore::RenderThemeIOS::mediaControlsScripts): Deleted.
+        (WebCore::RenderThemeIOS::mediaControlsBase64StringForIconNameAndType): Deleted.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet): Deleted.
+        (WebCore::RenderThemeMac::modernMediaControlsStyleSheet): Deleted.
+        (WebCore::RenderThemeMac::purgeCaches): Deleted.
+        (WebCore::RenderThemeMac::mediaControlsScripts): Deleted.
+        (WebCore::RenderThemeMac::mediaControlsBase64StringForIconNameAndType): Deleted.
+        Move media controls functions to `RenderThemeCocoa` since they are identical.
+
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::shadowRootCSSText):
+        * css/mediaControls.css:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        (WebCore::MediaDocument::defaultEventHandler):
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::ensureDefaultStyleSheetsForElement):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setModernMediaControlsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::modernMediaControlsEnabled const): Deleted.
+        Replace `ModernMediaControlsEnabled` setting with `ENABLE_MODERN_MEDIA_CONTROLS` build flag.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        Update the static `DEFAULTCAPTIONFONTSIZE` value for modern media controls.
+
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        * Modules/modern-media-controls/controls/text-tracks.css:
+        Update comments.
+
+        * css/mediaControlsiOS.css: Removed.
+        This file was never included anywhere.
+
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::resetHaveEverRegisteredAsNowPlayingApplicationForTesting): added.
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::resetHaveEverRegisteredAsNowPlayingApplicationForTesting): added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        Drive-by: Reset `haveEverRegisteredAsNowPlayingApplication` to a consistent state between tests.
+                  This is expected by `LayoutTests/media/now-playing-status-without-media.html`.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         Reduce number of heap allocations on the audio thread in AudioSampleDataSource

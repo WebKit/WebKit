@@ -1,8 +1,0 @@
-Tests that an audio file in a video element should not have a fullscreen button
-
-
-** Playing the video **
-RUN(video.play())
-** Testing if the fullscreen button is hidden **
-EXPECTED (fullscreenButton.classList.contains('hidden') == 'true') OK
-

@@ -25,7 +25,6 @@ EVENT(seeked)
 
 ** Check to make sure captions are displaying
 EXPECTED (video.textTracks[0].cues != 'null') OK
-EXPECTED (textTrackDisplayElement(video, 'cue').textContent != 'null') OK
 
 END OF TEST
 

@@ -86,6 +86,8 @@ protected:
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
 
+    void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() final { m_haveEverRegisteredAsNowPlayingApplication = false; };
+
 private:
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSessionManagerCocoa"; }

@@ -173,8 +173,8 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
                 addToDefaultStyle(*dialogStyleSheet);
             }
         }
-#if ENABLE(VIDEO)
-        else if (is<HTMLMediaElement>(element) && !RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
+#if ENABLE(VIDEO) && !ENABLE(MODERN_MEDIA_CONTROLS)
+        else if (is<HTMLMediaElement>(element)) {
             if (!mediaControlsStyleSheet) {
                 String mediaRules = RenderTheme::singleton().mediaControlsStyleSheet();
                 if (mediaRules.isEmpty())
@@ -184,7 +184,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 
             }
         }
-#endif // ENABLE(VIDEO)
+#endif // ENABLE(VIDEO) && !ENABLE(MODERN_MEDIA_CONTROLS)
 #if ENABLE(DATALIST_ELEMENT)
         else if (!dataListStyleSheet && is<HTMLDataListElement>(element)) {
             dataListStyleSheet = parseUASheet(RenderTheme::singleton().dataListStyleSheet());

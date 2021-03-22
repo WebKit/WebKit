@@ -83,8 +83,6 @@ fast/forms/datalist/ [ Skip ]
 
 # FILTERS_LEVEL_2 is disabled
 compositing/layer-creation/will-change-on-normal-flow-content.html [ Skip ]
-media/modern-media-controls/background-tint/background-tint.html [ Skip ]
-media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-start-button-style.html [ Skip ]
 
 # GAMEPAD is disabled
 gamepad [ Skip ]
@@ -231,17 +229,12 @@ media/track/audio/audio-track-mkv-vorbis-language.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-cues-added-once.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-kind.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-language.html [ Skip ]
-media/track/in-band/track-in-band-kate-ogg-mode.html [ Skip ]
-media/track/in-band/track-in-band-kate-ogg-style.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-track-order.html [ Skip ]
 media/track/in-band/track-in-band-mkv-chapters.html [ Skip ]
 media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Skip ]
 media/track/in-band/track-in-band-srt-mkv-kind.html [ Skip ]
 media/track/in-band/track-in-band-srt-mkv-language.html [ Skip ]
-media/track/in-band/track-in-band-srt-mkv-mode.html [ Skip ]
-media/track/in-band/track-in-band-srt-mkv-style.html [ Skip ]
 media/track/in-band/track-in-band-srt-mkv-track-order.html [ Skip ]
-media/click-volume-bar-not-pausing.html [ Skip ]
 media/invalid-media-url-crash.html [ Skip ]
 media/media-extension-with-fragment.html [ Skip ]
 
@@ -280,8 +273,6 @@ inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 # WIRELESS_PLAYBACK_TARGET is disabled
 media/airplay-target-availability.html [ Skip ]
 media/airplay-autoplay.html [ Skip ]
-media/controls/airplay-controls.html [ Skip ]
-media/controls/airplay-picker.html [ Skip ]
 
 # PLATFORM(MAC), internals.rangeForDictionaryLookupAtLocation()
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
@@ -366,11 +357,6 @@ workers/wasm-mem-post-message.html [ Skip ]
 wasm/iframe-postmessage.html [ Skip ]
 wasm/iframe-parent-postmessage.html [ Skip ]
 wasm/window-postmessage.html [ Skip ]
-
-
-
-# Media controls tests are OS X only
-media/controls [ Skip ]
 
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
@@ -1766,7 +1752,6 @@ media/content [ Skip ]
 media/ios [ Skip ]
 media/mac [ Skip ]
 media/mediacapabilities [ Skip ]
-media/modern-media-controls [ Skip ]
 media/picture-in-picture [ Skip ]
 media/track [ Skip ]
 pageoverlay [ Skip ]

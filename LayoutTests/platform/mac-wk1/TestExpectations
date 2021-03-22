@@ -507,9 +507,6 @@ fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Skip ]
 # WK1 main frame scrollbars are native widgets whose size is unaffected by webkit-scrollbar.
 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
 
-# This hit-test test doesn't work on DRT
-webkit.org/b/156084 accessibility/mac/video-tag-hit-test.html [ Skip ]
-
 # This newly imported test times out on WK1 but passes on WK2.
 webkit.org/b/172222 imported/w3c/web-platform-tests/notifications/event-onclose.html [ Skip ]
 
@@ -626,8 +623,6 @@ webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure ]
 
 # webkit.org/b/163585
-media/track/track-cue-rendering-horizontal.html [ Pass Crash ]
-media/accessibility-closed-captions-has-aria-owns.html [ Pass Crash ]
 media/track/track-cues-enter-exit.html [ Pass Crash ]
 
 # <rdar://problem/61744994> media/track/track-cues-cuechange.html is flaky timing out.
@@ -650,9 +645,6 @@ http/tests/css/filters-on-iframes.html [ Skip ]
 
 webkit.org/b/171937 imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht.xht [ Pass Failure ]
 webkit.org/b/171937 imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All.html [ Pass Failure ]
-
-webkit.org/b/171814 http/tests/media/hls/video-controls-live-stream.html [ Failure ]
-webkit.org/b/171814 http/tests/media/hls/video-duration-accessibility.html [ Failure ]
 
 webkit.org/b/172331 workers/wasm-long-compile-many.html [ Pass Timeout ]
 
@@ -730,10 +722,6 @@ imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 webkit.org/b/182554 transitions/transition-display-property.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/181834 [ Debug ] fast/block/positioning/fixed-container-with-relative-parent.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/182932 media/track/track-css-matching-default.html [ Pass Timeout ]
-
-webkit.org/b/183220 media/track/track-css-matching-timestamps.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ ImageOnlyFailure ]
 
@@ -961,8 +949,6 @@ webkit.org/b/209921 [ Debug ] inspector/css/add-css-property.html [ Pass Timeout
 
 webkit.org/b/210079 [ Debug ] inspector/debugger/evaluateOnCallFrame-errors.html [ Pass Failure ]
 
-webkit.org/b/210134 media/track/track-css-user-override.html [ Pass Failure ]
-
 webkit.org/b/210198 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 
 webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
@@ -1170,8 +1156,6 @@ webkit.org/b/215593 webaudio/oscillator-square.html [ Pass Failure ]
 webkit.org/b/215608 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm [ Pass Timeout ]
 
 webkit.org/b/215658 svg/custom/object-sizing-no-width-height.xhtml [ Pass Failure ]
-
-webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Pass Failure ]
 
 webkit.org/b/215767 [ Debug ] inspector/animation/nameChanged.html [ Pass Crash ]
 

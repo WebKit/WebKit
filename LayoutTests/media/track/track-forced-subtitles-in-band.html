@@ -3,7 +3,6 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <script src=../media-controls.js></script>
         <script src=../trackmenu-test.js></script>
         <script src=../video-test.js></script>
         <script>
@@ -14,7 +13,6 @@
                 consoleWrite("EVENT(seeked)");
                 consoleWrite("EVENT(cuechange)");
                 testExpected("video.textTracks[3].activeCues.length", 1);
-                testExpected("textTrackDisplayElement(video, 'cue')", null, "!=");
                 consoleWrite("");
 
                 endTest();
@@ -24,16 +22,6 @@
             {
                 consoleWrite("<br><i>** Forced tracks should be in .textTracks, but not in the menu<" + "/i>");
                 testExpected("video.textTracks.length", 9);
-
-                // Click the CC button to show the menu because it isn't created until it becomes visible.
-                clickCCButton();
-
-                trackMenuItems = captionTrackMenuList();
-                if (!trackMenuItems) {
-                    failTest("Failed to find track menu!");
-                    return;
-                }
-                testExpected("trackMenuItems.length", 6);
 
                 consoleWrite("<br><i>** Only the 'fr' forced track should be showing<" + "/i>");
                 testExpected("video.textTracks[0].language", "en");

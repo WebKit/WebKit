@@ -186,8 +186,6 @@
 
 #define WebKitKeygenElementEnabledPreferenceKey "WebKitKeygenElementEnabledPreferenceKey"
 
-#define WebKitModernMediaControlsEnabledPreferenceKey "WebKitModernMediaControlsEnabled"
-
 #define WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey "WebKitWebAnimationsCompositeOperationsEnabled"
 
 #define WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey "WebKitWebAnimationsMutableTimelinesEnabled"

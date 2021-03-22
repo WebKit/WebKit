@@ -19,7 +19,6 @@ accessibility/win [ Pass ]
 accessibility/aria-liveregions-attributes.html [ Failure ]
 accessibility/aria-liveregion-marquee-default.html [ Failure ]
 accessibility/image-load-on-delay.html [ Failure ]
-accessibility/media-emits-object-replacement.html [ Failure ]
 accessibility/meter-element.html [ Failure ]
 accessibility/set-selected-editable.html [ Failure ]
 accessibility/set-value-not-work-for-disabled-sliders.html [ Failure ]
@@ -135,9 +134,6 @@ webkit.org/b/127485 accessibility/win/parent-element.html [ Failure ]
 
 # Skipping on windows, missing implementation of cellForColumnAndRow
 webkit.org/b/129250 accessibility/table-scope.html [ Skip ]
-
-# Exclude media element for the time being
-accessibility/media-element.html [ Skip ]
 
 # Timeouts -- not investigated
 accessibility/aria-invalid.html [ Skip ]

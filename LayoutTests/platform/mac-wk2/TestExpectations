@@ -272,8 +272,6 @@ webkit.org/b/90156 editing/mac/spelling/autocorrection-blockquote-crash.html [ F
 
 webkit.org/b/95043 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 
-webkit.org/b/186055 [ Release ] media/video-trackmenu-selection.html [ Pass Failure ]
-
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK2 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
 fast/forms/validation-message-on-menulist.html
@@ -508,8 +506,6 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 
 # PiP tests are only enabled for Sierra WebKit2.
 # rdar://problem/27574303
-media/controls/picture-in-picture.html [ Pass ]
-webkit.org/b/170620 media/controls/pip-placeholder-without-video-controls.html [ Pass Failure ]
 media/element-containing-pip-video-going-into-fullscreen.html [ Pass Timeout ]
 media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
 webkit.org/b/173199 media/navigate-with-pip-should-not-crash.html [ Pass Failure ]
@@ -547,9 +543,6 @@ fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 webkit.org/b/162638 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
-
-# <rdar://problem/25063128>
-media/media-controls-drag-timeline-set-controls-property.html [ Pass Timeout ]
 
 webkit.org/b/167607 [ Debug ] http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html [ Pass Timeout ]
 
@@ -660,17 +653,7 @@ webkit.org/b/173500 http/tests/loading/basic-auth-remove-credentials.html [ Pass
 
 webkit.org/b/175781 svg/in-html/by-reference.html [ Pass Failure ]
 
-webkit.org/b/176054 media/video-controls-in-media-document.html [ Pass Failure ]
-
-webkit.org/b/176054 media/video-controls-no-display-with-text-track.html [ Pass Failure ]
-
 webkit.org/b/169238 fast/events/mouse-cursor-no-mousemove.html [ Pass Failure ]
-
-webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass Failure ]
-
-# These are flaky media tests
-webkit.org/b/185962 media/video-play-require-user-gesture.html [ Pass Failure ]
-webkit.org/b/185962 media/video-play-audio-require-user-gesture.html [ Pass Failure ]
 
 webkit.org/b/185994 fast/text/user-installed-fonts/shadow-family.html [ Pass ImageOnlyFailure ]
 webkit.org/b/185994 fast/text/user-installed-fonts/shadow-postscript-family.html [ Pass ImageOnlyFailure ]
@@ -999,8 +982,6 @@ webkit.org/b/212091 platform/mac/media/media-source/media-source-change-source.h
 webkit.org/b/212085 [ Mojave Debug ] webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/212085 [ Mojave Debug ] webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 
-webkit.org/b/183424 media/video-zoom-controls.html [ Pass Failure ]
-
 webkit.org/b/212413 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout ]
 
 webkit.org/b/188924 fast/mediastream/device-change-event-2.html [ Pass Timeout ]
@@ -1214,8 +1195,6 @@ webkit.org/b/215611 [ Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scr
 webkit.org/b/215700 [ Debug ] fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
 
 webkit.org/b/214997 [ Release ] http/tests/workers/service/basic-install-event-waitUntil-reject.html [ Pass Timeout ]
-
-webkit.org/b/215808 [ Debug ] media/controls/forced-tracks-only.html [ Pass Timeout ]
 
 webkit.org/b/215809 [ Debug ] media/W3C/video/events/event_order_canplay_canplaythrough.html [ Pass Timeout ]
 

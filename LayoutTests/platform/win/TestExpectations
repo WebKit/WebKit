@@ -45,7 +45,6 @@ http/tests/gzip-content-encoding [ Pass ]
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-accessibility/media-emits-object-replacement.html [ Failure ]
 accessibility/aria-liveregions-attributes.html [ Failure ]
 accessibility/aria-liveregion-marquee-default.html [ Failure ]
 
@@ -841,8 +840,6 @@ media [ Skip ]
 fast/media [ Skip ] 
 http/tests/media [ Skip ] 
 
-fast/layers/video-layer.html [ Skip ] # Skip until video control changes are done.
-
 # "AQMEIOManager::FindIOUnit: error -1" errors in tests output.
 webkit.org/b/148903 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ [ Skip ]
 
@@ -850,10 +847,7 @@ webkit.org/b/148903 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/48910 [ Debug ] http/tests/media/pdf-served-as-pdf.html [ Skip ]  # Crashing
 webkit.org/b/48910 http/tests/media/video-cancel-load.html [ Skip ]  # Crashing
 
-webkit.org/b/58654 media/video-controls-in-media-document.html [ Skip ]
-
 # disable until 25220 is fixed: Loading a .ogv file into Safari downloads the file instead of playing it in a media document, even if XiphQT is installed (25220)
-webkit.org/b/25220 media/video-click-dblckick-standalone.html [ Skip ] # WontFix
 webkit.org/b/25220 media/video-document-types.html [ Skip ] # WontFix
 # This test requires ogg codecs
 media/media-can-play-ogg.html [ Skip ] # WontFix
@@ -861,8 +855,6 @@ media/media-can-play-ogg.html [ Skip ] # WontFix
 media/media-can-play-flac-audio.html [ Skip ] # WontFix
 
 webkit.org/b/112659 media/video-playing-and-pause.html [ Skip ] # [ Crash Failure Pass ]
-webkit.org/b/29047 media/audio-delete-while-step-button-clicked.html [ Skip ]
-#media/video-empty-source.html [ Failure ]
 
 # Needs to pass cookies to the media player
 webkit.org/b/33954 http/tests/media/video-cookie.html [ Skip ]
@@ -939,15 +931,10 @@ webkit.org/b/38000 media/media-fullscreen-not-in-document.html [ Skip ]
 # Flaky media/video tests
 #webkit.org/b/95806 media/video-source-error-no-candidate.html [ Pass Failure ]
 #webkit.org/b/95806 media/video-source-moved.html [ Pass Failure ]
-webkit.org/b/25465 media/video-zoom-controls.html [ Skip ] # Crashing
 
 # Resolution media query is not yet enabled.
 webkit.org/b/85262 fast/media/mq-resolution.html [ Skip ]
 webkit.org/b/85262 fast/media/mq-resolution-dpi-dpcm-warning.html [ Skip ]
-webkit.org/b/97026 media/audio-controls-rendering.html [ Skip ]
-webkit.org/b/97026 media/audio-repaint.html [ Skip ]
-webkit.org/b/97026 media/controls-styling-strict.html [ Skip ]
-webkit.org/b/97026 media/video-controls-fullscreen-volume.html [ Skip ]
 http/tests/media/media-document.html [ Skip ]
 http/tests/media/video-useragent.html [ Skip ]
 
@@ -956,24 +943,9 @@ webkit.org/b/103442 media/W3C/video/readyState/readyState_during_loadedmetadata.
 # This test requires generation of progress events during loading
 #webkit.org/b/97026 media/progress-events-generated-correctly.html [ Failure ]
 
-webkit.org/b/97132 media/track/track-cue-rendering-vertical.html [ Skip ] # Crashing
-
-webkit.org/b/106477 media/video-controls-captions-trackmenu-sorted.html [ Skip ] # Crashing
-webkit.org/b/106477 media/video-controls-captions-trackmenu.html [ Skip ]  # [ Timeout ]
-webkit.org/b/106477 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Skip ] # Crashing
-webkit.org/b/106477 media/video-controls-visible-exiting-fullscreen.html [ Skip ] # Crash
-webkit.org/b/106477 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Skip ] # Crashing
-
-# Windows doesn't have a toggle for CC any more, it's based on a menu of choices.
-# https://bugs.webkit.org/show_bug.cgi?id=95428
-webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
-
 # Windows does not support custom media data loading
 media/video-src-blob.html [ Skip ]
 webkit.org/b/113106 media/track/track-prefer-captions.html [ Skip ]
-
-# The logic in this test is no longer correct for Apple ports
-webkit.org/b/112492 media/track/track-user-preferences.html [ Skip ]
 
 # WEBVTT_REGIONS is not enabled on win
 media/track/regions-webvtt [ Skip ]
@@ -986,31 +958,19 @@ media/track/in-band [ Skip ] # [ WontFix ]
 media/track/video [ Skip ] # [ WontFix ]
 media/track/audio [ Skip ] # [ WontFix ]
 
-webkit.org/b/116564 media/click-volume-bar-not-pausing.html [ Skip ] #  [ Timeout ]
 webkit.org/b/117322 media/video-poster-background.html [ Skip ] # Timeout
 
 webkit.org/b/62024 http/tests/media/video-cross-site.html [ Skip ] # Crash
 media/audio-constructor-src.html [ Skip ] #  Timeout
-media/audio-delete-while-slider-thumb-clicked.html [ Skip ] # Timeout
 media/track/track-in-band-legacy-api.html [ Skip ]
 media/track/track-in-band-mode.html [ Skip ]
 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Skip ]
 #fast/media/mq-transform-02.html [ Pass ImageOnlyFailure ]
 #fast/media/mq-transform-03.html [ Pass ImageOnlyFailure ]
 
-# The following tests fail due to the new CSS/JS-based media controls.
-# They need to be rebaselined.
-# REGRESSION(r156730): 18 media tests broken (122021)
-webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Skip ] # Crashing
-webkit.org/b/122021 media/video-controls-toggling.html [ Skip ] #  [ Timeout ]
-
 # The following tests also seem affected by r156730
 #webkit.org/b/122166 media/track/audio-track.html [ Failure ]
 webkit.org/b/122166 media/track/video-track.html [ Skip ] # Crashing
-webkit.org/b/122166 media/audio-controls-do-not-fade-out.html [ Skip ] #  [ Timeout ]
-webkit.org/b/122166 media/media-controls-invalid-url.html [ Skip ] # Crashing
-webkit.org/b/122166 media/media-volume-slider-rendered-normal.html [ Skip ] # Crashing
-webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Skip ] # Crashing
 
 # Test introduced in r157133 fails. State of colorspace management on Windows is unclear.
 media/video-canvas-drawing-output.html [ Skip ] #  [ Timeout ]
@@ -1038,34 +998,20 @@ media/track/track-datacue-value.html [ Skip ]
 #http/tests/media/hls/hls-audio-tracks-has-audio.html [ Failure ]
 #http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
 #http/tests/media/hls/hls-audio-tracks.html [ Failure ]
-#http/tests/media/hls/video-controls-live-stream.html [ Failure ]
 
 # Crashing
 media/media-controller.html [ Skip ] # Crashing
 media/media-controller-playbackrate.html [ Skip ] # Crashing
-media/controls-after-reload.html [ Skip ] # Crashing
-media/controls-without-preload.html [ Skip ] # Crashing
 media/video-autoplay.html [ Skip ] # Crashing
-media/video-controls-transformed.html [ Skip ] # Crashing
 media/video-display-aspect-ratio.html [ Skip ] # Crashing
-media/video-fullscreen-only-controls.html [ Skip ] # Crashing
 media/video-fullscreen-only-playback.html [ Skip ] # Crashing
 media/video-load-networkState.html [ Skip ] # Crashing
 media/video-object-fit.html [ Skip ] # Crashing
 media/video-object-fit-change.html [ Skip ] # Crashing
 media/video-remove-insert-repaints.html [ Skip ] # Crashing
-media/video-volume-slider.html [ Skip ] # Crashing
-media/video-volume-slider-drag.html [ Skip ] # Crashing
 
-#media/controls-strict.html [ Failure ]
-#media/controls-styling.html [ Failure ]
-#media/media-controls-timeline-updates.html [ Failure ]
 #media/sources-fallback-codecs.html [ Failure ]
 #media/track/track-disabled.html [ Failure ]
-#media/video-controls-audiotracks-trackmenu.html [ Failure ]
-#media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
-#media/video-controls-rendering.html [ Failure ]
-#media/video-display-toggle.html [ Failure ]
 #media/video-layer-crash.html [ Failure ]
 #media/video-load-preload-metadata.html [ Failure ]
 #media/video-pause-immediately.html [ Failure ]
@@ -1075,30 +1021,9 @@ media/audio-constructor-preload.html [ Skip ] # Timeout
 media/audio-data-url.html [ Skip ] # Timeout
 media/audio-only-video-intrinsic-size.html [ Skip ] # Timeout
 media/audio-play-event.html [ Skip ] # Timeout
-media/controls-drag-timebar.html [ Skip ] # Timeout
 media/event-attributes.html [ Skip ] # Timeout
 media/media-captions.html [ Skip ] # Timeout
 media/media-continues-playing-after-replace-source.html [ Skip ] # Timeout
-media/media-controls-cancel-events.html [ Skip ] # Timeout
-media/media-document-audio-controls-visible.html [ Skip ] # Timeout
-media/media-document-audio-repaint.html [ Skip ] # Timeout
-media/media-volume-slider-rendered-below.html [ Skip ] # Timeout
-media/track/track-css-all-cues.html [ Skip ] # Timeout
-media/track/track-css-cue-lifetime.html [ Skip ] # Timeout
-media/track/track-css-matching-default.html [ Skip ] # Timeout
-media/track/track-css-matching.html [ Skip ] # Timeout
-media/track/track-css-matching-lang.html [ Skip ] # Timeout
-media/track/track-css-matching-timestamps.html [ Skip ] # Timeout
-media/track/track-css-property-allowlist.html [ Skip ] # Timeout
-media/track/track-css-user-override.html [ Skip ] # Timeout
-media/track/track-cue-nothing-to-render.html [ Skip ] # Timeout
-media/track/track-cue-rendering.html [ Skip ] # Timeout
-media/track/track-cue-rendering-horizontal.html [ Skip ] # Timeout
-media/track/track-cue-rendering-on-resize.html [ Skip ] # Timeout
-media/track/track-cue-rendering-rtl.html [ Skip ] # Timeout
-media/track/track-cue-rendering-snap-to-lines-not-set.html [ Skip ] # Timeout
-media/track/track-cue-rendering-with-padding.html [ Skip ] # Timeout
-media/track/track-cue-overlap-snap-to-lines-not-set.html [ Skip ] # Timeout
 media/track/track-cues-cuechange.html [ Skip ] # Timeout
 media/track/track-cues-enter-exit.html [ Skip ] # Timeout
 media/track/track-cues-missed.html [ Skip ] # Timeout
@@ -1106,12 +1031,10 @@ media/track/track-cues-pause-on-exit.html [ Skip ] # Timeout
 media/track/track-cues-seeking.html [ Skip ] # Timeout
 media/track/track-cues-sorted-before-dispatch.html [ Skip ] # Timeout
 media/track/track-forced-subtitles-in-band.html [ Skip ] # Timeout
-media/track/track-in-band-style.html [ Skip ] # Timeout
 media/track/track-language-preference.html [ Skip ] # Timeout
 media/track/track-legacyapi-with-automatic-mode.html [ Skip ] # Timeout
 media/track/track-load-error-readyState.html [ Skip ] # Timeout
 media/track/track-long-captions-file.html [ Skip ] # Timeout
-media/track/track-long-word-container-sizing.html [ Skip ] # Timeout
 media/track/track-mode.html [ Skip ] # Timeout
 media/track/track-mode-disabled-crash.html [ Skip ] # Timeout
 media/track/track-mode-not-changed-by-new-track.html [ Skip ] # Timeout
@@ -1137,9 +1060,6 @@ media/video-seek-with-negative-playback.html [ Skip ] # Timeout
 media/video-seeking.html [ Skip ] # Timeout
 media/video-size-intrinsic-scale.html [ Skip ] # Timeout
 media/video-timeupdate-reverse-play.html [ Skip ] # Timeout
-
-# Tracks don't seem to be appearing at all:
-media/track/track-in-band-subtitles-too-large.html [ Skip ] # Timeout
 
 # HTTP Timeouts
 http/tests/media/hls/video-cookie.html [ Skip ] # Timeout
@@ -1575,9 +1495,6 @@ webkit.org/b/127485 [ Release ] accessibility/win/parent-element.html [ Pass Fai
 # Skipping on windows, missing implementation of cellForColumnAndRow
 webkit.org/b/129250 accessibility/table-scope.html [ Skip ]
 
-# Exclude media element for the time being
-accessibility/media-element.html [ Skip ]
-
 # Timeouts -- not investigated
 accessibility/aria-invalid.html [ Skip ]
 
@@ -1773,7 +1690,6 @@ webkit.org/b/184676 accessibility/ARIA-reflection.html [ Skip ]
 
 # Not implemented on Win
 accessibility/insert-newline.html [ Skip ]
-accessibility/media-with-aria-label.html [ Skip ]
 accessibility/misspelling-range.html [ Skip ]
 
 ################################################################################

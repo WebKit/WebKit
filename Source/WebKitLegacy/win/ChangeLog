@@ -1,3 +1,26 @@
+2021-03-22  Devin Rousso  <drousso@apple.com>
+
+        Remove unused JS and CSS files of media controls
+        https://bugs.webkit.org/show_bug.cgi?id=214955
+        <rdar://problem/66604040>
+
+        Reviewed by Eric Carlson.
+
+        Cocoa platforms are already using modern media controls so there's no reason to keep the old
+        media controls resources/logic around any longer. It just wastes space.
+
+        The non-iOS Apple controls must be kept though as they are still used on Windows.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.h:
+        * WebPreferences.cpp:
+        (WebPreferences::setModernMediaControlsEnabled): Deleted.
+        (WebPreferences::modernMediaControlsEnabled): Deleted.
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+        Replace `ModernMediaControlsEnabled` setting with `ENABLE_MODERN_MEDIA_CONTROLS` build flag.
+
 2021-03-19  Per Arne  <pvollan@apple.com>
 
         [Win] Fix build issue

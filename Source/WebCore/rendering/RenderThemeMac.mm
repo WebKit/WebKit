@@ -65,8 +65,6 @@
 #import "ThemeMac.h"
 #import "TimeRanges.h"
 #import "UTIUtilities.h"
-#import "UserAgentScripts.h"
-#import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 #import <CoreServices/CoreServices.h>
@@ -94,10 +92,6 @@
 #endif
 
 #endif // ENABLE(SERVICE_CONTROLS)
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/RenderThemeMacAdditions.cpp>
-#endif
 
 // FIXME: This should go into an SPI.h file in the spi directory.
 @interface NSTextFieldCell ()
@@ -172,12 +166,6 @@ constexpr Seconds progressAnimationRepeatInterval = 33_ms; // 30 fps
     return [self _adjustedCoreUIDrawOptionsForDrawingBordersOnly:[super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus maskOnly:maskOnly]];
 }
 
-@end
-
-@interface WebCoreRenderThemeBundle : NSObject
-@end
-
-@implementation WebCoreRenderThemeBundle
 @end
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -294,79 +282,6 @@ NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
     LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance());
     ControlStates states(extractControlStatesForRenderer(o));
     return ThemeMac::ensuredView(&o.view().frameView(), states);
-}
-
-String RenderThemeMac::mediaControlsStyleSheet()
-{
-    if (m_legacyMediaControlsStyleSheet.isEmpty())
-        m_legacyMediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
-    return m_legacyMediaControlsStyleSheet;
-}
-
-String RenderThemeMac::modernMediaControlsStyleSheet()
-{
-    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
-        if (m_mediaControlsStyleSheet.isEmpty())
-            m_mediaControlsStyleSheet = StringImpl::createStaticStringImpl(ModernMediaControlsUserAgentStyleSheet, sizeof(ModernMediaControlsUserAgentStyleSheet));
-        return m_mediaControlsStyleSheet;
-    }
-    return emptyString();
-}
-
-void RenderThemeMac::purgeCaches()
-{
-    m_legacyMediaControlsScript.clearImplIfNotShared();
-    m_mediaControlsLocalizedStringsScript.clearImplIfNotShared();
-    m_mediaControlsScript.clearImplIfNotShared();
-    m_mediaControlsAdditionalScript.clearImplIfNotShared();
-    m_legacyMediaControlsStyleSheet.clearImplIfNotShared();
-    m_mediaControlsStyleSheet.clearImplIfNotShared();
-
-    RenderTheme::purgeCaches();
-}
-
-Vector<String, 3> RenderThemeMac::mediaControlsScripts()
-{
-    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
-        if (m_mediaControlsLocalizedStringsScript.isEmpty() || m_mediaControlsScript.isEmpty() || m_mediaControlsAdditionalScript.isEmpty()) {
-            // FIXME: Localized strings are not worth having a script. We should make it JSON data etc. instead.
-            if (m_mediaControlsLocalizedStringsScript.isEmpty()) {
-                NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-                m_mediaControlsLocalizedStringsScript = [NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
-            }
-
-            if (m_mediaControlsScript.isEmpty())
-                m_mediaControlsScript = StringImpl::createStaticStringImpl(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript));
-
-#if defined(RenderThemeMacAdditions_mediaControlsScript)
-            if (m_mediaControlsAdditionalScript.isEmpty())
-                m_mediaControlsAdditionalScript = String(RenderThemeMacAdditions_mediaControlsScript);
-#endif
-        }
-        return {
-            m_mediaControlsLocalizedStringsScript,
-            m_mediaControlsScript,
-            m_mediaControlsAdditionalScript,
-        };
-    }
-
-    if (m_legacyMediaControlsScript.isEmpty()) {
-        NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-        NSString *localizedStrings = [NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsLocalizedStrings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
-        NSString *script = [NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
-        m_legacyMediaControlsScript = makeString(String { localizedStrings }, String { script });
-    }
-    return { m_legacyMediaControlsScript };
-}
-
-String RenderThemeMac::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
-{
-    if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
-        return emptyString();
-
-    NSString *directory = @"modern-media-controls/images";
-    NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-    return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const

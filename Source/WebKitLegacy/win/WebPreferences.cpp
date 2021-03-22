@@ -2142,20 +2142,6 @@ HRESULT WebPreferences::setCrossOriginWindowPolicySupportEnabled(BOOL)
     return S_OK;
 }
 
-HRESULT WebPreferences::setModernMediaControlsEnabled(BOOL enabled)
-{
-    setBoolValue(WebKitModernMediaControlsEnabledPreferenceKey, enabled);
-    return S_OK;
-}
-
-HRESULT WebPreferences::modernMediaControlsEnabled(_Out_ BOOL* enabled)
-{
-    if (!enabled)
-        return E_POINTER;
-    *enabled = boolValueForKey(WebKitModernMediaControlsEnabledPreferenceKey);
-    return S_OK;
-}
-
 HRESULT WebPreferences::fetchAPIKeepAliveEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
