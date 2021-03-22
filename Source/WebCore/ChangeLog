@@ -1,3 +1,49 @@
+2021-03-22  Rob Buis  <rbuis@igalia.com>
+
+        Enable ability to prevent scrolling in Element.focus()
+        https://bugs.webkit.org/show_bug.cgi?id=178583
+
+        Reviewed by Simon Fraser.
+
+        Add FocusOptions parameter to the focus method [1] both
+        to the IDL as the C++ side. Change Element.focus to not
+        scroll if FocusOptions.preventScroll is true.
+
+        Behavior matches Chrome and Firefox.
+
+        Tests: imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea.html
+               imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-nested-scroll-elements.html
+
+        Test: imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-nested-scroll-elements.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        * dom/Element.h:
+        (WebCore::Element::focus):
+        * dom/FocusOptions.h: Copied from Source/WebCore/html/HTMLOrForeignElement.idl.
+        * dom/FocusOptions.idl: Copied from Source/WebCore/html/HTMLOrForeignElement.idl.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::didAttachRenderers):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::focus):
+        * html/HTMLLabelElement.h:
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::focus):
+        * html/HTMLLegendElement.h:
+        * html/HTMLOrForeignElement.idl:
+        * html/InputType.cpp:
+        (WebCore::InputType::accessKeyAction):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::FocusController::advanceFocusDirectionallyInContainer):
+
 2021-03-22  Devin Rousso  <drousso@apple.com>
 
         Remove unused JS and CSS files of media controls

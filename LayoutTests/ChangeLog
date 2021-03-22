@@ -1,3 +1,15 @@
+2021-03-22  Rob Buis  <rbuis@igalia.com>
+
+        Enable ability to prevent scrolling in Element.focus()
+        https://bugs.webkit.org/show_bug.cgi?id=178583
+
+        Reviewed by Simon Fraser.
+
+        The test preventScroll-textarea.html now passes on all platforms.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea-expected.txt: Removed.
+
 2021-03-22  Devin Rousso  <drousso@apple.com>
 
         Remove unused JS and CSS files of media controls

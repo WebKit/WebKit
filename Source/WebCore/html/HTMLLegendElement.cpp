@@ -57,19 +57,19 @@ RefPtr<HTMLFormControlElement> HTMLLegendElement::associatedControl()
     return descendantsOfType<HTMLFormControlElement>(*enclosingFieldset).first();
 }
 
-void HTMLLegendElement::focus(SelectionRestorationMode restorationMode, FocusDirection direction)
+void HTMLLegendElement::focus(const FocusOptions& options)
 {
     if (document().haveStylesheetsLoaded()) {
         document().updateLayoutIgnorePendingStylesheets();
         if (isFocusable()) {
-            Element::focus(restorationMode, direction);
+            Element::focus({ options.selectionRestorationMode, options.direction });
             return;
         }
     }
 
     // To match other browsers' behavior, never restore previous selection.
     if (auto control = associatedControl())
-        control->focus(SelectionRestorationMode::SelectAll, direction);
+        control->focus({ SelectionRestorationMode::SelectAll, options.direction });
 }
 
 bool HTMLLegendElement::accessKeyAction(bool sendMouseEvents)

@@ -830,6 +830,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFocusEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFocusEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFocusOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFocusOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.cpp

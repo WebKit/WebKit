@@ -172,21 +172,21 @@ bool HTMLLabelElement::willRespondToMouseClickEvents()
     return (element && element->willRespondToMouseClickEvents()) || HTMLElement::willRespondToMouseClickEvents();
 }
 
-void HTMLLabelElement::focus(SelectionRestorationMode restorationMode, FocusDirection direction)
+void HTMLLabelElement::focus(const FocusOptions& options)
 {
     Ref<HTMLLabelElement> protectedThis(*this);
     if (document().haveStylesheetsLoaded()) {
         document().updateLayout();
         if (isFocusable()) {
             // The value of restorationMode is not used for label elements as it doesn't override updateFocusAppearance.
-            Element::focus(restorationMode, direction);
+            Element::focus(options);
             return;
         }
     }
 
     // To match other browsers, always restore previous selection.
     if (auto element = control())
-        element->focus(SelectionRestorationMode::RestoreOrSelectAll, direction);
+        element->focus({ SelectionRestorationMode::RestoreOrSelectAll, options.direction });
 }
 
 bool HTMLLabelElement::accessKeyAction(bool sendMouseEvents)

@@ -3024,6 +3024,7 @@ JSFileSystemEntryCallback.cpp
 JSFileSystemFileEntry.cpp
 JSFillMode.cpp
 JSFocusEvent.cpp
+JSFocusOptions.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
 JSGPUBindGroupLayoutBinding.cpp

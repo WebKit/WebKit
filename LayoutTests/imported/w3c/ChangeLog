@@ -1,3 +1,16 @@
+2021-03-22  Rob Buis  <rbuis@igalia.com>
+
+        Enable ability to prevent scrolling in Element.focus()
+        https://bugs.webkit.org/show_bug.cgi?id=178583
+
+        Reviewed by Simon Fraser.
+
+        Update improved test result.
+
+        * web-platform-tests/html/interaction/focus/processing-model/preventScroll-nested-scroll-elements-expected.txt: Added.
+        * web-platform-tests/html/interaction/focus/processing-model/preventScroll-nested-scroll-elements.html: Added.
+        * web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea-expected.txt:
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/nan-param.html is failing

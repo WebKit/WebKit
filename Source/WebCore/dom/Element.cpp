@@ -3040,7 +3040,7 @@ static RefPtr<Element> findFirstProgramaticallyFocusableElementInComposedTree(El
     return nullptr;
 }
 
-void Element::focus(SelectionRestorationMode restorationMode, FocusDirection direction)
+void Element::focus(const FocusOptions& options)
 {
     if (!isConnected())
         return;
@@ -3084,11 +3084,12 @@ void Element::focus(SelectionRestorationMode restorationMode, FocusDirection dir
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), direction))
+        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), options.direction))
             return;
     }
 
-    newTarget->revealFocusedElement(restorationMode);
+    if (!options.preventScroll)
+        newTarget->revealFocusedElement(options.selectionRestorationMode);
 }
 
 void Element::revealFocusedElement(SelectionRestorationMode selectionMode)

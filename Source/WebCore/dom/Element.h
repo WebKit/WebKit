@@ -27,6 +27,7 @@
 #include "AXTextStateChangeIntent.h"
 #include "Document.h"
 #include "ElementData.h"
+#include "FocusOptions.h"
 #include "HTMLNames.h"
 #include "ScrollTypes.h"
 #include "ShadowRootInit.h"
@@ -401,7 +402,7 @@ public:
     virtual String target() const { return String(); }
 
     static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
-    virtual void focus(SelectionRestorationMode = SelectionRestorationMode::RestoreOrSelectAll, FocusDirection = FocusDirection::None);
+    virtual void focus(const FocusOptions& = { });
     void revealFocusedElement(SelectionRestorationMode);
     virtual RefPtr<Element> focusAppearanceUpdateTarget();
     virtual void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode = SelectionRevealMode::Reveal);
