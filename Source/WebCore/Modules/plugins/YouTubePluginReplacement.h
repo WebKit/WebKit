@@ -48,7 +48,7 @@ private:
     static bool supportsURL(const URL&);
     static bool isEnabledBySettings(const Settings&);
 
-    bool installReplacement(ShadowRoot&) final;
+    InstallResult installReplacement(ShadowRoot&) final;
 
     String youTubeURL(const String& rawURL);
 

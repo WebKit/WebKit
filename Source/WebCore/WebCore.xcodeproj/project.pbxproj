@@ -2896,6 +2896,7 @@
 		9B6C41531344949000085B62 /* StringWithDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6C41521344949000085B62 /* StringWithDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B714E211C91166900AC0E92 /* EventPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B714E1F1C91166900AC0E92 /* EventPath.h */; };
 		9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */; };
+		9BA584C226061EFF001A5C51 /* JSValueInWrappedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAAC45C21520128003D4A98 /* GCReachableRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAAC4562151E39E003D4A98 /* GCReachableRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAB6C6A12550631001626D4 /* EditingStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAF3B2312C1A39800014BF1 /* WritingDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -30341,6 +30342,7 @@
 				078E091917D14D1C00420AA1 /* MediaStreamTrackEvent.h in Headers */,
 				07FFDE69181AED420072D409 /* MediaStreamTrackPrivate.h in Headers */,
 				932CC0B71DFFD158004C0F9F /* MediaTrackConstraints.h in Headers */,
+				9BA584C226061EFF001A5C51 /* JSValueInWrappedObject.h in Headers */,
 				07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */,
 				51E1BAC31BD8064E0055D81F /* MemoryBackingStoreTransaction.h in Headers */,
 				BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */,

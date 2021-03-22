@@ -77,7 +77,7 @@ RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlu
     return m_embedShadowElement->createElementRenderer(WTFMove(style), insertionPosition);
 }
 
-bool YouTubePluginReplacement::installReplacement(ShadowRoot& root)
+auto YouTubePluginReplacement::installReplacement(ShadowRoot& root) -> InstallResult
 {
     m_embedShadowElement = YouTubeEmbedShadowElement::create(m_parentElement->document());
 
@@ -100,7 +100,7 @@ bool YouTubePluginReplacement::installReplacement(ShadowRoot& root)
     iframeElement->setAttributeWithoutSynchronization(HTMLNames::scrollingAttr, AtomicString("no", AtomicString::ConstructFromLiteral));
     m_embedShadowElement->appendChild(iframeElement);
 
-    return true;
+    return { true };
 }
     
 static inline URL createYouTubeURL(const String& videoID, const String& timeID)

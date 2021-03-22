@@ -305,7 +305,14 @@ void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot& root)
         return;
     
     root.setResetStyleInheritance(true);
-    if (m_pluginReplacement->installReplacement(root)) {
+    auto result = m_pluginReplacement->installReplacement(root);
+
+#if PLATFORM(COCOA)
+    RELEASE_ASSERT(result.success || !result.scriptObject);
+    m_pluginReplacementScriptObject = result.scriptObject;
+#endif
+
+    if (result.success) {
         setDisplayState(DisplayingPluginReplacement);
         invalidateStyleAndRenderersForSubtree();
     }
@@ -401,9 +408,14 @@ bool HTMLPlugInElement::requestObject(const String& url, const String& mimeType,
 
 JSC::JSObject* HTMLPlugInElement::scriptObjectForPluginReplacement()
 {
-    if (m_pluginReplacement)
-        return m_pluginReplacement->scriptObject();
+#if PLATFORM(COCOA)
+    JSC::JSValue value = m_pluginReplacementScriptObject;
+    if (!value)
+        return nullptr;
+    return value.getObject();
+#else
     return nullptr;
+#endif
 }
 
 bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason reason, const String& unavailabilityDescription)
