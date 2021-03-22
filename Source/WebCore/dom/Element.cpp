@@ -4594,11 +4594,6 @@ ElementIdentifier Element::createElementIdentifier()
     return ElementIdentifier::generate();
 }
 
-void Element::didChangeRenderer(RenderObject* oldRenderer)
-{
-    InspectorInstrumentation::nodeLayoutContextChanged(*this, oldRenderer);
-}
-
 #if ENABLE(CSS_TYPED_OM)
 
 StylePropertyMap* Element::attributeStyleMap()

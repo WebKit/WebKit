@@ -1,3 +1,46 @@
+2021-03-22  Patrick Angle  <pangle@apple.com>
+
+        REGRESSION(r272433): Inspector should not instrument inside `WebCore::Node::setRenderer`
+        https://bugs.webkit.org/show_bug.cgi?id=223559
+
+        Reviewed by Ryosuke Niwa and Devin Rousso.
+
+        Existing test coverage:
+        - inspector/css/nodeLayoutContextTypeChanged.html
+        - inspector/css/setLayoutContextTypeChangedMode.html
+
+        The previous approach to observing render changes was most likely a performance regression in a very hot code
+        path (`Node::setRenderer`). This patch resolves this by not instrumenting in this the hot path. Instead we call
+        inspector instrumentation inside the constructors/destructors of only the RenderObject subclasses we are
+        interested in observing layout changes for.
+
+        Additionally, layout change events are now added to a `Vector` of pending changes, which will be sent to the
+        front-end later in order to avoid evaluating JavaScript inside a destructor in WK1 with the new instrumentation
+        points.
+
+        * dom/Element.cpp:
+        (WebCore::Element::didChangeRenderer): Deleted.
+        * dom/Element.h:
+        * dom/Node.h:
+        (WebCore::Node::didChangeRenderer): Deleted.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::nodeLayoutContextChangedImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::nodeLayoutContextChanged):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::reset):
+        (WebCore::InspectorCSSAgent::nodeLayoutContextTypeChanged):
+        (WebCore::InspectorCSSAgent::layoutContextTypeChangedTimerFired):
+        - Moved layout change events behind a timer firing.
+        * inspector/agents/InspectorCSSAgent.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::RenderGrid):
+        (WebCore::RenderGrid::~RenderGrid):
+        - Move instrumentation from `Node::setRenderer` to `RenderGrid`.
+        * rendering/RenderObject.h:
+        (WebCore::Node::setRenderer):
+
 2021-03-22  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Add a "wallTime" field to struct RemoteMediaPlayerState

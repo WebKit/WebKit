@@ -176,10 +176,10 @@ void InspectorInstrumentation::didRemoveDOMNodeImpl(InstrumentingAgents& instrum
         domAgent->didRemoveDOMNode(node);
 }
 
-void InspectorInstrumentation::nodeLayoutContextChangedImpl(InstrumentingAgents& instrumentingAgents, Node& node, RenderObject* oldRenderer)
+void InspectorInstrumentation::nodeLayoutContextChangedImpl(InstrumentingAgents& instrumentingAgents, Node& node, RenderObject* newRenderer)
 {
     if (auto* cssAgent = instrumentingAgents.enabledCSSAgent())
-        cssAgent->nodeLayoutContextTypeChanged(node, oldRenderer); 
+        cssAgent->nodeLayoutContextTypeChanged(node, newRenderer);
 }
 
 void InspectorInstrumentation::willModifyDOMAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element, const AtomString& oldValue, const AtomString& newValue)
