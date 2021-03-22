@@ -381,6 +381,8 @@ public:
     virtual bool shouldEnableInAppBrowserPrivacyProtections() const { return false; }
     virtual void notifyPageOfAppBoundBehavior() { }
 #endif
+    
+    virtual bool isParentProcessAFullWebBrowser() const { return false; }
 };
 
 } // namespace WebCore

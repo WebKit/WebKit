@@ -1033,6 +1033,15 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
     return true;
 }
 
+static bool hasDeniedCrossPageStorageAccess(const HashSet<RegistrableDomain>& loginDomains, const RegistrableDomain& topFrameDomain)
+{
+    for (auto& loginDomain : loginDomains) {
+        if (ResourceLoadObserver::shared().hasDeniedCrossPageStorageAccess(loginDomain, topFrameDomain))
+            return true;
+    }
+    return false;
+}
+
 const String& Quirks::BBCRadioPlayerURLString()
 {
     static NeverDestroyed<String> BBCRadioPlayerURLString = "https://www.bbc.co.uk/sounds/player/bbc_world_service"_s;
@@ -1060,34 +1069,37 @@ static bool isBBCPopUpPlayerElement(const Element& element)
     return element.parentElement()->classNames().contains("p_audioButton_buttonInner") && parentElement->parentElement()->classNames().contains("hidden");
 }
 
-Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler) const
+Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&& completionHandler) const
 {
     auto firstPartyDomain = mapToTopDomain(m_document->topDocument().url());
     auto domainsInNeedOfStorageAccess = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain);
     if (!domainsInNeedOfStorageAccess || domainsInNeedOfStorageAccess.value().isEmpty()) {
-        completionHandler(StorageAccessWasGranted::No);
+        completionHandler(ShouldDispatchClick::No);
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
-    if (hasStorageAccessForAllLoginDomains(*domainsInNeedOfStorageAccess, firstPartyDomain)) {
-        completionHandler(StorageAccessWasGranted::No);
+    if (hasStorageAccessForAllLoginDomains(*domainsInNeedOfStorageAccess, firstPartyDomain)
+        || hasDeniedCrossPageStorageAccess(*domainsInNeedOfStorageAccess, firstPartyDomain)) {
+        completionHandler(ShouldDispatchClick::No);
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
 
     auto domainInNeedOfStorageAccess = RegistrableDomain(*domainsInNeedOfStorageAccess.value().begin().get());
 
     if (!m_document) {
-        completionHandler(StorageAccessWasGranted::No);
+        completionHandler(ShouldDispatchClick::No);
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
 
     DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
         if (storageAccessGranted == StorageAccessWasGranted::No) {
-            completionHandler(storageAccessGranted);
+            ResourceLoadObserver::shared().setHasDeniedCrossPageStorageAccess({{ firstPartyDomain, domainInNeedOfStorageAccess }}, [completionHandler = WTFMove(completionHandler)] () mutable {
+                completionHandler(ShouldDispatchClick::Yes);
+            });
             return;
         }
 
-        ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, domainInNeedOfStorageAccess }}, [storageAccessGranted, completionHandler = WTFMove(completionHandler)] () mutable {
-            completionHandler(storageAccessGranted);
+        ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, domainInNeedOfStorageAccess }}, [completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(ShouldDispatchClick::Yes);
         });
     });
     return Quirks::StorageAccessResult::ShouldCancelEvent;
@@ -1102,9 +1114,9 @@ RegistrableDomain Quirks::mapToTopDomain(const URL& urlToMap)
 }
 #endif
 
-Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget) const
+Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, bool isParentProcessAFullWebBrowser) const
 {
-    if (!DeprecatedGlobalSettings::resourceLoadStatisticsEnabled())
+    if (!DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() || !isParentProcessAFullWebBrowser)
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -1179,11 +1191,11 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         }
 
         if (isStorageAccessQuirkDomainAndElement(m_document->url(), element)) {
-            return requestStorageAccessAndHandleClick([element = makeWeakPtr(element), platformEvent, eventType, detail, relatedTarget] (StorageAccessWasGranted storageAccessWasGranted) mutable {
+            return requestStorageAccessAndHandleClick([element = makeWeakPtr(element), platformEvent, eventType, detail, relatedTarget] (ShouldDispatchClick shouldDispatchClick) mutable {
                 if (!element)
                     return;
 
-                if (storageAccessWasGranted == StorageAccessWasGranted::Yes)
+                if (shouldDispatchClick == ShouldDispatchClick::Yes)
                     element->dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget);
             });
         }
@@ -1193,8 +1205,8 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
         // BBC RadioPlayer case.
         if (isBBCDomain(domain) && isBBCPopUpPlayerElement(element)) {
-            return requestStorageAccessAndHandleClick([document = m_document] (StorageAccessWasGranted storageAccessWasGranted) mutable {
-                if (!document || storageAccessWasGranted == StorageAccessWasGranted::No)
+            return requestStorageAccessAndHandleClick([document = m_document] (ShouldDispatchClick shouldDispatchClick) mutable {
+                if (!document || shouldDispatchClick == ShouldDispatchClick::No)
                     return;
 
                 auto domWindow = document->domWindow();
