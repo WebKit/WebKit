@@ -1,3 +1,24 @@
+2021-03-22  Zalan Bujtas  <zalan@apple.com>
+
+        [ macOS debug arm64 ] ASSERTION FAILED: count >= 1 ./rendering/RenderMultiColumnSet.cpp(450) : unsigned int WebCore::RenderMultiColumnSet::columnCount() const
+        https://bugs.webkit.org/show_bug.cgi?id=223144
+        <rdar://problem/75381496>
+
+        Reviewed by Simon Fraser.
+
+        Overflow height computation with infinite constraint should not produce a negative height value.
+        During the column balancing, we use the "max layout unit" value to indicate infinite available space.
+        However this max value confuses the height computation in expandToEncompassFragmentedFlowContentsIfNeeded and produces a negative height value.
+
+        Let's also ensure that we never trigger undefined behavior as the result of implicitly converting (negative)float to unsigned.
+
+        * rendering/RenderFragmentContainerSet.cpp:
+        (WebCore::RenderFragmentContainerSet::expandToEncompassFragmentedFlowContentsIfNeeded):
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::columnCount const):
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         Implement AbortSignal.abort()
