@@ -1,3 +1,16 @@
+2021-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Composition text is not initially highlighted when typing in text fields using Pinyin keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=223563
+        <rdar://problem/75564516>
+
+        Reviewed by Antti Koivisto.
+
+        Add a test to verify that marked text underlines show up in search fields.
+
+        * editing/input/composition-underline-in-search-field-expected-mismatch.html: Added.
+        * editing/input/composition-underline-in-search-field.html: Added.
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/nan-param.html is failing

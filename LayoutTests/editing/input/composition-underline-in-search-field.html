@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+input {
+    font-size: 20px;
+    outline: none;
+    caret-color: transparent;
+}
+</style>
+</head>
+<body>
+<input autofocus type="search"></input>
+<p class="description">This test verifies that composition underlines are visible setting marked text in a search field.</p>
+<script>
+addEventListener("load", () => {
+    if (window.textInputController)
+        textInputController.setMarkedText("foo", 3, 3);
+});
+</script>
+</body>
+</html>
