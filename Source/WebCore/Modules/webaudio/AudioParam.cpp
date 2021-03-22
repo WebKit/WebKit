@@ -39,6 +39,14 @@
 
 namespace WebCore {
 
+static void replaceNaNValues(float* values, unsigned numberOfValues, float defaultValue)
+{
+    for (unsigned i = 0; i < numberOfValues; ++i) {
+        if (std::isnan(values[i]))
+            values[i] = defaultValue;
+    }
+}
+
 AudioParam::AudioParam(BaseAudioContext& context, const String& name, float defaultValue, float minValue, float maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode)
     : AudioSummingJunction(context)
     , m_name(name)
@@ -294,6 +302,10 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
     // If we're not sample accurate, duplicate the first element of |values| to all of the elements.
     if (!sampleAccurate)
         std::fill_n(values + 1, numberOfValues - 1, values[0]);
+
+    // As per https://webaudio.github.io/web-audio-api/#computation-of-value, we should replace NaN values
+    // with the default value.
+    replaceNaNValues(values, numberOfValues, m_defaultValue);
 
     // Clamp values based on range allowed by AudioParam's min and max values.
     VectorMath::clamp(values, minValue(), maxValue(), values, numberOfValues);

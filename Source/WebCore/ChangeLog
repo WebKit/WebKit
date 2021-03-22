@@ -1,3 +1,19 @@
+2021-03-22  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/nan-param.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=223583
+
+        Reviewed by Eric Carlson.
+
+        As per https://webaudio.github.io/web-audio-api/#computation-of-value, we should replace NaN values with
+        the default value, when computing the value for an AudioParam.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::replaceNaNValues):
+        (WebCore::AudioParam::calculateFinalValues):
+
 2021-03-22  Rob Buis  <rbuis@igalia.com>
 
         [css-contain] Parse CSS contain property

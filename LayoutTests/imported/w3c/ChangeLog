@@ -1,3 +1,14 @@
+2021-03-22  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/nan-param.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=223583
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline test that is now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/nan-param-expected.txt:
+
 2021-03-22  Rob Buis  <rbuis@igalia.com>
 
         [css-contain] Parse CSS contain property
