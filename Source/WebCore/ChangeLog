@@ -1,3 +1,45 @@
+2021-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Reduce number of heap allocations on the audio thread in AudioSampleDataSource
+        https://bugs.webkit.org/show_bug.cgi?id=223549
+
+        Reviewed by Darin Adler.
+
+        Reduce number of heap allocations on the audio thread in AudioSampleDataSource
+        for performance reasons. I got rid of the heap allocations that I could easily
+        address. Some trickier ones remain.
+
+        * platform/audio/cocoa/AudioSampleDataSource.h:
+        (WebCore::AudioSampleDataSource::inputDescription const):
+        - Use Optional<> type for m_inputDescription & m_outputDescription data members instead of
+        std::unique_ptr<> so that we can initialize them without heap allocation.
+        - Use UniqueRef<> instead of std::unique_ptr<> for m_ringBuffer now that it gets
+          initialized in the constructor (on the main thread).
+
+        * platform/audio/cocoa/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::AudioSampleDataSource):
+        Initialize m_ringBuffer in the constructor which runs on the main thread, instead of
+        doing it lazily later on, on the audio rendering thread.
+
+        (WebCore::AudioSampleDataSource::~AudioSampleDataSource):
+        Stop nulling data members out unnecessarily in the destructor.
+
+        (WebCore::AudioSampleDataSource::setInputFormat):
+        Initialize m_inputDescription without doing a heap allocation.
+
+        (WebCore::AudioSampleDataSource::setOutputFormat):
+        - Initialize m_outputDescription without doing a heap allocation.
+        - Drop initialization of m_ringBuffer now that it is done eagerly in the constructor.
+        - Drop RunLoop::main().dispatch() just to do logging since this was causing heap allocations.
+
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::AudioSampleDataSource::pushSamples):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullAvalaibleSamplesAsChunks):
+        (WebCore::AudioSampleDataSource::pullSamples):
+        Drop null checks for m_ringBuffer now that it is initialized eagerly in the constructor
+        and thus can never be null.
+
 2021-03-22  Devin Rousso  <drousso@apple.com>
 
         Fix incorrect fallback values in `PlaybackSessionModelMediaElement` after r274249
