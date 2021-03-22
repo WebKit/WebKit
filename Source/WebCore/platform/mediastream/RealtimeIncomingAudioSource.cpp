@@ -64,12 +64,9 @@ void RealtimeIncomingAudioSource::stopProducingData()
 
 void RealtimeIncomingAudioSource::OnChanged()
 {
-    callOnMainThread([this, weakThis = makeWeakPtr(this)] {
-        if (!weakThis)
-            return;
-
-        if (m_audioTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
-            end();
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (protectedThis->m_audioTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
+            protectedThis->end();
     });
 }
 

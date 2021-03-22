@@ -175,13 +175,11 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     if (m_hasStartedProducingData)
         return;
 
-    callOnMainThread([this, weakThis = makeWeakPtr(this)] {
-        if (!weakThis)
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (protectedThis->m_hasStartedProducingData)
             return;
-        if (m_hasStartedProducingData)
-            return;
-        m_hasStartedProducingData = true;
-        forEachObserver([&](auto& observer) {
+        protectedThis->m_hasStartedProducingData = true;
+        protectedThis->forEachObserver([&](auto& observer) {
             observer.hasStartedProducingData();
         });
     });

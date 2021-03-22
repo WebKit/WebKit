@@ -1,3 +1,13 @@
+2021-03-22  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeMediaSource does not need to be a WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=223573
+        <rdar://75583258>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.h:
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         Source/WebKit/UIProcess/Cocoa/WebViewImpl.mm:2681:9: runtime error: load of value nnn, which is not a valid value for type 'BOOL' (aka 'signed char')

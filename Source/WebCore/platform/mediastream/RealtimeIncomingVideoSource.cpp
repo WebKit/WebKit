@@ -68,12 +68,9 @@ void RealtimeIncomingVideoSource::stopProducingData()
 
 void RealtimeIncomingVideoSource::OnChanged()
 {
-    callOnMainThread([this, weakThis = makeWeakPtr(this)] {
-        if (!weakThis)
-            return;
-
-        if (m_videoTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
-            end();
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (protectedThis->m_videoTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
+            protectedThis->end();
     });
 }
 
