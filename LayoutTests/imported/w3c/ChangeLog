@@ -1,5 +1,11 @@
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip audioworkletprocessor-param-getter-overridden.https.html WPT test as it is no longer failing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-param-getter-overridden.https-expected.txt: Added.
+
+2021-03-22  Chris Dumez  <cdumez@apple.com>
+
         Implement AbortSignal.abort()
         https://bugs.webkit.org/show_bug.cgi?id=223071
         <rdar://problem/75575483>
