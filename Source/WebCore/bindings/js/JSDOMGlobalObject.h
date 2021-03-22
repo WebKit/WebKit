@@ -29,7 +29,6 @@
 #include "WebCoreJSBuiltinInternals.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/LockDuringMarking.h>
 
 namespace WebCore {
