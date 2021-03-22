@@ -298,6 +298,13 @@ class MacPort(DarwinPort):
         # FIXME: Find where this is coming from and file a bug to have it removed (then remove this line).
         logging_patterns.append((re.compile('VP9 Info:.*\n'), ''))
 
+        # FIXME: Replace this with a defaults write after bots update to a build that has rdar://problem/74031400 fixed.
+        logging_patterns.append((r'Negotiation String:.*\n', ''))
+        logging_patterns.append((r'LRP.*\n', ''))
+        logging_patterns.append((r'.* \(seconds\) ', ''))
+        logging_patterns.append((r'.* 0  0 \[\]\n', ''))
+        logging_patterns.append((r'\[\]\n', ''))
+
         return logging_patterns
 
     def stderr_patterns_to_strip(self):

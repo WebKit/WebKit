@@ -1,3 +1,13 @@
+2021-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Remove some spurious logging lines appearing in WebRTC tests
+        https://bugs.webkit.org/show_bug.cgi?id=223502
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.logging_patterns_to_strip):
+
 2021-03-22  Jean-Yves Avenard  <jya@apple.com>
 
         Add Jean-Yves Avenard to contributors.json
