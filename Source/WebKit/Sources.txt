@@ -130,6 +130,7 @@ NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp
 NetworkProcess/cache/PrefetchCache.cpp
 
 NetworkProcess/webrtc/NetworkMDNSRegister.cpp
+NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp
 
 // TODO: We should unify these files once GTK's PluginProcess2 is removed.
 Platform/Logging.cpp @no-unify
@@ -630,6 +631,7 @@ WebProcess/Network/webrtc/LibWebRTCProvider.cpp
 WebProcess/Network/webrtc/LibWebRTCResolver.cpp
 WebProcess/Network/webrtc/LibWebRTCSocket.cpp
 WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp
+WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp
 WebProcess/Network/webrtc/WebMDNSRegister.cpp
 WebProcess/Network/webrtc/WebRTCMonitor.cpp
 WebProcess/Network/webrtc/WebRTCResolver.cpp
@@ -718,5 +720,7 @@ WebProcess/WebStorage/StorageAreaMap.cpp
 WebProcess/WebStorage/StorageNamespaceImpl.cpp
 WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 
+RTCDataChannelRemoteManagerMessageReceiver.cpp
+RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
 RemoteGraphicsContextGLMessageReceiver.cpp
 RemoteGraphicsContextGLProxyMessageReceiver.cpp

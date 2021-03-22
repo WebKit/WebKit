@@ -48,6 +48,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RTCDataChannelIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/WebSocketIdentifier.h>
 #include <wtf/OptionSet.h>
@@ -250,6 +251,9 @@ private:
 #endif
 
     void createRTCProvider(CompletionHandler<void()>&&);
+#if ENABLE(WEB_RTC)
+    void connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler, CompletionHandler<void(Optional<bool>)>&&);
+#endif
 
     void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& port1, const WebCore::MessagePortIdentifier& port2);
     void entangleLocalPortInThisProcessToRemote(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote);
@@ -271,6 +275,8 @@ private:
 #endif
 #if ENABLE(WEB_RTC)
     NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
+    void registerToRTCDataChannelProxy();
+    void unregisterToRTCDataChannelProxy();
 #endif
 
     CacheStorageEngineConnection& cacheStorageConnection();
@@ -383,6 +389,10 @@ private:
 #if ENABLE(SERVICE_WORKER)
     WeakPtr<WebSWServerConnection> m_swConnection;
     std::unique_ptr<WebSWServerToContextConnection> m_swContextConnection;
+#endif
+
+#if ENABLE(WEB_RTC)
+    bool m_isRegisteredToRTCDataChannelProxy { false };
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)

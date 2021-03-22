@@ -3826,9 +3826,16 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer)
     m_memoryCost = computeMemoryCost();
 }
 
-SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray)
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::unique_ptr<ArrayBufferContentsArray>&& arrayBufferContentsArray
+#if ENABLE(WEB_RTC)
+        , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
+#endif
+        )
     : m_data(WTFMove(buffer))
     , m_arrayBufferContentsArray(WTFMove(arrayBufferContentsArray))
+#if ENABLE(WEB_RTC)
+    , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
+#endif
 {
     m_memoryCost = computeMemoryCost();
 }

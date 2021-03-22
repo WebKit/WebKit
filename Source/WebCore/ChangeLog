@@ -1,3 +1,89 @@
+2021-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Implement RTCDataChannel transfer out of process
+        https://bugs.webkit.org/show_bug.cgi?id=223443
+
+        Reviewed by Eric Carlson.
+
+        Add support for serialization/deserialization of RTCDataChannel information so that it can be MessagePort transfered or transfered to out-of-process contexts like Window or Service Worker.
+        Add infrastructure for remote sources (that allows to send data or close data channels) and remote handlers which receive messages from out-of-process data channels.
+
+        Covered by API tests.
+
+        * Modules/mediastream/DetachedRTCDataChannel.h: Added.
+        (WebCore::DetachedRTCDataChannel::DetachedRTCDataChannel):
+        (WebCore::DetachedRTCDataChannel::memoryCost const):
+        (WebCore::DetachedRTCDataChannel::encode const):
+        (WebCore::DetachedRTCDataChannel::decode):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::RTCDataChannel):
+        (WebCore::rtcDataChannelLocalMap):
+        (WebCore::RTCDataChannel::handlerFromIdentifier):
+        (WebCore::RTCDataChannel::create):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannelRemoteHandler.cpp: Added.
+        (WebCore::RTCDataChannelRemoteHandler::create):
+        (WebCore::RTCDataChannelRemoteHandler::RTCDataChannelRemoteHandler):
+        (WebCore::RTCDataChannelRemoteHandler::~RTCDataChannelRemoteHandler):
+        (WebCore::RTCDataChannelRemoteHandler::didChangeReadyState):
+        (WebCore::RTCDataChannelRemoteHandler::didReceiveStringData):
+        (WebCore::RTCDataChannelRemoteHandler::didReceiveRawData):
+        (WebCore::RTCDataChannelRemoteHandler::didDetectError):
+        (WebCore::RTCDataChannelRemoteHandler::bufferedAmountIsDecreasing):
+        (WebCore::RTCDataChannelRemoteHandler::readyToSend):
+        (WebCore::RTCDataChannelRemoteHandler::setClient):
+        (WebCore::RTCDataChannelRemoteHandler::sendStringData):
+        (WebCore::RTCDataChannelRemoteHandler::sendRawData):
+        (WebCore::RTCDataChannelRemoteHandler::close):
+        * Modules/mediastream/RTCDataChannelRemoteHandler.h: Added.
+        * Modules/mediastream/RTCDataChannelRemoteSource.cpp: Copied from Source/WebCore/platform/mediastream/RTCDataChannelHandler.h.
+        (WebCore::RTCDataChannelRemoteSource::RTCDataChannelRemoteSource):
+        (WebCore::RTCDataChannelRemoteSource::~RTCDataChannelRemoteSource):
+        * Modules/mediastream/RTCDataChannelRemoteSource.h: Added.
+        (WebCore::RTCDataChannelRemoteSource::create):
+        (WebCore::RTCDataChannelRemoteSource::sendStringData):
+        (WebCore::RTCDataChannelRemoteSource::sendRawData):
+        (WebCore::RTCDataChannelRemoteSource::close):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::postTask):
+        * Modules/webaudio/AudioWorkletMessagingProxy.cpp:
+        (WebCore::AudioWorkletMessagingProxy::createRTCDataChannelRemoteHandlerConnection):
+        * Modules/webaudio/AudioWorkletMessagingProxy.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::encode const):
+        (WebCore::SerializedScriptValue::decode):
+        * dom/Document.cpp:
+        (WebCore::Document::createRTCDataChannelRemoteHandlerConnection):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::createRTCDataChannelRemoteHandlerConnection):
+        * platform/ScriptExecutionContextIdentifier.h: Copied from Source/WebCore/platform/mediastream/RTCDataChannelState.h.
+        * platform/mediastream/RTCDataChannelHandler.h:
+        (WebCore::RTCDataChannelInit::encode const):
+        (WebCore::RTCDataChannelInit::decode):
+        * platform/mediastream/RTCDataChannelIdentifier.h: Copied from Source/WebCore/platform/mediastream/RTCDataChannelHandler.h.
+        (WebCore::RTCDataChannelIdentifier::encode const):
+        (WebCore::RTCDataChannelIdentifier::decode):
+        * platform/mediastream/RTCDataChannelRemoteHandlerConnection.h: Copied from Source/WebCore/platform/mediastream/RTCDataChannelHandler.h.
+        * platform/mediastream/RTCDataChannelRemoteSourceConnection.h: Copied from Source/WebCore/platform/mediastream/RTCDataChannelHandler.h.
+        * platform/mediastream/RTCDataChannelState.h:
+        * platform/mediastream/RTCPriorityType.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::createRTCDataChannelRemoteHandlerConnection):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerLoaderProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::createRTCDataChannelRemoteHandlerConnection):
+        * workers/WorkerMessagingProxy.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::createRTCDataChannelRemoteHandlerConnection):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+
 2021-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         Fix a mistake in r274725 spotted by Darin.

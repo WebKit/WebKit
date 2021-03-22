@@ -37,6 +37,8 @@
 #include "CacheStorageConnection.h"
 #include "Document.h"
 #include "Frame.h"
+#include "LibWebRTCProvider.h"
+#include "Page.h"
 #include "Settings.h"
 #include "WorkletParameters.h"
 #include "WorkletPendingTasks.h"
@@ -83,6 +85,14 @@ RefPtr<CacheStorageConnection> AudioWorkletMessagingProxy::createCacheStorageCon
 {
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+RefPtr<RTCDataChannelRemoteHandlerConnection> AudioWorkletMessagingProxy::createRTCDataChannelRemoteHandlerConnection()
+{
+    ASSERT(isMainThread());
+    if (!m_document->page())
+        return nullptr;
+    return m_document->page()->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
 void AudioWorkletMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)

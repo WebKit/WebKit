@@ -1,3 +1,85 @@
+2021-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Implement RTCDataChannel transfer out of process
+        https://bugs.webkit.org/show_bug.cgi?id=223443
+
+        Reviewed by Eric Carlson.
+
+        Add support for connecting remote sources to remote data channels.
+        This is done by connection detached data channels to remote source that will send messages to network process.
+        Network process then sends to the process in which was reattached the data channel.
+        Pairing of data channels is done in main thread through connectToSource message.
+        The data then flows in background threads, network process being the proxy between web processes.
+        RTCDataChannelRemoteManagerProxy is the forwarding entity in NetworkProcess.
+        RTCDataChannelRemoteManager is the entity in WebProcess doing the messaging from and to data channels.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::connectToRTCDataChannelRemoteSource):
+        (WebKit::NetworkConnectionToWebProcess::registerToRTCDataChannelProxy):
+        (WebKit::NetworkConnectionToWebProcess::unregisterToRTCDataChannelProxy):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::rtcDataChannelProxy):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp: Added.
+        (WebKit::RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy):
+        (WebKit::RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess):
+        (WebKit::RTCDataChannelRemoteManagerProxy::unregisterConnectionToWebProcess):
+        (WebKit::RTCDataChannelRemoteManagerProxy::sendData):
+        (WebKit::RTCDataChannelRemoteManagerProxy::close):
+        (WebKit::RTCDataChannelRemoteManagerProxy::changeReadyState):
+        (WebKit::RTCDataChannelRemoteManagerProxy::receiveData):
+        (WebKit::RTCDataChannelRemoteManagerProxy::detectError):
+        (WebKit::RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing):
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.h: Added.
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.messages.in: Added.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::connectToRTCDataChannelRemoteSource):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createRTCDataChannelRemoteHandlerConnection):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp: Added.
+        (WebKit::RTCDataChannelRemoteManager::sharedManager):
+        (WebKit::RTCDataChannelRemoteManager::RTCDataChannelRemoteManager):
+        (WebKit::RTCDataChannelRemoteManager::setConnection):
+        (WebKit::RTCDataChannelRemoteManager::connectToRemoteSource):
+        (WebKit::RTCDataChannelRemoteManager::remoteHandlerConnection):
+        (WebKit::RTCDataChannelRemoteManager::remoteSourceConnection):
+        (WebKit::RTCDataChannelRemoteManager::postTaskToHandler):
+        (WebKit::RTCDataChannelRemoteManager::sourceFromIdentifier):
+        (WebKit::RTCDataChannelRemoteManager::sendData):
+        (WebKit::RTCDataChannelRemoteManager::close):
+        (WebKit::RTCDataChannelRemoteManager::changeReadyState):
+        (WebKit::RTCDataChannelRemoteManager::receiveData):
+        (WebKit::RTCDataChannelRemoteManager::detectError):
+        (WebKit::RTCDataChannelRemoteManager::bufferedAmountIsDecreasing):
+        (WebKit::RTCDataChannelRemoteManager::RemoteHandlerConnection::create):
+        (WebKit::RTCDataChannelRemoteManager::RemoteHandlerConnection::RemoteHandlerConnection):
+        (WebKit::RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource):
+        (WebKit::RTCDataChannelRemoteManager::RemoteHandlerConnection::sendData):
+        (WebKit::RTCDataChannelRemoteManager::RemoteHandlerConnection::close):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::create):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::RemoteSourceConnection):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::didChangeReadyState):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveStringData):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::bufferedAmountIsDecreasing):
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.h: Added.
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.messages.in: Copied from Source/WebKit/WebProcess/Network/NetworkProcessConnection.messages.in.
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+
 2021-03-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Cannot login to microsoftonline.com without allowing storage access

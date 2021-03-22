@@ -33,6 +33,7 @@
 #endif
 
 #include "LibWebRTCNetwork.h"
+#include "RTCDataChannelRemoteManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
@@ -150,6 +151,11 @@ void LibWebRTCProvider::startedNetworkThread()
 std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent)
 {
     return makeUnique<RTCSocketFactory>(WTFMove(userAgent));
+}
+
+RefPtr<RTCDataChannelRemoteHandlerConnection> LibWebRTCProvider::createRTCDataChannelRemoteHandlerConnection()
+{
+    return &RTCDataChannelRemoteManager::sharedManager().remoteHandlerConnection();
 }
 
 } // namespace WebKit

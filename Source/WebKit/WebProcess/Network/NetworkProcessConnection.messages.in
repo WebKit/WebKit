@@ -37,6 +37,10 @@ messages -> NetworkProcessConnection LegacyReceiver {
     AllCookiesDeleted();
 #endif
 
+#if ENABLE(WEB_RTC)
+    ConnectToRTCDataChannelRemoteSource(struct WebCore::RTCDataChannelIdentifier source, struct WebCore::RTCDataChannelIdentifier handler) -> (Optional<bool> result) Async
+#endif
+
     CheckProcessLocalPortForActivity(struct WebCore::MessagePortIdentifier port) -> (WebCore::MessagePortChannelProvider::HasActivity hasActivity) Async
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 

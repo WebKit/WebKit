@@ -160,6 +160,8 @@ Modules/mediastream/RTCDTMFSender.cpp
 Modules/mediastream/RTCDTMFToneChangeEvent.cpp
 Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCDataChannelEvent.cpp
+Modules/mediastream/RTCDataChannelRemoteHandler.cpp
+Modules/mediastream/RTCDataChannelRemoteSource.cpp
 Modules/mediastream/RTCEncodedAudioFrame.cpp
 Modules/mediastream/RTCEncodedFrame.cpp
 Modules/mediastream/RTCEncodedVideoFrame.cpp

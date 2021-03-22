@@ -3491,7 +3491,16 @@ SocketProvider* Document::socketProvider()
 {
     return m_socketProvider.get();
 }
-    
+
+RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemoteHandlerConnection()
+{
+    ASSERT(isMainThread());
+    auto* page = this->page();
+    if (!page)
+        return nullptr;
+    return page->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+}
+
 bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
 {
     if (!m_frame)
