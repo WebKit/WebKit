@@ -34,6 +34,9 @@ public:
     typedef JSFunction Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
+    static constexpr bool needsDestruction = true;
+    static void destroy(JSCell*);
+
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
@@ -50,13 +53,13 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    const PropertyName& propertyName() const { return m_propertyName; }
+    const Identifier& propertyName() const { return m_propertyName; }
     PutValueFunc setter() const { return m_setter; };
 
 private:
     JSCustomSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, PutValueFunc);
 
-    PropertyName m_propertyName;
+    Identifier m_propertyName;
     PutValueFunc m_setter;
 };
 

@@ -43,7 +43,7 @@ JSC_DEFINE_HOST_FUNCTION(customSetterFunctionCall, (JSGlobalObject* globalObject
 
 JSCustomSetterFunction::JSCustomSetterFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, const PropertyName& propertyName, PutValueFunc setter)
     : Base(vm, executable, globalObject, structure)
-    , m_propertyName(propertyName)
+    , m_propertyName(Identifier::fromUid(vm, propertyName.uid()))
     , m_setter(setter)
 {
 }
@@ -59,6 +59,11 @@ JSCustomSetterFunction* JSCustomSetterFunction::create(VM& vm, JSGlobalObject* g
     String name = makeString("set ", String(propertyName.publicName()));
     function->finishCreation(vm, executable, 1, name);
     return function;
+}
+
+void JSCustomSetterFunction::destroy(JSCell* cell)
+{
+    static_cast<JSCustomSetterFunction*>(cell)->~JSCustomSetterFunction();
 }
 
 } // namespace JSC

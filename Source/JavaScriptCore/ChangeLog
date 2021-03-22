@@ -1,3 +1,27 @@
+2021-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSCustomGetterFunction/JSCustomSetterFunction should use Identifier for their field
+        https://bugs.webkit.org/show_bug.cgi?id=223588
+
+        Reviewed by Mark Lam and Saam Barati.
+
+        PropertyName is the holder for passing it as an argument, and it does not ref/deref underlying UniqueStringImpl.
+        We should use Identifier to keep it strongly ref-ed in JSCustomGetterFunction/JSCustomSetterFunction.
+        And we should make JSCustomGetterFunction/JSCustomSetterFunction destructible objects since Identifier needs to
+        deref underlying UniqueStringImpl when destroying these functions.
+
+        * runtime/JSCustomGetterFunction.cpp:
+        (JSC::JSCustomGetterFunction::JSCustomGetterFunction):
+        (JSC::JSCustomGetterFunction::destroy):
+        * runtime/JSCustomGetterFunction.h:
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSCustomSetterFunction::JSCustomSetterFunction):
+        (JSC::JSCustomSetterFunction::destroy):
+        * runtime/JSCustomSetterFunction.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2021-03-22  Saam Barati  <sbarati@apple.com>
 
         LiteralParser shouldn't make error messages of length ~2^31
