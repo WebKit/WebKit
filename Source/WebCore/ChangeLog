@@ -1,3 +1,28 @@
+2021-03-22  Eric Carlson  <eric.carlson@apple.com>
+
+        AVAudioSessionCaptureDeviceManager should use crossThreadCopy
+        https://bugs.webkit.org/show_bug.cgi?id=223565
+        <rdar://75480589>
+
+        Reviewed by Youenn Fablet.
+
+        Tested manually, this can only be tested on device.
+
+        * platform/mediastream/CaptureDevice.h: Change access restriction for member
+        variables from `private:` to `protected:` so derived classes can access them
+        directly.
+
+        * platform/mediastream/ios/AVAudioSessionCaptureDevice.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDevice.mm:
+        (WebCore::AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice): New constructor.
+        (WebCore::AVAudioSessionCaptureDevice::isolatedCopy const): New.
+
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        (WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices): Use
+        `WTFMove(deviceList).isolatedCopy()` when moving from AVAudioSession queue
+        to main thread.
+        (WebCore::AVAudioSessionCaptureDeviceManager::getCaptureDevices): Ditto.
+
 2021-03-22  Patrick Angle  <pangle@apple.com>
 
         REGRESSION(r272433): Inspector should not instrument inside `WebCore::Node::setRenderer`
