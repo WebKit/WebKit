@@ -1,3 +1,44 @@
+2021-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Context menu should account for image overlay content
+        https://bugs.webkit.org/show_bug.cgi?id=223518
+        <rdar://problem/75505210>
+
+        Reviewed by Devin Rousso.
+
+        Make some adjustments to allow context menu items for text selection to show up when right clicking on text in
+        an image overlay.
+
+        Test: fast/images/image-extraction/mac/copy-image-overlay-text-with-context-menu.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::performCutOrCopy):
+
+        Adjust this logic so that we only attempt to write plain text to the system pasteboard when copying text inside
+        image overlays (this matches the behavior of copying selected text in `textarea` elements and text fields).
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::hasImageOverlay const):
+        (WebCore::imageOverlayHost):
+        (WebCore::HTMLElement::isInsideImageOverlay):
+
+        Add a helper function to determine whether or not a given range in the DOM is inside an image overlay shadow
+        root. To avoid code duplication, pull out some logic to grab the image overlay's element host (if it exists) out
+        into a separate static helper function (`imageOverlayHost`), and use it here and also in `isImageOverlayText`.
+
+        (WebCore::HTMLElement::isImageOverlayText):
+
+        Move the UA shadow root check into `HTMLElement::hasImageOverlay`, so that `hasImageOverlay` can be invoked for
+        elements with non-UA shadow roots without hitting an assertion.
+
+        * html/HTMLElement.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+
+        Pull logic that determines whether or not we should show text-selection-related context menu items out into a
+        separate lambda function, so that it's easier to take advantage of early returns; then, in the case where we
+        have an image URL, additionally show selected text options if the selection is inside the image overlay.
+
 2021-03-22  Sam Weinig  <weinig@apple.com>
 
         Use the PropertyName parameter passed to custom getters/setters rather than a redundant const char* in DOM attribute prologues

@@ -35,6 +35,7 @@ class FormAssociatedElement;
 class FormNamedItem;
 class HTMLFormElement;
 class VisibleSelection;
+struct SimpleRange;
 
 #if ENABLE(IMAGE_EXTRACTION)
 struct ImageExtractionResult;
@@ -128,6 +129,7 @@ public:
 
     WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
     bool hasImageOverlay() const;
+    static bool isInsideImageOverlay(const SimpleRange&);
     WEBCORE_EXPORT static bool isImageOverlayText(const Node&);
 
 #if ENABLE(IMAGE_EXTRACTION)
