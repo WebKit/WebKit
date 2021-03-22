@@ -33,7 +33,7 @@
 #if PLATFORM(IOS_FAMILY)
 #include "DisplayRefreshMonitorIOS.h"
 #elif PLATFORM(MAC)
-#include "DisplayRefreshMonitorMac.h"
+#include "LegacyDisplayRefreshMonitorMac.h"
 #elif PLATFORM(GTK)
 #include "DisplayRefreshMonitorGtk.h"
 #elif PLATFORM(WIN)
@@ -45,7 +45,7 @@ namespace WebCore {
 RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
 #if PLATFORM(MAC)
-    return DisplayRefreshMonitorMac::create(displayID);
+    return LegacyDisplayRefreshMonitorMac::create(displayID);
 #endif
 #if PLATFORM(IOS_FAMILY)
     return DisplayRefreshMonitorIOS::create(displayID);

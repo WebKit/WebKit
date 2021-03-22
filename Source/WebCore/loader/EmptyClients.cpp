@@ -125,6 +125,25 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 
 #endif // ENABLE(CONTEXT_MENUS)
 
+
+class EmptyDisplayRefreshMonitor : public DisplayRefreshMonitor {
+public:
+    static Ref<EmptyDisplayRefreshMonitor> create(PlatformDisplayID displayID)
+    {
+        return adoptRef(*new EmptyDisplayRefreshMonitor(displayID));
+    }
+
+    void displayLinkFired() final { }
+    bool requestRefreshCallback() final { return false; }
+    void stop() final { }
+
+private:
+    explicit EmptyDisplayRefreshMonitor(PlatformDisplayID displayID)
+        : DisplayRefreshMonitor(displayID)
+    {
+    }
+};
+
 class EmptyDatabaseProvider final : public DatabaseProvider {
 #if ENABLE(INDEXED_DATABASE)
     struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate {
@@ -510,6 +529,11 @@ void EmptyChromeClient::storeAppHighlight(AppHighlight&&) const
 {
 }
 #endif
+
+RefPtr<DisplayRefreshMonitor> EmptyChromeClient::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+{
+    return EmptyDisplayRefreshMonitor::create(displayID);
+}
 
 void EmptyChromeClient::runOpenPanel(Frame&, FileChooser&)
 {

@@ -34,21 +34,21 @@ typedef struct __CVDisplayLink *CVDisplayLinkRef;
 
 namespace WebCore {
 
-class DisplayRefreshMonitorMac : public DisplayRefreshMonitor {
+class LegacyDisplayRefreshMonitorMac : public DisplayRefreshMonitor {
 public:
-    static Ref<DisplayRefreshMonitorMac> create(PlatformDisplayID displayID)
+    static Ref<LegacyDisplayRefreshMonitorMac> create(PlatformDisplayID displayID)
     {
-        return adoptRef(*new DisplayRefreshMonitorMac(displayID));
+        return adoptRef(*new LegacyDisplayRefreshMonitorMac(displayID));
     }
     
-    virtual ~DisplayRefreshMonitorMac();
+    virtual ~LegacyDisplayRefreshMonitorMac();
 
     void displayLinkFired() final;
     bool requestRefreshCallback() final;
     void stop() final;
 
 private:
-    explicit DisplayRefreshMonitorMac(PlatformDisplayID);
+    explicit LegacyDisplayRefreshMonitorMac(PlatformDisplayID);
 
     CVDisplayLinkRef m_displayLink { nullptr };
 };

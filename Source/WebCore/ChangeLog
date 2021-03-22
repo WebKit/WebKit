@@ -1,3 +1,40 @@
+2021-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename WebCore's DisplayRefreshMonitorMac to indicate that it's only used in legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223543
+
+        Reviewed by Tim Horton.
+
+        DisplayRefreshMonitorMac in WebCore is only used for WebKitLegacy; WebProcess doesn't have
+        WindowServer access so is unable to create CVDisplayLinkRefs.
+
+        Rename it to indicate this, and reduce confusion with DisplayRefreshMonitorMac in WebKit2.
+        Also add an assertion that LegacyDisplayRefreshMonitorMac is not being created in the
+        WebProcess.
+
+        For EmptyPageClients (like the Page used by createPageForSanitizingWebContent()) we need
+        a DisplayRefreshMonitor implementation that doesn't try to CVDisplayLinkRefs in the
+        Web Process, so add an EmptyDisplayRefreshMonitor that never fires.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyDisplayRefreshMonitor::create):
+        (WebCore::EmptyDisplayRefreshMonitor::EmptyDisplayRefreshMonitor):
+        (WebCore::EmptyChromeClient::createDisplayRefreshMonitor const):
+        * loader/EmptyClients.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor):
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp: Renamed from Source/WebCore/platform/graphics/mac/DisplayRefreshMonitorMac.cpp.
+        (WebCore::LegacyDisplayRefreshMonitorMac::LegacyDisplayRefreshMonitorMac):
+        (WebCore::LegacyDisplayRefreshMonitorMac::~LegacyDisplayRefreshMonitorMac):
+        (WebCore::LegacyDisplayRefreshMonitorMac::stop):
+        (WebCore::displayLinkCallback):
+        (WebCore::LegacyDisplayRefreshMonitorMac::requestRefreshCallback):
+        (WebCore::LegacyDisplayRefreshMonitorMac::displayLinkFired):
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.h: Renamed from Source/WebCore/platform/graphics/mac/DisplayRefreshMonitorMac.h.
+        (WebCore::LegacyDisplayRefreshMonitorMac::create):
+
 2021-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Style: Remove unnecessary { }s from case statements in DisplayListItemBuffer.cpp

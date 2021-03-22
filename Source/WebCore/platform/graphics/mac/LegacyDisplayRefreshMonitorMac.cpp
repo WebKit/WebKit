@@ -24,26 +24,28 @@
  */
 
 #include "config.h"
-#include "DisplayRefreshMonitorMac.h"
+#include "LegacyDisplayRefreshMonitorMac.h"
 
 #if PLATFORM(MAC)
 
+#include "RuntimeApplicationChecks.h"
 #include <QuartzCore/QuartzCore.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-DisplayRefreshMonitorMac::DisplayRefreshMonitorMac(PlatformDisplayID displayID)
+LegacyDisplayRefreshMonitorMac::LegacyDisplayRefreshMonitorMac(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
 {
+    ASSERT(!isInWebProcess());
 }
 
-DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac()
+LegacyDisplayRefreshMonitorMac::~LegacyDisplayRefreshMonitorMac()
 {
     ASSERT(!m_displayLink);
 }
 
-void DisplayRefreshMonitorMac::stop()
+void LegacyDisplayRefreshMonitorMac::stop()
 {
     if (!m_displayLink)
         return;
@@ -55,12 +57,12 @@ void DisplayRefreshMonitorMac::stop()
 
 static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
-    DisplayRefreshMonitorMac* monitor = static_cast<DisplayRefreshMonitorMac*>(data);
+    LegacyDisplayRefreshMonitorMac* monitor = static_cast<LegacyDisplayRefreshMonitorMac*>(data);
     monitor->displayLinkFired();
     return kCVReturnSuccess;
 }
 
-bool DisplayRefreshMonitorMac::requestRefreshCallback()
+bool LegacyDisplayRefreshMonitorMac::requestRefreshCallback()
 {
     if (!isActive())
         return false;
@@ -87,7 +89,7 @@ bool DisplayRefreshMonitorMac::requestRefreshCallback()
     return true;
 }
 
-void DisplayRefreshMonitorMac::displayLinkFired()
+void LegacyDisplayRefreshMonitorMac::displayLinkFired()
 {
     LockHolder lock(mutex());
     if (!isPreviousFrameDone())
