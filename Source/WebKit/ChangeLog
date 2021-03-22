@@ -1,3 +1,15 @@
+2021-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Add an early return in UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList
+        https://bugs.webkit.org/show_bug.cgi?id=223571
+
+        Reviewed by Eric Carlson.
+
+        Update code to early return as soon as possible.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList):
+
 2021-03-19  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make it possible to release a WKWebView on a non-main thread without a crash due to WKScriptMessage race
