@@ -185,9 +185,9 @@ static inline JSValue jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructorGet
     return JSExposedToWorkerAndWindow::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructorGetter>(*lexicalGlobalObject, thisValue, "ExposedToWorkerAndWindow");
+    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
@@ -196,9 +196,9 @@ static inline JSValue jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedCons
     return JSTestDefaultToJSONFilteredByExposed::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructorGetter>(*lexicalGlobalObject, thisValue, "TestDefaultToJSONFilteredByExposed");
+    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsWorkerGlobalScope_TestNodeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
@@ -207,9 +207,9 @@ static inline JSValue jsWorkerGlobalScope_TestNodeConstructorGetter(JSGlobalObje
     return JSTestNode::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestNodeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestNodeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_TestNodeConstructorGetter>(*lexicalGlobalObject, thisValue, "TestNode");
+    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_TestNodeConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsWorkerGlobalScope_TestObjectConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
@@ -218,9 +218,9 @@ static inline JSValue jsWorkerGlobalScope_TestObjectConstructorGetter(JSGlobalOb
     return JSTestObj::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_TestObjectConstructorGetter>(*lexicalGlobalObject, thisValue, "TestObject");
+    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_TestObjectConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsWorkerGlobalScope_TestPromiseRejectionEventConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
@@ -229,9 +229,9 @@ static inline JSValue jsWorkerGlobalScope_TestPromiseRejectionEventConstructorGe
     return JSTestPromiseRejectionEvent::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_TestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_TestPromiseRejectionEventConstructorGetter>(*lexicalGlobalObject, thisValue, "TestPromiseRejectionEvent");
+    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_TestPromiseRejectionEventConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsWorkerGlobalScope_WorkerGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
@@ -240,9 +240,9 @@ static inline JSValue jsWorkerGlobalScope_WorkerGlobalScopeConstructorGetter(JSG
     return JSWorkerGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_WorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScope_WorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_WorkerGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, "WorkerGlobalScope");
+    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScope_WorkerGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 JSC::IsoSubspace* JSWorkerGlobalScope::subspaceForImpl(JSC::VM& vm)

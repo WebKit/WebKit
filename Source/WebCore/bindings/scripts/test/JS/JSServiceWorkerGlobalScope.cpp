@@ -144,9 +144,9 @@ static inline JSValue jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstru
     return JSServiceWorkerGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSServiceWorkerGlobalScope>::get<jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, "ServiceWorkerGlobalScope");
+    return IDLAttribute<JSServiceWorkerGlobalScope>::get<jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 JSC::IsoSubspace* JSServiceWorkerGlobalScope::subspaceForImpl(JSC::VM& vm)

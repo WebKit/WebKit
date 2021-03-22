@@ -5349,9 +5349,9 @@ sub GenerateAttributeGetterTrampolineDefinition
         push(@templateParameters, "CastedThisErrorBehavior::Assert");
     }
     
-    push(@$outputArray, "JSC_DEFINE_CUSTOM_GETTER(${attributeGetterName}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))\n");
+    push(@$outputArray, "JSC_DEFINE_CUSTOM_GETTER(${attributeGetterName}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeGetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, \"" . $attribute->name .  "\");\n");
+    push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeGetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, attributeName);\n");
     push(@$outputArray, "}\n\n");
 }
 
@@ -5444,7 +5444,7 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
         push(@$outputArray, "    auto nativeValue = ${toNativeExpression};\n");
         push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
-        push(@$outputArray, "    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {\n");
+        push(@$outputArray, "    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {\n");
         push(@$outputArray, "        return impl.setPropertyInternal(CSSProperty${propertyID}, WTFMove(nativeValue), false);\n");
         push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");
@@ -5519,7 +5519,7 @@ sub GenerateAttributeSetterBodyDefinition
         }
 
         my $functionString = "${functionName}(" . join(", ", @arguments) . ")";
-        push(@$outputArray, "    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {\n");
+        push(@$outputArray, "    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {\n");
         push(@$outputArray, "        return $functionString;\n");
         push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");
@@ -5540,9 +5540,9 @@ sub GenerateAttributeSetterTrampolineDefinition
     push(@templateParameters, $attributeSetterBodyName);
     push(@templateParameters, "CastedThisErrorBehavior::ReturnEarly") if $attribute->extendedAttributes->{LegacyLenientThis};
     
-    push(@$outputArray, "JSC_DEFINE_CUSTOM_SETTER(${attributeSetterName}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))\n");
+    push(@$outputArray, "JSC_DEFINE_CUSTOM_SETTER(${attributeSetterName}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeSetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, encodedValue, \"" . $attribute->name . "\");\n");
+    push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeSetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, encodedValue, attributeName);\n");
     push(@$outputArray, "}\n\n");
 }
 

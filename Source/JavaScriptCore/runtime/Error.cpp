@@ -110,7 +110,7 @@ JSObject* createError(JSGlobalObject* globalObject, ErrorTypeWithExtension error
     return nullptr;
 }
 
-JSObject* createGetterTypeError(JSGlobalObject* globalObject, const String& message)
+static JSObject* createGetterTypeError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     auto* error = ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::TypeError), message, jsUndefined(), nullptr, TypeNothing, ErrorType::TypeError);
@@ -252,6 +252,16 @@ JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& sour
     return error;
 }
 
+String makeDOMAttributeGetterTypeErrorMessage(const char* interfaceName, const String& attributeName)
+{
+    return makeString("The ", interfaceName, '.', attributeName, " getter can only be used on instances of ", interfaceName);
+}
+
+String makeDOMAttributeSetterTypeErrorMessage(const char* interfaceName, const String& attributeName)
+{
+    return makeString("The ", interfaceName, '.', attributeName, " setter can only be used on instances of ", interfaceName);
+}
+
 Exception* throwConstructorCannotBeCalledAsFunctionTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const char* constructorName)
 {
     return throwTypeError(globalObject, scope, makeString("calling ", constructorName, " constructor without new is invalid"));
@@ -282,14 +292,14 @@ Exception* throwSyntaxError(JSGlobalObject* globalObject, ThrowScope& scope, con
     return throwException(globalObject, scope, createSyntaxError(globalObject, message));
 }
 
-Exception* throwGetterTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const String& message)
-{
-    return throwException(globalObject, scope, createGetterTypeError(globalObject, message));
-}
-
 JSValue throwDOMAttributeGetterTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName)
 {
-    return throwGetterTypeError(globalObject, scope, makeString("The ", classInfo->className, '.', String(propertyName.uid()), " getter can only be used on instances of ", classInfo->className));
+    return throwException(globalObject, scope, createGetterTypeError(globalObject, makeDOMAttributeGetterTypeErrorMessage(classInfo->className, String(propertyName.uid()))));
+}
+
+JSValue throwDOMAttributeSetterTypeError(JSGlobalObject* globalObject, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName)
+{
+    return throwException(globalObject, scope, createTypeError(globalObject, makeDOMAttributeSetterTypeErrorMessage(classInfo->className, String(propertyName.uid()))));
 }
 
 JSObject* createError(JSGlobalObject* globalObject, const String& message)

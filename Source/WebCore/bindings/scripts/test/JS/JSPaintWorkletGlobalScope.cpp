@@ -144,9 +144,9 @@ static inline JSValue jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstruct
     return JSPaintWorkletGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSPaintWorkletGlobalScope>::get<jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, "PaintWorkletGlobalScope");
+    return IDLAttribute<JSPaintWorkletGlobalScope>::get<jsPaintWorkletGlobalScope_PaintWorkletGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 JSC::IsoSubspace* JSPaintWorkletGlobalScope::subspaceForImpl(JSC::VM& vm)

@@ -179,9 +179,9 @@ static inline JSValue jsTestCSSProperty_propertyGetter(JSGlobalObject& lexicalGl
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.getPropertyValueInternal(CSSPropertyPropertyName))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestCSSProperty_property, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestCSSProperty_property, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestCSSProperty>::get<jsTestCSSProperty_propertyGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "property");
+    return IDLAttribute<JSTestCSSProperty>::get<jsTestCSSProperty_propertyGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline bool setJSTestCSSProperty_propertySetter(JSGlobalObject& lexicalGlobalObject, JSTestCSSProperty& thisObject, JSValue value)
@@ -192,15 +192,15 @@ static inline bool setJSTestCSSProperty_propertySetter(JSGlobalObject& lexicalGl
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setPropertyInternal(CSSPropertyPropertyName, WTFMove(nativeValue), false);
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestCSSProperty_property, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCSSProperty_property, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestCSSProperty>::set<setJSTestCSSProperty_propertySetter>(*lexicalGlobalObject, thisValue, encodedValue, "property");
+    return IDLAttribute<JSTestCSSProperty>::set<setJSTestCSSProperty_propertySetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 JSC::IsoSubspace* JSTestCSSProperty::subspaceForImpl(JSC::VM& vm)

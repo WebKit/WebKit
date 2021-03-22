@@ -1,3 +1,27 @@
+2021-03-22  Sam Weinig  <weinig@apple.com>
+
+        Use the PropertyName parameter passed to custom getters/setters rather than a redundant const char* in DOM attribute prologues
+        https://bugs.webkit.org/show_bug.cgi?id=223542
+
+        Reviewed by Alexey Shvayka.
+
+        Add throwVMDOMAttributeSetterTypeError to match existing throwVMDOMAttributeGetterTypeError and move
+        additional helpers used by WebCore here to avoid redundant work.
+
+        Removes some now unused functions.
+
+        * runtime/Error.cpp:
+        (JSC::createGetterTypeError):
+        (JSC::makeDOMAttributeGetterTypeErrorMessage):
+        (JSC::makeDOMAttributeSetterTypeErrorMessage):
+        (JSC::throwDOMAttributeGetterTypeError):
+        (JSC::throwDOMAttributeSetterTypeError):
+        (JSC::throwGetterTypeError): Deleted.
+        * runtime/Error.h:
+        (JSC::throwVMRangeError):
+        (JSC::throwVMDOMAttributeSetterTypeError):
+        (JSC::throwVMGetterTypeError): Deleted.
+
 2021-03-22  Tyler Wilcock  <twilco.o@protonmail.com>
 
         AppleWin can't start due to "Failed to determine path to AAS directory." because iTunes changed the registry key

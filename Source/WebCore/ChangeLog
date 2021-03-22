@@ -1,3 +1,50 @@
+2021-03-22  Sam Weinig  <weinig@apple.com>
+
+        Use the PropertyName parameter passed to custom getters/setters rather than a redundant const char* in DOM attribute prologues
+        https://bugs.webkit.org/show_bug.cgi?id=223542
+
+        Reviewed by Alexey Shvayka.
+
+        Use the PropertyName parameter passed to custom getters/setters rather than a 
+        redundant const char* in DOM attribute prologues. This will allow us to share
+        IDLAttribute prologue implementations in cases where the same bound function
+        should be called for multiple attributes, as will be the case for CSSStyleDeclaration.
+
+        Also took the opertunity to do some cleanup
+        - Made CastedThisErrorBehavior conditions use if constexpr to ensure the non-requested
+          cases are compiled out, even in debug builds.
+        - Moves all attribute Getter/Setter TypeError related functions to JSC, where there
+          were already some, to remove duplication of strings and prepare for hoisting setter
+          prologues in the future (as is already done for getters).
+        - Remove AttributeSetter::call as it was redundant with invokeFunctorPropagatingExceptionIfNecessary.
+
+        * bindings/js/JSDOMAttribute.h:
+        (WebCore::IDLAttribute::set):
+        (WebCore::IDLAttribute::setStatic):
+        (WebCore::IDLAttribute::get):
+        (WebCore::IDLAttribute::getStatic):
+        (WebCore::AttributeSetter::call): Deleted.
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::rejectPromiseWithGetterTypeError):
+        (WebCore::makeGetterTypeErrorMessage): Deleted.
+        (WebCore::throwGetterTypeError): Deleted.
+        (WebCore::throwSetterTypeError): Deleted.
+        * bindings/js/JSDOMExceptionHandling.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        * bindings/js/JSDOMOperation.h:
+        (WebCore::IDLOperation::call):
+        * bindings/js/JSDOMOperationReturningPromise.h:
+        (WebCore::IDLOperationReturningPromise::call):
+        (WebCore::IDLOperationReturningPromise::callReturningOwnPromise):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterTrampolineDefinition):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateAttributeSetterTrampolineDefinition):
+
+        * bindings/scripts/test/JS/*:
+        Update test results.
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         Avoid heap allocation under AudioNodeInput::disable() / AudioNodeInput::enable()
