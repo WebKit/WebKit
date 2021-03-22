@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 
 #include "APINavigation.h"
 #include "APINavigationAction.h"
@@ -52,8 +52,8 @@
 
 namespace WebKit {
 
-static const LPCWSTR WebInspectorProxyPointerProp = L"WebInspectorProxyPointer";
-static const LPCWSTR WebInspectorProxyClassName = L"WebInspectorProxyClass";
+static const LPCWSTR WebInspectorUIProxyPointerProp = L"WebInspectorUIProxyPointer";
+static const LPCWSTR WebInspectorUIProxyClassName = L"WebInspectorUIProxyClass";
 
 struct InspectedWindowInfo {
     int left;
@@ -75,7 +75,7 @@ static InspectedWindowInfo getInspectedWindowInfo(HWND inspectedWindow, HWND par
     return { rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, parentRect.right - parentRect.left, parentRect.bottom - parentRect.top };
 }
 
-void WebInspectorProxy::windowReceivedMessage(HWND hwnd, UINT msg, WPARAM, LPARAM lParam)
+void WebInspectorUIProxy::windowReceivedMessage(HWND hwnd, UINT msg, WPARAM, LPARAM lParam)
 {
     switch (msg) {
     case WM_WINDOWPOSCHANGING: {
@@ -118,15 +118,15 @@ void WebInspectorProxy::windowReceivedMessage(HWND hwnd, UINT msg, WPARAM, LPARA
     }
 }
 
-LRESULT CALLBACK WebInspectorProxy::wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WebInspectorUIProxy::wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    WebInspectorProxy* client = reinterpret_cast<WebInspectorProxy*>(::GetProp(hwnd, WebInspectorProxyPointerProp));
+    WebInspectorUIProxy* inspector = reinterpret_cast<WebInspectorUIProxy*>(::GetProp(hwnd, WebInspectorUIProxyPointerProp));
     switch (msg) {
     case WM_SIZE:
-        ::SetWindowPos(client->m_inspectorViewWindow, 0, 0, 0, LOWORD(lParam), HIWORD(lParam), SWP_NOZORDER);
+        ::SetWindowPos(inspector->m_inspectorViewWindow, 0, 0, 0, LOWORD(lParam), HIWORD(lParam), SWP_NOZORDER);
         return 0;
     case WM_CLOSE:
-        client->close();
+        inspector->close();
         return 0;
     default:
         break;
@@ -134,7 +134,7 @@ LRESULT CALLBACK WebInspectorProxy::wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
     return ::DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-bool WebInspectorProxy::registerWindowClass()
+bool WebInspectorUIProxy::registerWindowClass()
 {
     static bool haveRegisteredWindowClass = false;
 
@@ -153,7 +153,7 @@ bool WebInspectorProxy::registerWindowClass()
     wcex.hCursor = LoadCursor(0, IDC_ARROW);
     wcex.hbrBackground = 0;
     wcex.lpszMenuName = 0;
-    wcex.lpszClassName = WebInspectorProxyClassName;
+    wcex.lpszClassName = WebInspectorUIProxyClassName;
     wcex.hIconSm = 0;
     return ::RegisterClassEx(&wcex);
 }
@@ -167,13 +167,13 @@ static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActio
         return;
     }
 
-    const WebInspectorProxy* webInspectorProxy = static_cast<const WebInspectorProxy*>(clientInfo);
-    ASSERT(webInspectorProxy);
+    const WebInspectorUIProxy* inspector = static_cast<const WebInspectorUIProxy*>(clientInfo);
+    ASSERT(inspector);
 
     WebCore::ResourceRequest request = toImpl(navigationActionRef)->request();
 
     // Allow loading of the main inspector file.
-    if (WebInspectorProxy::isMainOrTestInspectorPage(request.url())) {
+    if (WebInspectorUIProxy::isMainOrTestInspectorPage(request.url())) {
         toImpl(listenerRef)->use({ });
         return;
     }
@@ -182,17 +182,17 @@ static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActio
     toImpl(listenerRef)->ignore();
 
     // And instead load it in the inspected page.
-    webInspectorProxy->inspectedPage()->loadRequest(WTFMove(request));
+    inspector->inspectedPage()->loadRequest(WTFMove(request));
 }
 
 static void webProcessDidCrash(WKPageRef, const void* clientInfo)
 {
-    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
-    ASSERT(webInspectorProxy);
-    webInspectorProxy->closeForCrash();
+    WebInspectorUIProxy* inspector = static_cast<WebInspectorUIProxy*>(const_cast<void*>(clientInfo));
+    ASSERT(inspector);
+    inspector->closeForCrash();
 }
 
-WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
+WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
 {
     ASSERT(inspectedPage());
 
@@ -249,7 +249,7 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
     return inspectorPage;
 }
 
-void WebInspectorProxy::platformCloseFrontendPageAndWindow()
+void WebInspectorUIProxy::platformCloseFrontendPageAndWindow()
 {
     WebCore::WindowMessageBroadcaster::removeListener(m_inspectedViewWindow, this);
     m_inspectorView = nullptr;
@@ -259,7 +259,7 @@ void WebInspectorProxy::platformCloseFrontendPageAndWindow()
         m_inspectorViewWindow = nullptr;
     }
     if (m_inspectorDetachWindow) {
-        ::RemoveProp(m_inspectorDetachWindow, WebInspectorProxyPointerProp);
+        ::RemoveProp(m_inspectorDetachWindow, WebInspectorUIProxyPointerProp);
         ::DestroyWindow(m_inspectorDetachWindow);
         m_inspectorDetachWindow = nullptr;
     }
@@ -267,7 +267,7 @@ void WebInspectorProxy::platformCloseFrontendPageAndWindow()
     m_inspectedViewParentWindow = nullptr;
 }
 
-String WebInspectorProxy::inspectorPageURL()
+String WebInspectorUIProxy::inspectorPageURL()
 {
 #if USE(CF)
     RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("Main"), CFSTR("html"), CFSTR("WebInspectorUI")));
@@ -277,7 +277,7 @@ String WebInspectorProxy::inspectorPageURL()
 #endif
 }
 
-String WebInspectorProxy::inspectorTestPageURL()
+String WebInspectorUIProxy::inspectorTestPageURL()
 {
 #if USE(CF)
     RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("Test"), CFSTR("html"), CFSTR("WebInspectorUI")));
@@ -287,27 +287,27 @@ String WebInspectorProxy::inspectorTestPageURL()
 #endif
 }
 
-DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
+DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
 {
     // FIXME <https://webkit.org/b/205537>: this should infer more useful data.
     return DebuggableInfoData::empty();
 }
 
-unsigned WebInspectorProxy::platformInspectedWindowHeight()
+unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
 {
     RECT rect;
     ::GetClientRect(m_inspectedViewWindow, &rect);
     return rect.bottom - rect.top;
 }
 
-unsigned WebInspectorProxy::platformInspectedWindowWidth()
+unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
 {
     RECT rect;
     ::GetClientRect(m_inspectedViewWindow, &rect);
     return rect.right - rect.left;
 }
 
-void WebInspectorProxy::platformAttach()
+void WebInspectorUIProxy::platformAttach()
 {
     static const unsigned defaultAttachedSize = 300;
     static const unsigned minimumAttachedWidth = 750;
@@ -330,17 +330,17 @@ void WebInspectorProxy::platformAttach()
     ::ShowWindow(m_inspectorViewWindow, SW_SHOW);
 }
 
-void WebInspectorProxy::platformDetach()
+void WebInspectorUIProxy::platformDetach()
 {
     if (!inspectedPage()->hasRunningProcess())
         return;
 
     if (!m_inspectorDetachWindow) {
         registerWindowClass();
-        m_inspectorDetachWindow = ::CreateWindowEx(0, WebInspectorProxyClassName, 0, WS_OVERLAPPEDWINDOW,
+        m_inspectorDetachWindow = ::CreateWindowEx(0, WebInspectorUIProxyClassName, 0, WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT, initialWindowWidth, initialWindowHeight,
             0, 0, WebCore::instanceHandle(), 0);
-        ::SetProp(m_inspectorDetachWindow, WebInspectorProxyPointerProp, reinterpret_cast<HANDLE>(this));
+        ::SetProp(m_inspectorDetachWindow, WebInspectorUIProxyPointerProp, reinterpret_cast<HANDLE>(this));
     }
 
     WebCore::WindowMessageBroadcaster::removeListener(m_inspectedViewWindow, this);
@@ -356,97 +356,97 @@ void WebInspectorProxy::platformDetach()
         ::ShowWindow(m_inspectorDetachWindow, SW_SHOW);
 }
 
-void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
+void WebInspectorUIProxy::platformSetAttachedWindowHeight(unsigned height)
 {
     auto windowInfo = getInspectedWindowInfo(m_inspectedViewWindow, m_inspectedViewParentWindow);
     ::SetWindowPos(m_inspectorViewWindow, 0, windowInfo.left, windowInfo.parentHeight - height, windowInfo.parentWidth - windowInfo.left, height, SWP_NOZORDER);
     ::SetWindowPos(m_inspectedViewWindow, 0, windowInfo.left, windowInfo.top, windowInfo.parentWidth - windowInfo.left, windowInfo.parentHeight - windowInfo.top, SWP_NOZORDER);
 }
 
-void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
+void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned width)
 {
     auto windowInfo = getInspectedWindowInfo(m_inspectedViewWindow, m_inspectedViewParentWindow);
     ::SetWindowPos(m_inspectorViewWindow, 0, windowInfo.parentWidth - width, windowInfo.top, width, windowInfo.parentHeight - windowInfo.top, SWP_NOZORDER);
     ::SetWindowPos(m_inspectedViewWindow, 0, windowInfo.left, windowInfo.top, windowInfo.parentWidth - windowInfo.left, windowInfo.parentHeight - windowInfo.top, SWP_NOZORDER);
 }
 
-void WebInspectorProxy::platformSetSheetRect(const WebCore::FloatRect&)
+void WebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&)
 {
     notImplemented();
 }
 
-bool WebInspectorProxy::platformIsFront()
+bool WebInspectorUIProxy::platformIsFront()
 {
     notImplemented();
     return false;
 }
 
-void WebInspectorProxy::platformHide()
+void WebInspectorUIProxy::platformHide()
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformResetState()
+void WebInspectorUIProxy::platformResetState()
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformBringToFront()
+void WebInspectorUIProxy::platformBringToFront()
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformBringInspectedPageToFront()
+void WebInspectorUIProxy::platformBringInspectedPageToFront()
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance)
+void WebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance)
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformInspectedURLChanged(const String& /* url */)
+void WebInspectorUIProxy::platformInspectedURLChanged(const String& /* url */)
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformShowCertificate(const WebCore::CertificateInfo&)
+void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo&)
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformSave(const String&, const String&, bool, bool)
+void WebInspectorUIProxy::platformSave(const String&, const String&, bool, bool)
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformAppend(const String&, const String&)
+void WebInspectorUIProxy::platformAppend(const String&, const String&)
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformAttachAvailabilityChanged(bool /* available */)
+void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool /* available */)
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformCreateFrontendWindow()
+void WebInspectorUIProxy::platformCreateFrontendWindow()
 {
     platformDetach();
 }
 
-void WebInspectorProxy::platformDidCloseForCrash()
+void WebInspectorUIProxy::platformDidCloseForCrash()
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformInvalidate()
+void WebInspectorUIProxy::platformInvalidate()
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformStartWindowDrag()
+void WebInspectorUIProxy::platformStartWindowDrag()
 {
     notImplemented();
 }

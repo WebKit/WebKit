@@ -221,8 +221,8 @@ UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 
 UIProcess/Inspector/glib/RemoteInspectorClient.cpp
 
-UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp
-UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp
+UIProcess/Inspector/gtk/RemoteWebInspectorUIProxyGtk.cpp
+UIProcess/Inspector/gtk/WebInspectorUIProxyGtk.cpp
 UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp
 
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp @no-unify

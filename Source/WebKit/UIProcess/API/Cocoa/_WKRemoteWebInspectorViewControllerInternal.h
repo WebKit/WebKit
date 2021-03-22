@@ -28,14 +28,14 @@
 #if !TARGET_OS_IPHONE
 
 namespace WebKit {
-class RemoteWebInspectorProxy;
+class RemoteWebInspectorUIProxy;
 }
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKRemoteWebInspectorViewController () {
 @package
-    RefPtr<WebKit::RemoteWebInspectorProxy> m_remoteInspectorProxy;
+    RefPtr<WebKit::RemoteWebInspectorUIProxy> m_remoteInspectorProxy;
 }
 @end
 

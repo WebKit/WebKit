@@ -1,3 +1,444 @@
+2021-03-22  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: rename WebInspectorProxy to WebInspectorUIProxy
+        https://bugs.webkit.org/show_bug.cgi?id=223551
+
+        Reviewed by Devin Rousso.
+
+        To improve clarity in the codebase, I'm renaming this to be consistent
+        with it's WebProcess-side counterpart, WebInspectorUI. There are many
+        different classes with the 'WebInspector' prefix, so it can be difficult
+        to understand whether a class is associated with the WebInspectorUI
+        frontend or the InspectorController backend. This fixes one of the biggest
+        offenders.
+
+        For brevity, I have elided function-level changelog entries from files
+        that have been renamed. This is a mechanical refactoring.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * UIProcess/API/APIInspectorClient.h:
+        (API::InspectorClient::openURLExternally):
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didAttachLocalInspector):
+        (API::UIClient::willCloseLocalInspector):
+        (API::UIClient::configurationForLocalInspector):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorGetTypeID):
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/mac/WKInspectorPrivateMac.h:
+        * UIProcess/API/Cocoa/_WKInspectorInternal.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewControllerInternal.h:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (webkitWebInspectorCreate):
+        * UIProcess/API/gtk/WebKitWebInspectorPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::configurationForLocalInspector):
+        (WebKit::UIDelegate::UIClient::didAttachLocalInspector):
+        (WebKit::UIDelegate::UIClient::willCloseLocalInspector):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp:
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.mm:
+        (WebKit::InspectorDelegate::InspectorClient::openURLExternally):
+        * UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm:
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp: Renamed from Source/WebKit/UIProcess/Inspector/RemoteWebInspectorProxy.cpp.
+        (WebKit::RemoteWebInspectorUIProxy::RemoteWebInspectorUIProxy):
+        (WebKit::RemoteWebInspectorUIProxy::~RemoteWebInspectorUIProxy):
+        (WebKit::RemoteWebInspectorUIProxy::invalidate):
+        (WebKit::RemoteWebInspectorUIProxy::setDiagnosticLoggingAvailable):
+        (WebKit::RemoteWebInspectorUIProxy::load):
+        (WebKit::RemoteWebInspectorUIProxy::closeFromBackend):
+        (WebKit::RemoteWebInspectorUIProxy::closeFromCrash):
+        (WebKit::RemoteWebInspectorUIProxy::show):
+        (WebKit::RemoteWebInspectorUIProxy::sendMessageToFrontend):
+        (WebKit::RemoteWebInspectorUIProxy::frontendLoaded):
+        (WebKit::RemoteWebInspectorUIProxy::frontendDidClose):
+        (WebKit::RemoteWebInspectorUIProxy::reopen):
+        (WebKit::RemoteWebInspectorUIProxy::resetState):
+        (WebKit::RemoteWebInspectorUIProxy::bringToFront):
+        (WebKit::RemoteWebInspectorUIProxy::save):
+        (WebKit::RemoteWebInspectorUIProxy::append):
+        (WebKit::RemoteWebInspectorUIProxy::setSheetRect):
+        (WebKit::RemoteWebInspectorUIProxy::setForcedAppearance):
+        (WebKit::RemoteWebInspectorUIProxy::startWindowDrag):
+        (WebKit::RemoteWebInspectorUIProxy::openURLExternally):
+        (WebKit::RemoteWebInspectorUIProxy::showCertificate):
+        (WebKit::RemoteWebInspectorUIProxy::sendMessageToBackend):
+        (WebKit::RemoteWebInspectorUIProxy::createFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorUIProxy::closeFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorUIProxy::platformResetState):
+        (WebKit::RemoteWebInspectorUIProxy::platformBringToFront):
+        (WebKit::RemoteWebInspectorUIProxy::platformSave):
+        (WebKit::RemoteWebInspectorUIProxy::platformAppend):
+        (WebKit::RemoteWebInspectorUIProxy::platformSetSheetRect):
+        (WebKit::RemoteWebInspectorUIProxy::platformSetForcedAppearance):
+        (WebKit::RemoteWebInspectorUIProxy::platformStartWindowDrag):
+        (WebKit::RemoteWebInspectorUIProxy::platformOpenURLExternally):
+        (WebKit::RemoteWebInspectorUIProxy::platformShowCertificate):
+        (WebKit::RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow):
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.h: Renamed from Source/WebKit/UIProcess/Inspector/RemoteWebInspectorProxy.h.
+        (WebKit::RemoteWebInspectorUIProxyClient::~RemoteWebInspectorUIProxyClient):
+        (WebKit::RemoteWebInspectorUIProxy::create):
+        (WebKit::RemoteWebInspectorUIProxy::setClient):
+        (WebKit::RemoteWebInspectorUIProxy::isUnderTest const):
+        (WebKit::RemoteWebInspectorUIProxy::extensionController const):
+        (WebKit::RemoteWebInspectorUIProxy::window const):
+        (WebKit::RemoteWebInspectorUIProxy::sheetRect const):
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.messages.in: Renamed from Source/WebKit/UIProcess/Inspector/RemoteWebInspectorProxy.messages.in.
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp: Renamed from Source/WebKit/UIProcess/Inspector/WebInspectorProxy.cpp.
+        (WebKit::WebInspectorUIProxy::WebInspectorUIProxy):
+        (WebKit::WebInspectorUIProxy::~WebInspectorUIProxy):
+        (WebKit::WebInspectorUIProxy::setInspectorClient):
+        (WebKit::WebInspectorUIProxy::inspectionLevel const):
+        (WebKit::WebInspectorUIProxy::inspectorPagePreferences const):
+        (WebKit::WebInspectorUIProxy::invalidate):
+        (WebKit::WebInspectorUIProxy::sendMessageToFrontend):
+        (WebKit::WebInspectorUIProxy::isFront):
+        (WebKit::WebInspectorUIProxy::connect):
+        (WebKit::WebInspectorUIProxy::show):
+        (WebKit::WebInspectorUIProxy::hide):
+        (WebKit::WebInspectorUIProxy::close):
+        (WebKit::WebInspectorUIProxy::closeForCrash):
+        (WebKit::WebInspectorUIProxy::reopen):
+        (WebKit::WebInspectorUIProxy::resetState):
+        (WebKit::WebInspectorUIProxy::reset):
+        (WebKit::WebInspectorUIProxy::updateForNewPageProcess):
+        (WebKit::WebInspectorUIProxy::setFrontendConnection):
+        (WebKit::WebInspectorUIProxy::showConsole):
+        (WebKit::WebInspectorUIProxy::showResources):
+        (WebKit::WebInspectorUIProxy::showMainResourceForFrame):
+        (WebKit::WebInspectorUIProxy::attachBottom):
+        (WebKit::WebInspectorUIProxy::attachRight):
+        (WebKit::WebInspectorUIProxy::attachLeft):
+        (WebKit::WebInspectorUIProxy::attach):
+        (WebKit::WebInspectorUIProxy::detach):
+        (WebKit::WebInspectorUIProxy::setAttachedWindowHeight):
+        (WebKit::WebInspectorUIProxy::setAttachedWindowWidth):
+        (WebKit::WebInspectorUIProxy::setSheetRect):
+        (WebKit::WebInspectorUIProxy::startWindowDrag):
+        (WebKit::WebInspectorUIProxy::togglePageProfiling):
+        (WebKit::WebInspectorUIProxy::toggleElementSelection):
+        (WebKit::WebInspectorUIProxy::isMainOrTestInspectorPage):
+        (WebKit::WebInspectorUIProxy::createFrontendPage):
+        (WebKit::WebInspectorUIProxy::openLocalInspectorFrontend):
+        (WebKit::WebInspectorUIProxy::open):
+        (WebKit::WebInspectorUIProxy::didClose):
+        (WebKit::WebInspectorUIProxy::closeFrontendPageAndWindow):
+        (WebKit::WebInspectorUIProxy::sendMessageToBackend):
+        (WebKit::WebInspectorUIProxy::frontendLoaded):
+        (WebKit::WebInspectorUIProxy::bringToFront):
+        (WebKit::WebInspectorUIProxy::bringInspectedPageToFront):
+        (WebKit::WebInspectorUIProxy::attachAvailabilityChanged):
+        (WebKit::WebInspectorUIProxy::setForcedAppearance):
+        (WebKit::WebInspectorUIProxy::openURLExternally):
+        (WebKit::WebInspectorUIProxy::inspectedURLChanged):
+        (WebKit::WebInspectorUIProxy::showCertificate):
+        (WebKit::WebInspectorUIProxy::elementSelectionChanged):
+        (WebKit::WebInspectorUIProxy::timelineRecordingChanged):
+        (WebKit::WebInspectorUIProxy::setDeveloperPreferenceOverride):
+        (WebKit::WebInspectorUIProxy::setDiagnosticLoggingAvailable):
+        (WebKit::WebInspectorUIProxy::save):
+        (WebKit::WebInspectorUIProxy::append):
+        (WebKit::WebInspectorUIProxy::shouldOpenAttached):
+        (WebKit::WebInspectorUIProxy::evaluateInFrontendForTesting):
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendPage):
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorUIProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorUIProxy::platformDidCloseForCrash):
+        (WebKit::WebInspectorUIProxy::platformInvalidate):
+        (WebKit::WebInspectorUIProxy::platformResetState):
+        (WebKit::WebInspectorUIProxy::platformBringToFront):
+        (WebKit::WebInspectorUIProxy::platformBringInspectedPageToFront):
+        (WebKit::WebInspectorUIProxy::platformHide):
+        (WebKit::WebInspectorUIProxy::platformIsFront):
+        (WebKit::WebInspectorUIProxy::platformSetForcedAppearance):
+        (WebKit::WebInspectorUIProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorUIProxy::platformShowCertificate):
+        (WebKit::WebInspectorUIProxy::platformSave):
+        (WebKit::WebInspectorUIProxy::platformAppend):
+        (WebKit::WebInspectorUIProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorUIProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorUIProxy::platformAttach):
+        (WebKit::WebInspectorUIProxy::platformDetach):
+        (WebKit::WebInspectorUIProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorUIProxy::platformSetSheetRect):
+        (WebKit::WebInspectorUIProxy::platformStartWindowDrag):
+        (WebKit::WebInspectorUIProxy::inspectorPageURL):
+        (WebKit::WebInspectorUIProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorUIProxy::infoForLocalDebuggable):
+        (WebKit::WebInspectorUIProxy::platformSetAttachedWindowWidth):
+        (WebKit::WebInspectorUIProxy::platformAttachAvailabilityChanged):
+        * UIProcess/Inspector/WebInspectorUIProxy.h: Renamed from Source/WebKit/UIProcess/Inspector/WebInspectorProxy.h.
+        (WebKit::WebInspectorUIProxy::create):
+        (WebKit::WebInspectorUIProxy::inspectorClient):
+        (WebKit::WebInspectorUIProxy::inspectedPage const):
+        (WebKit::WebInspectorUIProxy::inspectorPage const):
+        (WebKit::WebInspectorUIProxy::extensionController const):
+        (WebKit::WebInspectorUIProxy::isConnected const):
+        (WebKit::WebInspectorUIProxy::isVisible const):
+        (WebKit::WebInspectorUIProxy::inspectorWindow const):
+        (WebKit::WebInspectorUIProxy::sheetRect const):
+        (WebKit::WebInspectorUIProxy::inspectorView const):
+        (WebKit::WebInspectorUIProxy::attachmentSide const):
+        (WebKit::WebInspectorUIProxy::isAttached const):
+        (WebKit::WebInspectorUIProxy::isProfilingPage const):
+        (WebKit::WebInspectorUIProxy::isElementSelectionActive const):
+        (WebKit::WebInspectorUIProxy::isUnderTest const):
+        (WebKit::WebInspectorUIProxy::platformCanAttach):
+        (WebKit::WebInspectorUIProxy::canAttach const):
+        * UIProcess/Inspector/WebInspectorUIProxy.messages.in: Renamed from Source/WebKit/UIProcess/Inspector/WebInspectorProxy.messages.in.
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp:
+        * UIProcess/Inspector/glib/RemoteInspectorClient.h:
+        * UIProcess/Inspector/gtk/RemoteWebInspectorUIProxyGtk.cpp: Renamed from Source/WebKit/UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp.
+        (WebKit::RemoteWebInspectorUIProxy::updateWindowTitle):
+        (WebKit::remoteInspectorViewDestroyed):
+        (WebKit::RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorUIProxy::platformResetState):
+        (WebKit::RemoteWebInspectorUIProxy::platformBringToFront):
+        (WebKit::remoteFileReplaceContentsCallback):
+        (WebKit::RemoteWebInspectorUIProxy::platformSave):
+        (WebKit::RemoteWebInspectorUIProxy::platformAppend):
+        (WebKit::RemoteWebInspectorUIProxy::platformSetSheetRect):
+        (WebKit::RemoteWebInspectorUIProxy::platformSetForcedAppearance):
+        (WebKit::RemoteWebInspectorUIProxy::platformStartWindowDrag):
+        (WebKit::RemoteWebInspectorUIProxy::platformOpenURLExternally):
+        (WebKit::RemoteWebInspectorUIProxy::platformShowCertificate):
+        * UIProcess/Inspector/gtk/WebInspectorUIProxyClient.h: Renamed from Source/WebKit/UIProcess/Inspector/gtk/WebInspectorProxyClient.h.
+        * UIProcess/Inspector/gtk/WebInspectorUIProxyGtk.cpp: Renamed from Source/WebKit/UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp.
+        (WebKit::inspectorViewDestroyed):
+        (WebKit::WebInspectorUIProxy::setClient):
+        (WebKit::WebInspectorUIProxy::updateInspectorWindowTitle const):
+        (WebKit::exceededDatabaseQuota):
+        (WebKit::webProcessDidCrash):
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::getContextMenuFromProposedMenu):
+        (WebKit::inspectorWebsiteDataStore):
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendPage):
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorUIProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorUIProxy::platformDidCloseForCrash):
+        (WebKit::WebInspectorUIProxy::platformInvalidate):
+        (WebKit::WebInspectorUIProxy::platformHide):
+        (WebKit::WebInspectorUIProxy::platformResetState):
+        (WebKit::WebInspectorUIProxy::platformBringToFront):
+        (WebKit::WebInspectorUIProxy::platformBringInspectedPageToFront):
+        (WebKit::WebInspectorUIProxy::platformIsFront):
+        (WebKit::WebInspectorUIProxy::platformSetForcedAppearance):
+        (WebKit::WebInspectorUIProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorUIProxy::platformShowCertificate):
+        (WebKit::WebInspectorUIProxy::inspectorPageURL):
+        (WebKit::WebInspectorUIProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorUIProxy::infoForLocalDebuggable):
+        (WebKit::WebInspectorUIProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorUIProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorUIProxy::platformAttach):
+        (WebKit::WebInspectorUIProxy::platformDetach):
+        (WebKit::WebInspectorUIProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorUIProxy::platformSetAttachedWindowWidth):
+        (WebKit::WebInspectorUIProxy::platformSetSheetRect):
+        (WebKit::WebInspectorUIProxy::platformStartWindowDrag):
+        (WebKit::fileReplaceContentsCallback):
+        (WebKit::WebInspectorUIProxy::platformSave):
+        (WebKit::WebInspectorUIProxy::platformAppend):
+        (WebKit::WebInspectorUIProxy::platformAttachAvailabilityChanged):
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:
+        (webkitInspectorWindowNew):
+        * UIProcess/Inspector/mac/RemoteWebInspectorUIProxyMac.mm: Renamed from Source/WebKit/UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm.
+        (-[WKRemoteWebInspectorUIProxyObjCAdapter window:willPositionSheet:usingRect:]):
+        (-[WKRemoteWebInspectorUIProxyObjCAdapter initWithRemoteWebInspectorUIProxy:]):
+        (-[WKRemoteWebInspectorUIProxyObjCAdapter inspectorWKWebViewDidBecomeActive:]):
+        (-[WKRemoteWebInspectorUIProxyObjCAdapter inspectorViewControllerInspectorDidCrash:]):
+        (-[WKRemoteWebInspectorUIProxyObjCAdapter inspectorViewControllerInspectorIsUnderTest:]):
+        (WebKit::RemoteWebInspectorUIProxy::webView const):
+        (WebKit::RemoteWebInspectorUIProxy::didBecomeActive):
+        (WebKit::RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorUIProxy::platformResetState):
+        (WebKit::RemoteWebInspectorUIProxy::platformBringToFront):
+        (WebKit::RemoteWebInspectorUIProxy::platformSave):
+        (WebKit::RemoteWebInspectorUIProxy::platformAppend):
+        (WebKit::RemoteWebInspectorUIProxy::platformSetSheetRect):
+        (WebKit::RemoteWebInspectorUIProxy::platformSetForcedAppearance):
+        (WebKit::RemoteWebInspectorUIProxy::platformStartWindowDrag):
+        (WebKit::RemoteWebInspectorUIProxy::platformOpenURLExternally):
+        (WebKit::RemoteWebInspectorUIProxy::platformShowCertificate):
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController webView]):
+        * UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm: Renamed from Source/WebKit/UIProcess/Inspector/mac/WebInspectorProxyMac.mm.
+        (-[WKWebInspectorUIProxyObjCAdapter inspectorRef]):
+        (-[WKWebInspectorUIProxyObjCAdapter inspector]):
+        (-[WKWebInspectorUIProxyObjCAdapter initWithWebInspectorUIProxy:]):
+        (-[WKWebInspectorUIProxyObjCAdapter invalidate]):
+        (-[WKWebInspectorUIProxyObjCAdapter window:willPositionSheet:usingRect:]):
+        (-[WKWebInspectorUIProxyObjCAdapter windowDidMove:]):
+        (-[WKWebInspectorUIProxyObjCAdapter windowDidResize:]):
+        (-[WKWebInspectorUIProxyObjCAdapter windowWillClose:]):
+        (-[WKWebInspectorUIProxyObjCAdapter windowDidEnterFullScreen:]):
+        (-[WKWebInspectorUIProxyObjCAdapter windowDidExitFullScreen:]):
+        (-[WKWebInspectorUIProxyObjCAdapter inspectedViewFrameDidChange:]):
+        (-[WKWebInspectorUIProxyObjCAdapter observeValueForKeyPath:ofObject:change:context:]):
+        (-[WKWebInspectorUIProxyObjCAdapter inspectorViewControllerDidBecomeActive:]):
+        (-[WKWebInspectorUIProxyObjCAdapter inspectorViewControllerInspectorDidCrash:]):
+        (-[WKWebInspectorUIProxyObjCAdapter inspectorViewControllerInspectorIsUnderTest:]):
+        (-[WKWebInspectorUIProxyObjCAdapter inspectorViewController:willMoveToWindow:]):
+        (-[WKWebInspectorUIProxyObjCAdapter inspectorViewControllerDidMoveToWindow:]):
+        (-[WKWebInspectorUIProxyObjCAdapter inspectorViewController:openURLExternally:]):
+        (WebKit::WebInspectorUIProxy::didBecomeActive):
+        (WebKit::WebInspectorUIProxy::attachmentViewDidChange):
+        (WebKit::WebInspectorUIProxy::attachmentWillMoveFromWindow):
+        (WebKit::WebInspectorUIProxy::attachmentDidMoveToWindow):
+        (WebKit::WebInspectorUIProxy::updateInspectorWindowTitle const):
+        (WebKit::WebInspectorUIProxy::createFrontendWindow):
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendPage):
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorUIProxy::closeFrontendPage):
+        (WebKit::WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired):
+        (WebKit::WebInspectorUIProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorUIProxy::platformDidCloseForCrash):
+        (WebKit::WebInspectorUIProxy::platformInvalidate):
+        (WebKit::WebInspectorUIProxy::platformHide):
+        (WebKit::WebInspectorUIProxy::platformResetState):
+        (WebKit::WebInspectorUIProxy::platformBringToFront):
+        (WebKit::WebInspectorUIProxy::platformBringInspectedPageToFront):
+        (WebKit::WebInspectorUIProxy::platformIsFront):
+        (WebKit::WebInspectorUIProxy::platformCanAttach):
+        (WebKit::WebInspectorUIProxy::platformAttachAvailabilityChanged):
+        (WebKit::WebInspectorUIProxy::platformSetForcedAppearance):
+        (WebKit::WebInspectorUIProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorUIProxy::platformShowCertificate):
+        (WebKit::WebInspectorUIProxy::platformSave):
+        (WebKit::WebInspectorUIProxy::platformAppend):
+        (WebKit::WebInspectorUIProxy::windowFrameDidChange):
+        (WebKit::WebInspectorUIProxy::windowFullScreenDidChange):
+        (WebKit::WebInspectorUIProxy::inspectedViewFrameDidChange):
+        (WebKit::WebInspectorUIProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorUIProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorUIProxy::platformAttach):
+        (WebKit::WebInspectorUIProxy::platformDetach):
+        (WebKit::WebInspectorUIProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorUIProxy::platformSetAttachedWindowWidth):
+        (WebKit::WebInspectorUIProxy::platformSetSheetRect):
+        (WebKit::WebInspectorUIProxy::platformStartWindowDrag):
+        (WebKit::WebInspectorUIProxy::inspectorPageURL):
+        (WebKit::WebInspectorUIProxy::inspectorTestPageURL):
+        (WebKit::systemVersionPlist):
+        (WebKit::WebInspectorUIProxy::infoForLocalDebuggable):
+        (WebKit::WebInspectorUIProxy::applyForcedAppearance):
+        * UIProcess/Inspector/socket/RemoteInspectorClient.cpp:
+        * UIProcess/Inspector/win/RemoteWebInspectorUIProxyWin.cpp: Renamed from Source/WebKit/UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp.
+        (WebKit::RemoteWebInspectorUIProxy::WndProc):
+        (WebKit::registerWindowClass):
+        (WebKit::RemoteWebInspectorUIProxy::sizeChange):
+        (WebKit::RemoteWebInspectorUIProxy::onClose):
+        (WebKit::RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorUIProxy::platformResetState):
+        (WebKit::RemoteWebInspectorUIProxy::platformBringToFront):
+        (WebKit::RemoteWebInspectorUIProxy::platformSave):
+        (WebKit::RemoteWebInspectorUIProxy::platformAppend):
+        (WebKit::RemoteWebInspectorUIProxy::platformSetSheetRect):
+        (WebKit::RemoteWebInspectorUIProxy::platformSetForcedAppearance):
+        (WebKit::RemoteWebInspectorUIProxy::platformStartWindowDrag):
+        (WebKit::RemoteWebInspectorUIProxy::platformOpenURLExternally):
+        (WebKit::RemoteWebInspectorUIProxy::platformShowCertificate):
+        (WebKit::RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow):
+        * UIProcess/Inspector/win/WebInspectorUIProxyWin.cpp: Renamed from Source/WebKit/UIProcess/Inspector/win/WebInspectorProxyWin.cpp.
+        (WebKit::getInspectedWindowInfo):
+        (WebKit::WebInspectorUIProxy::windowReceivedMessage):
+        (WebKit::WebInspectorUIProxy::wndProc):
+        (WebKit::WebInspectorUIProxy::registerWindowClass):
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::webProcessDidCrash):
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendPage):
+        (WebKit::WebInspectorUIProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorUIProxy::inspectorPageURL):
+        (WebKit::WebInspectorUIProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorUIProxy::infoForLocalDebuggable):
+        (WebKit::WebInspectorUIProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorUIProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorUIProxy::platformAttach):
+        (WebKit::WebInspectorUIProxy::platformDetach):
+        (WebKit::WebInspectorUIProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorUIProxy::platformSetAttachedWindowWidth):
+        (WebKit::WebInspectorUIProxy::platformSetSheetRect):
+        (WebKit::WebInspectorUIProxy::platformIsFront):
+        (WebKit::WebInspectorUIProxy::platformHide):
+        (WebKit::WebInspectorUIProxy::platformResetState):
+        (WebKit::WebInspectorUIProxy::platformBringToFront):
+        (WebKit::WebInspectorUIProxy::platformBringInspectedPageToFront):
+        (WebKit::WebInspectorUIProxy::platformSetForcedAppearance):
+        (WebKit::WebInspectorUIProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorUIProxy::platformShowCertificate):
+        (WebKit::WebInspectorUIProxy::platformSave):
+        (WebKit::WebInspectorUIProxy::platformAppend):
+        (WebKit::WebInspectorUIProxy::platformAttachAvailabilityChanged):
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorUIProxy::platformDidCloseForCrash):
+        (WebKit::WebInspectorUIProxy::platformInvalidate):
+        (WebKit::WebInspectorUIProxy::platformStartWindowDrag):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPageProxy::inspector const):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::sendMessageToBackend):
+        (WebKit::RemoteWebInspectorUI::frontendLoaded):
+        (WebKit::RemoteWebInspectorUI::changeSheetRect):
+        (WebKit::RemoteWebInspectorUI::setForcedAppearance):
+        (WebKit::RemoteWebInspectorUI::startWindowDrag):
+        (WebKit::RemoteWebInspectorUI::bringToFront):
+        (WebKit::RemoteWebInspectorUI::closeWindow):
+        (WebKit::RemoteWebInspectorUI::reopen):
+        (WebKit::RemoteWebInspectorUI::resetState):
+        (WebKit::RemoteWebInspectorUI::openURLExternally):
+        (WebKit::RemoteWebInspectorUI::save):
+        (WebKit::RemoteWebInspectorUI::append):
+        (WebKit::RemoteWebInspectorUI::showCertificate):
+        * WebProcess/Inspector/WebInspector.cpp:
+        (WebKit::WebInspector::openLocalInspectorFrontend):
+        (WebKit::WebInspector::closeFrontendConnection):
+        (WebKit::WebInspector::bringToFront):
+        (WebKit::WebInspector::elementSelectionChanged):
+        (WebKit::WebInspector::timelineRecordingChanged):
+        (WebKit::WebInspector::setDeveloperPreferenceOverride):
+        (WebKit::WebInspector::updateDockingAvailability):
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::updateConnection):
+        (WebKit::WebInspectorUI::frontendLoaded):
+        (WebKit::WebInspectorUI::startWindowDrag):
+        (WebKit::WebInspectorUI::bringToFront):
+        (WebKit::WebInspectorUI::closeWindow):
+        (WebKit::WebInspectorUI::reopen):
+        (WebKit::WebInspectorUI::resetState):
+        (WebKit::WebInspectorUI::setForcedAppearance):
+        (WebKit::WebInspectorUI::requestSetDockSide):
+        (WebKit::WebInspectorUI::changeAttachedWindowHeight):
+        (WebKit::WebInspectorUI::changeAttachedWindowWidth):
+        (WebKit::WebInspectorUI::changeSheetRect):
+        (WebKit::WebInspectorUI::openURLExternally):
+        (WebKit::WebInspectorUI::save):
+        (WebKit::WebInspectorUI::append):
+        (WebKit::WebInspectorUI::inspectedURLChanged):
+        (WebKit::WebInspectorUI::showCertificate):
+        (WebKit::WebInspectorUI::sendMessageToBackend):
+
 2021-03-22  Devin Rousso  <drousso@apple.com>
 
         Remove unused JS and CSS files of media controls

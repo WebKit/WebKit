@@ -493,7 +493,7 @@ public:
     void didEnterFullscreen();
     void didExitFullscreen();
 
-    WebInspectorProxy* inspector() const;
+    WebInspectorUIProxy* inspector() const;
     GeolocationPermissionRequestManagerProxy& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
 
     void resourceLoadDidSendRequest(ResourceLoadInfo&&, WebCore::ResourceRequest&&);
@@ -2483,7 +2483,7 @@ private:
     String m_customTextEncodingName;
     String m_overrideContentSecurityPolicy;
 
-    RefPtr<WebInspectorProxy> m_inspector;
+    RefPtr<WebInspectorUIProxy> m_inspector;
 
 #if PLATFORM(COCOA)
     WeakObjCPtr<WKWebView> m_cocoaView;

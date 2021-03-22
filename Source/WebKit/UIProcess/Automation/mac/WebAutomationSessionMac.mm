@@ -30,7 +30,7 @@
 
 #import "Logging.h"
 #import "WebAutomationSessionMacros.h"
-#import "WebInspectorProxy.h"
+#import "WebInspectorUIProxy.h"
 #import "WebPageProxy.h"
 #import "_WKAutomationSession.h"
 #import <Carbon/Carbon.h>

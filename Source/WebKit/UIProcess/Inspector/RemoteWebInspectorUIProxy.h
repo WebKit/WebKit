@@ -38,7 +38,7 @@
 OBJC_CLASS NSURL;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKInspectorViewController;
-OBJC_CLASS WKRemoteWebInspectorProxyObjCAdapter;
+OBJC_CLASS WKRemoteWebInspectorUIProxyObjCAdapter;
 OBJC_CLASS WKWebView;
 #endif
 
@@ -53,31 +53,31 @@ class InspectorConfiguration;
 
 namespace WebKit {
 
-class RemoteWebInspectorProxy;
+class RemoteWebInspectorUIProxy;
 class WebPageProxy;
 class WebView;
 #if ENABLE(INSPECTOR_EXTENSIONS)
 class WebInspectorUIExtensionControllerProxy;
 #endif
 
-class RemoteWebInspectorProxyClient {
+class RemoteWebInspectorUIProxyClient {
 public:
-    virtual ~RemoteWebInspectorProxyClient() { }
+    virtual ~RemoteWebInspectorUIProxyClient() { }
     virtual void sendMessageToBackend(const String& message) = 0;
     virtual void closeFromFrontend() = 0;
-    virtual Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorProxy&) = 0;
+    virtual Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorUIProxy&) = 0;
 };
 
-class RemoteWebInspectorProxy : public RefCounted<RemoteWebInspectorProxy>, public IPC::MessageReceiver {
+class RemoteWebInspectorUIProxy : public RefCounted<RemoteWebInspectorUIProxy>, public IPC::MessageReceiver {
 public:
-    static Ref<RemoteWebInspectorProxy> create()
+    static Ref<RemoteWebInspectorUIProxy> create()
     {
-        return adoptRef(*new RemoteWebInspectorProxy());
+        return adoptRef(*new RemoteWebInspectorUIProxy());
     }
 
-    ~RemoteWebInspectorProxy();
+    ~RemoteWebInspectorUIProxy();
 
-    void setClient(RemoteWebInspectorProxyClient* client) { m_client = client; }
+    void setClient(RemoteWebInspectorUIProxyClient* client) { m_client = client; }
 
     bool isUnderTest() const { return false; }
 
@@ -118,12 +118,12 @@ public:
     void closeFromCrash();
 
 private:
-    RemoteWebInspectorProxy();
+    RemoteWebInspectorUIProxy();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    // RemoteWebInspectorProxy messages.
+    // RemoteWebInspectorUIProxy messages.
     void frontendLoaded();
     void frontendDidClose();
     void reopen();
@@ -154,7 +154,7 @@ private:
     void platformOpenURLExternally(const String& url);
     void platformShowCertificate(const WebCore::CertificateInfo&);
 
-    RemoteWebInspectorProxyClient* m_client { nullptr };
+    RemoteWebInspectorUIProxyClient* m_client { nullptr };
     WebPageProxy* m_inspectorPage { nullptr };
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -167,7 +167,7 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<WKInspectorViewController> m_inspectorView;
     RetainPtr<NSWindow> m_window;
-    RetainPtr<WKRemoteWebInspectorProxyObjCAdapter> m_objCAdapter;
+    RetainPtr<WKRemoteWebInspectorUIProxyObjCAdapter> m_objCAdapter;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     WebCore::FloatRect m_sheetRect;
 #endif

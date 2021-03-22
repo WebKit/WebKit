@@ -27,7 +27,7 @@
 #include "InspectorBrowserAgent.h"
 
 #include "APIUIClient.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>

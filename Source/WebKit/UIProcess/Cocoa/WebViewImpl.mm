@@ -74,7 +74,7 @@
 #import "WebBackForwardList.h"
 #import "WebEditCommandProxy.h"
 #import "WebEventFactory.h"
-#import "WebInspectorProxy.h"
+#import "WebInspectorUIProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"

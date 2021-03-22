@@ -125,9 +125,9 @@ private:
         bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
         void didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy&, WKResourceLimit) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const URL&, API::Data&) final;
-        Ref<API::InspectorConfiguration> configurationForLocalInspector(WebPageProxy&, WebInspectorProxy&) final;
-        void didAttachLocalInspector(WebPageProxy&, WebInspectorProxy&) final;
-        void willCloseLocalInspector(WebPageProxy&, WebInspectorProxy&) final;
+        Ref<API::InspectorConfiguration> configurationForLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
+        void didAttachLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
+        void willCloseLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
         void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;

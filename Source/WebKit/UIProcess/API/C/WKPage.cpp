@@ -73,7 +73,7 @@
 #include "WebBackForwardList.h"
 #include "WebFormClient.h"
 #include "WebImage.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"

@@ -39,7 +39,7 @@ namespace WebKit {
 
 class RemoteInspectorClient;
 class RemoteInspectorProxy;
-class RemoteWebInspectorProxy;
+class RemoteWebInspectorUIProxy;
 
 class RemoteInspectorObserver {
 public:

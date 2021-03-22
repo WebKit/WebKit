@@ -24,19 +24,19 @@
  */
 
 #import "config.h"
-#import "RemoteWebInspectorProxy.h"
+#import "RemoteWebInspectorUIProxy.h"
 
 #if PLATFORM(MAC) && ENABLE(REMOTE_INSPECTOR)
 
 #import "GlobalFindInPageState.h"
-#import "RemoteWebInspectorProxyMessages.h"
 #import "RemoteWebInspectorUIMessages.h"
+#import "RemoteWebInspectorUIProxyMessages.h"
 #import "WKFrameInfo.h"
 #import "WKInspectorViewController.h"
 #import "WKNavigationAction.h"
 #import "WKNavigationDelegate.h"
 #import "WKWebViewInternal.h"
-#import "WebInspectorProxy.h"
+#import "WebInspectorUIProxy.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "_WKInspectorConfigurationInternal.h"
@@ -45,13 +45,13 @@
 #import <WebCore/CertificateInfo.h>
 #import <wtf/text/Base64.h>
 
-@interface WKRemoteWebInspectorProxyObjCAdapter : NSObject <NSWindowDelegate, WKInspectorViewControllerDelegate> {
-    WebKit::RemoteWebInspectorProxy* _inspectorProxy;
+@interface WKRemoteWebInspectorUIProxyObjCAdapter : NSObject <NSWindowDelegate, WKInspectorViewControllerDelegate> {
+    WebKit::RemoteWebInspectorUIProxy* _inspectorProxy;
 }
-- (instancetype)initWithRemoteWebInspectorProxy:(WebKit::RemoteWebInspectorProxy*)inspectorProxy;
+- (instancetype)initWithRemoteWebInspectorUIProxy:(WebKit::RemoteWebInspectorUIProxy*)inspectorProxy;
 @end
 
-@implementation WKRemoteWebInspectorProxyObjCAdapter
+@implementation WKRemoteWebInspectorUIProxyObjCAdapter
 
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
@@ -60,7 +60,7 @@
     return rect;
 }
 
-- (instancetype)initWithRemoteWebInspectorProxy:(WebKit::RemoteWebInspectorProxy*)inspectorProxy
+- (instancetype)initWithRemoteWebInspectorUIProxy:(WebKit::RemoteWebInspectorUIProxy*)inspectorProxy
 {
     if (!(self = [super init]))
         return nil;
@@ -90,25 +90,25 @@
 namespace WebKit {
 using namespace WebCore;
 
-WKWebView *RemoteWebInspectorProxy::webView() const
+WKWebView *RemoteWebInspectorUIProxy::webView() const
 {
     return m_inspectorView.get().webView;
 }
 
-void RemoteWebInspectorProxy::didBecomeActive()
+void RemoteWebInspectorUIProxy::didBecomeActive()
 {
     m_inspectorPage->send(Messages::RemoteWebInspectorUI::UpdateFindString(WebKit::stringForFind()));
 }
 
-WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
+WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
-    m_objCAdapter = adoptNS([[WKRemoteWebInspectorProxyObjCAdapter alloc] initWithRemoteWebInspectorProxy:this]);
+    m_objCAdapter = adoptNS([[WKRemoteWebInspectorUIProxyObjCAdapter alloc] initWithRemoteWebInspectorUIProxy:this]);
 
     Ref<API::InspectorConfiguration> configuration = m_client->configurationForRemoteInspector(*this);
     m_inspectorView = adoptNS([[WKInspectorViewController alloc] initWithConfiguration: WebKit::wrapper(configuration) inspectedPage:nullptr]);
     [m_inspectorView.get() setDelegate:m_objCAdapter.get()];
 
-    m_window = WebInspectorProxy::createFrontendWindow(NSZeroRect, WebInspectorProxy::InspectionTargetType::Remote);
+    m_window = WebInspectorUIProxy::createFrontendWindow(NSZeroRect, WebInspectorUIProxy::InspectionTargetType::Remote);
     [m_window setDelegate:m_objCAdapter.get()];
     [m_window setFrameAutosaveName:@"WKRemoteWebInspectorWindowFrame"];
 
@@ -119,7 +119,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     return webView()->_page.get();
 }
 
-void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
+void RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow()
 {
     if (m_window) {
         [m_window setDelegate:nil];
@@ -136,20 +136,20 @@ void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
         m_objCAdapter = nil;
 }
 
-void RemoteWebInspectorProxy::platformResetState()
+void RemoteWebInspectorUIProxy::platformResetState()
 {
     [NSWindow removeFrameUsingName:[m_window frameAutosaveName]];
 }
 
-void RemoteWebInspectorProxy::platformBringToFront()
+void RemoteWebInspectorUIProxy::platformBringToFront()
 {
     [m_window makeKeyAndOrderFront:nil];
     [m_window makeFirstResponder:webView()];
 }
 
-void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+void RemoteWebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
-    // FIXME: Share with WebInspectorProxyMac.
+    // FIXME: Share with WebInspectorUIProxyMac.
 
     ASSERT(!suggestedURL.isEmpty());
     
@@ -213,9 +213,9 @@ void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const Str
         completionHandler([panel runModal]);
 }
 
-void RemoteWebInspectorProxy::platformAppend(const String& suggestedURL, const String& content)
+void RemoteWebInspectorUIProxy::platformAppend(const String& suggestedURL, const String& content)
 {
-    // FIXME: Share with WebInspectorProxyMac.
+    // FIXME: Share with WebInspectorUIProxyMac.
 
     ASSERT(!suggestedURL.isEmpty());
     
@@ -233,12 +233,12 @@ void RemoteWebInspectorProxy::platformAppend(const String& suggestedURL, const S
     inspectorPage->send(Messages::RemoteWebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
-void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
+void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect& rect)
 {
     m_sheetRect = rect;
 }
 
-void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance appearance)
+void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance appearance)
 {
     NSAppearance *platformAppearance;
     switch (appearance) {
@@ -262,17 +262,17 @@ void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClien
     window.appearance = platformAppearance;
 }
 
-void RemoteWebInspectorProxy::platformStartWindowDrag()
+void RemoteWebInspectorUIProxy::platformStartWindowDrag()
 {
     webView()->_page->startWindowDrag();
 }
 
-void RemoteWebInspectorProxy::platformOpenURLExternally(const String& url)
+void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String& url)
 {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
 }
 
-void RemoteWebInspectorProxy::platformShowCertificate(const CertificateInfo& certificateInfo)
+void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certificateInfo)
 {
     ASSERT(!certificateInfo.isEmpty());
 

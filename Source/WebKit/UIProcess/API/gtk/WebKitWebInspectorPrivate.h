@@ -21,4 +21,4 @@
 
 #include "WebKitWebInspector.h"
 
-WebKitWebInspector* webkitWebInspectorCreate(WebKit::WebInspectorProxy*);
+WebKitWebInspector* webkitWebInspectorCreate(WebKit::WebInspectorUIProxy*);

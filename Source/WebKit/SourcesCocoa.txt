@@ -427,8 +427,8 @@ UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm
 UIProcess/Inspector/ios/WKInspectorHighlightView.mm
 UIProcess/Inspector/ios/WKInspectorNodeSearchGestureRecognizer.mm
 
-UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm
-UIProcess/Inspector/mac/WebInspectorProxyMac.mm
+UIProcess/Inspector/mac/RemoteWebInspectorUIProxyMac.mm
+UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm
 UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm
 UIProcess/Inspector/mac/WKInspectorViewController.mm
 UIProcess/Inspector/mac/WKInspectorWKWebView.mm

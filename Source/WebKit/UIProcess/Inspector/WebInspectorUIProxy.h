@@ -50,7 +50,7 @@
 OBJC_CLASS NSURL;
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
-OBJC_CLASS WKWebInspectorProxyObjCAdapter;
+OBJC_CLASS WKWebInspectorUIProxyObjCAdapter;
 OBJC_CLASS WKInspectorViewController;
 #elif PLATFORM(WIN)
 #include "WebView.h"
@@ -67,7 +67,7 @@ class InspectorClient;
 namespace WebKit {
 
 class WebFrameProxy;
-class WebInspectorProxyClient;
+class WebInspectorUIProxyClient;
 class WebPageProxy;
 class WebPreferences;
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -80,7 +80,7 @@ enum class AttachmentSide {
     Left,
 };
 
-class WebInspectorProxy
+class WebInspectorUIProxy
     : public API::ObjectImpl<API::Object::Type::Inspector>
     , public IPC::MessageReceiver
     , public Inspector::FrontendChannel
@@ -89,13 +89,13 @@ class WebInspectorProxy
 #endif
 {
 public:
-    static Ref<WebInspectorProxy> create(WebPageProxy& inspectedPage)
+    static Ref<WebInspectorUIProxy> create(WebPageProxy& inspectedPage)
     {
-        return adoptRef(*new WebInspectorProxy(inspectedPage));
+        return adoptRef(*new WebInspectorUIProxy(inspectedPage));
     }
 
-    explicit WebInspectorProxy(WebPageProxy&);
-    virtual ~WebInspectorProxy();
+    explicit WebInspectorUIProxy(WebPageProxy&);
+    virtual ~WebInspectorUIProxy();
 
     void invalidate();
 
@@ -150,7 +150,7 @@ public:
 
 #if PLATFORM(GTK)
     GtkWidget* inspectorView() const { return m_inspectorView; };
-    void setClient(std::unique_ptr<WebInspectorProxyClient>&&);
+    void setClient(std::unique_ptr<WebInspectorUIProxyClient>&&);
 #endif
 
     void showConsole();
@@ -183,7 +183,7 @@ public:
 
     void setDiagnosticLoggingAvailable(bool);
 
-    // Provided by platform WebInspectorProxy implementations.
+    // Provided by platform WebInspectorUIProxy implementations.
     static String inspectorPageURL();
     static String inspectorTestPageURL();
     static bool isMainOrTestInspectorPage(const URL&);
@@ -242,7 +242,7 @@ private:
     bool platformCanAttach(bool webProcessCanAttach) { return webProcessCanAttach; }
 #endif
 
-    // Called by WebInspectorProxy messages
+    // Called by WebInspectorUIProxy messages
     void openLocalInspectorFrontend(bool canAttach, bool underTest);
     void setFrontendConnection(IPC::Attachment);
 
@@ -310,15 +310,15 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<WKInspectorViewController> m_inspectorViewController;
     RetainPtr<NSWindow> m_inspectorWindow;
-    RetainPtr<WKWebInspectorProxyObjCAdapter> m_objCAdapter;
+    RetainPtr<WKWebInspectorUIProxyObjCAdapter> m_objCAdapter;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
-    RunLoop::Timer<WebInspectorProxy> m_closeFrontendAfterInactivityTimer;
+    RunLoop::Timer<WebInspectorUIProxy> m_closeFrontendAfterInactivityTimer;
     String m_urlString;
     WebCore::FloatRect m_sheetRect;
     WebCore::InspectorFrontendClient::Appearance m_frontendAppearance { WebCore::InspectorFrontendClient::Appearance::System };
     bool m_isObservingContentLayoutRect { false };
 #elif PLATFORM(GTK)
-    std::unique_ptr<WebInspectorProxyClient> m_client;
+    std::unique_ptr<WebInspectorUIProxyClient> m_client;
     GtkWidget* m_inspectorView { nullptr };
     GtkWidget* m_inspectorWindow { nullptr };
     GtkWidget* m_headerBar { nullptr };

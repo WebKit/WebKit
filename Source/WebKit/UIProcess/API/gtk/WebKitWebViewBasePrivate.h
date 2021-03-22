@@ -36,7 +36,7 @@
 #include "ViewSnapshotStore.h"
 #include "WebContextMenuProxyGtk.h"
 #include "WebHitTestResultData.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebKitInputMethodContext.h"
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"

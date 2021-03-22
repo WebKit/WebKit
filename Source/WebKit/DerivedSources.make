@@ -147,8 +147,8 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebAuthentication/WebAuthnProcessProxy \
 	UIProcess/WebPasteboardProxy \
 	UIProcess/UserContent/WebUserContentControllerProxy \
-	UIProcess/Inspector/WebInspectorProxy \
-	UIProcess/Inspector/RemoteWebInspectorProxy \
+	UIProcess/Inspector/WebInspectorUIProxy \
+	UIProcess/Inspector/RemoteWebInspectorUIProxy \
 	UIProcess/Inspector/WebInspectorUIExtensionControllerProxy \
 	UIProcess/Plugins/PluginProcessProxy \
 	UIProcess/DrawingAreaProxy \

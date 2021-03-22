@@ -282,9 +282,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteTextTrackProxyMessagesReplies
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteVideoTrackProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteVideoTrackProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteVideoTrackProxyMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteWebInspectorUIMessagesReplies.h
@@ -412,9 +412,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorInterruptDispatcherMess
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorProxyMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebInspectorUIExtensionControllerMessagesReplies.h

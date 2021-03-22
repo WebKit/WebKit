@@ -29,14 +29,14 @@
 #if !PLATFORM(IOS_FAMILY)
 
 #include "WKAPICast.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebPageProxy.h"
 
 using namespace WebKit;
 
 WKTypeID WKInspectorGetTypeID()
 {
-    return toAPI(WebInspectorProxy::APIType);
+    return toAPI(WebInspectorUIProxy::APIType);
 }
 
 WKPageRef WKInspectorGetPage(WKInspectorRef inspectorRef)

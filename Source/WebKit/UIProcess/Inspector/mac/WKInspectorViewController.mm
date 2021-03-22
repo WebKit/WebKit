@@ -40,7 +40,7 @@
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewPrivate.h"
-#import "WebInspectorProxy.h"
+#import "WebInspectorUIProxy.h"
 #import "WebInspectorUtilities.h"
 #import "WebPageProxy.h"
 #import "_WKInspectorConfigurationInternal.h"
@@ -93,7 +93,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 {
     // Construct lazily so the client can set the delegate before the WebView is created.
     if (!_webView) {
-        NSRect initialFrame = NSMakeRect(0, 0, WebKit::WebInspectorProxy::initialWindowWidth, WebKit::WebInspectorProxy::initialWindowHeight);
+        NSRect initialFrame = NSMakeRect(0, 0, WebKit::WebInspectorUIProxy::initialWindowWidth, WebKit::WebInspectorUIProxy::initialWindowHeight);
         _webView = adoptNS([[WKInspectorWKWebView alloc] initWithFrame:initialFrame configuration:self.webViewConfiguration]);
         [_webView setUIDelegate:self];
         [_webView setNavigationDelegate:self];

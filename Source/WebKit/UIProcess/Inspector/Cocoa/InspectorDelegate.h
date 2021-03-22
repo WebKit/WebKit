@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class WebInspectorProxy;
+class WebInspectorUIProxy;
 
 class InspectorDelegate {
     WTF_MAKE_FAST_ALLOCATED;
@@ -54,7 +54,7 @@ private:
 
     private:
         // API::InspectorClient
-        void openURLExternally(WebInspectorProxy&, const String& url);
+        void openURLExternally(WebInspectorUIProxy&, const String& url);
 
         InspectorDelegate& m_inspectorDelegate;
     };

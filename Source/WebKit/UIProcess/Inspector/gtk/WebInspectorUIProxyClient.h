@@ -29,20 +29,20 @@
 
 namespace WebKit {
 
-class WebInspectorProxy;
+class WebInspectorUIProxy;
 
-class WebInspectorProxyClient {
+class WebInspectorUIProxyClient {
 public:
-    virtual ~WebInspectorProxyClient() = default;
-    virtual bool openWindow(WebInspectorProxy&) = 0;
-    virtual void didClose(WebInspectorProxy&) = 0;
-    virtual bool bringToFront(WebInspectorProxy&) = 0;
-    virtual void inspectedURLChanged(WebInspectorProxy&, const String& url) = 0;
-    virtual bool attach(WebInspectorProxy&) = 0;
-    virtual bool detach(WebInspectorProxy&) = 0;
-    virtual void didChangeAttachedHeight(WebInspectorProxy&, unsigned height) = 0;
-    virtual void didChangeAttachedWidth(WebInspectorProxy&, unsigned width) = 0;
-    virtual void didChangeAttachAvailability(WebInspectorProxy&, bool available) = 0;
+    virtual ~WebInspectorUIProxyClient() = default;
+    virtual bool openWindow(WebInspectorUIProxy&) = 0;
+    virtual void didClose(WebInspectorUIProxy&) = 0;
+    virtual bool bringToFront(WebInspectorUIProxy&) = 0;
+    virtual void inspectedURLChanged(WebInspectorUIProxy&, const String& url) = 0;
+    virtual bool attach(WebInspectorUIProxy&) = 0;
+    virtual bool detach(WebInspectorUIProxy&) = 0;
+    virtual void didChangeAttachedHeight(WebInspectorUIProxy&, unsigned height) = 0;
+    virtual void didChangeAttachedWidth(WebInspectorUIProxy&, unsigned width) = 0;
+    virtual void didChangeAttachAvailability(WebInspectorUIProxy&, bool available) = 0;
 };
 
 } // namespace WebKit

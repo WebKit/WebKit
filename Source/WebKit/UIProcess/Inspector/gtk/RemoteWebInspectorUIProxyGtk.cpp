@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "RemoteWebInspectorProxy.h"
+#include "RemoteWebInspectorUIProxy.h"
 
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteWebInspectorUIMessages.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
@@ -40,19 +40,19 @@
 namespace WebKit {
 using namespace WebCore;
 
-void RemoteWebInspectorProxy::updateWindowTitle(const CString& targetName)
+void RemoteWebInspectorUIProxy::updateWindowTitle(const CString& targetName)
 {
     if (!m_window)
         return;
     webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_window), !targetName.isNull() ? targetName.data() : nullptr);
 }
 
-static void remoteInspectorViewDestroyed(RemoteWebInspectorProxy* inspectorProxy)
+static void remoteInspectorViewDestroyed(RemoteWebInspectorUIProxy* inspectorProxy)
 {
     inspectorProxy->closeFromCrash();
 }
 
-WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
+WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
     ASSERT(!m_webView);
 
@@ -86,7 +86,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
 }
 
-void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
+void RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow()
 {
     if (m_webView) {
         if (auto* webPage = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView)))
@@ -96,11 +96,11 @@ void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
         gtk_widget_destroy(m_window);
 }
 
-void RemoteWebInspectorProxy::platformResetState()
+void RemoteWebInspectorUIProxy::platformResetState()
 {
 }
 
-void RemoteWebInspectorProxy::platformBringToFront()
+void RemoteWebInspectorUIProxy::platformBringToFront()
 {
     if (m_window)
         gtk_window_present(GTK_WINDOW(m_window));
@@ -117,7 +117,7 @@ static void remoteFileReplaceContentsCallback(GObject* sourceObject, GAsyncResul
     page->send(Messages::RemoteWebInspectorUI::DidSave(path.get()));
 }
 
-void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+void RemoteWebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     UNUSED_PARAM(forceSaveDialog);
 
@@ -156,27 +156,27 @@ void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const Str
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, remoteFileReplaceContentsCallback, m_inspectorPage);
 }
 
-void RemoteWebInspectorProxy::platformAppend(const String&, const String&)
+void RemoteWebInspectorUIProxy::platformAppend(const String&, const String&)
 {
 }
 
-void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect&)
+void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect&)
 {
 }
 
-void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance)
+void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance)
 {
 }
 
-void RemoteWebInspectorProxy::platformStartWindowDrag()
+void RemoteWebInspectorUIProxy::platformStartWindowDrag()
 {
 }
 
-void RemoteWebInspectorProxy::platformOpenURLExternally(const String&)
+void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String&)
 {
 }
 
-void RemoteWebInspectorProxy::platformShowCertificate(const CertificateInfo&)
+void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo&)
 {
 }
 

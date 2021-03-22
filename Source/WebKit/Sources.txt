@@ -455,8 +455,8 @@ UIProcess/Network/NetworkProcessProxy.cpp
 UIProcess/GPU/GPUProcessProxy.cpp
 
 UIProcess/Inspector/InspectorTargetProxy.cpp
-UIProcess/Inspector/RemoteWebInspectorProxy.cpp
-UIProcess/Inspector/WebInspectorProxy.cpp
+UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp
+UIProcess/Inspector/WebInspectorUIProxy.cpp
 UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp
 UIProcess/Inspector/WebInspectorUtilities.cpp
 UIProcess/Inspector/WebPageDebuggable.cpp

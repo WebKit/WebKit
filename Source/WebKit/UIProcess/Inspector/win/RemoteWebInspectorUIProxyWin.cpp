@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "RemoteWebInspectorProxy.h"
+#include "RemoteWebInspectorUIProxy.h"
 
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "APIPageConfiguration.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebView.h"
@@ -38,12 +38,12 @@
 
 namespace WebKit {
 
-static LPCTSTR RemoteWebInspectorProxyPointerProp = TEXT("RemoteWebInspectorProxyPointer");
-const LPCWSTR RemoteWebInspectorProxyClassName = L"RemoteWebInspectorProxyClass";
+static LPCTSTR RemoteWebInspectorUIProxyPointerProp = TEXT("RemoteWebInspectorUIProxyPointer");
+const LPCWSTR RemoteWebInspectorUIProxyClassName = L"RemoteWebInspectorUIProxyClass";
 
-LRESULT CALLBACK RemoteWebInspectorProxy::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK RemoteWebInspectorUIProxy::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    RemoteWebInspectorProxy* client = reinterpret_cast<RemoteWebInspectorProxy*>(::GetProp(hwnd, RemoteWebInspectorProxyPointerProp));
+    RemoteWebInspectorUIProxy* client = reinterpret_cast<RemoteWebInspectorUIProxy*>(::GetProp(hwnd, RemoteWebInspectorUIProxyPointerProp));
 
     switch (msg) {
     case WM_SIZE:
@@ -66,7 +66,7 @@ static ATOM registerWindowClass()
     WNDCLASSEX wcex;
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.style          = 0;
-    wcex.lpfnWndProc    = RemoteWebInspectorProxy::WndProc;
+    wcex.lpfnWndProc    = RemoteWebInspectorUIProxy::WndProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = 0;
@@ -74,14 +74,14 @@ static ATOM registerWindowClass()
     wcex.hCursor        = LoadCursor(0, IDC_ARROW);
     wcex.hbrBackground  = 0;
     wcex.lpszMenuName   = 0;
-    wcex.lpszClassName  = RemoteWebInspectorProxyClassName;
+    wcex.lpszClassName  = RemoteWebInspectorUIProxyClassName;
     wcex.hIconSm        = 0;
 
     haveRegisteredWindowClass = true;
     return ::RegisterClassEx(&wcex);
 }
 
-LRESULT RemoteWebInspectorProxy::sizeChange()
+LRESULT RemoteWebInspectorUIProxy::sizeChange()
 {
     if (!m_webView)
         return 0;
@@ -92,14 +92,14 @@ LRESULT RemoteWebInspectorProxy::sizeChange()
     return 0;
 }
 
-LRESULT RemoteWebInspectorProxy::onClose()
+LRESULT RemoteWebInspectorUIProxy::onClose()
 {
     ::ShowWindow(m_frontendHandle, SW_HIDE);
     frontendDidClose();
     return 0;
 }
 
-WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
+WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
     RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
     preferences->setAllowFileAccessFromFileURLs(true);
@@ -118,10 +118,10 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
 
     WebCore::IntRect rect(60, 200, 1500, 1000);
     registerWindowClass();
-    m_frontendHandle = ::CreateWindowEx(0, RemoteWebInspectorProxyClassName, 0, WS_OVERLAPPEDWINDOW,
+    m_frontendHandle = ::CreateWindowEx(0, RemoteWebInspectorUIProxyClassName, 0, WS_OVERLAPPEDWINDOW,
         rect.x(), rect.y(), rect.width(), rect.height(), 0, 0, 0, 0);
 
-    ::SetProp(m_frontendHandle, RemoteWebInspectorProxyPointerProp, reinterpret_cast<HANDLE>(this));
+    ::SetProp(m_frontendHandle, RemoteWebInspectorUIProxyPointerProp, reinterpret_cast<HANDLE>(this));
     ShowWindow(m_frontendHandle, SW_SHOW);
 
     RECT r;
@@ -130,17 +130,17 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     return m_webView->page();
 }
 
-void RemoteWebInspectorProxy::platformResetState() { }
-void RemoteWebInspectorProxy::platformBringToFront() { }
-void RemoteWebInspectorProxy::platformSave(const String&, const String&, bool, bool) { }
-void RemoteWebInspectorProxy::platformAppend(const String&, const String&) { }
-void RemoteWebInspectorProxy::platformSetSheetRect(const WebCore::FloatRect&) { }
-void RemoteWebInspectorProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance) { }
-void RemoteWebInspectorProxy::platformStartWindowDrag() { }
-void RemoteWebInspectorProxy::platformOpenURLExternally(const String&) { }
-void RemoteWebInspectorProxy::platformShowCertificate(const WebCore::CertificateInfo&) { }
+void RemoteWebInspectorUIProxy::platformResetState() { }
+void RemoteWebInspectorUIProxy::platformBringToFront() { }
+void RemoteWebInspectorUIProxy::platformSave(const String&, const String&, bool, bool) { }
+void RemoteWebInspectorUIProxy::platformAppend(const String&, const String&) { }
+void RemoteWebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&) { }
+void RemoteWebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance) { }
+void RemoteWebInspectorUIProxy::platformStartWindowDrag() { }
+void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String&) { }
+void RemoteWebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo&) { }
 
-void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
+void RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow()
 {
     ::DestroyWindow(m_frontendHandle);
 }

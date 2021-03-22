@@ -956,7 +956,7 @@ void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::
     }).get()];
 }
 
-Ref<API::InspectorConfiguration> UIDelegate::UIClient::configurationForLocalInspector(WebPageProxy&, WebInspectorProxy& inspector)
+Ref<API::InspectorConfiguration> UIDelegate::UIClient::configurationForLocalInspector(WebPageProxy&, WebInspectorUIProxy& inspector)
 {
     if (!m_uiDelegate)
         return API::InspectorConfiguration::create();
@@ -971,7 +971,7 @@ Ref<API::InspectorConfiguration> UIDelegate::UIClient::configurationForLocalInsp
     return static_cast<API::InspectorConfiguration&>([[(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() configurationForLocalInspector:wrapper(inspector)] _apiObject]);
 }
 
-void UIDelegate::UIClient::didAttachLocalInspector(WebPageProxy&, WebInspectorProxy& inspector)
+void UIDelegate::UIClient::didAttachLocalInspector(WebPageProxy&, WebInspectorUIProxy& inspector)
 {
     if (!m_uiDelegate)
         return;
@@ -986,7 +986,7 @@ void UIDelegate::UIClient::didAttachLocalInspector(WebPageProxy&, WebInspectorPr
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() didAttachLocalInspector:wrapper(inspector)];
 }
 
-void UIDelegate::UIClient::willCloseLocalInspector(WebPageProxy&, WebInspectorProxy& inspector)
+void UIDelegate::UIClient::willCloseLocalInspector(WebPageProxy&, WebInspectorUIProxy& inspector)
 {
     if (!m_uiDelegate)
         return;

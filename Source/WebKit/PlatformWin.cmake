@@ -57,7 +57,7 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
-    UIProcess/Inspector/win/WebInspectorProxyWin.cpp
+    UIProcess/Inspector/win/WebInspectorUIProxyWin.cpp
 
     UIProcess/Launcher/win/ProcessLauncherWin.cpp
 
@@ -185,7 +185,7 @@ if (ENABLE_REMOTE_INSPECTOR)
         UIProcess/Inspector/socket/RemoteInspectorClient.cpp
         UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.cpp
 
-        UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp
+        UIProcess/Inspector/win/RemoteWebInspectorUIProxyWin.cpp
     )
 
     list(APPEND WebKit_INCLUDE_DIRECTORIES

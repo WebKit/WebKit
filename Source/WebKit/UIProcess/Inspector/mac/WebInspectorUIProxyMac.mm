@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebInspectorProxy.h"
+#import "WebInspectorUIProxy.h"
 
 #if PLATFORM(MAC)
 
@@ -58,15 +58,15 @@ static const Seconds webViewCloseTimeout { 1_min };
 
 static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserverContext;
 
-@interface WKWebInspectorProxyObjCAdapter () <NSWindowDelegate, WKInspectorViewControllerDelegate>
+@interface WKWebInspectorUIProxyObjCAdapter () <NSWindowDelegate, WKInspectorViewControllerDelegate>
 
-- (instancetype)initWithWebInspectorProxy:(WebKit::WebInspectorProxy*)inspectorProxy;
+- (instancetype)initWithWebInspectorUIProxy:(WebKit::WebInspectorUIProxy*)inspectorProxy;
 - (void)invalidate;
 
 @end
 
-@implementation WKWebInspectorProxyObjCAdapter {
-    WebKit::WebInspectorProxy* _inspectorProxy;
+@implementation WKWebInspectorUIProxyObjCAdapter {
+    WebKit::WebInspectorUIProxy* _inspectorProxy;
 }
 
 - (WKInspectorRef)inspectorRef
@@ -81,7 +81,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
     return nil;
 }
 
-- (instancetype)initWithWebInspectorProxy:(WebKit::WebInspectorProxy*)inspectorProxy
+- (instancetype)initWithWebInspectorUIProxy:(WebKit::WebInspectorUIProxy*)inspectorProxy
 {
     ASSERT_ARG(inspectorProxy, inspectorProxy);
 
@@ -209,12 +209,12 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 namespace WebKit {
 using namespace WebCore;
 
-void WebInspectorProxy::didBecomeActive()
+void WebInspectorUIProxy::didBecomeActive()
 {
     m_inspectorPage->send(Messages::WebInspectorUI::UpdateFindString(WebKit::stringForFind()));
 }
 
-void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
+void WebInspectorUIProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
 {
     [[NSNotificationCenter defaultCenter] removeObserver:m_objCAdapter.get() name:NSViewFrameDidChangeNotification object:oldView];
     [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:newView];
@@ -223,7 +223,7 @@ void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView
         attach(m_attachmentSide);
 }
 
-void WebInspectorProxy::attachmentWillMoveFromWindow(NSWindow *oldWindow)
+void WebInspectorUIProxy::attachmentWillMoveFromWindow(NSWindow *oldWindow)
 {
     if (m_isObservingContentLayoutRect) {
         m_isObservingContentLayoutRect = false;
@@ -231,7 +231,7 @@ void WebInspectorProxy::attachmentWillMoveFromWindow(NSWindow *oldWindow)
     }
 }
 
-void WebInspectorProxy::attachmentDidMoveToWindow(NSWindow *newWindow)
+void WebInspectorUIProxy::attachmentDidMoveToWindow(NSWindow *newWindow)
 {
     if (m_isAttached && !!newWindow) {
         m_isObservingContentLayoutRect = true;
@@ -240,7 +240,7 @@ void WebInspectorProxy::attachmentDidMoveToWindow(NSWindow *newWindow)
     }
 }
 
-void WebInspectorProxy::updateInspectorWindowTitle() const
+void WebInspectorUIProxy::updateInspectorWindowTitle() const
 {
     if (!m_inspectorWindow)
         return;
@@ -255,7 +255,7 @@ void WebInspectorProxy::updateInspectorWindowTitle() const
     }
 }
 
-RetainPtr<NSWindow> WebInspectorProxy::createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType targetType)
+RetainPtr<NSWindow> WebInspectorUIProxy::createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType targetType)
 {
     NSRect windowFrame = !NSIsEmptyRect(savedWindowFrame) ? savedWindowFrame : NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
     auto window = adoptNS([[_WKInspectorWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO]);
@@ -280,7 +280,7 @@ RetainPtr<NSWindow> WebInspectorProxy::createFrontendWindow(NSRect savedWindowFr
     return window;
 }
 
-WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
+WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
 {
     ASSERT(inspectedPage());
     ASSERT(!m_inspectorPage);
@@ -292,7 +292,7 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
         return [m_inspectorViewController webView]->_page.get();
     }
 
-    m_objCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
+    m_objCAdapter = adoptNS([[WKWebInspectorUIProxyObjCAdapter alloc] initWithWebInspectorUIProxy:this]);
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
 
@@ -306,14 +306,14 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
     return inspectorPage;
 }
 
-void WebInspectorProxy::platformCreateFrontendWindow()
+void WebInspectorUIProxy::platformCreateFrontendWindow()
 {
     ASSERT(!m_inspectorWindow);
 
     NSString *savedWindowFrameString = inspectedPage()->pageGroup().preferences().inspectorWindowFrame();
     NSRect savedWindowFrame = NSRectFromString(savedWindowFrameString);
 
-    m_inspectorWindow = WebInspectorProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local);
+    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local);
     [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
     WKWebView *inspectorView = [m_inspectorViewController webView];
@@ -325,7 +325,7 @@ void WebInspectorProxy::platformCreateFrontendWindow()
     applyForcedAppearance();
 }
 
-void WebInspectorProxy::closeFrontendPage()
+void WebInspectorUIProxy::closeFrontendPage()
 {
     ASSERT(!m_isAttached || !m_inspectorWindow);
 
@@ -342,12 +342,12 @@ void WebInspectorProxy::closeFrontendPage()
     }
 }
 
-void WebInspectorProxy::closeFrontendAfterInactivityTimerFired()
+void WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired()
 {
     closeFrontendPage();
 }
 
-void WebInspectorProxy::platformCloseFrontendPageAndWindow()
+void WebInspectorUIProxy::platformCloseFrontendPageAndWindow()
 {
     if (m_inspectorWindow) {
         [m_inspectorWindow setDelegate:nil];
@@ -358,21 +358,21 @@ void WebInspectorProxy::platformCloseFrontendPageAndWindow()
     m_closeFrontendAfterInactivityTimer.startOneShot(webViewCloseTimeout);
 }
 
-void WebInspectorProxy::platformDidCloseForCrash()
+void WebInspectorUIProxy::platformDidCloseForCrash()
 {
     m_closeFrontendAfterInactivityTimer.stop();
 
     closeFrontendPage();
 }
 
-void WebInspectorProxy::platformInvalidate()
+void WebInspectorUIProxy::platformInvalidate()
 {
     m_closeFrontendAfterInactivityTimer.stop();
 
     closeFrontendPage();
 }
 
-void WebInspectorProxy::platformHide()
+void WebInspectorUIProxy::platformHide()
 {
     if (m_isAttached) {
         platformDetach();
@@ -386,12 +386,12 @@ void WebInspectorProxy::platformHide()
     }
 }
 
-void WebInspectorProxy::platformResetState()
+void WebInspectorUIProxy::platformResetState()
 {
     inspectedPage()->pageGroup().preferences().deleteInspectorWindowFrame();
 }
 
-void WebInspectorProxy::platformBringToFront()
+void WebInspectorUIProxy::platformBringToFront()
 {
     // If the Web Inspector is no longer in the same window as the inspected view,
     // then we need to reopen the Inspector to get it attached to the right window.
@@ -406,18 +406,18 @@ void WebInspectorProxy::platformBringToFront()
     [[m_inspectorViewController webView].window makeFirstResponder:[m_inspectorViewController webView]];
 }
 
-void WebInspectorProxy::platformBringInspectedPageToFront()
+void WebInspectorUIProxy::platformBringInspectedPageToFront()
 {
     [inspectedPage()->platformWindow() makeKeyAndOrderFront:nil];
 }
 
-bool WebInspectorProxy::platformIsFront()
+bool WebInspectorUIProxy::platformIsFront()
 {
     // FIXME <rdar://problem/10937688>: this will not return false for a background tab in Safari, only a background window.
     return m_isVisible && [m_inspectorViewController webView].window.isMainWindow;
 }
 
-bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
+bool WebInspectorUIProxy::platformCanAttach(bool webProcessCanAttach)
 {
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     if ([WKInspectorViewController viewIsInspectorWebView:inspectedView])
@@ -436,26 +436,26 @@ bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
     return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= NSWidth(inspectedViewFrame);
 }
 
-void WebInspectorProxy::platformAttachAvailabilityChanged(bool available)
+void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool available)
 {
     // Do nothing.
 }
 
-void WebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance appearance)
+void WebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance appearance)
 {
     m_frontendAppearance = appearance;
 
     applyForcedAppearance();
 }
 
-void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
+void WebInspectorUIProxy::platformInspectedURLChanged(const String& urlString)
 {
     m_urlString = urlString;
 
     updateInspectorWindowTitle();
 }
 
-void WebInspectorProxy::platformShowCertificate(const CertificateInfo& certificateInfo)
+void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certificateInfo)
 {
     ASSERT(!certificateInfo.isEmpty());
 
@@ -484,7 +484,7 @@ void WebInspectorProxy::platformShowCertificate(const CertificateInfo& certifica
     [certificateView setDetailsDisclosed:YES];
 }
 
-void WebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
+void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     ASSERT(!suggestedURL.isEmpty());
     
@@ -548,7 +548,7 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
         completionHandler([panel runModal]);
 }
 
-void WebInspectorProxy::platformAppend(const String& suggestedURL, const String& content)
+void WebInspectorUIProxy::platformAppend(const String& suggestedURL, const String& content)
 {
     ASSERT(!suggestedURL.isEmpty());
     
@@ -565,7 +565,7 @@ void WebInspectorProxy::platformAppend(const String& suggestedURL, const String&
     m_inspectorPage->send(Messages::WebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
-void WebInspectorProxy::windowFrameDidChange()
+void WebInspectorUIProxy::windowFrameDidChange()
 {
     ASSERT(!m_isAttached);
     ASSERT(m_isVisible);
@@ -578,7 +578,7 @@ void WebInspectorProxy::windowFrameDidChange()
     inspectedPage()->pageGroup().preferences().setInspectorWindowFrame(frameString);
 }
 
-void WebInspectorProxy::windowFullScreenDidChange()
+void WebInspectorUIProxy::windowFullScreenDidChange()
 {
     ASSERT(!m_isAttached);
     ASSERT(m_isVisible);
@@ -590,7 +590,7 @@ void WebInspectorProxy::windowFullScreenDidChange()
     attachAvailabilityChanged(platformCanAttach(canAttach()));    
 }
 
-void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
+void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 {
     if (!m_isVisible)
         return;
@@ -677,21 +677,21 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
     [inspectedView setFrame:inspectedViewFrame];
 }
 
-unsigned WebInspectorProxy::platformInspectedWindowHeight()
+unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
 {
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     NSRect inspectedViewRect = [inspectedView frame];
     return static_cast<unsigned>(inspectedViewRect.size.height);
 }
 
-unsigned WebInspectorProxy::platformInspectedWindowWidth()
+unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
 {
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     NSRect inspectedViewRect = [inspectedView frame];
     return static_cast<unsigned>(inspectedViewRect.size.width);
 }
 
-void WebInspectorProxy::platformAttach()
+void WebInspectorUIProxy::platformAttach()
 {
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     WKWebView *inspectorView = [m_inspectorViewController webView];
@@ -726,7 +726,7 @@ void WebInspectorProxy::platformAttach()
     [inspectorView.window makeFirstResponder:inspectorView];
 }
 
-void WebInspectorProxy::platformDetach()
+void WebInspectorUIProxy::platformDetach()
 {
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     WKWebView *inspectorView = [m_inspectorViewController webView];
@@ -748,7 +748,7 @@ void WebInspectorProxy::platformDetach()
     open();
 }
 
-void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
+void WebInspectorUIProxy::platformSetAttachedWindowHeight(unsigned height)
 {
     if (!m_isAttached)
         return;
@@ -756,7 +756,7 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
     inspectedViewFrameDidChange(height);
 }
 
-void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
+void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned width)
 {
     if (!m_isAttached)
         return;
@@ -764,12 +764,12 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
     inspectedViewFrameDidChange(width);
 }
 
-void WebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
+void WebInspectorUIProxy::platformSetSheetRect(const FloatRect& rect)
 {
     m_sheetRect = rect;
 }
 
-void WebInspectorProxy::platformStartWindowDrag()
+void WebInspectorUIProxy::platformStartWindowDrag()
 {
     if (auto* webView = [m_inspectorViewController webView]) {
         if (webView->_page)
@@ -777,12 +777,12 @@ void WebInspectorProxy::platformStartWindowDrag()
     }
 }
 
-String WebInspectorProxy::inspectorPageURL()
+String WebInspectorUIProxy::inspectorPageURL()
 {
     return [WKInspectorViewController URLForInspectorResource:@"Main.html"].absoluteString;
 }
 
-String WebInspectorProxy::inspectorTestPageURL()
+String WebInspectorUIProxy::inspectorTestPageURL()
 {
     return [WKInspectorViewController URLForInspectorResource:@"Test.html"].absoluteString;
 }
@@ -795,7 +795,7 @@ static NSDictionary *systemVersionPlist()
     return systemVersionInfo;
 }
 
-DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
+DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
 {
     NSDictionary *plist = systemVersionPlist();
 
@@ -809,7 +809,7 @@ DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
     return result;
 }
 
-void WebInspectorProxy::applyForcedAppearance()
+void WebInspectorUIProxy::applyForcedAppearance()
 {
     NSAppearance *platformAppearance;
     switch (m_frontendAppearance) {
