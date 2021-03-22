@@ -155,9 +155,7 @@ WKNavigation *WKPageLoadFileReturningNavigation(WKPageRef pageRef, WKURLRef file
 
 WKWebView *WKPageGetWebView(WKPageRef page)
 {
-    if (!page)
-        return nil;
-    return fromWebPageProxy(*WebKit::toImpl(page));
+    return page ? WebKit::toImpl(page)->cocoaView().autorelease() : nil;
 }
 
 #if PLATFORM(MAC)

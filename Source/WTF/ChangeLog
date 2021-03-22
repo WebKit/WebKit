@@ -1,3 +1,13 @@
+2021-03-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make it possible to release a WKWebView on a non-main thread without a crash due to WKScriptMessage race
+        https://bugs.webkit.org/show_bug.cgi?id=222336
+
+        Reviewed by Chris Dumez.
+
+        * wtf/spi/cocoa/objcSPI.h: Removed unnecessary #if so functions are correctly compiled for
+        non-Objective-C source files. Added include of <objc/objc.h> so that "id" is defined.
+
 2021-03-19  Sam Weinig  <weinig@apple.com>
 
         Add PropertyName parameter to custom setters to allow shared implementations to do late name lookup

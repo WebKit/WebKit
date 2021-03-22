@@ -1,3 +1,14 @@
+2021-03-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make it possible to release a WKWebView on a non-main thread without a crash due to WKScriptMessage race
+        https://bugs.webkit.org/show_bug.cgi?id=222336
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        Use _close instead of WKWebView deallocation to trigger a call to stopURLSchemeTask,
+        since such delegate methods will intentionally no longer be delivered if triggered by deallocation.
+
 2021-03-22  Youenn Fablet  <youenn@apple.com>
 
         Implement RTCDataChannel transfer out of process

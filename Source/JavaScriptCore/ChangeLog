@@ -1,3 +1,13 @@
+2021-03-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make it possible to release a WKWebView on a non-main thread without a crash due to WKScriptMessage race
+        https://bugs.webkit.org/show_bug.cgi?id=222336
+
+        Reviewed by Chris Dumez.
+
+        * API/ObjcRuntimeExtras.h: Removed declarations of objc_initWeak and objc_destroyWeak, since
+        these are already in <wtf/spi/cocoa/objcSPI.h>.
+
 2021-03-19  Mark Lam  <mark.lam@apple.com>
 
         BrandedStructure should keep its members alive.

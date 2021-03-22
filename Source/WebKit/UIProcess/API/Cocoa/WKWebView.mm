@@ -197,17 +197,6 @@ static const BOOL defaultFastClickingEnabled = NO;
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif // PLATFORM(IOS_FAMILY)
 
-static HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKWebView *>& pageToViewMap()
-{
-    static NeverDestroyed<HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKWebView *>> map;
-    return map;
-}
-
-WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
-{
-    return pageToViewMap().get(&page);
-}
-
 RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
@@ -440,7 +429,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     for (auto& pair : pageConfiguration->urlSchemeHandlers())
         _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
 
-    pageToViewMap().add(_page.get(), self);
+    _page->setCocoaView(self);
 
     [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WKWebView" deprecated:NO];
 
@@ -449,7 +438,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _timeOfRequestForVisibleContentRectUpdate = timeNow;
     _timeOfLastVisibleContentRectUpdate = timeNow;
     _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;
-#endif // PLATFORM(IOS_FAMILY)
+#endif
 }
 
 - (void)_setupPageConfiguration:(Ref<API::PageConfiguration>&)pageConfiguration
@@ -642,9 +631,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr);
 #endif
-
-    if (_page)
-        pageToViewMap().remove(_page.get());
 
     [super dealloc];
 }

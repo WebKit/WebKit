@@ -33,6 +33,7 @@
 #import "WKNSData.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import <Foundation/Foundation.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/WeakObjCPtr.h>
@@ -196,10 +197,8 @@ private:
 
 - (WKWebView *)webView
 {
-    auto* page = _download->originatingPage();
-    if (!page)
-        return nil;
-    return fromWebPageProxy(*page);
+    auto page = _download->originatingPage();
+    return page ? page->cocoaView().autorelease() : nil;
 }
 
 - (id <WKDownloadDelegate>)delegate

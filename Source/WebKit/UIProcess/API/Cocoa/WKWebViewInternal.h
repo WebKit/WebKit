@@ -283,7 +283,6 @@ class ViewGestureController;
 
 @end
 
-WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&);
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

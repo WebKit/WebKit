@@ -138,11 +138,6 @@
 #include "EndowmentStateTracker.h"
 #endif
 
-OBJC_CLASS NSMenu;
-OBJC_CLASS NSTextAlternatives;
-OBJC_CLASS NSView;
-OBJC_CLASS _WKRemoteObjectRegistry;
-
 #if ENABLE(DRAG_SUPPORT)
 #include <WebCore/DragActions.h>
 #endif
@@ -154,6 +149,7 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #if PLATFORM(COCOA)
 #include "DynamicViewportSizeUpdate.h"
 #include "RemoteLayerTreeNode.h"
+#include <wtf/WeakObjCPtr.h>
 #endif
 
 #if HAVE(TOUCH_BAR)
@@ -219,10 +215,19 @@ class Decoder;
 class FormDataReference;
 class SharedBufferCopy;
 }
+
+#if PLATFORM(COCOA)
 OBJC_CLASS NSFileWrapper;
+OBJC_CLASS NSMenu;
+OBJC_CLASS NSTextAlternatives;
+OBJC_CLASS NSView;
 OBJC_CLASS WKQLThumbnailLoadOperation;
+OBJC_CLASS WKWebView;
+OBJC_CLASS _WKRemoteObjectRegistry;
+#endif
 
 namespace WebCore {
+
 class AuthenticationChallenge;
 class CertificateInfo;
 class Cursor;
@@ -294,6 +299,7 @@ enum class DataOwnerType : uint8_t;
 
 template<typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
+
 }
 
 #if PLATFORM(GTK)
@@ -313,7 +319,7 @@ typedef HWND PlatformViewWidget;
 #endif
 
 namespace WebKit {
-struct AppBoundNavigationTestingData;
+
 class AudioSessionRoutingArbitratorProxy;
 class DrawingAreaProxy;
 class GamepadData;
@@ -359,7 +365,7 @@ class WebWheelEvent;
 class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
-struct WebBackForwardListCounts;
+struct AppBoundNavigationTestingData;
 struct ColorSpaceData;
 struct DataDetectionResult;
 struct DocumentEditingContext;
@@ -380,13 +386,14 @@ struct PlatformPopupMenuData;
 struct PrintInfo;
 struct PDFContextMenu;
 struct ResourceLoadInfo;
+struct URLSchemeTaskParameters;
+struct UserMessage;
 struct WebAutocorrectionData;
+struct WebBackForwardListCounts;
 struct WebHitTestResultData;
 struct WebNavigationDataStore;
 struct WebPopupItem;
 struct WebSpeechSynthesisVoice;
-struct URLSchemeTaskParameters;
-struct UserMessage;
 
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
@@ -414,7 +421,7 @@ class WebDateTimePicker;
 
 using SpellDocumentTag = int64_t;
 
-class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
+class WebPageProxy final : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
 #endif
@@ -1358,7 +1365,7 @@ public:
 #endif
 
     // WebPopupMenuProxy::Client
-    NativeWebMouseEvent* currentlyProcessedMouseDownEvent() override;
+    NativeWebMouseEvent* currentlyProcessedMouseDownEvent() final;
 
     void setSuppressVisibilityUpdates(bool flag);
     bool suppressVisibilityUpdates() { return m_suppressVisibilityUpdates; }
@@ -1644,8 +1651,8 @@ public:
 #if HAVE(QUICKLOOK_THUMBNAILING)
     void updateAttachmentIcon(const String&, const RefPtr<ShareableBitmap>&);
     void requestThumbnailWithPath(const String&, const String&);
-    void requestThumbnailWithFileWrapper(NSFileWrapper*, const String&);
-    void requestThumbnailWithOperation(WKQLThumbnailLoadOperation*);
+    void requestThumbnailWithFileWrapper(NSFileWrapper *, const String&);
+    void requestThumbnailWithOperation(WKQLThumbnailLoadOperation *);
 #endif
     enum class ShouldUpdateAttachmentAttributes : bool { No, Yes };
     ShouldUpdateAttachmentAttributes willUpdateAttachmentAttributes(const API::Attachment&);
@@ -1736,8 +1743,8 @@ public:
 
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     void requestStorageSpace(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, WTF::CompletionHandler<void(uint64_t)>&&);
 
@@ -1806,8 +1813,11 @@ public:
     void grantAccessToCurrentPasteboardData(const String& pasteboardName);
 #endif
 
-#if ENABLE(CONTEXT_MENUS)
+#if PLATFORM(MAC)
     NSMenu *platformActiveContextMenu() const;
+#endif
+
+#if ENABLE(CONTEXT_MENUS)
     void platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
 
@@ -1879,11 +1889,12 @@ public:
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
     void appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
     void clearAppBoundNavigationData(CompletionHandler<void()>&&);
-#endif
 
-#if PLATFORM(COCOA)
     NSDictionary *contentsOfUserInterfaceItem(NSString *userInterfaceItem);
-#endif // PLATFORM(COCOA)
+
+    RetainPtr<WKWebView> cocoaView();
+    void setCocoaView(WKWebView *);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -1913,15 +1924,15 @@ private:
     void setUserAgent(String&&);
 
     // IPC::MessageSender
-    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&&) override;
-    IPC::Connection* messageSenderConnection() const override;
-    uint64_t messageSenderDestinationID() const override;
+    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&&) final;
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
 
     // WebPopupMenuProxy::Client
-    void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) override;
-    void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) override;
+    void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) final;
+    void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) final;
 #if PLATFORM(GTK)
-    void failedToShowPopupMenu() override;
+    void failedToShowPopupMenu() final;
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -2087,8 +2098,8 @@ private:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     void showColorPicker(const WebCore::Color& initialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&);
-    void didChooseColor(const WebCore::Color&) override;
-    void didEndColorPicker() override;
+    void didChooseColor(const WebCore::Color&) final;
+    void didEndColorPicker() final;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -2389,13 +2400,13 @@ private:
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    void didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) override;
-    void didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) override;
-    void didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) override;
-    void didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) override;
-    void speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&) override;
-    void boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary, unsigned charIndex) override;
-    void voicesDidChange() override;
+    void didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&) final;
+    void boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary, unsigned charIndex) final;
+    void voicesDidChange() final;
 
     struct SpeechSynthesisData;
     SpeechSynthesisData& speechSynthesisData();
@@ -2473,6 +2484,10 @@ private:
     String m_overrideContentSecurityPolicy;
 
     RefPtr<WebInspectorProxy> m_inspector;
+
+#if PLATFORM(COCOA)
+    WeakObjCPtr<WKWebView> m_cocoaView;
+#endif
 
 #if ENABLE(FULLSCREEN_API)
     std::unique_ptr<WebFullScreenManagerProxy> m_fullScreenManager;
@@ -2944,5 +2959,19 @@ private:
 #import <WebKitAdditions/WebPageProxyAdditionsAfter.h>
 #endif
 };
+
+#ifdef __OBJC__
+
+inline RetainPtr<WKWebView> WebPageProxy::cocoaView()
+{
+    return m_cocoaView.get();
+}
+
+inline void WebPageProxy::setCocoaView(WKWebView *view)
+{
+    m_cocoaView = view;
+}
+
+#endif
 
 } // namespace WebKit

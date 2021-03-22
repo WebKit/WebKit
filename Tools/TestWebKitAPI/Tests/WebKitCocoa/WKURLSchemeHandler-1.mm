@@ -558,7 +558,7 @@ TEST(URLSchemeHandler, SyncXHR)
         TestWebKitAPI::Util::run(&startedXHR);
         receivedMessage = false;
 
-        webView = nil;
+        [webView _close];
     }
     
     TestWebKitAPI::Util::run(&receivedStop);

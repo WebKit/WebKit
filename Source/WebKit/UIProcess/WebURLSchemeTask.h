@@ -86,6 +86,8 @@ public:
     void stop();
     void pageDestroyed();
 
+    void suppressTaskStoppedExceptions() { m_shouldSuppressTaskStoppedExceptions = true; }
+
 private:
     WebURLSchemeTask(WebURLSchemeHandler&, WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, URLSchemeTaskParameters&&, SyncLoadCompletionHandler&&);
 
@@ -103,7 +105,8 @@ private:
     bool m_responseSent { false };
     bool m_dataSent { false };
     bool m_completed { false };
-    
+    bool m_shouldSuppressTaskStoppedExceptions { false };
+
     SyncLoadCompletionHandler m_syncCompletionHandler;
     WebCore::ResourceResponse m_syncResponse;
     RefPtr<WebCore::SharedBuffer> m_syncData;

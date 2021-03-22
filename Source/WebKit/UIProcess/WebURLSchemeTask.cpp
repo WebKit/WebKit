@@ -65,7 +65,7 @@ auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& respons
     ASSERT(RunLoop::isMain());
 
     if (m_stopped)
-        return ExceptionType::TaskAlreadyStopped;
+        return m_shouldSuppressTaskStoppedExceptions ? ExceptionType::None : ExceptionType::TaskAlreadyStopped;
     
     if (m_completed)
         return ExceptionType::CompleteAlreadyCalled;
@@ -94,7 +94,7 @@ auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> E
     ASSERT(RunLoop::isMain());
 
     if (m_stopped)
-        return ExceptionType::TaskAlreadyStopped;
+        return m_shouldSuppressTaskStoppedExceptions ? ExceptionType::None : ExceptionType::TaskAlreadyStopped;
 
     if (m_completed)
         return ExceptionType::CompleteAlreadyCalled;
@@ -118,7 +118,7 @@ auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionTy
     ASSERT(RunLoop::isMain());
 
     if (m_stopped)
-        return ExceptionType::TaskAlreadyStopped;
+        return m_shouldSuppressTaskStoppedExceptions ? ExceptionType::None : ExceptionType::TaskAlreadyStopped;
 
     if (m_completed)
         return ExceptionType::CompleteAlreadyCalled;
@@ -145,7 +145,7 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     ASSERT(RunLoop::isMain());
 
     if (m_stopped)
-        return ExceptionType::TaskAlreadyStopped;
+        return m_shouldSuppressTaskStoppedExceptions ? ExceptionType::None : ExceptionType::TaskAlreadyStopped;
 
     if (m_completed)
         return ExceptionType::CompleteAlreadyCalled;

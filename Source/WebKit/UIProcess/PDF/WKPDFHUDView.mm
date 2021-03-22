@@ -163,11 +163,8 @@ static NSArray<NSString *> *controlArray()
 
 - (NSView *)hitTest:(NSPoint)point
 {
-    if (_page)
-        return fromWebPageProxy(*_page);
-
-    ASSERT_NOT_REACHED();
-    return self;
+    ASSERT(_page);
+    return _page ? _page->cocoaView().autorelease() : self;
 }
 
 - (void)mouseMoved:(NSEvent *)event

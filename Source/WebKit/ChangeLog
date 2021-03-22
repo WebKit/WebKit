@@ -1,3 +1,102 @@
+2021-03-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make it possible to release a WKWebView on a non-main thread without a crash due to WKScriptMessage race
+        https://bugs.webkit.org/show_bug.cgi?id=222336
+
+        Reviewed by Chris Dumez.
+
+        * Platform/spi/Cocoa/objcSPI.h: Removed this unused file.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (WKPageGetWebView): Use WKPageProxy::cocoaView instead of fromWebPageProxy.
+        * UIProcess/API/Cocoa/WKDownload.mm:
+        (-[WKDownload webView]): Ditto.
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo webView]): Ditto.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (ScriptMessageHandlerDelegate::didPostMessage): Use WKPageProxy::cocoaView
+        instead of fromWebPageProxy and add null checks.
+        (ScriptMessageHandlerDelegate::didPostMessageWithAsyncReply): Ditto.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (pageToViewMap): Deleted.
+        (fromWebPageProxy): Deleted.
+        (-[WKWebView _initializeWithConfiguration:]): Use WKPageProxy::setCocoaView
+        instead of adding the page/view pair to a map.
+        (-[WKWebView dealloc]): Removed code that removed the page/view pair from the map.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h: Removed fromWebPageProxy.
+
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload originatingWebView]): Use WKPageProxy::cocoaView instead of fromWebPageProxy.
+        * UIProcess/API/Cocoa/_WKFrameTreeNode.mm:
+        (-[_WKFrameTreeNode webView]): Ditto.
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector webView]): Ditto.
+        * UIProcess/API/Cocoa/_WKInspectorTesting.mm:
+        (-[_WKInspector inspectorWebView]): Ditto.
+
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::requestSwitchToPage): Use WKPageProxy::cocoaView
+        instead of fromWebPageProxy and add a null check.
+        (WebKit::AutomationSessionClient::requestHideWindowOfPage): Ditto.
+        (WebKit::AutomationSessionClient::requestRestoreWindowOfPage): Ditto.
+        (WebKit::AutomationSessionClient::requestMaximizeWindowOfPage): Ditto.
+        (WebKit::AutomationSessionClient::isShowingJavaScriptDialogOnPage): Ditto.
+        (WebKit::AutomationSessionClient::dismissCurrentJavaScriptDialogOnPage): Ditto.
+        (WebKit::AutomationSessionClient::acceptCurrentJavaScriptDialogOnPage): Ditto.
+        (WebKit::AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage): Ditto.
+        (WebKit::AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage): Ditto.
+        (WebKit::AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage): Ditto.
+        (WebKit::AutomationSessionClient::currentPresentationOfPage): Ditto.
+
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::alertForPermission): Use WKPageProxy::cocoaView instead of fromWebPageProxy.
+
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm:
+        (WebKit::PopUpSOAuthorizationSession::abortInternal): Added a null check since
+        initSecretWebView is no longer guaranteed to allocate m_secretWebView in the case
+        where the WKWebView is nil.
+        (WebKit::PopUpSOAuthorizationSession::completeInternal): Ditto.
+        (WebKit::PopUpSOAuthorizationSession::initSecretWebView): Use WKPageProxy::cocoaView
+        instead of fromWebPageProxy and added a null check.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::continueStartAfterDecidePolicy): Use WKPageProxy::cocoaView
+        instead of fromWebPageProxy.
+
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm:
+        (WebKit::WebURLSchemeHandlerCocoa::platformStartTask): Use WKPageProxy::cocoaView
+        instead of fromWebPageProxy and added a null check.
+        (WebKit::WebURLSchemeHandlerCocoa::platformStopTask): Ditto. Also call the
+        new suppressTaskStoppedExceptions if we are unable to call the delegate method due to
+        the WKWebView already being nil.
+
+        * UIProcess/PDF/WKPDFHUDView.mm:
+        (-[WKPDFHUDView hitTest:]): Use WKPageProxy::cocoaView instead of fromWebPageProxy.
+
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didPerformRedirection): Don't raise the "task stopped"
+        exception if it has been explicitly suppressed.
+        (WebKit::WebURLSchemeTask::didReceiveResponse): Ditto.
+        (WebKit::WebURLSchemeTask::didReceiveData): Ditto.
+        (WebKit::WebURLSchemeTask::didComplete): Ditto.
+
+        * UIProcess/WebURLSchemeTask.h: Added a suppressTaskStoppedExceptions function,
+        which we use to prevent exceptions in the case where the WKWebView was deallocated.
+        Since we were not able to call the delegate method in that case, the caller can't
+        be expected to refrain from calling methods. Eventually, clients of WKWebView could avoid this
+        by calling the _close method instead of relying for deallocation to do web view teardown,
+        but we need to promote that from SPI to API.
+
+        * UIProcess/WebPageProxy.h: Tweaked forward declarations a bit, and added one for WKWebView.
+        Marked the class final and use final instead of override. Added Cocoa-only cocoaView and
+        setCocoaView function members, and m_cocoaView data member. Also added inline implementations
+        but only compile them when included from an Objective-C source file.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed objcSPI.h.
+
 2021-03-22  Youenn Fablet  <youenn@apple.com>
 
         Implement RTCDataChannel transfer out of process

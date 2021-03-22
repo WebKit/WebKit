@@ -243,8 +243,6 @@ typename DelegateType::ResultType parseObjCType(const char*& position)
 extern "C" {
     // Forward declare some Objective-C runtime internal methods that are not API.
     const char *_protocol_getMethodTypeEncoding(Protocol *, SEL, BOOL isRequiredMethod, BOOL isInstanceMethod);
-    id objc_initWeak(id *, id);
-    void objc_destroyWeak(id *);
     bool _Block_has_signature(void *);
     const char * _Block_signature(void *);
 }

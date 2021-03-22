@@ -27,6 +27,7 @@
 
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKFrameTreeNodeInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
@@ -61,7 +62,7 @@
 
 - (WKWebView *)webView
 {
-    return retainPtr(fromWebPageProxy(_node->page())).autorelease();
+    return _node->page().cocoaView().autorelease();
 }
 
 - (NSArray<_WKFrameTreeNode *> *)childFrames
