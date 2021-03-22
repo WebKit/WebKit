@@ -1,3 +1,16 @@
+2021-03-22  Per Arne  <pvollan@apple.com>
+
+        Allow additional fcntl
+        https://bugs.webkit.org/show_bug.cgi?id=223590
+        <rdar://problem/75702241>
+
+        Reviewed by Brent Fulgham.
+
+        An additional fcntl is being used and should be allowed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-03-22  Youenn Fablet  <youenn@apple.com>
 
         RealtimeMediaSource does not need to be a WeakPtr
