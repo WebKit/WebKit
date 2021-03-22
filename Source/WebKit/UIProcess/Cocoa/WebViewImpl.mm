@@ -2661,7 +2661,7 @@ bool WebViewImpl::tryHandlePluginComplexTextInputKeyDown(NSEvent *event)
 void WebViewImpl::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus, uint64_t pluginComplexTextInputIdentifier)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    BOOL inputSourceChanged = m_pluginComplexTextInputIdentifier;
+    bool inputSourceChanged = !!m_pluginComplexTextInputIdentifier;
 
     if (pluginHasFocusAndWindowHasFocus) {
         // Check if we're already allowing text input for this plug-in.

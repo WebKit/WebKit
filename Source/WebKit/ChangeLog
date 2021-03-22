@@ -1,3 +1,17 @@
+2021-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Source/WebKit/UIProcess/Cocoa/WebViewImpl.mm:2681:9: runtime error: load of value nnn, which is not a valid value for type 'BOOL' (aka 'signed char')
+        https://bugs.webkit.org/show_bug.cgi?id=223581
+
+        Reviewed by Simon Fraser.
+
+        The code was implicitly casting an uint64_t identifier into a BOOL variable. The intention was
+        to check whether the identifier is 0 or not. To silence the UBSAN error, we now use the bool
+        type instead of BOOL (since BOOL is defined as a signed char on some platforms).
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::pluginFocusOrWindowFocusChanged):
+
 2021-03-22  Youenn Fablet  <youenn@apple.com>
 
         Add an early return in UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList
