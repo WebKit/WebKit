@@ -1,3 +1,19 @@
+2021-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Better validate JSArrays in AudioWorkletProcessor
+        https://bugs.webkit.org/show_bug.cgi?id=223548
+
+        Reviewed by Geoffrey Garen.
+
+        Better validate JSArrays in AudioWorkletProcessor. Replaces debug assertions with runtime
+        checks for robustness.
+
+        * Modules/webaudio/AudioWorkletProcessor.cpp:
+        (WebCore::copyDataFromBusesToJSArray):
+        (WebCore::copyDataFromParameterMapToJSObject):
+        (WebCore::zeroJSArray):
+        (WebCore::AudioWorkletProcessor::buildJSArguments):
+
 2021-03-22  Zalan Bujtas  <zalan@apple.com>
 
         [ macOS debug arm64 ] ASSERTION FAILED: count >= 1 ./rendering/RenderMultiColumnSet.cpp(450) : unsigned int WebCore::RenderMultiColumnSet::columnCount() const
