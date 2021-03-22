@@ -95,8 +95,8 @@ describe('/api/build-requests', function () {
         const updates = {900: {
             status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: parseInt(content['buildRequests'][0].id)}};
         const response = await TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         });
 
@@ -153,8 +153,8 @@ describe('/api/build-requests', function () {
             status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: 704}};
 
         const response = await TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         });
 
@@ -222,8 +222,8 @@ describe('/api/build-requests', function () {
         const updates = {900: {
                 status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: parseInt(content['buildRequests'][0].id)}};
         const response = await TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         });
 
@@ -282,8 +282,8 @@ describe('/api/build-requests', function () {
         const updates = {900: {
             status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: content['buildRequests'][0].id}};
         await assertThrows('CannotReuseDeletedRoot', () => TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         }));
     });
@@ -325,8 +325,8 @@ describe('/api/build-requests', function () {
             status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: parseInt(content['buildRequests'][0].id)}};
 
         await assertThrows('CannotReuseDeletedRoot', () => TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         }));
     });
@@ -361,8 +361,8 @@ describe('/api/build-requests', function () {
                 status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: parseInt(content['buildRequests'][0].id)}};
 
         await assertThrows('NoMatchingCommitSetItem', () => TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         }));
     });
@@ -399,8 +399,8 @@ describe('/api/build-requests', function () {
                 status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: parseInt(content['buildRequests'][0].id)}};
 
         await assertThrows('CannotReuseRootWithNonMatchingCommitSets', () => TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         }));
     });
@@ -434,8 +434,8 @@ describe('/api/build-requests', function () {
         const updates = {900: {
             status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: parseInt(content['buildRequests'][0].id)}};
         await assertThrows('CanOnlyReuseCompletedBuildRequest', () => TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         }));
     });
@@ -470,8 +470,8 @@ describe('/api/build-requests', function () {
             status: content['buildRequests'][0].status, url: content['buildRequests'][0].url, buildRequestForRootReuse: 999}};
 
         await assertThrows('FailedToFindbuildRequestForRootReuse', () => TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         }));
     });
@@ -1003,8 +1003,8 @@ describe('/api/build-requests', function () {
         const updates = {'700': {status: 'canceled', url: 'http://build.webkit.org/someBuilder/builds'}};
         return MockData.addMockData(TestServer.database()).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-                'slaveName': 'sync-slave',
-                'slavePassword': 'password',
+                'workerName': 'sync-worker',
+                'workerPassword': 'password',
                 'buildRequestUpdates': updates
             }).then((response) => {
                 assert.strictEqual(response['status'], 'OK');
@@ -1049,8 +1049,8 @@ describe('/api/build-requests', function () {
         await MockData.addMockData(TestServer.database(), ['running', 'pending', 'pending', 'pending']);
         await TestServer.database().query(`UPDATE build_requests SET request_url = '${url}' WHERE request_id = 700`);
         const response = await TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
-            'slaveName': 'sync-slave',
-            'slavePassword': 'password',
+            'workerName': 'sync-worker',
+            'workerPassword': 'password',
             'buildRequestUpdates': updates
         });
         assert.equal(response['status'], 'OK');

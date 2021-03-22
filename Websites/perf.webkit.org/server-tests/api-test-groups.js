@@ -92,7 +92,7 @@ describe('/api/test-groups', function () {
 
             let data =  await TestServer.remoteAPI().getJSON('/api/test-groups/600');
             assert.ok(!data['testGroups'][0].mayNeedMoreRequests);
-            await TestServer.remoteAPI().postJSON('/api/build-requests/build-webkit', {slaveName: 'test', slavePassword: 'password',
+            await TestServer.remoteAPI().postJSON('/api/build-requests/build-webkit', {workerName: 'test', workerPassword: 'password',
                 buildRequestUpdates: {703: {status: 'failedIfNotCompleted', url: 'http://webkit.org/build/1'}}});
             data =  await TestServer.remoteAPI().getJSON('/api/test-groups/600');
             assert.ok(data['testGroups'][0].mayNeedMoreRequests);
@@ -104,7 +104,7 @@ describe('/api/test-groups', function () {
 
             let data =  await TestServer.remoteAPI().getJSON('/api/test-groups/600');
             assert.ok(!data['testGroups'][0].mayNeedMoreRequests);
-            await TestServer.remoteAPI().postJSON('/api/build-requests/build-webkit', {slaveName: 'test', slavePassword: 'password',
+            await TestServer.remoteAPI().postJSON('/api/build-requests/build-webkit', {workerName: 'test', workerPassword: 'password',
                 buildRequestUpdates: {703: {status: 'failed', url: 'http://webkit.org/build/1'}}});
             data =  await TestServer.remoteAPI().getJSON('/api/test-groups/600');
             assert.ok(data['testGroups'][0].mayNeedMoreRequests);
@@ -120,7 +120,7 @@ describe('/api/test-groups', function () {
             data =  await TestServer.remoteAPI().getJSON('/api/test-groups/601');
             assert.ok(!data['testGroups'][0].mayNeedMoreRequests);
 
-            await TestServer.remoteAPI().postJSON('/api/build-requests/build-webkit', {slaveName: 'test', slavePassword: 'password',
+            await TestServer.remoteAPI().postJSON('/api/build-requests/build-webkit', {workerName: 'test', workerPassword: 'password',
                 buildRequestUpdates: {
                     703: {status: 'failed', url: 'http://webkit.org/build/1'},
                     713: {status: 'failedIfNotCompleted', url: 'http://webkit.org/build/11'},

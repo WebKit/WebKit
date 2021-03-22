@@ -53,7 +53,7 @@ function loadServerConfig(serverConfigJSON)
         server['auth'] = server['auth']['username'] + ':' + server['auth']['password'];
 
     settings.perfserver = server;
-    settings.slave = serverConfig['slave'];
+    settings.worker = serverConfig['worker'];
 }
 
 function mapInOrder(array, callback, startIndex)
@@ -219,8 +219,8 @@ function createAnalysisTaskAndNotify(config, range, summary)
         segmentationStrategy: segmentationStrategy,
         testRangeStrategy: testRangeStrategy,
 
-        slaveName: settings.slave.name,
-        slavePassword: settings.slave.password,
+        workerName: settings.worker.name,
+        workerPassword: settings.worker.password,
     };
 
     return postJSON(settings.perfserver, '/privileged-api/create-analysis-task', analysisTaskData).then(function (response) {
@@ -267,8 +267,8 @@ function createAnalysisTaskAndNotify(config, range, summary)
                 commitSets: commitSets,
                 repetitionCount: Math.max(2, Math.min(8, Math.floor((range.endIndex - range.startIndex) / 4))),
 
-                slaveName: settings.slave.name,
-                slavePassword: settings.slave.password,
+                workerName: settings.worker.name,
+                workerPassword: settings.worker.password,
             };
 
             return postJSON(settings.perfserver, '/privileged-api/create-test-group', testData).then(function (response) {

@@ -10,7 +10,7 @@ const MockLogger = require('./resources/mock-logger.js').MockLogger;
 const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').MockRemoteAPI;
 const TestServer = require('./resources/test-server.js');
 const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
-const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
+const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
 
@@ -18,8 +18,8 @@ const configWithOneTesterTwoBuilders = {
     triggerableName: 'build-webkit',
     lookbackCount: 2,
     buildRequestArgument: 'build-request-id',
-    slaveName: 'sync-slave',
-    slavePassword: 'password',
+    workerName: 'sync-worker',
+    workerPassword: 'password',
     repositoryGroups: {
         'webkit': {
             repositories: {'WebKit': {acceptsPatch: true}},
@@ -63,8 +63,8 @@ const configWithPlatformName = {
     triggerableName: 'build-webkit',
     lookbackCount: 2,
     buildRequestArgument: 'build-request-id',
-    slaveName: 'sync-slave',
-    slavePassword: 'password',
+    workerName: 'sync-worker',
+    workerPassword: 'password',
     platformArgument: 'platform-name',
     repositoryGroups: {
         'webkit': {
@@ -109,8 +109,8 @@ const configWithTwoTesters = {
     triggerableName: 'build-webkit',
     lookbackCount: 2,
     buildRequestArgument: 'build-request-id',
-    slaveName: 'sync-slave',
-    slavePassword: 'password',
+    workerName: 'sync-worker',
+    workerPassword: 'password',
     repositoryGroups: {
         'webkit': {
             repositories: {'WebKit': {acceptsPatch: true}},
@@ -156,13 +156,13 @@ function createTriggerable(config = configWithOneTesterTwoBuilders)
     return MockData.addMockConfiguration(TestServer.database()).then(() => {
         return Manifest.fetch();
     }).then(() => {
-        triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, {name: 'sync-slave', password: 'password'}, new MockLogger);
+        triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, {name: 'sync-worker', password: 'password'}, new MockLogger);
         const syncPromise = triggerable.initSyncers().then(() => triggerable.updateTriggerable());
         assertAndResolveRequest(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
         MockRemoteAPI.reset();
         return syncPromise;
     }).then(() => Manifest.fetch()).then(() => {
-        return new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, {name: 'sync-slave', password: 'password'}, new MockLogger);
+        return new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, {name: 'sync-worker', password: 'password'}, new MockLogger);
     });
 }
 
@@ -218,8 +218,8 @@ function uploadRoot(buildRequestId, buildTag, repositoryList = ["WebKit"], build
 {
     return TemporaryFile.makeTemporaryFile(`root${buildTag}.dat`, `root for build ${buildTag} and repository list at ${buildTime}`).then((rootFile) => {
         return TestServer.remoteAPI().postFormData('/api/upload-root/', {
-            slaveName: 'sync-slave',
-            slavePassword: 'password',
+            workerName: 'sync-worker',
+            workerPassword: 'password',
             builderName: 'some builder',
             buildTag: buildTag,
             buildTime: buildTime,

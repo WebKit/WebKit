@@ -62,26 +62,27 @@ class ReportProcessor {
 
     private function authenticate_and_construct_build_data(&$report, $existing_report_id) {
         $builder_info = array('name' => $report['builderName']);
-        $slave_name = array_get($report, 'slaveName', NULL);
-        $slave_id = NULL;
+        $worker_name = array_get($report, 'workerName', array_get($report, 'slaveName', NULL));
+        $worker_id = NULL;
         if (!$existing_report_id) {
             $hash = NULL;
-            if ($slave_name && array_key_exists('slavePassword', $report)) {
-                $universal_password = config('universalSlavePassword');
-                if ($slave_name && $universal_password && $universal_password == $report['slavePassword'])
-                    $slave_id = $this->db->select_or_insert_row('build_slaves', 'slave', array('name' => $slave_name));
+            if ($worker_name && (array_key_exists('workerPassword', $report) || array_key_exists('slavePassword', $report))) {
+                $universal_password = config('universalWorkerPassword', config('universalSlavePassword'));
+                $worker_password = array_get($report, 'workerPassword', array_get($report, 'slavePassword'));
+                if ($worker_name && $universal_password && $universal_password == $worker_password)
+                    $worker_id = $this->db->select_or_insert_row('build_workers', 'worker', array('name' => $worker_name));
                 else {
-                    $hash = hash('sha256', $report['slavePassword']);
-                    $slave = $this->db->select_first_row('build_slaves', 'slave', array('name' => $slave_name, 'password_hash' => $hash));
-                    if ($slave)
-                        $slave_id = $slave['slave_id'];
+                    $hash = hash('sha256', $worker_password);
+                    $worker = $this->db->select_first_row('build_workers', 'worker', array('name' => $worker_name, 'password_hash' => $hash));
+                    if ($worker)
+                        $worker_id = $worker['worker_id'];
                 }
             } else if (array_key_exists('builderPassword', $report))
                 $hash = hash('sha256', $report['builderPassword']);
 
-            if (!$hash && !$slave_id)
+            if (!$hash && !$worker_id)
                 $this->exit_with_error('BuilderNotFound');
-            if (!$slave_id)
+            if (!$worker_id)
                 $builder_info['password_hash'] = $hash;
         }
 
@@ -89,23 +90,25 @@ class ReportProcessor {
             unset($report['builderPassword']);
         if (array_key_exists('slavePassword', $report))
             unset($report['slavePassword']);
+        if (array_key_exists('workerPassword', $report))
+            unset($report['workerPassword']);
 
         $builder_id = NULL;
-        if ($slave_id)
+        if ($worker_id)
             $builder_id = $this->db->select_or_insert_row('builders', 'builder', $builder_info);
         else {
             $builder = $this->db->select_first_row('builders', 'builder', $builder_info);
             if (!$builder)
                 $this->exit_with_error('BuilderNotFound', array('name' => $builder_info['name']));
             $builder_id = $builder['builder_id'];
-            if ($slave_name)
-                $slave_id = $this->db->select_or_insert_row('build_slaves', 'slave', array('name' => $slave_name));
+            if ($worker_name)
+                $worker_id = $this->db->select_or_insert_row('build_workers', 'worker', array('name' => $worker_name));
         }
 
-        return $this->construct_build_data($report, $builder_id, $slave_id);
+        return $this->construct_build_data($report, $builder_id, $worker_id);
     }
 
-    private function construct_build_data(&$report, $builder_id, $slave_id) {
+    private function construct_build_data(&$report, $builder_id, $worker_id) {
         if (array_key_exists('buildNumber', $report)) {
             if (array_key_exists('buildTag', $report) && $report['buildTag'] != $report['buildNumber'])
                 $this->exit_with_error('BuilderNumberTagMismatch');
@@ -115,14 +118,14 @@ class ReportProcessor {
         array_key_exists('buildTag', $report) or $this->exit_with_error('MissingBuildSerial');
         array_key_exists('buildTime', $report) or $this->exit_with_error('MissingBuildTime');
 
-        return array('builder' => $builder_id, 'slave' => $slave_id, 'tag' => $report['buildTag'], 'time' => $report['buildTime']);
+        return array('builder' => $builder_id, 'worker' => $worker_id, 'tag' => $report['buildTag'], 'time' => $report['buildTime']);
     }
 
     private function store_report(&$report, $build_data) {
         assert(!$this->report_id);
         $this->report_id = $this->db->insert_row('reports', 'report', array(
             'builder' => $build_data['builder'],
-            'slave' => $build_data['slave'],
+            'worker' => $build_data['worker'],
             'build_tag' => $build_data['tag'],
             'content' => json_encode($report)));
         if (!$this->report_id)
@@ -139,13 +142,13 @@ class ReportProcessor {
     }
 
     private function resolve_build_id(&$build_data, $revisions, $build_request_id) {
-        $results = $this->db->query_and_fetch_all("SELECT build_id, build_slave FROM builds
+        $results = $this->db->query_and_fetch_all("SELECT build_id, build_worker FROM builds
             WHERE build_builder = $1 AND build_tag = $2 AND build_time <= $3 AND build_time + interval '1 day' > $3 LIMIT 2",
             array($build_data['builder'], $build_data['tag'], $build_data['time']));
         if ($results) {
             $first_result = $results[0];
-            if ($first_result['build_slave'] != $build_data['slave'])
-                $this->rollback_with_error('MismatchingBuildSlave', array('storedBuild' => $results, 'reportedBuildData' => $build_data));
+            if ($first_result['build_worker'] != $build_data['worker'])
+                $this->rollback_with_error('MismatchingBuildWorker', array('storedBuild' => $results, 'reportedBuildData' => $build_data));
             $build_id = $first_result['build_id'];
         } else
             $build_id = $this->db->insert_row('builds', 'build', $build_data);

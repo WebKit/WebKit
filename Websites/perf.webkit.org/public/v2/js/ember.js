@@ -19623,7 +19623,7 @@
               is created. Having an instance of `Ember.Application` will satisfy this
               requirement.
 
-              ### Specifying whitelisted modifier keys
+              ### Specifying allowed modifier keys
 
               By default the `{{action}}` helper will ignore click event with pressed modifier
               keys. You can supply an `allowedKeys` option to specify which keys should not be ignored.

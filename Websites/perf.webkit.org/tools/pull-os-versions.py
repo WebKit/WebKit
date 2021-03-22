@@ -67,7 +67,7 @@ class OSBuildFetcher:
         self._assign_order(available_builds)
 
         print "Submitting %d builds" % len(available_builds)
-        submit_commits(available_builds, server_config['server']['url'], server_config['slave']['name'], server_config['slave']['password'])
+        submit_commits(available_builds, server_config['server']['url'], server_config['worker']['name'], server_config['worker']['password'])
         reported_revisions |= set(map(lambda commit: commit['revision'], available_builds))
 
     @staticmethod

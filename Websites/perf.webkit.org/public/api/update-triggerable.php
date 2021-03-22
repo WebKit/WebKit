@@ -11,7 +11,7 @@ function main($post_data)
         exit_with_error('DatabaseConnectionFailure');
 
     $report = json_decode($post_data, true);
-    verify_slave($db, $report);
+    verify_worker($db, $report);
 
     $triggerable_name = array_get($report, 'triggerable');
     $triggerable = $db->select_first_row('build_triggerables', 'triggerable', array('name' => $triggerable_name));

@@ -5,7 +5,7 @@ const assert = require('assert');
 const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
 const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
-const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
+const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
@@ -23,8 +23,8 @@ function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
             }
         },
         "builderName": "someBuilder",
-        "slaveName": "someSlave",
-        "slavePassword": "somePassword",
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
         "platform": "some platform",
         "tests": {
             "some test": {
@@ -52,8 +52,8 @@ function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
             }
         },
         "builderName": "someBuilder",
-        "slaveName": "someSlave",
-        "slavePassword": "somePassword",
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
         "platform": "some platform",
         "tests": {
             "some test": {
@@ -70,7 +70,7 @@ function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
 
     const db = TestServer.database();
     const remote = TestServer.remoteAPI();
-    return addSlaveForReport(reportWithRevision[0]).then(() => {
+    return addWorkerForReport(reportWithRevision[0]).then(() => {
         return remote.postJSON('/api/report/', reportWithRevision);
     }).then(() => {
         return remote.postJSON('/api/report/', anotherReportWithRevision);
@@ -95,8 +95,8 @@ function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
 function addTriggerableAndCreateTask(name, webkitRevisions)
 {
     const report = {
-        'slaveName': 'anotherSlave',
-        'slavePassword': 'anotherPassword',
+        'workerName': 'anotherWorker',
+        'workerPassword': 'anotherPassword',
         'triggerable': 'build-webkit',
         'configurations': [
             {test: MockData.someTestId(), platform: MockData.somePlatformId()},
@@ -121,7 +121,7 @@ function addTriggerableAndCreateTask(name, webkitRevisions)
         ]
     };
     return MockData.addMockData(TestServer.database()).then(() => {
-        return addSlaveForReport(report);
+        return addWorkerForReport(report);
     }).then(() => {
         return TestServer.remoteAPI().postJSON('/api/update-triggerable/', report);
     }).then(() => {

@@ -175,7 +175,7 @@ Require valid-user
  - **Commit** - A commit is a specific revision or a version of a repository. e.g. r211196 of WebKit.
  - **Committer** - A committer is the author of the change in a given repository for a specific commit. e.g. the author of r211196 in WebKit is Ryosuke Niwa.
  - **Builder** - Like a builder in buildbot, a builder submits data points to the dashboard in terms of a sequence of builds. For example, a builder named "El Capitan MacBookAir7,1" may submit data points for benchmarks ran on MacBookAir7,1 with El Capitan.
- - (Build) **Slave** - Like a buildlsave in buildbot, a slave is a physical machine that submit data points to the dashboard. e.g. it could be a bot205 which submits data points as either "El Capitan MacBookAir7,1" or "Sierra MacBookAir7,1".
+ - (Build) **Worker** - Like a buildlsave in buildbot, a worker is a physical machine that submit data points to the dashboard. e.g. it could be a bot205 which submits data points as either "El Capitan MacBookAir7,1" or "Sierra MacBookAir7,1".
  - **Build** - A build represents a set of data points reported by a specific builder. e.g. "El Capitan MacBookAir7,1" may report Speedometer score along with its subtests' results. All those data points being to a single build. This is a different concept from a build of software. A single build of WebKit, for example, could be ran on multiple builders (e.g. one MacBookAir and another MacBookPro) to generate two builds in the dashboard.
  - **Bug Tracker** - A bug or an issue tracking tool such as Bugzilla and Radar.
  - **Bug** - A bug number associated with a particular bug tracker.
@@ -228,16 +228,16 @@ Each *test run* are related to one another via *builds* which is uniquely identi
 
 To submit a new *build*, or a set of data points to an instance of the performance dashboard, you need to do the following:
 
- - Add a slave on `/admin/slaves` if the slave used in the report has not already been added.
+ - Add a worker on `/admin/workers` if the worker used in the report has not already been added.
  - Make a HTTP POST request to `/api/report`.
 
 ### Format of Results JSON
 
 The JSON submitted to `/api/report` should be an array of dictionaries, and each dictionary should must contain the following key-value pairs representing a single run of tests and its subtests on a single build:
 
-- `builderName` - The name of a builder. A single slave may submit to multiple builders.
-- `slaveName` - The name of a slave present on `/admin/slaves`.
-- `slavePassword` - The password associated with the slave.
+- `builderName` - The name of a builder. A single worker may submit to multiple builders.
+- `workerName` - The name of a worker present on `/admin/workers`.
+- `workerPassword` - The password associated with the worker.
 - `buildNumber` - The string that uniquely identifies a given build on the builder.
 - `buildTime` - The time at which this build started in **UTC** (Use ISO time format such as `2013-01-31T22:22:12.121051`). This is completely independent of timestamp of repository revisions.
 - `platform` - The human-readable name of a platform such as `Mountain Lion` or `Windows 7`.
@@ -259,8 +259,8 @@ The test also reports `FrameRate` but this metric is measured only for the entir
     "buildNumber": "651",
     "buildTime": "2013-01-31T22:22:12.121051",
     "builderName": "Trunk Mountain Lion Performance Tests",
-    "slaveName": "bot-111",
-    "slavePassword": "somePassword",
+    "workerName": "bot-111",
+    "workerPassword": "somePassword",
     "platform": "Mountain Lion",
     "revisions": {
         "OS X": {

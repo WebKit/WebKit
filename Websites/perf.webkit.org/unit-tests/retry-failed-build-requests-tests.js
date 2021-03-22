@@ -143,7 +143,7 @@ describe('createAdditionalBuildRequestsForTestGroupsWithFailedRequests', () => {
     let requests = MockRemoteAPI.inject(null, NodePrivilegedAPI);
     MockModels.inject();
     beforeEach(() => {
-        PrivilegedAPI.configure('slave_name', 'password');
+        PrivilegedAPI.configure('worker_name', 'password');
     });
 
     it('should add one more build request when one of the existing requests failed', async () => {
@@ -155,7 +155,7 @@ describe('createAdditionalBuildRequestsForTestGroupsWithFailedRequests', () => {
         assert.equal(requests.length, 1);
 
         assert.equal(requests[0].url, '/privileged-api/add-build-requests');
-        assert.deepEqual(requests[0].data, {slaveName: 'slave_name', slavePassword: 'password', group: '2128', addCount: 1});
+        assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', addCount: 1});
         requests[0].resolve();
 
         await MockRemoteAPI.waitForRequest();
@@ -172,7 +172,7 @@ describe('createAdditionalBuildRequestsForTestGroupsWithFailedRequests', () => {
         assert.equal(requests.length, 1);
 
         assert.equal(requests[0].url, '/privileged-api/add-build-requests');
-        assert.deepEqual(requests[0].data, {slaveName: 'slave_name', slavePassword: 'password', group: '2128', addCount: 2});
+        assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', addCount: 2});
         requests[0].resolve();
 
         await MockRemoteAPI.waitForRequest();
@@ -189,7 +189,7 @@ describe('createAdditionalBuildRequestsForTestGroupsWithFailedRequests', () => {
         assert.equal(requests.length, 1);
 
         assert.equal(requests[0].url, '/privileged-api/update-test-group');
-        assert.deepEqual(requests[0].data, {slaveName: 'slave_name', slavePassword: 'password', group: '2128', mayNeedMoreRequests: false});
+        assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
         requests[0].resolve();
     });
 
@@ -211,7 +211,7 @@ describe('createAdditionalBuildRequestsForTestGroupsWithFailedRequests', () => {
         assert.equal(requests.length, 1);
 
         assert.equal(requests[0].url, '/privileged-api/update-test-group');
-        assert.deepEqual(requests[0].data, {slaveName: 'slave_name', slavePassword: 'password', group: '2128', mayNeedMoreRequests: false});
+        assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
         requests[0].resolve();
     });
 
@@ -224,7 +224,7 @@ describe('createAdditionalBuildRequestsForTestGroupsWithFailedRequests', () => {
         assert.equal(requests.length, 1);
 
         assert.equal(requests[0].url, '/privileged-api/update-test-group');
-        assert.deepEqual(requests[0].data, {slaveName: 'slave_name', slavePassword: 'password', group: '2128', mayNeedMoreRequests: false});
+        assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
         requests[0].resolve();
     });
 
@@ -237,7 +237,7 @@ describe('createAdditionalBuildRequestsForTestGroupsWithFailedRequests', () => {
         assert.equal(requests.length, 1);
 
         assert.equal(requests[0].url, '/privileged-api/update-test-group');
-        assert.deepEqual(requests[0].data, {slaveName: 'slave_name', slavePassword: 'password', group: '2128', mayNeedMoreRequests: false});
+        assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
         requests[0].resolve();
     });
 

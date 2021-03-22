@@ -14,7 +14,7 @@ function main($id, $path, $post_data) {
     $report = $post_data ? json_decode($post_data, true) : array();
     $updates = array_get($report, 'buildRequestUpdates');
     if ($updates) {
-        verify_slave($db, $report);
+        verify_worker($db, $report);
         update_builds($db, $updates);
     }
 

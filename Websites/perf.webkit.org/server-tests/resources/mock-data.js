@@ -34,7 +34,7 @@ MockData = {
     {
         return Promise.all([
             db.insert('build_triggerables', {id: 1000, name: 'build-webkit'}),
-            db.insert('build_slaves', {id: 20, name: 'sync-slave', password_hash: crypto.createHash('sha256').update('password').digest('hex')}),
+            db.insert('build_workers', {id: 20, name: 'sync-worker', password_hash: crypto.createHash('sha256').update('password').digest('hex')}),
             db.insert('repositories', {id: this.macosRepositoryId(), name: 'macOS'}),
             db.insert('repositories', {id: this.webkitRepositoryId(), name: 'WebKit'}),
             db.insert('repositories', {id: this.sharedRepositoryId(), name: 'Shared'}),
@@ -455,7 +455,7 @@ MockData = {
                 "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
                 "wk": [options.webkitRevision || '191622', "Unknown"],
                 "os": [options.osxRevision || '10.11 15A284', "Unknown"],
-                "slavename": [options.workerName || "bot202", "Worker (deprecated)"],
+                "workername": [options.workerName || "bot202", "Worker (deprecated)"],
                 "workername": [options.workerName || "bot202", "Worker"]
             }
         };
@@ -490,7 +490,7 @@ MockData = {
                 "project": ['', "Unknown"],
                 "repository": ['', "Unknown"],
                 "revision": ['', "Unknown"],
-                "slavename": [options.workerName || "bot202", "Worker (deprecated)"],
+                "workername": [options.workerName || "bot202", "Worker (deprecated)"],
                 "workername": [options.workerName || "bot202", "Worker"]
             }
         };   

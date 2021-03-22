@@ -82,7 +82,7 @@ class TestServer {
             'uploadUserQuotaInMB': 5,
             'uploadTotalQuotaInMB': 7,
             'uploadDirectory': Config.value('dataDirectory') + '/uploaded',
-            'universalSlavePassword': null,
+            'universalWorkerPassword': null,
             'maintenanceMode': false,
             'clusterStart': [2000, 1, 1, 0, 0],
             'clusterSize': [0, 2, 0],

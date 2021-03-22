@@ -79,7 +79,7 @@ class Repository(object):
             print "Submitting revisions %s for %s to %s" % (revision_list, self._name, server_config['server']['url'])
 
             result = submit_commits(pending_commits, server_config['server']['url'],
-                server_config['slave']['name'], server_config['slave']['password'], ['OK', 'FailedToFindPreviousCommit'])
+                server_config['worker']['name'], server_config['worker']['password'], ['OK', 'FailedToFindPreviousCommit'])
 
             if result.get('status') == 'OK':
                 break

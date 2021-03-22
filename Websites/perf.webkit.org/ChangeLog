@@ -1,5 +1,121 @@
 2021-03-21  Dewei Zhu  <dewei_zhu@apple.com>
 
+        [perf dashboard] Remove non-inclusive words from perf dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=223505
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed most of non-inclusive terminology and replaced it with 'worker'.
+        Make impacted APIs backward compatible during transition.
+        The non-inclusive terminology will be removed after transition.
+
+        * ReadMe.md: Removed non-inclusive words.
+        * init-database.sql: Rename tables with non-inclusive words.
+        * migrate-database.sql: Added migration SQL for existing database.
+        * public/admin/build-workers.php: Renamed from Websites/perf.webkit.org/public/admin/build-slaves.php.
+        * public/api/build-requests.php:
+        * public/api/measurement-set.php:
+        * public/api/report-commits.php:
+        * public/api/runs.php:
+        * public/api/update-triggerable.php:
+        * public/api/upload-root.php:
+        * public/include/admin-header.php:
+        * public/include/json-header.php:
+        * public/include/report-processor.php:
+        * public/privileged-api/add-build-requests.php:
+        * public/privileged-api/create-analysis-task.php:
+        * public/privileged-api/create-test-group.php:
+        * public/privileged-api/update-test-group.php:
+        * public/v2/js/ember.js:
+        * server-tests/api-build-requests-tests.js:
+        * server-tests/api-commits-tests.js:
+        * server-tests/api-report-commits-tests.js:
+        * server-tests/api-report-tests.js:
+        (emptyReport):
+        (reportWitMismatchingCommitTime):
+        (reportWithOneSecondCommitTimeDifference):
+        (emptyWorkerReport):
+        (emptySlaveReport): Deleted.
+        * server-tests/api-test-groups.js:
+        * server-tests/api-update-triggerable-tests.js:
+        (updateWithOSXRepositoryGroup):
+        (updateWithMacWebKitRepositoryGroups):
+        * server-tests/api-upload-root-tests.js:
+        (makeReport):
+        (addWorkerAndCreateRootFile):
+        * server-tests/privileged-api-add-build-requests-tests.js:
+        (async createAnalysisTask):
+        (async addTriggerableAndCreateTask):
+        * server-tests/privileged-api-create-analysis-task-tests.js:
+        * server-tests/privileged-api-create-test-group-tests.js:
+        (createAnalysisTask):
+        * server-tests/privileged-api-update-test-group-tests.js:
+        (async createAnalysisTask):
+        (async addTriggerableAndCreateTask):
+        * server-tests/resources/common-operations.js:
+        * server-tests/resources/mock-data.js:
+        (MockData.addMockConfiguration):
+        (MockData.set mockTestSyncConfigWithSingleBuilder):
+        (MockData.sampleBuildData):
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype.testConfig):
+        * server-tests/tools-buildbot-triggerable-tests.js:
+        * server-tests/tools-os-build-fetcher-tests.js:
+        * server-tests/tools-sync-buildbot-integration-tests.js:
+        (createTriggerable):
+        * tools/detect-changes.js:
+        (loadServerConfig):
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.prototype.buildTag):
+        (BuildbotSyncer):
+        (BuildbotSyncer.prototype.scheduleRequest):
+        (BuildbotSyncer.prototype.scheduleRequestInGroupIfAvailable):
+        (BuildbotSyncer.prototype.pullBuildbot):
+        (BuildbotSyncer._loadConfig):
+        (BuildbotSyncer._validateAndMergeConfig):
+        (BuildbotBuildEntry.prototype.slaveName): Deleted.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable):
+        (BuildbotTriggerable.prototype.updateTriggerable):
+        (BuildbotTriggerable.prototype.async syncOnce):
+        (BuildbotTriggerable.prototype.async _scheduleRequest):
+        (BuildbotTriggerable.prototype._scheduleRequestIfWorkerIsAvailable):
+        (BuildbotTriggerable.prototype._scheduleRequestWithLog):
+        (BuildbotTriggerable._testGroupMapForBuildRequests):
+        (BuildbotTriggerable.prototype._scheduleRequestIfSlaveIsAvailable): Deleted.
+        * tools/js/database.js:
+        * tools/js/os-build-fetcher.js:
+        (prototype.async _reportCommits):
+        * tools/js/privileged-api.js:
+        (NodePrivilegedAPI.prototype.sendRequest):
+        (NodePrivilegedAPI.configure):
+        (NodePrivilegedAPI):
+        * tools/pull-os-versions.py:
+        (OSBuildFetcher.fetch_and_report_new_builds):
+        * tools/run-analysis.js:
+        (async analysisLoop):
+        * tools/sync-buildbot.js:
+        (syncLoop.const.makeTriggerable):
+        (syncLoop):
+        * tools/sync-commits.py:
+        (Repository.fetch_commits_and_submit):
+        * tools/sync-os-versions.js:
+        (syncLoop):
+        * tools/util.py:
+        (submit_commits):
+        * unit-tests/analysis-task-tests.js:
+        * unit-tests/buildbot-syncer-tests.js:
+        (sampleiOSConfig):
+        (sampleBuildData):
+        (async const):
+        * unit-tests/checkconfig.js:
+        * unit-tests/measurement-set-analyzer-tests.js:
+        * unit-tests/privileged-api-tests.js:
+        * unit-tests/retry-failed-build-requests-tests.js:
+        * unit-tests/test-groups-tests.js:
+
+2021-03-21  Dewei Zhu  <dewei_zhu@apple.com>
+
         [perf dashboard] Perf dashboard should be compatible with newer version of postgres.
         https://bugs.webkit.org/show_bug.cgi?id=223567
 

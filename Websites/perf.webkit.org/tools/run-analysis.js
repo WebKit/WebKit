@@ -34,7 +34,7 @@ async function analysisLoop(options)
         const analysisRangeInDays = options['--analysis-range-in-days'];
 
         global.RemoteAPI = new RemoteAPI(serverConfig.server);
-        PrivilegedAPI.configure(serverConfig.slave.name, serverConfig.slave.password);
+        PrivilegedAPI.configure(serverConfig.worker.name, serverConfig.worker.password);
 
         const manifest = await Manifest.fetch();
         const measurementSetList = MeasurementSetAnalyzer.measurementSetListForAnalysis(manifest);

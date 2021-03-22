@@ -9,11 +9,11 @@ function addBuilderForReport(report)
     });
 }
 
-function addSlaveForReport(report)
+function addWorkerForReport(report)
 {
-    return TestServer.database().insert('build_slaves', {
-        name: report.slaveName,
-        password_hash: crypto.createHash('sha256').update(report.slavePassword).digest('hex')
+    return TestServer.database().insert('build_workers', {
+        name: report.workerName,
+        password_hash: crypto.createHash('sha256').update(report.workerPassword).digest('hex')
     });
 }
 
@@ -29,9 +29,9 @@ function prepareServerTest(test, privilegedAPIType='browser')
         await database.connect({keepAlive: true});
         if (privilegedAPIType === 'browser')
             return;
-        const entry = await TestServer.database().selectFirstRow('build_slaves', {name: 'test'});
+        const entry = await TestServer.database().selectFirstRow('build_workers', {name: 'test'});
         if (!entry)
-            await addSlaveForReport({slaveName: 'test', slavePassword: 'password'});
+            await addWorkerForReport({workerName: 'test', workerPassword: 'password'});
     });
 
     afterEach(function () {
@@ -63,7 +63,7 @@ async function assertThrows(expectedError, testFunction)
 
 if (typeof module != 'undefined') {
     module.exports.addBuilderForReport = addBuilderForReport;
-    module.exports.addSlaveForReport = addSlaveForReport;
+    module.exports.addWorkerForReport = addWorkerForReport;
     module.exports.prepareServerTest = prepareServerTest;
     module.exports.submitReport = submitReport;
     module.exports.assertThrows = assertThrows;

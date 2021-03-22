@@ -31,7 +31,7 @@ function syncLoop(options)
     console.log(`Fetching the manifest...`);
 
     const makeTriggerable = function () {
-        return new BuildbotTriggerable(buildbotConfig, global.RemoteAPI, buildbotRemote, serverConfig.slave, console)
+        return new BuildbotTriggerable(buildbotConfig, global.RemoteAPI, buildbotRemote, serverConfig.worker, console)
     };
 
     Manifest.fetch().then(() => {
