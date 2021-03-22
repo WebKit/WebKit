@@ -1,3 +1,16 @@
+2021-03-19  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal-Angle on Simulator does not support D24S8 correctly
+        https://bugs.webkit.org/show_bug.cgi?id=223494
+
+        Reviewed by Dean Jackson.
+
+        Re-ran autogen script for format table to add the missing format
+        Corrected texture swizzle support. Swizzle is unsupported on simulator.
+
+        * src/libANGLE/renderer/metal/mtl_format_table_autogen.mm:
+        (rx::mtl::Format::init):
+
 2021-03-19  Alex Christensen  <achristensen@webkit.org>
 
         libANGLE-shared.dylib needs INSTALL_PATH when building Catalyst roots

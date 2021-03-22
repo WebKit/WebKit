@@ -832,7 +832,7 @@ void DisplayMtl::initializeFeatures()
                             isMetal2_1 && !isIntel() && !isNVIDIA());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), hasTextureSwizzle,
-                            isMetal2_2 && supportsEitherGPUFamily(1, 2));
+                            isMetal2_2 && supportsEitherGPUFamily(3, 2) && !isSimulator);
 
     // http://crbug.com/1136673
     // Fence sync is flaky on Nvidia
