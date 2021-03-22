@@ -1,5 +1,14 @@
 2021-03-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix a mistake in r274725 spotted by Darin.
+
+        I accidentally removed the case statement for CSSPropertyWebkitTextSizeAdjust.
+
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::isPropertyRuntimeDisabled const):
+
+2021-03-22  Simon Fraser  <simon.fraser@apple.com>
+
         Rename WebCore's DisplayRefreshMonitorMac to indicate that it's only used in legacy WebKit
         https://bugs.webkit.org/show_bug.cgi?id=223543
 

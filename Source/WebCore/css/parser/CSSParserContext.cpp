@@ -153,6 +153,7 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertyScrollBehavior:
         return !scrollBehaviorEnabled;
 #if ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
+    case CSSPropertyWebkitTextSizeAdjust:
         return !textAutosizingEnabled;
 #endif
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
