@@ -1,3 +1,49 @@
+2021-03-22  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/workers convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223522
+        <rdar://problem/75624689>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/workers/resources/subworker-encoded.php: Removed.
+        * http/tests/workers/resources/subworker-encoded.py: Added.
+        * http/tests/workers/resources/worker-encoded.php: Removed.
+        * http/tests/workers/resources/worker-encoded.py: Added.
+        * http/tests/workers/resources/worker-importScripts-banned-mimetype.php: Removed.
+        * http/tests/workers/resources/worker-importScripts-banned-mimetype.py: Added.
+        * http/tests/workers/resources/xhr-query-utf8.php: Removed.
+        * http/tests/workers/resources/xhr-query-utf8.py: Added.
+        * http/tests/workers/resources/xhr-response.py: Added.
+        * http/tests/workers/service/basic-timeout.https-expected.txt:
+        * http/tests/workers/service/controller-change.html:
+        * http/tests/workers/service/page-caching.html:
+        * http/tests/workers/service/registration-updateViaCache-all.html:
+        * http/tests/workers/service/registration-updateViaCache-none.html:
+        * http/tests/workers/service/resources/basic-timeout.js:
+        * http/tests/workers/service/resources/cacheable-script-worker.php: Removed.
+        * http/tests/workers/service/resources/cacheable-script-worker.py: Added.
+        * http/tests/workers/service/resources/download-binary.php: Removed.
+        * http/tests/workers/service/resources/download-binary.py: Added.
+        * http/tests/workers/service/resources/import-cacheable-script-worker.js:
+        * http/tests/workers/service/resources/self_registration_update-worker.php: Removed.
+        * http/tests/workers/service/resources/self_registration_update-worker.py: Added.
+        * http/tests/workers/service/resources/succeed-fallback-check.php: Removed.
+        * http/tests/workers/service/resources/succeed-fallback-check.py: Added.
+        * http/tests/workers/service/resources/updating-fetch-worker.php: Removed.
+        * http/tests/workers/service/resources/updating-fetch-worker.py: Added.
+        * http/tests/workers/service/resources/updating-worker.php: Removed.
+        * http/tests/workers/service/resources/updating-worker.py: Added.
+        * http/tests/workers/service/self_registration_update.html:
+        * http/tests/workers/service/service-worker-download-async-delegates.https-expected.txt:
+        * http/tests/workers/service/service-worker-download-async-delegates.https.html:
+        * http/tests/workers/service/service-worker-download.https-expected.txt:
+        * http/tests/workers/service/service-worker-download.https.html:
+        * http/tests/workers/service/service-worker-registration-gc-event.html:
+        * http/tests/workers/text-encoding.html:
+        * http/tests/workers/worker-importScripts-banned-mimetype-expected.txt:
+        * http/tests/workers/worker-importScripts-banned-mimetype.html:
+
 2021-03-22  Amir Mark Jr  <amir_mark@apple.com>
 
         REGRESSION (r274711): [iOS 14 Wk2] webgl/conformance/extensions/khr-parallel-shader-compile.html is consistently failing
