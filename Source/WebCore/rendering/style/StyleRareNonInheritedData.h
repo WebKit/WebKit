@@ -109,6 +109,8 @@ public:
     double aspectRatioWidth;
     double aspectRatioHeight;
 
+    OptionSet<Containment> contain;
+
     float perspective;
     Length perspectiveOriginX;
     Length perspectiveOriginY;

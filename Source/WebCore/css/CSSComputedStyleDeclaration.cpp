@@ -3482,6 +3482,27 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             }
             ASSERT_NOT_REACHED();
             return nullptr;
+        case CSSPropertyContain: {
+            if (renderer && !renderer->settings().cssContainmentEnabled())
+                return nullptr;
+            auto containment = style.contain();
+            if (!containment)
+                return cssValuePool.createIdentifierValue(CSSValueNone);
+            if (containment == RenderStyle::strictContainment())
+                return cssValuePool.createIdentifierValue(CSSValueStrict);
+            if (containment == RenderStyle::contentContainment())
+                return cssValuePool.createIdentifierValue(CSSValueContent);
+            auto list = CSSValueList::createSpaceSeparated();
+            if (containment & Containment::Size)
+                list->append(cssValuePool.createIdentifierValue(CSSValueSize));
+            if (containment & Containment::Layout)
+                list->append(cssValuePool.createIdentifierValue(CSSValueLayout));
+            if (containment & Containment::Style)
+                list->append(cssValuePool.createIdentifierValue(CSSValueStyle));
+            if (containment & Containment::Paint)
+                list->append(cssValuePool.createIdentifierValue(CSSValuePaint));
+            return list;
+        }
         case CSSPropertyWebkitBackfaceVisibility:
             return cssValuePool.createIdentifierValue((style.backfaceVisibility() == BackfaceVisibility::Hidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:

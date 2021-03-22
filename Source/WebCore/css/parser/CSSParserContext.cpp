@@ -72,6 +72,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , colorFilterEnabled { document.settings().colorFilterEnabled() }
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
+    , containmentEnabled { document.settings().cssContainmentEnabled() }
     , cssColor4 { document.settings().cssColor4() }
     , deferredCSSParserEnabled { document.settings().deferredCSSParserEnabled() }
     , individualTransformPropertiesEnabled { document.settings().cssIndividualTransformPropertiesEnabled() }
@@ -111,6 +112,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.colorFilterEnabled == b.colorFilterEnabled
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
+        && a.containmentEnabled == b.containmentEnabled
         && a.cssColor4 == b.cssColor4
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
         && a.individualTransformPropertiesEnabled == b.individualTransformPropertiesEnabled
@@ -140,6 +142,8 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     switch (property) {
     case CSSPropertyAspectRatio:
         return !aspectRatioEnabled;
+    case CSSPropertyContain:
+        return !containmentEnabled;
     case CSSPropertyAppleColorFilter:
         return !colorFilterEnabled;
     case CSSPropertyTranslate:

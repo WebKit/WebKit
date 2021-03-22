@@ -1516,3 +1516,14 @@ compact
 x
 y
 z
+
+// contain
+// none
+// strict
+// content
+size
+layout
+// style
+#if !(defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API)
+paint
+#endif

@@ -149,6 +149,18 @@ CSSColorMixEnabled:
     WebCore:
       default: false
 
+CSSContainmentEnabled:
+  type: bool
+  humanReadableName: "CSS Containment"
+  humanReadableDescription: "Enable contain CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
   humanReadableName: "CSS Custom Properties and Values API"

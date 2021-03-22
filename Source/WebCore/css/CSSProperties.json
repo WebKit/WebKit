@@ -4567,6 +4567,19 @@
                 "url": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio"
             }
         },
+        "contain": {
+            "codegen-properties": {
+                "custom": "All",
+                "settings-flag": "cssContainment"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-contain",
+                "url": "https://drafts.csswg.org/css-contain-1/"
+            }
+        },
         "-webkit-backface-visibility": {
             "values": [
                 "visible",

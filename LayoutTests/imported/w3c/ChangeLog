@@ -1,3 +1,19 @@
+2021-03-22  Rob Buis  <rbuis@igalia.com>
+
+        [css-contain] Parse CSS contain property
+        https://bugs.webkit.org/show_bug.cgi?id=223252
+
+        Reviewed by Darin Adler.
+
+        Adjust test expectations.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-026-expected.txt:
+        * web-platform-tests/css/css-contain/inheritance-expected.txt:
+        * web-platform-tests/css/css-contain/parsing/contain-computed-expected.txt:
+        * web-platform-tests/css/css-contain/parsing/contain-valid-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2021-03-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip audioworkletprocessor-param-getter-overridden.https.html WPT test as it is no longer failing.

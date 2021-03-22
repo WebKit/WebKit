@@ -78,6 +78,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(Contain);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
@@ -1197,6 +1198,53 @@ inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSS
     else
         builderState.style().setAspectRatioType(AspectRatioType::Ratio);
     builderState.style().setAspectRatio(width, height);
+}
+
+inline void BuilderCustom::applyInitialContain(BuilderState& builderState)
+{
+    builderState.style().setContain(RenderStyle::initialContainment());
+}
+
+inline void BuilderCustom::applyInheritContain(BuilderState& builderState)
+{
+    builderState.style().setContain(forwardInheritedValue(builderState.parentStyle().contain()));
+}
+
+inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
+            return builderState.style().setContain(RenderStyle::initialContainment());
+        if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueStrict)
+            return builderState.style().setContain(RenderStyle::strictContainment());
+        return builderState.style().setContain(RenderStyle::contentContainment());
+    }
+
+    if (!is<CSSValueList>(value))
+        return;
+
+    OptionSet<Containment> containment;
+    auto& list = downcast<CSSValueList>(value);
+    for (auto& item : list) {
+        auto& value = downcast<CSSPrimitiveValue>(item.get());
+        switch (value.valueID()) {
+        case CSSValueSize:
+            containment.add(Containment::Size);
+            break;
+        case CSSValueLayout:
+            containment.add(Containment::Layout);
+            break;
+        case CSSValueStyle:
+            containment.add(Containment::Style);
+            break;
+        case CSSValuePaint:
+            containment.add(Containment::Paint);
+            break;
+        default:
+            break;
+        };
+    }
+    return builderState.style().setContain(containment);
 }
 
 inline void BuilderCustom::applyValueWebkitTextEmphasisStyle(BuilderState& builderState, CSSValue& value)

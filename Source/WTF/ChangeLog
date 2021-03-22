@@ -1,3 +1,14 @@
+2021-03-22  Rob Buis  <rbuis@igalia.com>
+
+        [css-contain] Parse CSS contain property
+        https://bugs.webkit.org/show_bug.cgi?id=223252
+
+        Reviewed by Darin Adler.
+
+        Add experimental feature flag.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-03-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, fix Mac and non-unified JSCOnly builds

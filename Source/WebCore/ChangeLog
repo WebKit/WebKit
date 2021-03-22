@@ -1,3 +1,46 @@
+2021-03-22  Rob Buis  <rbuis@igalia.com>
+
+        [css-contain] Parse CSS contain property
+        https://bugs.webkit.org/show_bug.cgi?id=223252
+
+        Reviewed by Darin Adler.
+
+        Parse CSS contain property according to the specification [1].
+        This patch also adds the experimental feature CSSContainment and
+        makes contain invisible from style when disabled.
+
+        [1] https://drafts.csswg.org/css-contain-1/#contain-property
+
+        Test: fast/css/contain-invalidate-if-disabled.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::operator==):
+        (WebCore::CSSParserContext::isPropertyRuntimeDisabled const):
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeContain):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::contain const):
+        (WebCore::RenderStyle::setContain):
+        (WebCore::RenderStyle::initialContainment):
+        (WebCore::RenderStyle::strictContainment):
+        (WebCore::RenderStyle::contentContainment):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInitialContain):
+        (WebCore::Style::BuilderCustom::applyInheritContain):
+        (WebCore::Style::BuilderCustom::applyValueContain):
+
 2021-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] ASSERTION FAILED: isMainThread() in GPU process for some canvas/philip/tests tests

@@ -133,6 +133,7 @@ const TestFeatures& TestOptions::defaults()
             { "AspectRatioEnabled", true },
             { "AsyncClipboardAPIEnabled", false },
             { "AttachmentElementEnabled", false },
+            { "CSSContainmentEnabled", false },
             { "CSSLogicalEnabled", false },
             { "CSSOMViewSmoothScrollingEnabled", false },
             { "ColorFilterEnabled", false },
