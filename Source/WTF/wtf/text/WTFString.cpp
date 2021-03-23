@@ -405,21 +405,6 @@ String String::foldCase() const
     return m_impl ? m_impl->foldCase() : String { };
 }
 
-bool String::percentage(int& result) const
-{
-    if (!m_impl || !m_impl->length())
-        return false;
-
-    if ((*m_impl)[m_impl->length() - 1] != '%')
-       return false;
-
-    if (m_impl->is8Bit())
-        result = charactersToIntStrict(m_impl->characters8(), m_impl->length() - 1);
-    else
-        result = charactersToIntStrict(m_impl->characters16(), m_impl->length() - 1);
-    return true;
-}
-
 Vector<UChar> String::charactersWithoutNullTermination() const
 {
     Vector<UChar> result;

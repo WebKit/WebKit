@@ -299,8 +299,6 @@ public:
     WTF_EXPORT_PRIVATE double toDouble(bool* ok = nullptr) const;
     WTF_EXPORT_PRIVATE float toFloat(bool* ok = nullptr) const;
 
-    bool percentage(int& percentage) const;
-
     WTF_EXPORT_PRIVATE String isolatedCopy() const &;
     WTF_EXPORT_PRIVATE String isolatedCopy() &&;
 

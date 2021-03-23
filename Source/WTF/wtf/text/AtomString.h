@@ -135,7 +135,6 @@ public:
     int toInt(bool* ok = nullptr) const { return m_string.toInt(ok); }
     double toDouble(bool* ok = nullptr) const { return m_string.toDouble(ok); }
     float toFloat(bool* ok = nullptr) const { return m_string.toFloat(ok); }
-    bool percentage(int& p) const { return m_string.percentage(p); }
 
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
