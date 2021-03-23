@@ -1,3 +1,26 @@
+2021-03-23  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr deref in WebCore::ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=223364
+
+        Reviewed by Ryosuke Niwa.
+
+        When the editing code creates a span to apply font style change, it may not have editable
+        style if the document sets extra style (e.g. user-select: all). This is causing a debug
+        ASSERT in AppendNodeCommand::AppendNodeCommand when the span is inserted and a nullptr
+        dereference later in release mode. This patch ensures that we skip the font style change
+        when that happens.
+
+        Test: editing/style/apply-font-style-change-crash.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Skip the font style change if
+        the span insertion failed.
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement): After inserting the new element,
+        ensure that the conditions from the ASSERT of AppendNodeCommand::AppendNodeCommand hold and
+        return failure if they don't.
+        * editing/ApplyStyleCommand.h: Return a boolean indicating success.
+
 2021-03-23  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Unable to view state details on CDC COVID map

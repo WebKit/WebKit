@@ -1,5 +1,17 @@
 2021-03-23  Frédéric Wang  <fwang@igalia.com>
 
+        Nullptr deref in WebCore::ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=223364
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * editing/style/apply-font-style-change-crash-expected.txt: Added.
+        * editing/style/apply-font-style-change-crash.html: Added.
+
+2021-03-23  Frédéric Wang  <fwang@igalia.com>
+
         Nullopt in DOMSelection::getRangeAt
         https://bugs.webkit.org/show_bug.cgi?id=223361
 
