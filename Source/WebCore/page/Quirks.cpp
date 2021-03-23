@@ -203,6 +203,16 @@ bool Quirks::shouldDisableContentChangeObserverTouchEventAdjustment() const
     return host.endsWith(".youtube.com") || host == "youtube.com";
 }
 
+bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element) const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "covid.cdc.gov"))
+        return false;
+    return element.hasClass() && element.classNames().contains("tooltip");
+}
+
 bool Quirks::needsMillisecondResolutionForHighResTimeStamp() const
 {
     if (!needsQuirks())

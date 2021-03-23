@@ -76,6 +76,7 @@ public:
     bool needsInputModeNoneImplicitly(const HTMLElement&) const;
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
     bool shouldDisableContentChangeObserverTouchEventAdjustment() const;
+    bool shouldTooltipPreventFromProceedingWithClick(const Element&) const;
 
     bool needsMillisecondResolutionForHighResTimeStamp() const;
 

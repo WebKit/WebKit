@@ -182,6 +182,9 @@ private:
     bool visibleRendererWasDestroyed(const Element& element) const { return m_elementsWithDestroyedVisibleRenderer.contains(&element); }
     bool shouldObserveVisibilityChangeForElement(const Element&);
 
+    enum class ElementHadRenderer { No, Yes };
+    bool isConsideredActionableContent(const Element&, ElementHadRenderer) const;
+
     enum class Event {
         StartedTouchStartEventDispatching,
         EndedTouchStartEventDispatching,

@@ -1,3 +1,28 @@
+2021-03-23  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Unable to view state details on CDC COVID map
+        https://bugs.webkit.org/show_bug.cgi?id=223620
+        <rdar://74284133>
+
+        Reviewed by Simon Fraser.
+
+        When the content change observer sees some visibility change, it checks if the newly visible content is actionable (e.g. something the user can click on).
+        A non-actionable content is considered less important than the action behind the "click". So while we trigger the hover state we immediately proceed with click as well.
+        (e.g. on youtube.com, hovering over the controls (settings, volume etc) brings up a (non-actionable) tooltip and the subsequent click triggers the associated action.
+        Now on iPadOS, it would require 2 taps on the mute/unmute button to actually mute/unmute the video, if we stopped at the hover state)
+
+        This patch implements a quirk for the CDC Covid map so that tapping on the map brings up the numbers dialog and we only submit the click event on the subsequent tap.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldTooltipPreventFromProceedingWithClick const):
+        * page/Quirks.h:
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::isConsideredActionableContent const): moved the isConsideredClickable logic to a lambda function. Call it when we don't apply the quirk.
+        (WebCore::ContentChangeObserver::didFinishTransition):
+        (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope):
+        (WebCore::isConsideredClickable): Deleted.
+        * page/ios/ContentChangeObserver.h:
+
 2021-03-23  Frédéric Wang  <fwang@igalia.com>
 
         Nullopt in DOMSelection::getRangeAt
