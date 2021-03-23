@@ -1,3 +1,19 @@
+2021-03-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: textRectsFromMarkers always fails
+        https://bugs.webkit.org/show_bug.cgi?id=223556
+        <rdar://74256003>
+
+        Reviewed by Zalan Bujtas.
+
+        The textRectsFromMarkers:text: method is always failing to return a valid answer because when we try to extend
+        the search range of text to search, we're creating a range that can't be iterated with a CharacterIterator
+
+        Test: accessibility/ios-simulator/text-rects-for-range-matches.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::rangeMatchesTextNearRange):
+
 2021-03-22  Ian Gilbert  <iang@apple.com>
 
         [Web Animations] nullptr crash in updatePlaybackRate() with no timeline

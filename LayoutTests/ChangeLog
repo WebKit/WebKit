@@ -1,3 +1,14 @@
+2021-03-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: textRectsFromMarkers always fails
+        https://bugs.webkit.org/show_bug.cgi?id=223556
+        <rdar://74256003>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/ios-simulator/text-rects-for-range-matches.html: Added.
+        * accessibility/ios-simulator/text-rects-for-range-matches-expected.txt: Added.
+
 2021-03-22  Peng Liu  <peng.liu6@apple.com>
 
         [ macOS wk2 ] media/media-source/media-source-canplaythrough-event.html is a flakey text failure
