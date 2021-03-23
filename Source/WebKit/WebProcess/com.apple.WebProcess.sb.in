@@ -1270,20 +1270,25 @@
     (allow mach-lookup
         (global-name "com.apple.system.notification_center")
         (apply-message-filter
-            (deny mach-message-send (with telemetry))
+            (allow mach-message-send (with telemetry-backtrace))
             (deny mach-message-send (with no-report) (message-number 1023))
-            (allow mach-message-send (with telemetry) (message-number
+            (allow mach-message-send (with telemetry-backtrace) (message-number
                 1002
-                1010
+                1003
+                1004
+                1005
                 1011
                 1012
+                1013
+                1014
+                1015
                 1016
                 1017
                 1018
                 1021
-                1022
                 1025
                 1026
+                1027
             ))
             (allow mach-message-send (message-number
                 1028
