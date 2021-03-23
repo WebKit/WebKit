@@ -1,3 +1,14 @@
+2021-03-23  Martin Robinson  <mrobinson@igalia.com>
+
+        No scrolling momentum with 'scroll-snap-type: x mandatory' if the scroller scrolls vertically
+        https://bugs.webkit.org/show_bug.cgi?id=213571
+        <rdar://problem/64715507>
+
+        Reviewed by Simon Fraser.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-momentum-in-non-snapping-axis-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-momentum-in-non-snapping-axis.html: Added.
+
 2021-03-23  Said Abou-Hallawa  <said@apple.com>
 
         SVG links navigate only to internal animation elements and <view> anchors

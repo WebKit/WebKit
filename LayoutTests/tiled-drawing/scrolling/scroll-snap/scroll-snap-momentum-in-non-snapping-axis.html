@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            .container {
+                width: 200px;
+                height: 200px;
+                overflow: scroll;
+            }
+            #vertical-snapping-container { scroll-snap-type: y proximity; }
+            #bidirectional-snapping-container { scroll-snap-type: both proximity; }
+            .box {
+                height: 100vh;
+                width: 100vw;
+                float: left;
+                scroll-snap-align: start;
+            }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script src="resources/mainframe-scroll-snap-test.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function runTests()
+        {
+            try {
+                const containerNotSnappingOnAxis = document.getElementById("vertical-snapping-container");
+                await doScrollGlide(containerNotSnappingOnAxis, HORIZONTAL);
+                const containerSnappingOnAxis = document.getElementById("bidirectional-snapping-container");
+                await doScrollGlide(containerSnappingOnAxis, HORIZONTAL);
+                expectTrue(containerSnappingOnAxis.scrollLeft == containerNotSnappingOnAxis.scrollLeft, "scrolling momentum the same in snapping and non-snapping axes.");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+
+        function onLoad()
+        {
+            if (window.eventSender) {
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
+                runTests();
+            } else {
+                var messageLocation = document.getElementById('console');
+                messageLocation.innerHTML = "<p>To run this test manually, scroll the page vertically. The page should "
+                    + "snap between uniform colors which fill the view.<p>";
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="console"></div>
+        <div id="vertical-snapping-container" class="container">
+            <div style="width: 200vw">
+                <div class="box"></div>
+                <div class="box"></div>
+            </div>
+        </div>
+        <div id="bidirectional-snapping-container" class="container">
+            <div style="width: 200vw">
+                <div class="box" style="float: left"></div>
+                <div class="box" style="float: left"></div>
+            </div>
+        </div>
+    </body>
+</html>
