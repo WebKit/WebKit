@@ -39,6 +39,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
+#include <WebCore/Region.h>
 #include <WebCore/Settings.h>
 
 #if USE(DIRECT2D)
@@ -150,21 +151,21 @@ void DrawingAreaCoordinatedGraphics::scroll(const IntRect& scrollRect, const Int
     }
 
     // Get the part of the dirty region that is in the scroll rect.
-    Region dirtyRegionInScrollRect = intersect(scrollRect, m_dirtyRegion);
+    WebCore::Region dirtyRegionInScrollRect = intersect(scrollRect, m_dirtyRegion);
     if (!dirtyRegionInScrollRect.isEmpty()) {
         // There are parts of the dirty region that are inside the scroll rect.
         // We need to subtract them from the region, move them and re-add them.
         m_dirtyRegion.subtract(scrollRect);
 
         // Move the dirty parts.
-        Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollDelta), scrollRect);
+        WebCore::Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollDelta), scrollRect);
 
         // And add them back.
         m_dirtyRegion.unite(movedDirtyRegionInScrollRect);
     }
 
     // Compute the scroll repaint region.
-    Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollDelta));
+    WebCore::Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollDelta));
 
     m_dirtyRegion.unite(scrollRepaintRegion);
     scheduleDisplay();
@@ -621,7 +622,7 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
     m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
 
     // Non-composited content will now be handled exclusively by the layer tree host.
-    m_dirtyRegion = Region();
+    m_dirtyRegion = WebCore::Region();
     m_scrollRect = IntRect();
     m_scrollOffset = IntSize();
     m_displayTimer.stop();
@@ -797,7 +798,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     updateInfo.scrollRect = m_scrollRect;
     updateInfo.scrollOffset = m_scrollOffset;
 
-    m_dirtyRegion = Region();
+    m_dirtyRegion = WebCore::Region();
     m_scrollRect = IntRect();
     m_scrollOffset = IntSize();
 
