@@ -119,10 +119,6 @@ quicklook/numbers.html [ ImageOnlyFailure ]
 
 scrollbars/overflow-scrollbar-combinations.html [ Timeout ]
 
-security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
-
-security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
-
 # <rdar://problem/32575766>, need to handle media sandbox correctly
 webrtc
 
