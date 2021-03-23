@@ -577,6 +577,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/AuthenticationExtensionsClientInputs.idl
     Modules/webauthn/AuthenticationExtensionsClientOutputs.idl
     Modules/webauthn/AuthenticatorAssertionResponse.idl
+    Modules/webauthn/AuthenticatorAttachment.idl
     Modules/webauthn/AuthenticatorAttestationResponse.idl
     Modules/webauthn/AuthenticatorResponse.idl
     Modules/webauthn/AuthenticatorTransport.idl

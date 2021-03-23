@@ -1647,7 +1647,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
     EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
     EXPECT_EQ(result.excludeCredentials[0].transports[2], AuthenticatorTransport::Internal);
 
-    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform);
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, AuthenticatorAttachment::Platform);
     EXPECT_EQ(result.authenticatorSelection->requireResidentKey, true);
     EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Required);
 
@@ -1717,7 +1717,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
     EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
     EXPECT_EQ(result.excludeCredentials[0].transports[2], AuthenticatorTransport::Internal);
 
-    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform);
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, AuthenticatorAttachment::CrossPlatform);
     EXPECT_EQ(result.authenticatorSelection->requireResidentKey, true);
     EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Discouraged);
 
@@ -1922,6 +1922,36 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
         EXPECT_WK_STREQ([response.authenticatorData base64EncodedStringWithOptions:0], "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFUFAAAAAA==");
         EXPECT_NOT_NULL(response.signature);
         EXPECT_WK_STREQ([response.userHandle base64EncodedStringWithOptions:0], "AAECAwQFBgcICQ==");
+    }];
+    Util::run(&webAuthenticationPanelRan);
+}
+
+TEST(WebAuthenticationPanel, GetAssertionCrossPlatform)
+{
+    reset();
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "", testUserEntityBundleBase64));
+
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+    [options setRelyingPartyIdentifier:@""];
+    [options setAuthenticatorAttachment:_WKAuthenticatorAttachmentCrossPlatform];
+    [options setTimeout:@120];
+
+    auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
+    [panel setMockConfiguration:@{ }];
+    auto delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
+    [panel setDelegate:delegate.get()];
+
+    [panel getAssertionWithChallenge:nsHash origin:@"" options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
+        webAuthenticationPanelRan = true;
+        cleanUpKeychain("");
+
+        EXPECT_NULL(response);
+        EXPECT_EQ(error.domain, WKErrorDomain);
+        EXPECT_EQ(error.code, WKErrorUnknown);
     }];
     Util::run(&webAuthenticationPanelRan);
 }

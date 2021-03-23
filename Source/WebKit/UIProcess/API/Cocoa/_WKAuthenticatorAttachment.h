@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,27 +27,8 @@
 
 #import <WebKit/WKFoundation.h>
 
-#import <Foundation/Foundation.h>
-#import <WebKit/_WKAuthenticatorAttachment.h>
-#import <WebKit/_WKUserVerificationRequirement.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class _WKAuthenticationExtensionsClientInputs;
-@class _WKPublicKeyCredentialDescriptor;
-
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
-@interface _WKPublicKeyCredentialRequestOptions : NSObject
-
-@property (nullable, nonatomic, copy) NSNumber *timeout;
-@property (nullable, nonatomic, copy) NSString *relyingPartyIdentifier;
-@property (nullable, nonatomic, copy) NSArray<_WKPublicKeyCredentialDescriptor *> *allowCredentials;
-/*!@discussion The default value is _WKUserVerificationRequirementPreferred.*/
-@property (nonatomic) _WKUserVerificationRequirement userVerification;
-/*!@discussion The default value is _WKAuthenticatorAttachmentAll.*/
-@property (nonatomic) _WKAuthenticatorAttachment authenticatorAttachment;
-@property (nullable, nonatomic, strong) _WKAuthenticationExtensionsClientInputs *extensions;
-
-@end
-
-NS_ASSUME_NONNULL_END
+typedef NS_ENUM(NSInteger, _WKAuthenticatorAttachment) {
+    _WKAuthenticatorAttachmentAll,
+    _WKAuthenticatorAttachmentPlatform,
+    _WKAuthenticatorAttachmentCrossPlatform,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));

@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 #include "AttestationConveyancePreference.h"
 #include "AuthenticationExtensionsClientInputs.h"
+#include "AuthenticatorAttachment.h"
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
@@ -39,11 +40,6 @@ namespace WebCore {
 
 struct PublicKeyCredentialCreationOptions {
 #if ENABLE(WEB_AUTHN)
-    enum class AuthenticatorAttachment {
-        Platform,
-        CrossPlatform
-    };
-
     struct Entity {
         String name;
         String icon;
@@ -202,17 +198,3 @@ Optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOptions:
 #endif // ENABLE(WEB_AUTHN)
 
 } // namespace WebCore
-
-#if ENABLE(WEB_AUTHN)
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment> {
-    using values = EnumValues<
-        WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment,
-        WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform,
-        WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform
-    >;
-};
-
-} // namespace WTF
-#endif // ENABLE(WEB_AUTHN)

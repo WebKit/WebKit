@@ -1,3 +1,17 @@
+2021-03-23  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Provide a way to specify platform vs security key when requesting an assertion in the SPI
+        https://bugs.webkit.org/show_bug.cgi?id=223547
+        <rdar://74034746>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+        Adds the test case.
+
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
         wtf/text/IntegerToStringConversion.h:54:104: runtime error: negation of -2147483648 cannot be represented in type 'int'; cast to an unsigned type to negate this value to itself

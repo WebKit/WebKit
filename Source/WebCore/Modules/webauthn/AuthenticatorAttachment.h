@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,29 @@
 
 #pragma once
 
-#import <WebKit/WKFoundation.h>
+#if ENABLE(WEB_AUTHN)
 
-#import <Foundation/Foundation.h>
-#import <WebKit/_WKAuthenticatorAttachment.h>
-#import <WebKit/_WKUserVerificationRequirement.h>
+#include <wtf/EnumTraits.h>
 
-NS_ASSUME_NONNULL_BEGIN
+namespace WebCore {
 
-@class _WKAuthenticationExtensionsClientInputs;
-@class _WKPublicKeyCredentialDescriptor;
+enum class AuthenticatorAttachment {
+    Platform,
+    CrossPlatform
+};
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
-@interface _WKPublicKeyCredentialRequestOptions : NSObject
+} // namespace WebCore
 
-@property (nullable, nonatomic, copy) NSNumber *timeout;
-@property (nullable, nonatomic, copy) NSString *relyingPartyIdentifier;
-@property (nullable, nonatomic, copy) NSArray<_WKPublicKeyCredentialDescriptor *> *allowCredentials;
-/*!@discussion The default value is _WKUserVerificationRequirementPreferred.*/
-@property (nonatomic) _WKUserVerificationRequirement userVerification;
-/*!@discussion The default value is _WKAuthenticatorAttachmentAll.*/
-@property (nonatomic) _WKAuthenticatorAttachment authenticatorAttachment;
-@property (nullable, nonatomic, strong) _WKAuthenticationExtensionsClientInputs *extensions;
+namespace WTF {
 
-@end
+template<> struct EnumTraits<WebCore::AuthenticatorAttachment> {
+    using values = EnumValues<
+        WebCore::AuthenticatorAttachment,
+        WebCore::AuthenticatorAttachment::Platform,
+        WebCore::AuthenticatorAttachment::CrossPlatform
+    >;
+};
 
-NS_ASSUME_NONNULL_END
+} // namespace WTF
+
+#endif // ENABLE(WEB_AUTHN)

@@ -363,15 +363,15 @@ static Vector<WebCore::PublicKeyCredentialDescriptor> publicKeyCredentialDescrip
     return result;
 }
 
-static Optional<WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment> authenticatorAttachment(_WKAuthenticatorAttachment attachment)
+static Optional<WebCore::AuthenticatorAttachment> authenticatorAttachment(_WKAuthenticatorAttachment attachment)
 {
     switch (attachment) {
     case _WKAuthenticatorAttachmentAll:
         return WTF::nullopt;
     case _WKAuthenticatorAttachmentPlatform:
-        return WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform;
+        return WebCore::AuthenticatorAttachment::Platform;
     case _WKAuthenticatorAttachmentCrossPlatform:
-        return WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform;
+        return WebCore::AuthenticatorAttachment::CrossPlatform;
     default:
         ASSERT_NOT_REACHED();
         return WTF::nullopt;
@@ -486,6 +486,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
     if (options.allowCredentials)
         result.allowCredentials = publicKeyCredentialDescriptors(options.allowCredentials);
     result.userVerification = userVerification(options.userVerification);
+    result.authenticatorAttachment = authenticatorAttachment(options.authenticatorAttachment);
     result.extensions = authenticationExtensionsClientInputs(options.extensions);
 #endif
 

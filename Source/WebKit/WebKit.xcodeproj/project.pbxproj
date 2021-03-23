@@ -1214,6 +1214,7 @@
 		57FD318522B35169008D0E8B /* SOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317C22B3514A008D0E8B /* SOAuthorizationSession.h */; };
 		57FD318622B3516C008D0E8B /* SubFrameSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317D22B3514A008D0E8B /* SubFrameSOAuthorizationSession.h */; };
 		57FD318722B35170008D0E8B /* WKSOAuthorizationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317122B35148008D0E8B /* WKSOAuthorizationDelegate.h */; };
+		57FE686D2604827800BF45E4 /* _WKAuthenticatorAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FE686C2604827800BF45E4 /* _WKAuthenticatorAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */; };
 		5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */; };
 		5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C121E8324101F7000486F9B /* FrameTreeNodeData.h */; };
@@ -4322,6 +4323,7 @@
 		57FD317D22B3514A008D0E8B /* SubFrameSOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubFrameSOAuthorizationSession.h; sourceTree = "<group>"; };
 		57FD317E22B3514A008D0E8B /* WKSOAuthorizationDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSOAuthorizationDelegate.mm; sourceTree = "<group>"; };
 		57FD317F22B3514A008D0E8B /* SOAuthorizationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SOAuthorizationSession.mm; sourceTree = "<group>"; };
+		57FE686C2604827800BF45E4 /* _WKAuthenticatorAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorAttachment.h; sourceTree = "<group>"; };
 		5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsParameters.h; sourceTree = "<group>"; };
 		5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSchemeRegistry.cpp; sourceTree = "<group>"; };
 		5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkSocketStreamMessageReceiver.cpp; path = DerivedSources/WebKit2/NetworkSocketStreamMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7804,6 +7806,7 @@
 				5790A6862567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.h */,
 				5790A6872567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.mm */,
 				5790A68E2567B4CF0077C5A7 /* _WKAuthenticatorAssertionResponseInternal.h */,
+				57FE686C2604827800BF45E4 /* _WKAuthenticatorAttachment.h */,
 				5790A6822567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.h */,
 				5790A6832567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.mm */,
 				5790A68C2567B4490077C5A7 /* _WKAuthenticatorAttestationResponseInternal.h */,
@@ -11454,6 +11457,7 @@
 				5790A6912567B5E00077C5A7 /* _WKAuthenticationExtensionsClientOutputsInternal.h in Headers */,
 				5790A6882567A28A0077C5A7 /* _WKAuthenticatorAssertionResponse.h in Headers */,
 				5790A68F2567B4CF0077C5A7 /* _WKAuthenticatorAssertionResponseInternal.h in Headers */,
+				57FE686D2604827800BF45E4 /* _WKAuthenticatorAttachment.h in Headers */,
 				5790A6842567A21E0077C5A7 /* _WKAuthenticatorAttestationResponse.h in Headers */,
 				5790A68D2567B4490077C5A7 /* _WKAuthenticatorAttestationResponseInternal.h in Headers */,
 				5790A6802567A1AC0077C5A7 /* _WKAuthenticatorResponse.h in Headers */,

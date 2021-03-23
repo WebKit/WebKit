@@ -241,6 +241,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticationExtensionsClientOut
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticationExtensionsClientOutputs.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorAssertionResponse.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorAssertionResponse.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorAttachment.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorAttachment.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorAttestationResponse.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorAttestationResponse.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorResponse.cpp
