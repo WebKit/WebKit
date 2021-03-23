@@ -118,6 +118,9 @@ void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample)
 
 void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
 {
+    // FIXME: This does heap allocations on the audio thread.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
     if (m_description != description) {
         ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
         m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
@@ -144,6 +147,9 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
 
 void MediaRecorderPrivate::storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
+    // FIXME: This does heap allocations on the audio thread.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
     SharedMemory::Handle handle;
     if (storage)
         storage->createHandle(handle, SharedMemory::Protection::ReadOnly);

@@ -210,6 +210,9 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     // m_bufferReadWriteIndex will wrap back around to 0 when the current input and output buffers are full.
     // When this happens, fire an event and swap buffers.
     if (!m_bufferReadWriteIndex) {
+        // Dispatching a Function to the main thread requires heap allocations.
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
         // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.
         // We only wait for script code execution when the context is an offline one for performance reasons.
         if (context().isOfflineContext()) {

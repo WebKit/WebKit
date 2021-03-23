@@ -118,6 +118,7 @@ void RealtimeOutgoingAudioSourceCocoa::audioSamplesAvailable(const MediaTime&, c
     if (!hasBufferedEnoughData())
         return;
 
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
         protectedThis->pullAudioData();
     });

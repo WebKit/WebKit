@@ -111,8 +111,12 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
 
     m_outputDescription = CAAudioStreamDescription { format };
 
-    m_ringBuffer->allocate(format, static_cast<size_t>(m_maximumSampleCount));
-    m_scratchBuffer = AudioSampleBufferList::create(m_outputDescription->streamDescription(), m_maximumSampleCount);
+    {
+        // FIXME: This does heap allocations on the audio thread.
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+        m_ringBuffer->allocate(format, static_cast<size_t>(m_maximumSampleCount));
+        m_scratchBuffer = AudioSampleBufferList::create(m_outputDescription->streamDescription(), m_maximumSampleCount);
+    }
 
     return setupConverter();
 }

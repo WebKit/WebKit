@@ -53,6 +53,33 @@
 
 namespace WTF {
 
+#if ASSERT_ENABLED
+thread_local static unsigned forbidMallocUseScopeCount;
+thread_local static unsigned disableMallocRestrictionScopeCount;
+
+ForbidMallocUseForCurrentThreadScope::ForbidMallocUseForCurrentThreadScope()
+{
+    ++forbidMallocUseScopeCount;
+}
+
+ForbidMallocUseForCurrentThreadScope::~ForbidMallocUseForCurrentThreadScope()
+{
+    ASSERT(forbidMallocUseScopeCount);
+    --forbidMallocUseScopeCount;
+}
+
+DisableMallocRestrictionsForCurrentThreadScope::DisableMallocRestrictionsForCurrentThreadScope()
+{
+    ++disableMallocRestrictionScopeCount;
+}
+
+DisableMallocRestrictionsForCurrentThreadScope::~DisableMallocRestrictionsForCurrentThreadScope()
+{
+    ASSERT(disableMallocRestrictionScopeCount);
+    --disableMallocRestrictionScopeCount;
+}
+#endif
+
 #if !defined(NDEBUG)
 namespace {
 // We do not use std::numeric_limits<size_t>::max() here due to the edge case in VC++.
@@ -194,12 +221,14 @@ void fastAlignedFree(void* p)
 TryMallocReturnValue tryFastMalloc(size_t n) 
 {
     FAIL_IF_EXCEEDS_LIMIT(n);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     return malloc(n);
 }
 
 void* fastMalloc(size_t n) 
 {
     ASSERT_IS_WITHIN_LIMIT(n);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     void* result = malloc(n);
     if (!result)
         CRASH();
@@ -210,12 +239,14 @@ void* fastMalloc(size_t n)
 TryMallocReturnValue tryFastCalloc(size_t n_elements, size_t element_size)
 {
     FAIL_IF_EXCEEDS_LIMIT(n_elements * element_size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     return calloc(n_elements, element_size);
 }
 
 void* fastCalloc(size_t n_elements, size_t element_size)
 {
     ASSERT_IS_WITHIN_LIMIT(n_elements * element_size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     void* result = calloc(n_elements, element_size);
     if (!result)
         CRASH();
@@ -231,6 +262,7 @@ void fastFree(void* p)
 void* fastRealloc(void* p, size_t n)
 {
     ASSERT_IS_WITHIN_LIMIT(n);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     void* result = realloc(p, n);
     if (!result)
         CRASH();
@@ -240,6 +272,7 @@ void* fastRealloc(void* p, size_t n)
 TryMallocReturnValue tryFastRealloc(void* p, size_t n)
 {
     FAIL_IF_EXCEEDS_LIMIT(n);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     return realloc(p, n);
 }
 
@@ -488,6 +521,7 @@ bool isFastMallocEnabled()
 void* fastMalloc(size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     void* result = bmalloc::api::malloc(size);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
     if (!AvoidRecordingScope::avoidRecordingCount())
@@ -510,6 +544,7 @@ void* fastCalloc(size_t numElements, size_t elementSize)
 void* fastRealloc(void* object, size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     void* result = bmalloc::api::realloc(object, size);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
     if (!AvoidRecordingScope::avoidRecordingCount())
@@ -543,6 +578,7 @@ size_t fastMallocGoodSize(size_t size)
 void* fastAlignedMalloc(size_t alignment, size_t size)
 {
     ASSERT_IS_WITHIN_LIMIT(size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     void* result = bmalloc::api::memalign(alignment, size);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
     if (!AvoidRecordingScope::avoidRecordingCount())
@@ -554,6 +590,7 @@ void* fastAlignedMalloc(size_t alignment, size_t size)
 void* tryFastAlignedMalloc(size_t alignment, size_t size)
 {
     FAIL_IF_EXCEEDS_LIMIT(size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     void* result = bmalloc::api::tryMemalign(alignment, size);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
     if (!AvoidRecordingScope::avoidRecordingCount())
@@ -570,6 +607,7 @@ void fastAlignedFree(void* p)
 TryMallocReturnValue tryFastMalloc(size_t size)
 {
     FAIL_IF_EXCEEDS_LIMIT(size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     return bmalloc::api::tryMalloc(size);
 }
 
@@ -586,6 +624,7 @@ TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
 TryMallocReturnValue tryFastRealloc(void* object, size_t newSize)
 {
     FAIL_IF_EXCEEDS_LIMIT(newSize);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
     return bmalloc::api::tryRealloc(object, newSize);
 }
 

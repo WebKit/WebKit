@@ -509,6 +509,7 @@ void AudioSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
 
 void AudioSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
 {
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     m_serialDispatchQueue->dispatchSync([this, buffer] {
         if (m_isEncoding)
             processSampleBuffer(buffer);

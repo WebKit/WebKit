@@ -1,3 +1,33 @@
+2021-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Add assertions to guard against heap allocations on the audio thread
+        https://bugs.webkit.org/show_bug.cgi?id=223226
+
+        Reviewed by Darin Adler.
+
+        Add assertions to guard against heap allocations on the audio thread during
+        audio processing, since those are bad for performance. I fixed any of the
+        issues found by these assertions in dependency bugs. Some issues remain
+        and are protected by DisableMallocRestrictionsForCurrentThreadScope to avoid
+        tripping the new assertions.
+
+        Right now, the assertions only protect audio processing, not pre/post quantum
+        rendering casts. Ideally, we'd expand the scope of these assertions to cover
+        everything that's done on the audio thread but this will require more fixes.
+
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::render):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::finish):
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::fireProcessorErrorOnMainThread):
+        * Modules/webaudio/AudioWorkletProcessor.cpp:
+        (WebCore::AudioWorkletProcessor::process):
+        * Modules/webaudio/MediaStreamAudioSourceCocoa.cpp:
+        (WebCore::MediaStreamAudioSource::consumeAudio):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::process):
+
 2021-03-23  Philippe Normand  <pnormand@igalia.com>
 
         [MSE][GStreamer] SIGSEV in webKitMediaSrcFreeStream

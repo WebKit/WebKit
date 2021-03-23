@@ -175,6 +175,8 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     if (m_hasStartedProducingData)
         return;
 
+    // Dispatching a Function to the main thread requires heap allocations.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     callOnMainThread([protectedThis = makeRef(*this)] {
         if (protectedThis->m_hasStartedProducingData)
             return;

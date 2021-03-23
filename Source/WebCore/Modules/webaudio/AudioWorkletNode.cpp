@@ -276,6 +276,8 @@ void AudioWorkletNode::fireProcessorErrorOnMainThread(ProcessorError error)
 {
     ASSERT(!isMainThread());
 
+    // Dispatching a Function to the main thread requires heap allocations.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     callOnMainThread([this, protectedThis = makeRef(*this), error]() mutable {
         String errorMessage;
         switch (error) {

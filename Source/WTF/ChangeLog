@@ -1,3 +1,34 @@
+2021-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Add assertions to guard against heap allocations on the audio thread
+        https://bugs.webkit.org/show_bug.cgi?id=223226
+
+        Reviewed by Darin Adler.
+
+        Add ForbidMallocUseForCurrentThreadScope to FastMalloc.h to enable assertions guarding against
+        doing heap allocations on the current thread (during the lifetime of the Scope object).
+
+        Also add a DisableMallocRestrictionsForCurrentThreadScope to temporarily disable those checks
+        to allow for some very specific assertions (either because they are required, or simply because
+        they are not fixed yet).
+
+        * wtf/FastMalloc.cpp:
+        (WTF::ForbidMallocUseForCurrentThreadScope::ForbidMallocUseForCurrentThreadScope):
+        (WTF::ForbidMallocUseForCurrentThreadScope::~ForbidMallocUseForCurrentThreadScope):
+        (WTF::DisableMallocRestrictionsForCurrentThreadScope::DisableMallocRestrictionsForCurrentThreadScope):
+        (WTF::DisableMallocRestrictionsForCurrentThreadScope::~DisableMallocRestrictionsForCurrentThreadScope):
+        (WTF::tryFastMalloc):
+        (WTF::fastMalloc):
+        (WTF::tryFastCalloc):
+        (WTF::fastCalloc):
+        (WTF::fastRealloc):
+        (WTF::tryFastRealloc):
+        (WTF::fastAlignedMalloc):
+        (WTF::tryFastAlignedMalloc):
+        * wtf/FastMalloc.h:
+        (WTF::ForbidMallocUseForCurrentThreadScope::~ForbidMallocUseForCurrentThreadScope):
+        (WTF::DisableMallocRestrictionsForCurrentThreadScope::~DisableMallocRestrictionsForCurrentThreadScope):
+
 2021-03-22  Devin Rousso  <drousso@apple.com>
 
         Remove unused JS and CSS files of media controls
