@@ -1476,6 +1476,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/UnicodeBidi.h
     platform/text/WritingMode.h
 
+    platform/xr/PlatformXR.h
+
     plugins/PluginData.h
     plugins/PluginInfoProvider.h
     plugins/PluginViewBase.h

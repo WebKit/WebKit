@@ -191,10 +191,10 @@ protected:
 
 class Instance {
 public:
-    static Instance& singleton();
+    WEBCORE_EXPORT static Instance& singleton();
 
     using DeviceList = Vector<Ref<Device>>;
-    void enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList&)>&&);
+    WEBCORE_EXPORT void enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList&)>&&);
 
 private:
     friend LazyNeverDestroyed<Instance>;

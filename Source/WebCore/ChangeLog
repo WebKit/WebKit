@@ -1,3 +1,26 @@
+2021-03-22  Ada Chan  <ada.chan@apple.com>
+
+        [WebXR] Enumerate XR devices via ChromeClient in WebXRSystem
+        https://bugs.webkit.org/show_bug.cgi?id=223520
+
+        Reviewed by Sam Weinig.
+
+        We want to avoid using singletons in the WebProcess and be able
+        to proxy the devices from the UI process.
+
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::ensureImmersiveXRDeviceIsSelected):
+        Instead of getting the devices from the singleton PlatformXR::Instance,
+        get them from the ChromeClient.
+        * WebCore.xcodeproj/project.pbxproj:
+        Mark PlatformXR.h private so it's visible to WebKit.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::enumerateImmersiveXRDevices):
+        The default implementation will call PlatformXR::Instance::enumerateImmersiveXRDevices()
+        to keep current functionality.
+        * platform/xr/PlatformXR.h:
+        Export methods that are now called in ChromeClient.
+
 2021-03-22  Eric Carlson  <eric.carlson@apple.com>
 
         AVAudioSessionCaptureDeviceManager should use crossThreadCopy

@@ -77,6 +77,10 @@ class WAKResponder;
 #include "MediaUsageInfo.h"
 #endif
 
+#if ENABLE(WEBXR)
+#include "PlatformXR.h"
+#endif
+
 OBJC_CLASS NSResponder;
 
 namespace WebCore {
@@ -562,6 +566,10 @@ public:
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     virtual void showMediaControlsContextMenu(FloatRect&&, Vector<MediaControlsContextMenuItem>&&, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler) { completionHandler(MediaControlsContextMenuItem::invalidID); }
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+
+#if ENABLE(WEBXR)
+    virtual void enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&& completionHandler) { PlatformXR::Instance::singleton().enumerateImmersiveXRDevices(WTFMove(completionHandler)); }
+#endif
 
 protected:
     virtual ~ChromeClient() = default;

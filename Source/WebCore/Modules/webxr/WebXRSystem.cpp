@@ -28,12 +28,15 @@
 
 #if ENABLE(WEBXR)
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "FeaturePolicy.h"
 #include "IDLTypes.h"
 #include "JSWebXRSession.h"
 #include "JSXRReferenceSpaceType.h"
+#include "Page.h"
 #include "PlatformXR.h"
 #include "RequestAnimationFrameCallback.h"
 #include "RuntimeEnabledFeatures.h"
@@ -80,9 +83,14 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
     }
 
     // https://immersive-web.github.io/webxr/#enumerate-immersive-xr-devices
-    auto& platformXR = PlatformXR::Instance::singleton();
+    auto document = downcast<Document>(scriptExecutionContext());
+    if (!document || !document->page()) {
+        callback();
+        return;
+    }
+
     bool isFirstXRDevicesEnumeration = !m_immersiveXRDevicesHaveBeenEnumerated;
-    platformXR.enumerateImmersiveXRDevices([this, protectedThis = makeRef(*this), isFirstXRDevicesEnumeration, callback = WTFMove(callback)](auto& immersiveXRDevices) mutable {
+    document->page()->chrome().client().enumerateImmersiveXRDevices([this, protectedThis = makeRef(*this), isFirstXRDevicesEnumeration, callback = WTFMove(callback)](auto& immersiveXRDevices) mutable {
         m_immersiveXRDevicesHaveBeenEnumerated = true;
 
         auto callbackOnExit = makeScopeExit([&]() {
