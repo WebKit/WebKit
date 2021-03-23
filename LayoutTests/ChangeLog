@@ -1,3 +1,13 @@
+2021-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Functor for WeakGCMap::ensureValue must not invoke GC
+        https://bugs.webkit.org/show_bug.cgi?id=223629
+
+        Reviewed by Mark Lam.
+
+        * js/dom/weak-gc-map-ensure-value-should-not-invoke-gc-expected.txt: Added.
+        * js/dom/weak-gc-map-ensure-value-should-not-invoke-gc.html: Added.
+
 2021-03-23  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] 2 web audio WPT tests fail when media in GPU Process is enabled

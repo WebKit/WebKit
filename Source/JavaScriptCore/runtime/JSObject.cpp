@@ -3521,17 +3521,23 @@ Butterfly* JSObject::allocateMoreOutOfLineStorage(VM& vm, size_t oldSize, size_t
     return Butterfly::createOrGrowPropertyStorage(butterfly(), vm, this, structure(vm), oldSize, newSize);
 }
 
-static JSCustomGetterFunction* createCustomGetterFunction(JSGlobalObject* globalObject, PropertyName propertyName, GetValueFunc getValueFunc, Optional<DOMAttributeAnnotation> domAttribute)
+static JSCustomGetterFunction* createCustomGetterFunction(JSGlobalObject* globalObject, VM& vm, PropertyName propertyName, GetValueFunc getValueFunc, Optional<DOMAttributeAnnotation> domAttribute)
 {
+    // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
+    // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
+    DeferGC deferGC(vm.heap);
     return globalObject->customGetterFunctionMap().ensureValue(getValueFunc, [&] {
-        return JSCustomGetterFunction::create(globalObject->vm(), globalObject, propertyName, getValueFunc, domAttribute);
+        return JSCustomGetterFunction::create(vm, globalObject, propertyName, getValueFunc, domAttribute);
     });
 }
 
-static JSCustomSetterFunction* createCustomSetterFunction(JSGlobalObject* globalObject, PropertyName propertyName, PutValueFunc putValueFunc)
+static JSCustomSetterFunction* createCustomSetterFunction(JSGlobalObject* globalObject, VM& vm, PropertyName propertyName, PutValueFunc putValueFunc)
 {
+    // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
+    // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
+    DeferGC deferGC(vm.heap);
     return globalObject->customSetterFunctionMap().ensureValue(putValueFunc, [&] {
-        return JSCustomSetterFunction::create(globalObject->vm(), globalObject, propertyName, putValueFunc);
+        return JSCustomSetterFunction::create(vm, globalObject, propertyName, putValueFunc);
     });
 }
 
@@ -3553,9 +3559,9 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
         descriptor.setAccessorDescriptor((slot.attributes() | PropertyAttribute::Accessor) & ~PropertyAttribute::CustomAccessor);
         JSGlobalObject* slotBaseGlobalObject = slot.slotBase()->globalObject(vm);
         if (slot.customGetter())
-            descriptor.setGetter(createCustomGetterFunction(slotBaseGlobalObject, propertyName, slot.customGetter(), slot.domAttribute()));
+            descriptor.setGetter(createCustomGetterFunction(slotBaseGlobalObject, vm, propertyName, slot.customGetter(), slot.domAttribute()));
         if (slot.customSetter())
-            descriptor.setSetter(createCustomSetterFunction(slotBaseGlobalObject, propertyName, slot.customSetter()));
+            descriptor.setSetter(createCustomSetterFunction(slotBaseGlobalObject, vm, propertyName, slot.customSetter()));
     } else {
         JSValue value = slot.getValue(globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, false);

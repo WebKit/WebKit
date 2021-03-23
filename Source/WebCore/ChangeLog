@@ -1,3 +1,16 @@
+2021-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Functor for WeakGCMap::ensureValue must not invoke GC
+        https://bugs.webkit.org/show_bug.cgi?id=223629
+
+        Reviewed by Mark Lam.
+
+        Test: js/dom/weak-gc-map-ensure-value-should-not-invoke-gc.html
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::createCrossOriginFunction):
+        (WebCore::JSDOMGlobalObject::createCrossOriginGetterSetter):
+
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline bindings tests after r274906.

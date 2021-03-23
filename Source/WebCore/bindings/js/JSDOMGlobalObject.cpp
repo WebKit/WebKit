@@ -306,18 +306,27 @@ void JSDOMGlobalObject::clearDOMGuardedObjects()
 
 JSFunction* JSDOMGlobalObject::createCrossOriginFunction(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, NativeFunction nativeFunction, unsigned length)
 {
+    auto& vm = lexicalGlobalObject->vm();
     CrossOriginMapKey key = std::make_pair(lexicalGlobalObject, nativeFunction.rawPointer());
+
+    // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
+    // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
+    DeferGC deferGC(vm.heap);
     return m_crossOriginFunctionMap.ensureValue(key, [&] {
-        return JSFunction::create(lexicalGlobalObject->vm(), lexicalGlobalObject, length, propertyName.publicName(), nativeFunction);
+        return JSFunction::create(vm, lexicalGlobalObject, length, propertyName.publicName(), nativeFunction);
     });
 }
 
 GetterSetter* JSDOMGlobalObject::createCrossOriginGetterSetter(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, GetValueFunc getter, PutValueFunc setter)
 {
     ASSERT(getter || setter);
+    auto& vm = lexicalGlobalObject->vm();
     CrossOriginMapKey key = std::make_pair(lexicalGlobalObject, getter ? reinterpret_cast<void*>(getter) : reinterpret_cast<void*>(setter));
+
+    // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
+    // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
+    DeferGC deferGC(vm.heap);
     return m_crossOriginGetterSetterMap.ensureValue(key, [&] {
-        auto& vm = lexicalGlobalObject->vm();
         return GetterSetter::create(vm, lexicalGlobalObject,
             getter ? JSCustomGetterFunction::create(vm, lexicalGlobalObject, propertyName, getter) : nullptr,
             setter ? JSCustomSetterFunction::create(vm, lexicalGlobalObject, propertyName, setter) : nullptr);

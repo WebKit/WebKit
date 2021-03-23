@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DeferGC.h"
 #include "Weak.h"
 #include <wtf/HashMap.h>
 
@@ -67,6 +68,9 @@ public:
     template<typename Functor>
     ValueArg* ensureValue(const KeyType& key, Functor&& functor)
     {
+        // If functor invokes GC, GC can prune WeakGCMap, and manipulate HashMap while we are touching it in ensure function.
+        // The functor must not invoke GC.
+        DisallowGC disallowGC;
         AddResult result = m_map.ensure(key, std::forward<Functor>(functor));
         ValueArg* value = result.iterator->value.get();
         if (!result.isNewEntry && !value) {

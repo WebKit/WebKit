@@ -1,5 +1,28 @@
 2021-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Functor for WeakGCMap::ensureValue must not invoke GC
+        https://bugs.webkit.org/show_bug.cgi?id=223629
+        <rdar://problem/75619217>
+
+        Reviewed by Mark Lam.
+
+        The functor for WeakGCMap::ensureValue must not invoke GC. GC can prune entries in WeakGCMap.
+        So we can modify underlying HashMap while we are just touching it for HashMap::ensure. This
+        can corrupt HashMap. To ensure this invariant, we put DisallowGC for WeakGCMap::ensureValue.
+        So we cannot invoke GC in the functor of that function (otherwise, assertion hits).
+
+        And we use DeferGC in createCustomGetterFunction / createCustomSetterFunction to avoid invoking
+        GC in WeakGCMap::ensureValue. This defers GC invocation until this DeferGC scope is destroyed,
+        and ensures that functor invoked by WeakGCMap::ensureValue will not cause GC.
+
+        * runtime/JSObject.cpp:
+        (JSC::createCustomGetterFunction):
+        (JSC::createCustomSetterFunction):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/WeakGCMap.h:
+
+2021-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Use ErrorInstance for AggregateError
         https://bugs.webkit.org/show_bug.cgi?id=223626
 
