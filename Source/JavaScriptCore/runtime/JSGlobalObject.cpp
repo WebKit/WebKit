@@ -1484,7 +1484,7 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalO
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
 
-    SymbolTableEntry::Fast entry;
+    SymbolTableEntry entry;
     PropertyDescriptor currentDescriptor;
     if (symbolTableGet(thisObject, propertyName, entry, currentDescriptor)) {
         bool isExtensible = false; // ignored since current descriptor is present
@@ -1502,7 +1502,8 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalO
             scope.assertNoException();
         }
         if (descriptor.writablePresent() && !descriptor.writable() && !entry.isReadOnly()) {
-            thisObject->symbolTable()->set(propertyName.uid(), SymbolTableEntry(entry.varOffset(), entry.getAttributes() | PropertyAttribute::ReadOnly));
+            entry.setReadOnly();
+            thisObject->symbolTable()->set(propertyName.uid(), entry);
             thisObject->varReadOnlyWatchpoint()->fireAll(vm, "GlobalVar was redefined as ReadOnly");
         }
         return true;

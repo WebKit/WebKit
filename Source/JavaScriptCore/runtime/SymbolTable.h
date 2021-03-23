@@ -264,6 +264,11 @@ public:
         return getFast().getAttributes();
     }
 
+    void setReadOnly()
+    {
+        bits() |= ReadOnlyFlag;
+    }
+
     bool isReadOnly() const
     {
         return bits() & ReadOnlyFlag;
