@@ -1,3 +1,16 @@
+2021-03-23  Chris Lord  <clord@igalia.com>
+
+        Import WPT html/canvas/offscreen/manual/draw-generic-family tests
+        https://bugs.webkit.org/show_bug.cgi?id=223630
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/w3c-import.log: Added.
+
 2021-03-22  Rob Buis  <rbuis@igalia.com>
 
         Enable ability to prevent scrolling in Element.focus()
