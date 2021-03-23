@@ -1,3 +1,12 @@
+2021-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix for AppleWin after r274827
+        https://bugs.webkit.org/show_bug.cgi?id=223500
+        <rdar://problem/75706741>
+
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+
 2021-03-22  Jean-Yves Avenard  <jya@apple.com>
 
         Move management of RemoteCommandListener from MediaSessionManagerCocoa into NowPlayingManager.
