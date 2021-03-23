@@ -1,3 +1,17 @@
+2021-03-22  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in ReplaceSelectionCommand::doApply()
+        https://bugs.webkit.org/show_bug.cgi?id=223545
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test to catch this null pointer dereference.
+        Thanks to Ryosuke Niwa for significant work in reducing
+        this test case.
+
+        * editing/execCommand/insert-image-in-composed-list-expected.txt: Added.
+        * editing/execCommand/insert-image-in-composed-list.html: Added.
+
 2021-03-22  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening webgl/conformance/extensions/khr-parallel-shader-compile.html timeout after r274711

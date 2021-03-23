@@ -1,3 +1,18 @@
+2021-03-22  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in ReplaceSelectionCommand::doApply()
+        https://bugs.webkit.org/show_bug.cgi?id=223545
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/execCommand/insert-image-in-composed-list.html
+
+        Add a missing check in ReplaceSelectionCommand::doApply()
+        to prevent calling splitTreeToNode() with nullptr.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2021-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use JSValueInWrappedObject to keep the JSObject alive for QuickTimePluginReplacement
