@@ -1,5 +1,43 @@
 2021-03-23  Philippe Normand  <pnormand@igalia.com>
 
+        [MSE][GStreamer] SIGSEV in webKitMediaSrcFreeStream
+        https://bugs.webkit.org/show_bug.cgi?id=220091
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The pipeline used by the MSE player is now able reload the MediaSource from the beginning if
+        a seek to 0 was requested. The problem was that uridecodebin was creating a new source
+        element and notifying the player which was then trying to dispose underlying platform track
+        informations, and also related appsrc elements. The latter was specially problematic because
+        the appsrc elements ownership was badly handled (elements added to a bin should not be
+        reused, unless an extra ref is added), leading to racy crashes.
+
+        So now when uridecodebin creates a new source element, the player detects this is a new
+        source and transfers track-related informations to the new element. Additionally, new appsrc
+        elements are created for the new element and track signals emitted so that the player is
+        still fully aware of the MSE tracks topology.
+
+        No new tests but two existing tests are now passing.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::sourceSetup):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.cpp:
+        (WebCore::MediaSourcePrivateGStreamer::open):
+        * platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::addSourceBuffer):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcFinalize):
+        (webKitMediaSrcChangeState):
+        (webKitMediaSrcFreeStream):
+        (webKitMediaSrcRestoreTracks):
+        (webKitMediaSrcSignalTracks):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h:
+
+2021-03-23  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] X11 build fixes
         https://bugs.webkit.org/show_bug.cgi?id=223577
 
