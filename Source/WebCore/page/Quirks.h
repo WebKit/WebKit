@@ -115,8 +115,7 @@ public:
     bool shouldAvoidPastingImagesAsWebContent() const;
 
     enum StorageAccessResult : bool { ShouldNotCancelEvent, ShouldCancelEvent };
-    enum ShouldDispatchClick : bool { No, Yes };
-    StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*, bool isParentProcessAFullWebBrowser) const;
+    StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*) const;
 
     bool needsVP9FullRangeFlagQuirk() const;
     bool needsHDRPixelDepthQuirk() const;
@@ -137,7 +136,7 @@ public:
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
     static const String& BBCRadioPlayerURLString();
     WEBCORE_EXPORT static const String& staticRadioPlayerURLString();
-    StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&&) const;
+    StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(StorageAccessWasGranted)>&&) const;
     static RegistrableDomain mapToTopDomain(const URL&);
 #endif
 
