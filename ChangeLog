@@ -1,3 +1,23 @@
+2021-03-23  Cameron McCormack  <heycam@apple.com>
+
+        Update .clang-format to reflect WebKit style better.
+        https://bugs.webkit.org/show_bug.cgi?id=223229
+
+        First, SpaceBeforeCpp11BracedList is set to true so that a space
+        is introduced after a variable name and before a braced initializer.
+
+        Second, AlwaysBreakTemplateDeclarations is changed from false (an
+        invalid value) to No, which should result in no line breaks being
+        introduced in template declarations.  Although there is a mix of
+        template declaration line breaking styles in the codebase, changing
+        this option to No will prevent clang-format from introducing one
+        where the patch author decides to write the declaration all on one
+        line.
+
+        Reviewed by Alex Christensen.
+
+        * .clang-format:
+
 2021-03-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Wrong variable used in FindFontconfig used to pick version from pkg-config
