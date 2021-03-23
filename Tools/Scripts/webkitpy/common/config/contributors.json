@@ -1077,9 +1077,9 @@
    },
    "Cameron McCormack" : {
       "emails" : [
+         "heycam@apple.com",
          "cam@mcc.id.au",
-         "cam@webkit.org",
-         "heycam@apple.com"
+         "cam@webkit.org"
       ],
       "nicks" : [
          "heycam"
