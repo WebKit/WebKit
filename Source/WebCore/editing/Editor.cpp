@@ -87,6 +87,7 @@
 #include "Range.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderLayer.h"
 #include "RenderTextControl.h"
 #include "RenderedDocumentMarker.h"
@@ -127,6 +128,10 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 #include "PromisedAttachmentInfo.h"
+#endif
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+#include "LayoutIntegrationLineLayout.h"
 #endif
 
 namespace WebCore {
@@ -2135,8 +2140,14 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
                 highlight.startOffset += baseOffset;
                 highlight.endOffset += baseOffset;
             }
-            if (baseNode->renderer())
-                baseNode->renderer()->repaint();
+
+            if (auto renderer = baseNode->renderer()) {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+                if (auto lineLayout = LayoutIntegration::LineLayout::containing(*renderer))
+                    lineLayout->flow().ensureLineBoxes();
+#endif
+                renderer->repaint();
+            }
 
             unsigned start = std::min(baseOffset + selectionStart, extentOffset);
             unsigned end = std::min(std::max(start, baseOffset + selectionEnd), extentOffset);

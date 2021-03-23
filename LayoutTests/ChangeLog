@@ -1,3 +1,55 @@
+2021-03-22  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274796. rdar://problem/75712824
+
+    [iOS] Composition text is not initially highlighted when typing in text fields using Pinyin keyboard
+    https://bugs.webkit.org/show_bug.cgi?id=223563
+    <rdar://problem/75564516>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    When enabling line layout integration, composition highlights on iOS don't appear when typing an input string
+    using the Pinyin keyboard for the first time. This is because the text renderer for the inserted composition
+    text does not contain inline text boxes when painting the composition text on iOS, so the marked text painting
+    codepath is never triggered.
+    
+    On macOS, this isn't an issue because the process of setting the composition changes the selection, which then
+    changes the highlight state of the `RenderText`, which subsequently calls into `ensureLineBoxes()`. However,
+    since selections are drawn using UIKit in the UI process on iOS, we don't end up ensuring that inline text boxes
+    are constructed for the inserted text.
+    
+    To address this, we follow macOS behavior by ensuring line box construction on the rendered composition text
+    when setting the composition.
+    
+    Test: editing/input/composition-underline-in-search-field.html
+    
+    * editing/Editor.cpp:
+    (WebCore::Editor::setComposition):
+    
+    LayoutTests:
+    
+    Add a test to verify that marked text underlines show up in search fields.
+    
+    * editing/input/composition-underline-in-search-field-expected-mismatch.html: Added.
+    * editing/input/composition-underline-in-search-field.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274796 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Composition text is not initially highlighted when typing in text fields using Pinyin keyboard
+            https://bugs.webkit.org/show_bug.cgi?id=223563
+            <rdar://problem/75564516>
+
+            Reviewed by Antti Koivisto.
+
+            Add a test to verify that marked text underlines show up in search fields.
+
+            * editing/input/composition-underline-in-search-field-expected-mismatch.html: Added.
+            * editing/input/composition-underline-in-search-field.html: Added.
+
 2021-03-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r273901. rdar://problem/75058982
