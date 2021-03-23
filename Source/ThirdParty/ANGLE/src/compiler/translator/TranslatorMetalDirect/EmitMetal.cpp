@@ -1256,7 +1256,8 @@ static std::map<Name, size_t> BuildExternalAttributeIndexMap(
         const TField &internalField = *internalFields[internalIndex];
         const Name internalName     = Name(internalField);
         const TType &internalType   = *internalField.type();
-        while (internalName.rawName() != shaderVars[shaderVarIndex].name)
+        while (internalName.rawName() != shaderVars[shaderVarIndex].name &&
+               internalName.rawName() != shaderVars[shaderVarIndex].mappedName)
         {
             // This case represents an inactive field.
 
