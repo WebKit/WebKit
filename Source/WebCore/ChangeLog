@@ -1,3 +1,42 @@
+2021-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use JSValueInWrappedObject to keep the JSObject alive for QuickTimePluginReplacement
+        https://bugs.webkit.org/show_bug.cgi?id=223561
+        <rdar://75634407>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch replaces QuickTimePluginReplacement's m_scriptObject member variable by
+        JSValueInWrappedObject in HTMLPlugInElement and hooks it up with the slot visitor.
+
+        Also use WeakPtr instead of a raw pointer for the back reference to the plugin element
+        in QuickTimePluginReplacement and YouTubePluginReplacement.
+
+        * Modules/plugins/PluginReplacement.h:
+        (WebCore::PluginReplacement::InstallResult): Added; a boolean indicating the installation
+        had succeeded and the script object for QuickTimePluginReplacement.
+        (WebCore::PluginReplacement::scriptObject): Deleted.
+        * Modules/plugins/QuickTimePluginReplacement.h:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::QuickTimePluginReplacement): Deployed WeakPtr.
+        (WebCore::QuickTimePluginReplacement::~QuickTimePluginReplacement): Removed
+        the superflous de-initialization of the member variables.
+        (WebCore::QuickTimePluginReplacement::installReplacement): Now returns JSValue
+        instead of storing it in m_scriptObject.
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::YouTubePluginReplacement): Deployed WeakPtr.
+        (WebCore::YouTubePluginReplacement::installReplacement):
+        * Modules/plugins/YouTubePluginReplacement.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InstanceNeedsVisitChildren): Generate visitChildren when an IDL has Plugin attribute.
+        (GenerateImplementation): Visit the newly added JSValueInWrappedObject.
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::didAddUserAgentShadowRoot): Store the script object returned
+        by QuickTimePluginReplacement::installReplacement in the newly added member variable.
+        (WebCore::HTMLPlugInElement::scriptObjectForPluginReplacement): Updated.
+        * html/HTMLPlugInElement.h:
+        (WebCore::HTMLPlugInElement::pluginReplacementScriptObject): Added. Used by visitChildren.
+
 2021-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process]: Improve getImageData() perf part 1: Add a GetImageData display list item

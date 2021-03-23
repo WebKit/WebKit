@@ -60,7 +60,7 @@ bool YouTubePluginReplacement::supportsFileExtension(const String& extension)
 }
 
 YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
-    : m_parentElement(&plugin)
+    : m_parentElement(makeWeakPtr(plugin))
 {
     ASSERT(paramNames.size() == paramValues.size());
     for (size_t i = 0; i < paramNames.size(); ++i)
@@ -77,7 +77,7 @@ RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlu
     return m_embedShadowElement->createElementRenderer(WTFMove(style), insertionPosition);
 }
 
-bool YouTubePluginReplacement::installReplacement(ShadowRoot& root)
+auto YouTubePluginReplacement::installReplacement(ShadowRoot& root) -> InstallResult
 {
     m_embedShadowElement = YouTubeEmbedShadowElement::create(m_parentElement->document());
 
@@ -86,7 +86,7 @@ bool YouTubePluginReplacement::installReplacement(ShadowRoot& root)
     auto iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, m_parentElement->document());
     if (m_attributes.contains("width"))
         iframeElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
-    
+
     const auto& heightValue = m_attributes.find("height");
     if (heightValue != m_attributes.end()) {
         iframeElement->setAttribute(HTMLNames::styleAttr, AtomString("max-height: 100%", AtomString::ConstructFromLiteral));
@@ -100,7 +100,7 @@ bool YouTubePluginReplacement::installReplacement(ShadowRoot& root)
     iframeElement->setAttributeWithoutSynchronization(HTMLNames::scrollingAttr, AtomString("no", AtomString::ConstructFromLiteral));
     m_embedShadowElement->appendChild(iframeElement);
 
-    return true;
+    return { true };
 }
     
 static URL createYouTubeURL(StringView videoID, StringView timeID)
