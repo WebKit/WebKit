@@ -1,3 +1,16 @@
+2021-03-23  Chris Dumez  <cdumez@apple.com>
+
+        [UBSan] dom/Document.cpp:2722:23: runtime error: reference binding to null pointer of type 'JSC::CallFrame'
+        https://bugs.webkit.org/show_bug.cgi?id=223642
+
+        Reviewed by Darin Adler.
+
+        Use a raw pointer instead of a reference for the JSC::CallFrame and null check it to make sure
+        the code is safe and its behavior is defined.
+
+        * dom/Document.cpp:
+        (WebCore::Document::shouldBypassMainWorldContentSecurityPolicy const):
+
 2021-03-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         Provide a way to specify platform vs security key when requesting an assertion in the SPI
