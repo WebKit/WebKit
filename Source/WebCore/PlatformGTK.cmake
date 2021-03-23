@@ -107,7 +107,7 @@ list(APPEND WebCore_LIBRARIES
 
 if (USE_LCMS)
     list(APPEND WebCore_LIBRARIES
-        ${LCMS2_LIBRARIES}
+        LCMS2::LCMS2
     )
 endif ()
 
@@ -126,12 +126,6 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBTASN1_INCLUDE_DIRS}
     ${UPOWERGLIB_INCLUDE_DIRS}
 )
-
-if (USE_LCMS)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${LCMS2_INCLUDE_DIR}
-    )
-endif ()
 
 if (USE_OPENGL)
     list(APPEND WebCore_SOURCES
