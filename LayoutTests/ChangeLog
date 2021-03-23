@@ -1,3 +1,11 @@
+2021-03-22  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening webgl/conformance/extensions/khr-parallel-shader-compile.html timeout after r274711
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-03-22  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r272842): security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html is consistently failing
