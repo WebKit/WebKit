@@ -25,45 +25,15 @@
 
 #pragma once
 
-#include "ArgList.h"
 #include "ErrorInstance.h"
 #include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSGlobalObject.h"
 #include "Structure.h"
 #include "VM.h"
-#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
-class AggregateError final : public ErrorInstance {
-public:
-    using Base = ErrorInstance;
-    static constexpr unsigned StructureFlags = Base::StructureFlags;
-    static constexpr bool needsDestruction = Base::needsDestruction;
-
-    DECLARE_EXPORT_INFO;
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
-    }
-
-    static AggregateError* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const MarkedArgumentBuffer& errors, const String& message, JSValue cause, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
-    {
-        auto* instance = new (NotNull, allocateCell<AggregateError>(vm.heap)) AggregateError(vm, structure);
-        instance->finishCreation(vm, globalObject, errors, message, cause, appender, type, useCurrentFrame);
-        return instance;
-    }
-
-    static AggregateError* create(JSGlobalObject*, VM&, Structure*, JSValue errors, JSValue message, JSValue options, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
-
-    void finishCreation(VM&, JSGlobalObject*, const MarkedArgumentBuffer& errors, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
-
-private:
-    explicit AggregateError(VM&, Structure*);
-};
-
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(AggregateError, AggregateError::Base);
+ErrorInstance* createAggregateError(JSGlobalObject*, VM&, Structure*, JSValue errors, JSValue message, JSValue options, ErrorInstance::SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
 } // namespace JSC

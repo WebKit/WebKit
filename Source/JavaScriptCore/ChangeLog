@@ -1,3 +1,25 @@
+2021-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use ErrorInstance for AggregateError
+        https://bugs.webkit.org/show_bug.cgi?id=223626
+
+        Reviewed by Darin Adler.
+
+        From r274609, WebAssembly errors start using normal ErrorInstance. We apply the same thing to AggregateError too.
+        This patch removes AggregateError class, and just generating ErrorInstance.
+
+        * runtime/AggregateError.cpp:
+        (JSC::createAggregateError):
+        (JSC::AggregateError::AggregateError): Deleted.
+        (JSC::AggregateError::finishCreation): Deleted.
+        (JSC::AggregateError::create): Deleted.
+        * runtime/AggregateError.h:
+        (): Deleted.
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::initializeAggregateErrorConstructor):
+
 2021-03-23  Robin Morisset  <rmorisset@apple.com>
 
         Object.freeze(this) at the global scope can lose a reference to a WatchpointSet
