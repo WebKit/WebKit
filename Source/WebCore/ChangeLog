@@ -1,3 +1,18 @@
+2021-03-22  Venky Dass  <yaranamavenkataramana@apple.com>
+
+        Nullptr crash in  WebCore::RenderObject::RenderObjectBitfields::isLineBreak() where a NULL check is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=223409
+
+        Reviewed by Ryosuke Niwa.
+
+        When the check for LineBreak is performed the BR elmement NULL check is not performed. Which results in a crash
+        The fix therefore is to check for NULL.
+        
+        Test: LayoutTests/editing/inserting/insert-paragraph-between-hr-and-br-assigned-to-slot-crash.html
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2021-03-22  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in ReplaceSelectionCommand::doApply()
