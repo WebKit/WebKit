@@ -1,3 +1,43 @@
+2021-03-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add pressed state for button-like controls
+        https://bugs.webkit.org/show_bug.cgi?id=223208
+        <rdar://problem/72399087>
+
+        Reviewed by Simon Fraser.
+
+        Add a pressed state for buttons, checkboxes, radio buttons, select
+        elements and date inputs. The pressed state has a 75% opacity applied
+        to the text and background colors.
+
+        * css/html.css:
+
+        Explicitly set the default active style on buttons to ensure styles are
+        are adjusted when the element is pressed.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+
+        The style adjustment is only performed if the -webkit-appearance property
+        is not set to none. This ensures we do not override the colors for
+        custom styled form controls.
+
+        (WebCore::adjustInputElementButtonStyle):
+        (WebCore::RenderThemeIOS::adjustMenuListButtonStyle const):
+        (WebCore::RenderThemeIOS::adjustButtonStyle const):
+        (WebCore::RenderThemeIOS::checkboxRadioBackgroundColor):
+
+        Factored out the background color determination for checkboxes and
+        radio buttons into a common method.
+
+        (WebCore::RenderThemeIOS::checkboxRadioIndicatorColor):
+
+        Factored out the indicator color determination for checkboxes and
+        radio buttons into a common method.
+
+        (WebCore::RenderThemeIOS::paintCheckbox):
+        (WebCore::RenderThemeIOS::paintRadio):
+
 2021-03-23  Peng Liu  <peng.liu6@apple.com>
 
         Enable the quirk to disable firing "webkitendfullscreen" event when a video enters picture-in-picture from fullscreen on espn.com

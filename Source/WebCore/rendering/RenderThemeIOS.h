@@ -114,6 +114,9 @@ private:
     void paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    Color checkboxRadioBackgroundColor(ControlStates::States, OptionSet<StyleColor::Options>);
+    Color checkboxRadioIndicatorColor(ControlStates::States, OptionSet<StyleColor::Options>);
+
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintRadio(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
@@ -176,6 +179,8 @@ private:
     bool paintSliderTrackWithFormControlRefresh(const RenderObject&, const PaintInfo&, const IntRect&);
     void paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox&, const PaintInfo&, const FloatRect&);
 #endif
+
+    void adjustPressedStyle(RenderStyle&, const Element&) const;
 
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 

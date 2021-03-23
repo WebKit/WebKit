@@ -684,6 +684,8 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
     if (!element)
         return;
 
+    adjustPressedStyle(style, *element);
+
     // Enforce some default styles in the case that this is a non-multiple <select> element,
     // or a date input. We don't force these if this is just an element with
     // "-webkit-appearance: menulist-button".
@@ -1072,6 +1074,24 @@ void RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const 
     paintTextFieldDecorations(box, paintInfo, rect);
 }
 
+// This value matches the opacity applied to UIKit controls.
+constexpr auto pressedStateOpacity = 0.75f;
+
+void RenderThemeIOS::adjustPressedStyle(RenderStyle& style, const Element& element) const
+{
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (element.document().settings().iOSFormControlRefreshEnabled() && element.active() && !element.isDisabledFormControl()) {
+        auto textColor = style.color();
+        if (textColor.isValid())
+            style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
+
+        auto backgroundColor = style.backgroundColor();
+        if (backgroundColor.isValid())
+            style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
+    }
+#endif
+}
+
 void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
@@ -1095,6 +1115,8 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
 
     if (!element)
         return;
+
+    adjustPressedStyle(style, *element);
 
     RenderBox* box = element->renderBox();
     if (!box)
@@ -1986,6 +2008,35 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 
+Color RenderThemeIOS::checkboxRadioBackgroundColor(ControlStates::States states, OptionSet<StyleColor::Options> styleColorOptions)
+{
+    if (!(states & ControlStates::EnabledState))
+        return systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions);
+
+    Color enabledBackgroundColor;
+    if (states & ControlStates::CheckedState || states & ControlStates::IndeterminateState)
+        enabledBackgroundColor = systemColor(CSSValueAppleSystemBlue, styleColorOptions);
+    else
+        enabledBackgroundColor = systemColor(CSSValueAppleSystemSecondaryFill, styleColorOptions);
+
+    if (states & ControlStates::PressedState)
+        return enabledBackgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
+
+    return enabledBackgroundColor;
+}
+
+Color RenderThemeIOS::checkboxRadioIndicatorColor(ControlStates::States states, OptionSet<StyleColor::Options> styleColorOptions)
+{
+    if (!(states & ControlStates::EnabledState))
+        return systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions);
+
+    Color enabledIndicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColor::Options::UseDarkAppearance);
+    if (states & ControlStates::PressedState)
+        return enabledIndicatorColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
+
+    return enabledIndicatorColor;
+}
+
 bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
@@ -1994,67 +2045,56 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver { context };
 
-    auto styleColorOptions = box.styleColorOptions();
-
     constexpr auto checkboxHeight = 16.0f;
     constexpr auto checkboxCornerRadius = 5.0f;
 
     FloatRoundedRect checkboxRect(rect, FloatRoundedRect::Radii(checkboxCornerRadius * rect.height() / checkboxHeight));
 
-    auto checked = isChecked(box);
-    auto indeterminate = isIndeterminate(box);
-    auto enabled = isEnabled(box);
+    auto controlStates = extractControlStatesForRenderer(box);
+    auto styleColorOptions = box.styleColorOptions();
 
-    if (checked || indeterminate) {
-        if (enabled)
-            context.fillRoundedRect(checkboxRect, systemColor(CSSValueAppleSystemBlue, styleColorOptions));
-        else
-            context.fillRoundedRect(checkboxRect, systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions));
+    context.fillRoundedRect(checkboxRect, checkboxRadioBackgroundColor(controlStates, styleColorOptions));
 
-        Path path;
-        if (checked) {
-            path.moveTo({ 28.174f, 68.652f });
-            path.addBezierCurveTo({ 31.006f, 68.652f }, { 33.154f, 67.578f }, { 34.668f, 65.332f });
-            path.addLineTo({ 70.02f, 11.28f });
-            path.addBezierCurveTo({ 71.094f, 9.62f }, { 71.582f, 8.107f }, { 71.582f, 6.642f });
-            path.addBezierCurveTo({ 71.582f, 2.784f }, { 68.652f, 0.001f }, { 64.697f, 0.001f });
-            path.addBezierCurveTo({ 62.012f, 0.001f }, { 60.352f, 0.978f }, { 58.691f, 3.565f });
-            path.addLineTo({ 28.027f, 52.1f });
-            path.addLineTo({ 12.354f, 32.52f });
-            path.addBezierCurveTo({ 10.84f, 30.664f }, { 9.18f, 29.834f }, { 6.884f, 29.834f });
-            path.addBezierCurveTo({ 2.882f, 29.834f }, { 0.0f, 32.666f }, { 0.0f, 36.572f });
-            path.addBezierCurveTo({ 0.0f, 38.282f }, { 0.537f, 39.795f }, { 2.002f, 41.504f });
-            path.addLineTo({ 21.826f, 65.625f });
-            path.addBezierCurveTo({ 23.536f, 67.675f }, { 25.536f, 68.652f }, { 28.174f, 68.652f });
+    bool checked = controlStates & ControlStates::CheckedState;
+    bool indeterminate = controlStates & ControlStates::IndeterminateState;
 
-            const FloatSize checkmarkSize(72.0f, 69.0f);
-            float scale = (0.65f * rect.width()) / checkmarkSize.width();
+    if (!checked && !indeterminate)
+        return false;
 
-            AffineTransform transform;
-            transform.translate(rect.center() - (checkmarkSize * scale * 0.5f));
-            transform.scale(scale);
-            path.transform(transform);
-        } else {
-            const FloatSize indeterminateBarRoundingRadii(1.25f, 1.25f);
-            constexpr float indeterminateBarPadding = 2.5f;
-            float height = 0.12f * rect.height();
+    Path path;
+    if (checked) {
+        path.moveTo({ 28.174f, 68.652f });
+        path.addBezierCurveTo({ 31.006f, 68.652f }, { 33.154f, 67.578f }, { 34.668f, 65.332f });
+        path.addLineTo({ 70.02f, 11.28f });
+        path.addBezierCurveTo({ 71.094f, 9.62f }, { 71.582f, 8.107f }, { 71.582f, 6.642f });
+        path.addBezierCurveTo({ 71.582f, 2.784f }, { 68.652f, 0.001f }, { 64.697f, 0.001f });
+        path.addBezierCurveTo({ 62.012f, 0.001f }, { 60.352f, 0.978f }, { 58.691f, 3.565f });
+        path.addLineTo({ 28.027f, 52.1f });
+        path.addLineTo({ 12.354f, 32.52f });
+        path.addBezierCurveTo({ 10.84f, 30.664f }, { 9.18f, 29.834f }, { 6.884f, 29.834f });
+        path.addBezierCurveTo({ 2.882f, 29.834f }, { 0.0f, 32.666f }, { 0.0f, 36.572f });
+        path.addBezierCurveTo({ 0.0f, 38.282f }, { 0.537f, 39.795f }, { 2.002f, 41.504f });
+        path.addLineTo({ 21.826f, 65.625f });
+        path.addBezierCurveTo({ 23.536f, 67.675f }, { 25.536f, 68.652f }, { 28.174f, 68.652f });
 
-            FloatRect indeterminateBarRect(rect.x() + indeterminateBarPadding, rect.center().y() - height / 2.0f, rect.width() - indeterminateBarPadding * 2, height);
-            path.addRoundedRect(indeterminateBarRect, indeterminateBarRoundingRadii);
-        }
+        const FloatSize checkmarkSize(72.0f, 69.0f);
+        float scale = (0.65f * rect.width()) / checkmarkSize.width();
 
-        if (enabled)
-            context.setFillColor(systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColor::Options::UseDarkAppearance));
-        else
-            context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions));
-
-        context.fillPath(path);
+        AffineTransform transform;
+        transform.translate(rect.center() - (checkmarkSize * scale * 0.5f));
+        transform.scale(scale);
+        path.transform(transform);
     } else {
-        if (enabled)
-            context.fillRoundedRect(checkboxRect, systemColor(CSSValueAppleSystemSecondaryFill, styleColorOptions));
-        else
-            context.fillRoundedRect(checkboxRect, systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions));
+        const FloatSize indeterminateBarRoundingRadii(1.25f, 1.25f);
+        constexpr float indeterminateBarPadding = 2.5f;
+        float height = 0.12f * rect.height();
+
+        FloatRect indeterminateBarRect(rect.x() + indeterminateBarPadding, rect.center().y() - height / 2.0f, rect.width() - indeterminateBarPadding * 2, height);
+        path.addRoundedRect(indeterminateBarRect, indeterminateBarRoundingRadii);
     }
+
+    context.setFillColor(checkboxRadioIndicatorColor(controlStates, styleColorOptions));
+    context.fillPath(path);
 
     return false;
 }
@@ -2067,17 +2107,13 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
+    auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
-    auto enabled = isEnabled(box);
 
-    if (isChecked(box)) {
-        if (enabled)
-            context.setFillColor(systemColor(CSSValueAppleSystemBlue, styleColorOptions));
-        else
-            context.setFillColor(systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions));
+    context.setFillColor(checkboxRadioBackgroundColor(controlStates, styleColorOptions));
+    context.fillEllipse(rect);
 
-        context.fillEllipse(rect);
-
+    if (controlStates & ControlStates::CheckedState) {
         // The inner circle is 6 / 14 the size of the surrounding circle,
         // leaving 8 / 14 around it. (8 / 14) / 2 = 2 / 7.
         constexpr float innerInverseRatio = 2 / 7.0f;
@@ -2086,19 +2122,8 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
         innerCircleRect.inflateX(-innerCircleRect.width() * innerInverseRatio);
         innerCircleRect.inflateY(-innerCircleRect.height() * innerInverseRatio);
 
-        if (enabled)
-            context.setFillColor(systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColor::Options::UseDarkAppearance));
-        else
-            context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions));
-
+        context.setFillColor(checkboxRadioIndicatorColor(controlStates, styleColorOptions));
         context.fillEllipse(innerCircleRect);
-    } else {
-        if (enabled)
-            context.setFillColor(systemColor(CSSValueAppleSystemSecondaryFill, styleColorOptions));
-        else
-            context.setFillColor(systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions));
-
-        context.fillEllipse(rect);
     }
 
     return false;
