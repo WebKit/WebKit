@@ -1,3 +1,16 @@
+2021-03-23  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Print output of setup.py when install fails
+        https://bugs.webkit.org/show_bug.cgi?id=223589
+        <rdar://problem/75700606>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.install): Print stdout and stderr of setup.py when install fails.
+
 2021-03-22  Cameron McCormack  <heycam@apple.com>
 
         Fix ordering of my email addresses in contributors.json
