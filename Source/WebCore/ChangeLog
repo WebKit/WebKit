@@ -1,3 +1,20 @@
+2021-03-23  Peng Liu  <peng.liu6@apple.com>
+
+        Enable the quirk to disable firing "webkitendfullscreen" event when a video enters picture-in-picture from fullscreen on espn.com
+        https://bugs.webkit.org/show_bug.cgi?id=223610
+
+        Reviewed by Jer Noble.
+
+        A video element entering picture-in-picture from fullscreen will fire a "webkitendfullscreen"
+        event since r266728, but some sites (e.g., espn.com) do not handle the event properly.
+        Because they assume the video will resume to inline after exiting fullscreen.
+
+        This patch enables the quirk for espn.com to disable firing "webkitendfullscreen" event
+        in that scenario before they fix the issue in the event handler.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk const):
+
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
         dom/WheelEvent.cpp:47:58: runtime error: negation of -2147483648 cannot be represented in type 'int'; cast to an unsigned type to negate this value to itself
