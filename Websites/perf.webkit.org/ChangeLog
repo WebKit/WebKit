@@ -1,3 +1,50 @@
+2021-03-22  Dewei Zhu  <dewei_zhu@apple.com>
+
+        [perf dashboard] Remove v1 and v2 code.
+        https://bugs.webkit.org/show_bug.cgi?id=223617
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove v1 and v2 code from perf dashboard.
+        Remove detect-changes.js script since run-analysis.js is the v3 version equivalent.
+
+        * public/index.html: Keep the redirection to v3.
+        * public/js/helper-classes.js: Removed.
+        * public/js/jquery.colorhelpers.js: Removed.
+        * public/js/jquery.flot.categories.js: Removed.
+        * public/js/jquery.flot.crosshair.js: Removed.
+        * public/js/jquery.flot.errorbars.js: Removed.
+        * public/js/jquery.flot.fillbetween.js: Removed.
+        * public/js/jquery.flot.js: Removed.
+        * public/js/jquery.flot.navigate.js: Removed.
+        * public/js/jquery.flot.plugins.js: Removed.
+        * public/js/jquery.flot.resize.js: Removed.
+        * public/js/jquery.flot.selection.js: Removed.
+        * public/js/jquery.flot.stack.js: Removed.
+        * public/js/jquery.flot.symbol.js: Removed.
+        * public/js/jquery.flot.threshold.js: Removed.
+        * public/js/jquery.flot.time.js: Removed.
+        * public/js/jquery.js: Removed.
+        * public/v2/analysis.js: Removed.
+        * public/v2/app.css: Removed.
+        * public/v2/app.js: Removed.
+        * public/v2/chart-pane.css: Removed.
+        * public/v2/commits-viewer.js: Removed.
+        * public/v2/data.js: Removed.
+        * public/v2/index.html: Keep the redirection to v3.
+        * public/v2/interactive-chart.js: Removed.
+        * public/v2/js/d3/LICENSE: Removed.
+        * public/v2/js/d3/d3.js: Removed.
+        * public/v2/js/d3/d3.min.js: Removed.
+        * public/v2/js/ember-data.js: Removed.
+        * public/v2/js/ember.js: Removed.
+        * public/v2/js/handlebars.js: Removed.
+        * public/v2/js/jquery.min.js: Removed.
+        * public/v2/manifest.js: Removed.
+        * public/v2/popup.js: Removed.
+        * public/v2/statistics-strategies.js: Removed.
+        * tools/detect-changes.js: Removed.
+
 2021-03-21  Dewei Zhu  <dewei_zhu@apple.com>
 
         [perf dashboard] Remove non-inclusive words from perf dashboard.
