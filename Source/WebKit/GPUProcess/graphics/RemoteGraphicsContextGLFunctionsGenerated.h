@@ -1114,18 +1114,6 @@
     {
         m_context->getExtensions().drawBuffersEXT(makeGCGLSpan(reinterpret_cast<const GCGLenum*>(bufs.data()), bufs.size()));
     }
-    void drawArraysInstancedANGLE(uint32_t mode, int32_t first, int32_t count, int32_t primcount)
-    {
-        m_context->getExtensions().drawArraysInstancedANGLE(mode, first, count, primcount);
-    }
-    void drawElementsInstancedANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t primcount)
-    {
-        m_context->getExtensions().drawElementsInstancedANGLE(mode, count, type, static_cast<GCGLvoidptr>(offset), primcount);
-    }
-    void vertexAttribDivisorANGLE(uint32_t index, uint32_t divisor)
-    {
-        m_context->getExtensions().vertexAttribDivisorANGLE(index, divisor);
-    }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> params(static_cast<size_t>(paramsSize), 0);

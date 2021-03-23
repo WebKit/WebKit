@@ -120,30 +120,6 @@ void ExtensionsGLANGLE::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
     gl::DrawBuffersEXT(bufs.bufSize, bufs.data);
 }
 
-void ExtensionsGLANGLE::drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::DrawArraysInstancedANGLE(mode, first, count, primcount);
-}
-
-void ExtensionsGLANGLE::drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::DrawElementsInstancedANGLE(mode, count, type, reinterpret_cast<GLvoid*>(offset), primcount);
-}
-
-void ExtensionsGLANGLE::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::VertexAttribDivisorANGLE(index, divisor);
-}
-
 String ExtensionsGLANGLE::getExtensions()
 {
     return String(reinterpret_cast<const char*>(gl::GetString(GL_EXTENSIONS)));

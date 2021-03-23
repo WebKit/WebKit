@@ -51,10 +51,6 @@ public:
 
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
 
-    void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;
-    void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) override;
-    void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) override;
-
     // Only for non-WebGL 2.0 contexts.
     GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
 

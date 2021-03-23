@@ -1,5 +1,22 @@
 2021-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        Move instanced drawing functionality from ExtensionsGL to GraphicsContextGL
+        https://bugs.webkit.org/show_bug.cgi?id=223179
+
+        Reviewed by Kenneth Russell.
+
+        Remove unused instanced rendering functions from ExtensionsGL.
+        They are already in GraphicsContextGL interfaces.
+        ExtensionsGL is being removed as it is redundant. The extension object
+        is the same object as the context object and not useful.
+
+        * platform/graphics/ExtensionsGL.h:
+        * platform/graphics/angle/ExtensionsGLANGLE.cpp:
+        * platform/graphics/angle/ExtensionsGLANGLE.h:
+        * platform/graphics/opengl/ExtensionsGLOpenGL.h:
+
+2021-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         ANGLE is missing the explicit context headers
         https://bugs.webkit.org/show_bug.cgi?id=223470
 
