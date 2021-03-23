@@ -1,3 +1,41 @@
+2021-03-23  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274714. rdar://problem/75751024
+
+    [Win] Fix build issue
+    https://bugs.webkit.org/show_bug.cgi?id=223451
+    <rdar://75545172>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKitLegacy:
+    
+    Specify that WebKitLegacy links WebCore and PAL statically, since the correctness of the WEBCORE_EXPORT macro depends on that.
+    
+    * PlatformWin.cmake:
+    
+    Source/WebKitLegacy/win:
+    
+    Add WebCore namespace to function call.
+    
+    * Plugins/PluginView.cpp:
+    (WebCore::PluginView::getValueForURL):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274714 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-19  Per Arne  <pvollan@apple.com>
+
+            [Win] Fix build issue
+            https://bugs.webkit.org/show_bug.cgi?id=223451
+            <rdar://75545172>
+
+            Reviewed by Brent Fulgham.
+
+            Specify that WebKitLegacy links WebCore and PAL statically, since the correctness of the WEBCORE_EXPORT macro depends on that.
+
+            * PlatformWin.cmake:
+
 2020-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Determine correct visibility for linked frameworks
