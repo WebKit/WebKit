@@ -74,8 +74,8 @@ int g_environment_tear_down_count = 0;
 class MyEnvironment : public testing::Environment {
  public:
   MyEnvironment() {}
-  virtual void SetUp() { g_environment_set_up_count++; }
-  virtual void TearDown() { g_environment_tear_down_count++; }
+  void SetUp() override { g_environment_set_up_count++; }
+  void TearDown() override { g_environment_tear_down_count++; }
 };
 
 // A test that should fail.
@@ -117,13 +117,12 @@ const int kNumberOfParamTests = 10;
 class MyParamTest : public testing::TestWithParam<int> {};
 
 TEST_P(MyParamTest, ShouldPass) {
-  // FIXME: Make parameter value checking robust WRT order of tests.
   GTEST_CHECK_INT_EQ_(g_param_test_count % kNumberOfParamTests, GetParam());
   g_param_test_count++;
 }
-INSTANTIATE_TEST_CASE_P(MyParamSequence,
-                        MyParamTest,
-                        testing::Range(0, kNumberOfParamTests));
+INSTANTIATE_TEST_SUITE_P(MyParamSequence,
+                         MyParamTest,
+                         testing::Range(0, kNumberOfParamTests));
 
 // Resets the count for each test.
 void ResetCounts() {

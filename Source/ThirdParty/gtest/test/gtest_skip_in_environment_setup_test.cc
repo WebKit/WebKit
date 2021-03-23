@@ -1,4 +1,4 @@
-// Copyright 2009, Google Inc.
+// Copyright 2019, Google LLC.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-//     * Neither the name of Google Inc. nor the names of its
+//     * Neither the name of Google LLC. nor the names of its
 // contributors may be used to endorse or promote products derived from
 // this software without specific prior written permission.
 //
@@ -27,12 +27,23 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Author: Josh Kelley (joshkel@gmail.com)
-//
-// Google C++ Testing Framework (Google Test)
-//
-// C++Builder's IDE cannot build a static library from files with hyphens
-// in their name.  See http://qc.codegear.com/wc/qcmain.aspx?d=70977 .
-// This file serves as a workaround.
+// This test verifies that skipping in the environment results in the
+// testcases being skipped.
 
-#include "src/gtest-all.cc"
+#include <iostream>
+#include "gtest/gtest.h"
+
+class SetupEnvironment : public testing::Environment {
+ public:
+  void SetUp() override { GTEST_SKIP() << "Skipping the entire environment"; }
+};
+
+TEST(Test, AlwaysFails) { EXPECT_EQ(true, false); }
+
+int main(int argc, char **argv) {
+  testing::InitGoogleTest(&argc, argv);
+
+  testing::AddGlobalTestEnvironment(new SetupEnvironment());
+
+  return RUN_ALL_TESTS();
+}

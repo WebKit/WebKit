@@ -1,3 +1,24 @@
+2021-03-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update googletest to 1a8ecf1
+        https://bugs.webkit.org/show_bug.cgi?id=223607
+
+        Reviewed by Don Olmstead.
+
+        * gtest/:
+        Update googletest, but...
+
+        * gtest/CMakeLists.txt:
+        Keep our own build files, just add the new file.
+
+        * gtest/xcode/:
+        Keep our own build files, but it seems that after 1.10.0, googletest is just "live at HEAD",
+        so ditch Scripts/versiongenerate.py.
+
+        * gtest/README.WebKit: Removed.
+        * gtest/changes.diff: Removed.
+        It appears that our fix for FreeBSD has been upstreamed.
+
 2021-02-24  Tim Horton  <timothy_horton@apple.com>
 
         Fix linker warnings building gtest for macCatalyst

@@ -14,6 +14,7 @@ set(GTEST_SOURCES
     ${GTEST_DIR}/src/gtest-death-test.cc
     ${GTEST_DIR}/src/gtest-filepath.cc
     ${GTEST_DIR}/src/gtest_main.cc
+    ${GTEST_DIR}/src/gtest-matchers.cc
     ${GTEST_DIR}/src/gtest-port.cc
     ${GTEST_DIR}/src/gtest-printers.cc
     ${GTEST_DIR}/src/gtest-test-part.cc

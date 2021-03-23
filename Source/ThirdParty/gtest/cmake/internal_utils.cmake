@@ -12,6 +12,10 @@
 #   Test and Google Mock's option() definitions, and thus must be
 #   called *after* the options have been defined.
 
+if (POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif (POLICY CMP0054)
+
 # Tweaks CMake's default compiler/linker settings to suit Google Test's needs.
 #
 # This must be a macro(), as inside a function string() can only
@@ -22,6 +26,8 @@ macro(fix_default_compiler_settings_)
     # This replacement code is taken from sample in the CMake Wiki at
     # https://gitlab.kitware.com/cmake/community/wikis/FAQ#dynamic-replace.
     foreach (flag_var
+             CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+             CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
              CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
              CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
       if (NOT BUILD_SHARED_LIBS AND NOT gtest_force_shared_crt)
@@ -56,7 +62,6 @@ macro(config_compiler_and_linker)
   unset(GTEST_HAS_PTHREAD)
   if (NOT gtest_disable_pthreads AND NOT MINGW)
     # Defines CMAKE_USE_PTHREADS_INIT and CMAKE_THREAD_LIBS_INIT.
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads)
     if (CMAKE_USE_PTHREADS_INIT)
       set(GTEST_HAS_PTHREAD ON)
@@ -67,37 +72,23 @@ macro(config_compiler_and_linker)
   if (MSVC)
     # Newlines inside flags variables break CMake's NMake generator.
     # TODO(vladl@google.com): Add -RTCs and -RTCu to debug builds.
-    set(cxx_base_flags "-GS -W4 -WX -wd4251 -wd4275 -nologo -J -Zi")
-    if (MSVC_VERSION LESS 1400)  # 1400 is Visual Studio 2005
-      # Suppress spurious warnings MSVC 7.1 sometimes issues.
-      # Forcing value to bool.
-      set(cxx_base_flags "${cxx_base_flags} -wd4800")
-      # Copy constructor and assignment operator could not be generated.
-      set(cxx_base_flags "${cxx_base_flags} -wd4511 -wd4512")
-      # Compatibility warnings not applicable to Google Test.
-      # Resolved overload was found by argument-dependent lookup.
-      set(cxx_base_flags "${cxx_base_flags} -wd4675")
-    endif()
-    if (MSVC_VERSION LESS 1500)  # 1500 is Visual Studio 2008
-      # Conditional expression is constant.
-      # When compiling with /W4, we get several instances of C4127
-      # (Conditional expression is constant). In our code, we disable that
-      # warning on a case-by-case basis. However, on Visual Studio 2005,
-      # the warning fires on std::list. Therefore on that compiler and earlier,
-      # we disable the warning project-wide.
-      set(cxx_base_flags "${cxx_base_flags} -wd4127")
-    endif()
-    if (NOT (MSVC_VERSION LESS 1700))  # 1700 is Visual Studio 2012.
-      # Suppress "unreachable code" warning on VS 2012 and later.
-      # http://stackoverflow.com/questions/3232669 explains the issue.
-      set(cxx_base_flags "${cxx_base_flags} -wd4702")
-    endif()
-
+    set(cxx_base_flags "-GS -W4 -WX -wd4251 -wd4275 -nologo -J")
     set(cxx_base_flags "${cxx_base_flags} -D_UNICODE -DUNICODE -DWIN32 -D_WIN32")
     set(cxx_base_flags "${cxx_base_flags} -DSTRICT -DWIN32_LEAN_AND_MEAN")
     set(cxx_exception_flags "-EHsc -D_HAS_EXCEPTIONS=1")
     set(cxx_no_exception_flags "-EHs-c- -D_HAS_EXCEPTIONS=0")
     set(cxx_no_rtti_flags "-GR-")
+    # Suppress "unreachable code" warning
+    # http://stackoverflow.com/questions/3232669 explains the issue.
+    set(cxx_base_flags "${cxx_base_flags} -wd4702")
+    # Ensure MSVC treats source files as UTF-8 encoded.
+    set(cxx_base_flags "${cxx_base_flags} -utf-8")
+  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(cxx_base_flags "-Wall -Wshadow -Werror -Wconversion")
+    set(cxx_exception_flags "-fexceptions")
+    set(cxx_no_exception_flags "-fno-exceptions")
+    set(cxx_strict_flags "-W -Wpointer-arith -Wreturn-type -Wcast-qual -Wwrite-strings -Wswitch -Wunused-parameter -Wcast-align -Wchar-subscripts -Winline -Wredundant-decls")
+    set(cxx_no_rtti_flags "-fno-rtti")
   elseif (CMAKE_COMPILER_IS_GNUCXX)
     set(cxx_base_flags "-Wall -Wshadow -Werror")
     if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7.0.0)
@@ -148,7 +139,6 @@ macro(config_compiler_and_linker)
     "${CMAKE_CXX_FLAGS} ${cxx_base_flags} ${cxx_no_exception_flags}")
   set(cxx_default "${cxx_exception}")
   set(cxx_no_rtti "${cxx_default} ${cxx_no_rtti_flags}")
-  set(cxx_use_own_tuple "${cxx_default} -DGTEST_USE_OWN_TR1_TUPLE=1")
 
   # For building the gtest libraries.
   set(cxx_strict "${cxx_default} ${cxx_strict_flags}")
@@ -167,6 +157,22 @@ function(cxx_library_with_type name type cxx_flags)
   set_target_properties(${name}
     PROPERTIES
     DEBUG_POSTFIX "d")
+  # Set the output directory for build artifacts
+  set_target_properties(${name}
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+  # make PDBs match library name
+  get_target_property(pdb_debug_postfix ${name} DEBUG_POSTFIX)
+  set_target_properties(${name}
+    PROPERTIES
+    PDB_NAME "${name}"
+    PDB_NAME_DEBUG "${name}${pdb_debug_postfix}"
+    COMPILE_PDB_NAME "${name}"
+    COMPILE_PDB_NAME_DEBUG "${name}${pdb_debug_postfix}")
+
   if (BUILD_SHARED_LIBS OR type STREQUAL "SHARED")
     set_target_properties(${name}
       PROPERTIES
@@ -183,6 +189,10 @@ function(cxx_library_with_type name type cxx_flags)
       set(threads_spec Threads::Threads)
     endif()
     target_link_libraries(${name} PUBLIC ${threads_spec})
+  endif()
+
+  if (NOT "${CMAKE_VERSION}" VERSION_LESS "3.8")
+    target_compile_features(${name} PUBLIC cxx_std_11)
   endif()
 endfunction()
 
@@ -204,7 +214,7 @@ endfunction()
 # is built from the given source files with the given compiler flags.
 function(cxx_executable_with_flags name cxx_flags libs)
   add_executable(${name} ${ARGN})
-  if (MSVC AND (NOT (MSVC_VERSION LESS 1700)))  # 1700 is Visual Studio 2012.
+  if (MSVC)
     # BigObj required for tests.
     set(cxx_flags "${cxx_flags} -bigobj")
   endif()
@@ -236,7 +246,13 @@ function(cxx_executable name dir libs)
 endfunction()
 
 # Sets PYTHONINTERP_FOUND and PYTHON_EXECUTABLE.
-find_package(PythonInterp)
+if ("${CMAKE_VERSION}" VERSION_LESS "3.12.0")
+  find_package(PythonInterp)
+else()
+  find_package(Python COMPONENTS Interpreter)
+  set(PYTHONINTERP_FOUND ${Python_Interpreter_FOUND})
+  set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
+endif()
 
 # cxx_test_with_flags(name cxx_flags libs srcs...)
 #
@@ -244,7 +260,7 @@ find_package(PythonInterp)
 # from the given source files with the given compiler flags.
 function(cxx_test_with_flags name cxx_flags libs)
   cxx_executable_with_flags(${name} "${cxx_flags}" "${libs}" ${ARGN})
-  add_test(NAME ${name} COMMAND ${name})
+    add_test(NAME ${name} COMMAND "$<TARGET_FILE:${name}>")
 endfunction()
 
 # cxx_test(name libs srcs...)
@@ -263,33 +279,30 @@ endfunction()
 # test/name.py.  It does nothing if Python is not installed.
 function(py_test name)
   if (PYTHONINTERP_FOUND)
-    if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
+    if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 3.1)
       if (CMAKE_CONFIGURATION_TYPES)
-	# Multi-configuration build generators as for Visual Studio save
-	# output in a subdirectory of CMAKE_CURRENT_BINARY_DIR (Debug,
-	# Release etc.), so we have to provide it here.
-        add_test(
-          NAME ${name}
+        # Multi-configuration build generators as for Visual Studio save
+        # output in a subdirectory of CMAKE_CURRENT_BINARY_DIR (Debug,
+        # Release etc.), so we have to provide it here.
+        add_test(NAME ${name}
           COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/${name}.py
               --build_dir=${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG> ${ARGN})
       else (CMAKE_CONFIGURATION_TYPES)
-	# Single-configuration build generators like Makefile generators
-	# don't have subdirs below CMAKE_CURRENT_BINARY_DIR.
-        add_test(
-          NAME ${name}
+        # Single-configuration build generators like Makefile generators
+        # don't have subdirs below CMAKE_CURRENT_BINARY_DIR.
+        add_test(NAME ${name}
           COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/${name}.py
-              --build_dir=${CMAKE_CURRENT_BINARY_DIR} ${ARGN})
+            --build_dir=${CMAKE_CURRENT_BINARY_DIR} ${ARGN})
       endif (CMAKE_CONFIGURATION_TYPES)
-    else (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
+    else()
       # ${CMAKE_CURRENT_BINARY_DIR} is known at configuration time, so we can
       # directly bind it from cmake. ${CTEST_CONFIGURATION_TYPE} is known
       # only at ctest runtime (by calling ctest -c <Configuration>), so
       # we have to escape $ to delay variable substitution here.
-      add_test(
-        ${name}
-        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/${name}.py
+      add_test(NAME ${name}
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/${name}.py
           --build_dir=${CMAKE_CURRENT_BINARY_DIR}/\${CTEST_CONFIGURATION_TYPE} ${ARGN})
-    endif (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
+    endif()
   endif(PYTHONINTERP_FOUND)
 endfunction()
 
@@ -306,6 +319,18 @@ function(install_project)
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+      # Install PDBs
+      foreach(t ${ARGN})
+        get_target_property(t_pdb_name ${t} COMPILE_PDB_NAME)
+        get_target_property(t_pdb_name_debug ${t} COMPILE_PDB_NAME_DEBUG)
+        get_target_property(t_pdb_output_directory ${t} PDB_OUTPUT_DIRECTORY)
+        install(FILES
+          "${t_pdb_output_directory}/\${CMAKE_INSTALL_CONFIG_NAME}/$<$<CONFIG:Debug>:${t_pdb_name_debug}>$<$<NOT:$<CONFIG:Debug>>:${t_pdb_name}>.pdb"
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          OPTIONAL)
+      endforeach()
+    endif()
     # Configure and install pkgconfig files.
     foreach(t ${ARGN})
       set(configured_pc "${generated_dir}/${t}.pc")
