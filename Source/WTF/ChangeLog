@@ -1,3 +1,18 @@
+2021-03-23  Chris Dumez  <cdumez@apple.com>
+
+        wtf/text/IntegerToStringConversion.h:54:104: runtime error: negation of -2147483648 cannot be represented in type 'int'; cast to an unsigned type to negate this value to itself
+        https://bugs.webkit.org/show_bug.cgi?id=223614
+
+        Reviewed by Darin Adler.
+
+        numberToStringSigned() was calling -number when number is negative. This could trigger undefined behavior
+        since -number may not be representable in the input type. For example, if the type was int and number was
+        INT_MIN, -INT_MIN would overflow and the result would be undefined. To address the issue, we now cast
+        number to the destination *unsigned* type *before* negating it.
+
+        * wtf/text/IntegerToStringConversion.h:
+        (WTF::numberToStringSigned):
+
 2021-03-23  Alex Christensen  <achristensen@webkit.org>
 
         Optimize StringView::CodePoints::Iterator
