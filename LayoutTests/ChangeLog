@@ -1,5 +1,16 @@
 2021-03-22  Peng Liu  <peng.liu6@apple.com>
 
+        [ macOS wk2 ] media/media-source/media-source-canplaythrough-event.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223012
+
+        Unreviewed test gardening.
+
+        This flaky test failure has been fixed by r274591 and r274731.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-03-22  Peng Liu  <peng.liu6@apple.com>
+
         [GPUP] Add a "wallTime" field to struct RemoteMediaPlayerState
         https://bugs.webkit.org/show_bug.cgi?id=223523
 
