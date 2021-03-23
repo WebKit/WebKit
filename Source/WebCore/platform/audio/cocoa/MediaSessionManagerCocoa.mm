@@ -57,6 +57,7 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 #endif // !PLATFORM(MAC)
 
 MediaSessionManagerCocoa::MediaSessionManagerCocoa()
+    : m_nowPlayingManager(platformStrategies()->mediaStrategy().createNowPlayingManager())
 {
 #if ENABLE(VP9)
     if (shouldEnableVP9Decoder())
@@ -162,11 +163,7 @@ void MediaSessionManagerCocoa::prepareToSendUserMediaPermissionRequest()
 void MediaSessionManagerCocoa::scheduleSessionStatusUpdate()
 {
     m_taskQueue.enqueueTask([this] () mutable {
-        if (m_remoteCommandListener) {
-            m_remoteCommandListener->setSupportsSeeking(computeSupportsSeeking());
-            m_remoteCommandListener->updateSupportedCommands();
-        }
-
+        m_nowPlayingManager->setSupportsSeeking(computeSupportsSeeking());
         updateNowPlayingInfo();
 
         forEachSession([] (auto& session) {
@@ -191,8 +188,7 @@ void MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing(PlatformMediaSession
 
 void MediaSessionManagerCocoa::addSession(PlatformMediaSession& session)
 {
-    if (!m_remoteCommandListener)
-        m_remoteCommandListener = RemoteCommandListener::create(*this);
+    m_nowPlayingManager->addClient(*this);
 
     if (!m_audioHardwareListener)
         m_audioHardwareListener = AudioHardwareListener::create(*this);
@@ -205,7 +201,7 @@ void MediaSessionManagerCocoa::removeSession(PlatformMediaSession& session)
     PlatformMediaSessionManager::removeSession(session);
 
     if (hasNoSession()) {
-        m_remoteCommandListener = nullptr;
+        m_nowPlayingManager->removeClient(*this);
         m_audioHardwareListener = nullptr;
     }
 
@@ -216,8 +212,7 @@ void MediaSessionManagerCocoa::setCurrentSession(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::setCurrentSession(session);
 
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->updateSupportedCommands();
+    m_nowPlayingManager->updateSupportedCommands();
 }
 
 void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying delayCallingUpdateNowPlaying)
@@ -253,14 +248,12 @@ void MediaSessionManagerCocoa::sessionCanProduceAudioChanged()
 
 void MediaSessionManagerCocoa::addSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->addSupportedCommand(command);
+    m_nowPlayingManager->addSupportedCommand(command);
 }
 
 void MediaSessionManagerCocoa::removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->removeSupportedCommand(command);
+    m_nowPlayingManager->removeSupportedCommand(command);
 }
 
 void MediaSessionManagerCocoa::clearNowPlayingInfo()
@@ -358,7 +351,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
         if (m_registeredAsNowPlayingApplication) {
             ALWAYS_LOG(LOGIDENTIFIER, "clearing now playing info");
-            platformStrategies()->mediaStrategy().clearNowPlayingInfo();
+            m_nowPlayingManager->clearNowPlayingInfo();
         }
 
         m_registeredAsNowPlayingApplication = false;
@@ -367,18 +360,14 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         m_lastUpdatedNowPlayingDuration = NAN;
         m_lastUpdatedNowPlayingElapsedTime = NAN;
         m_lastUpdatedNowPlayingInfoUniqueIdentifier = { };
-        m_nowPlayingInfo = { };
 
         return;
     }
 
     m_haveEverRegisteredAsNowPlayingApplication = true;
 
-    if (m_nowPlayingInfo != nowPlayingInfo) {
-        m_nowPlayingInfo = nowPlayingInfo;
-        platformStrategies()->mediaStrategy().setNowPlayingInfo(!m_registeredAsNowPlayingApplication, *nowPlayingInfo);
+    if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo))
         ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", nowPlayingInfo->artwork ? nowPlayingInfo->artwork->src : String(), "\"");
-    }
 
     if (!m_registeredAsNowPlayingApplication) {
         m_registeredAsNowPlayingApplication = true;

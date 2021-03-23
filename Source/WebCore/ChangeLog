@@ -1,3 +1,51 @@
+2021-03-22  Jean-Yves Avenard  <jya@apple.com>
+
+        Move management of RemoteCommandListener from MediaSessionManagerCocoa into NowPlayingManager.
+        https://bugs.webkit.org/show_bug.cgi?id=223435
+        <rdar://problem/75567198>
+
+        Reviewed by Eric Carlson.
+
+        NowPlaying and RemoteCommandListener kind of do the same things, as such it make sense to combine the two
+        and hide the implementation details from consumers.
+        We move the handling of setting and clearing the NowPlayingInfo information to an expanded
+        NowPlayingManager which now also runs in the webcontent process.
+        The job to ensure a RemoteCommandListener is set is now up to the NowPlayingManager as well as
+        dealing with changes in NowPlayingInfo content.
+        Ideally we would prefer to remove all code related to MediaRemote from MediaSessionManagerCocoa;
+        however for ease we leave it there to avoid having to deal with objective-C interface in NowPlayingManager.
+        No change in observable behavior.
+
+        * platform/MediaStrategy.h: The two existing methods dealing with NowPlayingInfo are removed, instead we can override the entire creation of the NowPlayingManager.
+        * platform/MediaStrategy.cpp:
+        (WebCore::MediaStrategy::createNowPlayingManager const): default implementation for createNowPlayingManager
+        * platform/NowPlayingManager.cpp: Add methods used in MediaSessionManagerCocoa used to deal with RemoteCommandListener.
+        (WebCore::NowPlayingManager::didReceiveRemoteControlCommand):
+        (WebCore::NowPlayingManager::addClient): Add explicit method to add a RemoteCommandListener listener, to be called before calling setNowPlayingInfo if needed.
+        (WebCore::NowPlayingManager::removeClient): renamed from clearNowPlayingInfoClient.
+        (WebCore::NowPlayingManager::clearNowPlayingInfo):
+        (WebCore::NowPlayingManager::clearNowPlayingInfoPrivate): Virtual class with default implementation which will immediately communicate with MediaRemote.
+        (WebCore::NowPlayingManager::setNowPlayingInfo):
+        (WebCore::NowPlayingManager::setNowPlayingInfoPrivate):  Virtual class with default implementation which will immediately communicate with MediaRemote.
+        (WebCore::NowPlayingManager::setSupportsSeeking): We explicitly set a different setSupportsSeeking method for code clarity.
+        (WebCore::NowPlayingManager::addSupportedCommand):
+        (WebCore::NowPlayingManager::removeSupportedCommand):
+        (WebCore::NowPlayingManager::setSupportedRemoteCommands):
+        (WebCore::NowPlayingManager::updateSupportedCommands):
+        (WebCore::NowPlayingManager::ensureRemoteCommandListenerCreated):
+        (WebCore::NowPlayingManager::clearNowPlayingInfoClient): Deleted.
+        * platform/NowPlayingManager.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h: Remove now unused members
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm: Amended to use new NowPlayingManager.
+        (WebCore::MediaSessionManagerCocoa::MediaSessionManagerCocoa):
+        (WebCore::MediaSessionManagerCocoa::scheduleSessionStatusUpdate):
+        (WebCore::MediaSessionManagerCocoa::addSession):
+        (WebCore::MediaSessionManagerCocoa::removeSession):
+        (WebCore::MediaSessionManagerCocoa::setCurrentSession):
+        (WebCore::MediaSessionManagerCocoa::addSupportedCommand):
+        (WebCore::MediaSessionManagerCocoa::removeSupportedCommand):
+        (WebCore::MediaSessionManagerCocoa::updateNowPlayingInfo):
+
 2021-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix for AppleWin after r274791

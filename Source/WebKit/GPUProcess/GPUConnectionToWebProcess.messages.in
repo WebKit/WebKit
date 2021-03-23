@@ -30,7 +30,7 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void ReleaseGraphicsContextGL(WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier)
 #endif
     void ClearNowPlayingInfo()
-    void SetNowPlayingInfo(bool setAsNowPlayingApplication, struct WebCore::NowPlayingInfo nowPlayingInfo)
+    void SetNowPlayingInfo(struct WebCore::NowPlayingInfo nowPlayingInfo)
 #if USE(AUDIO_SESSION)
     EnsureAudioSession() -> (struct WebKit::RemoteAudioSessionConfiguration configuration) Synchronous
 #endif

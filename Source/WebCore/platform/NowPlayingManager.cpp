@@ -37,13 +37,17 @@ NowPlayingManager::~NowPlayingManager() = default;
 
 void NowPlayingManager::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    ASSERT(m_nowPlayingInfo);
-
     if (m_client)
         m_client->didReceiveRemoteControlCommand(type, argument);
 }
 
-void NowPlayingManager::clearNowPlayingInfoClient(Client& client)
+void NowPlayingManager::addClient(Client& client)
+{
+    m_client = makeWeakPtr(client);
+    ensureRemoteCommandListenerCreated();
+}
+
+void NowPlayingManager::removeClient(Client& client)
 {
     if (m_client.get() != &client)
         return;
@@ -52,35 +56,76 @@ void NowPlayingManager::clearNowPlayingInfoClient(Client& client)
     m_client.clear();
     m_nowPlayingInfo = { };
 
+    clearNowPlayingInfo();
+}
+
+void NowPlayingManager::clearNowPlayingInfo()
+{
+    clearNowPlayingInfoPrivate();
+    m_setAsNowPlayingApplication = false;
+}
+
+void NowPlayingManager::clearNowPlayingInfoPrivate()
+{
 #if PLATFORM(COCOA)
     MediaSessionManagerCocoa::clearNowPlayingInfo();
 #endif
 }
 
-void NowPlayingManager::setNowPlayingInfo(Client& client, NowPlayingInfo&& nowPlayingInfo)
+bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo)
 {
-    if (!m_remoteCommandListener)
-        m_remoteCommandListener = RemoteCommandListener::create(*this);
+    if (m_nowPlayingInfo && *m_nowPlayingInfo == nowPlayingInfo)
+        return false;
+    m_nowPlayingInfo = nowPlayingInfo;
+    setNowPlayingInfoPrivate(*m_nowPlayingInfo);
+    m_setAsNowPlayingApplication = true;
+    return true;
+}
 
-    m_remoteCommandListener->setSupportsSeeking(nowPlayingInfo.supportsSeeking);
-    m_client = makeWeakPtr(client);
+void NowPlayingManager::setNowPlayingInfoPrivate(const NowPlayingInfo& nowPlayingInfo)
+{
+    setSupportsSeeking(nowPlayingInfo.supportsSeeking);
 #if PLATFORM(COCOA)
-    bool wasPlaying = !!m_nowPlayingInfo;
-#endif
-    m_nowPlayingInfo = WTFMove(nowPlayingInfo);
-
-#if PLATFORM(COCOA)
-    MediaSessionManagerCocoa::setNowPlayingInfo(!wasPlaying && m_nowPlayingInfo, *m_nowPlayingInfo);
+    MediaSessionManagerCocoa::setNowPlayingInfo(!m_setAsNowPlayingApplication, nowPlayingInfo);
+#else
+    (void)nowPlayingInfo;
 #endif
 }
 
-void NowPlayingManager::setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet& commands, bool supportsSeeking)
+void NowPlayingManager::setSupportsSeeking(bool supports)
+{
+    if (m_remoteCommandListener)
+        m_remoteCommandListener->setSupportsSeeking(supports);
+}
+
+void NowPlayingManager::addSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
+{
+    if (m_remoteCommandListener)
+        m_remoteCommandListener->addSupportedCommand(command);
+}
+
+void NowPlayingManager::removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
+{
+    if (m_remoteCommandListener)
+        m_remoteCommandListener->removeSupportedCommand(command);
+}
+
+void NowPlayingManager::setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet& commands)
+{
+    if (m_remoteCommandListener)
+        m_remoteCommandListener->setSupportedCommands(commands);
+}
+
+void NowPlayingManager::updateSupportedCommands()
+{
+    if (m_remoteCommandListener)
+        m_remoteCommandListener->updateSupportedCommands();
+}
+
+void NowPlayingManager::ensureRemoteCommandListenerCreated()
 {
     if (!m_remoteCommandListener)
-        return;
-
-    m_remoteCommandListener->setSupportsSeeking(supportsSeeking);
-    m_remoteCommandListener->setSupportedCommands(commands);
+        m_remoteCommandListener = RemoteCommandListener::create(*this);
 }
 
 }

@@ -32,4 +32,9 @@ MediaStrategy::MediaStrategy() = default;
 
 MediaStrategy::~MediaStrategy() = default;
 
+std::unique_ptr<NowPlayingManager> MediaStrategy::createNowPlayingManager() const
+{
+    return makeUnique<NowPlayingManager>();
+}
+
 }

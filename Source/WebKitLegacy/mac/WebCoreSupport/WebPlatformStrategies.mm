@@ -33,7 +33,6 @@
 #import <WebCore/CDMFactory.h>
 #import <WebCore/Color.h>
 #import <WebCore/Frame.h>
-#import <WebCore/MediaSessionManagerCocoa.h>
 #import <WebCore/MediaStrategy.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PasteboardItemInfo.h>
@@ -75,15 +74,6 @@ private:
         return AudioDestination::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
     }
 #endif
-    void clearNowPlayingInfo() final
-    {
-        MediaSessionManagerCocoa::clearNowPlayingInfo();
-    }
-
-    void setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo& nowPlayingInfo) final
-    {
-        MediaSessionManagerCocoa::setNowPlayingInfo(setAsNowPlayingApplication, nowPlayingInfo);
-    }
 };
 
 MediaStrategy* WebPlatformStrategies::createMediaStrategy()

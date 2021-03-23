@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NowPlayingInfo.h"
+#include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
 #include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
@@ -48,14 +49,26 @@ public:
         virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) = 0;
     };
 
-    void clearNowPlayingInfoClient(Client&);
-    void setNowPlayingInfo(Client&, NowPlayingInfo&&);
-    void setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet&, bool);
+    void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
+    void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
+
+    void addClient(Client&);
+    void removeClient(Client&);
+
+    void clearNowPlayingInfo();
+    bool setNowPlayingInfo(const NowPlayingInfo&);
+    void setSupportsSeeking(bool);
+    void setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet&);
+    void updateSupportedCommands();
 
 private:
+    virtual void clearNowPlayingInfoPrivate();
+    virtual void setNowPlayingInfoPrivate(const NowPlayingInfo&);
+    void ensureRemoteCommandListenerCreated();
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     WeakPtr<Client> m_client;
     Optional<NowPlayingInfo> m_nowPlayingInfo;
+    bool m_setAsNowPlayingApplication { false };
 };
 
 }

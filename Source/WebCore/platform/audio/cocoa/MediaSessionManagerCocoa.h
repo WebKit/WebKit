@@ -29,7 +29,7 @@
 
 #include "AudioHardwareListener.h"
 #include "GenericTaskQueue.h"
-#include "NowPlayingInfo.h"
+#include "NowPlayingManager.h"
 #include "PlatformMediaSessionManager.h"
 #include "RemoteCommandListener.h"
 
@@ -39,7 +39,7 @@ struct NowPlayingInfo;
 
 class MediaSessionManagerCocoa
     : public PlatformMediaSessionManager
-    , private RemoteCommandListenerClient
+    , private NowPlayingManager::Client
     , private AudioHardwareListener::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -93,7 +93,7 @@ private:
     const char* logClassName() const override { return "MediaSessionManagerCocoa"; }
 #endif
 
-    // RemoteCommandListenerClient
+    // NowPlayingManager::Client
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument) final { processDidReceiveRemoteControlCommand(type, argument); }
 
     // AudioHardwareListenerClient
@@ -101,7 +101,6 @@ private:
     void audioHardwareDidBecomeInactive() final { }
     void audioOutputDeviceChanged() final;
 
-    Optional<NowPlayingInfo> m_nowPlayingInfo;
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };
     bool m_haveEverRegisteredAsNowPlayingApplication { false };
@@ -114,7 +113,7 @@ private:
 
     GenericTaskQueue<Timer> m_taskQueue;
 
-    std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
+    const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;
 };
 

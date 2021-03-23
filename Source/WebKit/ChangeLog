@@ -1,3 +1,23 @@
+2021-03-22  Jean-Yves Avenard  <jya@apple.com>
+
+        Move management of RemoteCommandListener from MediaSessionManagerCocoa into NowPlayingManager
+        https://bugs.webkit.org/show_bug.cgi?id=223435
+        <rdar://problem/75567198>
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp: Update methods to use new NowPlayingManager API.
+        (WebKit::GPUConnectionToWebProcess::clearNowPlayingInfo):
+        (WebKit::GPUConnectionToWebProcess::setNowPlayingInfo):
+        (WebKit::GPUConnectionToWebProcess::updateSupportedRemoteCommands): explicitly call setSupportsSeek
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in: Remove argument that can be easily inferred in code.
+        * WebProcess/GPU/media/WebMediaStrategy.cpp: Override createNowPlayingManager method when using the GPU process.
+        (WebKit::WebMediaStrategy::createNowPlayingManager const):
+        (WebKit::WebMediaStrategy::clearNowPlayingInfo): Deleted.
+        (WebKit::WebMediaStrategy::setNowPlayingInfo): Deleted.
+        * WebProcess/GPU/media/WebMediaStrategy.h:
+
 2021-03-22  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Port grid overlay drawing to iOS
