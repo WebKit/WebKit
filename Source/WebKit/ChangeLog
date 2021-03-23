@@ -1,3 +1,20 @@
+2021-03-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add getter to textInteractionEnabled property
+        https://bugs.webkit.org/show_bug.cgi?id=223638
+        <rdar://problem/73990298>
+
+        Reviewed by Darin Adler.
+
+        During API review, it was pointed out that the textInteractionEnabled
+        property should have a getter/Swift name prefixed with "is" so the
+        call site reads like an assertion about the receiver.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences isTextInteractionEnabled]):
+        (-[WKPreferences textInteractionEnabled]): Deleted.
+
 2021-03-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r274889.
