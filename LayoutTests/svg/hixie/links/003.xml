@@ -19,7 +19,7 @@ if (window.testRunner) {
  
 function checkNoNavigation()
 {
-  var result = location.hash == '' ? 'PASS' : 'FAIL';
+  var result = location.hash != '' ? 'PASS' : 'FAIL';
   document.documentElement.appendChild(document.createTextNode(result));
   if (window.testRunner)
     testRunner.notifyDone();
@@ -39,14 +39,9 @@ function runTest() {
 }
 ]]>
 </script>
-   <!-- Spec says that <a> can only link to animation elements,
-        otherwise it is invalid; that known attributes with
-        unsupported values are treated as if they hadn't been
-        specified when rendering; that if the attribute is not
-        specified, the effect is as if an empty value ("") was
-        specified; and that an empty attribute value (xlink:href="")
-        means that no link traversal occurs upon activation of the 'a'
-        element. So. Nothing should happen if you click it: -->
+   <!-- SVG 2 uses attributes in the default namespace that are
+        consistent with HTML links, and deprecates the XLink
+        attributes. -->
    <a xlink:href="#test" id="link">
     <circle cx="50" cy="50" r="50" fill="blue"/>
    </a>
