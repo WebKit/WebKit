@@ -285,7 +285,7 @@ class TestGit(unittest.TestCase):
 
 
 class TestGitHub(unittest.TestCase):
-    remote = 'https://github.example.com/WebKit/webkit'
+    remote = 'https://github.example.com/WebKit/WebKit'
 
     def test_detection(self):
         self.assertEqual(remote.GitHub.is_webserver('https://github.example.com/WebKit/webkit'), True)

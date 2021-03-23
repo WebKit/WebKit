@@ -1,3 +1,19 @@
+2021-03-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Base GitHub mock links on provided remote
+        https://bugs.webkit.org/show_bug.cgi?id=223611
+        <rdar://problem/75713760>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub.__init__): Standardize mock GitHub path.
+        (GitHub._parents_of_request): Base link path on GitHub remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGitHub):
+
 2021-03-22  Devin Rousso  <drousso@apple.com>
 
         Remove unused JS and CSS files of media controls
