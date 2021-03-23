@@ -1,3 +1,32 @@
+2021-03-23  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa][Opus] Protect against variable frame duration packets
+        https://bugs.webkit.org/show_bug.cgi?id=223623
+
+        Reviewed by Eric Carlson.
+
+        Because frames-per-packet and frame duration are carried within the TOC of each individual
+        frame, it's theoretically possible to construct an Opus stream where those values change
+        without a new initialization segment, a situation which CoreAudio does not currently
+        support. In the case such a stream is encountered, bail with an error code during parsing,
+        rather than passing such data on to CoreAudio for decoding.
+
+        To do so, extract some of the Opus private data parsing code from
+        createOpusAudioFormatDescription(), into its own method parseOpusPrivateData(). Create a new
+        struct type OpusCookieContents to recieve this parsed data. And to avoid excessive
+        allocations during parsing, ensure that these methods support stack-based structures through
+        an out-param (as opposed to returning an Optional<> struct).
+
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::AudioTrackData::consumeFrameData):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h:
+        * platform/graphics/cocoa/WebMAudioUtilitiesCocoa.h:
+        * platform/graphics/cocoa/WebMAudioUtilitiesCocoa.mm:
+        (WebCore::parseOpusPrivateData):
+        (WebCore::cookieFromOpusCookieContents):
+        (WebCore::createOpusAudioFormatDescription):
+        (WebCore::cookieFromOpusCodecPrivate): Deleted.
+
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
         [UBSan] dom/Document.cpp:2722:23: runtime error: reference binding to null pointer of type 'JSC::CallFrame'

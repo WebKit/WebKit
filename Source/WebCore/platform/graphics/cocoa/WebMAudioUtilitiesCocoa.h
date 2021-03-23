@@ -37,8 +37,24 @@ namespace WebCore {
 bool isVorbisDecoderAvailable();
 RetainPtr<CMFormatDescriptionRef> createVorbisAudioFormatDescription(size_t, const void*);
 
+struct OpusCookieContents {
+    uint8_t version { 0 };
+    uint8_t channelCount { 0 };
+    uint16_t preSkip { 0 };
+    uint32_t sampleRate { 0 };
+    int16_t outputGain { 0 };
+    uint8_t mappingFamily { 0 };
+    uint8_t config { 0 };
+    Seconds frameDuration { 0_s };
+    int32_t bandwidth { 0 };
+    uint8_t framesPerPacket { 0 };
+    bool isVBR { false };
+    bool hasPadding { false };
+};
+
 bool isOpusDecoderAvailable();
-RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(size_t, const void*, size_t, const void*);
+bool parseOpusPrivateData(size_t privateDataSize, const void* privateData, size_t frameDataSize, const void* frameData, OpusCookieContents&);
+RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(const OpusCookieContents&);
 
 }
 

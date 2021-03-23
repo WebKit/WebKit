@@ -157,9 +157,11 @@ constexpr int32_t opusConfigToBandwidth(uint8_t config)
     ASSERT_NOT_REACHED();
     return 0;
 }
+#endif
 
-static Vector<uint8_t> cookieFromOpusCodecPrivate(size_t codecPrivateSize, const void* codecPrivateData, size_t frameSize, const void* frameData)
+bool parseOpusPrivateData(size_t codecPrivateSize, const void* codecPrivateData, size_t frameSize, const void* frameData, OpusCookieContents& cookie)
 {
+#if ENABLE(OPUS)
     // https://tools.ietf.org/html/rfc7845
     // 5. Header Packets
     //
@@ -196,30 +198,30 @@ static Vector<uint8_t> cookieFromOpusCodecPrivate(size_t codecPrivateSize, const
     //     This is an 8-octet (64-bit) field that allows codec
     //     identification and is human readable.
     if (strncmp("OpusHead", reinterpret_cast<const char*>(privateDataPtr), 8))
-        return { };
+        return false;
 
     // 2. Version (8 bits, unsigned):
-    uint8_t version = *(privateDataPtr + 8);
+    cookie.version = *(privateDataPtr + 8);
 
     // 3. Output Channel Count 'C' (8 bits, unsigned):
-    uint8_t channelCount = *(privateDataPtr + 9);
+    cookie.channelCount = *(privateDataPtr + 9);
 
     // 4. Pre-skip (16 bits, unsigned, little endian):
-    uint16_t preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(privateDataPtr + 10), true);
+    cookie.preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(privateDataPtr + 10), true);
 
     // 5. Input Sample Rate (32 bits, unsigned, little endian):
-    uint32_t sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(privateDataPtr + 12), true);
+    cookie.sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(privateDataPtr + 12), true);
 
     // 6. Output Gain (16 bits, signed, little endian):
-    int16_t outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(privateDataPtr + 16), true);
+    cookie.outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(privateDataPtr + 16), true);
 
     // 7. Channel Mapping Family (8 bits, unsigned):
-    uint8_t mappingFamily = *(privateDataPtr + 18);
+    cookie.mappingFamily = *(privateDataPtr + 18);
 
     auto framePtr = static_cast<const uint8_t*>(frameData);
 
     if (frameSize < 1)
-        return { };
+        return false;
 
     // https://tools.ietf.org/html/rfc6716
     // 3.1. The TOC Byte
@@ -239,16 +241,16 @@ static Vector<uint8_t> cookieFromOpusCodecPrivate(size_t codecPrivateSize, const
 
     uint8_t tocByte = *framePtr;
     uint8_t config = (tocByte & 0b11111000) >> 3;
-    Seconds frameDuration = opusConfigToFrameDuration(config);
-    int32_t bandwidth = opusConfigToBandwidth(config);
+    cookie.frameDuration = opusConfigToFrameDuration(config);
+    cookie.bandwidth = opusConfigToBandwidth(config);
 
     uint8_t frameCountValue = (tocByte & 0b00000011);
 
-    uint8_t framesPerPacket = 0;
+    cookie.framesPerPacket = 0;
     if (!frameCountValue)
-        framesPerPacket = 1;
+        cookie.framesPerPacket = 1;
     else if (frameCountValue == 1 || frameCountValue == 2)
-        framesPerPacket = 2;
+        cookie.framesPerPacket = 2;
     else if (frameCountValue == 3) {
         // 3.2.5. Code 3: A Signaled Number of Frames in the Packet
         //
@@ -273,23 +275,28 @@ static Vector<uint8_t> cookieFromOpusCodecPrivate(size_t codecPrivateSize, const
         //
         //                       Figure 5: The frame count byte
         if (frameSize < 2)
-            return { };
+            return false;
 
         uint8_t frameCountByte = *(framePtr + 1);
-        bool isVBR = ((frameCountByte & 0b10000000) >> 7) == 1;
-        bool hasPadding = ((frameCountByte & 0b01000000) >> 6) == 1;
-        framesPerPacket = (frameCountByte & 0b00111111);
-
-        UNUSED_PARAM(isVBR);
-        UNUSED_PARAM(hasPadding);
+        cookie.isVBR = ((frameCountByte & 0b10000000) >> 7) == 1;
+        cookie.hasPadding = ((frameCountByte & 0b01000000) >> 6) == 1;
+        cookie.framesPerPacket = (frameCountByte & 0b00111111);
     }
+    return true;
+#else
+    UNUSED_PARAM(codecPrivateSize);
+    UNUSED_PARAM(codecPrivateData);
+    UNUSED_PARAM(frameSize);
+    UNUSED_PARAM(frameData);
+    UNUSED_PARAM(cookie);
+    return false;
+#endif
+}
 
-    UNUSED_PARAM(version);
-    UNUSED_PARAM(preSkip);
-    UNUSED_PARAM(outputGain);
-    UNUSED_PARAM(mappingFamily);
-
-    auto samplesPerPacket = framesPerPacket * (frameDuration.seconds() * sampleRate);
+#if ENABLE(OPUS)
+static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& cookie)
+{
+    auto samplesPerPacket = cookie.framesPerPacket * (cookie.frameDuration.seconds() * cookie.sampleRate);
 
     struct CoreAudioOpusHeader {
         unsigned applicationID;
@@ -303,10 +310,10 @@ static Vector<uint8_t> cookieFromOpusCodecPrivate(size_t codecPrivateSize, const
 
     CoreAudioOpusHeader header = {
         CFSwapInt32HostToBig(OPUS_APPLICATION_AUDIO),
-        CFSwapInt32HostToBig(sampleRate),
+        CFSwapInt32HostToBig(cookie.sampleRate),
         CFSwapInt32HostToBig(samplesPerPacket),
-        static_cast<int>(CFSwapInt32HostToBig(bandwidth)),
-        CFSwapInt32HostToBig(channelCount),
+        static_cast<int>(CFSwapInt32HostToBig(cookie.bandwidth)),
+        CFSwapInt32HostToBig(cookie.channelCount),
         CFSwapInt32HostToBig(1),
     };
 
@@ -334,22 +341,19 @@ bool isOpusDecoderAvailable()
     return available;
 }
 
-RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(size_t privateDataSize, const void* privateData, size_t frameDataSize, const void* frameData)
+RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(const OpusCookieContents& cookieContents)
 {
 #if ENABLE(OPUS)
     if (!isOpusDecoderAvailable())
         return nullptr;
 
-    auto cookieData = cookieFromOpusCodecPrivate(privateDataSize, privateData, frameDataSize, frameData);
+    auto cookieData = cookieFromOpusCookieContents(cookieContents);
     if (!cookieData.size())
         return nullptr;
 
     return createAudioFormatDescriptionForFormat('opus', WTFMove(cookieData));
 #else
-    UNUSED_PARAM(privateDataSize);
-    UNUSED_PARAM(privateData);
-    UNUSED_PARAM(frameDataSize);
-    UNUSED_PARAM(frameData);
+    UNUSED_PARAM(cookieContents);
     return nullptr;
 #endif
 }
