@@ -3,6 +3,17 @@
         [GPU Process]: Improve getImageData() perf part 1: Add a GetImageData display list item
         https://bugs.webkit.org/show_bug.cgi?id=223544
 
+        Unreviewed.
+
+        I accidentally forgot to commit one line of the patch!!
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+
+2021-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process]: Improve getImageData() perf part 1: Add a GetImageData display list item
+        https://bugs.webkit.org/show_bug.cgi?id=223544
+
         Reviewed by Wenson Hsieh.
 
         We're moving to a design for getImageData() where the web process and the GPU process

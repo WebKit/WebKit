@@ -2334,6 +2334,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FlushContext,
     WebCore::DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer,
     WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer,
+    WebCore::DisplayList::ItemType::GetImageData,
     WebCore::DisplayList::ItemType::PutImageData,
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
     WebCore::DisplayList::ItemType::StrokeRect,
