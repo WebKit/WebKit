@@ -1,3 +1,25 @@
+2021-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Enable webrtc GPU Process feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=223582
+
+        Reviewed by Eric Carlson.
+
+        Enable WebRTC GPU process feature flag.
+        Make use of it for WebRTC codecs experimental flag default value.
+        Make use of it for WebRTC video capture experimental flag default value on iOS. Keep it to false on MacOS.
+        Update audio capture experimental flag default value to false on MacOS until we can use the feature flag value.
+        No change of behavior.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+        (WebKit::defaultCaptureVideoInGPUProcessEnabled):
+        (WebKit::defaultWebRTCCodecsInGPUProcess):
+
 2021-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process]: Improve getImageData() perf part 1: Add a GetImageData display list item
