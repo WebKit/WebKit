@@ -1,3 +1,29 @@
+2021-03-23  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr crash in HTMLConverter::convert
+        https://bugs.webkit.org/show_bug.cgi?id=221719
+
+        Reviewed by Ryosuke Niwa.
+
+        When the "Undo" command is called after DOM changes, one of the selection's position anchors
+        may have been moved to a new document. In that case, just clear the selection. Also add
+        asserts to ensure the selection is in good state after unapply and reapply commands.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply): Add security assert to ensure selection is in
+        good state.
+        (WebCore::EditCommandComposition::reapply): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance): If the selection's
+        position anchors have been moved to a new document then just clear the selection.
+        (WebCore::FrameSelection::isConnectedToDocument const): New method to verify that all the
+        positions of the visible selection are in m_document.
+        * editing/FrameSelection.h: Declare new method.
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::document const): New method that returns a common document for
+        all positions or nullptr otherwise.
+        * editing/VisibleSelection.h: Declare new method.
+
 2021-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION(r274860): error: ‘class WebCore::ExtensionsGLOpenGLCommon’ has no member named ‘drawArraysInstancedANGLE’
