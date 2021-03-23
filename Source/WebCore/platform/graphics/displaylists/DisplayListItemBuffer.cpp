@@ -187,8 +187,10 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::MetaCommandChangeDestinationImageBuffer:
     case ItemType::MetaCommandChangeItemBuffer:
         return;
+    case ItemType::GetImageData:
     case ItemType::PutImageData:
-        get<PutImageData>().apply(context);
+        // Should already be handled by the delegate.
+        ASSERT_NOT_REACHED();
         return;
     case ItemType::PaintFrameForMedia:
         get<PaintFrameForMedia>().apply(context);
@@ -274,6 +276,9 @@ void ItemHandle::destroy()
         return;
     case ItemType::FillRoundedRect:
         get<FillRoundedRect>().~FillRoundedRect();
+        return;
+    case ItemType::GetImageData:
+        static_assert(std::is_trivially_destructible<GetImageData>::value);
         return;
     case ItemType::PutImageData:
         get<PutImageData>().~PutImageData();
@@ -483,6 +488,8 @@ bool ItemHandle::safeCopy(ItemHandle destination) const
         return copyInto<FillRectWithRoundedHole>(*this, itemOffset);
     case ItemType::FillRoundedRect:
         return copyInto<FillRoundedRect>(*this, itemOffset);
+    case ItemType::GetImageData:
+        return copyInto<GetImageData>(*this, itemOffset);
     case ItemType::PutImageData:
         return copyInto<PutImageData>(*this, itemOffset);
     case ItemType::SetLineDash:

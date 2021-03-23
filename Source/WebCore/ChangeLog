@@ -1,3 +1,46 @@
+2021-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process]: Improve getImageData() perf part 1: Add a GetImageData display list item
+        https://bugs.webkit.org/show_bug.cgi?id=223544
+
+        Reviewed by Wenson Hsieh.
+
+        We're moving to a design for getImageData() where the web process and the GPU process
+        set up a shmem + semaphore ahead-of-time, so that when we encounter a call to getImageData(),
+        the GPU process can just write into the shmem and signal the semaphore. The web process just
+        encodes the getImageData() call into the regular display list, flushAsync()s to kick the GPU
+        process, then just waits on the semaphore. Initial performance testing shows that this is
+        way, way faster than sending messages containing pixel color data payloads.
+
+        This patch is just the first step: Adding a GetImageData display list item. The item
+        currently gets recorded in the web process and applied in the GPU process, but the application
+        process currently does nothing.
+
+        No new tests because there is no behavior change yet.
+
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::append):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemHandle::apply):
+        (WebCore::DisplayList::ItemHandle::destroy):
+        (WebCore::DisplayList::ItemHandle::safeCopy const):
+        * platform/graphics/displaylists/DisplayListItemBuffer.h:
+        * platform/graphics/displaylists/DisplayListItemType.cpp:
+        (WebCore::DisplayList::sizeOfItemInBytes):
+        (WebCore::DisplayList::isDrawingItem):
+        (WebCore::DisplayList::isInlineItem):
+        * platform/graphics/displaylists/DisplayListItemType.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::operator<<):
+        (WebCore::DisplayList::PutImageData::apply const): Deleted.
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::GetImageData::GetImageData):
+        (WebCore::DisplayList::GetImageData::outputFormat const):
+        (WebCore::DisplayList::GetImageData::srcRect const):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::getImageData):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
 2021-03-22  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Remove the need to specify [MayThrowException]

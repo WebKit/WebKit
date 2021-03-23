@@ -55,6 +55,11 @@ Recorder::~Recorder()
     LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
 }
 
+void Recorder::getImageData(AlphaPremultiplication outputFormat, const IntRect& sourceRect)
+{
+    append<GetImageData>(outputFormat, sourceRect);
+}
+
 void Recorder::putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
 {
     append<PutImageData>(inputFormat, imageData, srcRect, destPoint, destFormat);

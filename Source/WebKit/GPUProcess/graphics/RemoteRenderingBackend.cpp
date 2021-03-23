@@ -436,6 +436,10 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemB
 
 Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::decodeItem(const uint8_t* data, size_t length, DisplayList::ItemType type, uint8_t* handleLocation)
 {
+    /* This needs to match (1) isInlineItem() in DisplayListItemType.cpp, (2) RemoteImageBufferProxy::encodeItem(),
+     * and (3) all the "static constexpr bool isInlineItem"s inside the individual item classes.
+     * See the comment at the top of DisplayListItems.h for why. */
+
     switch (type) {
     case DisplayList::ItemType::ClipOutToPath:
         return decodeAndCreate<DisplayList::ClipOutToPath>(data, length, handleLocation);
@@ -520,7 +524,8 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
 #endif
     case DisplayList::ItemType::StrokeRect:
     case DisplayList::ItemType::StrokeLine:
-    case DisplayList::ItemType::Translate: {
+    case DisplayList::ItemType::Translate:
+    case DisplayList::ItemType::GetImageData: {
         ASSERT_NOT_REACHED();
         break;
     }

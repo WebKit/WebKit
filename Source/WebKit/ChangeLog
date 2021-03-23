@@ -1,3 +1,15 @@
+2021-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process]: Improve getImageData() perf part 1: Add a GetImageData display list item
+        https://bugs.webkit.org/show_bug.cgi?id=223544
+
+        Reviewed by Wenson Hsieh.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::decodeItem):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2021-03-22  Jean-Yves Avenard  <jya@apple.com>
 
         Move management of RemoteCommandListener from MediaSessionManagerCocoa into NowPlayingManager

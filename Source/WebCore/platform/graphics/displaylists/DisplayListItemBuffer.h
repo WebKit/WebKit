@@ -139,7 +139,7 @@ public:
     // writable buffer handle; if remaining buffer capacity is insufficient to store the item, a
     // new buffer will be allocated (either by the ItemBufferWritingClient, if set, or by the item
     // buffer itself if there is no client). Items are placed back-to-back in these item buffers,
-    // with padding after each item to ensure that all items are aligned to 8 bytes.
+    // with padding between each item to ensure that all items are aligned to 8 bytes.
     //
     // If a writing client is present and requires custom encoding for the given item type T, the
     // item buffer will ask the client for an opaque SharedBuffer containing encoded data for the

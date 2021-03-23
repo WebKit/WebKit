@@ -51,6 +51,15 @@ struct ImagePaintingOptions;
 
 namespace DisplayList {
 
+/* isInlineItem indicates whether the object needs to be passed through IPC::Encoder in order to serialize,
+ * or whether we can just use placement new and be done.
+ * It needs to match (1) RemoteImageBufferProxy::encodeItem(), (2) RemoteRenderingBackend::decodeItem(),
+ * and (3) isInlineItem() in DisplayListItemType.cpp.
+ *
+ * isDrawingItem indicates if this command can affect dirty rects.
+ * We can do things like skip drawing items when replaying them if their extents don't intersect with the current clip.
+ * It needs to match isDrawingItem() in DisplayListItemType.cpp. */
+
 class Save {
 public:
     static constexpr ItemType itemType = ItemType::Save;
@@ -1885,6 +1894,26 @@ private:
     FloatRect m_rect;
 };
 
+class GetImageData {
+public:
+    static constexpr ItemType itemType = ItemType::GetImageData;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = false;
+
+    GetImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect)
+        : m_srcRect(srcRect)
+        , m_outputFormat(outputFormat)
+    {
+    }
+
+    AlphaPremultiplication outputFormat() const { return m_outputFormat; }
+    IntRect srcRect() const { return m_srcRect; }
+
+private:
+    IntRect m_srcRect;
+    AlphaPremultiplication m_outputFormat;
+};
+
 class PutImageData {
 public:
     static constexpr ItemType itemType = ItemType::PutImageData;
@@ -1899,8 +1928,6 @@ public:
     IntRect srcRect() const { return m_srcRect; }
     IntPoint destPoint() const { return m_destPoint; }
     AlphaPremultiplication destFormat() const { return m_destFormat; }
-
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
     Optional<FloatRect> globalBounds() const { return {{ m_destPoint, m_srcRect.size() }}; }
