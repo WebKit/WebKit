@@ -25,6 +25,7 @@
 #include "CustomElementReactionQueue.h"
 #include "DOMIsoSubspaces.h"
 #include "HTMLNames.h"
+#include "IDLTypes.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"

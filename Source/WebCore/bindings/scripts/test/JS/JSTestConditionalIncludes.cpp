@@ -42,6 +42,10 @@
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
 
+#if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || (ENABLE(Condition12) && ENABLE(Condition22)) || (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
+#include "IDLTypes.h"
+#endif
+
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition22) || ENABLE(Condition23)
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertStrings.h"

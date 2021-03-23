@@ -1,5 +1,33 @@
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline bindings tests after r274906.
+
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp:
+        * bindings/scripts/test/JS/JSTestDomainSecurity.cpp:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestLegacyNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestMapLikeWithOverriddenOperations.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOperationConditional.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSetLikeWithOverriddenOperations.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+
+2021-03-23  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix after r274832.
 
         * bindings/scripts/CodeGeneratorJS.pm:

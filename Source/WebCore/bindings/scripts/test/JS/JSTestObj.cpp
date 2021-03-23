@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "IDLTypes.h"
 #include "JSBlob.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"

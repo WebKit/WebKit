@@ -25,6 +25,7 @@
 #include "DOMIsoSubspaces.h"
 #include "DOMPromiseProxy.h"
 #include "DOMWrapperWorld.h"
+#include "IDLTypes.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"

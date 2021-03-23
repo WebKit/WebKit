@@ -24,6 +24,7 @@
 #include "ActiveDOMObject.h"
 #include "DOMIsoSubspaces.h"
 #include "DOMPromiseProxy.h"
+#include "IDLTypes.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"

@@ -23,6 +23,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMIsoSubspaces.h"
+#include "IDLTypes.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"

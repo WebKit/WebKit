@@ -44,6 +44,10 @@
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
 
+#if ENABLE(TEST_FEATURE)
+#include "IDLTypes.h"
+#endif
+
 
 namespace WebCore {
 using namespace JSC;

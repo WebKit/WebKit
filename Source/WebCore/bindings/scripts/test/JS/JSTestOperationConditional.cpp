@@ -43,6 +43,10 @@
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
 
+#if ENABLE(ConditionBase) || (ENABLE(ConditionBase) && ENABLE(ConditionOperation))
+#include "IDLTypes.h"
+#endif
+
 
 namespace WebCore {
 using namespace JSC;
