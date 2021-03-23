@@ -1,3 +1,18 @@
+2021-03-23  Alex Christensen  <achristensen@webkit.org>
+
+        Optimize StringView::CodePoints::Iterator
+        https://bugs.webkit.org/show_bug.cgi?id=162315
+
+        Reviewed by Darin Adler.
+
+        This stores range pointers in the iterator instead of a pointer to a pointer.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::CodePoints::Iterator::Iterator):
+        (WTF::StringView::CodePoints::Iterator::operator++):
+        (WTF::StringView::CodePoints::Iterator::operator* const):
+        (WTF::StringView::CodePoints::Iterator::operator== const):
+
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
         Add assertions to guard against heap allocations on the audio thread
