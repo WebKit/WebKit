@@ -1,3 +1,15 @@
+2021-03-23  Frédéric Wang  <fwang@igalia.com>
+
+        Nullopt in DOMSelection::getRangeAt
+        https://bugs.webkit.org/show_bug.cgi?id=223361
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * editing/selection/modify-by-lineboundary-toward-pseudo-element-expected.txt: Added.
+        * editing/selection/modify-by-lineboundary-toward-pseudo-element.html: Added.
+
 2021-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Debug assert failure in RenderTable::layout()

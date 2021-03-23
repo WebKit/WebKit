@@ -1,5 +1,23 @@
 2021-03-23  Frédéric Wang  <fwang@igalia.com>
 
+        Nullopt in DOMSelection::getRangeAt
+        https://bugs.webkit.org/show_bug.cgi?id=223361
+
+        Reviewed by Ryosuke Niwa.
+
+        When extending the selection toward a pseudo element, it's possible to reach the
+        corresponding debug ASSERT in WebCore::Position::Position and later a nullptr dereference in
+        release mode. This patch fixes start/endPositionForLine to avoid that issue.
+
+        Test: editing/selection/modify-by-lineboundary-toward-pseudo-element.html
+
+        * editing/VisibleUnits.cpp: Make the two branches of LineEndpointComputationMode consistent
+        and merge them.
+        (WebCore::startPositionForLine): For logical ordering, try a non-pseudo element after.
+        (WebCore::endPositionForLine): For logical ordering, try a non-pseudo element before.
+
+2021-03-23  Frédéric Wang  <fwang@igalia.com>
+
         Nullptr crash in HTMLConverter::convert
         https://bugs.webkit.org/show_bug.cgi?id=221719
 
