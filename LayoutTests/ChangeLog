@@ -1,3 +1,15 @@
+2021-03-23  Chris Dumez  <cdumez@apple.com>
+
+        dom/WheelEvent.cpp:47:58: runtime error: negation of -2147483648 cannot be represented in type 'int'; cast to an unsigned type to negate this value to itself
+        https://bugs.webkit.org/show_bug.cgi?id=223605
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/events/wheelevent-delta-overflow-expected.txt: Added.
+        * fast/events/wheelevent-delta-overflow.html: Added.
+
 2021-03-23  Youenn Fablet  <youenn@apple.com>
 
         [GPUP] Test http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html fails when media in GPU process is enabled

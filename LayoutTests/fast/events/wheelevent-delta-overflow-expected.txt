@@ -1,0 +1,60 @@
+Tests large values for WheelEvent.wheelDeltaX / wheelDeltaY.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+wheelEvent = new WheelEvent('foo', { wheelDeltaX:-2147483648, wheelDeltaY:-2147483648 })
+PASS wheelEvent.wheelDeltaX is -2147483648
+PASS wheelEvent.wheelDeltaY is -2147483648
+PASS wheelEvent.deltaX is 2147483648
+PASS wheelEvent.deltaY is 2147483648
+
+wheelEvent = new WheelEvent('foo', { wheelDeltaX:2147483647, wheelDeltaY:2147483647 })
+PASS wheelEvent.wheelDeltaX is 2147483647
+PASS wheelEvent.wheelDeltaY is 2147483647
+PASS wheelEvent.deltaX is -2147483647
+PASS wheelEvent.deltaY is -2147483647
+
+wheelEvent = new WheelEvent('foo', { deltaX:-2147483647, deltaY:-2147483647 })
+PASS wheelEvent.wheelDeltaX is 2147483647
+PASS wheelEvent.wheelDeltaY is 2147483647
+PASS wheelEvent.deltaX is -2147483647
+PASS wheelEvent.deltaY is -2147483647
+
+wheelEvent = new WheelEvent('foo', { deltaX:-2147483648, deltaY:-2147483648 })
+PASS wheelEvent.wheelDeltaX is 2147483647
+PASS wheelEvent.wheelDeltaY is 2147483647
+PASS wheelEvent.deltaX is -2147483648
+PASS wheelEvent.deltaY is -2147483648
+
+wheelEvent = new WheelEvent('foo', { deltaX:2147483647, deltaY:2147483647 })
+PASS wheelEvent.wheelDeltaX is -2147483647
+PASS wheelEvent.wheelDeltaY is -2147483647
+PASS wheelEvent.deltaX is 2147483647
+PASS wheelEvent.deltaY is 2147483647
+
+wheelEvent = new WheelEvent('foo', { deltaX:-2147483649, deltaY:-2147483649 })
+PASS wheelEvent.wheelDeltaX is 2147483647
+PASS wheelEvent.wheelDeltaY is 2147483647
+PASS wheelEvent.deltaX is -2147483649
+PASS wheelEvent.deltaY is -2147483649
+
+wheelEvent = new WheelEvent('foo', { deltaX:2147483649, deltaY:2147483649 })
+PASS wheelEvent.wheelDeltaX is -2147483648
+PASS wheelEvent.wheelDeltaY is -2147483648
+PASS wheelEvent.deltaX is 2147483649
+PASS wheelEvent.deltaY is 2147483649
+
+wheelEvent = document.createEvent('wheelevent')
+wheelEvent.initWebKitWheelEvent(-2147483648, -2147483648)
+PASS wheelEvent.deltaX is 2147483648
+PASS wheelEvent.deltaY is 2147483648
+
+wheelEvent = document.createEvent('wheelevent')
+wheelEvent.initWebKitWheelEvent(2147483647, 2147483647)
+PASS wheelEvent.deltaX is -2147483647
+PASS wheelEvent.deltaY is -2147483647
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
