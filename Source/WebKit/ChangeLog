@@ -1,3 +1,34 @@
+2021-03-22  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Port grid overlay drawing to iOS
+        https://bugs.webkit.org/show_bug.cgi?id=223396
+
+        Reviewed by BJ Burg.
+
+        Port drawing routines from `WebCore::InspectorOverlay` to use `CALayer`s on iOS to enable drawing grid overlays
+        on iOS. Drawing logic is, as much as possible, equivalent to that defined in `WebCore::InspectorOverlay`, with
+        changes to fit the CALayer model.
+
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.h:
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.mm:
+        (-[WKInspectorHighlightView initWithFrame:]):
+        (-[WKInspectorHighlightView _removeAllLayers]):
+        (-[WKInspectorHighlightView _createLayers:]):
+        (layerPath):
+        - Path should be closed so that objects being stroked are stroked on all edges.
+        (-[WKInspectorHighlightView _layoutForNodeListHighlight:]):
+        (-[WKInspectorHighlightView _layoutForRectsHighlight:]):
+        (-[WKInspectorHighlightView _createGridOverlayLayers:scale:]):
+        (createLayoutHatchingLayer):
+        (createLayoutLabelLayer):
+        (-[WKInspectorHighlightView _createGridOverlayLayer:scale:]):
+        - Create layers for the grid overlays.
+        (-[WKInspectorHighlightView update:scale:]):
+        - Obtain the view scale so that `CATextLayer`s can have the correct content scale set.
+        (-[WKInspectorHighlightView update:]): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _showInspectorHighlight:]):
+
 2021-03-22  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Add a "wallTime" field to struct RemoteMediaPlayerState

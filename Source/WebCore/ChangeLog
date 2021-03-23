@@ -1,3 +1,39 @@
+2021-03-22  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Port grid overlay drawing to iOS
+        https://bugs.webkit.org/show_bug.cgi?id=223396
+
+        Reviewed by BJ Burg.
+
+        Enable Grid Overlays to be drawn on iOS be including computed overlay objects in the
+        `InspectorOverlay::Highlight`. Some refactoring was also done to reduce code duplication in the normal and iOS
+        paths.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        - FloatLine should be accessible from `WebKit::*`
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::getHighlight):
+        - Add `GridHighlightOverlay`s to the highlight object for iOS.
+        (WebCore::InspectorOverlay::drawGridOverlay):
+        (WebCore::buildLabel):
+        (WebCore::InspectorOverlay::buildGridOverlay):
+        - Refactored actual drawing into a separate method to reduce the amount of code duplication needed between the
+        normal path and the iOS path.
+        * inspector/InspectorOverlay.h:
+        (WebCore::InspectorOverlay::Highlight::GridHighlightOverlay::encode const):
+        (WebCore::InspectorOverlay::Highlight::GridHighlightOverlay::decode):
+        (WebCore::InspectorOverlay::Highlight::GridHighlightOverlay::Label::encode const):
+        (WebCore::InspectorOverlay::Highlight::GridHighlightOverlay::Label::decode):
+        (WebCore::InspectorOverlay::Highlight::GridHighlightOverlay::Area::encode const):
+        (WebCore::InspectorOverlay::Highlight::GridHighlightOverlay::Area::decode):
+        - Support encode/decode for sending new Highlight components to the UIProcess.
+        * platform/graphics/FloatLine.h:
+        (WebCore::FloatLine::encode const):
+        (WebCore::FloatLine::decode):
+        - Support encode/decode as part of serialization of `InspectorOverlay::Highlight`
+
 2021-03-22  Ada Chan  <ada.chan@apple.com>
 
         [WebXR] Enumerate XR devices via ChromeClient in WebXRSystem

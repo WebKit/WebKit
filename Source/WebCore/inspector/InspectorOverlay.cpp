@@ -427,8 +427,10 @@ void InspectorOverlay::paint(GraphicsContext& context)
         rulerExclusion.titlePath = nodeRulerExclusion.titlePath;
     }
 
-    for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays)
-        drawGridOverlay(context, gridOverlay);
+    for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays) {
+        if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay))
+            drawGridOverlay(context, *gridHighlightOverlay);
+    }
 
     if (!m_paintRects.isEmpty())
         drawPaintRects(context, m_paintRects);
@@ -437,12 +439,12 @@ void InspectorOverlay::paint(GraphicsContext& context)
         drawRulers(context, rulerExclusion);
 }
 
-void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
+void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList)
+    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_activeGridOverlays.size())
         return;
 
-    highlight.type = InspectorOverlay::Highlight::Type::Rects;
+    highlight.type = InspectorOverlay::Highlight::Type::None;
     if (m_highlightNode)
         buildNodeHighlight(*m_highlightNode, m_nodeHighlightConfig, highlight, coordinateSystem);
     else if (m_highlightNodeList) {
@@ -454,8 +456,15 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
                 highlight.quads.appendVector(nodeHighlight.quads);
         }
         highlight.type = InspectorOverlay::Highlight::Type::NodeList;
-    } else
+    } else if (m_highlightQuad) {
+        highlight.type = InspectorOverlay::Highlight::Type::Rects;
         buildQuadHighlight(*m_highlightQuad, m_quadHighlightConfig, highlight);
+    }
+    constexpr bool offsetBoundsByScroll = true;
+    for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays) {
+        if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay, offsetBoundsByScroll))
+            highlight.gridHighlightOverlays.append(*gridHighlightOverlay);
+    }
 }
 
 void InspectorOverlay::hideHighlight()
@@ -1281,6 +1290,37 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
     context.drawText(font, TextRun(label), textPosition);
 }
 
+void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const InspectorOverlay::Highlight::GridHighlightOverlay& gridOverlay)
+{
+    constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(153);
+
+    GraphicsContextStateSaver saver(context);
+    context.setStrokeThickness(1);
+    context.setStrokeColor(gridOverlay.color);
+
+    Path gridLinesPath;
+    for (auto gridLine : gridOverlay.gridLines) {
+        gridLinesPath.moveTo(gridLine.start());
+        gridLinesPath.addLineTo(gridLine.end());
+    }
+    context.strokePath(gridLinesPath);
+
+    for (auto gapQuad : gridOverlay.gaps)
+        drawLayoutHatching(context, gapQuad);
+
+    context.setStrokeThickness(3);
+    for (auto area : gridOverlay.areas)
+        context.strokePath(quadToPath(area.quad));
+
+    // Draw labels on top of all other lines.
+    context.setStrokeThickness(1);
+    for (auto area : gridOverlay.areas)
+        drawLayoutLabel(context, area.name, area.quad.p1(), LabelArrowDirection::None, translucentLabelBackgroundColor, area.quad.boundingBox().width());
+
+    for (auto label : gridOverlay.labels)
+        drawLayoutLabel(context, label.text, label.location, label.arrowDirection, label.backgroundColor);
+}
+
 static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirection direction, unsigned expectedTrackCount)
 {
     if (!is<Element>(node))
@@ -1379,14 +1419,24 @@ static OrderedNamedGridLinesMap gridLineNames(const RenderStyle* renderStyle, Gr
     return combinedGridLineNames;
 }
 
-void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const InspectorOverlay::Grid& gridOverlay)
+static InspectorOverlay::Highlight::GridHighlightOverlay::Label buildLabel(String text, FloatPoint location, Color backgroundColor, InspectorOverlay::LabelArrowDirection arrowDirection)
+{
+    InspectorOverlay::Highlight::GridHighlightOverlay::Label label;
+    label.text = text;
+    label.location = location;
+    label.backgroundColor = backgroundColor;
+    label.arrowDirection = arrowDirection;
+    return label;
+}
+
+Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::buildGridOverlay(const InspectorOverlay::Grid& gridOverlay, bool offsetBoundsByScroll)
 {
     // If the node WeakPtr has been cleared, then the node is gone and there's nothing to draw.
     if (!gridOverlay.gridNode) {
         m_activeGridOverlays.removeAllMatching([&] (const InspectorOverlay::Grid& gridOverlay) {
             return !gridOverlay.gridNode;
         });
-        return;
+        return { };
     }
     
     // Always re-check because the node's renderer may have changed since being added.
@@ -1395,21 +1445,23 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     auto renderer = node->renderer();
     if (!is<RenderGrid>(renderer)) {
         removeGridOverlayForNode(*node);
-        return;
+        return { };
     }
-    
+
     constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(153);
     
     FrameView* pageView = m_page.mainFrame().view();
     if (!pageView)
-        return;
+        return { };
     FloatRect viewportBounds = { { 0, 0 }, pageView->sizeForVisibleContent() };
+    if (offsetBoundsByScroll)
+        viewportBounds.setLocation(pageView->scrollPosition());
     
     auto& renderGrid = *downcast<RenderGrid>(renderer);
     auto columnPositions = renderGrid.columnPositions();
     auto rowPositions = renderGrid.rowPositions();
     if (!columnPositions.size() || !rowPositions.size())
-        return;
+        return { };
     
     float gridStartX = columnPositions[0];
     float gridEndX = columnPositions[columnPositions.size() - 1];
@@ -1418,7 +1470,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
 
     Frame* containingFrame = node->document().frame();
     if (!containingFrame)
-        return;
+        return { };
     FrameView* containingView = containingFrame->view();
 
     auto columnLineAt = [&](int x) -> FloatLine {
@@ -1433,10 +1485,9 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
             localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(gridEndX, y), nullptr)),
         };
     };
-    
-    GraphicsContextStateSaver saver(context);
-    context.setStrokeThickness(1);
-    context.setStrokeColor(gridOverlay.config.gridColor);
+
+    InspectorOverlay::Highlight::GridHighlightOverlay gridHighlightOverlay;
+    gridHighlightOverlay.color = gridOverlay.config.gridColor;
 
     // Draw columns and rows.
     auto columnWidths = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::ForColumns);
@@ -1446,19 +1497,16 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     for (unsigned i = 0; i < columnPositions.size(); ++i) {
         auto columnStartLine = columnLineAt(columnPositions[i]);
 
-        Path columnPaths;
         if (gridOverlay.config.showExtendedGridLines) {
             auto extendedLine = columnStartLine.extendedToBounds(viewportBounds);
-            columnPaths.moveTo(extendedLine.start());
-            columnPaths.addLineTo(extendedLine.end());
+            gridHighlightOverlay.gridLines.append(extendedLine);
         } else {
-            columnPaths.moveTo(columnStartLine.start());
-            columnPaths.addLineTo(columnStartLine.end());
+            gridHighlightOverlay.gridLines.append(columnStartLine);
         }
         
         FloatPoint gapLabelPosition = columnStartLine.start();
         if (i) {
-            drawLayoutHatching(context, { previousColumnEndLine.start(), columnStartLine.start(), columnStartLine.end(), previousColumnEndLine.end() });
+            gridHighlightOverlay.gaps.append({ previousColumnEndLine.start(), columnStartLine.start(), columnStartLine.end(), previousColumnEndLine.end() });
             FloatLine lineBetweenColumnTops = { columnStartLine.start(), previousColumnEndLine.start() };
             gapLabelPosition = lineBetweenColumnTops.pointAtRelativeDistance(0.5);
         }
@@ -1469,11 +1517,9 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
 
             if (gridOverlay.config.showExtendedGridLines) {
                 auto extendedLine = columnEndLine.extendedToBounds(viewportBounds);
-                columnPaths.moveTo(extendedLine.start());
-                columnPaths.addLineTo(extendedLine.end());
+                gridHighlightOverlay.gridLines.append(extendedLine);
             } else {
-                columnPaths.moveTo(columnEndLine.start());
-                columnPaths.addLineTo(columnEndLine.end());
+                gridHighlightOverlay.gridLines.append(columnEndLine);
             }
             previousColumnEndLine = columnEndLine;
             
@@ -1493,13 +1539,11 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
                 }
                 
                 FloatLine trackTopLine = { columnStartLine.start(), columnEndLine.start() };
-                drawLayoutLabel(context, trackSizeLabel, trackTopLine.pointAtRelativeDistance(0.5), LabelArrowDirection::Up, translucentLabelBackgroundColor);
+                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, LabelArrowDirection::Up));
             }
         } else
             previousColumnEndLine = columnStartLine;
-        
-        context.strokePath(columnPaths);
-        
+
         StringBuilder lineLabel;
         if (gridOverlay.config.showLineNumbers)
             lineLabel.append(i + 1, thinSpace, bullet, thinSpace, -static_cast<int>(columnPositions.size() - i));
@@ -1512,7 +1556,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
         }
         // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
         if (!lineLabel.isEmpty())
-            drawLayoutLabel(context, lineLabel.toString(), gapLabelPosition, LabelArrowDirection::Down);
+            gridHighlightOverlay.labels.append(buildLabel(lineLabel.toString(), gapLabelPosition, Color::white, LabelArrowDirection::Down));
     }
 
     auto rowHeights = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
@@ -1522,37 +1566,32 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     for (unsigned i = 0; i < rowPositions.size(); ++i) {
         auto rowStartLine = rowLineAt(rowPositions[i]);
 
-        Path rowPaths;
         if (gridOverlay.config.showExtendedGridLines) {
-            auto line = rowStartLine.extendedToBounds(viewportBounds);
-            rowPaths.moveTo(line.start());
-            rowPaths.addLineTo(line.end());
+            auto extendedLine = rowStartLine.extendedToBounds(viewportBounds);
+            gridHighlightOverlay.gridLines.append(extendedLine);
         } else {
-            rowPaths.moveTo(rowStartLine.start());
-            rowPaths.addLineTo(rowStartLine.end());
+            gridHighlightOverlay.gridLines.append(rowStartLine);
         }
-        
+
         FloatPoint gapLabelPosition = rowStartLine.start();
         if (i) {
             FloatLine lineBetweenRowStarts = { rowStartLine.start(), previousRowEndLine.start() };
-            drawLayoutHatching(context, { previousRowEndLine.start(), previousRowEndLine.end(), rowStartLine.end(), rowStartLine.start() });
+            gridHighlightOverlay.gaps.append({ previousRowEndLine.start(), previousRowEndLine.end(), rowStartLine.end(), rowStartLine.start() });
             gapLabelPosition = lineBetweenRowStarts.pointAtRelativeDistance(0.5);
         }
 
         if (i < rowHeights.size() && i < rowPositions.size()) {
             auto height = rowHeights[i];
             auto rowEndLine = rowLineAt(rowPositions[i] + height);
-            
+
             if (gridOverlay.config.showExtendedGridLines) {
                 auto extendedLine = rowEndLine.extendedToBounds(viewportBounds);
-                rowPaths.moveTo(extendedLine.start());
-                rowPaths.addLineTo(extendedLine.end());
+                gridHighlightOverlay.gridLines.append(extendedLine);
             } else {
-                rowPaths.moveTo(rowEndLine.start());
-                rowPaths.addLineTo(rowEndLine.end());
+                gridHighlightOverlay.gridLines.append(rowEndLine);
             }
             previousRowEndLine = rowEndLine;
-            
+
             if (gridOverlay.config.showTrackSizes) {
                 auto trackSizeLabel = String::number(roundf(height));
                 trackSizeLabel.append("px"_s);
@@ -1568,13 +1607,11 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
                     }
                 }
                 FloatLine trackLeftLine = { rowStartLine.start(), rowEndLine.start() };
-                drawLayoutLabel(context, trackSizeLabel, trackLeftLine.pointAtRelativeDistance(0.5), LabelArrowDirection::Left, translucentLabelBackgroundColor);
+                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, LabelArrowDirection::Left));
             }
         } else
             previousRowEndLine = rowStartLine;
 
-        context.strokePath(rowPaths);
-        
         StringBuilder lineLabel;
         if (gridOverlay.config.showLineNumbers)
             lineLabel.append(i + 1, thinSpace, bullet, thinSpace, -static_cast<int>(rowPositions.size() - i));
@@ -1587,9 +1624,9 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
         }
         // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
         if (!lineLabel.isEmpty())
-            drawLayoutLabel(context, lineLabel.toString(), gapLabelPosition, LabelArrowDirection::Right);
+            gridHighlightOverlay.labels.append(buildLabel(lineLabel.toString(), gapLabelPosition, Color::white, LabelArrowDirection::Right));
     }
-    
+
     if (gridOverlay.config.showAreaNames) {
         for (auto& gridArea : node->renderStyle()->namedGridArea()) {
             auto& name = gridArea.key;
@@ -1600,25 +1637,24 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
             auto columnEndLine = columnLineAt(columnPositions[area.columns.endLine() - 1] + columnWidths[area.columns.endLine() - 1]);
             auto rowStartLine = rowLineAt(rowPositions[area.rows.startLine()] - rowPositions[0]);
             auto rowEndLine = rowLineAt(rowPositions[area.rows.endLine() - 1] + rowHeights[area.rows.endLine() - 1] - rowPositions[0]);
-            
+
             Optional<FloatPoint> topLeft = columnStartLine.intersectionWith(rowStartLine);
             Optional<FloatPoint> topRight = columnEndLine.intersectionWith(rowStartLine);
             Optional<FloatPoint> bottomRight = columnEndLine.intersectionWith(rowEndLine);
             Optional<FloatPoint> bottomLeft = columnStartLine.intersectionWith(rowEndLine);
-            
+
             // If any two lines are coincident with each other, they will not have an intersection, which can occur with extreme `transform: perspective(...)` values.
             if (!topLeft || !topRight || !bottomRight || !bottomLeft)
                 continue;
 
-            FloatQuad areaQuad = { *topLeft, *topRight, *bottomRight, *bottomLeft };
-
-            context.setStrokeThickness(3);
-            context.strokePath(quadToPath(areaQuad));
-
-            context.setStrokeThickness(1);
-            drawLayoutLabel(context, name, areaQuad.p1(), LabelArrowDirection::None, translucentLabelBackgroundColor, areaQuad.boundingBox().width());
+            InspectorOverlay::Highlight::GridHighlightOverlay::Area highlightOverlayArea;
+            highlightOverlayArea.name = name;
+            highlightOverlayArea.quad = { *topLeft, *topRight, *bottomRight, *bottomLeft };
+            gridHighlightOverlay.areas.append(highlightOverlayArea);
         }
     }
+
+    return { gridHighlightOverlay };
 }
 
 } // namespace WebCore
