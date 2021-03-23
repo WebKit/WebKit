@@ -77,6 +77,15 @@ bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo)
     if (m_nowPlayingInfo && *m_nowPlayingInfo == nowPlayingInfo)
         return false;
     m_nowPlayingInfo = nowPlayingInfo;
+    // We do not want to send the artwork's image over each time nowPlayingInfo gets updated.
+    // So if present we store it once locally. On the receiving end, a null imageData indicates to use the cached image.
+    if (!nowPlayingInfo.artwork)
+        m_nowPlayingInfoArtwork = { };
+    else if (!m_nowPlayingInfoArtwork || nowPlayingInfo.artwork->src != m_nowPlayingInfoArtwork->src)
+        m_nowPlayingInfoArtwork = ArtworkCache { nowPlayingInfo.artwork->src, nowPlayingInfo.artwork->imageData };
+    else
+        m_nowPlayingInfo->artwork->imageData = nullptr;
+
     setNowPlayingInfoPrivate(*m_nowPlayingInfo);
     m_setAsNowPlayingApplication = true;
     return true;
@@ -86,6 +95,13 @@ void NowPlayingManager::setNowPlayingInfoPrivate(const NowPlayingInfo& nowPlayin
 {
     setSupportsSeeking(nowPlayingInfo.supportsSeeking);
 #if PLATFORM(COCOA)
+    if (nowPlayingInfo.artwork && !nowPlayingInfo.artwork->imageData) {
+        ASSERT(m_nowPlayingInfoArtwork, "cached value must have been initialized");
+        NowPlayingInfo nowPlayingInfoRebuilt = nowPlayingInfo;
+        nowPlayingInfoRebuilt.artwork->imageData = m_nowPlayingInfoArtwork->imageData;
+        MediaSessionManagerCocoa::setNowPlayingInfo(!m_setAsNowPlayingApplication, nowPlayingInfoRebuilt);
+        return;
+    }
     MediaSessionManagerCocoa::setNowPlayingInfo(!m_setAsNowPlayingApplication, nowPlayingInfo);
 #else
     (void)nowPlayingInfo;

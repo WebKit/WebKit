@@ -68,6 +68,11 @@ private:
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     WeakPtr<Client> m_client;
     Optional<NowPlayingInfo> m_nowPlayingInfo;
+    struct ArtworkCache {
+        String src;
+        RefPtr<SharedBuffer> imageData;
+    };
+    Optional<ArtworkCache> m_nowPlayingInfoArtwork;
     bool m_setAsNowPlayingApplication { false };
 };
 

@@ -1,3 +1,18 @@
+2021-03-23  Jean-Yves Avenard  <jya@apple.com>
+
+        Only send image across XPC to GPU process if it changes.
+        https://bugs.webkit.org/show_bug.cgi?id=223298
+        <rdar://problem/75559236>
+
+        Reviewed by Eric Carlson.
+
+        No change in observable functionality.
+
+        * platform/NowPlayingManager.cpp: 
+        (WebCore::NowPlayingManager::setNowPlayingInfo): On first image change we store it to a local member variable and set imageData to null.
+        (WebCore::NowPlayingManager::setNowPlayingInfoPrivate): Check if imageData is null, and if so use cache value.
+        * platform/NowPlayingManager.h: New member to store cache.
+
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
         Add assertions to guard against heap allocations on the audio thread
