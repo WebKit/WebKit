@@ -584,7 +584,7 @@ webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeou
 
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
-webkit.org/b/217961 http/tests/images/mp4-partial-load.html [ Timeout Pass ]
+webkit.org/b/217961 webkit.org/b/223636 http/tests/images/mp4-partial-load.html [ Crash Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs

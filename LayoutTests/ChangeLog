@@ -1,3 +1,11 @@
+2021-03-23  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening http/tests/images/mp4-partial-load.html flaky crashes after r274358
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-03-23  Per Arne  <pvollan@apple.com>
 
         [Win] Flaky editing and events tests
