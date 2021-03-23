@@ -231,10 +231,6 @@ webaudio/Panner/hrtf-database.html [ Timeout ]
 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Timeout ]
 webaudio/codec-tests/mp3/128kbps-44khz.html [ Timeout ]
 
-# webkit.org/b/221696
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Failure ]
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
-
 webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 
 webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]

@@ -70,6 +70,7 @@ private:
     float sampleRate() const final { return m_configuration.sampleRate; }
     size_t bufferSize() const final { return m_configuration.bufferSize; }
     size_t numberOfOutputChannels() const final { return m_configuration.numberOfOutputChannels; }
+    size_t maximumNumberOfOutputChannels() const final { return m_configuration.maximumNumberOfOutputChannels; }
     size_t preferredBufferSize() const final { return m_configuration.preferredBufferSize; }
     bool isMuted() const final { return m_configuration.isMuted; }
     bool isActive() const final { return m_configuration.isActive; }
