@@ -41,11 +41,6 @@
 #define GL_GLEXT_PROTOTYPES 0
 #endif
 
-// Skip the inclusion of ANGLE's explicit context entry points for now.
-#define GL_ANGLE_explicit_context
-#define GL_ANGLE_explicit_context_gles1
-typedef void* GLeglContext;
-
 #include <ANGLE/entry_points_egl.h>
 #include <ANGLE/entry_points_egl_ext.h>
 #include <ANGLE/entry_points_gles_2_0_autogen.h>

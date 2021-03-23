@@ -1,3 +1,14 @@
+2021-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE is missing the explicit context headers
+        https://bugs.webkit.org/show_bug.cgi?id=223470
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/graphics/angle/ANGLEHeaders.h:
+        Remove the hack that was needed when including ANGLE without
+        the explicit context headers.
+
 2021-03-23  Martin Robinson  <mrobinson@igalia.com>
 
         No scrolling momentum with 'scroll-snap-type: x mandatory' if the scroller scrolls vertically

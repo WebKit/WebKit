@@ -27,9 +27,7 @@ then
 
     sed \
         -e 's/^#include [<"]EGL\/\(.*\)[>"]/#include <ANGLE\/\1>/' \
-        -e 's/^#include [<"]GLES\/\(.*\)[>"]/#include <ANGLE\/\1>/' \
-        -e 's/^#include [<"]GLES2\/\(.*\)[>"]/#include <ANGLE\/\1>/' \
-        -e 's/^#include [<"]GLES3\/\(.*\)[>"]/#include <ANGLE\/\1>/' \
+        -e 's/^#include [<"]\(\.\.\/\)*GLES[23]*\/\(.*\)[>"]/#include <ANGLE\/\2>/' \
         -e 's/^#include [<"]KHR\/\(.*\)[>"]/#include <ANGLE\/\1>/' \
         -e 's/^#include [<"]export.h[>"]/#include <ANGLE\/export.h>/' \
         -e 's/^#include "\(eglext_angle\|gl2ext_angle\|ShaderVars\).h"/#include <ANGLE\/\1.h>/' \
