@@ -120,7 +120,7 @@ void WebAnimation::remove()
     // This object could be deleted after either clearing the effect or timeline relationship.
     auto protectedThis = makeRef(*this);
     setEffectInternal(nullptr);
-    setTimelineInternal(nullptr);
+    setTimeline(nullptr);
 }
 
 void WebAnimation::suspendEffectInvalidation()

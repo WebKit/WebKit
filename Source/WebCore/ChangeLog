@@ -1,3 +1,20 @@
+2021-03-22  Ian Gilbert  <iang@apple.com>
+
+        [Web Animations] nullptr crash in updatePlaybackRate() with no timeline
+        https://bugs.webkit.org/show_bug.cgi?id=223095
+
+        Reviewed by Ryosuke Niwa.
+
+        Changed to WebAnimation::remove() to use setTimeline() instead of setTimelineInternal()
+        to ensure the animation is in the correct play state.
+
+        No new tests as this relies on navigating while updating the playback rate and I was unable to make
+        a reliable test case.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::remove): Changed setTimelineInternal() to setTimeline() in order to
+        ensure the animation has the correct play state.
+
 2021-03-22  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Port grid overlay drawing to iOS
