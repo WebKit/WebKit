@@ -1,3 +1,61 @@
+2021-03-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iPadOS] Stale checked item when reopening <select>
+        https://bugs.webkit.org/show_bug.cgi?id=223592
+        <rdar://problem/75629529>
+
+        Reviewed by Wenson Hsieh.
+
+        Reopening a select element after changing its value displays the
+        original value as checked, rather than the current value on iPadOS. This
+        is incorrect, since the checked value in the context menu should match
+        the selected value in-page.
+
+        The behavior is incorrect on iPadOS, but works correctly on iPhone, since
+        dismissing input peripherals on iPhone blurs the focused element,
+        resulting in a new peripheral being created each time. However, on iPad
+        the same peripheral is reused when interacting with the same element.
+        Since the presented UIMenu is only created once during the initialization
+        of the peripheral, the checked item can be stale on iPads. To fix, update
+        the menu each time the peripheral is presented, rather than each time it
+        is created.
+
+        Test: fast/forms/ios/form-control-refresh/select/no-stale-checked-items-in-select-picker.html
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker initWithView:]):
+
+        Do not create the presented UIMenu during initialization.
+
+        (-[WKSelectPicker controlBeginEditing]):
+
+        Create the UIMenu when the peripheral is about to be presented. This
+        ensures the state of the menu is up-to-date.
+
+        (-[WKSelectPicker didSelectOptionIndex:]):
+
+        Update the underlying data structure for <select> elements, so that a
+        newly created UIMenu will have the correct state.
+
+        (-[WKSelectPicker createMenu]):
+
+        Use a separate local variable to avoid modifying a reference. The
+        incorrect logic here was masked by the fact that the UIMenu was
+        previously only created once per WKSelectPicker.
+
+        (-[WKSelectPicker actionForOptionIndex:]):
+
+        Factored logic to get a UIAction from an option index for testing.
+
+        (-[WKSelectPicker selectRow:inComponent:extendingSelection:]):
+
+        Call accessoryDone to simulate the dismissal of the presented UIMenu
+        when using this testing method.
+
+        (-[WKSelectPicker selectFormAccessoryHasCheckedItemAtRow:]):
+
+        Implement this method so that the checked item can be obtained in tests.
+
 2021-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Move instanced drawing functionality from ExtensionsGL to GraphicsContextGL

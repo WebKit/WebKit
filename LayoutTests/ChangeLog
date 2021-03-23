@@ -1,3 +1,18 @@
+2021-03-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iPadOS] Stale checked item when reopening <select>
+        https://bugs.webkit.org/show_bug.cgi?id=223592
+        <rdar://problem/75629529>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test that verifies that tapping on a select element, changing
+        its value, and then tapping on the same element, presents a context
+        menu with the correct checked item.
+
+        * fast/forms/ios/form-control-refresh/select/no-stale-checked-items-in-select-picker-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/select/no-stale-checked-items-in-select-picker.html: Added.
+
 2021-03-23  Frédéric Wang  <fwang@igalia.com>
 
         Nullptr deref in WebCore::ApplyStyleCommand::applyRelativeFontStyleChange
