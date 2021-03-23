@@ -56,6 +56,10 @@ public:
 
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
 
+    virtual void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
+    virtual void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) = 0;
+    virtual void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) = 0;
+
     // EXT Robustness - uses getGraphicsResetStatusARB()
     void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data) override;
     void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params) override;

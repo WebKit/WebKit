@@ -1,5 +1,17 @@
 2021-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        REGRESSION(r274860): error: ‘class WebCore::ExtensionsGLOpenGLCommon’ has no member named ‘drawArraysInstancedANGLE’
+        https://bugs.webkit.org/show_bug.cgi?id=223633
+
+        Unreviewed build fix.
+
+        Fix WPE build by adding the functions to ExtensionsGLOpenGLCommon as pure virtual functions.
+
+        * platform/graphics/opengl/ExtensionsGLOpenGL.h:
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.h:
+
+2021-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Move instanced drawing functionality from ExtensionsGL to GraphicsContextGL
         https://bugs.webkit.org/show_bug.cgi?id=223179
 

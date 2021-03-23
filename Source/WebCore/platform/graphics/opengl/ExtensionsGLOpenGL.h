@@ -47,9 +47,9 @@ public:
     void bindVertexArrayOES(PlatformGLObject) override;
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
 
-    void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount);
-    void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount);
-    void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor);
+    void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) override;
+    void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) override;
+    void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) override;
 
 protected:
     bool supportsExtension(const WTF::String&) override;
