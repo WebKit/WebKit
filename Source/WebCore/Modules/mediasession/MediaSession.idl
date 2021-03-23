@@ -35,5 +35,5 @@
 
     undefined setActionHandler(MediaSessionAction action, MediaSessionActionHandler? handler);
 
-    [MayThrowException] undefined setPositionState(optional MediaPositionState? state = null);
+    undefined setPositionState(optional MediaPositionState? state = null);
 };

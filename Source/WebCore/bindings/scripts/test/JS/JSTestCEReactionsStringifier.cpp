@@ -255,7 +255,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunction_
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.value())));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.value())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

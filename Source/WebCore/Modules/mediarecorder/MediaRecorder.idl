@@ -45,11 +45,11 @@ enum RecordingState { "inactive", "recording", "paused" };
     readonly attribute unsigned long audioBitsPerSecond;
     // readonly attribute BitrateMode audioBitrateMode;
 
-    [MayThrowException, ImplementedAs=startRecording] undefined start(optional unsigned long timeslice);
+    [ImplementedAs=startRecording] undefined start(optional unsigned long timeslice);
     [ImplementedAs=stopRecording] undefined stop();
-    [MayThrowException, ImplementedAs=pauseRecording] undefined pause();
-    [MayThrowException, ImplementedAs=resumeRecording] undefined resume();
-    [MayThrowException] undefined requestData();
+    [ImplementedAs=pauseRecording] undefined pause();
+    [ImplementedAs=resumeRecording] undefined resume();
+    undefined requestData();
 
     [CallWith=Document] static boolean isTypeSupported(DOMString type);
 };

@@ -45,12 +45,12 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     readonly attribute TextTrackCueList? cues;
     readonly attribute TextTrackCueList? activeCues;
 
-    [MayThrowException] undefined addCue(TextTrackCue cue);
-    [MayThrowException] undefined removeCue(TextTrackCue cue);
+    undefined addCue(TextTrackCue cue);
+    undefined removeCue(TextTrackCue cue);
 
     attribute EventHandler oncuechange;
 
     readonly attribute VTTRegionList regions;
     undefined addRegion(VTTRegion region);
-    [MayThrowException] undefined removeRegion(VTTRegion region);
+    undefined removeRegion(VTTRegion region);
 };

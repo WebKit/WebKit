@@ -36,7 +36,7 @@
     ImplementationLacksVTable,
     Exposed=Window
 ] interface TestInterface {
-    [MayThrowException, CallWith=ScriptExecutionContext] constructor(DOMString str1, optional DOMString str2 = "defaultString");
+    [CallWith=ScriptExecutionContext] constructor(DOMString str1, optional DOMString str2 = "defaultString");
 
     iterable<TestNode, TestObj>;
 };

@@ -28,5 +28,5 @@
     JSGenerateToJSObject,
     LegacyNoInterfaceObject,
 ] interface InspectorAuditDOMObject {
-    [MayThrowException] boolean hasEventListeners(Node node, optional DOMString type);
+    boolean hasEventListeners(Node node, optional DOMString type);
 };

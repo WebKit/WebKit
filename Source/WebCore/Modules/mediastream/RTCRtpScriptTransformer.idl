@@ -35,5 +35,5 @@
     [CallWith=GlobalObject, CachedAttribute] readonly attribute any options;
 
     readonly attribute MessagePort port;
-    [MayThrowException] undefined requestKeyFrame();
+    undefined requestKeyFrame();
 };

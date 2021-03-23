@@ -36,11 +36,11 @@
 
     long getNumberOfChars();
     unrestricted float getComputedTextLength();
-    [MayThrowException] unrestricted float getSubStringLength(optional unsigned long offset = 0, optional unsigned long length = 0);
-    [MayThrowException, NewObject] SVGPoint getStartPositionOfChar(optional unsigned long offset = 0);
-    [MayThrowException, NewObject] SVGPoint getEndPositionOfChar(optional unsigned long offset = 0);
-    [MayThrowException, NewObject] SVGRect getExtentOfChar(optional unsigned long offset = 0);
-    [MayThrowException] unrestricted float getRotationOfChar(optional unsigned long offset = 0);
+    unrestricted float getSubStringLength(optional unsigned long offset = 0, optional unsigned long length = 0);
+    [NewObject] SVGPoint getStartPositionOfChar(optional unsigned long offset = 0);
+    [NewObject] SVGPoint getEndPositionOfChar(optional unsigned long offset = 0);
+    [NewObject] SVGRect getExtentOfChar(optional unsigned long offset = 0);
+    unrestricted float getRotationOfChar(optional unsigned long offset = 0);
     long getCharNumAtPosition(DOMPointInit point);
-    [MayThrowException] undefined selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
+    undefined selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
 };

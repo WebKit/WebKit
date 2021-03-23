@@ -29,12 +29,12 @@
     readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowException] undefined clear();
-    [MayThrowException] SVGPoint initialize(SVGPoint newItem);
-    [MayThrowException] getter SVGPoint getItem(unsigned long index);
-    [MayThrowException] SVGPoint insertItemBefore(SVGPoint newItem, unsigned long index);
-    [MayThrowException] SVGPoint replaceItem(SVGPoint newItem, unsigned long index);
-    [MayThrowException] SVGPoint removeItem(unsigned long index);
-    [MayThrowException] SVGPoint appendItem(SVGPoint newItem);
+    undefined clear();
+    SVGPoint initialize(SVGPoint newItem);
+    getter SVGPoint getItem(unsigned long index);
+    SVGPoint insertItemBefore(SVGPoint newItem, unsigned long index);
+    SVGPoint replaceItem(SVGPoint newItem, unsigned long index);
+    SVGPoint removeItem(unsigned long index);
+    SVGPoint appendItem(SVGPoint newItem);
     setter undefined (unsigned long index, SVGPoint newItem);
 };

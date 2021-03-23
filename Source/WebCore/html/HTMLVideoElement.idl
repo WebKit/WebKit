@@ -39,12 +39,12 @@
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
-    [MayThrowException] undefined webkitEnterFullscreen();
+    undefined webkitEnterFullscreen();
     undefined webkitExitFullscreen();
 
     // Maintain "FullScreen" capitalization scheme for backwards compatibility.
     // https://bugs.webkit.org/show_bug.cgi?id=36081
-    [ImplementedAs=webkitEnterFullscreen, MayThrowException] undefined webkitEnterFullScreen();
+    [ImplementedAs=webkitEnterFullscreen] undefined webkitEnterFullScreen();
     [ImplementedAs=webkitExitFullscreen] undefined webkitExitFullScreen();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] attribute boolean webkitWirelessVideoPlaybackDisabled;

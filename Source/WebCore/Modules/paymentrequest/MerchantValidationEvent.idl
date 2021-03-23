@@ -33,7 +33,7 @@
 
     readonly attribute DOMString methodName;
     readonly attribute USVString validationURL;
-    [MayThrowException] undefined complete(Promise<any> merchantSessionPromise);
+    undefined complete(Promise<any> merchantSessionPromise);
 };
 
 [

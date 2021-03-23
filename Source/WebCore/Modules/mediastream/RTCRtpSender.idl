@@ -41,7 +41,7 @@
     RTCRtpSendParameters getParameters();
     Promise<undefined> setParameters(RTCRtpSendParameters parameters);
     Promise<undefined> replaceTrack(MediaStreamTrack? withTrack);
-    [MayThrowException] undefined setStreams(MediaStream... streams);
+    undefined setStreams(MediaStream... streams);
     Promise<RTCStatsReport> getStats();
 
     [Conditional=WEB_RTC, EnabledAtRuntime=WebRTCDTMF] readonly attribute RTCDTMFSender? dtmf;

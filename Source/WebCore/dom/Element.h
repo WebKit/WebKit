@@ -210,6 +210,8 @@ public:
 
     WEBCORE_EXPORT bool removeAttribute(const AtomString& qualifiedName);
     WEBCORE_EXPORT bool removeAttributeNS(const AtomString& namespaceURI, const AtomString& localName);
+    void removeAttributeForBindings(const AtomString& qualifiedName) { removeAttribute(qualifiedName); }
+    void removeAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName) { removeAttributeNS(namespaceURI, localName); }
 
     Ref<Attr> detachAttribute(unsigned index);
 

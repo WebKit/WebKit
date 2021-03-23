@@ -30,6 +30,6 @@
 ] interface ImageBitmapRenderingContext {
     readonly attribute HTMLCanvasElement canvas;
 
-    [MayThrowException] undefined transferFromImageBitmap(ImageBitmap? bitmap);
+    undefined transferFromImageBitmap(ImageBitmap? bitmap);
 };
 

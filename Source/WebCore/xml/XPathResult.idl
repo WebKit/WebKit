@@ -43,6 +43,6 @@
     readonly attribute boolean invalidIteratorState;
     readonly attribute unsigned long snapshotLength;
 
-    [MayThrowException] Node iterateNext();
-    [MayThrowException] Node snapshotItem(unsigned long index);
+    Node iterateNext();
+    Node snapshotItem(unsigned long index);
 };

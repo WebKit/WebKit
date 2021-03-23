@@ -40,24 +40,24 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface InternalSettings : InternalSettingsGenerated {
     // Settings
-    [MayThrowException] undefined setStandardFontFamily(DOMString family, DOMString script);
-    [MayThrowException] undefined setSerifFontFamily(DOMString family, DOMString script);
-    [MayThrowException] undefined setSansSerifFontFamily(DOMString family, DOMString script);
-    [MayThrowException] undefined setFixedFontFamily(DOMString family, DOMString script);
-    [MayThrowException] undefined setCursiveFontFamily(DOMString family, DOMString script);
-    [MayThrowException] undefined setFantasyFontFamily(DOMString family, DOMString script);
-    [MayThrowException] undefined setPictographFontFamily(DOMString family, DOMString script);
-    [MayThrowException] undefined setFontLoadTimingOverride(FontLoadTimingOverride override);
+    undefined setStandardFontFamily(DOMString family, DOMString script);
+    undefined setSerifFontFamily(DOMString family, DOMString script);
+    undefined setSansSerifFontFamily(DOMString family, DOMString script);
+    undefined setFixedFontFamily(DOMString family, DOMString script);
+    undefined setCursiveFontFamily(DOMString family, DOMString script);
+    undefined setFantasyFontFamily(DOMString family, DOMString script);
+    undefined setPictographFontFamily(DOMString family, DOMString script);
+    undefined setFontLoadTimingOverride(FontLoadTimingOverride override);
     // Forwards to TextAutosizingWindowSizeOverrideHeight and TextAutosizingWindowSizeOverrideWidth.
-    [MayThrowException] undefined setTextAutosizingWindowSizeOverride(long width, long height);
-    [MayThrowException] undefined setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double intervalInSeconds);
-    [MayThrowException] undefined setMinimumTimerInterval(unrestricted double intervalInSeconds);
-    [MayThrowException] undefined setEditingBehavior(EditingBehaviorType behavior);
-    [MayThrowException] undefined setStorageBlockingPolicy(StorageBlockingPolicy policy);
-    [MayThrowException] undefined setPDFImageCachingPolicy(PDFImageCachingPolicy policy);
-    [MayThrowException] undefined setFrameFlattening(FrameFlatteningValue frameFlattening);
-    [MayThrowException] undefined setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy policy);
-    [MayThrowException] undefined setSystemLayoutDirection(SystemLayoutDirection direction);
+    undefined setTextAutosizingWindowSizeOverride(long width, long height);
+    undefined setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double intervalInSeconds);
+    undefined setMinimumTimerInterval(unrestricted double intervalInSeconds);
+    undefined setEditingBehavior(EditingBehaviorType behavior);
+    undefined setStorageBlockingPolicy(StorageBlockingPolicy policy);
+    undefined setPDFImageCachingPolicy(PDFImageCachingPolicy policy);
+    undefined setFrameFlattening(FrameFlatteningValue frameFlattening);
+    undefined setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy policy);
+    undefined setSystemLayoutDirection(SystemLayoutDirection direction);
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
     attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersContrastAccessibilityValue;
@@ -65,34 +65,34 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     attribute ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue;
 
     // RuntimeEnabledFeatures.
-    [MayThrowException] undefined setWebGL2Enabled(boolean enabled);
-    [MayThrowException] undefined setWebGPUEnabled(boolean enabled);
-    [MayThrowException] undefined setFetchAPIKeepAliveEnabled(boolean enabled);
-    [MayThrowException] undefined setCustomPasteboardDataEnabled(boolean enabled);
+    undefined setWebGL2Enabled(boolean enabled);
+    undefined setWebGPUEnabled(boolean enabled);
+    undefined setFetchAPIKeepAliveEnabled(boolean enabled);
+    undefined setCustomPasteboardDataEnabled(boolean enabled);
 
     readonly attribute boolean vp9DecoderEnabled;
 
     // DeprecatedGlobalSettings.
-    [MayThrowException] undefined setShouldManageAudioSessionCategory(boolean should);
+    undefined setShouldManageAudioSessionCategory(boolean should);
 
     // CaptionUserPreferences
-    [MayThrowException] undefined setShouldDisplayTrackKind(TrackKind kind, boolean enabled);
-    [MayThrowException] boolean shouldDisplayTrackKind(TrackKind kind);
+    undefined setShouldDisplayTrackKind(TrackKind kind, boolean enabled);
+    boolean shouldDisplayTrackKind(TrackKind kind);
 
     // Page
-    [MayThrowException] undefined setCanStartMedia(boolean enabled);
-    [MayThrowException] undefined setEditableRegionEnabled(boolean enabled);
-    [MayThrowException] undefined setUseDarkAppearance(boolean enabled);
+    undefined setCanStartMedia(boolean enabled);
+    undefined setEditableRegionEnabled(boolean enabled);
+    undefined setUseDarkAppearance(boolean enabled);
 
     // ScrollView
-    [MayThrowException] undefined setAllowUnclampedScrollPosition(boolean allowUnclamped);
+    undefined setAllowUnclampedScrollPosition(boolean allowUnclamped);
 
     // PlatformMediaSessionManager.
-    [MayThrowException] undefined setShouldDeactivateAudioSession(boolean shouldDeactivate);
+    undefined setShouldDeactivateAudioSession(boolean shouldDeactivate);
 
     // RenderTheme/FontCache
-    [MayThrowException] undefined setShouldMockBoldSystemFontForAccessibility(boolean shouldMock);
+    undefined setShouldMockBoldSystemFontForAccessibility(boolean shouldMock);
 
     // AudioContext
-    [MayThrowException] undefined setDefaultAudioContextSampleRate(float sampleRate);
+    undefined setDefaultAudioContextSampleRate(float sampleRate);
 };

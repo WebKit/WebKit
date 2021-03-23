@@ -35,11 +35,11 @@
     readonly attribute DOMStringList objectStoreNames;
 
     // FIXME: 'transaction' should also take an optional 'IDBTransactionOptions' argument.
-    [NewObject, MayThrowException] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames, optional IDBTransactionMode mode = "readonly");
+    [NewObject] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames, optional IDBTransactionMode mode = "readonly");
     undefined close();
 
-    [NewObject, MayThrowException] IDBObjectStore createObjectStore(DOMString name, optional IDBObjectStoreParameters parameters);
-    [MayThrowException] undefined deleteObjectStore(DOMString name);
+    [NewObject] IDBObjectStore createObjectStore(DOMString name, optional IDBObjectStoreParameters parameters);
+    undefined deleteObjectStore(DOMString name);
 
     // Event handlers:
     attribute EventHandler onabort;
@@ -49,7 +49,7 @@
 
     // Non-standard: This is not part of the spec, but is needed for compatibility.
     // See https://github.com/w3c/IndexedDB/issues/85
-    [MayThrowException] IDBTransaction transaction(DOMStringList storeNames, optional IDBTransactionMode mode = "readonly");
+    IDBTransaction transaction(DOMStringList storeNames, optional IDBTransactionMode mode = "readonly");
 };
 
 dictionary IDBObjectStoreParameters {

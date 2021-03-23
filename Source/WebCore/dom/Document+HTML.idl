@@ -58,11 +58,11 @@ partial interface Document {
     // FIXME: The HTML spec says this should consult the "responsible document". We should ensure
     // that the caller document matches those semantics. It is possible we should replace it with
     // the existing 'incumbent document' concept.
-    [CEReactions, CallWith=ResponsibleDocument, ImplementedAs=openForBindings, MayThrowException] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
-    [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings, MayThrowException] WindowProxy open(USVString url, DOMString name, DOMString features);
-    [CEReactions, ImplementedAs=closeForBindings, MayThrowException] undefined close();
-    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] undefined write(DOMString... text);
-    [CEReactions, CallWith=ResponsibleDocument, MayThrowException] undefined writeln(DOMString... text);
+    [CEReactions, CallWith=ResponsibleDocument, ImplementedAs=openForBindings] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
+    [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings] WindowProxy open(USVString url, DOMString name, DOMString features);
+    [CEReactions, ImplementedAs=closeForBindings] undefined close();
+    [CEReactions, CallWith=ResponsibleDocument] undefined write(DOMString... text);
+    [CEReactions, CallWith=ResponsibleDocument] undefined writeln(DOMString... text);
 
     // user interaction
     [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;

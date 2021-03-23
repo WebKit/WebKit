@@ -95,10 +95,8 @@ template<typename Functor> void invokeFunctorPropagatingExceptionIfNecessary(JSC
         auto result = functor();
         if (UNLIKELY(result.hasException()))
             propagateException(lexicalGlobalObject, throwScope, result.releaseException());
-        return;
-    }
-
-    functor();
+    } else
+        functor();
 }
 
 } // namespace WebCore

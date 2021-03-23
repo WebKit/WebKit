@@ -80,7 +80,6 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_pointFunction);
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_stringSequenceFunction);
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_stringSequenceFunction2);
 static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresInclude);
-static JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_methodWithException);
 
 // Attributes
 
@@ -223,7 +222,6 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
     { "stringSequenceFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunction_stringSequenceFunction), (intptr_t) (1) } },
     { "stringSequenceFunction2", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunction_stringSequenceFunction2), (intptr_t) (1) } },
     { "callWithSequenceThatRequiresInclude", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresInclude), (intptr_t) (1) } },
-    { "methodWithException", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunction_methodWithException), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
@@ -499,9 +497,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcBody(JSC::
     EnsureStillAliveScope argument0 = callFrame->argument(0);
     auto x = argument0.value().isUndefined() ? Converter<IDLSequence<IDLLong>>::ReturnType{ } : convert<IDLSequence<IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.func(WTFMove(x));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.func(WTFMove(x)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_func, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -533,9 +529,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_setShadowBody(
     EnsureStillAliveScope argument4 = callFrame->argument(4);
     auto alpha = argument4.value().isUndefined() ? Optional<Converter<IDLUnrestrictedFloat>::ReturnType>() : Optional<Converter<IDLUnrestrictedFloat>::ReturnType>(convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument4.value()));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.setShadow(WTFMove(width), WTFMove(height), WTFMove(blur), WTFMove(color), WTFMove(alpha));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.setShadow(WTFMove(width), WTFMove(height), WTFMove(blur), WTFMove(color), WTFMove(alpha)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_setShadow, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -555,7 +549,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_methodWithSequ
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLSequence<IDLSerializedScriptValue<SerializedScriptValue>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUnsignedLongLong>(impl.methodWithSequenceArg(WTFMove(sequenceArg)))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUnsignedLongLong>(*lexicalGlobalObject, throwScope, impl.methodWithSequenceArg(WTFMove(sequenceArg)))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_methodWithSequenceArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -575,9 +569,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequen
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLNullable<IDLSequence<IDLDOMString>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.nullableSequenceArg(WTFMove(sequenceArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.nullableSequenceArg(WTFMove(sequenceArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_nullableSequenceArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -597,9 +589,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_sequenceOfNull
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.sequenceOfNullablesArg(WTFMove(sequenceArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.sequenceOfNullablesArg(WTFMove(sequenceArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_sequenceOfNullablesArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -619,9 +609,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequen
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLNullable<IDLSequence<IDLNullable<IDLDOMString>>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.nullableSequenceOfNullablesArg(WTFMove(sequenceArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.nullableSequenceOfNullablesArg(WTFMove(sequenceArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_nullableSequenceOfNullablesArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -641,9 +629,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_nullableSequen
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLNullable<IDLSequence<IDLUnion<IDLDOMString, IDLSequence<IDLDOMString>>>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.nullableSequenceOfUnionsArg(WTFMove(sequenceArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.nullableSequenceOfUnionsArg(WTFMove(sequenceArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_nullableSequenceOfUnionsArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -663,9 +649,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_unionArgBody(J
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto unionArg = convert<IDLUnion<IDLDOMString, IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.unionArg(WTFMove(unionArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.unionArg(WTFMove(unionArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_unionArg, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -688,9 +672,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcWithClampB
     EnsureStillAliveScope argument1 = callFrame->argument(1);
     auto arg2 = argument1.value().isUndefined() ? Optional<Converter<IDLClampAdaptor<IDLUnsignedLongLong>>::ReturnType>() : Optional<Converter<IDLClampAdaptor<IDLUnsignedLongLong>>::ReturnType>(convert<IDLClampAdaptor<IDLUnsignedLongLong>>(*lexicalGlobalObject, argument1.value()));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.funcWithClamp(WTFMove(arg1), WTFMove(arg2));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.funcWithClamp(WTFMove(arg1), WTFMove(arg2)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_funcWithClamp, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -710,9 +692,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcWithClampI
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto arg = convert<IDLClampAdaptor<IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.funcWithClampInTypedef(WTFMove(arg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.funcWithClampInTypedef(WTFMove(arg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_funcWithClampInTypedef, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -727,7 +707,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_pointFunctionB
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<SVGPoint>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.pointFunction())));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<SVGPoint>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.pointFunction())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_pointFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -787,29 +767,12 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_callWithSequen
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLSequence<IDLInterface<TestEventTarget>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(impl.callWithSequenceThatRequiresInclude(WTFMove(sequenceArg)))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, impl.callWithSequenceThatRequiresInclude(WTFMove(sequenceArg)))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresInclude, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresIncludeBody>(*lexicalGlobalObject, *callFrame, "callWithSequenceThatRequiresInclude");
-}
-
-static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_methodWithExceptionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestTypedefs>::ClassParameter castedThis)
-{
-    auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    throwScope.release();
-    propagateException(*lexicalGlobalObject, throwScope, impl.methodWithException());
-    return JSValue::encode(jsUndefined());
-}
-
-JSC_DEFINE_HOST_FUNCTION(jsTestTypedefsPrototypeFunction_methodWithException, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
-{
-    return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunction_methodWithExceptionBody>(*lexicalGlobalObject, *callFrame, "methodWithException");
 }
 
 JSC::IsoSubspace* JSTestTypedefs::subspaceForImpl(JSC::VM& vm)

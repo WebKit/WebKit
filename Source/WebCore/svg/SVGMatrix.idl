@@ -35,12 +35,12 @@
     attribute unrestricted double f;
 
     [NewObject] SVGMatrix multiply(SVGMatrix secondMatrix);
-    [MayThrowException, NewObject] SVGMatrix inverse();
+    [NewObject] SVGMatrix inverse();
     [NewObject] SVGMatrix translate(unrestricted float x, unrestricted float y);
     [NewObject] SVGMatrix scale(unrestricted float scaleFactor);
     [NewObject] SVGMatrix scaleNonUniform(unrestricted float scaleFactorX, unrestricted float scaleFactorY);
     [NewObject] SVGMatrix rotate(unrestricted float angle);
-    [MayThrowException, NewObject] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
+    [NewObject] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
     [NewObject] SVGMatrix flipX();
     [NewObject] SVGMatrix flipY();
     [NewObject] SVGMatrix skewX(unrestricted float angle);

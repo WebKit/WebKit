@@ -55,8 +55,8 @@
     attribute long selectionEnd;
     attribute DOMString selectionDirection;
 
-    [MayThrowException] undefined setRangeText(DOMString replacement);
-    [MayThrowException] undefined setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
+    undefined setRangeText(DOMString replacement);
+    undefined setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
 
     undefined setSelectionRange(optional long start = 0, optional long end = 0, optional DOMString direction);
 

@@ -351,9 +351,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
         TestInterfaceCallTracer::recordAction(impl, "testOperationInterface"_s);
-    throwScope.release();
-    impl.testOperationInterface();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationInterface(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationInterface, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -370,9 +368,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(impl.hasActiveTestOperationCallTracer()))
         TestOperationCallTracer::recordAction(impl, "testOperationSpecified"_s);
-    throwScope.release();
-    impl.testOperationSpecified();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationSpecified(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationSpecified, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -400,9 +396,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
         TestInterfaceCallTracer::recordAction(impl, "testOperationWithArguments"_s, { TestInterfaceCallTracer::processArgument(impl, a), TestInterfaceCallTracer::processArgument(impl, b), TestInterfaceCallTracer::processArgument(impl, c) });
-    throwScope.release();
-    impl.testOperationWithArguments(WTFMove(a), WTFMove(b), WTFMove(c));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationWithArguments(WTFMove(a), WTFMove(b), WTFMove(c)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationWithArguments, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -424,9 +418,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
         TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableArgument"_s, { TestInterfaceCallTracer::processArgument(impl, nodeNullableArg) });
-    throwScope.release();
-    impl.testOperationWithNullableArgument(WTFMove(nodeNullableArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationWithNullableArgument(WTFMove(nodeNullableArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationWithNullableArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -448,9 +440,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
         TestInterfaceCallTracer::recordAction(impl, "testOperationWithVariantArgument"_s, { TestInterfaceCallTracer::processArgument(impl, variantArg) });
-    throwScope.release();
-    impl.testOperationWithVariantArgument(WTFMove(variantArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationWithVariantArgument(WTFMove(variantArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationWithVariantArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -472,9 +462,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
         TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableVariantArgument"_s, { TestInterfaceCallTracer::processArgument(impl, variantNullableArg) });
-    throwScope.release();
-    impl.testOperationWithNullableVariantArgument(WTFMove(variantNullableArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationWithNullableVariantArgument(WTFMove(variantNullableArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationWithNullableVariantArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -494,9 +482,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
         TestInterfaceCallTracer::recordAction(impl, "testOperationWithOptionalVariantArgument"_s, { TestInterfaceCallTracer::processArgument(impl, variantOptionalArg) });
-    throwScope.release();
-    impl.testOperationWithOptionalVariantArgument(WTFMove(variantOptionalArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationWithOptionalVariantArgument(WTFMove(variantOptionalArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationWithOptionalVariantArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -516,9 +502,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
         TestInterfaceCallTracer::recordAction(impl, "testOperationWithDefaultVariantArgument"_s, { TestInterfaceCallTracer::processArgument(impl, variantDefaultArg) });
-    throwScope.release();
-    impl.testOperationWithDefaultVariantArgument(WTFMove(variantDefaultArg));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationWithDefaultVariantArgument(WTFMove(variantDefaultArg)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationWithDefaultVariantArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

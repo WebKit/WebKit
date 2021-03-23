@@ -30,12 +30,12 @@
     readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowException] undefined clear();
-    [MayThrowException] SVGPathSeg initialize(SVGPathSeg newItem);
-    [MayThrowException] getter SVGPathSeg getItem(unsigned long index);
-    [MayThrowException] SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index);
-    [MayThrowException] SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index);
-    [MayThrowException] SVGPathSeg removeItem(unsigned long index);
-    [MayThrowException] SVGPathSeg appendItem(SVGPathSeg newItem);
+    undefined clear();
+    SVGPathSeg initialize(SVGPathSeg newItem);
+    getter SVGPathSeg getItem(unsigned long index);
+    SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index);
+    SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index);
+    SVGPathSeg removeItem(unsigned long index);
+    SVGPathSeg appendItem(SVGPathSeg newItem);
     setter undefined (unsigned long index, SVGPathSeg newItem);
 };

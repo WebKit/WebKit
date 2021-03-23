@@ -36,7 +36,7 @@
     attribute boolean interimResults;
     attribute unsigned long maxAlternatives;
 
-    [MayThrowException, ImplementedAs=startRecognition] undefined start();
+    [ImplementedAs=startRecognition] undefined start();
     [ImplementedAs=stopRecognition] undefined stop();
     [ImplementedAs=abortRecognition] undefined abort();
 

@@ -48,11 +48,11 @@ typedef (
     [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long width;
     [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long height;
 
-    [CallWith=GlobalObject, MayThrowException] RenderingContext? getContext(DOMString contextId, any... arguments);
+    [CallWith=GlobalObject] RenderingContext? getContext(DOMString contextId, any... arguments);
 
-    [MayThrowException] DOMString toDataURL(optional DOMString type, optional any quality);
-    [CallWith=ScriptExecutionContext, MayThrowException] undefined toBlob(BlobCallback callback, optional DOMString type, optional any quality);
-    [Conditional=OFFSCREEN_CANVAS, CallWith=ScriptExecutionContext, MayThrowException] OffscreenCanvas transferControlToOffscreen();
+    DOMString toDataURL(optional DOMString type, optional any quality);
+    [CallWith=ScriptExecutionContext] undefined toBlob(BlobCallback callback, optional DOMString type, optional any quality);
+    [Conditional=OFFSCREEN_CANVAS, CallWith=ScriptExecutionContext] OffscreenCanvas transferControlToOffscreen();
 
-    [Conditional=MEDIA_STREAM, CallWith=Document, MayThrowException, NewObject] MediaStream captureStream(optional double frameRequestRate);
+    [Conditional=MEDIA_STREAM, CallWith=Document, NewObject] MediaStream captureStream(optional double frameRequestRate);
 };

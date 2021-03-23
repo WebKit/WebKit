@@ -37,8 +37,8 @@
     DOMString getPropertyValue(DOMString property);
     // FIXME: The return value of 'getPropertyPriority' should not be nullable.
     DOMString? getPropertyPriority(DOMString property);
-    [CEReactions, MayThrowException] undefined setProperty(DOMString property, [LegacyNullToEmptyString] DOMString value, optional [LegacyNullToEmptyString] DOMString priority = "");
-    [CEReactions, MayThrowException] DOMString removeProperty(DOMString property);
+    [CEReactions] undefined setProperty(DOMString property, [LegacyNullToEmptyString] DOMString value, optional [LegacyNullToEmptyString] DOMString priority = "");
+    [CEReactions] DOMString removeProperty(DOMString property);
     readonly attribute CSSRule? parentRule;
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString cssFloat;
 

@@ -31,5 +31,5 @@
 ] interface PaymentRequestUpdateEvent : Event {
     constructor(DOMString type, optional PaymentRequestUpdateEventInit eventInitDict);
 
-    [MayThrowException] undefined updateWith(Promise<PaymentDetailsUpdate> detailsPromise);
+    undefined updateWith(Promise<PaymentDetailsUpdate> detailsPromise);
 };

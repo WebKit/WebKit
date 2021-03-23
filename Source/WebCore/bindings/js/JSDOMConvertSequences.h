@@ -82,7 +82,7 @@ struct GenericSequenceConverter {
 // Specialization for numeric types
 // FIXME: This is only implemented for the IDLFloatingPointTypes and IDLLong. To add
 // support for more numeric types, add an overload of Converter<IDLType>::convert that
-// takes an ExecState, ThrowScope, double as its arguments.
+// takes a JSGlobalObject, ThrowScope and double as its arguments.
 template<typename IDLType>
 struct NumericSequenceConverter {
     using GenericConverter = GenericSequenceConverter<IDLType>;

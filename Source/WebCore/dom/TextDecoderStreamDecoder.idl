@@ -32,6 +32,6 @@
     constructor(DOMString label, boolean fatal, boolean ignoreBOM);
 
     [PrivateIdentifier] DOMString encoding();
-    [PrivateIdentifier, MayThrowException] DOMString decode([AllowShared] BufferSource source);
-    [PrivateIdentifier, MayThrowException] DOMString flush();
+    [PrivateIdentifier] DOMString decode([AllowShared] BufferSource source);
+    [PrivateIdentifier] DOMString flush();
 };

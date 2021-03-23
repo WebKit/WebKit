@@ -43,10 +43,10 @@
 
     // FIXME: In all four methods found below, the blob parameter should not be nullable.
     // async read methods
-    [MayThrowException] undefined readAsArrayBuffer(Blob? blob);
-    [MayThrowException] undefined readAsBinaryString(Blob? blob);
-    [MayThrowException] undefined readAsText(Blob? blob, optional DOMString encoding);
-    [MayThrowException] undefined readAsDataURL(Blob? blob);
+    undefined readAsArrayBuffer(Blob? blob);
+    undefined readAsBinaryString(Blob? blob);
+    undefined readAsText(Blob? blob, optional DOMString encoding);
+    undefined readAsDataURL(Blob? blob);
 
     undefined abort();
 

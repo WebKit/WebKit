@@ -30,7 +30,6 @@
 namespace WebCore {
 using namespace JSC;
 
-// FIXME: This should get passed a global object rather than getting it out of the ExecState.
 JSValue jsDate(JSGlobalObject& lexicalGlobalObject, double value)
 {
     return DateInstance::create(lexicalGlobalObject.vm(), lexicalGlobalObject.dateStructure(), value);

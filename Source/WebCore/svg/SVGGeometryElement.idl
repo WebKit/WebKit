@@ -31,5 +31,5 @@
     boolean isPointInFill(optional DOMPointInit point);
     boolean isPointInStroke(optional DOMPointInit point);
     unrestricted float getTotalLength();
-    [NewObject, MayThrowException] SVGPoint getPointAtLength(float distance);
+    [NewObject] SVGPoint getPointAtLength(float distance);
 };

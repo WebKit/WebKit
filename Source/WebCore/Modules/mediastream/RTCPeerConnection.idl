@@ -104,7 +104,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
 
     undefined restartIce();
     RTCConfiguration getConfiguration();
-    [MayThrowException] undefined setConfiguration(RTCConfiguration configuration);
+    undefined setConfiguration(RTCConfiguration configuration);
     undefined close();
 
     attribute EventHandler onnegotiationneeded;
@@ -124,17 +124,17 @@ typedef (object or DOMString) AlgorithmIdentifier;
     sequence<RTCRtpReceiver> getReceivers();
     sequence<RTCRtpTransceiver> getTransceivers();
 
-    [MayThrowException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
-    [MayThrowException] undefined removeTrack(RTCRtpSender sender);
+    RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
+    undefined removeTrack(RTCRtpSender sender);
 
-    [MayThrowException] RTCRtpTransceiver addTransceiver((MediaStreamTrack or DOMString) track, optional RTCRtpTransceiverInit init);
+    RTCRtpTransceiver addTransceiver((MediaStreamTrack or DOMString) track, optional RTCRtpTransceiverInit init);
 
     attribute EventHandler ontrack;
 
     // 6.1 Peer-to-peer data API
     // FIXME 169644: missing sctp
 
-    [MayThrowException] RTCDataChannel createDataChannel([LegacyNullToEmptyString] USVString label, optional RTCDataChannelInit options);
+    RTCDataChannel createDataChannel([LegacyNullToEmptyString] USVString label, optional RTCDataChannelInit options);
     attribute EventHandler ondatachannel;
 
 

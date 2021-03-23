@@ -29,7 +29,7 @@
     PrivateIdentifier,
     PublicIdentifier
 ] interface AbortSignal : EventTarget {
-    [ PrivateIdentifier ] static undefined whenSignalAborted(AbortSignal object, AbortAlgorithm algorithm);
+    [PrivateIdentifier] static boolean whenSignalAborted(AbortSignal object, AbortAlgorithm algorithm);
 
     [NewObject, CallWith=ScriptExecutionContext] static AbortSignal abort();
     readonly attribute boolean aborted;

@@ -31,5 +31,5 @@
     // FIXME: The float parameters below should be a double.
 
     // opaque object
-    [MayThrowException] undefined addColorStop(float offset, DOMString color);
+    undefined addColorStop(float offset, DOMString color);
 };

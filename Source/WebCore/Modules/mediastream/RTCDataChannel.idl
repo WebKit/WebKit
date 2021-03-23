@@ -45,10 +45,10 @@
 
     attribute DOMString binaryType;
 
-    [MayThrowException] undefined send(ArrayBuffer data);
-    [MayThrowException] undefined send(ArrayBufferView data);
-    [MayThrowException] undefined send(Blob data);
-    [MayThrowException] undefined send(USVString data);
+    undefined send(ArrayBuffer data);
+    undefined send(ArrayBufferView data);
+    undefined send(Blob data);
+    undefined send(USVString data);
 
     undefined close();
 

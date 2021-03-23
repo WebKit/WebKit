@@ -33,5 +33,5 @@
     getter DOMString? getItem(DOMString key);
     setter undefined setItem(DOMString key, DOMString data);
     deleter undefined removeItem(DOMString key);
-    [MayThrowException] undefined clear();
+    undefined clear();
 };

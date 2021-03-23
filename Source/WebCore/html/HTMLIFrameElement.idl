@@ -42,7 +42,7 @@
 
     readonly attribute WindowProxy contentWindow;
 
-    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
+    [CheckSecurityForNode] Document getSVGDocument();
 
     [EnabledBySetting=ReferrerPolicyAttribute, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
 

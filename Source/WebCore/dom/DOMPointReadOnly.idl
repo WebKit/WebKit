@@ -44,7 +44,7 @@
     readonly attribute unrestricted double z;
     readonly attribute unrestricted double w;
 
-    [MayThrowException] DOMPoint matrixTransform(optional DOMMatrixInit matrix);
+    DOMPoint matrixTransform(optional DOMMatrixInit matrix);
 
     [Default] object toJSON();
 };

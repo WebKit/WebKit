@@ -41,7 +41,7 @@
     attribute EventHandler onkeystatuseschange;
     attribute EventHandler onmessage;
     Promise<undefined> generateRequest(DOMString initDataType, BufferSource initData);
-    Promise<bool> load(DOMString sessionId);
+    Promise<boolean> load(DOMString sessionId);
     Promise<undefined> update(BufferSource response);
     Promise<undefined> close();
     Promise<undefined> remove();

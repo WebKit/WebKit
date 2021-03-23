@@ -44,9 +44,9 @@
     [ImplementedAs=resumeRendering] Promise<undefined> resume();
     Promise<undefined> close();
 
-    [Conditional=VIDEO, MayThrowException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
-    [Conditional=MEDIA_STREAM, MayThrowException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
-    [Conditional=MEDIA_STREAM, MayThrowException] MediaStreamAudioDestinationNode createMediaStreamDestination();
+    [Conditional=VIDEO] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
+    [Conditional=MEDIA_STREAM] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
+    [Conditional=MEDIA_STREAM] MediaStreamAudioDestinationNode createMediaStreamDestination();
 
     // FIXME: Add support.
     // MediaStreamTrackAudioSourceNode createMediaStreamTrackSource(MediaStreamTrack mediaStreamTrack);

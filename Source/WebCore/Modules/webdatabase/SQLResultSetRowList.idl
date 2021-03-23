@@ -34,5 +34,5 @@ typedef (DOMString? or unrestricted double) SQLValue;
     Exposed=Window
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;
-    [MayThrowException] record<DOMString, SQLValue> item(unsigned long index);
+    record<DOMString, SQLValue> item(unsigned long index);
 };

@@ -199,7 +199,7 @@ static inline JSC::EncodedJSValue jsTestStringifierReadOnlyAttributePrototypeFun
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.identifier())));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.identifier())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestStringifierReadOnlyAttributePrototypeFunction_toString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

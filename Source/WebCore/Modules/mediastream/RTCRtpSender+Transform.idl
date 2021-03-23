@@ -31,5 +31,5 @@ typedef (RTCRtpSFrameTransform or RTCRtpScriptTransform) RTCRtpTransform;
     Exposed=Window,
     ImplementedBy=RTCRtpSenderWithTransform,
 ] partial interface RTCRtpSender {
-    [MayThrowException] attribute RTCRtpTransform? transform;
+    attribute RTCRtpTransform? transform;
 };

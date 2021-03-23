@@ -295,9 +295,6 @@ public:
     }
 };
 
-
-Ref<DeferredPromise> createDeferredPromise(JSC::JSGlobalObject&, JSDOMWindow&);
-
 void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);

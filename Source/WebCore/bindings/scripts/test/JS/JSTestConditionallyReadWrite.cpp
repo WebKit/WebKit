@@ -455,7 +455,7 @@ static inline JSValue jsTestConditionallyReadWrite_runtimeConditionallyReadWrite
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLDouble>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.runtimeConditionallyReadWriteAttributePromise())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLDouble>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, [&]() -> decltype(auto) { return impl.runtimeConditionallyReadWriteAttributePromise(); })));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -579,7 +579,7 @@ static inline JSValue jsTestConditionallyReadWrite_settingsConditionallyReadWrit
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLDouble>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.settingsConditionallyReadWriteAttributePromise())));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLDouble>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, [&]() -> decltype(auto) { return impl.settingsConditionallyReadWriteAttributePromise(); })));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

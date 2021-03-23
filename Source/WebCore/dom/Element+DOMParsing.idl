@@ -26,5 +26,5 @@
 // https://w3c.github.io/DOM-Parsing/#extensions-to-the-element-interface
 partial interface Element {
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerHTML;
-    [CEReactions, MayThrowException] undefined insertAdjacentHTML(DOMString position, DOMString text);
+    [CEReactions] undefined insertAdjacentHTML(DOMString position, DOMString text);
 };

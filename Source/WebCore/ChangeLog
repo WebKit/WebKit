@@ -1,3 +1,336 @@
+2021-03-22  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Remove the need to specify [MayThrowException]
+        https://bugs.webkit.org/show_bug.cgi?id=180019
+
+        Reviewed by Darin Adler and Chris Dumez.
+
+        Removes the need to specify [MayThrowException] by deducing it from the bound 
+        signature's return value. Any function returning an ExceptionOr is one that throws.
+
+        In most cases, this was already handled by toJS<>(..., impl.func()), which had
+        overloads for the case that the value was an ExceptionOr. The cases this didn't
+        work for were funtions that returned void, as toJS<>(..., impl.func()) would not
+        compile. To work around this, toJS<>() can now take a lambda as its value, and
+        can determine via the lambda's return type if it needs to throw. For instance,
+        an IDL operation like:
+
+            [MayThrowException] undefined func();
+
+        used to generate a bindings body that looked like the following :
+
+            auto& impl = castedThis->wrapped();
+            throwScope.release();
+            propagateException(*lexicalGlobalObject, throwScope, impl.func());
+            return JSValue::encode(jsUndefined());        
+        
+        will now generate a bindings body that looks like:
+        
+             auto& impl = castedThis->wrapped();
+             RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.func(); })));
+
+        which closely mirrors a non-undefined return operation. This wrapped lambda form
+        is only used for operations returning undefined or promises, as those are the only
+        functions that can return void, but it would be correct to use them for all types,
+        if not a bit more noisy and perhaps a tiny compile time cost.
+
+        NOTE: The use of `-> decltype(auto)` explicit return type on the lambda is required
+        to perfectly forward reference types, such as those used by owned promises. Otherwise,
+        a copy constructor is invoked.
+
+        In addition to supporting all operations, this also removes the requirement to annotate
+        named and indexed getters/setters. This mostly just means always defining a throw scope,
+        but for named getters it also meant adding a new helper, `visibleNamedPropertyItemAccessorFunctor`
+        which constructors the item accessor functor for the `accessVisibleNamedProperty` 
+        algorithm rather than hard coding it in the generator.
+
+        Due to increased use of toJS, the code generator is now checking more return types
+        (via AddToImplIncludesForIDLType) so the code generator was able to find a few invalid
+        return types (e.g. use of Promise<bool> rather than Promise<boolean>, etc.) and these
+        have been fixed and will be an error going forward. Would be a nice improvement to
+        the code generator to do type checking up front, rather than as a side effect of
+        code generation, but we will leave that for another day.
+
+        * bindings/js/JSDOMAbstractOperations.h:
+        (WebCore::visibleNamedPropertyItemAccessorFunctor):
+        Added. Moves the getterFunctor lambda creation from the GenerateNamedGetterLambda
+        subroutine in CodeGeneratorJS.pm, but uses deduction and constexpr to determine
+        if the getter throws.
+
+        (WebCore::accessVisibleNamedProperty):
+        Rename Functor to ItemAccessor to make it a bit more clear what the type does.
+
+        * bindings/js/JSDOMConvertBase.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        Replace SFINAE-based overloading of toJS/toJSNewlyCreated with constexpr based
+        conditionals and add the ability to pass in a functor rather than value. If a
+        functor is used, additional code paths for void and ExpectionOr<void> are added
+        which explicitly return jsUndefined().
+
+        * bindings/js/JSDOMConvertDate.cpp:
+        Remove incorrect comment about ExecStates that hasn't applied for a while.
+
+        * bindings/js/JSDOMConvertSequences.h:
+        Fix comment, replacing ExecState with JSGlobalObject. This has been wrong for
+        a while, and this is just a drive by fix.
+
+        * bindings/js/JSDOMExceptionHandling.h:
+        (WebCore::invokeFunctorPropagatingExceptionIfNecessary):
+        Use an explicit else as part of the constexpr expression to ensure the functor
+        is not called, even in debug builds.
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::createDeferredPromise): Deleted.
+        * bindings/js/JSDOMPromiseDeferred.h:
+        Remove unused createDeferredPromise function.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddMapLikeAttributesAndOperationIfNeeded):
+        (AddSetLikeAttributesAndOperationIfNeeded):
+        Fix return type of mapped clear operation to be `any` rather than `undefined`
+        to match the implementation, which returns a JSValue (e.g. `any`). This is now
+        required as we actually look at the return type via deduction and need it to match.
+ 
+        (GenerateNamedGetterLambda):
+        Replace most of the implementation with a call to the new `visibleNamedPropertyItemAccessorFunctor`
+        helper which returns a lambda with the correct behavior depending on the return type of the inner
+        lambda passed.
+ 
+        (GenerateGetOwnPropertySlot):
+        (GenerateGetOwnPropertySlotByIndex):
+        (GenerateAttributeGetterBodyDefinition):
+        Match most other parts of the generator and always create a throw scope.
+
+        (GenerateOperationDefinition):
+        Remove explicit call to propagateException now that toJS() will handle that for us.
+
+        (GenerateParametersCheck):
+        Remove explicit call to propagateException now that toJS() will handle that for us.
+
+        (GenerateImplementationFunctionCall):
+        Simplify by using invokeFunctorPropagatingExceptionIfNecessary helper for the "returnArgumentName"
+        case and relying on toJS handling the other cases.
+
+        (NativeToJSValueMayThrow):
+        Add operation to the list of things that might always throw.
+
+        (NativeToJSValue):
+        Use the lambda wrapped version of toJS for undefined and promise types, which might both
+        return void and thus require it. To keep most code unchanged, and avoid unnecessary compiler
+        work, we only use the wrapped version when it might be necessary. If it turns out to be
+        cheep enough, it might make sense to always use this form for simplicity.
+
+        (NeedsExplicitPropagateExceptionCall): Deleted.
+
+        * bindings/scripts/IDLAttributes.json:
+        Remove MayThrowException.
+
+        * dom/Element.idl:
+        * dom/Element.h:
+        (WebCore::Element::removeAttributeForBindings):
+        (WebCore::Element::removeAttributeNSForBindings):
+        Add bindings specific versions of `removeAttribute` and `removeAttributeNS` which
+        have a void return type (rather than the bool used by the main implementation)
+        as it is now a requirement that that the bound functions signature match the IDL.
+
+        * Modules/cache/DOMCache.idl:
+        Use the correct interface name, `FetchRequest`, not `Request`.
+
+        * Modules/cache/DOMCacheStorage.idl:
+        Use the correct interface name, `DOMCache`, not `Cache`.
+
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * dom/Document+StorageAccess.idl:
+        * page/Navigator+IsLoggedIn.idl:
+        Use the correct IDL type, `boolean`, not `bool`.
+
+        * dom/AbortSignal.idl:
+        Update whenSignalAborted to match the return type of implementation, which is `boolean`,
+        not `undefined`.
+
+        * testing/ServiceWorkerInternals.idl:
+        Use the correct interface name, `FetchResponse`, not `Response`.
+
+        * workers/service/ServiceWorkerClients.idl:
+        Use the correct interface names, `ServiceWorkerClient`, not `Client`, and `ServiceWorkerWindowClient`, not `WindowClient`.
+
+        * workers/service/ServiceWorkerWindowClient.idl:
+        Use the correct interface names, `ServiceWorkerWindowClient`, not `WindowClient`.
+
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/beacon/Navigator+Beacon.idl:
+        * Modules/cache/DOMWindow+Caches.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.idl:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * Modules/mediasession/MediaMetadata.idl:
+        * Modules/mediasession/MediaSession.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCRtpReceiver+Transform.idl:
+        * Modules/mediastream/RTCRtpSFrameTransform.idl:
+        * Modules/mediastream/RTCRtpScriptTransformer.idl:
+        * Modules/mediastream/RTCRtpSender+Transform.idl:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpTransceiver.idl:
+        * Modules/paymentrequest/MerchantValidationEvent.idl:
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.idl:
+        * Modules/speech/SpeechRecognition.idl:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioListener.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/AudioParam.idl:
+        * Modules/webaudio/AudioScheduledSourceNode.idl:
+        * Modules/webaudio/AudioWorkletGlobalScope.idl:
+        * Modules/webaudio/AudioWorkletProcessor.idl:
+        * Modules/webaudio/BaseAudioContext.idl:
+        * Modules/webaudio/BiquadFilterNode.idl:
+        * Modules/webaudio/IIRFilterNode.idl:
+        * Modules/webaudio/PannerNode.idl:
+        * Modules/webaudio/WebKitAudioBufferSourceNode.idl:
+        * Modules/webaudio/WebKitAudioContext.idl:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * Modules/websockets/WebSocket.idl:
+        * Modules/webxr/WebXRFrame.idl:
+        * Modules/webxr/WebXRReferenceSpace.idl:
+        * Modules/webxr/WebXRSession.idl:
+        * Modules/webxr/WebXRWebGLLayer.idl:
+        * animation/Animatable.idl:
+        * animation/AnimationEffect.idl:
+        * animation/KeyframeEffect.idl:
+        * animation/WebAnimation.idl:
+        * css/CSSGroupingRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleSheet.idl:
+        * css/DOMCSSNamespace+CSSPropertiesandValues.idl:
+        * css/DOMMatrix.idl:
+        * css/DOMMatrixReadOnly.idl:
+        * css/DeprecatedCSSOMPrimitiveValue.idl:
+        * css/FontFaceSet.idl:
+        * css/MediaList.idl:
+        * dom/CharacterData.idl:
+        * dom/ChildNode.idl:
+        * dom/CustomElementRegistry.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DOMPointReadOnly.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/Document+HTML.idl:
+        * dom/Document.idl:
+        * dom/Element+DOMParsing.idl:
+        * dom/Element+PointerEvents.idl:
+        * dom/EventTarget.idl:
+        * dom/MessagePort.idl:
+        * dom/MutationObserver.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/NodeIterator.idl:
+        * dom/ParentNode.idl:
+        * dom/Range+DOMParsing.idl:
+        * dom/Range.idl:
+        * dom/Text.idl:
+        * dom/TextDecoder.idl:
+        * dom/TextDecoderStreamDecoder.idl:
+        * dom/TreeWalker.idl:
+        * fileapi/Blob.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/DOMTokenList.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLDialogElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLVideoElement.idl:
+        * html/OffscreenCanvas.idl:
+        * html/TimeRanges.idl:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasImageData.idl:
+        * html/canvas/CanvasPath.idl:
+        * html/canvas/CanvasPattern.idl:
+        * html/canvas/CanvasTransform.idl:
+        * html/canvas/ImageBitmapRenderingContext.idl:
+        * html/canvas/Path2D.idl:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * html/track/TextTrack.idl:
+        * inspector/InspectorAuditAccessibilityObject.idl:
+        * inspector/InspectorAuditDOMObject.idl:
+        * inspector/InspectorAuditResourcesObject.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/Crypto.idl:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/NavigatorServiceWorker.idl:
+        * page/Performance+UserTiming.idl:
+        * page/PerformanceObserver.idl:
+        * page/UndoManager.idl:
+        * page/UserMessageHandler.idl:
+        * page/WindowOrWorkerGlobalScope.idl:
+        * storage/Storage.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGGeometryElement.idl:
+        * svg/SVGGraphicsElement.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGLengthList.idl:
+        * svg/SVGMatrix.idl:
+        * svg/SVGNumberList.idl:
+        * svg/SVGPathSegList.idl:
+        * svg/SVGPointList.idl:
+        * svg/SVGStringList.idl:
+        * svg/SVGTextContentElement.idl:
+        * svg/SVGTransform.idl:
+        * svg/SVGTransformList.idl:
+        * testing/InternalSettings.idl:
+        * testing/Internals.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/Worker.idl:
+        * workers/WorkerGlobalScope.idl:
+        * workers/service/ExtendableEvent.idl:
+        * workers/service/FetchEvent.idl:
+        * workers/service/ServiceWorker.idl:
+        * workers/service/ServiceWorkerClient.idl:
+        * worklets/PaintWorkletGlobalScope.idl:
+        * xml/DOMParser.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XPathEvaluatorBase.idl:
+        * xml/XPathExpression.idl:
+        * xml/XPathResult.idl:
+        Remove use of [MayThrowException].
+
+        * bindings/scripts/test/JS/*:
+        Remove uses of [MayThrowException] in the tests and update all the test results.
+
 2021-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix for AppleWin after r274827

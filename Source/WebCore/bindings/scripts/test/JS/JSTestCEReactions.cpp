@@ -410,9 +410,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunction_methodWithC
     UNUSED_PARAM(callFrame);
     CustomElementReactionStack customElementReactionStack(*lexicalGlobalObject);
     auto& impl = castedThis->wrapped();
-    throwScope.release();
-    impl.methodWithCEReactions();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithCEReactions(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsPrototypeFunction_methodWithCEReactions, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -428,9 +426,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunction_methodWithC
     UNUSED_PARAM(callFrame);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
     auto& impl = castedThis->wrapped();
-    throwScope.release();
-    impl.methodWithCEReactionsNotNeeded();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithCEReactionsNotNeeded(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsPrototypeFunction_methodWithCEReactionsNotNeeded, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

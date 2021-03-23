@@ -48,31 +48,31 @@
     readonly attribute AudioContextState state;
     attribute EventHandler onstatechange;
     
-    [MayThrowException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
+    AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
 
     // Asynchronous audio file data decoding.
     Promise<AudioBuffer> decodeAudioData(ArrayBuffer audioData, optional AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
 
     // Sources
-    [MayThrowException] AudioBufferSourceNode createBufferSource();
+    AudioBufferSourceNode createBufferSource();
 
     // Processing nodes
-    [MayThrowException] GainNode createGain();
-    [MayThrowException] DelayNode createDelay(optional double maxDelayTime = 1);
-    [MayThrowException] BiquadFilterNode createBiquadFilter();
-    [MayThrowException] WaveShaperNode createWaveShaper();
-    [MayThrowException] PannerNode createPanner();
-    [MayThrowException] ConvolverNode createConvolver();
-    [MayThrowException] DynamicsCompressorNode createDynamicsCompressor();
-    [MayThrowException] AnalyserNode createAnalyser();
-    [MayThrowException] ScriptProcessorNode createScriptProcessor(optional unsigned long bufferSize = 0, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
-    [MayThrowException] OscillatorNode createOscillator();
-    [MayThrowException] PeriodicWave createPeriodicWave(sequence<float> real, sequence<float> imag, optional PeriodicWaveOptions options);
-    [MayThrowException] ConstantSourceNode createConstantSource();
-    [MayThrowException] StereoPannerNode createStereoPanner();
-    [MayThrowException, CallWith=ScriptExecutionContext] IIRFilterNode createIIRFilter(sequence<double> feedforward, sequence<double> feedback);
+    GainNode createGain();
+    DelayNode createDelay(optional double maxDelayTime = 1);
+    BiquadFilterNode createBiquadFilter();
+    WaveShaperNode createWaveShaper();
+    PannerNode createPanner();
+    ConvolverNode createConvolver();
+    DynamicsCompressorNode createDynamicsCompressor();
+    AnalyserNode createAnalyser();
+    ScriptProcessorNode createScriptProcessor(optional unsigned long bufferSize = 0, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
+    OscillatorNode createOscillator();
+    PeriodicWave createPeriodicWave(sequence<float> real, sequence<float> imag, optional PeriodicWaveOptions options);
+    ConstantSourceNode createConstantSource();
+    StereoPannerNode createStereoPanner();
+    [CallWith=ScriptExecutionContext] IIRFilterNode createIIRFilter(sequence<double> feedforward, sequence<double> feedback);
 
     // Channel splitting and merging
-    [MayThrowException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);
-    [MayThrowException] ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs = 6);
+    ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);
+    ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs = 6);
 };

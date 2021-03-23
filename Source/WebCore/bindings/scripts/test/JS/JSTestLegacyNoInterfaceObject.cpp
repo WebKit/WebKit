@@ -35,7 +35,6 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
-#include "JSTestObj.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapAnalyzer.h>
@@ -54,7 +53,6 @@ using namespace JSC;
 // Functions
 
 static JSC_DECLARE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperation);
-static JSC_DECLARE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_throwingOperation);
 static JSC_DECLARE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperation);
 static JSC_DECLARE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectConstructorFunction_staticOperation);
 
@@ -111,7 +109,6 @@ static const HashTableValue JSTestLegacyNoInterfaceObjectPrototypeTableValues[] 
     { "customGetterSetterStringAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_customGetterSetterStringAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestLegacyNoInterfaceObject_customGetterSetterStringAttribute) } },
     { "nodeAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestLegacyNoInterfaceObject_nodeAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestLegacyNoInterfaceObject_nodeAttribute) } },
     { "voidOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperation), (intptr_t) (0) } },
-    { "throwingOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestLegacyNoInterfaceObjectPrototypeFunction_throwingOperation), (intptr_t) (2) } },
     { "customOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperation), (intptr_t) (0) } },
     { "CONSTANT1", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
     { "CONSTANT2", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
@@ -302,40 +299,12 @@ static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectPrototypeFunction
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    throwScope.release();
-    impl.voidOperation();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.voidOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestLegacyNoInterfaceObject>::call<jsTestLegacyNoInterfaceObjectPrototypeFunction_voidOperationBody>(*lexicalGlobalObject, *callFrame, "voidOperation");
-}
-
-static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectPrototypeFunction_throwingOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestLegacyNoInterfaceObject>::ClassParameter castedThis)
-{
-    auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    if (UNLIKELY(callFrame->argumentCount() < 2))
-        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return JSValue::encode(jsUndefined());
-    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
-    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestLegacyNoInterfaceObject", "throwingOperation", "TestObj"); });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.throwingOperation(*context, WTFMove(strArg), *objArg))));
-}
-
-JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectPrototypeFunction_throwingOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
-{
-    return IDLOperation<JSTestLegacyNoInterfaceObject>::call<jsTestLegacyNoInterfaceObjectPrototypeFunction_throwingOperationBody>(*lexicalGlobalObject, *callFrame, "throwingOperation");
 }
 
 static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectPrototypeFunction_customOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestLegacyNoInterfaceObject>::ClassParameter castedThis)
@@ -358,9 +327,7 @@ static inline JSC::EncodedJSValue jsTestLegacyNoInterfaceObjectConstructorFuncti
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    throwScope.release();
-    TestLegacyNoInterfaceObject::staticOperation();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return TestLegacyNoInterfaceObject::staticOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestLegacyNoInterfaceObjectConstructorFunction_staticOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

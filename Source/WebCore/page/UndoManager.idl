@@ -29,5 +29,5 @@
     GenerateIsReachable=ImplDocument,
     Exposed=Window
 ] interface UndoManager {
-    [MayThrowException] undefined addItem(UndoItem item);
+    undefined addItem(UndoItem item);
 };

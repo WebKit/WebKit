@@ -61,21 +61,21 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
     HTMLCollection getElementsByClassName(DOMString classNames);
 
-    [NewObject, MayThrowException, ImplementedAs=createElementForBindings] Element createElement(DOMString localName); // FIXME: missing options parameter.
-    [NewObject, MayThrowException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName); // FIXME: missing options parameter.
+    [NewObject, ImplementedAs=createElementForBindings] Element createElement(DOMString localName); // FIXME: missing options parameter.
+    [NewObject] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName); // FIXME: missing options parameter.
     [NewObject] DocumentFragment createDocumentFragment();
     [NewObject] Text createTextNode(DOMString data);
-    [NewObject, MayThrowException] CDATASection createCDATASection(DOMString data);
+    [NewObject] CDATASection createCDATASection(DOMString data);
     [NewObject] Comment createComment(DOMString data);
-    [NewObject, MayThrowException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
+    [NewObject] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
 
-    [CEReactions, MayThrowException, NewObject] Node importNode(Node node, optional boolean deep = false);
-    [CEReactions, MayThrowException] Node adoptNode(Node node);
+    [CEReactions, NewObject] Node importNode(Node node, optional boolean deep = false);
+    [CEReactions] Node adoptNode(Node node);
 
-    [NewObject, MayThrowException] Attr createAttribute(DOMString localName);
-    [NewObject, MayThrowException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject] Attr createAttribute(DOMString localName);
+    [NewObject] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
 
-    [MayThrowException, NewObject] Event createEvent(DOMString type);
+    [NewObject] Event createEvent(DOMString type);
 
     [NewObject] Range createRange();
 

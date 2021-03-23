@@ -30,5 +30,5 @@ typedef (Blob or BufferSource or DOMFormData or URLSearchParams or ReadableStrea
     EnabledBySetting=BeaconAPI,
     ImplementedBy=NavigatorBeacon
 ] partial interface Navigator {
-    [CallWith=Document, MayThrowException] boolean sendBeacon(USVString url, optional BodyInit? data = null);
+    [CallWith=Document] boolean sendBeacon(USVString url, optional BodyInit? data = null);
 };

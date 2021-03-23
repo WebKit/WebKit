@@ -35,7 +35,7 @@
     readonly attribute WorkerGlobalScope self;
     readonly attribute WorkerLocation location;
     readonly attribute WorkerNavigator navigator;
-    [MayThrowException] undefined importScripts(USVString... urls);
+    undefined importScripts(USVString... urls);
 
     // FIXME: The spec 'onerror' should be of type 'OnErrorEventHandler'.
     attribute EventHandler onerror;
