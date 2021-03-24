@@ -1,3 +1,17 @@
+2021-03-23  Dean Jackson  <yolo@apple.com>
+
+        Enable Metal ANGLE backend for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=220076
+        <rdar://problem/72565020>
+
+        Reviewed by Sam Weinig.
+
+        Turn the Metal backend for ANGLE on, moving the feature
+        from Internal to Experimental.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
         DerivedSources/WebKitTestRunner/JSAccessibilityUIElement.cpp:802:72: runtime error: -1 is outside the range of representable values of type 'unsigned int'
