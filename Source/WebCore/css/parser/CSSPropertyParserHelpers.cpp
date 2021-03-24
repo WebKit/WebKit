@@ -1104,17 +1104,19 @@ template<HSLFunctionMode Mode> static Color parseHSLParameters(CSSParserTokenRan
     return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(normalizedAlpha) });
 }
 
+template<typename ComponentType>
 struct WhitenessBlackness {
-    double whiteness;
-    double blackness;
+    ComponentType whiteness;
+    ComponentType blackness;
 };
-static WhitenessBlackness normalizeWhitenessBlackness(double whiteness, double blackness)
+
+template<typename ComponentType> static auto normalizeWhitenessBlackness(ComponentType whiteness, ComponentType blackness) -> WhitenessBlackness<ComponentType>
 {
     //   Values outside of these ranges are not invalid, but are clamped to the
     //   ranges defined here at computed-value time.
-    WhitenessBlackness result {
-        clampTo(whiteness, 0.0, 100.0),
-        clampTo(blackness, 0.0, 100.0)
+    WhitenessBlackness<ComponentType> result {
+        clampTo<ComponentType>(whiteness, 0.0, 100.0),
+        clampTo<ComponentType>(blackness, 0.0, 100.0)
     };
 
     //   If the sum of these two arguments is greater than 100%, then at
@@ -1551,325 +1553,190 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
     return colorsToCompareAgainst[indexOfColorWithHigestContrastRatio];
 }
 
-struct HueColorAdjuster {
-    enum class Type {
-        Shorter,
-        Longer,
-        Increasing,
-        Decreasing,
-        Specified
+enum class ColorMixColorSpace {
+    Srgb,
+    Hsl,
+    Hwb,
+    Xyz,
+    Lab,
+    Lch
+};
+
+static Optional<ColorMixColorSpace> consumeColorMixColorSpaceAndComma(CSSParserTokenRange& args)
+{
+    auto consumeIdentAndComma = [](CSSParserTokenRange& args, ColorMixColorSpace colorSpace) -> Optional<ColorMixColorSpace> {
+        consumeIdentRaw(args);
+        if (!consumeCommaIncludingWhitespace(args))
+            return WTF::nullopt;
+        return colorSpace;
     };
 
-    static std::pair<double, double> fixupAnglesForInterpolation(double theta1, double theta2, Type type)
-    {
-        ASSERT(theta1 >= 0.0);
-        ASSERT(theta1 <= 360.0);
-        ASSERT(theta2 >= 0.0);
-        ASSERT(theta2 <= 360.0);
-
-        switch (type) {
-        case Type::Shorter: {
-            auto difference = theta2 - theta1;
-            if (difference > 180.0)
-                return { theta1 + 360.0, theta2 };
-            if (difference < -180.0)
-                return { theta1, theta2 + 360.0 };
-            return { theta1, theta2 };
-        }
-        case Type::Longer: {
-            auto difference = theta2 - theta1;
-            if (difference >= 0.0 && difference < 180.0)
-                return { theta1 + 360.0, theta2 };
-            if (difference >= -180.0  && difference < 0)
-                return { theta1, theta2 + 360.0 };
-            return { theta1, theta2 };
-        }
-        case Type::Increasing: {
-            if (theta2 < theta1)
-                return { theta1, theta2 + 360.0 };
-            return { theta1, theta2 };
-        }
-        case Type::Decreasing: {
-            if (theta1 < theta2)
-                return { theta1 + 360.0, theta2 };
-            return { theta1, theta2 };
-        }
-        case Type::Specified:
-            return { theta1, theta2 };
-        }
-
-        RELEASE_ASSERT_NOT_REACHED();
+    switch (args.peek().id()) {
+    case CSSValueHsl:
+        return consumeIdentAndComma(args, ColorMixColorSpace::Hsl);
+    case CSSValueHwb:
+        return consumeIdentAndComma(args, ColorMixColorSpace::Hwb);
+    case CSSValueLch:
+        return consumeIdentAndComma(args, ColorMixColorSpace::Lch);
+    case CSSValueLab:
+        return consumeIdentAndComma(args, ColorMixColorSpace::Lab);
+    case CSSValueXyz:
+        return consumeIdentAndComma(args, ColorMixColorSpace::Xyz);
+    case CSSValueSRGB:
+        return consumeIdentAndComma(args, ColorMixColorSpace::Srgb);
+    default:
+        return WTF::nullopt;
     }
+}
 
-    HueColorAdjuster(double value = 0.0, Type type = Type::Shorter)
-        : type { type }
-        , value { value }
-    {
-    }
-
-    Type type;
-    double value;
-};
-
-template<typename C, CSSValueID ID0, typename Channel0, CSSValueID ID1, typename Channel1, CSSValueID ID2, typename Channel2, CSSValueID ID3, typename Channel3>
-struct ColorAdjuster {
-    using ColorType = C;
-    static constexpr auto channelCSSValueIDs = std::make_tuple(ID0, ID1, ID2, ID3);
-
-    ColorAdjuster() = default;
-    explicit ColorAdjuster(double percentage)
-        : channels { percentage, percentage, percentage, percentage }
-    {
-    }
-
-    std::tuple<Optional<Channel0>, Optional<Channel1>, Optional<Channel2>, Optional<Channel3>> channels;
-};
-
-using HSLColorAdjuster = ColorAdjuster<HSLA<float>, CSSValueHue, HueColorAdjuster, CSSValueSaturation, double, CSSValueLightness, double, CSSValueAlpha, double>;
-using HWBColorAdjuster = ColorAdjuster<HWBA<float>, CSSValueHue, HueColorAdjuster, CSSValueWhiteness, double, CSSValueBlackness, double, CSSValueAlpha, double>;
-using LCHColorAdjuster = ColorAdjuster<LCHA<float>, CSSValueLightness, double, CSSValueChroma, HueColorAdjuster, CSSValueHue, double, CSSValueAlpha, double>;
-using LabColorAdjuster = ColorAdjuster<Lab<float>, CSSValueLightness, double, CSSValueA, double, CSSValueB, double, CSSValueAlpha, double>;
-using SRGBColorAdjuster = ColorAdjuster<SRGBA<float>, CSSValueRed, double, CSSValueGreen, double, CSSValueBlue, double, CSSValueAlpha, double>;
-using XYZColorAdjuster = ColorAdjuster<XYZA<float, WhitePoint::D50>, CSSValueX, double, CSSValueY, double, CSSValueZ, double, CSSValueAlpha, double>;
-
-template<typename Adjuster> struct ColorMixComponent {
+struct ColorMixComponent {
     Color color;
-    Adjuster adjuster;
+    Optional<double> percentage;
 };
 
-template<CSSValueID Ident, typename T> struct AdjusterConsumer;
-
-template<CSSValueID Ident> struct AdjusterConsumer<Ident, HueColorAdjuster> {
-    static Optional<HueColorAdjuster> consume(CSSParserTokenRange& args)
-    {
-        if (!consumeIdentRaw<Ident>(args))
-            return WTF::nullopt;
-
-        HueColorAdjuster result;
-        if (auto hueAdjustmentType = consumeHueAdjustmentType(args))
-            result.type = *hueAdjustmentType;
-
-        // FIXME: Is clamping to 0 for negative percentages the right thing to do?
-        if (auto percentage = consumePercentRaw(args))
-            result.value = std::max(0.0, *percentage);
-
-        // FIXME: Should an adjuster without a percetange be allowed?
-        //  e.g color-mix(hsl, teal hue, red);
-
-        return result;
-    }
-
-    static Optional<HueColorAdjuster::Type> consumeHueAdjustmentType(CSSParserTokenRange& args)
-    {
-        switch (args.peek().id()) {
-        case CSSValueShorter:
-            consumeIdentRaw(args);
-            return HueColorAdjuster::Type::Shorter;
-        case CSSValueLonger:
-            consumeIdentRaw(args);
-            return HueColorAdjuster::Type::Longer;
-        case CSSValueIncreasing:
-            consumeIdentRaw(args);
-            return HueColorAdjuster::Type::Increasing;
-        case CSSValueDecreasing:
-            consumeIdentRaw(args);
-            return HueColorAdjuster::Type::Decreasing;
-        case CSSValueSpecified:
-            consumeIdentRaw(args);
-            return HueColorAdjuster::Type::Specified;
-        default:
-            return WTF::nullopt;
-        }
-    }
-};
-
-template<CSSValueID Ident> struct AdjusterConsumer<Ident, double> {
-    static Optional<double> consume(CSSParserTokenRange& args)
-    {
-        if (!consumeIdentRaw<Ident>(args))
-            return WTF::nullopt;
-        
-        // FIXME: Is clamping to 0 for negative percentages the right thing to do?
-        if (auto percentage = consumePercentRaw(args))
-            return std::max(0.0, *percentage);
-
-        // FIXME: Should an adjuster without a percetange be allowed?
-        //  e.g color-mix(hsl, teal saturation, red);
-
-        return 0;
-    }
-};
-
-template<CSSValueID Ident, typename T> inline decltype(auto) consumeAdjuster(CSSParserTokenRange& args)
+static Optional<ColorMixComponent> consumeColorMixComponent(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    return AdjusterConsumer<Ident, T>::consume(args);
-}
+    ColorMixComponent result;
 
-template<std::size_t I, typename Adjuster> static bool consumeAndUpdateAdjusterAtIndex(CSSParserTokenRange& args, Adjuster& adjuster)
-{
-    using AdjusterType = std::decay_t<decltype(std::get<I>(adjuster.channels).value())>;
-    static constexpr CSSValueID Ident = std::get<I>(Adjuster::channelCSSValueIDs);
-
-    if (auto adjustment = consumeAdjuster<Ident, AdjusterType>(args)) {
-        std::get<I>(adjuster.channels) = *adjustment;
-        return true;
-    }
-    return false;
-}
-
-template<typename Adjuster> static bool consumeAndUpdateAdjuster(CSSParserTokenRange& args, Adjuster& adjuster)
-{
-    if (consumeAndUpdateAdjusterAtIndex<0>(args, adjuster))
-        return true;
-    if (consumeAndUpdateAdjusterAtIndex<1>(args, adjuster))
-        return true;
-    if (consumeAndUpdateAdjusterAtIndex<2>(args, adjuster))
-        return true;
-    if (consumeAndUpdateAdjusterAtIndex<3>(args, adjuster))
-        return true;
-    return false;
-}
-
-template<typename Adjuster> static Adjuster consumeAdjusters(CSSParserTokenRange& args)
-{
-    Adjuster adjuster;
-    while (consumeAndUpdateAdjuster(args, adjuster)) {
-        // Keep consuming until there are no more adjusters.
-    }
-    
-    return adjuster;
-}
-
-template<typename Adjuster> static Optional<ColorMixComponent<Adjuster>> consumeMixComponents(CSSParserTokenRange& args, const CSSParserContext& context)
-{
-    auto originColor = consumeOriginColor(args, context);
-    if (!originColor.isValid())
-        return WTF::nullopt;
-
-    // FIXME: Is clamping to 0 for negative percentages the right thing to do?
     if (auto percentage = consumePercentRaw(args))
-        return { { WTFMove(originColor), Adjuster { std::max(0.0, *percentage) } } };
+        result.percentage = percentage;
 
-    return { { WTFMove(originColor), consumeAdjusters<Adjuster>(args) } };
-}
+    result.color = consumeOriginColor(args, context);
+    if (!result.color.isValid())
+        return WTF::nullopt;
 
-static std::pair<HueColorAdjuster, HueColorAdjuster> normalizeAdjusterValues(HueColorAdjuster adjuster1, HueColorAdjuster adjuster2)
-{
-    if (auto sum = adjuster1.value + adjuster2.value; sum != 100.0) {
-        adjuster1.value *= 100.0 / sum;
-        adjuster2.value *= 100.0 / sum;
+    if (!result.percentage) {
+        if (auto percentage = consumePercentRaw(args))
+            result.percentage = percentage;
     }
 
-    return { adjuster1, adjuster2 };
+    return result;
 }
 
-static std::pair<double, double> normalizeAdjusterValues(double adjuster1, double adjuster2)
+struct ColorMixPercentages {
+    double p1;
+    double p2;
+};
+
+static ColorMixPercentages normalizedMixPercentages(const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
 {
-    if (auto sum = adjuster1 + adjuster2; sum != 100.0) {
-        adjuster1 *= 100.0 / sum;
-        adjuster2 *= 100.0 / sum;
+    // The percentages are normalized as follows:
+
+    // 1. Let p1 be the first percentage and p2 the second one.
+
+    // 2. If both percentages are omitted, they each default to 50% (an equal mix of the two colors).
+    if (!mixComponents1.percentage && !mixComponents2.percentage)
+        return { 50.0, 50.0 };
+    
+    ColorMixPercentages result;
+
+    if (!mixComponents2.percentage) {
+        // 3. Otherwise, if p2 is omitted, it becomes 100% - p1
+        result.p1 = *mixComponents1.percentage;
+        result.p2 = 100.0 - result.p1;
+    } else if (!mixComponents1.percentage) {
+        // 4. Otherwise, if p1 is omitted, it becomes 100% - p2
+        result.p2 = *mixComponents2.percentage;
+        result.p1 = 100.0 - result.p2;
+    } else {
+        result.p1 = *mixComponents1.percentage;
+        result.p2 = *mixComponents2.percentage;
     }
 
-    return { adjuster1, adjuster2 };
+    auto sum = result.p1 + result.p2;
+
+    // 5. If the percentages sum to zero do something, tbd. (FIXME: We just use 50 / 50 for this case for now).
+    if (sum == 0)
+        return { 50.0, 50.0 };
+
+    if (sum != 100.0) {
+        // 6. Otherwise, if both are provided but do not add up to 100%, they are scaled accordingly so that they
+        //    add up to 100%. This means that p1 becomes p1 / (p1 + p2) and p2 becomes p2 / (p1 + p2).
+        result.p1 *= 100.0 / sum;
+        result.p2 *= 100.0 / sum;
+    }
+
+    return result;
 }
 
-static HueColorAdjuster remainingAdjustment(HueColorAdjuster adjuster)
+// Normalization is special cased for HWBA, which needs to normalize the whiteness and blackness components and convert to sRGB
+// and HSLA, which just needs to be converted to sRGB. All other color types can go through this non-specialized case.
+
+template<typename ColorType> inline Color makeColorTypeByNormalizingComponentsAfterMix(const ColorComponents<float>& colorComponents)
 {
-    return { 100.0 - adjuster.value, adjuster.type };
+    return makeFromComponents<ColorType>(colorComponents);
 }
 
-static double remainingAdjustment(double adjuster)
+template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>(const ColorComponents<float>& colorComponents)
 {
-    return 100.0 - adjuster;
-}
-
-template<typename AdjusterType> static auto normalizeAdjusterValues(Optional<AdjusterType> adjuster1, Optional<AdjusterType> adjuster2) -> std::pair<AdjusterType, AdjusterType>
-{
-    if (adjuster1 && adjuster2)
-        return normalizeAdjusterValues(*adjuster1, *adjuster2);
-    if (!adjuster1 && adjuster2)
-        return { remainingAdjustment(*adjuster2), *adjuster2 };
-    if (adjuster1 && !adjuster2)
-        return { *adjuster1, remainingAdjustment(*adjuster1) };
-    // When neigher mix component provides an adjuster, the result is the non-modified
-    // channel from from the first color.
-    ASSERT(!adjuster1 && !adjuster2);
-    return { 100.0, 0.0 };
-}
-
-static double mixComponent(float component1, HueColorAdjuster adjustment1, float component2, HueColorAdjuster adjustment2)
-{
-    // FIXME: The spec does not indicate what to do if two different hue types are specified. We always use the first one for now,
-    // though we probably should take into account whether it was actually specified or is the default value. That normalization
-    // should happen in normalizeAdjusterValues().
-
-    auto [fixedUpComponent1, fixedUpComponent2] = HueColorAdjuster::fixupAnglesForInterpolation(component1, component2, adjustment1.type);
-    auto result = (fixedUpComponent1 * (adjustment1.value / 100.0)) + (fixedUpComponent2 * (adjustment2.value / 100.0));
-    // FIXME: Check if this full normalization is needed.
-    return normalizeHue(result);
-}
-
-static double mixComponent(float component1, double adjustment1, float component2, double adjustment2)
-{
-    return (component1 * (adjustment1 / 100.0)) + (component2 * (adjustment2 / 100.0));
-}
-
-template<std::size_t I, typename Adjuster> static double mixComponentAtIndex(const ColorComponents<float>& color1, const Adjuster& adjuster1, const ColorComponents<float>& color2, const Adjuster& adjuster2)
-{
-    auto [normalizedAdjuster1Value, normalizedAdjuster2Value] = normalizeAdjusterValues(std::get<I>(adjuster1.channels), std::get<I>(adjuster2.channels));
-    return mixComponent(color1[I], normalizedAdjuster1Value, color2[I], normalizedAdjuster2Value);
-}
-
-template<typename ColorType> inline ColorType makeColorTypeByNormalizingComponentsAfterMix(double channel0, double channel1, double channel2, double channel3)
-{
-    return { static_cast<float>(channel0), static_cast<float>(channel1), static_cast<float>(channel2), static_cast<float>(channel3) };
-}
-
-template<> inline HWBA<float> makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>(double hue, double whiteness, double blackness, double alpha)
-{
+    auto [hue, whiteness, blackness, alpha] = colorComponents;
     auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(whiteness, blackness);
-    return { static_cast<float>(hue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(alpha) };
+
+    return convertColor<SRGBA<uint8_t>>(HWBA<float> { hue, normalizedWhitness, normalizedBlackness, alpha });
 }
 
-template<typename Adjuster> static typename Adjuster::ColorType mix(const ColorMixComponent<Adjuster>& mixComponents1, const ColorMixComponent<Adjuster>& mixComponents2)
+template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>(const ColorComponents<float>& colorComponents)
 {
-    using ColorType = typename Adjuster::ColorType;
+    return convertColor<SRGBA<uint8_t>>(makeFromComponents<HSLA<float>>(colorComponents));
+}
 
-    auto color1 = asColorComponents(mixComponents1.color.template toColorTypeLossy<ColorType>());
-    auto color2 = asColorComponents(mixComponents2.color.template toColorTypeLossy<ColorType>());
+template<size_t I, typename ComponentType> static void fixupHueComponentsPriorToMix(ColorComponents<ComponentType>& colorComponents1, ColorComponents<ComponentType>& colorComponents2)
+{
+    auto normalizeAnglesUsingShorterAlgorithm = [] (auto theta1, auto theta2) -> std::pair<ComponentType, ComponentType> {
+        // https://drafts.csswg.org/css-color-4/#hue-shorter
+        auto difference = theta2 - theta1;
+        if (difference > 180.0)
+            return { theta1 + 360.0, theta2 };
+        if (difference < -180.0)
+            return { theta1, theta2 + 360.0 };
+        return { theta1, theta2 };
+    };
 
-    auto adjuster1 = mixComponents1.adjuster;
-    auto adjuster2 = mixComponents2.adjuster;
+    // As no other interpolation type was specified, all angles should be normalized to use the "shorter" algorithm.
+    auto [theta1, theta2] = normalizeAnglesUsingShorterAlgorithm(colorComponents1[I], colorComponents2[I]);
+    colorComponents1[I] = theta1;
+    colorComponents2[I] = theta2;
+}
 
-    if (!std::get<0>(adjuster1.channels) && !std::get<1>(adjuster1.channels) && !std::get<2>(adjuster1.channels) && !std::get<3>(adjuster1.channels) && !std::get<0>(adjuster2.channels) && !std::get<1>(adjuster2.channels) && !std::get<2>(adjuster2.channels) && !std::get<3>(adjuster2.channels)) {
-        // No adjusters being specified at all is special cased to mean mix 50-50.
-        adjuster1 = Adjuster { 50.0 };
-        adjuster2 = Adjuster { 50.0 };
+template<typename ColorType> static Color mixColorComponentsInColorSpace(ColorMixPercentages mixPercentages, const Color& color1, const Color& color2)
+{
+    auto colorComponents1 = asColorComponents(color1.template toColorTypeLossy<ColorType>());
+    auto colorComponents2 = asColorComponents(color2.template toColorTypeLossy<ColorType>());
+
+    // Perform fixups on any hue/angle components.
+    constexpr auto componentInfo = ColorType::Model::componentInfo;
+    if constexpr (componentInfo[0].type == ColorComponentType::Angle)
+        fixupHueComponentsPriorToMix<0>(colorComponents1, colorComponents2);
+    if constexpr (componentInfo[1].type == ColorComponentType::Angle)
+        fixupHueComponentsPriorToMix<1>(colorComponents1, colorComponents2);
+    if constexpr (componentInfo[2].type == ColorComponentType::Angle)
+        fixupHueComponentsPriorToMix<2>(colorComponents1, colorComponents2);
+
+    auto colorComponentsMixed = mapColorComponents([&] (auto componentFromColor1, auto componentFromColor2) -> float {
+        return (componentFromColor1 * mixPercentages.p1 / 100.0) + (componentFromColor2 * mixPercentages.p2 / 100.0);
+    }, colorComponents1, colorComponents2);
+
+    return makeColorTypeByNormalizingComponentsAfterMix<ColorType>(colorComponentsMixed);
+}
+
+static Color mixColorComponents(ColorMixColorSpace colorSpace, const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
+{
+    auto mixPercentages = normalizedMixPercentages(mixComponents1, mixComponents2);
+
+    switch (colorSpace) {
+    case ColorMixColorSpace::Hsl:
+        return mixColorComponentsInColorSpace<HSLA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
+    case ColorMixColorSpace::Hwb:
+        return mixColorComponentsInColorSpace<HWBA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
+    case ColorMixColorSpace::Lch:
+        return mixColorComponentsInColorSpace<LCHA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
+    case ColorMixColorSpace::Lab:
+        return mixColorComponentsInColorSpace<Lab<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
+    case ColorMixColorSpace::Xyz:
+        return mixColorComponentsInColorSpace<XYZA<float, WhitePoint::D50>>(mixPercentages, mixComponents1.color, mixComponents2.color);
+    case ColorMixColorSpace::Srgb:
+        return mixColorComponentsInColorSpace<SRGBA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
     }
-
-    auto channel0 = mixComponentAtIndex<0>(color1, adjuster1, color2, adjuster2);
-    auto channel1 = mixComponentAtIndex<1>(color1, adjuster1, color2, adjuster2);
-    auto channel2 = mixComponentAtIndex<2>(color1, adjuster1, color2, adjuster2);
-    auto channel3 = mixComponentAtIndex<3>(color1, adjuster1, color2, adjuster2);
-
-    return makeColorTypeByNormalizingComponentsAfterMix<ColorType>(channel0, channel1, channel2, channel3);
-}
-
-template<typename Adjuster> static Optional<typename Adjuster::ColorType> parseColorMixFunctionParametersUsingAdjusters(CSSParserTokenRange& args, const CSSParserContext& context)
-{
-    auto mixComponents1 = consumeMixComponents<Adjuster>(args, context);
-    if (!mixComponents1)
-        return WTF::nullopt;
-
-    // FIXME: This comma is not in the grammar, but is in all the examples.
-    if (!consumeCommaIncludingWhitespace(args))
-        return WTF::nullopt;
-
-    auto mixComponents2 = consumeMixComponents<Adjuster>(args, context);
-    if (!mixComponents2)
-        return WTF::nullopt;
-
-    return mix(*mixComponents1, *mixComponents2);
 }
 
 static Color parseColorMixFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -1881,50 +1748,28 @@ static Color parseColorMixFunctionParameters(CSSParserTokenRange& range, const C
 
     auto args = consumeFunction(range);
 
-    auto consumeIdentAndComma = [](CSSParserTokenRange& args) {
-        consumeIdentRaw(args);
-        // FIXME: This comma is not in the grammar, but is in all the examples.
-        return consumeCommaIncludingWhitespace(args);
-    };
+    if (!consumeIdentRaw<CSSValueIn>(args))
+        return { };
+    
+    auto colorSpace = consumeColorMixColorSpaceAndComma(args);
+    if (!colorSpace)
+        return { };
 
-    switch (args.peek().id()) {
-    case CSSValueHsl: {
-        if (!consumeIdentAndComma(args))
-            return { };
-        auto hsl = parseColorMixFunctionParametersUsingAdjusters<HSLColorAdjuster>(args, context);
-        if (!hsl)
-            return { };
-        return convertColor<SRGBA<uint8_t>>(*hsl);
-    }
-    case CSSValueHwb: {
-        if (!consumeIdentAndComma(args))
-            return { };
-        auto hwb = parseColorMixFunctionParametersUsingAdjusters<HWBColorAdjuster>(args, context);
-        if (!hwb)
-            return { };
-        return convertColor<SRGBA<uint8_t>>(*hwb);
-    }
-    case CSSValueLch:
-        if (!consumeIdentAndComma(args))
-            return { };
-        return parseColorMixFunctionParametersUsingAdjusters<LCHColorAdjuster>(args, context);
-    case CSSValueLab:
-        if (!consumeIdentAndComma(args))
-            return { };
-        return parseColorMixFunctionParametersUsingAdjusters<LabColorAdjuster>(args, context);
-    case CSSValueXyz:
-        if (!consumeIdentAndComma(args))
-            return { };
-        return parseColorMixFunctionParametersUsingAdjusters<XYZColorAdjuster>(args, context);
-    case CSSValueSRGB:
-        if (!consumeIdentAndComma(args))
-            return { };
-        return parseColorMixFunctionParametersUsingAdjusters<SRGBColorAdjuster>(args, context);
-    default:
-        // Default to using LCH if no color space is provided as per the spec.
-        // FIXME: This behavior is unnecessarily confusing, we should remove the default from the spec.
-        return parseColorMixFunctionParametersUsingAdjusters<LCHColorAdjuster>(args, context);
-    }
+    auto mixComponent1 = consumeColorMixComponent(args, context);
+    if (!mixComponent1)
+        return { };
+
+    if (!consumeCommaIncludingWhitespace(args))
+        return { };
+
+    auto mixComponent2 = consumeColorMixComponent(args, context);
+    if (!mixComponent2)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    return mixColorComponents(*colorSpace, *mixComponent1, *mixComponent2);
 }
 
 static Optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)

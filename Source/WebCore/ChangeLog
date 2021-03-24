@@ -1,3 +1,53 @@
+2021-03-24  Sam Weinig  <weinig@apple.com>
+
+        Update CSS Color 5 color-mix() implementation to match the latest draft spec
+        https://bugs.webkit.org/show_bug.cgi?id=223665
+
+        Reviewed by Simon Fraser.
+
+        Update to the latest draft spec, which dramatically reduces the complexity of color-mix()
+        by remove per-component adjusters.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::normalizeWhitenessBlackness):
+        (WebCore::CSSPropertyParserHelpers::consumeColorMixColorSpaceAndComma):
+        (WebCore::CSSPropertyParserHelpers::consumeColorMixComponent):
+        (WebCore::CSSPropertyParserHelpers::normalizedMixPercentages):
+        (WebCore::CSSPropertyParserHelpers::makeColorTypeByNormalizingComponentsAfterMix):
+        (WebCore::CSSPropertyParserHelpers::makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>):
+        (WebCore::CSSPropertyParserHelpers::makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>):
+        (WebCore::CSSPropertyParserHelpers::fixupHueComponentsPriorToMix):
+        (WebCore::CSSPropertyParserHelpers::mixColorComponentsInColorSpace):
+        (WebCore::CSSPropertyParserHelpers::mixColorComponents):
+        (WebCore::CSSPropertyParserHelpers::parseColorMixFunctionParameters):
+        (WebCore::CSSPropertyParserHelpers::HueColorAdjuster::fixupAnglesForInterpolation): Deleted.
+        (WebCore::CSSPropertyParserHelpers::HueColorAdjuster::HueColorAdjuster): Deleted.
+        (WebCore::CSSPropertyParserHelpers::ColorAdjuster::ColorAdjuster): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeAdjuster): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeAndUpdateAdjusterAtIndex): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeAndUpdateAdjuster): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeAdjusters): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeMixComponents): Deleted.
+        (WebCore::CSSPropertyParserHelpers::normalizeAdjusterValues): Deleted.
+        (WebCore::CSSPropertyParserHelpers::remainingAdjustment): Deleted.
+        (WebCore::CSSPropertyParserHelpers::mixComponent): Deleted.
+        (WebCore::CSSPropertyParserHelpers::mixComponentAtIndex): Deleted.
+        (WebCore::CSSPropertyParserHelpers::mix): Deleted.
+        (WebCore::CSSPropertyParserHelpers::parseColorMixFunctionParametersUsingAdjusters): Deleted.
+        Update to the new syntax and remove component adjusters. They may come back for color-adjust() 
+        in the future.
+
+        * platform/graphics/ColorModels.h:
+        * platform/graphics/ColorTypes.h:
+        (WebCore::clampedComponent):
+        (WebCore::assertInRange):
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::invertedColorWithOverriddenAlpha):
+        Add support in the color models for annotating more about each component, now including
+        the type (angle, number or percentage). This allows algorithms generic algorithms to
+        operate on abstract color type components without specializing for each color type.
+
 2021-03-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Use imxvideoconvert_g2d element inside the sink when available

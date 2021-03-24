@@ -1443,15 +1443,7 @@ vs
 
 // color-mix()
 color-mix
-shorter
-longer
-increasing
-decreasing
-specified
-lightness
-chroma
-whiteness
-blackness
+in
 
 // prefers-default-appearance
 prefers

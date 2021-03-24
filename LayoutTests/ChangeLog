@@ -1,3 +1,14 @@
+2021-03-24  Sam Weinig  <weinig@apple.com>
+
+        Update CSS Color 5 color-mix() implementation to match the latest draft spec
+        https://bugs.webkit.org/show_bug.cgi?id=223665
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/parsing-color-mix-expected.txt:
+        * fast/css/parsing-color-mix.html:
+        Update test and results for vastly simplified color-mix().
+
 2021-03-24  Chris Lord  <clord@igalia.com>
 
         [GLIB] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w.html is flaky failing
