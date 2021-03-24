@@ -42,6 +42,14 @@ static bool isAcceptableDevice(id <MTLDevice> device)
     return true;
 }
 
+void GPUDevice::prewarm()
+{
+    // Call MTLCopyAllDevices() on a background thread to avoid hanging the main thread.
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        MTLCopyAllDevices();
+    });
+}
+
 RefPtr<GPUDevice> GPUDevice::tryCreate(const Optional<GPURequestAdapterOptions>& options)
 {
     RetainPtr<MTLDevice> devicePtr;

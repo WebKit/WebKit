@@ -1,3 +1,25 @@
+2021-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Preload graphics drivers on a background thread instead of the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=223713
+
+        Reviewed by Simon Fraser.
+
+        Preload graphics drivers on a background thread instead of the main thread. We have evidence of prewarmGlobally() hanging
+        the main thread (rdar://75279383) so we should do pre-warming off the main thread whenever possible.
+
+        r265418 introduced this graphics loader preloading and an earlier version of this patch was simply calling MTLCopyAllDevices()
+        on a background queue. However, that patch was updated before landing to do the work on the main thread. I think we should go
+        back to the earlier iteration.
+
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::prewarmGlobally):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::prewarm):
+        * platform/graphics/gpu/dawn/GPUDeviceDawn.cpp:
+        (WebCore::GPUDevice::prewarm):
+
 2021-03-24  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of the border-spacing property

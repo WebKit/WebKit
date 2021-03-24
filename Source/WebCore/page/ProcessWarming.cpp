@@ -85,7 +85,7 @@ void ProcessWarming::prewarmGlobally()
 #endif
 
 #if ENABLE(GPU_DRIVER_PREWARMING)
-    GPUDevice::tryCreate(WTF::nullopt);
+    GPUDevice::prewarm();
 #endif
 }
 

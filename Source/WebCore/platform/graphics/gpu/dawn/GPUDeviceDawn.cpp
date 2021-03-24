@@ -35,6 +35,10 @@ RefPtr<GPUDevice> GPUDevice::tryCreate(const Optional<GPURequestAdapterOptions>&
     return nullptr;
 }
 
+void GPUDevice::prewarm()
+{
+}
+
 GPUDevice::GPUDevice(PlatformDeviceSmartPtr&& device)
     : m_platformDevice(WTFMove(device))
 {
