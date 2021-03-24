@@ -1,3 +1,18 @@
+2021-03-23  Chris Dumez  <cdumez@apple.com>
+
+        DerivedSources/WebKitTestRunner/JSAccessibilityUIElement.cpp:802:72: runtime error: -1 is outside the range of representable values of type 'unsigned int'
+        https://bugs.webkit.org/show_bug.cgi?id=223650
+
+        Reviewed by Darin Adler.
+
+        Update the clampTo() template specialization that converts floating types into integer types so that
+        it deals with NaN inputs in a well-defined manner. Previously, it would simply cast the NaN to the
+        integer type, which was undefined behavior. We now return the minimum range boundary for the output
+        when the input is NaN.
+
+        * wtf/MathExtras.h:
+        (clampTo):
+
 2021-03-23  Saam Barati  <sbarati@apple.com>
 
         Don't require VM_FLAGS_PERMANENT on the simulator builds

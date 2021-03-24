@@ -1,3 +1,25 @@
+2021-03-23  Chris Dumez  <cdumez@apple.com>
+
+        DerivedSources/WebKitTestRunner/JSAccessibilityUIElement.cpp:802:72: runtime error: -1 is outside the range of representable values of type 'unsigned int'
+        https://bugs.webkit.org/show_bug.cgi?id=223650
+
+        Reviewed by Darin Adler.
+
+        The bindings generator used by WebKitTestRunner was converting all numbers into double and
+        passing that to the implementation, no matter the IDL type (e.g. unsigned long). As a result,
+        there may be a type mismatch between the value the bindings are passing and the implementation
+        function getting called. This implicit conversion has undefined behavior in some cases and it
+        triggers UBSan errors. To address the issue, we now call clampTo<NativeNumberType>() on the
+        double before passing it to the implementation. This makes sure we pass the implementation
+        the type it expects and that the conversion is well-defined.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (_generateImplementationFile):
+        (_nativeNumericType):
+        (_platformType):
+        (_platformTypeConstructor):
+        (_platformTypeVariableDeclaration):
+
 2021-03-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         Provide a way to specify platform vs security key when requesting an assertion in the SPI

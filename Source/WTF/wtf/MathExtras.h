@@ -163,7 +163,8 @@ clampTo(SourceType value, TargetType min = defaultMinimumForClamp<TargetType>(),
 {
     if (value >= static_cast<SourceType>(max))
         return max;
-    if (value <= static_cast<SourceType>(min))
+    // This will return min if value is NaN.
+    if (!(value > static_cast<SourceType>(min)))
         return min;
     return static_cast<TargetType>(value);
 }
