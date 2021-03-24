@@ -1,3 +1,20 @@
+2021-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Source/WebCore/page/FrameView.h:990:50: runtime error: signed integer overflow: 65537 * 65537 cannot be represented in type 'int'
+        https://bugs.webkit.org/show_bug.cgi?id=223697
+
+        Reviewed by Darin Adler.
+
+        Make sure FrameView::incrementVisuallyNonEmptyPixelCount() deals with overflows in a well-defined
+        manner. This fixes the following reports from UBSan:
+        - Source/WebCore/page/FrameView.h:990:50: runtime error: signed integer overflow: 65537 * 65537 cannot be represented in type 'int'
+        - Source/WebCore/page/FrameView.h:990:50: runtime error: signed integer overflow: 65536 * 65536 cannot be represented in type 'int'
+        - Source/WebCore/page/FrameView.h:990:50: runtime error: signed integer overflow: 1116300 * 558150 cannot be represented in type 'int'
+        - Source/WebCore/page/FrameView.h:990:50: runtime error: signed integer overflow: -33554432 * -33554432 cannot be represented in type 'int'
+
+        * page/FrameView.h:
+        (WebCore::FrameView::incrementVisuallyNonEmptyPixelCount):
+
 2021-03-24  Rob Buis  <rbuis@igalia.com>
 
         [css-contain] Parse CSS contain property
