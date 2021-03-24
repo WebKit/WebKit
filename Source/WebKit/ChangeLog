@@ -1,3 +1,20 @@
+2021-03-24  Alex Christensen  <achristensen@webkit.org>
+
+        Call InitializeWebKit2 when initializing a _WKUserInitiatedAction
+        https://bugs.webkit.org/show_bug.cgi?id=223708
+        <rdar://75788877>
+
+        Reviewed by Chris Dumez.
+
+        There is a test that deallocates a _WKUserInitiatedAction before anything calls InitializeWebKit2.
+        Calling constructInWrapper calls InitializeWebKit2.
+        Since r274227 it has been asserting s_mainRunLoop in RunLoop::isMain.  This fixes it.
+        We don't have test infrastructure to test this in WebKit because TestWebKitAPI initializes the main thread for us before doing anything.
+
+        * UIProcess/API/APIUserInitiatedAction.h:
+        * UIProcess/API/Cocoa/_WKUserInitiatedAction.mm:
+        (-[_WKUserInitiatedAction init]):
+
 2021-03-24  Youenn Fablet  <youenn@apple.com>
 
         Update GPUProcess sandbox to support camera access
