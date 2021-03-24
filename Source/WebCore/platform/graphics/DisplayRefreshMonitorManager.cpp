@@ -29,6 +29,7 @@
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorClient.h"
 #include "Logging.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -55,7 +56,7 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::monitorForClient(DisplayRef
     if (!monitor)
         return nullptr;
 
-    LOG(RequestAnimationFrame, "DisplayRefreshMonitorManager::monitorForClient() - created monitor %p", monitor.get());
+    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorManager::monitorForClient() - created monitor " << monitor.get() << " for display " << clientDisplayID);
     monitor->addClient(client);
     DisplayRefreshMonitor* result = monitor.get();
     m_monitors.append({ WTFMove(monitor) });
@@ -97,7 +98,8 @@ void DisplayRefreshMonitorManager::displayDidRefresh(DisplayRefreshMonitor& moni
 {
     if (!monitor.shouldBeTerminated())
         return;
-    LOG(RequestAnimationFrame, "DisplayRefreshMonitorManager::displayDidRefresh() - destroying monitor %p", &monitor);
+
+    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorManager::displayDidRefresh() - destroying monitor " << &monitor);
 
     m_monitors.removeFirstMatching([&](auto& monitorWrapper) {
         return monitorWrapper.monitor == &monitor;

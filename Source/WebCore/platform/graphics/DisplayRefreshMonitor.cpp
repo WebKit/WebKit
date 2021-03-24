@@ -30,6 +30,7 @@
 #include "DisplayRefreshMonitorFactory.h"
 #include "DisplayRefreshMonitorManager.h"
 #include "Logging.h"
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "DisplayRefreshMonitorIOS.h"
@@ -101,7 +102,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
 {
     {
         LockHolder lock(m_mutex);
-        LOG(RequestAnimationFrame, "DisplayRefreshMonitor::displayDidRefresh(%p) - m_scheduled(%d), m_unscheduledFireCount(%d)", this, m_scheduled, m_unscheduledFireCount);
+        LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitor " << this << " displayDidRefresh for display " << displayID() << " scheduled " << m_scheduled << " unscheduledFireCount " << m_unscheduledFireCount);
         if (!m_scheduled)
             ++m_unscheduledFireCount;
         else

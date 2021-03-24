@@ -28,11 +28,13 @@
 
 #if PLATFORM(MAC)
 
+#include "Logging.h"
 #include "WebProcess.h"
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/RunLoopObserver.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -75,6 +77,8 @@ void DisplayRefreshMonitorMac::displayLinkFired()
     if (!m_firstCallbackInCurrentRunloop)
         return;
     m_firstCallbackInCurrentRunloop = false;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorMac::displayLinkFired() for display " << displayID());
 
     // Since we are on the main thread, we can just call handleDisplayRefreshedNotificationOnMainThread here.
     handleDisplayRefreshedNotificationOnMainThread(this);

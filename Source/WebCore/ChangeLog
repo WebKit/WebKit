@@ -1,3 +1,21 @@
+2021-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Add DisplayLink log channels in WebCore and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223669
+
+        Reviewed by Tim Horton.
+        
+        DisplayRefreshMonitor code involves some non-trivial object
+        fan-out and WebProcess/UI Process interaction, and it deserves
+        a log channel.
+
+        * platform/Logging.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::monitorForClient):
+        (WebCore::DisplayRefreshMonitorManager::displayDidRefresh):
+
 2021-03-24  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r274870) fast/canvas/webgl/texImage2D-mse-flipY-true.html and fast/canvas/webgl/texImage2D-mse-flipY-false.html are crashing
