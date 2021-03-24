@@ -582,6 +582,9 @@
     required-etc-files
     (literal "/"))
 
+(deny file-read* (with no-report)
+      (literal "/private/etc/passwd"))
+
 (allow file-read*
        (subpath "/private/var/MobileAsset/PreinstalledAssetsV2/InstallWithOs"))
 
