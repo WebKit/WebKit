@@ -1,3 +1,11 @@
+2021-03-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Followup to https://trac.webkit.org/changeset/274928/webkit
+
+        Unreviewed build fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2021-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Revise loadSimulatedRequest API with final review comments (223657)

@@ -1560,9 +1560,9 @@ TEST(InAppBrowserPrivacy, NonAppBoundRequestWithSubFrame)
 
 enum class ResponseType { Synthetic, Fetched };
 enum class IsAppBound : bool { No, Yes };
-static bool isDone = false;
 static void runTest(ResponseType responseType, IsAppBound appBound)
 {
+    static bool isDone = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         isDone = true;
     }];
@@ -1676,7 +1676,7 @@ TEST(InAppBrowserPrivacy, AppBoundRequestWithServiceWorker)
     runTest(ResponseType::Fetched, IsAppBound::Yes);
 }
 
-static const char* mainBytes = R"SWRESOURCE(
+static const char* mainSWBytes = R"SWRESOURCE(
 <script>
 try {
     navigator.serviceWorker.register('/sw.js').then(function(reg) {
@@ -1700,6 +1700,7 @@ try {
 
 TEST(InAppBrowserPrivacy, MultipleWebViewsWithSharedServiceWorker)
 {
+    static bool isDone = false;
     isDone = false;
 
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
@@ -1711,7 +1712,7 @@ TEST(InAppBrowserPrivacy, MultipleWebViewsWithSharedServiceWorker)
     const char* expectedAlert = "fetched from server";
 
     TestWebKitAPI::HTTPServer server({
-        { "/", { mainBytes } },
+        { "/", { mainSWBytes } },
         { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } },
         { "/fetched.html", { "<script>alert('fetched from server')</script>" } },
     }, TestWebKitAPI::HTTPServer::Protocol::Https);
