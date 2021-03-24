@@ -892,7 +892,14 @@
         (require-all
             (extension "com.apple.webkit.extension.mach")
             (global-name "com.apple.applecamerad")
-        ))
+        )
+#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.appleh13camerad")
+        )
+#endif
+        )
     (allow iokit-open
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
