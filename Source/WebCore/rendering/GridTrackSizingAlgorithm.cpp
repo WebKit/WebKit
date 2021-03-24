@@ -1268,11 +1268,11 @@ bool GridTrackSizingAlgorithm::isValidTransition() const
 
 // GridTrackSizingAlgorithm API.
 
-void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, Optional<LayoutUnit> availableSpace, Optional<LayoutUnit> freeSpace)
+void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, Optional<LayoutUnit> availableSpace)
 {
     ASSERT(m_needsSetup);
     m_direction = direction;
-    setAvailableSpace(direction, availableSpace);
+    setAvailableSpace(direction, availableSpace ? std::max(0_lu, *availableSpace) : availableSpace);
 
     m_sizingOperation = sizingOperation;
     switch (m_sizingOperation) {
@@ -1288,7 +1288,11 @@ void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigne
     m_flexibleSizedTracksIndex.shrink(0);
     m_autoSizedTracksForStretchIndex.shrink(0);
 
-    setFreeSpace(direction, freeSpace);
+    if (availableSpace) {
+        LayoutUnit guttersSize = m_renderGrid->guttersSize(m_grid, direction, 0, m_grid.numTracks(direction), this->availableSpace(direction));
+        setFreeSpace(direction, *availableSpace - guttersSize);
+    } else
+        setFreeSpace(direction, WTF::nullopt);
     tracks(direction).resize(numTracks);
 
     m_needsSetup = false;

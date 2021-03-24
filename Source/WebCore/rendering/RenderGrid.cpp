@@ -145,10 +145,7 @@ Optional<LayoutUnit> RenderGrid::availableSpaceForGutters(GridTrackSizingDirecti
 
 void RenderGrid::computeTrackSizesForDefiniteSize(GridTrackSizingDirection direction, LayoutUnit availableSpace)
 {
-    LayoutUnit totalGuttersSize = guttersSize(m_grid, direction, 0, m_grid.numTracks(direction), availableSpace);
-    LayoutUnit freeSpace = availableSpace - totalGuttersSize;
-
-    m_trackSizingAlgorithm.setup(direction, numTracks(direction, m_grid), TrackSizing, availableSpace, freeSpace);
+    m_trackSizingAlgorithm.setup(direction, numTracks(direction, m_grid), TrackSizing, availableSpace);
     m_trackSizingAlgorithm.run();
 
     ASSERT(m_trackSizingAlgorithm.tracksAreWiderThanMinTrackBreadth());
@@ -316,6 +313,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction, Optional<LayoutUnit> availableSize) const
 {
+    ASSERT(!availableSize || *availableSize >= 0);
     const GapLength& gapLength = direction == ForColumns? style().columnGap() : style().rowGap();
     if (gapLength.isNormal())
         return 0_lu;
@@ -439,7 +437,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, GridTrackSizingDirection direction, LayoutUnit* minIntrinsicSize, LayoutUnit* maxIntrinsicSize) const
 {
     const Grid& grid = algorithm.grid();
-    algorithm.setup(direction, numTracks(direction, grid), IntrinsicSizeComputation, WTF::nullopt, WTF::nullopt);
+    algorithm.setup(direction, numTracks(direction, grid), IntrinsicSizeComputation, WTF::nullopt);
     algorithm.run();
 
     size_t numberOfTracks = algorithm.tracks(direction).size();
@@ -1111,7 +1109,7 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
     // children are laid out, so we can't use the child cached values. Hence, we need to
     // compute margins in order to determine the available height before stretching.
     GridTrackSizingDirection childBlockFlowDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForRows);
-    return gridAreaBreadthForChild - GridLayoutFunctions::marginLogicalSizeForChild(*this, childBlockFlowDirection, child);
+    return std::max(0_lu, gridAreaBreadthForChild - GridLayoutFunctions::marginLogicalSizeForChild(*this, childBlockFlowDirection, child));
 }
 
 StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child, const RenderStyle* gridStyle) const
