@@ -1,3 +1,15 @@
+2021-03-24  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of the border-spacing property
+        https://bugs.webkit.org/show_bug.cgi?id=223702
+
+        Reviewed by Antti Koivisto.
+
+        Import the border-spacing interpolation test with its 120 tests passing.
+
+        * web-platform-tests/css/css-tables/animations/border-spacing-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-tables/animations/border-spacing-interpolation.html: Added.
+
 2021-03-24  Rob Buis  <rbuis@igalia.com>
 
         [css-contain] Parse CSS contain property
