@@ -1,3 +1,32 @@
+2021-03-24  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Build error in ARMv7 invalid 'static_cast' for GLNativeWindowType
+        https://bugs.webkit.org/show_bug.cgi?id=223684
+
+        Fixes this error:
+
+          error: invalid 'static_cast' from type 'uintptr_t' {aka 'unsigned
+          int'} to type 'GLNativeWindowType' {aka 'void*'}
+
+        ; an invalid 'static_cast' from type error for ARMv7 (rpi3 and mesa driver)
+        by using the same solution chosen in
+        https://bugs.webkit.org/show_bug.cgi?id=179511:
+
+          EGLNativeWindowType can be aliased to a different type depending (at least) on the EGL
+          implementation, its build options, and the libepoxy build options.  Using "static_cast"
+          works when it is a numeric value and the width of the value needs to be optionally
+          extended to 64 bits (e.g. the EGL type is "int" in a 32-bit CPU) but not for pointers,
+          and using "reinterpret_cast" works when the size of a pointer is 64 bits but not in other
+          cases. Therefore it seems reasonable to use a plain C cast expression to solve this
+          particular situation.
+
+        https://trac.webkit.org/changeset/274869/webkit
+
+        Reviewed by Philippe Normand.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::createGLContext):
+
 2021-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Add DisplayRefreshMonitorFactory.
