@@ -755,44 +755,31 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 - (void)_didCommitLayerTreeDuringAnimatedResize:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     auto updateID = layerTreeTransaction.dynamicViewportSizeUpdateID();
-    if (updateID && *updateID == _currentDynamicViewportSizeUpdateID) {
-        double pageScale = layerTreeTransaction.pageScaleFactor();
-        WebCore::IntPoint scrollPosition = layerTreeTransaction.scrollPosition();
-
-        CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
-        double currentTargetScale = animatingScaleTarget * [[_contentView layer] transform].m11;
-        double scale = pageScale / currentTargetScale;
-        _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 1);
-
-        CGPoint newContentOffset = [self _contentOffsetAdjustedForObscuredInset:CGPointMake(scrollPosition.x() * pageScale, scrollPosition.y() * pageScale)];
-        CGPoint currentContentOffset = [_scrollView contentOffset];
-
-        _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
-        _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / animatingScaleTarget;
-
-        [_resizeAnimationView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
-
-        // If we've already passed endAnimatedResize, immediately complete
-        // the resize when we have an up-to-date layer tree. Otherwise,
-        // we will defer completion until endAnimatedResize.
-        _waitingForCommitAfterAnimatedResize = NO;
-        if (!_waitingForEndAnimatedResize)
-            [self _didCompleteAnimatedResize];
-
-        return;
-    }
-
-    // If a commit arrives during the live part of a resize but before the
-    // layer tree takes the current resize into account, it could change the
-    // WKContentView's size. Update the resizeAnimationView's scale to ensure
-    // we continue to fill the width of the resize target.
-
-    if (_waitingForEndAnimatedResize)
+    if (updateID != _currentDynamicViewportSizeUpdateID)
         return;
 
-    auto newViewLayoutSize = [self activeViewLayoutSize:self.bounds];
-    CGFloat resizeAnimationViewScale = _animatedResizeOriginalContentWidth / newViewLayoutSize.width();
-    [[_resizeAnimationView layer] setSublayerTransform:CATransform3DMakeScale(resizeAnimationViewScale, resizeAnimationViewScale, 1)];
+    double pageScale = layerTreeTransaction.pageScaleFactor();
+    WebCore::IntPoint scrollPosition = layerTreeTransaction.scrollPosition();
+
+    CGFloat animatingScaleTarget = [[_resizeAnimationView layer] transform].m11;
+    double currentTargetScale = animatingScaleTarget * [[_contentView layer] transform].m11;
+    double scale = pageScale / currentTargetScale;
+    _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 1);
+
+    CGPoint newContentOffset = [self _contentOffsetAdjustedForObscuredInset:CGPointMake(scrollPosition.x() * pageScale, scrollPosition.y() * pageScale)];
+    CGPoint currentContentOffset = [_scrollView contentOffset];
+
+    _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
+    _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / animatingScaleTarget;
+
+    [_resizeAnimationView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
+
+    // If we've already passed endAnimatedResize, immediately complete
+    // the resize when we have an up-to-date layer tree. Otherwise,
+    // we will defer completion until endAnimatedResize.
+    _waitingForCommitAfterAnimatedResize = NO;
+    if (!_waitingForEndAnimatedResize)
+        [self _didCompleteAnimatedResize];
 }
 
 - (void)_trackTransactionCommit:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction

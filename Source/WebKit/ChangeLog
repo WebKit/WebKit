@@ -1,3 +1,24 @@
+2021-03-24  Sihui Liu  <sihui_liu@appe.com>
+
+        Ignore middle commits during animated resize
+        https://bugs.webkit.org/show_bug.cgi?id=223530
+
+        Reviewed by Tim Horton.
+
+        For animated resize, UI process sets layer transform to fit new size until web process picks up size change and 
+        paints. It is possible that UI process receives a commit during animated resize and the commit is not for the 
+        animated resize (web process commits before animated resize). In this case, our current implementation is: if 
+        SPI client species there will be no other update (!_waitingForEndAnimatedResize), we change layer transform to
+        reflect change of the middle commit. 
+
+        However, that commit does not mean web process issues new paint, so the adjustment can be wrong. We find the 
+        handling of middle commits causes issues in SPI client's use case  (rdar://47623140). Also by manual testing, 
+        it's not clear how the code can benefit current SPI clients. It seems to cause the same trouble sometimes. So 
+        let's just remove it.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _didCommitLayerTreeDuringAnimatedResize:]):
+
 2021-03-24  Per Arne  <pvollan@apple.com>
 
         Add IOKit method filter telemetry
