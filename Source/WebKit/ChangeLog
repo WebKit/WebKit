@@ -1,3 +1,22 @@
+2021-03-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove deprecated WKMediaPlayback APIs
+        https://bugs.webkit.org/show_bug.cgi?id=223704
+        <rdar://problem/74611683>
+
+        Reviewed by Tim Horton.
+
+        We kept these API around after updating the names to give clients
+        time to adopt the new versions. We can remove them now.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView pauseAllMediaPlayback:]): Deleted.
+        (-[WKWebView suspendAllMediaPlayback:]): Deleted.
+        (-[WKWebView resumeAllMediaPlayback:]): Deleted.
+        (-[WKWebView closeAllMediaPresentations:]): Deleted.
+        (-[WKWebView requestMediaPlaybackState:]): Deleted.
+
 2021-03-24  Alex Christensen  <achristensen@webkit.org>
 
         Call InitializeWebKit2 when initializing a _WKUserInitiatedAction
