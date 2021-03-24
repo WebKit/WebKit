@@ -17,7 +17,7 @@
         if (paintEntries.length)
             paintEntry = paintEntries[0];
 
-        const resourceEntries = performance.getEntriesByType('resource').filter(r => r.name.includes('slowstyle.php'));
+        const resourceEntries = performance.getEntriesByType('resource').filter(r => r.name.includes('slowstyle.py'));
         if (resourceEntries.length)
             styleEntry = resourceEntries[0];
 
@@ -31,7 +31,7 @@
     });
     observer.observe({entryTypes: ["paint", "resource"]});
 </script>
-<link rel="stylesheet" href="./resources/slowstyle.php?delay=0.5" />
+<link rel="stylesheet" href="./resources/slowstyle.py?delay=0.5" />
 </head>
 <body>
 TEXT
