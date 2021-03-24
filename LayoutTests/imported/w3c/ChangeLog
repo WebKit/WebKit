@@ -1,3 +1,12 @@
+2021-03-24  Chris Lord  <clord@igalia.com>
+
+        [GLIB] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=223671
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w-expected.txt:
+
 2021-03-23  Chris Lord  <clord@igalia.com>
 
         Import WPT html/canvas/offscreen/manual/draw-generic-family tests
