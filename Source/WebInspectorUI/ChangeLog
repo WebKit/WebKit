@@ -1,3 +1,16 @@
+2021-03-24  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: REGRESSION (r269359): Timelines: TypeError: this.deselect is not a function
+        https://bugs.webkit.org/show_bug.cgi?id=223698
+        <rdar://problem/75790983>
+
+        Reviewed by BJ Burg.
+
+        Ensure individual timeline views can be closed to return to the Timelines overview.
+
+        * UserInterface/Views/TimelineTreeElement.js:
+        (WI.TimelineTreeElement.prototype._showCloseButton):
+
 2021-03-19  BJ Burg  <bburg@apple.com>
 
         Uncaught Exception: RangeError: Array size is not a small enough positive integer.
