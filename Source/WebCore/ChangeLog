@@ -1,3 +1,51 @@
+2021-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add DisplayRefreshMonitorFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=223648
+
+        Reviewed by Chris Dumez.
+
+        Future work will require that it's possible to create a DisplayRefreshMonitor
+        without having a DisplayRefreshMonitorClient. It was also weird that the way to
+        create a DisplayRefreshMonitor was via the DisplayRefreshMonitorClient, so
+        this change fixes both by adding DisplayRefreshMonitorFactory.
+
+        In WK2, the drawing areas are DisplayRefreshMonitorFactories. If there is no
+        factory, we fall back to the default implementations.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyDisplayRefreshMonitorFactory::sharedEmptyDisplayRefreshMonitorFactory):
+        (WebCore::EmptyChromeClient::displayRefreshMonitorFactory const):
+        (WebCore::EmptyChromeClient::createDisplayRefreshMonitor const): Deleted.
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::displayRefreshMonitorFactory const):
+        (WebCore::ChromeClient::createDisplayRefreshMonitor const): Deleted.
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::displayRefreshMonitorFactory const):
+        (WebCore::RenderingUpdateScheduler::createDisplayRefreshMonitor const): Deleted.
+        * page/RenderingUpdateScheduler.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::create):
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/DisplayRefreshMonitorClient.cpp:
+        (WebCore::DisplayRefreshMonitorClient::DisplayRefreshMonitorClient): Deleted.
+        * platform/graphics/DisplayRefreshMonitorClient.h:
+        * platform/graphics/DisplayRefreshMonitorFactory.h: Copied from Source/WebCore/platform/graphics/DisplayRefreshMonitorClient.cpp.
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::monitorForClient):
+        * platform/graphics/GraphicsLayerUpdater.cpp:
+        (WebCore::GraphicsLayerUpdater::GraphicsLayerUpdater):
+        (WebCore::GraphicsLayerUpdater::displayRefreshMonitorFactory const):
+        (WebCore::GraphicsLayerUpdater::createDisplayRefreshMonitor const): Deleted.
+        * platform/graphics/GraphicsLayerUpdater.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::displayRefreshMonitorFactory):
+        (WebCore::RenderLayerCompositor::createDisplayRefreshMonitor const): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2021-03-23  Kate Cheney  <katherine_cheney@apple.com>
 
         Service worker loads are not marked as app-bound

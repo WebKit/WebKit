@@ -31,9 +31,7 @@
 
 namespace WebCore {
 
-DisplayRefreshMonitorClient::DisplayRefreshMonitorClient()
-{
-}
+DisplayRefreshMonitorClient::DisplayRefreshMonitorClient() = default;
 
 DisplayRefreshMonitorClient::~DisplayRefreshMonitorClient()
 {

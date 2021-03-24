@@ -1186,6 +1186,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/DecodingOptions.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
+    platform/graphics/DisplayRefreshMonitorFactory.h
     platform/graphics/DisplayRefreshMonitorManager.h
     platform/graphics/ExtensionsGL.h
     platform/graphics/FloatLine.h

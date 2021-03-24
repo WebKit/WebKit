@@ -27,6 +27,7 @@
 #include "DisplayRefreshMonitor.h"
 
 #include "DisplayRefreshMonitorClient.h"
+#include "DisplayRefreshMonitorFactory.h"
 #include "DisplayRefreshMonitorManager.h"
 #include "Logging.h"
 
@@ -60,9 +61,15 @@ RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefresh
     return nullptr;
 }
 
-RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonitorClient& client)
+RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonitorFactory* factory, PlatformDisplayID displayID)
 {
-    return client.createDisplayRefreshMonitor(client.displayID());
+    if (factory) {
+        auto monitor = factory->createDisplayRefreshMonitor(displayID);
+        if (monitor)
+            return monitor;
+    }
+    
+    return createDefaultDisplayRefreshMonitor(displayID);
 }
 
 DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)

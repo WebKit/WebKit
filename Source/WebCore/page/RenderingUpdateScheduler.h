@@ -34,8 +34,7 @@ namespace WebCore {
 class Page;
 class Timer;
 
-class RenderingUpdateScheduler : public DisplayRefreshMonitorClient
-{
+class RenderingUpdateScheduler final : public DisplayRefreshMonitorClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<RenderingUpdateScheduler> create(Page& page)
@@ -55,8 +54,9 @@ public:
 private:
     void setPreferredFramesPerSecond(FramesPerSecond);
     bool scheduleAnimation(FramesPerSecond);
-    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const final;
+
     void displayRefreshFired() final;
+    DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;
 
     bool isScheduled() const;
     void startTimer(Seconds);

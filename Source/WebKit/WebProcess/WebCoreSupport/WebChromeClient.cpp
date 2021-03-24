@@ -912,15 +912,16 @@ GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
     return nullptr;
 }
 
-RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+WebCore::DisplayRefreshMonitorFactory* WebChromeClient::displayRefreshMonitorFactory() const
 {
-    if (auto* drawingArea = m_page.drawingArea())
-        return drawingArea->createDisplayRefreshMonitor(displayID);
+#if PLATFORM(COCOA)
+    return m_page.drawingArea();
+#else
     return nullptr;
+#endif
 }
 
 #if ENABLE(GPU_PROCESS)
-
 
 RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat) const
 {

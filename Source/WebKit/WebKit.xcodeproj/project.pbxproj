@@ -2466,6 +2466,8 @@
 		0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeOverflowScrollingNodeIOS.mm; sourceTree = "<group>"; };
 		0F931C1B18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeScrollingNodeDelegateIOS.mm; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
+		0FBB5FBF2609A0910054572C /* DisplayRefreshMonitorMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorMac.h; sourceTree = "<group>"; };
+		0FBB5FC02609A0910054572C /* DisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
 		0FC0856E187CE0A900780D86 /* __init__.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = __init__.py; path = webkit/__init__.py; sourceTree = "<group>"; };
 		0FC0856F187CE0A900780D86 /* messages.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = messages.py; path = webkit/messages.py; sourceTree = "<group>"; };
 		0FC08570187CE0A900780D86 /* model.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = model.py; path = webkit/model.py; sourceTree = "<group>"; };
@@ -5492,7 +5494,6 @@
 		C1710CF224A7BD0300D7C112 /* XPCEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCEventHandler.h; sourceTree = "<group>"; };
 		C1710CF524AA634500D7C112 /* LaunchServicesDatabaseObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LaunchServicesDatabaseObserver.h; sourceTree = "<group>"; };
 		C1710CF624AA643200D7C112 /* LaunchServicesDatabaseObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LaunchServicesDatabaseObserver.mm; sourceTree = "<group>"; };
-		C181735E205839F600DFDA65 /* DrawingAreaMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMac.cpp; sourceTree = "<group>"; };
 		C18173602058424700DFDA65 /* DisplayLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayLink.h; sourceTree = "<group>"; };
 		C1817362205844A900DFDA65 /* DisplayLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLink.cpp; sourceTree = "<group>"; };
 		C18F3A13256332A600797E66 /* WebInspectorPreferenceObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebInspectorPreferenceObserver.h; sourceTree = "<group>"; };
@@ -10586,7 +10587,8 @@
 		BC963D6C113DD19500574BE2 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				C181735E205839F600DFDA65 /* DrawingAreaMac.cpp */,
+				0FBB5FC02609A0910054572C /* DisplayRefreshMonitorMac.cpp */,
+				0FBB5FBF2609A0910054572C /* DisplayRefreshMonitorMac.h */,
 				7C6D37FA172F555F009D2847 /* PageBannerMac.mm */,
 				1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */,
 				1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */,

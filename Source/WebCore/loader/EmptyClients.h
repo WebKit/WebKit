@@ -149,7 +149,7 @@ class EmptyChromeClient : public ChromeClient {
     void storeAppHighlight(AppHighlight&&) const final;
 #endif
 
-    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const final;
+    DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;
 
     void runOpenPanel(Frame&, FileChooser&) final;
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;

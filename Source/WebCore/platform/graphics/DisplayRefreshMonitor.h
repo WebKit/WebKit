@@ -36,10 +36,11 @@ namespace WebCore {
 
 class DisplayAnimationClient;
 class DisplayRefreshMonitorClient;
+class DisplayRefreshMonitorFactory;
 
 class DisplayRefreshMonitor : public ThreadSafeRefCounted<DisplayRefreshMonitor> {
 public:
-    static RefPtr<DisplayRefreshMonitor> create(DisplayRefreshMonitorClient&);
+    static RefPtr<DisplayRefreshMonitor> create(DisplayRefreshMonitorFactory*, PlatformDisplayID);
     WEBCORE_EXPORT virtual ~DisplayRefreshMonitor();
 
     virtual void displayLinkFired() { }

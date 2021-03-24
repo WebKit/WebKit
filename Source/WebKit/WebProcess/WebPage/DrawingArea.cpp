@@ -82,19 +82,17 @@ void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void 
     function();
 }
 
-#if !PLATFORM(MAC)
-RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(PlatformDisplayID)
-{
-    return nullptr;
-}
-#endif
-
 void DrawingArea::removeMessageReceiverIfNeeded()
 {
     if (m_hasRemovedMessageReceiver)
         return;
     m_hasRemovedMessageReceiver = true;
     WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_identifier);
+}
+
+RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(WebCore::PlatformDisplayID)
+{
+    return nullptr;
 }
 
 bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)

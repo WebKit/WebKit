@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class DisplayRefreshMonitorFactory;
 class FixedPositionViewportConstraints;
 class GraphicsLayer;
 class GraphicsLayerUpdater;
@@ -404,7 +405,8 @@ private:
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }
     
     // GraphicsLayerUpdaterClient implementation
-    void flushLayersSoon(GraphicsLayerUpdater&) override;
+    void flushLayersSoon(GraphicsLayerUpdater&) final;
+    DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() final;
 
     // Copy the accelerated compositing related flags from Settings
     void cacheAcceleratedCompositingFlags();
@@ -486,8 +488,6 @@ private:
     
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
-
-    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 
     // Non layout-dependent
     bool requiresCompositingForAnimation(RenderLayerModelObject&) const;

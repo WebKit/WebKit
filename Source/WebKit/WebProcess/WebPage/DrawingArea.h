@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include "WebPage.h"
 #include <WebCore/ActivityState.h>
+#include <WebCore/DisplayRefreshMonitorFactory.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestone.h>
@@ -64,7 +65,7 @@ class LayerTreeHost;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
-class DrawingArea : public IPC::MessageReceiver {
+class DrawingArea : public IPC::MessageReceiver, public WebCore::DisplayRefreshMonitorFactory {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DrawingArea);
 
@@ -116,8 +117,6 @@ public:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void triggerRenderingUpdate() = 0;
-
-    virtual RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&);
 
@@ -174,6 +173,9 @@ private:
                                          const WebCore::IntSize& /*scrollOffset*/) { }
 #endif
     virtual void didUpdate() { }
+
+    // DisplayRefreshMonitorFactory.
+    RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.

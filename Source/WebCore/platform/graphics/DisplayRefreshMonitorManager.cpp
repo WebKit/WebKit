@@ -51,7 +51,7 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::monitorForClient(DisplayRef
         return existingMonitor;
     }
 
-    auto monitor = DisplayRefreshMonitor::create(client);
+    auto monitor = DisplayRefreshMonitor::create(client.displayRefreshMonitorFactory(), clientDisplayID);
     if (!monitor)
         return nullptr;
 

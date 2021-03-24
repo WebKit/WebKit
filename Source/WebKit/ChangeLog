@@ -1,3 +1,44 @@
+2021-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add DisplayRefreshMonitorFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=223648
+
+        Reviewed by Chris Dumez.
+
+        Future work will require that it's possible to create a DisplayRefreshMonitor
+        without having a DisplayRefreshMonitorClient. It was also weird that the way to
+        create a DisplayRefreshMonitor was via the DisplayRefreshMonitorClient, so
+        this change fixes both by adding DisplayRefreshMonitorFactory.
+
+        In WK2, the drawing areas are DisplayRefreshMonitorFactories. If there is no
+        factory, we fall back to the default implementations.
+
+        Remove DrawingAreaMac.cpp since its code was entirely related to creating
+        DisplayRefreshMonitorMac objects.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::displayRefreshMonitorFactory const):
+        (WebKit::WebChromeClient::createDisplayRefreshMonitor const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::createDisplayRefreshMonitor): Deleted.
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor):
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp: Renamed from Source/WebKit/WebProcess/WebPage/mac/DrawingAreaMac.cpp.
+        (WebKit::DisplayRefreshMonitorMac::DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::requestRefreshCallback):
+        (WebKit::DisplayRefreshMonitorMac::displayLinkFired):
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.h: Copied from Source/WebCore/platform/graphics/GraphicsLayerUpdater.h.
+        (WebKit::DisplayRefreshMonitorMac::create):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::createDisplayRefreshMonitor):
+
 2021-03-23  Kate Cheney  <katherine_cheney@apple.com>
 
         Service worker loads are not marked as app-bound

@@ -128,12 +128,9 @@ void RenderingUpdateScheduler::clearScheduled()
     m_refreshTimer = nullptr;
 }
 
-RefPtr<DisplayRefreshMonitor> RenderingUpdateScheduler::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+DisplayRefreshMonitorFactory* RenderingUpdateScheduler::displayRefreshMonitorFactory() const
 {
-    if (auto monitor = m_page.chrome().client().createDisplayRefreshMonitor(displayID))
-        return monitor;
-
-    return DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(displayID);
+    return m_page.chrome().client().displayRefreshMonitorFactory();
 }
 
 void RenderingUpdateScheduler::windowScreenDidChange(PlatformDisplayID displayID)

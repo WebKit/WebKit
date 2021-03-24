@@ -39,6 +39,7 @@
 #include "DataListSuggestionPicker.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
+#include "DisplayRefreshMonitorFactory.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DragClient.h"
@@ -125,8 +126,7 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 
 #endif // ENABLE(CONTEXT_MENUS)
 
-
-class EmptyDisplayRefreshMonitor : public DisplayRefreshMonitor {
+class EmptyDisplayRefreshMonitor final : public DisplayRefreshMonitor {
 public:
     static Ref<EmptyDisplayRefreshMonitor> create(PlatformDisplayID displayID)
     {
@@ -141,6 +141,21 @@ private:
     explicit EmptyDisplayRefreshMonitor(PlatformDisplayID displayID)
         : DisplayRefreshMonitor(displayID)
     {
+    }
+};
+
+class EmptyDisplayRefreshMonitorFactory final : public DisplayRefreshMonitorFactory {
+public:
+    static DisplayRefreshMonitorFactory* sharedEmptyDisplayRefreshMonitorFactory()
+    {
+        static NeverDestroyed<EmptyDisplayRefreshMonitorFactory> emptyFactory;
+        return &emptyFactory.get();
+    }
+
+private:
+    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID displayID) final
+    {
+        return EmptyDisplayRefreshMonitor::create(displayID);
     }
 };
 
@@ -530,9 +545,9 @@ void EmptyChromeClient::storeAppHighlight(AppHighlight&&) const
 }
 #endif
 
-RefPtr<DisplayRefreshMonitor> EmptyChromeClient::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+DisplayRefreshMonitorFactory* EmptyChromeClient::displayRefreshMonitorFactory() const
 {
-    return EmptyDisplayRefreshMonitor::create(displayID);
+    return EmptyDisplayRefreshMonitorFactory::sharedEmptyDisplayRefreshMonitorFactory();
 }
 
 void EmptyChromeClient::runOpenPanel(Frame&, FileChooser&)

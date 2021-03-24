@@ -35,7 +35,7 @@ GraphicsLayerUpdater::GraphicsLayerUpdater(GraphicsLayerUpdaterClient& client, P
     : m_client(client)
 {
     DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
-    DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
+    scheduleUpdate();
 }
 
 GraphicsLayerUpdater::~GraphicsLayerUpdater()
@@ -63,9 +63,9 @@ void GraphicsLayerUpdater::displayRefreshFired()
     m_client.flushLayersSoon(*this);
 }
 
-RefPtr<DisplayRefreshMonitor> GraphicsLayerUpdater::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
+DisplayRefreshMonitorFactory* GraphicsLayerUpdater::displayRefreshMonitorFactory() const
 {
-    return m_client.createDisplayRefreshMonitor(displayID);
+    return m_client.displayRefreshMonitorFactory();
 }
 
 } // namespace WebCore
