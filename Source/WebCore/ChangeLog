@@ -1,3 +1,19 @@
+2021-03-24  Antoine Quint  <graouts@webkit.org>
+
+        Support animation of the tab-size CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223688
+
+        Reviewed by Antti Koivisto.
+
+        Test: imported/w3c/web-platform-tests/css/css-text/animations/tab-size-interpolation.html
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/graphics/TabSize.h:
+        (WebCore::TabSize::value const):
+        (WebCore::TabSize::operator bool const):
+
 2021-03-24  Rob Buis  <rbuis@igalia.com>
 
         [css-grid] Do not allow negative heights

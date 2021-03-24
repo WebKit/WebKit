@@ -1,3 +1,15 @@
+2021-03-24  Antoine Quint  <graouts@webkit.org>
+
+        Support animation of the tab-size CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223688
+
+        Reviewed by Antti Koivisto.
+
+        Import the tab-size interpolation test with its 196 tests passing.
+
+        * web-platform-tests/css/css-text/animations/tab-size-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-text/animations/tab-size-interpolation.html: Added.
+
 2021-03-24  Chris Lord  <clord@igalia.com>
 
         [GLIB] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w.html is flaky failing

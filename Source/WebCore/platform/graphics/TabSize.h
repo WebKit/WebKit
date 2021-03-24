@@ -53,7 +53,12 @@ struct TabSize {
         return m_isSpaces ? m_value * spaceWidth : m_value;
     }
 
-    operator bool() const { return m_value; }
+    float value() const
+    {
+        return m_value;
+    }
+
+    operator bool() const { return value(); }
 
     float m_value;
     bool m_isSpaces;

@@ -57,6 +57,7 @@
 #include "StyleGeneratedImage.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
+#include "TabSize.h"
 #include <algorithm>
 #include <memory>
 #include <wtf/MathExtras.h>
@@ -98,6 +99,12 @@ static inline GapLength blendFunc(const CSSPropertyBlendingClient*, const GapLen
     if (from.isNormal() || to.isNormal())
         return progress < 0.5 ? from : to;
     return blend(from.length(), to.length(), progress, ValueRangeNonNegative);
+}
+
+static inline TabSize blendFunc(const CSSPropertyBlendingClient*, const TabSize& from, const TabSize& to, double progress)
+{
+    auto blendedValue = blend(from.value(), to.value(), progress);
+    return { blendedValue < 0 ? 0 : blendedValue, from.isSpaces() ? SpaceValueType : LengthValueType };
 }
 
 static inline LengthSize blendFunc(const CSSPropertyBlendingClient* client, const LengthSize& from, const LengthSize& to, double progress)
@@ -1855,6 +1862,29 @@ private:
     }
 };
 
+class TabSizePropertyWrapper final : public PropertyWrapper<const TabSize&> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    TabSizePropertyWrapper()
+        : PropertyWrapper<const TabSize&>(CSSPropertyTabSize, &RenderStyle::tabSize, &RenderStyle::setTabSize)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    {
+        return value(from).isSpaces() == value(to).isSpaces();
+    }
+
+    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    {
+        if (!canInterpolate(from, to))
+            (destination->*m_setter)(progress ? value(to) : value(from));
+        else
+            PropertyWrapper::blend(client, destination, from, to, progress);
+    }
+};
+
 class PropertyWrapperAspectRatio final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -2117,6 +2147,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new NonNegativeFloatPropertyWrapper(CSSPropertyFlexGrow, &RenderStyle::flexGrow, &RenderStyle::setFlexGrow),
         new NonNegativeFloatPropertyWrapper(CSSPropertyFlexShrink, &RenderStyle::flexShrink, &RenderStyle::setFlexShrink),
         new PropertyWrapper<int>(CSSPropertyOrder, &RenderStyle::order, &RenderStyle::setOrder),
+
+        new TabSizePropertyWrapper,
 
         // FIXME: The following properties are currently not animatable but should be:
         // background-attachment, background-blend-mode,background-clip, background-origin,
