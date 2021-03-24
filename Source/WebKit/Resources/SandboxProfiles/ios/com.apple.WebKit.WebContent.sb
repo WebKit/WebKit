@@ -1313,8 +1313,7 @@
         (fcntl-command F_OFD_SETLK))
 
     (allow system-fcntl
-        (fcntl-command F_GETPROTECTIONCLASS)
-        (fcntl-command F_SETPROTECTIONCLASS))
+        (fcntl-command F_GETPROTECTIONCLASS))
 )
 
 (when (defined? 'process-codesigning*)
