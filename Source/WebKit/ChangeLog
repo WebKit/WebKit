@@ -1,3 +1,23 @@
+2021-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Revise loadSimulatedRequest API with final review comments (223657)
+        https://bugs.webkit.org/show_bug.cgi?id=223657
+        <rdar://75757727>
+
+        Reviewed by Alex Christensen.
+
+        Tested by TestWebKitAPI.
+
+        Update the WKWebView API to match final review comments. Deprecate the prior draft API so that we
+        can smoothly transition away from the original methods.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadSimulatedRequest:response:responseData:]):
+        (-[WKWebView loadSimulatedRequest:withResponse:responseData:]):
+        (-[WKWebView loadSimulatedRequest:responseHTMLString:]):
+        (-[WKWebView loadSimulatedRequest:withResponseHTMLString:]):
+
 2021-03-24  Sihui Liu  <sihui_liu@appe.com>
 
         Ignore middle commits during animated resize

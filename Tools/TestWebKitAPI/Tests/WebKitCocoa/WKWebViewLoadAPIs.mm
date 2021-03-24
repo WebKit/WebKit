@@ -50,7 +50,13 @@ TEST(WKWebView, LoadSimulatedRequestUsingResponseHTMLString)
 
     NSURLRequest *loadRequest = [NSURLRequest requestWithURL:exampleURL];
 
+    [webView loadSimulatedRequest:loadRequest responseHTMLString:htmlString];
+    [delegate waitForDidFinishNavigation];
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME(223658): Remove this once adopters have moved to the final API.
     [webView loadSimulatedRequest:loadRequest withResponseHTMLString:htmlString];
+ALLOW_DEPRECATED_DECLARATIONS_END
     [delegate waitForDidFinishNavigation];
 }
 
@@ -66,7 +72,13 @@ TEST(WKWebView, LoadSimulatedRequestUsingResponseData)
     NSData *data = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:exampleURL MIMEType:@"text/HTML" expectedContentLength:[data length] textEncodingName:@"UTF-8"]);
 
+    [webView loadSimulatedRequest:loadRequest response:response.get() responseData:data];
+    [delegate waitForDidFinishNavigation];
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME(223658): Remove this once adopters have moved to the final API.
     [webView loadSimulatedRequest:loadRequest withResponse:response.get() responseData:data];
+ALLOW_DEPRECATED_DECLARATIONS_END
     [delegate waitForDidFinishNavigation];
 }
 
@@ -92,11 +104,11 @@ TEST(WKWebView, LoadSimulatedRequestUpdatesBackForwardList)
     [webView setNavigationDelegate:delegate.get()];
 
     NSURLRequest *loadRequest = [NSURLRequest requestWithURL:exampleURL];
-    [webView loadSimulatedRequest:loadRequest withResponseHTMLString:htmlString];
+    [webView loadSimulatedRequest:loadRequest responseHTMLString:htmlString];
     [delegate waitForDidFinishNavigation];
 
     NSURLRequest *loadRequest2 = [NSURLRequest requestWithURL:exampleURL2];
-    [webView loadSimulatedRequest:loadRequest2 withResponseHTMLString:htmlString2];
+    [webView loadSimulatedRequest:loadRequest2 responseHTMLString:htmlString2];
     [delegate waitForDidFinishNavigation];
     
     WKBackForwardList *list = [webView backForwardList];

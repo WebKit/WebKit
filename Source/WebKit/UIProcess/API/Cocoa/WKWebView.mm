@@ -1554,17 +1554,29 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
 }
 
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request response:(NSURLResponse *)response responseData:(NSData *)data
 {
     return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
 }
 
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
+// FIXME(223658): Remove this once adopters have moved to the final API.
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
+{
+    return [self loadSimulatedRequest:request response:response responseData:data];
+}
+
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)string
 {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
 
-    return [self loadSimulatedRequest:request withResponse:response.get() responseData:data];
+    return [self loadSimulatedRequest:request response:response.get() responseData:data];
+}
+
+// FIXME(223658): Remove this once adopters have moved to the final API.
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
+{
+    return [self loadSimulatedRequest:request responseHTMLString:string];
 }
 
 - (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
