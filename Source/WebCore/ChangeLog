@@ -1,3 +1,23 @@
+2021-03-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Use imxvideoconvert_g2d element inside the sink when available
+        https://bugs.webkit.org/show_bug.cgi?id=223693
+
+        Reviewed by Philippe Normand.
+
+        On some iMX platforms we require the use of imxvideoconvert_g2d element
+        in order to properly convert the visual buffers before they can be
+        rendered through our pipeline. We expect to require this buffer if it's
+        present in the GStreamer plugin registry on the system.
+
+        We search for this element and, if found, add it to the sink and
+        position it at the beginning, before the glupload element.
+
+        Based on an approach outlined by Gabriel Valcazar.
+
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (webKitGLVideoSinkConstructed):
+
 2021-03-24  Antoine Quint  <graouts@webkit.org>
 
         Support animation of the tab-size CSS property
