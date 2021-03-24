@@ -308,3 +308,6 @@ http/tests/is-logged-in/ [ Skip ]
 http/tests/resourceLoadStatistics [ Skip ]
 
 webkit.org/b/220579 fast/events/currentTarget-gc-crash.html [ Skip ]
+
+fast/css/sticky/sticky-in-rtl-overflow.html [ ImageOnlyFailure ]
+http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]

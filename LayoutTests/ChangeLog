@@ -1,3 +1,10 @@
+2021-03-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-03-23  Dean Jackson  <yolo@apple.com>
 
         Enable Metal ANGLE backend for WebGL
