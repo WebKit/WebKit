@@ -1,3 +1,15 @@
+2021-03-24  Youenn Fablet  <youenn@apple.com>
+
+        Add logging to check whether RealtimeOutgoingVideoSource is applying rotation or not
+        https://bugs.webkit.org/show_bug.cgi?id=223691
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.mm:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer):
+
 2021-03-24  Chris Dumez  <cdumez@apple.com>
 
         Source/WebCore/page/FrameView.h:990:50: runtime error: signed integer overflow: 65537 * 65537 cannot be represented in type 'int'
