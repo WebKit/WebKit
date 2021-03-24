@@ -25,9 +25,11 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "ServiceWorkerTCPServer.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -1556,4 +1558,212 @@ TEST(InAppBrowserPrivacy, NonAppBoundRequestWithSubFrame)
     TestWebKitAPI::Util::run(&isDone);
 };
 
+enum class ResponseType { Synthetic, Fetched };
+enum class IsAppBound : bool { No, Yes };
+static bool isDone = false;
+static void runTest(ResponseType responseType, IsAppBound appBound)
+{
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    static const char* main =
+    "<script>"
+    "try {"
+    "    navigator.serviceWorker.register('/sw.js').then(function(reg) {"
+    "        if (reg.active) {"
+    "            alert('worker unexpectedly already active');"
+    "            return;"
+    "        }"
+    "        worker = reg.installing;"
+    "        worker.addEventListener('statechange', function() {"
+    "            if (worker.state == 'activated')"
+    "                alert('successfully registered');"
+    "        });"
+    "    }).catch(function(error) {"
+    "        alert('Registration failed with: ' + error);"
+    "    });"
+    "} catch(e) {"
+    "    alert('Exception: ' + e);"
+    "}"
+    "</script>";
+
+    const char* js = nullptr;
+    const char* expectedAlert = nullptr;
+
+    switch (responseType) {
+    case ResponseType::Synthetic:
+        js = "self.addEventListener('fetch', (event) => { event.respondWith(new Response(new Blob(['<script>alert(\"synthetic response\")</script>'], {type: 'text/html'}))); })";
+        expectedAlert = "synthetic response";
+        break;
+    case ResponseType::Fetched:
+        js = "self.addEventListener('fetch', (event) => { event.respondWith(fetch('/fetched.html')) });";
+        expectedAlert = "fetched from server";
+        break;
+    }
+
+    TestWebKitAPI::HTTPServer server({
+        { "/", { main } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } },
+        { "/fetched.html", { "<script>alert('fetched from server')</script>" } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https);
+
+    auto webView = adoptNS([WKWebView new]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    webView.get().navigationDelegate = delegate.get();
+
+    NSURLRequest *request = server.request();
+    if (appBound == IsAppBound::No) {
+        NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+        APP_BOUND_REQUEST_ADDITIONS
+        request = nonAppBoundRequest;
+    }
+
+    [webView loadRequest:request];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
+
+    if (responseType != ResponseType::Fetched)
+        server.cancel();
+
+    bool expectingAppBoundRequests = appBound == IsAppBound::Yes;
+    isDone = false;
+    [webView _appBoundNavigationData: ^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppBoundRequestTesting, expectingAppBoundRequests);
+        EXPECT_EQ(data.hasLoadedNonAppBoundRequestTesting, !expectingAppBoundRequests);
+        isDone = true;
+    }];
+
+    isDone = false;
+    [webView _clearAppBoundNavigationData:^{
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], expectedAlert);
+
+    isDone = false;
+    [webView _appBoundNavigationData: ^(struct WKAppBoundNavigationTestingData data) {
+        if (responseType == ResponseType::Synthetic) {
+            EXPECT_FALSE(data.hasLoadedAppBoundRequestTesting);
+            EXPECT_FALSE(data.hasLoadedNonAppBoundRequestTesting);
+        } else {
+            EXPECT_EQ(data.hasLoadedAppBoundRequestTesting, expectingAppBoundRequests);
+            EXPECT_EQ(data.hasLoadedNonAppBoundRequestTesting, !expectingAppBoundRequests);
+        }
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, NonAppBoundRequestWithServiceWorker)
+{
+    runTest(ResponseType::Synthetic, IsAppBound::No);
+    runTest(ResponseType::Fetched, IsAppBound::No);
+}
+
+TEST(InAppBrowserPrivacy, AppBoundRequestWithServiceWorker)
+{
+    runTest(ResponseType::Synthetic, IsAppBound::Yes);
+    runTest(ResponseType::Fetched, IsAppBound::Yes);
+}
+
+static const char* mainBytes = R"SWRESOURCE(
+<script>
+try {
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+        if (reg.active) {
+            alert('worker already active');
+            return;
+        }
+        worker = reg.installing;
+        worker.addEventListener('statechange', function() {
+            if (worker.state == 'activated')
+                alert('successfully registered');
+        });
+    }).catch(function(error) {
+        alert('Registration failed with: ' + error);
+    });
+} catch(e) {
+    alert('Exception: ' + e);
+}
+</script>
+)SWRESOURCE";
+
+TEST(InAppBrowserPrivacy, MultipleWebViewsWithSharedServiceWorker)
+{
+    isDone = false;
+
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    const char* js = "self.addEventListener('fetch', (event) => { event.respondWith(fetch('/fetched.html')) })";
+    const char* expectedAlert = "fetched from server";
+
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } },
+        { "/fetched.html", { "<script>alert('fetched from server')</script>" } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https);
+
+    auto webView1 = adoptNS([WKWebView new]);
+    auto webView2 = adoptNS([WKWebView new]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    webView1.get().navigationDelegate = delegate.get();
+    webView2.get().navigationDelegate = delegate.get();
+
+    [webView1 loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
+
+    [webView1 reload];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], expectedAlert);
+
+    isDone = false;
+    [webView1 _appBoundNavigationData: ^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_TRUE(data.hasLoadedAppBoundRequestTesting);
+        EXPECT_FALSE(data.hasLoadedNonAppBoundRequestTesting);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+
+    isDone = false;
+    [webView1 _clearAppBoundNavigationData:^{
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+
+    isDone = false;
+    NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/main.html", server.port()]]];
+    APP_BOUND_REQUEST_ADDITIONS
+    [webView2 loadRequest:nonAppBoundRequest];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "fetched from server");
+
+    [webView2 reload];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], expectedAlert);
+
+    [webView2 _appBoundNavigationData: ^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_FALSE(data.hasLoadedAppBoundRequestTesting);
+        EXPECT_TRUE(data.hasLoadedNonAppBoundRequestTesting);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+}
 #endif

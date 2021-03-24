@@ -1,3 +1,16 @@
+2021-03-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Service worker loads are not marked as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=222635
+        <rdar://problem/74395950>
+
+        API test coverage for fetched and synthetic responses to make sure
+        they are marked as app-bound or not based on the main request.
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2021-03-23  Chris Dumez  <cdumez@apple.com>
 
         DerivedSources/WebKitTestRunner/JSAccessibilityUIElement.cpp:802:72: runtime error: -1 is outside the range of representable values of type 'unsigned int'

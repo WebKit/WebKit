@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "CacheStorageProvider.h"
+#include "DocumentLoader.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FetchLoader.h"
@@ -122,6 +123,12 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
 {
     ASSERT(allServiceWorkerThreadProxies().contains(this));
     allServiceWorkerThreadProxies().remove(this);
+}
+
+void ServiceWorkerThreadProxy::setLastNavigationWasAppBound(bool wasAppBound)
+{
+    if (m_document->loader())
+        m_document->loader()->setLastNavigationWasAppBound(wasAppBound);
 }
 
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)

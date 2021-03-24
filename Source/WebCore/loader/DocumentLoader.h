@@ -421,7 +421,7 @@ public:
 #endif
 
     bool lastNavigationWasAppBound() const { return m_lastNavigationWasAppBound; }
-    void setlastNavigationWasAppBound(bool lastNavigationWasAppBound) { m_lastNavigationWasAppBound = lastNavigationWasAppBound; }
+    void setLastNavigationWasAppBound(bool lastNavigationWasAppBound) { m_lastNavigationWasAppBound = lastNavigationWasAppBound; }
 
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);

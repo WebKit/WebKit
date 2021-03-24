@@ -6479,7 +6479,7 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
 {
     Ref<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
 
-    documentLoader->setlastNavigationWasAppBound(m_lastNavigationWasAppBound);
+    documentLoader->setLastNavigationWasAppBound(m_lastNavigationWasAppBound);
 
     if (frame.isMainFrame()) {
         if (m_pendingNavigationID) {

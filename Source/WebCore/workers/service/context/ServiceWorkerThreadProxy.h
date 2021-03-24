@@ -79,6 +79,8 @@ public:
     void fireInstallEvent();
     void fireActivateEvent();
 
+    WEBCORE_EXPORT void setLastNavigationWasAppBound(bool);
+
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, String&& userAgent, CacheStorageProvider&, StorageBlockingPolicy);
 

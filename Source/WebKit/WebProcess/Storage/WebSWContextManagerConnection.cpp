@@ -227,6 +227,8 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         return;
     }
 
+    serviceWorkerThreadProxy->setLastNavigationWasAppBound(request.isAppBound());
+
     if (!isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer)) {
         m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier);
         return;
