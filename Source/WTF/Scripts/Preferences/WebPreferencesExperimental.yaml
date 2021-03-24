@@ -1110,18 +1110,6 @@ WebGL2Enabled:
     WebKit:
       default: true
 
-WebGLUsingMetal:
-  type: bool
-  humanReadableName: "WebGL via Metal"
-  humanReadableDescription: "Use the Metal backend for ANGLE"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEBGL)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 WebGPUEnabled:
   type: bool
   humanReadableName: "WebGPU"

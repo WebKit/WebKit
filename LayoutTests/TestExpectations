@@ -3405,8 +3405,6 @@ webgl/1.0.3/conformance/glsl/misc/shaders-with-mis-matching-uniforms.html [ Skip
 webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ]
 webgl/1.0.3/conformance/glsl/misc/struct-unary-operators.html [ Skip ]
 webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Skip ]
-webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
-webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ]
 
 # webkit.org/b/203908 Tests generate inconsistent results or time out
 webgl/1.0.3/conformance/textures/texture-npot-video.html [ Skip ]

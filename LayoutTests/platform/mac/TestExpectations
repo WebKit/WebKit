@@ -145,6 +145,10 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
 
+webkit.org/b/188061 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Slow ]
+
+[ Debug ] webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow ]
+
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
@@ -2014,8 +2018,7 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 [ arm64 ] webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing.html [ Failure ]
 
 # rdar://65848157 ([AS Layout Tests] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html is failing)
-# Marked as failing on all architectures below. When that is fixed, this bug still needs to be fixed.
-# [ arm64 ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
+[ arm64 ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
 
 # rdar://64535650 (BlitFramebuffer sRGB webgl tests crashing/failing)
 [ arm64 ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Failure ]
@@ -2245,30 +2248,3 @@ webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-change.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/222239 fast/canvas/webgl/context-creation-attributes.html [ Pass Failure ]
-webkit.org/b/222239 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Pass Failure ]
-webkit.org/b/222239 webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass Failure ]
-webkit.org/b/222239 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Pass Failure ]
-webkit.org/b/222239 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Skip ]
-webkit.org/b/222239 webgl/2.0.0/conformance2/textures/misc/texel-fetch-undefined.html [ Skip ]
-webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
-
-webkit.org/b/222239 webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Pass Failure Slow ]
-webkit.org/b/222239 webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Pass Failure Slow ]
-
-# Note: Even when fixed, this bug needs to be marked as Slow in debug builds.
-webkit.org/b/222239 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Pass Failure Slow ]
-
-# These ones only seem to fail on the bots. Could be older OSes?
-webkit.org/b/222239 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Failure ]
-webkit.org/b/222239 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Pass Failure ]
-
-webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
-webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
-
-# ASTC may be supported on M1 macs, but we should skip it for now
-fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
-
-# This fails on Catalina, but not Big Sur.
-[ Catalina Mojave ] inspector/canvas/updateShader-webgl.html [ Skip ]
