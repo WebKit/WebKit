@@ -1,5 +1,23 @@
 2021-03-24  Ruben Turcios  <rubent_22@apple.com>
 
+        Apply patch. rdar://problem/75744524
+
+    Aply patch. rdar://75744524
+
+    2021-03-24  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Read access to passwd is required
+            https://bugs.webkit.org/show_bug.cgi?id=223641
+            <rdar://75616105>
+
+            Reviewed by Brent Fulgham.
+
+            The WebContent sandbox on iOS should allow reading the passwd file.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2021-03-24  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r274766. rdar://problem/75762455
 
     Add an early return in UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList
