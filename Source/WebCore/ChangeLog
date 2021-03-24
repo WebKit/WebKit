@@ -1,3 +1,17 @@
+2021-03-24  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r274870) fast/canvas/webgl/texImage2D-mse-flipY-true.html and fast/canvas/webgl/texImage2D-mse-flipY-false.html are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=223674
+
+        Reviewed by Kenneth Russell.
+
+        When the srcObject is directly set on a media element, the corresponding URL might still be
+        empty, so we need to ensure the URI corresponding to the MediaSource blob is not empty,
+        otherwise uridecodebin would fail to create the right source element.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+
 2021-03-24  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r273154): [iOS] Two magnifier symbols on google.com

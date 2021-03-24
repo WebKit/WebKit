@@ -554,9 +554,8 @@ webkit.org/b/218653 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-p
 
 webkit.org/b/220540 media/media-fullscreen-inline.html [ Timeout ]
 
-# 223674 for Crash, revert to Timeout for 179258
-webkit.org/b/179258 webkit.org/b/223674 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Crash ]
-webkit.org/b/179258 webkit.org/b/223674 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Crash ]
+webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
+webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
