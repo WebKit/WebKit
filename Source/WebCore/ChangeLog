@@ -1,3 +1,35 @@
+2021-03-24  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r273154): [iOS] Two magnifier symbols on google.com
+        https://bugs.webkit.org/show_bug.cgi?id=223700
+        <rdar://problem/75357965>
+
+        Reviewed by Tim Horton.
+
+        The iOS form control refresh added a magnifier symbol to
+        the default appearance of <input type="search">. On iPhone, google.com
+        uses <input type="search"> for their search field, while drawing their
+        own magnifier symbol. As a result, two magnifier symbols appear.
+
+        Note that on macOS and iPadOS, google.com uses an <input type="text">,
+        which means this problem is only observed on iPhone. Ideally, google.com
+        should adopt <input type="text"> on the iPhone version of the site,
+        matching the other platforms. However, in the meantime, we can hide our
+        symbol using a quirk.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::SearchFieldResultsButtonElement):
+
+        Hide the symbol if the quirk applies.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldHideSearchFieldResultsButton const):
+
+        Add a quirk to hide the magnifier symbol on google.com and other country
+        domains.
+
+        * page/Quirks.h:
+
 2021-03-24  Youenn Fablet  <youenn@apple.com>
 
         Add logging to check whether RealtimeOutgoingVideoSource is applying rotation or not

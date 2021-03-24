@@ -77,6 +77,7 @@ public:
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
     bool shouldDisableContentChangeObserverTouchEventAdjustment() const;
     bool shouldTooltipPreventFromProceedingWithClick(const Element&) const;
+    bool shouldHideSearchFieldResultsButton() const;
 
     bool needsMillisecondResolutionForHighResTimeStamp() const;
 

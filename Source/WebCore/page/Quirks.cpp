@@ -213,6 +213,19 @@ bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element)
     return element.hasClass() && element.classNames().contains("tooltip");
 }
 
+// FIXME: Remove after the site is fixed, <rdar://problem/75792913>
+bool Quirks::shouldHideSearchFieldResultsButton() const
+{
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (!needsQuirks())
+        return false;
+
+    if (topPrivatelyControlledDomain(m_document->topDocument().url().host().toString()).startsWith("google."))
+        return true;
+#endif
+    return false;
+}
+
 bool Quirks::needsMillisecondResolutionForHighResTimeStamp() const
 {
     if (!needsQuirks())
