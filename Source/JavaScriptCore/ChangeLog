@@ -1,3 +1,25 @@
+2021-03-24  Saam Barati  <sbarati@apple.com>
+
+        r271034 added code in constant folding phase that's unreachable given current invariants of our ICs and PutByIdStatus
+        https://bugs.webkit.org/show_bug.cgi?id=223625
+
+        Reviewed by Yusuke Suzuki.
+
+        The code was doing a lot of wrong things by making bad assumptions about the
+        invariants of PutByIdVariants. Replace PutByIdVariants never have object
+        property condition sets, since we always replace on the self object (and don't
+        look at the prototype chain). This patch clears up the code to make it
+        clearer what the invariants are.
+        
+        With respect to the original fix about not emitting a PutByOffset for a
+        Replace on a Structure that has an unfired replacement watchpoint set,
+        that was already handled by the PutByIdStatus::computeFor variant we're
+        calling inside of constant folding. It will return TakesSlowPathif it
+        encounters a Replace where the Structure still has an unfired watchpoint.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+
 2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Rope string equal operation should first check length
