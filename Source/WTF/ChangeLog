@@ -1,3 +1,25 @@
+2021-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Address undefined behavior found by UBSan in DateMath.h
+        https://bugs.webkit.org/show_bug.cgi?id=223663
+
+        Reviewed by Darin Adler.
+
+        Address undefined behavior found by UBSan in DateMath.h
+        Release/usr/local/include/wtf/DateMath.h:247:39: runtime error: nan is outside the range of representable values of type 'int'
+        Release/usr/local/include/wtf/DateMath.h:221:29: runtime error: nan is outside the range of representable values of type 'int'
+        Release/usr/local/include/wtf/DateMath.h:165:38: runtime error: signed integer overflow: -2147483648 - 1 cannot be represented in type 'int'
+
+        * wtf/DateMath.h:
+        (WTF::daysFrom1970ToYear):
+        Cast year to a double *before* substracting 1 instead of *after*. This works around the fact that INT_MIN-1 would not
+        fit in an int and would be undefined behavior.
+
+        (WTF::dayInYear):
+        (WTF::msToYear):
+        Deal with the double potentially being NaN before casting to an int, since
+        casting NaN to an int type has undefined behavior.
+
 2021-03-23  Dean Jackson  <yolo@apple.com>
 
         Enable Metal ANGLE backend for WebGL

@@ -162,7 +162,7 @@ inline double daysFrom1970ToYear(int year)
     static constexpr int excludedLeapDaysBefore1971By100Rule = 1970 / 100;
     static constexpr int leapDaysBefore1971By400Rule = 1970 / 400;
 
-    const double yearMinusOne = year - 1;
+    const double yearMinusOne = static_cast<double>(year) - 1;
     const double yearsToAddBy4Rule = floor(yearMinusOne / 4.0) - leapDaysBefore1971By4Rule;
     const double yearsToExcludeBy100Rule = floor(yearMinusOne / 100.0) - excludedLeapDaysBefore1971By100Rule;
     const double yearsToAddBy400Rule = floor(yearMinusOne / 400.0) - leapDaysBefore1971By400Rule;
@@ -218,7 +218,8 @@ inline int dayInYear(int year, int month, int day)
 
 inline int dayInYear(double ms, int year)
 {
-    return static_cast<int>(msToDays(ms) - daysFrom1970ToYear(year));
+    double result = msToDays(ms) - daysFrom1970ToYear(year);
+    return std::isnan(result) ? 0 : static_cast<int>(result);
 }
 
 inline int dayInYear(TimeClippedPositiveMilliseconds ms, int year)
@@ -244,7 +245,10 @@ inline double dateToDaysFrom1970(int year, int month, int day)
 
 inline int msToYear(double ms)
 {
-    int approxYear = static_cast<int>(floor(ms / (msPerDay * 365.2425)) + 1970);
+    double msAsYears = std::floor(ms / (msPerDay * 365.2425));
+    if (std::isnan(msAsYears))
+        msAsYears = 0;
+    int approxYear = static_cast<int>(msAsYears + 1970);
     double msFromApproxYearTo1970 = msPerDay * daysFrom1970ToYear(approxYear);
     if (msFromApproxYearTo1970 > ms)
         return approxYear - 1;
