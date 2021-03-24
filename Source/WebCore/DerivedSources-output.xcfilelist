@@ -1298,6 +1298,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadata.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadata.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadataInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadataInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadataPlaylistMixin.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaMetadataPlaylistMixin.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaPositionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaPositionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryList.cpp
@@ -1316,8 +1318,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionActionDetails.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionActionDetails.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionActionHandler.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionActionHandler.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionCoordinator.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionCoordinator.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionCoordinatorMixin.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionCoordinatorMixin.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaybackState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaybackState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaylistMixin.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionPlaylistMixin.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionReadyState.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSessionReadyState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStream.cpp
@@ -1352,6 +1362,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCDMFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCDMFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockContentFilterSettings.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockContentFilterSettings.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockMediaSessionCoordinator.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockMediaSessionCoordinator.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPageOverlay.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPageOverlay.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentAddress.cpp

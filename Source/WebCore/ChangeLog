@@ -1,3 +1,113 @@
+2021-03-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Add Experimental MediaSession coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=222158
+        <rdar://problem/74508862>
+
+        Reviewed by Jer Noble.
+
+        Add an experimental MediaSession coordinator, an object that provides an interface
+        that allows script to coordinate changes to MediaSession with the User Agent. Also
+        add an experimental MediaSession playlist interface.
+
+        The changes are behind new experimental feature flags,
+        MediaSessionCoordinatorEnabled and MediaSessionPlaylistEnabled.
+
+        Test: media/media-session/mock-coordinator.html
+
+        * DerivedSources-input.xcfilelist: Add new IDL files.
+        * DerivedSources-output.xcfilelist: Add new derived sources.
+        * DerivedSources.make: Add new IDL.
+
+        * Modules/mediasession/MediaMetadata.cpp:
+        (WebCore::MediaMetadata::create): Set trackIdentifier from init data.
+        (WebCore::MediaMetadata::setTrackIdentifier): trackIdentifier setter.
+        * Modules/mediasession/MediaMetadata.h:
+        (WebCore::MediaMetadata::trackIdentifier const):
+        * Modules/mediasession/MediaMetadata.idl:
+
+        * Modules/mediasession/MediaMetadataInit.h: Add trackIdentifier.
+        (WebCore::MediaMetadataInit::encode const):
+        (WebCore::MediaMetadataInit::decode):
+        * Modules/mediasession/MediaMetadataInit.idl:
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession): Initialize MainThreadGenericEventQueue.
+        (WebCore::MediaSession::setMetadata): metadataUpdated -> notifyMetadataObservers.
+        (WebCore::MediaSession::setReadyState): Session readyState setter.
+        (WebCore::MediaSession::setCoordinator): Coordinator setter. Post 'coordinatorchange'
+        event after change.
+        (WebCore::MediaSession::setPlaylist): Playlist setter.
+        (WebCore::MediaSession::setActionHandler): Call notifyActionHandlerObservers.
+        (WebCore::MediaSession::setPositionState): Call notifyPositionStateObservers.
+        (WebCore::MediaSession::metadataUpdated): Call notifyMetadataObservers.
+        (WebCore::MediaSession::addObserver): New.
+        (WebCore::MediaSession::removeObserver): New.
+        (WebCore::MediaSession::forEachObserver): New.
+        (WebCore::MediaSession::notifyMetadataObservers): New.
+        (WebCore::MediaSession::notifyPositionStateObservers): New.
+        (WebCore::MediaSession::notifyPlaybackStateObservers): New.
+        (WebCore::MediaSession::notifyActionHandlerObservers): New.
+        (WebCore::MediaSession::notifyReadyStateObservers): New.
+        * Modules/mediasession/MediaSession.h:
+        (WebCore::MediaSession::coordinator const):
+        (WebCore::MediaSession::playlist const):
+        (WebCore::MediaSession::logger const):
+        * Modules/mediasession/MediaSession.idl:
+
+        * Modules/mediasession/MediaSessionAction.h:
+        * Modules/mediasession/MediaSessionAction.idl:
+        * Modules/mediasession/MediaSessionActionDetails.h:
+        * Modules/mediasession/MediaSessionActionDetails.idl:
+
+        MediaSessionCoordinator proxies calls through the PlatformMediaSessionCoordinator,
+        and then calls the equivalent MediaSession methode if the platform coordinator 
+        is successful.
+        * Modules/mediasession/MediaSessionCoordinator.cpp: Added.
+        (WebCore::nextCoordinatorLogIdentifier):
+        (WebCore::MediaSessionCoordinator::create):
+        (WebCore::MediaSessionCoordinator::MediaSessionCoordinator):
+        (WebCore::MediaSessionCoordinator::seekTo):
+        (WebCore::MediaSessionCoordinator::play):
+        (WebCore::MediaSessionCoordinator::pause):
+        (WebCore::MediaSessionCoordinator::setTrack):
+        (WebCore::MediaSessionCoordinator::setMediaSession):
+        (WebCore::MediaSessionCoordinator::logChannel):
+        * Modules/mediasession/MediaSessionCoordinator.h: New.
+        (WebCore::MediaSessionCoordinator::logger const):
+        (WebCore::MediaSessionCoordinator::logIdentifier const):
+        (WebCore::MediaSessionCoordinator::logClassName):
+        * Modules/mediasession/MediaSessionCoordinator.idl: New.
+
+        * Modules/mediasession/NavigatorMediaSession.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.h:
+        * dom/EventTargetFactory.in:
+
+        * platform/graphics/PlatformMediaSessionCoordinator.h: Added.
+        (WebCore::PlatformMediaSessionCoordinator::setLogger):
+        (WebCore::PlatformMediaSessionCoordinator::loggerPtr const):
+        (WebCore::PlatformMediaSessionCoordinator::logIdentifier const):
+        (WebCore::PlatformMediaSessionCoordinator::logClassName const):
+        (WebCore::PlatformMediaSessionCoordinator::logChannel const):
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::registerMockMediaSessionCoordinator): Register the mock
+        media session coordinator for testing.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        * testing/MockMediaSessionCoordinator.cpp: Added.
+        (WebCore::MockMediaSessionCoordinator::create):
+        (WebCore::MockMediaSessionCoordinator::MockMediaSessionCoordinator):
+        (WebCore::MockMediaSessionCoordinator::seekTo):
+        (WebCore::MockMediaSessionCoordinator::play):
+        (WebCore::MockMediaSessionCoordinator::pause):
+        (WebCore::MockMediaSessionCoordinator::setTrack):
+        * testing/MockMediaSessionCoordinator.h: New.
+
 2021-03-24  Chris Dumez  <cdumez@apple.com>
 
         Preload graphics drivers on a background thread instead of the main thread

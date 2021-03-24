@@ -12,10 +12,14 @@ PASS Navigator includes NavigatorContentUtils: member names are unique
 PASS Navigator includes NavigatorCookies: member names are unique
 PASS Navigator includes NavigatorPlugins: member names are unique
 PASS Navigator includes NavigatorConcurrentHardware: member names are unique
-PASS MediaSession interface: existence and properties of interface object
+FAIL MediaSession interface: existence and properties of interface object assert_equals: prototype of self's property "MediaSession" is not Function.prototype expected function "function () {
+    [native code]
+}" but got function "function EventTarget() {
+    [native code]
+}"
 PASS MediaSession interface object length
 PASS MediaSession interface object name
-PASS MediaSession interface: existence and properties of interface prototype object
+FAIL MediaSession interface: existence and properties of interface prototype object assert_equals: prototype of MediaSession.prototype is not Object.prototype expected object "[object Object]" but got object "[object EventTarget]"
 PASS MediaSession interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaSession interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaSession interface: attribute metadata

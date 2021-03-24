@@ -96,6 +96,9 @@ ExceptionOr<Ref<MediaMetadata>> MediaMetadata::create(ScriptExecutionContext& co
         metadata->setTitle(init->title);
         metadata->setArtist(init->artist);
         metadata->setAlbum(init->album);
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+        metadata->setTrackIdentifier(init->trackIdentifier);
+#endif
         auto possibleException = metadata->setArtwork(context, WTFMove(init->artwork));
         if (possibleException.hasException())
             return Exception { possibleException.exception() };
@@ -187,6 +190,17 @@ void MediaMetadata::setArtworkImage(Image* image)
 {
     m_artworkImage = image;
 }
+
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+void MediaMetadata::setTrackIdentifier(const String& identifier)
+{
+    if (m_metadata.trackIdentifier == identifier)
+        return;
+
+    m_metadata.trackIdentifier = identifier;
+    metadataUpdated();
+}
+#endif
 
 void MediaMetadata::metadataUpdated()
 {

@@ -171,6 +171,7 @@ namespace WebCore {
     macro(MediaQueryListEvent) \
     macro(MediaRecorder) \
     macro(MediaRecorderErrorEvent) \
+    macro(MediaSessionCoordinator) \
     macro(MediaSource) \
     macro(MediaStream) \
     macro(MediaStreamTrack) \

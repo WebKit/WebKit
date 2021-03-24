@@ -331,12 +331,17 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasession/MediaImage.idl
     Modules/mediasession/MediaMetadata.idl
     Modules/mediasession/MediaMetadataInit.idl
+    Modules/mediasession/MediaMetadataPlaylistMixin.idl
     Modules/mediasession/MediaPositionState.idl
     Modules/mediasession/MediaSession.idl
     Modules/mediasession/MediaSessionAction.idl
     Modules/mediasession/MediaSessionActionDetails.idl
     Modules/mediasession/MediaSessionActionHandler.idl
+    Modules/mediasession/MediaSessionCoordinator.idl
+    Modules/mediasession/MediaSessionCoordinatorMixin.idl
     Modules/mediasession/MediaSessionPlaybackState.idl
+    Modules/mediasession/MediaSessionPlaylistMixin.idl
+    Modules/mediasession/MediaSessionReadyState.idl
     Modules/mediasession/Navigator+MediaSession.idl
 
     Modules/mediasource/AudioTrack+MediaSource.idl

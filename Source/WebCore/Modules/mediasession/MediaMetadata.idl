@@ -33,4 +33,8 @@
     attribute DOMString artist;
     attribute DOMString album;
     [SetterCallWith=ScriptExecutionContext] attribute FrozenArray<MediaImage> artwork;
+
+    [Conditional=MEDIA_SESSION_PLAYLIST, EnabledBySetting=MediaSessionPlaylist] attribute DOMString trackIdentifier;
 };
+
+MediaMetadata includes MediaMetadataPlaylistMixin;

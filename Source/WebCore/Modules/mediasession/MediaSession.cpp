@@ -29,8 +29,10 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "DOMWindow.h"
+#include "EventNames.h"
 #include "Logging.h"
 #include "MediaMetadata.h"
+#include "MediaSessionCoordinator.h"
 #include "Navigator.h"
 #include "PlatformMediaSessionManager.h"
 
@@ -76,7 +78,11 @@ Ref<MediaSession> MediaSession::create(Navigator& navigator)
 }
 
 MediaSession::MediaSession(Navigator& navigator)
-    : m_navigator(makeWeakPtr(navigator))
+    : ContextDestructionObserver(navigator.scriptExecutionContext())
+    , m_navigator(makeWeakPtr(navigator))
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+#endif
 {
     m_logger = makeRefPtr(Document::sharedLogger());
     m_logIdentifier = nextLogIdentifier();
@@ -89,14 +95,66 @@ MediaSession::~MediaSession() = default;
 void MediaSession::setMetadata(RefPtr<MediaMetadata>&& metadata)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-
     if (m_metadata)
         m_metadata->resetMediaSession();
     m_metadata = WTFMove(metadata);
     if (m_metadata)
         m_metadata->setMediaSession(*this);
-    metadataUpdated();
+    notifyMetadataObservers();
 }
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void MediaSession::setReadyState(MediaSessionReadyState state)
+{
+    if (m_readyState == state)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, state);
+
+    m_readyState = state;
+    notifyReadyStateObservers();
+}
+
+void MediaSession::setCoordinator(MediaSessionCoordinator* coordinator)
+{
+    if (m_coordinator == coordinator)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (m_coordinator)
+        m_coordinator->setMediaSession(nullptr);
+
+    m_coordinator = coordinator;
+
+    if (m_coordinator)
+        m_coordinator->setMediaSession(this);
+
+    m_asyncEventQueue->enqueueEvent(Event::create(eventNames().coordinatorchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+ExceptionOr<void> MediaSession::setPlaylist(ScriptExecutionContext& context, Vector<RefPtr<MediaMetadata>>&& playlist)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    Vector<Ref<MediaMetadata>> resolvedPlaylist;
+    resolvedPlaylist.reserveInitialCapacity(playlist.size());
+
+    for (auto& entry : playlist) {
+        auto resolvedEntry = MediaMetadata::create(context, { entry->metadata() });
+        if (resolvedEntry.hasException())
+            return resolvedEntry.releaseException();
+        
+        resolvedPlaylist.uncheckedAppend(resolvedEntry.releaseReturnValue());
+    }
+
+    m_playlist = WTFMove(resolvedPlaylist);
+
+    return { };
+}
+#endif
 
 void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
 {
@@ -111,6 +169,7 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
         m_timeAtLastPositionUpdate = MonotonicTime::now();
     }
     m_playbackState = state;
+    notifyPlaybackStateObservers();
 }
 
 void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessionActionHandler>&& handler)
@@ -129,7 +188,7 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
         PlatformMediaSessionManager::sharedManager().removeSupportedCommand(platformCommandForMediaSessionAction(action));
     }
 
-    actionHandlersUpdated();
+    notifyActionHandlerObservers();
 }
 
 bool MediaSession::hasActionHandler(MediaSessionAction action) const
@@ -142,12 +201,19 @@ RefPtr<MediaSessionActionHandler> MediaSession::handlerForAction(MediaSessionAct
     return m_actionHandlers.get(action);
 }
 
+void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails)
+{
+    if (auto handler = m_actionHandlers.get(actionDetails.action))
+        handler->handleEvent(actionDetails);
+}
+
 ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& state)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (!state) {
         m_positionState = WTF::nullopt;
+        notifyPositionStateObservers();
         return { };
     }
 
@@ -161,6 +227,8 @@ ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& 
     m_positionState = WTFMove(state);
     m_lastReportedPosition = m_positionState->position;
     m_timeAtLastPositionUpdate = MonotonicTime::now();
+    notifyPositionStateObservers();
+
     return { };
 }
 
@@ -185,11 +253,64 @@ Document* MediaSession::document() const
 
 void MediaSession::metadataUpdated()
 {
+    notifyMetadataObservers();
 }
 
-void MediaSession::actionHandlersUpdated()
+void MediaSession::addObserver(Observer& observer)
 {
+    ASSERT(isMainThread());
+    m_observers.add(observer);
 }
+
+void MediaSession::removeObserver(Observer& observer)
+{
+    ASSERT(isMainThread());
+    m_observers.remove(observer);
+}
+
+void MediaSession::forEachObserver(const Function<void(Observer&)>& apply)
+{
+    ASSERT(isMainThread());
+    auto protectedThis = makeRef(*this);
+    m_observers.forEach(apply);
+}
+
+void MediaSession::notifyMetadataObservers()
+{
+    forEachObserver([this](auto& observer) {
+        observer.metadataChanged(m_metadata);
+    });
+}
+
+void MediaSession::notifyPositionStateObservers()
+{
+    forEachObserver([this](auto& observer) {
+        observer.positionStateChanged(m_positionState);
+    });
+}
+
+void MediaSession::notifyPlaybackStateObservers()
+{
+    forEachObserver([this](auto& observer) {
+        observer.playbackStateChanged(m_playbackState);
+    });
+}
+
+void MediaSession::notifyActionHandlerObservers()
+{
+    forEachObserver([](auto& observer) {
+        observer.actionHandlersChanged();
+    });
+}
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void MediaSession::notifyReadyStateObservers()
+{
+    forEachObserver([this](auto& observer) {
+        observer.readyStateChanged(m_readyState);
+    });
+}
+#endif
 
 }
 

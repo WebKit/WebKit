@@ -35,6 +35,9 @@ struct MediaMetadataInit {
     String title;
     String artist;
     String album;
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+    String trackIdentifier;
+#endif
     Vector<MediaImage> artwork;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -43,28 +46,51 @@ struct MediaMetadataInit {
 
 template<class Encoder> inline void MediaMetadataInit::encode(Encoder& encoder) const
 {
-    encoder << title << artist << album << artwork;
+    encoder << title << artist << album
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+    << trackIdentifier
+#endif
+    << artwork;
 }
 
 template<class Decoder> inline Optional<MediaMetadataInit> MediaMetadataInit::decode(Decoder& decoder)
 {
-    String title;
-    if (!decoder.decode(title))
+    Optional<String> title;
+    decoder >> title;
+    if (title)
         return { };
 
-    String artist;
-    if (!decoder.decode(artist))
+    Optional<String> artist;
+    decoder >> artist;
+    if (!artist)
         return { };
 
-    String album;
-    if (!decoder.decode(album))
+    Optional<String> album;
+    decoder >> album;
+    if (!album)
         return { };
 
-    Vector<MediaImage> artwork;
-    if (!decoder.decode(artwork))
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+    Optional<String> trackIdentifier;
+    decoder >> trackIdentifier;
+    if (!trackIdentifier)
+        return { };
+#endif
+
+    Optional<Vector<MediaImage>> artwork;
+    decoder >> artwork;
+    if (!artwork)
         return { };
 
-    return MediaMetadataInit { WTFMove(title), WTFMove(artist), WTFMove(album), WTFMove(artwork) };
+    return { {
+        WTFMove(*title),
+        WTFMove(*artist),
+        WTFMove(*album),
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+        WTFMove(*trackIdentifier),
+#endif
+        WTFMove(*artwork)
+    } };
 }
 
 }

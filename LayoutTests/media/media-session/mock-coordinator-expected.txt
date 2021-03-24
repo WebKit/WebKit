@@ -1,0 +1,81 @@
+
+** There should be no mediaSession.coordinator initially.
+EXPECTED (navigator.mediaSession.coordinator == 'undefined') OK
+
+** Test that mediaSession.coordinatorchange event is fired when it changes.
+RUN(internals.registerMockMediaSessionCoordinator(changeHandler))
+EVENT(coordinatorchange)
+EXPECTED (navigator.mediaSession.coordinator != 'undefined') OK
+
+** Test that when coordinator methods succeed, promises resolve and mediaSession action handlers are called.
+Test navigator.mediaSession.coordinator.play()
+ACTION(play)
+EXPECTED (latestAction == 'play') OK
+
+Test navigator.mediaSession.coordinator.pause()
+ACTION(pause)
+EXPECTED (latestAction == 'pause') OK
+
+Test navigator.mediaSession.coordinator.seekto()
+ACTION(seekto)
+EXPECTED (latestAction == 'seekto') OK
+
+** Test that when coordinator methods succeed, promises reject and mediaSession action handlers are not called.
+Test navigator.mediaSession.coordinator.play()
+EXPECTED (latestAction == '') OK
+
+Test navigator.mediaSession.coordinator.pause()
+EXPECTED (latestAction == '') OK
+
+Test navigator.mediaSession.coordinator.seekto()
+EXPECTED (latestAction == '') OK
+
+** Test that mediaSession notifies coordinator when positionState changes.
+RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 }))
+EXPECTED (latestChange == 'positionStateChanged') OK
+
+** Test that mediaSession notifies coordinator when readyState changes.
+EXPECTED (navigator.mediaSession.readyState == 'haveNothing') OK
+RUN(navigator.mediaSession.readyState = 'haveMetadata')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveMetadata') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'haveMetadata') OK
+RUN(navigator.mediaSession.readyState = 'haveCurrentData')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveCurrentData') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'haveCurrentData') OK
+RUN(navigator.mediaSession.readyState = 'haveFutureData')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveFutureData') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'haveFutureData') OK
+RUN(navigator.mediaSession.readyState = 'haveEnoughData')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveEnoughData') OK
+
+EXPECTED (navigator.mediaSession.readyState == 'haveEnoughData') OK
+RUN(navigator.mediaSession.readyState = 'haveNothing')
+EXPECTED (latestChange == 'readyStateChanged') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveNothing') OK
+
+** Test that mediaSession notifies coordinator when playbackState changes.
+EXPECTED (navigator.mediaSession.playbackState == 'none') OK
+RUN(navigator.mediaSession.playbackState = 'paused')
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EXPECTED (navigator.mediaSession.playbackState == 'paused') OK
+
+EXPECTED (navigator.mediaSession.playbackState == 'paused') OK
+RUN(navigator.mediaSession.playbackState = 'playing')
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EXPECTED (navigator.mediaSession.playbackState == 'playing') OK
+
+EXPECTED (navigator.mediaSession.playbackState == 'playing') OK
+RUN(navigator.mediaSession.playbackState = 'none')
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EXPECTED (navigator.mediaSession.playbackState == 'none') OK
+
+
+END OF TEST
+

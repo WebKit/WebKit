@@ -46,7 +46,7 @@ public:
     virtual CallbackResult<void> handleEvent(const String& data) = 0;
 
     // Helper to post callback task.
-    void scheduleCallback(ScriptExecutionContext&, const String& data);
+    WEBCORE_EXPORT void scheduleCallback(ScriptExecutionContext&, const String& data);
 };
 
 } // namespace WebCore

@@ -131,6 +131,7 @@ Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/mediacapabilities/NavigatorMediaCapabilities.cpp
 Modules/mediasession/MediaMetadata.cpp
 Modules/mediasession/MediaSession.cpp
+Modules/mediasession/MediaSessionCoordinator.cpp
 Modules/mediasession/NavigatorMediaSession.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 Modules/mediarecorder/BlobEvent.cpp
@@ -1998,6 +1999,7 @@ platform/graphics/Path.cpp
 platform/graphics/PathTraversalState.cpp
 platform/graphics/PathUtilities.cpp
 platform/graphics/Pattern.cpp
+platform/graphics/PlatformMediaSessionCoordinator.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/Region.cpp
 platform/graphics/RemoteGraphicsContextGLProxyBase.cpp
@@ -3226,6 +3228,7 @@ JSMediaKeys.cpp
 JSMediaKeysRequirement.cpp
 JSMediaList.cpp
 JSMediaMetadata.cpp
+JSMediaSessionCoordinator.cpp
 JSMediaMetadataInit.cpp
 JSMediaPositionState.cpp
 JSMediaQueryList.cpp
@@ -3236,6 +3239,7 @@ JSMediaSessionActionDetails.cpp
 JSMediaSessionActionHandler.cpp
 JSMediaSessionAction.cpp
 JSMediaSessionPlaybackState.cpp
+JSMediaSessionReadyState.cpp
 JSMediaSession.cpp
 JSMediaSource.cpp
 JSMediaStream.cpp

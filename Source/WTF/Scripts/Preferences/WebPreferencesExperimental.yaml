@@ -632,11 +632,37 @@ MediaRecorderEnabled:
     WebCore:
       default: false
 
+MediaSessionCoordinatorEnabled:
+  type: bool
+  humanReadableName: "Experimental MediaSession coordinator API"
+  humanReadableDescription: "Enable experimental MediaSession coordinator API"
+  condition: ENABLE(MEDIA_SESSION_COORDINATOR)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MediaSessionEnabled:
   type: bool
   humanReadableName: "Media Session API"
   humanReadableDescription: "Media Session API"
   condition: ENABLE(MEDIA_SESSION)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+MediaSessionPlaylistEnabled:
+  type: bool
+  humanReadableName: "Experimental MediaSession playlist API"
+  humanReadableDescription: "Enable experimental MediaSession playlist API"
+  condition: ENABLE(MEDIA_SESSION_PLAYLIST)
   defaultValue:
     WebKitLegacy:
       default: false

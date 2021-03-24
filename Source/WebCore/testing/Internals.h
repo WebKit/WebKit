@@ -136,6 +136,10 @@ class WebXRTest;
 #if ENABLE(MEDIA_SESSION)
 class MediaSession;
 struct MediaSessionActionDetails;
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+class MediaSessionCoordinator;
+class MockMediaSessionCoordinator;
+#endif
 #endif
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -1093,9 +1097,16 @@ public:
 #if ENABLE(MEDIA_SESSION)
     ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);
     ExceptionOr<void> sendMediaSessionAction(MediaSession&, const MediaSessionActionDetails&);
-    using ArtworkImagePromise = DOMPromiseDeferred<IDLInterface<ImageData>>;
+
+        using ArtworkImagePromise = DOMPromiseDeferred<IDLInterface<ImageData>>;
     void loadArtworkImage(String&&, ArtworkImagePromise&&);
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    ExceptionOr<void> registerMockMediaSessionCoordinator(ScriptExecutionContext&, RefPtr<StringCallback>&&);
+    ExceptionOr<void> setMockMediaSessionCoordinatorCommandsShouldFail(bool);
 #endif
+
+#endif // ENABLE(MEDIA_SESSION)
 
     enum TreeType : uint8_t { Tree, ShadowIncludingTree, ComposedTree };
     String treeOrder(Node&, Node&, TreeType);
@@ -1139,6 +1150,11 @@ private:
 
 #if ENABLE(WEBXR)
     RefPtr<WebXRTest> m_xrTest;
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<MediaSessionCoordinator> m_mediaSessionCoordinator;
+    RefPtr<MockMediaSessionCoordinator> m_mockMediaSessionCoordinator;
 #endif
 };
 
