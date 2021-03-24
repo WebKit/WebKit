@@ -1,3 +1,26 @@
+2021-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Use FramesPerSecond in more places in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=223656
+
+        Reviewed by Tim Horton.
+
+        Use FramesPerSecond rather than 'unsigned' in more places in WebCore.
+
+        * page/Chrome.h:
+        * page/Page.cpp:
+        (WebCore::Page::windowScreenDidChange):
+        * page/Page.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::windowScreenDidChange):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::windowScreenDidChange):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::windowScreenDidChange):
+        * page/scrolling/ScrollingTree.h:
+        * platform/HostWindow.h:
+
 2021-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Functor for WeakGCMap::ensureValue must not invoke GC

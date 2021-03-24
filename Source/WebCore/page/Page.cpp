@@ -1175,7 +1175,7 @@ void Page::screenPropertiesDidChange()
     setNeedsRecalcStyleInAllFrames();
 }
 
-void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
+void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPerSecond> nominalFramesPerSecond)
 {
     if (displayID == m_displayID && nominalFramesPerSecond == m_displayNominalFramesPerSecond)
         return;

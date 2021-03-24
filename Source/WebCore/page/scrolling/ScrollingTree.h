@@ -54,6 +54,8 @@ class ScrollingTreeOverflowScrollProxyNode;
 class ScrollingTreePositionedNode;
 class ScrollingTreeScrollingNode;
 enum class EventListenerRegionType : uint8_t;
+
+using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 
 struct WheelEventHandlingResult {
@@ -216,7 +218,7 @@ public:
 
     Lock& treeMutex() { return m_treeMutex; }
 
-    void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond);
+    void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID();
     
     bool hasProcessedWheelEventsRecently();
@@ -252,7 +254,7 @@ protected:
     void setGestureState(Optional<WheelScrollGestureState>);
     Optional<WheelScrollGestureState> gestureState();
 
-    Optional<unsigned> nominalFramesPerSecond();
+    Optional<FramesPerSecond> nominalFramesPerSecond();
 
     void applyLayerPositionsInternal();
     void removeAllNodes();
@@ -291,7 +293,7 @@ private:
         EventTrackingRegions eventTrackingRegions;
         FloatPoint mainFrameScrollPosition;
         PlatformDisplayID displayID { 0 };
-        Optional<unsigned> nominalFramesPerSecond;
+        Optional<FramesPerSecond> nominalFramesPerSecond;
         Optional<WheelScrollGestureState> gestureState;
         HashSet<ScrollingNodeID> nodesWithActiveRubberBanding;
         HashSet<ScrollingNodeID> nodesWithActiveScrollSnap;

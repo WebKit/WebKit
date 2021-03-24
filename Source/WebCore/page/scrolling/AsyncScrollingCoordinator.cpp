@@ -787,7 +787,7 @@ bool AsyncScrollingCoordinator::hasSynchronousScrollingReasons(ScrollingNodeID n
 #endif
 }
 
-void AsyncScrollingCoordinator::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
+void AsyncScrollingCoordinator::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPerSecond> nominalFramesPerSecond)
 {
     if (m_scrollingTree)
         m_scrollingTree->windowScreenDidChange(displayID, nominalFramesPerSecond);

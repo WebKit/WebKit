@@ -38,6 +38,8 @@ enum class DestinationColorSpace : uint8_t;
 enum class RenderingMode : bool;
 enum class RenderingPurpose : uint8_t;
 
+using FramesPerSecond = unsigned;
+
 class HostWindow {
     WTF_MAKE_NONCOPYABLE(HostWindow); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -77,7 +79,7 @@ public:
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
 
     virtual PlatformDisplayID displayID() const = 0;
-    virtual void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond) = 0;
+    virtual void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond> nominalFramesPerSecond) = 0;
 
     virtual FloatSize screenSize() const = 0;
     virtual FloatSize availableScreenSize() const = 0;

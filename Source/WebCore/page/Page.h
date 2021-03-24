@@ -419,7 +419,7 @@ public:
     WEBCORE_EXPORT void setInitialScaleIgnoringContentSize(float);
 
     WEBCORE_EXPORT void screenPropertiesDidChange();
-    void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond);
+    void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID() const { return m_displayID; }
     Optional<unsigned> displayNominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
 

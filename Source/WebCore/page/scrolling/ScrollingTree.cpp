@@ -667,7 +667,7 @@ void ScrollingTree::scrollBySimulatingWheelEventForTesting(ScrollingNodeID nodeI
     downcast<ScrollingTreeScrollingNode>(*node).scrollBy(delta);
 }
 
-void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
+void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPerSecond> nominalFramesPerSecond)
 {
     LockHolder locker(m_treeStateMutex);
     m_treeState.displayID = displayID;
