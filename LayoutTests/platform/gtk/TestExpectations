@@ -152,6 +152,7 @@ webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Fail
 
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Pass ]
+webkit.org/b/210840 fast/mediastream/play-newly-added-audio-track.html [ Failure ]
 
 # Layout
 webkit.org/b/218510 fast/dom/Range/getBoundingClientRect.html [ Failure ]
@@ -1684,9 +1685,6 @@ webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-vali
 webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.html [ Timeout ]
 
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
-
-webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
-webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
 
