@@ -95,6 +95,12 @@ static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
     return applicationBundleIdentifier() == bundleIdentifierString;
 }
 
+bool CocoaApplication::isIBooks()
+{
+    static bool isIBooks = applicationBundleIsEqualTo("com.apple.iBooksX"_s) || applicationBundleIsEqualTo("com.apple.iBooks"_s);
+    return isIBooks;
+}
+
 #if PLATFORM(MAC)
 
 bool MacApplication::isSafari()
@@ -109,12 +115,6 @@ bool MacApplication::isAppleMail()
 {
     static bool isAppleMail = applicationBundleIsEqualTo("com.apple.mail"_s);
     return isAppleMail;
-}
-
-bool MacApplication::isIBooks()
-{
-    static bool isIBooks = applicationBundleIsEqualTo("com.apple.iBooksX"_s);
-    return isIBooks;
 }
 
 bool MacApplication::isITunes()
@@ -270,12 +270,6 @@ bool IOSApplication::isSpringBoard()
 bool IOSApplication::isWebProcess()
 {
     return isInWebProcess();
-}
-
-bool IOSApplication::isIBooks()
-{
-    static bool isIBooks = applicationBundleIsEqualTo("com.apple.iBooks"_s);
-    return isIBooks;
 }
 
 bool IOSApplication::isIBooksStorytime()

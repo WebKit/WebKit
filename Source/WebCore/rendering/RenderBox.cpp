@@ -3223,12 +3223,11 @@ LayoutUnit RenderBox::computeReplacedLogicalHeight(Optional<LayoutUnit>) const
 
 static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
 {
-#if PLATFORM(MAC)
-    return MacApplication::isIBooks();
-#elif PLATFORM(IOS_FAMILY)
-    return IOSApplication::isIBooks();
-#endif
+#if PLATFORM(COCOA)
+    return CocoaApplication::isIBooks();
+#else
     return false;
+#endif
 }
 
 void RenderBox::computePreferredLogicalWidths(const Length& minWidth, const Length& maxWidth, LayoutUnit borderAndPadding)

@@ -1,3 +1,37 @@
+2021-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Consolidate Books bundle checks
+        https://bugs.webkit.org/show_bug.cgi?id=223664
+        <rdar://problem/75754750>
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests, no change in behavior.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::isRequestFromIBooks):
+        * bindings/js/CommonVM.cpp:
+        (WebCore::globalConstRedeclarationShouldThrow):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::initMouseEventQuirk):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback const):
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::currentRunLoop):
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::CocoaApplication::isIBooks):
+        (WebCore::MacApplication::isIBooks): Deleted.
+        (WebCore::IOSApplication::isIBooks): Deleted.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::synchronousWillSendRequestEnabled):
+        * rendering/RenderBox.cpp:
+        (WebCore::allowMinMaxPercentagesInAutoHeightBlocksQuirk):
+        Transition to a single bundle check for Books, since the quirks are generally
+        about book content, not about the app's behavior. Long-term, we should
+        get rid of these entirely (some are no longer necessary, and the rest
+        should turn into switches that Books can toggle).
+
 2021-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Add DisplayRefreshMonitorFactory.

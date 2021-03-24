@@ -1,3 +1,14 @@
+2021-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Consolidate Books bundle checks
+        https://bugs.webkit.org/show_bug.cgi?id=223664
+        <rdar://problem/75754750>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebView/WebViewData.mm:
+        (currentRunLoop):
+
 2021-03-22  Jean-Yves Avenard  <jya@apple.com>
 
         Move management of RemoteCommandListener from MediaSessionManagerCocoa into NowPlayingManager

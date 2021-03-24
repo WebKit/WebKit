@@ -47,10 +47,8 @@ namespace WebCore {
 // FIXME: <rdar://problem/25965028> This should be removed or replaced with a Setting that iBooks can use if it is still needed.
 static bool globalConstRedeclarationShouldThrow()
 {
-#if PLATFORM(MAC)
-    return !MacApplication::isIBooks();
-#elif PLATFORM(IOS_FAMILY)
-    return !IOSApplication::isIBooks();
+#if PLATFORM(COCOA)
+    return !CocoaApplication::isIBooks();
 #else
     return true;
 #endif
