@@ -2819,7 +2819,7 @@ webkit.org/b/178669 compositing/visible-rect/iframe-no-layers.html [ Pass Failur
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
 
-webkit.org/b/178029 http/tests/preload/viewport/meta-viewport-link-headers.php [ Pass Failure ]
+webkit.org/b/178029 http/tests/preload/viewport/meta-viewport-link-headers.py [ Pass Failure ]
 
 webkit.org/b/179201 [ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Skip ]
 

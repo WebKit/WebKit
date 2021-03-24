@@ -3601,7 +3601,7 @@ fast/events/message-port-postMessage-recursive.html [ Timeout Pass ]
 fast/events/page-visibility-iframe-move-test.html [ Timeout Pass ]
 fast/events/tabindex-focus-chain.html [ Failure Timeout Pass ]
 http/tests/misc/delete-frame-during-readystatechange-with-gc-after-video-removal.html [ Crash Pass ]
-http/tests/preload/single_download_preload_headers_charset.php [ Crash Failure Pass ]
+http/tests/preload/single_download_preload_headers_charset.py [ Crash Failure Pass ]
 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Crash Timeout Pass ]
 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout Failure Crash ]
 http/tests/security/contentSecurityPolicy/block-favicon.html [ Failure Pass ]
@@ -3759,7 +3759,7 @@ webkit.org/b/177284 transitions/transition-display-property.html [ ImageOnlyFail
 webkit.org/b/177077 imported/blink/fast/events/panScroll-panIcon.html [ Pass ImageOnlyFailure Crash ]
 
 webkit.org/b/176598 http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Pass Crash ]
-webkit.org/b/176606 http/tests/preload/single_download_preload_headers.php [ Pass Crash ]
+webkit.org/b/176606 http/tests/preload/single_download_preload_headers.py [ Pass Crash ]
 webkit.org/b/176609 http/tests/websocket/tests/hybi/close-code-and-reason.html [ Pass Crash ]
 webkit.org/b/176632 http/tests/websocket/tests/hybi/websocket-pending-activity.html [ Pass Crash ]
 

@@ -1,16 +1,22 @@
-<?php
-header("Link: <http://127.0.0.1:8000/resources/dummy.js>; rel=preload; as=script", false);
-header("LiNk:<http://127.0.0.1:8000/resources/dummy.css>; rel=preload; as=style", false);
-header("Link: <http://127.0.0.1:8000/resources/square100.png>;rel=preload;as=image", false);
-header("Link: <http://127.0.0.1:8000/resources/square100.png?background>;rel=preload;as=image", false);
-header("Link: <http://127.0.0.1:8000/resources/Ahem.woff>; rel=preload; as=font; crossorigin", false);
-header("Link: <http://127.0.0.1:8000/resources/test.mp4>; rel=preload; as=video", false);
-header("Link: <http://127.0.0.1:8000/resources/test.oga>; rel=preload; as=audio", false);
-header("link: <http://127.0.0.1:8000/security/resources/captions.vtt>; rel=preload; as=track", false);
-header("Link: <http://127.0.0.1:8000/resources/dummy.xml?foobar>; rel=preload; as=foobar", false);
-header("Link: <http://127.0.0.1:8000/resources/dummy.xml>; as=fetch; crossorigin; rel=preload", false);
-?>
-<!DOCTYPE html>
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Link: <http://127.0.0.1:8000/resources/dummy.js>; rel=preload; as=script\r\n'
+    'LiNk:<http://127.0.0.1:8000/resources/dummy.css>; rel=preload; as=style\r\n'
+    'Link: <http://127.0.0.1:8000/resources/square100.png>;rel=preload;as=image\r\n'
+    'Link: <http://127.0.0.1:8000/resources/square100.png?background>;rel=preload;as=image\r\n'
+    'Link: <http://127.0.0.1:8000/resources/Ahem.woff>; rel=preload; as=font; crossorigin\r\n'
+    'Link: <http://127.0.0.1:8000/resources/test.mp4>; rel=preload; as=video\r\n'
+    'Link: <http://127.0.0.1:8000/resources/test.oga>; rel=preload; as=audio\r\n'
+    'link: <http://127.0.0.1:8000/security/resources/captions.vtt>; rel=preload; as=track\r\n'
+    'Link: <http://127.0.0.1:8000/resources/dummy.xml?foobar>; rel=preload; as=foobar\r\n'
+    'Link: <http://127.0.0.1:8000/resources/dummy.xml>; as=fetch; crossorigin; rel=preload\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<!DOCTYPE html>
 <script src="/js-test-resources/testharness.js"></script>
 <script src="/js-test-resources/testharnessreport.js"></script>
 <script>
@@ -60,4 +66,4 @@ header("Link: <http://127.0.0.1:8000/resources/dummy.xml>; as=fetch; crossorigin
             t.done();
             }), 100);
     }));
-</script>
+</script>''')

@@ -1,10 +1,16 @@
-<?php
-header("Link: <http://127.0.0.1:8000/resources/square100.png?timer>;rel=preload;as=image;\"", false);
-header("Link: <http://127.0.0.1:8000/resources/square100.png?control>;rel=preload;as=image;\"", false);
-header("Link: <http://127.0.0.1:8000/resources/square100.png?large>;rel=preload;as=image;media=\"(min-width: 300px)\"", false);
-header("Link: <http://127.0.0.1:8000/resources/square100.png?small>;rel=preload;as=image;media=\"(max-width: 299px)\"", false);
-?>
-<!DOCTYPE html>
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Link: <http://127.0.0.1:8000/resources/square100.png?timer>;rel=preload;as=image;\"\r\n'
+    'Link: <http://127.0.0.1:8000/resources/square100.png?control>;rel=preload;as=image;\"\r\n'
+    'Link: <http://127.0.0.1:8000/resources/square100.png?large>;rel=preload;as=image;media=\"(min-width: 300px)\"\r\n'
+    'Link: <http://127.0.0.1:8000/resources/square100.png?small>;rel=preload;as=image;media=\"(max-width: 299px)\"\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<!DOCTYPE html>
 <meta name="viewport" content="width=160">
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
@@ -42,4 +48,4 @@ header("Link: <http://127.0.0.1:8000/resources/square100.png?small>;rel=preload;
         t.step_timeout(test, timeout);
     }));
     img.src = "http://127.0.0.1:8000/resources/square100.png?timer";
-</script>
+</script>''')

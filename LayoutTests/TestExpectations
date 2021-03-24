@@ -2577,7 +2577,7 @@ webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display/display-cont
 ### END OF display: contents failures
 ########################################
 
-webkit.org/b/170122 http/tests/preload/single_download_preload_headers_charset.php [ Pass Failure ]
+webkit.org/b/170122 http/tests/preload/single_download_preload_headers_charset.py [ Pass Failure ]
 
 ########################################
 ### START OF -disabled tests

@@ -1,7 +1,13 @@
-<?php
-header("Link: <resources/success.js>; rel=preload; as=script", false);
-?>
-<script src="../../resources/js-test-pre.js"></script>
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Link: <resources/success.js>; rel=preload; as=script\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<script src="../../resources/js-test-pre.js"></script>
 <script>
 jsTestIsAsync = true;
 
@@ -28,4 +34,4 @@ function test()
 }
 </script>
 <body onload="test()">
-<script src="../../resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>''')
