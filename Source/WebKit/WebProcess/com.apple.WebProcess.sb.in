@@ -1544,6 +1544,7 @@
             "com.apple.tccd"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
+            "com.apple.accessibility.mediaaccessibilityd"
             "com.apple.audio.AudioComponentRegistrar" "com.apple.audio.audiohald" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"
             "com.apple.coremedia.endpointplaybacksession.xpc" "com.apple.coremedia.endpointremotecontrolsession.xpc" "com.apple.coremedia.routediscoverer.xpc"
             "com.apple.coremedia.routingcontext.xpc" "com.apple.coremedia.volumecontroller.xpc" "com.apple.lskdd" "com.apple.mediaremoted.xpc" "com.apple.trustd.agent"
@@ -1557,7 +1558,6 @@
         (extension "com.apple.webkit.extension.mach")
         (xpc-service-name
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
-            "com.apple.accessibility.mediaaccessibilityd"
             "com.apple.audio.SandboxHelper"
             "com.apple.coremedia.videodecoder"
             "com.apple.coremedia.videoencoder"
