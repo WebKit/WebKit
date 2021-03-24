@@ -1058,7 +1058,7 @@ webkit.org/b/209725 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-draw
 
 webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyFailure ]
 
-webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php [ Failure ]
+webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
 
 webkit.org/b/210796 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Failure ]
 

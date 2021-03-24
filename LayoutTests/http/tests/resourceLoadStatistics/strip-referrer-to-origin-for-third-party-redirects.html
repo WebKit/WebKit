@@ -21,13 +21,13 @@
 
     let referrer;
     setEnableFeature(true, function() {
-        fetch("resources/echo-referrer.php").then(function(response) {
+        fetch("resources/echo-referrer.py").then(function(response) {
             return response.text();
         }).then(function(data) {
             referrer = data;
             shouldBeEqualToString("referrer", "http://127.0.0.1:8000/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html");
 
-            openIframe("resources/redirect.php?redirectTo=http://localhost:8000/resourceLoadStatistics/resources/echo-referrer.php", function () {
+            openIframe("resources/redirect.py?redirectTo=http://localhost:8000/resourceLoadStatistics/resources/echo-referrer.py", function () {
                 setEnableFeature(false, finishJSTest);
             });
         }).catch(function(error) {

@@ -14,12 +14,12 @@
     const thirdPartyOrigin = "http://localhost:8000";
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const firstPartyCookieName = "firstPartyCookie";
-    const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
-    const subPathToSetFirstPartyCookieRandom = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value&dummyParam=" + Math.random();
+    const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
+    const subPathToSetFirstPartyCookieRandom = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value&dummyParam=" + Math.random();
     const thirdPartyCookieName = "thirdPartyCookie";
-    const subPathToSetThirdPartyCookie = "/set-cookie.php?name=" + thirdPartyCookieName + "&value=value";
+    const subPathToSetThirdPartyCookie = "/set-cookie.py?name=" + thirdPartyCookieName + "&value=value";
     const fragmentWithReturnUrl = "http://" + partitionHost + "/resourceLoadStatistics/cookie-deletion.html";
-    const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + thirdPartyCookieName;
+    const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieName + "&name2=" + thirdPartyCookieName;
 
     function finishTest() {
         console.log("in finishTest")

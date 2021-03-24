@@ -1,5 +1,76 @@
 2021-03-24  Chris Gambrell  <cgambrell@apple.com>
 
+        [LayoutTests] Convert http/tests/resourceLoadStatistics convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223541
+        <rdar://problem/75639142>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/resourceLoadStatistics/add-blocking-to-redirect.html:
+        * http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import.html:
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource-expected.txt:
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html:
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname.html:
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html:
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-matching-cname.html:
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-no-cname.html:
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html:
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html:
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html:
+        * http/tests/resourceLoadStatistics/cookie-deletion.html:
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html:
+        * http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html:
+        * http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.php: Removed.
+        * http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py: Added.
+        * http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-cookie-blocking-between-each-other.html:
+        * http/tests/resourceLoadStatistics/grandfathering.html:
+        * http/tests/resourceLoadStatistics/no-third-party-cookie-blocking-when-itp-is-off.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/resources/cached-permanent-redirect.php:
+        * http/tests/resourceLoadStatistics/resources/echo-query.php: Removed.
+        * http/tests/resourceLoadStatistics/resources/echo-query.py: Added.
+        * http/tests/resourceLoadStatistics/resources/echo-referrer.php: Removed.
+        * http/tests/resourceLoadStatistics/resources/echo-referrer.py: Added.
+        * http/tests/resourceLoadStatistics/resources/get-cookies.php: Removed.
+        * http/tests/resourceLoadStatistics/resources/get-cookies.py: Added.
+        * http/tests/resourceLoadStatistics/resources/page-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/resources/page-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/resources/page-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/resources/page-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/resources/redirect.php: Removed.
+        * http/tests/resourceLoadStatistics/resources/redirect.py: Added.
+        * http/tests/resourceLoadStatistics/resources/script-revealing-cookies.php: Removed.
+        * http/tests/resourceLoadStatistics/resources/script-revealing-cookies.py: Added.
+        * http/tests/resourceLoadStatistics/resources/set-all-kinds-of-cookies.php: Removed.
+        * http/tests/resourceLoadStatistics/resources/set-all-kinds-of-cookies.py: Added.
+        * http/tests/resourceLoadStatistics/resources/set-cookie-on-redirect.php: Removed.
+        * http/tests/resourceLoadStatistics/resources/set-cookie-on-redirect.py: Added.
+        * http/tests/resourceLoadStatistics/resources/set-cookie.php: Removed.
+        * http/tests/resourceLoadStatistics/resources/set-cookie.py: Added.
+        * http/tests/resourceLoadStatistics/resources/worker-importing-localhost-script.js:
+        (onmessage):
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html:
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html:
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-requests.html:
+        * http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php: Removed.
+        * http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html:
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking.html:
+        * http/tests/storageAccess/resources/self-navigating-frame-after-granted-access.html:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2021-03-24  Chris Gambrell  <cgambrell@apple.com>
+
         [LayoutTests] Convert http/tests/performance convert PHP to Python
         https://bugs.webkit.org/show_bug.cgi?id=223599
         <rdar://problem/75707991>

@@ -92,7 +92,7 @@
     }
 
     function run() {
-        fetch("resources/set-all-kinds-of-cookies.php?dummy=" + Math.random())
+        fetch("resources/set-all-kinds-of-cookies.py?dummy=" + Math.random())
             .then(() => {
                 document.cookie = "clientSideCookie=1";
                 cookiesBeforeChange = internals.getCookies();

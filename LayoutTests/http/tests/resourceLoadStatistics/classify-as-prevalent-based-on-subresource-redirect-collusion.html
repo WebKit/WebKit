@@ -60,7 +60,7 @@
                     testFailed("Host did not get set as non-prevalent resource.");
                 let iframeElement = document.createElement("iframe");
                 iframeElement.onload = runTest;
-                iframeElement.src = "http://localhost:8000/resourceLoadStatistics/resources/redirect.php?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/onclick.html";
+                iframeElement.src = "http://localhost:8000/resourceLoadStatistics/resources/redirect.py?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/onclick.html";
                 document.body.appendChild(iframeElement);
             });
         });

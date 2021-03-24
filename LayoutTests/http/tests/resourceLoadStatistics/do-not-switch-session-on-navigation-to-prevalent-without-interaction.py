@@ -1,7 +1,13 @@
-<?php
-    header("Cache-Control: no-store");
-?>
-<!DOCTYPE html>
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Cache-Control: no-store\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -34,25 +40,25 @@
         if (shouldHaveSessionCookie && hasSessionCookie)
             testPassed("Should have and has the session cookie.");
         else if (shouldHaveSessionCookie && !hasSessionCookie) {
-            testFailed("Should have but doesn't have the session cookie.");
+            testFailed("Should have but doesn\'t have the session cookie.");
             setEnableFeature(false, finishJSTest);
         } else if (!shouldHaveSessionCookie && hasSessionCookie) {
-            testFailed("Shouldn't have but has the session cookie.");
+            testFailed("Shouldn\'t have but has the session cookie.");
             setEnableFeature(false, finishJSTest);
         } else
-            testPassed("Shouldn't have and doesn't have the session cookie.");
+            testPassed("Shouldn\'t have and doesn\'t have the session cookie.");
 
 
         if (shouldHavePersistentCookie && hasPersistentCookie)
             testPassed("Should have and has the persistent cookie.");
         else if (shouldHavePersistentCookie && !hasPersistentCookie) {
-            testFailed("Should have but doesn't have the persistent cookie.");
+            testFailed("Should have but doesn\'t have the persistent cookie.");
             setEnableFeature(false, finishJSTest);
         } else if (!shouldHavePersistentCookie && hasPersistentCookie) {
-            testFailed("Shouldn't have but has the persistent cookie.");
+            testFailed("Shouldn\'t have but has the persistent cookie.");
             setEnableFeature(false, finishJSTest);
         } else
-            testPassed("Shouldn't have and doesn't have the persistent cookie.");
+            testPassed("Shouldn\'t have and doesn\'t have the persistent cookie.");
     }
 
     function runTest() {
@@ -76,7 +82,7 @@
                     setEnableFeature(false, finishJSTest);
                 } else
                     testPassed("Origin has no isolated session.");
-                document.location.href = nonPrevalentOrigin + "/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.php#step2";
+                document.location.href = nonPrevalentOrigin + "/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py#step2";
                 break;
             case "#step2":
                 document.location.hash = "step3";
@@ -91,7 +97,7 @@
                 });
                 break;
             case "#step3":
-                document.location.href = prevalentOrigin + "/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.php#step4";
+                document.location.href = prevalentOrigin + "/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py#step4";
                 break;
             case "#step4":
                 checkCookies(true, true);
@@ -108,4 +114,4 @@
     }
 </script>
 </body>
-</html>
+</html>''')
