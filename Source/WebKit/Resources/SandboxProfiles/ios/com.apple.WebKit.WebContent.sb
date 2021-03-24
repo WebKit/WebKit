@@ -96,7 +96,7 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow
+                (allow (with telemetry)
                     iokit-external-method)
             )
         )
@@ -246,7 +246,7 @@
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-external-trap)
-                (allow
+                (allow (with telemetry)
                     iokit-async-external-method
                     iokit-external-method)
             )
@@ -416,7 +416,7 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow
+                (allow (with telemetry)
                     iokit-external-method)
             )
         )
@@ -432,7 +432,7 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow
+                (allow (with telemetry)
                     iokit-external-method)
             )
         )
@@ -1029,7 +1029,7 @@
             (deny (with telemetry)
                 iokit-async-external-method
                 iokit-external-trap)
-            (allow
+            (allow (with telemetry)
                 iokit-external-method)
         )
     )
