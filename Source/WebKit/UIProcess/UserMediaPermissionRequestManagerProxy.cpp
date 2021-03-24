@@ -699,8 +699,10 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool reve
 
     RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([this, weakThis = makeWeakPtr(this), revealIdsAndLabels, completion = WTFMove(completion)] (auto&& devices) mutable {
 
-        if (!weakThis)
+        if (!weakThis) {
             completion({ });
+            return;
+        }
 
         unsigned cameraCount = 0;
         unsigned microphoneCount = 0;
