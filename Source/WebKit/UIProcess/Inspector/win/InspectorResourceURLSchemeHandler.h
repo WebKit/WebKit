@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebInspectorUI.h"
+#pragma once
 
-#include "RemoteWebInspectorUI.h"
-
-#include <WebCore/WebCoreBundleWin.h>
-#include <wtf/FileSystem.h>
-#include <wtf/text/WTFString.h>
+#include "WebURLSchemeHandler.h"
 
 namespace WebKit {
 
-bool WebInspectorUI::canSave()
-{
-    return false;
-}
+class WebURLSchemeTask;
 
-String WebInspectorUI::localizedStringsURL() const
-{
-    return "inspector-resource:///localizedStrings.js"_s;
-}
+class InspectorResourceURLSchemeHandler final : public WebURLSchemeHandler {
+public:
+    static Ref<InspectorResourceURLSchemeHandler> create() { return adoptRef(*new InspectorResourceURLSchemeHandler()); }
 
-String RemoteWebInspectorUI::localizedStringsURL() const
-{
-    return "inspector-resource:///localizedStrings.js"_s;
-}
+private:
+    InspectorResourceURLSchemeHandler() = default;
+
+    // WebURLSchemeHandler
+    void platformStartTask(WebPageProxy&, WebURLSchemeTask&) final;
+    void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final { }
+    void platformTaskCompleted(WebURLSchemeTask&) final { }
+};
 
 } // namespace WebKit

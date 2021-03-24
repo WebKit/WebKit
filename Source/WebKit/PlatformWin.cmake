@@ -57,6 +57,7 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
+    UIProcess/Inspector/win/InspectorResourceURLSchemeHandler.cpp
     UIProcess/Inspector/win/WebInspectorUIProxyWin.cpp
 
     UIProcess/Launcher/win/ProcessLauncherWin.cpp

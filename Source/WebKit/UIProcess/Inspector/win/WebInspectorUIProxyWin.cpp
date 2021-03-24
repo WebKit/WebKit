@@ -30,6 +30,7 @@
 #include "APINavigation.h"
 #include "APINavigationAction.h"
 #include "APIPageConfiguration.h"
+#include "InspectorResourceURLSchemeHandler.h"
 #include "PageClientImpl.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageGroup.h"
@@ -202,7 +203,6 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     preferences->setDeveloperExtrasEnabled(true);
     preferences->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
-    preferences->setAllowFileAccessFromFileURLs(true);
     preferences->setJavaScriptRuntimeFlags({ });
     auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage()));
     auto pageConfiguration = API::PageConfiguration::create();
@@ -246,6 +246,8 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     m_inspectorViewWindow = inspectorPage->viewWidget();
     WKPageSetPageNavigationClient(toAPI(inspectorPage), &navigationClient.base);
 
+    inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_s);
+
     return inspectorPage;
 }
 
@@ -269,22 +271,12 @@ void WebInspectorUIProxy::platformCloseFrontendPageAndWindow()
 
 String WebInspectorUIProxy::inspectorPageURL()
 {
-#if USE(CF)
-    RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("Main"), CFSTR("html"), CFSTR("WebInspectorUI")));
-    return CFURLGetString(htmlURLRef.get());
-#else
-    return { };
-#endif
+    return "inspector-resource:///Main.html"_s;
 }
 
 String WebInspectorUIProxy::inspectorTestPageURL()
 {
-#if USE(CF)
-    RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("Test"), CFSTR("html"), CFSTR("WebInspectorUI")));
-    return CFURLGetString(htmlURLRef.get());
-#else
-    return { };
-#endif
+    return "inspector-resource:///Test.html"_s;
 }
 
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
