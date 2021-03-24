@@ -1,3 +1,12 @@
+2021-03-24  Robert Jenner  <jenner@apple.com>
+
+        Remove unused JS and CSS files of media controls
+        https://bugs.webkit.org/show_bug.cgi?id=214955
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Test expectation was removed in a webkit patch, casuing a slowdown on EWS. Re-adding test expectation to Failure.
+
 2021-03-24  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r274927.
