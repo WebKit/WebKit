@@ -1,3 +1,21 @@
+2021-03-24  Rob Buis  <rbuis@igalia.com>
+
+        [css-contain] Parse CSS contain property
+        https://bugs.webkit.org/show_bug.cgi?id=223252
+
+        Reviewed by Sam Weinig.
+
+        Address post land review comments.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeContain):
+        * rendering/style/RenderStyleConstants.h:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueContain):
+
 2021-03-24  Sam Weinig  <weinig@apple.com>
 
         Update CSS Color 5 color-mix() implementation to match the latest draft spec

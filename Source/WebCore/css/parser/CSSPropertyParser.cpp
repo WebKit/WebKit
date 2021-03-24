@@ -3926,32 +3926,35 @@ static RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
 
 static RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
 {
-    RefPtr<CSSPrimitiveValue> singleValue;
-    if (range.peek().type() == IdentToken)
-        singleValue = consumeIdent<CSSValueNone, CSSValueStrict, CSSValueContent>(range);
-    if (singleValue)
+    if (auto singleValue = consumeIdent<CSSValueNone, CSSValueStrict, CSSValueContent>(range))
         return singleValue;
     auto list = CSSValueList::createSpaceSeparated();
-    RefPtr<CSSPrimitiveValue> size, layout, style, paint;
-    while (true) {
-        auto id = range.peek().id();
-        if (id == CSSValueSize && !size)
+    RefPtr<CSSPrimitiveValue> size, layout, paint;
+    while (!range.atEnd()) {
+        switch (range.peek().id()) {
+        case CSSValueSize:
+            if (size)
+                return nullptr;
             size = consumeIdent(range);
-        else if (id == CSSValueLayout && !layout)
-            layout = consumeIdent(range);
-        else if (id == CSSValueStyle && !style)
-            style = consumeIdent(range);
-        else if (id == CSSValuePaint && !paint)
-            paint = consumeIdent(range);
-        else
             break;
+        case CSSValueLayout:
+            if (layout)
+                return nullptr;
+            layout = consumeIdent(range);
+            break;
+        case CSSValuePaint:
+            if (paint)
+                return nullptr;
+            paint = consumeIdent(range);
+            break;
+        default:
+            return nullptr;
+        }
     }
     if (size)
         list->append(size.releaseNonNull());
     if (layout)
         list->append(layout.releaseNonNull());
-    if (style)
-        list->append(style.releaseNonNull());
     if (paint)
         list->append(paint.releaseNonNull());
     if (!list->length())

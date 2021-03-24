@@ -1210,9 +1210,8 @@ enum class MathStyle : uint8_t {
 
 enum class Containment : uint8_t {
     Layout   = 1 << 0,
-    Style    = 1 << 1,
-    Paint    = 1 << 2,
-    Size     = 1 << 3,
+    Paint    = 1 << 1,
+    Size     = 1 << 2,
 };
 
 extern const float defaultMiterLimit;
