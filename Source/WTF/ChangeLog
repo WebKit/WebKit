@@ -1,3 +1,19 @@
+2021-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Address undefined behavior found by UBSan in StringToIntegerConversion.h
+        https://bugs.webkit.org/show_bug.cgi?id=223694
+
+        Reviewed by Geoffrey Garen.
+
+        Update StringToIntegerConversion to deal with overflows in a well-defined manner,
+        by relying on CheckedArithmetics. This addresses undefined behavior reborted by
+        UBSan:
+        - wtf/text/StringToIntegerConversion.h:94:30: runtime error: signed integer overflow: 2147483640 + 8 cannot be represented in type 'int'
+        - wtf/text/StringToIntegerConversion.h:104:17: runtime error: negation of -2147483648 cannot be represented in type 'int'; cast to an unsigned type to negate this value to itself
+
+        * wtf/text/StringToIntegerConversion.h:
+        (WTF::toIntegralType):
+
 2021-03-24  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r274927.

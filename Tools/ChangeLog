@@ -1,3 +1,15 @@
+2021-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Address undefined behavior found by UBSan in StringToIntegerConversion.h
+        https://bugs.webkit.org/show_bug.cgi?id=223694
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-03-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Followup to https://trac.webkit.org/changeset/274928/webkit

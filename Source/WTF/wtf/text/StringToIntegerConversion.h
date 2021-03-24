@@ -27,6 +27,7 @@
 
 #include <unicode/utypes.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/CheckedArithmetic.h>
 
 namespace WTF {
 
@@ -48,11 +49,9 @@ inline bool isCharacterAllowedInBase(UChar c, int base)
 template<typename IntegralType, typename CharacterType>
 inline IntegralType toIntegralType(const CharacterType* data, size_t length, bool* ok, int base = 10)
 {
-    static constexpr IntegralType integralMax = std::numeric_limits<IntegralType>::max();
     static constexpr bool isSigned = std::numeric_limits<IntegralType>::is_signed;
-    const IntegralType maxMultiplier = integralMax / base;
 
-    IntegralType value = 0;
+    Checked<IntegralType, RecordOverflow> value;
     bool isOk = false;
     bool isNegative = false;
 
@@ -88,24 +87,16 @@ inline IntegralType toIntegralType(const CharacterType* data, size_t length, boo
         else
             digitValue = c - 'A' + 10;
 
-        if (value > maxMultiplier || (value == maxMultiplier && digitValue > (integralMax % base) + isNegative))
-            goto bye;
-
-        value = base * value + digitValue;
+        value *= static_cast<IntegralType>(base);
+        if (isNegative)
+            value -= digitValue;
+        else
+            value += digitValue;
         ++data;
     }
 
-#if COMPILER(MSVC)
-#pragma warning(push, 0)
-#pragma warning(disable:4146)
-#endif
-
-    if (isNegative)
-        value = -value;
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
+    if (UNLIKELY(value.hasOverflowed()))
+        goto bye;
 
     // skip trailing space
     while (length && isSpaceOrNewline(*data)) {
@@ -118,7 +109,7 @@ inline IntegralType toIntegralType(const CharacterType* data, size_t length, boo
 bye:
     if (ok)
         *ok = isOk;
-    return isOk ? value : 0;
+    return isOk ? value.unsafeGet() : 0;
 }
 
 template<typename IntegralType, typename StringOrStringView>
