@@ -1,3 +1,14 @@
+2021-03-24  Michael Saboff  <msaboff@apple.com>
+
+        [YARR] Interpreter incorrectly matches non-BMP characters with multiple . w/dotAll flag
+        https://bugs.webkit.org/show_bug.cgi?id=223666
+
+        Reviewed by Mark Lam.
+
+        Added tests for dotAll.  Also made sure that we test both JIT and non-JIT execution.
+
+        * stress/regexp-dot-match-nonBMP.js:
+
 2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Rope string equal operation should first check length

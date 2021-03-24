@@ -436,6 +436,9 @@ public:
     bool checkCharacterClassDontAdvanceInputForNonBMP(CharacterClass* characterClass, unsigned negativeInputOffset)
     {
         int readCharacter = characterClass->hasOnlyNonBMPCharacters() ? input.readSurrogatePairChecked(negativeInputOffset) :  input.readChecked(negativeInputOffset);
+        if (readCharacter < 0)
+            return false;
+
         return testCharacterClass(characterClass, readCharacter);
     }
 

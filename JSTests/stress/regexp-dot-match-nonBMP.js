@@ -1,3 +1,6 @@
+//@ runDefault
+//@ runNoJIT
+
 function shouldMatch(regexp, str) {
     let result = regexp.test(str);
     if (result !== true)
@@ -18,3 +21,10 @@ shouldMatch(/../, s);
 shouldntMatch(/../u, s);
 shouldntMatch(/.../, s);
 shouldntMatch(/.../u, s);
+
+shouldMatch(/./s, s);
+shouldMatch(/./su, s);
+shouldMatch(/../s, s);
+shouldntMatch(/../su, s);
+shouldntMatch(/.../s, s);
+shouldntMatch(/.../su, s);

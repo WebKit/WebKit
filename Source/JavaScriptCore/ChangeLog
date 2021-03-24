@@ -1,3 +1,16 @@
+2021-03-24  Michael Saboff  <msaboff@apple.com>
+
+        [YARR] Interpreter incorrectly matches non-BMP characters with multiple . w/dotAll flag
+        https://bugs.webkit.org/show_bug.cgi?id=223666
+
+        Reviewed by Mark Lam.
+
+        In checkCharacterClassDontAdvanceInputForNonBMP(), we need to check for input.readChecked() returning -1
+        and return that the character class didn't match.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::checkCharacterClassDontAdvanceInputForNonBMP):
+
 2021-03-24  Saam Barati  <sbarati@apple.com>
 
         r271034 added code in constant folding phase that's unreachable given current invariants of our ICs and PutByIdStatus
