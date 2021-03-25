@@ -1,3 +1,15 @@
+2021-03-25  Alberto Garcia  <berto@igalia.com>
+
+        REGRESSION(r271560): [Linux] release assert in Thread::initializePlatformThreading
+        https://bugs.webkit.org/show_bug.cgi?id=223069
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace an existing signal handler instead of aborting.
+
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::initializePlatformThreading):
+
 2021-03-24  Mark Lam  <mark.lam@apple.com>
 
         WTF::setPermissionsOfConfigPage() should allow its VM_FLAGS_PERMANENT workaround unconditionally.
