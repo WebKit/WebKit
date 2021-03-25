@@ -342,7 +342,7 @@ public:
     void simulateResourceLoadStatisticsSessionRestart(PAL::SessionID, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(PAL::SessionID, URL&&, CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementAttributionReportURLsForTesting(PAL::SessionID, URL&& sourceURL, URL&& attributeOnURL, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementAttributionReportURLsForTesting(PAL::SessionID, URL&& sourceURL, URL&& destinationURL, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID, CompletionHandler<void()>&&);
     void setPCMFraudPreventionValuesForTesting(PAL::SessionID, String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID, CompletionHandler<void()>&&);
 

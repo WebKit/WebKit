@@ -54,7 +54,7 @@ bool PrivateClickMeasurement::isValid() const
         && m_attributionTriggerData.value().isValid()
         && m_sourceID.isValid()
         && !m_sourceSite.registrableDomain.isEmpty()
-        && !m_attributeOnSite.registrableDomain.isEmpty()
+        && !m_destinationSite.registrableDomain.isEmpty()
         && m_earliestTimeToSend;
 }
 
@@ -143,7 +143,7 @@ URL PrivateClickMeasurement::attributionReportAttributeOnURL() const
     if (!isValid())
         return URL();
 
-    return attributionReportURL(m_attributeOnSite.registrableDomain);
+    return attributionReportURL(m_destinationSite.registrableDomain);
 }
 
 Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
@@ -155,7 +155,7 @@ Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
     reportDetails->setString("source_engagement_type"_s, "click"_s);
     reportDetails->setString("source_site"_s, m_sourceSite.registrableDomain.string());
     reportDetails->setInteger("source_id"_s, m_sourceID.id);
-    reportDetails->setString("attributed_on_site"_s, m_attributeOnSite.registrableDomain.string());
+    reportDetails->setString("attributed_on_site"_s, m_destinationSite.registrableDomain.string());
     reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
     reportDetails->setInteger("version"_s, 2);
 

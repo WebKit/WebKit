@@ -1,3 +1,61 @@
+2021-03-25  John Wilander  <wilander@apple.com>
+
+        PCM: Rename attributeOn to attributionDestination and change the IDL data type of attributionSourceId to unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=223661
+        <rdar://problem/75762075>
+
+        Reviewed by Brent Fulgham.
+
+        The PR review of the update of the PCM spec lead WebKit, Mozilla, and Google to decide on two changes:
+        1. Rename attributeOn to attributionDestination
+        2. Change the IDL data type of attributionSourceId from DOMString to unsigned long
+
+        The spec change can be seen in this commit:
+        https://github.com/privacycg/private-click-measurement/pull/75/commits/8623b5df5e899e6652bc5b00313585f7eeafa797
+
+        This patch makes those changes, plus changes names of SPIs, functions, and variables accordingly.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::removeUnattributed):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributionToString):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttribution):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::attributePrivateClickMeasurement):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::handleAttribution):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::setAttributionReportURLsForTesting):
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _setPrivateClickMeasurementAttributionReportURLsForTesting:destinationURL:completionHandler:]):
+        (-[WKWebView _setPrivateClickMeasurementAttributionReportURLsForTesting:attributeOnURL:completionHandler:]): Deleted.
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setUIEventAttribution:]):
+        (-[WKWebView _uiEventAttribution]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        * UIProcess/WebPageProxy.h:
+
 2021-03-25  Chris Dumez  <cdumez@apple.com>
 
         Do not do process pre-warming when the system is under memory pressure

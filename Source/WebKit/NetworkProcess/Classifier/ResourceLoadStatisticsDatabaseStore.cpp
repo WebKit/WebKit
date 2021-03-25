@@ -2965,14 +2965,14 @@ void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const
 PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement* statement, PrivateClickMeasurementAttributionType attributionType)
 {
     auto sourceSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(0));
-    auto attributeOnSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(1));
+    auto destinationSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(1));
     auto sourceID = statement->getColumnInt(2);
     auto timeOfAdClick = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnDouble(5) : statement->getColumnDouble(3);
     auto token = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnText(7) : statement->getColumnText(4);
     auto signature = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnText(8) : statement->getColumnText(5);
     auto keyID = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnText(9) : statement->getColumnText(6);
 
-    PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributeOnSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(attributeOnSiteDomain)), { }, { }, WallTime::fromRawSeconds(timeOfAdClick));
+    PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributionDestinationSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), { }, { }, WallTime::fromRawSeconds(timeOfAdClick));
     
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
         auto attributionTriggerData = statement->getColumnInt(3);
@@ -2990,18 +2990,18 @@ PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMe
     return attribution;
 }
 
-std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPrivateClickMeasurement>> ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributeOnSite& attributeOnSite)
+std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPrivateClickMeasurement>> ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite)
 {
     auto sourceSiteDomainID = domainID(sourceSite.registrableDomain);
-    auto attributeOnSiteDomainID = domainID(attributeOnSite.registrableDomain);
+    auto destinationSiteDomainID = domainID(destinationSite.registrableDomain);
 
-    if (!sourceSiteDomainID || !attributeOnSiteDomainID)
+    if (!sourceSiteDomainID || !destinationSiteDomainID)
         return std::make_pair(WTF::nullopt, WTF::nullopt);
 
     auto findUnattributedScopedStatement = this->scopedStatement(m_findUnattributedStatement, findUnattributedQuery, "findPrivateClickMeasurement"_s);
     if (!findUnattributedScopedStatement
         || findUnattributedScopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-        || findUnattributedScopedStatement->bindInt(2, *attributeOnSiteDomainID) != SQLITE_OK) {
+        || findUnattributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement findUnattributedQuery, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
@@ -3009,7 +3009,7 @@ std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPriv
     auto findAttributedScopedStatement = this->scopedStatement(m_findAttributedStatement, findAttributedQuery, "findPrivateClickMeasurement"_s);
     if (!findAttributedScopedStatement
         || findAttributedScopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-        || findAttributedScopedStatement->bindInt(2, *attributeOnSiteDomainID) != SQLITE_OK) {
+        || findAttributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement findAttributedQuery, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
@@ -3028,9 +3028,9 @@ std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPriv
 void ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement(PrivateClickMeasurement&& attribution, PrivateClickMeasurementAttributionType attributionType)
 {
     auto sourceData = ensureResourceStatisticsForRegistrableDomain(attribution.sourceSite().registrableDomain);
-    auto attributeOnData = ensureResourceStatisticsForRegistrableDomain(attribution.attributeOnSite().registrableDomain);
+    auto attributionDestinationData = ensureResourceStatisticsForRegistrableDomain(attribution.destinationSite().registrableDomain);
 
-    if (!sourceData.second || !attributeOnData.second)
+    if (!sourceData.second || !attributionDestinationData.second)
         return;
 
     auto& sourceUnlinkableToken = attribution.sourceUnlinkableToken();
@@ -3042,7 +3042,7 @@ void ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement(PrivateC
         auto statement = SQLiteStatement(m_database, insertAttributedPrivateClickMeasurementQuery);
         if (statement.prepare() != SQLITE_OK
             || statement.bindInt(1, *sourceData.second) != SQLITE_OK
-            || statement.bindInt(2, *attributeOnData.second) != SQLITE_OK
+            || statement.bindInt(2, *attributionDestinationData.second) != SQLITE_OK
             || statement.bindInt(3, attribution.sourceID().id) != SQLITE_OK
             || statement.bindInt(4, attributionTriggerData) != SQLITE_OK
             || statement.bindInt(5, priority) != SQLITE_OK
@@ -3061,7 +3061,7 @@ void ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement(PrivateC
     auto statement = SQLiteStatement(m_database, insertUnattributedPrivateClickMeasurementQuery);
     if (statement.prepare() != SQLITE_OK
         || statement.bindInt(1, *sourceData.second) != SQLITE_OK
-        || statement.bindInt(2, *attributeOnData.second) != SQLITE_OK
+        || statement.bindInt(2, *attributionDestinationData.second) != SQLITE_OK
         || statement.bindInt(3, attribution.sourceID().id) != SQLITE_OK
         || statement.bindDouble(4, attribution.timeOfAdClick().secondsSinceEpoch().value()) != SQLITE_OK
         || statement.bindText(5, sourceUnlinkableToken ? sourceUnlinkableToken->tokenBase64URL : emptyString()) != SQLITE_OK
@@ -3086,23 +3086,23 @@ void ResourceLoadStatisticsDatabaseStore::markAllUnattributedPrivateClickMeasure
 void ResourceLoadStatisticsDatabaseStore::removeUnattributed(PrivateClickMeasurement& attribution)
 {
     auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
-    auto attributeOnSiteDomainID = domainID(attribution.attributeOnSite().registrableDomain);
+    auto destinationSiteDomainID = domainID(attribution.destinationSite().registrableDomain);
 
-    if (!sourceSiteDomainID || !attributeOnSiteDomainID)
+    if (!sourceSiteDomainID || !destinationSiteDomainID)
         return;
     
     auto scopedStatement = this->scopedStatement(m_removeUnattributedStatement, removeUnattributedQuery, "removeUnattributed"_s);
 
     if (!scopedStatement
         || scopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-        || scopedStatement->bindInt(2, *attributeOnSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::removeUnattributed, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
 }
 
-Optional<Seconds> ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeasurement(const SourceSite& sourceSite, const AttributeOnSite& attributeOnSite, AttributionTriggerData&& attributionTriggerData)
+Optional<Seconds> ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeasurement(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData)
 {
     // We should always clear expired clicks from the database before scheduling an attribution.
     clearExpiredPrivateClickMeasurement();
@@ -3125,7 +3125,7 @@ Optional<Seconds> ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeas
 
     auto secondsUntilSend = Seconds::infinity();
 
-    auto attribution = findPrivateClickMeasurement(sourceSite, attributeOnSite);
+    auto attribution = findPrivateClickMeasurement(sourceSite, destinationSite);
     auto& previouslyUnattributed = attribution.first;
     auto& previouslyAttributed = attribution.second;
 
@@ -3236,14 +3236,14 @@ void ResourceLoadStatisticsDatabaseStore::clearExpiredPrivateClickMeasurement()
 String ResourceLoadStatisticsDatabaseStore::attributionToString(WebCore::SQLiteStatement* statement, PrivateClickMeasurementAttributionType attributionType)
 {
     auto sourceSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(0));
-    auto attributeOnSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(1));
+    auto destinationSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(1));
     auto sourceID = statement->getColumnInt(2);
 
     StringBuilder builder;
     builder.appendLiteral("Source site: ");
     builder.append(sourceSiteDomain);
     builder.appendLiteral("\nAttribute on site: ");
-    builder.append(attributeOnSiteDomain);
+    builder.append(destinationSiteDomain);
     builder.appendLiteral("\nSource ID: ");
     builder.appendNumber(sourceID);
 
@@ -3331,15 +3331,15 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
 void ResourceLoadStatisticsDatabaseStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& attribution)
 {
     auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
-    auto attributeOnSiteDomainID = domainID(attribution.attributeOnSite().registrableDomain);
+    auto destinationSiteDomainID = domainID(attribution.destinationSite().registrableDomain);
 
-    if (!sourceSiteDomainID || !attributeOnSiteDomainID)
+    if (!sourceSiteDomainID || !destinationSiteDomainID)
         return;
 
     SQLiteStatement clearAttributedStatement(m_database, "DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s);
     if (clearAttributedStatement.prepare() != SQLITE_OK
         || clearAttributedStatement.bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-        || clearAttributedStatement.bindInt(2, *attributeOnSiteDomainID) != SQLITE_OK
+        || clearAttributedStatement.bindInt(2, *destinationSiteDomainID) != SQLITE_OK
         || clearAttributedStatement.step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearSentAttribution failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();

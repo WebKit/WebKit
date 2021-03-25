@@ -46,7 +46,7 @@ namespace WebKit {
 using namespace WebCore;
 
 using SourceSite = PrivateClickMeasurement::SourceSite;
-using AttributeOnSite = PrivateClickMeasurement::AttributeOnSite;
+using AttributionDestinationSite = PrivateClickMeasurement::AttributionDestinationSite;
 using AttributionTriggerData = PrivateClickMeasurement::AttributionTriggerData;
 using EphemeralSourceNonce = PrivateClickMeasurement::EphemeralSourceNonce;
 
@@ -255,7 +255,7 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
         return;
     }
 
-    attribute(SourceSite { WTFMove(redirectDomain) }, AttributeOnSite { firstPartyURL }, WTFMove(attributionTriggerData));
+    attribute(SourceSite { WTFMove(redirectDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData));
 }
 
 void PrivateClickMeasurementManager::startTimer(Seconds seconds)
@@ -263,14 +263,14 @@ void PrivateClickMeasurementManager::startTimer(Seconds seconds)
     m_firePendingAttributionRequestsTimer.startOneShot(m_isRunningTest ? 0_s : seconds);
 }
 
-void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributeOnSite& attributeOnSite, AttributionTriggerData&& attributionTriggerData)
+void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!featureEnabled())
         return;
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
-        resourceLoadStatistics->attributePrivateClickMeasurement(sourceSite, attributeOnSite, WTFMove(attributionTriggerData), [this, weakThis = makeWeakPtr(*this)] (auto optionalSecondsUntilSend) {
+        resourceLoadStatistics->attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData), [this, weakThis = makeWeakPtr(*this)] (auto optionalSecondsUntilSend) {
             if (!weakThis)
                 return;
             if (optionalSecondsUntilSend) {
@@ -474,12 +474,12 @@ void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testUR
         m_tokenSignatureURLForTesting = WTFMove(testURL);
 }
 
-void PrivateClickMeasurementManager::setAttributionReportURLsForTesting(URL&& sourceURL, URL&& attributeOnURL)
+void PrivateClickMeasurementManager::setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL)
 {
-    if (sourceURL.isEmpty() || attributeOnURL.isEmpty())
+    if (sourceURL.isEmpty() || destinationURL.isEmpty())
         m_attributionReportTestConfig = WTF::nullopt;
     else
-        m_attributionReportTestConfig = AttributionReportTestConfig { WTFMove(sourceURL), WTFMove(attributeOnURL) };
+        m_attributionReportTestConfig = AttributionReportTestConfig { WTFMove(sourceURL), WTFMove(destinationURL) };
 }
 
 void PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting()

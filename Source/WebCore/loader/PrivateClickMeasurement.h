@@ -141,24 +141,24 @@ public:
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    struct AttributeOnSite {
-        AttributeOnSite() = default;
-        explicit AttributeOnSite(const URL& url)
+    struct AttributionDestinationSite {
+        AttributionDestinationSite() = default;
+        explicit AttributionDestinationSite(const URL& url)
             : registrableDomain { RegistrableDomain { url } }
         {
         }
 
-        explicit AttributeOnSite(WTF::HashTableDeletedValueType)
+        explicit AttributionDestinationSite(WTF::HashTableDeletedValueType)
             : registrableDomain { WTF::HashTableDeletedValue }
         {
         }
 
-        explicit AttributeOnSite(RegistrableDomain&& domain)
+        explicit AttributionDestinationSite(RegistrableDomain&& domain)
             : registrableDomain { WTFMove(domain) }
         {
         }
         
-        bool operator==(const AttributeOnSite& other) const
+        bool operator==(const AttributionDestinationSite& other) const
         {
             return registrableDomain == other.registrableDomain;
         }
@@ -173,15 +173,15 @@ public:
             return registrableDomain.isHashTableDeletedValue();
         }
 
-        static AttributeOnSite deletedValue()
+        static AttributionDestinationSite deletedValue()
         {
-            return AttributeOnSite { WTF::HashTableDeletedValue };
+            return AttributionDestinationSite { WTF::HashTableDeletedValue };
         }
 
-        static void constructDeletedValue(AttributeOnSite& attributeOnSite)
+        static void constructDeletedValue(AttributionDestinationSite& destinationSite)
         {
-            new (&attributeOnSite) AttributeOnSite;
-            attributeOnSite = AttributeOnSite::deletedValue();
+            new (&destinationSite) AttributionDestinationSite;
+            destinationSite = AttributionDestinationSite::deletedValue();
         }
 
         void deleteValue()
@@ -197,13 +197,13 @@ public:
         RegistrableDomain registrableDomain;
     };
 
-    struct AttributeOnSiteHash {
-        static unsigned hash(const AttributeOnSite& attributeOnSite)
+    struct AttributionDestinationSiteHash {
+        static unsigned hash(const AttributionDestinationSite& destinationSite)
         {
-            return attributeOnSite.registrableDomain.hash();
+            return destinationSite.registrableDomain.hash();
         }
         
-        static bool equal(const AttributeOnSite& a, const AttributeOnSite& b)
+        static bool equal(const AttributionDestinationSite& a, const AttributionDestinationSite& b)
         {
             return a == b;
         }
@@ -248,10 +248,10 @@ public:
     };
 
     PrivateClickMeasurement() = default;
-    PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributeOnSite& attributeOnSite, String&& sourceDescription = { }, String&& purchaser = { }, WallTime timeOfAdClick = WallTime::now())
+    PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, String&& sourceDescription = { }, String&& purchaser = { }, WallTime timeOfAdClick = WallTime::now())
         : m_sourceID { sourceID }
         , m_sourceSite { sourceSite }
-        , m_attributeOnSite { attributeOnSite }
+        , m_destinationSite { destinationSite }
         , m_sourceDescription { WTFMove(sourceDescription) }
         , m_purchaser { WTFMove(purchaser) }
         , m_timeOfAdClick { timeOfAdClick }
@@ -266,7 +266,7 @@ public:
     WEBCORE_EXPORT URL attributionReportAttributeOnURL() const;
     WEBCORE_EXPORT Ref<JSON::Object> attributionReportJSON() const;
     const SourceSite& sourceSite() const { return m_sourceSite; };
-    const AttributeOnSite& attributeOnSite() const { return m_attributeOnSite; };
+    const AttributionDestinationSite& destinationSite() const { return m_destinationSite; };
     WallTime timeOfAdClick() const { return m_timeOfAdClick; }
     Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };
     void setEarliestTimeToSend(WallTime time) { m_earliestTimeToSend = time; }
@@ -321,7 +321,7 @@ private:
 
     SourceID m_sourceID;
     SourceSite m_sourceSite;
-    AttributeOnSite m_attributeOnSite;
+    AttributionDestinationSite m_destinationSite;
     String m_sourceDescription;
     String m_purchaser;
     WallTime m_timeOfAdClick;
@@ -348,7 +348,7 @@ void PrivateClickMeasurement::encode(Encoder& encoder) const
 {
     encoder << m_sourceID.id
         << m_sourceSite.registrableDomain
-        << m_attributeOnSite.registrableDomain
+        << m_destinationSite.registrableDomain
         << m_sourceDescription
         << m_purchaser
         << m_timeOfAdClick
@@ -370,9 +370,9 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     if (!sourceRegistrableDomain)
         return WTF::nullopt;
     
-    Optional<RegistrableDomain> attributeOnRegistrableDomain;
-    decoder >> attributeOnRegistrableDomain;
-    if (!attributeOnRegistrableDomain)
+    Optional<RegistrableDomain> destinationRegistrableDomain;
+    decoder >> destinationRegistrableDomain;
+    if (!destinationRegistrableDomain)
         return WTF::nullopt;
     
     Optional<String> sourceDescription;
@@ -408,7 +408,7 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     PrivateClickMeasurement attribution {
         SourceID { WTFMove(*sourceID) },
         SourceSite { WTFMove(*sourceRegistrableDomain) },
-        AttributeOnSite { WTFMove(*attributeOnRegistrableDomain) },
+        AttributionDestinationSite { WTFMove(*destinationRegistrableDomain) },
         WTFMove(*sourceDescription),
         WTFMove(*purchaser),
         WTFMove(*timeOfAdClick)
@@ -476,10 +476,10 @@ template<> struct HashTraits<WebCore::PrivateClickMeasurement::SourceSite> : Gen
     static bool isDeletedValue(const WebCore::PrivateClickMeasurement::SourceSite& slot) { return slot.isDeletedValue(); }
 };
 
-template<> struct DefaultHash<WebCore::PrivateClickMeasurement::AttributeOnSite> : WebCore::PrivateClickMeasurement::AttributeOnSiteHash { };
-template<> struct HashTraits<WebCore::PrivateClickMeasurement::AttributeOnSite> : GenericHashTraits<WebCore::PrivateClickMeasurement::AttributeOnSite> {
-    static WebCore::PrivateClickMeasurement::AttributeOnSite emptyValue() { return { }; }
-    static void constructDeletedValue(WebCore::PrivateClickMeasurement::AttributeOnSite& slot) { WebCore::PrivateClickMeasurement::AttributeOnSite::constructDeletedValue(slot); }
-    static bool isDeletedValue(const WebCore::PrivateClickMeasurement::AttributeOnSite& slot) { return slot.isDeletedValue(); }
+template<> struct DefaultHash<WebCore::PrivateClickMeasurement::AttributionDestinationSite> : WebCore::PrivateClickMeasurement::AttributionDestinationSiteHash { };
+template<> struct HashTraits<WebCore::PrivateClickMeasurement::AttributionDestinationSite> : GenericHashTraits<WebCore::PrivateClickMeasurement::AttributionDestinationSite> {
+    static WebCore::PrivateClickMeasurement::AttributionDestinationSite emptyValue() { return { }; }
+    static void constructDeletedValue(WebCore::PrivateClickMeasurement::AttributionDestinationSite& slot) { WebCore::PrivateClickMeasurement::AttributionDestinationSite::constructDeletedValue(slot); }
+    static bool isDeletedValue(const WebCore::PrivateClickMeasurement::AttributionDestinationSite& slot) { return slot.isDeletedValue(); }
 };
 }

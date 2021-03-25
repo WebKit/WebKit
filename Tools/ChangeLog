@@ -1,3 +1,32 @@
+2021-03-25  John Wilander  <wilander@apple.com>
+
+        PCM: Rename attributeOn to attributionDestination and change the IDL data type of attributionSourceId to unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=223661
+        <rdar://problem/75762075>
+
+        Reviewed by Brent Fulgham.
+
+        The PR review of the update of the PCM spec lead WebKit, Mozilla, and Google to decide on two changes:
+        1. Rename attributeOn to attributionDestination
+        2. Change the IDL data type of attributionSourceId from DOMString to unsigned long
+
+        The spec change can be seen in this commit:
+        https://github.com/privacycg/private-click-measurement/pull/75/commits/8623b5df5e899e6652bc5b00313585f7eeafa797
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setPrivateClickMeasurementAttributionReportURLsForTesting):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2021-03-25  Alex Christensen  <achristensen@webkit.org>
 
         WKContentRuleList first-party should include other subdomains of the current registrable domain

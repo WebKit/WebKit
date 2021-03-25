@@ -49,7 +49,7 @@ public:
     using RegistrableDomain = WebCore::RegistrableDomain;
     using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
     using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
-    using AttributeOnSite = WebCore::PrivateClickMeasurement::AttributeOnSite;
+    using AttributionDestinationSite = WebCore::PrivateClickMeasurement::AttributionDestinationSite;
     using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
 
     explicit PrivateClickMeasurementManager(NetworkSession&, NetworkProcess&, PAL::SessionID);
@@ -63,7 +63,7 @@ public:
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
     void setTokenPublicKeyURLForTesting(URL&&);
     void setTokenSignatureURLForTesting(URL&&);
-    void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& attributeOnURL);
+    void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL);
     void markAllUnattributedAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
@@ -73,7 +73,7 @@ private:
     void getTokenPublicKey(PrivateClickMeasurement&&, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
     void getSignedUnlinkableToken(PrivateClickMeasurement&&);
     void clearSentAttribution(PrivateClickMeasurement&&);
-    void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
+    void attribute(const SourceSite&, const AttributionDestinationSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
     void fireConversionRequestImpl(const PrivateClickMeasurement&);
     void firePendingAttributionRequests();

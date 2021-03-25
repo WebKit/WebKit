@@ -1505,7 +1505,7 @@ void WebResourceLoadStatisticsStore::markAllUnattributedPrivateClickMeasurementA
     });
 }
 
-void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributeOnSite& attributeOnSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(Optional<Seconds>)>&& completionHandler)
+void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributionDestinationSite& destinationSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(Optional<Seconds>)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -1514,7 +1514,7 @@ void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const Priv
         return;
     }
 
-    postTask([this, sourceSite, attributeOnSite, attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, sourceSite, destinationSite, attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(WTF::nullopt);
@@ -1522,7 +1522,7 @@ void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const Priv
             return;
         }
 
-        auto seconds = m_statisticsStore->attributePrivateClickMeasurement(sourceSite, attributeOnSite, WTFMove(attributionTriggerData));
+        auto seconds = m_statisticsStore->attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData));
         postTaskReply([seconds, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(seconds);
         });

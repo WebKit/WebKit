@@ -2043,11 +2043,11 @@ void TestRunner::setPrivateClickMeasurementTokenSignatureURLForTesting(JSStringR
         adoptWK(WKURLCreateWithUTF8CString(toWTFString(urlString).utf8().data())));
 }
 
-void TestRunner::setPrivateClickMeasurementAttributionReportURLsForTesting(JSStringRef sourceURLString, JSStringRef attributeOnURLString)
+void TestRunner::setPrivateClickMeasurementAttributionReportURLsForTesting(JSStringRef sourceURLString, JSStringRef destinationURLString)
 {
     postSynchronousPageMessage("SetPrivateClickMeasurementAttributionReportURLsForTesting", createWKDictionary({
         { "SourceURLString", toWK(sourceURLString) },
-        { "AttributeOnURLString", toWK(attributeOnURLString) },
+        { "AttributeOnURLString", toWK(destinationURLString) },
     }));
 }
 

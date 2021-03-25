@@ -15,8 +15,8 @@
     const configuration = [
         {
             href: "http://localhost:8000" + path + "?stepTwo",
-            attributionsourceid: "3",
-            attributeon: "http://localhost:8000"
+            attributionsourceid: 3,
+            attributiondestination: "http://localhost:8000"
         }
     ];
 
@@ -26,7 +26,7 @@
         let linkElement = document.getElementById("targetLink");
         linkElement.setAttribute("href", configuration[index].href);
         linkElement.setAttribute("attributionsourceid", configuration[index].attributionsourceid);
-        linkElement.setAttribute("attributeon", configuration[index].attributeon);
+        linkElement.setAttribute("attributiondestination", configuration[index].attributiondestination);
     }
 
     function activateElement(elementID) {

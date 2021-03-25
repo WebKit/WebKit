@@ -515,7 +515,7 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(JSStringRef);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(JSStringRef);
-    void setPrivateClickMeasurementAttributionReportURLsForTesting(JSStringRef sourceURL, JSStringRef attributeOnURL);
+    void setPrivateClickMeasurementAttributionReportURLsForTesting(JSStringRef sourceURL, JSStringRef destinationURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     void setPrivateClickMeasurementFraudPreventionValuesForTesting(JSStringRef unlinkableToken, JSStringRef secretToken, JSStringRef signature, JSStringRef keyID);

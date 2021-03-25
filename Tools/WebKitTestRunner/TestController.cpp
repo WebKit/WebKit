@@ -3652,10 +3652,10 @@ void TestController::setPrivateClickMeasurementTokenSignatureURLForTesting(WKURL
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef attributeOnURL)
+void TestController::setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef destinationURL)
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting(m_mainWebView->page(), sourceURL, attributeOnURL, privateClickMeasurementVoidCallback, &callbackContext);
+    WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting(m_mainWebView->page(), sourceURL, destinationURL, privateClickMeasurementVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 

@@ -206,7 +206,7 @@ public:
     // Private Click Measurement.
     virtual void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) = 0;
     virtual void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() = 0;
-    virtual Optional<Seconds> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) = 0;
+    virtual Optional<Seconds> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) = 0;
     virtual Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement() = 0;
     virtual void clearPrivateClickMeasurement(Optional<RegistrableDomain>) = 0;
     virtual void clearExpiredPrivateClickMeasurement() = 0;

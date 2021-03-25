@@ -2649,10 +2649,10 @@ void NetworkProcess::setPrivateClickMeasurementTokenSignatureURLForTesting(PAL::
     completionHandler();
 }
 
-void NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting(PAL::SessionID sessionID, URL&& sourceURL, URL&& attributeOnURL, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting(PAL::SessionID sessionID, URL&& sourceURL, URL&& destinationURL, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->setPrivateClickMeasurementAttributionReportURLsForTesting(WTFMove(sourceURL), WTFMove(attributeOnURL));
+        session->setPrivateClickMeasurementAttributionReportURLsForTesting(WTFMove(sourceURL), WTFMove(destinationURL));
 
     completionHandler();
 }

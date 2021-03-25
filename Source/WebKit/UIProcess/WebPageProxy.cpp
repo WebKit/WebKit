@@ -4674,7 +4674,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         else if (navigation && navigation->privateClickMeasurement())
             privateClickMeasurement = navigation->privateClickMeasurement();
         if (privateClickMeasurement) {
-            if (privateClickMeasurement->attributeOnSite().matches(frame->url()))
+            if (privateClickMeasurement->destinationSite().matches(frame->url()))
                 websiteDataStore().networkProcess().send(Messages::NetworkProcess::StorePrivateClickMeasurement(m_websiteDataStore->sessionID(), *privateClickMeasurement), 0);
         }
     }
@@ -10015,9 +10015,9 @@ void WebPageProxy::setPrivateClickMeasurementTokenSignatureURLForTesting(const U
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenSignatureURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& attributeOnURL, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& destinationURL, CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAttributionReportURLsForTesting(m_websiteDataStore->sessionID(), sourceURL, attributeOnURL), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAttributionReportURLsForTesting(m_websiteDataStore->sessionID(), sourceURL, destinationURL), WTFMove(completionHandler));
 }
 
 void WebPageProxy::markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)

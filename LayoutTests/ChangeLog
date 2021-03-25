@@ -1,3 +1,47 @@
+2021-03-25  John Wilander  <wilander@apple.com>
+
+        PCM: Rename attributeOn to attributionDestination and change the IDL data type of attributionSourceId to unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=223661
+        <rdar://problem/75762075>
+
+        Reviewed by Brent Fulgham.
+
+        The PR review of the update of the PCM spec lead WebKit, Mozilla, and Google to decide on two changes:
+        1. Rename attributeOn to attributionDestination
+        2. Change the IDL data type of attributionSourceId from DOMString to unsigned long
+
+        The spec change can be seen in this commit:
+        https://github.com/privacycg/private-click-measurement/pull/75/commits/8623b5df5e899e6652bc5b00313585f7eeafa797
+
+        Test cases were updated accordingly.
+
+        * http/tests/contentextensions/block-private-click-measurement.html:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-reflect-expected.txt:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-reflect.html:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-validation-expected.txt:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-validation.html:
+            Since attributionSourceId is now an unsigned long, tests that checked invalid
+            string values are no longer relevant. It should be noted that a set
+            attributionSourceId with an invalid value becomes 0 which is a valid value.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority.html:
+        * http/tests/privateClickMeasurement/clear-through-website-data-removal.html:
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session.html:
+        * http/tests/privateClickMeasurement/expired-ad-click-gets-removed-on-session-start.html:
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html:
+        * http/tests/privateClickMeasurement/expired-attributions-removed.html:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority.html:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority.html:
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority.html:
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority.html:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+        * http/tests/privateClickMeasurement/store-disabled-in-ephemeral-session.html:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html:
+        * http/tests/privateClickMeasurement/store-private-click-measurement.html:
+
 2021-03-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r274826 and r274968.

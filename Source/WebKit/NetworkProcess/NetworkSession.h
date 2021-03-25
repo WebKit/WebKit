@@ -126,7 +126,7 @@ public:
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(URL&&);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(URL&&);
-    void setPrivateClickMeasurementAttributionReportURLsForTesting(URL&& sourceURL, URL&& attributeOnURL);
+    void setPrivateClickMeasurementAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
     void firePrivateClickMeasurementTimerImmediately();

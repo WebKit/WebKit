@@ -58,7 +58,7 @@ class PrivateClickMeasurementManager;
 using AttributedPrivateClickMeasurement = WebCore::PrivateClickMeasurement;
 using UnattributedPrivateClickMeasurement = WebCore::PrivateClickMeasurement;
 using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
-using AttributeOnSite = WebCore::PrivateClickMeasurement::AttributeOnSite;
+using AttributionDestinationSite = WebCore::PrivateClickMeasurement::AttributionDestinationSite;
 using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
@@ -134,7 +134,7 @@ public:
     // Private Click Measurement.
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) override;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() override;
-    Optional<Seconds> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) override;
+    Optional<Seconds> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) override;
     Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement() override;
     void clearPrivateClickMeasurement(Optional<RegistrableDomain>) override;
     void clearExpiredPrivateClickMeasurement() override;
@@ -235,7 +235,7 @@ private:
     void removeUnattributed(WebCore::PrivateClickMeasurement&);
     WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement*, PrivateClickMeasurementAttributionType);
     String attributionToString(WebCore::SQLiteStatement*, PrivateClickMeasurementAttributionType);
-    std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&);
+    std::pair<Optional<UnattributedPrivateClickMeasurement>, Optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&);
 
     const String m_storageDirectoryPath;
     mutable WebCore::SQLiteDatabase m_database;

@@ -8,7 +8,7 @@
 </head>
 <body onload="setTimeout(runTest, 0)">
 <div id="description">Tests that the presence of a source nonce triggers a token signing request.</div>
-<a id="targetLink" attributionsourceid="3" attributeon="http://localhost:8000" attributionsourcenonce="ABCDEFabcdef0123456789">Link</a><br>
+<a id="targetLink" attributionsourceid=3 attributiondestination="http://localhost:8000" attributionsourcenonce="ABCDEFabcdef0123456789">Link</a><br>
 <div id="output"></div>
 <script>
     const currentTimeMillis = (new Date()).getTime();

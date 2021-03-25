@@ -349,7 +349,7 @@ public:
     void simulateResourceLoadStatisticsSessionRestart();
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(WKURLRef);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef);
-    void setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef attributeOnURL);
+    void setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef destinationURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void setPCMFraudPreventionValuesForTesting(WKStringRef unlinkableToken, WKStringRef secretToken, WKStringRef signature, WKStringRef keyID);
 

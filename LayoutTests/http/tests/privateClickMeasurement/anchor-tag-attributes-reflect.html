@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ PrivateClickMeasurementFraudPreventionEnabled=true ] -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
 </head>
 <body>
-<a id="testTag" href="http://localhost:8000" attributionsourceid="40" attributeon="destination.example"></a>
+<a id="testTag" href="http://localhost:8000" attributionsourceid=40 attributiondestination="https://destination.example"></a>
 <script>
     description("Test for the new private click measurement attributes on anchor tags.");
 
     const anchorTag = document.getElementById("testTag");
-    shouldBeEqualToString("anchorTag.attributionsourceid", "40");
-    shouldBeEqualToString("anchorTag.attributeon", "destination.example");
+    shouldBeEqualToNumber("anchorTag.attributionsourceid", 40);
+    shouldBeEqualToString("anchorTag.attributiondestination", "https://destination.example");
 </script>
 </body>
 </html>
