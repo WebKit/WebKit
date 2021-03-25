@@ -1,3 +1,23 @@
+2021-03-25  BJ Burg  <bburg@apple.com>
+
+        SendKeys on Input of type=file returns element not found in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=223028
+        <rdar://problem/75526126>
+
+        Reviewed by Devin Rousso.
+
+        This bizarre behavior is triggered by removing the <input type=file> element inside an onclick() handler
+        for the input element. This confuses safaridriver, which expects to be able to query the file input's .value
+        via JavaScript after setting the files.
+
+        As part of the fix, provide the list of selected filenames in the Automation.fileChooserDismissed event.
+        On the safaridriver side, just use the list of filenames provided in this event to avoid an extra JS evaluation
+        that may race with page content.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::handleRunOpenPanel):
+
 2021-03-25  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r272376): [iOS] ASSERTION FAILED: sessionID.isEphemeral() || !path.isEmpty() in WebKit::NetworkProcess::swServerForSession
