@@ -41,6 +41,10 @@
 #include <EGL/eglext.h>
 #endif
 
+#if USE(GLX)
+#include <GL/glx.h>
+#endif
+
 namespace WebCore {
 
 std::unique_ptr<PlatformDisplay> PlatformDisplayX11::create()
@@ -123,6 +127,26 @@ bool PlatformDisplayX11::supportsXDamage(Optional<int>& damageEventBase, Optiona
     damageEventBase = m_damageEventBase;
     damageErrorBase = m_damageErrorBase;
     return m_supportsXDamage.value();
+}
+
+bool PlatformDisplayX11::supportsGLX(Optional<int>& glxErrorBase) const
+{
+#if USE(GLX)
+    if (!m_supportsGLX) {
+        m_supportsGLX = false;
+        if (m_display) {
+            int eventBase, errorBase;
+            m_supportsGLX = glXQueryExtension(m_display, &errorBase, &eventBase);
+            if (m_supportsGLX.value())
+                m_glxErrorBase = errorBase;
+        }
+    }
+
+    glxErrorBase = m_glxErrorBase;
+    return m_supportsGLX.value();
+#else
+    return false;
+#endif
 }
 
 void* PlatformDisplayX11::visual() const

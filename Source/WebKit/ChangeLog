@@ -1,3 +1,18 @@
+2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GTK4 crashes with XVFB: GLXBadWindow
+        https://bugs.webkit.org/show_bug.cgi?id=223108
+
+        Reviewed by Žan Doberšek.
+
+        Handle GLXBadWindow errors in AcceleratedBackingStoreX11.
+
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::checkRequirements):
+        (WebKit::glxErrorCode):
+        (WebKit::AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11):
+        (WebKit::AcceleratedBackingStoreX11::update):
+
 2021-03-24  Pablo Saavedra  <psaavedra@igalia.com>
 
         [WPE] Build error in ARMv7 invalid 'static_cast' for GLNativeWindowType
