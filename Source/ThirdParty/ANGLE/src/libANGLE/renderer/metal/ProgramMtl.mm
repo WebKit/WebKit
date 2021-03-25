@@ -96,6 +96,19 @@ void InitDefaultUniformBlock(const std::vector<sh::Uniform> &uniforms,
     return;
 }
 
+inline NSDictionary<NSString *, NSObject *> * getDefaultSubstitutionDictionary() {
+#if ANGLE_ENABLE_METAL_SPIRV
+    if (sh::readBoolEnvVar("ANGLE_GEN_MTL_WITH_SPIRV"))
+    {
+        return @{};
+    }
+    else
+#endif
+    {
+        return @{@"TRANSFORM_FEEDBACK_ENABLED": @"0"};
+    }
+}
+
 template <typename T>
 void UpdateDefaultUniformBlock(GLsizei count,
                                uint32_t arrayIndex,
@@ -240,16 +253,6 @@ ProgramMtl::ProgramMtl(const gl::ProgramState &state) : ProgramImpl(state),
     mAuxBufferPool(nullptr)
 {
     mMetalXfbRenderPipelineCache = new mtl::RenderPipelineCache(this);
-#if ANGLE_ENABLE_METAL_SPIRV
-    if (sh::readBoolEnvVar("ANGLE_GEN_MTL_WITH_SPIRV"))
-    {
-        mDefaultSubstitutionDictionary = @{};
-    }
-    else
-#endif
-    {
-        mDefaultSubstitutionDictionary = @{@"TRANSFORM_FEEDBACK_ENABLED": @"0"};
-    }
 }
 
 ProgramMtl::~ProgramMtl()
@@ -415,7 +418,7 @@ angle::Result ProgramMtl::linkImplSpirv(const gl::Context *glContext,
     {
         // Create actual Metal shader library
         ANGLE_TRY(createMslShaderLib(contextMtl, shaderType, infoLog,
-                                     &mMslShaderTranslateInfo[shaderType], mDefaultSubstitutionDictionary));
+                                     &mMslShaderTranslateInfo[shaderType], getDefaultSubstitutionDictionary()));
     }
 
     return angle::Result::Continue;
@@ -445,7 +448,7 @@ angle::Result ProgramMtl::linkImplDirect(const gl::Context *glContext,
     {
         // Create actual Metal shader
         ANGLE_TRY(
-                  createMslShaderLib(contextMtl, shaderType, infoLog, &mMslShaderTranslateInfo[shaderType], mDefaultSubstitutionDictionary));
+                  createMslShaderLib(contextMtl, shaderType, infoLog, &mMslShaderTranslateInfo[shaderType], getDefaultSubstitutionDictionary()));
     }
     // Save this, could be reset on shader destruction. These values will eventually be written out and restored in
     // saveTranslatedShaders/loadTranslatedShaders
@@ -484,9 +487,9 @@ angle::Result ProgramMtl::linkTranslatedShaders(const gl::Context *glContext,
     ANGLE_TRY(loadDefaultUniformBlocksInfo(glContext, stream));
 
     ANGLE_TRY(createMslShaderLib(contextMtl, gl::ShaderType::Vertex, infoLog,
-                              &mMslShaderTranslateInfo[gl::ShaderType::Vertex], mDefaultSubstitutionDictionary));
+                              &mMslShaderTranslateInfo[gl::ShaderType::Vertex], getDefaultSubstitutionDictionary()));
     ANGLE_TRY(createMslShaderLib(contextMtl, gl::ShaderType::Fragment, infoLog,
-                              &mMslShaderTranslateInfo[gl::ShaderType::Fragment], mDefaultSubstitutionDictionary));
+                              &mMslShaderTranslateInfo[gl::ShaderType::Fragment], getDefaultSubstitutionDictionary()));
 
     return angle::Result::Continue;
 }

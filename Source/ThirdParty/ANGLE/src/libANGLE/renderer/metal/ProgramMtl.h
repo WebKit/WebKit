@@ -275,7 +275,6 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
 
     mtl::RenderPipelineCache mMetalRenderPipelineCache;
     std::array<uint32_t, mtl::kMaxShaderXFBs> mXfbBindings;
-    NSDictionary<NSString *, NSObject *> * mDefaultSubstitutionDictionary;
     mtl::BufferPool * mAuxBufferPool;
 };
 
