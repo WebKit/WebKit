@@ -1,5 +1,16 @@
 2021-03-25  Youenn Fablet  <youenn@apple.com>
 
+        Switch from PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION to filtering interfaces in Network process
+        https://bugs.webkit.org/show_bug.cgi?id=223679
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
+2021-03-25  Youenn Fablet  <youenn@apple.com>
+
         Align RemoteVideoDecoder destruction strategy with RemoteVideoEncoder
         https://bugs.webkit.org/show_bug.cgi?id=223745
 

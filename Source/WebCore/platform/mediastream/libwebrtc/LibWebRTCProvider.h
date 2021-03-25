@@ -109,6 +109,7 @@ public:
 
     void disableEnumeratingAllNetworkInterfaces();
     void enableEnumeratingAllNetworkInterfaces();
+    bool isEnumeratingAllNetworkInterfacesEnabled() const { return m_enableEnumeratingAllNetworkInterfaces; }
 
     void setH265Support(bool value) { m_supportsH265 = value; }
     void setVP9Support(bool supportsVP9Profile0, bool supportsVP9Profile2);

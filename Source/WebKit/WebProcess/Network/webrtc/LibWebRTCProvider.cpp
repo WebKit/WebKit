@@ -64,7 +64,9 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     }
 #endif
 
-    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), *socketFactory, WTFMove(configuration), makeUnique<AsyncResolverFactory>());
+    auto& networkMonitor = WebProcess::singleton().libWebRTCNetwork().monitor();
+    networkMonitor.setEnumeratingAllNetworkInterfacesEnabled(isEnumeratingAllNetworkInterfacesEnabled());
+    return WebCore::LibWebRTCProvider::createPeerConnection(observer, networkMonitor, *socketFactory, WTFMove(configuration), makeUnique<AsyncResolverFactory>());
 }
 
 void LibWebRTCProvider::disableNonLocalhostConnections()

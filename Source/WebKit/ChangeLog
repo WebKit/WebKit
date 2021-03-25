@@ -1,3 +1,27 @@
+2021-03-25  Youenn Fablet  <youenn@apple.com>
+
+        Switch from PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION to filtering interfaces in Network process
+        https://bugs.webkit.org/show_bug.cgi?id=223679
+
+        Reviewed by Eric Carlson.
+
+        When starting to monitor, pass whether to enumerate all interfaces from WebProcess to NetworkProcess as a boolean.
+        In NetworkProcess, do network interface enumeration as usual, but use the boolean to decide whether to send the full list or the list that is related to the default IP addresses to WebProcess.
+
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp:
+        (WebKit::NetworkManagerWrapper::addListener):
+        (WebKit::NetworkManagerWrapper::onNetworksChanged):
+        (WebKit::NetworkRTCMonitor::startUpdatingIfNeeded):
+        (WebKit::NetworkRTCMonitor::onNetworksChanged):
+        * NetworkProcess/webrtc/NetworkRTCMonitor.h:
+        * NetworkProcess/webrtc/NetworkRTCMonitor.messages.in:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        * WebProcess/Network/webrtc/WebRTCMonitor.cpp:
+        (WebKit::WebRTCMonitor::setEnumeratingAllNetworkInterfacesEnabled):
+        (WebKit::WebRTCMonitor::StartUpdating):
+        * WebProcess/Network/webrtc/WebRTCMonitor.h:
+
 2021-03-25  Tim Horton  <timothy_horton@apple.com>
 
         All Books quirks are flakily not applied in modern WebKit

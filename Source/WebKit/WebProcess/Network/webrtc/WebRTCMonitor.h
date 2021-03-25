@@ -46,6 +46,7 @@ public:
 
     void networkProcessCrashed();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void setEnumeratingAllNetworkInterfacesEnabled(bool);
 
 private:
     void networksChanged(const Vector<RTCNetwork>& networkList, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&);
@@ -58,6 +59,7 @@ private:
 
     unsigned m_clientCount { 0 };
     bool m_receivedNetworkList { false };
+    bool m_enableEnumeratingAllNetworkInterfaces { false };
 };
 
 } // namespace WebKit
