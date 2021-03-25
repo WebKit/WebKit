@@ -1,3 +1,14 @@
+2021-03-25  Tim Nguyen  <ntim@apple.com>
+
+        Enable normalization-conic-2.html WPT now that underlying bug is fixed.
+        Also skip some conic-gradient tests only on Windows instead of all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=221294
+        <rdar://problem/74157218>
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: enabled imported/w3c/web-platform-tests/css/css-images/normalization-conic-2.html.
+
 2021-03-25  Robert Jenner  <jenner@apple.com>
 
         [ Debug wk2 ] ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData)

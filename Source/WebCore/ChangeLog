@@ -1,3 +1,22 @@
+2021-03-25  Tim Nguyen  <ntim@apple.com>
+
+        Fix edge cases in normalization of conic-gradient color stops
+        https://bugs.webkit.org/show_bug.cgi?id=221294
+        <rdar://problem/74157218>
+
+        Reviewed by Darin Adler.
+
+        `lastOneOrLessIndex` had an off-by-one error, so it did not go through the
+        branch handling clamping all the stop offsets when they're all above 1.
+
+        Also made `normalizeStopsAndEndpointsOutsideRange` logic easier to follow using
+        `Optional<size_t>` instead of placeholder values.
+
+        Test: web-platform-tests/css/css-images/normalization-conic-2.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::ConicGradientAdapter::normalizeStopsAndEndpointsOutsideRange):
+
 2021-03-25  Chris Dumez  <cdumez@apple.com>
 
         Address some alignment issues found by UBSan in contentextensions code

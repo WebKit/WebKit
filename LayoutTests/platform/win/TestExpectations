@@ -269,6 +269,20 @@ accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
 
+# TODO Conic gradients
+http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]
+fast/gradients/conic-repeating.html [ Skip ]
+fast/gradients/conic.html [ Skip ]
+fast/gradients/conic-off-center.html [ Skip ]
+fast/gradients/conic-center-outside-box.html [ Skip ]
+fast/gradients/conic-extended-stops.html [ Skip ]
+fast/gradients/conic-from-angle.html [ Skip ]
+fast/gradients/conic-repeating-last-stop.html [ Skip ]
+fast/gradients/conic-gradient-alpha.html [ Skip ]
+fast/gradients/conic-gradient-extended-stops.html [ Skip ]
+fast/gradients/conic-gradient.html [ Skip ]
+fast/gradients/conic-two-hints.html [ Skip ]
+
 # TODO Investigate why these mouse scroll tests are failing.
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]

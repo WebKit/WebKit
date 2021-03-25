@@ -237,9 +237,10 @@ public:
 
     void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops)
     {
-        auto numStops = stops.size();
-        
-        size_t firstZeroOrGreaterIndex = numStops;
+        size_t numStops = stops.size();
+        size_t lastStopIndex = numStops - 1;
+
+        Optional<size_t> firstZeroOrGreaterIndex;
         for (size_t i = 0; i < numStops; ++i) {
             if (*stops[i].offset >= 0) {
                 firstZeroOrGreaterIndex = i;
@@ -247,54 +248,56 @@ public:
             }
         }
 
-        if (firstZeroOrGreaterIndex > 0) {
-            if (firstZeroOrGreaterIndex < numStops && *stops[firstZeroOrGreaterIndex].offset > 0) {
-                float prevOffset = *stops[firstZeroOrGreaterIndex - 1].offset;
-                float nextOffset = *stops[firstZeroOrGreaterIndex].offset;
-                
-                float interStopProportion = -prevOffset / (nextOffset - prevOffset);
+        if (firstZeroOrGreaterIndex) {
+            size_t index = *firstZeroOrGreaterIndex;
+            if (index > 0) {
+                float previousOffset = *stops[index - 1].offset;
+                float nextOffset = *stops[index].offset;
+
+                float interStopProportion = -previousOffset / (nextOffset - previousOffset);
                 // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
-                Color blendedColor = blend(stops[firstZeroOrGreaterIndex - 1].color, stops[firstZeroOrGreaterIndex].color, interStopProportion);
-                
+                Color blendedColor = blend(stops[index - 1].color, stops[index].color, interStopProportion);
+
                 // Clamp the positions to 0 and set the color.
-                for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i) {
+                for (size_t i = 0; i < index; ++i) {
                     stops[i].offset = 0;
                     stops[i].color = blendedColor;
                 }
-            } else {
-                // All stops are below 0; just clamp them.
-                for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i)
-                    stops[i].offset = 0;
             }
+        } else {
+            // All stop offsets below 0, clamp them.
+            for (auto& stop : stops)
+                stop.offset = 0;
         }
 
-        size_t lastOneOrLessIndex = numStops;
-        for (int i = numStops - 1; i >= 0; --i) {
+        Optional<size_t> lastOneOrLessIndex;
+        for (int i = lastStopIndex; i >= 0; --i) {
             if (*stops[i].offset <= 1) {
                 lastOneOrLessIndex = i;
                 break;
             }
         }
-        
-        if (lastOneOrLessIndex < numStops - 1) {
-            if (lastOneOrLessIndex < numStops && *stops[lastOneOrLessIndex].offset < 1) {
-                float prevOffset = *stops[lastOneOrLessIndex].offset;
-                float nextOffset = *stops[lastOneOrLessIndex + 1].offset;
-                
-                float interStopProportion = (1 - prevOffset) / (nextOffset - prevOffset);
+
+        if (lastOneOrLessIndex) {
+            size_t index = *lastOneOrLessIndex;
+            if (index < lastStopIndex) {
+                float previousOffset = *stops[index].offset;
+                float nextOffset = *stops[index + 1].offset;
+
+                float interStopProportion = (1 - previousOffset) / (nextOffset - previousOffset);
                 // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
-                Color blendedColor = blend(stops[lastOneOrLessIndex].color, stops[lastOneOrLessIndex + 1].color, interStopProportion);
-                
+                Color blendedColor = blend(stops[index].color, stops[index + 1].color, interStopProportion);
+
                 // Clamp the positions to 1 and set the color.
-                for (size_t i = lastOneOrLessIndex + 1; i < numStops; ++i) {
+                for (size_t i = index + 1; i <= lastStopIndex; ++i) {
                     stops[i].offset = 1;
                     stops[i].color = blendedColor;
                 }
-            } else {
-                // All stops are above 1; just clamp them.
-                for (size_t i = lastOneOrLessIndex; i < numStops; ++i)
-                    stops[i].offset = 1;
             }
+        } else {
+            // All stop offsets above 1, clamp them.
+            for (auto& stop : stops)
+                stop.offset = 1;
         }
     }
 };
