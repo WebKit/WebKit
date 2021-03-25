@@ -1,3 +1,17 @@
+2021-03-25  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: Consider implementing @aria-details.
+        https://bugs.webkit.org/show_bug.cgi?id=165842
+        rdar://30725491
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/aria-details-expected.txt: Added.
+        * accessibility/ios-simulator/aria-details.html: Added.
+        * accessibility/mac/aria-details-expected.txt: Added.
+        * accessibility/mac/aria-details.html: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2021-03-25  Cameron McCormack  <heycam@apple.com>
 
         Collapse newly adjacent anonymous table cells when a table cell is detached from between them.

@@ -1,0 +1,23 @@
+
+Details example
+The Pythagorean Theorem is a relationship in Euclidean Geometry between the three sides of a right triangle, where the square of the hypotenuse is the sum of the squares of the two opposing sides.
+
+The following drawing illustrates an application of the Pythagorean Theorem when used to construct a skateboard ramp.
+
+In this example you will notice a skateboard ramp with a base and vertical board whose width is the width of the ramp. To compute how long the ramp must be, simply calculate the base length, square it, sum it with the square of the height of the ramp, and take the square root of the sum.
+
+See an Application of the Pythagorean Theorem.
+
+This verifies the exposure of aria-details.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS details.length is 5
+PASS details[0].description is 'AXLabel: Details example'
+PASS details[2].description is 'AXLabel: The following drawing illustrates an application of the Pythagorean Theorem when used to construct a skateboard ramp.'
+PASS details[4].description is 'AXLabel: Application of the Pythagorean Theorem'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
