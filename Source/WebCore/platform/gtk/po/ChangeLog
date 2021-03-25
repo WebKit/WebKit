@@ -1,3 +1,12 @@
+2021-03-18  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [GTK][l10n] Updated Polish translation of WebKitGTK for 2.32
+        https://bugs.webkit.org/show_bug.cgi?id=223149
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * pl.po:
+
 2021-03-08  Dingzhong Chen  <wsxy162@gmail.com>
 
         [GTK] Update Simplified Chinese translation
