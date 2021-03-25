@@ -8238,6 +8238,29 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
 }
 
+- (void)overridePositionTrackingViewForTargetedPreviewIfNecessary:(UITargetedPreview *)targetedPreview containerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
+{
+    if (!scrollingNodeID)
+        return;
+
+    UIScrollView *positionTrackingView = self.webView.scrollView;
+    if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
+        positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID);
+
+    if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
+        [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
+}
+
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement
+{
+    RetainPtr<UITargetedPreview> targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect);
+
+    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
+
+    _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
+    return _contextMenuInteractionTargetedPreview.get();
+}
+
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible
 {
     RetainPtr<UITargetedPreview> targetedPreview;
@@ -8255,14 +8278,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (!targetedPreview)
         targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds);
 
-    if (_positionInformation.containerScrollingNodeID) {
-        UIScrollView *positionTrackingView = self.webView.scrollView;
-        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
-            positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(_positionInformation.containerScrollingNodeID);
-
-        if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
-            [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
-    }
+    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_positionInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();

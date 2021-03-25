@@ -1,3 +1,101 @@
+2021-03-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Date picker view jumps to center when switching between MobileSafari and another app
+        https://bugs.webkit.org/show_bug.cgi?id=223662
+        <rdar://problem/74748727>
+
+        Reviewed by Tim Horton.
+
+        Tapping on a date input presents a UIDatePicker inside of a
+        UIContextMenuInteraction. The presentation of context menus is
+        dependent on the _positionInformation in WKContentViewInteraction being
+        up-to-date.
+
+        To ensure the value is up-to-date, a position information request is
+        made prior to presenting the date picker. However, the location used
+        for the request is the current FocusedElementInformation's
+        lastInteractionLocation. This is fine in most cases, since the date
+        picker is usually present immediately after tapping on the date input.
+        However, the date picker can be closed and presented again when
+        switching between MobileSafari and another app, as the input is focused
+        again when MobileSafari is reopened. If the switch is performed using a
+        gesture, the last interaction location is modified. Consequently, the
+        last interaction location does not always correspond to the position
+        of the date input, and the position information request gives us
+        incorrect information, leading to incorrect presentation of the picker.
+
+        To fix, add a new way of presenting context menus that is not dependent
+        on position information. Instead, form controls can use the information
+        they already have in FocusedElementInformation to present their
+        peripherals.
+
+        No new tests, since this bug only reproduces when swiping to switch apps.
+        Other touches in the web view immediately dismiss the date picker, making
+        the bug difficult to reproduce in a test.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Added a member to inform FocusedElementInformation whether the focused
+        element is in a subscrollable region.
+
+        See r248447 for more details on why this information is needed when
+        creating a UITargetedPreview.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView overridePositionTrackingViewForTargetedPreviewIfNecessary:containerScrollingNodeID:]):
+
+        Factored out the logic that overrides the targeted preview's position
+        tracking view when the element is in a subscrollable region.
+
+        (-[WKContentView _createTargetedContextMenuHintPreviewForFocusedElement]):
+
+        Create a targeted preview using the current FocusedElementInformation.
+
+        (-[WKContentView _createTargetedContextMenuHintPreviewIfPossible]):
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker controlBeginEditing]):
+
+        Displaying the context menu no longer needs to be done asynchronously
+        since the FocusedElementInformation is already available during
+        controlBeginEditing.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+
+        Adopt the new logic for <select> elements, since the presented context
+        menu is an input peripheral, and can run into the same issues as the
+        date picker.
+
+        (-[WKSelectPicker controlBeginEditing]):
+        (-[WKSelectPicker contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+
+        Remove a redundant call to elementDidRefocus following r258333. The
+        FocusController already calls elementDidRefocus before this point, when
+        the mousepress event is dispatched.
+
+        The redundant call was uncovered when making the context menu
+        presentation synchronous, and causes problems with the presentation.
+        Specifically, the first call to elementDidRefocus causes the context
+        menu to be presented. The second call then results in an attempt
+        to scroll the web view, since the context menu can obscure the
+        assisted node. The additional scrolling is unwanted behavior, since it
+        does not occur when focusing the node for the first time.
+
+        This issue was previously unobserved, since the asynchronous presentation
+        of the context menu (after obtaining new position information) resulted
+        in both calls to elementDidRefocus occuring before presentation.
+
+        (WebKit::WebPage::getFocusedElementInformation):
+
+        Forward the scrolling node information to the UIProcess, so that the
+        position tracking view of the UITargetedPreview can be overridden
+        if necessary.
+
 2021-03-25  BJ Burg  <bburg@apple.com>
 
         SendKeys on Input of type=file returns element not found in some cases

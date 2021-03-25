@@ -99,6 +99,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << label;
     encoder << ariaLabel;
     encoder << focusedElementIdentifier;
+    encoder << containerScrollingNodeID;
 #if ENABLE(DATALIST_ELEMENT)
     encoder << hasSuggestions;
     encoder << isFocusingWithDataListDropdown;
@@ -223,6 +224,9 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
         return false;
 
     if (!decoder.decode(result.focusedElementIdentifier))
+        return false;
+
+    if (!decoder.decode(result.containerScrollingNodeID))
         return false;
 
 #if ENABLE(DATALIST_ELEMENT)

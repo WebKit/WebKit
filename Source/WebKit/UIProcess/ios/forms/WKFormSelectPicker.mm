@@ -505,11 +505,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 #if USE(UICONTEXTMENU)
     _selectMenu = [self createMenu];
-
-    WebKit::InteractionInformationRequest positionInformationRequest { WebCore::IntPoint(_view.focusedElementInformation.lastInteractionLocation) };
-    [_view doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
-        [self showSelectPicker];
-    } forRequest:positionInformationRequest];
+    [self showSelectPicker];
 #endif
 }
 
@@ -631,7 +627,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
-    return [_view _createTargetedContextMenuHintPreviewIfPossible];
+    return [_view _createTargetedContextMenuHintPreviewForFocusedElement];
 }
 
 - (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration

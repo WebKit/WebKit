@@ -141,6 +141,7 @@ struct FocusedElementInformation {
     bool isFocusingWithValidationMessage { false };
 
     FocusedElementIdentifier focusedElementIdentifier { 0 };
+    WebCore::ScrollingNodeID containerScrollingNodeID { 0 };
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, FocusedElementInformation&);

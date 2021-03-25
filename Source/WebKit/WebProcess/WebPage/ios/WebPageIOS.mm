@@ -866,13 +866,6 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     RefPtr<Frame> newFocusedFrame = m_page->focusController().focusedFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
 
-    // If the focus has not changed, we need to notify the client anyway, since it might be
-    // necessary to start assisting the node.
-    // If the node has been focused by JavaScript without user interaction, the
-    // keyboard is not on screen.
-    if (newFocusedElement && newFocusedElement == oldFocusedElement)
-        elementDidRefocus(*newFocusedElement);
-
     if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled()) {
         auto& document = nodeRespondingToClick.document();
         // Dispatch mouseOut to dismiss tooltip content when tapping on the control bar buttons (cc, settings).
@@ -3083,6 +3076,11 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);
         information.insideFixedPosition = inFixed;
         information.isRTL = renderer->style().direction() == TextDirection::RTL;
+
+#if ENABLE(ASYNC_SCROLLING)
+        if (auto* scrollingCoordinator = this->scrollingCoordinator())
+            information.containerScrollingNodeID = scrollingCoordinator->scrollableContainerNodeID(*renderer);
+#endif
     } else
         information.interactionRect = { };
 
