@@ -31,6 +31,7 @@
 #import "TextCheckerState.h"
 #import <WebCore/NotImplemented.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
+#import <wtf/CheckedArithmetic.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -436,6 +437,13 @@ void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const Str
 
 void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
+    Checked<uint64_t, RecordOverflow> endOfRangeChecked = grammarDetail.range.location;
+    endOfRangeChecked += grammarDetail.range.length;
+
+    uint64_t endOfRange;
+    if (endOfRangeChecked.safeGet(endOfRange) == CheckedState::DidOverflow || endOfRange >= badGrammarPhrase.length())
+        return;
+
     NSDictionary *detail = @{
         NSGrammarRange : [NSValue valueWithRange:grammarDetail.range],
         NSGrammarUserDescription : grammarDetail.userDescription,

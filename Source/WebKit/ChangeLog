@@ -1,3 +1,15 @@
+2021-03-24  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in TextChecker::updateSpellingUIWithGrammarString()
+        https://bugs.webkit.org/show_bug.cgi?id=223716
+
+        Reviewed by Ryosuke Niwa.
+
+        Prevent a crash by checking the GrammarDetail's range.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+
 2021-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         Add DisplayLink log channels in WebCore and WebKit
