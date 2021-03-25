@@ -300,6 +300,8 @@ bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(
     return true;
 });
 
+GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
+
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS

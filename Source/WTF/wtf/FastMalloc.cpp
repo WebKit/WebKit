@@ -97,6 +97,16 @@ char* fastStrDup(const char* src)
     return dup;
 }
 
+void* fastMemDup(const void* mem, size_t bytes)
+{
+    if (!mem || !bytes)
+        return nullptr;
+
+    void* result = fastMalloc(bytes);
+    memcpy(result, mem, bytes);
+    return result;
+}
+
 TryMallocReturnValue tryFastZeroedMalloc(size_t n) 
 {
     void* result;
