@@ -1,3 +1,13 @@
+2021-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        WKContentRuleList first-party should include other subdomains of the current registrable domain
+        https://bugs.webkit.org/show_bug.cgi?id=223728
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+
 2021-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] JSC crashes if a function expects a parameter but doesn't receive any

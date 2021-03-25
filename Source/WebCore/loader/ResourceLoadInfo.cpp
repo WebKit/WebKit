@@ -126,10 +126,7 @@ Optional<OptionSet<LoadType>> readLoadType(const String& name)
 
 bool ResourceLoadInfo::isThirdParty() const
 {
-    Ref<SecurityOrigin> mainDocumentSecurityOrigin = SecurityOrigin::create(mainDocumentURL);
-    Ref<SecurityOrigin> resourceSecurityOrigin = SecurityOrigin::create(resourceURL);
-
-    return !mainDocumentSecurityOrigin->isSameOriginDomain(resourceSecurityOrigin.get());
+    return !RegistrableDomain(mainDocumentURL).matches(resourceURL);
 }
     
 ResourceFlags ResourceLoadInfo::getResourceFlags() const

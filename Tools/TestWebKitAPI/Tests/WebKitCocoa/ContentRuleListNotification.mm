@@ -276,6 +276,53 @@ TEST(ContentRuleList, ResourceTypes)
     EXPECT_EQ(beaconServer.totalRequests(), 5u);
 }
 
+TEST(ContentRuleList, ThirdParty)
+{
+    auto handler = [[TestURLSchemeHandler new] autorelease];
+    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto respond = [task] (const char* html) {
+            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:strlen(html) textEncodingName:nil] autorelease];
+            [task didReceiveResponse:response];
+            [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
+            [task didFinish];
+        };
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main.html"]) {
+            return respond("<script>"
+                "function testWebKit() { fetch('test://webkit.org/resource.txt', {mode:'no-cors'}).then(()=>{alert('webkit.org loaded');}).catch(()=>{alert('webkit.org blocked');}) };"
+                "fetch('test://sub.example.com/resource.txt', {mode:'no-cors'}).then(()=>{alert('sub.example.com loaded');testWebKit();}).catch(()=>{alert('sub.example.com blocked');testWebKit();})"
+            "</script>");
+        }
+        if ([path isEqualToString:@"/resource.txt"])
+            return respond("hi");
+
+        ASSERT_NOT_REACHED();
+    };
+    auto configuration = [[WKWebViewConfiguration new] autorelease];
+    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
+    configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto webView = [[[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration] autorelease];
+
+    auto listWithLoadType = [] (const char* type) {
+        return makeContentRuleList([NSString stringWithFormat:@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"resource.txt\",\"load-type\":[\"%s\"]}}]", type]);
+    };
+
+    WKUserContentController *userContentController = webView.configuration.userContentController;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://example.com/main.html"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "sub.example.com loaded");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit.org loaded");
+    
+    [userContentController addContentRuleList:listWithLoadType("third-party").get()];
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "sub.example.com loaded");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit.org blocked");
+    [userContentController removeAllContentRuleLists];
+    [userContentController addContentRuleList:listWithLoadType("first-party").get()];
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "sub.example.com blocked");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit.org loaded");
+}
+
 TEST(ContentRuleList, SupportsRegex)
 {
     NSArray<NSString *> *allowed = @[
