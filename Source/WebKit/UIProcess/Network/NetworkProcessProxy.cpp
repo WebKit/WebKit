@@ -158,6 +158,14 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
     SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadWrite, parameters.tempDirectoryExtensionHandle);
 #endif
+
+#if !PLATFORM(GTK) && !PLATFORM(WPE) // GTK and WPE don't use defaultNetworkProcess
+    parameters.websiteDataStoreParameters = WebsiteDataStore::parametersFromEachWebsiteDataStore();
+    WebsiteDataStore::forEachWebsiteDataStore([this](auto& websiteDataStore) {
+        addSession(websiteDataStore, SendParametersToNetworkProcess::No);
+    });
+#endif
+
     WebProcessPool::platformInitializeNetworkProcess(parameters);
     send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 }
@@ -1327,11 +1335,13 @@ void NetworkProcessProxy::flushCookies(const PAL::SessionID& sessionID, Completi
     sendWithAsyncReply(Messages::NetworkProcess::FlushCookies(sessionID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::addSession(WebsiteDataStore& store)
+void NetworkProcessProxy::addSession(WebsiteDataStore& store, SendParametersToNetworkProcess sendParametersToNetworkProcess)
 {
-    m_websiteDataStores.add(store);
+    auto addResult = m_websiteDataStores.add(store);
+    if (!addResult.isNewEntry)
+        return;
 
-    if (canSendMessage())
+    if (canSendMessage() && sendParametersToNetworkProcess == SendParametersToNetworkProcess::Yes)
         send(Messages::NetworkProcess::AddWebsiteDataStore { store.parameters() }, 0);
     auto sessionID = store.sessionID();
     if (!sessionID.isEphemeral()) {
