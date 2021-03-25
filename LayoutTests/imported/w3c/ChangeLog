@@ -1,3 +1,16 @@
+2021-03-25  Antoine Quint  <graouts@webkit.org>
+
+        Improve interpolation of the shape-outside CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223738
+
+        Reviewed by Antti Koivisto.
+
+        Add another 29 PASS results for shape-outside interpolation.
+
+        * web-platform-tests/css/css-shapes/animation/shape-outside-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2021-03-24  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of the border-spacing property

@@ -273,21 +273,15 @@ static inline RefPtr<ClipPathOperation> blendFunc(const CSSPropertyBlendingClien
 
 static inline RefPtr<ShapeValue> blendFunc(const CSSPropertyBlendingClient*, ShapeValue* from, ShapeValue* to, double progress)
 {
-    if (!from || !to)
+    if (!progress)
+        return from;
+
+    if (progress == 1.0)
         return to;
 
-    if (from->type() != ShapeValue::Type::Shape || to->type() != ShapeValue::Type::Shape)
-        return to;
-
-    if (from->cssBox() != to->cssBox())
-        return to;
-
+    ASSERT(from && to);
     const BasicShape& fromShape = *from->shape();
     const BasicShape& toShape = *to->shape();
-
-    if (!fromShape.canBlend(toShape))
-        return to;
-
     return ShapeValue::create(toShape.blend(fromShape, progress), to->cssBox());
 }
 
@@ -924,6 +918,23 @@ private:
         if (!shapeA || !shapeB)
             return false;
         return *shapeA == *shapeB;
+    }
+
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    {
+        auto* fromShape = value(from);
+        auto* toShape = value(to);
+
+        if (!fromShape || !toShape)
+            return false;
+
+        if (fromShape->type() != ShapeValue::Type::Shape || toShape->type() != ShapeValue::Type::Shape)
+            return false;
+
+        if (fromShape->cssBox() != toShape->cssBox())
+            return false;
+
+        return fromShape->shape()->canBlend(*toShape->shape());
     }
 };
 
