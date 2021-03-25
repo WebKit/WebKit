@@ -40,7 +40,7 @@ template <typename IntType>
 inline void append(Vector<DFABytecode>& bytecode, IntType value)
 {
     bytecode.grow(bytecode.size() + sizeof(IntType));
-    *reinterpret_cast<IntType*>(&bytecode[bytecode.size() - sizeof(IntType)]) = value;
+    memcpy(&bytecode[bytecode.size() - sizeof(IntType)], &value, sizeof(IntType));
 }
 
 inline void appendZeroes(Vector<DFABytecode>& bytecode, DFABytecodeJumpSize jumpSize)

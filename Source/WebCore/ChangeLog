@@ -1,5 +1,36 @@
 2021-03-25  Chris Dumez  <cdumez@apple.com>
 
+        Address some alignment issues found by UBSan in contentextensions code
+        https://bugs.webkit.org/show_bug.cgi?id=223748
+
+        Reviewed by Darin Adler.
+
+        Address some alignment issues found by UBSan in contentextensions code:
+        - contentextensions/SerializedNFA.h:55:20: runtime error: reference binding to misaligned address 0xnnnnnnnnn for type 'const unsigned long long', which requires 8 byte alignment
+        - contentextensions/NFAToDFA.cpp:254:29: runtime error: reference binding to misaligned address 0xnnnnnnnnn for type 'const unsigned long long', which requires 8 byte alignment
+        - contentextensions/DFABytecodeCompiler.cpp:43:5: runtime error: store to misaligned address 0xnnnnnnnnn for type 'unsigned short', which requires 2 byte alignment
+
+        Use memcpy() to store/load to/from misaligned address.
+
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::append):
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::epsilonClosureExcludingSelf):
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetTranslator::translate):
+        * contentextensions/SerializedNFA.h:
+        (WebCore::ContentExtensions::SerializedNFA::Range::pointerAt const):
+        (WebCore::ContentExtensions::SerializedNFA::Range::valueAt const):
+        (WebCore::ContentExtensions::SerializedNFA::ConstTargetIterator::operator* const):
+        (WebCore::ContentExtensions::SerializedNFA::ConstTargetIterator::operator-> const):
+        (WebCore::ContentExtensions::SerializedNFA::ConstRangeIterator::first const):
+        (WebCore::ContentExtensions::SerializedNFA::ConstRangeIterator::last const):
+        (WebCore::ContentExtensions::SerializedNFA::ConstRangeIterator::data const):
+        (WebCore::ContentExtensions::SerializedNFA::ConstRangeIterator::range const):
+        (WebCore::ContentExtensions::SerializedNFA::transitionsForNode const):
+        (WebCore::ContentExtensions::SerializedNFA::Range::operator[] const): Deleted.
+
+2021-03-25  Chris Dumez  <cdumez@apple.com>
+
         Source/WebCore/xml/parser/CharacterReferenceParserInlines.h:107:33: runtime error: signed integer overflow: 268435455 * 16 cannot be represented in type 'int'
         https://bugs.webkit.org/show_bug.cgi?id=223718
 
