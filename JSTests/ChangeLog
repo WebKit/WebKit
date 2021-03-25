@@ -1,3 +1,14 @@
+2021-03-25  Saam Barati  <sbarati@apple.com>
+
+        early-return-from-builtin.js should try/catch in case of OOM
+        https://bugs.webkit.org/show_bug.cgi?id=223756
+
+        Reviewed by Yusuke Suzuki.
+
+        It's throwing an OOM on iOS.
+
+        * stress/early-return-from-builtin.js:
+
 2021-03-24  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Interpreter incorrectly matches non-BMP characters with multiple . w/dotAll flag

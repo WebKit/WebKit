@@ -18,4 +18,6 @@ let iter = {
   }
 };
 
-[...iter];
+try {
+    [...iter];
+} catch {}
