@@ -1,4 +1,4 @@
-//@ skip if $architecture != "x86-64"
+//@ skip if $architecture != "arm64" and $architecture != "x86-64"
 //@ runDefault("--earlyReturnFromInfiniteLoopsLimit=10", "--returnEarlyFromInfiniteLoopsForFuzzing=1", "--watchdog=1000", "--watchdog-exception-ok")
 
 let o = {

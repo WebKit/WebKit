@@ -1,5 +1,17 @@
 2021-03-25  Truitt Savell  <tsavell@apple.com>
 
+        Unreviewed, reverting r275056.
+
+        This is no longer needed
+
+        Reverted changeset:
+
+        "stress/early-return-from-builtin.js.default is failing on iOS
+        JSC testers"
+        https://commits.webkit.org/r275056
+
+2021-03-25  Truitt Savell  <tsavell@apple.com>
+
         stress/early-return-from-builtin.js.default is failing on iOS JSC testers
         rdar://75597901
 
