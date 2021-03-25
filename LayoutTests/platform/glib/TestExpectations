@@ -609,8 +609,6 @@ webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 # JavaScriptCore-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/222453 [ Release ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-4-tla.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of JavaScriptCore-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -711,8 +709,6 @@ webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual
 
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w.html [ Slow ]
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
-
-webkit.org/b/223671 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
