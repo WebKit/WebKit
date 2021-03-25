@@ -69,16 +69,11 @@ void MemoryPressureHandler::install()
         return;
 
     dispatch_async(m_dispatchQueue.get(), ^{
-#if PLATFORM(IOS_FAMILY)
         auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_WARN | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_CRITICAL;
-#else // PLATFORM(MAC)
-        auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_CRITICAL;
-#endif
         memoryPressureEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, m_dispatchQueue.get());
 
         dispatch_source_set_event_handler(memoryPressureEventSource, ^{
             auto status = dispatch_source_get_data(memoryPressureEventSource);
-#if PLATFORM(IOS_FAMILY)
             switch (status) {
             // VM pressure events.
             case DISPATCH_MEMORYPRESSURE_NORMAL:
@@ -100,9 +95,6 @@ void MemoryPressureHandler::install()
                 respondToMemoryPressure(Critical::Yes);
                 break;
             }
-#else // PLATFORM(MAC)
-            respondToMemoryPressure(Critical::Yes);
-#endif
             if (m_shouldLogMemoryMemoryPressureEvents)
                 WTFLogAlways("Received memory pressure event %lu vm pressure %d", status, isUnderMemoryPressure());
         });

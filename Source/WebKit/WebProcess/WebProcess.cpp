@@ -610,6 +610,10 @@ void WebProcess::markIsNoLongerPrewarmed()
 
 void WebProcess::prewarmGlobally()
 {
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
+        RELEASE_LOG(PerformanceLogging, "WebProcess::prewarmGlobally: Not prewarming because the system in under memory pressure");
+        return;
+    }
     WebCore::ProcessWarming::prewarmGlobally();
 }
 

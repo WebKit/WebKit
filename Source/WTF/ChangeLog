@@ -1,3 +1,18 @@
+2021-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Do not do process pre-warming when the system is under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=223717
+        <rdar://problem/75810423>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+        - Listen to the same memory pressure notifications on macOS and iOS. Previously, macOS would not respond to
+          non-critical memory pressure notifications for example. Also, since macOS would not listen for the notification
+          that happens when the memory usage goes back to normal, MemoruPressureHandler::isUnderMemoryPressure() would
+          start returning true after a critical memory pressure notification and it would never go back to false.
+
 2021-03-25  Alberto Garcia  <berto@igalia.com>
 
         REGRESSION(r271560): [Linux] release assert in Thread::initializePlatformThreading

@@ -1,3 +1,16 @@
+2021-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Do not do process pre-warming when the system is under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=223717
+        <rdar://problem/75810423>
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prewarmGlobally):
+        Only do prewarming if we're not under memory pressure as this would make
+        the situation worse.
+
 2021-03-25  Youenn Fablet  <youenn@apple.com>
 
         Switch from PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION to filtering interfaces in Network process
