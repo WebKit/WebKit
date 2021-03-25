@@ -130,7 +130,8 @@ void MediaPlayerPrivateGStreamerMSE::load(const String&)
 
 void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, MediaSourcePrivateClient* mediaSource)
 {
-    GST_DEBUG("Loading %s", url.string().ascii().data());
+    auto mseBlobURI = makeString("mediasource", url.string().isEmpty() ? "blob://" : url.string());
+    GST_DEBUG("Loading %s", mseBlobURI.ascii().data());
     m_mediaSource = mediaSource;
 
     if (!m_playbackPipeline)
@@ -138,7 +139,7 @@ void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, Me
 
     m_mediaSourcePrivate = MediaSourcePrivateGStreamer::open(*m_mediaSource.get(), *this);
 
-    MediaPlayerPrivateGStreamer::load(makeString("mediasource", url.string()));
+    MediaPlayerPrivateGStreamer::load(mseBlobURI);
 }
 
 void MediaPlayerPrivateGStreamerMSE::pause()
