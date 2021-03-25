@@ -387,7 +387,7 @@ target_include_directories(WPEInjectedBundle PRIVATE ${WebKit_INCLUDE_DIRECTORIE
 target_include_directories(WPEInjectedBundle SYSTEM PRIVATE ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-wpe.cfg
-    "[wpe-${WPE_API_VERSION}]\n"
+    "[wpe-${WPE_API_DOC_VERSION}]\n"
     "pkgconfig_file=${WPE_PKGCONFIG_FILE}\n"
     "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
     "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
@@ -407,7 +407,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-wpe.cfg
 )
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webextensions.cfg
-    "[wpe-webextensions-${WPE_API_VERSION}]\n"
+    "[wpe-webextensions-${WPE_API_DOC_VERSION}]\n"
     "pkgconfig_file=${WPEWebExtension_PKGCONFIG_FILE}\n"
     "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
     "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
