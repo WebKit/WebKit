@@ -854,7 +854,7 @@
 #define HAVE_LIBXSLT_FIX_FOR_RADAR_71864140 1
 #endif
 
-#if __has_include(<AuthenticationServicesCore/ASCAuthorizationPresenter.h>)
+#if __has_include(<AuthenticationServicesCore/ASCAuthorizationPresenter.h>) && PLATFORM(IOS)
 #define HAVE_ASC_AUTH_UI 1
 #endif
 

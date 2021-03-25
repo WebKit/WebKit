@@ -1,3 +1,13 @@
+2021-03-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        Some calls in AuthenticatorPresenterCoordinator::selectAssertionResponse are not yet available for mac
+        https://bugs.webkit.org/show_bug.cgi?id=223752
+        <rdar://problem/75808515>
+
+        Reviewed by Jiewen Tan.
+
+        * wtf/PlatformHave.h:
+
 2021-03-25  Per Arne  <pvollan@apple.com>
 
         Enforce notifyd message filtering
