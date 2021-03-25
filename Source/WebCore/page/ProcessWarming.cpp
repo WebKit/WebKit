@@ -35,7 +35,6 @@
 #include "MediaFeatureNames.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"
-#include "Settings.h"
 #include "TelephoneNumberDetector.h"
 #include "UserAgentStyle.h"
 #include "WebKitFontFamilyNames.h"
@@ -67,9 +66,6 @@ void ProcessWarming::initializeNames()
 void ProcessWarming::prewarmGlobally()
 {
     initializeNames();
-    
-    // Initializes default font families.
-    Settings::create(nullptr);
     
     // Prewarms user agent stylesheet.
     Style::UserAgentStyle::initDefaultStyleSheet();

@@ -1,3 +1,18 @@
+2021-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Drop unnecessary Settings pre-warming in ProcessWarming::prewarmGlobally()
+        https://bugs.webkit.org/show_bug.cgi?id=223749
+
+        Reviewed by Antti Koivisto.
+
+        Drop unnecessary Settings pre-warming in ProcessWarming::prewarmGlobally(). Based on the comment,
+        it looks like the intention was to prewarm some font families. However, looking at the code, nothing
+        that gets populated is global and survives the destruction of the Settings object on the next line.
+        We don't even make any calls to CTFont.
+
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::prewarmGlobally):
+
 2021-03-25  Youenn Fablet  <youenn@apple.com>
 
         Switch from PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION to filtering interfaces in Network process
