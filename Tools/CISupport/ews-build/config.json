@@ -533,7 +533,7 @@
       "architectures": ["i386"],
       "workernames": ["ews164", "ews165", "ews166"]
     },
-     {
+    {
       "name": "tvOS-14-Build-EWS",
       "shortname": "tv",
       "icon": "buildOnly",
@@ -604,7 +604,7 @@
       "triggers": ["jsc-tests-mipsel-tests-ews"],
       "workernames": ["igalia-jsc32-mipsel-ews", "igalia-jsc32-mipsel-ews-03"]
     },
-  {
+    {
       "name": "JSC-MIPSEL-32bits-Tests-EWS",
       "shortname": "jsc-mips-tests",
       "icon": "testOnly",
