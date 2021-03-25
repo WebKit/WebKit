@@ -51,6 +51,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTable.h"
+#include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderTableSection.h"
 #include "RenderText.h"
@@ -826,8 +827,19 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     };
     clearFloatsAndOutOfFlowPositionedObjects();
 
-    if (is<RenderTableRow>(destroyRoot))
-        tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
+    auto collapseAndDestroyAnonymousSiblings = [&] {
+        // FIXME: Probably need to handle other table parts here as well.
+        if (is<RenderTableCell>(destroyRoot)) {
+            tableBuilder().collapseAndDestroyAnonymousSiblingCells(downcast<RenderTableCell>(destroyRoot));
+            return;
+        }
+
+        if (is<RenderTableRow>(destroyRoot)) {
+            tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
+            return;
+        }
+    };
+    collapseAndDestroyAnonymousSiblings();
 
     // FIXME: Do not try to collapse/cleanup the anonymous wrappers inside destroy (see webkit.org/b/186746).
     auto destroyRootParent = makeWeakPtr(*destroyRoot.parent());

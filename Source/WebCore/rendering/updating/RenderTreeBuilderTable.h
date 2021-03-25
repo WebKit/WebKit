@@ -32,6 +32,7 @@ namespace WebCore {
 class RenderElement;
 class RenderObject;
 class RenderTable;
+class RenderTableCell;
 class RenderTableSection;
 class RenderTableRow;
 class RenderTreeBuilder;
@@ -51,9 +52,13 @@ public:
 
     bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
 
+    void collapseAndDestroyAnonymousSiblingCells(RenderTableCell&);
     void collapseAndDestroyAnonymousSiblingRows(RenderTableRow&);
 
 private:
+    template <typename Parent, typename Child>
+    void collapseAndDestroyAnonymousSiblings(Parent*, Child* previousChild, Child* nextChild);
+
     RenderTreeBuilder& m_builder;
 };
 

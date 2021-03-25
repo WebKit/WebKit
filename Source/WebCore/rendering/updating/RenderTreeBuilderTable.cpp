@@ -247,26 +247,28 @@ bool RenderTreeBuilder::Table::childRequiresTable(const RenderElement& parent, c
     return false;
 }
 
-void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(RenderTableRow& row)
+template <typename Parent, typename Child>
+void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblings(Parent* parent, Child* previousSibling, Child* nextSibling)
 {
-    auto* section = row.section();
-    if (!section)
+    if (!parent || !previousSibling || !nextSibling)
         return;
 
-    auto* before = row.previousRow();
-    if (!before)
-        return;
-
-    auto* after = row.nextRow();
-    if (!after)
-        return;
-
-    if (before->isAnonymous() && after->isAnonymous()) {
-        m_builder.moveAllChildren(*after, *before, RenderTreeBuilder::NormalizeAfterInsertion::No);
-        auto toDestroy = m_builder.detach(*section, *after);
+    if (previousSibling->isAnonymous() && nextSibling->isAnonymous()) {
+        m_builder.moveAllChildren(*nextSibling, *previousSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
+        auto toDestroy = m_builder.detach(*parent, *nextSibling);
     }
 
-    before->setNeedsLayout();
+    previousSibling->setNeedsLayout();
+}
+
+void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingCells(RenderTableCell& cell)
+{
+    collapseAndDestroyAnonymousSiblings(cell.row(), cell.previousCell(), cell.nextCell());
+}
+
+void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(RenderTableRow& row)
+{
+    collapseAndDestroyAnonymousSiblings(row.section(), row.previousRow(), row.nextRow());
 }
 
 }
