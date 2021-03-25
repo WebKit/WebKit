@@ -137,7 +137,7 @@ if (USE_CAPSTONE)
     list(APPEND JavaScriptCore_LIBRARIES capstone)
 endif ()
 
-if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
+if (ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND JavaScriptCore_LIBRARIES atomic)
 endif ()
 
