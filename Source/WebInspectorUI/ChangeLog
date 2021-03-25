@@ -1,3 +1,21 @@
+2021-03-25  Razvan Caliman  <rcaliman@apple.com>
+
+        REGRESSION (r270134) Web Inspector: Audit: Results are stacked on top of each other.
+        https://bugs.webkit.org/show_bug.cgi?id=223381
+        <rdar://problem/75528374>
+
+        Reviewed by Devin Rousso.
+
+        Ensure pre-existing `ContentView`s are removed when navigating back/forward
+        even when the incoming `ContentView` is already attached.
+
+        For example, `AuditTestContentView` instances for individual tests are already attached
+        when shown as part of a test group `AuditTestGroupContentView`.
+        Navigating from the group to the individual test view must remove the group view.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype.showBackForwardEntryForIndex):
+
 2021-03-24  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: REGRESSION (r269359): Timelines: TypeError: this.deselect is not a function

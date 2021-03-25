@@ -157,7 +157,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         var currentEntry = this.currentBackForwardEntry;
         console.assert(currentEntry);
 
-        if (previousEntry && !currentEntry.contentView.isAttached)
+        if (previousEntry && (!currentEntry.contentView.isAttached || previousEntry.contentView !== currentEntry.contentView))
             this._hideEntry(previousEntry);
         this._showEntry(currentEntry);
 
