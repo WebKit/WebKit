@@ -1,3 +1,25 @@
+2021-03-25  Don Olmstead  <don.olmstead@sony.com>
+
+        Embiggen maximum HashTable size when not using ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=223757
+
+        Reviewed by Alex Christensen.
+
+        This is a partial revert of r274603 which cut the maximum size HashTable from 400 to 250.
+        When not using ANGLE directly for an OpenGL ES implementation there's some code hashing its
+        sh::ShaderVariable from the shader compiler ANGLE ships with. This type is too big and
+        triggers the static_assert.
+
+        The eventual goal is for ANGLE to be the OpenGL ES implementation for WebKit when enabling
+        WebGL. On PlayStation we already have a system OpenGL ES and any use of WebGL is in legacy
+        applications. The WebGL compliance features in ANGLE aren't needed in this case so ideally
+        we wouldn't even compile out ANGLE.
+
+        This patch punts on fixing the actual problem and just resolves this build issue.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
 2021-03-25  Chris Dumez  <cdumez@apple.com>
 
         Do not do process pre-warming when the system is under memory pressure
