@@ -175,7 +175,8 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     if (m_hasStartedProducingData)
         return;
 
-    // Dispatching a Function to the main thread requires heap allocations.
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     callOnMainThread([protectedThis = makeRef(*this)] {
         if (protectedThis->m_hasStartedProducingData)

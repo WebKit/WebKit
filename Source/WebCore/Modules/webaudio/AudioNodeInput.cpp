@@ -103,6 +103,9 @@ void AudioNodeInput::updateInternalBus()
     if (numberOfInputChannels == m_internalSummingBus->numberOfChannels())
         return;
 
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     m_internalSummingBus = AudioBus::create(numberOfInputChannels, AudioUtilities::renderQuantumSize);
 }
 

@@ -1,5 +1,28 @@
 2021-03-24  Chris Dumez  <cdumez@apple.com>
 
+        Extend WebAudio heap allocation assertions to cover the pre & post-rendering phases
+        https://bugs.webkit.org/show_bug.cgi?id=223640
+
+        Reviewed by Sam Weinig.
+
+        Extend WebAudio heap allocation assertions to cover the pre & post-rendering phases. I had to add
+        exceptions for some heap allocations that are currently happening during this phase but I
+        will work to reduce the number of exceptions in follow-ups.
+
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::render):
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::updateInternalBus):
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::updateInternalBus):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::addAutomaticPullNode):
+        (WebCore::BaseAudioContext::updateAutomaticPullNodes):
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::initialize):
+
+2021-03-24  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix after r274983.
 
         * Modules/mediasession/MediaSession.h:

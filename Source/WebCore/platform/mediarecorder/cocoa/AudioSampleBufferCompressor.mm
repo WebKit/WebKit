@@ -509,6 +509,8 @@ void AudioSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
 
 void AudioSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
 {
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     m_serialDispatchQueue->dispatchSync([this, buffer] {
         if (m_isEncoding)

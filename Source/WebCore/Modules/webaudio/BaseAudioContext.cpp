@@ -782,6 +782,10 @@ void BaseAudioContext::scheduleNodeDeletion()
 
     // Make sure to call deleteMarkedNodes() on main thread.    
     if (m_nodesMarkedForDeletion.size() && !m_isDeletionScheduled) {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
         m_nodesToDelete.appendVector(m_nodesMarkedForDeletion);
         m_nodesMarkedForDeletion.clear();
 
@@ -824,7 +828,10 @@ void BaseAudioContext::deleteMarkedNodes()
 
 void BaseAudioContext::markSummingJunctionDirty(AudioSummingJunction* summingJunction)
 {
-    ASSERT(isGraphOwner());    
+    ASSERT(isGraphOwner());
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     m_dirtySummingJunctions.add(summingJunction);
 }
 
@@ -870,6 +877,9 @@ void BaseAudioContext::addAutomaticPullNode(AudioNode& node)
 {
     ASSERT(isGraphOwner());
 
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     if (m_automaticPullNodes.add(&node).isNewEntry)
         m_automaticPullNodesNeedUpdating = true;
 }
@@ -887,6 +897,10 @@ void BaseAudioContext::updateAutomaticPullNodes()
     ASSERT(isGraphOwner());
 
     if (m_automaticPullNodesNeedUpdating) {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
         // Copy from m_automaticPullNodes to m_renderingAutomaticPullNodes.
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
 
@@ -913,6 +927,10 @@ ScriptExecutionContext* BaseAudioContext::scriptExecutionContext() const
 
 void BaseAudioContext::isPlayingAudioDidChange()
 {
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
     // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
     // we could be on the audio I/O thread here and the call into WebCore could block.
     callOnMainThread([protectedThis = makeRef(*this)] {
