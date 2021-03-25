@@ -1808,12 +1808,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(Access
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
-{
-    // Not implemented on macOS
-    return nullptr;
-}
-
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
 {
     BEGIN_AX_OBJC_EXCEPTIONS

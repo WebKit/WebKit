@@ -814,12 +814,6 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(Accessibi
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
-{
-    notImplemented();
-    return nullptr;
-}
-
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     notImplemented();
