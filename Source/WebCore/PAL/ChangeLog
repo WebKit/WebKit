@@ -1,3 +1,16 @@
+2021-03-25  Per Arne  <pvollan@apple.com>
+
+        Enforce notifyd message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=223601
+        <rdar://75098580>
+
+        Reviewed by Brent Fulgham.
+
+        Add Notify SPI file.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/NotifySPI.h: Added.
+
 2021-03-19  Jer Noble  <jer.noble@apple.com>
 
         Many media/media-fragments/ tests are crashing due to other tests that run before them.
