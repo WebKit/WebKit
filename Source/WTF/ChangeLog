@@ -1,5 +1,20 @@
 2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Use StaticStringImpl instead of StringImpl::createStaticStringImpl if it is not dynamic string content
+        https://bugs.webkit.org/show_bug.cgi?id=223714
+
+        Reviewed by Saam Barati.
+
+        We should just use StaticStringImpl instead of StringImpl::createStaticStringImpl if the string content is
+        not dynamically allocated one. Keep in mind that this URL code is strongly assuming that internal StringImpl
+        is static so that this string (and URL) can be used in multiple threads. And StaticStringImpl meets this requirement.
+
+        * wtf/URL.cpp:
+        (WTF::aboutBlankURL):
+        (WTF::aboutSrcDocURL):
+
+2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
         All string resources from UserAgentStyleSheets / UserAgentScripts should be used as non-copying StringImpl
         https://bugs.webkit.org/show_bug.cgi?id=223685
 
