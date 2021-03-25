@@ -86,12 +86,12 @@ void ThreadedCompositor::createGLContext()
 
     ASSERT(m_nativeSurfaceHandle);
 
-#if CPU(ADDRESS64)
-    auto windowType = reinterpret_cast<GLNativeWindowType>(m_nativeSurfaceHandle);
-#else
-    // On 32-bit platforms GLNativeWindowType is an integer type, which cannot be casted with reinterpret_cast.
-    auto windowType = static_cast<GLNativeWindowType>(m_nativeSurfaceHandle);
-#endif
+    // GLNativeWindowType depends on the EGL implementation: reinterpret_cast works
+    // for pointers (only if they are 64-bit wide and not for other cases), and static_cast for
+    // numeric types (and when needed they get extended to 64-bit) but not for pointers. Using
+    // a plain C cast expression in this one instance works in all cases.
+    static_assert(sizeof(GLNativeWindowType) <= sizeof(uint64_t), "GLNativeWindowType must not be longer than 64 bits.");
+    auto windowType = (GLNativeWindowType) m_nativeSurfaceHandle;
     m_context = GLContext::createContextForWindow(windowType, &PlatformDisplay::sharedDisplayForCompositing());
     if (m_context)
         m_context->makeContextCurrent();
