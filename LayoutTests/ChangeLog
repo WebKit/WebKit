@@ -1,3 +1,21 @@
+2021-03-24  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r274919) [ATK] accessibility/set-selected-text-range-contenteditable.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=223710
+
+        Reviewed by Adrian Perez de Castro.
+
+        r274919 clamped the values passed to the accessibility elements,
+        making the {-1,0} text range to be collapsed to {0,0} as text ranges
+        are composed of unsigned ints.
+
+        This commit updates the test to remove the ATK-specific case of
+        passing -1 to point to the final offset of a text range.
+
+        * accessibility/set-selected-text-range-contenteditable.html: Remove
+        ATK-specific quirk.
+        * platform/glib/accessibility/set-selected-text-range-contenteditable-expected.txt: Removed.
+
 2021-03-24  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Add Experimental MediaSession coordinator
