@@ -70,6 +70,8 @@ struct _WebKitMediaSrcClass {
 
 GType webkit_media_src_get_type(void);
 
+void webKitMediaSrcRestoreTracks(WebKitMediaSrc*, WebKitMediaSrc*);
+void webKitMediaSrcSignalTracks(WebKitMediaSrc*);
 void webKitMediaSrcSetMediaPlayerPrivate(WebKitMediaSrc*, WebCore::MediaPlayerPrivateGStreamerMSE*);
 
 void webKitMediaSrcPrepareSeek(WebKitMediaSrc*, const MediaTime&);

@@ -121,25 +121,24 @@ MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE()
         m_playbackPipeline->setWebKitMediaSrc(nullptr);
 }
 
-void MediaPlayerPrivateGStreamerMSE::load(const String& urlString)
+void MediaPlayerPrivateGStreamerMSE::load(const String&)
 {
-    if (!urlString.startsWith("mediasource")) {
-        // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.
-        m_networkState = MediaPlayer::NetworkState::FormatError;
-        m_player->networkStateChanged();
-        return;
-    }
-
-    if (!m_playbackPipeline)
-        m_playbackPipeline = PlaybackPipeline::create();
-
-    MediaPlayerPrivateGStreamer::load(urlString);
+    // This media engine only supports MediaSource URLs.
+    m_networkState = MediaPlayer::NetworkState::FormatError;
+    m_player->networkStateChanged();
 }
 
 void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, MediaSourcePrivateClient* mediaSource)
 {
+    GST_DEBUG("Loading %s", url.string().ascii().data());
     m_mediaSource = mediaSource;
-    load(makeString("mediasource", url.string()));
+
+    if (!m_playbackPipeline)
+        m_playbackPipeline = PlaybackPipeline::create();
+
+    m_mediaSourcePrivate = MediaSourcePrivateGStreamer::open(*m_mediaSource.get(), *this);
+
+    MediaPlayerPrivateGStreamer::load(makeString("mediasource", url.string()));
 }
 
 void MediaPlayerPrivateGStreamerMSE::pause()
@@ -475,17 +474,33 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamerMSE::buffered() c
 
 void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
 {
-    m_source = sourceElement;
+    ASSERT(WEBKIT_IS_MEDIA_SRC(sourceElement));
+    GST_DEBUG_OBJECT(pipeline(), "Source %p setup (old was: %p)", sourceElement, m_source.get());
 
-    ASSERT(WEBKIT_IS_MEDIA_SRC(m_source.get()));
+    bool shouldRestoreTracks = m_source;
+    if (shouldRestoreTracks)
+        webKitMediaSrcRestoreTracks(WEBKIT_MEDIA_SRC(m_source.get()), WEBKIT_MEDIA_SRC(sourceElement));
+    m_source = sourceElement;
+    m_eosMarked = false;
 
     m_playbackPipeline->setWebKitMediaSrc(WEBKIT_MEDIA_SRC(m_source.get()));
-
-    MediaSourcePrivateGStreamer::open(*m_mediaSource.get(), *this);
     g_signal_connect_swapped(m_source.get(), "video-changed", G_CALLBACK(videoChangedCallback), this);
     g_signal_connect_swapped(m_source.get(), "audio-changed", G_CALLBACK(audioChangedCallback), this);
     g_signal_connect_swapped(m_source.get(), "text-changed", G_CALLBACK(textChangedCallback), this);
     webKitMediaSrcSetMediaPlayerPrivate(WEBKIT_MEDIA_SRC(m_source.get()), this);
+
+    if (shouldRestoreTracks) {
+        callOnMainThread([player = makeWeakPtr(*this)] {
+            if (!player)
+                return;
+            webKitMediaSrcSignalTracks(WEBKIT_MEDIA_SRC(player->m_source.get()));
+            player->m_mediaSource->monitorSourceBuffers();
+
+            auto seekTime = MediaTime::zeroTime();
+            webKitMediaSrcPrepareInitialSeek(WEBKIT_MEDIA_SRC(player->m_source.get()), player->m_playbackRate, seekTime, MediaTime::invalidTime());
+            player->notifySeekNeedsDataForTime(seekTime);
+        });
+    }
 }
 
 void MediaPlayerPrivateGStreamerMSE::updateStates()

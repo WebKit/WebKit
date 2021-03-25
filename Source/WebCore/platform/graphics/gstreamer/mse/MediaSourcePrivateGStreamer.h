@@ -55,7 +55,7 @@ class MediaSourcePrivateGStreamer final : public MediaSourcePrivate
 #endif
 {
 public:
-    static void open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
+    static Ref<MediaSourcePrivateGStreamer> open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~MediaSourcePrivateGStreamer();
 
     AddStatus addSourceBuffer(const ContentType&, bool, RefPtr<SourceBufferPrivate>&) override;

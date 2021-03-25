@@ -271,6 +271,7 @@ void webKitMediaSrcFinalize(GObject* object)
     WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(object);
     WebKitMediaSrcPrivate* priv = source->priv;
 
+    GST_DEBUG_OBJECT(source, "Finalizing %p", source);
     Vector<Stream*> oldStreams;
     source->priv->streams.swap(oldStreams);
 
@@ -352,6 +353,7 @@ GstStateChangeReturn webKitMediaSrcChangeState(GstElement* element, GstStateChan
     WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(element);
     WebKitMediaSrcPrivate* priv = source->priv;
 
+    GST_DEBUG_OBJECT(element, "%s", gst_state_change_get_name(transition));
     switch (transition) {
     case GST_STATE_CHANGE_READY_TO_PAUSED:
         priv->allTracksConfigured = false;
@@ -509,10 +511,13 @@ void webKitMediaSrcLinkSourcePad(GstPad* sourcePad, GstCaps* caps, Stream* strea
 
 void webKitMediaSrcFreeStream(WebKitMediaSrc* source, Stream* stream)
 {
+    GST_DEBUG_OBJECT(source, "Releasing stream: %p", stream);
+
     if (GST_IS_APP_SRC(stream->appsrc)) {
         // Don't trigger callbacks from this appsrc to avoid using the stream anymore.
         gst_app_src_set_callbacks(GST_APP_SRC(stream->appsrc), &disabledAppsrcCallbacks, nullptr, nullptr);
         gst_app_src_end_of_stream(GST_APP_SRC(stream->appsrc));
+        gst_object_unref(stream->appsrc);
     }
 
     GST_OBJECT_LOCK(source);
@@ -566,7 +571,6 @@ void webKitMediaSrcFreeStream(WebKitMediaSrc* source, Stream* stream)
         source->priv->streamCondition.notifyOne();
     }
 
-    GST_DEBUG("Releasing stream: %p", stream);
     delete stream;
 }
 
@@ -690,6 +694,73 @@ static void notifyReadyForMoreSamplesMainThread(WebKitMediaSrc* source, Stream* 
         appsrcStream->sourceBuffer->notifyReadyForMoreSamples();
 
     GST_OBJECT_UNLOCK(source);
+}
+
+void webKitMediaSrcRestoreTracks(WebKitMediaSrc* oldSource, WebKitMediaSrc* newSource)
+{
+    newSource->priv->streams = WTFMove(oldSource->priv->streams);
+    for (auto* stream : newSource->priv->streams) {
+        stream->parent = newSource;
+
+        auto oldSourcePad = adoptGRef(gst_element_get_static_pad(stream->appsrc, "src"));
+        unsigned padId = static_cast<unsigned>(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(oldSourcePad.get()), "padId")));
+
+        gst_object_unref(stream->appsrc);
+
+        // Ensure ownership is not transfered to the bin. The appsrc element is managed by its parent Stream.
+        stream->appsrc = GST_ELEMENT_CAST(gst_object_ref_sink(gst_element_factory_make("appsrc", nullptr)));
+        stream->appsrcNeedDataFlag = true;
+
+        gst_app_src_set_callbacks(GST_APP_SRC(stream->appsrc), &enabledAppsrcCallbacks, stream->parent, nullptr);
+        gst_app_src_set_emit_signals(GST_APP_SRC(stream->appsrc), FALSE);
+        gst_app_src_set_stream_type(GST_APP_SRC(stream->appsrc), GST_APP_STREAM_TYPE_SEEKABLE);
+
+        gst_app_src_set_max_bytes(GST_APP_SRC(stream->appsrc), 2 * WTF::MB);
+        g_object_set(G_OBJECT(stream->appsrc), "block", FALSE, "min-percent", 20, "format", GST_FORMAT_TIME, nullptr);
+
+        gst_bin_add(GST_BIN_CAST(newSource), stream->appsrc);
+
+        auto sourcePad = adoptGRef(gst_element_get_static_pad(stream->appsrc, "src"));
+        g_object_set_data(G_OBJECT(sourcePad.get()), "padId", GINT_TO_POINTER(padId));
+    }
+
+    newSource->priv->numberOfAudioStreams = oldSource->priv->numberOfAudioStreams;
+    newSource->priv->numberOfTextStreams = oldSource->priv->numberOfTextStreams;
+    newSource->priv->numberOfVideoStreams = oldSource->priv->numberOfVideoStreams;
+    newSource->priv->numberOfPads = oldSource->priv->numberOfPads;
+    newSource->priv->allTracksConfigured = oldSource->priv->allTracksConfigured;
+}
+
+void webKitMediaSrcSignalTracks(WebKitMediaSrc* source)
+{
+    for (auto* stream : source->priv->streams) {
+        auto sourcePad = adoptGRef(gst_element_get_static_pad(stream->appsrc, "src"));
+        webKitMediaSrcLinkStreamToSrcPad(sourcePad.get(), stream);
+
+        gst_element_sync_state_with_parent(stream->appsrc);
+
+        int signal = -1;
+        switch (stream->type) {
+        case WebCore::MediaSourceStreamTypeGStreamer::Video:
+            signal = SIGNAL_VIDEO_CHANGED;
+            break;
+        case WebCore::MediaSourceStreamTypeGStreamer::Audio:
+            signal = SIGNAL_AUDIO_CHANGED;
+            break;
+        case WebCore::MediaSourceStreamTypeGStreamer::Text:
+            signal = SIGNAL_TEXT_CHANGED;
+            break;
+        default:
+            break;
+        }
+        if (signal != -1)
+            g_signal_emit(G_OBJECT(stream->parent), webKitMediaSrcSignals[signal], 0, nullptr);
+    }
+
+    if (source->priv->streams.size()) {
+        gst_element_no_more_pads(GST_ELEMENT_CAST(source));
+        webKitMediaSrcDoAsyncDone(source);
+    }
 }
 
 void webKitMediaSrcSetMediaPlayerPrivate(WebKitMediaSrc* source, WebCore::MediaPlayerPrivateGStreamerMSE* mediaPlayerPrivate)
