@@ -854,6 +854,11 @@ static gboolean checkUserData(GFile* file)
     return G_IS_FILE(file);
 }
 
+static char* valueToString(JSCValue* value)
+{
+    return jsc_value_to_string(value);
+}
+
 static void testJSCFunction()
 {
     {
@@ -1122,6 +1127,47 @@ static void testJSCFunction()
         checker.watch(value.get());
         g_assert_true(jsc_value_is_boolean(value.get()));
         g_assert_true(jsc_value_to_boolean(value.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(context.get(), "valueToString", G_CALLBACK(valueToString), nullptr, nullptr, G_TYPE_STRING, 1, JSC_TYPE_VALUE));
+        checker.watch(function.get());
+        jsc_context_set_value(context.get(), "valueToString", function.get());
+
+        GRefPtr<JSCValue> value = adoptGRef(jsc_context_evaluate(context.get(), "valueToString(4)", -1));
+        checker.watch(value.get());
+        GUniquePtr<char> valueString(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(valueString.get(), ==, "4");
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "valueToString('Hello World')", -1));
+        checker.watch(value.get());
+        valueString.reset(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(valueString.get(), ==, "Hello World");
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "valueToString(undefined)", -1));
+        checker.watch(value.get());
+        valueString.reset(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(valueString.get(), ==, "undefined");
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "valueToString(null)", -1));
+        checker.watch(value.get());
+        valueString.reset(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(valueString.get(), ==, "null");
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "valueToString()", -1));
+        checker.watch(value.get());
+        valueString.reset(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(valueString.get(), ==, "undefined");
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "valueToString(1,2,3)", -1));
+        checker.watch(value.get());
+        valueString.reset(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(valueString.get(), ==, "1");
     }
 }
 
@@ -1812,6 +1858,14 @@ static void testJSCClass()
         checker.watch(value.get());
         g_assert_true(jsc_value_is_number(value.get()));
         g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 52);
+
+        foo2 = adoptGRef(jsc_context_evaluate(context.get(), "f2 = new Foo.CreateWithFoo();", -1));
+        checker.watch(foo2.get());
+        g_assert_true(jsc_value_is_object(foo2.get()));
+        value = adoptGRef(jsc_context_evaluate(context.get(), "f2.foo", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_number(value.get()));
+        g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 0);
 
         GRefPtr<JSCValue> constructorV = adoptGRef(jsc_class_add_constructor_variadic(jscClass, "CreateWithFoo", G_CALLBACK(fooCreateWithFooV), nullptr, nullptr, G_TYPE_POINTER));
         checker.watch(constructorV.get());

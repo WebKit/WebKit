@@ -1,3 +1,21 @@
+2021-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] JSC crashes if a function expects a parameter but doesn't receive any
+        https://bugs.webkit.org/show_bug.cgi?id=223646
+
+        Reviewed by Adrian Perez de Castro.
+
+        Handle the case of receiving fewer argumens than expected in function calls and constructors. We pass undefined
+        for the expected arguments that are missing. We were not correctly handling the case of converting undefined and
+        null values to JSCValue, so this patch fixes that case too.
+
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSCCallbackFunction::call):
+        (JSC::JSCCallbackFunction::construct):
+        * API/glib/JSCContext.cpp:
+        (jscContextJSValueToWrappedObject):
+        (jscContextJSValueToGValue):
+
 2021-03-24  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Interpreter incorrectly matches non-BMP characters with multiple . w/dotAll flag

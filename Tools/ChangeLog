@@ -1,3 +1,17 @@
+2021-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] JSC crashes if a function expects a parameter but doesn't receive any
+        https://bugs.webkit.org/show_bug.cgi?id=223646
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add test cases.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (valueToString):
+        (testJSCFunction):
+        (testJSCClass):
+
 2021-03-25  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add unit-test to ensure that config.json doesn't have tab characters
