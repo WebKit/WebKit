@@ -1,3 +1,12 @@
+2021-03-25  Truitt Savell  <tsavell@apple.com>
+
+        stress/early-return-from-builtin.js.default is failing on iOS JSC testers
+        rdar://75597901
+
+        Unreviewed test gardening.
+
+        * stress/early-return-from-builtin.js:
+
 2021-03-25  Saam Barati  <sbarati@apple.com>
 
         early-return-from-builtin.js should try/catch in case of OOM
