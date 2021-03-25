@@ -113,7 +113,7 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     // GClosure always expect to have at least the instance parameter.
     bool addInstance = instance || (m_parameters && m_parameters->isEmpty());
 
-    auto parameterCount = m_parameters ? std::min(m_parameters->size(), argumentCount) : 1;
+    auto parameterCount = m_parameters ? m_parameters->size() : 1;
     if (addInstance)
         parameterCount++;
     auto* values = static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount));
@@ -126,8 +126,11 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
         firstParameter = 1;
     }
     if (m_parameters) {
-        for (size_t i = firstParameter; i < parameterCount && !*exception; ++i)
-            jscContextJSValueToGValue(context.get(), arguments[i - firstParameter], m_parameters.value()[i - firstParameter], &values[i], exception);
+        for (size_t i = firstParameter; i < parameterCount && !*exception; ++i) {
+            auto argumentIndex = i - firstParameter;
+            jscContextJSValueToGValue(context.get(), argumentIndex < argumentCount ? arguments[argumentIndex] : JSValueMakeUndefined(jsContext),
+                m_parameters.value()[argumentIndex], &values[i], exception);
+        }
     } else {
         auto* parameters = g_ptr_array_new_full(argumentCount, g_object_unref);
         for (size_t i = 0; i < argumentCount; ++i)
@@ -182,13 +185,13 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
         g_closure_invoke(m_closure.get(), &returnValue, 1, &dummyValue, nullptr);
         g_value_unset(&dummyValue);
     } else {
-        auto parameterCount = m_parameters ? std::min(m_parameters->size(), argumentCount) : 1;
+        auto parameterCount = m_parameters ? m_parameters->size() : 1;
         auto* values = static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount));
         memset(values, 0, sizeof(GValue) * parameterCount);
 
         if (m_parameters) {
             for (size_t i = 0; i < parameterCount && !*exception; ++i)
-                jscContextJSValueToGValue(context.get(), arguments[i], m_parameters.value()[i], &values[i], exception);
+                jscContextJSValueToGValue(context.get(), i < argumentCount ? arguments[i] : JSValueMakeUndefined(jsContext), m_parameters.value()[i], &values[i], exception);
         } else {
             auto* parameters = g_ptr_array_new_full(argumentCount, g_object_unref);
             for (size_t i = 0; i < argumentCount; ++i)
