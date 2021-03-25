@@ -1,5 +1,18 @@
 2021-03-24  Chris Dumez  <cdumez@apple.com>
 
+        bindings/js/JSEventListener.cpp:281:91: runtime error: reference binding to null pointer of type 'WebCore::ScriptExecutionContext'
+        https://bugs.webkit.org/show_bug.cgi?id=223719
+
+        Reviewed by Darin Adler.
+
+        Make sure we null check the scriptExecutionContext before we dereference it.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::eventHandlerAttribute):
+        (WebCore::windowEventHandlerAttribute):
+
+2021-03-24  Chris Dumez  <cdumez@apple.com>
+
         Port FontDescriptionKey::computeHash() from legacy IntegerHasher to Hasher
         https://bugs.webkit.org/show_bug.cgi?id=223701
 

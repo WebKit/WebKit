@@ -278,7 +278,10 @@ static inline RefPtr<JSEventListener> createEventListenerForEventHandlerAttribut
 
 JSC::JSValue eventHandlerAttribute(EventTarget& target, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
 {
-    return eventHandlerAttribute(target.attributeEventListener(eventType, isolatedWorld), *target.scriptExecutionContext());
+    auto* context = target.scriptExecutionContext();
+    if (!context)
+        return jsNull();
+    return eventHandlerAttribute(target.attributeEventListener(eventType, isolatedWorld), *context);
 }
 
 void setEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, EventTarget& target, const AtomString& eventType, JSC::JSValue value)
