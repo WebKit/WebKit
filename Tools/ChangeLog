@@ -1,3 +1,16 @@
+2021-03-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Autoinstalling keyring-7.3.1 is failing with Python 2
+        https://bugs.webkit.org/show_bug.cgi?id=223677
+        <rdar://problem/75800504>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version, add setuptools_scm.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.install): Always install setuptools_scm.
+
 2021-03-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Add functions rectsForTextMarkerRange for testing
