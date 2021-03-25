@@ -42,6 +42,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
