@@ -1,3 +1,12 @@
+2021-03-24  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Wk2 ]inspector/indexeddb/clearObjectStore.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=222140
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to include Pass Failure Timeout.
+
 2021-03-24  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r274919) [ATK] accessibility/set-selected-text-range-contenteditable.html is timing out
