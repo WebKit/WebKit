@@ -1301,7 +1301,7 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
 
     auto shadowRoot = makeRef(ensureUserAgentShadowRoot());
     if (!previousContainer) {
-        static NeverDestroyed<const String> shadowStyle(imageOverlayUserAgentStyleSheet, String::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
         auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
         style->setTextContent(shadowStyle);
         shadowRoot->appendChild(WTFMove(style));

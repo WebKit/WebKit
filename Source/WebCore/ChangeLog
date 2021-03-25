@@ -1,3 +1,39 @@
+2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        All string resources from UserAgentStyleSheets / UserAgentScripts should be used as non-copying StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=223685
+
+        Reviewed by Saam Barati.
+
+        We use StringImpl::createWithoutCopying for string resources from UserAgentStyleSheets / UserAgentScripts to make sure that
+        these resources do not allocate heap strings.
+
+        This patch also fixes HTMLMeterElement's bug (and imageOverlayUserAgentStyleSheet's bug). Previously, we are using String::ConstructFromLiteral,
+        but this only accepts string literal as it says. As a result, we are dropping the last character since UserAgentStyleSheets's last character is not \0.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::quickTimePluginReplacementScript):
+        * WebCoreMacros.cmake:
+        * dom/Document.cpp:
+        (WebCore::Document::ensurePlugInsInjectedScript):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithImageExtractionResult):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::didAddUserAgentShadowRoot):
+        * rendering/RenderThemeAdwaita.cpp:
+        (WebCore::RenderThemeAdwaita::extraDefaultStyleSheet):
+        (WebCore::RenderThemeAdwaita::extraMediaControlsStyleSheet):
+        (WebCore::RenderThemeAdwaita::mediaControlsScripts):
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::mediaControlsStyleSheet):
+        (WebCore::RenderThemeCocoa::mediaControlsScripts):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::extraDefaultStyleSheet):
+        (WebCore::RenderThemeWin::extraQuirksStyleSheet):
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::initDefaultStyleSheet):
+        (WebCore::Style::UserAgentStyle::ensureDefaultStyleSheetsForElement):
+
 2021-03-24  Chris Dumez  <cdumez@apple.com>
 
         bindings/js/JSEventListener.cpp:281:91: runtime error: reference binding to null pointer of type 'WebCore::ScriptExecutionContext'
