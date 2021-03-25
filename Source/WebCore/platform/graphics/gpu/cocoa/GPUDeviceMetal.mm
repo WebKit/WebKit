@@ -44,10 +44,12 @@ static bool isAcceptableDevice(id <MTLDevice> device)
 
 void GPUDevice::prewarm()
 {
+#if PLATFORM(MAC)
     // Call MTLCopyAllDevices() on a background thread to avoid hanging the main thread.
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        MTLCopyAllDevices();
+        auto devices = adoptNS(MTLCopyAllDevices());
     });
+#endif
 }
 
 RefPtr<GPUDevice> GPUDevice::tryCreate(const Optional<GPURequestAdapterOptions>& options)

@@ -1,3 +1,17 @@
+2021-03-25  Ben Nham  <nham@apple.com>
+
+        Only preheat MTLCopyAllDevices on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=223747
+
+        Reviewed by Chris Dumez.
+
+        We should use adoptNS to avoid leaking the array returned by MTLCopyAllDevices. We should
+        also only do this on Mac because this is only a public API on the Mac, and the issue of
+        graphics drivers falling out of the dyld shared cache doesn't exist on iOS.
+
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::prewarm):
+
 2021-03-25  Alex Christensen  <achristensen@webkit.org>
 
         WKContentRuleList first-party should include other subdomains of the current registrable domain
