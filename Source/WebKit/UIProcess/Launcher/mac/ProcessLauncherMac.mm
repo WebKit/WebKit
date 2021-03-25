@@ -27,6 +27,7 @@
 #import "ProcessLauncher.h"
 
 #import "WebPreferencesDefaultValues.h"
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/mach_error.h>
@@ -39,6 +40,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Threading.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/CString.h>
@@ -207,6 +209,8 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
+    xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", WebCore::applicationBundleIdentifier().utf8().data());
+    xpc_dictionary_set_string(bootstrapMessage.get(), "client-sdk-version", String::number(applicationSDKVersion()).utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "process-identifier", String::number(m_launchOptions.processIdentifier.toUInt64()).utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);

@@ -1,3 +1,92 @@
+2021-03-25  Tim Horton  <timothy_horton@apple.com>
+
+        All Books quirks are flakily not applied in modern WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=157101
+        <rdar://problem/25965028>
+
+        Reviewed by Darin Adler.
+
+        In r200121, a quirk was introduced that queried the isIBooks()
+        RuntimeApplicationChecks method from inside commonVM().
+
+        RuntimeApplicationChecks bundle checks cache the result of the bundle
+        check, and, as such, must not be called until the bundle identifer of
+        the UI application is known. In legacy WebKit, this is not a problem,
+        because the check is running in the application process; in modern WebKit,
+        there is a short window between process launch and the InitializeWebProcess
+        message being received where we won't know the bundle identifier, and if
+        isIBooks() (or any other bundle check) is called during this time, it will
+        cache the wrong result.
+
+        It is possible for commonVM() to be called in this window; one possible path
+        to this is by triggering an os_log_fault during this time, which WebKit
+        observes (via os_state_add_handler()) in order to dump memory usage
+        (which happens to call commonVM() and results in isIBooks getting called
+        and caching the wrong value).
+
+        Add an assertion, and move the quirk to live as a setting on the process
+        pool configuration, to be set via SPI by Books, instead of as a bundle check.
+
+        Also, ensure that client bundle identifier and SDK version are set in 
+        all WebKit subprocesses, so that bundle/SDK checks work everywhere
+        (previously, the GPU process was using SDK checks without having pushed
+        the values from the UI process, resulting in incorrect results, and
+        running afoul of the assertion added above).
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        (API::defaultShouldThrowExceptionForGlobalConstantRedeclaration):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration shouldThrowExceptionForGlobalConstantRedeclaration]):
+        (-[_WKProcessPoolConfiguration setShouldThrowExceptionForGlobalConstantRedeclaration:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Plumb a new _WKProcessPoolConfiguration parameter to the Web Content process,
+        and set the bit on the commonVM when launched.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::initialize):
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        * Shared/AuxiliaryProcess.h:
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::initializeTimerCoalescingPolicy):
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getClientSDKVersion):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Remove an extra unused member.
+        * Shared/ios/AuxiliaryProcessIOS.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize): Deleted.
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::initializeTimerCoalescingPolicy): Deleted.
+        (WebKit::AuxiliaryProcess::platformInitialize): Deleted.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Plumb the client bundle identifer and SDK version to all auxiliary processes
+        at process initialization time instead of InitializeWebProcess/NetworkProcess
+        message receipt time, closing the window in which it is invalid to use
+        bundle checks, and ensuring that bundle checks work in all processes.
+
 2021-03-24  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in TextChecker::updateSpellingUIWithGrammarString()

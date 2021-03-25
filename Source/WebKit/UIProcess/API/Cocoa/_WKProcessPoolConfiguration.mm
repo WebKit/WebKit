@@ -141,6 +141,16 @@
     return _processPoolConfiguration->setAttrStyleEnabled(enabled);
 }
 
+- (BOOL)shouldThrowExceptionForGlobalConstantRedeclaration
+{
+    return _processPoolConfiguration->shouldThrowExceptionForGlobalConstantRedeclaration();
+}
+
+- (void)setShouldThrowExceptionForGlobalConstantRedeclaration:(BOOL)shouldThrow
+{
+    return _processPoolConfiguration->setShouldThrowExceptionForGlobalConstantRedeclaration(shouldThrow);
+}
+
 - (NSArray<NSURL *> *)additionalReadAccessAllowedURLs
 {
     auto paths = _processPoolConfiguration->additionalReadAccessAllowedPaths();

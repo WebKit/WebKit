@@ -72,9 +72,21 @@ bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Ide
 bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier)
 {
     clientIdentifier = xpc_dictionary_get_string(m_initializerMessage, "client-identifier");
-    if (clientIdentifier.isEmpty())
-        return false;
-    return true;
+    return !clientIdentifier.isEmpty();
+}
+
+bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBundleIdentifier)
+{
+    clientBundleIdentifier = xpc_dictionary_get_string(m_initializerMessage, "client-bundle-identifier");
+    return !clientBundleIdentifier.isEmpty();
+}
+
+bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersion)
+{
+    auto string = xpc_dictionary_get_string(m_initializerMessage, "client-sdk-version");
+    bool ok;
+    clientSDKVersion = charactersToUIntStrict(reinterpret_cast<const LChar*>(string), string ? std::strlen(string) : 0, &ok);
+    return ok;
 }
 
 bool XPCServiceInitializerDelegate::getProcessIdentifier(ProcessIdentifier& identifier)

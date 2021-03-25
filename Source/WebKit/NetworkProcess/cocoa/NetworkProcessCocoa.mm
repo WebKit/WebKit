@@ -73,9 +73,6 @@ static void initializeNetworkSettings()
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
-    WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
-    setApplicationSDKVersion(parameters.uiProcessSDKVersion);
-
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);

@@ -47,6 +47,7 @@ enum class AuxiliaryProcessType : uint8_t {
 WEBCORE_EXPORT void setAuxiliaryProcessType(AuxiliaryProcessType);
 WEBCORE_EXPORT bool checkAuxiliaryProcessType(AuxiliaryProcessType);
 
+bool isInAuxiliaryProcess();
 inline bool isInWebProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::WebContent); }
 inline bool isInNetworkProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::Network); }
 #if ENABLE(GPU_PROCESS)

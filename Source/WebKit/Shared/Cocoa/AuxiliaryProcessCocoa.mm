@@ -28,9 +28,41 @@
 
 #import "WKCrashReporter.h"
 #import "XPCServiceEntryPoint.h"
+#import <WebCore/FloatingPointEnvironment.h>
+#import <WebCore/RuntimeApplicationChecks.h>
+#import <mach/task.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 namespace WebKit {
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+static void initializeTimerCoalescingPolicy()
+{
+    // Set task_latency and task_throughput QOS tiers as appropriate for a visible application.
+    struct task_qos_policy qosinfo = { LATENCY_QOS_TIER_0, THROUGHPUT_QOS_TIER_0 };
+    kern_return_t kr = task_policy_set(mach_task_self(), TASK_BASE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
+    ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+}
+#endif
+
+void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters& parameters)
+{
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    initializeTimerCoalescingPolicy();
+#endif
+
+    FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::singleton();
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+    floatingPointEnvironment.enableDenormalSupport();
+#endif
+    floatingPointEnvironment.saveMainThreadEnvironment();
+
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
+
+    WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
+    setApplicationSDKVersion(parameters.clientSDKVersion);
+}
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
 {

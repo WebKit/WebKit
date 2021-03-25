@@ -320,7 +320,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     SandboxExtension::createHandleWithoutResolvingPath(parameters.uiProcessBundleResourcePath, SandboxExtension::Type::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
     parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
-    parameters.uiProcessSDKVersion = applicationSDKVersion();
 
     parameters.latencyQOS = webProcessLatencyQOS();
     parameters.throughputQOS = webProcessThroughputQOS();
@@ -482,7 +481,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
     parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
-    parameters.uiProcessSDKVersion = applicationSDKVersion();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 

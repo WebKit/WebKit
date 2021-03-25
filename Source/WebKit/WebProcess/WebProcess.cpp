@@ -484,6 +484,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setAttrStyleEnabled(parameters.attrStyleEnabled);
+    
+    commonVM().setGlobalConstRedeclarationShouldThrow(parameters.shouldThrowExceptionForGlobalConstantRedeclaration);
 
 #if ENABLE(SERVICE_CONTROLS)
     setEnabledServices(parameters.hasImageServices, parameters.hasSelectionServices, parameters.hasRichContentServices);

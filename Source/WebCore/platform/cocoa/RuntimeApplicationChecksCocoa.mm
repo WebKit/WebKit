@@ -65,6 +65,7 @@ String applicationBundleIdentifier()
     ASSERT(identifier.isNull() || RunLoop::isMain());
     if (identifier.isNull())
         identifier = bundleIdentifier();
+    ASSERT_WITH_MESSAGE(!isInAuxiliaryProcess() || !!identifier, "applicationBundleIsEqualTo() and applicationBundleStartsWith() must not be called before setApplicationBundleIdentifier() in auxiliary processes");
     return identifier.isNull() ? String([[NSBundle mainBundle] bundleIdentifier]) : identifier;
 }
 
@@ -77,7 +78,7 @@ void setApplicationBundleIdentifier(const String& identifier)
 void setApplicationBundleIdentifierOverride(const String& identifier)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() and applicationBundleStartsWith() should not be called before setApplicationBundleIdentifier()");
+    ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() and applicationBundleStartsWith() must not be called before setApplicationBundleIdentifierOverride()");
     bundleIdentifierOverride() = identifier;
 }
 

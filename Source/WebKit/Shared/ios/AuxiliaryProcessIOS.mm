@@ -41,14 +41,6 @@
 
 namespace WebKit {
 
-void AuxiliaryProcess::platformInitialize()
-{
-    FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::singleton(); 
-    floatingPointEnvironment.enableDenormalSupport(); 
-    floatingPointEnvironment.saveMainThreadEnvironment(); 
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
-}
-
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&)
 {
     RELEASE_ASSERT_NOT_REACHED();

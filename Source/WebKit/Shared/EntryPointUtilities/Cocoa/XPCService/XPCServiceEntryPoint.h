@@ -61,6 +61,8 @@ public:
     virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier);
     virtual bool getProcessIdentifier(WebCore::ProcessIdentifier&);
     virtual bool getClientIdentifier(String& clientIdentifier);
+    virtual bool getClientBundleIdentifier(String& clientBundleIdentifier);
+    virtual bool getClientSDKVersion(uint32_t& clientSDKVersion);
     virtual bool getClientProcessName(String& clientProcessName);
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
 
@@ -112,6 +114,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         exit(EXIT_FAILURE);
 
     if (!delegate.getClientIdentifier(parameters.clientIdentifier))
+        exit(EXIT_FAILURE);
+
+    if (!delegate.getClientBundleIdentifier(parameters.clientBundleIdentifier))
+        exit(EXIT_FAILURE);
+
+    if (!delegate.getClientSDKVersion(parameters.clientSDKVersion))
         exit(EXIT_FAILURE);
 
     WebCore::ProcessIdentifier processIdentifier;

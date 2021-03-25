@@ -69,7 +69,7 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     RELEASE_ASSERT_WITH_MESSAGE(parameters.processIdentifier, "Unable to initialize child process without a WebCore process identifier");
     Process::setIdentifier(*parameters.processIdentifier);
 
-    platformInitialize();
+    platformInitialize(parameters);
 
 #if PLATFORM(COCOA)
     m_priorityBoostMessage = parameters.priorityBoostMessage;
@@ -237,7 +237,7 @@ Optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> AuxiliaryProce
 }
 
 #if !PLATFORM(COCOA)
-void AuxiliaryProcess::platformInitialize()
+void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
 {
 }
 

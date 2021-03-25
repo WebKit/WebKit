@@ -36,7 +36,6 @@
 #import "WKFoundation.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FileHandle.h>
-#import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/SystemVersion.h>
 #import <mach-o/dyld.h>
 #import <mach/mach.h>
@@ -145,14 +144,6 @@ struct SandboxInfo {
 constexpr uint32_t CachedSandboxVersionNumber = 1;
 #endif // USE(CACHE_COMPILED_SANDBOX)
 
-static void initializeTimerCoalescingPolicy()
-{
-    // Set task_latency and task_throughput QOS tiers as appropriate for a visible application.
-    struct task_qos_policy qosinfo = { LATENCY_QOS_TIER_0, THROUGHPUT_QOS_TIER_0 };
-    kern_return_t kr = task_policy_set(mach_task_self(), TASK_BASE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
-    ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
-}
-
 void AuxiliaryProcess::launchServicesCheckIn()
 {
 #if HAVE(CSCHECKFIXDISABLE)
@@ -162,15 +153,6 @@ void AuxiliaryProcess::launchServicesCheckIn()
 
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
     RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(kLSDefaultSessionID, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
-}
-
-void AuxiliaryProcess::platformInitialize()
-{
-    initializeTimerCoalescingPolicy();
-
-    FloatingPointEnvironment::singleton().saveMainThreadEnvironment();
-
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 
 static OSStatus enableSandboxStyleFileQuarantine()

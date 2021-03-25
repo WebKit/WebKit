@@ -40,6 +40,9 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic) BOOL ignoreSynchronousMessagingTimeoutsForTesting WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic) BOOL attrStyleEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
+// Defaults to YES.
+@property (nonatomic) BOOL shouldThrowExceptionForGlobalConstantRedeclaration WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @property (nonatomic, copy) NSArray<NSURL *> *additionalReadAccessAllowedURLs WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 #if TARGET_OS_IPHONE && !TARGET_OS_SIMULATOR

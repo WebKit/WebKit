@@ -53,7 +53,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredForCustomProtocols;
 #if PLATFORM(COCOA)
     encoder << uiProcessBundleIdentifier;
-    encoder << uiProcessSDKVersion;
     IPC::encode(encoder, networkATSContext.get());
 #endif
 #if USE(SOUP)
@@ -110,8 +109,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 #if PLATFORM(COCOA)
     if (!decoder.decode(result.uiProcessBundleIdentifier))
-        return false;
-    if (!decoder.decode(result.uiProcessSDKVersion))
         return false;
     if (!IPC::decode(decoder, result.networkATSContext))
         return false;
