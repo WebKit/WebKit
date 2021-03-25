@@ -1,5 +1,18 @@
 2021-03-24  Chris Dumez  <cdumez@apple.com>
 
+        Port FontDescriptionKey::computeHash() from legacy IntegerHasher to Hasher
+        https://bugs.webkit.org/show_bug.cgi?id=223701
+
+        Reviewed by Darin Adler.
+
+        Port FontDescriptionKey::computeHash() from legacy IntegerHasher to Hasher. Hasher
+        has the benefit of having add() overloads that take in signed integer types.
+
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::computeHash const):
+
+2021-03-24  Chris Dumez  <cdumez@apple.com>
+
         Extend WebAudio heap allocation assertions to cover the pre & post-rendering phases
         https://bugs.webkit.org/show_bug.cgi?id=223640
 

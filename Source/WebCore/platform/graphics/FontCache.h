@@ -108,16 +108,13 @@ struct FontDescriptionKey {
 
     inline unsigned computeHash() const
     {
-        IntegerHasher hasher;
-        hasher.add(m_size);
-        hasher.add(m_fontSelectionRequest.weight);
-        hasher.add(m_fontSelectionRequest.width);
-        hasher.add(m_fontSelectionRequest.slope.valueOr(normalItalicValue()));
-        hasher.add(m_locale.existingHash());
-        for (unsigned flagItem : m_flags)
-            hasher.add(flagItem);
-        hasher.add(m_featureSettings.hash());
-        hasher.add(m_variationSettings.hash());
+        Hasher hasher;
+        add(hasher, m_size);
+        add(hasher, m_fontSelectionRequest.tied());
+        add(hasher, m_locale.existingHash());
+        add(hasher, m_flags);
+        add(hasher, m_featureSettings.hash());
+        add(hasher, m_variationSettings.hash());
         return hasher.hash();
     }
 
