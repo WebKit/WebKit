@@ -1,5 +1,14 @@
 2021-03-24  Lauro Moura  <lmoura@igalia.com>
 
+        [GTK] Re-skip modern-media-controls tests after r274810
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Skipping them again until proper
+        support is added.
+
+2021-03-24  Lauro Moura  <lmoura@igalia.com>
+
         [GLIB] Gardening already closed bug and a WPE flaky
 
         Unreviewed test gardening.

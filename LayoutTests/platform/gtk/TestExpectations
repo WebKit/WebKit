@@ -189,6 +189,10 @@ webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/animation
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/parsing/transition-delay-invalid.html [ Pass Crash ]
 webkit.org/b/216777 fast/table/007.html [ Pass Crash ]
 
+# Modern-media-controls support
+webkit.org/b/182502 http/tests/media/modern-media-controls [ Skip ]
+webkit.org/b/182502 media/modern-media-controls [ Skip ]
+
 # Navigation
 webkit.org/b/218349 fast/forms/focus2.html [ Failure ]
 webkit.org/b/218349 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
