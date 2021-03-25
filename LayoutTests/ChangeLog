@@ -1,3 +1,13 @@
+2021-03-25  Robert Jenner  <jenner@apple.com>
+
+        [ Debug wk2 ] ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData)
+        https://bugs.webkit.org/show_bug.cgi?id=223750
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Added test expectation to Pass Crash while test is reviewed.
+        * platform/mac-wk2/TestExpectations: Updated test expectation to Pass Crash while test is reviewed.
+
 2021-03-25  John Wilander  <wilander@apple.com>
 
         PCM: Rename attributeOn to attributionDestination and change the IDL data type of attributionSourceId to unsigned long

@@ -1908,3 +1908,5 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-
 webkit.org/b/223586 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 webkit.org/b/214955 fast/parser/xml-colon-entity.html [ Failure ]
+
+webkit.org/b/223750 [ Debug ] security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Pass Crash ]
