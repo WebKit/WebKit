@@ -1,3 +1,16 @@
+2021-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Source/WebCore/xml/parser/CharacterReferenceParserInlines.h:107:33: runtime error: signed integer overflow: 268435455 * 16 cannot be represented in type 'int'
+        https://bugs.webkit.org/show_bug.cgi?id=223718
+
+        Reviewed by Darin Adler.
+
+        Use Checked<> for the result in consumeCharacterReference() to deal with overflows
+        in a well-defined manner.
+
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::consumeCharacterReference):
+
 2021-03-25  John Wilander  <wilander@apple.com>
 
         PCM: Rename attributeOn to attributionDestination and change the IDL data type of attributionSourceId to unsigned long

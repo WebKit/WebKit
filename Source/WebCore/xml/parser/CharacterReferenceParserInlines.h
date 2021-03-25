@@ -51,8 +51,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         Decimal,
         Named
     } state = Initial;
-    UChar32 result = 0;
-    bool overflow = false;
+    Checked<UChar32, RecordOverflow> result = 0;
     StringBuilder consumedCharacters;
     
     while (!source.isEmpty()) {
@@ -104,18 +103,17 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         case Hex:
         Hex:
             if (isASCIIHexDigit(character)) {
-                result = result * 16 + toASCIIHexValue(character);
-                if (result > UCHAR_MAX_VALUE)
-                    overflow = true;
+                result *= 16;
+                result += static_cast<UChar32>(toASCIIHexValue(character));
                 break;
             }
             if (character == ';') {
                 source.advancePastNonNewline();
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.unsafeGet()));
                 return true;
             }
             if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.unsafeGet()));
                 return true;
             }
             unconsumeCharacters(source, consumedCharacters);
@@ -123,18 +121,17 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         case Decimal:
         Decimal:
             if (isASCIIDigit(character)) {
-                result = result * 10 + character - '0';
-                if (result > UCHAR_MAX_VALUE)
-                    overflow = true;
+                result *= 10;
+                result += (character - '0');
                 break;
             }
             if (character == ';') {
                 source.advancePastNonNewline();
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.unsafeGet()));
                 return true;
             }
             if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.unsafeGet()));
                 return true;
             }
             unconsumeCharacters(source, consumedCharacters);
