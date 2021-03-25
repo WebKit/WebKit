@@ -230,24 +230,6 @@ const ImageDecoderGStreamerSample* ImageDecoderGStreamer::sampleAtIndex(size_t i
     return toSample(iter);
 }
 
-int ImageDecoderGStreamer::InnerDecoder::selectStream(GstStream* stream)
-{
-    // Select only the first video stream.
-    auto* object = GST_OBJECT_CAST(m_decodebin.get());
-    GST_OBJECT_LOCK(object);
-    auto numberOfSourcePads = m_decodebin->numsrcpads;
-    GST_OBJECT_UNLOCK(object);
-
-    if (numberOfSourcePads) {
-        GST_DEBUG_OBJECT(m_pipeline.get(), "Discarding additional %" GST_PTR_FORMAT, stream);
-        return 0;
-    }
-
-    int result = gst_stream_get_stream_type(stream) & GST_STREAM_TYPE_VIDEO ? 1 : 0;
-    GST_DEBUG_OBJECT(m_pipeline.get(), "%" GST_PTR_FORMAT " selected: %s", stream, boolForPrinting(result));
-    return result;
-}
-
 void ImageDecoderGStreamer::InnerDecoder::decodebinPadAddedCallback(ImageDecoderGStreamer::InnerDecoder* decoder, GstPad* pad)
 {
     decoder->connectDecoderPad(pad);
@@ -336,6 +318,27 @@ void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
         g_warning("Error: %d, %s. Debug output: %s", error->code, error->message, debug.get());
         m_decoder.setHasEOS();
         break;
+    case GST_MESSAGE_STREAM_COLLECTION: {
+        GRefPtr<GstStreamCollection> collection;
+        gst_message_parse_stream_collection(message, &collection.outPtr());
+        if (collection) {
+            unsigned size = gst_stream_collection_get_size(collection.get());
+            GList* streams = nullptr;
+            for (unsigned i = 0 ; i < size; i++) {
+                auto* stream = gst_stream_collection_get_stream(collection.get(), i);
+                auto streamType = gst_stream_get_stream_type(stream);
+                if (streamType == GST_STREAM_TYPE_VIDEO) {
+                    streams = g_list_append(streams, const_cast<char*>(gst_stream_get_stream_id(stream)));
+                    break;
+                }
+            }
+            if (streams) {
+                gst_element_send_event(m_decodebin.get(), gst_event_new_select_streams(streams));
+                g_list_free(streams);
+            }
+        }
+        break;
+    }
     default:
         break;
     }
@@ -369,9 +372,6 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
     g_object_set(source, "stream", m_memoryStream.get(), nullptr);
 
     m_decodebin = gst_element_factory_make("decodebin3", nullptr);
-    g_signal_connect(m_decodebin.get(), "select-stream", G_CALLBACK(+[](GstElement*, GstStreamCollection*, GstStream* stream, ImageDecoderGStreamer::InnerDecoder* decoder) -> int {
-        return decoder->selectStream(stream);
-    }), this);
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);
 
     gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), source, m_decodebin.get(), nullptr);
