@@ -94,7 +94,7 @@ private:
     RefPtr<CoordinatedGraphicsScene> m_scene;
     std::unique_ptr<WebCore::GLContext> m_context;
 
-    uint64_t m_nativeSurfaceHandle;
+    uintptr_t m_nativeSurfaceHandle;
     WebCore::TextureMapper::PaintFlags m_paintFlags { 0 };
     unsigned m_suspendedCount { 0 };
 

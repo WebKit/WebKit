@@ -86,7 +86,13 @@ void ThreadedCompositor::createGLContext()
 
     ASSERT(m_nativeSurfaceHandle);
 
-    m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(m_nativeSurfaceHandle), &PlatformDisplay::sharedDisplayForCompositing());
+#if CPU(ADDRESS64)
+    auto windowType = reinterpret_cast<GLNativeWindowType>(m_nativeSurfaceHandle);
+#else
+    // On 32-bit platforms GLNativeWindowType is an integer type, which cannot be casted with reinterpret_cast.
+    auto windowType = static_cast<GLNativeWindowType>(m_nativeSurfaceHandle);
+#endif
+    m_context = GLContext::createContextForWindow(windowType, &PlatformDisplay::sharedDisplayForCompositing());
     if (m_context)
         m_context->makeContextCurrent();
 }

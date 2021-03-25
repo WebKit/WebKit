@@ -69,10 +69,16 @@ typedef unsigned char UInt8;
 #endif
 #endif
 
-// X11 header defines "None" as constant in macro and breakes the PaintInvalidationReasons enum's "None".
-// As a workaround, we explicitly undef X11's None here.
+// X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
+// As a workaround, we explicitly undef them here.
 #if defined(None)
 #undef None
+#endif
+#if defined(Below)
+#undef Below
+#endif
+#if defined(Success)
+#undef Success
 #endif
 
 namespace WebCore {
