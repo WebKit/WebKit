@@ -1,11 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-base/gst-plugins-base-1.18.3.tar.xz
-  ref: dbfa20283848f0347a223dd8523dfb62e09e5220b21b1d157a8b0c8b67ba9f52
-# Backport of https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/-/merge_requests/1031 to be shipped in 1.18.4
-- kind: patch
-  path: patches/gst-plugins-base-0001-videodecoder-Fix-racy-critical-when-pool-negotiation.patch
+  url: gst_downloads:gst-plugins-base/gst-plugins-base-1.18.4.tar.xz
+  ref: 29e53229a84d01d722f6f6db13087231cdf6113dd85c25746b9b58c3d68e8323
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:

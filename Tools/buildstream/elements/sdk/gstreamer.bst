@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gstreamer/gstreamer-1.18.3.tar.xz
-  ref: 0c2e09e18f2df69a99b5cb3bd53c597b3cc2e35cf6c98043bb86a66f3d312100
+  url: gst_downloads:gstreamer/gstreamer-1.18.4.tar.xz
+  ref: 9aeec99b38e310817012aa2d1d76573b787af47f8a725a65b833880a094dfbc5
 # Backport of https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/679 to be shipped in 1.20.
 - kind: patch
   path: patches/gstreamer-0001-devicemonitor-Stop-only-the-already-started-provider.patch
