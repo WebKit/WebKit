@@ -125,7 +125,7 @@ private:
 class RemoteVideoDecoder final : public webrtc::VideoDecoder {
 public:
     explicit RemoteVideoDecoder(WebKitVideoDecoder);
-    ~RemoteVideoDecoder() = default;
+    ~RemoteVideoDecoder();
 
 private:
     int32_t InitDecode(const VideoCodec*, int32_t number_of_cores) final;
@@ -163,6 +163,11 @@ RemoteVideoDecoder::RemoteVideoDecoder(WebKitVideoDecoder internalDecoder)
 {
 }
 
+RemoteVideoDecoder::~RemoteVideoDecoder()
+{
+    videoDecoderCallbacks().releaseCallback(m_internalDecoder);
+}
+
 void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, CVPixelBufferRef pixelBuffer, uint32_t timeStampRTP)
 {
     auto videoFrame = VideoFrame::Builder().set_video_frame_buffer(pixelBufferToFrame(pixelBuffer))
@@ -198,7 +203,8 @@ int32_t RemoteVideoDecoder::RegisterDecodeCompleteCallback(DecodedImageCallback*
 
 int32_t RemoteVideoDecoder::Release()
 {
-    return videoDecoderCallbacks().releaseCallback(m_internalDecoder);
+    RegisterDecodeCompleteCallback(nullptr);
+    return 0;
 }
 
 RemoteVideoDecoderFactory::RemoteVideoDecoderFactory(std::unique_ptr<VideoDecoderFactory>&& internalFactory)
