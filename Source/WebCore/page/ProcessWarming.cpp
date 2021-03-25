@@ -81,7 +81,7 @@ void ProcessWarming::prewarmGlobally()
     FontCache::singleton().prewarmGlobally();
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    TelephoneNumberDetector::isSupported();
+    TelephoneNumberDetector::prewarm();
 #endif
 
 #if ENABLE(GPU_DRIVER_PREWARMING)
