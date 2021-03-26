@@ -81,10 +81,10 @@ constexpr auto topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery = "I
 constexpr auto topFrameUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO TopFrameUniqueRedirectsFrom (targetDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto topFrameLoadedThirdPartyScriptsQuery = "INSERT OR IGNORE into TopFrameLoadedThirdPartyScripts (topFrameDomainID, subresourceDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
 constexpr auto subresourceUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO SubresourceUniqueRedirectsFrom (subresourceDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
-constexpr auto insertUnattributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, attributeOnSiteDomainID, "
+constexpr auto insertUnattributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
     "sourceID, timeOfAdClick, token, signature, keyID) VALUES (?, ?, ?, ?, ?, ?, ?)"_s;
-constexpr auto insertAttributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, attributeOnSiteDomainID, "
-    "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSend, token, signature, keyID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
+constexpr auto insertAttributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
+    "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null)"_s;
 
 // INSERT OR REPLACE Queries
 constexpr auto subframeUnderTopFrameDomainsQuery = "INSERT OR REPLACE into SubframeUnderTopFrameDomains (subFrameDomainID, lastUpdated, topFrameDomainID) SELECT ?, ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
@@ -135,9 +135,9 @@ constexpr auto getAllSubStatisticsUnderDomainQuery = "SELECT topFrameDomainID FR
     "UNION ALL SELECT topFrameDomainID FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?"
     "UNION ALL SELECT toDomainID FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?"_s;
 constexpr auto allUnattributedPrivateClickMeasurementAttributionsQuery = "SELECT * FROM UnattributedPrivateClickMeasurement"_s;
-constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT * FROM AttributedPrivateClickMeasurement ORDER BY earliestTimeToSend"_s;
-constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s;
-constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s;
+constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT * FROM AttributedPrivateClickMeasurement ORDER BY earliestTimeToSendToSource"_s;
+constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
+constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
 
 // EXISTS for testing queries
 constexpr auto linkDecorationExistsQuery = "SELECT EXISTS (SELECT * FROM TopFrameLinkDecorationsFrom WHERE toDomainID = ? OR fromDomainID = ?)"_s;
@@ -149,10 +149,10 @@ constexpr auto observedDomainsExistsQuery = "SELECT EXISTS (SELECT * FROM Observ
 
 // DELETE Queries
 constexpr auto removeAllDataQuery = "DELETE FROM ObservedDomains WHERE domainID = ?"_s;
-constexpr auto clearUnattributedPrivateClickMeasurementQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID LIKE ? OR attributeOnSiteDomainID LIKE ?"_s;
-constexpr auto clearAttributedPrivateClickMeasurementQuery = "DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID LIKE ? OR attributeOnSiteDomainID LIKE ?"_s;
+constexpr auto clearUnattributedPrivateClickMeasurementQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID LIKE ? OR destinationSiteDomainID LIKE ?"_s;
+constexpr auto clearAttributedPrivateClickMeasurementQuery = "DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID LIKE ? OR destinationSiteDomainID LIKE ?"_s;
 constexpr auto clearExpiredPrivateClickMeasurementQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE ? > timeOfAdClick"_s;
-constexpr auto removeUnattributedQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s;
+constexpr auto removeUnattributedQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
 
 constexpr auto createObservedDomain = "CREATE TABLE ObservedDomains ("
     "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, "
@@ -178,73 +178,73 @@ enum {
 
 constexpr auto createTopLevelDomains = "CREATE TABLE TopLevelDomains ("
     "topLevelDomainID INTEGER PRIMARY KEY, CONSTRAINT fkDomainID FOREIGN KEY(topLevelDomainID) "
-    "REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
     
 constexpr auto createStorageAccessUnderTopFrameDomains = "CREATE TABLE StorageAccessUnderTopFrameDomains ("
     "domainID INTEGER NOT NULL, topLevelDomainID INTEGER NOT NULL ON CONFLICT FAIL, "
     "CONSTRAINT fkDomainID FOREIGN KEY(domainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(topLevelDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(topLevelDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
     
 constexpr auto createTopFrameUniqueRedirectsTo = "CREATE TABLE TopFrameUniqueRedirectsTo ("
     "sourceDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(sourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 constexpr auto createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement = "CREATE TABLE TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement ("
     "sourceDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(sourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 constexpr auto createTopFrameUniqueRedirectsFrom = "CREATE TABLE TopFrameUniqueRedirectsFrom ("
     "targetDomainID INTEGER NOT NULL, fromDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(targetDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 constexpr auto createTopFrameLinkDecorationsFrom = "CREATE TABLE TopFrameLinkDecorationsFrom ("
     "toDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, fromDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 constexpr auto createTopFrameLoadedThirdPartyScripts = "CREATE TABLE TopFrameLoadedThirdPartyScripts ("
     "topFrameDomainID INTEGER NOT NULL, subresourceDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(topFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 constexpr auto createSubframeUnderTopFrameDomains = "CREATE TABLE SubframeUnderTopFrameDomains ("
     "subFrameDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, topFrameDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(topFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(topFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
     
 constexpr auto createSubresourceUnderTopFrameDomains = "CREATE TABLE SubresourceUnderTopFrameDomains ("
     "subresourceDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, topFrameDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(topFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(topFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
     
 constexpr auto createSubresourceUniqueRedirectsTo = "CREATE TABLE SubresourceUniqueRedirectsTo ("
     "subresourceDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, toDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
     
 constexpr auto createSubresourceUniqueRedirectsFrom = "CREATE TABLE SubresourceUniqueRedirectsFrom ("
     "subresourceDomainID INTEGER NOT NULL, fromDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 constexpr auto createOperatingDates = "CREATE TABLE OperatingDates ("
-    "year INTEGER NOT NULL, month INTEGER NOT NULL, monthDay INTEGER NOT NULL);"_s;
+    "year INTEGER NOT NULL, month INTEGER NOT NULL, monthDay INTEGER NOT NULL)"_s;
 
 constexpr auto createUnattributedPrivateClickMeasurement = "CREATE TABLE UnattributedPrivateClickMeasurement ("
-    "sourceSiteDomainID INTEGER NOT NULL, attributeOnSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
+    "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
     "timeOfAdClick REAL NOT NULL, token TEXT, signature TEXT, keyID TEXT, FOREIGN KEY(sourceSiteDomainID) "
-    "REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(attributeOnSiteDomainID) REFERENCES "
+    "REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
     "ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 constexpr auto createAttributedPrivateClickMeasurement = "CREATE TABLE AttributedPrivateClickMeasurement ("
-    "sourceSiteDomainID INTEGER NOT NULL, attributeOnSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
+    "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
     "attributionTriggerData INTEGER NOT NULL, priority INTEGER NOT NULL, timeOfAdClick REAL NOT NULL, "
-    "earliestTimeToSend REAL NOT NULL, token TEXT, signature TEXT, keyID TEXT, FOREIGN KEY(sourceSiteDomainID) "
-    "REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(attributeOnSiteDomainID) REFERENCES "
-    "ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+    "earliestTimeToSendToSource REAL, token TEXT, signature TEXT, keyID TEXT, earliestTimeToSendToDestination REAL, "
+    "FOREIGN KEY(sourceSiteDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
+    "ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 // CREATE UNIQUE INDEX Queries.
 constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID );"_s;
@@ -258,8 +258,8 @@ constexpr auto createUniqueIndexSubresourceUnderTopFrameDomains = "CREATE UNIQUE
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsTo_subresourceDomainID_toDomainID on SubresourceUniqueRedirectsTo ( subresourceDomainID, toDomainID );"_s;
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsFrom_subresourceDomainID_fromDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, fromDomainID );"_s;
 constexpr auto createUniqueIndexOperatingDates = "CREATE UNIQUE INDEX IF NOT EXISTS OperatingDates_year_month_monthDay on OperatingDates ( year, month, monthDay );"_s;
-constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_attributeOnSiteDomainID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, attributeOnSiteDomainID );"_s;
-constexpr auto createUniqueIndexAttributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS AttributedPrivateClickMeasurement_sourceSiteDomainID_attributeOnSiteDomainID on AttributedPrivateClickMeasurement ( sourceSiteDomainID, attributeOnSiteDomainID );"_s;
+constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID );"_s;
+constexpr auto createUniqueIndexAttributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS AttributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on AttributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID );"_s;
 
 static const String ObservedDomainsTableSchemaV1()
 {
@@ -271,24 +271,16 @@ static const String ObservedDomainsTableSchemaV1Alternate()
     return "CREATE TABLE \"ObservedDomains\" (domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, isPrevalent INTEGER NOT NULL, isVeryPrevalent INTEGER NOT NULL, dataRecordsRemoved INTEGER NOT NULL,timesAccessedAsFirstPartyDueToUserInteraction INTEGER NOT NULL, timesAccessedAsFirstPartyDueToStorageAccessAPI INTEGER NOT NULL,isScheduledForAllButCookieDataRemoval INTEGER NOT NULL)";
 }
 
-static const String unattributedPrivateClickMeasurementSchemaV1()
+static const ExpectedColumns& expectedUnattributedColumns()
 {
-    return createUnattributedPrivateClickMeasurement;
+    static const auto columns = makeNeverDestroyed(Vector<String> { "sourceSiteDomainID", "destinationSiteDomainID", "sourceID", "timeOfAdClick", "token", "signature", "keyID" });
+    return columns.get();
 }
 
-static const String unattributedPrivateClickMeasurementSchemaV1Alternate()
+static const ExpectedColumns& expectedAttributedColumns()
 {
-    return "CREATE TABLE \"UnattributedPrivateClickMeasurement\" (sourceSiteDomainID INTEGER NOT NULL, attributeOnSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, timeOfAdClick REAL NOT NULL, token TEXT, signature TEXT, keyID TEXT, FOREIGN KEY(sourceSiteDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(attributeOnSiteDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE)";
-}
-
-static const String outdatedUnattributedColumns()
-{
-    return "sourceSiteDomainID, attributeOnSiteDomainID, sourceID, timeOfAdClick"_s;
-}
-
-static const String outdatedAttributedColumns()
-{
-    return "sourceSiteDomainID, attributeOnSiteDomainID, sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSend"_s;
+    static const auto columns = makeNeverDestroyed(Vector<String> { "sourceSiteDomainID", "destinationSiteDomainID", "sourceID", "attributionTriggerData", "priority", "timeOfAdClick", "earliestTimeToSendToSource", "token", "signature", "keyID", "earliestTimeToSendToDestination" });
+    return columns.get();
 }
 
 static bool needsNewCreateTableSchema(const String& schema)
@@ -428,31 +420,30 @@ void ResourceLoadStatisticsDatabaseStore::enableForeignKeys()
     }
 }
 
-bool ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema()
+String ResourceLoadStatisticsDatabaseStore::tableSchema(const String& tableName)
 {
-    String currentSchema;
-
-    // Fetch the schema for the existing UnattributedPrivateClickMeasurement table.
-    SQLiteStatement statement(m_database, "SELECT type, sql FROM sqlite_master WHERE tbl_name='UnattributedPrivateClickMeasurement' AND type = 'table'");
+    SQLiteStatement statement(m_database, makeString("SELECT type, sql FROM sqlite_master WHERE tbl_name='", tableName, "' AND type = 'table'"));
     if (statement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema Unable to prepare statement to fetch schema for the UnattributedPrivateClickMeasurement table, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::tableSchema Unable to prepare statement to fetch schema for the table, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
-        return false;
+        return { };
     }
 
     if (statement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema error executing statement to fetch UnattributedPrivateClickMeasurement schema, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::tableSchema error executing statement to fetch table schema, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
-        return false;
+        return { };
     }
 
-    currentSchema = statement.getColumnText(1);
+    return statement.getColumnText(1);
+}
 
-    if (!currentSchema.isEmpty()
-        && currentSchema != unattributedPrivateClickMeasurementSchemaV1()
-        && currentSchema != unattributedPrivateClickMeasurementSchemaV1Alternate()) {
+bool ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema()
+{
+    auto currentSchema = tableSchema("AttributedPrivateClickMeasurement"_s);
+
+    if (!currentSchema.isEmpty() && currentSchema != createAttributedPrivateClickMeasurement)
         return true;
-    }
 
     return false;
 }
@@ -460,43 +451,28 @@ bool ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSch
 bool ResourceLoadStatisticsDatabaseStore::missingReferenceToObservedDomains()
 {
     // Check a table for a reference to TopLevelDomains, a sign of the old schema.
-    SQLiteStatement statement(m_database, "SELECT type, sql FROM sqlite_master WHERE type = 'table' AND tbl_name='TopFrameUniqueRedirectsTo'");
-    if (statement.prepare() != SQLITE_OK) {
-        LOG_ERROR("Unable to prepare statement to fetch schema.");
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    // If there is no table at all, or there is an error executing the fetch, delete and reopen the file.
-    if (statement.step() != SQLITE_ROW) {
-        LOG_ERROR("Error executing statement to fetch schema.");
-        close();
-        FileSystem::deleteFile(m_storageDirectoryPath);
-        openITPDatabase();
-        return false;
-    }
-    
-    auto oldSchema = String(statement.getColumnText(1));
+    auto oldSchema = tableSchema("TopFrameUniqueRedirectsTo"_s);
     return needsNewCreateTableSchema(oldSchema);
 }
 
-static String columnsToCopy(const String& tableName, bool needsPCMSchemaUpdate)
+bool ResourceLoadStatisticsDatabaseStore::needsUpdatedSchema()
 {
-    if (!needsPCMSchemaUpdate)
-        return "*"_s;
+    // There are 2 cases where we expect potential schema changes due to upgrades.
+    // All other tables should be up-to-date, so we should ASSERT that they are correct.
+    if (missingReferenceToObservedDomains() || needsUpdatedPrivateClickMeasurementSchema())
+        return true;
 
-    if (tableName == "UnattributedPrivateClickMeasurement"_s)
-        return makeString(outdatedUnattributedColumns(), ", null, null, null");
-    if (tableName == "AttributedPrivateClickMeasurement"_s)
-        return makeString(outdatedAttributedColumns(), ", null, null, null");
+    for (auto& table : createTableQueries().keys()) {
+        UNUSED_PARAM(table);
+        ASSERT(tableSchema(table) == createTableQueries().get(table));
+    }
 
-    return "*"_s;
+    return false;
 }
 
 void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
 {
-    bool needsPCMSchemaUpdate = needsUpdatedPrivateClickMeasurementSchema();
-    if (!missingReferenceToObservedDomains() && !needsPCMSchemaUpdate)
+    if (!needsUpdatedSchema())
         return;
 
     SQLiteTransaction transaction(m_database);
@@ -519,15 +495,14 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     }
 
     for (auto& table : createTableQueries().keys()) {
-        auto columns = columnsToCopy(table, needsPCMSchemaUpdate);
-        auto query = makeString("INSERT INTO ", table, " SELECT ", columns, " FROM _", table);
+        auto query = makeString("INSERT INTO ", table, " SELECT * FROM _", table);
         SQLiteStatement migrateTableData(m_database, query);
         if (migrateTableData.prepare() != SQLITE_OK || migrateTableData.step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to migrate schema, error message: %{private}s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
         }
-        
+
         auto dropQuery = makeString("DROP TABLE _", table);
         SQLiteStatement dropTableQuery(m_database, dropQuery);
         if (dropTableQuery.prepare() != SQLITE_OK || dropTableQuery.step() != SQLITE_DONE) {
@@ -544,6 +519,96 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
         ASSERT_NOT_REACHED();
         return;
     }
+}
+
+Vector<String> ResourceLoadStatisticsDatabaseStore::columnsForTable(const String& tableName)
+{
+    SQLiteStatement statement(m_database, makeString("PRAGMA table_info(", tableName, ")"));
+
+    if (statement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::getColumnsFromTableInfoStatement Unable to prepare statement to fetch schema for table, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    Vector<String> columns;
+    while (statement.step() == SQLITE_ROW) {
+        auto name = statement.getColumnText(1);
+        columns.append(name);
+    }
+
+    return columns;
+}
+
+void ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable(String&& tableName, const ExistingColumns& existingColumns, const ExpectedColumns& expectedColumns)
+{
+    ASSERT(existingColumns.size() <= expectedColumns.size());
+
+    for (auto& column : expectedColumns) {
+        if (existingColumns.contains(column))
+            continue;
+        
+        SQLiteStatement statement(m_database, makeString("ALTER TABLE ", tableName, " ADD COLUMN ", column));
+        if (statement.prepare() != SQLITE_OK) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable Unable to prepare statement to add missing columns to table, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        if (statement.step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable error executing statement to add missing columns to table, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        statement.reset();
+    }
+}
+
+void ResourceLoadStatisticsDatabaseStore::addMissingColumnsIfNecessary()
+{
+    const auto unattributedTableName = "UnattributedPrivateClickMeasurement"_s;
+    const auto attributedTableName = "AttributedPrivateClickMeasurement"_s;
+
+    addMissingColumnsToTable(unattributedTableName, columnsForTable(unattributedTableName), expectedUnattributedColumns());
+    addMissingColumnsToTable(attributedTableName, columnsForTable(attributedTableName), expectedAttributedColumns());
+}
+
+void ResourceLoadStatisticsDatabaseStore::renameColumnInTable(String&& tableName, ExistingColumnName&& existingColumnName, ExpectedColumnName&& expectedColumnName)
+{
+    SQLiteStatement statement(m_database, makeString("ALTER TABLE ", tableName, " RENAME COLUMN ", existingColumnName, " TO ", expectedColumnName));
+    if (statement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable Unable to prepare statement to rename column in table, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (statement.step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable error executing statement to rename column in table, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+}
+
+void ResourceLoadStatisticsDatabaseStore::renameColumnsIfNecessary()
+{
+    // Attributed Private Click Measurement case.
+    const auto attributedTableName = "AttributedPrivateClickMeasurement"_s;
+    const auto oldEarliestTimeToSendColumn = "earliestTimeToSend"_s;
+    const auto newEarliestTimeToSendColumn = "earliestTimeToSendToSource"_s;
+    const auto oldAttributionDestinationColumn = "attributeOnSiteDomainID"_s;
+    const auto newAttributionDestinationColumn = "destinationSiteDomainID"_s;
+    const auto foundAttributedTableColumns = columnsForTable(attributedTableName);
+
+    if (foundAttributedTableColumns.contains(oldEarliestTimeToSendColumn))
+        renameColumnInTable(attributedTableName, oldEarliestTimeToSendColumn, newEarliestTimeToSendColumn);
+
+    if (foundAttributedTableColumns.contains(oldAttributionDestinationColumn))
+        renameColumnInTable(attributedTableName, oldAttributionDestinationColumn, newAttributionDestinationColumn);
+
+    // Unattributed Private Click Measurement case.
+    auto unattributedTableName = "UnattributedPrivateClickMeasurement"_s;
+    auto foundUnattributedTableColumns = columnsForTable(unattributedTableName);
+
+    if (foundUnattributedTableColumns.contains(oldAttributionDestinationColumn))
+        renameColumnInTable(unattributedTableName, oldAttributionDestinationColumn, newAttributionDestinationColumn);
 }
 
 void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
@@ -600,8 +665,13 @@ void ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary()
         close();
         FileSystem::deleteFile(m_storageDirectoryPath);
         openITPDatabase();
-    } else
-        migrateDataToNewTablesIfNecessary();
+        return;
+    }
+
+    // Renaming and adding columns should be done before migrating to avoid mismatched or missing columns.
+    renameColumnsIfNecessary();
+    addMissingColumnsIfNecessary();
+    migrateDataToNewTablesIfNecessary();
 }
 
 SQLiteStatementAutoResetScope ResourceLoadStatisticsDatabaseStore::scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>& statement, const String& query, const String& logString) const
@@ -3336,7 +3406,7 @@ void ResourceLoadStatisticsDatabaseStore::clearSentAttribution(WebCore::PrivateC
     if (!sourceSiteDomainID || !destinationSiteDomainID)
         return;
 
-    SQLiteStatement clearAttributedStatement(m_database, "DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND attributeOnSiteDomainID = ?"_s);
+    SQLiteStatement clearAttributedStatement(m_database, "DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s);
     if (clearAttributedStatement.prepare() != SQLITE_OK
         || clearAttributedStatement.bindInt(1, *sourceSiteDomainID) != SQLITE_OK
         || clearAttributedStatement.bindInt(2, *destinationSiteDomainID) != SQLITE_OK
@@ -3350,7 +3420,7 @@ void ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurements
 {
     auto expiredTimeToSend = WallTime::now() - 1_h;
     
-    auto statement = SQLiteStatement(m_database, "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSend = ?");
+    auto statement = SQLiteStatement(m_database, "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToSource = ?");
     if (statement.prepare() != SQLITE_OK
         || statement.bindInt(1, expiredTimeToSend.secondsSinceEpoch().value()) != SQLITE_OK
         || statement.step() != SQLITE_DONE) {

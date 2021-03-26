@@ -60,6 +60,10 @@ using UnattributedPrivateClickMeasurement = WebCore::PrivateClickMeasurement;
 using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
 using AttributionDestinationSite = WebCore::PrivateClickMeasurement::AttributionDestinationSite;
 using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
+using ExistingColumns = Vector<String>;
+using ExpectedColumns = Vector<String>;
+using ExistingColumnName = String;
+using ExpectedColumnName = String;
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore {
@@ -141,6 +145,7 @@ public:
     String privateClickMeasurementToString() override;
     void clearSentAttribution(WebCore::PrivateClickMeasurement&&) override;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting() override;
+    Vector<String> columnsForTable(const String&);
 
 private:
     void includeTodayAsOperatingDateIfNecessary() override;
@@ -150,7 +155,15 @@ private:
 
     void openITPDatabase();
     void addMissingTablesIfNecessary();
+    bool needsUpdatedSchema();
     bool needsUpdatedPrivateClickMeasurementSchema();
+    void renameColumnInTable(String&&, ExistingColumnName&&, ExpectedColumnName&&);
+    void addMissingColumnsToTable(String&&, const ExistingColumns&, const ExpectedColumns&);
+    void addMissingColumnsIfNecessary();
+    void renameColumnsIfNecessary();
+    void renameColumnInTable();
+    String tableSchema(const String&);
+    void updatePrivateClickMeasurementSchemaIfNecessary();
     void enableForeignKeys();
     bool missingReferenceToObservedDomains();
     void migrateDataToNewTablesIfNecessary();

@@ -1,3 +1,86 @@
+2021-03-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Implement PCM SQLite changes based on spec review
+        https://bugs.webkit.org/show_bug.cgi?id=223726
+        <rdar://problem/75818526>
+
+        Reviewed by Brent Fulgham.
+
+        This patch makes 2 significant changes in the SQLite database for
+        PCM. First, it renames attributeOnSiteDomainID to destinationSiteDomainID
+        based on spec review. Second, it adds support for sending reports to
+        both click source and destination sites. This involved adding an
+        additional column to the AttributedPrivateClickMeasurement table to
+        store the earliest time to send a report to the destination, renaming
+        the earliestTimeToSend column to specify source, and removing the NOT NULL
+        constraint on earliestTimeToSend in order to mark in the database when
+        a report has been send to the source site.
+
+        Since we need to remove a NOT NULL constraint and update foreign keys
+        and unique constraints, this requires a full migration of data from
+        the PCM tables.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        earliestTimeToSendToDestination should be null for now until we
+        implement the rest of the PCM work in
+        https://bugs.webkit.org/show_bug.cgi?id=223615.
+
+        Remove semi-colons from create table queries. They don't matter in
+        this context and if we remove them we can use the create table
+        queries to check for a correct schema.
+
+        (WebKit::attributedPrivateClickMeasurementSchemaV1):
+        (WebKit::attributedPrivateClickMeasurementSchemaV1Alternate):
+        Capture the table info from AttributedPrivateClickMeasurement to check
+        if we need an update.
+
+        (WebKit::expectedUnattributedColumns):
+        (WebKit::expectedAttributedColumns):
+        Instead of storing outdated columns, we should store expected columns
+        and add any missing ones in addMissingColumnsToTable.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::tableSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::missingReferenceToObservedDomains):
+        Separate out some duplicated code.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::columnsForTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::renameColumnInTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::renameColumnsIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary):
+        Simplify the way we update the schema by first adding columns, then
+        renaming, then migrating. This way we don't need to worry about a
+        mismatch in number of columns or column name when transferring data.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttribution):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::unattributedPrivateClickMeasurementSchemaV1): Deleted.
+        (WebKit::unattributedPrivateClickMeasurementSchemaV1Alternate): Deleted.
+        (WebKit::outdatedUnattributedColumns): Deleted.
+        (WebKit::outdatedAttributedColumns): Deleted.
+        (WebKit::columnsToCopy): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::statisticsDatabaseColumnsForTable):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::statisticsDatabaseColumnsForTable):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _statisticsDatabaseColumnsForTable:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::statisticsDatabaseColumnsForTable):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::statisticsDatabaseColumnsForTable):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        New function for testing.
+
 2021-03-26  Said Abou-Hallawa  <said@apple.com>
 
         Allow logging minimal info about uploading media files in the system diagnose

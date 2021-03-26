@@ -1,3 +1,24 @@
+2021-03-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Implement PCM SQLite changes based on spec review
+        https://bugs.webkit.org/show_bug.cgi?id=223726
+        <rdar://problem/75818526>
+
+        Reviewed by Brent Fulgham.
+
+        Add API test coverage to check that renaming and adding columns works.
+        Data migration was tested manually.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm: Added.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutFraudPreventionDatabase.db: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutFraudPreventionDatabase.db-shm: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutFraudPreventionDatabase.db-wal: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutReportingColumns.db: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutReportingColumns.db-shm: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/pcmWithoutReportingColumns.db-wal: Added.
+
 2021-03-26  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, reverting r275081.
