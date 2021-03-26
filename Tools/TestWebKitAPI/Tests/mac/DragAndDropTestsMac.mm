@@ -148,7 +148,6 @@ TEST(DragAndDropTests, DragImageWithOptionKeyDown)
     EXPECT_EQ(pid, [webView _webProcessIdentifier]);
 }
 
-
 TEST(DragAndDropTests, ProvideImageDataForMultiplePasteboards)
 {
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);

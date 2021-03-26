@@ -1,3 +1,36 @@
+2021-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        It should be possible to drag images with overlay content
+        https://bugs.webkit.org/show_bug.cgi?id=223766
+        <rdar://problem/75856030>
+
+        Reviewed by Tim Horton.
+
+        Add an API test to verify that the top part of the image (with an overlay) doesn't trigger a `dragstart` when
+        dragged, but the bottom part of the image does.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/simple-image-overlay.html: Added.
+
+        Add a test page that installs an image overlay for testing purposes (assuming that the web view injects the
+        global `internals` object).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator containsDraggedType:]):
+
+        Add a helper method to return whether or not the simulated drag resulted in the given type being written to the
+        "drag pasteboard" (in the case of iOS, this just means any of the source item providers).
+
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+
+        Make a minor adjustment to ensure that the drag pasteboard is cleared out before starting a simulated drag.
+
+        (-[DragAndDropSimulator containsDraggedType:]):
+
 2021-03-25  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: Consider implementing @aria-details.

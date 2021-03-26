@@ -1,3 +1,45 @@
+2021-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        It should be possible to drag images with overlay content
+        https://bugs.webkit.org/show_bug.cgi?id=223766
+        <rdar://problem/75856030>
+
+        Reviewed by Tim Horton.
+
+        Make a few minor adjustments to make drag and drop play well with images with overlay content. See below for
+        more details.
+
+        Test: DragAndDropTests.DragElementWithImageOverlay
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isInsideImageOverlay):
+
+        Add a helper method to return whether an individual DOM node is inside an image overlay. Use this in the
+        existing version of this method that takes a `SimpleRange`.
+
+        * html/HTMLElement.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement const):
+
+        Skip all drag source actions except for `Selection` in the case where we're hit-testing to text inside of an
+        image overlay.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+
+        Make `isMouseDownOnLinkOrImage` `false` in the case where we're over image overlay text.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::nodeForImageData const):
+        (WebCore::HitTestResult::image const):
+        (WebCore::HitTestResult::imageRect const):
+        (WebCore::HitTestResult::absoluteImageURL const):
+
+        Teach `HitTestResult` to skip out of image overlay content and find the actual image element when determining
+        the image URL, image, or image rect.
+
+        * rendering/HitTestResult.h:
+
 2021-03-25  Jessie Berlin  <jberlin@webkit.org>
 
         Remove 10.13 DEPLOYMENT_TARGETs and SYSTEM_VERSION_PREFIXs

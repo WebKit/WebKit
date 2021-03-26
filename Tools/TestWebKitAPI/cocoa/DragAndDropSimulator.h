@@ -139,6 +139,8 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
 #endif // PLATFORM(MAC)
 
+- (BOOL)containsDraggedType:(NSString *)type;
+
 @end
 
 #endif // ENABLE(DRAG_SUPPORT)

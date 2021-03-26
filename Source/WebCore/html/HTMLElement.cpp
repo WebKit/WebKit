@@ -1250,11 +1250,16 @@ bool HTMLElement::isInsideImageOverlay(const SimpleRange& range)
     if (!commonAncestor)
         return false;
 
-    auto host = imageOverlayHost(*commonAncestor);
+    return isInsideImageOverlay(*commonAncestor);
+}
+
+bool HTMLElement::isInsideImageOverlay(const Node& node)
+{
+    auto host = imageOverlayHost(node);
     if (!host)
         return false;
 
-    return host->userAgentShadowRoot()->contains(*commonAncestor);
+    return host->userAgentShadowRoot()->contains(node);
 }
 
 bool HTMLElement::isImageOverlayText(const Node& node)

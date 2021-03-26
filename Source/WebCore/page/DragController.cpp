@@ -785,6 +785,10 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
     }
 #endif
 
+    auto selectionDragElement = state.type.contains(DragSourceAction::Selection) && m_dragSourceAction.contains(DragSourceAction::Selection) ? startElement : nullptr;
+    if (startElement && HTMLElement::isImageOverlayText(*startElement))
+        return selectionDragElement;
+
     for (auto* element = startElement; element; element = element->parentOrShadowHostElement()) {
         auto* renderer = element->renderer();
         if (!renderer)
@@ -798,7 +802,6 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         if (dragMode == UserDrag::Auto) {
             if ((m_dragSourceAction.contains(DragSourceAction::Image))
                 && is<HTMLImageElement>(*element)
-                && !HTMLElement::isImageOverlayText(*startElement)
                 && imageElementIsDraggable(downcast<HTMLImageElement>(*element), *sourceFrame)) {
                 state.type.add(DragSourceAction::Image);
                 return element;
@@ -825,10 +828,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
     }
 
     // We either have nothing to drag or we have a selection and we're not over a draggable element.
-    if (state.type.contains(DragSourceAction::Selection) && m_dragSourceAction.contains(DragSourceAction::Selection))
-        return startElement;
-
-    return nullptr;
+    return selectionDragElement;
 }
 
 static CachedImage* getCachedImage(Element& element)

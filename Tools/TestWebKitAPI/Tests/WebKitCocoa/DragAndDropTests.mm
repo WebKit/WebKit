@@ -30,6 +30,7 @@
 
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WebArchive.h>
 
@@ -382,5 +383,24 @@ TEST(DragAndDropTests, ColorInputEvents)
 }
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+TEST(DragAndDropTests, DragElementWithImageOverlay)
+{
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]);
+    [[configuration preferences] _setLargeImageAsyncDecodingEnabled:NO];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [[simulator webView] synchronouslyLoadTestPageNamed:@"simple-image-overlay"];
+
+    [simulator runFrom:NSMakePoint(150, 40) to:NSMakePoint(300, 40)];
+    EXPECT_FALSE([simulator containsDraggedType:(__bridge NSString *)kUTTypeJPEG]);
+
+    [simulator runFrom:NSMakePoint(150, 200) to:NSMakePoint(300, 200)];
+    EXPECT_TRUE([simulator containsDraggedType:(__bridge NSString *)kUTTypeJPEG]);
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 #endif // ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
