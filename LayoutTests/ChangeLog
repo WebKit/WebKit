@@ -1,3 +1,16 @@
+2021-03-25  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html causes GPURestarts on some machines
+        https://bugs.webkit.org/show_bug.cgi?id=223767
+
+        Reviewed by Darin Adler.
+
+        Avoid GPURestarts on Intel machines by reducing test workload. The
+        core of this test, using default generic attributes, is still in
+        place.
+
+        * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html:
+
 2021-03-25  Robert Jenner  <jenner@apple.com>
 
         [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html is a flakey timeout
