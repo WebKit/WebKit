@@ -5234,8 +5234,10 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         traits.autocorrectionType = disableAutocorrectAndAutocapitalize ? UITextAutocorrectionTypeNo : (_focusedElementInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo);
 
     if (!_focusedElementInformation.isSpellCheckingEnabled) {
-        traits.smartQuotesType = UITextSmartQuotesTypeNo;
-        traits.smartDashesType = UITextSmartDashesTypeNo;
+        if ([traits respondsToSelector:@selector(setSmartQuotesType:)])
+            traits.smartQuotesType = UITextSmartQuotesTypeNo;
+        if ([traits respondsToSelector:@selector(setSmartDashesType:)])
+            traits.smartDashesType = UITextSmartDashesTypeNo;
     }
 
     switch (_focusedElementInformation.inputMode) {
@@ -6510,6 +6512,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [context setSuggestions:suggestions.get()];
     [context setInitialText:_focusedElementInformation.value];
     [context setAcceptsEmoji:YES];
+    [context setShouldPresentModernTextInputUI:YES];
     [quickboardController setQuickboardPresentingViewController:presentingViewController];
     [quickboardController setExcludedFromScreenCapture:[context isSecureTextEntry]];
     [quickboardController setTextInputContext:context.get()];
@@ -6548,12 +6551,10 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         break;
     default: {
 #if HAVE(QUICKBOARD_CONTROLLER)
-        if (_page->preferences().quickboardControllerForTextInputEnabled()) {
-            _presentedQuickboardController = [self _createQuickboardController:presentingViewController];
-            break;
-        }
-#endif
+        _presentedQuickboardController = [self _createQuickboardController:presentingViewController];
+#else
         _presentedFullScreenInputViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
+#endif
         break;
     }
     }
