@@ -1,3 +1,17 @@
+================
+WebKitGTK 2.32.0
+================
+
+What's new in WebKitGTK 2.32.0?
+
+  - Fix the authentication request port when URL omits the port.
+  - Fix iframe scrolling when main frame is scrolled in async scrolling mode.
+  - Stop using g_memdup.
+  - Show a warning message when overriding signal handler for threading suspension.
+  - Fix the build on RISC-V with GCC 11.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish.
+
 =================
 WebKitGTK 2.31.91
 =================
