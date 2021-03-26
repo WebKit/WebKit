@@ -418,6 +418,15 @@ private:
     void requestImageExtraction(WebCore::Element&) final;
 #endif
 
+    bool needsImageOverlayControllerForSelectionPainting() const final
+    {
+#if USE(UIKIT_EDITING)
+        return false;
+#else
+        return true;
+#endif
+    }
+
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&) final;
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

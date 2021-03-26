@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../../resources/js-test.js"></script>
-<script src="../../../../resources/ui-helper.js"></script>
 <style>
 img {
     position: absolute;
@@ -15,7 +13,8 @@ img {
 <img draggable="true" src="../../resources/green-400x400.png"></img>
 <script>
 addEventListener("load", () => {
-    internals.installImageOverlay(document.querySelector("img"), [
+    const image = document.querySelector("img");
+    internals.installImageOverlay(image, [
         {
             text : "hello",
             topLeft : new DOMPointReadOnly(0, 0),
@@ -24,10 +23,8 @@ addEventListener("load", () => {
             bottomLeft : new DOMPointReadOnly(0, 0.5),
         }
     ]);
-    eventSender.mouseMoveTo(50, 300);
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(350, 300);
-    eventSender.mouseUp();
+
+    getSelection().selectAllChildren(internals.shadowRoot(image).querySelector(".image-overlay-text"));
 });
 </script>
 </body>

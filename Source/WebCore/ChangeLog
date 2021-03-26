@@ -1,3 +1,71 @@
+2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow some image overlay content to render in fully transparent image elements
+        https://bugs.webkit.org/show_bug.cgi?id=223781
+        <rdar://problem/75886351>
+
+        Reviewed by Tim Horton.
+
+        Introduce `ImageOverlayController`, and use it to render selections in image overlay content when the image
+        overlay's host element is fully transparent.
+
+        Test: fast/images/image-extraction/mac/select-word-in-transparent-image-overlay.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::willBeRemovedFromFrame):
+
+        Add plumbing to allow `ImageOverlayController` to uninstall its `PageOverlay` when the document is about to be
+        detached. See `ImageOverlayController::` below.
+
+        * editing/SelectionRectGatherer.cpp:
+        (WebCore::SelectionRectGatherer::Notifier::~Notifier):
+
+        Have `SelectionRectGatherer` notify the image overlay controller as well, when selection rects change.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::needsImageOverlayControllerForSelectionPainting const):
+
+        Add a new client hook that returns whether or not we should use `ImageOverlayController` to paint selections.
+        If not (i.e. we're on iOS, where we use UIKit to draw selections in the UI process), then we'll never install
+        page overlays, since `selectionRectsDidChange` is effectively a no-op.
+
+        * page/ImageOverlayController.cpp: Added.
+        (WebCore::ImageOverlayController::ImageOverlayController):
+        (WebCore::ImageOverlayController::selectionRectsDidChange):
+
+        When selection rects change, if the selection is inside an image overlay whose host is completely transparent
+        (or very close to being completely transparent), then remember the selection rects along with the renderer's
+        background color, and use this to render selection highlights separately, in a `PageOverlay`.
+
+        (WebCore::ImageOverlayController::documentDetached):
+
+        If the `Document` containing the current rendered overlay selection is detached, immediately uninstall the
+        current `PageOverlay`. This ensures that the overlays don't persist through navigation.
+
+        (WebCore::ImageOverlayController::installPageOverlayIfNeeded):
+        (WebCore::ImageOverlayController::uninstallPageOverlayIfNeeded):
+
+        Helper methods to add or remove the `PageOverlay` from the current `Page`.
+
+        (WebCore::ImageOverlayController::willMoveToPage):
+
+        Uninstall the current page overlay if needed.
+
+        (WebCore::ImageOverlayController::drawRect):
+
+        Use the information stored in `ImageOverlayController::selectionRectsDidChange` to render custom selection
+        rects.
+
+        * page/ImageOverlayController.h: Added.
+        * page/Page.cpp:
+        * page/Page.h:
+
+        Add an `ImageOverlayController` to the `Page`.
+
+        (WebCore::Page::imageOverlayController):
+
 2021-03-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Deprecate using DERIVED_SOURCES_DIR/FOWARDING_HEADERS_DIR directly

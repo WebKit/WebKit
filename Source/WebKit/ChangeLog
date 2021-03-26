@@ -1,3 +1,15 @@
+2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow some image overlay content to render in fully transparent image elements
+        https://bugs.webkit.org/show_bug.cgi?id=223781
+        <rdar://problem/75886351>
+
+        Reviewed by Tim Horton.
+
+        Implement a new chrome client hook. See WebCore ChangeLog for more information.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2021-03-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Deprecate using DERIVED_SOURCES_DIR/FOWARDING_HEADERS_DIR directly

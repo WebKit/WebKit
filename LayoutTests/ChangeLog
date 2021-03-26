@@ -1,3 +1,26 @@
+2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow some image overlay content to render in fully transparent image elements
+        https://bugs.webkit.org/show_bug.cgi?id=223781
+        <rdar://problem/75886351>
+
+        Reviewed by Tim Horton.
+
+        Adjust an existing layout test so that it actually checks what it was intended to check; add a new layout test
+        to cover the changes in this bug.
+
+        * fast/images/image-extraction/mac/select-word-in-draggable-image-overlay.html:
+
+        Drive-by fix: remove some extraneous imported scripts from this layout test, and additionally simplify the test
+        so that it doesn't rely on event sender to select text.
+
+        * fast/images/image-extraction/mac/select-word-in-transparent-image-overlay-expected-mismatch.html: Added.
+        * fast/images/image-extraction/mac/select-word-in-transparent-image-overlay.html: Added.
+
+        Add a new layout test with a fully transparent image element that covers a div of the same size, with a
+        background image that is identical to the image element's image. This emulates the behavior of certain websites
+        that prompted this fallback image overlay rendering codepath in the first place.
+
 2021-03-26  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement cachedPropertyValue for WebXR [SameObject] attributes

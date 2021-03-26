@@ -562,6 +562,7 @@ public:
 #if ENABLE(IMAGE_EXTRACTION)
     virtual void requestImageExtraction(Element&) { }
 #endif
+    virtual bool needsImageOverlayControllerForSelectionPainting() const { return false; }
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     virtual void showMediaControlsContextMenu(FloatRect&&, Vector<MediaControlsContextMenuItem>&&, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler) { completionHandler(MediaControlsContextMenuItem::invalidID); }

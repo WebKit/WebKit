@@ -118,6 +118,7 @@
 #include "IdleCallbackController.h"
 #include "ImageBitmapRenderingContext.h"
 #include "ImageLoader.h"
+#include "ImageOverlayController.h"
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserver.h"
 #include "JSCustomElementInterface.h"
@@ -2613,12 +2614,11 @@ void Document::willBeRemovedFromFrame()
     if (is<PluginDocument>(*this))
         downcast<PluginDocument>(*this).detachFromPluginElement();
 
-#if ENABLE(POINTER_LOCK)
-    if (page())
-        page()->pointerLockController().documentDetached(*this);
-#endif
-
     if (auto* page = this->page()) {
+#if ENABLE(POINTER_LOCK)
+        page->pointerLockController().documentDetached(*this);
+#endif
+        page->imageOverlayController().documentDetached(*this);
         if (auto* validationMessageClient = page->validationMessageClient())
             validationMessageClient->documentDetached(*this);
     }

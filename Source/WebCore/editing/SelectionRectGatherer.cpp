@@ -31,6 +31,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Frame.h"
+#include "ImageOverlayController.h"
 #include "RenderView.h"
 #include "ServicesOverlayController.h"
 
@@ -71,8 +72,12 @@ SelectionRectGatherer::Notifier::Notifier(SelectionRectGatherer& gatherer)
 
 SelectionRectGatherer::Notifier::~Notifier()
 {
-    if (auto* page = m_gatherer.m_renderView.view().frame().page())
-        page->servicesOverlayController().selectionRectsDidChange(m_gatherer.m_rects, m_gatherer.m_gapRects, m_gatherer.isTextOnly());
+    auto page = m_gatherer.m_renderView.view().frame().page();
+    if (!page)
+        return;
+
+    page->servicesOverlayController().selectionRectsDidChange(m_gatherer.m_rects, m_gatherer.m_gapRects, m_gatherer.isTextOnly());
+    page->imageOverlayController().selectionRectsDidChange(m_gatherer.m_renderView.frame(), m_gatherer.m_rects);
 }
 
 std::unique_ptr<SelectionRectGatherer::Notifier> SelectionRectGatherer::clearAndCreateNotifier()

@@ -108,6 +108,7 @@ class FocusController;
 class Frame;
 class HTMLMediaElement;
 class HistoryItem;
+class ImageOverlayController;
 class InspectorClient;
 class InspectorController;
 class LibWebRTCProvider;
@@ -496,6 +497,7 @@ public:
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
 #endif
+    ImageOverlayController& imageOverlayController() { return *m_imageOverlayController; }
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingController& scrollLatchingController();
@@ -1111,6 +1113,7 @@ private:
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
+    std::unique_ptr<ImageOverlayController> m_imageOverlayController;
 
     std::unique_ptr<WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
     std::unique_ptr<PageOverlayController> m_pageOverlayController;
