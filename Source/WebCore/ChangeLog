@@ -1,3 +1,31 @@
+2021-03-26  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement cachedPropertyValue for WebXR [SameObject] attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223635
+
+        Reviewed by Chris Dumez.
+
+        [SameObject] is not currently implemented in WebKit. We need to implement custom getters.
+
+        Tested by WebXR WPT.
+
+        * Modules/webxr/WebXRRigidTransform.h:
+        (WebCore::WebXRRigidTransform::cachedMatrix):
+        * Modules/webxr/WebXRRigidTransform.idl:
+        * Modules/webxr/WebXRView.h:
+        (WebCore::WebXRView::cachedProjectionMatrix):
+        * Modules/webxr/WebXRView.idl:
+        * Modules/webxr/WebXRViewerPose.h:
+        (WebCore::WebXRViewerPose::cachedViews):
+        * Modules/webxr/WebXRViewerPose.idl:
+        * Sources.txt:
+        * bindings/js/JSWebXRRigidTransformCustom.cpp: Added.
+        (WebCore::JSWebXRRigidTransform::matrix const):
+        * bindings/js/JSWebXRViewCustom.cpp: Added.
+        (WebCore::JSWebXRView::projectionMatrix const):
+        * bindings/js/JSWebXRViewerPoseCustom.cpp: Added.
+        (WebCore::JSWebXRViewerPose::views const):
+
 2021-03-26  Devin Rousso  <drousso@apple.com>
 
         Adopt AVKit SPI for hiding touch bar seeking controls

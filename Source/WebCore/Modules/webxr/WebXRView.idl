@@ -28,11 +28,12 @@
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
+    JSCustomMarkFunction,
     ImplementationLacksVTable,
     InterfaceName=XRView
 ] interface WebXRView {
     readonly attribute XREye eye;
-    readonly attribute Float32Array projectionMatrix;
+    [CustomGetter] readonly attribute Float32Array projectionMatrix;
     [SameObject] readonly attribute WebXRRigidTransform transform;
     readonly attribute double? recommendedViewportScale;
     undefined requestViewportScale(double? scale);

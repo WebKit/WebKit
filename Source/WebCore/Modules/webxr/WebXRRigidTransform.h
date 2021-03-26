@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR)
 
 #include "ExceptionOr.h"
+#include "JSValueInWrappedObject.h"
 #include "TransformationMatrix.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/IsoMalloc.h>
@@ -53,6 +54,8 @@ public:
     const WebXRRigidTransform& inverse();
     const TransformationMatrix& rawTransform() const;
 
+    JSValueInWrappedObject& cachedMatrix() { return m_cachedMatrix; }
+
 private:
     WebXRRigidTransform(const DOMPointInit&, const DOMPointInit&);
     WebXRRigidTransform(const TransformationMatrix&);
@@ -63,6 +66,7 @@ private:
     RefPtr<Float32Array> m_matrix;
     RefPtr<WebXRRigidTransform> m_inverse;
     WeakPtr<WebXRRigidTransform> m_parentInverse;
+    JSValueInWrappedObject m_cachedMatrix;
 };
 
 } // namespace WebCore
