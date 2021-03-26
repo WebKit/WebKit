@@ -1,3 +1,15 @@
+2021-03-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Deprecate using DERIVED_SOURCES_DIR/FOWARDING_HEADERS_DIR directly
+        https://bugs.webkit.org/show_bug.cgi?id=223763
+
+        Reviewed by Michael Catanzaro.
+
+        Remove any usages of DERIVED_SOURCES_DIR and FOWARDING_HEADERS_DIR.
+
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+
 2021-03-26  Tim Nguyen  <ntim@apple.com>
 
         Make the object-position CSS property animatable.

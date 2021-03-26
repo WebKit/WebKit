@@ -620,10 +620,8 @@ ADD_WEBKIT_PREFIX_HEADER(webkit2gtkinjectedbundle)
 target_link_libraries(webkit2gtkinjectedbundle WebKit)
 
 target_include_directories(webkit2gtkinjectedbundle PRIVATE
-    ${WebKit_INCLUDE_DIRECTORIES}
-    ${WebKit_PRIVATE_INCLUDE_DIRECTORIES}
+    $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>
     "${DERIVED_SOURCES_DIR}/InjectedBundle"
-    "${FORWARDING_HEADERS_DIR}"
     "${FORWARDING_HEADERS_WEBKIT2GTK_DIR}"
     "${FORWARDING_HEADERS_WEBKIT2GTK_VERSIONED_DIR}"
     "${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}"
@@ -699,13 +697,12 @@ if (ENABLE_INTROSPECTION)
             -DWEBKIT2_COMPILATION
             -I${CMAKE_SOURCE_DIR}/Source
             -I${WEBKIT_DIR}
-            -I${DERIVED_SOURCES_DIR}
             -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
             -I${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}
-            -I${FORWARDING_HEADERS_DIR}
             -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
             -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
             -I${FORWARDING_HEADERS_WEBKIT2GTK_VERSIONED_DIR}
+            -I${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
             ${WebKit2GTK_INSTALLED_HEADERS}
             ${WEBKIT_DIR}/Shared/API/glib/*.cpp
             ${WEBKIT_DIR}/UIProcess/API/glib/*.cpp
@@ -747,14 +744,13 @@ if (ENABLE_INTROSPECTION)
             -DWEBKIT2_COMPILATION
             -I${CMAKE_SOURCE_DIR}/Source
             -I${WEBKIT_DIR}
-            -I${DERIVED_SOURCES_DIR}
             -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
             -I${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}
-            -I${FORWARDING_HEADERS_DIR}
             -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
             -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
             -I${FORWARDING_HEADERS_WEBKIT2GTK_VERSIONED_DIR}
             -I${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}
+            -I${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
             -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk
             ${WebKitDOM_INSTALLED_HEADERS}
             ${WebKit2WebExtension_INSTALLED_HEADERS}

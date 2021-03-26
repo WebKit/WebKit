@@ -17,8 +17,6 @@ set(MiniBrowser_SOURCES
 set(MiniBrowser_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source/WebKitLegacy
     ${CMAKE_SOURCE_DIR}/Source
-    ${FORWARDING_HEADERS_DIR}
-    ${FORWARDING_HEADERS_DIR}/WebKit
     ${MINIBROWSER_DIR}
 )
 

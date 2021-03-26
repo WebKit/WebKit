@@ -108,7 +108,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/mac"
     "${WEBKITLEGACY_DIR}"
-    "${FORWARDING_HEADERS_DIR}/WebCore"
 )
 
 set(XPCService_SOURCES
@@ -229,24 +228,6 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     WebProcess/InjectedBundle/API/mac
 )
 
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit_FORWARDING_HEADERS_FILES} DIRECTORIES ${WebKit_FORWARDING_HEADERS_DIRECTORIES})
-
-# This is needed right now to import ObjC headers instead of including them.
-# FIXME: Forwarding headers should be copies of actual headers.
-file(GLOB ObjCHeaders UIProcess/API/Cocoa/*.h)
-foreach (_file ${ObjCHeaders})
-    get_filename_component(_name ${_file} NAME)
-    if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKit/${_name})
-        file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_name} "#import <WebKit/UIProcess/API/Cocoa/${_name}>")
-    endif ()
-endforeach ()
-if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKit/WKWebViewPrivateForTestingIOS.h)
-    file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKWebViewPrivateForTestingIOS.h "#import <WebKit/UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h>")
-endif ()
-if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKit/WKWebViewPrivateForTestingMac.h)
-    file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKWebViewPrivateForTestingMac.h "#import <WebKit/UIProcess/API/mac/WKWebViewPrivateForTestingMac.h>")
-endif ()
-
 # FIXME: Forwarding headers should be complete copies of the header.
 set(WebKitLegacyForwardingHeaders
     DOM.h
@@ -305,9 +286,6 @@ set(WebKitLegacyForwardingHeaders
     WebViewPrivate
     WebViewPrivate.h
 )
-foreach (_file ${WebKitLegacyForwardingHeaders})
-    file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
-endforeach ()
 
 set(ObjCForwardingHeaders
     DOMAbstractView.h
@@ -449,12 +427,6 @@ set(ObjCForwardingHeaders
     DOMXPathNSResolver.h
     DOMXPathResult.h
 )
-foreach (_file ${ObjCForwardingHeaders})
-    file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
-endforeach ()
-
-# FIXME: These should not be necessary.
-file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/API/c/cg/WKImageCG.h>")
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 target_link_options(WebKit PRIVATE -weak_framework SafariSafeBrowsing -lsandbox -framework AuthKit)
