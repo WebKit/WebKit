@@ -1234,7 +1234,7 @@ private:
 
 
 enum MaybeInvalidColorTag { MaybeInvalidColor };
-class PropertyWrapperVisitedAffectedColor final : public AnimationPropertyWrapperBase {
+class PropertyWrapperVisitedAffectedColor : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperVisitedAffectedColor(CSSPropertyID property, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
@@ -1250,18 +1250,22 @@ public:
     {
     }
 
-private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+protected:
+    bool equals(const RenderStyle* a, const RenderStyle* b) const override
     {
         return m_wrapper->equals(a, b) && m_visitedWrapper->equals(a, b);
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const override
     {
         m_wrapper->blend(client, destination, from, to, progress);
         m_visitedWrapper->blend(client, destination, from, to, progress);
     }
 
+    std::unique_ptr<AnimationPropertyWrapperBase> m_wrapper;
+    std::unique_ptr<AnimationPropertyWrapperBase> m_visitedWrapper;
+
+private:
 #if !LOG_DISABLED
     void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* result, double progress) const final
     {
@@ -1269,9 +1273,58 @@ private:
         m_visitedWrapper->logBlend(from, to, result, progress);
     }
 #endif
+};
 
-    std::unique_ptr<AnimationPropertyWrapperBase> m_wrapper;
-    std::unique_ptr<AnimationPropertyWrapperBase> m_visitedWrapper;
+static bool canInterpolateCaretColor(const RenderStyle* from, const RenderStyle* to, bool visited)
+{
+    if (visited)
+        return !from->hasVisitedLinkAutoCaretColor() && !to->hasVisitedLinkAutoCaretColor();
+    return !from->hasAutoCaretColor() && !to->hasAutoCaretColor();
+}
+
+class CaretColorPropertyWrapper final : public PropertyWrapperVisitedAffectedColor {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    CaretColorPropertyWrapper()
+        : PropertyWrapperVisitedAffectedColor(CSSPropertyCaretColor, MaybeInvalidColor, &RenderStyle::caretColor, &RenderStyle::setCaretColor, &RenderStyle::visitedLinkCaretColor, &RenderStyle::setVisitedLinkCaretColor)
+    {
+    }
+
+private:
+    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    {
+        return a->hasAutoCaretColor() == b->hasAutoCaretColor()
+            && a->hasVisitedLinkAutoCaretColor() == b->hasVisitedLinkAutoCaretColor()
+            && PropertyWrapperVisitedAffectedColor::equals(a, b);
+    }
+
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    {
+        return canInterpolateCaretColor(from, to, false) || canInterpolateCaretColor(from, to, true);
+    }
+
+    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    {
+        if (canInterpolateCaretColor(from, to, false))
+            m_wrapper->blend(client, destination, from, to, progress);
+        else {
+            auto* blendingRenderStyle = progress < 0.5 ? from : to;
+            if (blendingRenderStyle->hasAutoCaretColor())
+                destination->setHasAutoCaretColor();
+            else
+                destination->setCaretColor(blendingRenderStyle->caretColor());
+        }
+
+        if (canInterpolateCaretColor(from, to, true))
+            m_visitedWrapper->blend(client, destination, from, to, progress);
+        else {
+            auto* blendingRenderStyle = progress < 0.5 ? from : to;
+            if (blendingRenderStyle->hasVisitedLinkAutoCaretColor())
+                destination->setHasVisitedLinkAutoCaretColor();
+            else
+                destination->setVisitedLinkCaretColor(blendingRenderStyle->visitedLinkCaretColor());
+        }
+    }
 };
 
 // Wrapper base class for an animatable property in a FillLayer
@@ -2024,7 +2077,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyPaddingTop, &RenderStyle::paddingTop, &RenderStyle::setPaddingTop, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
         new LengthPropertyWrapper(CSSPropertyPaddingBottom, &RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, { LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
 
-        new PropertyWrapperVisitedAffectedColor(CSSPropertyCaretColor, &RenderStyle::caretColor, &RenderStyle::setCaretColor, &RenderStyle::visitedLinkCaretColor, &RenderStyle::setVisitedLinkCaretColor),
+        new CaretColorPropertyWrapper,
 
         new PropertyWrapperVisitedAffectedColor(CSSPropertyColor, &RenderStyle::color, &RenderStyle::setColor, &RenderStyle::visitedLinkColor, &RenderStyle::setVisitedLinkColor),
 

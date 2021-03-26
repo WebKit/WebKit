@@ -77,6 +77,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageSlice);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(CaretColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Contain);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
@@ -793,6 +794,48 @@ inline void BuilderCustom::applyValueOutlineStyle(BuilderState& builderState, CS
 
     builderState.style().setOutlineStyleIsAuto(primitiveValue);
     builderState.style().setOutlineStyle(primitiveValue);
+}
+
+inline void BuilderCustom::applyInitialCaretColor(BuilderState& builderState)
+{
+    if (builderState.applyPropertyToRegularStyle())
+        builderState.style().setHasAutoCaretColor();
+    if (builderState.applyPropertyToVisitedLinkStyle())
+        builderState.style().setHasVisitedLinkAutoCaretColor();
+}
+
+inline void BuilderCustom::applyInheritCaretColor(BuilderState& builderState)
+{
+    Color color = builderState.parentStyle().caretColor();
+    if (builderState.applyPropertyToRegularStyle()) {
+        if (builderState.parentStyle().hasAutoCaretColor())
+            builderState.style().setHasAutoCaretColor();
+        else
+            builderState.style().setCaretColor(color);
+    }
+    if (builderState.applyPropertyToVisitedLinkStyle()) {
+        if (builderState.parentStyle().hasVisitedLinkAutoCaretColor())
+            builderState.style().setHasVisitedLinkAutoCaretColor();
+        else
+            builderState.style().setVisitedLinkCaretColor(color);
+    }
+}
+
+inline void BuilderCustom::applyValueCaretColor(BuilderState& builderState, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (builderState.applyPropertyToRegularStyle()) {
+        if (primitiveValue.valueID() == CSSValueAuto)
+            builderState.style().setHasAutoCaretColor();
+        else
+            builderState.style().setCaretColor(builderState.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ false));
+    }
+    if (builderState.applyPropertyToVisitedLinkStyle()) {
+        if (primitiveValue.valueID() == CSSValueAuto)
+            builderState.style().setHasVisitedLinkAutoCaretColor();
+        else
+            builderState.style().setVisitedLinkCaretColor(builderState.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
+    }
 }
 
 inline void BuilderCustom::applyInitialClip(BuilderState& builderState)

@@ -1,5 +1,19 @@
 2021-03-25  Antoine Quint  <graouts@webkit.org>
 
+        Fix interpolation of the caret-color CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223181
+        <rdar://problem/75687413>
+
+        Reviewed by Antti Koivisto.
+
+        Add 64 PASS results for the caret-color interpolation test which now is passing completely.
+        The test css/css-ui/caret-color-021.html also progresses.
+
+        * web-platform-tests/css/css-ui/animation/caret-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/caret-color-021-expected.txt:
+
+2021-03-25  Antoine Quint  <graouts@webkit.org>
+
         Improve interpolation of the shape-outside CSS property
         https://bugs.webkit.org/show_bug.cgi?id=223738
 

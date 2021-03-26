@@ -1,3 +1,38 @@
+2021-03-25  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of the caret-color CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223181
+        <rdar://problem/75687413>
+
+        Reviewed by Antti Koivisto.
+
+        Add support for the "auto" value for the "caret-color" CSS property. That value
+        is its initial value. We support it with a new boolean flag on StyleRareInheritedData
+        which we reset to false when setCaretColor() or setVisitedLinkCaretColor() is called.
+
+        Then, we can blend this property with the new CaretColorPropertyWrapper wrapper which is
+        required to correctly get and set the "auto" bit.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * css/CSSProperties.json: We can remove the initial value key since this property is entirely
+        custom.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setCaretColor):
+        (WebCore::RenderStyle::setHasAutoCaretColor):
+        (WebCore::RenderStyle::setVisitedLinkCaretColor):
+        (WebCore::RenderStyle::setHasVisitedLinkAutoCaretColor):
+        (WebCore::RenderStyle::hasAutoCaretColor const):
+        (WebCore::RenderStyle::hasVisitedLinkAutoCaretColor const):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInitialCaretColor):
+        (WebCore::Style::BuilderCustom::applyInheritCaretColor):
+        (WebCore::Style::BuilderCustom::applyValueCaretColor):
+
 2021-03-26  Jean-Yves Avenard  <jya@apple.com>
 
         Fix NowPlayingInfoArtwork operator== logic.

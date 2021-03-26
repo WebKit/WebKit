@@ -160,6 +160,9 @@ public:
 
     unsigned mathStyle : 1;
 
+    unsigned hasAutoCaretColor : 1;
+    unsigned hasVisitedLinkAutoCaretColor : 1;
+
     OptionSet<TouchAction> effectiveTouchActions;
     OptionSet<EventListenerRegionType> eventListenerRegionTypes;
 
