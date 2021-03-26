@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        * platform/glib/TestExpectations: Unflag
+        media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html
+        and
+        media/encrypted-media/clearKey/clearKey-session-life-cycle.html
+
+2021-03-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
         * platform/gtk/TestExpectations: Unflag
         http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html.
 
