@@ -1,3 +1,10 @@
+2021-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Don't add `-webkit-user-select: none;` on image elements with `draggable=true`
