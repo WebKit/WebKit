@@ -144,7 +144,7 @@
             )
             (with telemetry-backtrace)
             (apply-message-filter
-                (allow (with telemetry)
+                (allow
                     iokit-async-external-method
                     iokit-external-method
                 )
@@ -192,7 +192,7 @@
             )
             (with telemetry-backtrace)
             (apply-message-filter
-                (allow (with telemetry)
+                (allow
                     iokit-async-external-method
                     iokit-external-method
                 )
@@ -224,7 +224,7 @@
             )
             (with telemetry-backtrace)
             (apply-message-filter
-                (allow (with telemetry)
+                (allow
                     iokit-external-method
                 )
                 (deny (with telemetry)
@@ -251,7 +251,7 @@
             )
             (with telemetry-backtrace)
             (apply-message-filter
-                (allow (with telemetry)
+                (allow
                     iokit-external-method
                 )
                 (deny (with telemetry)
@@ -301,7 +301,7 @@
             )
             (with telemetry-backtrace)
             (apply-message-filter
-                (allow (with telemetry)
+                (allow
                     iokit-async-external-method
                     iokit-external-method
                 )
@@ -350,15 +350,8 @@
             )
             (with telemetry-backtrace)
             (apply-message-filter
-                (allow (with telemetry)
+                (allow
                     iokit-external-method
-                )
-                (allow iokit-external-method
-                    (iokit-method-number
-                        0
-                        1
-                        3
-                    )
                 )
                 (deny (with telemetry)
                     iokit-async-external-method
@@ -937,17 +930,8 @@
         )
         (with telemetry-backtrace)
         (apply-message-filter
-            (allow (with telemetry)
+            (allow
                 iokit-external-method
-            )
-            (allow iokit-external-method
-                (iokit-method-number
-                    0
-                    1
-                    3
-                    4
-                    5
-                )
             )
             (deny (with telemetry)
                 iokit-async-external-method
@@ -972,13 +956,8 @@
         )
         (with telemetry-backtrace)
         (apply-message-filter
-            (allow (with telemetry)
+            (allow
                 iokit-external-method
-            )
-            (allow iokit-external-method
-                (iokit-method-number
-                    3
-                )
             )
             (deny (with telemetry)
                 iokit-async-external-method
@@ -1004,17 +983,8 @@
         )
         (with telemetry-backtrace)
         (apply-message-filter
-            (allow (with telemetry)
+            (allow
                 iokit-external-method
-            )
-            (allow iokit-external-method
-                (iokit-method-number
-                    0
-                    1
-                    3
-                    4
-                    5
-                )
             )
             (deny (with telemetry)
                 iokit-async-external-method
@@ -1973,7 +1943,7 @@
             )
         )
         (apply-message-filter
-            (allow (with telemetry)
+            (allow
                 iokit-async-external-method
                 iokit-external-method
             )
@@ -2018,7 +1988,7 @@
             )
         )
         (apply-message-filter
-            (allow (with telemetry)
+            (allow
                 iokit-async-external-method
                 iokit-external-method
             )
