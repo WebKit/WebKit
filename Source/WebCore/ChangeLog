@@ -1,3 +1,19 @@
+2021-03-26  Rob Buis  <rbuis@igalia.com>
+
+        Remove ASSERT in RenderListItem::computeMarkerStyle
+        https://bugs.webkit.org/show_bug.cgi?id=222670
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove ASSERT in RenderListItem::computeMarkerStyle
+        since ::marker does not apply to all elements so
+        getCachedPseudoStyle can return null.
+
+        Test: fast/lists/list-item-compute-marker-style-crash.xhtml
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::computeMarkerStyle const):
+
 2021-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r272301): [SOUP] default port attribute when persisting credential information with libsecret

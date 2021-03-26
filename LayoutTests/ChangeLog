@@ -1,3 +1,13 @@
+2021-03-26  Rob Buis  <rbuis@igalia.com>
+
+        Remove ASSERT in RenderListItem::computeMarkerStyle
+        https://bugs.webkit.org/show_bug.cgi?id=222670
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/lists/list-item-compute-marker-style-crash-expected.txt: Added.
+        * fast/lists/list-item-compute-marker-style-crash.xhtml: Added.
+
 2021-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
