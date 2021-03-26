@@ -1,3 +1,28 @@
+2021-03-25  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Do not try to normalize the tree while destroying the multicolumn flow
+        https://bugs.webkit.org/show_bug.cgi?id=223722
+        <rdar://75731256>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/multicol/crash-while-destroying-the-column-context.html
+
+        This patch ensures that we don't start moving around parts of the fragmented flow subtree (e.g. collapsing anonymous blocks) while
+        trying place the spanner renderers back to their original positions as part of the "we don't need multicolumn context anymore".
+        (e.g spanner placeholder is removed -> triggers anon block collapsing -> moves subtrees around inside the multicolumn subtree -> insertion happens -> spanner placeholder gets re-validated)
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::destroy):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::detach):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::handleSpannerRemoval):
+        (WebCore::RenderTreeBuilder::MultiColumn::multiColumnRelativeWillBeRemoved):
+        * rendering/updating/RenderTreeBuilderMultiColumn.h:
+
 2021-03-25  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: Consider implementing @aria-details.

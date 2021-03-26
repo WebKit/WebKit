@@ -1,3 +1,14 @@
+2021-03-25  Zalan Bujtas  <zalan@apple.com>
+
+        [RenederTreeBuilder] Do not try to normalize the tree while destroying the multicolumn flow
+        https://bugs.webkit.org/show_bug.cgi?id=223722
+        <rdar://75731256>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/crash-while-destroying-the-column-context-expected.txt: Added.
+        * fast/multicol/crash-while-destroying-the-column-context.html: Added.
+
 2021-03-25  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: Consider implementing @aria-details.

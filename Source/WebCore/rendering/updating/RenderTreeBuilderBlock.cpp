@@ -381,7 +381,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent
     if (!parent.renderTreeBeingDestroyed()) {
         auto* fragmentedFlow = parent.multiColumnFlow();
         if (fragmentedFlow && fragmentedFlow != &child)
-            m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child);
+            m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child, canCollapseAnonymousBlock);
     }
     return detach(static_cast<RenderBlock&>(parent), child, canCollapseAnonymousBlock);
 }

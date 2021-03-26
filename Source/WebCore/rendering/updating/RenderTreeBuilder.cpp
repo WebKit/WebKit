@@ -164,11 +164,11 @@ RenderTreeBuilder::~RenderTreeBuilder()
     s_current = m_previous;
 }
 
-void RenderTreeBuilder::destroy(RenderObject& renderer)
+void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     RELEASE_ASSERT(RenderTreeMutationDisallowedScope::isMutationAllowed());
     ASSERT(renderer.parent());
-    auto toDestroy = detach(*renderer.parent(), renderer);
+    auto toDestroy = detach(*renderer.parent(), renderer, canCollapseAnonymousBlock);
 
 #if ENABLE(FULLSCREEN_API)
     if (is<RenderFullScreen>(renderer))
