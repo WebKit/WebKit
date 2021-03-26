@@ -1,5 +1,25 @@
 2021-03-25  Kyle Piddington  <kpiddington@apple.com>
 
+        ANGLE Metal crash ASAN webgl/1.0.3/conformance/misc/object-deletion-behaviour.html
+        https://bugs.webkit.org/show_bug.cgi?id=223739
+
+        Reviewed by Dean Jackson.
+
+        Previously, ANGLE would try to read color attachments off of the
+        cached render targets. However, since validation happens before
+        state sync, the cached render targets may be out of date.
+
+        For non-surface backed render targets, we instead get a fresh copy
+        of the render target when determening the native pixel format.
+
+        * src/libANGLE/renderer/metal/FrameBufferMtl.h:
+        * src/libANGLE/renderer/metal/FrameBufferMtl.mm:
+        (rx::FramebufferMtl::getImplementationColorReadFormat const):
+        (rx::FramebufferMtl::getColorReadRenderTargetNoCache const):
+
+
+2021-03-25  Kyle Piddington  <kpiddington@apple.com>
+
         [Metal ANGLE] Add CPU mipmap generation for workaround on Intel devices.
         https://bugs.webkit.org/show_bug.cgi?id=223778
 
