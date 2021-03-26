@@ -94,7 +94,7 @@ static bool collectDescendantLayersAtPoint(Vector<RefPtr<CompositionLayer>>& lay
                 float originX = childState.anchorPoint.x() * childState.size.width();
                 float originY = childState.anchorPoint.y() * childState.size.height();
                 auto transform = *(TransformationMatrix()
-                    .translate3d(originX + childState.position.x(), originY + childState.position.y(), childState.anchorPoint.z())
+                    .translate3d(originX + childState.position.x() - state.boundsOrigin.x(), originY + childState.position.y() - state.boundsOrigin.y(), childState.anchorPoint.z())
                     .multiply(childState.transform)
                     .translate3d(-originX, -originY, -childState.anchorPoint.z()).inverse());
                 auto pointInChildSpace = transform.projectPoint(point);
