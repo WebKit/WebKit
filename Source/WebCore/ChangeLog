@@ -1,3 +1,17 @@
+2021-03-26  Tim Nguyen  <ntim@apple.com>
+
+        Make the object-position CSS property animatable.
+        https://bugs.webkit.org/show_bug.cgi?id=223568
+
+        Reviewed by Antoine Quint.
+
+        Test: imported/w3c/web-platform-tests/css/css-images/object-position-interpolation.html
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::canInterpolateLengthPoints):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
 2021-03-26  Said Abou-Hallawa  <said@apple.com>
 
         Allow logging minimal info about uploading media files in the system diagnose

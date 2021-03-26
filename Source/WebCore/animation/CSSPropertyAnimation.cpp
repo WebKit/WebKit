@@ -48,6 +48,7 @@
 #include "FontTaggedSettings.h"
 #include "GapLength.h"
 #include "IdentityTransformOperation.h"
+#include "LengthPoint.h"
 #include "Logging.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
@@ -111,6 +112,11 @@ static inline LengthSize blendFunc(const CSSPropertyBlendingClient* client, cons
 {
     return { blendFunc(client, from.width, to.width, progress, ValueRangeNonNegative),
              blendFunc(client, from.height, to.height, progress, ValueRangeNonNegative) };
+}
+
+static inline LengthPoint blendFunc(const CSSPropertyBlendingClient*, const LengthPoint& from, const LengthPoint& to, double progress)
+{
+    return blend(from, to, progress);
 }
 
 static inline ShadowStyle blendFunc(const CSSPropertyBlendingClient* client, ShadowStyle from, ShadowStyle to, double progress)
@@ -758,6 +764,24 @@ static bool canInterpolateLengthVariants(const GapLength& from, const GapLength&
     bool isLengthPercentage = true;
     return canInterpolateLengths(from.length(), to.length(), isLengthPercentage);
 }
+
+class LengthPointPropertyWrapper final : public PropertyWrapperGetter<LengthPoint> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    LengthPointPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+        : PropertyWrapperGetter<LengthPoint>(property, getter)
+        , m_setter(setter)
+    {
+    }
+
+private:
+    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    {
+        (destination->*m_setter)(blendFunc(client, value(from), value(to), progress));
+    }
+
+    void (RenderStyle::*m_setter)(LengthPoint&&);
+};
 
 template <typename T>
 class LengthVariantPropertyWrapper final : public PropertyWrapperGetter<const T&> {
@@ -2103,6 +2127,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionX, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskSize, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
+
+        new LengthPointPropertyWrapper(CSSPropertyObjectPosition, &RenderStyle::objectPosition, &RenderStyle::setObjectPosition),
 
         new PropertyWrapper<float>(CSSPropertyFontSize, &RenderStyle::computedFontSize, &RenderStyle::setFontSize),
         new PropertyWrapper<unsigned short>(CSSPropertyColumnRuleWidth, &RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth),
