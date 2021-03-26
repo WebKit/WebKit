@@ -49,6 +49,17 @@ WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
 
 namespace WebCore {
 
+// In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
+// In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
+// and it always contains nullptr and nullptr is always written to it.
+static GraphicsContextGLOpenGL* currentContext;
+
+static bool isCurrentContextPredictable()
+{
+    static bool value = isInWebProcess() || isInGPUProcess();
+    return value;
+}
+
 #if ASSERT_ENABLED
 // Returns true if we have volatile context extension for the particular API or
 // if the particular API is not used.
@@ -82,7 +93,7 @@ static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttri
     Vector<EGLint> displayAttributes;
 
     // FIXME: This should come in from the GraphicsContextGLAttributes.
-    bool shouldInitializeWithVolatileContextSupport = !(isInWebProcess() || isInGPUProcess());
+    bool shouldInitializeWithVolatileContextSupport = !isCurrentContextPredictable();
     if (shouldInitializeWithVolatileContextSupport) {
         // For WK1 type APIs we need to set "volatile platform context" for specific
         // APIs, since client code will be able to override the thread-global context
@@ -373,10 +384,10 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
             EGL_DestroySurface(m_displayObj, contentsHandle);
     }
     if (m_contextObj) {
-        EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        clearCurrentContext();
         EGL_DestroyContext(m_displayObj, m_contextObj);
-    }
-
+    } else
+        ASSERT(currentContext != this);
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
 }
 
@@ -427,18 +438,28 @@ bool GraphicsContextGLOpenGL::makeContextCurrent()
     // The exception is the case when the context is used before reshaping.
     if (!m_displayBufferBacking && !getInternalFramebufferSize().isEmpty())
         return false;
-    // ANGLE has an early out for case where nothing changes. Calling MakeCurrent
-    // is important to set volatile platform context. See InitializeEGLDisplay().
+    if (currentContext == this)
+        return true;
+    // Calling MakeCurrent is important to set volatile platform context. See InitializeEGLDisplay().
     if (!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj))
         return false;
+    if (isCurrentContextPredictable())
+        currentContext = this;
     return true;
+}
+
+void GraphicsContextGLOpenGL::clearCurrentContext()
+{
+    EGLBoolean result = EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    ASSERT_UNUSED(result, result);
+    currentContext = nullptr;
 }
 
 #if PLATFORM(IOS_FAMILY)
 bool GraphicsContextGLOpenGL::releaseCurrentContext(ReleaseBehavior releaseBehavior)
 {
     // At the moment this function is relevant only when web thread lock owns the GraphicsContextGLOpenGL current context.
-    ASSERT(!WebCore::isInWebProcess());
+    ASSERT(!isCurrentContextPredictable());
 
     if (!EGL_BindAPI(EGL_OPENGL_ES_API))
         return false;
@@ -476,9 +497,7 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
         LOG(WebGL, "Pretending the GPU has reset (%p). Lose the context.", this);
         m_failNextStatusCheck = false;
         forceContextLost();
-
-        EGL_BindAPI(EGL_OPENGL_ES_API);
-        EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        clearCurrentContext();
         return;
     }
 

@@ -1,3 +1,31 @@
+2021-03-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GraphicsContextGLOpenGL should avoid calling into ANGLE MakeCurrent
+        https://bugs.webkit.org/show_bug.cgi?id=223511
+
+        Reviewed by Kenneth Russell.
+
+        Avoid calling ANGLE MakeCurrent for contexts that are already current. Cache the current context pointer into a
+        global variable. Currently the code adds no locking. For the forseeable future, ANGLE does not support
+        simultaneous access from multiple threads.
+
+        The optimization can be done when run in WebContent process or in GPU process, but not when in WK1. This is because in WK1,
+        the 3rd party client may run arbitrary code in WebKit thread. This includes code that changes EAGL or AGL state.
+        This code might change the current context underneath WebKit. In WK1 mode, we already use "volatile context" feature of
+        ANGLE to reset the platform context on every EGL command. The command we use for this for normal GL commands is EGL_MakeCurrent.
+        Makes in-process WebGL faster in MotionMark triangles by 6300 -> 9800 pts
+        Makes GPU process WebGL faster in MotionMark triangles by 5300 -> 7000 pts
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::isCurrentContextPredictable):
+        (WebCore::InitializeEGLDisplay):
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::makeContextCurrent):
+        (WebCore::GraphicsContextGLOpenGL::clearCurrentContext):
+        (WebCore::GraphicsContextGLOpenGL::releaseCurrentContext):
+        (WebCore::GraphicsContextGLOpenGL::checkGPUStatus):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2021-03-25  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of the caret-color CSS property
