@@ -140,6 +140,7 @@ my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
 my $xcodeSDK;
+my $xcodeSDKPlatformName;
 my $simulatorIdiom;
 my $configurationForVisualStudio;
 my $configurationProductDir;
@@ -400,13 +401,13 @@ sub determineArchitecture
         if ($architecture) {
             chomp $architecture;
         } else {
-            if ($xcodeSDK =~ /^iphoneos/) {
+            if ($xcodeSDK eq /iphoneos/) {
                 $architecture = 'arm64';
-            } elsif ($xcodeSDK =~ /^watchsimulator/) {
+            } elsif ($xcodeSDK eq /watchsimulator/) {
                 $architecture = 'i386';
-            } elsif ($xcodeSDK =~ /^watchos/) {
+            } elsif ($xcodeSDK eq /watchos/) {
                 $architecture = 'arm64_32 arm64e armv7k';
-            } elsif ($xcodeSDK =~ /^appletvos/) {
+            } elsif ($xcodeSDK eq /appletvos/) {
                 $architecture = 'arm64';
             }
         }
@@ -549,7 +550,7 @@ sub argumentsForConfiguration()
     determineConfiguration();
     determineArchitecture();
     if (isAppleCocoaWebKit()) {
-        determineXcodeSDK();
+        determineXcodeSDKPlatformName();
     }
 
     my @args = ();
@@ -557,14 +558,14 @@ sub argumentsForConfiguration()
     # These are determined automatically from stored configuration.
     push(@args, '--debug') if ($configuration =~ "^Debug");
     push(@args, '--release') if ($configuration =~ "^Release");
-    push(@args, '--ios-device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
-    push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/ && $simulatorIdiom eq "iPhone");
-    push(@args, '--ipad-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/ && $simulatorIdiom eq "iPad");
-    push(@args, '--tvos-device') if (defined $xcodeSDK && $xcodeSDK =~ /^appletvos/);
-    push(@args, '--tvos-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^appletvsimulator/);
-    push(@args, '--watchos-device') if (defined $xcodeSDK && $xcodeSDK =~ /^watchos/);
-    push(@args, '--watchos-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^watchsimulator/);
-    push(@args, '--maccatalyst') if (defined $xcodeSDK && $xcodeSDK =~ /^maccatalyst/);
+    push(@args, '--ios-device') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq /^iphoneos/);
+    push(@args, '--ios-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq /^iphonesimulator/ && $simulatorIdiom eq "iPhone");
+    push(@args, '--ipad-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq /^iphonesimulator/ && $simulatorIdiom eq "iPad");
+    push(@args, '--tvos-device') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq /^appletvos/);
+    push(@args, '--tvos-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq /^appletvsimulator/);
+    push(@args, '--watchos-device') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq /^watchos/);
+    push(@args, '--watchos-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq /^watchsimulator/);
+    push(@args, '--maccatalyst') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq /^maccatalyst/);
     push(@args, '--32-bit') if ($architecture eq "x86" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
     push(@args, '--ftw') if isFTW();
@@ -622,53 +623,76 @@ sub availableXcodeSDKs
     return parseAvailableXcodeSDKs(\@output);
 }
 
-sub determineXcodeSDK
-{
-    return if defined $xcodeSDK;
+sub isValidXcodeSDKPlatformName($) {
+    my $name = shift;
+    my @platforms = qw(
+        appletvos
+        appletvsimulator
+        iphoneos
+        iphonesimulator
+        macosx
+        watchos
+        watchsimulator
+        maccatalyst
+    );
+    return grep { $_ eq $name } @platforms;
+}
+
+sub determineXcodeSDKPlatformName {
+    return if defined $xcodeSDKPlatformName;
     my $sdk;
     
     # The user explicitly specified the sdk, don't assume anything
     if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk)) {
-        $xcodeSDK = $sdk;
+        $xcodeSDK = lc $sdk;
+        $xcodeSDKPlatformName = $sdk;
+        $xcodeSDKPlatformName =~ s/\.internal$//;
+        die "Couldn't determine platform name from Xcode SDK" unless isValidXcodeSDKPlatformName($xcodeSDKPlatformName);
         return;
     }
     if (checkForArgumentAndRemoveFromARGV("--device") || checkForArgumentAndRemoveFromARGV("--ios-device")) {
-        $xcodeSDK ||= "iphoneos";
+        $xcodeSDKPlatformName ||= "iphoneos";
     }
     if (checkForArgumentAndRemoveFromARGV("--simulator") || checkForArgumentAndRemoveFromARGV("--ios-simulator")) {
-        $xcodeSDK ||= 'iphonesimulator';
+        $xcodeSDKPlatformName ||= 'iphonesimulator';
         $simulatorIdiom = 'iPhone';
     }
     if (checkForArgumentAndRemoveFromARGV("--ipad-simulator")) {
-        $xcodeSDK ||= 'iphonesimulator';
+        $xcodeSDKPlatformName ||= 'iphonesimulator';
         $simulatorIdiom = 'iPad';
     }
     if (checkForArgumentAndRemoveFromARGV("--tvos-device")) {
-        $xcodeSDK ||=  "appletvos";
+        $xcodeSDKPlatformName ||= "appletvos";
     }
     if (checkForArgumentAndRemoveFromARGV("--tvos-simulator")) {
-        $xcodeSDK ||= "appletvsimulator";
+        $xcodeSDKPlatformName ||= "appletvsimulator";
     }
     if (checkForArgumentAndRemoveFromARGV("--watchos-device")) {
-        $xcodeSDK ||=  "watchos";
+        $xcodeSDKPlatformName ||= "watchos";
     }
     if (checkForArgumentAndRemoveFromARGV("--watchos-simulator")) {
-        $xcodeSDK ||= "watchsimulator";
+        $xcodeSDKPlatformName ||= "watchsimulator";
     }
     if (checkForArgumentAndRemoveFromARGV("--maccatalyst")) {
-        $xcodeSDK ||= "maccatalyst";
+        $xcodeSDKPlatformName ||= "maccatalyst";
     }
 
     # Finally, fall back to macOS if no platform is specified.
-    if (!defined $xcodeSDK) {
-        $xcodeSDK = "macosx";
-    }
-    
+    $xcodeSDKPlatformName ||= "macosx";
+}
+
+sub determineXcodeSDK
+{
+    determineXcodeSDKPlatformName();  # This can set $xcodeSDK if --sdk was used.
+    return if defined $xcodeSDK;
+
+    $xcodeSDK = $xcodeSDKPlatformName;
+
     # Prefer the internal version of an sdk, if it exists.
     my @availableSDKs = availableXcodeSDKs();
 
     foreach my $sdk (@availableSDKs) {
-        next if $sdk ne "$xcodeSDK.internal";
+        next if $sdk ne "$xcodeSDKPlatformName.internal";
         $xcodeSDK = $sdk;
         last;
     }
@@ -685,20 +709,10 @@ sub setXcodeSDK($)
     ($xcodeSDK) = @_;
 }
 
-
-sub xcodeSDKPlatformName()
+sub xcodeSDKPlatformName
 {
-    determineXcodeSDK();
-    return "" if !defined $xcodeSDK;
-    return "appletvos" if $xcodeSDK =~ /appletvos/i;
-    return "appletvsimulator" if $xcodeSDK =~ /appletvsimulator/i;
-    return "iphoneos" if $xcodeSDK =~ /iphoneos/i;
-    return "iphonesimulator" if $xcodeSDK =~ /iphonesimulator/i;
-    return "macosx" if $xcodeSDK =~ /macosx/i;
-    return "watchos" if $xcodeSDK =~ /watchos/i;
-    return "watchsimulator" if $xcodeSDK =~ /watchsimulator/i;
-    return "maccatalyst" if $xcodeSDK =~ /maccatalyst/i;
-    die "Couldn't determine platform name from Xcode SDK";
+    determineXcodeSDKPlatformName();
+    return $xcodeSDKPlatformName;
 }
 
 sub XcodeSDKPath
@@ -1344,7 +1358,7 @@ sub determinePortName()
     if (isAnyWindows()) {
         $portName = AppleWin;
     } elsif (isDarwin()) {
-        determineXcodeSDK();
+        determineXcodeSDKPlatformName();
         if (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK()) {
             $portName = iOS;
         } elsif (willUseAppleTVDeviceSDK() || willUseAppleTVSimulatorSDK()) {
