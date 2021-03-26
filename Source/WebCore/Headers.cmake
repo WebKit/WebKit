@@ -870,6 +870,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/DeprecatedGlobalSettings.h
     page/DeviceClient.h
     page/DiagnosticLoggingClient.h
+    page/DiagnosticLoggingDomain.h
     page/DiagnosticLoggingKeys.h
     page/DiagnosticLoggingResultType.h
     page/DisabledAdaptations.h

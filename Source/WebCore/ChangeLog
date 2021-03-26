@@ -1,3 +1,21 @@
+2021-03-26  Said Abou-Hallawa  <said@apple.com>
+
+        Allow logging minimal info about uploading media files in the system diagnose
+        https://bugs.webkit.org/show_bug.cgi?id=223706
+
+        Reviewed by Alex Christensen.
+
+        Give the WebKit client the ability to log info about the media files which
+        were submitted to a web server through an HTMLFormElement.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        * loader/EmptyClients.cpp:
+        * page/DiagnosticLoggingClient.h:
+        * page/DiagnosticLoggingDomain.h: Copied from Source/WebKit/UIProcess/API/APIDiagnosticLoggingClient.h.
+
 2021-03-26  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement cachedPropertyValue for WebXR [SameObject] attributes

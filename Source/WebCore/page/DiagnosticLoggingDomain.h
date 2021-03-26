@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,19 @@
 
 #pragma once
 
-#include <WebCore/DiagnosticLoggingDomain.h>
-#include <WebCore/DiagnosticLoggingResultType.h>
-#include <wtf/text/WTFString.h>
+namespace WebCore {
 
-namespace WebKit {
-class WebPageProxy;
-}
+enum class DiagnosticLoggingDomain : uint8_t { Media };
 
-namespace API {
+} // namespace WebCore
 
-class Dictionary;
+namespace WTF {
 
-class DiagnosticLoggingClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~DiagnosticLoggingClient() { }
-
-    virtual void logDiagnosticMessage(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description) = 0;
-    virtual void logDiagnosticMessageWithResult(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, WebCore::DiagnosticLoggingResultType) = 0;
-    virtual void logDiagnosticMessageWithValue(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, const WTF::String& value) = 0;
-    virtual void logDiagnosticMessageWithEnhancedPrivacy(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description) = 0;
-
-    virtual void logDiagnosticMessageWithValueDictionary(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, Ref<API::Dictionary>&&) = 0;
-
-    virtual void logDiagnosticMessageWithDomain(WebKit::WebPageProxy*, const WTF::String&, WebCore::DiagnosticLoggingDomain) { }
+template<> struct EnumTraits<WebCore::DiagnosticLoggingDomain> {
+    using values = EnumValues<
+        WebCore::DiagnosticLoggingDomain,
+        WebCore::DiagnosticLoggingDomain::Media
+    >;
 };
 
-} // namespace API
+} // namespace WTF

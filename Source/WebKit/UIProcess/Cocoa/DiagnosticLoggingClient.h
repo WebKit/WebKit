@@ -29,6 +29,7 @@
 #import "WKFoundation.h"
 
 #import "APIDiagnosticLoggingClient.h"
+#import <WebCore/DiagnosticLoggingDomain.h>
 #import <WebCore/DiagnosticLoggingResultType.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -52,6 +53,7 @@ private:
     void logDiagnosticMessageWithValue(WebPageProxy*, const String& message, const String& description, const String& value) override;
     void logDiagnosticMessageWithEnhancedPrivacy(WebPageProxy*, const String& message, const String& description) override;
     void logDiagnosticMessageWithValueDictionary(WebPageProxy*, const String& message, const String& description, Ref<API::Dictionary>&&) override;
+    void logDiagnosticMessageWithDomain(WebPageProxy*, const String& message, WebCore::DiagnosticLoggingDomain) override;
 
     WKWebView *m_webView;
     WeakObjCPtr<id <_WKDiagnosticLoggingDelegate>> m_delegate;
@@ -62,6 +64,7 @@ private:
         unsigned webviewLogDiagnosticMessageWithValue : 1;
         unsigned webviewLogDiagnosticMessageWithEnhancedPrivacy : 1;
         unsigned webviewLogDiagnosticMessageWithValueDictionary : 1;
+        unsigned webviewLogDiagnosticMessageWithDomain : 1;
     } m_delegateMethods;
 };
 

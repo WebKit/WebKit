@@ -7218,6 +7218,15 @@ void WebPageProxy::logDiagnosticMessageWithValueDictionary(const String& message
     effectiveClient->logDiagnosticMessageWithValueDictionary(this, message, description, WTFMove(apiDictionary));
 }
 
+void WebPageProxy::logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain domain)
+{
+    auto* effectiveClient = effectiveDiagnosticLoggingClient(ShouldSample::No);
+    if (!effectiveClient)
+        return;
+
+    effectiveClient->logDiagnosticMessageWithDomain(this, message, domain);
+}
+
 void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)
 {
     PerformanceLoggingClient::ScrollingEvent event = static_cast<PerformanceLoggingClient::ScrollingEvent>(eventType);

@@ -1,3 +1,31 @@
+2021-03-26  Said Abou-Hallawa  <said@apple.com>
+
+        Allow logging minimal info about uploading media files in the system diagnose
+        https://bugs.webkit.org/show_bug.cgi?id=223706
+
+        Reviewed by Alex Christensen.
+
+        Add the new method logDiagnosticMessageWithDomain to the modern ObjC API
+        WKDiagnosticLoggingDelegate and make it accessible from DiagnosticLoggingClient.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * UIProcess/API/APIDiagnosticLoggingClient.h:
+        (API::DiagnosticLoggingClient::logDiagnosticMessageWithDomain):
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        * UIProcess/Cocoa/DiagnosticLoggingClient.h:
+        * UIProcess/Cocoa/DiagnosticLoggingClient.mm:
+        (WebKit::DiagnosticLoggingClient::setDelegate):
+        (WebKit::toWKDiagnosticLoggingDomain):
+        (WebKit::DiagnosticLoggingClient::logDiagnosticMessageWithDomain):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::logDiagnosticMessageWithDomain):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp:
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithDomain):
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.h:
+
 2021-03-26  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Enable the UseGPUProcessForMedia preference by default
