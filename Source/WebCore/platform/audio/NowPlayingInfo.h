@@ -41,12 +41,12 @@ struct NowPlayingInfoArtwork {
 
     bool operator==(const NowPlayingInfoArtwork& other) const
     {
-        return *this != other;
+        return src == other.src && mimeType == other.mimeType;
     }
 
     bool operator!=(const NowPlayingInfoArtwork& other) const
     {
-        return src != other.src || mimeType != other.mimeType;
+        return !(*this == other);
     }
 
     template<class Encoder> void encode(Encoder&) const;

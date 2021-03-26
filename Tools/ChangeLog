@@ -1,3 +1,17 @@
+2021-03-26  Jean-Yves Avenard  <jya@apple.com>
+
+        Fix NowPlayingInfoArtwork operator== logic.
+        https://bugs.webkit.org/show_bug.cgi?id=223730
+        <rdar://problem/75822687>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/NowPlayingInfoTests.cpp: Added.
+        (TestWebKitAPI::testEmptyArtwork):
+        (TestWebKitAPI::TEST):
+
 2021-03-25  Cameron McCormack  <heycam@apple.com>
 
         Avoid calling `xcodebuild -showsdks` where possible.
