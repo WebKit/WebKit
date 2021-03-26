@@ -558,12 +558,6 @@ const AtomString& HTMLImageElement::alt() const
     return attributeWithoutSynchronization(altAttr);
 }
 
-bool HTMLImageElement::draggable() const
-{
-    // Image elements are draggable by default.
-    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(draggableAttr), "false");
-}
-
 void HTMLImageElement::setHeight(unsigned value)
 {
     setUnsignedIntegralAttribute(heightAttr, value);

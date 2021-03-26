@@ -210,7 +210,8 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
     } else if (name == draggableAttr) {
         if (equalLettersIgnoringASCIICase(value, "true")) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
+            if (!isDraggableIgnoringAttributes())
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
         } else if (equalLettersIgnoringASCIICase(value, "false"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
     } else if (name == dirAttr) {
@@ -709,7 +710,11 @@ ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
 
 bool HTMLElement::draggable() const
 {
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(draggableAttr), "true");
+    auto& value = attributeWithoutSynchronization(draggableAttr);
+    if (isDraggableIgnoringAttributes())
+        return !equalLettersIgnoringASCIICase(value, "false");
+
+    return equalLettersIgnoringASCIICase(value, "true");
 }
 
 void HTMLElement::setDraggable(bool value)

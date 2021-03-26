@@ -63,6 +63,7 @@ public:
 
     virtual bool draggable() const;
     WEBCORE_EXPORT void setDraggable(bool);
+    virtual bool isDraggableIgnoringAttributes() const { return false; }
 
     WEBCORE_EXPORT bool spellcheck() const;
     WEBCORE_EXPORT void setSpellcheck(bool);

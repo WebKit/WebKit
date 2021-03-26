@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+<img draggable="true" src="../../resources/green-400x400.png"></img>
+<script>
+addEventListener("load", () => {
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
+            text : "hello",
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+        }
+    ]);
+    eventSender.mouseMoveTo(50, 300);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(350, 300);
+    eventSender.mouseUp();
+});
+</script>
+</body>
+</html>
