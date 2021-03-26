@@ -1,3 +1,18 @@
+2021-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Source/WebCore/editing/cocoa/HTMLConverter.mm:1278:44: runtime error: member call on null pointer of type 'WebCore::ArchiveResource'
+        https://bugs.webkit.org/show_bug.cgi?id=223696
+
+        Reviewed by Alex Christensen.
+
+        Fix bug found by UBSan.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_addAttachmentForElement):
+        - Drop duplicate call to dataSource->subresource(url) as it doesn't seem it can return something else
+          than null if it returned null the first time around.
+        - Make sure resource is null-checked before we dereference it to get the MIME type.
+
 2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow some image overlay content to render in fully transparent image elements

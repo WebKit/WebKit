@@ -1271,16 +1271,13 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
             fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:url options:0 error:NULL]);
     }
     if (!fileWrapper && dataSource) {
-        RefPtr<ArchiveResource> resource = dataSource->subresource(url);
-        if (!resource)
-            resource = dataSource->subresource(url);
-
-        const String& mimeType = resource->mimeType();
-        if (usePlaceholder && resource && mimeType == "text/html")
-            notFound = YES;
-        if (resource && !notFound) {
-            fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()]);
-            [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
+        if (auto resource = dataSource->subresource(url)) {
+            auto& mimeType = resource->mimeType();
+            if (!usePlaceholder || mimeType != "text/html") {
+                fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()]);
+                [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
+            } else
+                notFound = YES;
         }
     }
 #if !PLATFORM(IOS_FAMILY)
