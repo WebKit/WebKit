@@ -1,3 +1,15 @@
+2021-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r272301): [SOUP] default port attribute when persisting credential information with libsecret
+        https://bugs.webkit.org/show_bug.cgi?id=223782
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use the default port instead of 0 when the URL omits the port.
+
+        * platform/network/soup/AuthenticationChallengeSoup.cpp:
+        (WebCore::protectionSpaceFromSoupAuthAndURL):
+
 2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use ICUDeleter to encode ucnv_close/uenum_close call into type of deleter of std::unique_ptr
