@@ -1,3 +1,28 @@
+2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use ICUDeleter to encode ucnv_close/uenum_close call into type of deleter of std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=223503
+
+        Reviewed by Alex Christensen.
+
+        Use ICUDeleter<ucnv_close> instead of holding ucnv_close pointer in ICUConverterPtr.
+        This deleter encodes ucnv_close calls into type so that we do not need to hold a pointer
+        to ucnv_close.
+
+        We also use ICUDeleter<uenum_close> in place where we use UEnumeration.
+
+        * Modules/applepay/PaymentRequestValidator.mm:
+        (WebCore::validateCurrencyCode):
+        * platform/text/EncodingTables.cpp:
+        (WebCore::jis0208):
+        (WebCore::jis0212):
+        (WebCore::big5):
+        (WebCore::eucKR):
+        (WebCore::gb18030):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::createICUConverter const):
+        * platform/text/TextCodecICU.h:
+
 2021-03-26  Jessie Berlin  <jberlin@webkit.org>
 
         Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags

@@ -1066,7 +1066,7 @@ const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208()
         size_t arrayIndex = 0;
         
         UErrorCode error = U_ZERO_ERROR;
-        auto icuConverter = ICUConverterPtr { ucnv_open("EUC-JP", &error), ucnv_close };
+        auto icuConverter = ICUConverterPtr { ucnv_open("EUC-JP", &error) };
         ASSERT(!error);
 
         constexpr size_t range = 94;
@@ -1871,7 +1871,7 @@ const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212()
         size_t arrayIndex = 0;
         
         UErrorCode error = U_ZERO_ERROR;
-        auto icuConverter = ICUConverterPtr { ucnv_open("EUC-JP", &error), ucnv_close };
+        auto icuConverter = ICUConverterPtr { ucnv_open("EUC-JP", &error) };
         ASSERT(!error);
 
         constexpr size_t range = 94;
@@ -4882,7 +4882,7 @@ const std::array<std::pair<uint16_t, UChar32>, 18590>& big5()
         size_t arrayIndex = 0;
         
         UErrorCode error = U_ZERO_ERROR;
-        auto icuConverter = ICUConverterPtr { ucnv_open("Big-5", &error), ucnv_close };
+        auto icuConverter = ICUConverterPtr { ucnv_open("Big-5", &error) };
         ASSERT(!error);
 
         uint8_t icuInput[2];
@@ -7072,7 +7072,7 @@ const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR()
     std::call_once(flag, [] {
         array = new std::array<std::pair<uint16_t, UChar>, 17048>;
         UErrorCode error = U_ZERO_ERROR;
-        auto icuConverter = ICUConverterPtr { ucnv_open("windows-949", &error), ucnv_close };
+        auto icuConverter = ICUConverterPtr { ucnv_open("windows-949", &error) };
         ASSERT(U_SUCCESS(error));
         auto getPair = [icuConverter = WTFMove(icuConverter)] (uint16_t pointer) -> Optional<std::pair<uint16_t, UChar>> {
             std::array<uint8_t, 2> icuInput { static_cast<uint8_t>(pointer / 190u + 0x81), static_cast<uint8_t>(pointer % 190u + 0x41) };
@@ -8611,7 +8611,7 @@ const std::array<UChar, 23940>& gb18030()
     std::call_once(flag, [] {
         array = new std::array<UChar, 23940>;
         UErrorCode error = U_ZERO_ERROR;
-        auto icuConverter = ICUConverterPtr { ucnv_open("gb18030", &error), ucnv_close };
+        auto icuConverter = ICUConverterPtr { ucnv_open("gb18030", &error) };
         for (size_t pointer = 0; pointer < 23940; pointer++) {
             uint8_t icuInput[2];
             icuInput[0] = pointer / 190 + 0x81;

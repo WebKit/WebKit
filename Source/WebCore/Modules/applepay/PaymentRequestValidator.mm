@@ -32,6 +32,7 @@
 #import "ApplePayShippingMethod.h"
 #import <unicode/ucurr.h>
 #import <unicode/uloc.h>
+#import <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WebCore {
 
@@ -115,7 +116,7 @@ static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
         return Exception { TypeError, "Missing currency code." };
 
     UErrorCode errorCode = U_ZERO_ERROR;
-    auto currencyCodes = std::unique_ptr<UEnumeration, void (*)(UEnumeration*)>(ucurr_openISOCurrencies(UCURR_ALL, &errorCode), uenum_close);
+    auto currencyCodes = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucurr_openISOCurrencies(UCURR_ALL, &errorCode));
 
     int32_t length;
     while (auto *currencyCodePtr = uenum_next(currencyCodes.get(), &length, &errorCode)) {

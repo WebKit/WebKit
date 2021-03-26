@@ -186,7 +186,7 @@ void TextCodecICU::createICUConverter() const
     }
 
     UErrorCode error = U_ZERO_ERROR;
-    m_converter = ICUConverterPtr { ucnv_open(m_canonicalConverterName, &error), ucnv_close };
+    m_converter = ICUConverterPtr { ucnv_open(m_canonicalConverterName, &error) };
     if (m_converter)
         ucnv_setFallback(m_converter.get(), true);
 }

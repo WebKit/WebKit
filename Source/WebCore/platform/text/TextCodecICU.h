@@ -28,10 +28,11 @@
 
 #include "TextCodec.h"
 #include <unicode/ucnv.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WebCore {
 
-using ICUConverterPtr = std::unique_ptr<UConverter, void (*)(UConverter*)>;
+using ICUConverterPtr = std::unique_ptr<UConverter, ICUDeleter<ucnv_close>>;
 
 class TextCodecICU final : public TextCodec {
 public:
@@ -52,13 +53,13 @@ private:
 
     const char* const m_encodingName;
     const char* const m_canonicalConverterName;
-    mutable ICUConverterPtr m_converter { nullptr, ucnv_close };
+    mutable ICUConverterPtr m_converter;
 };
 
 struct ICUConverterWrapper {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    ICUConverterPtr converter { nullptr, ucnv_close };
+    ICUConverterPtr converter;
 };
 
 } // namespace WebCore
