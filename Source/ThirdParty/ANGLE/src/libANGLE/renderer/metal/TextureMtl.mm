@@ -1119,6 +1119,9 @@ angle::Result TextureMtl::generateMipmap(const gl::Context *context)
     //
     bool sRGB = mFormat.actualInternalFormat().colorEncoding == GL_SRGB;
 
+    bool needsCPUPath = contextMtl->getDisplay()->getFeatures().intelThinMipmapWorkaround.enabled
+                                && mNativeTexture->widthAt0() < 5;
+
     if (caps.writable && mState.getType() == gl::TextureType::_3D)
     {
         // http://anglebug.com/4921.
@@ -1127,7 +1130,7 @@ angle::Result TextureMtl::generateMipmap(const gl::Context *context)
         ANGLE_TRY(contextMtl->getDisplay()->getUtils().generateMipmapCS(contextMtl, mNativeTexture,
                                                                         sRGB, &mNativeLevelViews));
     }
-    else if (caps.filterable && caps.colorRenderable)
+    else if (!needsCPUPath && caps.filterable && caps.colorRenderable)
     {
         mtl::BlitCommandEncoder *blitEncoder = contextMtl->getBlitCommandEncoder();
         blitEncoder->generateMipmapsForTexture(mNativeTexture);

@@ -1,3 +1,29 @@
+2021-03-25  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] Add CPU mipmap generation for workaround on Intel devices.
+        https://bugs.webkit.org/show_bug.cgi?id=223778
+
+        Reviewed by Dean Jackson.
+
+        Mipmap generation on Intel does not reliably work for textures with
+        width less than four. To reliably pass webGL conformance, we need
+        to switch to CPU mipmap generation when generating mipmaps in this
+        specific circumstance.
+
+        This patch fixes the following four tests on Intel
+        webgl/1.0.3/conformance/limits/gl-max-texture-dimensions.html
+        webgl/1.0.3/conformance/textures/texture-size.html
+        webgl/2.0.0/conformance/limits/gl-max-texture-dimensions.html
+        webgl/2.0.0/conformance/textures/misc/texture-size.html
+
+        * include/platform/Feature.h:
+        (angle::FeatureCategoryToString):
+        * include/platform/FeaturesMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeFeatures):
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::generateMipmap):
+
 2021-03-25  Jessie Berlin  <jberlin@webkit.org>
 
         Remove 10.13 DEPLOYMENT_TARGETs and SYSTEM_VERSION_PREFIXs
