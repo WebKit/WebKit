@@ -1,3 +1,24 @@
+2021-03-26  Zalan Bujtas  <zalan@apple.com>
+
+        [MiniBrowser] Remove redundant "Disable Simple Line Layout" menu item
+        https://bugs.webkit.org/show_bug.cgi?id=223812
+
+        Reviewed by Simon Fraser.
+
+        SLL was replaced by IFC integration a while ago.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController initWithMenu:]):
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleSimpleLineLayoutEnabled:]): Deleted.
+        (-[SettingsController simpleLineLayoutEnabled]): Deleted.
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController didChangeSettings]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]):
+
 2021-03-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Implement PCM SQLite changes based on spec review
