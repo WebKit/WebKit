@@ -2,6 +2,13 @@
 
         Unreviewed.
 
+        * platform/gtk/TestExpectations: Unflag
+        http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html
+
+2021-03-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
         * platform/gtk/TestExpectations: Unflagging
         mediasource-endofstream-invaliderror.html.
 
