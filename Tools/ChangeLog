@@ -1,3 +1,19 @@
+2021-03-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkit-patch] Use commit.webkit.org instead of remote SVN to compute identifier
+        https://bugs.webkit.org/show_bug.cgi?id=223820
+        <rdar://problem/75902125>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest.mock_svn_remote): Replace mock Svn with mock requests.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/comments.py:
+        (bug_comment_from_svn_revision): Use commits.webkit.org instead of svn.webkit.org.
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        (CloseBugForLandDiffTest.test_empty_state): Replace mock Svn with mock requests.
+
 2021-03-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Deprecate using DERIVED_SOURCES_DIR/FOWARDING_HEADERS_DIR directly
