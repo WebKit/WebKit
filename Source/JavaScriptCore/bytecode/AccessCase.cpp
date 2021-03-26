@@ -1068,7 +1068,7 @@ void AccessCase::generateWithGuard(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
-        jit.cageConditionally(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR);
+        jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);
 
         jit.signExtend32ToPtr(propertyGPR, scratchGPR);
         if (isInt(type)) {

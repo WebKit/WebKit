@@ -256,7 +256,8 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
 
     if (!!info.memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-        GPRReg scratchOrBoundsCheckingSize = wasmCallingConvention().prologueScratchGPRs[0];
+        GPRReg size = wasmCallingConvention().prologueScratchGPRs[0];
+        GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[1];
 
         if (Context::useFastTLS())
             jit.loadWasmContextInstance(baseMemory);
@@ -264,15 +265,15 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
         GPRReg currentInstanceGPR = Context::useFastTLS() ? baseMemory : wasmContextInstanceGPR;
         if (isARM64E()) {
             if (mode != Wasm::MemoryMode::Signaling)
-                scratchOrBoundsCheckingSize = pinnedRegs.boundsCheckingSizeRegister;
-            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), scratchOrBoundsCheckingSize);
+                size = pinnedRegs.boundsCheckingSizeRegister;
+            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), size);
         } else {
             if (mode != Wasm::MemoryMode::Signaling)
                 jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister);
         }
 
         jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
-        jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchOrBoundsCheckingSize);
+        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, size, scratch);
     }
 
     CCallHelpers::Call call = jit.threadSafePatchableNearCall();
