@@ -1,3 +1,14 @@
+2021-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Allow WKContentRuleList to block only in frames or only in main frame
+        https://bugs.webkit.org/show_bug.cgi?id=219001
+
+        Reviewed by Ben Poulain.
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListStore::getContentRuleListSource):
+        * UIProcess/API/APIContentRuleListStore.h:
+
 2021-03-25  Megan Gardner  <megan_gardner@apple.com>
 
         Have App Highlights be a Configuration Setting instead of an internal Preference setting.

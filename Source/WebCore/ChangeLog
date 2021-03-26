@@ -1,3 +1,41 @@
+2021-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Allow WKContentRuleList to block only in frames or only in main frame
+        https://bugs.webkit.org/show_bug.cgi?id=219001
+        <rdar://problem/71382045>
+
+        Reviewed by Ben Poulain.
+
+        This adds load-context to the trigger, which can have an array containing main-frame or iframe.
+        This makes the trigger only happen in such loading contexts.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::validateURL):
+        * contentextensions/ContentExtension.cpp:
+        (WebCore::ContentExtensions::ContentExtension::populateConditionCacheIfNeeded):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getTypeFlags):
+        (WebCore::ContentExtensions::loadTrigger):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentRuleListsForLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentRuleListsForPingLoad):
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretTestFlagsAndAppendAction):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::ContentExtensions::toResourceType):
+        (WebCore::ContentExtensions::readResourceType):
+        (WebCore::ContentExtensions::readLoadType):
+        (WebCore::ContentExtensions::readLoadContext):
+        (WebCore::ContentExtensions::ResourceLoadInfo::getResourceFlags const):
+        * loader/ResourceLoadInfo.h:
+
 2021-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Don't add `-webkit-user-select: none;` on image elements with `draggable=true`

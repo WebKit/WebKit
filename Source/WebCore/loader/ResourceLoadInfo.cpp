@@ -63,7 +63,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
     case CachedResource::Type::RawResource:
         if (requester == ResourceRequestBase::Requester::XHR
             || requester == ResourceRequestBase::Requester::Fetch)
-            return {{ ResourceType::Raw, ResourceType::Fetch }};
+            return { ResourceType::Fetch };
         FALLTHROUGH;
     case CachedResource::Type::Beacon:
     case CachedResource::Type::Ping:
@@ -74,7 +74,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:
 #endif
-        return {{ ResourceType::Raw, ResourceType::Other }};
+        return { ResourceType::Other };
 
     case CachedResource::Type::TextTrackResource:
         return { ResourceType::Media };
@@ -84,7 +84,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
     return { };
 }
 
-Optional<OptionSet<ResourceType>> readResourceType(const String& name)
+Optional<OptionSet<ResourceType>> readResourceType(StringView name)
 {
     if (name == "document")
         return { ResourceType::Document };
@@ -97,13 +97,13 @@ Optional<OptionSet<ResourceType>> readResourceType(const String& name)
     if (name == "font")
         return { ResourceType::Font };
     if (name == "raw")
-        return { ResourceType::Raw };
+        return {{ ResourceType::Fetch, ResourceType::WebSocket, ResourceType::Other, ResourceType::Ping }};
     if (name == "websocket")
         return { ResourceType::WebSocket };
     if (name == "fetch")
         return { ResourceType::Fetch };
     if (name == "other")
-        return { ResourceType::Other };
+        return {{ ResourceType::Other, ResourceType::Ping }};
     if (name == "svg-document")
         return { ResourceType::SVGDocument };
     if (name == "media")
@@ -115,12 +115,21 @@ Optional<OptionSet<ResourceType>> readResourceType(const String& name)
     return WTF::nullopt;
 }
 
-Optional<OptionSet<LoadType>> readLoadType(const String& name)
+Optional<OptionSet<LoadType>> readLoadType(StringView name)
 {
     if (name == "first-party")
         return { LoadType::FirstParty };
     if (name == "third-party")
         return { LoadType::ThirdParty };
+    return WTF::nullopt;
+}
+
+Optional<OptionSet<LoadContext>> readLoadContext(StringView name)
+{
+    if (name == "top-frame")
+        return { LoadContext::TopFrame };
+    if (name == "child-frame")
+        return { LoadContext::ChildFrame };
     return WTF::nullopt;
 }
 
@@ -135,6 +144,7 @@ ResourceFlags ResourceLoadInfo::getResourceFlags() const
     ASSERT(!type.isEmpty());
     flags |= type.toRaw();
     flags |= isThirdParty() ? static_cast<ResourceFlags>(LoadType::ThirdParty) : static_cast<ResourceFlags>(LoadType::FirstParty);
+    flags |= mainFrameContext ? static_cast<ResourceFlags>(LoadContext::TopFrame) : static_cast<ResourceFlags>(LoadContext::ChildFrame);
     return flags;
 }
 

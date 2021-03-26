@@ -112,12 +112,14 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
     uint16_t flagsToCheck = getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction));
 
     uint16_t loadTypeFlags = flagsToCheck & LoadTypeMask;
+    uint16_t loadContextFlags = flagsToCheck & LoadContextMask;
     uint16_t resourceTypeFlags = flagsToCheck & ResourceTypeMask;
-    
+
     bool loadTypeMatches = loadTypeFlags ? (loadTypeFlags & flags) : true;
+    bool loadContextMatches = loadContextFlags ? (loadContextFlags & flags) : true;
     bool resourceTypeMatches = resourceTypeFlags ? (resourceTypeFlags & flags) : true;
     
-    if (loadTypeMatches && resourceTypeMatches) {
+    if (loadTypeMatches && loadContextMatches && resourceTypeMatches) {
         uint64_t actionAndFlags = (ifCondition ? IfConditionFlag : 0) | (static_cast<uint64_t>(flagsToCheck) << 32) | static_cast<uint64_t>(getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint16_t)));
         if (!m_topURLActions || matchesCondition(actionAndFlags, *m_topURLActions))
             actions.add(actionAndFlags);

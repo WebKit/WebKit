@@ -576,6 +576,7 @@ void ContentRuleListStore::getContentRuleListSource(const WTF::String& identifie
         switch (contentRuleList->metaData.version) {
         case 9:
         case 10:
+        case 11:
             if (!contentRuleList->metaData.sourceSize) {
                 complete({ });
                 return;

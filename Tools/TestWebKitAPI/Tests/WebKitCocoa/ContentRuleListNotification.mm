@@ -349,6 +349,77 @@ TEST(ContentRuleList, SupportsRegex)
         EXPECT_FALSE([WKContentRuleList _supportsRegularExpression:regex]);
 }
 
+TEST(ContentRuleList, TopFrameChildFrame)
+{
+    auto handler = [[TestURLSchemeHandler new] autorelease];
+    __block bool loadedIFrame = false;
+    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto respond = [task] (const char* html) {
+            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:strlen(html) textEncodingName:nil] autorelease];
+            [task didReceiveResponse:response];
+            [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
+            [task didFinish];
+        };
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main.html"])
+            return respond("<iframe src='frame.html'></iframe>");
+        if ([path isEqualToString:@"/frame.html"]) {
+            EXPECT_FALSE(loadedIFrame);
+            loadedIFrame = true;
+            return respond("hi");
+        }
+        if ([path isEqualToString:@"/fetch_main.html"]) {
+            return respond("<script>"
+                "function addiframe() { var iframe = document.createElement('iframe'); iframe.src = 'fetch_iframe.html'; document.body.appendChild(iframe); };"
+                "function testfetch() { fetch('/fetched.txt').then(()=>{alert('main frame fetched successfully');addiframe()}).catch(()=>{alert('main frame fetch failed');addiframe();}) }"
+                "</script><body onload='testfetch()'/>");
+        }
+        if ([path isEqualToString:@"/fetched.txt"])
+            return respond("hi");
+        if ([path isEqualToString:@"/fetch_iframe.html"]) {
+            return respond("<script>"
+                "function testfetch() { fetch('/fetched.txt').then(()=>{alert('iframe fetched successfully')}).catch(()=>{alert('iframe fetch failed');}) }"
+                "</script><body onload='testfetch()'/>");
+        }
+        ASSERT_NOT_REACHED();
+    };
+    auto configuration = [[WKWebViewConfiguration new] autorelease];
+    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
+    configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto webView = [[[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration] autorelease];
+    WKUserContentController *userContentController = webView.configuration.userContentController;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_TRUE(loadedIFrame);
+
+    [userContentController addContentRuleList:makeContentRuleList(@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\",\"load-context\":[\"child-frame\"]}}]").get()];
+    loadedIFrame = false;
+    [webView reload];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_FALSE(loadedIFrame);
+    
+    [userContentController removeAllContentRuleLists];
+    
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///fetch_main.html"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame fetched successfully");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe fetched successfully");
+
+    auto listWithLoadContext = [] (const char* type) {
+        return makeContentRuleList([NSString stringWithFormat:@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\",\"load-context\":[\"%s\"],\"resource-type\":[\"fetch\"]}}]", type]);
+    };
+    [userContentController addContentRuleList:listWithLoadContext("child-frame").get()];
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame fetched successfully");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe fetch failed");
+
+    [userContentController removeAllContentRuleLists];
+    [userContentController addContentRuleList:listWithLoadContext("top-frame").get()];
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame fetch failed");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe fetched successfully");
+}
+
 #if HAVE(SSL)
 
 TEST(WebKit, RedirectToPlaintextHTTPSUpgrade)
