@@ -1,3 +1,10 @@
+2021-03-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Unflagging
+        mediasource-endofstream-invaliderror.html.
+
 2021-03-26  Dean Jackson  <dino@apple.com>
 
         Enable Metal ANGLE backend for WebGL
