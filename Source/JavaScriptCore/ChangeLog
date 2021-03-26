@@ -1,3 +1,26 @@
+2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use new Apple ICU APIs to avoid C++ ICU API usage
+        https://bugs.webkit.org/show_bug.cgi?id=223783
+        <rdar://problem/75060240>
+
+        Reviewed by Mark Lam.
+
+        This patch adopts ICU 69's draft APIs to avoid using ICU C++ APIs in newer macOS build.
+        AppleICU adopts these draft APIs so that we can use it even in ICU 68 if ICU is AppleICU.
+        The API is ucal_getTimeZoneOffsetFromLocal, which is back-ported from ICU 69[1].
+        The purpose of this API is that calculating timezone offset and dst offset from *local* time.
+
+        [1]: https://github.com/unicode-org/icu/commit/53aa0505c5f95a8cebbd7b4421d474fd2a790b80
+
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/JSDateMath.cpp:
+        (JSC::OpaqueICUTimeZoneDeleter::operator()):
+        (JSC::DateCache::calculateLocalTimeOffset):
+        (JSC::DateCache::defaultTimeZone):
+        (JSC::DateCache::timeZoneCacheSlow):
+        * runtime/JSDateMath.h:
+
 2021-03-26  Jessie Berlin  <jberlin@webkit.org>
 
         Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags

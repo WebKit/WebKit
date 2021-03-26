@@ -60,7 +60,7 @@ struct LocalTimeOffset {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     LocalTimeOffset() = default;
-    LocalTimeOffset(bool isDST, int offset)
+    constexpr LocalTimeOffset(bool isDST, int offset)
         : isDST(isDST)
         , offset(offset)
     {
