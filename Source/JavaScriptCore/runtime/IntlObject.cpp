@@ -246,7 +246,7 @@ static Vector<StringView> unicodeExtensionComponents(StringView extension)
     return subtags;
 }
 
-Vector<char, 32> localeIDBufferForLanguageTag(const CString& tag)
+Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString& tag)
 {
     if (!tag.length())
         return { };
@@ -603,11 +603,15 @@ bool isUnicodeLocaleIdentifierType(StringView string)
 // https://tc39.es/ecma402/#sec-canonicalizeunicodelocaleid
 static String canonicalizeLanguageTag(const CString& tag)
 {
-    auto buffer = localeIDBufferForLanguageTag(tag);
+    auto buffer = localeIDBufferForLanguageTagWithNullTerminator(tag);
     if (buffer.isEmpty())
         return String();
-
-    return languageTagForLocaleID(buffer.data());
+    auto canonicalized = canonicalizeLocaleIDWithoutNullTerminator(buffer.data());
+    if (!canonicalized)
+        return String();
+    canonicalized->append('\0');
+    ASSERT(canonicalized->contains('\0'));
+    return languageTagForLocaleID(canonicalized->data());
 }
 
 Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue locales)
@@ -1407,6 +1411,26 @@ bool isUnicodeLanguageId(StringView string)
 bool isWellFormedCurrencyCode(StringView currency)
 {
     return currency.length() == 3 && currency.isAllSpecialCharacters<isASCIIAlpha>();
+}
+
+Optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID)
+{
+    ASSERT(localeID);
+    Vector<char, 32> buffer;
+#if U_ICU_VERSION_MAJOR_NUM >= 68 && USE(APPLE_INTERNAL_SDK)
+    // Use ualoc_canonicalForm AppleICU SPI, which can perform mapping of aliases.
+    // ICU-21506 is a bug upstreaming this SPI to ICU.
+    // https://unicode-org.atlassian.net/browse/ICU-21506
+    auto status = callBufferProducingFunction(ualoc_canonicalForm, localeID, buffer);
+    if (U_FAILURE(status))
+        return WTF::nullopt;
+    return buffer;
+#else
+    auto status = callBufferProducingFunction(uloc_canonicalize, localeID, buffer);
+    if (U_FAILURE(status))
+        return WTF::nullopt;
+    return buffer;
+#endif
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlObjectFuncGetCanonicalLocales, (JSGlobalObject* globalObject, CallFrame* callFrame))

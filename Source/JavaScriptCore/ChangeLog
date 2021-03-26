@@ -1,3 +1,30 @@
+2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use AppleICU SPI for canonicalization
+        https://bugs.webkit.org/show_bug.cgi?id=223552
+
+        Reviewed by Ryosuke Niwa.
+
+        uloc_canonicalize does not perform alias mapping. This is different from ECMA402's canonicalization requirement.
+        ICU C++ icu::Locale can canonicalize locale ID with alias mapping, but this is not exposed to C API.
+
+        In this patch, we adopt AppleICU SPI "ualoc_canonicalForm" added in rdar://74314220. This canonicalization can perform
+        alias mapping too. We do not extend uloc_canonicalize since this API explicitly says "It does NOT map aliased names in any way."[1].
+        In [2], we are tracking upstreaming of this new SPI. Once it is upstreamed to the mainline ICU, we will switch to that.
+
+        [1]: https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uloc_8h.html#a69b148194cf57ac40d4bb15c5b905260
+        [2]: https://unicode-org.atlassian.net/browse/ICU-21506
+
+        * runtime/IntlLocale.cpp:
+        (JSC::LocaleIDBuilder::initialize):
+        (JSC::LocaleIDBuilder::toCanonical):
+        * runtime/IntlObject.cpp:
+        (JSC::localeIDBufferForLanguageTagWithNullTerminator):
+        (JSC::canonicalizeLanguageTag):
+        (JSC::canonicalizeLocaleIDWithoutNullTerminator):
+        (JSC::localeIDBufferForLanguageTag): Deleted.
+        * runtime/IntlObject.h:
+
 2021-03-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Deprecate using DERIVED_SOURCES_DIR/FOWARDING_HEADERS_DIR directly

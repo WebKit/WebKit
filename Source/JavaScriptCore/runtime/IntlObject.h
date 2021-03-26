@@ -95,7 +95,7 @@ TriState intlBooleanOption(JSGlobalObject*, Optional<JSObject&> options, Propert
 String intlStringOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
-Vector<char, 32> localeIDBufferForLanguageTag(const CString&);
+Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
 
@@ -126,6 +126,8 @@ bool isUnicodeLanguageId(StringView);
 bool isStructurallyValidLanguageTag(StringView);
 
 bool isWellFormedCurrencyCode(StringView);
+
+Optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
 
 struct UFieldPositionIteratorDeleter {
     void operator()(UFieldPositionIterator*) const;

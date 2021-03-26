@@ -1,3 +1,14 @@
+2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use AppleICU SPI for canonicalization
+        https://bugs.webkit.org/show_bug.cgi?id=223552
+
+        Reviewed by Ryosuke Niwa.
+
+        * stress/intl-canonical-locale-alias-mapping.js: Added.
+        (shouldBe):
+        (Intl.getCanonicalLocales):
+
 2021-03-25  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r275056.
