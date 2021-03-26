@@ -329,6 +329,7 @@ __attribute__((availability(macosx, obsoleted = 10.13))) @interface AVFunctionBa
 @property (readonly, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property (readonly) BOOL canTogglePictureInPicture;
 - (void)togglePictureInPicture;
+@property (nonatomic, readonly) BOOL canSeek;
 
 typedef NS_ENUM(NSInteger, AVTouchBarMediaSelectionOptionType) {
     AVTouchBarMediaSelectionOptionTypeRegular,
