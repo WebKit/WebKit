@@ -20,7 +20,7 @@
 	<key>gpu_process_media</key>
 	<dict>
 		<key>Enabled</key>
-		<false/>
+		<true/>
 	</dict>
 	<key>gpu_process_webgl</key>
 	<dict>

@@ -1,3 +1,15 @@
+2021-03-26  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Enable the UseGPUProcessForMedia preference by default
+        https://bugs.webkit.org/show_bug.cgi?id=223771
+
+        Reviewed by Eric Carlson.
+
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+
 2021-03-26  Youenn Fablet  <youenn@apple.com>
 
         Use webrtc GPU Process feature flag for video capture on MacOS
