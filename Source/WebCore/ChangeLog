@@ -1,3 +1,17 @@
+2021-03-26  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: crash at aom.apple.WebCore: WebCore::AccessibilityProgressIndicator::element const
+        https://bugs.webkit.org/show_bug.cgi?id=223800
+        rdar://75861367
+
+        Reviewed by Zalan Bujtas.
+
+        Prevent unintended renderer access. 
+        No steps to reproduce were available, so a test was not able to be created.
+
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::element const):
+
 2021-03-26  Chris Dumez  <cdumez@apple.com>
 
         Source/WebCore/editing/cocoa/HTMLConverter.mm:1278:44: runtime error: member call on null pointer of type 'WebCore::ArchiveResource'

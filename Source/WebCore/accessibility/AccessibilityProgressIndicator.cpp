@@ -195,6 +195,9 @@ String AccessibilityProgressIndicator::gaugeRegionValueDescription() const
 
 Element* AccessibilityProgressIndicator::element() const
 {
+    if (!m_renderer)
+        return nullptr;
+
     if (m_renderer->isProgress())
         return progressElement();
 
