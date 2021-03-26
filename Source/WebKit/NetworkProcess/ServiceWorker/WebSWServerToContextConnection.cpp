@@ -44,10 +44,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, RegistrableDomain&& registrableDomain, SWServer& server)
+WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, SWServer& server)
     : SWServerToContextConnection(WTFMove(registrableDomain))
     , m_connection(connection)
     , m_server(makeWeakPtr(server))
+    , m_webPageProxyID(webPageProxyID)
 {
     server.addContextConnection(*this);
 }

@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "ServiceWorkerFetchTask.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/SWServerToContextConnection.h>
 #include <wtf/WeakPtr.h>
 
@@ -54,7 +55,7 @@ class WebSWServerConnection;
 
 class WebSWServerToContextConnection: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebCore::RegistrableDomain&&, WebCore::SWServer&);
+    WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::RegistrableDomain&&, WebCore::SWServer&);
     ~WebSWServerToContextConnection();
 
     IPC::Connection& ipcConnection() const;
@@ -99,6 +100,7 @@ private:
     WeakPtr<WebCore::SWServer> m_server;
     HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_ongoingFetches;
     bool m_isThrottleable { true };
+    WebPageProxyIdentifier m_webPageProxyID;
 }; // class WebSWServerToContextConnection
 
 } // namespace WebKit

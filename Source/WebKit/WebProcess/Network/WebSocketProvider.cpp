@@ -46,7 +46,7 @@ Ref<SocketStreamHandle> WebSocketProvider::createSocketStreamHandle(const URL& u
 
 RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client)
 {
-    return WebSocketChannel::create(document, client);
+    return WebSocketChannel::create(m_webPageProxyID, document, client);
 }
 
 } // namespace WebKit

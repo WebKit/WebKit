@@ -1,3 +1,109 @@
+2021-03-26  Brady Eidson  <beidson@apple.com>
+
+        Refactor NetworkSessionCocoa to prepare for per-WebPageProxy sessions
+        https://bugs.webkit.org/show_bug.cgi?id=223776
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change refactor)
+
+        A NetworkSessionCocoa has (n) NSURLSessions associated with it.
+        
+        When a network load needs to happen - based on the context for that load - the appropriate
+        NSURLSession is chosen (or created).
+        
+        In a future patch, there will be an additional bit of context used for choosing the appropriate
+        NSURLSession - The WKWebView the load was triggered from.
+        
+        This patch takes those (n) NSURLSessions and wraps them in a SessionSet object.
+        It also adds the concept of looking up the appropriate SessionSet based on the WebPageProxyIdentifier
+        triggering the load.
+        
+        This patch by itself should not be a behavior change, but allows the followup to be much simpler.
+        
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::createSocketChannel):
+        (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::createWebSocketTask):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::removeWebSocketTask):
+        (WebKit::NetworkSession::addWebSocketTask):
+
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::create):
+        (WebKit::NetworkSocketChannel::NetworkSocketChannel):
+        (WebKit::NetworkSocketChannel::~NetworkSocketChannel):
+        * NetworkProcess/NetworkSocketChannel.h:
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::hstsStorage const):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::initializeStandardSessionsInSet):
+        (WebKit::NetworkSessionCocoa::sessionSetForPage):
+        (WebKit::NetworkSessionCocoa::sessionSetForPage const):
+        (WebKit::NetworkSessionCocoa::initializeEphemeralStatelessSessionIfNeeded):
+        (WebKit::NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSessionIfNeeded):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        (WebKit::NetworkSessionCocoa::appBoundSession):
+        (WebKit::NetworkSessionCocoa::hasAppBoundSession const):
+        (WebKit::NetworkSessionCocoa::clearAppBoundSession):
+        (WebKit::NetworkSessionCocoa::isolatedSession):
+        (WebKit::NetworkSessionCocoa::SessionSet::isolatedSession):
+        (WebKit::NetworkSessionCocoa::hasIsolatedSession const):
+        (WebKit::NetworkSessionCocoa::clearIsolatedSessions):
+        (WebKit::NetworkSessionCocoa::invalidateAndCancelSessionSet):
+        (WebKit::NetworkSessionCocoa::invalidateAndCancel):
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        (WebKit::NetworkSessionCocoa::addWebSocketTask):
+        (WebKit::NetworkSessionCocoa::removeWebSocketTask):
+        (WebKit::NetworkSessionCocoa::hostNamesWithAlternativeServices const):
+        (WebKit::NetworkSessionCocoa::deleteAlternativeServicesForHostNames):
+        (WebKit::NetworkSessionCocoa::clearAlternativeServices):
+        (WebKit::NetworkSessionCocoa::initializeEphemeralStatelessSession): Deleted.
+        
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::createWebSocketTask):
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+        
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::initialize):
+        
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::create):
+        (WebKit::WebSocketChannel::WebSocketChannel):
+        (WebKit::WebSocketChannel::connect):
+        * WebProcess/Network/WebSocketChannel.h:
+        
+        * WebProcess/Network/WebSocketProvider.cpp:
+        (WebKit::WebSocketProvider::createWebSocketChannel):
+        * WebProcess/Network/WebSocketProvider.h:
+        
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::establishConnection):
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+
 2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow some image overlay content to render in fully transparent image elements

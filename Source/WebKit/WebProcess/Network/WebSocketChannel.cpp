@@ -42,9 +42,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebSocketChannel> WebSocketChannel::create(Document& document, WebSocketChannelClient& client)
+Ref<WebSocketChannel> WebSocketChannel::create(WebPageProxyIdentifier webPageProxyID, Document& document, WebSocketChannelClient& client)
 {
-    return adoptRef(*new WebSocketChannel(document, client));
+    return adoptRef(*new WebSocketChannel(webPageProxyID, document, client));
 }
 
 void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, const char* data, size_t length)
@@ -68,11 +68,12 @@ NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSoc
     } };
 }
 
-WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client)
+WebSocketChannel::WebSocketChannel(WebPageProxyIdentifier webPageProxyID, Document& document, WebSocketChannelClient& client)
     : m_document(makeWeakPtr(document))
     , m_client(makeWeakPtr(client))
     , m_messageQueue(createMessageQueue(document, *this))
     , m_inspector(document)
+    , m_webPageProxyID(webPageProxyID)
 {
     WebProcess::singleton().webSocketChannelManager().addChannel(*this);
 }
@@ -116,7 +117,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
 
     m_inspector.didCreateWebSocket(m_document.get(), url);
     m_url = request->url();
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID });
     return ConnectStatus::OK;
 }
 

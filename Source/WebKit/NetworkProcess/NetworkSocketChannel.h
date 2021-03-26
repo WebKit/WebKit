@@ -28,6 +28,7 @@
 #include "DataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/Timer.h>
 #include <WebCore/WebSocketIdentifier.h>
 #include <pal/SessionID.h>
@@ -54,9 +55,9 @@ class NetworkSession;
 class NetworkSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<NetworkSocketChannel> create(NetworkConnectionToWebProcess&, PAL::SessionID, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier);
+    static std::unique_ptr<NetworkSocketChannel> create(NetworkConnectionToWebProcess&, PAL::SessionID, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier);
 
-    NetworkSocketChannel(NetworkConnectionToWebProcess&, NetworkSession*, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier);
+    NetworkSocketChannel(NetworkConnectionToWebProcess&, NetworkSession*, const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier);
     ~NetworkSocketChannel();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -94,6 +95,7 @@ private:
     WebCore::Timer m_errorTimer;
     String m_errorMessage;
     Optional<std::pair<unsigned short, String>> m_closeInfo;
+    WebPageProxyIdentifier m_webPageProxyID;
 };
 
 } // namespace WebKit

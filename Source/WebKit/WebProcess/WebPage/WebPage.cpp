@@ -526,7 +526,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     PageConfiguration pageConfiguration(
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
-        WebSocketProvider::create(),
+        WebSocketProvider::create(parameters.webPageProxyIdentifier),
         createLibWebRTCProvider(*this),
         WebProcess::singleton().cacheStorageProvider(),
         m_userContentController,

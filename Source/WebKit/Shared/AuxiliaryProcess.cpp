@@ -30,6 +30,7 @@
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/LogInitialization.h>
 #include <pal/SessionID.h>
 
@@ -90,6 +91,7 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     // In WebKit2, only the UI process should ever be generating certain identifiers.
     PAL::SessionID::enableGenerationProtection();
     ContentWorldIdentifier::enableGenerationProtection();
+    WebPageProxyIdentifier::enableGenerationProtection();
 
     m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier, *this);
     initializeConnection(m_connection.get());

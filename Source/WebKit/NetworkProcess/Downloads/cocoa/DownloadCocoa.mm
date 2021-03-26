@@ -73,10 +73,10 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
 
     // FIXME: Use nsData instead of updatedData once we've migrated from _WKDownload to WKDownload
     // because there's no reason to set the local path we got from the data back into the data.
-    m_downloadTask = [cocoaSession.sessionWrapperForDownloads().session downloadTaskWithResumeData:updatedData];
+    m_downloadTask = [cocoaSession.sessionWrapperForDownloadResume().session downloadTaskWithResumeData:updatedData];
     auto taskIdentifier = [m_downloadTask taskIdentifier];
-    ASSERT(!cocoaSession.sessionWrapperForDownloads().downloadMap.contains(taskIdentifier));
-    cocoaSession.sessionWrapperForDownloads().downloadMap.add(taskIdentifier, m_downloadID);
+    ASSERT(!cocoaSession.sessionWrapperForDownloadResume().downloadMap.contains(taskIdentifier));
+    cocoaSession.sessionWrapperForDownloadResume().downloadMap.add(taskIdentifier, m_downloadID);
     m_downloadTask.get()._pathToDownloadTaskFile = path;
 
     [m_downloadTask resume];
