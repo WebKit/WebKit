@@ -50,20 +50,6 @@ AlwaysZoomOnDoubleTap:
   defaultValue:
     WebKit:
       default: false
-      
-AppHighlightsEnabled:
-  type: bool
-  humanReadableName: "App Highlights"
-  humanReadableDescription: "Enable persistent highlights for apps"
-  condition: ENABLE(APP_HIGHLIGHTS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: WebKit::defaultAppHighlightsEnabled()
-    WebCore:
-      default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 ApplePayRemoteUIEnabled:

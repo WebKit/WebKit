@@ -542,6 +542,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setColorFilterEnabled(!![_configuration _colorFilterEnabled]);
 
     pageConfiguration->preferences()->setUndoManagerAPIEnabled(!![_configuration _undoManagerAPIEnabled]);
+    
+#if ENABLE(APP_HIGHLIGHTS)
+    pageConfiguration->preferences()->setAppHighlightsEnabled(!![_configuration _appHighlightsEnabled]);
+#endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     pageConfiguration->preferences()->setLegacyEncryptedMediaAPIEnabled(!![_configuration _legacyEncryptedMediaAPIEnabled]);
@@ -1388,7 +1392,6 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-
 
 - (id <_WKAppHighlightDelegate>)_appHighlightDelegate
 {
