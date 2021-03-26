@@ -27,7 +27,7 @@ from cassandra.auth import PlainTextAuthProvider
 from fakeredis import FakeStrictRedis
 from redis import StrictRedis
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.casserole import CasseroleNodes, CasseroleRedis

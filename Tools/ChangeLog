@@ -1,5 +1,21 @@
 2021-03-26  Jonathan Bedard  <jbedard@apple.com>
 
+        System installing webkitcorepy can break certain scripts
+        https://bugs.webkit.org/show_bug.cgi?id=223822
+        <rdar://problem/75905163>
+
+        Rubber-stamped by Alan Coon.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/example/environment.py:
+        * Scripts/test-lldb-webkit: Replace sys.path.append with sys.path.insert.
+        * Scripts/webkitpy/__init__.py: Only put webkitcorepy path into sys.path if it isn't already there.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        Replace sys.path.append with sys.path.insert.
+        * Scripts/webkitpy/common/system/executive_unittest.py: Ditto.
+        * Scripts/webkitpy/port/config_standalone.py: Ditto.
+
+2021-03-26  Jonathan Bedard  <jbedard@apple.com>
+
         [webkit-patch] Use commit.webkit.org instead of remote SVN to compute identifier
         https://bugs.webkit.org/show_bug.cgi?id=223820
         <rdar://problem/75902125>

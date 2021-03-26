@@ -9,7 +9,7 @@ import sys
 # that Tools/Scripts is in sys.path for the next imports to work correctly.
 script_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../..'))
 if script_dir not in sys.path:
-    sys.path.append(script_dir)
+    sys.path.insert(0, script_dir)
 
 from pkg_resources import require, VersionConflict, DistributionNotFound
 from webkitpy.autoinstalled import twisted

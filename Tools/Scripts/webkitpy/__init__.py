@@ -19,7 +19,10 @@ import sys
 os.environ['SYSTEM_VERSION_COMPAT'] = '0'
 
 libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'libraries')
-sys.path.insert(0, os.path.join(libraries, 'webkitcorepy'))
+webkitcorepy_path = os.path.join(libraries, 'webkitcorepy')
+if webkitcorepy_path not in sys.path:
+    sys.path.insert(0, webkitcorepy_path)
+import webkitcorepy
 
 if sys.platform == 'darwin':
     is_root = not os.getuid()
