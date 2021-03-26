@@ -1213,8 +1213,6 @@ webkit.org/b/127280 media/audio-concurrent-supported.html [ Failure Timeout Pass
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure Pass ]
 
 # Tests showing flakiness in the bot
-webkit.org/b/131533 media/track/track-remove-active-cue-crash.html [ Timeout Pass Crash ]
-
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure ]
 
 # Fast overflow.
