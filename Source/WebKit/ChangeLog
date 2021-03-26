@@ -1,3 +1,15 @@
+2021-03-26  Youenn Fablet  <youenn@apple.com>
+
+        Use webrtc GPU Process feature flag for video capture on MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=223683
+
+        Reviewed by Eric Carlson.
+
+        Manually tested.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureVideoInGPUProcessEnabled):
+
 2021-03-26  Jessie Berlin  <jberlin@webkit.org>
 
         Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags
