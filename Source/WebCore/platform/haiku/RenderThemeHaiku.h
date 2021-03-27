@@ -50,7 +50,7 @@ public:
 
 #if ENABLE(VIDEO)
     String mediaControlsStyleSheet() override;
-    String mediaControlsScript() override;
+    Vector<String, 3> mediaControlsScripts() override;
 #endif
 protected:
 #if !USE(NEW_THEME)

@@ -187,12 +187,17 @@ String RenderThemeHaiku::mediaControlsStyleSheet()
     return ASCIILiteral::fromLiteralUnsafe(mediaControlsBaseUserAgentStyleSheet);
 }
 
-String RenderThemeHaiku::mediaControlsScript()
+Vector<String, 3> RenderThemeHaiku::mediaControlsScripts()
 {
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    // FIXME store the thing in a member variable like it is done in the windows theme
     StringBuilder scriptBuilder;
     scriptBuilder.appendCharacters(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
     scriptBuilder.appendCharacters(mediaControlsBaseJavaScript, sizeof(mediaControlsBaseJavaScript));
-    return scriptBuilder.toString();
+    return { scriptBuilder.toString() };
+#else
+    return { };
+#endif
 }
 #endif
 

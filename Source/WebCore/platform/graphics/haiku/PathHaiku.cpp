@@ -35,7 +35,6 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
-#include "StrokeStyleApplier.h"
 #include "TransformationMatrix.h"
 #include <Bitmap.h>
 #include <Shape.h>
@@ -132,12 +131,12 @@ public:
         return hitTestPixel();
     }
 
-    bool hitTest(BShape* shape, float x, float y, StrokeStyleApplier* applier)
+    bool hitTest(BShape* shape, float x, float y, const Function<void(GraphicsContext&)>& applier)
     {
         prepareHitTest(x, y);
 
         GraphicsContext context(m_view);
-        applier->strokeStyle(&context);
+        applier(context);
         m_view->StrokeShape(shape);
 
         return hitTestPixel();
@@ -228,10 +227,10 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
     return gHitTestBitmap.hitTest(m_path, point.x(), point.y(), rule);
 }
 
-bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) const
+bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& applier) const
 {
     gHitTestBitmap.init();
-    return gHitTestBitmap.hitTest(m_path, point.x(), point.y(), &applier);
+    return gHitTestBitmap.hitTest(m_path, point.x(), point.y(), applier);
 }
 
 void Path::translate(const FloatSize& size)
@@ -654,9 +653,18 @@ void Path::transform(const AffineTransform& transform)
     transformIterator.Iterate(m_path);
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
+FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& applier) const
 {
-    notImplemented();
+    // Used by the web inspector to highlight some element
+
+    // Should this be isEmpty() or can an empty path have a non-zero origin?
+    if (isNull())
+        return FloatRect();
+
+    if (applier) {
+        notImplemented();
+    }
+
     return m_path->Bounds();
 }
 
