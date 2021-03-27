@@ -1,3 +1,33 @@
+2021-03-27  David Kilzer  <ddkilzer@apple.com>
+
+        UBSan: runtime error: load of value <unknown>, which is not a valid value for type 'const WebCore::RealtimeMediaSourceCapabilities::EchoCancellation'
+        <https://webkit.org/b/223821>
+
+        Reviewed by Chris Dumez.
+
+        Tests: fast/mediastream/MediaDevices-addEventListener.html
+               fast/mediastream/constraint-intrinsic-size.html
+               http/tests/media/media-stream/enumerate-devices-iframe-allow-attribute.html
+               http/tests/media/media-stream/get-display-media-iframe-allow-attribute.html
+               imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https.html
+               webrtc/addICECandidate-closed.html
+               webrtc/ice-candidate-sdpMLineIndex.html
+               webrtc/libwebrtc/descriptionGetters.html
+               webrtc/peerconnection-page-cache.html
+
+        * platform/mediastream/RealtimeMediaSourceCapabilities.h:
+        (WebCore::CapabilityValueOrRange::union ValueUnion):
+        - Make asDouble the first union member so C++ member
+          initializers set all memory.
+        (WebCore::CapabilityValueOrRange::m_minOrValue):
+        (WebCore::CapabilityValueOrRange::m_max):
+        (WebCore::CapabilityValueOrRange::m_type):
+        (WebCore::RealtimeMediaSourceCapabilities::m_echoCancellation):
+        - Provide member initializers. Setting a default value for
+          m_echoCancellation fixes the bug.
+        (WebCore::RealtimeMediaSourceCapabilities::encode const):
+        - Drive-by clean-up of encoder statement.
+
 2021-03-27  Antoine Quint  <graouts@webkit.org>
 
         Fix build with ENABLE_CSS3_TEXT
