@@ -52,6 +52,7 @@ using ErrorStringOr = Expected<T, ErrorString>;
 
 namespace WebCore {
 
+class FontCascade;
 class FloatPoint;
 class GraphicsContext;
 class InspectorClient;
@@ -71,6 +72,13 @@ public:
         Up,
         Left,
         Right,
+    };
+
+    enum class LabelArrowEdgePosition {
+        None,
+        Leading, // Positioned at the left/top side of edge.
+        Middle, // Positioned at the center on the edge.
+        Trailing, // Positioned at the right/bottom side of the edge.
     };
 
     struct Highlight {
@@ -103,6 +111,7 @@ public:
                 FloatPoint location;
                 Color backgroundColor;
                 LabelArrowDirection arrowDirection;
+                LabelArrowEdgePosition arrowEdgePosition;
 
 #if PLATFORM(IOS_FAMILY)
                 template<class Encoder> void encode(Encoder&) const;
@@ -209,6 +218,8 @@ public:
     Inspector::ErrorStringOr<void> clearGridOverlayForNode(Node&);
     void clearAllGridOverlays();
 
+    WEBCORE_EXPORT static FontCascade fontForLayoutLabel();
+    WEBCORE_EXPORT static Path backgroundPathForLayoutLabel(float, float, InspectorOverlay::LabelArrowDirection, InspectorOverlay::LabelArrowEdgePosition, float arrowSize);
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
 
@@ -226,7 +237,7 @@ private:
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
     void drawLayoutHatching(GraphicsContext&, FloatQuad);
-    void drawLayoutLabel(GraphicsContext&, String, FloatPoint, LabelArrowDirection, Color backgroundColor = Color::white, float maximumWidth = 0);
+    void drawLayoutLabel(GraphicsContext&, String, FloatPoint, LabelArrowDirection, InspectorOverlay::LabelArrowEdgePosition, Color backgroundColor = Color::white, float maximumWidth = 0);
 
     void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Highlight::GridHighlightOverlay&);
     Optional<InspectorOverlay::Highlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
@@ -289,6 +300,7 @@ template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::
     encoder << location;
     encoder << backgroundColor;
     encoder << static_cast<uint32_t>(arrowDirection);
+    encoder << static_cast<uint32_t>(arrowEdgePosition);
 }
 
 template<class Decoder> Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Label> InspectorOverlay::Highlight::GridHighlightOverlay::Label::decode(Decoder& decoder)
@@ -305,6 +317,11 @@ template<class Decoder> Optional<InspectorOverlay::Highlight::GridHighlightOverl
     if (!decoder.decode(arrowDirection))
         return { };
     label.arrowDirection = (InspectorOverlay::LabelArrowDirection)arrowDirection;
+
+    uint32_t arrowEdgePosition;
+    if (!decoder.decode(arrowEdgePosition))
+        return { };
+    label.arrowEdgePosition = (InspectorOverlay::LabelArrowEdgePosition)arrowEdgePosition;
 
     return { label };
 }

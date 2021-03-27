@@ -1,3 +1,34 @@
+2021-03-26  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Grid layout labels can be drawn outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=221972
+
+        Reviewed by BJ Burg.
+
+        Added logic for a best-effort attempt to make sure that layout labels are drawn within the document's bounds, or
+        at least within the grid itself. Labels are measured and adjusted so that if they would be drawn outside the
+        document's bounds, they will be pulled inside the grid. This does not guarantee that all labels will be visible
+        all the time. It is still possible an entire side of a grid will be outside the document's bounds, and this does
+        not attempt to correct for this case, as the desired anchor points for labels will be outside of the visible
+        area of the document.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::fontForLayoutLabel):
+        - Added helper that creates the FontCascade for layout labels, which is done in a few different places.
+        (WebCore::InspectorOverlay::backgroundPathForLayoutLabel):
+        - Added helper to create the Path for the background of layout labels, which is now used in `WebKit::WKInspectorHighlightView`.
+        (WebCore::expectedSizeForLayoutLabel):
+        - Gets the expected size of the label based on the text and arrow direction, and does so without needing to
+        create the entire label background's path.
+        (WebCore::InspectorOverlay::drawLayoutLabel):
+        - Support new `LabelArrowEdgePosition` property
+        (WebCore::InspectorOverlay::drawGridOverlay):
+        (WebCore::buildLabel):
+        (WebCore::InspectorOverlay::buildGridOverlay):
+        * inspector/InspectorOverlay.h:
+        (WebCore::InspectorOverlay::Highlight::GridHighlightOverlay::Label::encode const):
+        (WebCore::InspectorOverlay::Highlight::GridHighlightOverlay::Label::decode):
+
 2021-03-26  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] No need to update the counters when the renderer is moved internally

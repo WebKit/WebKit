@@ -318,15 +318,9 @@ static CALayer * createLayoutHatchingLayer(WebCore::FloatQuad quad, WebCore::Col
     return layer;
 }
 
-static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point, WebCore::InspectorOverlay::LabelArrowDirection direction, WebCore::Color backgroundColor, WebCore::Color strokeColor, double scale, float maximumWidth = 0)
+static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point, WebCore::InspectorOverlay::LabelArrowDirection arrowDirection, WebCore::InspectorOverlay::LabelArrowEdgePosition arrowEdgePosition, WebCore::Color backgroundColor, WebCore::Color strokeColor, double scale, float maximumWidth = 0)
 {
-    WebCore::FontCascadeDescription fontDescription;
-    fontDescription.setFamilies({ "system-ui" });
-    fontDescription.setWeight(WebCore::FontSelectionValue(500));
-    fontDescription.setComputedSize(12);
-
-    WebCore::FontCascade font(WTFMove(fontDescription), 0, 0);
-    font.update(nullptr);
+    auto font = WebCore::InspectorOverlay::fontForLayoutLabel();
 
     constexpr auto padding = 4;
     constexpr auto arrowSize = 4;
@@ -342,71 +336,88 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
         }
     }
 
-    auto labelPath = adoptCF(CGPathCreateMutable());
-
     // Note: Implementation Difference - The textPosition is the center of text, unlike WebCore::InspectorOverlay, where the textPosition is leftmost point on the baseline of the text.
     WebCore::FloatPoint textPosition;
-
-    switch (direction) {
+    switch (arrowDirection) {
     case WebCore::InspectorOverlay::LabelArrowDirection::Down:
-        CGPathMoveToPoint(labelPath.get(), 0, -(textWidth / 2) - padding, -textHeight - (padding * 2) - arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, -(textWidth / 2) - padding, -arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, -arrowSize, -arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, 0, 0);
-        CGPathAddLineToPoint(labelPath.get(), 0, arrowSize, -arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, (textWidth / 2) + padding, -arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, (textWidth / 2) + padding, -textHeight - (padding * 2) - arrowSize);
-        textPosition = WebCore::FloatPoint(0, -(textHeight / 2) - arrowSize - padding);
+        switch (arrowEdgePosition) {
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Leading:
+            textPosition = WebCore::FloatPoint((textWidth / 2) + padding, -(textHeight / 2) - arrowSize - padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Middle:
+            textPosition = WebCore::FloatPoint(0, -(textHeight / 2) - arrowSize - padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            textPosition = WebCore::FloatPoint(-(textWidth / 2) - padding, -(textHeight / 2) - arrowSize - padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
         break;
     case WebCore::InspectorOverlay::LabelArrowDirection::Up:
-        CGPathMoveToPoint(labelPath.get(), 0, -(textWidth / 2) - padding, textHeight + (padding * 2) + arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, -(textWidth / 2) - padding, arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, -arrowSize, arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, 0, 0);
-        CGPathAddLineToPoint(labelPath.get(), 0, arrowSize, arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, (textWidth / 2) + padding, arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, (textWidth / 2) + padding, textHeight + (padding * 2) + arrowSize);
-        textPosition = WebCore::FloatPoint(0, (textHeight / 2) + arrowSize + padding);
+        switch (arrowEdgePosition) {
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Leading:
+            textPosition = WebCore::FloatPoint((textWidth / 2) + padding, (textHeight / 2) + arrowSize + padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Middle:
+            textPosition = WebCore::FloatPoint(0, (textHeight / 2) + arrowSize + padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            textPosition = WebCore::FloatPoint(-(textWidth / 2) - padding, (textHeight / 2) + arrowSize + padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
         break;
     case WebCore::InspectorOverlay::LabelArrowDirection::Right:
-        CGPathMoveToPoint(labelPath.get(), 0, -textWidth - (padding * 2) - arrowSize, (textHeight / 2) + padding);
-        CGPathAddLineToPoint(labelPath.get(), 0, -arrowSize, (textHeight / 2) + padding);
-        CGPathAddLineToPoint(labelPath.get(), 0, -arrowSize, arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, 0, 0);
-        CGPathAddLineToPoint(labelPath.get(), 0, -arrowSize, -arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, -arrowSize, -(textHeight / 2) - padding);
-        CGPathAddLineToPoint(labelPath.get(), 0, -textWidth - (padding * 2) - arrowSize, -(textHeight / 2) - padding);
-        textPosition = WebCore::FloatPoint(-(textWidth / 2) - arrowSize - padding, 0);
+        switch (arrowEdgePosition) {
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Leading:
+            textPosition = WebCore::FloatPoint(-(textWidth / 2) - arrowSize - padding, (textHeight / 2) + padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Middle:
+            textPosition = WebCore::FloatPoint(-(textWidth / 2) - arrowSize - padding, 0);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            textPosition = WebCore::FloatPoint(-(textWidth / 2) - arrowSize - padding, -(textHeight / 2) - padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
         break;
     case WebCore::InspectorOverlay::LabelArrowDirection::Left:
-        CGPathMoveToPoint(labelPath.get(), 0, textWidth + (padding * 2) + arrowSize, (textHeight / 2) + padding);
-        CGPathAddLineToPoint(labelPath.get(), 0, arrowSize, (textHeight / 2) + padding);
-        CGPathAddLineToPoint(labelPath.get(), 0, arrowSize, arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, 0, 0);
-        CGPathAddLineToPoint(labelPath.get(), 0, arrowSize, -arrowSize);
-        CGPathAddLineToPoint(labelPath.get(), 0, arrowSize, -(textHeight / 2) - padding);
-        CGPathAddLineToPoint(labelPath.get(), 0, textWidth + (padding * 2) + arrowSize, -(textHeight / 2) - padding);
-        textPosition = WebCore::FloatPoint((textWidth / 2) + arrowSize + padding, 0);
+        switch (arrowEdgePosition) {
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Leading:
+            textPosition = WebCore::FloatPoint((textWidth / 2) + arrowSize + padding, (textHeight / 2) + padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Middle:
+            textPosition = WebCore::FloatPoint((textWidth / 2) + arrowSize + padding, 0);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            textPosition = WebCore::FloatPoint((textWidth / 2) + arrowSize + padding, -(textHeight / 2) - padding);
+            break;
+        case WebCore::InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
         break;
     case WebCore::InspectorOverlay::LabelArrowDirection::None:
-        CGPathMoveToPoint(labelPath.get(), 0, 0, 0);
-        CGPathAddLineToPoint(labelPath.get(), 0, 0, textHeight + (padding * 2));
-        CGPathAddLineToPoint(labelPath.get(), 0, textWidth + (padding * 2), textHeight + (padding * 2));
-        CGPathAddLineToPoint(labelPath.get(), 0, textWidth + (padding * 2), 0);
         textPosition = WebCore::FloatPoint(padding + (textWidth / 2), padding + (textHeight / 2));
         break;
     }
 
-    CGPathCloseSubpath(labelPath.get());
-
     CALayer *layer = [CALayer layer];
 
+#if USE(CG)
+    // WebCore::Path::PlatformPathPtr is only a CGPath* when `USE(CG)` is true.
+    auto labelPath = WebCore::InspectorOverlay::backgroundPathForLayoutLabel(textWidth + (padding * 2), textHeight + (padding * 2), arrowDirection, arrowEdgePosition, arrowSize);
+    CGPath* platformLabelPath = labelPath.ensurePlatformPath();
+
     CAShapeLayer *labelPathLayer = [CAShapeLayer layer];
-    labelPathLayer.path = labelPath.get();
+    labelPathLayer.path = platformLabelPath;
     labelPathLayer.fillColor = cachedCGColor(backgroundColor);
     labelPathLayer.strokeColor = cachedCGColor(strokeColor);
     labelPathLayer.position = CGPointMake(point.x(), point.y());
     [layer addSublayer:labelPathLayer];
+#endif
 
     CATextLayer *textLayer = [CATextLayer layer];
     textLayer.frame = CGRectMake(0, 0, textWidth, textHeight);
@@ -453,10 +464,10 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
     constexpr auto translucentLabelBackgroundColor = WebCore::Color::white.colorWithAlphaByte(153);
 
     for (auto area : overlay.areas)
-        [layer addSublayer:createLayoutLabelLayer(area.name, area.quad.p1(), WebCore::InspectorOverlay::LabelArrowDirection::None, translucentLabelBackgroundColor, overlay.color, scale, area.quad.boundingBox().width())];
+        [layer addSublayer:createLayoutLabelLayer(area.name, area.quad.p1(), WebCore::InspectorOverlay::LabelArrowDirection::None, WebCore::InspectorOverlay::LabelArrowEdgePosition::None, translucentLabelBackgroundColor, overlay.color, scale, area.quad.boundingBox().width())];
 
     for (auto label : overlay.labels)
-        [layer addSublayer:createLayoutLabelLayer(label.text, label.location, label.arrowDirection, label.backgroundColor, overlay.color, scale)];
+        [layer addSublayer:createLayoutLabelLayer(label.text, label.location, label.arrowDirection, label.arrowEdgePosition, label.backgroundColor, overlay.color, scale)];
 
     return layer;
 }
