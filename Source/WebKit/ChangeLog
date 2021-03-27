@@ -1,3 +1,17 @@
+2021-03-27  David Kilzer  <ddkilzer@apple.com>
+
+        Fix leaks in WKInspectorResourceURLSchemeHandler
+        <https://webkit.org/b/223824>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm:
+        (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+        - Make use of adoptNS() when assigning a newly allocated, +1
+          retained Objective-C object to a RetainPtr<>.
+        - Also fix leak of local NSHTTPURLResponse object by using a
+          RetainPtr<>.
+
 2021-03-27  Simon Fraser  <simon.fraser@apple.com>
 
         Remove DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread()

@@ -52,10 +52,10 @@
     }
 
     if (!_fileLoadOperations)
-        _fileLoadOperations = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:5];
+        _fileLoadOperations = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:5]);
 
     if (!_operationQueue) {
-        _operationQueue = [[NSOperationQueue alloc] init];
+        _operationQueue = adoptNS([[NSOperationQueue alloc] init]);
         _operationQueue.get().underlyingQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
         _operationQueue.get().qualityOfService = NSOperationQualityOfServiceUserInteractive;
     }
@@ -85,13 +85,13 @@
         if (!mimeType)
             mimeType = @"application/octet-stream";
 
-        NSHTTPURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:urlSchemeTask.request.URL statusCode:200 HTTPVersion:nil headerFields:@{
+        RetainPtr<NSHTTPURLResponse> urlResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:urlSchemeTask.request.URL statusCode:200 HTTPVersion:nil headerFields:@{
             @"Access-Control-Allow-Origin": @"*",
             @"Content-Length": [NSString stringWithFormat:@"%zu", (size_t)fileData.length],
             @"Content-Type": mimeType,
-        }];
+        }]);
 
-        [urlSchemeTask didReceiveResponse:urlResponse];
+        [urlSchemeTask didReceiveResponse:urlResponse.get()];
         [urlSchemeTask didReceiveData:fileData];
         [urlSchemeTask didFinish];
     }];
