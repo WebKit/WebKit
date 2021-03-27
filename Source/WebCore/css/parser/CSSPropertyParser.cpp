@@ -1174,7 +1174,9 @@ static RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserM
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
 
     bool hasLengthOrPercentage = false;
-//    bool hasEachLine = false;
+#if ENABLE(CSS3_TEXT)
+    bool hasEachLine = false;
+#endif
     bool hasHanging = false;
 
     do {
@@ -1187,20 +1189,20 @@ static RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserM
         }
 
         CSSValueID id = range.peek().id();
- /* FIXME-NEWPARSER: We don't support this yet.
+#if ENABLE(CSS3_TEXT)
         if (!hasEachLine && id == CSSValueEachLine) {
-            list->append(*consumeIdent(range));
+            list->append(consumeIdent(range).releaseNonNull());
             hasEachLine = true;
             continue;
         }
-*/
-        
+#endif
+
         if (!hasHanging && id == CSSValueHanging) {
             list->append(consumeIdent(range).releaseNonNull());
             hasHanging = true;
             continue;
         }
-        
+
         return nullptr;
     } while (!range.atEnd());
 

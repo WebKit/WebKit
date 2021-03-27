@@ -1,3 +1,27 @@
+2021-03-27  Antoine Quint  <graouts@webkit.org>
+
+        Fix build with ENABLE_CSS3_TEXT
+        https://bugs.webkit.org/show_bug.cgi?id=223841
+
+        Reviewed by Darin Adler.
+
+        We also remove the -webkit- prefix for the "hanging" and "each-line" keywords since
+        these are well specified by the CSS Text Module Level 3 spec.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTextIndent):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setTextIndentType):
+        (WebCore::RenderStyle::setTextAlignLast):
+        (WebCore::RenderStyle::setTextJustify):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueTextIndent):
+
 2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Send report to both click source and attribution destination website

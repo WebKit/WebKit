@@ -486,9 +486,9 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
         if (!primitiveValue.valueID())
             lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
 #if ENABLE(CSS3_TEXT)
-        else if (primitiveValue.valueID() == CSSValueWebkitEachLine)
+        else if (primitiveValue.valueID() == CSSValueEachLine)
             textIndentLineValue = TextIndentLine::EachLine;
-        else if (primitiveValue.valueID() == CSSValueWebkitHanging)
+        else if (primitiveValue.valueID() == CSSValueHanging)
             textIndentTypeValue = TextIndentType::Hanging;
 #endif
     }

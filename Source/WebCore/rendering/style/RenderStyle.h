@@ -980,10 +980,10 @@ public:
     void setTextZoom(TextZoom v) { SET_VAR(m_rareInheritedData, textZoom, static_cast<unsigned>(v)); }
 
 #if ENABLE(CSS3_TEXT)
-    void setTextIndentLine(TextIndentLine v) { SET_VAR(m_rareInheritedData, textIndentLine, v); }
-    void setTextIndentType(TextIndentType v) { SET_VAR(m_rareInheritedData, textIndentType, v); }
-    void setTextAlignLast(TextAlignLast v) { SET_VAR(m_rareInheritedData, textAlignLast, v); }
-    void setTextJustify(TextJustify v) { SET_VAR(m_rareInheritedData, textJustify, v); }
+    void setTextIndentLine(TextIndentLine v) { SET_VAR(m_rareInheritedData, textIndentLine, static_cast<unsigned>(v)); }
+    void setTextIndentType(TextIndentType v) { SET_VAR(m_rareInheritedData, textIndentType, static_cast<unsigned>(v)); }
+    void setTextAlignLast(TextAlignLast v) { SET_VAR(m_rareInheritedData, textAlignLast, static_cast<unsigned>(v)); }
+    void setTextJustify(TextJustify v) { SET_VAR(m_rareInheritedData, textJustify, static_cast<unsigned>(v)); }
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)

@@ -1358,8 +1358,8 @@ dense
 
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
 // text-indent
--webkit-each-line
--webkit-hanging
+each-line
+// hanging
 #endif
 
 // -webkit-column-fill

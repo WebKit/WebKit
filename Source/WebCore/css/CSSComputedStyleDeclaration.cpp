@@ -3244,9 +3244,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 auto list = CSSValueList::createSpaceSeparated();
                 list->append(WTFMove(textIndent));
                 if (style.textIndentLine() == TextIndentLine::EachLine)
-                    list->append(cssValuePool.createIdentifierValue(CSSValueWebkitEachLine));
+                    list->append(cssValuePool.createIdentifierValue(CSSValueEachLine));
                 if (style.textIndentType() == TextIndentType::Hanging)
-                    list->append(cssValuePool.createIdentifierValue(CSSValueWebkitHanging));
+                    list->append(cssValuePool.createIdentifierValue(CSSValueHanging));
                 return list;
             }
 #endif
