@@ -91,7 +91,7 @@ void ThreadedDisplayRefreshMonitor::invalidate()
         wasScheduled = isScheduled();
     }
     if (wasScheduled)
-        DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(this);
+        displayDidRefresh();
     m_client = nullptr;
 }
 
@@ -106,7 +106,7 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
     }
 
     if (shouldHandleDisplayRefreshNotification)
-        DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(this);
+        displayDidRefresh();
 
     // Retrieve the scheduled status for this DisplayRefreshMonitor.
     bool hasBeenRescheduled { false };

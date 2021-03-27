@@ -1,3 +1,25 @@
+2021-03-27  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Remove DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=223837
+
+        Reviewed by Simon Fraser.
+
+        Fixes build for GTK + WPE after
+        https://trac.webkit.org/changeset/275134/webkit.
+
+        Quoting that revision:
+
+        > handleDisplayRefreshedNotificationOnMainThread() is an anachronism left over from
+        > the non-main-thread nature of the CVDisplayLink callback. There's no need to burden
+        > all subclasses of DisplayRefreshMonitor with that detail.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::invalidate):
+        (WebKit::ThreadedDisplayRefreshMonitor::displayRefreshCallback):
+        Replace call to DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(this)
+        with displayDidRefresh().
+
 2021-03-27  David Kilzer  <ddkilzer@apple.com>
 
         Fix leaks in WKInspectorResourceURLSchemeHandler
