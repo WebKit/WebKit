@@ -1,3 +1,16 @@
+2021-03-26  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r275111) [GLIB] Fix build with new derived sources and forwarding headers scheme
+        https://bugs.webkit.org/show_bug.cgi?id=223834
+
+        Unreviewed build fix.
+
+        Buildfix for now. Actual removal of older scheme will come in the
+        future.
+
+        * Source/cmake/OptionsWPE.cmake: Add some missing variables with the
+        per framework source and header dirs.
+
 2021-03-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Deprecate using DERIVED_SOURCES_DIR/FOWARDING_HEADERS_DIR directly
