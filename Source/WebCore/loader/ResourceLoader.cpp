@@ -355,7 +355,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     if (!redirectResponse.isNull() && frameLoader()) {
         Page* page = frameLoader()->frame().page();
         if (page && m_documentLoader) {
-            auto results = page->userContentProvider().processContentRuleListsForLoad(*page, request.url(), m_resourceType, *m_documentLoader);
+            auto results = page->userContentProvider().processContentRuleListsForLoad(*page, request.url(), m_resourceType, *m_documentLoader, redirectResponse.url());
             bool blockedLoad = results.summary.blockedLoad;
             ContentExtensions::applyResultsToRequest(WTFMove(results), page, request);
             if (blockedLoad) {

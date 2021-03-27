@@ -21,7 +21,7 @@ window.onmessage = function (event)
 
 var worker;
 try {
-    worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-blocked.php?csp=" + encodeURIComponent("connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php"));
+    worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-blocked.py?csp=" + encodeURIComponent("connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py"));
     worker.onmessage = function (event) { window.postMessage(event.data, "*") };
 } catch (exception) {
     window.postMessage("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".", "*");

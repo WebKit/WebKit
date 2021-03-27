@@ -43,7 +43,7 @@ class Commit(object):
                 return super(Commit.Encoder, self).default(obj)
 
             result = dict()
-            for attribute in ['hash', 'revision', 'branch', 'timestamp', 'order', 'message']:
+            for attribute in ['hash', 'revision', 'branch', 'timestamp', 'order', 'message', 'repository_id']:
                 value = getattr(obj, attribute, None)
                 if value is not None:
                     result[attribute] = value
@@ -146,12 +146,33 @@ class Commit(object):
             raise ValueError("'{}' cannot be converted to a commit object".format(arg))
         return None
 
+    @classmethod
+    def from_json(cls, data):
+        data = data if isinstance(data, dict) else json.loads(data)
+        hash_from_id = None
+        revision_from_id = cls._parse_revision(data.get('id'))
+        if not revision_from_id:
+            hash_from_id = cls._parse_hash(data.get('id'))
+
+        return cls(
+            repository_id=data.get('repository_id'),
+            branch=data.get('branch'),
+            hash=data.get('hash', hash_from_id),
+            revision=data.get('revision', revision_from_id),
+            timestamp=data.get('timestamp'),
+            identifier=data.get('identifier'),
+            branch_point=data.get('branch_point'),
+            order=data.get('order'),
+            author=data.get('author', data.get('committer')),
+            message=data.get('message'),
+        )
+
     def __init__(
         self,
         hash=None,
         revision=None,
         identifier=None, branch=None, branch_point=None,
-        timestamp=None, author=None, message=None, order=None,
+        timestamp=None, author=None, message=None, order=None, repository_id=None
     ):
         self.hash = self._parse_hash(hash, do_assert=True)
         self.revision = self._parse_revision(revision, do_assert=True)
@@ -184,16 +205,22 @@ class Commit(object):
                 ),
             )
 
+        if isinstance(timestamp, six.string_types) and timestamp.isdigit():
+            timestamp = int(timestamp)
         if timestamp and not isinstance(timestamp, int):
             raise TypeError("Expected 'timestamp' to be of type int, got '{}'".format(timestamp))
         self.timestamp = timestamp
 
+        if isinstance(order, six.string_types) and order.isdigit():
+            order = int(order)
         if order and not isinstance(order, int):
             raise TypeError("Expected 'order' to be of type int, got '{}'".format(order))
         self.order = order or 0
 
         if author and isinstance(author, dict) and author.get('name'):
             self.author = Contributor(author.get('name'), author.get('emails'))
+        elif author and isinstance(author, six.string_types) and '@' in author:
+            self.author = Contributor(author, [author])
         elif author and not isinstance(author, Contributor):
             raise TypeError("Expected 'author' to be of type {}, got '{}'".format(Contributor, author))
         else:
@@ -202,6 +229,10 @@ class Commit(object):
         if message and not isinstance(message, six.string_types):
             raise ValueError("Expected 'message' to be a string, got '{}'".format(message))
         self.message = message
+
+        if repository_id and not isinstance(repository_id, six.string_types):
+            raise ValueError("Expected 'repository_id' to be a string, got '{}'".format(repository_id))
+        self.repository_id = repository_id
 
         # Force a commit format check
         self.__repr__()

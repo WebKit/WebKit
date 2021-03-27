@@ -1,0 +1,4 @@
+
+FAIL Fragment navigation with content-visibility; single text promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: fetchResults"
+FAIL Fragment navigation with content-visibility; range across blocks promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: fetchResults"
+

@@ -613,7 +613,7 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, Optional<
         if (!child->hasOverridingContainingBlockContentLogicalWidth())
             child->setOverridingContainingBlockContentLogicalWidth(LayoutUnit());
         if (!child->hasOverridingContainingBlockContentLogicalHeight())
-            child->setOverridingContainingBlockContentLogicalHeight(LayoutUnit(-1));
+            child->setOverridingContainingBlockContentLogicalHeight(WTF::nullopt);
 
         GridArea area = grid.gridItemArea(*child);
         if (!area.rows.isIndefinite())
@@ -672,7 +672,7 @@ void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algor
         // Orthogonal items should be laid out in order to properly compute content-sized tracks that may depend on item's intrinsic size.
         // We also need to properly estimate its grid area size, since it may affect to the baseline shims if such item particiaptes in baseline alignment. 
         if (GridLayoutFunctions::isOrthogonalChild(*this, *child)) {
-            updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child));
+            updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child, ForColumns), algorithm.estimatedGridAreaBreadthForChild(*child, ForRows));
             child->layoutIfNeeded();
             continue;
         }
@@ -680,7 +680,7 @@ void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algor
         // baseline or not, which may imply a cyclic sizing dependency.
         // FIXME: Can we avoid it ?
         if (isBaselineAlignmentForChild(*child)) {
-            updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child));
+            updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child, ForColumns), algorithm.estimatedGridAreaBreadthForChild(*child, ForRows));
             child->layoutIfNeeded();
         }
     }
@@ -899,11 +899,11 @@ static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid()
     return normalBehavior;
 }
 
-static bool overrideSizeChanged(const RenderBox& child, GridTrackSizingDirection direction, LayoutSize size)
+static bool overrideSizeChanged(const RenderBox& child, GridTrackSizingDirection direction, Optional<LayoutUnit> width, Optional<LayoutUnit> height)
 {
     if (direction == ForColumns)
-        return !child.hasOverridingContainingBlockContentLogicalWidth() || child.overridingContainingBlockContentLogicalWidth() != size.width();
-    return !child.hasOverridingContainingBlockContentLogicalHeight() || child.overridingContainingBlockContentLogicalHeight() != size.height();
+        return !child.hasOverridingContainingBlockContentLogicalWidth() || child.overridingContainingBlockContentLogicalWidth() != width;
+    return !child.hasOverridingContainingBlockContentLogicalHeight() || child.overridingContainingBlockContentLogicalHeight() != height;
 }
 
 static bool hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& child)
@@ -911,17 +911,17 @@ static bool hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& ch
     return GridLayoutFunctions::isOrthogonalChild(grid, child) ? child.hasRelativeLogicalWidth() || child.style().logicalWidth().isAuto() : child.hasRelativeLogicalHeight();
 }
 
-void RenderGrid::updateGridAreaLogicalSize(RenderBox& child, LayoutSize gridAreaLogicalSize) const
+void RenderGrid::updateGridAreaLogicalSize(RenderBox& child, Optional<LayoutUnit> width, Optional<LayoutUnit> height) const
 {
     // Because the grid area cannot be styled, we don't need to adjust
     // the grid breadth to account for 'box-sizing'.
-    bool gridAreaWidthChanged = overrideSizeChanged(child, ForColumns, gridAreaLogicalSize);
-    bool gridAreaHeightChanged = overrideSizeChanged(child, ForRows, gridAreaLogicalSize);
+    bool gridAreaWidthChanged = overrideSizeChanged(child, ForColumns, width, height);
+    bool gridAreaHeightChanged = overrideSizeChanged(child, ForRows, width, height);
     if (gridAreaWidthChanged || (gridAreaHeightChanged && hasRelativeBlockAxisSize(*this, child)))
         child.setNeedsLayout(MarkOnlyThis);
 
-    child.setOverridingContainingBlockContentLogicalWidth(gridAreaLogicalSize.width());
-    child.setOverridingContainingBlockContentLogicalHeight(gridAreaLogicalSize.height());
+    child.setOverridingContainingBlockContentLogicalWidth(width);
+    child.setOverridingContainingBlockContentLogicalHeight(height);
 }
 
 void RenderGrid::layoutGridItems()
@@ -940,7 +940,7 @@ void RenderGrid::layoutGridItems()
         // Setting the definite grid area's sizes. It may imply that the
         // item must perform a layout if its area differs from the one
         // used during the track sizing algorithm.
-        updateGridAreaLogicalSize(*child, LayoutSize(gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForColumns), gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForRows)));
+        updateGridAreaLogicalSize(*child, gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForColumns), gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForRows));
 
         LayoutRect oldChildRect = child->frameRect();
 
@@ -1136,7 +1136,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
     if (allowedToStretchChildBlockSize) {
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
-        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1_lu);
+        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, WTF::nullopt);
         child.setOverridingLogicalHeight(desiredLogicalHeight);
 
         // Checking the logical-height of a child isn't enough. Setting an override logical-height

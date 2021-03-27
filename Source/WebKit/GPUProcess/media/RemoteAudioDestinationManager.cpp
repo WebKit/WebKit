@@ -116,7 +116,7 @@ private:
 #if PLATFORM(COCOA)
     OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
     {
-        ASSERT(!isMainThread());
+        ASSERT(!isMainRunLoop());
 
         OSStatus status = -1;
 

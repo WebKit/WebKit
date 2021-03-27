@@ -1226,7 +1226,7 @@ inline Optional<float> BuilderConverter::convertPerspective(BuilderState& builde
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueNone)
-        return 0.f;
+        return RenderStyle::initialPerspective();
 
     float perspective = -1;
     if (primitiveValue.isLength())

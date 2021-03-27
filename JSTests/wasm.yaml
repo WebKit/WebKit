@@ -130,6 +130,8 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/threads-spec-tests/atomic-signed.wast.js
   cmd: runWebAssemblySpecTest :normal
+- path: wasm/threads-spec-tests/wait-large.wast.js
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal

@@ -60,7 +60,7 @@ class Repository extends LabeledObject {
                     return 1;
                 else if (a.name() < b.name())
                     return -1;
-                return 0;
+                return a.id() - b.id();
             } else if (b._blameUrl) // a > b
                 return 1;
             return -1;

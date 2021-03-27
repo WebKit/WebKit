@@ -31,6 +31,7 @@ import tempfile
 from buildbot.process import remotetransfer
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShell
+from buildbot.test.util.misc import TestReactorMixin
 from buildbot.test.util.steps import BuildStepMixin
 from buildbot.util import identifiers as buildbot_identifiers
 from mock import call
@@ -38,11 +39,6 @@ from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
-if sys.version_info > (3, 0):
-    from buildbot.test.util.misc import TestReactorMixin
-else:
-    TestReactorMixin = type('TestReactorMixin', (object,), {})
-    TestReactorMixin.setUpTestReactor = lambda self: None
 
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
@@ -53,8 +49,8 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    FetchBranches, FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
-                   RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
-                   RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
+                   RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
+                   RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
                    UploadTestResults, ValidateCommiterAndReviewer, ValidatePatch)
@@ -622,7 +618,7 @@ FAILED (failures=1, errors=0)''')
         return self.runStep()
 
 
-class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
+class TestRunBuildbotCheckConfigForEWS(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -631,12 +627,13 @@ class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        self.setupStep(RunEWSBuildbotCheckConfig())
+        self.setupStep(RunBuildbotCheckConfigForEWS())
         self.expectRemoteCommands(
             ExpectShell(workdir='build/Tools/CISupport/ews-build',
                         timeout=120,
                         logEnviron=False,
                         command=['buildbot', 'checkconfig'],
+                        env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + 0,
         )
@@ -644,14 +641,53 @@ class TestRunEWSBuildbotCheckConfig(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RunEWSBuildbotCheckConfig())
+        self.setupStep(RunBuildbotCheckConfigForEWS())
         self.expectRemoteCommands(
             ExpectShell(workdir='build/Tools/CISupport/ews-build',
                         timeout=120,
                         logEnviron=False,
                         command=['buildbot', 'checkconfig'],
+                        env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
-            + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) iOS-12-Debug-Build-EWS have no schedulers to drive them')
+            + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) iOS-14-Debug-Build-EWS have no schedulers to drive them')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed buildbot checkconfig')
+        return self.runStep()
+
+
+class TestRunBuildbotCheckConfigForBuildWebKit(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunBuildbotCheckConfigForBuildWebKit())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['buildbot', 'checkconfig'],
+                        env={'LC_CTYPE': 'en_US.UTF-8'}
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed buildbot checkconfig')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunBuildbotCheckConfigForBuildWebKit())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['buildbot', 'checkconfig'],
+                        env={'LC_CTYPE': 'en_US.UTF-8'}
+                        )
+            + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) Apple-iOS-14-Release-Build have no schedulers to drive them')
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed buildbot checkconfig')
@@ -1866,6 +1902,119 @@ class TestRunWebKitTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase)
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build',
+                                 '--no-show-results',
+                                 '--no-new-test-results',
+                                 '--clobber-old-results',
+                                 '--release',
+                                 '--results-directory', 'layout-test-results',
+                                 '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '30',
+                                 '--skip-failing-tests'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
+    def test_success_retry_only_subset(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('first_run_failures', ['test1', 'test2', 'test3'])
+        self.setProperty('second_run_failures', ['test1', 'test3', 'test4'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build',
+                                 '--no-show-results',
+                                 '--no-new-test-results',
+                                 '--clobber-old-results',
+                                 '--release',
+                                 '--results-directory', 'layout-test-results',
+                                 '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '30',
+                                 '--skip-failing-tests',
+                                 'test1', 'test2', 'test3', 'test4'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
+    def test_success_retry_only_subset_limit_exceeded(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('first_run_failures', ['test1', 'test2', 'test3'])
+        self.setProperty('second_results_exceed_failure_limit', True)
+        self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build',
+                                 '--no-show-results',
+                                 '--no-new-test-results',
+                                 '--clobber-old-results',
+                                 '--release',
+                                 '--results-directory', 'layout-test-results',
+                                 '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '30',
+                                 '--skip-failing-tests'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
+    def test_success_retry_only_subset_patch_no_modifies_expectations(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('first_run_failures', ['test1', 'test2', 'test3'])
+        self.setProperty('second_run_failures', ['test1', 'test3', 'test4'])
+        RunWebKitTests._get_patch = lambda x: b'+++ Tools/ChangeLog\n+++ Tools/WebKitTestRunner/Options.cpp\n'
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build',
+                                 '--no-show-results',
+                                 '--no-new-test-results',
+                                 '--clobber-old-results',
+                                 '--release',
+                                 '--results-directory', 'layout-test-results',
+                                 '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '30',
+                                 '--skip-failing-tests',
+                                 'test1', 'test2', 'test3', 'test4'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
+    def test_success_retry_only_subset_patch_modifies_expectations(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('first_run_failures', ['test1', 'test2', 'test3'])
+        self.setProperty('second_run_failures', ['test1', 'test3', 'test4'])
+        RunWebKitTests._get_patch = lambda x: b'+++ LayoutTests/Changelog\n+++ LayoutTests/platform/gtk/TestExpectations\n'
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},

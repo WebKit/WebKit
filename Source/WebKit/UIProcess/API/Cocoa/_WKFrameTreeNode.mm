@@ -29,12 +29,15 @@
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKFrameTreeNodeInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKFrameTreeNode
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKFrameTreeNode.class, self))
+        return;
     _node->API::FrameTreeNode::~FrameTreeNode();
     [super dealloc];
 }

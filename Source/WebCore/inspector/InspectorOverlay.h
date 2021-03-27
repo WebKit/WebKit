@@ -183,7 +183,7 @@ private:
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
-    void drawLayoutHatching(GraphicsContext&, FloatRect, IntPoint);
+    void drawLayoutHatching(GraphicsContext&, FloatQuad);
     void drawLayoutLabel(GraphicsContext&, String, FloatPoint, LabelArrowDirection, Color backgroundColor = Color::white, float maximumWidth = 0);
 
     void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Grid&);

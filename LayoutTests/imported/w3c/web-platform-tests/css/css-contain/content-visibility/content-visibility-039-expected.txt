@@ -1,0 +1,4 @@
+This is text
+
+PASS Measure Forced SVG Text
+

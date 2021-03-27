@@ -61,6 +61,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/WeakObjCPtr.h>
 
 @interface NSObject (WKDeprecatedDelegateMethods)
@@ -369,6 +370,9 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInBrowserContextController.class, self))
+        return;
+
     if (_remoteObjectRegistry)
         [_remoteObjectRegistry _invalidate];
 

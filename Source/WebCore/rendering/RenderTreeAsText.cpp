@@ -646,9 +646,12 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
 
     ts << indent << "layer ";
     
-    if (behavior.contains(RenderAsTextFlag::ShowAddresses))
+    if (behavior.contains(RenderAsTextFlag::ShowAddresses)) {
         ts << static_cast<const void*>(&layer) << " ";
-      
+        if (auto* scrollableArea = layer.scrollableArea())
+            ts << "scrollableArea " << static_cast<const void*>(scrollableArea) << " ";
+    }
+
     ts << adjustedLayoutBounds;
 
     if (!adjustedLayoutBounds.isEmpty()) {

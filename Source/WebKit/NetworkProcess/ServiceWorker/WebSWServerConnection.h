@@ -67,6 +67,9 @@ public:
     WebSWServerConnection(const WebSWServerConnection&) = delete;
     ~WebSWServerConnection() final;
 
+    using WebCore::SWServer::Connection::weakPtrFactory;
+    using WeakValueType = WebCore::SWServer::Connection::WeakValueType;
+
     IPC::Connection& ipcConnection() const { return m_contentConnection.get(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

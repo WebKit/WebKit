@@ -354,6 +354,10 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagRevealImage();
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+    String contextMenuItemTagTranslate(const String& selectedString);
+#endif
+
 #if USE(GLIB) && defined(GETTEXT_PACKAGE)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(_(string))
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(C_(key, string))

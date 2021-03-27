@@ -72,17 +72,16 @@ bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, 
     return true;
 }
 
-CFURLAuthChallengeRef createCF(const AuthenticationChallenge& coreChallenge)
+RetainPtr<CFURLAuthChallengeRef> createCF(const AuthenticationChallenge& coreChallenge)
 {
     // FIXME: Why not cache CFURLAuthChallengeRef in m_cfChallenge? Foundation counterpart does that.
 
-    RetainPtr<CFURLCredentialRef> credential = adoptCF(createCF(coreChallenge.proposedCredential()));
-    RetainPtr<CFURLProtectionSpaceRef> protectionSpace = adoptCF(createCF(coreChallenge.protectionSpace()));
-    CFURLAuthChallengeRef result = CFURLAuthChallengeCreate(0, protectionSpace.get(), credential.get(), coreChallenge.previousFailureCount(), coreChallenge.failureResponse().cfURLResponse(), coreChallenge.error());
-    return result;
+    auto credential = createCF(coreChallenge.proposedCredential());
+    auto protectionSpace = createCF(coreChallenge.protectionSpace());
+    return adoptCF(CFURLAuthChallengeCreate(0, protectionSpace.get(), credential.get(), coreChallenge.previousFailureCount(), coreChallenge.failureResponse().cfURLResponse(), coreChallenge.error()));
 }
 
-CFURLCredentialRef createCF(const Credential& coreCredential)
+RetainPtr<CFURLCredentialRef> createCF(const Credential& coreCredential)
 {
     CFURLCredentialPersistence persistence = kCFURLCredentialPersistenceNone;
     switch (coreCredential.persistence()) {
@@ -98,10 +97,10 @@ CFURLCredentialRef createCF(const Credential& coreCredential)
         ASSERT_NOT_REACHED();
     }
     
-    return CFURLCredentialCreate(0, coreCredential.user().createCFString().get(), coreCredential.password().createCFString().get(), 0, persistence);
+    return adoptCF(CFURLCredentialCreate(0, coreCredential.user().createCFString().get(), coreCredential.password().createCFString().get(), 0, persistence));
 }
 
-CFURLProtectionSpaceRef createCF(const ProtectionSpace& coreSpace)
+RetainPtr<CFURLProtectionSpaceRef> createCF(const ProtectionSpace& coreSpace)
 {
     CFURLProtectionSpaceServerType serverType = kCFURLProtectionSpaceServerHTTP;
     switch (coreSpace.serverType()) {
@@ -165,7 +164,7 @@ CFURLProtectionSpaceRef createCF(const ProtectionSpace& coreSpace)
         ASSERT_NOT_REACHED();
     }
 
-    return CFURLProtectionSpaceCreate(0, coreSpace.host().createCFString().get(), coreSpace.port(), serverType, coreSpace.realm().createCFString().get(), scheme);
+    return adoptCF(CFURLProtectionSpaceCreate(0, coreSpace.host().createCFString().get(), coreSpace.port(), serverType, coreSpace.realm().createCFString().get(), scheme));
 }
 
 Credential core(CFURLCredentialRef cfCredential)

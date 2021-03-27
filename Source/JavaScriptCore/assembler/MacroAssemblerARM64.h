@@ -4577,9 +4577,14 @@ protected:
     }
     
     template<int datasize>
-    void signExtend(RegisterID src, RegisterID dest)
+    void zeroExtend(RegisterID src, RegisterID dest)
     {
-        move(src, dest);
+        if constexpr (datasize == 8)
+            zeroExtend8To32(src, dest);
+        else if constexpr (datasize == 16)
+            zeroExtend16To32(src, dest);
+        else
+            move(src, dest);
     }
     
     template<int datasize>
@@ -4591,7 +4596,7 @@ protected:
     template<int datasize>
     void atomicStrongCAS(StatusCondition cond, RegisterID expectedAndResult, RegisterID newValue, Address address, RegisterID result)
     {
-        signExtend<datasize>(expectedAndResult, expectedAndResult);
+        zeroExtend<datasize>(expectedAndResult, expectedAndResult);
         
         RegisterID simpleAddress = extractSimpleAddress(address);
         RegisterID tmp = getCachedDataTempRegisterIDAndInvalidate();
@@ -4617,7 +4622,7 @@ protected:
     template<int datasize, typename AddressType>
     void atomicRelaxedStrongCAS(StatusCondition cond, RegisterID expectedAndResult, RegisterID newValue, AddressType address, RegisterID result)
     {
-        signExtend<datasize>(expectedAndResult, expectedAndResult);
+        zeroExtend<datasize>(expectedAndResult, expectedAndResult);
         
         RegisterID simpleAddress = extractSimpleAddress(address);
         RegisterID tmp = getCachedDataTempRegisterIDAndInvalidate();
@@ -4641,7 +4646,7 @@ protected:
     template<int datasize, typename AddressType>
     JumpList branchAtomicWeakCAS(StatusCondition cond, RegisterID expectedAndClobbered, RegisterID newValue, AddressType address)
     {
-        signExtend<datasize>(expectedAndClobbered, expectedAndClobbered);
+        zeroExtend<datasize>(expectedAndClobbered, expectedAndClobbered);
         
         RegisterID simpleAddress = extractSimpleAddress(address);
         RegisterID tmp = getCachedDataTempRegisterIDAndInvalidate();
@@ -4669,7 +4674,7 @@ protected:
     template<int datasize, typename AddressType>
     JumpList branchAtomicRelaxedWeakCAS(StatusCondition cond, RegisterID expectedAndClobbered, RegisterID newValue, AddressType address)
     {
-        signExtend<datasize>(expectedAndClobbered, expectedAndClobbered);
+        zeroExtend<datasize>(expectedAndClobbered, expectedAndClobbered);
         
         RegisterID simpleAddress = extractSimpleAddress(address);
         RegisterID tmp = getCachedDataTempRegisterIDAndInvalidate();
@@ -4854,18 +4859,6 @@ template<>
 ALWAYS_INLINE void MacroAssemblerARM64::storeUnscaledImmediate<16>(RegisterID rt, RegisterID rn, int simm)
 {
     m_assembler.sturh(rt, rn, simm);
-}
-
-template<>
-inline void MacroAssemblerARM64::signExtend<8>(RegisterID src, RegisterID dest)
-{
-    signExtend8To32(src, dest);
-}
-
-template<>
-inline void MacroAssemblerARM64::signExtend<16>(RegisterID src, RegisterID dest)
-{
-    signExtend16To32(src, dest);
 }
 
 template<>

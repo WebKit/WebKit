@@ -1,4 +1,6 @@
+'use strict';
 
+const assert = require('assert');
 const MarkupDocument = new class MarkupDocument {
     constructor()
     {
@@ -27,7 +29,7 @@ const MarkupDocument = new class MarkupDocument {
 
     _idForClone(original)
     {
-        console.assert(original instanceof MarkupNode);
+        assert.ok(original instanceof MarkupNode);
         return this._nodeId++;
     }
 
@@ -38,7 +40,7 @@ const MarkupDocument = new class MarkupDocument {
 
     markup(node)
     {
-        console.assert(node instanceof MarkupNode);
+        assert.ok(node instanceof MarkupNode);
         return node._markup();
     }
 
@@ -56,7 +58,7 @@ const MarkupDocument = new class MarkupDocument {
 class MarkupNode {
     constructor(id)
     {
-        console.assert(typeof(id) == 'number');
+        assert.ok(typeof(id) == 'number');
         this._id = id;
         this._parentNode = null;
     }
@@ -73,9 +75,9 @@ class MarkupNode {
 
     _cloneNodeData(clonedNode)
     {
-        console.assert(typeof(clonedNode._id) == 'number');
-        console.assert(this._id != clonedNode._id);
-        console.assert(clonedNode._parentNode == null);
+        assert.ok(typeof(clonedNode._id) == 'number');
+        assert.ok(this._id != clonedNode._id);
+        assert.ok(clonedNode._parentNode == null);
     }
 
     remove()
@@ -113,7 +115,7 @@ class MarkupParentNode extends MarkupNode {
         if (child._parentNode)
             child.remove();
 
-        console.assert(child._parentNode == null);
+        assert.ok(child._parentNode == null);
         this._childNodes.push(child);
         child._parentNode = this;
     }
@@ -123,7 +125,7 @@ class MarkupParentNode extends MarkupNode {
         if (child._parentNode != this)
             return;
         const index = this._childNodes.indexOf(child);
-        console.assert(index >= 0);
+        assert.ok(index >= 0);
         this._childNodes.splice(index, 1);
         child._parentNode = null;
     }
@@ -142,10 +144,10 @@ class MarkupParentNode extends MarkupNode {
 
         if (newChild._parentNode)
             newChild.remove();
-        console.assert(newChild._parentNode == null);
+        assert.ok(newChild._parentNode == null);
 
         const index = this._childNodes.indexOf(oldChild);
-        console.assert(index >= 0);
+        assert.ok(index >= 0);
         this._childNodes.splice(index, 1, newChild);
         oldChild._parentNode = null;
         newChild._parentNode = this;
@@ -155,8 +157,8 @@ class MarkupParentNode extends MarkupNode {
 class MarkupContentRoot extends MarkupParentNode {
     constructor(id, host)
     {
-        console.assert(host instanceof MarkupElement);
-        console.assert(host._contentRoot == null);
+        assert.ok(host instanceof MarkupElement);
+        assert.ok(host._contentRoot == null);
         super(id);
         this._hostElement = null;
         host._contentRoot = this;
@@ -175,7 +177,7 @@ class MarkupElement extends MarkupParentNode {
     constructor(id, name)
     {
         super(id);
-        console.assert(typeof(name) == 'string');
+        assert.ok(typeof(name) == 'string');
         this._name = name;
         this._attributes = new Map;
         this._value = null;
@@ -364,7 +366,7 @@ class MarkupComponentBase extends CommonComponentBase {
         super();
         this._name = componentsByClass.get(new.target);
         const component = componentsMap.get(this._name);
-        console.assert(component, `Component "${this._name}" has not been defined`);
+        assert.ok(component, `Component "${this._name}" has not been defined`);
         this._componentId = component.id;
         this._element = null;
         this._contentRoot = null;
@@ -412,7 +414,7 @@ class MarkupComponentBase extends CommonComponentBase {
 
     static runRenderLoop()
     {
-        console.assert(!currentlyRenderingComponent);
+        assert.ok(!currentlyRenderingComponent);
         do {
             const currentSet = [...componentsToRender];
             componentsToRender.clear();
@@ -429,14 +431,14 @@ class MarkupComponentBase extends CommonComponentBase {
 
     renderReplace(parentNode, content)
     {
-        console.assert(currentlyRenderingComponent == this);
-        console.assert(parentNode instanceof MarkupParentNode);
+        assert.ok(currentlyRenderingComponent == this);
+        assert.ok(parentNode instanceof MarkupParentNode);
         parentNode.removeAllChildren();
         if (content) {
             MarkupComponentBase._addContentToElement(parentNode, content);
 
             const component = componentsMap.get(this._name);
-            console.assert(component);
+            assert.ok(component);
             this._applyStyleOverrides(parentNode, component.styleOverride);
         }
     }
@@ -493,7 +495,7 @@ class MarkupComponentBase extends CommonComponentBase {
 
     static reset()
     {
-        console.assert(!currentlyRenderingComponent);
+        assert.ok(!currentlyRenderingComponent);
         MarkupDocument.reset();
         componentsMap.clear();
         componentsByClass.clear();
@@ -567,9 +569,9 @@ class MarkupComponentBase extends CommonComponentBase {
 
     static defineElement(name, componentClass)
     {
-        console.assert(!componentsMap.get(name), `The component "${name}" has already been defined`);
+        assert.ok(!componentsMap.get(name), `The component "${name}" has already been defined`);
         const existingComponentForClass = componentsByClass.get(componentClass);
-        console.assert(!existingComponentForClass, existingComponentForClass
+        assert.ok(!existingComponentForClass, existingComponentForClass
             ? `The component class "${existingComponentForClass}" has already been used to define another component "${existingComponentForClass.name}"` : '');
         componentsMap.set(name, {
             class: componentClass,

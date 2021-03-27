@@ -21,8 +21,8 @@ document.fonts.ready.then(async () => {
     performance.getEntries().map(obj => {
         assert_false(obj.name.includes('imported-loading-subresources.css'), "import");
         assert_false(obj.name.includes('Ahem.woff'), "font");
-        assert_false(obj.name.includes('abe-allow-star.php?image'), "image");
-        assert_false(obj.name.includes('abe-allow-star.php?cursor'), "cursor");
+        assert_false(obj.name.includes('abe-allow-star.py?image'), "image");
+        assert_false(obj.name.includes('abe-allow-star.py?cursor'), "cursor");
     });
     mydiv.innerHTML = "";
     done();

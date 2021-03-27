@@ -27,11 +27,15 @@
 #import "_WKFrameHandleInternal.h"
 
 #import <WebCore/FrameIdentifier.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKFrameHandle
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKFrameHandle.class, self))
+        return;
+
     _frameHandle->~FrameHandle();
 
     [super dealloc];

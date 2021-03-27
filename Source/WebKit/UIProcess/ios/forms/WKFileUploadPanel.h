@@ -45,6 +45,7 @@ class WebOpenPanelResultListenerProxy;
 - (void)dismiss;
 
 - (NSArray<NSString *> *)currentAvailableActionTitles;
+- (NSArray<NSString *> *)acceptedTypeIdentifiers;
 @end
 
 @protocol WKFileUploadPanelDelegate <NSObject>

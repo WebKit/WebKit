@@ -247,54 +247,54 @@ PASS Web Animations: property <border-image-width> from [10px 20% 30 40px] to [8
 PASS Web Animations: property <border-image-width> from [10px 20% 30 40px] to [80px 70% 60 50px] at (1.5) should be [115px  95%  75  55px]
 PASS Web Animations: property <border-image-width> from [10px 20% 30 40px] to [80px 70% 60 50px] at (5) should be [360px 270% 180  90px]
 PASS Web Animations: property <border-image-width> from [10px 20% 30 40px] to [80px 70% 60 50px] at (10) should be [710px 520% 330 140px]
-FAIL CSS Transitions: property <border-image-width> from [10%] to [20px] at (-0.3) should be [calc(13% + -6px)] assert_equals: expected "7px " but got "10 % "
+FAIL CSS Transitions: property <border-image-width> from [10%] to [20px] at (-0.3) should be [calc(13% + -6px)] assert_equals: expected "7px " but got ""
 PASS CSS Transitions: property <border-image-width> from [10%] to [20px] at (0) should be [10%]
 FAIL CSS Transitions: property <border-image-width> from [10%] to [20px] at (0.3) should be [calc(7% + 6px)] assert_equals: expected "13px " but got ""
 FAIL CSS Transitions: property <border-image-width> from [10%] to [20px] at (0.6) should be [calc(4% + 12px)] assert_equals: expected "16px " but got ""
 PASS CSS Transitions: property <border-image-width> from [10%] to [20px] at (1) should be [calc(0% + 20px)]
-FAIL CSS Transitions: property <border-image-width> from [10%] to [20px] at (1.5) should be [calc(-5% + 30px)] assert_equals: expected "25px " but got "20px "
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10%] to [20px] at (-0.3) should be [calc(13% + -6px)] assert_equals: expected "7px " but got "10 % "
+FAIL CSS Transitions: property <border-image-width> from [10%] to [20px] at (1.5) should be [calc(-5% + 30px)] assert_equals: expected "25px " but got ""
+FAIL CSS Transitions with transition: all: property <border-image-width> from [10%] to [20px] at (-0.3) should be [calc(13% + -6px)] assert_equals: expected "7px " but got ""
 PASS CSS Transitions with transition: all: property <border-image-width> from [10%] to [20px] at (0) should be [10%]
 FAIL CSS Transitions with transition: all: property <border-image-width> from [10%] to [20px] at (0.3) should be [calc(7% + 6px)] assert_equals: expected "13px " but got ""
 FAIL CSS Transitions with transition: all: property <border-image-width> from [10%] to [20px] at (0.6) should be [calc(4% + 12px)] assert_equals: expected "16px " but got ""
 PASS CSS Transitions with transition: all: property <border-image-width> from [10%] to [20px] at (1) should be [calc(0% + 20px)]
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10%] to [20px] at (1.5) should be [calc(-5% + 30px)] assert_equals: expected "25px " but got "20px "
-FAIL CSS Animations: property <border-image-width> from [10%] to [20px] at (-0.3) should be [calc(13% + -6px)] assert_equals: expected "7px " but got "10 % "
+FAIL CSS Transitions with transition: all: property <border-image-width> from [10%] to [20px] at (1.5) should be [calc(-5% + 30px)] assert_equals: expected "25px " but got ""
+FAIL CSS Animations: property <border-image-width> from [10%] to [20px] at (-0.3) should be [calc(13% + -6px)] assert_equals: expected "7px " but got ""
 PASS CSS Animations: property <border-image-width> from [10%] to [20px] at (0) should be [10%]
 FAIL CSS Animations: property <border-image-width> from [10%] to [20px] at (0.3) should be [calc(7% + 6px)] assert_equals: expected "13px " but got ""
 FAIL CSS Animations: property <border-image-width> from [10%] to [20px] at (0.6) should be [calc(4% + 12px)] assert_equals: expected "16px " but got ""
 PASS CSS Animations: property <border-image-width> from [10%] to [20px] at (1) should be [calc(0% + 20px)]
-FAIL CSS Animations: property <border-image-width> from [10%] to [20px] at (1.5) should be [calc(-5% + 30px)] assert_equals: expected "25px " but got "20px "
-FAIL Web Animations: property <border-image-width> from [10%] to [20px] at (-0.3) should be [calc(13% + -6px)] assert_equals: expected "7px " but got "10 % "
+FAIL CSS Animations: property <border-image-width> from [10%] to [20px] at (1.5) should be [calc(-5% + 30px)] assert_equals: expected "25px " but got ""
+FAIL Web Animations: property <border-image-width> from [10%] to [20px] at (-0.3) should be [calc(13% + -6px)] assert_equals: expected "7px " but got ""
 PASS Web Animations: property <border-image-width> from [10%] to [20px] at (0) should be [10%]
 FAIL Web Animations: property <border-image-width> from [10%] to [20px] at (0.3) should be [calc(7% + 6px)] assert_equals: expected "13px " but got ""
 FAIL Web Animations: property <border-image-width> from [10%] to [20px] at (0.6) should be [calc(4% + 12px)] assert_equals: expected "16px " but got ""
 PASS Web Animations: property <border-image-width> from [10%] to [20px] at (1) should be [calc(0% + 20px)]
-FAIL Web Animations: property <border-image-width> from [10%] to [20px] at (1.5) should be [calc(-5% + 30px)] assert_equals: expected "25px " but got "20px "
-FAIL CSS Transitions: property <border-image-width> from [10px] to [20%] at (-0.3) should be [calc(13px + -6%)] assert_equals: expected "7px " but got "10px "
+FAIL Web Animations: property <border-image-width> from [10%] to [20px] at (1.5) should be [calc(-5% + 30px)] assert_equals: expected "25px " but got ""
+FAIL CSS Transitions: property <border-image-width> from [10px] to [20%] at (-0.3) should be [calc(13px + -6%)] assert_equals: expected "7px " but got ""
 PASS CSS Transitions: property <border-image-width> from [10px] to [20%] at (0) should be [calc(0% + 10px)]
 FAIL CSS Transitions: property <border-image-width> from [10px] to [20%] at (0.3) should be [calc(7px + 6%)] assert_equals: expected "13px " but got ""
 FAIL CSS Transitions: property <border-image-width> from [10px] to [20%] at (0.6) should be [calc(4px + 12%)] assert_equals: expected "16px " but got ""
 PASS CSS Transitions: property <border-image-width> from [10px] to [20%] at (1) should be [20%]
-FAIL CSS Transitions: property <border-image-width> from [10px] to [20%] at (1.5) should be [calc(-5px + 30%)] assert_equals: expected "25px " but got "20 % "
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10px] to [20%] at (-0.3) should be [calc(13px + -6%)] assert_equals: expected "7px " but got "10px "
+FAIL CSS Transitions: property <border-image-width> from [10px] to [20%] at (1.5) should be [calc(-5px + 30%)] assert_equals: expected "25px " but got ""
+FAIL CSS Transitions with transition: all: property <border-image-width> from [10px] to [20%] at (-0.3) should be [calc(13px + -6%)] assert_equals: expected "7px " but got ""
 PASS CSS Transitions with transition: all: property <border-image-width> from [10px] to [20%] at (0) should be [calc(0% + 10px)]
 FAIL CSS Transitions with transition: all: property <border-image-width> from [10px] to [20%] at (0.3) should be [calc(7px + 6%)] assert_equals: expected "13px " but got ""
 FAIL CSS Transitions with transition: all: property <border-image-width> from [10px] to [20%] at (0.6) should be [calc(4px + 12%)] assert_equals: expected "16px " but got ""
 PASS CSS Transitions with transition: all: property <border-image-width> from [10px] to [20%] at (1) should be [20%]
-FAIL CSS Transitions with transition: all: property <border-image-width> from [10px] to [20%] at (1.5) should be [calc(-5px + 30%)] assert_equals: expected "25px " but got "20 % "
-FAIL CSS Animations: property <border-image-width> from [10px] to [20%] at (-0.3) should be [calc(13px + -6%)] assert_equals: expected "7px " but got "10px "
+FAIL CSS Transitions with transition: all: property <border-image-width> from [10px] to [20%] at (1.5) should be [calc(-5px + 30%)] assert_equals: expected "25px " but got ""
+FAIL CSS Animations: property <border-image-width> from [10px] to [20%] at (-0.3) should be [calc(13px + -6%)] assert_equals: expected "7px " but got ""
 PASS CSS Animations: property <border-image-width> from [10px] to [20%] at (0) should be [calc(0% + 10px)]
 FAIL CSS Animations: property <border-image-width> from [10px] to [20%] at (0.3) should be [calc(7px + 6%)] assert_equals: expected "13px " but got ""
 FAIL CSS Animations: property <border-image-width> from [10px] to [20%] at (0.6) should be [calc(4px + 12%)] assert_equals: expected "16px " but got ""
 PASS CSS Animations: property <border-image-width> from [10px] to [20%] at (1) should be [20%]
-FAIL CSS Animations: property <border-image-width> from [10px] to [20%] at (1.5) should be [calc(-5px + 30%)] assert_equals: expected "25px " but got "20 % "
-FAIL Web Animations: property <border-image-width> from [10px] to [20%] at (-0.3) should be [calc(13px + -6%)] assert_equals: expected "7px " but got "10px "
+FAIL CSS Animations: property <border-image-width> from [10px] to [20%] at (1.5) should be [calc(-5px + 30%)] assert_equals: expected "25px " but got ""
+FAIL Web Animations: property <border-image-width> from [10px] to [20%] at (-0.3) should be [calc(13px + -6%)] assert_equals: expected "7px " but got ""
 PASS Web Animations: property <border-image-width> from [10px] to [20%] at (0) should be [calc(0% + 10px)]
 FAIL Web Animations: property <border-image-width> from [10px] to [20%] at (0.3) should be [calc(7px + 6%)] assert_equals: expected "13px " but got ""
 FAIL Web Animations: property <border-image-width> from [10px] to [20%] at (0.6) should be [calc(4px + 12%)] assert_equals: expected "16px " but got ""
 PASS Web Animations: property <border-image-width> from [10px] to [20%] at (1) should be [20%]
-FAIL Web Animations: property <border-image-width> from [10px] to [20%] at (1.5) should be [calc(-5px + 30%)] assert_equals: expected "25px " but got "20 % "
+FAIL Web Animations: property <border-image-width> from [10px] to [20%] at (1.5) should be [calc(-5px + 30%)] assert_equals: expected "25px " but got ""
 PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto auto 120] at (-0.3) should be [  0px auto auto   0]
 PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto auto 120] at (0) should be [ 10px auto auto  20]
 PASS CSS Transitions: property <border-image-width> from [10px auto auto 20] to [110px auto auto 120] at (0.3) should be [ 40px auto auto  50]

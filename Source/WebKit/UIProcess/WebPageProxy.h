@@ -138,6 +138,7 @@
 #include "EndowmentStateTracker.h"
 #endif
 
+OBJC_CLASS NSMenu;
 OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS NSView;
 OBJC_CLASS _WKRemoteObjectRegistry;
@@ -432,13 +433,14 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #endif
 #if PLATFORM(MACCATALYST)
     , public EndowmentStateTracker::Client
-#else
-    , public CanMakeWeakPtr<WebPageProxy>
 #endif
     {
 public:
     static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     virtual ~WebPageProxy();
+
+    using IPC::MessageReceiver::weakPtrFactory;
+    using WeakValueType = IPC::MessageReceiver::WeakValueType;
 
     static void forMostVisibleWebPageIfAny(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&&);
 
@@ -1599,7 +1601,7 @@ public:
     void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, SandboxExtension::HandleArray& fileUploadHandles);
 #endif
     void editorStateChanged(const EditorState&);
-    void updateEditorState(const EditorState&);
+    bool updateEditorState(const EditorState& newEditorState);
     void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();
 
@@ -1626,9 +1628,9 @@ public:
     void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&&);
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
     static WebPageProxy* nonEphemeralWebPageProxy();
 
@@ -1705,9 +1707,9 @@ public:
     void simulateResourceLoadStatisticsSessionRestart(CompletionHandler<void()>&&);
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(const URL&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(const URL&, CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementAttributionReportURLForTesting(const URL&, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& attributeOnURL, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
-    void setFraudPreventionValuesForTesting(const String& secretToken, const String& unlinkableToken, const String& signature, const String& keyID, CompletionHandler<void()>&&);
+    void setPCMFraudPreventionValuesForTesting(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&&);
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&&);
@@ -1735,7 +1737,7 @@ public:
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     void requestStorageSpace(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, WTF::CompletionHandler<void(uint64_t)>&&);
 
@@ -1775,6 +1777,7 @@ public:
 
     void grantAccessToAssetServices();
     void revokeAccessToAssetServices();
+    void switchFromStaticFontRegistryToUserFontRegistry();
 
 #if PLATFORM(COCOA)
     void grantAccessToPreferenceService();
@@ -1804,6 +1807,7 @@ public:
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
+    NSMenu *platformActiveContextMenu() const;
     void platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
 
@@ -1866,12 +1870,20 @@ public:
     void resetImageExtractionPreview();
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+    bool canHandleContextMenuTranslation() const;
+#endif
+
 #if PLATFORM(COCOA)
     void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
     void appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
     void clearAppBoundNavigationData(CompletionHandler<void()>&&);
 #endif
+
+#if PLATFORM(COCOA)
+    NSDictionary *contentsOfUserInterfaceItem(NSString *userInterfaceItem);
+#endif // PLATFORM(COCOA)
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -1901,7 +1913,7 @@ private:
     void setUserAgent(String&&);
 
     // IPC::MessageSender
-    bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&&) override;
+    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&&) override;
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
 
@@ -2164,9 +2176,6 @@ private:
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&);
 #endif
 
-    void stopMakingViewBlankDueToLackOfRenderingUpdate();
-    void makeViewBlankIfUnpaintedSinceLastLoadCommit();
-
     // Spelling and grammar.
     void checkSpellingOfString(const String& text, CompletionHandler<void(int32_t misspellingLocation, int32_t misspellingLength)>&&);
     void checkGrammarOfString(const String& text, CompletionHandler<void(Vector<WebCore::GrammarDetail>&&, int32_t badGrammarLocation, int32_t badGrammarLength)>&&);
@@ -2186,7 +2195,6 @@ private:
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 #if PLATFORM(MAC)
-    void didUpdateRenderingAfterCommittingLoad();
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -2246,7 +2254,6 @@ private:
     void updateInputContextAfterBlurringAndRefocusingElement();
     void focusedElementDidChangeInputMode(WebCore::InputMode);
     void didReleaseAllTouchPoints();
-    void didUpdateEditorState();
 
     void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&);
     void hideInspectorHighlight();
@@ -2409,6 +2416,10 @@ private:
 
     static SandboxExtension::HandleArray createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
 
+    static SandboxExtension::Handle fontdMachExtensionHandle();
+
+    void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
+
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;
     WeakPtr<PageClient> m_pageClient;
@@ -2478,13 +2489,11 @@ private:
     std::unique_ptr<MediaUsageManager> m_mediaUsageManager;
 #endif
 
-#if PLATFORM(COCOA)
-    bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
-#endif
 #if PLATFORM(IOS_FAMILY)
     Optional<WebCore::InputMode> m_pendingInputModeChange;
     TransactionID m_firstLayerTreeTransactionIdAfterDidCommitLoad;
     int32_t m_deviceOrientation { 0 };
+    bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad { true };
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };

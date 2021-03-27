@@ -10,11 +10,11 @@ if ($isTestingMultipart) {
     echo("Referrer-Policy: " . $_GET["value"] . "\r\n");
     echo("Content-type: text/html\r\n");
     echo("\r\n");
-    echo("<iframe src='" . $destinationOrigin . "security/resources/postReferrer.php'></iframe>\r\n");
+    echo("<iframe src='" . $destinationOrigin . "security/resources/postReferrer.py'></iframe>\r\n");
     echo("--boundary\r\n");
 } else {
     header("Content-Type: text/html");
     echo("\r\n");
-    echo("<iframe src='" . $destinationOrigin . "security/resources/postReferrer.php'></iframe>\r\n");
+    echo("<iframe src='" . $destinationOrigin . "security/resources/postReferrer.py'></iframe>\r\n");
 }
 ?>

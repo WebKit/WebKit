@@ -135,6 +135,7 @@
 #import "WebSwitchingGPUClient.h"
 #import <WebCore/GraphicsContextGLOpenGLManager.h>
 #import <WebCore/ScrollbarThemeMac.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
@@ -143,6 +144,7 @@
 #import <os/state_private.h>
 #endif
 
+#import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
@@ -1160,6 +1162,17 @@ void WebProcess::revokeAccessToAssetServices()
     m_assetServiceV2Extension = nullptr;
 }
 
+void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle)
+{
+    if (m_fontMachExtension)
+        return;
+    m_fontMachExtension = SandboxExtension::create(WTFMove(fontMachExtensionHandle));
+    m_fontMachExtension->consume();
+#if HAVE(STATIC_FONT_REGISTRY)
+    CTFontManagerEnableAllUserFonts(true);
+#endif
+}
+
 void WebProcess::setScreenProperties(const ScreenProperties& properties)
 {
     WebCore::setScreenProperties(properties);
@@ -1233,9 +1246,9 @@ void WebProcess::platformInitializeGPUProcessConnectionParameters(GPUProcessConn
         parameters.webProcessIdentityToken = MachSendRight::adopt(identityToken);
     else
         RELEASE_LOG_ERROR(Process, "Call to task_create_identity_token() failed: %{private}s (%x)", mach_error_string(kr), kr);
-#else
-    UNUSED_PARAM(parameters);
 #endif
+
+    parameters.overrideLanguages = userPreferredLanguagesOverride();
 }
 #endif
 
@@ -1257,6 +1270,22 @@ void WebProcess::systemDidWake()
         PlatformMediaSessionManager::sharedManager().processSystemDidWake();
 }
 #endif
+
+void WebProcess::consumeAudioComponentRegistrations(const IPC::DataReference& data)
+{
+    using namespace PAL;
+
+    if (!isAudioToolboxCoreFrameworkAvailable() || !canLoad_AudioToolboxCore_AudioComponentApplyServerRegistrations())
+        return;
+
+    auto registrations = adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size()));
+    if (!registrations)
+        return;
+
+    auto err = AudioComponentApplyServerRegistrations(registrations.get());
+    if (noErr != err)
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Could not apply AudioComponent registrations, err(%ld)", static_cast<long>(err));
+}
 
 } // namespace WebKit
 

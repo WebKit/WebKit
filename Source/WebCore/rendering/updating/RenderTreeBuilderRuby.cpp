@@ -240,9 +240,14 @@ void RenderTreeBuilder::Ruby::attach(RenderRubyRun& parent, RenderPtr<RenderObje
         return;
     }
     // child is not a text -> insert it into the base
-    // (append it instead if beforeChild is the ruby text)
-    if (beforeChild && beforeChild->isRubyText())
+    if (beforeChild && beforeChild->isRubyText()) {
+        // Append it instead if beforeChild is the ruby text.
         beforeChild = nullptr;
+    }
+    if (!parent.hasRubyBase()) {
+        // Child is going to be attached to the newly constructed ruby base.
+        beforeChild = nullptr;
+    }
     m_builder.attach(rubyBaseSafe(parent), WTFMove(child), beforeChild);
 }
 

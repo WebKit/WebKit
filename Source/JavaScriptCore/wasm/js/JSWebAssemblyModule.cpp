@@ -44,7 +44,7 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, JSGlobalObject* glo
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!result.has_value()) {
-        auto* error = JSWebAssemblyCompileError::create(globalObject, vm, structure->globalObject()->webAssemblyCompileErrorStructure(), result.error());
+        auto* error = createJSWebAssemblyCompileError(globalObject, vm, result.error());
         RETURN_IF_EXCEPTION(scope, nullptr);
         throwException(globalObject, scope, error);
         return nullptr;

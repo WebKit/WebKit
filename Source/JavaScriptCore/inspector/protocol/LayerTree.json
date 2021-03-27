@@ -53,6 +53,7 @@
                 { "name": "canvas", "type": "boolean", "optional": true, "description": "Composition due to the element being a <canvas> element." },
                 { "name": "plugin", "type": "boolean", "optional": true, "description": "Composition due to association with a plugin." },
                 { "name": "iFrame", "type": "boolean", "optional": true, "description": "Composition due to association with an <iframe> element." },
+                { "name": "model", "type": "boolean", "optional": true, "description": "Composition due to association with a <model> element." },
                 { "name": "backfaceVisibilityHidden", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"backface-visibility: hidden\" style." },
                 { "name": "clipsCompositingDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element clipping compositing descendants." },
                 { "name": "animation", "type": "boolean", "optional": true, "description": "Composition due to association with an animated element." },

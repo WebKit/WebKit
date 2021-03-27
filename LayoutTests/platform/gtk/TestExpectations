@@ -112,8 +112,9 @@ imported/w3c/web-platform-tests/css/css-ui/outline-019.html [ Pass ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
-fast/images/avif-image-decoding.html [ Pass ]
-fast/images/avif-as-image.html [ Pass ]
+# Temporarily skip avif related tests until the gtk port enables avif as default.
+fast/images/avif-image-decoding.html [ Skip ]
+fast/images/avif-as-image.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
@@ -626,7 +627,6 @@ webkit.org/b/187064 webrtc/video-remote-mute.html
 webkit.org/b/187064 webrtc/video-addTransceiver.html
 webkit.org/b/187064 webrtc/peer-connection-track-end.html
 webkit.org/b/187064 webrtc/video.html
-webkit.org/b/187064 webrtc/multi-video.html
 webkit.org/b/187064 webrtc/video-addTrack.html
 webkit.org/b/187064 webrtc/video-rotation.html
 webkit.org/b/187064 webrtc/video-mute.html
@@ -982,7 +982,7 @@ webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 http/tests/contentextensions/plugin-doesnt-crash.html [ Skip ]
 http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html [ Skip ]
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html [ Skip ]
-http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php [ Skip ]
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py [ Skip ]
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html [ Skip ]
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html [ Skip ]
 
@@ -2535,6 +2535,8 @@ webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.h
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
 
 webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure Pass ]
+
+webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

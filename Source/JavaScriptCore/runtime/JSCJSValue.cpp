@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+const ASCIILiteral SymbolCoercionError { "Cannot convert a symbol to a string"_s };
+
 double JSValue::toIntegerPreserveNaN(JSGlobalObject* globalObject) const
 {
     if (isInt32())
@@ -488,7 +490,7 @@ JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmp
         return returnString;
     }
     if (isSymbol()) {
-        throwTypeError(globalObject, scope, "Cannot convert a symbol to a string"_s);
+        throwTypeError(globalObject, scope, SymbolCoercionError);
         return errorValue();
     }
 

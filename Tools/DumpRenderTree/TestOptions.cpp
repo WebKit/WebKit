@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,65 @@ const TestFeatures& TestOptions::defaults()
     static TestFeatures features;
     if (features.boolWebPreferenceFeatures.empty()) {
         features.boolWebPreferenceFeatures = {
+#if PLATFORM(COCOA)
+            // These are non-experimental WebPreference values that must always be set as they
+            // differ from the default set in the WebPreferences*.yaml configuration.
+            { "AllowsInlineMediaPlayback", true },
+            { "CanvasUsesAcceleratedDrawing", true },
+            { "ColorFilterEnabled", true },
+            { "CustomPasteboardDataEnabled", true },
+            { "DOMPasteAllowed", true },
+            { "DeveloperExtrasEnabled", true },
+            { "DirectoryUploadEnabled", true },
+            { "DownloadAttributeEnabled", true },
+            { "EncryptedMediaAPIEnabled", true },
+            { "FullScreenEnabled", true },
+            { "GamepadsEnabled", true },
+            { "HiddenPageCSSAnimationSuspensionEnabled", false },
+            { "InlineMediaPlaybackRequiresPlaysInlineAttribute", false },
+            { "JavaEnabled", false },
+            { "JavaScriptCanAccessClipboard", true },
+            { "JavaScriptCanOpenWindowsAutomatically", true },
+            { "LargeImageAsyncDecodingEnabled", false },
+            { "LinkPreloadEnabled", true },
+            { "MediaCapabilitiesEnabled", true },
+            { "MediaDataLoadsAutomatically", true },
+            { "MediaDevicesEnabled", true },
+            { "MediaPreloadingEnabled", true },
+            { "MockScrollbarsEnabled", true },
+            { "NeedsStorageAccessFromFileURLsQuirk", false },
+            { "OfflineWebApplicationCacheEnabled", true },
+            { "RequiresUserGestureForAudioPlayback", false },
+            { "RequiresUserGestureForMediaPlayback", false },
+            { "RequiresUserGestureForVideoPlayback", false },
+            { "ShouldPrintBackgrounds", true },
+            { "ShrinksStandaloneImagesToFit", true },
+            { "SubpixelAntialiasedLayerTextEnabled", false },
+            { "TextAreasAreResizable", true },
+            { "TextAutosizingEnabled", false },
+            { "UsesBackForwardCache", false },
+            { "WebAudioEnabled", true },
+            { "WebSQLEnabled", true },
+            { "XSSAuditorEnabled", false },
+
+            // FIXME: These experimental features are currently the only ones not enabled for WebKitLegacy, we
+            // should either enable them or stop exposing them (as we do with with preferences like HTTP3Enabled).
+            // All other experimental features are automatically enabled regardless of their specified defaults.
+            { "AspectRatioOfImgFromWidthAndHeightEnabled", false },
+            { "AsyncClipboardAPIEnabled", false },
+            { "CSSOMViewSmoothScrollingEnabled", false },
+            { "ContactPickerAPIEnabled", false },
+            { "CoreMathMLEnabled", false },
+            { "GenericCueAPIEnabled", false },
+            { "IntersectionObserverEnabled", false },
+            { "IsLoggedInAPIEnabled", false },
+            { "LazyIframeLoadingEnabled", false },
+            { "LazyImageLoadingEnabled", false },
+            { "RequestIdleCallbackEnabled", false },
+            { "ResizeObserverEnabled", false },
+            { "WebAuthenticationEnabled", false },
+            { "WebGPUEnabled", false },
+#elif PLATFORM(WIN)
             // These are WebPreference values that must always be set as they may
             // differ from the default set in the WebPreferences*.yaml configuration.
             { "AcceleratedDrawingEnabled", false },
@@ -108,10 +167,24 @@ const TestFeatures& TestOptions::defaults()
             { "UsesBackForwardCache", false },
             { "WebGPUEnabled", false },
             { "XSSAuditorEnabled", false },
+#endif
         };
+#if PLATFORM(WIN)
         features.uint32WebPreferenceFeatures = {
             { "MinimumFontSize", 0 },
         };
+#endif
+#if PLATFORM(COCOA)
+        features.stringWebPreferenceFeatures = {
+            { "CursiveFontFamily", "Apple Chancery" },
+            { "FantasyFontFamily", "Papyrus" },
+            { "FixedFontFamily", "Courier" },
+            { "PictographFontFamily", "Apple Color Emoji" },
+            { "SansSerifFontFamily", "Helvetica" },
+            { "SerifFontFamily", "Times" },
+            { "StandardFontFamily", "Times" },
+        };
+#endif
     }
     return features;
 }

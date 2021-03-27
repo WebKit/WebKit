@@ -29,12 +29,15 @@
 
 #include "ContextMenuContext.h"
 #include "ContextMenuItem.h"
+#include "HitTestRequest.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class ContextMenuClient;
 class ContextMenuProvider;
 class Event;
+class HitTestResult;
 class Page;
 
 class ContextMenuController {
@@ -67,7 +70,7 @@ public:
 #endif
 
 private:
-    std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event&);
+    std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event&, OptionSet<HitTestRequest::RequestType> hitType, ContextMenuContext::Type);
     void showContextMenu(Event&);
     
     void appendItem(ContextMenuItem&, ContextMenu* parentMenu);

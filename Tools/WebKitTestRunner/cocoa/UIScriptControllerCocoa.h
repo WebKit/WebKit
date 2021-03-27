@@ -53,6 +53,10 @@ private:
     JSRetainPtr<JSStringRef> firstRedoLabel() const override;
     NSUndoManager *platformUndoManager() const override;
 
+    void setDidShowContextMenuCallback(JSValueRef) override;
+    void setDidDismissContextMenuCallback(JSValueRef) override;
+    bool isShowingContextMenu() const override;
+
     void setDidShowMenuCallback(JSValueRef) override;
     void setDidHideMenuCallback(JSValueRef) override;
     void dismissMenu() override;

@@ -272,7 +272,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return !m_pendingWriteEncoder;
 }
 
-bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
+bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
     ASSERT(!m_pendingWriteEncoder);
 
@@ -281,7 +281,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
         return false;
 
     // We put the message ID last.
-    *encoder << 0;
+    encoder.get() << 0;
 
     // Write the outgoing message.
 
@@ -305,7 +305,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 
     // The message will be sent soon. Hold onto the encoder so that it won't be destroyed
     // before the write completes.
-    m_pendingWriteEncoder = WTFMove(encoder);
+    m_pendingWriteEncoder = encoder.moveToUniquePtr();
 
     // We can only send one asynchronous message at a time (see comment in platformCanSendOutgoingMessages).
     return false;

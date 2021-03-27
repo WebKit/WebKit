@@ -740,17 +740,6 @@ EncryptedMediaAPIEnabled:
     WebCore:
       default: false
 
-EnforceCSSMIMETypeInNoQuirksMode:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      PLATFORM(MAC): WebKit::defaultEnforceCSSMIMETypeInNoQuirksMode()
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 EnumeratingAllNetworkInterfacesEnabled:
   type: bool
   webcoreBinding: none
@@ -1550,18 +1539,6 @@ NeedsFrameNameFallbackToIdQuirk:
   defaultValue:
     WebKitLegacy:
       PLATFORM(MAC): WebKit::defaultNeedsFrameNameFallbackToIdQuirk()
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
-NeedsIsLoadingInAPISenseQuirk:
-  comment: Some apps needs isLoadingInAPISense to account for active subresource loaders.
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      PLATFORM(MAC): WebKit::defaultNeedsIsLoadingInAPISenseQuirk()
       default: false
     WebKit:
       default: false

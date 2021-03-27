@@ -324,6 +324,15 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     });
 
     updateBackForwardCacheCapacity();
+
+#if PLATFORM(IOS)
+    if (WebCore::IOSApplication::isLutron() && !WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithSharedNetworkProcess)) {
+        callOnMainRunLoop([] {
+            if (WebsiteDataStore::defaultDataStoreExists())
+                WebsiteDataStore::defaultDataStore()->terminateNetworkProcess();
+        });
+    }
+#endif
 }
 
 WebProcessPool::~WebProcessPool()
@@ -678,6 +687,8 @@ static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayC
     for (auto& processPool : WebProcessPool::allProcessPools()) {
         processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
         processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
+        if (auto gpuProcess = processPool->gpuProcess())
+            gpuProcess->displayConfigurationChanged(display, flags);
     }
 }
 
@@ -855,6 +866,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     process.send(Messages::WebProcess::BacklightLevelDidChange(displayBrightness()), 0);
+#endif
+
+#if PLATFORM(COCOA)
+    process.sendAudioComponentRegistrations();
 #endif
 
 #if PLATFORM(MAC)
@@ -1075,6 +1090,11 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     m_configuration->setProcessSwapsOnNavigationFromExperimentalFeatures(enableProcessSwapOnCrossSiteNavigation);
     if (wasProcessSwappingOnNavigationEnabled != m_configuration->processSwapsOnNavigation())
         m_webProcessCache->updateCapacity(*this);
+
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->updatePreferences();
+#endif
 
     return page;
 }
@@ -1424,7 +1444,7 @@ bool WebProcessPool::dispatchMessage(IPC::Connection& connection, IPC::Decoder& 
     return m_messageReceiverMap.dispatchMessage(connection, decoder);
 }
 
-bool WebProcessPool::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool WebProcessPool::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
@@ -1945,10 +1965,12 @@ void WebProcessPool::sendDisplayConfigurationChangedMessageForTesting()
 {
 #if PLATFORM(MAC)
     auto display = CGSMainDisplayID();
-
+    CGDisplayChangeSummaryFlags flags = kCGDisplaySetModeFlag | kCGDisplayDesktopShapeChangedFlag;
     for (auto& processPool : WebProcessPool::allProcessPools()) {
         processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, kCGDisplayBeginConfigurationFlag));
-        processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, kCGDisplaySetModeFlag | kCGDisplayDesktopShapeChangedFlag));
+        processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
+        if (auto gpuProcess = processPool->gpuProcess())
+            gpuProcess->displayConfigurationChanged(display, flags);
     }
 #endif
 }

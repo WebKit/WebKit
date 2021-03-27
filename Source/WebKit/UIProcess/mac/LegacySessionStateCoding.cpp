@@ -384,7 +384,7 @@ static MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc> encodeSessionHistoryEnt
 
 static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& frameState)
 {
-    static CFAllocatorRef fastMallocDeallocator;
+    static NeverDestroyed<RetainPtr<CFAllocatorRef>> fastMallocDeallocator;
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -401,13 +401,13 @@ static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& fram
             },
             nullptr, // preferredSize
         };
-        fastMallocDeallocator = CFAllocatorCreate(kCFAllocatorDefault, &context);
+        fastMallocDeallocator.get() = adoptCF(CFAllocatorCreate(kCFAllocatorDefault, &context));
     });
 
     size_t bufferSize;
     auto buffer = encodeSessionHistoryEntryData(frameState, bufferSize);
 
-    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, buffer.leakPtr(), bufferSize, fastMallocDeallocator));
+    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, buffer.leakPtr(), bufferSize, fastMallocDeallocator.get().get()));
 }
 
 static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pair<CFStringRef, CFTypeRef>> keyValuePairs)

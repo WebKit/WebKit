@@ -178,18 +178,24 @@ class SymbolEnv
     const TStructure &getSamplerStruct();
 
     void markAsPointer(VarField x, AddressSpace space);
+    void removePointer(VarField x);
     const AddressSpace *isPointer(VarField x) const;
 
     void markAsReference(VarField x, AddressSpace space);
+    void removeAsReference(VarField x);
     const AddressSpace *isReference(VarField x) const;
 
     void markAsPacked(const TField &field);
     bool isPacked(const TField &field) const;
 
+    void markAsUBO(VarField x);
+    bool isUBO(VarField x) const;
+
   private:
     const TFunction &getFunctionOverloadImpl();
 
     void markSpace(VarField x, AddressSpace space, std::unordered_map<VarField, AddressSpace> &map);
+    void removeSpace(VarField x, std::unordered_map<VarField, AddressSpace> &map);
     const AddressSpace *isSpace(VarField x,
                                 const std::unordered_map<VarField, AddressSpace> &map) const;
 
@@ -209,6 +215,7 @@ class SymbolEnv
     std::unordered_map<VarField, AddressSpace> mPointers;
     std::unordered_map<VarField, AddressSpace> mReferences;
     std::unordered_set<const TField *> mPackedFields;
+    std::unordered_set<VarField> mUboFields;
 };
 
 Name GetTextureTypeName(TBasicType samplerType);

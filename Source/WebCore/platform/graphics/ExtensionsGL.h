@@ -281,12 +281,6 @@ public:
     // externally.
     virtual GCGLint getGraphicsResetStatusARB() = 0;
 
-    // GL_OES_vertex_array_object
-    virtual PlatformGLObject createVertexArrayOES() = 0;
-    virtual void deleteVertexArrayOES(PlatformGLObject) = 0;
-    virtual GCGLboolean isVertexArrayOES(PlatformGLObject) = 0;
-    virtual void bindVertexArrayOES(PlatformGLObject) = 0;
-
     // GL_ANGLE_translated_shader_source
     virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;
 

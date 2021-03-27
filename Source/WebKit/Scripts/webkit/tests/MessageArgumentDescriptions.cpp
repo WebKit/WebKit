@@ -67,6 +67,9 @@
 #include <WebCore/PluginData.h>
 #include <utility>
 #include <wtf/HashMap.h>
+#if PLATFORM(COCOA)
+#include <wtf/MachSendRight.h>
+#endif
 #if PLATFORM(MAC)
 #include <wtf/OptionSet.h>
 #endif
@@ -236,6 +239,14 @@ Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, Me
         return jsValueForDecodedArguments<Messages::TestWithStream::SendString::Arguments>(globalObject, decoder);
     case MessageName::TestWithStream_SendStringSynchronized:
         return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSynchronized::Arguments>(globalObject, decoder);
+#if PLATFORM(COCOA)
+    case MessageName::TestWithStream_SendMachSendRight:
+        return jsValueForDecodedArguments<Messages::TestWithStream::SendMachSendRight::Arguments>(globalObject, decoder);
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+        return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveMachSendRight::Arguments>(globalObject, decoder);
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+        return jsValueForDecodedArguments<Messages::TestWithStream::SendAndReceiveMachSendRight::Arguments>(globalObject, decoder);
+#endif
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return jsValueForDecodedArguments<Messages::TestWithStreamBuffer::SendStreamBuffer::Arguments>(globalObject, decoder);
     default:
@@ -559,6 +570,18 @@ Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName na
         return Vector<ArgumentDescription> {
             {"url", "String", nullptr, false},
         };
+#if PLATFORM(COCOA)
+    case MessageName::TestWithStream_SendMachSendRight:
+        return Vector<ArgumentDescription> {
+            {"a1", "MachSendRight", nullptr, false},
+        };
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+        return Vector<ArgumentDescription> {
+            {"a1", "MachSendRight", nullptr, false},
+        };
+#endif
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return Vector<ArgumentDescription> {
             {"stream", "IPC::StreamConnectionBuffer", nullptr, false},

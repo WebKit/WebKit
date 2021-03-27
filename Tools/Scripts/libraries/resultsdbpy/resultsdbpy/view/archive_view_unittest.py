@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,7 +22,6 @@
 
 import base64
 import json
-import time
 
 from fakeredis import FakeStrictRedis
 from resultsdbpy.controller.commit import Commit
@@ -30,10 +29,8 @@ from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.configuration_context_unittest import ConfigurationContextTest
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.mock_repository import MockStashRepository, MockSVNRepository
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 from resultsdbpy.view.view_routes_unittest import WebSiteTestCase
-from selenium.webdriver.support.select import Select
 
 
 class ArchiveViewUnittest(WebSiteTestCase):
@@ -43,7 +40,23 @@ class ArchiveViewUnittest(WebSiteTestCase):
             data=dict(
                 configuration=json.dumps(ConfigurationContextTest.CONFIGURATIONS[0], cls=Configuration.Encoder),
                 suite='layout-tests',
-                commits=json.dumps([MockStashRepository.safari().commit_for_id('bb6bda5f'), MockSVNRepository.webkit().commit_for_id(236542)], cls=Commit.Encoder),
+                commits=json.dumps([dict(
+                    repository_id='safari',
+                    id='d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                    branch='main',
+                    timestamp=1601668000,
+                    order=1,
+                    committer='jbedard@apple.com',
+                    message='Patch Series\n',
+                ), dict(
+                    repository_id='webkit',
+                    id='6',
+                    branch='trunk',
+                    timestamp=1601665100,
+                    order=0,
+                    committer='jbedard@apple.com',
+                    message='6th commit\n',
+                )], cls=Commit.Encoder),
             ),
             files=dict(file=base64.b64decode(MockModelFactory.ARCHIVE_ZIP)),
         )

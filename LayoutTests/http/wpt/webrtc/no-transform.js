@@ -1,1 +1,1 @@
-self.postMessage(self.registerRTCRtpScriptTransformer ? "on" : "off");
+self.postMessage(self.RTCRtpScriptTransformer ? "on" : "off");

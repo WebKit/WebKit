@@ -74,7 +74,7 @@ public:
     LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, Optional<LayoutUnit> availableSize) const;
     LayoutUnit gridItemOffset(GridTrackSizingDirection) const;
 
-    void updateGridAreaLogicalSize(RenderBox&, LayoutSize) const;
+    void updateGridAreaLogicalSize(RenderBox&, Optional<LayoutUnit> width, Optional<LayoutUnit> height) const;
     bool isBaselineAlignmentForChild(const RenderBox&) const;
     bool isBaselineAlignmentForChild(const RenderBox&, GridAxis) const;
 

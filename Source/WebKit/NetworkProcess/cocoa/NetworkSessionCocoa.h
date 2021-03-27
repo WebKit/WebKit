@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,6 @@ namespace WebKit {
 enum class NegotiatedLegacyTLS : bool;
 class LegacyCustomProtocolManager;
 class NetworkSessionCocoa;
-using HostAndPort = std::pair<String, uint16_t>;
 
 struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper> {
     void initialize(NSURLSessionConfiguration *, NetworkSessionCocoa&, WebCore::StoredCredentialsPolicy, NavigatingToAppBoundDomain);
@@ -75,6 +74,7 @@ public:
     const String& boundInterfaceIdentifier() const;
     const String& sourceApplicationBundleIdentifier() const;
     const String& sourceApplicationSecondaryIdentifier() const;
+    const String& attributedBundleIdentifier() const;
 #if PLATFORM(IOS_FAMILY)
     const String& dataConnectionServiceType() const;
 #endif
@@ -103,10 +103,6 @@ public:
     SessionWrapper& sessionWrapperForTask(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, Optional<NavigatingToAppBoundDomain>);
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
     
-    void clientCertificateSuggestedForHost(NetworkDataTaskCocoa::TaskIdentifier, NSURLCredential *, const String& host, uint16_t port);
-    void taskServerConnectionSucceeded(NetworkDataTaskCocoa::TaskIdentifier);
-    void taskFailed(NetworkDataTaskCocoa::TaskIdentifier);
-    NSURLCredential *successfulClientCertificateForHost(const String& host, uint16_t port) const;
     _NSHSTSStorage *hstsStorage() const;
 
 private:
@@ -147,6 +143,7 @@ private:
     String m_boundInterfaceIdentifier;
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
+    String m_attributedBundleIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
     RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
     bool m_deviceManagementRestrictionsEnabled { false };
@@ -155,14 +152,6 @@ private:
     bool m_fastServerTrustEvaluationEnabled { false };
     String m_dataConnectionServiceType;
     bool m_preventsSystemHTTPProxyAuthentication { false };
-
-    struct SuggestedClientCertificate {
-        String host;
-        uint16_t port { 0 };
-        RetainPtr<NSURLCredential> credential;
-    };
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, SuggestedClientCertificate> m_suggestedClientCertificates;
-    HashMap<HostAndPort, RetainPtr<NSURLCredential>> m_successfulClientCertificates;
 };
 
 } // namespace WebKit

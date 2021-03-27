@@ -127,18 +127,14 @@ LogsPageMessagesToSystemConsoleEnabled:
     WebCore:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-# FIXME: This is not relevent for WebCore, so should not have WebCore bindings.
 NeedsInAppBrowserPrivacyQuirks:
   type: bool
   humanReadableName: "Needs In-App Browser Privacy Quirks"
   humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
+  webcoreBinding: none
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
-      default: false
-    WebCore:
       default: false
 
 ResourceUsageOverlayVisible:

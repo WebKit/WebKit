@@ -1161,20 +1161,15 @@ static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSel
 
 static void invalidateFontCache()
 {
-    if (!isMainThread()) {
-        callOnMainThread([] {
-            invalidateFontCache();
-        });
-        return;
-    }
+    ensureOnMainThread([] {
+        SystemFontDatabaseCoreText::singleton().clear();
+        clearFontFamilySpecificationCoreTextCache();
 
-    SystemFontDatabaseCoreText::singleton().clear();
-    clearFontFamilySpecificationCoreTextCache();
+        FontDatabase::singletonAllowingUserInstalledFonts().clear();
+        FontDatabase::singletonDisallowingUserInstalledFonts().clear();
 
-    FontDatabase::singletonAllowingUserInstalledFonts().clear();
-    FontDatabase::singletonDisallowingUserInstalledFonts().clear();
-
-    FontCache::singleton().invalidate();
+        FontCache::singleton().invalidate();
+    });
 }
 
 static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)

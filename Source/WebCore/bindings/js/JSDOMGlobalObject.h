@@ -31,6 +31,7 @@
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/LockDuringMarking.h>
+#include <JavaScriptCore/WeakGCMap.h>
 
 namespace WebCore {
 
@@ -83,6 +84,9 @@ public:
 
     JSC::JSProxy& proxy() const { ASSERT(m_proxy); return *m_proxy.get(); }
 
+    JSC::JSFunction* createCrossOriginFunction(JSC::JSGlobalObject*, JSC::PropertyName, JSC::NativeFunction, unsigned length);
+    JSC::GetterSetter* createCrossOriginGetterSetter(JSC::JSGlobalObject*, JSC::PropertyName, JSC::GetValueFunc, JSC::PutValueFunc);
+
 public:
     ~JSDOMGlobalObject();
 
@@ -124,7 +128,11 @@ private:
     void addBuiltinGlobals(JSC::VM&);
     friend void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject&);
 
+    using CrossOriginMapKey = std::pair<JSC::JSGlobalObject*, void*>;
+
     JSBuiltinInternalFunctions m_builtinInternalFunctions;
+    JSC::WeakGCMap<CrossOriginMapKey, JSC::JSFunction> m_crossOriginFunctionMap;
+    JSC::WeakGCMap<CrossOriginMapKey, JSC::GetterSetter> m_crossOriginGetterSetterMap;
 };
 
 template<class ConstructorClass>

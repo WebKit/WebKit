@@ -135,10 +135,6 @@ public:
     size_t webHistoryItemCount();
     int windowCount();
 
-#if ENABLE(TEXT_AUTOSIZING)
-    void setTextAutosizingEnabled(bool);
-#endif
-
     void setAccummulateLogsForChannel(JSStringRef);
 
     void runUIScript(JSContextRef, JSStringRef, JSValueRef callback);

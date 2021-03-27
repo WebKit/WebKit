@@ -49,7 +49,7 @@
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
-#import "WKWebViewPrivateForTestingMac.h"
+#import "WKWebViewPrivateForTesting.h"
 #import "WebColorPickerMac.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebDataListSuggestionsDropdownMac.h"
@@ -496,11 +496,23 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
 }
 
 #if ENABLE(CONTEXT_MENUS)
+
 Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
 {
     return WebContextMenuProxyMac::create(m_view, page, WTFMove(context), userData);
 }
-#endif
+
+void PageClientImpl::didShowContextMenu()
+{
+    [m_webView _didShowContextMenu];
+}
+
+void PageClientImpl::didDismissContextMenu()
+{
+    [m_webView _didDismissContextMenu];
+}
+
+#endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(INPUT_TYPE_COLOR)
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions)
@@ -991,6 +1003,20 @@ WebCore::Color PageClientImpl::accentColor()
     return WebCore::colorFromNSColor([NSApp _effectiveAccentColor]);
 }
 #endif
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+bool PageClientImpl::canHandleContextMenuTranslation() const
+{
+    return m_impl->canHandleContextMenuTranslation();
+}
+
+void PageClientImpl::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const WebCore::IntPoint& menuLocation)
+{
+    m_impl->handleContextMenuTranslation(text, boundsInView, menuLocation);
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 } // namespace WebKit
 

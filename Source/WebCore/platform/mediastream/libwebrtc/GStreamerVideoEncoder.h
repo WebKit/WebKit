@@ -24,8 +24,26 @@
 
 G_BEGIN_DECLS
 
-#define WEBRTC_TYPE_VIDEO_ENCODER (webrtc_video_encoder_get_type())
+#define WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER (webkit_webrtc_video_encoder_get_type())
+#define WEBKIT_WEBRTC_VIDEO_ENCODER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER, WebKitWebrtcVideoEncoder))
+#define WEBKIT_WEBRTC_VIDEO_ENCODER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER, WebKitWebrtcVideoEncoderClass))
+#define WEBKIT_IS_WEBRTC_VIDEO_ENCODER(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER))
+#define WEBKIT_IS_WEBRTC_VIDEO_ENCODER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER))
 
-G_DECLARE_FINAL_TYPE (WebrtcVideoEncoder, webrtc_video_encoder, WEBRTC, VIDEO_ENCODER, GstBin)
+typedef struct _WebKitWebrtcVideoEncoder WebKitWebrtcVideoEncoder;
+typedef struct _WebKitWebrtcVideoEncoderClass WebKitWebrtcVideoEncoderClass;
+typedef struct _WebKitWebrtcVideoEncoderPrivate WebKitWebrtcVideoEncoderPrivate;
+
+struct _WebKitWebrtcVideoEncoder {
+    GstBin parent;
+
+    WebKitWebrtcVideoEncoderPrivate* priv;
+};
+
+struct _WebKitWebrtcVideoEncoderClass {
+    GstBinClass parentClass;
+};
+
+GType webkit_webrtc_video_encoder_get_type(void);
 
 G_END_DECLS

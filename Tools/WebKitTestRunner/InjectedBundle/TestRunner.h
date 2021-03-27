@@ -141,6 +141,7 @@ public:
     // Local storage
     void clearAllDatabases();
     void setDatabaseQuota(uint64_t);
+    void setQuotaLoggingEnabled(bool);
     JSRetainPtr<JSStringRef> pathToLocalResource(JSStringRef);
     void syncLocalStorage();
 
@@ -514,10 +515,10 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(JSStringRef);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(JSStringRef);
-    void setPrivateClickMeasurementAttributionReportURLForTesting(JSStringRef);
+    void setPrivateClickMeasurementAttributionReportURLsForTesting(JSStringRef sourceURL, JSStringRef attributeOnURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
-    void setFraudPreventionValuesForTesting(JSStringRef secretToken, JSStringRef unlinkableToken, JSStringRef signature, JSStringRef keyID);
+    void setPrivateClickMeasurementFraudPreventionValuesForTesting(JSStringRef unlinkableToken, JSStringRef secretToken, JSStringRef signature, JSStringRef keyID);
     void simulateResourceLoadStatisticsSessionRestart();
 
     void setIsSpeechRecognitionPermissionGranted(bool);

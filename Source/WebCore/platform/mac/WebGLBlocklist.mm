@@ -104,14 +104,10 @@ static OSBuildInfo buildInfoFromOSBuildString(NSString *buildString)
 
 bool WebGLBlocklist::shouldBlockWebGL()
 {
-    BlocklistUpdater::initializeQueue();
-
-    __block bool shouldBlock = false;
-    dispatch_sync(BlocklistUpdater::queue(), ^{
+    bool shouldBlock = false;
+    BlocklistUpdater::queue().dispatchSync([&shouldBlock] {
         BlocklistUpdater::reloadIfNecessary();
-
-        WebGLBlocklist* webGLBlocklist = BlocklistUpdater::webGLBlocklist();
-        if (webGLBlocklist)
+        if (auto* webGLBlocklist = BlocklistUpdater::webGLBlocklist())
             shouldBlock = webGLBlocklist->shouldBlock();
     });
 
@@ -120,14 +116,10 @@ bool WebGLBlocklist::shouldBlockWebGL()
 
 bool WebGLBlocklist::shouldSuggestBlockingWebGL()
 {
-    BlocklistUpdater::initializeQueue();
-
-    __block bool shouldSuggestBlocking = false;
-    dispatch_sync(BlocklistUpdater::queue(), ^{
+    bool shouldSuggestBlocking = false;
+    BlocklistUpdater::queue().dispatchSync([&shouldSuggestBlocking] {
         BlocklistUpdater::reloadIfNecessary();
-
-        WebGLBlocklist* webGLBlocklist = BlocklistUpdater::webGLBlocklist();
-        if (webGLBlocklist)
+        if (auto* webGLBlocklist = BlocklistUpdater::webGLBlocklist())
             shouldSuggestBlocking = webGLBlocklist->shouldSuggestBlocking();
     });
 

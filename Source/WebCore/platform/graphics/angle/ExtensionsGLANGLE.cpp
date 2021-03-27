@@ -107,46 +107,6 @@ void ExtensionsGLANGLE::initializeAvailableExtensions()
     m_initializedAvailableExtensions = true;
 }
 
-PlatformGLObject ExtensionsGLANGLE::createVertexArrayOES()
-{
-    if (!m_context->makeContextCurrent())
-        return 0;
-
-    GLuint array = 0;
-    gl::GenVertexArraysOES(1, &array);
-    return array;
-}
-
-void ExtensionsGLANGLE::deleteVertexArrayOES(PlatformGLObject array)
-{
-    if (!array)
-        return;
-
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::DeleteVertexArraysOES(1, &array);
-}
-
-GCGLboolean ExtensionsGLANGLE::isVertexArrayOES(PlatformGLObject array)
-{
-    if (!array)
-        return GL_FALSE;
-
-    if (!m_context->makeContextCurrent())
-        return GL_FALSE;
-
-    return gl::IsVertexArrayOES(array);
-}
-
-void ExtensionsGLANGLE::bindVertexArrayOES(PlatformGLObject array)
-{
-    if (!m_context->makeContextCurrent())
-        return;
-
-    gl::BindVertexArrayOES(array);
-}
-
 bool ExtensionsGLANGLE::supportsExtension(const String& name)
 {
     return m_availableExtensions.contains(name) || m_requestableExtensions.contains(name);

@@ -752,6 +752,7 @@ namespace JSC {
         template<typename Op>
         void emitNewFuncExprCommon(const Instruction*);
         void emitVarInjectionCheck(bool needsVarInjectionChecks);
+        void emitVarReadOnlyCheck(ResolveType);
         void emitResolveClosure(VirtualRegister dst, VirtualRegister scope, bool needsVarInjectionChecks, unsigned depth);
         void emitLoadWithStructureCheck(VirtualRegister scope, Structure** structureSlot);
 #if USE(JSVALUE64)

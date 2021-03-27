@@ -15,7 +15,7 @@
 
     if (window.testRunner) {
         testRunner.setPrivateClickMeasurementOverrideTimerForTesting(true);
-        testRunner.setPrivateClickMeasurementAttributionReportURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/conversionReport.php");
+        testRunner.setPrivateClickMeasurementAttributionReportURLsForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/conversionReport.php", "http://localhost:8000/privateClickMeasurement/resources/conversionReport.php");
     }
 
     function activateElement(elementID) {

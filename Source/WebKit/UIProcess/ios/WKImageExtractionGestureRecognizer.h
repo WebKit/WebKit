@@ -33,6 +33,7 @@
 
 @protocol WKImageExtractionGestureRecognizerDelegate <UIGestureRecognizerDelegate>
 - (void)imageExtractionGestureDidBegin:(WKImageExtractionGestureRecognizer *)gesture;
+- (void)imageExtractionGestureDidFail:(WKImageExtractionGestureRecognizer *)gesture;
 @end
 
 @interface WKImageExtractionGestureRecognizer : UILongPressGestureRecognizer

@@ -89,7 +89,7 @@
 {
     [super _notifyObserversOfChangeFromValuesForKeys:oldValues toValuesForKeys:newValues];
 
-    if (!isMainThread()) {
+    if (!isMainRunLoop()) {
         [self findPreferenceChangesAndNotifyForKeys:oldValues toValuesForKeys:newValues];
         return;
     }

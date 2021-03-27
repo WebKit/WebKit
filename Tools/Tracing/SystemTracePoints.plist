@@ -471,6 +471,18 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Create injected bundle</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12017</string>
+                 <key>CodeEnd</key>
+                 <string>12018</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Commit RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>

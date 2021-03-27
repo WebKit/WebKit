@@ -39,8 +39,6 @@ public:
     OffscreenCanvasRenderingContext2D(CanvasBase&);
     virtual ~OffscreenCanvasRenderingContext2D();
 
-    bool isOffscreen2d() const override { return true; }
-
     OffscreenCanvas& canvas() const { return downcast<OffscreenCanvas>(canvasBase()); }
 
     void commit();
@@ -52,6 +50,7 @@ public:
     Ref<TextMetrics> measureText(const String& text);
 
 private:
+    bool isOffscreen2d() const final { return true; }
     const FontProxy* fontProxy() final;
 };
 

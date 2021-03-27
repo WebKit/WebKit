@@ -29,11 +29,15 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandleInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKFrameInfo
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKFrameInfo.class, self))
+        return;
+
     _frameInfo->~FrameInfo();
 
     [super dealloc];

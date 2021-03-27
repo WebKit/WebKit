@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: ReferenceError: Can't find variable: ResizeObserver
+
+Harness Error (FAIL), message = Unhandled rejection: Can't find variable: ResizeObserver
+
+TIMEOUT ResizeObserver skipped while hidden Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: Can't find variable: ResizeObserver
+
+TIMEOUT ResizeObserver skipped while hidden Test timed out
+

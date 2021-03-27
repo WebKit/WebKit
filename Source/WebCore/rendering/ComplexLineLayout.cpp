@@ -1552,8 +1552,17 @@ void ComplexLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState,
         }
 
         // If there were no breaks in the block, we didn't create any widows.
-        if (!lineBox || !lineBox->isFirstAfterPageBreak() || lineBox == firstLineInBlock)
+        if (!lineBox || !lineBox->isFirstAfterPageBreak() || lineBox == firstLineInBlock) {
+            if (m_flow.shouldBreakAtLineToAvoidWidow()) {
+                // This is the case when the previous line layout marks a line to break at to avoid widows
+                // but the current layout does not produce that line. It happens when layout constraints unexpectedly
+                // change in between layouts (note that these paginated line layouts run within the same layout frame
+                // as opposed to two subsequent full layouts).
+                ASSERT_NOT_REACHED();
+                m_flow.clearShouldBreakAtLineToAvoidWidow();
+            }
             return;
+        }
 
         if (numLinesHanging < style().widows()) {
             // We have detected a widow. Now we need to work out how many

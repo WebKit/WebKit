@@ -336,6 +336,7 @@ public:
     static bool http3Enabled();
 
     void resetQuota(CompletionHandler<void()>&&);
+    void setQuotaLoggingEnabled(bool enabled, CompletionHandler<void()>&&);
 
 #if ENABLE(APP_BOUND_DOMAINS)
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
@@ -357,7 +358,7 @@ private:
     void addTestDomains() const;
 #endif
 
-    void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
+    void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Ref<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
     void platformInitialize();
     void platformDestroy();

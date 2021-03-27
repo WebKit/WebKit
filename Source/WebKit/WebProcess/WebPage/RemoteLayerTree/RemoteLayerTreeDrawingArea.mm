@@ -65,7 +65,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     webPage.corePage()->settings().setForceCompositingMode(true);
     m_rootLayer->setName("drawing area root");
 
-    m_commitQueue = dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr);
+    m_commitQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr));
 
     // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because DisplayRefreshMonitor
     // is driven by this class), give each page a unique DisplayID derived from WebPage's unique ID.
@@ -78,10 +78,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
         setViewExposedRect(viewExposedRect);
 }
 
-RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
-{
-    dispatch_release(m_commitQueue);
-}
+RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea() = default;
 
 void RemoteLayerTreeDrawingArea::setNeedsDisplay()
 {
@@ -385,8 +382,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(layerTransaction, scrollingTransaction);
-    auto commitEncoder = makeUnique<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
-    *commitEncoder << message.arguments();
+    auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
+    commitEncoder.get() << message.arguments();
 
     // FIXME: Move all backing store flushing management to RemoteLayerBackingStoreCollection.
     bool hadAnyChangedBackingStore = false;
@@ -412,7 +409,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
     auto pageID = m_webPage.identifier();
-    dispatch_async(m_commitQueue, [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
+    dispatch_async(m_commitQueue.get(), [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
         backingStoreFlusher->flush();
 
         MonotonicTime timestamp = MonotonicTime::now();
@@ -457,14 +454,14 @@ bool RemoteLayerTreeDrawingArea::markLayersVolatileImmediatelyIfPossible()
     return m_remoteLayerTreeContext->backingStoreCollection().markAllBackingStoreVolatileImmediatelyIfPossible();
 }
 
-Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, std::unique_ptr<IPC::Encoder> encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
+Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
 {
     return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(connection, WTFMove(encoder), WTFMove(flushers)));
 }
 
-RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(IPC::Connection* connection, std::unique_ptr<IPC::Encoder> encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
+RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(IPC::Connection* connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
     : m_connection(connection)
-    , m_commitEncoder(WTFMove(encoder))
+    , m_commitEncoder(encoder.moveToUniquePtr())
     , m_flushers(WTFMove(flushers))
     , m_hasFlushed(false)
 {
@@ -480,7 +477,8 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
         flusher->flush();
     m_hasFlushed = true;
 
-    m_connection->sendMessage(WTFMove(m_commitEncoder), { });
+    ASSERT(m_commitEncoder);
+    m_connection->sendMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_commitEncoder)), { });
 }
 
 void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)

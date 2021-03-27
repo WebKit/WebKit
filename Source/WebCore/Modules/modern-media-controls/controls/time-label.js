@@ -73,15 +73,15 @@ class TimeLabel extends LayoutNode
             const timeAsString = formattedStringForDuration(this.value);
             switch (this._type) {
             case TimeLabel.Type.Elapsed:
-                this.element.setAttribute("aria-label", `${UIString("Elapsed")}: ${timeAsString}`);
+                this.element.setAttribute("aria-label", UIString("Elapsed: %s", timeAsString));
                 break;
 
             case TimeLabel.Type.Remaining:
-                this.element.setAttribute("aria-label", `${UIString("Remaining")}: ${timeAsString}`);
+                this.element.setAttribute("aria-label", UIString("Remaining: %s", timeAsString));
                 break;
 
             case TimeLabel.Type.Duration:
-                this.element.setAttribute("aria-label", `${UIString("Duration")}: ${timeAsString}`);
+                this.element.setAttribute("aria-label", UIString("Duration: %s", timeAsString));
                 break;
             }
 

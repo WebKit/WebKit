@@ -242,6 +242,14 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if HAVE(NETWORK_LOADER)
 @property BOOL _usesNWLoader;
 #endif
+#if HAVE(CFNETWORK_NSURLSESSION_CONNECTION_CACHE_LIMITS)
+@property (readwrite, assign) NSInteger _connectionCacheNumPriorityLevels;
+@property (readwrite, assign) NSInteger _connectionCacheNumFastLanes;
+@property (readwrite, assign) NSInteger _connectionCacheMinimumFastLanePriority;
+#endif
+#if HAVE(HAVE_CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
+@property (nullable, copy) NSString *_attributedBundleIdentifier;
+#endif
 @end
 
 @interface NSURLSessionTask ()

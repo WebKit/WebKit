@@ -44,14 +44,10 @@ void TaskDispatcher<Timer>::postTask(Function<void()>&& function)
         pendingDispatchers().append(makeWeakPtr(*this));
     }
 
-    auto startTimer = [] {
+    ensureOnMainThread([] {
         if (!sharedTimer().isActive())
             sharedTimer().startOneShot(0_s);
-    };
-    if (isMainThread())
-        startTimer();
-    else
-        callOnMainThread(WTFMove(startTimer));
+    });
 }
 
 Timer& TaskDispatcher<Timer>::sharedTimer()

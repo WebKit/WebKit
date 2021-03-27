@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>media-source-abort-resets-parser</title>
+    <title>media-source-resize</title>
     <script src="media-source-loader.js"></script>
     <script src="../video-test.js"></script>
     <script>
@@ -54,8 +54,8 @@
 </head>
 <body onload="runTest()">
     <div>
-        This tests the ability of the SourceBuffer to reset the parser after an abort(). A SourceBuffer in this state should be able to accept
-        a new initialization segment or a new media segment.
+        This tests that a video element receives "resize" event correctly
+        when we append initialization and media segment to its source buffer.
     </div>
     <video controls></video>
 </body>

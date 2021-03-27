@@ -151,7 +151,7 @@ public:
     void resetUserMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
 
     // Device Orientation / Motion.
-    bool handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef);
+    bool handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef, WKFrameInfoRef);
 
     // Content Extensions.
     void configureContentExtensionForTest(const TestInvocation&);
@@ -204,7 +204,7 @@ public:
     void setIgnoresViewportScaleLimits(bool);
 
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
-    void setShouldAllowDeviceOrientationAndMotionAccess(bool value) { m_shouldAllowDeviceOrientationAndMotionAccess = value; }
+    void setShouldAllowDeviceOrientationAndMotionAccess(bool);
 
     void clearStatisticsDataForDomain(WKStringRef domain);
     bool doesStatisticsDomainIDExistInDatabase(unsigned domainID);
@@ -281,6 +281,7 @@ public:
     void terminateServiceWorkers();
 
     void resetQuota();
+    void setQuotaLoggingEnabled(bool);
 
     void removeAllSessionCredentials();
 
@@ -348,9 +349,9 @@ public:
     void simulateResourceLoadStatisticsSessionRestart();
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(WKURLRef);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef);
-    void setPrivateClickMeasurementAttributionReportURLForTesting(WKURLRef);
+    void setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef attributeOnURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
-    void setFraudPreventionValuesForTesting(WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID);
+    void setPCMFraudPreventionValuesForTesting(WKStringRef unlinkableToken, WKStringRef secretToken, WKStringRef signature, WKStringRef keyID);
 
     void didSetAppBoundDomains() const;
 

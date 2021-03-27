@@ -354,6 +354,15 @@ public:
         return newPoint;
     }
 
+    FloatPoint convertChildToSelf(const Widget* child, const FloatPoint& point) const
+    {
+        FloatPoint newPoint = point;
+        if (!isScrollViewScrollbar(child))
+            newPoint -= toFloatSize(scrollPosition());
+        newPoint.moveBy(child->location());
+        return newPoint;
+    }
+
     IntPoint convertSelfToChild(const Widget* child, const IntPoint& point) const
     {
         IntPoint newPoint = point;

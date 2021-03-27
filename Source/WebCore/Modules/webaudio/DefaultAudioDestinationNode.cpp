@@ -49,6 +49,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
 DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& context, Optional<float> sampleRate)
     : AudioDestinationNode(context, sampleRate.valueOr(AudioDestination::hardwareSampleRate()))
 {
+    ASSERT(BaseAudioContext::isSupportedSampleRate(AudioDestination::hardwareSampleRate()));
     initializeDefaultNodeOptions(2, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
 }
 
@@ -133,7 +134,7 @@ Function<void(Function<void()>&&)> DefaultAudioDestinationNode::dispatchToRender
             }, WorkerRunLoop::defaultMode());
         };
     }
-    return [](Function<void()>&& function) { function(); };
+    return nullptr;
 }
 
 void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)

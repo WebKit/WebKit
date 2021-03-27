@@ -1798,7 +1798,7 @@ sub get_function_line_ranges_for_python($$)
     my @ranges;
 
     my $multilineStringLiteralSentinelRegEx = qr#(?:"""|''')#;
-    my $multilineStringLiteralStartRegEx = qr#^\s*$multilineStringLiteralSentinelRegEx#;
+    my $multilineStringLiteralStartRegEx = qr#\s*$multilineStringLiteralSentinelRegEx#;
     my $multilineStringLiteralEndRegEx = qr#$multilineStringLiteralSentinelRegEx\s*$#;
 
     my @scopeStack = ({ line => 0, indent => -1, name => undef });

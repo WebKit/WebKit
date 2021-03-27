@@ -653,7 +653,7 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled() const
 
     bool disabled = player->wirelessVideoPlaybackDisabled();
     INFO_LOG(LOGIDENTIFIER, "returning ", disabled, " because media engine says so");
-    
+
     return disabled;
 }
 
@@ -812,7 +812,7 @@ void MediaElementSession::mediaEngineUpdated()
     if (m_shouldPlayToPlaybackTarget)
         client().setShouldPlayToPlaybackTarget(true);
 #endif
-    
+
 }
 
 void MediaElementSession::resetPlaybackSessionState()
@@ -1088,7 +1088,7 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
         ASSERT_NOT_REACHED();
         return;
     }
-    
+
     if (auto handler = session->handlerForAction(actionDetails.action))
         handler->handleEvent(actionDetails);
     else
@@ -1110,11 +1110,17 @@ Optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
 #if ENABLE(MEDIA_SESSION)
     auto* window = m_element.document().domWindow();
     auto* sessionMetadata = window ? NavigatorMediaSession::mediaSession(window->navigator()).metadata() : nullptr;
-    if (sessionMetadata)
-        return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), m_element.sourceApplicationIdentifier(), duration, currentTime, supportsSeeking, m_element.mediaSessionUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility };
+    if (sessionMetadata) {
+        Optional<NowPlayingInfoArtwork> artwork;
+        if (sessionMetadata->artworkImage()) {
+            // FIXME: Optimize so that we only send an image if it changes.
+            artwork = NowPlayingInfoArtwork { sessionMetadata->artworkSrc(), sessionMetadata->artworkImage()->mimeType(), sessionMetadata->artworkImage()->data() };
+        }
+        return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), m_element.sourceApplicationIdentifier(), duration, currentTime, supportsSeeking, m_element.mediaSessionUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
+    }
 #endif
 
-    return NowPlayingInfo { m_element.mediaSessionTitle(), emptyString(), emptyString(), m_element.sourceApplicationIdentifier(), duration, currentTime, supportsSeeking, m_element.mediaSessionUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility };
+    return NowPlayingInfo { m_element.mediaSessionTitle(), emptyString(), emptyString(), m_element.sourceApplicationIdentifier(), duration, currentTime, supportsSeeking, m_element.mediaSessionUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { }};
 }
 
 void MediaElementSession::updateMediaUsageIfChanged()
@@ -1194,7 +1200,7 @@ String convertEnumerationToString(const MediaPlaybackDenialReason enumerationVal
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
-    
+
 }
 
 #endif // ENABLE(VIDEO)

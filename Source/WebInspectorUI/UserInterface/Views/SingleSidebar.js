@@ -116,7 +116,7 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
             this._navigationBar.selectedNavigationItem = this.selectedSidebarPanel?.navigationItem ?? null;
     }
 
-    didSetCollapsed(flag)
+    didSetCollapsed()
     {
         if (this.selectedSidebarPanel) {
             if (this.collapsed) {
@@ -128,7 +128,7 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
             }
         }
 
-        if (!flag && this._navigationBar)
+        if (!this.collapsed && this._navigationBar)
             this._navigationBar.needsLayout();
     }
 

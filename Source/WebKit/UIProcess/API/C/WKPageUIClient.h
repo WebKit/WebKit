@@ -133,7 +133,7 @@ typedef void (*WKDidLosePointerLockCallback)(WKPageRef page, const void* clientI
 typedef void (*WKHasVideoInPictureInPictureDidChangeCallback)(WKPageRef page, bool hasVideoInPictureInPicture, const void* clientInfo);
 typedef void (*WKDidExceedBackgroundResourceLimitWhileInForegroundCallback)(WKPageRef page, WKResourceLimit limit, const void* clientInfo);
 typedef void (*WKPageDidResignInputElementStrongPasswordAppearanceCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
-typedef bool (*WKPageShouldAllowDeviceOrientationAndMotionAccessCallback)(WKPageRef page, WKSecurityOriginRef securityOrigin, const void *clientInfo);
+typedef bool (*WKPageShouldAllowDeviceOrientationAndMotionAccessCallback)(WKPageRef page, WKSecurityOriginRef securityOrigin, WKFrameInfoRef frame, const void *clientInfo);
 
 typedef void (*WKPageRunWebAuthenticationPanelCallback)();
 typedef void (*WKPageDecidePolicyForSpeechRecognitionPermissionRequestCallback)(WKPageRef page, WKSecurityOriginRef topOrigin, WKSpeechRecognitionPermissionCallbackRef callback);

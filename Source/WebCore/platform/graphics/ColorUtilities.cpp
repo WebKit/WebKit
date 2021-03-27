@@ -37,7 +37,9 @@ SRGBA<float> premultiplied(const SRGBA<float>& color)
 SRGBA<float> unpremultiplied(const SRGBA<float>& color)
 {
     auto [r, g, b, a] = color;
-    return { r / a, g / a, b / a, a };
+    if (!a)
+        return color;
+    return makeFromComponentsClampingExceptAlpha<SRGBA<float>>(r / a, g / a, b / a, a);
 }
 
 SRGBA<uint8_t> premultipliedFlooring(SRGBA<uint8_t> color)

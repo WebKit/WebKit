@@ -42,6 +42,12 @@ struct GPUProcessCreationParameters {
 #if ENABLE(MEDIA_STREAM)
     bool useMockCaptureDevices { false };
     SandboxExtension::Handle cameraSandboxExtensionHandle;
+#if HAVE(AUDIT_TOKEN)
+    SandboxExtension::Handle appleCameraServicePathSandboxExtensionHandle;
+#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+    SandboxExtension::Handle additionalAppleCameraServicePathSandboxExtensionHandle;
+#endif
+#endif // HAVE(AUDIT_TOKEN)
     SandboxExtension::Handle microphoneSandboxExtensionHandle;
 #if PLATFORM(IOS)
     SandboxExtension::Handle tccSandboxExtensionHandle;

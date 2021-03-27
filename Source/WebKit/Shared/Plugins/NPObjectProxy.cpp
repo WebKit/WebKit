@@ -302,15 +302,9 @@ void NPObjectProxy::NP_Deallocate(NPObject* npObject)
     // Since NPAPI behavior on a background thread is undefined, it is okay to limit this workaround to the one API
     // that is known to be misused during plugin teardown, and to not be concerned about change in behavior if this
     // occured at any other time.
-    if (!RunLoop::isMain()) {
-        RunLoop::main().dispatch([npObject] {
-            NP_Deallocate(npObject);
-        });
-        return;
-    }
-    
-    NPObjectProxy* npObjectProxy = toNPObjectProxy(npObject);
-    delete npObjectProxy;
+    ensureOnMainRunLoop([npObject] {
+        delete toNPObjectProxy(npObject);
+    });
 }
 
 bool NPObjectProxy::NP_HasMethod(NPObject* npObject, NPIdentifier methodName)

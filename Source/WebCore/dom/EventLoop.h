@@ -182,6 +182,8 @@ public:
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint
     void performMicrotaskCheckpoint();
 
+    void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
+
 private:
     enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };
 

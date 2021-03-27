@@ -260,6 +260,7 @@ windowtext
 -apple-system-red
 -apple-system-yellow
 -apple-system-app-highlight-background
+-webkit-control-background
 #endif
 #if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
 -apple-system-alternate-selected-text
@@ -275,9 +276,11 @@ windowtext
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 -apple-system-indigo
 -apple-system-teal
-#endif
-#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
--webkit-control-background
+-apple-system-fill
+-apple-system-secondary-fill
+-apple-system-secondary-fill-disabled
+-apple-system-tertiary-fill
+-apple-system-opaque-separator
 #endif
 -webkit-focus-ring-color
 currentcolor

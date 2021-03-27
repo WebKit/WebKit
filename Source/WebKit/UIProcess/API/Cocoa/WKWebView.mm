@@ -138,6 +138,7 @@
 #import <WebCore/TextManipulationController.h>
 #import <WebCore/VersionChecks.h>
 #import <WebCore/ViewportArguments.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/BlockPtr.h>
@@ -616,6 +617,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebView.class, self))
+        return;
+
 #if PLATFORM(MAC)
     [_textFinderClient willDestroyView:self];
 #endif
@@ -1399,24 +1403,6 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-- (BOOL)_hasBlankOverlay
-{
-    return !!_blankOverlayView;
-}
-
-- (void)_setHasBlankOverlay:(BOOL)hasBlankOverlay
-{
-    if (!!_blankOverlayView == hasBlankOverlay)
-        return;
-
-    if (hasBlankOverlay) {
-        _blankOverlayView = adoptNS([[WKBlankOverlayView alloc] initWithFrame:[self bounds]]);
-        [self addSubview:_blankOverlayView.get()];
-    } else {
-        [_blankOverlayView removeFromSuperview];
-        _blankOverlayView = nullptr;
-    }
-}
 
 - (id <_WKAppHighlightDelegate>)_appHighlightDelegate
 {
@@ -1580,6 +1566,32 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:editorStateDidChange:)])
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
+}
+
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
+{
+    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
+}
+
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
+{
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
+
+    return [self loadSimulatedRequest:request withResponse:response.get() responseData:data];
+}
+
+- (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
+{
+    auto URL = request.URL;
+
+    if (![URL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
+
+    if (![readAccessURL isFileURL])
+        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
+
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
 }
 
 @end
@@ -2197,32 +2209,6 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     return wrapper(_page->loadRequest(request, policy));
 }
 
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
-{
-    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
-}
-
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
-{
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
-
-    return [self loadSimulatedRequest:request withResponse:response.get() responseData:data];
-}
-
-- (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
-{
-    auto URL = request.URL;
-
-    if (![URL isFileURL])
-        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
-
-    if (![readAccessURL isFileURL])
-        [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
-
-    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
-}
-
 - (void)_grantAccessToAssetServices
 {
     if (_page)
@@ -2233,6 +2219,12 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 {
     if (_page)
         _page->revokeAccessToAssetServices();
+}
+
+- (void)_switchFromStaticFontRegistryToUserFontRegistry
+{
+    if (_page)
+        _page->switchFromStaticFontRegistryToUserFontRegistry();
 }
 
 - (NSArray *)_certificateChain

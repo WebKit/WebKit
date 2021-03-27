@@ -63,7 +63,7 @@ public:
     WEBCORE_EXPORT void setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver*);
 
     // PlaybackSessionModelClient
-    WEBCORE_EXPORT void rateChanged(bool isPlaying, float playbackRate) override;
+    WEBCORE_EXPORT void rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate) override;
     WEBCORE_EXPORT void externalPlaybackChanged(bool  enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
     WEBCORE_EXPORT void ensureControlsManager() override;
 

@@ -243,12 +243,12 @@ describe("/api/measurement-set", function () {
         return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
         }).then((result) => {
             return TestServer.remoteAPI().getJSON(`/api/measurement-set/?metric=${result.metricId}`);
         }).then((response) => {
-            assert.equal(response['status'], 'AmbiguousRequest');
+            assert.strictEqual(response['status'], 'AmbiguousRequest');
         });
     });
 
@@ -256,12 +256,12 @@ describe("/api/measurement-set", function () {
         return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
         }).then((result) => {
             return TestServer.remoteAPI().getJSON(`/api/measurement-set/?platform=${result.platformId}`);
         }).then((response) => {
-            assert.equal(response['status'], 'AmbiguousRequest');
+            assert.strictEqual(response['status'], 'AmbiguousRequest');
         });
     });
 
@@ -269,12 +269,12 @@ describe("/api/measurement-set", function () {
         return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
         }).then((result) => {
             return TestServer.remoteAPI().getJSON(`/api/measurement-set/?platform=${result.platformId}a&metric=${result.metricId}`);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidPlatform');
+            assert.strictEqual(response['status'], 'InvalidPlatform');
         });
     });
 
@@ -282,12 +282,12 @@ describe("/api/measurement-set", function () {
         return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
         }).then((result) => {
             return TestServer.remoteAPI().getJSON(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}b`);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidMetric');
+            assert.strictEqual(response['status'], 'InvalidMetric');
         });
     });
 
@@ -317,7 +317,7 @@ describe("/api/measurement-set", function () {
             return TestServer.remoteAPI().getJSONWithStatus(`/api/measurement-set/?platform=46&metric=5`).then((response) => {
                 assert(false);
             }, (error) => {
-                assert.equal(error, 404);
+                assert.strictEqual(error, 404);
             });
         });
     });
@@ -326,31 +326,31 @@ describe("/api/measurement-set", function () {
         return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
         }).then((result) => {
             return TestServer.remoteAPI().getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
         }).then((response) => {
             const buildTime = +(new Date(reportWithBuildTime[0]['buildTime']));
 
-            assert.deepEqual(Object.keys(response).sort(),
+            assert.deepStrictEqual(Object.keys(response).sort(),
                 ['clusterCount', 'clusterSize', 'clusterStart',
                   'configurations', 'elapsedTime', 'endTime', 'formatMap', 'lastModified', 'startTime', 'status']);
-            assert.equal(response['status'], 'OK');
-            assert.equal(response['clusterCount'], 1);
-            assert.deepEqual(response['formatMap'], [
+            assert.strictEqual(response['status'], 'OK');
+            assert.strictEqual(response['clusterCount'], 1);
+            assert.deepStrictEqual(response['formatMap'], [
                 'id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier',
                 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder']);
 
-            assert.equal(response['startTime'], reportWithBuildTime.startTime);
+            assert.strictEqual(response['startTime'], reportWithBuildTime.startTime);
             assert(typeof(response['lastModified']) == 'number', 'lastModified time should be a numeric');
 
-            assert.deepEqual(Object.keys(response['configurations']), ['current']);
+            assert.deepStrictEqual(Object.keys(response['configurations']), ['current']);
 
             const currentRows = response['configurations']['current'];
-            assert.equal(currentRows.length, 1);
-            assert.equal(currentRows[0].length, response['formatMap'].length);
-            assert.deepEqual(format(response['formatMap'], currentRows[0]), {
+            assert.strictEqual(currentRows.length, 1);
+            assert.strictEqual(currentRows[0].length, response['formatMap'].length);
+            assert.deepStrictEqual(format(response['formatMap'], currentRows[0]), {
                 mean: 3,
                 iterationCount: 5,
                 sum: 15,
@@ -367,7 +367,7 @@ describe("/api/measurement-set", function () {
         return addBuilderForReport(reportWithBuildTime[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', reportWithBuildTime);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return queryPlatformAndMetric('Mountain Lion', 'Time');
         }).then((result) => {
             const db = TestServer.database();
@@ -383,20 +383,20 @@ describe("/api/measurement-set", function () {
             const builders = result[2];
             const response = result[3];
 
-            assert.equal(runs.length, 1);
-            assert.equal(builds.length, 1);
-            assert.equal(builders.length, 1);
+            assert.strictEqual(runs.length, 1);
+            assert.strictEqual(builds.length, 1);
+            assert.strictEqual(builders.length, 1);
             const measurementId = runs[0]['id'];
             const buildId = builds[0]['id'];
             const builderId = builders[0]['id'];
 
-            assert.equal(response['configurations']['current'].length, 1);
+            assert.strictEqual(response['configurations']['current'].length, 1);
             const measurement = response['configurations']['current'][0];
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
 
-            assert.equal(measurement[response['formatMap'].indexOf('id')], measurementId);
-            assert.equal(measurement[response['formatMap'].indexOf('build')], buildId);
-            assert.equal(measurement[response['formatMap'].indexOf('builder')], builderId);
+            assert.strictEqual(measurement[response['formatMap'].indexOf('id')], measurementId);
+            assert.strictEqual(measurement[response['formatMap'].indexOf('build')], buildId);
+            assert.strictEqual(measurement[response['formatMap'].indexOf('builder')], builderId);
         });
     });
 
@@ -428,8 +428,8 @@ describe("/api/measurement-set", function () {
             const revisionTime = +(new Date(reportWithRevision[0]['revisions']['WebKit']['timestamp']));
             const revisionBuildTime = +(new Date(reportWithRevision[0]['buildTime']));
 
-            assert.equal(currentRows.length, 2);
-            assert.deepEqual(format(response['formatMap'], currentRows[0]), {
+            assert.strictEqual(currentRows.length, 2);
+            assert.deepStrictEqual(format(response['formatMap'], currentRows[0]), {
                mean: 13,
                iterationCount: 5,
                sum: 65,
@@ -439,7 +439,7 @@ describe("/api/measurement-set", function () {
                commitTime: revisionTime,
                buildTime: revisionBuildTime,
                buildTag: '124' });
-            assert.deepEqual(format(response['formatMap'], currentRows[1]), {
+            assert.deepStrictEqual(format(response['formatMap'], currentRows[1]), {
                 mean: 3,
                 iterationCount: 5,
                 sum: 15,
@@ -466,16 +466,16 @@ describe("/api/measurement-set", function () {
         const response = await remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
 
         const currentRows = response['configurations']['current'];
-        assert.equal(currentRows.length, 2);
-        assert.deepEqual(format(response['formatMap'], currentRows[0]).buildTag, 127);
-        assert.deepEqual(format(response['formatMap'], currentRows[1]).buildTag, 128);
+        assert.strictEqual(currentRows.length, 2);
+        assert.deepStrictEqual(format(response['formatMap'], currentRows[0]).buildTag, '127');
+        assert.deepStrictEqual(format(response['formatMap'], currentRows[1]).buildTag, '128');
         assert(format(response['formatMap'], currentRows[0]).commitTime < response.startTime);
         assert(format(response['formatMap'], currentRows[1]).commitTime < response.startTime);
 
         const baselineRows = response['configurations']['baseline'];
-        assert.equal(baselineRows.length, 2);
-        assert.deepEqual(format(response['formatMap'], baselineRows[0]).buildTag, 131);
-        assert.deepEqual(format(response['formatMap'], baselineRows[1]).buildTag, 129);
+        assert.strictEqual(baselineRows.length, 2);
+        assert.deepStrictEqual(format(response['formatMap'], baselineRows[0]).buildTag, '131');
+        assert.deepStrictEqual(format(response['formatMap'], baselineRows[1]).buildTag, '129');
     });
 
     it("should order results by build time when commit times are missing", () => {
@@ -522,8 +522,8 @@ describe("/api/measurement-set", function () {
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
         }).then((response) => {
             const currentRows = response['configurations']['baseline'];
-            assert.equal(currentRows.length, 2);
-            assert.deepEqual(format(response['formatMap'], currentRows[0]), {
+            assert.strictEqual(currentRows.length, 2);
+            assert.deepStrictEqual(format(response['formatMap'], currentRows[0]), {
                mean: 3,
                iterationCount: 5,
                sum: 15,
@@ -533,7 +533,7 @@ describe("/api/measurement-set", function () {
                commitTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
                buildTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
                buildTag: '1001' });
-            assert.deepEqual(format(response['formatMap'], currentRows[1]), {
+            assert.deepStrictEqual(format(response['formatMap'], currentRows[1]), {
                 mean: 7,
                 iterationCount: 5,
                 sum: 35,
@@ -562,9 +562,9 @@ describe("/api/measurement-set", function () {
         }).then((result) => {
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
-            assert.equal(response['clusterCount'], 2, 'should have two clusters');
-            assert.deepEqual(buildTags(response, 'current'),
+            assert.strictEqual(response['status'], 'OK');
+            assert.strictEqual(response['clusterCount'], 2, 'should have two clusters');
+            assert.deepStrictEqual(buildTags(response, 'current'),
                 [reportWithAncientRevision[0]['buildTag'], reportWithNewRevision[0]['buildTag']]);
         });
     });
@@ -580,10 +580,10 @@ describe("/api/measurement-set", function () {
         }).then((result) => {
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
         }).then((response) => {
-            assert.equal(response['clusterCount'], 2, 'should have two clusters');
+            assert.strictEqual(response['clusterCount'], 2, 'should have two clusters');
             let currentRows = response['configurations']['current'];
-            assert.equal(currentRows.length, 2, 'should contain two data points');
-            assert.deepEqual(buildTags(response, 'current'), [reportWithAncientRevision[0]['buildTag'], reportWithBuildTime[0]['buildTag']]);
+            assert.strictEqual(currentRows.length, 2, 'should contain two data points');
+            assert.deepStrictEqual(buildTags(response, 'current'), [reportWithAncientRevision[0]['buildTag'], reportWithBuildTime[0]['buildTag']]);
         });
     });
 
@@ -603,14 +603,14 @@ describe("/api/measurement-set", function () {
             return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
         }).then((newResult) => {
             return remote.getJSONWithStatus(`${cachePrefix}.json`).then((cachedResult) => {
-                assert.deepEqual(newResult, cachedResult);
+                assert.deepStrictEqual(newResult, cachedResult);
                 return remote.getJSONWithStatus(`${cachePrefix}-${cachedResult['startTime']}.json`);
             }).then((oldResult) => {
                 const oldbuildTags = buildTags(oldResult, 'current');
                 const newbuildTags = buildTags(newResult, 'current');
                 assert(oldbuildTags.length >= 2, 'The old cluster should contain at least two data points');
                 assert(newbuildTags.length >= 2, 'The new cluster should contain at least two data points');
-                assert.deepEqual(oldbuildTags.slice(oldbuildTags.length - 2), newbuildTags.slice(0, 2),
+                assert.deepStrictEqual(oldbuildTags.slice(oldbuildTags.length - 2), newbuildTags.slice(0, 2),
                     'Two conseqcutive clusters should share two data points');
             });
         });
@@ -629,9 +629,9 @@ describe("/api/measurement-set", function () {
                 const manifest = Manifest._didFetchManifest(content);
 
                 const platform = Platform.findByName('Mountain Lion');
-                assert.equal(Metric.all().length, 1);
+                assert.strictEqual(Metric.all().length, 1);
                 const metric = Metric.all()[0];
-                assert.equal(platform.lastModified(metric), primaryCluster['lastModified']);
+                assert.strictEqual(platform.lastModified(metric), primaryCluster['lastModified']);
             });
         });
     });
@@ -673,10 +673,10 @@ describe("/api/measurement-set", function () {
     it("should allow to report a build request", async () => {
         await MockData.addMockData(TestServer.database());
         let response = await reportAfterAddingBuilderAndAggregatorsWithResponse(reportWithBuildRequest);
-        assert.equal(response['status'], 'OK');
+        assert.strictEqual(response['status'], 'OK');
         response = await TestServer.remoteAPI().getJSONWithStatus('/api/measurement-set/?analysisTask=500');
-        assert.equal(response['status'], 'OK');
-        assert.deepEqual(response['measurements'], [[1, 4, 3, 12, 50, [
+        assert.strictEqual(response['status'], 'OK');
+        assert.deepStrictEqual(response['measurements'], [[1, 4, 3, 12, 50, [
                 ['1', '9', '10.8.2 12C60', null, 0], ['2', '11', '141977', null, 1360140920900]],
             1, 1362046323388, '123', 1, 1, 'current']]);
     });
@@ -711,17 +711,17 @@ describe("/api/measurement-set", function () {
         const remote = TestServer.remoteAPI();
         await MockData.addMockData(TestServer.database());
         let response = await reportAfterAddingBuilderAndAggregatorsWithResponse(reportWithCommitsNeedsRoundCommitTimeAndBuildRequest);
-        assert.equal(response['status'], 'OK');
+        assert.strictEqual(response['status'], 'OK');
 
         const rawWebKitCommit = await remote.getJSONWithStatus(`/api/commits/WebKit/141977`);
-        assert.equal(rawWebKitCommit.commits[0].time, expectedWebKitCommitTime);
+        assert.strictEqual(rawWebKitCommit.commits[0].time, expectedWebKitCommitTime);
 
         const rawMacOSCommit = await remote.getJSONWithStatus(`/api/commits/macOS/10.8.2%2012C60`);
-        assert.equal(rawMacOSCommit.commits[0].time, expectedMacOSCommitTime);
+        assert.strictEqual(rawMacOSCommit.commits[0].time, expectedMacOSCommitTime);
 
         response = await TestServer.remoteAPI().getJSONWithStatus('/api/measurement-set/?analysisTask=500');
-        assert.equal(response['status'], 'OK');
-        assert.deepEqual(response['measurements'], [[1, 4, 3, 12, 50, [
+        assert.strictEqual(response['status'], 'OK');
+        assert.deepStrictEqual(response['measurements'], [[1, 4, 3, 12, 50, [
             ['1', '9', '10.8.2 12C60', null, expectedMacOSCommitTime], ['2', '11', '141977', null, expectedWebKitCommitTime]],
             1, 1362046323388, '123', 1, 1, 'current']]);
     });
@@ -757,14 +757,14 @@ describe("/api/measurement-set", function () {
         await remote.postJSON('/api/report/', [reportWithCommitsNeedsRoundCommitTime]);
 
         const rawWebKitCommit = await remote.getJSONWithStatus(`/api/commits/WebKit/141977`);
-        assert.equal(rawWebKitCommit.commits[0].time, expectedWebKitCommitTime);
+        assert.strictEqual(rawWebKitCommit.commits[0].time, expectedWebKitCommitTime);
 
         const rawMacOSCommit = await remote.getJSONWithStatus(`/api/commits/macOS/10.8.2%2012C60`);
-        assert.equal(rawMacOSCommit.commits[0].time, expectedMacOSCommitTime);
+        assert.strictEqual(rawMacOSCommit.commits[0].time, expectedMacOSCommitTime);
 
         const result = await queryPlatformAndMetric('Mountain Lion', 'FrameRate');
         const primaryCluster = await remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
-        assert.deepEqual(primaryCluster.configurations.current, [[1, 4, 3, 12, 50, false, [
+        assert.deepStrictEqual(primaryCluster.configurations.current, [[1, 4, 3, 12, 50, false, [
             [1, 1, '10.8.2 12C60', null, expectedMacOSCommitTime], [2, 2, '141977', null, expectedWebKitCommitTime]],
             expectedWebKitCommitTime, 1, 1362046323388, '123', 1]]);
     });

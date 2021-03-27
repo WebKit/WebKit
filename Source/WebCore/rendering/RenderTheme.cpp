@@ -82,9 +82,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableFooterGroup
         || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableColumn
         || style.display() == DisplayType::TableCell || style.display() == DisplayType::TableCaption)
-        style.setDisplay(DisplayType::InlineBlock);
+        style.setEffectiveDisplay(DisplayType::InlineBlock);
     else if (style.display() == DisplayType::ListItem || style.display() == DisplayType::Table)
-        style.setDisplay(DisplayType::Block);
+        style.setEffectiveDisplay(DisplayType::Block);
 
     if (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle)) {
         switch (part) {
@@ -168,7 +168,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
             style.setHeight(WTFMove(controlSize.height));
 
         // Min-Width / Min-Height
-        LengthSize minControlSize = Theme::singleton().minimumControlSize(part, style.fontCascade(), { style.minWidth(), style.minHeight() }, style.effectiveZoom());
+        LengthSize minControlSize = Theme::singleton().minimumControlSize(part, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.effectiveZoom());
         if (minControlSize.width != style.minWidth())
             style.setMinWidth(WTFMove(minControlSize.width));
         if (minControlSize.height != style.minHeight())
@@ -485,6 +485,9 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     if (paintInfo.context().paintingDisabled())
         return;
 
+    // FIXME: Investigate whether all controls can use a device-pixel-snapped rect
+    // rather than an integral-snapped rect.
+
     IntRect integralSnappedRect = snappedIntRect(rect);
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
 
@@ -513,7 +516,7 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
         break;
 #if ENABLE(INPUT_TYPE_COLOR)
     case ColorWellPart:
-        paintColorWellDecorations(box, paintInfo, integralSnappedRect);
+        paintColorWellDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
 #endif
     case ButtonPart:
@@ -1002,9 +1005,9 @@ bool RenderTheme::paintMeter(const RenderObject&, const PaintInfo&, const IntRec
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-void RenderTheme::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderTheme::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    paintButtonDecorations(box, paintInfo, rect);
+    paintButtonDecorations(box, paintInfo, snappedIntRect(LayoutRect(rect)));
 }
 #endif
 

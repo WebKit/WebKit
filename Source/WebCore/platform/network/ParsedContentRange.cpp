@@ -51,7 +51,7 @@ static bool areContentRangeValuesValid(int64_t firstBytePosition, int64_t lastBy
     return lastBytePosition < instanceLength;
 }
 
-static bool parseContentRange(const String& headerValue, int64_t& firstBytePosition, int64_t& lastBytePosition, int64_t& instanceLength)
+static bool parseContentRange(StringView headerValue, int64_t& firstBytePosition, int64_t& lastBytePosition, int64_t& instanceLength)
 {
     // From <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html>
     // 14.16 Content-Range
@@ -79,33 +79,35 @@ static bool parseContentRange(const String& headerValue, int64_t& firstBytePosit
     if (instanceLengthSeparatorToken == notFound)
         return false;
 
-    bool isOk = true;
-    String firstByteString = headerValue.substring(prefixLength, byteSeparatorTokenLoc - prefixLength);
+    auto firstByteString = headerValue.substring(prefixLength, byteSeparatorTokenLoc - prefixLength);
     if (!firstByteString.isAllSpecialCharacters<isASCIIDigit>())
         return false;
 
-    firstBytePosition = firstByteString.toInt64Strict(&isOk);
-    if (!isOk)
+    auto optionalFirstBytePosition = firstByteString.toInt64Strict();
+    if (!optionalFirstBytePosition)
         return false;
+    firstBytePosition = *optionalFirstBytePosition;
 
-    String lastByteString = headerValue.substring(byteSeparatorTokenLoc + 1, instanceLengthSeparatorToken - (byteSeparatorTokenLoc + 1));
+    auto lastByteString = headerValue.substring(byteSeparatorTokenLoc + 1, instanceLengthSeparatorToken - (byteSeparatorTokenLoc + 1));
     if (!lastByteString.isAllSpecialCharacters<isASCIIDigit>())
         return false;
 
-    lastBytePosition = lastByteString.toInt64Strict(&isOk);
-    if (!isOk)
+    auto optionalLastBytePosition = lastByteString.toInt64Strict();
+    if (!optionalLastBytePosition)
         return false;
+    lastBytePosition = *optionalLastBytePosition;
 
-    String instanceString = headerValue.substring(instanceLengthSeparatorToken + 1);
+    auto instanceString = headerValue.substring(instanceLengthSeparatorToken + 1);
     if (instanceString == "*")
         instanceLength = ParsedContentRange::unknownLength;
     else {
         if (!instanceString.isAllSpecialCharacters<isASCIIDigit>())
             return false;
 
-        instanceLength = instanceString.toInt64Strict(&isOk);
-        if (!isOk)
+        auto optionalInstanceLength = instanceString.toInt64Strict();
+        if (!optionalInstanceLength)
             return false;
+        instanceLength = *optionalInstanceLength;
     }
 
     return areContentRangeValuesValid(firstBytePosition, lastBytePosition, instanceLength);
@@ -113,7 +115,7 @@ static bool parseContentRange(const String& headerValue, int64_t& firstBytePosit
 
 ParsedContentRange::ParsedContentRange(const String& headerValue)
 {
-    if (!parseContentRange(headerValue, m_firstBytePosition, m_lastBytePosition, m_instanceLength))
+    if (!parseContentRange(StringView(headerValue), m_firstBytePosition, m_lastBytePosition, m_instanceLength))
         m_instanceLength = invalidLength;
 }
 

@@ -589,7 +589,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         unsigned deletedCount() const { ASSERT(m_table); return reinterpret_cast_ptr<unsigned*>(m_table)[deletedCountOffset]; }
         void setDeletedCount(unsigned count) const { ASSERT(m_table); reinterpret_cast_ptr<unsigned*>(m_table)[deletedCountOffset] = count; }
 
-        ValueType* m_table { nullptr };
+        union {
+            ValueType* m_table { nullptr };
+            unsigned* m_tableForLLDB;
+        };
 
 #if CHECK_HASHTABLE_ITERATORS
     public:
@@ -665,7 +668,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename HashTranslator, typename T>
     ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::inlineLookup(const T& key) -> ValueType*
     {
-        static_assert(sizeof(Key) + sizeof(Value) < 500, "Your HashTable types are too big to efficiently move when rehashing.  Consider using std::unique_ptr instead");
+        static_assert(sizeof(Key) + sizeof(Value) < 250, "Your HashTable types are too big to efficiently move when rehashing.  Consider using UniqueRef instead");
 
         checkKey<HashTranslator>(key);
 

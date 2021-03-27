@@ -1,0 +1,15 @@
+
+FAIL Property contain value 'none' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'strict' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'content' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'size' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'layout' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'style' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'paint' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'size layout' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'style paint' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'layout style paint' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'size layout style paint' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'size layout paint' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+FAIL Property contain value 'layout paint' assert_true: contain doesn't seem to be supported in the computed style expected true got false
+

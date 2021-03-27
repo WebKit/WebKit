@@ -47,7 +47,7 @@ WebCacheStorageConnection::WebCacheStorageConnection(WebCacheStorageProvider& pr
 
 WebCacheStorageConnection::~WebCacheStorageConnection()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
 }
 
 IPC::Connection& WebCacheStorageConnection::connection()

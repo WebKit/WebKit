@@ -111,7 +111,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
         return;
     }
 
-    callOnMainThread([this, protectedThis = makeRef(*this), blobURL = blobURL.isolatedCopy()] () {
+    callOnMainRunLoop([this, protectedThis = makeRef(*this), blobURL = blobURL.isolatedCopy()] () {
         auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier);
         if (!serviceWorkerThreadProxy) {
             didFail(internalError(blobURL));
@@ -222,14 +222,10 @@ void WebServiceWorkerFetchTaskClient::cleanup()
 {
     m_connection = nullptr;
 
-    if (!isMainThread()) {
-        callOnMainThread([protectedThis = makeRef(*this)] () {
-            protectedThis->cleanup();
-        });
-        return;
-    }
-    if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier))
-        serviceWorkerThreadProxy->removeFetch(m_serverConnectionIdentifier, m_fetchIdentifier);
+    ensureOnMainRunLoop([serviceWorkerIdentifier = m_serviceWorkerIdentifier, serverConnectionIdentifier = m_serverConnectionIdentifier, fetchIdentifier = m_fetchIdentifier] {
+        if (auto* proxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
+            proxy->removeFetch(serverConnectionIdentifier, fetchIdentifier);
+    });
 }
 
 } // namespace WebKit

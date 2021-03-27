@@ -319,9 +319,9 @@ static void printFrame(WKPageRef page, WKFrameRef frame, const void*)
     WKPageEndPrinting(page);
 }
 
-static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOriginRef origin, const void*)
+static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOriginRef origin, WKFrameInfoRef frame, const void*)
 {
-    return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin);
+    return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin, frame);
 }
 
 // A placeholder to tell WebKit the client is WebKitTestRunner.
@@ -2401,9 +2401,10 @@ void TestController::handleCheckOfUserMediaPermissionForOrigin(WKFrameRef frame,
     WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, toWK(salt).get(), settingsForOrigin(originHash).persistentPermission());
 }
 
-bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef origin)
+bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef origin, WKFrameInfoRef frame)
 {
-    m_currentInvocation->outputText(makeString("Received device orientation & motion access request for security origin \"", originUserVisibleName(origin), "\".\n"));
+    auto frameOrigin = adoptWK(WKFrameInfoCopySecurityOrigin(frame));
+    m_currentInvocation->outputText(makeString("Received device orientation & motion access request for top level origin \"", originUserVisibleName(origin), "\", with frame origin \"", originUserVisibleName(frameOrigin.get()), "\".\n"));
     return m_shouldAllowDeviceOrientationAndMotionAccess;
 }
 
@@ -2903,6 +2904,13 @@ void TestController::resetQuota()
 {
     StorageVoidCallbackContext context(*this);
     WKWebsiteDataStoreResetQuota(TestController::websiteDataStore(), &context, StorageVoidCallback);
+    runUntil(context.done, noTimeout);
+}
+
+void TestController::setQuotaLoggingEnabled(bool enabled)
+{
+    StorageVoidCallbackContext context(*this);
+    WKWebsiteDataStoreSetQuotaLoggingEnabled(TestController::websiteDataStore(), enabled, &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3644,10 +3652,10 @@ void TestController::setPrivateClickMeasurementTokenSignatureURLForTesting(WKURL
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::setPrivateClickMeasurementAttributionReportURLForTesting(WKURLRef url)
+void TestController::setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef attributeOnURL)
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSetPrivateClickMeasurementAttributionReportURLForTesting(m_mainWebView->page(), url, privateClickMeasurementVoidCallback, &callbackContext);
+    WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting(m_mainWebView->page(), sourceURL, attributeOnURL, privateClickMeasurementVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 
@@ -3658,16 +3666,22 @@ void TestController::markPrivateClickMeasurementsAsExpiredForTesting()
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::setFraudPreventionValuesForTesting(WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID)
+void TestController::setPCMFraudPreventionValuesForTesting(WKStringRef unlinkableToken, WKStringRef secretToken, WKStringRef signature, WKStringRef keyID)
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSetFraudPreventionValuesForTesting(m_mainWebView->page(), secretToken, unlinkableToken, signature, keyID, privateClickMeasurementVoidCallback, &callbackContext);
+    WKPageSetPCMFraudPreventionValuesForTesting(m_mainWebView->page(), unlinkableToken, secretToken, signature, keyID, privateClickMeasurementVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 
 WKURLRef TestController::currentTestURL() const
 {
     return m_currentInvocation ? m_currentInvocation->url() : nullptr;
+}
+
+void TestController::setShouldAllowDeviceOrientationAndMotionAccess(bool value)
+{
+    m_shouldAllowDeviceOrientationAndMotionAccess = value;
+    WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
 }
 
 } // namespace WTR

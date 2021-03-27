@@ -441,6 +441,7 @@ webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 
 # Times out due to missing event 'callAfterScrollingCompletes'.
 webkit.org/b/212202 fast/events/wheel/platform-wheelevent-in-scrolling-div.html [ Skip ]
+webkit.org/b/212202 fast/events/wheel/redispatched-wheel-event.html [ Skip ]
 
 webkit.org/b/218931 fast/events/wheel/first-wheel-event-cancelable.html [ Timeout ]
 webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Timeout ]
@@ -514,7 +515,7 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout Pass ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
-webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
+webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash Timeout ]
 webkit.org/b/191886 webkit.org/b/210800 [ Release ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Pass Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Debug ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Crash ]
 webkit.org/b/216716 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Pass ]
@@ -747,6 +748,8 @@ webkit.org/b/168543 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/168543 imported/w3c/web-platform-tests/resource-timing/nextHopProtocol-tao-protected.https.html [ Failure ]
 webkit.org/b/214442 imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content_redirect.html [ Failure ]
 
+webkit.org/b/222756 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of ResourceTiming API bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -905,6 +908,13 @@ webkit.org/b/216024 fast/text/ahom.html [ ImageOnlyFailure ]
 
 webkit.org/b/220680 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
 
+webkit.org/b/222753 fast/text/multi-code-unit-simple-path.html [ ImageOnlyFailure ]
+
+webkit.org/b/223402 fast/inline/hyphenation-when-overflow-wrap-is-break-word.html [ ImageOnlyFailure ]
+
+webkit.org/b/223416 fast/text/image-alt-text-bidi.html [ ImageOnlyFailure ]
+webkit.org/b/223416 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Text-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1047,9 +1057,10 @@ webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
 webkit.org/b/219825 [ Release ] webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/219825 [ Debug ] webrtc/sframe-keys.html [ Failure ]
 
-
 webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute2.html  [ Failure ]
 webkit.org/b/221504 webrtc/peer-connection-remote-audio-mute.html  [ Failure Timeout ]
+
+webkit.org/b/222794 webrtc/multi-video.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -1287,6 +1298,8 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/menclose/legacy-mencl
 webkit.org/b/219247 imported/w3c/web-platform-tests/compat/webkit-box-clamp-bottom-border.html [ ImageOnlyFailure ]
 
 webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Timeout ]
+
+webkit.org/b/206503 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Pass Timeout Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
@@ -1845,7 +1858,6 @@ webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
 webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
 webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
 webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
-webkit.org/b/187064 webrtc/multi-video.html
 webkit.org/b/187064 webrtc/peer-connection-track-end.html
 webkit.org/b/187064 webrtc/video-addTrack.html
 webkit.org/b/187064 webrtc/video-addTransceiver.html
@@ -1915,9 +1927,6 @@ webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Fail
 webkit.org/b/201981 http/wpt/service-workers/mac/throttleable.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Failure Pass ]
-
-# Bug in iOS, probably will require a baseline once it's fixed.
-webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
 
 webkit.org/b/205186 compositing/contents-format/subpixel-antialiased-text.html [ ImageOnlyFailure ]
 webkit.org/b/205187 fast/text/font-antialiasing-save-restore.html [ ImageOnlyFailure ]
@@ -2017,6 +2026,7 @@ webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Pass Failure ]
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
+
 
 # End: Common failures between GTK and WPE.
 

@@ -302,9 +302,9 @@ public:
     static SupportsType supportsType(const MediaEngineSupportParameters&);
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static bool isAvailable();
-    static HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String& path);
+    static HashSet<SecurityOriginData> originsInMediaCache(const String& path);
     static void clearMediaCache(const String& path, WallTime modifiedSince);
-    static void clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>&);
+    static void clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
     bool supportsPictureInPicture() const;
@@ -709,9 +709,9 @@ public:
     virtual void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&) const = 0;
     virtual MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&) const = 0;
 
-    virtual HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String&) const { return { }; }
+    virtual HashSet<SecurityOriginData> originsInMediaCache(const String&) const { return { }; }
     virtual void clearMediaCache(const String&, WallTime) const { }
-    virtual void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&) const { }
+    virtual void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&) const { }
     virtual bool supportsKeySystem(const String& /* keySystem */, const String& /* mimeType */) const { return false; }
 };
 

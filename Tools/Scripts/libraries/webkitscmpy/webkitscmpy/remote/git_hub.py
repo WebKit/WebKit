@@ -42,7 +42,7 @@ class GitHub(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None):
         match = self.URL_RE.match(url)
         if not match:
             raise self.Exception("'{}' is not a valid GitHub project".format(url))
@@ -55,7 +55,12 @@ class GitHub(Scm):
         ))
         self._cached_credentials = None
 
-        super(GitHub, self).__init__(url, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
+        super(GitHub, self).__init__(
+            url,
+            dev_branches=dev_branches, prod_branches=prod_branches,
+            contributors=contributors,
+            id=id or self.name.lower(),
+        )
 
     def credentials(self, required=True):
         return credentials(
@@ -285,6 +290,7 @@ class GitHub(Scm):
             order += 1
 
         return Commit(
+            repository_id=self.id,
             hash=commit_data['sha'],
             revision=revision,
             branch_point=branch_point,

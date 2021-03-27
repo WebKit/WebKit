@@ -44,6 +44,7 @@ class Decoder;
 }
 
 namespace WebCore {
+class ContentType;
 class MediaSample;
 class PlatformTimeRanges;
 }
@@ -75,15 +76,15 @@ private:
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateBufferedDirtyChanged(bool) final;
-    void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&) final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
     void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    // void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     void setActive(bool);
+    void canSwitchToType(const WebCore::ContentType&, CompletionHandler<void(bool)>&&);
     void setMode(WebCore::SourceBufferAppendMode);
     void append(const IPC::DataReference&);
     void abort();
@@ -92,8 +93,8 @@ private:
     void setMediaSourceEnded(bool);
     void setReadyState(WebCore::MediaPlayer::ReadyState);
     void startChangingType();
-    void updateBufferedFromTrackBuffers(bool sourceIsEnded);
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void()>&&);
+    void updateBufferedFromTrackBuffers(bool sourceIsEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&)>&&);
+    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&)>&&);
     void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
     void addTrackBuffer(TrackPrivateRemoteIdentifier);
     void resetTrackBuffers();

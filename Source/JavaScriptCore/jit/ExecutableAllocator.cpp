@@ -36,6 +36,7 @@
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
 #include <wtf/ProcessID.h>
+#include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
@@ -167,6 +168,10 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
 #if USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
 static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerator(void* writableAddr, void* stubBase, size_t stubSize)
 {
+    auto exitScope = makeScopeExit([] {
+        RELEASE_ASSERT(!g_jscConfig.useFastJITPermissions);
+    });
+
     using namespace ARM64Registers;
     using TrustedImm32 = MacroAssembler::TrustedImm32;
 
@@ -259,6 +264,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> ALWAYS_INLINE jitWriteThunkGenerato
 
 static ALWAYS_INLINE void initializeSeparatedWXHeaps(void* stubBase, size_t stubSize, void* jitBase, size_t jitSize)
 {
+    auto exitScope = makeScopeExit([] {
+        RELEASE_ASSERT(!g_jscConfig.useFastJITPermissions);
+    });
+
     mach_vm_address_t writableAddr = 0;
 
     // Create a second mapping of the JIT region at a random address.
@@ -346,12 +355,21 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         ASSERT(reservation.pageReservation.size() == reservation.size);
         reservation.base = reservation.pageReservation.base();
 
-        bool fastJITPermissionsIsSupported = useFastJITPermissions();
-        if (fastJITPermissionsIsSupported)
+        bool fastJITPermissionsIsSupported = false;
+#if OS(DARWIN) && CPU(ARM64)
+#if USE(PTHREAD_JIT_PERMISSIONS_API) 
+        fastJITPermissionsIsSupported = !!pthread_jit_write_protect_supported_np();
+#elif USE(APPLE_INTERNAL_SDK)
+        fastJITPermissionsIsSupported = !!os_thread_self_restrict_rwx_is_supported();
+#endif
+#endif
+        g_jscConfig.useFastJITPermissions = fastJITPermissionsIsSupported;
+
+        if (g_jscConfig.useFastJITPermissions)
             threadSelfRestrictRWXToRX();
 
 #if ENABLE(SEPARATED_WX_HEAP)
-        if (!fastJITPermissionsIsSupported) {
+        if (!g_jscConfig.useFastJITPermissions) {
             // First page of our JIT allocation is reserved.
             ASSERT(reservation.size >= pageSize() * 2);
             reservation.base = (void*)((uintptr_t)(reservation.base) + pageSize());

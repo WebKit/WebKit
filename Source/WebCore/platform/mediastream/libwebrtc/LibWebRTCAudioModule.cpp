@@ -54,7 +54,7 @@ int32_t LibWebRTCAudioModule::StartPlayout()
         return 0;
 
     m_isPlaying = true;
-    m_queue->dispatch([this] {
+    m_queue->dispatch([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
         m_pollingTime = MonotonicTime::now();
         pollAudioData();
     });
@@ -91,7 +91,7 @@ void LibWebRTCAudioModule::pollAudioData()
         delayUntilNextPolling = 0_s;
     }
     m_pollingTime = now + delayUntilNextPolling;
-    m_queue->dispatchAfter(delayUntilNextPolling, [this] {
+    m_queue->dispatchAfter(delayUntilNextPolling, [this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
         pollAudioData();
     });
 }

@@ -125,7 +125,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
         if (UNLIKELY(Options::dumpJITMemoryPath()))
             dumpJITMemory(dst, src, n);
 
-        if (useFastJITPermissions()) {
+        if (g_jscConfig.useFastJITPermissions) {
             threadSelfRestrictRWXToRW();
             memcpy(dst, src, n);
             threadSelfRestrictRWXToRX();

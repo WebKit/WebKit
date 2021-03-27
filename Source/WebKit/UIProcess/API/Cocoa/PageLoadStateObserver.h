@@ -23,9 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageLoadStateObserver_h
-#define PageLoadStateObserver_h
-
 #import "PageLoadState.h"
 
 namespace WebKit {
@@ -37,6 +34,11 @@ public:
         : m_object(object)
         , m_activeURLKey(adoptNS([activeURLKey copy]))
     {
+    }
+
+    void clearObject()
+    {
+        m_object = nil;
     }
 
 private:
@@ -115,5 +117,3 @@ private:
 };
 
 }
-
-#endif // PageLoadStateObserver_h

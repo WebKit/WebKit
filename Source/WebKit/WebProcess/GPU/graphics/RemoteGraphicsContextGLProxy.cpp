@@ -59,6 +59,9 @@ RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(GPUProcessConnection&
     m_gpuProcessConnection->addClient(*this);
     m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteGraphicsContextGLProxy::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64(), *this);
     connection().send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, m_streamConnection.streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
+    // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
+    waitUntilInitialized();
 }
 
 RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
@@ -172,7 +175,7 @@ void RemoteGraphicsContextGLProxy::synthesizeGLError(GCGLenum error)
     if (!isContextLost()) {
         auto sendResult = send(Messages::RemoteGraphicsContextGL::SynthesizeGLError(error));
         if (!sendResult)
-            wasLost();
+            markContextLost();
         return;
     }
     m_errorWhenContextIsLost = error;
@@ -184,7 +187,7 @@ GCGLenum RemoteGraphicsContextGLProxy::getError()
         uint32_t returnValue = 0;
         auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetError(), Messages::RemoteGraphicsContextGL::GetError::Reply(returnValue));
         if (!sendResult)
-            wasLost();
+            markContextLost();
         return static_cast<GCGLenum>(returnValue);
     }
     return std::exchange(m_errorWhenContextIsLost, NO_ERROR);

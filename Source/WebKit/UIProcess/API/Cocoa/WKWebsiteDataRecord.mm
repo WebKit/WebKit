@@ -28,6 +28,7 @@
 
 #import "_WKWebsiteDataSizeInternal.h"
 #import <WebCore/SecurityOriginData.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/HashSet.h>
 
 NSString * const WKWebsiteDataTypeFetchCache = @"WKWebsiteDataTypeFetchCache";
@@ -60,6 +61,9 @@ NSString * const _WKWebsiteDataTypePlugInData = @"_WKWebsiteDataTypePlugInData";
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebsiteDataRecord.class, self))
+        return;
+
     _websiteDataRecord->API::WebsiteDataRecord::~WebsiteDataRecord();
 
     [super dealloc];

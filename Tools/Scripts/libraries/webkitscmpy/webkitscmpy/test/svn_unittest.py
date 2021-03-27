@@ -328,3 +328,6 @@ class TestRemoteSvn(unittest.TestCase):
     def test_no_identifier(self):
         with mocks.remote.Svn():
             self.assertIsNone(remote.Svn(self.remote).find('trunk', include_identifier=False).identifier)
+
+    def test_id(self):
+        self.assertEqual(remote.Svn(self.remote).id, 'webkit')

@@ -52,6 +52,15 @@ static IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
     return instance.get();
 }
 
+static constexpr Seconds dispatchReleaseAllResourcesIfUnusedTimeout = 0.2_s;
+static unsigned remoteGraphicsContextCount;
+static void dispatchReleaseAllResourcesIfUnused()
+{
+#if PLATFORM(COCOA)
+    remoteGraphicsContextGLStreamWorkQueue().dispatch(GraphicsContextGLOpenGL::releaseAllResourcesIfUnused);
+#endif
+}
+
 #if !PLATFORM(COCOA)
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
@@ -80,6 +89,7 @@ RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
 void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
 {
     ASSERT(RunLoop::isMain());
+    ++remoteGraphicsContextCount;
     remoteGraphicsContextGLStreamWorkQueue().dispatch([attributes = WTFMove(attributes), protectedThis = makeRef(*this)]() mutable {
         protectedThis->workQueueInitialize(WTFMove(attributes));
     });
@@ -93,7 +103,19 @@ void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&&
     remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
         protectedThis->workQueueUninitialize();
     });
+    --remoteGraphicsContextCount;
+    if (!remoteGraphicsContextCount)
+        RunLoop::current().dispatchAfter(dispatchReleaseAllResourcesIfUnusedTimeout, dispatchReleaseAllResourcesIfUnused);
 }
+
+#if PLATFORM(MAC)
+void RemoteGraphicsContextGL::displayWasReconfigured()
+{
+    remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = makeRef(*this)]() {
+        protectedThis->m_context->displayWasReconfigured();
+    });
+}
+#endif
 
 void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
@@ -222,10 +244,7 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
             pixelBuffer = mediaPlayer->pixelBufferForCurrentTime();
     };
 
-    if (isMainThread())
-        getPixelBuffer();
-    else
-        callOnMainThreadAndWait(WTFMove(getPixelBuffer));
+    callOnMainRunLoopAndWait(WTFMove(getPixelBuffer));
 
     if (!pixelBuffer) {
         completionHandler(false);
@@ -258,6 +277,24 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
 void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting event)
 {
     // FIXME: only run this in testing mode. https://bugs.webkit.org/show_bug.cgi?id=222544
+    if (event == WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting::Timeout) {
+        // Simulate the timeout by just discarding the context. The subsequent messages act like
+        // unauthorized or old messages from Web process, they are skipped.
+        callOnMainRunLoop([gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, identifier = m_graphicsContextGLIdentifier]() {
+            if (auto connectionToWeb = gpuConnectionToWebProcess.get())
+                connectionToWeb->releaseGraphicsContextGLForTesting(identifier);
+        });
+        return;
+    }
+    if (event == WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting::ContextChange) {
+#if PLATFORM(MAC)
+        callOnMainRunLoop([weakConnection = m_gpuConnectionToWebProcess]() {
+            if (auto connection = weakConnection.get())
+                connection->dispatchDisplayWasReconfiguredForTesting();
+        });
+#endif
+        return;
+    }
     m_context->simulateEventForTesting(event);
 }
 

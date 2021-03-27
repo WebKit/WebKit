@@ -7,19 +7,18 @@ global.FormData = require('form-data');
 
 const TestServer = require('./resources/test-server.js');
 const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
+const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe('/api/uploaded-file', function () {
-    this.timeout(5000);
-    TestServer.inject();
-
+    prepareServerTest(this);
     TemporaryFile.inject();
 
     it('should return "InvalidArguments" when neither path nor sha256 query is set', () => {
         return TestServer.remoteAPI().getJSON('/api/uploaded-file').then((content) => {
-            assert.equal(content['status'], 'InvalidArguments');
+            assert.strictEqual(content['status'], 'InvalidArguments');
             return TestServer.remoteAPI().getJSON('/api/uploaded-file/');
         }).then((content) => {
-            assert.equal(content['status'], 'InvalidArguments');
+            assert.strictEqual(content['status'], 'InvalidArguments');
         });
     });
 
@@ -27,7 +26,7 @@ describe('/api/uploaded-file', function () {
         return TestServer.remoteAPI().getJSON('/api/uploaded-file/1').then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 404);
+            assert.strictEqual(error, 404);
         });
     });
 
@@ -35,7 +34,7 @@ describe('/api/uploaded-file', function () {
         return TestServer.remoteAPI().getJSON('/api/uploaded-file/foo').then((content) => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 404);
+            assert.strictEqual(error, 404);
         });
     });
 
@@ -47,7 +46,7 @@ describe('/api/uploaded-file', function () {
             uploadedFile = response['uploadedFile'];
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${uploadedFile['id']}`, 'GET', null, null);
         }).then((response) => {
-            assert.equal(response.responseText, 'some content');
+            assert.strictEqual(response.responseText, 'some content');
         });
     });
 
@@ -68,13 +67,13 @@ describe('/api/uploaded-file', function () {
 
     it('should return "NotFound" when the specified SHA256 is invalid', () => {
         return TestServer.remoteAPI().getJSON('/api/uploaded-file/?sha256=abc').then((content) => {
-            assert.equal(content['status'], 'NotFound');
+            assert.strictEqual(content['status'], 'NotFound');
         });
     });
 
     it('should return "NotFound" when there is no file matching the specified SHA256 ', () => {
         return TestServer.remoteAPI().getJSON('/api/uploaded-file/?sha256=5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5').then((content) => {
-            assert.equal(content['status'], 'NotFound');
+            assert.strictEqual(content['status'], 'NotFound');
         });
     });
 
@@ -86,7 +85,7 @@ describe('/api/uploaded-file', function () {
             uploadedFile = response['uploadedFile'];
             return TestServer.remoteAPI().getJSON(`/api/uploaded-file/?sha256=${uploadedFile['sha256']}`);
         }).then((response) => {
-            assert.deepEqual(uploadedFile, response['uploadedFile']);
+            assert.deepStrictEqual(uploadedFile, response['uploadedFile']);
         });
     });
 
@@ -97,11 +96,11 @@ describe('/api/uploaded-file', function () {
         }).then((response) => {
             uploadedFile = response['uploadedFile'];
             const db = TestServer.database();
-            return db.connect().then(() => db.query(`UPDATE uploaded_files SET file_deleted_at = now() at time zone 'utc'`));
+            return db.query(`UPDATE uploaded_files SET file_deleted_at = now() at time zone 'utc'`);
         }).then(() => {
             return TestServer.remoteAPI().getJSON(`/api/uploaded-file/?sha256=${uploadedFile['sha256']}`);
         }).then((content) => {
-            assert.equal(content['status'], 'NotFound');
+            assert.strictEqual(content['status'], 'NotFound');
         });
     });
 
@@ -117,16 +116,16 @@ describe('/api/uploaded-file', function () {
             const headers = response.headers;
 
             assert(Object.keys(headers).includes('etag'));
-            assert.equal(headers['etag'], uploadedFile['sha256']);
+            assert.strictEqual(headers['etag'], uploadedFile['sha256']);
 
             assert(Object.keys(headers).includes('accept-ranges'));
-            assert.equal(headers['accept-ranges'], 'bytes');
+            assert.strictEqual(headers['accept-ranges'], 'bytes');
 
             assert(Object.keys(headers).includes('content-disposition'));
-            assert.equal(headers['content-disposition'], `attachment; filename*=utf-8''some.dat`);
+            assert.strictEqual(headers['content-disposition'], `attachment; filename*=utf-8''some.dat`);
 
             assert(Object.keys(headers).includes('content-length'));
-            assert.equal(headers['content-length'], uploadedFile['size']);
+            assert.strictEqual(headers['content-length'], uploadedFile['size']);
 
             assert(Object.keys(headers).includes('last-modified'));
         });
@@ -144,7 +143,7 @@ describe('/api/uploaded-file', function () {
             lastModified = response.headers['last-modified'];
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null);
         }).then((response) => {
-            assert.equal(response.headers['last-modified'], lastModified);
+            assert.strictEqual(response.headers['last-modified'], lastModified);
         });
     });
 
@@ -156,9 +155,9 @@ describe('/api/uploaded-file', function () {
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=5-'}});
         }).then((response) => {
             const headers = response.headers;
-            assert.equal(response.statusCode, 206);
-            assert.equal(headers['content-range'], 'bytes 5-11/12');
-            assert.equal(response.responseText, 'content');
+            assert.strictEqual(response.statusCode, 206);
+            assert.strictEqual(headers['content-range'], 'bytes 5-11/12');
+            assert.strictEqual(response.responseText, 'content');
         });
     });
 
@@ -170,9 +169,9 @@ describe('/api/uploaded-file', function () {
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=4-9'}});
         }).then((response) => {
             const headers = response.headers;
-            assert.equal(response.statusCode, 206);
-            assert.equal(headers['content-range'], 'bytes 4-9/12');
-            assert.equal(response.responseText, ' conte');
+            assert.strictEqual(response.statusCode, 206);
+            assert.strictEqual(headers['content-range'], 'bytes 4-9/12');
+            assert.strictEqual(response.responseText, ' conte');
         });
     });
 
@@ -184,9 +183,9 @@ describe('/api/uploaded-file', function () {
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=-4'}});
         }).then((response) => {
             const headers = response.headers;
-            assert.equal(response.statusCode, 206);
-            assert.equal(headers['content-range'], 'bytes 8-11/12');
-            assert.equal(response.responseText, 'tent');
+            assert.strictEqual(response.statusCode, 206);
+            assert.strictEqual(headers['content-range'], 'bytes 8-11/12');
+            assert.strictEqual(response.responseText, 'tent');
         });
     });
 
@@ -198,9 +197,9 @@ describe('/api/uploaded-file', function () {
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=-100'}});
         }).then((response) => {
             const headers = response.headers;
-            assert.equal(response.statusCode, 206);
-            assert.equal(headers['content-range'], 'bytes 0-11/12');
-            assert.equal(response.responseText, 'some content');
+            assert.strictEqual(response.statusCode, 206);
+            assert.strictEqual(headers['content-range'], 'bytes 0-11/12');
+            assert.strictEqual(response.responseText, 'some content');
         });
     });
 
@@ -210,7 +209,7 @@ describe('/api/uploaded-file', function () {
         }).then((response) => {
             const id = response['uploadedFile']['id'];
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=12-'}})
-                .then(() => assert(false, 'should never be reached'), (error) => assert.equal(error, 416));
+                .then(() => assert(false, 'should never be reached'), (error) => assert.strictEqual(error, 416));
         });
     });
 
@@ -220,7 +219,7 @@ describe('/api/uploaded-file', function () {
         }).then((response) => {
             const id = response['uploadedFile']['id'];
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null, {headers: {'Range': 'bytes=2-1'}})
-                .then(() => assert(false, 'should never be reached'), (error) => assert.equal(error, 416));
+                .then(() => assert(false, 'should never be reached'), (error) => assert.strictEqual(error, 416));
         });
     });
 
@@ -232,15 +231,15 @@ describe('/api/uploaded-file', function () {
             id = response['uploadedFile']['id'];
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null);
         }).then((response) => {
-            assert.equal(response.statusCode, 200);
-            assert.equal(response.responseText, 'some content');
+            assert.strictEqual(response.statusCode, 200);
+            assert.strictEqual(response.responseText, 'some content');
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null,
                 {headers: {'Range': 'bytes = 9-10', 'If-Range': response.headers['last-modified']}});
         }).then((response) => {
             const headers = response.headers;
-            assert.equal(response.statusCode, 206);
-            assert.equal(headers['content-range'], 'bytes 9-10/12');
-            assert.equal(response.responseText, 'en');
+            assert.strictEqual(response.statusCode, 206);
+            assert.strictEqual(headers['content-range'], 'bytes 9-10/12');
+            assert.strictEqual(response.responseText, 'en');
         });
     });
 
@@ -252,15 +251,15 @@ describe('/api/uploaded-file', function () {
             id = response['uploadedFile']['id'];
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null);
         }).then((response) => {
-            assert.equal(response.statusCode, 200);
-            assert.equal(response.responseText, 'some content');
+            assert.strictEqual(response.statusCode, 200);
+            assert.strictEqual(response.responseText, 'some content');
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null,
                 {headers: {'Range': 'bytes = 9-10', 'If-Range': response.headers['etag']}});
         }).then((response) => {
             const headers = response.headers;
-            assert.equal(response.statusCode, 206);
-            assert.equal(headers['content-range'], 'bytes 9-10/12');
-            assert.equal(response.responseText, 'en');
+            assert.strictEqual(response.statusCode, 206);
+            assert.strictEqual(headers['content-range'], 'bytes 9-10/12');
+            assert.strictEqual(response.responseText, 'en');
         });
     });
 
@@ -272,13 +271,13 @@ describe('/api/uploaded-file', function () {
             id = response['uploadedFile']['id'];
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null);
         }).then((response) => {
-            assert.equal(response.statusCode, 200);
-            assert.equal(response.responseText, 'some content');
+            assert.strictEqual(response.statusCode, 200);
+            assert.strictEqual(response.responseText, 'some content');
             return TestServer.remoteAPI().sendHttpRequest(`/api/uploaded-file/${id}`, 'GET', null, null,
                 {'Range': 'bytes = 9-10', 'If-Range': 'foo'});
         }).then((response) => {
-            assert.equal(response.statusCode, 200);
-            assert.equal(response.responseText, 'some content');
+            assert.strictEqual(response.statusCode, 200);
+            assert.strictEqual(response.responseText, 'some content');
         });
     });
 
@@ -303,7 +302,7 @@ describe('/api/uploaded-file', function () {
             for (let i = 0; i < endByte - startByte + 1; i++) {
                 const actual = responseBuffer[i];
                 const expected = buffer[startByte + i];
-                assert.equal(actual, expected, `The byte at index ${i} should be identical. Expected ${expected} but got ${actual}`);
+                assert.strictEqual(actual, expected, `The byte at index ${i} should be identical. Expected ${expected} but got ${actual}`);
             }
         }
 
@@ -315,8 +314,8 @@ describe('/api/uploaded-file', function () {
                 {headers: {'Range': `bytes = ${startByte}-${endByte}`}, responseHandler});
         }).then((response) => {
             const headers = response.headers;
-            assert.equal(response.statusCode, 206);
-            assert.equal(headers['content-range'], `bytes ${startByte}-${endByte}/${fileSize}`);
+            assert.strictEqual(response.statusCode, 206);
+            assert.strictEqual(headers['content-range'], `bytes ${startByte}-${endByte}/${fileSize}`);
             verifyBuffer();
         });
     });

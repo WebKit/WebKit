@@ -31,6 +31,7 @@
 #import "ResourceLoadInfo.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::ResourceLoadInfo::Type type)
 {
@@ -77,6 +78,8 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKResourceLoadInfo.class, self))
+        return;
     _info->API::ResourceLoadInfo::~ResourceLoadInfo();
     [super dealloc];
 }

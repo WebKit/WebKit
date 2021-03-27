@@ -20,10 +20,10 @@ function createFrame(url) {
     });
 }
 
-createFrame("/cache/resources/cacheable-random-text.php").then(function(frame) {
+createFrame("/cache/resources/cacheable-random-text.py").then(function(frame) {
     frame.remove();
     internals.clearMemoryCache();
-    createFrame("/cache/resources/cacheable-random-text.php").then(function(frame) {
+    createFrame("/cache/resources/cacheable-random-text.py").then(function(frame) {
         if (window.testRunner)
             testRunner.notifyDone();
     });

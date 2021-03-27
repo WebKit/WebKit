@@ -34,7 +34,7 @@ String DeprecatedCSSOMValueList::cssText() const
 {
     StringBuilder result;
     String separator;
-    switch (m_valueListSeparator) {
+    switch (m_valueSeparator) {
     case CSSValue::SpaceSeparator:
         separator = " "_s;
         break;

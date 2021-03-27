@@ -401,15 +401,22 @@ void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* can
  */
 guchar* webkit_web_resource_get_data_finish(WebKitWebResource* resource, GAsyncResult* result, gsize* length, GError** error)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(resource), 0);
-    g_return_val_if_fail(g_task_is_valid(result, resource), 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(resource), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, resource), nullptr);
 
     GTask* task = G_TASK(result);
     if (!g_task_propagate_boolean(task, error))
-        return 0;
+        return nullptr;
 
     ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_task_get_task_data(task));
     if (length)
         *length = data->webData->size();
-    return static_cast<guchar*>(g_memdup(data->webData->bytes(), data->webData->size()));
+
+    auto* bytes = data->webData->bytes();
+    if (!bytes || !data->webData->size())
+        return nullptr;
+
+    auto* returnValue = g_malloc(data->webData->size());
+    memcpy(returnValue, bytes, data->webData->size());
+    return static_cast<guchar*>(returnValue);
 }

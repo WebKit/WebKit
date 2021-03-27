@@ -71,6 +71,9 @@
         return @{ userInterfaceItem: @{ @"message": (NSString *)message, @"fontSize": @(fontSize) } };
     }
 
+    if (NSDictionary *contents = _page->contentsOfUserInterfaceItem(userInterfaceItem))
+        return contents;
+
 #if PLATFORM(IOS_FAMILY)
     return [_contentView _contentsOfUserInterfaceItem:(NSString *)userInterfaceItem];
 #else
@@ -302,11 +305,21 @@
     });
 }
 
-- (void)_setPrivateClickMeasurementAttributionReportURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
+- (void)_setPrivateClickMeasurementAttributionReportURLsForTesting:(NSURL *)sourceURL attributeOnURL:(NSURL *)attributeOnURL completionHandler:(void(^)(void))completionHandler
 {
-    _page->setPrivateClickMeasurementAttributionReportURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->setPrivateClickMeasurementAttributionReportURLsForTesting(sourceURL, attributeOnURL, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
+}
+
+- (void)_didShowContextMenu
+{
+    // For subclasses to override.
+}
+
+- (void)_didDismissContextMenu
+{
+    // For subclasses to override.
 }
 
 - (void)_didPresentContactPicker

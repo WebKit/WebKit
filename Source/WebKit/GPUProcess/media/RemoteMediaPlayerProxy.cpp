@@ -630,11 +630,6 @@ void RemoteMediaPlayerProxy::mediaPlayerSizeChanged()
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::SizeChanged(m_player->naturalSize()), m_id);
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerEngineUpdated()
-{
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::EngineUpdated(), m_id);
-}
-
 void RemoteMediaPlayerProxy::mediaPlayerActiveSourceBuffersChanged()
 {
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::ActiveSourceBuffersChanged(), m_id);

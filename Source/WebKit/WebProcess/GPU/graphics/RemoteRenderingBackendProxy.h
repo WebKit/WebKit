@@ -65,6 +65,9 @@ public:
 
     ~RemoteRenderingBackendProxy();
 
+    using GPUProcessConnection::Client::weakPtrFactory;
+    using WeakValueType = GPUProcessConnection::Client::WeakValueType;
+
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
     WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 

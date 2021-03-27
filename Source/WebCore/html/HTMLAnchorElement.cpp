@@ -525,9 +525,9 @@ void HTMLAnchorElement::handleClick(Event& event)
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Suppress;
 
     auto privateClickMeasurement = parsePrivateClickMeasurement();
-    // A matching conversion event needs to happen before the complete private click measurement
-    // URL can be created. Thus, it should be empty for now.
-    ASSERT(!privateClickMeasurement || privateClickMeasurement->attributionReportURL().isNull());
+    // A matching triggering event needs to happen before an attribution report can be sent.
+    // Thus, URLs should be empty for now.
+    ASSERT(!privateClickMeasurement || (privateClickMeasurement->attributionReportSourceURL().isNull() && privateClickMeasurement->attributionReportAttributeOnURL().isNull()));
     
     frame->loader().changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(privateClickMeasurement));
 

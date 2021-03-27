@@ -32,6 +32,7 @@
 #import "IOSurface.h"
 #import "LengthFunctions.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "Model.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
 #import "ScrollbarThemeMac.h"
@@ -275,6 +276,11 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         // We don't create PlatformCALayerCocoas wrapped around WebGLLayers or WebGPULayers.
         ASSERT_NOT_REACHED();
         break;
+#if ENABLE(MODEL_ELEMENT)
+    case LayerTypeModelLayer:
+        layerClass = [CALayer class];
+        break;
+#endif
     case LayerTypeShapeLayer:
         layerClass = [CAShapeLayer class];
         // fillColor defaults to opaque black.

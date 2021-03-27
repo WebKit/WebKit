@@ -369,12 +369,12 @@ void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::De
     didReceiveNetworkProcessProxyMessage(connection, decoder);
 }
 
-void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
-        return;
+        return true;
 
-    didReceiveSyncNetworkProcessProxyMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncNetworkProcessProxyMessage(connection, decoder, replyEncoder);
 }
 
 void NetworkProcessProxy::didClose(IPC::Connection&)
@@ -1604,6 +1604,11 @@ void NetworkProcessProxy::updateProcessAssertion()
 void NetworkProcessProxy::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::NetworkProcess::ResetQuota(sessionID), WTFMove(completionHandler));
+}
+
+void NetworkProcessProxy::setQuotaLoggingEnabled(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::SetQuotaLoggingEnabled(sessionID, enabled), WTFMove(completionHandler));
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)

@@ -1,3 +1,84 @@
+2021-03-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK1] Add a new API IWebPreferences::startBatchingUpdates to defer WebPreferencesChangedNotification
+        https://bugs.webkit.org/show_bug.cgi?id=223109
+
+        Reviewed by Sam Weinig.
+
+        Some JS tests are timing out for Windows WebKit1 Debug build since
+        r274111. Those tests generate very large pages. r274111 resets
+        WebPreferences to the initial state. Changing a preference causes
+        relayout. Thus, resetting preferences caused layouts repeatedly.
+
+        r274040 (Bug 218024) added _batchUpdatePreferencesInBlock to
+        WebPreferences for Mac WebKit1 to defer the notification.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferences.cpp:
+        (WebPreferences::postPreferencesChangesNotification):
+        (WebPreferences::startBatchingUpdates): Added.
+        (WebPreferences::stopBatchingUpdates): Added.
+        * WebPreferences.h:
+
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Window build fix after r274252.
+
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp:
+
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * WebApplicationCache.cpp:
+        (WebApplicationCache::originsWithCache):
+        * WebDownloadCFNet.cpp:
+        (WebDownload::useCredential):
+        (WebDownload::didReceiveAuthenticationChallenge):
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp:
+        (WKQCA::updateBounds):
+        * WebLocalizableStrings.cpp:
+        (LocalizedString::LocalizedString):
+        (LocalizedString::operator CFStringRef const):
+        (LocalizedString::operator LPCTSTR const):
+        (copyLocalizedStringFromBundle):
+        * WebPreferences.cpp:
+        (defaultSettings):
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::valueForKey):
+        (WebPreferences::copyWebKitPreferencesToCFPreferences):
+
+2021-03-08  Sam Weinig  <weinig@apple.com>
+
+        Add preference reseting to WebKitLegacy Windows to simplify testing reset
+        https://bugs.webkit.org/show_bug.cgi?id=222865
+
+        Reviewed by Brent Fulgham.
+
+        Add resetForTesting() function to allow easy reseting of all preferences
+        for testing, matching functionality added to Cocoa WebKitLegacy.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferences.cpp:
+        (WebPreferences::resetForTesting):
+        * WebPreferences.h:
+
+2021-03-08  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Builds with ENABLE_CONTEXT_MENUS=OFF fail
+        https://bugs.webkit.org/show_bug.cgi?id=222771
+
+        Reviewed by Don Olmstead.
+
+        Build fix for turning off context menus adding ifdefs as necessary.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebView.cpp:
+
 2021-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.12 or later

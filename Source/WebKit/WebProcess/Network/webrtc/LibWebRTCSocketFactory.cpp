@@ -74,7 +74,7 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createServerTcpSocket(const void
     if (m_connection)
         m_connection->send(Messages::NetworkRTCProvider::CreateServerTCPSocket(socket->identifier(), RTCNetwork::SocketAddress(address), minPort, maxPort, options), 0);
     else {
-        callOnMainThread([] {
+        callOnMainRunLoop([] {
             WebProcess::singleton().ensureNetworkProcessConnection();
         });
         m_pendingMessageTasks.append([identifier = socket->identifier(), address = RTCNetwork::SocketAddress(address), minPort, maxPort, options](auto& connection) {
@@ -92,7 +92,7 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createUdpSocket(const void* sock
     if (m_connection)
         m_connection->send(Messages::NetworkRTCProvider::CreateUDPSocket(socket->identifier(), RTCNetwork::SocketAddress(address), minPort, maxPort), 0);
     else {
-        callOnMainThread([] {
+        callOnMainRunLoop([] {
             WebProcess::singleton().ensureNetworkProcessConnection();
         });
         m_pendingMessageTasks.append([identifier = socket->identifier(), address = RTCNetwork::SocketAddress(address), minPort, maxPort](auto& connection) {
@@ -114,7 +114,7 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(const void
     if (m_connection)
         m_connection->send(Messages::NetworkRTCProvider::CreateClientTCPSocket(socket->identifier(), RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, options.opts), 0);
     else {
-        callOnMainThread([] {
+        callOnMainRunLoop([] {
             WebProcess::singleton().ensureNetworkProcessConnection();
         });
         m_pendingMessageTasks.append([identifier = socket->identifier(), localAddress = RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), remoteAddress = RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, opts = options.opts](auto& connection) {

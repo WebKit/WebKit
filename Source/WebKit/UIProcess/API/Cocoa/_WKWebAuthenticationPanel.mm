@@ -50,6 +50,7 @@
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebCore/WebAuthenticationConstants.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -107,6 +108,9 @@ NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey = @"_WKLocalAu
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebAuthenticationPanel.class, self))
+        return;
+
     _panel->~WebAuthenticationPanel();
 
     [super dealloc];

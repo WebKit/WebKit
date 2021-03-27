@@ -43,8 +43,7 @@ class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
 
 class RemoteAudioSessionProxy
-    : public IPC::MessageReceiver
-    , public CanMakeWeakPtr<RemoteAudioSessionProxy> {
+    : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static UniqueRef<RemoteAudioSessionProxy> create(GPUConnectionToWebProcess&);
@@ -63,7 +62,7 @@ public:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
 private:
     friend UniqueRef<RemoteAudioSessionProxy> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSessionProxy>(GPUConnectionToWebProcess&);

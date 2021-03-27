@@ -13,6 +13,7 @@
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/ProgramMtl.h"
 #include "libANGLE/renderer/metal/QueryMtl.h"
+#include "libANGLE/renderer/metal/mtl_constants.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 
 #include "libANGLE/Context.h"

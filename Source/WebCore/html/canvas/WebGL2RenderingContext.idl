@@ -40,9 +40,9 @@ typedef unsigned long long GLuint64;
 typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
 typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
-typedef (Float32Array or sequence<GLfloat>) Float32List;
-typedef (Int32Array or sequence<GLint>) Int32List;
-typedef (Uint32Array or sequence<GLuint>) Uint32List;
+typedef ([AllowShared] Float32Array or sequence<GLfloat>) Float32List;
+typedef ([AllowShared] Int32Array or sequence<GLint>) Int32List;
+typedef ([AllowShared] Uint32Array or sequence<GLuint>) Uint32List;
 
 #ifdef ENABLE_VIDEO
 typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
@@ -337,11 +337,11 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
     const GLenum MAX_CLIENT_WAIT_TIMEOUT_WEBGL                 = 0x9247;
 
     // Buffer objects.
-    undefined bufferData(GLenum target, ArrayBufferView data, GLenum usage, GLuint srcOffset, optional GLuint length = 0);
-    undefined bufferSubData(GLenum target, GLintptr dstByteOffset, ArrayBufferView srcData, GLuint srcOffset, optional GLuint length = 0);
+    undefined bufferData(GLenum target, [AllowShared] ArrayBufferView data, GLenum usage, GLuint srcOffset, optional GLuint length = 0);
+    undefined bufferSubData(GLenum target, GLintptr dstByteOffset, [AllowShared] ArrayBufferView srcData, GLuint srcOffset, optional GLuint length = 0);
 
     undefined copyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
-    undefined getBufferSubData(GLenum target, GLintptr srcByteOffset, ArrayBufferView dstData, optional GLuint dstOffset = 0, optional GLuint length = 0);
+    undefined getBufferSubData(GLenum target, GLintptr srcByteOffset, [AllowShared] ArrayBufferView dstData, optional GLuint dstOffset = 0, optional GLuint length = 0);
 
     // Framebuffer objects.
     undefined blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
@@ -360,19 +360,19 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
 
     undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, GLintptr pboOffset);
     undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, TexImageSource source);
-    undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
-    undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, ArrayBufferView srcData, GLuint srcOffset);
+    undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
+    undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, GLuint srcOffset);
 
     undefined texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLintptr pboOffset);
     undefined texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, TexImageSource source);
-    undefined texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, ArrayBufferView? srcData, optional GLuint srcOffset = 0);
+    undefined texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, [AllowShared] ArrayBufferView? srcData, optional GLuint srcOffset = 0);
 
     undefined copyTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 
     undefined compressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, GLintptr offset);
-    undefined compressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, ArrayBufferView srcData, optional GLuint srcOffset = 0, optional GLuint srcLengthOverride = 0);
+    undefined compressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, [AllowShared] ArrayBufferView srcData, optional GLuint srcOffset = 0, optional GLuint srcLengthOverride = 0);
     undefined compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, GLintptr offset);
-    undefined compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, ArrayBufferView srcData, optional GLuint srcOffset = 0, optional GLuint srcLengthOverride = 0);
+    undefined compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, [AllowShared] ArrayBufferView srcData, optional GLuint srcOffset = 0, optional GLuint srcLengthOverride = 0);
 
     // Programs and shaders/
     GLint getFragDataLocation(WebGLProgram program, DOMString name);
@@ -470,17 +470,17 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
 
     undefined texImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, GLintptr pboOffset);
     [MayThrowException] undefined texImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, TexImageSource source);
-    undefined texImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, ArrayBufferView srcData, GLuint srcOffset);
+    undefined texImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, GLuint srcOffset);
 
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr pboOffset);
     [MayThrowException] undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, TexImageSource source);
-    undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView srcData, GLuint srcOffset);
+    undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, GLuint srcOffset);
 
     undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, GLintptr offset);
-    undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, ArrayBufferView srcData, GLuint srcOffset, optional GLuint srcLengthOverride = 0);
+    undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, [AllowShared] ArrayBufferView srcData, GLuint srcOffset, optional GLuint srcLengthOverride = 0);
 
     undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, GLintptr offset);
-    undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, ArrayBufferView srcData, GLuint srcOffset, optional GLuint srcLengthOverride = 0);
+    undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, [AllowShared] ArrayBufferView srcData, GLuint srcOffset, optional GLuint srcLengthOverride = 0);
 
     undefined uniform1fv(WebGLUniformLocation? location, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
     undefined uniform2fv(WebGLUniformLocation? location, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
@@ -497,7 +497,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
     undefined uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
 
     undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr offset);
-    undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView dstData, GLuint dstOffset);
+    undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView dstData, GLuint dstOffset);
 };
 
 WebGL2RenderingContext includes WebGLRenderingContextBase;

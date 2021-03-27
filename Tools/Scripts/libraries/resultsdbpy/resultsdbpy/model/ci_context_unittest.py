@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2021-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,19 +21,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import contextlib
-import json
-import mock
 import time
-import unittest
 
 from fakeredis import FakeStrictRedis
 from redis import StrictRedis
 from resultsdbpy.model.cassandra_context import CassandraContext
-from resultsdbpy.model.ci_context import BuildbotURLFactory, CIContext, BuildbotEightURLFactory
+from resultsdbpy.model.ci_context import BuildbotURLFactory, BuildbotEightURLFactory
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.mock_repository import MockSVNRepository
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 
 from webkitcorepy import mocks
@@ -264,7 +260,7 @@ class CIContextTest(WaitForDockerTestCase):
     KEYSPACE = 'suite_context_test_keyspace'
 
     def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
-        with URLFactoryTest.mock():
+        with MockModelFactory.webkit(), MockModelFactory.safari(), URLFactoryTest.mock():
             cassandra.drop_keyspace(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
             self.model.ci_context.add_url_factory(BuildbotURLFactory(master='build.webkit.org', redis=self.model.redis))
@@ -314,12 +310,12 @@ class CIContextTest(WaitForDockerTestCase):
         urls = self.model.ci_context.find_urls_by_commit(
             configurations=[Configuration(version_name='Mojave', flavor='wk2')],
             suite='layout-tests',
-            begin=MockSVNRepository.webkit().commit_for_id(236542),
-            end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000,
+            end=1601660000,
         )
 
         self.assertEqual(next(iter(urls.values()))[0]['queue'], 'https://build.webkit.org/#/builders/2')
-        self.assertEqual(next(iter(urls.values()))[0]['build'], 'https://build.webkit.org/#/builders/2/builds/3')
+        self.assertEqual(next(iter(urls.values()))[0]['build'], 'https://build.webkit.org/#/builders/2/builds/1')
         self.assertEqual(next(iter(urls.values()))[0]['worker'], 'https://build.webkit.org/#/workers/3')
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)

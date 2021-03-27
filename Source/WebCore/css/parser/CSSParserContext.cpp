@@ -72,8 +72,8 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , colorFilterEnabled { document.settings().colorFilterEnabled() }
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
+    , cssColor4 { document.settings().cssColor4() }
     , deferredCSSParserEnabled { document.settings().deferredCSSParserEnabled() }
-    , enforcesCSSMIMETypeInNoQuirksMode { document.settings().enforceCSSMIMETypeInNoQuirksMode() }
     , individualTransformPropertiesEnabled { document.settings().cssIndividualTransformPropertiesEnabled() }
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     , legacyOverflowScrollingTouchEnabled { shouldEnableLegacyOverflowScrollingTouch(document) }
@@ -111,8 +111,8 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.colorFilterEnabled == b.colorFilterEnabled
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
+        && a.cssColor4 == b.cssColor4
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
-        && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
         && a.individualTransformPropertiesEnabled == b.individualTransformPropertiesEnabled
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         && a.legacyOverflowScrollingTouchEnabled == b.legacyOverflowScrollingTouchEnabled
@@ -133,6 +133,40 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
     ;
+}
+
+bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
+{
+    switch (property) {
+    case CSSPropertyAspectRatio:
+        return !aspectRatioEnabled;
+    case CSSPropertyAppleColorFilter:
+        return !colorFilterEnabled;
+    case CSSPropertyTranslate:
+    case CSSPropertyRotate:
+    case CSSPropertyScale:
+        return !individualTransformPropertiesEnabled;
+    case CSSPropertyOverscrollBehavior:
+    case CSSPropertyOverscrollBehaviorX:
+    case CSSPropertyOverscrollBehaviorY:
+        return !overscrollBehaviorEnabled;
+    case CSSPropertyScrollBehavior:
+        return !scrollBehaviorEnabled;
+#if ENABLE(TEXT_AUTOSIZING)
+    case CSSPropertyWebkitTextSizeAdjust:
+#if !PLATFORM(IOS_FAMILY)
+        return !textAutosizingEnabled;
+#endif
+        return false;
+#endif // ENABLE(TEXT_AUTOSIZING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+    case CSSPropertyWebkitOverflowScrolling:
+        return !legacyOverflowScrollingTouchEnabled;
+#endif
+    default:
+        return false;
+    }
+    return false;
 }
 
 URL CSSParserContext::completeURL(const String& url) const

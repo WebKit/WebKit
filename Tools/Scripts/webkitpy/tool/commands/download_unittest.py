@@ -301,7 +301,7 @@ Not updating bug 50000
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r852): Reason
-bug_description: https://commits.webkit.org/r852 broke the build:
+bug_description: https://commits.webkit.org/r852 introduced a regression:
 Reason
 component: MOCK component
 cc: MOCK cc
@@ -329,7 +329,7 @@ Unable to parse bug number from diff.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r852): Reason
-bug_description: https://commits.webkit.org/r852 broke the build:
+bug_description: https://commits.webkit.org/r852 introduced a regression:
 Reason
 component: MOCK component
 cc: MOCK cc
@@ -354,7 +354,7 @@ Preparing revert for bug 50004.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r852): Reason
-bug_description: https://commits.webkit.org/r852 broke the build:
+bug_description: https://commits.webkit.org/r852 introduced a regression:
 Reason
 component: MOCK component
 cc: MOCK cc
@@ -378,7 +378,7 @@ where ATTACHMENT_ID is the ID of this attachment.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r3001): Reason
-bug_description: https://commits.webkit.org/r3001 broke the build:
+bug_description: https://commits.webkit.org/r3001 introduced a regression:
 Reason
 component: MOCK component
 cc: MOCK cc
@@ -404,7 +404,7 @@ Preparing revert for bug 50004.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r963): Reason
-bug_description: https://commits.webkit.org/r963 broke the build:
+bug_description: https://commits.webkit.org/r963 introduced a regression:
 Reason
 component: MOCK component
 cc: MOCK cc

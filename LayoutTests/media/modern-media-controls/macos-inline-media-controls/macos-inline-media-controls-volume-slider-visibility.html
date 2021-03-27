@@ -5,7 +5,7 @@
 
 description("Testing the <code>MacOSInlineMediaControls</code> volume slider visibility.");
 
-const mediaControls = new MacOSInlineMediaControls;
+const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
 const volumeSliderContainer = mediaControls.volumeSlider.parent;
 
 debug("Default state")

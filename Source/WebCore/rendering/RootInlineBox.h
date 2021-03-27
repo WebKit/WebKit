@@ -56,6 +56,7 @@ public:
 
     LayoutUnit lineBoxTop() const { return m_lineBoxTop; }
     LayoutUnit lineBoxBottom() const { return m_lineBoxBottom; }
+    LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
     
     LayoutUnit paginationStrut() const { return m_paginationStrut; }
     void setPaginationStrut(LayoutUnit strut) { m_paginationStrut = strut; }

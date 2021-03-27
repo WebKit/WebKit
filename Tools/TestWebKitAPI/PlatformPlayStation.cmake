@@ -38,6 +38,10 @@ if (ENABLE_WEBKIT)
         Tests/WebKit/ForceRepaint.cpp
         Tests/WebKit/Geolocation.cpp
     )
+
+    list(APPEND TestWebKit_PRIVATE_LIBRARIES
+        WebKitRequirements::ProcessLauncher
+    )
 endif ()
 
 # Set the debugger working directory for Visual Studio

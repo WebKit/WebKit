@@ -44,13 +44,18 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
 {
 }
 
-ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* structure, JSValue message, SourceAppender appender, RuntimeType type, ErrorType errorType, bool useCurrentFrame)
+ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* structure, JSValue message, JSValue options, SourceAppender appender, RuntimeType type, ErrorType errorType, bool useCurrentFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
     String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return create(globalObject, vm, structure, messageString, appender, type, errorType, useCurrentFrame);
+
+    JSValue cause = !options.isObject() ? jsUndefined() : options.get(globalObject, vm.propertyNames->cause);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    return create(globalObject, vm, structure, messageString, cause, appender, type, errorType, useCurrentFrame);
 }
 
 static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* exception, BytecodeIndex bytecodeIndex, const String& message)
@@ -105,7 +110,7 @@ static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* ex
     return appender(message, codeBlock->source().provider()->getRange(start, stop).toString(), type, ErrorInstance::FoundApproximateSource);
 }
 
-void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
@@ -131,6 +136,9 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
 
     if (!messageWithSource.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, messageWithSource), static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    if (!cause.isUndefined())
+        putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to

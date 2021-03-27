@@ -13,7 +13,7 @@ describe('/api/manifest', function () {
 
     it("should generate an empty manifest when database is empty", () => {
         return TestServer.remoteAPI().getJSON('/api/manifest').then((manifest) => {
-            assert.deepEqual(Object.keys(manifest).sort(), ['all', 'bugTrackers', 'builders', 'dashboard', 'dashboards',
+            assert.deepStrictEqual(Object.keys(manifest).sort(), ['all', 'bugTrackers', 'builders', 'dashboard', 'dashboards',
                 'fileUploadSizeLimit', 'maxRootReuseAgeInDays', 'metrics', 'platformGroups', 'repositories', 'siteTitle',
                 'status', 'summaryPages', 'testAgeToleranceInHours', 'tests', 'triggerables']);
 
@@ -45,22 +45,22 @@ describe('/api/manifest', function () {
         return TestServer.database().insert('bug_trackers', bugzillaData).then(() => {
             return TestServer.remoteAPI().getJSON('/api/manifest');
         }).then((content) => {
-            assert.deepEqual(content.bugTrackers, {1: {name: 'Bugzilla', bugUrl: 'https://webkit.org/b/$number',
+            assert.deepStrictEqual(content.bugTrackers, {1: {name: 'Bugzilla', bugUrl: 'https://webkit.org/b/$number',
                 newBugUrl: 'https://bugs.webkit.org/', repositories: null}});
 
             let manifest = Manifest._didFetchManifest(content);
             let tracker = BugTracker.findById(1);
             assert(tracker);
-            assert.equal(tracker.name(), 'Bugzilla');
-            assert.equal(tracker.bugUrl(123), 'https://webkit.org/b/123');
-            assert.equal(tracker.newBugUrl(), 'https://bugs.webkit.org/');
+            assert.strictEqual(tracker.name(), 'Bugzilla');
+            assert.strictEqual(tracker.bugUrl(123), 'https://webkit.org/b/123');
+            assert.strictEqual(tracker.newBugUrl(), 'https://bugs.webkit.org/');
         });
     });
 
     it("should clear Bug and BugTracker static maps when reset", async () => {
         await TestServer.database().insert('bug_trackers', bugzillaData);
         const content = await TestServer.remoteAPI().getJSON('/api/manifest');
-        assert.deepEqual(content.bugTrackers, {1: {name: 'Bugzilla', bugUrl: 'https://webkit.org/b/$number',
+        assert.deepStrictEqual(content.bugTrackers, {1: {name: 'Bugzilla', bugUrl: 'https://webkit.org/b/$number',
             newBugUrl: 'https://bugs.webkit.org/', repositories: null}});
 
         Manifest._didFetchManifest(content);
@@ -92,28 +92,28 @@ describe('/api/manifest', function () {
 
             let webkit = Repository.findById(11);
             assert(webkit);
-            assert.equal(webkit.name(), 'WebKit');
-            assert.equal(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
+            assert.strictEqual(webkit.name(), 'WebKit');
+            assert.strictEqual(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
 
             let macos = Repository.findById(9);
             assert(macos);
-            assert.equal(macos.name(), 'macOS');
+            assert.strictEqual(macos.name(), 'macOS');
 
             let ios = Repository.findById(22);
             assert(ios);
-            assert.equal(ios.name(), 'iOS');
+            assert.strictEqual(ios.name(), 'iOS');
 
             let tracker = BugTracker.findById(1);
             assert(tracker);
-            assert.equal(tracker.name(), 'Bugzilla');
-            assert.equal(tracker.bugUrl(123), 'https://webkit.org/b/123');
-            assert.equal(tracker.newBugUrl(), 'https://bugs.webkit.org/');
-            assert.deepEqual(tracker.repositories(), [webkit]);
+            assert.strictEqual(tracker.name(), 'Bugzilla');
+            assert.strictEqual(tracker.bugUrl(123), 'https://webkit.org/b/123');
+            assert.strictEqual(tracker.newBugUrl(), 'https://bugs.webkit.org/');
+            assert.deepStrictEqual(tracker.repositories(), [webkit]);
 
             tracker = BugTracker.findById(2);
             assert(tracker);
-            assert.equal(tracker.name(), 'Radar');
-            assert.deepEqual(Repository.sortByName(tracker.repositories()), [ios, macos]);
+            assert.strictEqual(tracker.name(), 'Radar');
+            assert.deepStrictEqual(Repository.sortByName(tracker.repositories()), [ios, macos]);
         });
     });
 
@@ -131,19 +131,19 @@ describe('/api/manifest', function () {
 
             let webkit = Repository.findById(11);
             assert(webkit);
-            assert.equal(webkit.name(), 'WebKit');
-            assert.equal(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
-            assert.equal(webkit.ownedRepositories(), null);
+            assert.strictEqual(webkit.name(), 'WebKit');
+            assert.strictEqual(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
+            assert.ok(!webkit.ownedRepositories());
 
             let osx = Repository.findById(9);
             assert(osx);
-            assert.equal(osx.name(), 'OS X');
-            assert.deepEqual(osx.ownedRepositories(), [Repository.findById(35)]);
+            assert.strictEqual(osx.name(), 'OS X');
+            assert.deepStrictEqual(osx.ownedRepositories(), [Repository.findById(35)]);
 
             let ios = Repository.findById(22);
             assert(ios);
-            assert.equal(ios.name(), 'iOS');
-            assert.equal(ios.ownedRepositories(), null);
+            assert.strictEqual(ios.name(), 'iOS');
+            assert.ok(!ios.ownedRepositories());
         });
     });
 
@@ -156,7 +156,7 @@ describe('/api/manifest', function () {
         ]).then(() => {
             return TestServer.remoteAPI().getJSON('/api/manifest');
         }).then((content) => {
-            assert.deepEqual(content.builders, {
+            assert.deepStrictEqual(content.builders, {
                 '1': {name: 'SomeBuilder', buildUrl: 'https://build.webkit.org/builders/$builderName/build/$buildTag'},
                 '2': {name: 'SomeOtherBuilder', buildUrl: null}
             });
@@ -165,13 +165,13 @@ describe('/api/manifest', function () {
 
             let builder = Builder.findById(1);
             assert(builder);
-            assert.equal(builder.name(), 'SomeBuilder');
-            assert.equal(builder.urlForBuild(123), 'https://build.webkit.org/builders/SomeBuilder/build/123');
+            assert.strictEqual(builder.name(), 'SomeBuilder');
+            assert.strictEqual(builder.urlForBuild(123), 'https://build.webkit.org/builders/SomeBuilder/build/123');
 
             builder = Builder.findById(2);
             assert(builder);
-            assert.equal(builder.name(), 'SomeOtherBuilder');
-            assert.equal(builder.urlForBuild(123), null);
+            assert.strictEqual(builder.name(), 'SomeOtherBuilder');
+            assert.strictEqual(builder.urlForBuild(123), null);
         });
     });
 
@@ -202,14 +202,14 @@ describe('/api/manifest', function () {
         ]).then(() => {
             return TestServer.remoteAPI().getJSON('/api/manifest');
         }).then((content) => {
-            assert.deepEqual(content.tests, {
+            assert.deepStrictEqual(content.tests, {
                 "1": {"name": "SomeTest", "parentId": null, "url": null},
                 "2": {"name": "SomeOtherTest", "parentId": null, "url": null},
                 "3": {"name": "ChildTest", "parentId": "1", "url": null},
                 "4": {"name": "GrandChild", "parentId": "3", "url": null},
             });
 
-            assert.deepEqual(content.metrics, {
+            assert.deepStrictEqual(content.metrics, {
                 '5': {name: 'Time', test: '1', aggregator: null},
                 '6': {name: 'Time', test: '2', aggregator: 'Total'},
                 '7': {name: 'Malloc', test: '2', aggregator: 'Total'},
@@ -244,7 +244,7 @@ describe('/api/manifest', function () {
             assert(iosGroup);
             assert(macGroup);
 
-            assert.equal(mavericks.name(), 'Trunk Mavericks');
+            assert.strictEqual(mavericks.name(), 'Trunk Mavericks');
             assert(mavericks.hasTest(someTest));
             assert(mavericks.hasTest(someOtherTest));
             assert(mavericks.hasTest(childTest));
@@ -253,9 +253,9 @@ describe('/api/manifest', function () {
             assert(mavericks.hasMetric(someOtherTestTime));
             assert(mavericks.hasMetric(someOtherTestMalloc));
             assert(mavericks.hasMetric(childTestMetric));
-            assert.equal(mavericks.group(), macGroup);
+            assert.strictEqual(mavericks.group(), macGroup);
 
-            assert.equal(ios9iphone5s.name(), 'iOS 9 iPhone 5s');
+            assert.strictEqual(ios9iphone5s.name(), 'iOS 9 iPhone 5s');
             assert(ios9iphone5s.hasTest(someTest));
             assert(!ios9iphone5s.hasTest(someOtherTest));
             assert(!ios9iphone5s.hasTest(childTest));
@@ -264,63 +264,63 @@ describe('/api/manifest', function () {
             assert(!ios9iphone5s.hasMetric(someOtherTestTime));
             assert(!ios9iphone5s.hasMetric(someOtherTestMalloc));
             assert(!ios9iphone5s.hasMetric(childTestMetric));
-            assert.equal(ios9iphone5s.group(), iosGroup);
+            assert.strictEqual(ios9iphone5s.group(), iosGroup);
 
             const macPlatforms = macGroup.platforms();
-            assert.equal(macPlatforms.length, 1);
-            assert.equal(macPlatforms[0], mavericks);
+            assert.strictEqual(macPlatforms.length, 1);
+            assert.strictEqual(macPlatforms[0], mavericks);
 
             const iosPlatforms = iosGroup.platforms();
-            assert.equal(iosPlatforms.length, 1);
-            assert.equal(iosPlatforms[0], ios9iphone5s);
+            assert.strictEqual(iosPlatforms.length, 1);
+            assert.strictEqual(iosPlatforms[0], ios9iphone5s);
 
-            assert.equal(someTest.name(), 'SomeTest');
-            assert.equal(someTest.parentTest(), null);
-            assert.deepEqual(someTest.path(), [someTest]);
+            assert.strictEqual(someTest.name(), 'SomeTest');
+            assert.ok(!someTest.parentTest());
+            assert.deepStrictEqual(someTest.path(), [someTest]);
             assert(!someTest.onlyContainsSingleMetric());
-            assert.deepEqual(someTest.childTests(), [childTest]);
-            assert.deepEqual(someTest.metrics(), [someTestMetric]);
+            assert.deepStrictEqual(someTest.childTests(), [childTest]);
+            assert.deepStrictEqual(someTest.metrics(), [someTestMetric]);
 
-            assert.equal(someTestMetric.name(), 'Time');
-            assert.equal(someTestMetric.aggregatorName(), null);
-            assert.equal(someTestMetric.label(), 'Time');
-            assert.deepEqual(someTestMetric.childMetrics(), childTest.metrics());
-            assert.equal(someTestMetric.fullName(), 'SomeTest : Time');
+            assert.strictEqual(someTestMetric.name(), 'Time');
+            assert.strictEqual(someTestMetric.aggregatorName(), null);
+            assert.strictEqual(someTestMetric.label(), 'Time');
+            assert.deepStrictEqual(someTestMetric.childMetrics(), childTest.metrics());
+            assert.strictEqual(someTestMetric.fullName(), 'SomeTest : Time');
 
-            assert.equal(someOtherTest.name(), 'SomeOtherTest');
-            assert.equal(someOtherTest.parentTest(), null);
-            assert.deepEqual(someOtherTest.path(), [someOtherTest]);
+            assert.strictEqual(someOtherTest.name(), 'SomeOtherTest');
+            assert.ok(!someOtherTest.parentTest());
+            assert.deepStrictEqual(someOtherTest.path(), [someOtherTest]);
             assert(!someOtherTest.onlyContainsSingleMetric());
-            assert.deepEqual(someOtherTest.childTests(), []);
-            assert.equal(someOtherTest.metrics().length, 2);
-            assert.equal(someOtherTest.metrics()[0].name(), 'Time');
-            assert.equal(someOtherTest.metrics()[0].aggregatorName(), 'Total');
-            assert.equal(someOtherTest.metrics()[0].label(), 'Time : Total');
-            assert.equal(someOtherTest.metrics()[0].childMetrics().length, 0);
-            assert.equal(someOtherTest.metrics()[0].fullName(), 'SomeOtherTest : Time : Total');
-            assert.equal(someOtherTest.metrics()[1].name(), 'Malloc');
-            assert.equal(someOtherTest.metrics()[1].aggregatorName(), 'Total');
-            assert.equal(someOtherTest.metrics()[1].label(), 'Malloc : Total');
-            assert.equal(someOtherTest.metrics()[1].childMetrics().length, 0);
-            assert.equal(someOtherTest.metrics()[1].fullName(), 'SomeOtherTest : Malloc : Total');
+            assert.deepStrictEqual(someOtherTest.childTests(), []);
+            assert.strictEqual(someOtherTest.metrics().length, 2);
+            assert.strictEqual(someOtherTest.metrics()[0].name(), 'Time');
+            assert.strictEqual(someOtherTest.metrics()[0].aggregatorName(), 'Total');
+            assert.strictEqual(someOtherTest.metrics()[0].label(), 'Time : Total');
+            assert.strictEqual(someOtherTest.metrics()[0].childMetrics().length, 0);
+            assert.strictEqual(someOtherTest.metrics()[0].fullName(), 'SomeOtherTest : Time : Total');
+            assert.strictEqual(someOtherTest.metrics()[1].name(), 'Malloc');
+            assert.strictEqual(someOtherTest.metrics()[1].aggregatorName(), 'Total');
+            assert.strictEqual(someOtherTest.metrics()[1].label(), 'Malloc : Total');
+            assert.strictEqual(someOtherTest.metrics()[1].childMetrics().length, 0);
+            assert.strictEqual(someOtherTest.metrics()[1].fullName(), 'SomeOtherTest : Malloc : Total');
 
-            assert.equal(childTest.name(), 'ChildTest');
-            assert.equal(childTest.parentTest(), someTest);
-            assert.deepEqual(childTest.path(), [someTest, childTest]);
+            assert.strictEqual(childTest.name(), 'ChildTest');
+            assert.strictEqual(childTest.parentTest(), someTest);
+            assert.deepStrictEqual(childTest.path(), [someTest, childTest]);
             assert(!childTest.onlyContainsSingleMetric());
-            assert.deepEqual(childTest.childTests(), [grandChildTest]);
-            assert.equal(childTest.metrics().length, 1);
-            assert.equal(childTest.metrics()[0].label(), 'Time');
-            assert.equal(childTest.metrics()[0].fullName(), 'SomeTest \u220B ChildTest : Time');
+            assert.deepStrictEqual(childTest.childTests(), [grandChildTest]);
+            assert.strictEqual(childTest.metrics().length, 1);
+            assert.strictEqual(childTest.metrics()[0].label(), 'Time');
+            assert.strictEqual(childTest.metrics()[0].fullName(), 'SomeTest \u220B ChildTest : Time');
 
-            assert.equal(grandChildTest.name(), 'GrandChild');
-            assert.equal(grandChildTest.parentTest(), childTest);
-            assert.deepEqual(grandChildTest.path(), [someTest, childTest, grandChildTest]);
+            assert.strictEqual(grandChildTest.name(), 'GrandChild');
+            assert.strictEqual(grandChildTest.parentTest(), childTest);
+            assert.deepStrictEqual(grandChildTest.path(), [someTest, childTest, grandChildTest]);
             assert(grandChildTest.onlyContainsSingleMetric());
-            assert.deepEqual(grandChildTest.childTests(), []);
-            assert.equal(grandChildTest.metrics().length, 1);
-            assert.equal(grandChildTest.metrics()[0].label(), 'Time');
-            assert.equal(grandChildTest.metrics()[0].fullName(), 'SomeTest \u220B ChildTest \u220B GrandChild : Time');
+            assert.deepStrictEqual(grandChildTest.childTests(), []);
+            assert.strictEqual(grandChildTest.metrics().length, 1);
+            assert.strictEqual(grandChildTest.metrics()[0].label(), 'Time');
+            assert.strictEqual(grandChildTest.metrics()[0].fullName(), 'SomeTest \u220B ChildTest \u220B GrandChild : Time');
         });
     });
 
@@ -374,59 +374,59 @@ describe('/api/manifest', function () {
             return Manifest.fetch();
         }).then(() => {
             const webkit = Repository.findById(11);
-            assert.equal(webkit.name(), 'WebKit');
-            assert.equal(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
+            assert.strictEqual(webkit.name(), 'WebKit');
+            assert.strictEqual(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
 
             const osWebkit1 = Repository.findById(101);
-            assert.equal(osWebkit1.name(), 'WebKit');
-            assert.equal(osWebkit1.ownerId(), 9);
-            assert.equal(osWebkit1.urlForRevision(123), 'https://trac.webkit.org/123');
+            assert.strictEqual(osWebkit1.name(), 'WebKit');
+            assert.strictEqual(parseInt(osWebkit1.ownerId()), 9);
+            assert.strictEqual(osWebkit1.urlForRevision(123), 'https://trac.webkit.org/123');
 
             const macos = Repository.findById(9);
-            assert.equal(macos.name(), 'macOS');
+            assert.strictEqual(macos.name(), 'macOS');
 
             const shared = Repository.findById(16);
-            assert.equal(shared.name(), 'Shared');
+            assert.strictEqual(shared.name(), 'Shared');
 
             const someTest = Test.findById(1);
-            assert.equal(someTest.name(), 'SomeTest');
+            assert.strictEqual(someTest.name(), 'SomeTest');
 
             const someOtherTest = Test.findById(2);
-            assert.equal(someOtherTest.name(), 'SomeOtherTest');
+            assert.strictEqual(someOtherTest.name(), 'SomeOtherTest');
 
             const childTest = Test.findById(3);
-            assert.equal(childTest.name(), 'ChildTest');
+            assert.strictEqual(childTest.name(), 'ChildTest');
 
             const ios9iphone5s = Platform.findById(23);
-            assert.equal(ios9iphone5s.name(), 'iOS 9 iPhone 5s');
+            assert.strictEqual(ios9iphone5s.name(), 'iOS 9 iPhone 5s');
 
             const mavericks = Platform.findById(46);
-            assert.equal(mavericks.name(), 'Trunk Mavericks');
+            assert.strictEqual(mavericks.name(), 'Trunk Mavericks');
 
             const sierra = Platform.findById(104);
-            assert.equal(sierra.name(), 'Trunk Sierra MacBookPro11,2');
+            assert.strictEqual(sierra.name(), 'Trunk Sierra MacBookPro11,2');
 
-            assert.equal(Triggerable.all().length, 3);
+            assert.strictEqual(Triggerable.all().length, 3);
 
             const macosTriggerable = Triggerable.findByTestConfiguration(someTest, mavericks);
-            assert.equal(macosTriggerable.name(), 'build.webkit.org');
+            assert.strictEqual(macosTriggerable.name(), 'build.webkit.org');
 
-            assert.equal(Triggerable.findByTestConfiguration(someOtherTest, mavericks), macosTriggerable);
-            assert.equal(Triggerable.findByTestConfiguration(childTest, mavericks), macosTriggerable);
+            assert.strictEqual(Triggerable.findByTestConfiguration(someOtherTest, mavericks), macosTriggerable);
+            assert.strictEqual(Triggerable.findByTestConfiguration(childTest, mavericks), macosTriggerable);
 
             const iosTriggerable = Triggerable.findByTestConfiguration(someOtherTest, ios9iphone5s);
-            assert.notEqual(iosTriggerable, macosTriggerable);
-            assert.equal(iosTriggerable.name(), 'ios-build.webkit.org');
+            assert.notStrictEqual(iosTriggerable, macosTriggerable);
+            assert.strictEqual(iosTriggerable.name(), 'ios-build.webkit.org');
 
-            assert.equal(Triggerable.findByTestConfiguration(someOtherTest, ios9iphone5s), iosTriggerable);
-            assert.equal(Triggerable.findByTestConfiguration(childTest, ios9iphone5s), iosTriggerable);
+            assert.strictEqual(Triggerable.findByTestConfiguration(someOtherTest, ios9iphone5s), iosTriggerable);
+            assert.strictEqual(Triggerable.findByTestConfiguration(childTest, ios9iphone5s), iosTriggerable);
 
             const macTriggerable = Triggerable.findByTestConfiguration(someTest, sierra);
-            assert.equal(macTriggerable.name(), 'mac-build.webkit.org');
+            assert.strictEqual(macTriggerable.name(), 'mac-build.webkit.org');
             assert(macTriggerable.acceptedTests().has(someTest));
 
             const groups = macTriggerable.repositoryGroups();
-            assert.deepEqual(groups.length, 3);
+            assert.deepStrictEqual(groups.length, 3);
             TriggerableRepositoryGroup.sortByName(groups);
 
             const emptyCustomSet = new CustomCommitSet;
@@ -445,35 +445,35 @@ describe('/api/manifest', function () {
             cusomSetWithWebKitAndShared.setRevisionForRepository(webkit, '191622');
             cusomSetWithWebKitAndShared.setRevisionForRepository(shared, '86456');
 
-            assert.equal(groups[0].name(), 'system-and-roots');
-            assert.equal(groups[0].isHidden(), false);
-            assert.equal(groups[0].acceptsCustomRoots(), true);
-            assert.deepEqual(Repository.sortByName(groups[0].repositories()), [macos]);
-            assert.equal(groups[0].accepts(emptyCustomSet), false);
-            assert.equal(groups[0].accepts(customSetWithOSX), true);
-            assert.equal(groups[0].accepts(cusomSetWithOSXAndWebKit), false);
-            assert.equal(groups[0].accepts(cusomSetWithWebKitAndShared), false);
-            assert.equal(groups[0].accepts(cusomSetWithWebKit), false);
+            assert.strictEqual(groups[0].name(), 'system-and-roots');
+            assert.strictEqual(groups[0].isHidden(), false);
+            assert.strictEqual(groups[0].acceptsCustomRoots(), true);
+            assert.deepStrictEqual(Repository.sortByName(groups[0].repositories()), [macos]);
+            assert.strictEqual(groups[0].accepts(emptyCustomSet), false);
+            assert.strictEqual(groups[0].accepts(customSetWithOSX), true);
+            assert.strictEqual(groups[0].accepts(cusomSetWithOSXAndWebKit), false);
+            assert.strictEqual(groups[0].accepts(cusomSetWithWebKitAndShared), false);
+            assert.strictEqual(groups[0].accepts(cusomSetWithWebKit), false);
 
-            assert.equal(groups[1].name(), 'system-and-webkit');
-            assert.equal(groups[1].isHidden(), false);
-            assert.equal(groups[1].acceptsCustomRoots(), false);
-            assert.deepEqual(Repository.sortByName(groups[1].repositories()), [webkit, macos]);
-            assert.equal(groups[1].accepts(emptyCustomSet), false);
-            assert.equal(groups[1].accepts(customSetWithOSX), false);
-            assert.equal(groups[1].accepts(cusomSetWithOSXAndWebKit), true);
-            assert.equal(groups[1].accepts(cusomSetWithWebKitAndShared), false);
-            assert.equal(groups[1].accepts(cusomSetWithWebKit), false);
+            assert.strictEqual(groups[1].name(), 'system-and-webkit');
+            assert.strictEqual(groups[1].isHidden(), false);
+            assert.strictEqual(groups[1].acceptsCustomRoots(), false);
+            assert.deepStrictEqual(Repository.sortByName(groups[1].repositories()), [webkit, macos]);
+            assert.strictEqual(groups[1].accepts(emptyCustomSet), false);
+            assert.strictEqual(groups[1].accepts(customSetWithOSX), false);
+            assert.strictEqual(groups[1].accepts(cusomSetWithOSXAndWebKit), true);
+            assert.strictEqual(groups[1].accepts(cusomSetWithWebKitAndShared), false);
+            assert.strictEqual(groups[1].accepts(cusomSetWithWebKit), false);
 
-            assert.equal(groups[2].name(), 'webkit-and-shared');
-            assert.equal(groups[2].isHidden(), true);
-            assert.equal(groups[2].acceptsCustomRoots(), false);
-            assert.deepEqual(Repository.sortByName(groups[2].repositories()), [shared, webkit]);
-            assert.equal(groups[2].accepts(emptyCustomSet), false);
-            assert.equal(groups[2].accepts(customSetWithOSX), false);
-            assert.equal(groups[2].accepts(cusomSetWithOSXAndWebKit), false);
-            assert.equal(groups[2].accepts(cusomSetWithWebKitAndShared), true);
-            assert.equal(groups[2].accepts(cusomSetWithWebKit), false);
+            assert.strictEqual(groups[2].name(), 'webkit-and-shared');
+            assert.strictEqual(groups[2].isHidden(), true);
+            assert.strictEqual(groups[2].acceptsCustomRoots(), false);
+            assert.deepStrictEqual(Repository.sortByName(groups[2].repositories()), [shared, webkit]);
+            assert.strictEqual(groups[2].accepts(emptyCustomSet), false);
+            assert.strictEqual(groups[2].accepts(customSetWithOSX), false);
+            assert.strictEqual(groups[2].accepts(cusomSetWithOSXAndWebKit), false);
+            assert.strictEqual(groups[2].accepts(cusomSetWithWebKitAndShared), true);
+            assert.strictEqual(groups[2].accepts(cusomSetWithWebKit), false);
         });
     });
 

@@ -18,12 +18,12 @@ scheduler.frameDidFire = function()
 
     if (numberOfFrames == 1) {
         debug("4 enabled buttons")
-        shouldBe("rightContainer.buttonMargin", "16");
+        shouldBe("rightContainer.buttonMargin", "12");
         debug("");
         mediaControls.tracksButton.enabled = false;
     } else if (numberOfFrames == 2) {
         debug("3 enabled buttons")
-        shouldBe("rightContainer.buttonMargin", "24");
+        shouldBe("rightContainer.buttonMargin", "16");
         mediaControls.pipButton.enabled = false;
         debug("");
     } else if (numberOfFrames == 3) {

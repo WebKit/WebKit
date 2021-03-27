@@ -31,23 +31,6 @@
 
 namespace JSC {
 
-class JSWebAssemblyCompileError final : public ErrorInstance {
-public:
-    using Base = ErrorInstance;
-
-    static JSWebAssemblyCompileError* create(JSGlobalObject*, VM&, Structure*, const String&);
-    static JSWebAssemblyCompileError* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, JSValue message)
-    {
-        return create(globalObject, vm, structure, message.isUndefined() ? String() : message.toWTFString(globalObject));
-    }
-
-    DECLARE_INFO;
-
-private:
-    JSWebAssemblyCompileError(VM&, Structure*);
-};
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSWebAssemblyCompileError, ErrorInstance);
-
 JSObject* createJSWebAssemblyCompileError(JSGlobalObject*, VM&, const String&);
 
 } // namespace JSC

@@ -966,11 +966,8 @@ void HTMLMediaElement::scheduleCheckPlaybackTargetCompatability()
     if (m_checkPlaybackTargetCompatablityTask.hasPendingTask())
         return;
 
-    auto logSiteIdentifier = LOGIDENTIFIER;
-    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
-    m_checkPlaybackTargetCompatablityTask.scheduleTask([this, logSiteIdentifier] {
-        UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_checkPlaybackTargetCompatablityTask.scheduleTask([this] {
         checkPlaybackTargetCompatablity();
     });
 }
@@ -979,7 +976,14 @@ void HTMLMediaElement::checkPlaybackTargetCompatablity()
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_isPlayingToWirelessTarget && !m_player->canPlayToWirelessPlaybackTarget()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "calling setShouldPlayToPlaybackTarget(false)");
+        static const Seconds maxIntervalForWirelessPlaybackPlayerUpdate { 500_ms };
+        Seconds delta = MonotonicTime::now() - m_currentPlaybackTargetIsWirelessEventFiredTime;
+        if (delta < maxIntervalForWirelessPlaybackPlayerUpdate) {
+            scheduleCheckPlaybackTargetCompatability();
+            return;
+        }
+
+        ERROR_LOG(LOGIDENTIFIER, "player incompatible after ", delta.value(), ", calling setShouldPlayToPlaybackTarget(false)");
         m_failedToPlayToWirelessTarget = true;
         m_player->setShouldPlayToPlaybackTarget(false);
     }
@@ -2084,6 +2088,9 @@ void HTMLMediaElement::noneSupported()
 
 void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error)
 {
+    // https://html.spec.whatwg.org/#loading-the-media-resource:dom-media-have_nothing-2
+    // 17 March 2021
+
     // 1 - The user agent should cancel the fetching process.
     stopPeriodicTimers();
     m_loadState = WaitingForSource;
@@ -2097,20 +2104,18 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
     else
         ASSERT_NOT_REACHED();
 
-    // 3 - Queue a task to fire a simple event named error at the media element.
-    scheduleEvent(eventNames().errorEvent);
-
 #if ENABLE(MEDIA_SOURCE)
     detachMediaSource();
 #endif
 
-    // 4 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a
-    // task to fire a simple event called emptied at the element.
-    m_networkState = NETWORK_EMPTY;
-    scheduleEvent(eventNames().emptiedEvent);
+    // 3 - Set the element's networkState attribute to the NETWORK_IDLE value.
+    m_networkState = NETWORK_IDLE;
 
-    // 5 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
+    // 4 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
     setShouldDelayLoadEvent(false);
+
+    // 5 - Fire an event named error at the media element.
+    dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     // 6 - Abort the overall resource selection algorithm.
     m_currentSourceNode = nullptr;
@@ -3324,7 +3329,7 @@ void HTMLMediaElement::setPlaybackRate(double rate)
         return;
 #endif
 
-    if (m_player && potentiallyPlaying() && m_player->rate() != rate && !m_mediaController)
+    if (m_player && potentiallyPlaying() && !m_mediaController)
         m_player->setRate(rate);
 
     if (m_requestedPlaybackRate != rate) {
@@ -5001,6 +5006,7 @@ void HTMLMediaElement::mediaEngineWasUpdated()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     beginProcessingMediaPlayerCallback();
+    m_cachedSupportsAcceleratedRendering = m_player && m_player->supportsAcceleratedRendering();
     updateRenderer();
     endProcessingMediaPlayerCallback();
 
@@ -5511,6 +5517,7 @@ void HTMLMediaElement::clearMediaPlayer()
     if (m_player) {
         m_player->invalidate();
         m_player = nullptr;
+        m_cachedSupportsAcceleratedRendering = false;
     }
     schedulePlaybackControlsManagerUpdate();
 
@@ -5750,10 +5757,8 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool is
 void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarget)
 {
     auto logSiteIdentifier = LOGIDENTIFIER;
-    ALWAYS_LOG(logSiteIdentifier, isPlayingToWirelessTarget);
     m_playbackTargetIsWirelessQueue.enqueueTask([this, isPlayingToWirelessTarget, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
 
         if (isPlayingToWirelessTarget == m_isPlayingToWirelessTarget)
             return;
@@ -5768,6 +5773,7 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
         updateSleepDisabling();
 
         m_failedToPlayToWirelessTarget = false;
+        m_currentPlaybackTargetIsWirelessEventFiredTime = MonotonicTime::now();
         scheduleCheckPlaybackTargetCompatability();
 
         if (!isContextStopped())
@@ -6434,7 +6440,7 @@ const String& HTMLMediaElement::mediaCacheDirectory()
     return sharedMediaCacheDirectory();
 }
 
-HashSet<RefPtr<SecurityOrigin>> HTMLMediaElement::originsInMediaCache(const String& path)
+HashSet<SecurityOriginData> HTMLMediaElement::originsInMediaCache(const String& path)
 {
     return MediaPlayer::originsInMediaCache(path);
 }
@@ -6444,7 +6450,7 @@ void HTMLMediaElement::clearMediaCache(const String& path, WallTime modifiedSinc
     MediaPlayer::clearMediaCache(path, modifiedSince);
 }
 
-void HTMLMediaElement::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
+void HTMLMediaElement::clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins)
 {
     MediaPlayer::clearMediaCacheForOrigins(path, origins);
 }
@@ -7142,11 +7148,11 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     if (!page)
         return false;
 
-    String mediaControlsScript = RenderTheme::singleton().mediaControlsScript();
-    if (!mediaControlsScript.length())
+    auto mediaControlsScripts = RenderTheme::singleton().mediaControlsScripts();
+    if (mediaControlsScripts.isEmpty())
         return false;
 
-    return setupAndCallJS([mediaControlsScript](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController& scriptController, DOMWrapperWorld& world) {
+    return setupAndCallJS([mediaControlsScripts = WTFMove(mediaControlsScripts)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController& scriptController, DOMWrapperWorld& world) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
@@ -7154,16 +7160,20 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
         if (functionValue.isCallable(vm))
             return true;
 
-#if !defined(NDEBUG)
-        // Setting a scriptURL allows the source to be debuggable in the inspector.
-        URL scriptURL = URL({ }, "mediaControlsScript"_s);
-#else
-        URL scriptURL;
-#endif
-        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, WTFMove(scriptURL)), world);
-        if (UNLIKELY(scope.exception())) {
-            scope.clearException();
-            return false;
+        unsigned index = 0;
+        for (auto& mediaControlsScript : mediaControlsScripts) {
+            if (mediaControlsScript.isEmpty())
+                continue;
+            // Setting a scriptURL allows the source to be debuggable in the inspector.
+            URL scriptURL = URL({ }, makeString("__InjectedScript_mediaControlsScript"_s, index, ".js"));
+            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, WTFMove(scriptURL)), world);
+            if (UNLIKELY(scope.exception())) {
+                auto* exception = scope.exception();
+                scope.clearException();
+                reportException(&globalObject, exception);
+                return false;
+            }
+            ++index;
         }
 
         return true;
@@ -7989,18 +7999,11 @@ void HTMLMediaElement::mediaStreamCaptureStarted()
 
 void HTMLMediaElement::enqueueTaskForDispatcher(Function<void()>&& function)
 {
-    if (!isMainThread()) {
-        callOnMainThread([this, weakThis = makeWeakPtr(*this), function = WTFMove(function)]() mutable {
-            if (!weakThis)
-                return;
-            enqueueTaskForDispatcher(WTFMove(function));
-        });
-        return;
-    }
-
-    if (!scriptExecutionContext())
-        return;
-    scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, WTFMove(function));
+    ensureOnMainThread([this, weakThis = makeWeakPtr(*this), function = WTFMove(function)]() mutable {
+        if (!weakThis || !scriptExecutionContext())
+            return;
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, WTFMove(function));
+    });
 }
 
 SecurityOriginData HTMLMediaElement::documentSecurityOrigin() const

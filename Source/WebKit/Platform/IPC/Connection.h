@@ -42,6 +42,7 @@
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
@@ -70,6 +71,7 @@ enum class SendSyncOption {
     InformPlatformProcessWillSuspend = 1 << 0,
     UseFullySynchronousModeForTesting = 1 << 1,
     ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply = 1 << 2,
+    MaintainOrderingWithAsyncMessages = 1 << 3,
 };
 
 enum class WaitForOption {
@@ -273,10 +275,10 @@ public:
         return waitForAndDispatchImmediately<T>(destinationID.toUInt64(), timeout, waitForOptions);
     }
 
-    bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption> sendOptions);
-    std::unique_ptr<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, uint64_t& syncRequestID);
-    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<Encoder>, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
-    bool sendSyncReply(std::unique_ptr<Encoder>);
+    bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions);
+    UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, uint64_t& syncRequestID);
+    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
+    bool sendSyncReply(UniqueRef<Encoder>&&);
 
     void wakeUpRunLoop();
 
@@ -322,7 +324,9 @@ private:
     bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
     
     std::unique_ptr<Decoder> waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
-    
+    uint64_t makeSyncRequestID() { return ++m_syncRequestID; }
+    bool pushPendingSyncRequestID(uint64_t syncRequestID);
+    void popPendingSyncRequestID(uint64_t syncRequestID);
     std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
     // Called on the connection work queue.
@@ -332,7 +336,7 @@ private:
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
-    bool sendOutgoingMessage(std::unique_ptr<Encoder>);
+    bool sendOutgoingMessage(UniqueRef<Encoder>&&);
     void connectionDidClose();
     
     // Called on the listener thread.
@@ -401,7 +405,7 @@ private:
 
     // Outgoing messages.
     Lock m_outgoingMessagesMutex;
-    Deque<std::unique_ptr<Encoder>> m_outgoingMessages;
+    Deque<UniqueRef<Encoder>> m_outgoingMessages;
     
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageMutex;
@@ -457,10 +461,10 @@ private:
     void cancelReceiveSource();
 
     mach_port_t m_sendPort { MACH_PORT_NULL };
-    dispatch_source_t m_sendSource { nullptr };
+    OSObjectPtr<dispatch_source_t> m_sendSource;
 
     mach_port_t m_receivePort { MACH_PORT_NULL };
-    dispatch_source_t m_receiveSource { nullptr };
+    OSObjectPtr<dispatch_source_t> m_receiveSource;
 
     std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
     bool m_isInitializingSendSource { false };
@@ -495,6 +499,7 @@ private:
     EventListener m_writeListener;
     HANDLE m_connectionPipe { INVALID_HANDLE_VALUE };
 #endif
+    friend class StreamClientConnection;
 };
 
 template<typename T>
@@ -502,8 +507,8 @@ bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption>
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = makeUnique<Encoder>(T::name(), destinationID);
-    *encoder << message.arguments();
+    auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
+    encoder.get() << message.arguments();
     
     return sendMessage(WTFMove(encoder), sendOptions);
 }
@@ -517,7 +522,7 @@ uint64_t Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = makeUnique<Encoder>(T::name(), destinationID);
+    auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     uint64_t listenerID = nextAsyncReplyHandlerID();
     addAsyncReplyHandler(*this, listenerID, CompletionHandler<void(Decoder*)>([completionHandler = WTFMove(completionHandler)] (Decoder* decoder) mutable {
         if (decoder && decoder->isValid())
@@ -525,8 +530,8 @@ uint64_t Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint
         else
             T::cancelReply(WTFMove(completionHandler));
     }, CompletionHandlerCallThread::MainThread));
-    *encoder << listenerID;
-    *encoder << message.arguments();
+    encoder.get() << listenerID;
+    encoder.get() << message.arguments();
     sendMessage(WTFMove(encoder), sendOptions);
     return listenerID;
 }
@@ -556,7 +561,7 @@ template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message
     RELEASE_ASSERT(RunLoop::isMain());
 
     uint64_t syncRequestID = 0;
-    std::unique_ptr<Encoder> encoder = createSyncMessageEncoder(T::name(), destinationID, syncRequestID);
+    auto encoder = createSyncMessageEncoder(T::name(), destinationID, syncRequestID);
 
     if (sendSyncOptions.contains(SendSyncOption::UseFullySynchronousModeForTesting)) {
         encoder->setFullySynchronousModeForTesting();
@@ -564,7 +569,7 @@ template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message
     }
 
     // Encode the rest of the input arguments.
-    *encoder << message.arguments();
+    encoder.get() << message.arguments();
 
     // Now send the message and wait for a reply.
     std::unique_ptr<Decoder> replyDecoder = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);

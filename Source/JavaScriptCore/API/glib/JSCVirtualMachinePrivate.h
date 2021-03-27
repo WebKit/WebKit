@@ -23,6 +23,8 @@
 #include "JSCVirtualMachine.h"
 #include <wtf/glib/GRefPtr.h>
 
+typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
+
 GRefPtr<JSCVirtualMachine> jscVirtualMachineGetOrCreate(JSContextGroupRef);
 JSContextGroupRef jscVirtualMachineGetContextGroup(JSCVirtualMachine*);
 void jscVirtualMachineAddContext(JSCVirtualMachine*, JSCContext*);

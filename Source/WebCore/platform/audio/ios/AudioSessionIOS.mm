@@ -33,8 +33,8 @@
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WorkQueue.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -103,7 +103,7 @@ public:
     ~AudioSessionPrivate();
 
     AudioSession::CategoryType m_categoryOverride;
-    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
+    RefPtr<WorkQueue> m_workQueue;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
 };
 
@@ -261,23 +261,24 @@ size_t AudioSession::maximumNumberOfOutputChannels() const
 
 bool AudioSession::tryToSetActiveInternal(bool active)
 {
-    __block NSError* error = nil;
-
-    if (!m_private->m_dispatchQueue)
-        m_private->m_dispatchQueue = adoptOSObject(dispatch_queue_create("AudioSession Activation Queue", DISPATCH_QUEUE_SERIAL));
+    if (!m_private->m_workQueue)
+        m_private->m_workQueue = WorkQueue::create("AudioSession Activation Queue");
 
     // We need to deactivate the session on another queue because the AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation option
     // means that AVAudioSession may synchronously unduck previously ducked clients. Activation needs to complete before this method
     // returns, so do it synchronously on the same serial queue.
     if (active) {
-        dispatch_sync(m_private->m_dispatchQueue.get(), ^{
+        bool success = false;
+        m_private->m_workQueue->dispatchSync([&success] {
+            NSError *error = nil;
             [[PAL::getAVAudioSessionClass() sharedInstance] setActive:YES withOptions:0 error:&error];
+            success = !error;
         });
-
-        return !error;
+        return success;
     }
 
-    dispatch_async(m_private->m_dispatchQueue.get(), ^{
+    m_private->m_workQueue->dispatch([] {
+        NSError *error = nil;
         [[PAL::getAVAudioSessionClass() sharedInstance] setActive:NO withOptions:0 error:&error];
     });
 

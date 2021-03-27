@@ -147,7 +147,7 @@ class BuildbotTriggerable {
                 continue;
             }
             assert(triggerable instanceof Triggerable, 'Must specify a valid triggerable');
-            assert.equal(triggerable.name(), this._name, 'Must specify the triggerable of this syncer');
+            assert.strictEqual(triggerable.name(), this._name, 'Must specify the triggerable of this syncer');
             const repositoryGroup = request.repositoryGroup();
             if (!repositoryGroup) {
                 this._logger.error(`Build request ${request.id()} does not specify a repository group. Such a build request is no longer supported.`);

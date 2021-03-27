@@ -130,7 +130,12 @@ static void callExitSoon(IPC::Connection*)
         // global destructors or atexit handlers to be called from this thread while the main thread is busy
         // doing its thing.
         RELEASE_LOG_ERROR(IPC, "Exiting process early due to unacknowledged closed-connection");
+#if OS(WINDOWS)
+        // Calling _exit in non-main threads may cause a deadlock in WTF::Thread::ThreadHolder::~ThreadHolder.
+        TerminateProcess(GetCurrentProcess(), EXIT_FAILURE);
+#else
         _exit(EXIT_FAILURE);
+#endif
     });
 }
 
@@ -239,19 +244,19 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
     didReceiveNetworkProcessMessage(connection, decoder);
 }
 
-void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     ASSERT(parentProcessConnection() == &connection);
     if (parentProcessConnection() != &connection) {
         WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), decoder.destinationID());
         ASSERT_NOT_REACHED();
-        return;
+        return false;
     }
 
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
-        return;
+        return true;
 
-    didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
 }
 
 void NetworkProcess::didClose(IPC::Connection&)
@@ -446,7 +451,7 @@ std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSessio
     // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
     String sessionName = makeString("WebKit Test-", getCurrentProcessID());
 
-    auto session = adoptCF(WebCore::createPrivateStorageSession(sessionName.createCFString().get()));
+    auto session = WebCore::createPrivateStorageSession(sessionName.createCFString().get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
@@ -480,7 +485,7 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldU
     RetainPtr<CFURLStorageSessionRef> storageSession;
     RetainPtr<CFStringRef> cfIdentifier = makeString(identifierBase, ".PrivateBrowsing.", createCanonicalUUIDString()).createCFString();
     if (sessionID.isEphemeral())
-        storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
+        storageSession = createPrivateStorageSession(cfIdentifier.get());
     else if (sessionID != PAL::SessionID::defaultSessionID())
         storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get());
 
@@ -2396,6 +2401,20 @@ void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void
     completionHandler();
 }
 
+void NetworkProcess::setQuotaLoggingEnabled(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    if (m_quotaLoggingEnabled == enabled)
+        return completionHandler();
+    m_quotaLoggingEnabled = enabled;
+
+    LockHolder locker(m_sessionStorageQuotaManagersLock);
+    if (auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID)) {
+        for (auto storageQuotaManager : sessionStorageQuotaManager->existingStorageQuotaManagers())
+            storageQuotaManager->setLoggingEnabled(m_quotaLoggingEnabled);
+    }
+    completionHandler();
+}
+
 void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const URL& oldName, const URL& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
@@ -2504,24 +2523,30 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
 #if ENABLE(INDEXED_DATABASE)
     idbRootPath = sessionStorageQuotaManager->idbRootPath();
 #endif
-    StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()]() {
-        ASSERT(!isMainThread());    
+    StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()](StorageQuotaManager::ShouldPrintUsageDetail shouldPrintusageDetail) {
+        ASSERT(!isMainRunLoop());
 
-        uint64_t usage = CacheStorage::Engine::diskUsage(cacheRootPath, origin);
+        uint64_t cacheUsage = CacheStorage::Engine::diskUsage(cacheRootPath, origin);
+        uint64_t usage = cacheUsage;
+
 #if ENABLE(INDEXED_DATABASE)
         usage += IDBServer::IDBServer::diskUsage(idbRootPath, origin);
 #endif
+        if (shouldPrintusageDetail == StorageQuotaManager::ShouldPrintUsageDetail::Yes)
+            WTFLogAlways("StorageQuotaManager::UsageGetter Cache usage %" PRIu64 ", IDB usage %" PRIu64, cacheUsage, usage);
 
         return usage;
     };
     StorageQuotaManager::QuotaIncreaseRequester quotaIncreaseRequester = [this, weakThis = makeWeakPtr(*this), sessionID, origin] (uint64_t currentQuota, uint64_t currentSpace, uint64_t requestedIncrease, auto&& callback) {
-        ASSERT(isMainThread());
+        ASSERT(isMainRunLoop());
         if (!weakThis)
             callback({ });
         requestStorageSpace(sessionID, origin, currentQuota, currentSpace, requestedIncrease, WTFMove(callback));
     };
 
-    return sessionStorageQuotaManager->ensureOriginStorageQuotaManager(origin, sessionStorageQuotaManager->defaultQuota(origin), WTFMove(usageGetter), WTFMove(quotaIncreaseRequester)).ptr();
+    auto originStorageQuotaManager = sessionStorageQuotaManager->ensureOriginStorageQuotaManager(origin, sessionStorageQuotaManager->defaultQuota(origin), WTFMove(usageGetter), WTFMove(quotaIncreaseRequester)).ptr();
+    originStorageQuotaManager->setLoggingEnabled(m_quotaLoggingEnabled);
+    return originStorageQuotaManager;
 }
 
 #if !PLATFORM(COCOA)
@@ -2624,11 +2649,11 @@ void NetworkProcess::setPrivateClickMeasurementTokenSignatureURLForTesting(PAL::
     completionHandler();
 }
 
-void NetworkProcess::setPrivateClickMeasurementAttributionReportURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setPrivateClickMeasurementAttributionReportURLsForTesting(PAL::SessionID sessionID, URL&& sourceURL, URL&& attributeOnURL, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->setPrivateClickMeasurementAttributionReportURLForTesting(WTFMove(url));
-    
+        session->setPrivateClickMeasurementAttributionReportURLsForTesting(WTFMove(sourceURL), WTFMove(attributeOnURL));
+
     completionHandler();
 }
 
@@ -2640,10 +2665,10 @@ void NetworkProcess::markPrivateClickMeasurementsAsExpiredForTesting(PAL::Sessio
     completionHandler();
 }
 
-void NetworkProcess::setFraudPreventionValuesForTesting(PAL::SessionID sessionID, String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setPCMFraudPreventionValuesForTesting(PAL::SessionID sessionID, String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->setFraudPreventionValuesForTesting(WTFMove(secretToken), WTFMove(unlinkableToken), WTFMove(signature), WTFMove(keyID));
+        session->setPCMFraudPreventionValuesForTesting(WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID));
 
     completionHandler();
 }

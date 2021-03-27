@@ -26,17 +26,6 @@
 class TracksSupport extends MediaControllerSupport
 {
 
-    constructor(mediaController)
-    {
-        super(mediaController);
-
-        if (!this.control)
-            return;
-
-        this.mediaController.controls.tracksPanel.dataSource = this;
-        this.mediaController.controls.tracksPanel.uiDelegate = this;
-    }
-
     // Protected
 
     get control()
@@ -56,85 +45,14 @@ class TracksSupport extends MediaControllerSupport
 
     buttonWasPressed(control)
     {
-        if (this.mediaController.showMediaControlsContextMenu(control))
-            return;
-
-        if (this.mediaController.layoutTraits & LayoutTraits.macOS)
-            this.mediaController.controls.showTracksPanel();
-    }
-
-    tracksPanelNumberOfSections()
-    {
-        let numberOfSections = 0;
-        if (this._canPickAudioTracks())
-            numberOfSections++;
-        if (this._canPickTextTracks())
-            numberOfSections++;
-        return numberOfSections;
-    }
-
-    tracksPanelTitleForSection(sectionIndex)
-    {
-        if (sectionIndex == 0 && this._canPickAudioTracks())
-            return UIString("Audio");
-        return UIString("Subtitles");
-    }
-
-    tracksPanelNumberOfTracksInSection(sectionIndex)
-    {
-        if (sectionIndex == 0 && this._canPickAudioTracks())
-            return this._audioTracks().length;
-        return this._textTracks().length;
-    }
-
-    tracksPanelTitleForTrackInSection(trackIndex, sectionIndex)
-    {
-        let track;
-        if (sectionIndex == 0 && this._canPickAudioTracks())
-            track = this._audioTracks()[trackIndex];
-        else
-            track = this._textTracks()[trackIndex];
-
-        if (this.mediaController.host)
-            return this.mediaController.host.displayNameForTrack(track);
-        return track.label;
-    }
-
-    tracksPanelIsTrackInSectionSelected(trackIndex, sectionIndex)
-    {
-        if (sectionIndex == 0 && this._canPickAudioTracks())
-            return this._audioTracks()[trackIndex].enabled;
-
-        const textTracks = this._textTracks();
-        const trackItem = textTracks[trackIndex];
-        const host = this.mediaController.host;
-        const trackIsShowing = track => track.mode === "showing";
-        const allTracksDisabled = !textTracks.some(trackIsShowing);
-        const usesAutomaticTrack = host ? (host.captionDisplayMode === "automatic" && allTracksDisabled) : false;
-
-        if (allTracksDisabled && host && trackItem === host.captionMenuOffItem && (host.captionDisplayMode === "forced-only" || host.captionDisplayMode === "manual"))
-            return true;
-        if (host && trackItem === host.captionMenuAutomaticItem && usesAutomaticTrack)
-            return true;
-        return !usesAutomaticTrack && trackIsShowing(trackItem);
-    }
-
-    tracksPanelSelectionDidChange(trackIndex, sectionIndex)
-    {
-        if (sectionIndex == 0 && this._canPickAudioTracks())
-            this._audioTracks().forEach((audioTrack, index) => audioTrack.enabled = index === trackIndex);
-        else if (this.mediaController.host) {
-            this._textTracks().forEach(textTrack => textTrack.mode = "disabled");
-            this.mediaController.host.setSelectedTextTrack(this._textTracks()[trackIndex]);
-        } else
-            this._textTracks().forEach((textTrack, index) => textTrack.mode = index === trackIndex ? "showing" : "disabled");
-
-        this.mediaController.controls.hideTracksPanel();
+        this.mediaController.showMediaControlsContextMenu(control, {
+            promoteSubMenus: !!(this.mediaController.layoutTraits & LayoutTraits.macOS),
+        });
     }
 
     syncControl()
     {
-        this.control.enabled = (this.mediaController.layoutTraits & LayoutTraits.macOS || this.mediaController.canShowMediaControlsContextMenu) && (this._canPickAudioTracks() || this._canPickTextTracks());
+        this.control.enabled = this.mediaController.canShowMediaControlsContextMenu && (this._canPickAudioTracks() || this._canPickTextTracks());
     }
 
     // Private
@@ -163,7 +81,7 @@ class TracksSupport extends MediaControllerSupport
 
     _sortedTrackList(tracks)
     {
-        return Array.from(this.mediaController.host ? this.mediaController.host.sortedTrackListForMenu(tracks) : tracks);
+        return this.mediaController.host ? this.mediaController.host.sortedTrackListForMenu(tracks) : Array.from(tracks);
     }
 
 }

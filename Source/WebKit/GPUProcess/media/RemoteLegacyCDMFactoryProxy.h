@@ -42,18 +42,18 @@ class RemoteLegacyCDMSessionProxy;
 class RemoteLegacyCDMProxy;
 struct RemoteLegacyCDMConfiguration;
 
-class RemoteLegacyCDMFactoryProxy final : private IPC::MessageReceiver, public CanMakeWeakPtr<RemoteLegacyCDMFactoryProxy> {
+class RemoteLegacyCDMFactoryProxy final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteLegacyCDMFactoryProxy();
 
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    void didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& encoder) { didReceiveSyncMessage(connection, decoder, encoder); }
+    bool didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) { return didReceiveSyncMessage(connection, decoder, encoder); }
     void didReceiveCDMMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveCDMSessionMessage(IPC::Connection&, IPC::Decoder&);
-    void didReceiveSyncCDMMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
-    void didReceiveSyncCDMSessionMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
+    bool didReceiveSyncCDMMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool didReceiveSyncCDMSessionMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     void addProxy(RemoteLegacyCDMIdentifier, std::unique_ptr<RemoteLegacyCDMProxy>&&);
     void removeProxy(RemoteLegacyCDMIdentifier);
@@ -68,7 +68,7 @@ private:
     friend class GPUProcessConnection;
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { }
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
     void createCDM(const String& keySystem, Optional<WebCore::MediaPlayerIdentifier>&&, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&&);

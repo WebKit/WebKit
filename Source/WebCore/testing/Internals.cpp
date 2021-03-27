@@ -55,6 +55,7 @@
 #include "ComposedTreeIterator.h"
 #include "CookieJar.h"
 #include "Cursor.h"
+#include "DOMPointReadOnly.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMStringList.h"
@@ -78,6 +79,7 @@
 #include "ExtensionStyleSheets.h"
 #include "FetchResponse.h"
 #include "File.h"
+#include "FloatQuad.h"
 #include "FontCache.h"
 #include "FormController.h"
 #include "Frame.h"
@@ -126,6 +128,7 @@
 #include "MediaEngineConfigurationFactory.h"
 #include "MediaKeySession.h"
 #include "MediaKeys.h"
+#include "MediaMetadata.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
 #include "MediaRecorderProvider.h"
@@ -334,6 +337,10 @@
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+#include "ImageExtractionResult.h"
+#endif
+
 using JSC::CallData;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
@@ -479,6 +486,10 @@ Internals::~Internals()
 {
 #if ENABLE(MEDIA_STREAM)
     stopObservingRealtimeMediaSource();
+#endif
+#if ENABLE(MEDIA_SESSION)
+    if (m_artworkImagePromise)
+        m_artworkImagePromise->reject(Exception { InvalidStateError });
 #endif
 }
 
@@ -5102,6 +5113,9 @@ void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, W
     case SimulatedWebGLContextEvent::GPUStatusFailure:
         contextEvent = WebGLRenderingContext::SimulatedEventForTesting::GPUStatusFailure;
         break;
+    case SimulatedWebGLContextEvent::Timeout:
+        contextEvent = WebGLRenderingContext::SimulatedEventForTesting::Timeout;
+        break;
     default:
         ASSERT_NOT_REACHED();
         return;
@@ -5243,7 +5257,7 @@ void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
 
 void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
 {
-    m_nextTrackFramePromise = WTF::makeUnique<TrackFramePromise>(promise);
+    m_nextTrackFramePromise = makeUnique<TrackFramePromise>(WTFMove(promise));
 }
 
 void Internals::videoSampleAvailable(MediaSample& sample)
@@ -5509,6 +5523,29 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
     return downcast<MockPaymentCoordinator>(document.frame()->page()->paymentCoordinator().client());
 }
 #endif
+
+Internals::ImageOverlayText::~ImageOverlayText() = default;
+
+void Internals::installImageOverlay(Element& element, Vector<ImageOverlayText>&& allTextInfo)
+{
+    if (!is<HTMLElement>(element))
+        return;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    downcast<HTMLElement>(element).updateWithImageExtractionResult(ImageExtractionResult {
+        allTextInfo.map([] (auto& textInfo) -> ImageExtractionTextData {
+            return { textInfo.text, {
+                FloatPoint(textInfo.topLeft->x(), textInfo.topLeft->y()),
+                FloatPoint(textInfo.topRight->x(), textInfo.topRight->y()),
+                FloatPoint(textInfo.bottomRight->x(), textInfo.bottomRight->y()),
+                FloatPoint(textInfo.bottomLeft->x(), textInfo.bottomLeft->y()),
+            }};
+        })
+    });
+#else
+    UNUSED_PARAM(allTextInfo);
+#endif
+}
 
 bool Internals::isSystemPreviewLink(Element& element) const
 {
@@ -6049,6 +6086,32 @@ ExceptionOr<void> Internals::sendMediaSessionAction(MediaSession& session, const
     }
     return Exception { InvalidStateError };
 }
+
+void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
+{
+    if (!contextDocument()) {
+        promise.reject(Exception { InvalidStateError, "No document." });
+        return;
+    }
+    if (m_artworkImagePromise) {
+        promise.reject(Exception { InvalidStateError, "Another download is currently pending." });
+        return;
+    }
+    m_artworkImagePromise = makeUnique<ArtworkImagePromise>(WTFMove(promise));
+    m_artworkLoader = makeUnique<ArtworkImageLoader>(*contextDocument(), url, [this](Image* image) {
+        if (image) {
+            auto imageData = ImageData::create(unsigned(image->width()), unsigned(image->height()));
+            if (!imageData.hasException())
+                m_artworkImagePromise->resolve(imageData.releaseReturnValue());
+            else
+                m_nextTrackFramePromise->reject(imageData.exception().code());
+        } else
+            m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieve."  });
+        m_artworkImagePromise = nullptr;
+    });
+    m_artworkLoader->requestImageResource();
+}
+
 #endif
 
 constexpr ASCIILiteral string(PartialOrdering ordering)

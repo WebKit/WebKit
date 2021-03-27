@@ -14,7 +14,7 @@ promise_test(async (test) => {
     const worker = new Worker('no-transform.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "on");
-}, "registerRTCRtpScriptTransformer if insertable stream flag is on");
+}, "RTCRtpScriptTransformer if insertable stream flag is on");
 
 promise_test(async (test) => {
     if (window.internals)
@@ -23,7 +23,7 @@ promise_test(async (test) => {
     const worker = new Worker('no-transform.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "off");
-}, "no registerRTCRtpScriptTransformer if insertable stream flag is off");
+}, "no RTCRtpScriptTransformer if insertable stream flag is off");
         </script>
     </body>
 </html>

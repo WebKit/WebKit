@@ -1,3 +1,223 @@
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [perf dashboard] Use async/await in tests for TimeSeriesChart and InteractiveTimeSeriesChart
+        https://bugs.webkit.org/show_bug.cgi?id=222876
+
+        Reviewed by Sam Weinig.
+
+        Use async/await instead of chaining promises manually in the browser tests for
+        TimeSeriesChart and InteractiveTimeSeriesChart for better readability.
+
+        * browser-tests/interactive-time-series-chart-tests.js:
+        * browser-tests/time-series-chart-tests.js:
+
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [perf dashboard] Modernize TimeSeries and TimeSeriesView
+        https://bugs.webkit.org/show_bug.cgi?id=222872
+
+        Reviewed by Dewei Zhu.
+
+        Declare instance fields in class declarations, use const/let instead of var, and use generators
+        for forward and backward iterations instead of manually implementing the iterator protocol.
+
+        This patch also splits FilteredTimeSeriesView out of TimeSeriesView.
+
+        * public/v3/models/time-series.js:
+        (TimeSeries): Moved the declaration of _data instance field to the class declaration.
+        (TimeSeries.prototype.constructor): Deleted.
+        (TimeSeries.prototype.extendToFuture):
+        (TimeSeries.prototype.valuesBetweenRange):
+        (TimeSeries.prototype.findById):
+        (TimeSeries.prototype.findPointAfterTime):
+        (TimeSeriesView): Declared the instance fields in the class declaration.
+        (TimeSeriesView.prototype.constructor): Removed filteredData from the argument since it's split
+        out to FilteredTimeSeriesView now.
+        (TimeSeriesView.prototype.get _data): Added. An abstraction needed for FilteredTimeSeriesView.
+        (TimeSeriesView.prototype._findIndexForPoint): Ditto. Moved out of the constructor.
+        (TimeSeriesView.prototype.filter): Return a FilteredTimeSeriesView.
+        (TimeSeriesView.prototype.viewTimeRange): Use _subRange to return either TimeSeriesView or
+        FilteredTimeSeriesView which ever is needed.
+        (TimeSeriesView.prototype._subRange): An abstraction needed for FilteredTimeSeriesView.
+        (TimeSeriesView.prototype.Symbol.iterator): Made this a generator instead of implementing
+        the iterator protocol directly.
+        (TimeSeriesView.prototype._reverse): Ditto.
+        (FilteredTimeSeriesView): Added.
+        (FilteredTimeSeriesView.prototype.constructor): Added. Assert that afterEndingIndex is less than
+        the length of the filtered data. This assertion was missing in TimeSeries prior to this patch
+        when filteredData is specified.
+        (FilteredTimeSeriesView.prototype.get _data): Added.
+        (FilteredTimeSeriesView.prototype._subRange): Added. Instantiate FilteredTimeSeriesView with
+        the same filtered data.
+        (FilteredTimeSeriesView.prototype._findIndexForPoint): Moved from TimeSeriesView's constructor.
+        (FilteredTimeSeriesView.prototype._buildPointIndexMap): Moved from TimeSeriesView.
+
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [perf dashboard] Some browser tests are flaky or failing
+        https://bugs.webkit.org/show_bug.cgi?id=222874
+
+        Reviewed by Dewei Zhu.
+
+        There were two tests in TimeSeriesChart tests that were intermittently failing due to the test
+        not reliably waiting for the iframe's resize to take effect and not waiting for the time series'
+        fetching logic to run 'til completion before waiting for canvas charts to be re-drawn. Fixing
+        these by adding code to wait for these conditons.
+
+        All browser tests for markup-component.js was broken in r274036 as `require` function is not
+        available in browsers. Added a workaround in BrowsingContext to add a make assert.ok function
+        using expect(~).to.be.true().
+
+        * browser-tests/index.html:
+        (BrowsingContext.prototype.constructor): 
+        (waitForElementResize): Added.
+        * browser-tests/time-series-chart-tests.js: Fixed bugs in the tests.
+
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [perf dashboard] Modernize DataModelObject and LabeledObject
+        https://bugs.webkit.org/show_bug.cgi?id=222871
+
+        Reviewed by Dewei Zhu.
+
+        Use const/let instead of var, async/await instead of Promise.then, and Map instead
+        of a regular object for a dictionary.
+
+        Also define instance fields in the class declaration instead of simply adding them
+        in the class constructors, and set the default parameter values instead of relying
+        on the unspecified argument being undefined.
+
+        * public/v3/models/data-model.js:
+        (DataModelObject.ensureSingleton):
+        (DataModelObject.namedStaticMap):
+        (DataModelObject.ensureNamedStaticMap):
+        (DataModelObject.findById):
+        (DataModelObject.listForStaticMap):
+        (DataModelObject.async cachedFetch):
+        (DataModelObject):
+        (LabeledObject.sortByName):
+        (DataModelObject.cachedFetch): Deleted.
+
+2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [perf dashboard] Modernize MeasurementSet
+        https://bugs.webkit.org/show_bug.cgi?id=222857
+
+        Reviewed by Dewei Zhu.
+
+        Modernized MeasurementSet by using new instance field syntax, let/const instead of var,
+        async/await instead of then/catch, and Map instead of an object as a dictionary.
+
+        * public/v3/models/measurement-set.js:
+        (Array.prototype.includes): Deleted this polyfill which was needed for an old node.js.
+        (MeasurementSet): Moved the initialization of instance variables here. Also use Map
+        for this._allFetches instead of using a regular object as a dictionary.
+        (MeasurementSet.findSet): Use Map for MeasurementSet mapping.
+        (MeasurementSet.prototype.findClusters): Use const and let instead of var.
+        (MeasurementSet.prototype.async fetchBetween): Use async & await instead of Promise.then.
+        (MeasurementSet.prototype._ensureClusterPromise): Use let/const instead of var.
+        (MeasurementSet.prototype._urlForCache): Renamed from _constructUrl and removed the argument
+        for useCache since this function is now only used for feteching JSON caches.
+        (MeasurementSet.async _fetchPrimaryCluster): Use async/await and let/const. Consolidated
+        the API call to re-generate new JSON files and inlined API path here.
+        (MeasurementSet.async _fetchSecondaryCluster): Use async/await.
+        (MeasurementSet._addFetchedCluster): Use let/const instead of var.
+        (MeasurementSet.async fetchSegmentation): Use async/await and let/const.
+        (MeasurementSet.async _cachedClusterSegmentation): Ditto.
+        (MeasurementSet.prototype.async _invokeSegmentationAlgorithm): Ditto.
+        * unit-tests/measurement-set-tests.js:
+        (beforeEach): Updated the logic to reset measurement sets since the static variable was
+        renamed in MeasurementSet.findSet above.
+        * unit-tests/resources/mock-v3-models.js:
+        (MockModels.inject): Ditto.
+
+2021-03-06  Zhifei Fang  <zhifei_fang@apple.com>
+        
+        Make server test run with new node version
+        https://bugs.webkit.org/show_bug.cgi?id=222463
+
+        Change assert.equal to assert.strictEqual since node deprecated this API
+        Add a new function console.assert to make sure it will throw an error
+
+        Reviewed by Ryosuke Niwa.
+
+        * public/v3/models/repository.js:
+        (Repository.sortByNamePreferringOnesWithURL):
+        (Repository):
+        * server-tests/admin-platforms-tests.js:
+        * server-tests/admin-reprocess-report-tests.js:
+        * server-tests/api-build-requests-tests.js:
+        (return.TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/api-commits-tests.js:
+        (assertCommitIsSameAsOneSubmitted):
+        (return.TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/api-manifest-tests.js:
+        (return.TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/api-measurement-set-tests.js:
+        * server-tests/api-report-commits-tests.js:
+        (emptyReport.then):
+        (async initialReportCommits):
+        (async setUpTestsWithExpectedStatus):
+        (async testWithExpectedFailure):
+        * server-tests/api-report-tests.js:
+        (emptyReport.then):
+        * server-tests/api-test-groups.js:
+        * server-tests/api-update-triggerable-tests.js:
+        (update.then):
+        (then.response.db.selectAll.string_appeared_here.then):
+        (then.db.selectAll.string_appeared_here.then):
+        (then.Manifest.fetch.then):
+        * server-tests/api-upload-root-tests.js:
+        * server-tests/api-uploaded-file-tests.js:
+        (return.TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/privileged-api-add-build-requests-tests.js:
+        (async createAnalysisTask):
+        (const.commitSet.of.updatedGroups.0.requestedCommitSets):
+        * server-tests/privileged-api-create-analysis-task-tests.js:
+        * server-tests/privileged-api-create-test-group-tests.js:
+        (createAnalysisTask):
+        (return.createAnalysisTask.string_appeared_here.then):
+        (return.addTriggerableAndCreateTask.string_appeared_here.then):
+        (string_appeared_here.then):
+        * server-tests/privileged-api-upate-run-status.js:
+        * server-tests/privileged-api-update-test-group-tests.js:
+        (async createAnalysisTask):
+        * server-tests/privileged-api-upload-file-tests.js:
+        (TestServer.testConfig.uploadFileLimitInMB.1.then):
+        * server-tests/resources/common-operations.js:
+        (async assertThrows):
+        * server-tests/resources/temporary-file.js:
+        (TemporaryFile.makeTemporaryFileOfSizeInMB):
+        * server-tests/tools-buildbot-triggerable-tests.js:
+        (assertRequestAndResolve):
+        (then.refetchManifest.then):
+        (getBuilderNameToIDMapPromise.then):
+        * server-tests/tools-os-build-fetcher-tests.js:
+        * server-tests/tools-sync-buildbot-integration-tests.js:
+        (assertAndResolveRequest):
+        * tools/js/assert-override.js: Added.
+        (makeConsoleAssertThrow):
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.prototype.initialize):
+        (BuildbotBuildEntry.prototype.buildRequestStatusIfUpdateIsNeeded):
+        (BuildbotBuildEntry):
+        (BuildbotSyncer.prototype.scheduleRequest):
+        (BuildbotSyncer._loadConfig):
+        (BuildbotSyncer._parseRepositoryGroup):
+        (BuildbotSyncer._validateAndMergeConfig):
+        (BuildbotSyncer):
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._validateRequests):
+        * tools/js/markup-component.js:
+        (const.MarkupDocument.new.MarkupDocument.prototype._idForClone):
+        (const.MarkupDocument.new.MarkupDocument.prototype.markup):
+        * tools/js/os-build-fetcher.js:
+        (prototype._addOwnedCommitsForBuild):
+        * tools/js/remote.js:
+        (NodeRemoteAPI.prototype.configure):
+        * tools/js/v3-models.js:
+        * unit-tests/commit-set-tests.js:
+
 2021-02-18  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix a bug that a syncing script may try to reuse a delete root.

@@ -32,16 +32,13 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TranslatedProcess.h>
 
-#if ENABLE(SANDBOX_EXTENSIONS) && USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/UserMediaProcessManagerAdditions.cpp>
-#endif
-
 namespace WebKit {
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 static const ASCIILiteral audioExtensionPath { "com.apple.webkit.microphone"_s };
 static const ASCIILiteral videoExtensionPath { "com.apple.webkit.camera"_s };
 static const ASCIILiteral appleCameraServicePath { "com.apple.applecamerad"_s };
+static const ASCIILiteral additionalAppleCameraServicePath { "com.apple.appleh13camerad"_s };
 #endif
 
 static const Seconds deviceChangeDebounceTimerInterval { 200_ms };
@@ -83,11 +80,11 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     auto& process = proxy.page().process();
     size_t extensionCount = 0;
 
-    bool needsAudioSandboxExtension = withAudio && !process.hasAudioCaptureExtension() && !proxy.page().preferences().captureAudioInUIProcessEnabled();
+    bool needsAudioSandboxExtension = withAudio && !process.hasAudioCaptureExtension() && !proxy.page().preferences().captureAudioInUIProcessEnabled() && !proxy.page().preferences().captureAudioInGPUProcessEnabled();
     if (needsAudioSandboxExtension)
         extensionCount++;
 
-    bool needsVideoSandboxExtension = withVideo && !process.hasVideoCaptureExtension() && !proxy.page().preferences().captureVideoInUIProcessEnabled();
+    bool needsVideoSandboxExtension = withVideo && !process.hasVideoCaptureExtension() && !proxy.page().preferences().captureVideoInUIProcessEnabled() && !proxy.page().preferences().captureVideoInGPUProcessEnabled();
     if (needsVideoSandboxExtension)
         extensionCount++;
 

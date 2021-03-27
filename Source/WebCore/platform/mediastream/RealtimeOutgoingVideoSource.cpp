@@ -91,18 +91,14 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
 
 void RealtimeOutgoingVideoSource::applyRotation()
 {
-    if (!isMainThread()) {
-        callOnMainThread([this, protectedThis = makeRef(*this)] {
-            applyRotation();
-        });
-        return;
-    }
-    if (m_areSinksAskingToApplyRotation)
-        return;
+    ensureOnMainThread([this, protectedThis = makeRef(*this)] {
+        if (m_areSinksAskingToApplyRotation)
+            return;
 
-    m_areSinksAskingToApplyRotation = true;
-    if (!m_videoSource->source().setShouldApplyRotation(true))
-        m_shouldApplyRotation = true;
+        m_areSinksAskingToApplyRotation = true;
+        if (!m_videoSource->source().setShouldApplyRotation(true))
+            m_shouldApplyRotation = true;
+    });
 }
 
 void RealtimeOutgoingVideoSource::stop()

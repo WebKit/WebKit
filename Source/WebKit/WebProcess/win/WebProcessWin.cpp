@@ -59,4 +59,8 @@ void WebProcess::revokeAccessToAssetServices()
 {
 }
 
+void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&&)
+{
+}
+
 } // namespace WebKit

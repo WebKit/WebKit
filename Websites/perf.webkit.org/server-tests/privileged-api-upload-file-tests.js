@@ -27,7 +27,7 @@ describe('/privileged-api/upload-file', function () {
         return PrivilegedAPI.sendRequest('upload-file', {}, {useFormData: true}).then(() => {
             assert(false, 'should never be reached');
         }, (error) => {
-            assert.equal(error, 'NoFileSpecified');
+            assert.strictEqual(error, 'NoFileSpecified');
         });
     });
 
@@ -36,7 +36,7 @@ describe('/privileged-api/upload-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true}).then(() => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'FileSizeLimitExceeded');
+                assert.strictEqual(error, 'FileSizeLimitExceeded');
             });
         });
     });
@@ -51,15 +51,15 @@ describe('/privileged-api/upload-file', function () {
             uploadedFile = response['uploadedFile'];
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.equal(rows.length, 1);
-            assert.equal(rows[0].id, uploadedFile.id);
-            assert.equal(rows[0].size, limitInMB * 1024 * 1024);
-            assert.equal(rows[0].size, uploadedFile.size);
-            assert.equal(rows[0].filename, 'some.dat');
-            assert.equal(rows[0].filename, uploadedFile.filename);
-            assert.equal(rows[0].extension, '.dat');
-            assert.equal(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
-            assert.equal(rows[0].sha256, uploadedFile.sha256);
+            assert.strictEqual(rows.length, 1);
+            assert.strictEqual(rows[0].id, parseInt(uploadedFile.id));
+            assert.strictEqual(parseInt(rows[0].size), limitInMB * 1024 * 1024);
+            assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile.size));
+            assert.strictEqual(rows[0].filename, 'some.dat');
+            assert.strictEqual(rows[0].filename, uploadedFile.filename);
+            assert.strictEqual(rows[0].extension, '.dat');
+            assert.strictEqual(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
+            assert.strictEqual(rows[0].sha256, uploadedFile.sha256);
         });
     });
 
@@ -79,16 +79,16 @@ describe('/privileged-api/upload-file', function () {
             uploadedFile2 = response['uploadedFile'];
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.deepEqual(uploadedFile1, uploadedFile2);
-            assert.equal(rows.length, 1);
-            assert.equal(rows[0].id, uploadedFile1.id);
-            assert.equal(rows[0].size, limitInMB * 1024 * 1024);
-            assert.equal(rows[0].size, uploadedFile1.size);
-            assert.equal(rows[0].filename, 'some.dat');
-            assert.equal(rows[0].filename, uploadedFile1.filename);
-            assert.equal(rows[0].extension, '.dat');
-            assert.equal(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
-            assert.equal(rows[0].sha256, uploadedFile1.sha256);
+            assert.deepStrictEqual(uploadedFile1, uploadedFile2);
+            assert.strictEqual(rows.length, 1);
+            assert.strictEqual(rows[0].id, parseInt(uploadedFile1.id));
+            assert.strictEqual(parseInt(rows[0].size), limitInMB * 1024 * 1024);
+            assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile1.size));
+            assert.strictEqual(rows[0].filename, 'some.dat');
+            assert.strictEqual(rows[0].filename, uploadedFile1.filename);
+            assert.strictEqual(rows[0].extension, '.dat');
+            assert.strictEqual(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
+            assert.strictEqual(rows[0].sha256, uploadedFile1.sha256);
         });
     });
 
@@ -108,16 +108,16 @@ describe('/privileged-api/upload-file', function () {
             uploadedFile2 = response['uploadedFile'];
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.deepEqual(uploadedFile1, uploadedFile2);
-            assert.equal(rows.length, 1);
-            assert.equal(rows[0].id, uploadedFile1.id);
-            assert.equal(rows[0].size, limitInMB * 1024 * 1024);
-            assert.equal(rows[0].size, uploadedFile1.size);
-            assert.equal(rows[0].filename, 'some.dat');
-            assert.equal(rows[0].filename, uploadedFile1.filename);
-            assert.equal(rows[0].extension, '.dat');
-            assert.equal(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
-            assert.equal(rows[0].sha256, uploadedFile1.sha256);
+            assert.deepStrictEqual(uploadedFile1, uploadedFile2);
+            assert.strictEqual(rows.length, 1);
+            assert.strictEqual(rows[0].id, parseInt(uploadedFile1.id));
+            assert.strictEqual(parseInt(rows[0].size), limitInMB * 1024 * 1024);
+            assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile1.size));
+            assert.strictEqual(rows[0].filename, 'some.dat');
+            assert.strictEqual(rows[0].filename, uploadedFile1.filename);
+            assert.strictEqual(rows[0].extension, '.dat');
+            assert.strictEqual(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
+            assert.strictEqual(rows[0].sha256, uploadedFile1.sha256);
         });
     });
 
@@ -139,26 +139,26 @@ describe('/privileged-api/upload-file', function () {
             uploadedFile2 = response['uploadedFile'];
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.notEqual(uploadedFile1.id, uploadedFile2.id);
-            assert.equal(rows.length, 2);
-            assert.equal(rows[0].id, uploadedFile1.id);
-            assert.equal(rows[1].id, uploadedFile2.id);
+            assert.notStrictEqual(uploadedFile1.id, uploadedFile2.id);
+            assert.strictEqual(rows.length, 2);
+            assert.strictEqual(rows[0].id, parseInt(uploadedFile1.id));
+            assert.strictEqual(rows[1].id, parseInt(uploadedFile2.id));
 
-            assert.equal(rows[0].filename, 'some.dat');
-            assert.equal(rows[0].filename, uploadedFile1.filename);
-            assert.equal(rows[1].filename, 'other.dat');
-            assert.equal(rows[1].filename, uploadedFile2.filename);
+            assert.strictEqual(rows[0].filename, 'some.dat');
+            assert.strictEqual(rows[0].filename, uploadedFile1.filename);
+            assert.strictEqual(rows[1].filename, 'other.dat');
+            assert.strictEqual(rows[1].filename, uploadedFile2.filename);
 
-            assert.equal(rows[0].size, limitInMB * 1024 * 1024);
-            assert.equal(rows[0].size, uploadedFile1.size);
-            assert.equal(rows[0].size, uploadedFile2.size);
-            assert.equal(rows[0].size, rows[1].size);
-            assert.equal(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
-            assert.equal(rows[0].sha256, uploadedFile1.sha256);
-            assert.equal(rows[0].sha256, uploadedFile2.sha256);
-            assert.equal(rows[0].sha256, rows[1].sha256);
-            assert.equal(rows[0].extension, '.dat');
-            assert.equal(rows[1].extension, '.dat');
+            assert.strictEqual(parseInt(rows[0].size), limitInMB * 1024 * 1024);
+            assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile1.size));
+            assert.strictEqual(parseInt(rows[0].size), parseInt(uploadedFile2.size));
+            assert.strictEqual(rows[0].size, rows[1].size);
+            assert.strictEqual(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
+            assert.strictEqual(rows[0].sha256, uploadedFile1.sha256);
+            assert.strictEqual(rows[0].sha256, uploadedFile2.sha256);
+            assert.strictEqual(rows[0].sha256, rows[1].sha256);
+            assert.strictEqual(rows[0].extension, '.dat');
+            assert.strictEqual(rows[1].extension, '.dat');
         });
     });
 
@@ -170,12 +170,12 @@ describe('/privileged-api/upload-file', function () {
         }).then(() => {
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.equal(rows.length, 1);
-            assert.equal(rows[0].size, limitInMB * 1024 * 1024);
-            assert.equal(rows[0].mime, 'application/octet-stream');
-            assert.equal(rows[0].filename, 'some.other.tar.gz5');
-            assert.equal(rows[0].extension, '.tar.gz5');
-            assert.equal(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
+            assert.strictEqual(rows.length, 1);
+            assert.strictEqual(parseInt(rows[0].size), limitInMB * 1024 * 1024);
+            assert.strictEqual(rows[0].mime, 'application/octet-stream');
+            assert.strictEqual(rows[0].filename, 'some.other.tar.gz5');
+            assert.strictEqual(rows[0].extension, '.tar.gz5');
+            assert.strictEqual(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
         });
     });
 
@@ -195,13 +195,13 @@ describe('/privileged-api/upload-file', function () {
         }).then(() => {
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.equal(rows.length, 3);
-            assert.equal(rows[0].filename, 'some.dat');
-            assert.notEqual(rows[0].deleted_at, null);
-            assert.equal(rows[1].filename, 'other.dat');
-            assert.equal(rows[1].deleted_at, null);
-            assert.equal(rows[2].filename, 'another.dat');
-            assert.equal(rows[2].deleted_at, null);
+            assert.strictEqual(rows.length, 3);
+            assert.strictEqual(rows[0].filename, 'some.dat');
+            assert.notStrictEqual(rows[0].deleted_at, null);
+            assert.strictEqual(rows[1].filename, 'other.dat');
+            assert.strictEqual(rows[1].deleted_at, null);
+            assert.strictEqual(rows[2].filename, 'another.dat');
+            assert.strictEqual(rows[2].deleted_at, null);
         })
     });
 
@@ -217,14 +217,14 @@ describe('/privileged-api/upload-file', function () {
             await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }
         let rows = await db.selectAll('uploaded_files');
-        assert.equal(rows.length, splitCount);
+        assert.strictEqual(rows.length, splitCount);
 
         const stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('limit.dat', limitInMB, 'a');
         await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         rows = await db.selectAll('uploaded_files');
-        assert.equal(rows.length, splitCount + 1);
+        assert.strictEqual(rows.length, splitCount + 1);
         const deletedFiles = rows.filter((row) => row['deleted_at']);
-        assert.equal(deletedFiles.length, 16);
+        assert.strictEqual(deletedFiles.length, 16);
     });
 
     it('should not prune files that have been deleted', async () => {
@@ -281,7 +281,7 @@ describe('/privileged-api/upload-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true}).then(() => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'FileSizeQuotaExceeded');
+                assert.strictEqual(error, 'FileSizeQuotaExceeded');
             });
         });
     });
@@ -312,13 +312,13 @@ describe('/privileged-api/upload-file', function () {
         }).then(() => {
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.equal(rows.length, 3);
-            assert.equal(rows[0].filename, 'some.patch');
-            assert.notEqual(rows[0].deleted_at, null);
-            assert.equal(rows[1].filename, 'other.patch');
-            assert.equal(rows[1].deleted_at, null);
-            assert.equal(rows[2].filename, 'another.dat');
-            assert.equal(rows[2].deleted_at, null);
+            assert.strictEqual(rows.length, 3);
+            assert.strictEqual(rows[0].filename, 'some.patch');
+            assert.notStrictEqual(rows[0].deleted_at, null);
+            assert.strictEqual(rows[1].filename, 'other.patch');
+            assert.strictEqual(rows[1].deleted_at, null);
+            assert.strictEqual(rows[2].filename, 'another.dat');
+            assert.strictEqual(rows[2].deleted_at, null);
         });
     });
 
@@ -346,13 +346,13 @@ describe('/privileged-api/upload-file', function () {
         }).then(() => {
             return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
-            assert.equal(rows.length, 3);
-            assert.equal(rows[0].filename, 'some.patch');
-            assert.equal(rows[0].deleted_at, null);
-            assert.equal(rows[1].filename, 'root.tar.gz');
-            assert.notEqual(rows[1].deleted_at, null);
-            assert.equal(rows[2].filename, 'another.dat');
-            assert.equal(rows[2].deleted_at, null);
+            assert.strictEqual(rows.length, 3);
+            assert.strictEqual(rows[0].filename, 'some.patch');
+            assert.strictEqual(rows[0].deleted_at, null);
+            assert.strictEqual(rows[1].filename, 'root.tar.gz');
+            assert.notStrictEqual(rows[1].deleted_at, null);
+            assert.strictEqual(rows[2].filename, 'another.dat');
+            assert.strictEqual(rows[2].deleted_at, null);
         });
     });
 
@@ -382,7 +382,7 @@ describe('/privileged-api/upload-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true}).then(() => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'FileSizeQuotaExceeded');
+                assert.strictEqual(error, 'FileSizeQuotaExceeded');
             });
         });
     });

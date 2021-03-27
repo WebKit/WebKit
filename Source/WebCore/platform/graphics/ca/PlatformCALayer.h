@@ -76,6 +76,9 @@ public:
         LayerTypeLightSystemBackdropLayer,
         LayerTypeDarkSystemBackdropLayer,
         LayerTypeScrollContainerLayer,
+#if ENABLE(MODEL_ELEMENT)
+        LayerTypeModelLayer,
+#endif
         LayerTypeCustom,
     };
     enum FilterType { Linear, Nearest, Trilinear };
@@ -347,6 +350,9 @@ template<> struct EnumTraits<WebCore::PlatformCALayer::LayerType> {
         WebCore::PlatformCALayer::LayerType::LayerTypeLightSystemBackdropLayer,
         WebCore::PlatformCALayer::LayerType::LayerTypeDarkSystemBackdropLayer,
         WebCore::PlatformCALayer::LayerType::LayerTypeScrollContainerLayer,
+#if ENABLE(MODEL_ELEMENT)
+        WebCore::PlatformCALayer::LayerType::LayerTypeModelLayer,
+#endif
         WebCore::PlatformCALayer::LayerType::LayerTypeCustom
     >;
 };

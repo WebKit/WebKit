@@ -58,9 +58,8 @@ class MediaPlayerPrivateRemote;
 class MediaSourcePrivateRemote;
 
 class SourceBufferPrivateRemote final
-    : public CanMakeWeakPtr<SourceBufferPrivateRemote>
-    , public WebCore::SourceBufferPrivate
-    , private IPC::MessageReceiver
+    : public WebCore::SourceBufferPrivate
+    , public IPC::MessageReceiver
 {
 public:
     static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
@@ -110,14 +109,13 @@ private:
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void()>&&);
     void sourceBufferPrivateStreamEndedWithDecodeError();
     void sourceBufferPrivateAppendError(bool decodeError);
-    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult);
+    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, const WebCore::PlatformTimeRanges& buffered);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     void sourceBufferPrivateDurationChanged(const MediaTime&);
     void sourceBufferPrivateDidParseSample(double sampleDuration);
     void sourceBufferPrivateDidDropSample();
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
     void sourceBufferPrivateBufferedDirtyChanged(bool dirty);
-    void sourceBufferPrivateBufferedRangesChanged(const WebCore::PlatformTimeRanges&);
     void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory);
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;

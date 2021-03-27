@@ -203,6 +203,13 @@ private:
             return state;
         }
 
+        ContextState cloneForTransparencyLayer() const
+        {
+            auto state = cloneForSave();
+            state.lastDrawingState.alpha = 1;
+            return state;
+        }
+
         void translate(float x, float y);
         void rotate(float angleInRadians);
         void scale(const FloatSize&);

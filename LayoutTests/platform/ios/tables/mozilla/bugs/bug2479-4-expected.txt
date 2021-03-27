@@ -184,18 +184,18 @@ layer at (0,0) size 800x2672
         RenderBlock {P} at (0,0) size 784x49
           RenderText {#text} at (0,1) size 267x19
             text run at (0,1) width 267: "How does your browser fare on this test? "
-          RenderMenuList {SELECT} at (268,2) size 483x20 [color=#007AFF] [bgcolor=#EBF5FF]
-            RenderBlock (anonymous) at (5,3) size 472x14
-              RenderText at (0,0) size 461x14
-                text run at (0,0) width 461: "The tests all render identically, and this browser may or may not grok CSS2 tables."
+          RenderMenuList {SELECT} at (268,2) size 454x20 [color=#007AFF] [bgcolor=#78788029]
+            RenderBlock (anonymous) at (5,3) size 443x14
+              RenderText at (0,0) size 432x14
+                text run at (0,0) width 432: "The tests all render identically, and this browser may or may not grok CSS2 tables."
           RenderText {#text} at (0,0) size 0x0
           RenderInline {LABEL} at (0,0) size 231x19
             RenderText {#text} at (0,25) size 72x19
               text run at (0,25) width 72: "Comment: "
-            RenderTextControl {INPUT} at (73,26) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #D9D9D9)]
+            RenderTextControl {INPUT} at (73,26) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
           RenderText {#text} at (230,25) size 5x19
             text run at (230,25) width 5: " "
-          RenderButton {INPUT} at (236,26) size 63x20 [color=#FFFFFF] [bgcolor=#167AFF]
+          RenderButton {INPUT} at (236,26) size 63x20 [color=#FFFFFF] [bgcolor=#007AFF]
             RenderBlock (anonymous) at (11,3) size 40x14
               RenderText at (0,0) size 40x14
                 text run at (0,0) width 40: "Submit"

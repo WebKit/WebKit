@@ -480,43 +480,11 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     size_t baselineVirtualRegistersForCalleeSaves = baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters();
 
     if (exit.m_codeOrigin.inlineStackContainsActiveCheckpoint()) {
-        JSValue* tmpScratch = reinterpret_cast<JSValue*>(scratch + exit.m_descriptor->m_values.tmpIndex(0));
-        VM* vmPtr = &vm;
-        jit.probe([=] (Probe::Context& context) {
-            Vector<std::unique_ptr<CheckpointOSRExitSideState>, VM::expectedMaxActiveSideStateCount> sideStates;
-            sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());
-            auto sideStateCommitter = makeScopeExit([&] {
-                for (size_t i = sideStates.size(); i--;)
-                    vmPtr->pushCheckpointOSRSideState(WTFMove(sideStates[i]));
-            });
-
-            auto addSideState = [&] (CallFrame* frame, BytecodeIndex index, size_t tmpOffset) {
-                std::unique_ptr<CheckpointOSRExitSideState> sideState = WTF::makeUnique<CheckpointOSRExitSideState>(frame);
-
-                sideState->bytecodeIndex = index;
-                for (size_t i = 0; i < maxNumCheckpointTmps; ++i)
-                    sideState->tmps[i] = tmpScratch[i + tmpOffset];
-
-                sideStates.append(WTFMove(sideState));
-            };
-
-            const CodeOrigin* codeOrigin;
-            CallFrame* callFrame = context.gpr<CallFrame*>(GPRInfo::callFrameRegister);
-            for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame(); codeOrigin = codeOrigin->inlineCallFrame()->getCallerSkippingTailCalls()) {
-                BytecodeIndex callBytecodeIndex = codeOrigin->bytecodeIndex();
-                if (!callBytecodeIndex.checkpoint())
-                    continue;
-
-                auto* inlineCallFrame = codeOrigin->inlineCallFrame();
-                addSideState(reinterpret_cast<CallFrame*>(reinterpret_cast<char*>(callFrame) + inlineCallFrame->returnPCOffset() - sizeof(CPURegister)), callBytecodeIndex, inlineCallFrame->tmpOffset);
-            }
-
-            if (!codeOrigin)
-                return;
-
-            if (BytecodeIndex bytecodeIndex = codeOrigin->bytecodeIndex(); bytecodeIndex.checkpoint())
-                addSideState(callFrame, bytecodeIndex, 0);
-        });
+        EncodedJSValue* tmpScratch = scratch + exit.m_descriptor->m_values.tmpIndex(0);
+        jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(&vm, &exit, tmpScratch);
+        jit.prepareCallOperation(vm);
+        jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeOSRExitSideState)), GPRInfo::nonArgGPR0);
+        jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     }
 
     // Now get state out of the scratch buffer and place it back into the stack. The values are

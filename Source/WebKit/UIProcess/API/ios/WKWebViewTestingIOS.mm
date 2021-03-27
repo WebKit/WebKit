@@ -127,6 +127,11 @@
     [_contentView accessoryDone];
 }
 
+- (NSArray<NSString *> *)_filePickerAcceptedTypeIdentifiers
+{
+    return [_contentView filePickerAcceptedTypeIdentifiers];
+}
+
 - (void)_dismissFilePicker
 {
     [_contentView dismissFilePicker];
@@ -182,16 +187,6 @@
 - (NSString *)formInputLabel
 {
     return [_contentView formInputLabel];
-}
-
-- (void)_didShowContextMenu
-{
-    // For subclasses to override.
-}
-
-- (void)_didDismissContextMenu
-{
-    // For subclasses to override.
 }
 
 - (CGRect)_inputViewBounds

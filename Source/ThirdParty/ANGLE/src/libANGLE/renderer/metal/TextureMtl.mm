@@ -664,9 +664,12 @@ angle::Result TextureMtl::ensureSamplerStateCreated(const gl::Context *context)
 
         samplerDesc.maxAnisotropy = 1;
     }
-    if(mState.getType() == gl::TextureType::Rectangle)
+    if (mState.getType() == gl::TextureType::Rectangle)
     {
         samplerDesc.normalizedCoordinates = NO;
+        samplerDesc.rAddressMode          = MTLSamplerAddressModeClampToEdge;
+        samplerDesc.sAddressMode          = MTLSamplerAddressModeClampToEdge;
+        samplerDesc.tAddressMode          = MTLSamplerAddressModeClampToEdge;
     }
     else
     {
@@ -1610,7 +1613,7 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
                                               const mtl::TextureRef &image)
 {
     // If source pixels are luminance or RGB8, we need to convert them to RGBA
-   
+
     if (mFormat.needConversion(pixelsAngleFormat.id))
     {
         return convertAndSetPerSliceSubImage(context, slice, mtlArea, internalFormat, type,
@@ -1880,7 +1883,7 @@ angle::Result TextureMtl::initializeContents(const gl::Context *context,
     const mtl::TextureRef &image = imageDef.image;
     const mtl::Format &format    = contextMtl->getPixelFormat(imageDef.formatID);
     // For Texture's image definition, we always use zero mip level.
-    if(format.metalFormat == MTLPixelFormatInvalid)
+    if (format.metalFormat == MTLPixelFormatInvalid)
     {
         return angle::Result::Stop;
     }

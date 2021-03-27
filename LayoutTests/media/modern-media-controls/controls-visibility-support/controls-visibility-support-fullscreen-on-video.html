@@ -10,18 +10,30 @@ window.jsTestIsAsync = true;
 
 description("Testing that control are shown in fullscreen when the controls attribute is not present.");
 
+if (!window.internals) {
+    debug("window.internals is not defined");
+    finishJSTest();
+}
+
+internals.setMockVideoPresentationModeEnabled(true);
+
 const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
 
 media.addEventListener("play", () => {
     media.addEventListener("webkitfullscreenchange", () => {
-        shouldBeTrue("media.webkitDisplayingFullscreen");
-        shouldBeTrue("mediaController.controls.visible");
-        button.remove();
-        container.remove();
-        media.remove();
-        finishJSTest();
+        if (!media.webkitDisplayingFullscreen) {
+            media.remove();
+            finishJSTest();
+        }
+
+        shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", () => {
+            shouldBeTrue("mediaController.controls.visible");
+            button.remove();
+            container.remove();
+            media.webkitExitFullscreen();
+        });
     });
 
     const button = document.body.appendChild(document.createElement("div"));

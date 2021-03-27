@@ -125,6 +125,7 @@ public:
     // the surface, or an expensive GPU readback can result.
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage();
     WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>);
+
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer();
 
 #ifdef __OBJC__

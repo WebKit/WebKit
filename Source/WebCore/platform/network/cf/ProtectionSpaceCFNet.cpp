@@ -36,7 +36,7 @@ namespace WebCore {
 
 bool ProtectionSpace::receivesCredentialSecurely() const
 {
-    RetainPtr<CFURLProtectionSpaceRef> cfSpace = adoptCF(createCF(*this));
+    auto cfSpace = createCF(*this);
     return cfSpace && CFURLProtectionSpaceReceivesCredentialSecurely(cfSpace.get());
 }
 

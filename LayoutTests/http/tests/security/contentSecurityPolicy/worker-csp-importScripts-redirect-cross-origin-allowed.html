@@ -21,7 +21,7 @@ function reportResultAndNotifyDone(message)
 
 var worker;
 try {
-    worker = new Worker("resources/worker-importScript-redirect-cross-origin-allowed.php?csp=" + encodeURIComponent("script-src 'self' http://localhost:8000"));
+    worker = new Worker("resources/worker-importScript-redirect-cross-origin-allowed.py?csp=" + encodeURIComponent("script-src 'self' http://localhost:8000"));
     worker.onmessage = function (event) { reportResultAndNotifyDone(event.data); };
 } catch (exception) {
     reportResultAndNotifyDone("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".");

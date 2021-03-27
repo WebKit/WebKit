@@ -42,9 +42,8 @@ class SharedBuffer;
 namespace WebKit {
 
 class RemoteLegacyCDMProxy
-    : private IPC::MessageReceiver
-    , public WebCore::LegacyCDMClient
-    , public CanMakeWeakPtr<RemoteLegacyCDMProxy> {
+    : public IPC::MessageReceiver
+    , public WebCore::LegacyCDMClient {
 public:
     static std::unique_ptr<RemoteLegacyCDMProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>, WebCore::MediaPlayerIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
     ~RemoteLegacyCDMProxy();
@@ -57,7 +56,7 @@ private:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
     using SupportsMIMETypeCallback = CompletionHandler<void(bool)>;

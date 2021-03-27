@@ -45,17 +45,18 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSession);
 
-Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device)
+Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
 {
-    return adoptRef(*new WebXRSession(document, system, mode, device));
+    return adoptRef(*new WebXRSession(document, system, mode, device, WTFMove(requestedFeatures)));
 }
 
-WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device)
+WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
     : ActiveDOMObject(&document)
     , m_inputSources(WebXRInputSourceArray::create())
     , m_xrSystem(system)
     , m_mode(mode)
     , m_device(makeWeakPtr(device))
+    , m_requestedFeatures(WTFMove(requestedFeatures))
     , m_activeRenderState(WebXRRenderState::create(mode))
     , m_viewerReferenceSpace(makeUnique<WebXRViewerSpace>(document, *this))
     , m_timeOrigin(MonotonicTime::now())
@@ -164,7 +165,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
 bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
 {
     // 1. If type is not contained in session’s XR device's list of enabled features for mode return false.
-    if (!m_device->enabledFeatures(m_mode).contains(type))
+    if (!m_requestedFeatures.contains(type))
         return false;
 
     // 2. If type is viewer, return true.

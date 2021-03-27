@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -207,7 +207,7 @@ inline const T GCSegmentedArray<T>::removeLast()
 }
 
 template <typename T>
-inline bool GCSegmentedArray<T>::isEmpty()
+inline bool GCSegmentedArray<T>::isEmpty() const
 {
     // This happens to be safe to call concurrently. It's important to preserve that capability.
     if (m_top)
@@ -218,7 +218,7 @@ inline bool GCSegmentedArray<T>::isEmpty()
 }
 
 template <typename T>
-inline size_t GCSegmentedArray<T>::size()
+inline size_t GCSegmentedArray<T>::size() const
 {
     return m_top + s_segmentCapacity * (m_numberOfSegments - 1);
 }

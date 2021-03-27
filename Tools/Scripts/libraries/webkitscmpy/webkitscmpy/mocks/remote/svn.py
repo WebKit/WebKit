@@ -26,8 +26,6 @@ import re
 import xmltodict
 
 from collections import OrderedDict
-from datetime import datetime
-from dateutil.tz import tzoffset
 from webkitcorepy import mocks
 from webkitscmpy import Commit, Contributor, remote as scmremote
 
@@ -134,6 +132,8 @@ class Svn(mocks.Requests):
         return result
 
     def request(self, method, url, data=None, **kwargs):
+        from datetime import datetime, timedelta
+
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -259,7 +259,7 @@ class Svn(mocks.Requests):
                     '</D:multistatus>\n'.format(
                         stripped_url,
                         commit.revision,
-                        datetime.fromtimestamp(commit.timestamp, tz=tzoffset(None, -7 * 60 * 60)).strftime('%Y-%m-%dT%H:%M:%S.103754Z'),
+                        datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%S.103754Z'),
                         commit.author.email,
                 ),
             )

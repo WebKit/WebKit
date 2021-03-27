@@ -24,12 +24,14 @@
 #include "jsc/JSCContextPrivate.h"
 #undef JSC_COMPILATION
 
+#include <JavaScriptCore/JSContextRef.h>
 #include <jsc/jsc.h>
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CString.h>
 
 class LeakChecker {
 public:

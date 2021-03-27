@@ -1,4 +1,4 @@
 
-PASS registerRTCRtpScriptTransformer if insertable stream flag is on
-PASS no registerRTCRtpScriptTransformer if insertable stream flag is off
+PASS RTCRtpScriptTransformer if insertable stream flag is on
+PASS no RTCRtpScriptTransformer if insertable stream flag is off
 

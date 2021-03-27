@@ -349,16 +349,16 @@ PASS CSS Transitions with transition: all: property <border-image-slice> from [0
 PASS CSS Transitions with transition: all: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.6) should be [40 50 60% 70]
 PASS CSS Transitions with transition: all: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (1) should be [40 50 60% 70]
 PASS CSS Transitions with transition: all: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (1.5) should be [40 50 60% 70]
-FAIL CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (-0.3) should be [0% 10 20 30 fill] assert_equals: expected "0 % 10 20 30 fill " but got "0 10 20 30 fill "
-FAIL CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0) should be [0% 10 20 30 fill] assert_equals: expected "0 % 10 20 30 fill " but got "0 10 20 30 fill "
-FAIL CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.3) should be [0% 10 20 30 fill] assert_equals: expected "0 % 10 20 30 fill " but got "0 10 20 30 fill "
+PASS CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (-0.3) should be [0% 10 20 30 fill]
+PASS CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0) should be [0% 10 20 30 fill]
+PASS CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.3) should be [0% 10 20 30 fill]
 PASS CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.5) should be [40 50 60% 70]
 PASS CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.6) should be [40 50 60% 70]
 PASS CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (1) should be [40 50 60% 70]
 PASS CSS Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (1.5) should be [40 50 60% 70]
-FAIL Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (-0.3) should be [0% 10 20 30 fill] assert_equals: expected "0 % 10 20 30 fill " but got "0 10 20 30 fill "
-FAIL Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0) should be [0% 10 20 30 fill] assert_equals: expected "0 % 10 20 30 fill " but got "0 10 20 30 fill "
-FAIL Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.3) should be [0% 10 20 30 fill] assert_equals: expected "0 % 10 20 30 fill " but got "0 10 20 30 fill "
+PASS Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (-0.3) should be [0% 10 20 30 fill]
+PASS Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0) should be [0% 10 20 30 fill]
+PASS Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.3) should be [0% 10 20 30 fill]
 PASS Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.5) should be [40 50 60% 70]
 PASS Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (0.6) should be [40 50 60% 70]
 PASS Web Animations: property <border-image-slice> from [0% 10 20 30 fill] to [40 50 60% 70] at (1) should be [40 50 60% 70]

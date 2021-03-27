@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Apple Inc. All rights reserved.
+// Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -22,7 +22,8 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import {DOM, REF} from '/library/js/Ref.js';
-import {queryToParams, paramsToQuery, QueryModifier, } from '/assets/js/common.js';
+import {queryToParams, paramsToQuery, QueryModifier} from '/assets/js/common.js';
+import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js'
 
 function setEnableRecursive(element, state) {
@@ -331,4 +332,72 @@ function ConfigurationSelectors(callback) {
     }).join('')
 }
 
-export {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider};
+function CommitRepresentation(callback) {
+    const ref = REF.createRef({
+        state: {},
+        onStateUpdate: (element, state) => {
+            if (!Object.keys(state).length)
+                return;
+
+            DOM.inject(
+                element,
+                Object.keys(state).map(repository => {
+                    const selector = REF.createRef({
+                        state: state[repository].representation,
+                        onElementMount: (element) => {
+                            if (!element)
+                                return;
+                            element.onchange = () => {
+                                CommitBank.setCommitRepresentation(repository, element.value);
+                                callback();
+                            }
+                        },
+                        onStateUpdate: (element, representation) => {
+                            element.innerHTML = state[repository].candidates.map(candidate => {
+                                if (candidate === representation)
+                                    return `<option selected value="${candidate}">${candidate}</option>`;
+                                return `<option value="${candidate}">${candidate}</option>`;
+                            }).join('');
+                        },
+                    });
+                    return `<div class="input">
+                        <select required ref="${selector}">
+                           ${state[repository].candidates.map(repr => `<option value="${repr}">${repr}</option>`).join('')}
+                        </select>
+                        <label style="color:var(--inverseColor)">${repository.charAt(0).toUpperCase() + repository.slice(1)}</label>
+                    </div>`;
+                }).join(''));
+        },
+    });
+    CommitBank.commitRepresentations(json => {
+        ref.setState(json);
+    });
+
+    const expander = REF.createRef({
+        state: {isExpanded: false},
+        onStateUpdate: (element, state) => {
+            element.innerHTML = state.isExpanded ? '-' : '+';
+
+            Array.from(element.parentNode.children).forEach(child => {
+                if (element == child)
+                    return;
+                child.style.display = state.isExpanded ? 'block' : 'none';
+            });
+        },
+    });
+    expander.fromEvent('click').action(() => expander.setState({isExpanded: !expander.state.isExpanded}));
+
+    return `<div class="item">
+            <div style="font-size: var(--smallSize);">
+                <a class="link-button text medium" ref="${expander}">+</a>
+                Commit Representation
+                <div class="list" ref="${ref}" style="display: none;">
+                    <div class="item loader">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
+export {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation};

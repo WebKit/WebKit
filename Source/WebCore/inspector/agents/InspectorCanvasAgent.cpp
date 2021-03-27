@@ -475,7 +475,7 @@ void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context
         m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), node->memoryCost());
 }
 
-void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const FloatRect&)
+void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const Optional<FloatRect>&)
 {
     auto* context = canvasBase.renderingContext();
     if (!context)

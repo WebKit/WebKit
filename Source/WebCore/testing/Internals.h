@@ -49,9 +49,11 @@ namespace WebCore {
 
 class AbstractRange;
 class AnimationTimeline;
+class ArtworkImageLoader;
 class AudioContext;
 class AudioTrack;
 class CacheStorageConnection;
+class DOMPointReadOnly;
 class DOMRect;
 class DOMRectList;
 class DOMRectReadOnly;
@@ -774,7 +776,8 @@ public:
 #if ENABLE(WEBGL)
     enum class SimulatedWebGLContextEvent {
         ContextChange,
-        GPUStatusFailure
+        GPUStatusFailure,
+        Timeout
     };
     void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContext&);
     bool hasLowAndHighPowerGPUs();
@@ -838,6 +841,17 @@ public:
 #if ENABLE(APPLE_PAY)
     MockPaymentCoordinator& mockPaymentCoordinator(Document&);
 #endif
+
+    struct ImageOverlayText {
+        String text;
+        RefPtr<DOMPointReadOnly> topLeft;
+        RefPtr<DOMPointReadOnly> topRight;
+        RefPtr<DOMPointReadOnly> bottomRight;
+        RefPtr<DOMPointReadOnly> bottomLeft;
+
+        ~ImageOverlayText();
+    };
+    void installImageOverlay(Element&, Vector<ImageOverlayText>&&);
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
@@ -1079,6 +1093,8 @@ public:
 #if ENABLE(MEDIA_SESSION)
     ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);
     ExceptionOr<void> sendMediaSessionAction(MediaSession&, const MediaSessionActionDetails&);
+    using ArtworkImagePromise = DOMPromiseDeferred<IDLInterface<ImageData>>;
+    void loadArtworkImage(String&&, ArtworkImagePromise&&);
 #endif
 
     enum TreeType : uint8_t { Tree, ShadowIncludingTree, ComposedTree };
@@ -1112,7 +1128,10 @@ private:
     RefPtr<RealtimeMediaSource> m_trackSource;
     std::unique_ptr<TrackFramePromise> m_nextTrackFramePromise;
 #endif
-
+#if ENABLE(MEDIA_SESSION)
+    std::unique_ptr<ArtworkImageLoader> m_artworkLoader;
+    std::unique_ptr<ArtworkImagePromise> m_artworkImagePromise;
+#endif
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
 

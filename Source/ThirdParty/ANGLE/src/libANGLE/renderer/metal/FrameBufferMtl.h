@@ -23,7 +23,7 @@ namespace mtl
 class RenderCommandEncoder;
 }  // namespace mtl
 class ContextMtl;
-class WindowSurfaceMtl;
+class SurfaceMtl;
 
 class FramebufferMtl : public FramebufferImpl
 {

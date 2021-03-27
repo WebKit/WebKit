@@ -447,6 +447,8 @@ function getPropertyValue(property, elementId, iframeId)
         computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE);
     } else {
         var computedStyle = window.getComputedStyle(element).getPropertyCSSValue(property);
+        if (property == "z-index" && computedStyle.cssText == "auto")
+            return "auto";
         computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
     }
 
@@ -456,6 +458,9 @@ function getPropertyValue(property, elementId, iframeId)
 function comparePropertyValue(property, computedValue, expectedValue, tolerance)
 {
     var result = true;
+
+    if (computedValue == expectedValue)
+        return true;
 
     if (!property.indexOf("webkitTransform") || !property.indexOf("transform")) {
         if (typeof expectedValue == "string")

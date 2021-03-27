@@ -49,7 +49,7 @@ static void fixNANs(double &x)
 }
 
 WebKitAudioPannerNode::WebKitAudioPannerNode(WebKitAudioContext& context)
-    : PannerNodeBase(context)
+    : AudioNode(context, NodeTypePanner)
 {
     initializeDefaultNodeOptions(2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers);
 

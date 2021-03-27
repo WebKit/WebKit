@@ -153,8 +153,8 @@ http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirec
 
 # testRunner.setStatisticsShouldDowngradeReferrer() is not supported on WK1
 http/tests/referrer-policy-script/ [ Skip ]
-http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.php [ Skip ] 
-http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.php [ Skip ] 
+http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py [ Skip ] 
+http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py [ Skip ] 
 http/tests/security/referrer-policy-header.html [ Skip ] 
 http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
@@ -1259,3 +1259,15 @@ webkit.org/b/222493 [ BigSur ] platform/mac-bigsur/media/media-source/media-sour
 webkit.org/b/221819 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Pass Failure ]
 
 webkit.org/b/222693 [ BigSur Release ] media/video-aspect-ratio.html [ Failure Timeout ]
+
+webkit.org/b/223104 compositing/visibility/iframe-visibility-hidden.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223193 canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
+webkit.org/b/223193 imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
+webkit.org/b/223193 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
+
+webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/send-response-event-order.htm [ Pass Failure ]
+
+webkit.org/b/223283 fast/repaint/canvas-object-fit.html [ Pass Failure ]
+
+webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]

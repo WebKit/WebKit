@@ -65,6 +65,17 @@ static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("FreeBSD"));
 }
 
+// Some Google domains require an unbranded user agent, which is a little
+// awkward to test for. We want to check that standardUserAgentForURL is
+// non-null to ensure *any* quirk URL is returned, so that application branding
+// does not get used. (standardUserAgentForURL returns a null string to indicate
+// that the standard user agent should be used.)
+static void assertUserAgentForURLHasEmptyQuirk(const char* url)
+{
+    String uaString = standardUserAgentForURL(URL({ }, url));
+    EXPECT_FALSE(uaString.isNull());
+}
+
 TEST(UserAgentTest, Quirks)
 {
     // A site with no quirks should return a null String.
@@ -75,7 +86,6 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://auth.mayohr.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://bankofamerica.com/");
-    assertUserAgentForURLHasChromeBrowserQuirk("http://docs.google.com/");
 
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://bugzilla.redhat.com/");
 
@@ -93,6 +103,10 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasMacPlatformQuirk("http://outlook.office.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://mail.ntu.edu.tw/");
     assertUserAgentForURLHasMacPlatformQuirk("http://exchange.tu-berlin.de/");
+
+    assertUserAgentForURLHasEmptyQuirk("http://accounts.google.com/");
+    assertUserAgentForURLHasEmptyQuirk("http://docs.google.com/");
+    assertUserAgentForURLHasEmptyQuirk("http://drive.google.com/");
 }
 
 } // namespace TestWebKitAPI

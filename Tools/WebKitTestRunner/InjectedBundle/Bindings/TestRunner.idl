@@ -131,6 +131,7 @@ interface TestRunner {
     // Local storage API
     undefined clearAllDatabases();
     undefined setDatabaseQuota(unsigned long long quota);
+    undefined setQuotaLoggingEnabled(boolean enabled);
     DOMString pathToLocalResource(DOMString url);
     undefined syncLocalStorage();
 
@@ -405,9 +406,9 @@ interface TestRunner {
     undefined simulateResourceLoadStatisticsSessionRestart();
     undefined setPrivateClickMeasurementTokenPublicKeyURLForTesting(DOMString url);
     undefined setPrivateClickMeasurementTokenSignatureURLForTesting(DOMString url);
-    undefined setPrivateClickMeasurementAttributionReportURLForTesting(DOMString url);
+    undefined setPrivateClickMeasurementAttributionReportURLsForTesting(DOMString sourceURLString, DOMString attributeOnURLString);
     undefined markPrivateClickMeasurementsAsExpiredForTesting();
-    undefined setFraudPreventionValuesForTesting(DOMString secretToken, DOMString unlinkableToken, DOMString signature, DOMString keyID);
+    undefined setPrivateClickMeasurementFraudPreventionValuesForTesting(DOMString unlinkableToken, DOMString secretToken, DOMString signature, DOMString keyID);
 
     // SpeechRecognition
     undefined setIsSpeechRecognitionPermissionGranted(boolean value);

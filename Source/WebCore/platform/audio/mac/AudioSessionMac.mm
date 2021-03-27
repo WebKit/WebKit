@@ -253,25 +253,30 @@ void AudioSession::setCategoryOverride(CategoryType category)
 
 float AudioSession::sampleRate() const
 {
-    if (m_private->sampleRate)
-        return *m_private->sampleRate;
+    if (!m_private->sampleRate) {
+        m_private->addSampleRateObserverIfNeeded();
 
-    m_private->addSampleRateObserverIfNeeded();
+        Float64 nominalSampleRate;
+        UInt32 nominalSampleRateSize = sizeof(Float64);
 
-    Float64 nominalSampleRate;
-    UInt32 nominalSampleRateSize = sizeof(Float64);
+        AudioObjectPropertyAddress nominalSampleRateAddress = {
+            kAudioDevicePropertyNominalSampleRate,
+            kAudioObjectPropertyScopeGlobal,
+            kAudioObjectPropertyElementMaster
+        };
+        OSStatus result = AudioObjectGetPropertyData(defaultDevice(), &nominalSampleRateAddress, 0, 0, &nominalSampleRateSize, (void*)&nominalSampleRate);
+        if (result != noErr) {
+            RELEASE_LOG_ERROR(Media, "AudioSession::sampleRate() - AudioObjectGetPropertyData() failed with error %d", result);
+            return 44100;
+        }
 
-    AudioObjectPropertyAddress nominalSampleRateAddress = {
-        kAudioDevicePropertyNominalSampleRate,
-        kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster };
-    OSStatus result = AudioObjectGetPropertyData(defaultDevice(), &nominalSampleRateAddress, 0, 0, &nominalSampleRateSize, (void*)&nominalSampleRate);
-    if (result)
-        return 0;
-
-    m_private->sampleRate = narrowPrecisionToFloat(nominalSampleRate);
-
-    return narrowPrecisionToFloat(nominalSampleRate);
+        m_private->sampleRate = narrowPrecisionToFloat(nominalSampleRate);
+        if (!*m_private->sampleRate) {
+            RELEASE_LOG_ERROR(Media, "AudioSession::sampleRate() - AudioObjectGetPropertyData() return an invalid sample rate");
+            m_private->sampleRate = 44100;
+        }
+    }
+    return *m_private->sampleRate;
 }
 
 size_t AudioSession::bufferSize() const

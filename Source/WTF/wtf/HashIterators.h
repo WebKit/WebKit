@@ -115,7 +115,7 @@ namespace WTF {
     public:
         HashTableConstValuesIterator(const ConstIterator& impl) : m_impl(impl) {}
         
-        const MappedType* get() const { return &(m_impl.get()->value); }
+        const MappedType* get() const { return std::addressof(m_impl.get()->value); }
         const MappedType& operator*() const { return *get(); }
         const MappedType* operator->() const { return get(); }
 

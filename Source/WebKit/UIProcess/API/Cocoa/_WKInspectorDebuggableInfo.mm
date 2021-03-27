@@ -26,6 +26,8 @@
 #import "config.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation _WKInspectorDebuggableInfo
 
 - (instancetype)init
@@ -90,6 +92,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKInspectorDebuggableInfo.class, self))
+        return;
+
     _debuggableInfo->~DebuggableInfo();
 
     [super dealloc];

@@ -23,6 +23,7 @@
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -61,16 +62,18 @@ public:
     // FIXME: handle visibility changes
 };
 
-class Device : public CanMakeWeakPtr<Device> {
+class Device : public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Device);
 public:
     virtual ~Device() = default;
 
-    using ListOfEnabledFeatures = Vector<ReferenceSpaceType>;
+    using FeatureList = Vector<ReferenceSpaceType>;
     bool supports(SessionMode mode) const { return m_enabledFeaturesMap.contains(mode); }
-    void setEnabledFeatures(SessionMode mode, const ListOfEnabledFeatures& features) { m_enabledFeaturesMap.set(mode, features); }
-    ListOfEnabledFeatures enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
+    void setSupportedFeatures(SessionMode mode, const FeatureList& features) { m_enabledFeaturesMap.set(mode, features); }
+    FeatureList supportedFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
+    void setEnabledFeatures(SessionMode mode, const FeatureList& features) { m_enabledFeaturesMap.set(mode, features); }
+    FeatureList enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
 
     virtual WebCore::IntSize recommendedResolution(SessionMode) { return { 1, 1 }; }
 
@@ -144,8 +147,9 @@ protected:
     // https://immersive-web.github.io/webxr/#xr-device-concept
     // Each XR device has a list of enabled features for each XRSessionMode in its list of supported modes,
     // which is a list of feature descriptors which MUST be initially an empty list.
-    using EnabledFeaturesPerModeMap = WTF::HashMap<SessionMode, ListOfEnabledFeatures, WTF::IntHash<SessionMode>, WTF::StrongEnumHashTraits<SessionMode>>;
-    EnabledFeaturesPerModeMap m_enabledFeaturesMap;
+    using FeaturesPerModeMap = WTF::HashMap<SessionMode, FeatureList, WTF::IntHash<SessionMode>, WTF::StrongEnumHashTraits<SessionMode>>;
+    FeaturesPerModeMap m_enabledFeaturesMap;
+    FeaturesPerModeMap m_supportedFeaturesMap;
 
     bool m_supportsOrientationTracking { false };
     bool m_supportsViewportScaling { false };
@@ -156,7 +160,7 @@ class Instance {
 public:
     static Instance& singleton();
 
-    using DeviceList = Vector<UniqueRef<Device>>;
+    using DeviceList = Vector<Ref<Device>>;
     void enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList&)>&&);
 
 private:

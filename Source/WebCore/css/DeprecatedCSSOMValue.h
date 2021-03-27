@@ -89,7 +89,7 @@ private:
     WEBCORE_EXPORT void destroy();
 
 protected:
-    unsigned m_valueListSeparator : CSSValue::ValueListSeparatorBits;
+    unsigned m_valueSeparator : CSSValue::ValueSeparatorBits;
     unsigned m_classType : ClassTypeBits; // ClassType
     
     Ref<CSSStyleDeclaration> m_owner;

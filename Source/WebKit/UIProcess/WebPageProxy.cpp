@@ -31,6 +31,7 @@
 #include "APIAttachment.h"
 #include "APIContentWorld.h"
 #include "APIContextMenuClient.h"
+#include "APIDictionary.h"
 #include "APIFindClient.h"
 #include "APIFindMatchesClient.h"
 #include "APIFormClient.h"
@@ -2464,25 +2465,6 @@ void WebPageProxy::layerTreeCommitComplete()
 }
 #endif
 
-void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate()
-{
-#if PLATFORM(COCOA)
-    ASSERT(m_hasUpdatedRenderingAfterDidCommitLoad);
-    pageClient().setHasBlankOverlay(false);
-#endif
-}
-
-void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
-{
-#if PLATFORM(COCOA)
-    if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
-        // Add a blank overlay view to make the view blank. This overlay will be taken down once
-        // when we've painted for the first time after committing a load.
-        pageClient().setHasBlankOverlay(true);
-    }
-#endif
-}
-
 void WebPageProxy::discardQueuedMouseEvents()
 {
     while (m_mouseEventQueue.size() > 1)
@@ -4375,13 +4357,14 @@ void WebPageProxy::setCanUseCredentialStorage(bool canUseCredentialStorage)
 
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
 {
+    MESSAGE_CHECK(m_process, WebNavigationState::NavigationMap::isValidKey(navigationID));
+
     PageClientProtector protector(pageClient());
 
     // On process-swap, the previous process tries to destroy the navigation but the provisional process is actually taking over the navigation.
     if (m_provisionalPage && m_provisionalPage->navigationID() == navigationID)
         return;
 
-    // FIXME: Message check the navigationID.
     m_navigationState->didDestroyNavigation(navigationID);
 }
 
@@ -4659,12 +4642,10 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 
-#if PLATFORM(COCOA)
-    if (frame->isMainFrame()) {
-        m_hasUpdatedRenderingAfterDidCommitLoad = false;
 #if PLATFORM(IOS_FAMILY)
+    if (frame->isMainFrame()) {
+        m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = false;
         m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
-#endif
     }
 #endif
 
@@ -5437,6 +5418,9 @@ void WebPageProxy::willSubmitForm(FrameIdentifier frameID, FrameIdentifier sourc
     WebFrameProxy* sourceFrame = m_process->webFrame(sourceFrameID);
     MESSAGE_CHECK(m_process, sourceFrame);
 
+    for (auto& pair : textFieldValues)
+        MESSAGE_CHECK(m_process, API::Dictionary::MapType::isValidKey(pair.first));
+
     m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), [this, protectedThis = makeRef(*this), frameID, listenerID]() {
         send(Messages::WebPage::ContinueWillSubmitForm(frameID, listenerID));
     });
@@ -5650,12 +5634,6 @@ void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, FrameInfoData&& f
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
-
-    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
-    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
-    // on top of the view in this case.
-    makeViewBlankIfUnpaintedSinceLastLoadCommit();
-
     m_uiClient->runJavaScriptAlert(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
 }
 
@@ -5674,11 +5652,6 @@ void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, FrameInfoData&&
             automationSession->willShowJavaScriptDialog(*this);
     }
 
-    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
-    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
-    // on top of the view in this case.
-    makeViewBlankIfUnpaintedSinceLastLoadCommit();
-
     m_uiClient->runJavaScriptConfirm(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
 }
 
@@ -5696,11 +5669,6 @@ void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, FrameInfoData&& 
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
-
-    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
-    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
-    // on top of the view in this case.
-    makeViewBlankIfUnpaintedSinceLastLoadCommit();
 
     m_uiClient->runJavaScriptPrompt(*this, message, defaultValue, frame, WTFMove(frameInfo), WTFMove(reply));
 }
@@ -6479,7 +6447,7 @@ void WebPageProxy::didFailToFindString(const String& string)
     m_findClient->didFailToFindString(this, string);
 }
 
-bool WebPageProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo)
+bool WebPageProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo)
 {
     return m_process->sendMessage(WTFMove(encoder), sendOptions, WTFMove(asyncReplyInfo));
 }
@@ -6718,6 +6686,12 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     case ContextMenuItemTagRevealImage:
 #if ENABLE(IMAGE_EXTRACTION)
         handleContextMenuRevealImage();
+#endif
+        return;
+
+    case ContextMenuItemTagTranslate:
+#if HAVE(TRANSLATION_UI_SERVICES)
+        pageClient().handleContextMenuTranslation(m_activeContextMenuContextData.selectedText(), m_activeContextMenuContextData.selectionBounds(), m_activeContextMenuContextData.menuLocation());
 #endif
         return;
 
@@ -7156,8 +7130,18 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
-    updateEditorState(editorState);
-    dispatchDidUpdateEditorState();
+    if (updateEditorState(editorState))
+        dispatchDidUpdateEditorState();
+}
+
+bool WebPageProxy::updateEditorState(const EditorState& newEditorState)
+{
+    if (newEditorState.transactionID < m_editorState.transactionID)
+        return false;
+
+    auto oldEditorState = std::exchange(m_editorState, newEditorState);
+    didUpdateEditorState(oldEditorState, newEditorState);
+    return true;
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -7654,7 +7638,7 @@ static const Vector<ASCIILiteral>& attachmentElementServices()
 #if PLATFORM(COCOA)
 static const Vector<ASCIILiteral>& gpuIOKitClasses()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
 #if PLATFORM(IOS_FAMILY)
         "AGXDeviceUserClient"_s,
@@ -7686,7 +7670,7 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
 
 static const Vector<ASCIILiteral>& gpuMachServices()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.MTLCompilerService"_s,
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -7699,7 +7683,7 @@ static const Vector<ASCIILiteral>& gpuMachServices()
 // FIXME(207716): The following should be removed when the GPU process is complete.
 static const Vector<ASCIILiteral>& mediaRelatedMachServices()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
         "com.apple.audio.AudioComponentPrefs"_s, "com.apple.audio.AudioComponentRegistrar"_s,
         "com.apple.audio.AudioQueueServer"_s, "com.apple.coremedia.endpoint.xpc"_s,
@@ -7746,35 +7730,6 @@ static const Vector<ASCIILiteral>& mediaRelatedIOKitClasses()
     return services;
 }
 #endif
-
-#if HAVE(STATIC_FONT_REGISTRY)
-static bool customizedReaderConfiguration()
-{
-    auto configuration = adoptCF(CFPreferencesCopyAppValue(CFSTR("ReaderConfiguration"), kCFPreferencesCurrentApplication));
-    if (!configuration || CFGetTypeID(configuration.get()) != CFDictionaryGetTypeID())
-        return false;
-    auto fontFamilyNameForLanguageTag = CFDictionaryGetValue(static_cast<CFDictionaryRef>(configuration.get()), CFSTR("fontFamilyNameForLanguageTag"));
-    if (!fontFamilyNameForLanguageTag || CFGetTypeID(fontFamilyNameForLanguageTag) != CFDictionaryGetTypeID())
-        return false;
-    auto fontFamilyNameForLanguageTagDictionary = static_cast<CFDictionaryRef>(fontFamilyNameForLanguageTag);
-    auto count = CFDictionaryGetCount(fontFamilyNameForLanguageTagDictionary);
-    Vector<CFTypeRef> fontFamilyValues(count);
-    CFDictionaryGetKeysAndValues(fontFamilyNameForLanguageTagDictionary, nullptr, fontFamilyValues.data());
-
-    for (auto font : fontFamilyValues) {
-        if (!font || CFGetTypeID(font) != CFStringGetTypeID())
-            continue;
-        if (String(static_cast<CFStringRef>(font)) != "System")
-            return true;
-    }
-    return false;
-}
-
-static bool disableStaticFontRegistry()
-{
-    return CFPreferencesGetAppBooleanValue(CFSTR("WebKitDisableStaticFontRegistry"), kCFPreferencesCurrentApplication, nullptr);
-}
-#endif // HAVE(STATIC_FONT_REGISTRY)
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
@@ -7881,13 +7836,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     }
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
-    if (disableStaticFontRegistry()
-        || preferences().shouldAllowUserInstalledFonts()
-        || (WebCore::MacApplication::isSafari() && customizedReaderConfiguration())) {
-        SandboxExtension::Handle fontMachExtensionHandle;
-        SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, WTF::nullopt, fontMachExtensionHandle);
-        parameters.fontMachExtensionHandle = WTFMove(fontMachExtensionHandle);
-    }
+    if (preferences().shouldAllowUserInstalledFonts())
+        parameters.fontMachExtensionHandle = fontdMachExtensionHandle();
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     parameters.accentColor = pageClient().accentColor();
@@ -7911,8 +7861,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.urlSchemesWithLegacyCustomProtocolHandlers = WebProcessPool::urlSchemesWithCustomProtocolHandlers();
 
 #if ENABLE(WEB_RTC)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.iceCandidateFilteringEnabled = m_preferences->iceCandidateFilteringEnabled();
 #if USE(LIBWEBRTC)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.enumeratingAllNetworkInterfacesEnabled = m_preferences->enumeratingAllNetworkInterfacesEnabled();
 #endif
 #endif
@@ -7938,20 +7890,31 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     process.addWebUserContentControllerProxy(userContentController);
     parameters.userContentControllerParameters = userContentController.get().parameters();
 
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureAudioInUIProcess = preferences().captureAudioInUIProcessEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureAudioInGPUProcess = preferences().captureAudioInGPUProcessEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureVideoInUIProcess = preferences().captureVideoInUIProcessEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureVideoInGPUProcess = preferences().captureVideoInGPUProcessEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldRenderCanvasInGPUProcess = preferences().useGPUProcessForCanvasRenderingEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldRenderDOMInGPUProcess = preferences().useGPUProcessForDOMRenderingEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldPlayMediaInGPUProcess = preferences().useGPUProcessForMediaEnabled();
 #if ENABLE(WEBGL)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldRenderWebGLInGPUProcess = preferences().useGPUProcessForWebGLEnabled();
 #endif
 
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldEnableVP9Decoder = preferences().vp9DecoderEnabled();
 #if ENABLE(VP9) && PLATFORM(COCOA)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldEnableVP8Decoder = preferences().vp9DecoderEnabled();
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldEnableVP9SWDecoder = preferences().vp9DecoderEnabled() && (!WebCore::systemHasBattery() || preferences().vp9SWDecoderEnabledOnBattery());
 #endif
     parameters.shouldCaptureDisplayInUIProcess = m_process->processPool().configuration().shouldCaptureDisplayInUIProcess();
@@ -7973,14 +7936,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     }
 #endif
 
-#if ENABLE(APP_BOUND_DOMAINS)
-    parameters.needsInAppBrowserPrivacyQuirks = preferences().needsInAppBrowserPrivacyQuirks();
-#endif
-    
-    parameters.textInteractionEnabled = preferences().textInteractionEnabled();
     parameters.httpsUpgradeEnabled = preferences().upgradeKnownHostsToHTTPSEnabled() ? m_configuration->httpsUpgradeEnabled() : false;
 
 #if PLATFORM(IOS)
+    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload = allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
 #endif
 
@@ -8122,8 +8081,6 @@ void WebPageProxy::requestGeolocationPermissionForFrame(GeolocationIdentifier ge
     auto* frame = m_process->webFrame(*frameInfo.frameID);
     MESSAGE_CHECK(m_process, frame);
 
-    // FIXME: Geolocation should probably be using toString() as its string representation instead of databaseIdentifier().
-    auto origin = API::SecurityOrigin::create(frameInfo.securityOrigin.securityOrigin());
     auto request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
     Function<void(bool)> completionHandler = [request = WTFMove(request)](bool allowed) {
         if (allowed)
@@ -8238,7 +8195,7 @@ void WebPageProxy::clearUserMediaState()
 
 void WebPageProxy::requestMediaKeySystemPermissionForFrame(uint64_t mediaKeySystemID, FrameIdentifier frameID, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const String& keySystem)
 {
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(ENCRYPTED_MEDIA)
     MESSAGE_CHECK(m_process, m_process->webFrame(frameID));
 
     auto origin = API::SecurityOrigin::create(topLevelDocumentOriginData.securityOrigin());
@@ -8296,14 +8253,14 @@ MediaKeySystemPermissionRequestManagerProxy& WebPageProxy::mediaKeySystemPermiss
 }
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 void WebPageProxy::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
 {
     pageClient().showMediaControlsContextMenu(WTFMove(targetFrame), WTFMove(items), WTFMove(completionHandler));
 }
 
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 
 void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)
@@ -10058,9 +10015,9 @@ void WebPageProxy::setPrivateClickMeasurementTokenSignatureURLForTesting(const U
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenSignatureURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setPrivateClickMeasurementAttributionReportURLForTesting(const URL& url, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& attributeOnURL, CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAttributionReportURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAttributionReportURLsForTesting(m_websiteDataStore->sessionID(), sourceURL, attributeOnURL), WTFMove(completionHandler));
 }
 
 void WebPageProxy::markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
@@ -10068,9 +10025,9 @@ void WebPageProxy::markPrivateClickMeasurementsAsExpiredForTesting(CompletionHan
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::MarkPrivateClickMeasurementsAsExpiredForTesting(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setFraudPreventionValuesForTesting(const String& secretToken, const String& unlinkableToken, const String& signature, const String& keyID, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setPCMFraudPreventionValuesForTesting(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetFraudPreventionValuesForTesting(m_websiteDataStore->sessionID(), secretToken, unlinkableToken, signature, keyID), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPCMFraudPreventionValuesForTesting(m_websiteDataStore->sessionID(), unlinkableToken, secretToken, signature, keyID), WTFMove(completionHandler));
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)

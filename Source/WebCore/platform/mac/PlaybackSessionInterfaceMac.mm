@@ -92,11 +92,12 @@ void PlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, double 
 #endif
 }
 
-void PlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
+void PlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
     [controlsManager setRate:isPlaying ? playbackRate : 0.];
+    [controlsManager setDefaultPlaybackRate:defaultPlaybackRate];
     [controlsManager setPlaying:isPlaying];
     updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], playbackRate, isPlaying);
 #else
@@ -237,6 +238,7 @@ void PlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControls
     manager.contentDuration = duration;
     manager.hasEnabledAudio = duration > 0;
     manager.hasEnabledVideo = duration > 0;
+    manager.defaultPlaybackRate = m_playbackSessionModel->defaultPlaybackRate();
     manager.rate = m_playbackSessionModel->isPlaying() ? m_playbackSessionModel->playbackRate() : 0.;
     manager.seekableTimeRanges = timeRangesToArray(m_playbackSessionModel->seekableRanges()).get();
     manager.canTogglePlayback = YES;

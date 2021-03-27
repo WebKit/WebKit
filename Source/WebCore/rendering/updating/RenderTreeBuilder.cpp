@@ -31,6 +31,7 @@
 #include "FrameSelection.h"
 #include "RenderButton.h"
 #include "RenderCounter.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
@@ -577,9 +578,6 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
         // We have gone from not affecting the inline status of the parent flow to suddenly
         // having an impact. See if there is a mismatch between the parent flow's
         // childrenInline() state and our state.
-        // FIXME(186894): startsAffectingParent has clearly nothing to do with resetting the inline state.
-        if (!is<RenderSVGInline>(renderer))
-            renderer.setInline(renderer.style().isDisplayInlineType());
         if (renderer.isInline() != renderer.parent()->childrenInline())
             childFlowStateChangesAndAffectsParentBlock(renderer);
         return;
@@ -599,7 +597,17 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
     // Out of flow children of RenderMultiColumnFlow are not really part of the multicolumn flow. We need to ensure that changes in positioning like this
     // trigger insertions into the multicolumn flow.
     if (auto* enclosingFragmentedFlow = parent.enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(enclosingFragmentedFlow)) {
-        auto movingIntoMulticolumn = wasOutOfFlowPositioned && !isOutOfFlowPositioned;
+        auto movingIntoMulticolumn = [&] {
+            if (wasOutOfFlowPositioned && !isOutOfFlowPositioned)
+                return true;
+            if (auto* containingBlock = renderer.containingBlock(); containingBlock && isOutOfFlowPositioned) {
+                // Sometimes the flow state could change even when the renderer stays out-of-flow (e.g when going from fixed to absolute and
+                // the containing block is inside a multi-column flow).
+                return containingBlock->fragmentedFlowState() == RenderObject::InsideInFragmentedFlow
+                    && renderer.fragmentedFlowState() == RenderObject::NotInsideFragmentedFlow;
+            }
+            return false;
+        }();
         if (movingIntoMulticolumn) {
             multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), renderer);
             renderer.initializeFragmentedFlowStateOnInsertion();
@@ -783,10 +791,6 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
         return;
     }
 
-    // Remove intruding floats from sibling blocks before detaching.
-    if (is<RenderBox>(rendererToDestroy) && rendererToDestroy.isFloatingOrOutOfFlowPositioned())
-        downcast<RenderBox>(rendererToDestroy).removeFloatingOrPositionedChildFromBlockLists();
-
     auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
         return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow();
     };
@@ -806,6 +810,22 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     };
 
     auto& destroyRoot = destroyRootIncludingAnonymous();
+
+    auto clearFloatsAndOutOfFlowPositionedObjects = [&] {
+        // Remove floats and out-of-flow positioned objects from their containing block before detaching
+        // the renderer from the tree. It includes all the anonymous block descendants that we are about
+        // to destroy as well as part of the cleanup process below.
+        if (!is<RenderElement>(destroyRoot))
+            return;
+        for (auto& descendant : descendantsOfType<RenderBox>(downcast<RenderElement>(destroyRoot))) {
+            if (descendant.isFloatingOrOutOfFlowPositioned())
+                descendant.removeFloatingOrPositionedChildFromBlockLists();
+        }
+        if (is<RenderBox>(destroyRoot) && destroyRoot.isFloatingOrOutOfFlowPositioned())
+            downcast<RenderBox>(destroyRoot).removeFloatingOrPositionedChildFromBlockLists();
+    };
+    clearFloatsAndOutOfFlowPositionedObjects();
+
     if (is<RenderTableRow>(destroyRoot))
         tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
 
@@ -876,6 +896,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
         downcast<RenderBox>(child).deleteLineBoxWrapper();
     else if (is<RenderLineBreak>(child))
         downcast<RenderLineBreak>(child).deleteInlineBoxWrapper();
+    else if (is<RenderText>(child))
+        downcast<RenderText>(child).removeAndDestroyTextBoxes();
 
     if (!parent.renderTreeBeingDestroyed() && is<RenderFlexibleBox>(parent) && !child.isFloatingOrOutOfFlowPositioned() && child.isBox())
         downcast<RenderFlexibleBox>(parent).clearCachedChildIntrinsicContentLogicalHeight(downcast<RenderBox>(child));

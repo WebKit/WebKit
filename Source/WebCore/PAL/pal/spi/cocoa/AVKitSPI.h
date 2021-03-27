@@ -230,6 +230,11 @@ NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#if PLATFORM(IOS_FAMILY)
+@interface AVPlayerController ()
+@property (NS_NONATOMIC_IOSONLY) double defaultPlaybackRate;
+@end
+#endif // PLATFORM(IOS_FAMILY)
 
 #if HAVE(AVOBSERVATIONCONTROLLER)
 #if USE(APPLE_INTERNAL_SDK)

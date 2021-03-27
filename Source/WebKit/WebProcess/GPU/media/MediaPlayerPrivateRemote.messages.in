@@ -71,8 +71,6 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result) Async
     ResourceNotSupported()
 
-    EngineUpdated()
-
     ActiveSourceBuffersChanged()
 
 #if ENABLE(ENCRYPTED_MEDIA)

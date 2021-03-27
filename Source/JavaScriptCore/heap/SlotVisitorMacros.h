@@ -77,7 +77,7 @@ public: \
 #define DEFINE_VISIT_CHILDREN_WITH_MODIFIER(preModifier, className) \
     preModifier void className::visitChildren(JSCell* cell, AbstractSlotVisitor& visitor) \
     { \
-        AbstractSlotVisitor::Context context(visitor, cell); \
+        AbstractSlotVisitor::ReferrerContext context(visitor, cell); \
         visitChildrenImpl(cell, visitor); \
     } \
     preModifier void className::visitChildren(JSCell* cell, SlotVisitor& visitor) { visitChildrenImpl(cell, visitor); } \
@@ -101,7 +101,7 @@ public: \
 #define DEFINE_VISIT_OUTPUT_CONSTRAINTS_WITH_MODIFIER(preModifier, className) \
     preModifier void className::visitOutputConstraints(JSCell* cell, AbstractSlotVisitor& visitor) \
     { \
-        AbstractSlotVisitor::Context context(visitor, cell); \
+        AbstractSlotVisitor::ReferrerContext context(visitor, cell); \
         visitOutputConstraintsImpl(cell, visitor); \
     } \
     preModifier void className::visitOutputConstraints(JSCell* cell, SlotVisitor& visitor) { visitOutputConstraintsImpl(cell, visitor); } \

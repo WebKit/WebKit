@@ -642,35 +642,23 @@ void CoreAudioCaptureSource::setInterruptedForTesting(bool isInterrupted)
 
 void CoreAudioCaptureSourceFactory::beginInterruption()
 {
-    if (!isMainThread()) {
-        callOnMainThread([this] {
-            beginInterruption();
-        });
-        return;
-    }
-    CoreAudioSharedUnit::singleton().suspend();
+    ensureOnMainThread([] {
+        CoreAudioSharedUnit::singleton().suspend();
+    });
 }
 
 void CoreAudioCaptureSourceFactory::endInterruption()
 {
-    if (!isMainThread()) {
-        callOnMainThread([this] {
-            endInterruption();
-        });
-        return;
-    }
-    CoreAudioSharedUnit::singleton().resume();
+    ensureOnMainThread([] {
+        CoreAudioSharedUnit::singleton().resume();
+    });
 }
 
 void CoreAudioCaptureSourceFactory::scheduleReconfiguration()
 {
-    if (!isMainThread()) {
-        callOnMainThread([this] {
-            scheduleReconfiguration();
-        });
-        return;
-    }
-    CoreAudioSharedUnit::singleton().reconfigure();
+    ensureOnMainThread([] {
+        CoreAudioSharedUnit::singleton().reconfigure();
+    });
 }
 
 AudioCaptureFactory& CoreAudioCaptureSource::factory()

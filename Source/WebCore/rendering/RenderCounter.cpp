@@ -555,16 +555,15 @@ void RenderCounter::rendererSubtreeAttached(RenderElement& renderer)
     }
 }
 
-void RenderCounter::rendererStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle* newStyle)
+void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     Element* element = renderer.generatingElement();
     if (!element || !element->renderer())
         return; // cannot have generated content or if it can have, it will be handled during attaching
 
-    const CounterDirectiveMap* newCounterDirectives;
     const CounterDirectiveMap* oldCounterDirectives;
     if (oldStyle && (oldCounterDirectives = oldStyle->counterDirectives())) {
-        if (newStyle && (newCounterDirectives = newStyle->counterDirectives())) {
+        if (auto* newCounterDirectives = newStyle.counterDirectives()) {
             for (auto& keyValue : *newCounterDirectives) {
                 auto existingEntry = oldCounterDirectives->find(keyValue.key);
                 if (existingEntry != oldCounterDirectives->end()) {
@@ -587,7 +586,7 @@ void RenderCounter::rendererStyleChanged(RenderElement& renderer, const RenderSt
                 RenderCounter::destroyCounterNodes(renderer);
         }
     } else {
-        if (newStyle && (newCounterDirectives = newStyle->counterDirectives())) {
+        if (auto* newCounterDirectives = newStyle.counterDirectives()) {
             for (auto& key : newCounterDirectives->keys()) {
                 // We must create this node here, because the added node may be a node with no display such as
                 // as those created by the increment or reset directives and the re-layout that will happen will

@@ -68,12 +68,12 @@ let currentRequest = null;
 function createPaymentRequest() {
     if (currentRequest)
         currentRequest.abort().catch(() => {});
-    currentRequest = new PaymentRequest([method], simpleDetails);
+    currentRequest = new PaymentRequest([method], simpleDetails, {requestShipping: true});
     return currentRequest;
 }
 
 function triggerLargePaymentRequest() {
-    let request = new PaymentRequest([method], largeDetails);
+    let request = new PaymentRequest([method], largeDetails, {requestShipping: true});
     Promise.resolve().then(() => { TestPage.dispatchEventToFrontend("Continue"); });
     return request;
 }

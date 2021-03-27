@@ -30,24 +30,24 @@
  * @Title: WebKitSecurityOrigin
  *
  * #WebKitSecurityOrigin is a representation of a security domain
- * defined by websites. A security origin normally consists of a
- * protocol, a hostname, and a port number. It is also possible for a
- * security origin to be opaque, as defined by the HTML standard, in
- * which case it has no associated protocol, host, or port.
+ * defined by websites. A security origin consists of a protocol, a
+ * hostname, and an optional port number.
  *
- * Websites with the same security origin can access each other's
- * resources for client-side scripting or database access.
+ * Resources with the same security origin can generally access each
+ * other for client-side scripting or database access. When comparing
+ * origins, beware that if both protocol and host are %NULL, the origins
+ * should not be treated as equal.
  *
  * Since: 2.16
  */
 
 struct _WebKitSecurityOrigin {
-    _WebKitSecurityOrigin(Ref<WebCore::SecurityOrigin>&& coreSecurityOrigin)
-        : securityOrigin(WTFMove(coreSecurityOrigin))
+    explicit _WebKitSecurityOrigin(WebCore::SecurityOriginData&& data)
+        : securityOriginData(WTFMove(data))
     {
     }
 
-    Ref<WebCore::SecurityOrigin> securityOrigin;
+    WebCore::SecurityOriginData securityOriginData;
     CString protocol;
     CString host;
     int referenceCount { 1 };
@@ -55,17 +55,17 @@ struct _WebKitSecurityOrigin {
 
 G_DEFINE_BOXED_TYPE(WebKitSecurityOrigin, webkit_security_origin, webkit_security_origin_ref, webkit_security_origin_unref)
 
-WebKitSecurityOrigin* webkitSecurityOriginCreate(Ref<WebCore::SecurityOrigin>&& coreSecurityOrigin)
+WebKitSecurityOrigin* webkitSecurityOriginCreate(WebCore::SecurityOriginData&& data)
 {
     WebKitSecurityOrigin* origin = static_cast<WebKitSecurityOrigin*>(fastMalloc(sizeof(WebKitSecurityOrigin)));
-    new (origin) WebKitSecurityOrigin(WTFMove(coreSecurityOrigin));
+    new (origin) WebKitSecurityOrigin(WTFMove(data));
     return origin;
 }
 
-WebCore::SecurityOrigin& webkitSecurityOriginGetSecurityOrigin(WebKitSecurityOrigin* origin)
+const WebCore::SecurityOriginData& webkitSecurityOriginGetSecurityOriginData(WebKitSecurityOrigin* origin)
 {
     ASSERT(origin);
-    return origin->securityOrigin.get();
+    return origin->securityOriginData;
 }
 
 /**
@@ -88,10 +88,10 @@ WebKitSecurityOrigin* webkit_security_origin_new(const gchar* protocol, const gc
     g_return_val_if_fail(host, nullptr);
 
     Optional<uint16_t> optionalPort;
-    if (port)
+    if (port && !WTF::isDefaultPortForProtocol(port, protocol))
         optionalPort = port;
 
-    return webkitSecurityOriginCreate(WebCore::SecurityOrigin::create(String::fromUTF8(protocol), String::fromUTF8(host), optionalPort));
+    return webkitSecurityOriginCreate(WebCore::SecurityOriginData(String::fromUTF8(protocol), String::fromUTF8(host), optionalPort));
 }
 
 /**
@@ -110,7 +110,7 @@ WebKitSecurityOrigin* webkit_security_origin_new_for_uri(const gchar* uri)
 {
     g_return_val_if_fail(uri, nullptr);
 
-    return webkitSecurityOriginCreate(WebCore::SecurityOrigin::create(URL(URL(), String::fromUTF8(uri))));
+    return webkitSecurityOriginCreate(WebCore::SecurityOriginData::fromURL(URL(URL(), String::fromUTF8(uri))));
 }
 
 /**
@@ -157,7 +157,7 @@ void webkit_security_origin_unref(WebKitSecurityOrigin* origin)
  * webkit_security_origin_get_protocol:
  * @origin: a #WebKitSecurityOrigin
  *
- * Gets the protocol of @origin, or %NULL if @origin is opaque.
+ * Gets the protocol of @origin.
  *
  * Returns: (allow-none): The protocol of the #WebKitSecurityOrigin
  *
@@ -167,11 +167,11 @@ const gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    if (origin->securityOrigin->protocol().isEmpty())
+    if (origin->securityOriginData.protocol.isEmpty())
         return nullptr;
 
     if (origin->protocol.isNull())
-        origin->protocol = origin->securityOrigin->protocol().utf8();
+        origin->protocol = origin->securityOriginData.protocol.utf8();
     return origin->protocol.data();
 }
 
@@ -179,8 +179,8 @@ const gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* origin)
  * webkit_security_origin_get_host:
  * @origin: a #WebKitSecurityOrigin
  *
- * Gets the hostname of @origin, or %NULL if @origin is opaque or if its
- * protocol does not require a host component.
+ * Gets the hostname of @origin. It is reasonable for this to be %NULL
+ * if its protocol does not require a host component.
  *
  * Returns: (allow-none): The host of the #WebKitSecurityOrigin
  *
@@ -190,11 +190,11 @@ const gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    if (origin->securityOrigin->host().isEmpty())
+    if (origin->securityOriginData.host.isEmpty())
         return nullptr;
 
     if (origin->host.isNull())
-        origin->host = origin->securityOrigin->host().utf8();
+        origin->host = origin->securityOriginData.host.utf8();
     return origin->host.data();
 }
 
@@ -206,8 +206,7 @@ const gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* origin)
  * port is the default port for the given protocol. For example,
  * http://example.com has the same security origin as
  * http://example.com:80, and this function will return 0 for a
- * #WebKitSecurityOrigin constructed from either URI. It will also
- * return 0 if @origin is opaque.
+ * #WebKitSecurityOrigin constructed from either URI.
  *
  * Returns: The port of the #WebKitSecurityOrigin.
  *
@@ -217,25 +216,28 @@ guint16 webkit_security_origin_get_port(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, 0);
 
-    return origin->securityOrigin->port().valueOr(0);
+    return origin->securityOriginData.port.valueOr(0);
 }
 
 /**
  * webkit_security_origin_is_opaque:
  * @origin: a #WebKitSecurityOrigin
  *
- * Gets whether @origin is an opaque security origin, which does not
- * possess an associated protocol, host, or port.
+ * This function returns %FALSE. #WebKitSecurityOrigin is now a simple
+ * wrapper around a &lt;protocol, host, port&gt; triplet, and no longer
+ * represents an origin as defined by web standards that may be opaque.
  *
- * Returns: %TRUE if @origin is opaque.
+ * Returns: %FALSE
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.32
  */
 gboolean webkit_security_origin_is_opaque(WebKitSecurityOrigin* origin)
 {
-    g_return_val_if_fail(origin, TRUE);
+    g_return_val_if_fail(origin, FALSE);
 
-    return origin->securityOrigin->isUnique();
+    return FALSE;
 }
 
 /**
@@ -243,8 +245,8 @@ gboolean webkit_security_origin_is_opaque(WebKitSecurityOrigin* origin)
  * @origin: a #WebKitSecurityOrigin
  *
  * Gets a string representation of @origin. The string representation
- * is a valid URI with only protocol, host, and port components. It may
- * be %NULL, but usually only if @origin is opaque.
+ * is a valid URI with only protocol, host, and port components, or
+ * %NULL.
  *
  * Returns: (allow-none) (transfer full): a URI representing @origin.
  *
@@ -254,6 +256,6 @@ gchar* webkit_security_origin_to_string(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    CString cstring = origin->securityOrigin->toString().utf8();
-    return cstring == "null" ? nullptr : g_strdup (cstring.data());
+    CString cstring = origin->securityOriginData.toString().utf8();
+    return cstring == "null" || cstring == "" ? nullptr : g_strdup (cstring.data());
 }

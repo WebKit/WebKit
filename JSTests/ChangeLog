@@ -1,3 +1,241 @@
+2021-03-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Error#cause should apply to WebAssembly error constructors too
+        https://bugs.webkit.org/show_bug.cgi?id=223404
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/error-cause.js:
+        Run tests on WebAssembly errors too.
+
+        * wasm/js-api/test_basic_api.js:
+        Fix test. This behavior was inconsistent with all other error types (and divergent from all other engines).
+
+2021-03-17  Mark Lam  <mark.lam@apple.com>
+
+        Fix race condition in ConcurrentPtrHashSet.
+        https://bugs.webkit.org/show_bug.cgi?id=223241
+        rdar://74637896
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/race-to-add-opaque-roots-in-ConcurrentPtrHashSet.js: Added.
+
+2021-03-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement Error#cause
+        https://bugs.webkit.org/show_bug.cgi?id=223302
+
+        Reviewed by Yusuke Suzuki.
+
+        Add tests. test262 doesn't currently have any, but the spec is exceedingly simple anyway.
+
+        * stress/error-cause.js: Added.
+
+2021-03-16  Saam Barati  <sbarati@apple.com>
+
+        Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=221069
+        <rdar://problem/73686589>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/allocation-sinking-scope-materialization-order.js: Added.
+        (var3.var2.x):
+        (var3):
+
+2021-03-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274405.
+        https://bugs.webkit.org/show_bug.cgi?id=223187
+
+        Test is failing now
+
+        Reverted changeset:
+
+        "[JSC] Run one Mozilla test explicitly under PST since this
+        test does not work when we are moving from PST to PDT"
+        https://bugs.webkit.org/show_bug.cgi?id=223158
+        https://trac.webkit.org/changeset/274405
+
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Run one Mozilla test explicitly under PST since this test does not work when we are moving from PST to PDT
+        https://bugs.webkit.org/show_bug.cgi?id=223158
+
+        Reviewed by Mark Lam.
+
+        This mozilla test is broken: it fails when we are close to the point moving from PST to PDT / from PDT to PST.
+        We should always run this test under PST to avoid this DST related flakiness.
+
+        We explicitly set TZ=PST for this test to ensure that this runs under PST (not PDT). TZ environment variable is
+        recognized by system frameworks and some libraries including tzdata and ICU.
+
+        * complex.yaml:
+        * complex/mozilla-ecma-Date-15.9.5.14.js: Renamed from JSTests/mozilla/ecma/Date/15.9.5.14.js.
+        (test):
+        * complex/mozilla-shell.js: Added.
+        (AddTestCase):
+        (TestCase):
+        (startTest):
+        (test):
+        (getTestCaseResult):
+        (writeTestCaseResult):
+        (writeFormattedResult):
+        (writeLineToLog):
+        (writeHeaderToLog):
+        (stopTest):
+        (getFailedCases):
+        (getTimeZoneDiff):
+        (adjustResultArray):
+        (Day):
+        (DaysInYear):
+        (TimeInYear):
+        (DayNumber):
+        (TimeWithinDay):
+        (YearNumber):
+        (TimeFromYear):
+        (DayFromYear):
+        (InLeapYear):
+        (YearFromTime):
+        (MonthFromTime):
+        (DayWithinYear):
+        (DateFromTime):
+        (WeekDay):
+        (UTC):
+        (DaylightSavingTA):
+        (GetFirstSundayInApril):
+        (GetLastSundayInOctober):
+        (GetSecondSundayInMarch):
+        (GetFirstSundayInNovember):
+        (LocalTime):
+        (MakeTime):
+        (MakeDay):
+        (TimeInMonth):
+        (TimeClip):
+        (ToInteger):
+        (Enumerate):
+        (GetContext):
+        (OptLevel):
+        * mozilla/mozilla-tests.yaml:
+
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] wasm atomic wait offset is not index
+        https://bugs.webkit.org/show_bug.cgi?id=223159
+
+        Reviewed by Mark Lam.
+
+        * wasm.yaml:
+        * wasm/threads-spec-tests/resources/wait-large.wast: Added.
+        * wasm/threads-spec-tests/wait-large.wast.js: Added.
+
+2021-03-11  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI validator patchpoint should read heap top
+        https://bugs.webkit.org/show_bug.cgi?id=223052
+        <rdar://75087095>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/private-methods-inheritance.js: Added.
+        (A):
+        (A.prototype.x):
+        (B.prototype.y):
+        (B):
+
+2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
+        https://bugs.webkit.org/show_bug.cgi?id=203456
+
+        Reviewed by Robin Morisset.
+
+        * microbenchmarks/global-var-put-to-scope.js: Added.
+        * stress/eval-func-decl-in-frozen-global.js:
+        Object.freeze() redefines all global variables as ReadOnly, including hoisted `var error`.
+        Aligns with V8.
+
+        * stress/global-object-define-own-property-put-to-scope.js: Added.
+        * stress/global-object-define-own-property.js: Added.
+        * stress/to-this-before-arrow-function-closes-over-this-that-starts-as-lexical-environment.js:
+        Fix unwanted name conflict, which was an error in the original test, not an intended part of it.
+        Also, remove misleading comment on `defineProperty` and assert accessors are created on global object.
+        Aligns with V8.
+
+2021-03-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274263.
+        https://bugs.webkit.org/show_bug.cgi?id=223064
+
+        Added few broken tests
+
+        Reverted changeset:
+
+        "AI validator patchpoint should read heap top"
+        https://bugs.webkit.org/show_bug.cgi?id=223052
+        https://trac.webkit.org/changeset/274263
+
+2021-03-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI validator patchpoint should read heap top
+        https://bugs.webkit.org/show_bug.cgi?id=223052
+        <rdar://75087095>
+
+        Reviewed by Saam Barati.
+
+        * stress/private-methods-inheritance.js: Added.
+        (A):
+        (A.prototype.x):
+        (B.prototype.y):
+        (B):
+
+2021-03-09  Keith Miller  <keith_miller@apple.com>
+
+        JSC Crash in makeString() while creating Error object.
+        https://bugs.webkit.org/show_bug.cgi?id=222452
+
+        Reviewed by Mark Lam.
+
+        * stress/large-string-should-not-crash-error-creation.js: Added.
+
+2021-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Use --verifyGC=true on some JSC stress test configurations.
+        https://bugs.webkit.org/show_bug.cgi?id=222289
+
+        Reviewed by Filip Pizlo.
+
+        * stress/heap-analyzer-taking-lock.js:
+
+2021-03-08  Saam Barati  <sbarati@apple.com>
+
+        Using an undeclared private field inside eval shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=222834
+        <rdar://75035388>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/declared-private-field-in-eval.js: Added.
+        * stress/undeclared-private-field-in-eval.js: Added.
+
+2021-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        BooleanConstructor should be inlined in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=220322
+
+        Reviewed by Yusuke Suzuki.
+
+        Reorganize tests so the every UseKind / needsTypeCheck / invert combination is covered.
+
+        * microbenchmarks/array-filter-boolean-constructor.js: Added.
+        * stress/dfg-branch.js: Added.
+        * stress/dfg-to-boolean.js: Added.
+        * stress/logical-not-masquerades-as-undefined.js: Removed.
+        * stress/logical-not-masquerades.js: Removed.
+        * stress/logical-not.js: Removed.
+        * stress/value-to-boolean.js: Removed.
+
 2021-03-05  Tadeu Zagallo  <tzagallo@apple.com>
 
         OpGetPrivateName needs to be listed in FOR_EACH_OPCODE_WITH_VALUE_PROFILE

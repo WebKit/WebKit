@@ -41,7 +41,7 @@ function iframeLoaded(expectBlock) {
 }
 
 function injectFrameRedirectingTo(url, shouldBlock) {
-    injectFrame("/security/contentSecurityPolicy/resources/redir.php?url=" + url, shouldBlock);
+    injectFrame("/security/contentSecurityPolicy/resources/redir.py?url=" + url, shouldBlock);
 }
 
 function injectWorker(url, expectBlock) {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSParserMode.h"
+#include "CSSPropertyNames.h"
 #include "StyleRuleType.h"
 #include "TextEncoding.h"
 #include <wtf/HashFunctions.h>
@@ -56,14 +57,16 @@ public:
     bool isContentOpaque { false };
     bool useSystemAppearance { false };
 
+    bool isPropertyRuntimeDisabled(CSSPropertyID) const;
+
     // Settings.
     bool aspectRatioEnabled { false };
     bool colorContrastEnabled { false };
     bool colorFilterEnabled { false };
     bool colorMixEnabled { false };
     bool constantPropertiesEnabled { false };
+    bool cssColor4 { false };
     bool deferredCSSParserEnabled { false };
-    bool enforcesCSSMIMETypeInNoQuirksMode { true };
     bool individualTransformPropertiesEnabled { false };
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     bool legacyOverflowScrollingTouchEnabled { false };
@@ -114,8 +117,8 @@ struct CSSParserContextHash {
             & key.colorFilterEnabled                        << 6
             & key.colorMixEnabled                           << 7
             & key.constantPropertiesEnabled                 << 8
-            & key.deferredCSSParserEnabled                  << 9
-            & key.enforcesCSSMIMETypeInNoQuirksMode         << 10
+            & key.cssColor4                                 << 9
+            & key.deferredCSSParserEnabled                  << 10
             & key.individualTransformPropertiesEnabled      << 11
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
             & key.legacyOverflowScrollingTouchEnabled       << 12

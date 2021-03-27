@@ -738,7 +738,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
         readOperation.timings.recordIOStartTime = MonotonicTime::now();
 
         auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
-        channel->read(0, std::numeric_limits<size_t>::max(), &ioQueue(), [this, &readOperation](const Data& fileData, int error) {
+        channel->read(0, std::numeric_limits<size_t>::max(), ioQueue(), [this, &readOperation](const Data& fileData, int error) {
             readOperation.timings.recordIOEndTime = MonotonicTime::now();
             if (!error)
                 readRecord(readOperation, fileData);
@@ -877,7 +877,7 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
 
         auto channel = IOChannel::open(recordPath, IOChannel::Type::Create);
         size_t recordSize = recordData.size();
-        channel->write(0, recordData, nullptr, [this, &writeOperation, recordSize](int error) {
+        channel->write(0, recordData, WorkQueue::main(), [this, &writeOperation, recordSize](int error) {
             // On error the entry still stays in the contents filter until next synchronization.
             m_approximateRecordsSize += recordSize;
             finishWriteOperation(writeOperation, error);
@@ -986,7 +986,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
             ++traverseOperation.activeCount;
 
             auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
-            channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [this, &traverseOperation, worth, bodyShareCount](Data& fileData, int) {
+            channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [this, &traverseOperation, worth, bodyShareCount](Data& fileData, int) {
                 RecordMetaData metaData;
                 Data headerData;
                 if (decodeRecordHeader(fileData, metaData, headerData, m_salt)) {

@@ -152,7 +152,12 @@ public:
         static_assert(std::is_trivially_destructible<T>::value || !T::isInlineItem);
 
         if (!T::isInlineItem && m_writingClient) {
-            static uint8_t temporaryItemBuffer[sizeof(uint64_t) + sizeof(T)];
+#if COMPILER(MSVC)
+            __declspec(align(8)) typedef uint8_t EncodingBuffer[sizeof(uint64_t) + sizeof(T)];
+#else
+            using EncodingBuffer __attribute__((aligned (8))) = uint8_t[sizeof(uint64_t) + sizeof(T)];
+#endif
+            static EncodingBuffer temporaryItemBuffer;
             temporaryItemBuffer[0] = static_cast<uint8_t>(T::itemType);
             new (temporaryItemBuffer + sizeof(uint64_t)) T(std::forward<Args>(args)...);
             append({ temporaryItemBuffer });

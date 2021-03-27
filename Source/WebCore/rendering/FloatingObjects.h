@@ -49,7 +49,7 @@ public:
     FloatingObject(RenderBox&, Type, const LayoutRect&, const LayoutSize&, bool shouldPaint, bool isDescendant);
 
     Type type() const { return static_cast<Type>(m_type); }
-    RenderBox& renderer() const { return *m_renderer; }
+    RenderBox& renderer() const { ASSERT(m_renderer); return *m_renderer; }
 
     bool isPlaced() const { return m_isPlaced; }
     void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
@@ -174,7 +174,7 @@ public:
     LayoutUnit findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight);
 
 private:
-    const RenderBlockFlow& renderer() const { return *m_renderer; }
+    const RenderBlockFlow& renderer() const { ASSERT(m_renderer); return *m_renderer; }
     void computePlacedFloatsTree();
     const FloatingObjectTree* placedFloatsTree();
     void increaseObjectsCount(FloatingObject::Type);

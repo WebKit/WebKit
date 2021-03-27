@@ -74,7 +74,7 @@ InProcessIDBServer::~InProcessIDBServer()
 StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin)
 {
     return m_quotaManagers.ensure(origin, [] {
-        return StorageQuotaManager::create(StorageQuotaManager::defaultQuota(), [] {
+        return StorageQuotaManager::create(StorageQuotaManager::defaultQuota(), [](auto) {
             return 0;
         }, [](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
             callback(quota + currentSpace + spaceIncrease);

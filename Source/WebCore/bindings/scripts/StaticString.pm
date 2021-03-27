@@ -43,7 +43,7 @@ END
 
     for my $name (sort keys %strings) {
         my $value = $strings{$name};
-        push(@result, "const StringImpl::StaticStringImpl ${name}Data(\"${value}\");\n");
+        push(@result, "static constexpr StringImpl::StaticStringImpl ${name}Data(\"${value}\");\n");
     }
 
     push(@result, <<END);

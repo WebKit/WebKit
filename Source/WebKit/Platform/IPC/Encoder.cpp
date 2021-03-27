@@ -31,6 +31,7 @@
 #include "MessageFlags.h"
 #include <algorithm>
 #include <wtf/OptionSet.h>
+#include <wtf/UniqueRef.h>
 
 #if OS(DARWIN)
 #include <sys/mman.h>
@@ -122,7 +123,12 @@ void Encoder::setFullySynchronousModeForTesting()
     messageFlags().add(MessageFlags::UseFullySynchronousModeForTesting);
 }
 
-void Encoder::wrapForTesting(std::unique_ptr<Encoder> original)
+void Encoder::setShouldMaintainOrderingWithAsyncMessages()
+{
+    messageFlags().add(MessageFlags::MaintainOrderingWithAsyncMessages);
+}
+
+void Encoder::wrapForTesting(UniqueRef<Encoder>&& original)
 {
     ASSERT(isSyncMessage());
     ASSERT(!original->isSyncMessage());

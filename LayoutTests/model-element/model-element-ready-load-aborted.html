@@ -2,7 +2,7 @@
 <html>
 <body>
 <model id="model">
-    <source id="model-source" src="resources/heart.usdz">
+    <source id="model-source">
 </model>
 <p>This test passes if you see the word "Passed" below:</p>
 <p id="result">Failed</p>
@@ -27,6 +27,8 @@
         if (window.testRunner)
             testRunner.notifyDone();
     });
+
+    source.src = "resources/heart.usdz";
 
     model.removeChild(source);
 </script>

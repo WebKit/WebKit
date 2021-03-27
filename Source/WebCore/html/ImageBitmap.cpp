@@ -840,7 +840,13 @@ ImageBitmap::ImageBitmap(Optional<ImageBitmapBacking>&& backingStore)
     ASSERT_IMPLIES(m_backingStore, m_backingStore->buffer());
 }
 
-ImageBitmap::~ImageBitmap() = default;
+ImageBitmap::~ImageBitmap()
+{
+    if (isMainThread())
+        return;
+    if (auto imageBuffer = takeImageBuffer())
+        callOnMainThread([imageBuffer = WTFMove(imageBuffer)] { });
+}
 
 Optional<ImageBitmapBacking> ImageBitmap::takeImageBitmapBacking()
 {

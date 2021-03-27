@@ -97,11 +97,6 @@
     transition: opacity 0.1s linear;
 }
 
-.media-controls.shows-tracks-panel > .controls-bar > *,
-.media-controls.shows-tracks-panel > button {
-    pointer-events: none;
-}
-
 .media-controls.faded > *:not(.placard) {
     opacity: 0;
     pointer-events: none;

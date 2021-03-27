@@ -59,7 +59,7 @@ webkit_security_origin_get_host     (WebKitSecurityOrigin *origin);
 WEBKIT_API guint16
 webkit_security_origin_get_port     (WebKitSecurityOrigin *origin);
 
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_security_origin_is_opaque    (WebKitSecurityOrigin *origin);
 
 WEBKIT_API gchar *

@@ -275,13 +275,12 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
     if (m_relayConnection)
         return;
 
-    xpc_connection_t connection = xpc_connection_create_mach_service(WIRXPCMachPortName, m_xpcQueue, 0);
+    auto connection = adoptOSObject(xpc_connection_create_mach_service(WIRXPCMachPortName, m_xpcQueue, 0));
     if (!connection)
         return;
 
-    m_relayConnection = adoptRef(new RemoteInspectorXPCConnection(connection, m_xpcQueue, this));
+    m_relayConnection = adoptRef(new RemoteInspectorXPCConnection(connection.get(), m_xpcQueue, this));
     m_relayConnection->sendMessage(@"syn", nil); // Send a simple message to initialize the XPC connection.
-    xpc_release(connection);
 
     if (m_automaticInspectionCandidateTargetIdentifier) {
         // We already have a debuggable waiting to be automatically inspected.

@@ -39,8 +39,6 @@
 
 namespace JSC {
 
-static const char* rootTypeToString(RootMarkReason);
-
 NodeIdentifier HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
 NodeIdentifier HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
 void HeapSnapshotBuilder::resetNextAvailableObjectIdentifier() { HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1; }
@@ -303,42 +301,6 @@ static const char* snapshotTypeToString(HeapSnapshotBuilder::SnapshotType type)
     }
     ASSERT_NOT_REACHED();
     return "Inspector";
-}
-
-static const char* rootTypeToString(RootMarkReason type)
-{
-    switch (type) {
-    case RootMarkReason::None:
-        return "None";
-    case RootMarkReason::ConservativeScan:
-        return "Conservative scan";
-    case RootMarkReason::StrongReferences:
-        return "Strong references";
-    case RootMarkReason::ProtectedValues:
-        return "Protected values";
-    case RootMarkReason::MarkListSet:
-        return "Mark list set";
-    case RootMarkReason::VMExceptions:
-        return "VM exceptions";
-    case RootMarkReason::StrongHandles:
-        return "Strong handles";
-    case RootMarkReason::Debugger:
-        return "Debugger";
-    case RootMarkReason::JITStubRoutines:
-        return "JIT stub routines";
-    case RootMarkReason::WeakSets:
-        return "Weak sets";
-    case RootMarkReason::Output:
-        return "Output";
-    case RootMarkReason::DFGWorkLists:
-        return "DFG work lists";
-    case RootMarkReason::CodeBlocks:
-        return "Code blocks";
-    case RootMarkReason::DOMGCOutput:
-        return "DOM GC output";
-    }
-    ASSERT_NOT_REACHED();
-    return "None";
 }
 
 String HeapSnapshotBuilder::json()
@@ -656,7 +618,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             json.appendNumber(snapshotNode.value().identifier);
 
             // Maybe we should just always encode the root names.
-            const char* rootName = rootTypeToString(it.value.markReason);
+            const char* rootName = rootMarkReasonDescription(it.value.markReason);
             auto result = labelIndexes.add(rootName, nextLabelIndex);
             if (result.isNewEntry)
                 nextLabelIndex++;

@@ -32,7 +32,6 @@
 #include "CairoUtilities.h"
 #include "FloatRect.h"
 #include "GraphicsContextImplCairo.h"
-#include "StrokeStyleApplier.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
@@ -415,15 +414,15 @@ FloatRect Path::boundingRectSlowCase() const
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
+FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     // Should this be isEmpty() or can an empty path have a non-zero origin?
     if (isNull())
         return FloatRect();
 
-    if (applier) {
+    if (strokeStyleApplier) {
         GraphicsContext gc(GraphicsContextImplCairo::createFactory(m_path.get()));
-        applier->strokeStyle(&gc);
+        strokeStyleApplier(gc);
     }
 
     double x0, x1, y0, y1;
@@ -443,14 +442,16 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
     return contains;
 }
 
-bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) const
+bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
+    ASSERT(strokeStyleApplier);
+
     if (isNull())
         return false;
 
     {
         GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(m_path.get()));
-        applier.strokeStyle(&graphicsContext);
+        strokeStyleApplier(graphicsContext);
     }
 
     return cairo_in_stroke(m_path.get(), point.x(), point.y());

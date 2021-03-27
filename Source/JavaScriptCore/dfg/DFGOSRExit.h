@@ -140,6 +140,7 @@ struct OSRExitState : RefCounted<OSRExitState> {
 
 JSC_DECLARE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame*));
 JSC_DECLARE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (CallFrame*, void*, void*));
+JSC_DECLARE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM*, const OSRExitBase*, EncodedJSValue*));
 
 // === OSRExit ===
 //

@@ -390,6 +390,9 @@ Texture::Texture(ContextMtl *context,
                 desc.usage = desc.usage | MTLTextureUsageShaderWrite;
             }
         }
+        if(desc.pixelFormat == MTLPixelFormatDepth32Float_Stencil8){
+          ASSERT(allowFormatView);
+        }
 
         if (allowFormatView)
         {

@@ -464,7 +464,7 @@ SamplerDesc::SamplerDesc(const gl::SamplerState &glState) : SamplerDesc()
     maxAnisotropy = static_cast<uint32_t>(glState.getMaxAnisotropy());
 
     compareFunction = GetCompareFunc(glState.getCompareFunc());
-    
+
     normalizedCoordinates = YES;
 }
 
@@ -483,11 +483,11 @@ void SamplerDesc::reset()
     minFilter = MTLSamplerMinMagFilterNearest;
     magFilter = MTLSamplerMinMagFilterNearest;
     mipFilter = MTLSamplerMipFilterNearest;
-    
+
     maxAnisotropy = 1;
 
     compareFunction = MTLCompareFunctionNever;
-    
+
     normalizedCoordinates = YES;
 }
 
@@ -865,9 +865,7 @@ RenderPipelineCache::RenderPipelineCache() : RenderPipelineCache(nullptr) {
 RenderPipelineCache::RenderPipelineCache(
     RenderPipelineCacheSpecializeShaderFactory *specializedShaderFactory)
     : mSpecializedShaderFactory(specializedShaderFactory)
-{
-
-}
+{}
 
 RenderPipelineCache::~RenderPipelineCache() {}
 
@@ -966,7 +964,9 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         // Choose shader variant
         id<MTLFunction> vertShader = nil;
         id<MTLFunction> fragShader = nil;
-        if (mSpecializedShaderFactory &&
+        // Special case for transform feedback shader, we've already created it! See getTransformFeedbackRenderPipeline
+        if (desc.rasterizationType != mtl::RenderPipelineRasterization::Disabled &&
+            mSpecializedShaderFactory &&
             mSpecializedShaderFactory->hasSpecializedShader(gl::ShaderType::Vertex, desc))
         {
             if (IsError(mSpecializedShaderFactory->getSpecializedShader(
@@ -1052,7 +1052,6 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         return [newState ANGLE_MTL_AUTORELEASE];
     }
 }
-
 
 void RenderPipelineCache::recreatePipelineStates(Context *context)
 {

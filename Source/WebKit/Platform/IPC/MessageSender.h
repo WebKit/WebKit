@@ -27,6 +27,7 @@
 
 #include <wtf/Assertions.h>
 #include "Connection.h"
+#include <wtf/UniqueRef.h>
 
 namespace IPC {
 
@@ -43,8 +44,8 @@ public:
     {
         static_assert(!U::isSync, "Message is sync!");
 
-        auto encoder = makeUnique<Encoder>(U::name(), destinationID);
-        *encoder << message.arguments();
+        auto encoder = makeUniqueRef<Encoder>(U::name(), destinationID);
+        encoder.get() << message.arguments();
         
         return sendMessage(WTFMove(encoder), sendOptions);
     }
@@ -90,10 +91,10 @@ public:
     {
         COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-        auto encoder = makeUnique<IPC::Encoder>(T::name(), destinationID);
+        auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
         uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-        *encoder << listenerID;
-        *encoder << message.arguments();
+        encoder.get() << listenerID;
+        encoder.get() << message.arguments();
         sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
             if (decoder && decoder->isValid())
                 T::callReply(*decoder, WTFMove(completionHandler));
@@ -103,7 +104,7 @@ public:
         return listenerID;
     }
 
-    virtual bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& = WTF::nullopt);
+    virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& = WTF::nullopt);
 
 private:
     virtual Connection* messageSenderConnection() const = 0;

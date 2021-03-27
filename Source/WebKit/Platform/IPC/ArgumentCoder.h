@@ -43,6 +43,7 @@ template<typename T, typename I = T> struct HasModernDecoder : decltype(Detail::
 template<typename T, typename I = T> inline constexpr bool HasModernDecoderV = HasModernDecoder<T, I>::value;
 
 template<typename T, typename = void> struct ArgumentCoder {
+    template<typename Encoder>
     static void encode(Encoder& encoder, const T& t)
     {
         t.encode(encoder);

@@ -232,6 +232,7 @@ namespace WebCore {
     macro(resourcetimingbufferfull) \
     macro(result) \
     macro(resume) \
+    macro(rtctransform) \
     macro(scroll) \
     macro(search) \
     macro(securitypolicyviolation) \

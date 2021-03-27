@@ -171,7 +171,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldEnableVP9Decoder;
     encoder << shouldEnableVP9SWDecoder;
 #if ENABLE(APP_BOUND_DOMAINS)
-    encoder << needsInAppBrowserPrivacyQuirks;
     encoder << limitsNavigationsToAppBoundDomains;
 #endif
     encoder << lastNavigationWasAppBound;
@@ -182,7 +181,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << themeName;
 #endif
     
-    encoder << textInteractionEnabled;
     encoder << httpsUpgradeEnabled;
 #if PLATFORM(IOS)
     encoder << allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
@@ -568,9 +566,6 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    if (!decoder.decode(parameters.needsInAppBrowserPrivacyQuirks))
-        return WTF::nullopt;
-    
     if (!decoder.decode(parameters.limitsNavigationsToAppBoundDomains))
         return WTF::nullopt;
 #endif
@@ -587,9 +582,6 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.themeName))
         return WTF::nullopt;
 #endif
-    
-    if (!decoder.decode(parameters.textInteractionEnabled))
-        return WTF::nullopt;
 
     if (!decoder.decode(parameters.httpsUpgradeEnabled))
         return WTF::nullopt;

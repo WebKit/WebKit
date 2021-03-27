@@ -82,6 +82,12 @@ const char* description(MessageName name)
         return "TestWithSemaphore_SendSemaphore";
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return "TestWithStreamBuffer_SendStreamBuffer";
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+        return "TestWithStream_ReceiveMachSendRight";
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+        return "TestWithStream_SendAndReceiveMachSendRight";
+    case MessageName::TestWithStream_SendMachSendRight:
+        return "TestWithStream_SendMachSendRight";
     case MessageName::TestWithStream_SendString:
         return "TestWithStream_SendString";
     case MessageName::TestWithStream_SendStringSynchronized:
@@ -207,6 +213,9 @@ ReceiverName receiverName(MessageName messageName)
         return ReceiverName::TestWithSemaphore;
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return ReceiverName::TestWithStreamBuffer;
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+    case MessageName::TestWithStream_SendMachSendRight:
     case MessageName::TestWithStream_SendString:
     case MessageName::TestWithStream_SendStringSynchronized:
         return ReceiverName::TestWithStream;
@@ -340,6 +349,18 @@ bool isValidMessageName(MessageName messageName)
         return true;
     if (messageName == IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer)
         return true;
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::TestWithStream_ReceiveMachSendRight)
+        return true;
+#endif
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight)
+        return true;
+#endif
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::TestWithStream_SendMachSendRight)
+        return true;
+#endif
     if (messageName == IPC::MessageName::TestWithStream_SendString)
         return true;
     if (messageName == IPC::MessageName::TestWithStream_SendStringSynchronized)

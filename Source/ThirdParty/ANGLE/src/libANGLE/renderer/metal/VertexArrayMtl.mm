@@ -726,7 +726,6 @@ angle::Result VertexArrayMtl::getIndexBuffer(const gl::Context *context,
             BufferMtl *bufferMtl = mtl::GetImpl(glElementArrayBuffer);
             *idxBufferOut        = bufferMtl->getCurrentBuffer();
             *idxBufferOffsetOut  = convertedOffset;
-            
         }
     }
 

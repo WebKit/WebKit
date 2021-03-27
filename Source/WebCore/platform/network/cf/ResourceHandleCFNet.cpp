@@ -389,7 +389,7 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
                     // Store the credential back, possibly adding it as a default for this directory.
                     d->m_context->storageSession()->credentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
-                RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
+                auto cfCredential = createCF(credential);
                 CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
                 return true;
             }
@@ -436,11 +436,11 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         d->m_context->storageSession()->credentialStorage().set(firstRequest().cachePartition(), webCredential, challenge.protectionSpace(), urlToStore);
 
         if (d->m_connection) {
-            RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(webCredential));
+            auto cfCredential = createCF(webCredential);
             CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
         }
     } else if (d->m_connection) {
-        RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
+        auto cfCredential = createCF(credential);
         CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
     }
 
@@ -559,8 +559,8 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
             // Must add a source to the run loop to prevent CFRunLoopRun() from exiting.
             CFRunLoopSourceContext ctxt = { 0, (void*)1 /*must be non-null*/, 0, 0, 0, 0, 0, 0, 0, emptyPerform };
-            CFRunLoopSourceRef bogusSource = CFRunLoopSourceCreate(0, 0, &ctxt);
-            CFRunLoopAddSource(runLoop, bogusSource, kCFRunLoopDefaultMode);
+            auto bogusSource = adoptCF(CFRunLoopSourceCreate(0, 0, &ctxt));
+            CFRunLoopAddSource(runLoop, bogusSource.get(), kCFRunLoopDefaultMode);
             sem.signal();
 
             while (true)

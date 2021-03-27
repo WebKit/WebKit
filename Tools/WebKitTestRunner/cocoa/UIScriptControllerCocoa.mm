@@ -35,6 +35,7 @@
 #import <WebKit/WKURLCF.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <wtf/BlockPtr.h>
 
 @interface WKWebView (WKWebViewInternal)
 - (void)paste:(id)sender;
@@ -170,6 +171,31 @@ JSRetainPtr<JSStringRef> UIScriptControllerCocoa::firstRedoLabel() const
 NSUndoManager *UIScriptControllerCocoa::platformUndoManager() const
 {
     return platformContentView().undoManager;
+}
+
+void UIScriptControllerCocoa::setDidShowContextMenuCallback(JSValueRef callback)
+{
+    UIScriptController::setDidShowContextMenuCallback(callback);
+    webView().didShowContextMenuCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidShowContextMenu);
+    }).get();
+}
+
+void UIScriptControllerCocoa::setDidDismissContextMenuCallback(JSValueRef callback)
+{
+    UIScriptController::setDidDismissContextMenuCallback(callback);
+    webView().didDismissContextMenuCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidDismissContextMenu);
+    }).get();
+}
+
+bool UIScriptControllerCocoa::isShowingContextMenu() const
+{
+    return webView().isShowingContextMenu;
 }
 
 void UIScriptControllerCocoa::setDidShowMenuCallback(JSValueRef callback)

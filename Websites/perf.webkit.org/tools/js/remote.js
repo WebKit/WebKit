@@ -31,14 +31,14 @@ class NodeRemoteAPI extends CommonRemoteAPI {
     configure(server)
     {
         assert(server.scheme === 'http' || server.scheme === 'https');
-        assert.equal(typeof(server.host), 'string', 'host should be a string');
+        assert.strictEqual(typeof(server.host), 'string', 'host should be a string');
         assert(!server.port || typeof(server.port) == 'number', 'port should be a number');
 
         let auth = null;
         if (server.auth) {
-            assert.equal(typeof(server.auth), 'object', 'auth should be a dictionary with username and password as keys');
-            assert.equal(typeof(server.auth.username), 'string', 'auth should contain a string username');
-            assert.equal(typeof(server.auth.password), 'string', 'auth should contain a string password');
+            assert.strictEqual(typeof(server.auth), 'object', 'auth should be a dictionary with username and password as keys');
+            assert.strictEqual(typeof(server.auth.username), 'string', 'auth should contain a string username');
+            assert.strictEqual(typeof(server.auth.password), 'string', 'auth should contain a string password');
             auth = {
                 username: server.auth.username,
                 password: server.auth.password,

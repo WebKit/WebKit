@@ -51,12 +51,9 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
         options |= SOUP_SERVER_LISTEN_HTTPS;
 
     if (m_queue) {
-        BinarySemaphore semaphore;
-        m_queue->dispatch([&] {
+        m_queue->dispatchSync([&] {
             g_assert_true(soup_server_listen_local(m_soupServer.get(), 0, static_cast<SoupServerListenOptions>(options), nullptr));
-            semaphore.signal();
         });
-        semaphore.wait();
     } else
         g_assert_true(soup_server_listen_local(m_soupServer.get(), 0, static_cast<SoupServerListenOptions>(options), nullptr));
 

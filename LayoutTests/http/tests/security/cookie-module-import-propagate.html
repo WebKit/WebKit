@@ -35,7 +35,7 @@ function runNextScriptTest()
         return;
     }
     var url = test.src + "?testId=" + (counter++);
-    import("./resources/module-nest-import.php?url=" + encodeURIComponent(url)).then(
+    import("./resources/module-nest-import.py?url=" + encodeURIComponent(url)).then(
         () => test.onload(url),
         () => test.onerror(url)
     );
@@ -50,22 +50,22 @@ const DidNotLoadScript = "did not load script";
 
 var scriptTests = [
 {
-    src: "./cookie-protected-script.php",
+    src: "./cookie-protected-script.py",
     onload: (script) => pass(script, DidLoadScript),
     onerror: (script) => fail(script, DidNotLoadScript),
 },
 {
-    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.php",
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
     onload: (script) => pass(script, DidLoadScript),
     onerror: (script) => fail(script, DidNotLoadScript),
 },
 {
-    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.php",
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
     onload: (script) => fail(script, DidLoadScript),
     onerror: (script) => pass(script, DidNotLoadScript),
 },
 {
-    src: "http://localhost:8443/security/resources/cookie-protected-script.php",
+    src: "http://localhost:8443/security/resources/cookie-protected-script.py",
     onload: (script) => fail(script, DidLoadScript),
     onerror: (script) => pass(script, DidNotLoadScript),
 },

@@ -38,6 +38,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -82,7 +83,7 @@ class IDBConnectionProxy;
 enum ScriptExecutionContextIdentifierType { };
 using ScriptExecutionContextIdentifier = ObjectIdentifier<ScriptExecutionContextIdentifierType>;
 
-class ScriptExecutionContext : public SecurityContext {
+class ScriptExecutionContext : public SecurityContext, public CanMakeWeakPtr<ScriptExecutionContext> {
 public:
     ScriptExecutionContext();
     virtual ~ScriptExecutionContext();

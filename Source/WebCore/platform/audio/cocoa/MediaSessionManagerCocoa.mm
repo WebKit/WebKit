@@ -38,6 +38,7 @@
 #import "NowPlayingInfo.h"
 #import "PlatformMediaSession.h"
 #import "PlatformStrategies.h"
+#import "SharedBuffer.h"
 #import "VP9UtilitiesCocoa.h"
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Function.h>
@@ -307,6 +308,13 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         auto cfCurrentTime = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &nowPlayingInfo.currentTime));
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoElapsedTime, cfCurrentTime.get());
     }
+    if (nowPlayingInfo.artwork) {
+        // FIXME: we should only pass a decompressed image here and have the decompression performed in the webcontent process.
+        // see https://bugs.webkit.org/show_bug.cgi?id=223290.
+        auto nsArtwork = nowPlayingInfo.artwork->imageData->createNSData();
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkData, nsArtwork.get());
+        CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkMIMEType, nowPlayingInfo.artwork->mimeType.createCFString().get());
+    }
 
     if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication() && !nowPlayingInfo.sourceApplicationIdentifier.isEmpty())
         MRMediaRemoteSetParentApplication(MRMediaRemoteGetLocalOrigin(), nowPlayingInfo.sourceApplicationIdentifier.createCFString().get());
@@ -371,7 +379,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
     if (m_nowPlayingInfo != nowPlayingInfo) {
         m_nowPlayingInfo = nowPlayingInfo;
         platformStrategies()->mediaStrategy().setNowPlayingInfo(!m_registeredAsNowPlayingApplication, *nowPlayingInfo);
-        ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication);
+        ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", nowPlayingInfo->artwork ? nowPlayingInfo->artwork->src : String(), "\"");
     }
 
     if (!m_registeredAsNowPlayingApplication) {

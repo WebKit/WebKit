@@ -121,7 +121,7 @@ RemoteInspectorClient::~RemoteInspectorClient()
 
 void RemoteInspectorClient::sendWebInspectorEvent(const String& event)
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     ASSERT(m_connectionID.hasValue());
     auto message = event.utf8();
     send(m_connectionID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
@@ -155,7 +155,7 @@ void RemoteInspectorClient::connectionClosed()
 
 void RemoteInspectorClient::didClose(Inspector::RemoteInspectorSocketEndpoint&, ConnectionID)
 {
-    callOnMainThread([this] {
+    callOnMainRunLoop([this] {
         connectionClosed();
     });
 }

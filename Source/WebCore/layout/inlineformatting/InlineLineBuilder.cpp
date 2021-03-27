@@ -269,6 +269,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
         , isLastLine
+        , m_line.nonSpanningInlineLevelBoxCount()
         , m_line.runs()};
 }
 

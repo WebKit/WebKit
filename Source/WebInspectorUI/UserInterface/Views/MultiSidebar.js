@@ -154,7 +154,7 @@ WI.MultiSidebar = class MultiSidebar extends WI.Sidebar
 
     didInsertSidebarPanel(sidebarPanel, index)
     {
-        this._updateMinimumWidthForMultipleSidebars();
+        this._updateMinimumWidthForMultipleSidebars({ignoreExistingComputedValue: true});
         this._updateMultipleSidebarLayout();
     }
 
@@ -167,13 +167,15 @@ WI.MultiSidebar = class MultiSidebar extends WI.Sidebar
                 this.removeSidebar(sidebar);
         }
 
-        this._updateMinimumWidthForMultipleSidebars();
+        this._updateMinimumWidthForMultipleSidebars({ignoreExistingComputedValue: true});
         this._updateMultipleSidebarLayout();
     }
 
-    didSetCollapsed(flag)
+    didSetCollapsed()
     {
         this.primarySidebar.collapsed = this.collapsed;
+
+        this._updateMinimumWidthForMultipleSidebars({ignoreExistingComputedValue: true});
         this._updateMultipleSidebarLayout();
     }
 
@@ -184,8 +186,14 @@ WI.MultiSidebar = class MultiSidebar extends WI.Sidebar
         return this._allowMultipleSidebars && this._multipleSidebarsVisible && this._hasSidebarPanelSupportingExclusive && this.sidebarPanels.length >= 2;
     }
 
-    _updateMinimumWidthForMultipleSidebars()
+    _updateMinimumWidthForMultipleSidebars({ignoreExistingComputedValue} = {})
     {
+        if (!ignoreExistingComputedValue && this._requiredMinimumWidthForMultipleSidebars)
+            return;
+
+        if (this.collapsed || !this.isAttached)
+            return;
+
         // A 50px of additional required space helps make sure we collapse the multiple sidebars at an appropriate width
         // without preventing the user from sizing the single sidebar to fill up to the minimum width of the
         // #tab-browser once the sidebars are collapsed.
@@ -203,6 +211,7 @@ WI.MultiSidebar = class MultiSidebar extends WI.Sidebar
 
     get _hasWidthForMultipleSidebars()
     {
+        this._updateMinimumWidthForMultipleSidebars();
         return this._requiredMinimumWidthForMultipleSidebars < this.maximumWidth;
     }
 
@@ -239,11 +248,10 @@ WI.MultiSidebar = class MultiSidebar extends WI.Sidebar
         sidebarPanel.exclusive = true;
 
         let sidebar = new WI.SingleSidebar(null, this.side, sidebarPanel.navigationItem.label);
-        sidebar.addSidebarPanel(sidebarPanel);
         sidebar.collapsable = false;
-        this.addSidebar(sidebar);
-
+        sidebar.addSidebarPanel(sidebarPanel);
         sidebar.selectedSidebarPanel = sidebarPanel;
+        this.addSidebar(sidebar);
     }
 
     _makeSidebarPanelNotExclusive(sidebarPanel)

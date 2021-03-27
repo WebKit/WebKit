@@ -45,6 +45,7 @@ def chunk(list, chunkSize):
 def main():
     parser = OptionParser(usage="usage: %prog [options] header source [input [input...]]")
     parser.add_option('--no-minify', action='store_true', help='Do not run the input files through jsmin')
+    parser.add_option('--fail-if-non-ascii', action='store_true', help='Fail if the input files include non-ASCII characters')
     parser.add_option('-n', '--namespace', help='Namespace to use')
     (options, arguments) = parser.parse_args()
     if not options.namespace:
@@ -81,6 +82,11 @@ def main():
             characters = jsmin(data)
         else:
             characters = data
+
+        if options.fail_if_non_ascii:
+            for character in characters:
+                if ord(character) >= 128:
+                    raise Exception("%s is not ASCII" % character)
 
         if is_3:
             codepoints = bytearray(characters, encoding='utf-8')

@@ -19,6 +19,7 @@ fast/scrolling/mac [ Pass ]
 fast/visual-viewport/tiled-drawing [ Pass ]
 fast/web-share [ Pass ]
 imported/w3c/web-platform-tests/web-share [ Pass ]
+media/modern-media-controls/tracks-support [ Pass ]
 scrollingcoordinator [ Pass ]
 scrollingcoordinator/ios [ Skip ]
 swipe [ Pass ]
@@ -801,8 +802,6 @@ http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
 [ Mojave ] http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html [ Skip ]
 [ Mojave ] http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Skip ]
 
-webkit.org/b/183878 media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html [ Pass Timeout ] 
-
 webkit.org/b/194826 http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html [ Pass Timeout ]
 
 webkit.org/b/187391 accessibility/mac/async-increment-decrement-action.html [ Skip ]
@@ -867,8 +866,6 @@ webkit.org/b/207127 webgpu/whlsl/buffer-vertex.html [ Pass ImageOnlyFailure ]
 webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash Failure ]
 
 webkit.org/b/207141 [ Release ] inspector/canvas/create-context-bitmaprenderer.html [ Pass Failure ]
-
-webkit.org/b/207149  [ Mojave ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
 
 webkit.org/b/207166 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html [ Pass Failure ]
 
@@ -1115,9 +1112,6 @@ webrtc/simulcast-h264.html [ Pass Timeout ]
 # <rdar://problem/63275213> REGRESSION: http/tests/IndexedDB/storage-limit-1.https.html is a flaky failure
 [ BigSur+ Release ] http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
 
-# <rdar://problem/63357481> http/tests/privateClickMeasurement/send-attribution-conversion-request.html is a super flaky failure
-[ BigSur+ Debug ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Pass Failure ]
-
 # <rdar://problem/63554249> [20A279] DQ bots are seeing http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html and http/tests/cache/disk-cache/disk-cache-validation-no-body.html are timing out
 webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Failure Timeout ]
 [ BigSur+ Release ] http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Pass Timeout ]
@@ -1162,7 +1156,7 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-src-star.html [ Skip ]
 [ arm64 ] http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star.html [ Skip ]
 [ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html [ Skip ]
-[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py [ Skip ]
 [ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html [ Skip ]
 [ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html [ Skip ]
 [ arm64 ] http/tests/security/cross-origin-plugin-allowed.html [ Skip ]
@@ -1305,11 +1299,9 @@ fast/layoutformattingcontext/block-only/min-max-and-preferred-width-simple.html 
 webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse.html [ ImageOnlyFailure ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.html [ ImageOnlyFailure ]
-webkit.org/b/219905 fast/layoutformattingcontext/subframe-with-display-none-html.html [ Crash ImageOnlyFailure ]
+webkit.org/b/219905 fast/layoutformattingcontext/subframe-with-display-none-html.html [ Skip ]
 # This file should contain entries for expectations that are specific
 # to the Apple Mac port running the WebKit2 variant (--webkit-test-runner)
-
-webkit.org/b/220018 webanimations/accelerated-transform-related-animation-property-order.html [ ImageOnlyFailure ]
 
 webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html [ Pass Timeout ]
 
@@ -1325,8 +1317,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 platform/mac/media/encrypted-media/fps-clearkey-crash.html [ Timeout Crash ]
 
 webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Pass Timeout ]
-
-webkit.org/b/221965 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-seekable.html  [ Pass Failure ]
 
 webkit.org/b/221857 fast/selectors/text-field-selection-window-inactive-text-shadow.html [ Pass ImageOnlyFailure ]
 
@@ -1361,3 +1351,37 @@ webkit.org/b/222677 inspector/model/auditTestCase.html [ Pass Timeout ]
 webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
 
 webkit.org/b/222808 imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html [ Pass Failure ]
+
+webkit.org/b/221011 fast/selectors/selection-window-inactive-text-shadow.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223012 media/media-source/media-source-canplaythrough-event.html [ Pass Failure ]
+
+webkit.org/b/223014 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html [ Pass Failure ]
+
+webkit.org/b/222210 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Pass Failure ]
+
+webkit.org/b/223131 [ Debug ] imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html [ Pass Failure ]
+
+webkit.org/b/221759 [ Release ] inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Pass Timeout ]
+
+webkit.org/b/223206 http/tests/local/loading-stylesheet-import-remove.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/223291 Two accesability tests are flakey text failing only on Apple Silicon
+[ arm64 ] accessibility/mac/value-change/value-change-user-info-textfield.html [ Pass Failure ]
+[ arm64 ] accessibility/mac/value-change/value-change-user-info-textarea.html [ Pass Failure ]
+
+webkit.org/b/223292 [ arm64 ] fast/table/multiple-captions-crash4.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223293 media/media-fullscreen-return-to-inline.html [ Pass Failure Timeout ]
+
+# webkit.org/b/223385 Two imported webrtc tests are flakey text failing only on Apple Silicon
+[ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
+
+webkit.org/b/223387 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223383 compositing/video/video-border-radius.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223453 [ arm64 ] storage/indexeddb/IDBObject-leak.html [ Pass Failure ]
+
+webkit.org/b/223462 [ Debug arm64 ] imported/w3c/web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html [ Pass Crash ]

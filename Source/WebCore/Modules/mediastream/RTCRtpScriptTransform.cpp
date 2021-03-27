@@ -30,6 +30,7 @@
 
 #include "ErrorEvent.h"
 #include "EventNames.h"
+#include "JSDOMGlobalObject.h"
 #include "MessageChannel.h"
 #include "RTCRtpScriptTransformer.h"
 #include "RTCRtpTransformBackend.h"
@@ -41,22 +42,27 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpScriptTransform);
 
-ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(ScriptExecutionContext& context, Worker& worker, String&& name)
+ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlobalObject& state, Worker& worker, JSC::JSValue options)
 {
-    if (!worker.hasRTCRtpScriptTransformer(name))
-        return Exception { InvalidStateError, "No RTCRtpScriptTransformer was registered with this name"_s };
-
     if (!worker.scriptExecutionContext())
         return Exception { InvalidStateError, "Worker frame is detached"_s };
+
+    auto* context = JSC::jsCast<JSDOMGlobalObject*>(&state)->scriptExecutionContext();
+    if (!context)
+        return Exception { InvalidStateError, "Invalid context"_s };
+
+    auto serializedOptions = SerializedScriptValue::create(state, options);
+    if (!serializedOptions)
+        return Exception { ExistingExceptionError };
 
     auto messageChannel = MessageChannel::create(*worker.scriptExecutionContext());
     auto transformMessagePort = messageChannel->port1();
     auto transformerMessagePort = messageChannel->port2();
 
-    auto transform = adoptRef(*new RTCRtpScriptTransform(context, makeRef(worker), makeRef(*transformMessagePort)));
+    auto transform = adoptRef(*new RTCRtpScriptTransform(*context, makeRef(worker), makeRef(*transformMessagePort)));
     transform->suspendIfNeeded();
 
-    worker.createRTCRtpScriptTransformer(name, transformerMessagePort->disentangle(), transform);
+    worker.createRTCRtpScriptTransformer(transform, serializedOptions.releaseNonNull(), transformerMessagePort->disentangle());
 
     return transform;
 }
@@ -73,23 +79,16 @@ RTCRtpScriptTransform::~RTCRtpScriptTransform()
     clear();
 }
 
-void RTCRtpScriptTransform::setTransformer(RefPtr<RTCRtpScriptTransformer>&& transformer)
+void RTCRtpScriptTransform::setTransformer(RTCRtpScriptTransformer& transformer)
 {
     ASSERT(!isMainThread());
-    if (!transformer) {
-        callOnMainThread([this, protectedThis = makeRef(*this)]() mutable {
-            queueTaskToDispatchEvent(*this, TaskSource::MediaElement, ErrorEvent::create(eventNames().errorEvent, "An error was thrown from RTCRtpScriptTransformer constructor"_s, { }, 0, 0, { }));
-        });
-        return;
-    }
-
     {
         auto locker = holdLock(m_transformerLock);
         ASSERT(!m_isTransformerInitialized);
         m_isTransformerInitialized = true;
-        m_transformer = makeWeakPtr(transformer.get());
+        m_transformer = makeWeakPtr(transformer);
     }
-    transformer->startPendingActivity();
+    transformer.startPendingActivity();
     callOnMainThread([this, protectedThis = makeRef(*this)]() mutable {
         if (m_backend)
             setupTransformer(m_backend.releaseNonNull());

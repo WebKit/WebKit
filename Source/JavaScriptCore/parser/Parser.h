@@ -1511,7 +1511,7 @@ private:
         CodeFeatures features;
         int numConstants;
     };
-    Expected<ParseInnerResult, String> parseInner(const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const Vector<JSTextPosition>* = nullptr);
+    Expected<ParseInnerResult, String> parseInner(const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>*, const PrivateNameEnvironment* parentScopePrivateNames);
 
     // Used to determine type of error to report.
     bool isFunctionMetadataNode(ScopeNode*) { return false; }
@@ -2143,12 +2143,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
     ASSERT(m_source->startColumn() > OrdinalNumber::beforeFirst());
     unsigned startColumn = m_source->startColumn().zeroBasedInt();
 
-    if (isEvalNode<ParsedNode>() && parentScopePrivateNames && parentScopePrivateNames->size()) {
-        currentScope()->setIsPrivateNameScope();
-        currentScope()->lexicalVariables().addPrivateNamesFrom(parentScopePrivateNames);
-    }
-
-    auto parseResult = parseInner(calleeName, parsingContext, functionConstructorParametersEndPosition, classFieldLocations);
+    auto parseResult = parseInner(calleeName, parsingContext, functionConstructorParametersEndPosition, classFieldLocations, parentScopePrivateNames);
 
     int lineNumber = m_lexer->lineNumber();
     bool lexError = m_lexer->sawError();

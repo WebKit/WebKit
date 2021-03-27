@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,9 +98,16 @@ String errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
     return v.toString(globalObject)->value(globalObject);
 }
     
+static StringView clampErrorMessage(const String& originalMessage)
+{
+    // Hopefully this is sufficiently long. Note, this is the length of the string not the number of bytes used.
+    constexpr unsigned maxLength = 2 * KB;
+    return StringView(originalMessage).substring(0, maxLength);
+}
+
 static String defaultApproximateSourceError(const String& originalMessage, const String& sourceText)
 {
-    return makeString(originalMessage, " (near '...", sourceText, "...')");
+    return makeString(clampErrorMessage(originalMessage), " (near '...", sourceText, "...')");
 }
 
 String defaultSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
@@ -109,7 +116,7 @@ String defaultSourceAppender(const String& originalMessage, const String& source
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    return makeString(originalMessage, " (evaluating '", sourceText, "')");
+    return makeString(clampErrorMessage(originalMessage), " (evaluating '", sourceText, "')");
 }
 
 static String functionCallBase(const String& sourceText)

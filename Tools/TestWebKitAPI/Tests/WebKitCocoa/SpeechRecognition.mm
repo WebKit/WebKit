@@ -45,7 +45,7 @@ static RetainPtr<WKWebView> createdWebView;
 
 @interface SpeechRecognitionUIDelegate : NSObject<WKUIDelegatePrivate>
 - (void)_webView:(WKWebView *)webView requestSpeechRecognitionPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(void (^)(BOOL))decisionHandler;
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermission:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision))decisionHandler;
+- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler;
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures;
 - (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureStateDeprecated)state;
 @end
@@ -57,7 +57,7 @@ static RetainPtr<WKWebView> createdWebView;
     decisionHandler(shouldGrantPermissionRequest);
 }
 
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermission:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision))decisionHandler
+- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler
 {
     permissionRequested = true;
     decisionHandler(shouldGrantPermissionRequest ? _WKPermissionDecisionGrant : _WKPermissionDecisionDeny);

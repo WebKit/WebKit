@@ -281,6 +281,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
+    vertical-align: text-top;
 }
 
 .console-message-location.call-frame > .subtitle > .source-link {

@@ -120,17 +120,11 @@ public:
         case DestructionThread::Any:
             break;
         case DestructionThread::Main:
-            if (!isMainThread()) {
-                callOnMainThread(WTFMove(deleteThis));
-                return;
-            }
-            break;
+            ensureOnMainThread(WTFMove(deleteThis));
+            return;
         case DestructionThread::MainRunLoop:
-            if (!isMainRunLoop()) {
-                callOnMainRunLoop(WTFMove(deleteThis));
-                return;
-            }
-            break;
+            ensureOnMainRunLoop(WTFMove(deleteThis));
+            return;
         }
         deleteThis();
     }

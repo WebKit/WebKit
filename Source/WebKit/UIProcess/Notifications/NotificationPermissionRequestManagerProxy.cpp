@@ -40,10 +40,9 @@ NotificationPermissionRequestManagerProxy::NotificationPermissionRequestManagerP
 
 void NotificationPermissionRequestManagerProxy::invalidateRequests()
 {
-    for (auto& request : m_pendingRequests.values())
+    auto pendingRequests = std::exchange(m_pendingRequests, { });
+    for (auto& request : pendingRequests.values())
         request->deny();
-
-    m_pendingRequests.clear();
 }
 
 Ref<NotificationPermissionRequest> NotificationPermissionRequestManagerProxy::createRequest(uint64_t notificationID)

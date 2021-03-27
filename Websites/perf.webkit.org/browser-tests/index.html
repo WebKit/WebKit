@@ -51,6 +51,14 @@ class BrowsingContext {
         // Expedite calls to callbacks to make tests go faster.
         iframe.contentWindow.requestAnimationFrame = (callback) => setTimeout(callback, 0);
 
+        // Allow markup-component.js to function.
+        iframe.contentWindow.require = (module) => {
+            expect(module).to.be('assert');
+            return {
+                ok: (condition) => expect(!!condition).to.be(true)
+            };            
+        }
+
         this.iframe = iframe;
         this.symbols = {};
         this.global = this.iframe.contentWindow;
@@ -126,6 +134,17 @@ function waitForComponentsToRender(context)
             instance.enqueueToRender();
         }, 0);
     });
+}
+
+function waitForElementResize(element)
+{
+    return new Promise((resolve) => {
+        const observer = new ResizeObserver(() => {
+            observer.disconnect();
+            resolve();
+        });
+        observer.observe(element);
+    })
 }
 
 function wait(milliseconds)
@@ -375,7 +394,7 @@ const ChartTest = {
 };
 
 mocha.checkLeaks();
-mocha.globals(['expect', 'BrowsingContext', 'CanvasTest', 'ChartTest', 'wait', 'waitForComponentsToRender']);
+mocha.globals(['expect', 'BrowsingContext', 'CanvasTest', 'ChartTest', 'wait', 'waitForComponentsToRender', 'waitForElementResize']);
 mocha.run();
 
 </script>

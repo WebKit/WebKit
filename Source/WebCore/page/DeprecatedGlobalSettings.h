@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,9 +60,6 @@ public:
     WEBCORE_EXPORT static void setUsesMockScrollAnimator(bool);
     static bool usesMockScrollAnimator();
 
-    WEBCORE_EXPORT static void setShouldRespectPriorityInCSSAttributeSetters(bool);
-    static bool shouldRespectPriorityInCSSAttributeSetters();
-
     static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
     WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
 
@@ -115,7 +112,6 @@ private:
 #if PLATFORM(WIN)
     static bool gShouldUseHighResolutionTimers;
 #endif
-    static bool gShouldRespectPriorityInCSSAttributeSetters;
 #if PLATFORM(IOS_FAMILY)
     static bool gNetworkDataUsageTrackingEnabled;
     WEBCORE_EXPORT static bool gAVKitEnabled;

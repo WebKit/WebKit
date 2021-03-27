@@ -19,11 +19,18 @@
 
 #pragma once
 
-#include "APICast.h"
 #include "JSCContext.h"
 #include "JSCValue.h"
-#include "JSContextRef.h"
 #include <wtf/glib/GRefPtr.h>
+
+namespace JSC {
+class JSObject;
+}
+
+typedef struct OpaqueJSClass* JSClassRef;
+typedef struct OpaqueJSContext* JSGlobalContextRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+typedef struct OpaqueJSValue* JSObjectRef;
 
 JS_EXPORT_PRIVATE GRefPtr<JSCContext> jscContextGetOrCreate(JSGlobalContextRef);
 JS_EXPORT_PRIVATE JSGlobalContextRef jscContextGetJSContext(JSCContext*);

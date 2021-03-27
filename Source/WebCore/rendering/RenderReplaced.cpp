@@ -350,11 +350,11 @@ bool RenderReplaced::hasReplacedLogicalHeight() const
     if (style().logicalHeight().isAuto())
         return false;
 
-    if (style().logicalHeight().isSpecified()) {
-        if (hasAutoHeightOrContainingBlockWithAutoHeight())
-            return false;
+    if (style().logicalHeight().isFixed())
         return true;
-    }
+
+    if (style().logicalHeight().isPercentOrCalculated())
+        return !hasAutoHeightOrContainingBlockWithAutoHeight();
 
     if (style().logicalHeight().isIntrinsic())
         return true;
@@ -486,7 +486,7 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
             return;
     }
     // Figure out if we need to compute an intrinsic ratio.
-    if (!hasAspectRatio())
+    if (!hasIntrinsicAspectRatio())
         return;
 
     if (intrinsicSize.isEmpty()) {

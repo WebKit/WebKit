@@ -1,30 +1,25 @@
-class MockRTCRtpTransformer extends RTCRtpScriptTransformer {
-    constructor() {
-        super();
-        this.port.onmessage = (event) => this.port.postMessage(event.data);
-    }
-    start(readableStream, writableStream)
-    {
-        self.postMessage("started");
-        this.reader = readableStream.getReader();
-        this.writer = writableStream.getWriter();
-        this.process();
-    }
+onrtctransform = (event) => {
+    const transformer = event.transformer;
+    transformer.port.onmessage = (event) => transformer.port.postMessage(event.data);
 
-    process()
+    self.postMessage("started");
+    transformer.reader = transformer.readable.getReader();
+    transformer.writer = transformer.writable.getWriter();
+
+    function process(transformer)
     {
-        this.reader.read().then(chunk => {
+        transformer.reader.read().then(chunk => {
             if (chunk.done)
                 return;
             if (chunk.value instanceof RTCEncodedVideoFrame)
                 self.postMessage("video chunk");
             else if (chunk.value instanceof RTCEncodedAudioFrame)
                 self.postMessage("audio chunk");
-            this.writer.write(chunk.value);
-            this.process();
+            transformer.writer.write(chunk.value);
+            process(transformer);
         });
     }
-};
 
-registerRTCRtpScriptTransformer("MockRTCRtpTransform", MockRTCRtpTransformer);
+    process(transformer);
+};
 self.postMessage("registered");

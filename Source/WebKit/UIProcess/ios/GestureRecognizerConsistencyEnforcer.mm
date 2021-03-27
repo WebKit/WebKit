@@ -71,7 +71,7 @@ void GestureRecognizerConsistencyEnforcer::timerFired()
     auto strongView = m_view.get();
     auto possibleDeferringGestures = [NSMutableArray<WKDeferringGestureRecognizer *> array];
     for (WKDeferringGestureRecognizer *gesture in [strongView deferringGestures]) {
-        if (gesture.state == UIGestureRecognizerStatePossible)
+        if (gesture.state == UIGestureRecognizerStatePossible && gesture.enabled)
             [possibleDeferringGestures addObject:gesture];
     }
 

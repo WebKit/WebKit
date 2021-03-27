@@ -8,13 +8,6 @@ include(platform/TextureMapper.cmake)
 
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 
-# FIXME: https://bugs.webkit.org/show_bug.cgi?id=181916
-# Remove these lines when turning on hidden visibility
-list(APPEND WebCore_PRIVATE_LIBRARIES WebKit::WTF)
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND WebCore_PRIVATE_LIBRARIES WebKit::bmalloc)
-endif ()
-
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
 
@@ -100,6 +93,7 @@ list(APPEND WebCore_LIBRARIES
     ${GLIB_GMODULE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_LIBRARIES}
+    ${LCMS2_LIBRARIES}
     ${LIBSECRET_LIBRARIES}
     ${LIBTASN1_LIBRARIES}
     ${HYPHEN_LIBRARIES}
@@ -123,6 +117,7 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ENCHANT_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
+    ${LCMS2_INCLUDE_DIR}
     ${LIBSECRET_INCLUDE_DIRS}
     ${LIBTASN1_INCLUDE_DIRS}
     ${UPOWERGLIB_INCLUDE_DIRS}

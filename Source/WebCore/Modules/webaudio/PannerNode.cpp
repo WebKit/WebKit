@@ -50,11 +50,6 @@ static void fixNANs(double &x)
         x = 0.0;
 }
 
-PannerNodeBase::PannerNodeBase(BaseAudioContext& context)
-    : AudioNode(context, NodeTypePanner)
-{
-}
-
 ExceptionOr<Ref<PannerNode>> PannerNode::create(BaseAudioContext& context, const PannerOptions& options)
 {
     auto panner = adoptRef(*new PannerNode(context, options));
@@ -83,7 +78,7 @@ ExceptionOr<Ref<PannerNode>> PannerNode::create(BaseAudioContext& context, const
 }
 
 PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
-    : PannerNodeBase(context)
+    : AudioNode(context, NodeTypePanner)
     , m_panningModel(options.panningModel)
     , m_positionX(AudioParam::create(context, "positionX"_s, options.positionX, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
     , m_positionY(AudioParam::create(context, "positionY"_s, options.positionY, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
@@ -107,21 +102,6 @@ PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
 PannerNode::~PannerNode()
 {
     uninitialize();
-}
-
-void PannerNode::pullInputs(size_t framesToProcess)
-{
-    // We override pullInputs(), so we can detect new AudioSourceNodes which have connected to us when new connections are made.
-    // These AudioSourceNodes need to be made aware of our existence in order to handle doppler shift pitch changes.
-    if (m_connectionCount != context().connectionCount()) {
-        m_connectionCount = context().connectionCount();
-
-        // Recursively go through all nodes connected to us.
-        HashSet<AudioNode*> visitedNodes;
-        notifyAudioSourcesConnectedToNode(this, visitedNodes);
-    }
-    
-    AudioNode::pullInputs(framesToProcess);
 }
 
 void PannerNode::process(size_t framesToProcess)
@@ -533,11 +513,6 @@ void PannerNode::azimuthElevation(double* outAzimuth, double* outElevation)
     calculateAzimuthElevation(outAzimuth, outElevation, position(), listener().position(), listener().orientation(), listener().upVector());
 }
 
-float PannerNode::dopplerRate()
-{
-    return 1.0f;
-}
-
 bool PannerNode::requiresTailProcessing() const
 {
     // If there's no internal panner method set up yet, assume we require tail
@@ -562,35 +537,6 @@ float PannerNode::distanceConeGain()
     ASSERT(context().isAudioThread());
 
     return calculateDistanceConeGain(position(), orientation(), listener().position());
-}
-
-void PannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node, HashSet<AudioNode*>& visitedNodes)
-{
-    ASSERT(node);
-    if (!node)
-        return;
-        
-    // First check if this node is an AudioBufferSourceNode. If so, let it know about us so that doppler shift pitch can be taken into account.
-    if (node->nodeType() == NodeTypeAudioBufferSource) {
-        AudioBufferSourceNode* bufferSourceNode = reinterpret_cast<AudioBufferSourceNode*>(node);
-        bufferSourceNode->setPannerNode(this);
-    } else {    
-        // Go through all inputs to this node.
-        for (unsigned i = 0; i < node->numberOfInputs(); ++i) {
-            AudioNodeInput* input = node->input(i);
-
-            // For each input, go through all of its connections, looking for AudioBufferSourceNodes.
-            for (unsigned j = 0; j < input->numberOfRenderingConnections(); ++j) {
-                AudioNodeOutput* connectedOutput = input->renderingOutput(j);
-                AudioNode* connectedNode = connectedOutput->node();
-                if (visitedNodes.contains(connectedNode))
-                    continue;
-
-                visitedNodes.add(connectedNode);
-                notifyAudioSourcesConnectedToNode(connectedNode, visitedNodes);
-            }
-        }
-    }
 }
 
 } // namespace WebCore

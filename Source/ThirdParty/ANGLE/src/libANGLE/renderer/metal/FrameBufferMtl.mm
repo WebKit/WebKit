@@ -248,7 +248,7 @@ angle::Result FramebufferMtl::readPixels(const gl::Context *context,
     if (params.packBuffer)
     {
         // If PBO is active, pixels is treated as offset.
-        params.offset = reinterpret_cast<ptrdiff_t>(pixels);
+        params.offset = reinterpret_cast<ptrdiff_t>(pixels) + outputSkipBytes;
     }
 
     if (mFlipY)

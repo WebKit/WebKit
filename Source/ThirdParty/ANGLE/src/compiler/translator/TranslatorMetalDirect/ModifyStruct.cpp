@@ -10,6 +10,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "compiler/translator/Compiler.h"
+#include "compiler/translator/TranslatorMetalDirect.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
 #include "compiler/translator/TranslatorMetalDirect/ModifyStruct.h"
 
@@ -148,16 +150,20 @@ class ConvertStructState : angle::NonCopyable
     };
 
   public:
-    ConvertStructState(SymbolEnv &symbolEnv,
+    ConvertStructState(TCompiler &compiler,
+                       SymbolEnv &symbolEnv,
                        IdGen &idGen,
                        const ModifyStructConfig &config,
-                       ModifiedStructMachineries &outMachineries)
-        : config(config),
+                       ModifiedStructMachineries &outMachineries,
+                       const bool isUBO)
+        : mCompiler(compiler),
+          config(config),
           symbolEnv(symbolEnv),
           modifiedFields(*new TFieldList()),
           symbolTable(symbolEnv.symbolTable()),
           idGen(idGen),
-          outMachineries(outMachineries)
+          outMachineries(outMachineries),
+          isUBO(isUBO)
     {}
 
     ~ConvertStructState()
@@ -183,6 +189,7 @@ class ConvertStructState : angle::NonCopyable
             CreateInstanceVariable(symbolTable, originalStruct, Name("original"));
         ModifiedParam modifiedParam =
             CreateInstanceVariable(symbolTable, modifiedStruct, Name("modified"));
+
         symbolEnv.markAsReference(originalParam, AddressSpace::Thread);
         symbolEnv.markAsReference(modifiedParam, config.externalAddressSpace);
         if (isOriginalToModified)
@@ -228,7 +235,7 @@ class ConvertStructState : angle::NonCopyable
             const TType mt = modified->getType();
             ASSERT(ot.isArray() == mt.isArray());
 
-            if (ot.isArray() && ot != mt)
+            if (ot.isArray() && (ot.getLayoutQualifier().matrixPacking == EmpRowMajor  || ot != mt))
             {
                 ASSERT(ot.getArraySizes() == mt.getArraySizes());
                 if (ot.isArrayOfArrays())
@@ -296,19 +303,22 @@ class ConvertStructState : angle::NonCopyable
         pathItems.pop_back();
     }
 
-    void finalize()
+    void finalize(const bool allowPadding)
     {
         ASSERT(!finalized);
         finalized = true;
         introducePacking();
         ASSERT(metalLayoutTotal == Layout::Identity());
-        introducePadding();
+        // Only pad substructs. We don't want to pad the structure that contains all the UBOs, only individual UBOs.
+        if (allowPadding)
+            introducePadding();
     }
 
     void addModifiedField(const TField &field,
                           TType &newType,
                           TLayoutBlockStorage storage,
-                          TLayoutMatrixPacking packing)
+                          TLayoutMatrixPacking packing,
+                          const AddressSpace * addressSpace)
     {
         TLayoutQualifier layoutQualifier = newType.getLayoutQualifier();
         layoutQualifier.blockStorage     = storage;
@@ -316,7 +326,17 @@ class ConvertStructState : angle::NonCopyable
         newType.setLayoutQualifier(layoutQualifier);
 
         const ImmutableString pathName(namePath);
-        modifiedFields.push_back(new TField(&newType, pathName, field.line(), field.symbolType()));
+        TField * modifiedField = new TField(&newType, pathName, field.line(), field.symbolType());
+        if(addressSpace)
+        {
+            symbolEnv.markAsPointer(*modifiedField, *addressSpace);
+
+        }
+        if (symbolEnv.isUBO(field))
+        {
+            symbolEnv.markAsUBO(*modifiedField);
+        }
+        modifiedFields.push_back(modifiedField);
     }
 
     void addConversion(const ConversionFunc &func)
@@ -335,13 +355,16 @@ class ConvertStructState : angle::NonCopyable
 
     bool hasPadding() const { return padFieldCount > 0; }
 
-    bool recurse(const TStructure &structure, ModifiedStructMachinery &outMachinery)
+    bool recurse(const TStructure &structure, ModifiedStructMachinery &outMachinery, const bool isUBO)
     {
         const ModifiedStructMachinery *m = outMachineries.find(structure);
         if (m == nullptr)
         {
+            TranslatorMetalReflection *reflection =
+                ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
+            reflection->addOriginalName(structure.uniqueId().get(), structure.name().data());
             const Name name = idGen.createNewName(structure.name().data());
-            if (!TryCreateModifiedStruct(symbolEnv, idGen, config, structure, name, outMachineries))
+            if (!TryCreateModifiedStruct(mCompiler, symbolEnv, idGen, config, structure, name, outMachineries, isUBO, true))
             {
                 return false;
             }
@@ -350,6 +373,11 @@ class ConvertStructState : angle::NonCopyable
         }
         outMachinery = *m;
         return true;
+    }
+
+    bool getIsUBO() const
+    {
+        return isUBO;
     }
 
   private:
@@ -574,6 +602,7 @@ class ConvertStructState : angle::NonCopyable
     }
 
   public:
+    TCompiler &mCompiler;
     const ModifyStructConfig &config;
     SymbolEnv &symbolEnv;
 
@@ -593,6 +622,7 @@ class ConvertStructState : angle::NonCopyable
     TSymbolTable &symbolTable;
     IdGen &idGen;
     ModifiedStructMachineries &outMachineries;
+    const bool isUBO;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -613,7 +643,7 @@ bool IdentityModify(ConvertStructState &state,
                     const TLayoutMatrixPacking packing)
 {
     const TType &type = *field.type();
-    state.addModifiedField(field, CloneType(type), storage, packing);
+    state.addModifiedField(field, CloneType(type), storage, packing, nullptr);
     state.addConversion([=](Access::Env &, OriginalAccess &o, ModifiedAccess &m) {
         return Access{o, m};
     });
@@ -669,7 +699,7 @@ bool RecurseStruct(ConvertStructState &state,
     }
 
     ModifiedStructMachinery machinery;
-    if (!state.recurse(*substructure, machinery))
+    if (!state.recurse(*substructure, machinery, state.getIsUBO()))
     {
         return false;
     }
@@ -683,7 +713,11 @@ bool RecurseStruct(ConvertStructState &state,
     TIntermFunctionDefinition *converter = machinery.getConverter(state.config.convertType);
     ASSERT(converter);
 
-    state.addModifiedField(field, newType, storage, packing);
+    state.addModifiedField(field, newType, storage, packing, state.symbolEnv.isPointer(field));
+    if(state.symbolEnv.isPointer(field))
+    {
+        state.symbolEnv.removePointer(field);
+    }
     state.addConversion(*converter->getFunction());
 
     return true;
@@ -699,6 +733,7 @@ bool SplitMatrixColumns(ConvertStructState &state,
     {
         return false;
     }
+
     if (!state.config.splitMatrixColumns(field))
     {
         return false;
@@ -711,7 +746,11 @@ bool SplitMatrixColumns(ConvertStructState &state,
     {
         state.pushPath(c);
 
-        state.addModifiedField(field, rowType, storage, packing);
+        state.addModifiedField(field, rowType, storage, packing, state.symbolEnv.isPointer(field));
+        if(state.symbolEnv.isPointer(field))
+        {
+            state.symbolEnv.removePointer(field);
+        }
         state.addConversion([=](Access::Env &, OriginalAccess &o, ModifiedAccess &m) {
             return Access{o, m};
         });
@@ -732,24 +771,31 @@ bool SaturateMatrixRows(ConvertStructState &state,
     {
         return false;
     }
-    const int rows       = type.getRows();
-    const int saturation = state.config.saturateMatrixRows(field);
-    if (saturation <= rows)
+    const bool isRowMajor = type.getLayoutQualifier().matrixPacking == EmpRowMajor;
+    const int rows        = type.getRows();
+    const int saturation  = state.config.saturateMatrixRows(field);
+    if (saturation <= rows && !isRowMajor)
     {
         return false;
     }
 
     const int cols = type.getCols();
     TType &satType = SetMatrixRowDim(type, saturation);
-    state.addModifiedField(field, satType, storage, packing);
+    state.addModifiedField(field, satType, storage, packing, state.symbolEnv.isPointer(field));
+    if(state.symbolEnv.isPointer(field))
+    {
+        state.symbolEnv.removePointer(field);
+    }
 
     for (int c = 0; c < cols; ++c)
     {
         for (int r = 0; r < rows; ++r)
         {
             state.addConversion([=](Access::Env &, OriginalAccess &o, ModifiedAccess &m) {
+                int firstModifiedIndex  = isRowMajor ? r : c;
+                int secondModifiedIndex = isRowMajor ? c : r;
                 auto &o_ = AccessIndex(AccessIndex(o, c), r);
-                auto &m_ = AccessIndex(AccessIndex(m, c), r);
+                auto &m_ = AccessIndex(AccessIndex(m, firstModifiedIndex), secondModifiedIndex);
                 return Access{o_, m_};
             });
         }
@@ -815,7 +861,11 @@ bool SaturateScalarOrVectorCommon(ConvertStructState &state,
     {
         satType.setBasicType(TBasicType::EbtUInt);
     }
-    state.addModifiedField(field, satType, storage, packing);
+    state.addModifiedField(field, satType, storage, packing, state.symbolEnv.isPointer(field));
+    if(state.symbolEnv.isPointer(field))
+    {
+        state.symbolEnv.removePointer(field);
+    }
 
     for (int d = 0; d < dim; ++d)
     {
@@ -864,7 +914,11 @@ bool PromoteBoolToUint(ConvertStructState &state,
 
     auto &promotedType = CloneType(*field.type());
     promotedType.setBasicType(TBasicType::EbtUInt);
-    state.addModifiedField(field, promotedType, storage, packing);
+    state.addModifiedField(field, promotedType, storage, packing, state.symbolEnv.isPointer(field));
+    if(state.symbolEnv.isPointer(field))
+    {
+        state.symbolEnv.removePointer(field);
+    }
 
     state.addConversion([=](Access::Env &env, OriginalAccess &o, ModifiedAccess &m) {
         return ConvertBoolToUint(env.type, o, m);
@@ -966,14 +1020,17 @@ bool ModifyRecursive(ConvertStructState &state,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool sh::TryCreateModifiedStruct(SymbolEnv &symbolEnv,
+bool sh::TryCreateModifiedStruct(TCompiler &compiler,
+                                 SymbolEnv &symbolEnv,
                                  IdGen &idGen,
                                  const ModifyStructConfig &config,
                                  const TStructure &originalStruct,
                                  const Name &modifiedStructName,
-                                 ModifiedStructMachineries &outMachineries)
+                                 ModifiedStructMachineries &outMachineries,
+                                 const bool isUBO,
+                                 const bool allowPadding)
 {
-    ConvertStructState state(symbolEnv, idGen, config, outMachineries);
+    ConvertStructState state(compiler, symbolEnv, idGen, config, outMachineries, isUBO);
     size_t identicalFieldCount = 0;
 
     const TFieldList &originalFields = originalStruct.fields();
@@ -988,9 +1045,9 @@ bool sh::TryCreateModifiedStruct(SymbolEnv &symbolEnv,
         }
     }
 
-    state.finalize();
+    state.finalize(allowPadding);
 
-    if (identicalFieldCount == originalFields.size() && !state.hasPacking() && !state.hasPadding())
+    if (identicalFieldCount == originalFields.size() && !state.hasPacking() && !state.hasPadding() && !isUBO)
     {
         return false;
     }

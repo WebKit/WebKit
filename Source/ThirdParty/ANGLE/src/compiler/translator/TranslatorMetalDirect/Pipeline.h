@@ -28,7 +28,7 @@ struct PipelineScoped
     const T *internal = nullptr;
 
     // Returns true iff the input coincides with either `external` or `internal` data.
-    bool matches(const T *object) const { return external == object || internal == object; }
+    bool matches(const T &object) const { return external == &object || internal == &object; }
 
     // Both `external` and `internal` representations are non-null.
     bool isTotallyFull() const { return external && internal; }
@@ -55,6 +55,7 @@ class Pipeline
         NonConstantGlobals,
         InvocationVertexGlobals,
         InvocationFragmentGlobals,
+        UniformBuffer,
         Texture,
         InstanceId,
     };
@@ -112,10 +113,11 @@ struct PipelineStructs : angle::NonCopyable
     PipelineScoped<TStructure> nonConstantGlobals;
     PipelineScoped<TStructure> invocationVertexGlobals;
     PipelineScoped<TStructure> invocationFragmentGlobals;
+    PipelineScoped<TStructure> uniformBuffers;
     PipelineScoped<TStructure> texture;
     PipelineScoped<TStructure> instanceId;
 
-    bool matches(const TStructure *s, bool internal, bool external) const;
+    bool matches(const TStructure &s, bool internal, bool external) const;
 };
 
 }  // namespace sh

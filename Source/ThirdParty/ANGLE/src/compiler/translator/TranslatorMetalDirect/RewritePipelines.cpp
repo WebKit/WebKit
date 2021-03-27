@@ -19,7 +19,7 @@
 #include "compiler/translator/tree_util/FindMain.h"
 #include "compiler/translator/tree_util/IntermRebuild.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
-
+#include "compiler/translator/TranslatorMetalDirect/SymbolEnv.h"
 using namespace sh;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,14 +122,16 @@ class GeneratePipelineStruct : private TIntermRebuild
         }();
 
         ModifiedStructMachineries modifiedMachineries;
-        const bool modified = TryCreateModifiedStruct(
+        const bool isUBO = mPipeline.type == Pipeline::Type::UniformBuffer;
+        const bool modified = TryCreateModifiedStruct(mCompiler,
             mSymbolEnv, mIdGen, mPipeline.externalStructModifyConfig(), pipelineStruct,
-            mPipeline.getStructTypeName(Pipeline::Variant::Modified), modifiedMachineries);
+            mPipeline.getStructTypeName(Pipeline::Variant::Modified),
+            modifiedMachineries, isUBO, !isUBO);
 
         if (modified)
         {
             ASSERT(mPipeline.type != Pipeline::Type::Texture);
-            ASSERT(!mPipeline.globalInstanceVar);  // This shouldn't happen by construction.
+            ASSERT(mPipeline.type == Pipeline::Type::AngleUniforms || !mPipeline.globalInstanceVar);  // This shouldn't happen by construction.
 
             auto getFunction = [](sh::TIntermFunctionDefinition *funcDecl) {
                 return funcDecl ? funcDecl->getFunction() : nullptr;
@@ -185,12 +187,10 @@ class GeneratePipelineStruct : private TIntermRebuild
     {
         return {node, VisitBits::Neither};
     }
-
     PostResult visitDeclarationPost(TIntermDeclaration &declNode) override
     {
         Declaration decl     = ViewDeclaration(declNode);
         const TVariable &var = decl.symbol.variable();
-
         if (mPipeline.uses(var))
         {
             ASSERT(mInfo.pipelineVariables.find(&var) == mInfo.pipelineVariables.end());
@@ -229,6 +229,19 @@ class GeneratePipelineStruct : private TIntermRebuild
             }
             break;
 
+            case Pipeline::Type::UniformBuffer:
+            {
+                for (const TVariable *var : mPipelineVariableList)
+                {
+                    auto &type  = CloneType(var->getType());
+                    auto *field = new TField(&type, var->name(), kNoSourceLoc, var->symbolType());
+                    mSymbolEnv.markAsPointer(*field, AddressSpace::Constant);
+                    mSymbolEnv.markAsUBO(*field);
+                    mSymbolEnv.markAsPointer(*var, AddressSpace::Constant);
+                    fields.push_back(field);
+                }
+            }
+            break;
             default:
             {
                 for (const TVariable *var : mPipelineVariableList)
@@ -411,7 +424,6 @@ class PipelineFunctionEnv
                 auto *var = new TVariable(&mSymbolTable, name.rawName(),
                                           new TType(TBasicType::EbtUInt), name.symbolType());
                 newFunc   = &CloneFunctionAndPrependParam(mSymbolTable, nullptr, func, *var);
-                mSymbolEnv.markAsReference(*var, mPipeline.externalAddressSpace());
                 mPipelineMainLocalVar.external = var;
             }
             else if (isMain && mPipeline.alwaysRequiresLocalVariableDeclarationInMain())
@@ -433,6 +445,29 @@ class PipelineFunctionEnv
                 }
                 else
                 {
+                    if (mPipeline.type == Pipeline::Type::UniformBuffer)
+                    {
+                        TranslatorMetalReflection *reflection =
+                            ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
+                        // TODO: need more checks to make sure they line up? Could be reordered?
+                        ASSERT(mPipelineStruct.external->fields().size() ==
+                               mPipelineStruct.internal->fields().size());
+                        for (size_t i = 0; i < mPipelineStruct.external->fields().size(); i++)
+                        {
+                            const TField *externalField = mPipelineStruct.external->fields()[i];
+                            const TField *internalField = mPipelineStruct.internal->fields()[i];
+                            const TType &externalType = *externalField->type();
+                            const TType &internalType = *internalField->type();
+                            ASSERT(externalType.getBasicType() == internalType.getBasicType());
+                            if (externalType.getBasicType() == TBasicType::EbtStruct)
+                            {
+                                const TStructure *externalEnv = externalType.getStruct();
+                                const TStructure *internalEnv = internalType.getStruct();
+                                const std::string internalName = reflection->getOriginalName(internalEnv->uniqueId().get());
+                                reflection->addOriginalName(externalEnv->uniqueId().get(), internalName);
+                            }
+                        }
+                    }
                     var = &CreateInstanceVariable(
                         mSymbolTable, *mPipelineStruct.internal,
                         mPipeline.getStructInstanceName(Pipeline::Variant::Original));
@@ -922,6 +957,7 @@ bool sh::RewritePipelines(TCompiler &compiler,
         {Pipeline::Type::FragmentOut, outStructs.fragmentOut, nullptr},
         {Pipeline::Type::InvocationVertexGlobals, outStructs.invocationVertexGlobals, nullptr},
         {Pipeline::Type::InvocationFragmentGlobals, outStructs.invocationFragmentGlobals, nullptr},
+        {Pipeline::Type::UniformBuffer, outStructs.uniformBuffers, nullptr},
     };
 
     for (Info &info : infos)

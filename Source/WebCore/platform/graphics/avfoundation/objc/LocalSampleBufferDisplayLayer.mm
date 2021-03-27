@@ -40,7 +40,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/cf/TypeCastsCF.h>
-#import <wtf/threads/BinarySemaphore.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -187,11 +186,7 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
 
 LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 {
-    BinarySemaphore semaphore;
-    m_processingQueue->dispatch([&semaphore] {
-        semaphore.signal();
-    });
-    semaphore.wait();
+    m_processingQueue->dispatchSync([] { });
 
     m_processingQueue = nullptr;
 

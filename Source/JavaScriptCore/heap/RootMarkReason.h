@@ -25,19 +25,44 @@
 
 #pragma once
 
+namespace JSC {
+
+#define FOR_EACH_ROOT_MARK_REASON(v) \
+    v(None) \
+    v(ConservativeScan) \
+    v(ExecutableToCodeBlockEdges) \
+    v(ExternalRememberedSet) \
+    v(StrongReferences) \
+    v(ProtectedValues) \
+    v(MarkedJSValueRefArray) \
+    v(MarkListSet) \
+    v(VMExceptions) \
+    v(StrongHandles) \
+    v(Debugger) \
+    v(JITStubRoutines) \
+    v(WeakMapSpace) \
+    v(WeakSets) \
+    v(Output) \
+    v(DFGWorkLists) \
+    v(CodeBlocks) \
+    v(DOMGCOutput)
+
+#define DECLARE_ROOT_MARK_REASON(reason) reason,
+
 enum class RootMarkReason : uint8_t {
-    None,
-    ConservativeScan,
-    StrongReferences,
-    ProtectedValues,
-    MarkListSet,
-    VMExceptions,
-    StrongHandles,
-    Debugger,
-    JITStubRoutines,
-    WeakSets,
-    Output,
-    DFGWorkLists,
-    CodeBlocks,
-    DOMGCOutput,
+    FOR_EACH_ROOT_MARK_REASON(DECLARE_ROOT_MARK_REASON)
 };
+
+#undef DECLARE_ROOT_MARK_REASON
+
+const char* rootMarkReasonDescription(RootMarkReason);
+
+} // namespace JSC
+
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream&, JSC::RootMarkReason);
+
+} // namespace WTF

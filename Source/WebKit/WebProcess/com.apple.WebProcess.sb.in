@@ -80,10 +80,8 @@
     (literal "/dev/autofs_nowait")
     (literal "/dev/random")
     (literal "/dev/urandom")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
     (literal "/private/etc/master.passwd")
     (literal "/private/etc/passwd")
-#endif
 )
 
 (allow file-read*
@@ -1262,42 +1260,42 @@
 
 #if PLATFORM(MAC)
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
-(allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    (with report) (with telemetry)
-#endif
-    (global-name "com.apple.system.notification_center")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-    (apply-message-filter
-        (allow mach-message-send (with telemetry-backtrace))
-        (deny mach-message-send (with no-report) (message-number 1023))
-        (allow mach-message-send (with telemetry-backtrace) (message-number
-            1002
-            1003
-            1004
-            1005
-            1011
-            1012
-            1013
-            1014
-            1015
-            1016
-            1017
-            1018
-            1021
-            1025
-            1026
-            1027
-        ))
-        (allow mach-message-send (message-number
-            1028
-            1029
-            1030
-            1031
-            1032
-        ))
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "NO")
+    (allow mach-lookup
+        (global-name "com.apple.system.notification_center"))
+;; else
+    (allow mach-lookup
+        (global-name "com.apple.system.notification_center")
+        (apply-message-filter
+            (allow mach-message-send (with telemetry-backtrace))
+            (deny mach-message-send (with no-report) (message-number 1023))
+            (allow mach-message-send (with telemetry-backtrace) (message-number
+                1002
+                1003
+                1004
+                1005
+                1011
+                1012
+                1013
+                1014
+                1015
+                1016
+                1017
+                1018
+                1021
+                1025
+                1026
+                1027
+            ))
+            (allow mach-message-send (message-number
+                1028
+                1029
+                1030
+                1031
+                1032
+            ))
+        )
     )
-#endif
 )
 #endif
 
@@ -1403,11 +1401,14 @@
 
 ;; Media capture, camera access
 (with-filter (extension "com.apple.webkit.camera")
+    (shared-preferences-read "com.apple.cmio")
     (shared-preferences-read "com.apple.coremedia")
     (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
     (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
     (allow mach-lookup
         (global-name "com.apple.cmio.AppleCameraAssistant")
+        (global-name "com.apple.cmio.registerassistantservice")
+        (global-name "com.apple.cmio.registerassistantservice.system-extensions")
         ;; Apple DAL assistants
         (global-name "com.apple.cmio.VDCAssistant")
         (global-name "com.apple.cmio.AVCAssistant")
@@ -1540,6 +1541,75 @@
 ;; Caches for LaunchServices data needs to be able to mark the directory as 'hot'.
 (allow system-fsctl
     (fsctl-command (_IO "h" 47))) ;; See <rdar://74387453>
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+(when (defined? 'file-ioctl)
+    (deny file-ioctl (with telemetry))
+    (allow file-ioctl (literal "/dev/dtracehelper"))
+)
+
+(when (defined? 'socket-ioctl)
+    (deny socket-ioctl (with telemetry))
+)
+
+(when (defined? 'system-fcntl)
+    (deny system-fcntl (with telemetry))
+    (allow system-fcntl
+        (fcntl-command F_BARRIERFSYNC)
+        (fcntl-command F_GETCONFINED)
+        (fcntl-command F_GETFL) ;; LibJPEGReadPlugin::copyImageBlockSetStandard
+        (fcntl-command F_GETLK)
+        (fcntl-command F_GETSIGSINFO)
+        (fcntl-command F_NOCACHE)
+        (fcntl-command F_OFD_GETLK)
+        (fcntl-command F_OFD_SETLKWTIMEOUT)
+        (fcntl-command F_RDADVISE)
+        (fcntl-command F_SETCONFINED)
+        (fcntl-command F_GETPATH) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
+        (fcntl-command F_ADDFILESIGS_RETURN) ;; ImageLoaderMachO::loadCodeSignature
+        (fcntl-command F_CHECK_LV) ;; ImageLoaderMachO::loadCodeSignature
+        (fcntl-command F_SPECULATIVE_READ) ;; ImageLoaderMachO::mapSegments
+        (fcntl-command F_SETFD) ;; libwebrtc.dylib (no backtrace)
+        (fcntl-command F_GETFD) ;; libwebrtc.dylib (no backtrace)
+        (fcntl-command F_RDADVISE) ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
+        (fcntl-command F_NOCACHE) ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
+        (fcntl-command F_SETFL) ;; CMCapture uses when camera is enabled
+        (fcntl-command F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
+
+    (allow system-fcntl (with telemetry-backtrace)
+        (fcntl-command F_OFD_SETLK))
+
+    (allow system-fcntl
+        (fcntl-command F_GETPROTECTIONCLASS))
+)
+
+(when (defined? 'process-codesigning*)
+    ;; csops/csops_audittoken
+    (deny process-codesigning-text-offset-get (with telemetry))
+    (deny process-codesigning-cdhash-get (with telemetry))
+    (deny process-codesigning-blob-get (with telemetry))
+    (deny process-codesigning-teamid-get (with telemetry))
+    (allow process-codesigning-identity-get (with telemetry)) ;; codeSigningIdentifierForCurrentProcess
+    (allow process-codesigning-entitlements-blob-get) ;; WK reading entitlments via SecTaskCopyValueForEntitlement and _getSelfParsedEntitlements (accessibility)
+    (allow process-codesigning-status-get) ;; _xpc_get_entitlements
+    (allow process-codesigning-status-set (target self))
+    (deny process-info-codesignature (with no-report)) ;; SecTaskCopyValueForEntitlement - granting this grants all the process-codesign-* checks
+)
+
+(when (defined? 'socket-option-get)
+    ;; getsockopt
+    (deny socket-option-get (with telemetry))
+    (allow socket-option-get
+        (require-all
+            (socket-option-level SOL_SOCKET)
+            (socket-option-name SO_ERROR))) ;; libwebrtc; physical_socket_server.cc, ProcessEvents.  Called with fd=-1, so it fails.  Not technically needed, but the code needs changing
+)
+
+(when (defined? 'socket-option-set)
+    ;; setsockopt
+    (deny socket-option-set (with telemetry))
+)
+#endif
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with send-signal SIGKILL))

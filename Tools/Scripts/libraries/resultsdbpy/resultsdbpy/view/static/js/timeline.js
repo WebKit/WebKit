@@ -170,7 +170,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
     }
 
     function onScaleClick(node) {
-        if (!node.label.id)
+        if (!node.label.label())
             return;
         let params = {
             branch: node.label.branch ? [node.label.branch] : queryToParams(document.URL.split('?')[1]).branch,
@@ -191,7 +191,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
             ToolTip.set(
                 `<div class="content">
                     Time: ${new Date(node.label.timestamp * 1000).toLocaleString()}<br>
-                    Committer: ${node.label.committer}
+                    Author: ${node.label.author}
                     ${node.label.message ? `<br><div>${escapeHTML(node.label.message.split('\n')[0])}</div>` : ''}
                 </div>`,
                 node.tipPoints.map((point) => {
@@ -206,8 +206,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
             if (!ToolTip.isIn({x: event.x, y: event.y - scrollDelta}))
                 ToolTip.unset();
         },
-        // Per the birthday paradox, 10% change of collision with 7.7 million commits with 12 character commits
-        getLabelFunc: (commit) => {return commit ? commit.id.substring(0,12) : '?';},
+        getLabelFunc: (commit) => {return commit ? commit.label() : '?';},
         getScaleFunc: (commit) => commit.uuid,
         exporter: (updateFunction) => {
             updatesArray.push((scale) => {updateFunction(scaleForRepository(scale));});
@@ -653,7 +652,7 @@ class TimelineFromEndpoint {
                             if (!params.branch)
                                 delete params.branch;
                             const query = paramsToQuery(params);
-                            return `<a href="/commit/info?${query}" target="_blank">${commit.id.substring(0,12)}</a>`;
+                            return `<a href="/commit/info?${query}" target="_blank">${commit.label()}</a>`;
                         }).join(', ')}
                         <br>
                         ${partialConfiguration}

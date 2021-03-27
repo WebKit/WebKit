@@ -42,8 +42,10 @@
 #import "WebCoreThreadRun.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <UIKit/UIView.h>
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/WorkQueue.h>
+
+#import <pal/ios/UIKitSoftLink.h>
 
 using namespace WebCore;
 
@@ -147,6 +149,7 @@ private:
     void beginScanningForward() override;
     void beginScanningBackward() override;
     void endScanning() override;
+    void setDefaultPlaybackRate(float) override;
     void selectAudioMediaOption(uint64_t) override;
     void selectLegibleMediaOption(uint64_t) override;
     double duration() const override;
@@ -155,6 +158,7 @@ private:
     double bufferedTime() const override;
     bool isPlaying() const override;
     bool isScrubbing() const override { return false; }
+    float defaultPlaybackRate() const override;
     float playbackRate() const override;
     Ref<TimeRanges> seekableRanges() const override;
     double seekableTimeRangesLastModifiedTime() const override;
@@ -178,7 +182,7 @@ private:
     void durationChanged(double) override;
     void currentTimeChanged(double currentTime, double anchorTime) override;
     void bufferedTimeChanged(double) override;
-    void rateChanged(bool isPlaying, float playbackRate) override;
+    void rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate) override;
     void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) override;
     void canPlayFastReverseChanged(bool) override;
     void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
@@ -231,7 +235,7 @@ VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
         m_playbackModel = nullptr;
         m_fullscreenModel = nullptr;
     } else
-        dispatch_sync(dispatch_get_main_queue(), WTFMove(notifyClientsModelWasDestroyed));
+        WorkQueue::main().dispatchSync(WTFMove(notifyClientsModelWasDestroyed));
 }
 
 #pragma mark VideoFullscreenChangeObserver
@@ -411,17 +415,17 @@ void VideoFullscreenControllerContext::bufferedTimeChanged(double bufferedTime)
         client->bufferedTimeChanged(bufferedTime);
 }
 
-void VideoFullscreenControllerContext::rateChanged(bool isPlaying, float playbackRate)
+void VideoFullscreenControllerContext::rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate)
 {
     if (WebThreadIsCurrent()) {
-        RunLoop::main().dispatch([protectedThis = makeRefPtr(this), isPlaying, playbackRate] {
-            protectedThis->rateChanged(isPlaying, playbackRate);
+        RunLoop::main().dispatch([protectedThis = makeRefPtr(this), isPlaying, playbackRate, defaultPlaybackRate] {
+            protectedThis->rateChanged(isPlaying, playbackRate, defaultPlaybackRate);
         });
         return;
     }
 
     for (auto& client : m_playbackClients)
-        client->rateChanged(isPlaying, playbackRate);
+        client->rateChanged(isPlaying, playbackRate, defaultPlaybackRate);
 }
 
 void VideoFullscreenControllerContext::hasVideoChanged(bool hasVideo)
@@ -836,6 +840,15 @@ void VideoFullscreenControllerContext::endScanning()
     });
 }
 
+void VideoFullscreenControllerContext::setDefaultPlaybackRate(float defaultPlaybackRate)
+{
+    ASSERT(isUIThread());
+    WebThreadRun([protectedThis = makeRefPtr(this), this, defaultPlaybackRate] {
+        if (m_playbackModel)
+            m_playbackModel->setDefaultPlaybackRate(defaultPlaybackRate);
+    });
+}
+
 void VideoFullscreenControllerContext::selectAudioMediaOption(uint64_t index)
 {
     ASSERT(isUIThread());
@@ -876,6 +889,12 @@ bool VideoFullscreenControllerContext::isPlaying() const
 {
     ASSERT(isUIThread());
     return m_playbackModel ? m_playbackModel->isPlaying() : false;
+}
+
+float VideoFullscreenControllerContext::defaultPlaybackRate() const
+{
+    ASSERT(isUIThread());
+    return m_playbackModel ? m_playbackModel->defaultPlaybackRate() : 0;
 }
 
 float VideoFullscreenControllerContext::playbackRate() const

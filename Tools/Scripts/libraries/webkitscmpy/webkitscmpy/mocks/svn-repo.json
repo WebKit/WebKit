@@ -1,6 +1,7 @@
 {
     "tags/tag-1": [
         {
+            "hash": "b3137ad7dd276542606c3964a653fd7f95c29720",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -14,6 +15,7 @@
             "revision": 3
         }, 
         {
+            "hash": "4a228785d37ebd51e4b8c839df2a477c25dd3c9e",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -42,6 +44,7 @@
     ], 
     "tags/tag-2": [
         {
+            "hash": "b3137ad7dd276542606c3964a653fd7f95c29720",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -55,6 +58,7 @@
             "revision": 3
         }, 
         {
+            "hash": "fedcc2546eb9c158b2d69037b2676a6529df7051",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -68,6 +72,7 @@
             "revision": 5
         }, 
         {
+            "hash": "eb2b1e28f8b848e1893f45064636cef5414e5fc0",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -96,6 +101,7 @@
     ], 
     "branch-b": [
         {
+            "hash": "b3137ad7dd276542606c3964a653fd7f95c29720",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -109,6 +115,7 @@
             "revision": 3
         }, 
         {
+            "hash": "fedcc2546eb9c158b2d69037b2676a6529df7051",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -122,6 +129,7 @@
             "revision": 5
         }, 
         {
+            "hash": "eb2b1e28f8b848e1893f45064636cef5414e5fc0",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -137,6 +145,7 @@
     ], 
     "branch-a": [
         {
+            "hash": "b3137ad7dd276542606c3964a653fd7f95c29720",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -150,6 +159,7 @@
             "revision": 3
         }, 
         {
+            "hash": "4a228785d37ebd51e4b8c839df2a477c25dd3c9e",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -165,6 +175,7 @@
     ], 
     "trunk": [
         {
+            "hash": "d5d49f5de54925c66e8a74c3af950f60395c2065",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -178,6 +189,7 @@
             "revision": 1
         }, 
         {
+            "hash": "9c10490460e59907696db46cf31505176b4f930e",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -191,6 +203,7 @@
             "revision": 2
         }, 
         {
+            "hash": "463aaf3b3ff608209d36ed6a8cdf651429659659",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [
@@ -204,6 +217,7 @@
             "revision": 4
         }, 
         {
+            "hash": "75eaef1c9242f92a8d7694e8ccd310f69cf9683b",
             "author": {
                 "name": "Jonathan Bedard", 
                 "emails": [

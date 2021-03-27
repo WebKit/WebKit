@@ -595,8 +595,8 @@ PASS Document.querySelectorAll: :empty pseudo-class selector, matching all empty
 PASS Document.querySelector: :empty pseudo-class selector, matching all empty elements: #pseudo-empty :empty
 PASS Document.querySelectorAll: :link and :visited pseudo-class selectors, matching a and area elements with href attributes: #pseudo-link :link, #pseudo-link :visited
 PASS Document.querySelector: :link and :visited pseudo-class selectors, matching a and area elements with href attributes: #pseudo-link :link, #pseudo-link :visited
-PASS Document.querySelectorAll: :link and :visited pseudo-class selectors, matching link elements with href attributes: #head :link, #head :visited
-PASS Document.querySelector: :link and :visited pseudo-class selectors, matching link elements with href attributes: #head :link, #head :visited
+FAIL Document.querySelectorAll: :link and :visited pseudo-class selectors, matching no elements: #head :link, #head :visited assert_equals: The method should return the expected number of matches. expected 0 but got 2
+FAIL Document.querySelector: :link and :visited pseudo-class selectors, matching no elements: #head :link, #head :visited assert_equals: The method should not match anything. expected null but got Element node <link id="pseudo-link-link1" href=""></link>
 PASS Document.querySelectorAll: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target
 PASS Document.querySelector: :target pseudo-class selector, matching the element referenced by the URL fragment identifier: :target
 PASS Document.querySelectorAll: :lang pseudo-class selector, matching inherited language: #pseudo-lang-div1:lang(en)

@@ -86,6 +86,12 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 @interface WebPreferences (WebPrivate)
 
+- (void)_startBatchingUpdates;
+- (void)_stopBatchingUpdates;
+- (void)_batchUpdatePreferencesInBlock:(void (^)(WebPreferences *))block;
+
+- (void)_resetForTesting;
+
 - (void)_postPreferencesChangedNotification;
 - (void)_postPreferencesChangedAPINotification;
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)identifier;

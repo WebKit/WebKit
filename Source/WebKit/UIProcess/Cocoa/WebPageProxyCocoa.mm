@@ -39,6 +39,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
 #import "SharedBufferDataReference.h"
+#import "WebContextMenuProxy.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPasteboardProxy.h"
@@ -522,7 +523,7 @@ void WebPageProxy::scheduleActivityStateUpdate()
             // We can't call dispatchActivityStateChange directly underneath this commit handler, because it has side-effects
             // that may result in other frameworks trying to install commit handlers for the same phase, which is not allowed.
             // So, dispatch_async here; we only care that the activity state change doesn't apply until after the active commit is complete.
-            dispatch_async(dispatch_get_main_queue(), [weakThis] {
+            WorkQueue::main().dispatch([weakThis] {
                 auto protectedThis = makeRefPtr(weakThis.get());
                 if (!protectedThis)
                     return;
@@ -590,7 +591,8 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
     return SandboxExtension::HandleArray();
 }
 
-#if ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
+#if ENABLE(CONTEXT_MENUS)
+#if ENABLE(IMAGE_EXTRACTION)
 
 void WebPageProxy::handleContextMenuRevealImage()
 {
@@ -601,7 +603,17 @@ void WebPageProxy::handleContextMenuRevealImage()
     revealExtractedImageInPreviewPanel(*result.imageBitmap, result.toolTipText);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
+#endif // ENABLE(IMAGE_EXTRACTION)
+
+#if HAVE(TRANSLATION_UI_SERVICES)
+
+bool WebPageProxy::canHandleContextMenuTranslation() const
+{
+    return pageClient().canHandleContextMenuTranslation();
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES)
+#endif // ENABLE(CONTEXT_MENUS)
 
 void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& callback)
 {
@@ -629,6 +641,28 @@ void WebPageProxy::grantAccessToAssetServices()
 void WebPageProxy::revokeAccessToAssetServices()
 {
     process().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
+}
+
+void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
+{
+    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(fontdMachExtensionHandle()), 0);
+}
+
+SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle()
+{
+    SandboxExtension::Handle fontMachExtensionHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, WTF::nullopt, fontMachExtensionHandle);
+    return fontMachExtensionHandle;
+}
+
+NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceItem)
+{
+#if ENABLE(CONTEXT_MENUS)
+    if (m_activeContextMenu && [userInterfaceItem isEqualToString:@"mediaControlsContextMenu"])
+        return @{ userInterfaceItem: m_activeContextMenu->platformData() };
+#endif // ENABLE(CONTEXT_MENUS)
+
+    return nil;
 }
 
 } // namespace WebKit

@@ -26,9 +26,54 @@
 #pragma once
 
 #include "MediaSessionIdentifier.h"
+#include "SharedBuffer.h"
+#include <wtf/Optional.h>
+#include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+struct NowPlayingInfoArtwork {
+    String src;
+    String mimeType;
+    RefPtr<SharedBuffer> imageData;
+
+    bool operator==(const NowPlayingInfoArtwork& other) const
+    {
+        return *this != other;
+    }
+
+    bool operator!=(const NowPlayingInfoArtwork& other) const
+    {
+        return src != other.src || mimeType != other.mimeType;
+    }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<NowPlayingInfoArtwork> decode(Decoder&);
+};
+
+template<class Encoder> inline void NowPlayingInfoArtwork::encode(Encoder& encoder) const
+{
+    encoder << src << mimeType << imageData;
+}
+
+template<class Decoder> inline Optional<NowPlayingInfoArtwork> NowPlayingInfoArtwork::decode(Decoder& decoder)
+{
+    String src;
+    if (!decoder.decode(src))
+        return { };
+
+    String mimeType;
+    if (!decoder.decode(mimeType))
+        return { };
+
+    RefPtr<SharedBuffer> imageData;
+    if (!decoder.decode(imageData))
+        return { };
+
+    return NowPlayingInfoArtwork { WTFMove(src), WTFMove(mimeType), WTFMove(imageData) };
+}
 
 struct NowPlayingInfo {
     String title;
@@ -41,6 +86,7 @@ struct NowPlayingInfo {
     MediaSessionIdentifier uniqueIdentifier;
     bool isPlaying { false };
     bool allowsNowPlayingControlsVisibility { false };
+    Optional<NowPlayingInfoArtwork> artwork;
 
     bool operator==(const NowPlayingInfo& other) const
     {
@@ -53,10 +99,11 @@ struct NowPlayingInfo {
             && supportsSeeking == other.supportsSeeking
             && uniqueIdentifier == other.uniqueIdentifier
             && isPlaying == other.isPlaying
-            && allowsNowPlayingControlsVisibility == other.allowsNowPlayingControlsVisibility;
+            && allowsNowPlayingControlsVisibility == other.allowsNowPlayingControlsVisibility
+            && artwork == other.artwork;
     }
 
-    bool operator!=(const NowPlayingInfo other) const
+    bool operator!=(const NowPlayingInfo& other) const
     {
         return !(*this == other);
     }
@@ -67,7 +114,7 @@ struct NowPlayingInfo {
 
 template<class Encoder> inline void NowPlayingInfo::encode(Encoder& encoder) const
 {
-    encoder << title << artist << album << sourceApplicationIdentifier << duration << currentTime << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility;
+    encoder << title << artist << album << sourceApplicationIdentifier << duration << currentTime << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility << artwork;
 }
 
 template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(Decoder& decoder)
@@ -112,7 +159,11 @@ template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(D
     if (!decoder.decode(allowsNowPlayingControlsVisibility))
         return { };
 
-    return NowPlayingInfo { WTFMove(title), WTFMove(artist), WTFMove(album), WTFMove(sourceApplicationIdentifier), duration, currentTime, supportsSeeking, uniqueIdentifier, isPlaying, allowsNowPlayingControlsVisibility };
+    Optional<NowPlayingInfoArtwork> artwork;
+    if (!decoder.decode(artwork))
+        return { };
+
+    return NowPlayingInfo { WTFMove(title), WTFMove(artist), WTFMove(album), WTFMove(sourceApplicationIdentifier), duration, currentTime, supportsSeeking, uniqueIdentifier, isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
 }
 
 } // namespace WebCore

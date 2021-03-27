@@ -32,7 +32,8 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
             WI.ComputedStyleDetailsSidebarPanel,
         ];
 
-        if (WI.settings.experimentalEnableLayoutPanel.value)
+        // COMPATIBILITY (iOS 14.5): `DOM.showGridOverlay` did not exist yet.
+        if (InspectorBackend.hasCommand("DOM.showGridOverlay"))
             detailsSidebarPanelConstructors.push(WI.LayoutDetailsSidebarPanel);
 
         // COMPATIBILITY (iOS 14.0): `CSS.getFontDataForNode` did not exist yet.

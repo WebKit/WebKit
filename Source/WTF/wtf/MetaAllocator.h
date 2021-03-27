@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,7 @@ class MetaAllocator {
 
 public:
     using FreeSpacePtr = MetaAllocatorPtr<FreeSpacePtrTag>;
+    using MemoryPtr = MetaAllocatorHandle::MemoryPtr;
 
     WTF_EXPORT_PRIVATE MetaAllocator(Lock&, size_t allocationGranule, size_t pageSize = WTF::pageSize());
     
@@ -141,11 +142,6 @@ private:
     class FreeSpaceNode : public RedBlackTree<FreeSpaceNode, size_t>::Node {
     public:
         FreeSpaceNode() = default;
-
-        FreeSpaceNode(void* start, size_t sizeInBytes)
-            : m_start(start)
-            , m_end(reinterpret_cast<uint8_t*>(start) + sizeInBytes)
-        { }
 
         size_t sizeInBytes()
         {

@@ -12,7 +12,7 @@ class TemporaryFile {
         let megabyteString = characterToFill;
         for (let i = 0; i < 20; i++)
             megabyteString = megabyteString + megabyteString;
-        assert.equal(megabyteString.length, 1024 * 1024);
+        assert.strictEqual(megabyteString.length, 1024 * 1024);
 
         let content = '';
         for (let i = 0; i < sizeInMB; i++)

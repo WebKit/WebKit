@@ -39,7 +39,7 @@
 namespace WebCore {
 
 // <rdar://problem/46332893> Register .mjs files as whatever UTI indicates JavaScript
-static CFDictionaryRef createExtensionToMIMETypeMap()
+static RetainPtr<CFDictionaryRef> createExtensionToMIMETypeMap()
 {
     CFStringRef keys[] = {
         CFSTR("mjs")
@@ -50,7 +50,7 @@ static CFDictionaryRef createExtensionToMIMETypeMap()
     };
 
     ASSERT(sizeof(keys) == sizeof(values));
-    return CFDictionaryCreate(kCFAllocatorDefault, (const void**)&keys, (const void**)&values, sizeof(keys) / sizeof(CFStringRef), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)&keys, (const void**)&values, sizeof(keys) / sizeof(CFStringRef), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceLoad)
@@ -66,11 +66,11 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
         if ([(__bridge NSURL *)url isFileURL]) {
             RetainPtr<CFStringRef> extension = adoptCF(CFURLCopyPathExtension(url));
             if (extension) {
-                static CFDictionaryRef extensionMap = createExtensionToMIMETypeMap();
-                CFMutableStringRef mutableExtension = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, extension.get());
-                CFStringLowercase(mutableExtension, NULL);
-                extension = adoptCF(mutableExtension);
-                if (auto newMIMEType = (CFStringRef)CFDictionaryGetValue(extensionMap, extension.get()))
+                static NeverDestroyed<RetainPtr<CFDictionaryRef>> extensionMap = createExtensionToMIMETypeMap();
+                auto mutableExtension = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, extension.get()));
+                CFStringLowercase(mutableExtension.get(), NULL);
+                extension = WTFMove(mutableExtension);
+                if (auto newMIMEType = (CFStringRef)CFDictionaryGetValue(extensionMap.get().get(), extension.get()))
                     updatedMIMEType = newMIMEType;
             }
         }

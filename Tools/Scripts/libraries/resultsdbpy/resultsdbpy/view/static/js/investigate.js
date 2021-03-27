@@ -38,7 +38,7 @@ function commitsForUuid(uuid) {
             if (!params.branch)
                 delete params.branch;
             const query = paramsToQuery(params);
-            return `<a href="/commit/info?${query}" target="_blank">${commit.id.substring(0,12)}</a>`;
+            return `<a href="/commit/info?${query}" target="_blank">${commit.label()}</a>`;
         }).join(', ')}`
 }
 

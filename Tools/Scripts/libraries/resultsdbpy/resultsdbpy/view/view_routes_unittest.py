@@ -20,9 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import mock
-import os
-import requests
 import time
 
 from controller.api_routes import APIRoutes
@@ -31,12 +28,11 @@ from redis import StrictRedis
 from resultsdbpy.flask_support.flask_testcase import FlaskTestCase
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
+from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.model import Model
-from resultsdbpy.model.mock_repository import MockStashRepository, MockSVNRepository
+from resultsdbpy.model.repository import StashRepository, WebKitRepository
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 from resultsdbpy.view.view_routes import ViewRoutes
-
-from webkitcorepy import mocks
 
 
 class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
@@ -58,18 +54,22 @@ class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
 
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
-        cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
-        redis_instance = redis()
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            redis_instance = redis()
 
-        model = Model(
-            redis=redis_instance, cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True),
-            repositories=[MockSVNRepository.webkit(redis=redis_instance), MockStashRepository.safari(redis=redis_instance)],
-        )
-        api_routes = APIRoutes(model=model, import_name=__name__)
-        view_routes = ViewRoutes(model=model, controller=api_routes, import_name=__name__)
+            model = Model(
+                redis=redis_instance, cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True),
+                repositories=[
+                    WebKitRepository(),
+                    StashRepository('https://bitbucket.example.com/projects/SAFARI/repos/safari'),
+                ],
+            )
+            api_routes = APIRoutes(model=model, import_name=__name__)
+            view_routes = ViewRoutes(model=model, controller=api_routes, import_name=__name__)
 
-        app.register_blueprint(api_routes)
-        app.register_blueprint(view_routes)
+            app.register_blueprint(api_routes)
+            app.register_blueprint(view_routes)
 
     @classmethod
     def decorator(cls):

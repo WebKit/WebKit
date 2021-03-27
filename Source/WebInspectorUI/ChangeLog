@@ -1,3 +1,279 @@
+2021-03-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: REGRESSION(r271348): Console: message source code location is not vertically aligned with containing function name
+        https://bugs.webkit.org/show_bug.cgi?id=223288
+        <rdar://problem/75498577>
+
+        Reviewed by Devin Rousso.
+
+        WebKit inline-block behavior changed in r271348 to match the spec more closely.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message-location.call-frame > .title):
+        Explicitly set `vertical-align` to match the behavior prior r271348.
+
+2021-03-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: use native datetime-local picker for changing `expires` value in cookie popover
+        https://bugs.webkit.org/show_bug.cgi?id=209389
+
+        Reviewed by BJ Burg.
+
+        r259173 already made it so that the `<input>` for Expires used `datetime-local`, so nothing
+        needs to be changed to adopt that. We still want to keep the `"input"` event listener that
+        parses and validates the `value` (or `placeholder`) of the `<input type="datetime-local">`
+        because dates in the past should be considered invalid.
+
+        * UserInterface/Views/CookiePopover.js:
+        (WI.CookiePopover.prototype.show): Add `step = 1` so that the seconds field is shown.
+        (WI.CookiePopover.prototype.show.formatDate): Added.
+        (WI.CookiePopover.prototype.show.formatDate.pad): Added.
+        * UserInterface/Views/CookiePopover.css: Remove the FIXME comment.
+
+2021-03-17  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: add GridOverlay diagnostic event and related hooks
+        https://bugs.webkit.org/show_bug.cgi?id=223256
+        <rdar://problem/75478239>
+
+        Reviewed by BJ Burg.
+
+        Add instrumentation to log telemetry for the CSS Grid Inspector.
+
+        We want to answer these questions:
+        - How do users prefer to toggle the overlay, in-context from grid badges in the DOM tree
+          or from the aggregated grid node overlay list in Layout sidebar panel?
+        - Which overlay options are most used? Did we pick good defaults or do users prefer others?
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Controllers/GridOverlayDiagnosticEventRecorder.js: Added.
+        (WI.GridOverlayDiagnosticEventRecorder):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype.setup):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype.teardown):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype._handleGridOverlayShown):
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager.prototype.showGridOverlay):
+        (WI.OverlayManager.prototype.toggleGridOverlay):
+        (WI.OverlayManager.prototype._handleGridSettingChanged):
+        * UserInterface/Main.html:
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype._handleToggleAllCheckboxChanged):
+        (WI.CSSGridSection.prototype.layout):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._gridBadgeClicked):
+
+2021-03-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: remove experimental setting and enable "grid" badges
+        https://bugs.webkit.org/show_bug.cgi?id=223209
+        <rdar://problem/75442185>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._updateGridBadge):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+2021-03-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: remove experimental setting and enable Layout sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=221246
+        <rdar://problem/74130753>
+
+        Reviewed by BJ Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+2021-03-15  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: `Styles` sidebar pseudo-class checkboxes appear cramped after resizing window at narrow widths
+        https://bugs.webkit.org/show_bug.cgi?id=222990
+
+        Reviewed by Devin Rousso.
+
+        Fixed two compounding bugs that meant that a sidebar could end up using the base minimum width of 250px
+        instead of the actual minimum width as reported by the selected panel.
+
+        * UserInterface/Views/MultiSidebar.js:
+        (WI.MultiSidebar.prototype.didInsertSidebarPanel):
+        (WI.MultiSidebar.prototype.didRemoveSidebarPanel):
+        (WI.MultiSidebar.prototype.didSetCollapsed):
+        - Drive-by: Remove unused (and always undefined) `flag` argument.
+        (WI.MultiSidebar.prototype._updateMinimumWidthForMultipleSidebars):
+        - Add logic to make sure we can calculate a valid `_minimumWidthForMultipleSidebars`, and add a mechanism to
+        allow ignoring the presence of a cached value to force a recalculation.
+        (WI.MultiSidebar.prototype.get _hasWidthForMultipleSidebars):
+        - Ensure if possible that there is a valid `_minimumWidthForMultipleSidebars`.
+        (WI.MultiSidebar.prototype._makeSidebarPanelExclusive):
+        - Sets the sidebar as non-collapsible (which sets `collapsed` to `false`) before adding the panel and setting it
+        as the selected panel so that we don't set the selected panel on a collapsed sidebar.
+        * UserInterface/Views/SingleSidebar.js:
+        (WI.SingleSidebar.prototype.didSetCollapsed):
+        - Drive-by: Remove always undefined `flag` argument, use `this.collapsed` instead.
+
+2021-03-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: `WI.Object.singleFireEventListener` should not keep a strong reference to `thisObject`
+        https://bugs.webkit.org/show_bug.cgi?id=223090
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Base/Object.js:
+        (WI.Object.addEventListener):
+        (WI.Object.singleFireEventListener):
+
+2021-03-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add checkbox to toggle all grid overlays
+        https://bugs.webkit.org/show_bug.cgi?id=221924
+        <rdar://problem/74365101>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Controllers/OverlayManager.js:
+        Drive-by: remove unused getter.
+
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .toggle-all):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection):
+        (WI.CSSGridSection.prototype.initialLayout):
+        (WI.CSSGridSection.prototype._handleToggleAllCheckboxChanged):
+
+        (WI.CSSGridSection.prototype.layout):
+        Drive-by: replace `Array.prototype.includes`, which runs at O(n) time, with `isGridOverlayVisible`,
+        which checks a Map instead.
+
+        (WI.CSSGridSection.prototype._handleGridOverlayStateChanged):
+        (WI.CSSGridSection.prototype._updateToggleAllCheckbox):
+        Optimization: minimize number of Map lookups when when at least one overlay is visible and at least one is hidden.
+
+2021-03-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Syntax highlighting for JSX is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=217613
+        <rdar://problem/70210975>
+
+        Reviewed by BJ Burg.
+
+        Out of the box, React specifies the "js" extension for JSX files.
+        Use JSX mode for source map resources with the "js" extension. This
+        appears to match what the other browsers' developer tools do.
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource):
+
+2021-03-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: CSS Grid Inspector clean-up
+        https://bugs.webkit.org/show_bug.cgi?id=222913
+        <rdar://problem/75171301>
+
+        Reviewed by BJ Burg.
+
+        Remove obsolete methods to show/hide the grid overlay directly from a DOMNode.
+        Remove engineering-only context menu helpers used while implementing grid overlays.
+
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+
+2021-03-09  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Jump from Layout panel to grid container element
+        https://bugs.webkit.org/show_bug.cgi?id=222429
+        <rdar://problem/74751801>
+
+        Reviewed by Devin Rousso.
+
+        Add a button to inspect a CSS grid overlay's corresponding element.
+        Remove the similar functionality from the overloaded label.
+
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .node-display-name,):
+        (.css-grid-section .node-overlay-list-item-container :is(.go-to-arrow, .inline-swatch)):
+        (.css-grid-section .node-overlay-list-item-container:not(:hover) .go-to-arrow):
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.layout):
+
+2021-03-09  Razvan Caliman  <rcaliman@apple.com>
+
+        [Cocoa] Web Inspector: Console search box is broken, advancing to next result instead pastes from system find pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=220773
+        <rdar://problem/73410423>
+
+        Reviewed by Devin Rousso.
+
+        Ensure FindBanner is always marked as shown in the Console
+        to prevent malfunction when advancing through search results.
+
+        * UserInterface/Views/FindBanner.js:
+        (WI.FindBanner):
+        (WI.FindBanner.prototype.set targetElement):
+        (WI.FindBanner.prototype.hide):
+
+2021-03-08  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: REGRESSION (r267038): Inspector fails to show any details about animations/transitions in the timeline
+        https://bugs.webkit.org/show_bug.cgi?id=222921
+
+        Reviewed by Devin Rousso.
+
+        Timeline views should always be updated with the time from the overview, but r267038 erroneously prevented the
+        end time from being updated while recording was stopping and prevented the current time from being updated while
+        recording was stopping or inactive, which meant after a recording finished (Stopping -> Inactive) the timeline
+        views would not be updated with the current time. Because `_updateTimelineViewTimes` can be called when a
+        different content view is selected, it was incorrect to gate setting these values based on the recording state.
+        The check for not being in the inactive state was particularly problematic as it is quite common that a
+        developer would open a specific timelime view for the first time after recording finishes, at which point all
+        values should be populated regardless of recording state. The source of the time values continues to be handled
+        in such a way as to prevent values from continuously jumping around as a recording is stopped but data continues
+        to arrive.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype._updateTimes):
+        - Drive-by spelling correction.
+        (WI.TimelineRecordingContentView.prototype._updateTimelineViewTimes):
+        - Remove checks for the current recording state.
+
+2021-03-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r269359): TypeError: undefined is not an object (evaluating 'listenersForEventType')
+        https://bugs.webkit.org/show_bug.cgi?id=222940
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Models/JavaScriptBreakpoint.js:
+        (WI.JavaScriptBreakpoint.prototype.get special):
+        The existing logic for `get special` checks if `this` is one of the specially saved objects
+        on `WI.debuggerManager` (e.g. `assertionFailuresBreakpoint`). When deleting a breakpoint,
+        `WI.debuggerManager` has already cleared out it's previously saved reference to that object,
+        so it won't match. Use the existing `_isSpecial` (which looks at the `_sourceCodeLocation`)
+        as a backup in case `this` doesn't directly match any of the saved objects.
+
+2021-03-06  Tim Horton  <timothy_horton@apple.com>
+
+        <model> should create a model-owning compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=222798
+
+        Reviewed by Simon Fraser.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WI.LayerTreeDetailsSidebarPanel.prototype._populateListOfCompositingReasons):
+        (WI.LayerTreeDetailsSidebarPanel):
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView.prototype._updateReasonsList):
+        (WI.Layers3DContentView):
+        Add a compositing reason for <model>.
+
 2021-03-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: border color of "grid" badge should match color of corresponding outline

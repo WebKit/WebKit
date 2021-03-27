@@ -2466,9 +2466,10 @@ void Node::defaultEventHandler(Event& event)
         while (startNode && !startNode->renderer())
             startNode = startNode->parentOrShadowHostNode();
         
-        if (startNode && startNode->renderer())
+        if (startNode && startNode->renderer()) {
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
+        }
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     } else if (is<TouchEvent>(event) && eventNames().isTouchRelatedEventType(document(), eventType)) {
         // Capture the target node's visibility state before dispatching touchStart.

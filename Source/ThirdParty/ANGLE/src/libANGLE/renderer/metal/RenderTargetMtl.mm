@@ -41,8 +41,9 @@ void RenderTargetMtl::setWithImplicitMSTexture(const mtl::TextureRef &texture,
 {
     mTextureRenderTargetInfo->texture           = texture;
     mTextureRenderTargetInfo->implicitMSTexture = implicitMSTexture;
-    mTextureRenderTargetInfo->level        = level;
-    mTextureRenderTargetInfo->sliceOrDepth        = layer;
+    mTextureRenderTargetInfo->level             = level;
+    mTextureRenderTargetInfo->sliceOrDepth      = layer;
+    mTextureRenderTargetInfo->blendable         =  format.getCaps().blendable;
     mFormat            = &format;
 }
 
@@ -68,6 +69,7 @@ void RenderTargetMtl::reset()
     mTextureRenderTargetInfo->implicitMSTexture.reset();
     mTextureRenderTargetInfo->level        = mtl::kZeroNativeMipLevel;
     mTextureRenderTargetInfo->sliceOrDepth = 0;
+    mTextureRenderTargetInfo->blendable    = false;
     mFormat                                = nullptr;
 }
 

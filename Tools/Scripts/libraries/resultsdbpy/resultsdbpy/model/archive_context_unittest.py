@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@ from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.mock_repository import MockSVNRepository
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 
 
@@ -40,20 +39,21 @@ class ArchiveContextTest(WaitForDockerTestCase):
     KEYSPACE = 'archive_test_keyspace'
 
     def init_database(self, redis=StrictRedis, cassandra=CassandraContext, configuration=Configuration(), archive=None):
-        cassandra.drop_keyspace(keyspace=self.KEYSPACE)
-        self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
-        MockModelFactory.add_mock_archives(self.model, configuration=configuration, archive=archive)
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
+            MockModelFactory.add_mock_archives(self.model, configuration=configuration, archive=archive)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_archive(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         archives = self.model.archive_context.find_archive(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
-            begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
         self.assertEqual(len(next(iter(archives.values()))), 1)
-        self.assertEqual(next(iter(archives.values()))[0]['uuid'], 153804910800)
+        self.assertEqual(next(iter(archives.values()))[0]['uuid'], 160166000000)
         self.assertEqual(next(iter(archives.values()))[0]['archive'].getvalue(), base64.b64decode(MockModelFactory.ARCHIVE_ZIP))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -61,11 +61,11 @@ class ArchiveContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         files = self.model.archive_context.ls(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
-            begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
         self.assertEqual(len(next(iter(files.values()))), 1)
-        self.assertEqual(next(iter(files.values()))[0]['uuid'], 153804910800)
+        self.assertEqual(next(iter(files.values()))[0]['uuid'], 160166000000)
         self.assertEqual(next(iter(files.values()))[0]['files'], ['file.txt', 'index.html'])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -74,11 +74,11 @@ class ArchiveContextTest(WaitForDockerTestCase):
         files = self.model.archive_context.file(
             path='file.txt',
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
-            begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
         self.assertEqual(len(next(iter(files.values()))), 1)
-        self.assertEqual(next(iter(files.values()))[0]['uuid'], 153804910800)
+        self.assertEqual(next(iter(files.values()))[0]['uuid'], 160166000000)
         self.assertEqual(next(iter(files.values()))[0]['file'], 'data'.encode('ascii'))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -86,11 +86,11 @@ class ArchiveContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         files = self.model.archive_context.file(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
-            begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
         self.assertEqual(len(next(iter(files.values()))), 1)
-        self.assertEqual(next(iter(files.values()))[0]['uuid'], 153804910800)
+        self.assertEqual(next(iter(files.values()))[0]['uuid'], 160166000000)
         self.assertEqual(next(iter(files.values()))[0]['file'], ['file.txt', 'index.html'])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -113,16 +113,16 @@ class ArchiveContextTest(WaitForDockerTestCase):
 
         files = self.model.archive_context.find_archive(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
-            begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+            begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
         self.assertEqual(len(next(iter(files.values()))), 1)
-        self.assertEqual(next(iter(files.values()))[0]['uuid'], 153804910800)
+        self.assertEqual(next(iter(files.values()))[0]['uuid'], 160166000000)
         self.assertEqual(next(iter(files.values()))[0]['archive'].getvalue(), buff.getvalue())
 
         with mock.patch('resultsdbpy.model.archive_context.ArchiveContext.MEMORY_LIMIT', new=FILE_SIZE), self.assertRaises(RuntimeError):
             self.model.archive_context.find_archive(
                 configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
-                begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+                begin=1601660000, end=1601660000,
                 suite='layout-tests',
             )

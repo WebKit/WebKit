@@ -30,18 +30,20 @@
 
 #include <mutex>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
 template<const CFStringRef& colorSpaceNameGlobalConstant> static CGColorSpaceRef namedColorSpace()
 {
-    static CGColorSpaceRef colorSpace;
+    static NeverDestroyed<RetainPtr<CGColorSpaceRef>> colorSpace;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        colorSpace = CGColorSpaceCreateWithName(colorSpaceNameGlobalConstant);
-        ASSERT(colorSpace);
+        colorSpace.get() = adoptCF(CGColorSpaceCreateWithName(colorSpaceNameGlobalConstant));
+        ASSERT(colorSpace.get());
     });
-    return colorSpace;
+    return colorSpace.get().get();
 }
 
 CGColorSpaceRef sRGBColorSpaceRef()

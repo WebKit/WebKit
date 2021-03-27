@@ -231,10 +231,10 @@ RefPtr<ImageData> ImageBufferBackend::getImageData(AlphaPremultiplication output
     IntRect srcRectScaled = toBackendCoordinates(srcRect);
 
     auto imageData = ImageData::create(srcRectScaled.size());
-    if (!imageData || !imageData->data())
+    if (!imageData)
         return nullptr;
 
-    IntRect srcRectClipped =  intersection(backendRect(), srcRectScaled);
+    IntRect srcRectClipped = intersection(backendRect(), srcRectScaled);
     IntRect destRect = { IntPoint::zero(), srcRectClipped.size() };
 
     if (srcRectScaled.x() < 0)

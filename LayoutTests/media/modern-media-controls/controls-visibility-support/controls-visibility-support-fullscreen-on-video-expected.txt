@@ -3,7 +3,7 @@ Testing that control are shown in fullscreen when the controls attribute is not 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS media.webkitDisplayingFullscreen is true
+PASS internals.isChangingPresentationMode(media) became false
 PASS mediaController.controls.visible is true
 PASS successfullyParsed is true
 

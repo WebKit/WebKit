@@ -2723,6 +2723,53 @@ def check_wtf_optional(clean_lines, line_number, file_state, error):
     error(line_number, 'runtime/wtf_optional', 4, "Use 'WTF::Optional<>' instead of 'std::optional<>'.")
 
 
+def check_callonmainthread(filename, clean_lines, line_number, file_state, error):
+    """Looks for use of 'callOnMainThread()' which should be replaced with 'callOnMainRunLoop()'.
+
+    Args:
+      filename: The current file cpp_style is running over.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    if not _is_webkit2_file(filename):
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    using_callonmainthread = search(r'\bcallOnMainThread\s*\(', line)
+    if using_callonmainthread:
+        error(line_number, 'runtime/callonmainthread', 4, "Use 'callOnMainRunLoop()' instead of 'callOnMainThread()' in Source/WebKit.")
+    using_callonmainthreadandwait = search(r'\bcallOnMainThreadAndWait\s*\(', line)
+    if using_callonmainthreadandwait:
+        error(line_number, 'runtime/callonmainthread', 4, "Use 'callOnMainRunLoopAndWait()' instead of 'callOnMainThreadAndWait()' in Source/WebKit.")
+
+
+def check_ismainthread(filename, clean_lines, line_number, file_state, error):
+    """Looks for use of 'isMainThread()' which should be replaced with 'isMainRunLoop()'.
+
+    Args:
+      filename: The current file cpp_style is running over.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    if not _is_webkit2_file(filename):
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    using_ismainthread = search(r'\bisMainThread\s*\(', line)
+    if not using_ismainthread:
+        return
+
+    error(line_number, 'runtime/ismainthread', 4, "Use 'isMainRunLoop()' instead of 'isMainThread()' in Source/WebKit.")
+
+
 def check_wtf_make_unique(clean_lines, line_number, file_state, error):
     """Looks for use of 'std::make_unique<>' which should be replaced with 'WTF::makeUnique<>'.
 
@@ -3489,6 +3536,10 @@ def _does_primary_header_exist(filename):
 
 def _is_javascriptcore_file(filename):
     return filename.startswith('Source/JavaScriptCore/')
+
+
+def _is_webkit2_file(filename):
+    return filename.startswith('Source/WebKit/')
 
 
 def check_include_line(filename, file_extension, clean_lines, line_number, include_state, error):
@@ -4431,6 +4482,8 @@ def process_line(filename, file_extension,
     check_posix_threading(clean_lines, line, error)
     check_invalid_increment(clean_lines, line, error)
     check_os_version_checks(filename, clean_lines, line, error)
+    check_callonmainthread(filename, clean_lines, line, file_state, error)
+    check_ismainthread(filename, clean_lines, line, file_state, error)
 
 
 class _InlineASMState(object):
@@ -4547,6 +4600,7 @@ class CppChecker(object):
         'readability/utf8',
         'runtime/arrays',
         'runtime/bitfields',
+        'runtime/callonmainthread',
         'runtime/casting',
         'runtime/ctype_function',
         'runtime/dispatch_set_target_queue',
@@ -4555,6 +4609,7 @@ class CppChecker(object):
         'runtime/init',
         'runtime/int',
         'runtime/invalid_increment',
+        'runtime/ismainthread',
         'runtime/leaky_pattern',
         'runtime/lock_guard',
         'runtime/max_min_macros',

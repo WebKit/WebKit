@@ -48,6 +48,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "WebGeolocationProviderIOS.h"
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/WebCoreThread.h>
 #import <WebCore/WebCoreThreadInternal.h>
 #endif
 
@@ -122,6 +123,12 @@ void WebViewLayerFlushScheduler::invalidate()
 
 void WebViewLayerFlushScheduler::layerFlushCallback()
 {
+#if PLATFORM(IOS_FAMILY)
+    // Normally the layer flush callback happens before the web lock auto-unlock observer runs.
+    // However if the flush is rescheduled from the callback it may get pushed past it, to the next cycle.
+    WebThreadLock();
+#endif
+
     @autoreleasepool {
         RefPtr<LayerFlushController> protector = m_flushController;
 

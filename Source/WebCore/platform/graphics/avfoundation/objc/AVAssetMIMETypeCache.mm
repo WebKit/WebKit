@@ -33,10 +33,6 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-#if !PLATFORM(MACCATALYST)
-SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)
-#endif
-
 namespace WebCore {
 
 AVAssetMIMETypeCache& AVAssetMIMETypeCache::singleton()
@@ -48,13 +44,7 @@ AVAssetMIMETypeCache& AVAssetMIMETypeCache::singleton()
 bool AVAssetMIMETypeCache::isAvailable() const
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
-#if PLATFORM(MACCATALYST)
-    // FIXME: This should be using AVFoundationLibraryIsAvailable() instead, but doing so causes soft-linking
-    // to subsequently fail on certain symbols. See <rdar://problem/42224780> for more details.
     return PAL::isAVFoundationFrameworkAvailable();
-#else
-    return AVFoundationLibraryIsAvailable();
-#endif
 #else
     return false;
 #endif

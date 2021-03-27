@@ -69,6 +69,9 @@ enum class MessageName : uint16_t {
     , TestWithSemaphore_ReceiveSemaphore
     , TestWithSemaphore_SendSemaphore
     , TestWithStreamBuffer_SendStreamBuffer
+    , TestWithStream_ReceiveMachSendRight
+    , TestWithStream_SendAndReceiveMachSendRight
+    , TestWithStream_SendMachSendRight
     , TestWithStream_SendString
     , TestWithStream_SendStringSynchronized
     , TestWithSuperclass_LoadURL

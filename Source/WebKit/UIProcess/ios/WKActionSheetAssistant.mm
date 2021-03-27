@@ -100,14 +100,16 @@ static LSAppLink *appLinkForURL(NSURL *url)
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
     Optional<WebKit::InteractionInformationAtPosition> _positionInformation;
 #if USE(UICONTEXTMENU)
+#if ENABLE(DATA_DETECTION)
     RetainPtr<UIContextMenuInteraction> _dataDetectorContextMenuInteraction;
-#endif
+#endif // ENABLE(DATA_DETECTION)
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     RetainPtr<UIContextMenuInteraction> _mediaControlsContextMenuInteraction;
     RetainPtr<UIMenu> _mediaControlsContextMenu;
     WebCore::FloatRect _mediaControlsContextMenuTargetFrame;
     CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)> _mediaControlsContextMenuCallback;
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // USE(UICONTEXTMENU)
     WeakObjCPtr<UIView> _view;
     BOOL _needsLinkIndicator;
     BOOL _isPresentingDDUserInterface;
@@ -133,12 +135,14 @@ static LSAppLink *appLinkForURL(NSURL *url)
 - (void)dealloc
 {
     [self cleanupSheet];
+#if USE(UICONTEXTMENU)
 #if ENABLE(DATA_DETECTION)
     [self _removeDataDetectorContextMenuInteraction];
 #endif // ENABLE(DATA_DETECTION)
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     [self _removeMediaControlsContextMenuInteraction];
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // USE(UICONTEXTMENU)
     [super dealloc];
 }
 
@@ -789,6 +793,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // ENABLE(DATA_DETECTION)
 }
 
+#if USE(UICONTEXTMENU)
+
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 - (NSArray<UIMenuElement *> *)_uiMenuElementsForMediaControlContextMenuItems:(Vector<WebCore::MediaControlsContextMenuItem>&&) items
@@ -807,7 +813,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
             strongSelf->_mediaControlsContextMenuCallback(selectedItemID);
         }];
-        if (item.isChecked)
+        if (item.checked)
             action.state = UIMenuElementStateOn;
         return action;
     }).autorelease();
@@ -832,8 +838,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-
-#if USE(UICONTEXTMENU)
 
 static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArray> defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
 {

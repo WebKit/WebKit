@@ -43,11 +43,11 @@ AspectRatioEnabled:
   humanReadableDescription: "Enable aspect-ratio CSS property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 AspectRatioOfImgFromWidthAndHeightEnabled:
@@ -112,6 +112,18 @@ CFNetworkNetworkLoaderEnabled:
   defaultValue:
     WebKit:
       default: false
+
+CSSColor4:
+  type: bool
+  humanReadableName: "CSS Color 4 Color Types"
+  humanReadableDescription: "Enable support for CSS Color 4 Color Types"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 CSSColorContrastEnabled:
   type: bool
@@ -211,6 +223,17 @@ CSSTypedOMEnabled:
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
+
+CaptureVideoInGPUProcessEnabled:
+  type: bool
+  humanReadableName: "GPU Process: Video Capture"
+  humanReadableDescription: "Enable video capture in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultCaptureVideoInGPUProcessEnabled()
 
 ContactPickerAPIEnabled:
   type: bool
@@ -910,6 +933,17 @@ TransformStreamAPIEnabled:
     WebKit:
       default: true
 
+UseGPUProcessForCanvasRenderingEnabled:
+  type: bool
+  humanReadableName: "GPU Process: Canvas Rendering"
+  humanReadableDescription: "Enable canvas rendering in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(GPU_PROCESS) && !(PLATFORM(GTK) || PLATFORM(WPE))
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: defaultUseGPUProcessForCanvasRenderingEnabled()
+
 UseGPUProcessForMediaEnabled:
   type: bool
   humanReadableName: "GPU Process: Media"
@@ -1216,6 +1250,7 @@ WebShareFileAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)": true
       default: false
     WebCore:
       default: false

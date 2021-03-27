@@ -65,13 +65,13 @@ void RealtimeIncomingAudioSourceLibWebRTC::OnData(const void* audioData, int, in
     gst_audio_info_set_format(&info, format, sampleRate, numberOfChannels, NULL);
 
     auto bufferSize = GST_AUDIO_INFO_BPF(&info) * numberOfFrames;
-    gpointer bufferData = g_malloc(bufferSize);
+    gpointer bufferData = fastMalloc(bufferSize);
     if (muted())
         gst_audio_format_fill_silence(info.finfo, bufferData, bufferSize);
     else
         memcpy(bufferData, audioData, bufferSize);
 
-    auto buffer = adoptGRef(gst_buffer_new_wrapped(bufferData, bufferSize));
+    auto buffer = adoptGRef(gstBufferNewWrappedFast(bufferData, bufferSize));
     auto caps = adoptGRef(gst_audio_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     GStreamerAudioData data(WTFMove(sample), info);

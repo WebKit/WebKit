@@ -27,6 +27,8 @@
 
 #if WK_HAVE_C_SPI
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit/WKRetainPtr.h>
@@ -89,5 +91,6 @@ TEST(WebKit, HitTestResultNodeHandle)
 }
 
 } // namespace TestWebKitAPI
+#endif
 
 #endif

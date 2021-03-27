@@ -29,7 +29,9 @@
 namespace IPC {
 
 StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
+#if PLATFORM(COCOA)
     : m_name(name)
+#endif
 {
 }
 

@@ -2472,7 +2472,7 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
         return consumeIdent(range);
 
     if (auto parsedValue = consumeLength(range, cssParserMode, ValueRangeAll)) {
-        if (parsedValue->isPositive().valueOr(true))
+        if (!parsedValue->isNegative().valueOr(false))
             return parsedValue;
         return nullptr;
     }

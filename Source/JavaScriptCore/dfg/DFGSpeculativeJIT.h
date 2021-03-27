@@ -1169,9 +1169,10 @@ public:
     void compileObjectEquality(Node*);
     void compileObjectStrictEquality(Edge objectChild, Edge otherChild);
     void compileObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild);
-    void compileObjectOrOtherLogicalNot(Edge value);
-    void compileLogicalNot(Node*);
-    void compileLogicalNotStringOrOther(Node*);
+    void compileToBoolean(Node*, bool invert);
+    void compileToBooleanObjectOrOther(Edge value, bool invert);
+    void compileToBooleanString(Node*, bool invert);
+    void compileToBooleanStringOrOther(Node*, bool invert);
     void compileStringEquality(
         Node*, GPRReg leftGPR, GPRReg rightGPR, GPRReg lengthGPR,
         GPRReg leftTempGPR, GPRReg rightTempGPR, GPRReg leftTemp2GPR,
@@ -1181,7 +1182,6 @@ public:
     void compileStringIdentEquality(Node*);
     void compileStringToUntypedEquality(Node*, Edge stringEdge, Edge untypedEdge);
     void compileStringIdentToNotStringVarEquality(Node*, Edge stringEdge, Edge notStringVarEdge);
-    void compileStringZeroLength(Node*);
     void compileMiscStrictEq(Node*);
 
     void compileSymbolEquality(Node*);

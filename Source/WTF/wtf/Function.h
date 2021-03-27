@@ -71,11 +71,11 @@ public:
 
     template<typename CallableType, class = typename std::enable_if<!(std::is_pointer<CallableType>::value && std::is_function<typename std::remove_pointer<CallableType>::type>::value) && std::is_rvalue_reference<CallableType&&>::value>::type>
     Function(CallableType&& callable)
-        : m_callableWrapper(makeUnique<Detail::CallableWrapper<CallableType, Out, In...>>(WTFMove(callable))) { }
+        : m_callableWrapper(makeUnique<Detail::CallableWrapper<CallableType, Out, In...>>(std::forward<CallableType>(callable))) { }
 
     template<typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
     Function(FunctionType f)
-        : m_callableWrapper(makeUnique<Detail::CallableWrapper<FunctionType, Out, In...>>(WTFMove(f))) { }
+        : m_callableWrapper(makeUnique<Detail::CallableWrapper<FunctionType, Out, In...>>(std::forward<FunctionType>(f))) { }
 
     Out operator()(In... in) const
     {
@@ -88,14 +88,14 @@ public:
     template<typename CallableType, class = typename std::enable_if<!(std::is_pointer<CallableType>::value && std::is_function<typename std::remove_pointer<CallableType>::type>::value) && std::is_rvalue_reference<CallableType&&>::value>::type>
     Function& operator=(CallableType&& callable)
     {
-        m_callableWrapper = makeUnique<Detail::CallableWrapper<CallableType, Out, In...>>(WTFMove(callable));
+        m_callableWrapper = makeUnique<Detail::CallableWrapper<CallableType, Out, In...>>(std::forward<CallableType>(callable));
         return *this;
     }
 
     template<typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
     Function& operator=(FunctionType f)
     {
-        m_callableWrapper = makeUnique<Detail::CallableWrapper<FunctionType, Out, In...>>(WTFMove(f));
+        m_callableWrapper = makeUnique<Detail::CallableWrapper<FunctionType, Out, In...>>(std::forward<FunctionType>(f));
         return *this;
     }
 

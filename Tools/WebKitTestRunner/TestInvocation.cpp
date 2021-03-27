@@ -1352,9 +1352,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementAttributionReportURLForTesting")) {
-        ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
-        TestController::singleton().setPrivateClickMeasurementAttributionReportURLForTesting(static_cast<WKURLRef>(messageBody));
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementAttributionReportURLsForTesting")) {
+        auto testDictionary = dictionaryValue(messageBody);
+        auto sourceURL = adoptWK(WKURLCreateWithUTF8CString(toWTFString(stringValue(testDictionary, "SourceURLString")).utf8().data()));
+        auto attributeOnURL = adoptWK(WKURLCreateWithUTF8CString(toWTFString(stringValue(testDictionary, "AttributeOnURLString")).utf8().data()));
+        TestController::singleton().setPrivateClickMeasurementAttributionReportURLsForTesting(sourceURL.get(), attributeOnURL.get());
         return nullptr;
     }
 
@@ -1363,14 +1365,14 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetFraudPreventionValuesForTesting")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPCMFraudPreventionValuesForTesting")) {
         auto testDictionary = dictionaryValue(messageBody);
-        auto secretToken = stringValue(testDictionary, "SecretToken");
         auto unlinkableToken = stringValue(testDictionary, "UnlinkableToken");
+        auto secretToken = stringValue(testDictionary, "SecretToken");
         auto signature = stringValue(testDictionary, "Signature");
         auto keyID = stringValue(testDictionary, "KeyID");
 
-        TestController::singleton().setFraudPreventionValuesForTesting(secretToken, unlinkableToken, signature, keyID);
+        TestController::singleton().setPCMFraudPreventionValuesForTesting(unlinkableToken, secretToken, signature, keyID);
         return nullptr;
     }
 
@@ -1379,13 +1381,18 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "setIsSpeechRecognitionPermissionGranted")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "SetIsSpeechRecognitionPermissionGranted")) {
         TestController::singleton().setIsSpeechRecognitionPermissionGranted(booleanValue(messageBody));
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "setIsMediaKeySystemPermissionGranted")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "SetIsMediaKeySystemPermissionGranted")) {
         TestController::singleton().setIsMediaKeySystemPermissionGranted(booleanValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetQuotaLoggingEnabled")) {
+        TestController::singleton().setQuotaLoggingEnabled(messageBody);
         return nullptr;
     }
 

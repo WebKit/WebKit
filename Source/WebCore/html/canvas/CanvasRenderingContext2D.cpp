@@ -44,13 +44,16 @@
 #include "NodeRenderStyle.h"
 #include "Path2D.h"
 #include "RenderTheme.h"
+#include "RenderWidget.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "StyleBuilder.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleProperties.h"
 #include "StyleResolveForFontRaw.h"
+#include "StyleTreeResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
 #include <wtf/CheckedArithmetic.h>
@@ -100,6 +103,21 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
 
 void CanvasRenderingContext2D::setFont(const String& newFont)
 {
+    Document& document = canvas().document();
+    document.updateStyleIfNeeded();
+
+    setFontWithoutUpdatingStyle(newFont);
+}
+
+void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont)
+{
+    // Intentionally don't update style here, because updating style can cause JS to run synchronously.
+    // This function is called in the middle of processing, and running arbitrary JS in the middle of processing can cause unexpected behavior.
+    // Instead, the relevant canvas entry points update style once when they begin running, and we won't touch the style after that.
+    // This means that the style may end up being stale here, but that's at least better than running arbitrary JS in the middle of processing.
+
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     if (newFont.isEmpty())
         return;
 
@@ -108,24 +126,23 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
     // the "inherit" and "initial" values must be ignored. parseFontWorkerSafe() ignores these.
-    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode));
+    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!fontRaw)
         return;
-
-    // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
-    // relative to the canvas.
-    Document& document = canvas().document();
-    document.updateStyleIfNeeded();
 
     FontCascadeDescription fontDescription;
     if (auto* computedStyle = canvas().computedStyle())
         fontDescription = FontCascadeDescription { computedStyle->fontDescription() };
     else {
-        fontDescription.setOneFamily(DefaultFontFamily);
+        static NeverDestroyed<AtomString> family = DefaultFontFamily;
+        fontDescription.setOneFamily(family.get());
         fontDescription.setSpecifiedSize(DefaultFontSize);
         fontDescription.setComputedSize(DefaultFontSize);
     }
 
+    // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
+    // relative to the canvas.
+    Document& document = canvas().document();
     auto fontCascade = Style::resolveForFontRaw(*fontRaw, WTFMove(fontDescription), document);
     if (!fontCascade)
         return;
@@ -141,7 +158,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
 inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, const RenderStyle** computedStyle) const
 {
-    auto* style = (computedStyle || direction == Direction::Inherit) ? canvas().computedStyle() : nullptr;
+    auto* style = computedStyle || direction == Direction::Inherit ? canvas().existingComputedStyle() : nullptr;
     if (computedStyle)
         *computedStyle = style;
     switch (direction) {
@@ -175,48 +192,52 @@ void CanvasRenderingContext2D::strokeText(const String& text, float x, float y, 
 
 Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
 {
+    downcast<HTMLCanvasElement>(canvasBase()).document().updateStyleIfNeeded();
+
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
         auto& canvas = this->canvas();
         ResourceLoadObserver::shared().logCanvasWriteOrMeasure(canvas.document(), text);
         ResourceLoadObserver::shared().logCanvasRead(canvas.document());
     }
 
-    Ref<TextMetrics> metrics = TextMetrics::create();
-
-    String normalizedText = text;
-    normalizeSpaces(normalizedText);
-
+    String normalizedText = normalizeSpaces(text);
     const RenderStyle* computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
-    bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
-
+    bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
     TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
     return measureTextInternal(textRun);
 }
 
 auto CanvasRenderingContext2D::fontProxy() -> const FontProxy* {
-    auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
-    canvas.document().updateStyleIfNeeded();
+    // Intentionally don't update style here, because updating style can cause JS to run synchronously.
+    // This function is called in the middle of processing, and running arbitrary JS in the middle of processing can cause unexpected behavior.
+    // Instead, the relevant canvas entry points update style once when they begin running, and we won't touch the style after that.
+    // This means that the style may end up being stale here, but that's at least better than running arbitrary JS in the middle of processing.
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     if (!state().font.realized())
-        setFont(state().unparsedFont);
+        setFontWithoutUpdatingStyle(state().unparsedFont);
     return &state().font;
 }
 
 void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, Optional<float> maxWidth)
 {
+    downcast<HTMLCanvasElement>(canvasBase()).document().updateStyleIfNeeded();
+
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasWriteOrMeasure(this->canvas().document(), text);
 
-    if (!canDrawTextWithParams(x, y, fill, maxWidth))
+    if (!canDrawText(x, y, fill, maxWidth))
         return;
 
-    String normalizedText = text;
-    normalizeSpaces(normalizedText);
-
+    String normalizedText = normalizeSpaces(text);
     const RenderStyle* computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
-    bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
-
+    bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
     TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
 }

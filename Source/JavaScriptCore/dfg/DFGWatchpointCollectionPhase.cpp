@@ -83,6 +83,7 @@ private:
                 handleMasqueradesAsUndefined();
             break;
             
+        case ToBoolean:
         case LogicalNot:
         case Branch:
             switch (m_node->child1().useKind()) {

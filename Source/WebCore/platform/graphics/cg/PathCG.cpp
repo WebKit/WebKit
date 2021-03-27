@@ -33,7 +33,6 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "StrokeStyleApplier.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
@@ -46,23 +45,23 @@ static size_t putBytesNowhere(void*, const void*, size_t count)
     return count;
 }
 
-static CGContextRef createScratchContext()
+static RetainPtr<CGContextRef> createScratchContext()
 {
     CGDataConsumerCallbacks callbacks = { putBytesNowhere, 0 };
-    RetainPtr<CGDataConsumerRef> consumer = adoptCF(CGDataConsumerCreate(0, &callbacks));
-    CGContextRef context = CGPDFContextCreate(consumer.get(), 0, 0);
+    auto consumer = adoptCF(CGDataConsumerCreate(0, &callbacks));
+    auto context = adoptCF(CGPDFContextCreate(consumer.get(), 0, 0));
 
     CGFloat black[4] = { 0, 0, 0, 1 };
-    CGContextSetFillColor(context, black);
-    CGContextSetStrokeColor(context, black);
+    CGContextSetFillColor(context.get(), black);
+    CGContextSetStrokeColor(context.get(), black);
 
     return context;
 }
 
 static inline CGContextRef scratchContext()
 {
-    static CGContextRef context = createScratchContext();
-    return context;
+    static NeverDestroyed<RetainPtr<CGContextRef>> context = createScratchContext();
+    return context.get().get();
 }
 
 Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
@@ -211,11 +210,11 @@ static void copyClosingSubpathsApplierFunction(void* info, const CGPathElement* 
     }
 }
 
-static CGMutablePathRef copyCGPathClosingSubpaths(CGPathRef originalPath)
+static RetainPtr<CGMutablePathRef> copyCGPathClosingSubpaths(CGPathRef originalPath)
 {
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathApply(originalPath, path, copyClosingSubpathsApplierFunction);
-    CGPathCloseSubpath(path);
+    auto path = adoptCF(CGPathCreateMutable());
+    CGPathApply(originalPath, path.get(), copyClosingSubpathsApplierFunction);
+    CGPathCloseSubpath(path.get());
     return path;
 }
 
@@ -228,13 +227,14 @@ bool Path::contains(const FloatPoint &point, WindRule rule) const
         return false;
 
     // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
-    auto path = adoptCF(copyCGPathClosingSubpaths(platformPath()));
-    bool ret = CGPathContainsPoint(path.get(), 0, point, rule == WindRule::EvenOdd ? true : false);
-    return ret;
+    auto path = copyCGPathClosingSubpaths(platformPath());
+    return CGPathContainsPoint(path.get(), nullptr, point, rule == WindRule::EvenOdd);
 }
 
-bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) const
+bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
+    ASSERT(strokeStyleApplier);
+
     if (isNull())
         return false;
 
@@ -245,11 +245,11 @@ bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) 
     CGContextAddPath(context, platformPath());
 
     GraphicsContext graphicsContext(context);
-    applier.strokeStyle(&graphicsContext);
+    strokeStyleApplier(graphicsContext);
 
     bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
     CGContextRestoreGState(context);
-    
+
     return hitSuccess;
 }
 
@@ -293,7 +293,7 @@ FloatRect Path::fastBoundingRectSlowCase() const
     return zeroRectIfNull(CGPathGetBoundingBox(platformPath()));
 }
 
-FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
+FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     if (isNull())
         return CGRectZero;
@@ -304,9 +304,9 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
     CGContextBeginPath(context);
     CGContextAddPath(context, platformPath());
 
-    if (applier) {
+    if (strokeStyleApplier) {
         GraphicsContext graphicsContext(context);
-        applier->strokeStyle(&graphicsContext);
+        strokeStyleApplier(graphicsContext);
     }
 
     CGContextReplacePathWithStrokedPath(context);

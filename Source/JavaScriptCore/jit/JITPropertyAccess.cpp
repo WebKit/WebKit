@@ -1227,6 +1227,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
             JSScope* constantScope = JSScope::constantScopeForCodeBlock(resolveType, m_codeBlock);
             RELEASE_ASSERT(constantScope);
             emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            emitVarReadOnlyCheck(resolveType);
             if (!isInitialization(getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
                 // We need to do a TDZ check here because we can't always prove we need to emit TDZ checks statically.
                 if (indirectLoadForOperand)

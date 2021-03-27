@@ -33,8 +33,8 @@ promise_test(async (test) => {
     const localStream = await navigator.mediaDevices.getUserMedia({audio: true});
 
     let sender, receiver;
-    senderTransform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
-    receiverTransform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
+    senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'audio', side:'sender'});
+    receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'audio', side:'receiver'});
 
     promise1 = waitForMessage(senderTransform.port, "started audio sender");
     promise2 = waitForMessage(receiverTransform.port, "started audio receiver");

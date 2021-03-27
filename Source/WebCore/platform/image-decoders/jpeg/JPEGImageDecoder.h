@@ -36,6 +36,11 @@ extern "C" {
 #include "jpeglib.h"
 }
 
+#if USE(LCMS)
+typedef void* cmsHPROFILE;
+typedef void* cmsHTRANSFORM;
+#endif
+
 namespace WebCore {
 
     class JPEGImageReader;
@@ -62,6 +67,9 @@ namespace WebCore {
         void jpegComplete();
 
         void setOrientation(ImageOrientation orientation) { m_orientation = orientation; }
+#if USE(LCMS)
+        void setICCProfile(RefPtr<SharedBuffer>&&);
+#endif
 
     private:
         JPEGImageDecoder(AlphaOption, GammaAndColorProfileOption);
@@ -78,7 +86,13 @@ namespace WebCore {
         template <J_COLOR_SPACE colorSpace, bool isScaled>
         bool outputScanlines(ScalableImageDecoderFrame& buffer);
 
+        void clear();
+
         std::unique_ptr<JPEGImageReader> m_reader;
+#if USE(LCMS)
+        cmsHPROFILE m_iccProfile { nullptr };
+        cmsHTRANSFORM m_iccTransform { nullptr };
+#endif
     };
 
 } // namespace WebCore

@@ -93,11 +93,17 @@ FloatPoint ScrollSnapAnimatorState::currentAnimatedScrollOffset(bool& isAnimatio
 
 float ScrollSnapAnimatorState::targetOffsetForStartOffset(ScrollEventAxis axis, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float initialDelta, unsigned& outActiveSnapIndex) const
 {
-    LayoutUnit proposedOffset;
-    std::tie(proposedOffset, outActiveSnapIndex) = m_snapOffsetsInfo.closestSnapOffset(axis, LayoutUnit(predictedOffset / pageScale), initialDelta);
-    if (outActiveSnapIndex != invalidSnapOffsetIndex)
-        return pageScale * proposedOffset;
-    return clampTo<float>(startOffset, 0, maxScrollOffset);
+    const auto& snapOffsets = m_snapOffsetsInfo.offsetsForAxis(axis);
+    if (snapOffsets.isEmpty()) {
+        outActiveSnapIndex = invalidSnapOffsetIndex;
+        return clampTo<float>(startOffset, 0, maxScrollOffset);
+    }
+
+    float targetOffset = m_snapOffsetsInfo.closestSnapOffset(axis, LayoutUnit(predictedOffset / pageScale), initialDelta).first;
+    float minimumTargetOffset = std::max<float>(0, snapOffsets.first().offset);
+    float maximumTargetOffset = std::min<float>(maxScrollOffset, snapOffsets.last().offset);
+    targetOffset = clampTo<float>(targetOffset, minimumTargetOffset, maximumTargetOffset);
+    return pageScale * targetOffset;
 }
 
 TextStream& operator<<(TextStream& ts, const ScrollSnapAnimatorState& state)

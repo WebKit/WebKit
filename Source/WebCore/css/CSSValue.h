@@ -27,6 +27,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/URLHash.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
@@ -77,9 +78,11 @@ public:
 
     Type cssValueType() const;
     String cssText() const;
+    ASCIILiteral separatorCSSText() const;
 
     bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
     bool isValueList() const { return m_classType >= ValueListClass; }
+    bool isValuePair() const { return m_classType == ValuePairClass; }
     
     bool isBaseValueList() const { return m_classType == ValueListClass; }
         
@@ -198,6 +201,7 @@ protected:
         LineBoxContainClass,
         CalculationClass,
         GridTemplateAreasClass,
+        ValuePairClass,
 
         CSSContentDistributionClass,
 
@@ -219,8 +223,8 @@ protected:
     };
 
 public:
-    static const size_t ValueListSeparatorBits = 2;
-    enum ValueListSeparator {
+    static const size_t ValueSeparatorBits = 2;
+    enum ValueSeparator {
         SpaceSeparator,
         CommaSeparator,
         SlashSeparator
@@ -233,7 +237,7 @@ protected:
     explicit CSSValue(ClassType classType)
         : m_primitiveUnitType(0)
         , m_hasCachedCSSText(false)
-        , m_valueListSeparator(SpaceSeparator)
+        , m_valueSeparator(SpaceSeparator)
         , m_classType(classType)
     {
     }
@@ -259,7 +263,7 @@ protected:
     unsigned m_primitiveUnitType : 7; // CSSUnitType
     mutable unsigned m_hasCachedCSSText : 1;
 
-    unsigned m_valueListSeparator : ValueListSeparatorBits;
+    unsigned m_valueSeparator : ValueSeparatorBits;
 
 private:
     unsigned m_classType : ClassTypeBits; // ClassType

@@ -270,13 +270,13 @@ void DOMFileSystem::getParent(ScriptExecutionContext& context, FileSystemEntry& 
     auto virtualPath = resolveRelativeVirtualPath(entry.virtualPath(), "..");
     ASSERT(virtualPath[0] == '/');
     auto fullPath = evaluatePath(virtualPath);
-    m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+    m_workQueue->dispatch([protectedThis = makeRef(*this), context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
         auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileMetadata::Type::Directory);
-        callOnMainThread([this, context = WTFMove(context), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+        callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
             if (validatedVirtualPath.hasException())
                 completionCallback(validatedVirtualPath.releaseException());
             else
-                completionCallback(FileSystemDirectoryEntry::create(context, *this, validatedVirtualPath.releaseReturnValue()));
+                completionCallback(FileSystemDirectoryEntry::create(context, protectedThis.get(), validatedVirtualPath.releaseReturnValue()));
         });
     });
 }
@@ -311,19 +311,19 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
         return;
     }
 
-    m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+    m_workQueue->dispatch([protectedThis = makeRef(*this), context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
         auto entryType = fileType(fullPath);
-        callOnMainThread([this, context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
+        callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
             if (!entryType) {
                 completionCallback(Exception { NotFoundError, "Cannot find entry at given path"_s });
                 return;
             }
             switch (entryType.value()) {
             case FileMetadata::Type::Directory:
-                completionCallback(Ref<FileSystemEntry> { FileSystemDirectoryEntry::create(context, *this, resolvedVirtualPath) });
+                completionCallback(Ref<FileSystemEntry> { FileSystemDirectoryEntry::create(context, protectedThis.get(), resolvedVirtualPath) });
                 break;
             case FileMetadata::Type::File:
-                completionCallback(Ref<FileSystemEntry> { FileSystemFileEntry::create(context, *this, resolvedVirtualPath) });
+                completionCallback(Ref<FileSystemEntry> { FileSystemFileEntry::create(context, protectedThis.get(), resolvedVirtualPath) });
                 break;
             default:
                 completionCallback(Exception { NotFoundError, "Cannot find entry at given path"_s });

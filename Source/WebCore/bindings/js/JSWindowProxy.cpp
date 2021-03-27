@@ -42,6 +42,10 @@
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/StrongInlines.h>
 
+#if PLATFORM(COCOA)
+#include "VersionChecks.h"
+#endif
+
 namespace WebCore {
 
 using namespace JSC;
@@ -106,7 +110,11 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
         auto& localWindow = downcast<DOMWindow>(domWindow);
         auto& windowStructure = *JSDOMWindow::createStructure(vm, nullptr, prototype);
         window = JSDOMWindow::create(vm, &windowStructure, localWindow, this);
-        if (!localWindow.document()->haveInitializedSecurityOrigin() && localWindow.document()->settings().windowObjectAlwaysInitializedWithSecurityOriginEnabled())
+        bool linkedWithNewSDK = true;
+#if PLATFORM(COCOA)
+        linkedWithNewSDK = linkedOnOrAfter(SDKVersion::FirstWithDOMWindowReuseRestriction);
+#endif
+        if (!localWindow.document()->haveInitializedSecurityOrigin() && linkedWithNewSDK)
             localWindow.setAsWrappedWithoutInitializedSecurityOrigin();
     }
 

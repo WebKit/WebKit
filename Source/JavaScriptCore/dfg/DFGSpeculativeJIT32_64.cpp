@@ -1458,7 +1458,7 @@ void SpeculativeJIT::compileSymbolUntypedEquality(Node* node, Edge symbolEdge, E
     booleanResult(resultPayloadGPR, node);
 }
 
-void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
+void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
 {
     JSValueOperand value(this, nodeUse, ManualOperandSpeculation);
     GPRTemporary resultPayload(this);
@@ -1504,7 +1504,7 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
 
         isNotMasqueradesAsUndefined.link(&m_jit);
     }
-    m_jit.move(TrustedImm32(0), resultPayloadGPR);
+    m_jit.move(invert ? TrustedImm32(0) : TrustedImm32(1), resultPayloadGPR);
     MacroAssembler::Jump done = m_jit.jump();
     
     notCell.link(&m_jit);
@@ -1519,34 +1519,39 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
                 resultPayloadGPR, 
                 TrustedImm32(JSValue::NullTag)));
     }
-    m_jit.move(TrustedImm32(1), resultPayloadGPR);
+    m_jit.move(invert ? TrustedImm32(1) : TrustedImm32(0), resultPayloadGPR);
     
     done.link(&m_jit);
     
     booleanResult(resultPayloadGPR, m_currentNode);
 }
 
-void SpeculativeJIT::compileLogicalNot(Node* node)
+void SpeculativeJIT::compileToBoolean(Node* node, bool invert)
 {
     switch (node->child1().useKind()) {
     case BooleanUse:
     case KnownBooleanUse: {
         SpeculateBooleanOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value);
-        m_jit.xor32(TrustedImm32(1), value.gpr(), result.gpr());
+
+        if (invert)
+            m_jit.xor32(TrustedImm32(1), value.gpr(), result.gpr());
+        else
+            m_jit.move(value.gpr(), result.gpr());
+
         booleanResult(result.gpr(), node);
         return;
     }
         
     case ObjectOrOtherUse: {
-        compileObjectOrOtherLogicalNot(node->child1());
+        compileToBooleanObjectOrOther(node->child1(), invert);
         return;
     }
         
     case Int32Use: {
         SpeculateInt32Operand value(this, node->child1());
         GPRTemporary resultPayload(this, Reuse, value);
-        m_jit.compare32(MacroAssembler::Equal, value.gpr(), MacroAssembler::TrustedImm32(0), resultPayload.gpr());
+        m_jit.compare32(invert ? MacroAssembler::Equal : MacroAssembler::NotEqual, value.gpr(), MacroAssembler::TrustedImm32(0), resultPayload.gpr());
         booleanResult(resultPayload.gpr(), node);
         return;
     }
@@ -1555,9 +1560,9 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         SpeculateDoubleOperand value(this, node->child1());
         FPRTemporary scratch(this);
         GPRTemporary resultPayload(this);
-        m_jit.move(TrustedImm32(0), resultPayload.gpr());
+        m_jit.move(invert ? TrustedImm32(0) : TrustedImm32(1), resultPayload.gpr());
         MacroAssembler::Jump nonZero = m_jit.branchDoubleNonZero(value.fpr(), scratch.fpr());
-        m_jit.move(TrustedImm32(1), resultPayload.gpr());
+        m_jit.move(invert ? TrustedImm32(1) : TrustedImm32(0), resultPayload.gpr());
         nonZero.link(&m_jit);
         booleanResult(resultPayload.gpr(), node);
         return;
@@ -1574,16 +1579,17 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
 
         bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
-        bool negateResult = true;
-        m_jit.emitConvertValueToBoolean(vm(), arg1.jsValueRegs(), resultGPR, temp.gpr(), valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject, negateResult);
+        m_jit.emitConvertValueToBoolean(vm(), arg1.jsValueRegs(), resultGPR, temp.gpr(), valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject, invert);
         booleanResult(resultGPR, node);
         return;
     }
     case StringUse:
-        return compileStringZeroLength(node);
+        compileToBooleanString(node, invert);
+        return;
 
     case StringOrOtherUse:
-        return compileLogicalNotStringOrOther(node);
+        compileToBooleanStringOrOther(node, invert);
+        return;
 
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -2159,9 +2165,17 @@ void SpeculativeJIT::compile(Node* node)
         compileArithUnary(node);
         break;
 
-    case LogicalNot:
-        compileLogicalNot(node);
+    case ToBoolean: {
+        bool invert = false;
+        compileToBoolean(node, invert);
         break;
+    }
+
+    case LogicalNot: {
+        bool invert = true;
+        compileToBoolean(node, invert);
+        break;
+    }
 
     case CompareLess:
         if (compare(node, JITCompiler::LessThan, JITCompiler::DoubleLessThanAndOrdered, operationCompareLess))

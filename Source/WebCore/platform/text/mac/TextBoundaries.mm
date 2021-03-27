@@ -71,23 +71,23 @@ static bool isAmbiguousBoundaryCharacter(UChar32 character)
 
 static CFStringTokenizerRef tokenizerForString(CFStringRef str)
 {
-    static CFLocaleRef locale = nullptr;
-    if (!locale) {
-        const char* temp = currentTextBreakLocaleID();
-        RetainPtr<CFStringRef> currentLocaleID = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(temp), strlen(temp), kCFStringEncodingASCII, false, kCFAllocatorNull));
-        locale = CFLocaleCreate(kCFAllocatorDefault, currentLocaleID.get());
-        if (!locale)
-            return nullptr;
-    }
+    static auto locale = makeNeverDestroyed([] {
+        const char* localID = currentTextBreakLocaleID();
+        auto currentLocaleID = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(localID), strlen(localID), kCFStringEncodingASCII, false, kCFAllocatorNull));
+        return adoptCF(CFLocaleCreate(kCFAllocatorDefault, currentLocaleID.get()));
+    }());
+
+    if (!locale.get())
+        return nullptr;
 
     CFRange entireRange = CFRangeMake(0, CFStringGetLength(str));    
 
-    static CFStringTokenizerRef tokenizer = nullptr;
-    if (!tokenizer)
-        tokenizer = CFStringTokenizerCreate(kCFAllocatorDefault, str, entireRange, kCFStringTokenizerUnitWordBoundary, locale);
+    static NeverDestroyed<RetainPtr<CFStringTokenizerRef>> tokenizer;
+    if (!tokenizer.get())
+        tokenizer.get() = adoptCF(CFStringTokenizerCreate(kCFAllocatorDefault, str, entireRange, kCFStringTokenizerUnitWordBoundary, locale.get().get()));
     else
-        CFStringTokenizerSetString(tokenizer, str, entireRange);
-    return tokenizer;
+        CFStringTokenizerSetString(tokenizer.get().get(), str, entireRange);
+    return tokenizer.get().get();
 }
 
 // Simple case: A word is a stream of characters delimited by a special set of word-delimiting characters.

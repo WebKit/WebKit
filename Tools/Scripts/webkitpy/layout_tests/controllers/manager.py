@@ -128,6 +128,65 @@ class Manager(object):
 
         return tests_to_skip
 
+    def _split_into_chunks(self, test_names):
+        """split into a list to run and a set to skip, based on --run-chunk and --run-part."""
+        if not self._options.run_chunk and not self._options.run_part:
+            return test_names, set()
+
+        # If the user specifies they just want to run a subset of the tests,
+        # just grab a subset of the non-skipped tests.
+        chunk_value = self._options.run_chunk or self._options.run_part
+        try:
+            (chunk_num, chunk_len) = chunk_value.split(":")
+            chunk_num = int(chunk_num)
+            assert(chunk_num >= 0)
+            test_size = int(chunk_len)
+            assert(test_size > 0)
+        except AssertionError:
+            _log.critical("invalid chunk '%s'" % chunk_value)
+            return (None, None)
+
+        # Get the number of tests
+        num_tests = len(test_names)
+
+        # Get the start offset of the slice.
+        if self._options.run_chunk:
+            chunk_len = test_size
+            # In this case chunk_num can be really large. We need
+            # to make the worker fit in the current number of tests.
+            slice_start = (chunk_num * chunk_len) % num_tests
+        else:
+            # Validate the data.
+            assert(test_size <= num_tests)
+            assert(chunk_num <= test_size)
+
+            # To count the chunk_len, and make sure we don't skip
+            # some tests, we round to the next value that fits exactly
+            # all the parts.
+            rounded_tests = num_tests
+            if rounded_tests % test_size != 0:
+                rounded_tests = (num_tests + test_size - (num_tests % test_size))
+
+            chunk_len = rounded_tests // test_size
+            slice_start = chunk_len * (chunk_num - 1)
+            # It does not mind if we go over test_size.
+
+        # Get the end offset of the slice.
+        slice_end = min(num_tests, slice_start + chunk_len)
+
+        tests_to_run = test_names[slice_start:slice_end]
+
+        _log.debug('chunk slice [%d:%d] of %d is %d tests' % (slice_start, slice_end, num_tests, (slice_end - slice_start)))
+
+        # If we reached the end and we don't have enough tests, we run some
+        # from the beginning.
+        if slice_end - slice_start < chunk_len:
+            extra = chunk_len - (slice_end - slice_start)
+            _log.debug('   last chunk is partial, appending [0:%d]' % extra)
+            tests_to_run.extend(test_names[0:extra])
+
+        return (tests_to_run, set(test_names) - set(tests_to_run))
+
     def _prepare_lists(self, paths, test_names, device_type=None):
         tests_to_skip = self._skip_tests(test_names, self._expectations[device_type], self._http_tests(test_names))
         tests_to_run = [test for test in test_names if test not in tests_to_skip]
@@ -139,7 +198,7 @@ class Manager(object):
         elif self._options.order == 'random':
             random.shuffle(tests_to_run)
 
-        tests_to_run, tests_in_other_chunks = self._finder.split_into_chunks(tests_to_run)
+        tests_to_run, tests_in_other_chunks = self._split_into_chunks(tests_to_run)
         self._expectations[device_type].add_skipped_tests(tests_in_other_chunks)
         tests_to_skip.update(tests_in_other_chunks)
 
@@ -399,16 +458,13 @@ class Manager(object):
 
         _log.debug("summarizing results")
         summarized_results = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry)
-        results_including_passes = None
-        if self._options.results_server_host:
-            results_including_passes = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=True, include_time_and_modifiers=True)
         self._printer.print_results(end_time - start_time, initial_results, summarized_results)
 
         exit_code = -1
         if not self._options.dry_run:
             self._port.print_leaks_summary()
             self._output_perf_metrics(end_time - start_time, initial_results)
-            self._upload_json_files(summarized_results, initial_results, results_including_passes, start_time, end_time)
+            self._save_json_files(summarized_results, initial_results)
 
             results_path = self._filesystem.join(self._results_directory, "results.html")
             self._copy_results_html_file(results_path)
@@ -534,7 +590,7 @@ class Manager(object):
                 ), results_trie)
         return results_trie
 
-    def _upload_json_files(self, summarized_results, initial_results, results_including_passes=None, start_time=None, end_time=None):
+    def _save_json_files(self, summarized_results, initial_results):
         """Writes the results of the test run as JSON files into the results
         dir and upload the files to the appengine server.
 
@@ -557,17 +613,10 @@ class Manager(object):
         # We write full_results.json out as jsonp because we need to load it from a file url and Chromium doesn't allow that.
         json_results_generator.write_json(self._filesystem, summarized_results, full_results_path, callback="ADD_RESULTS")
 
-        results_json_path = self._filesystem.join(self._results_directory, "results_including_passes.json")
-        if results_including_passes:
-            json_results_generator.write_json(self._filesystem, results_including_passes, results_json_path)
-
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
-            self._port, self._options.builder_name, self._options.build_name,
-            self._options.build_number, self._results_directory,
+            self._port, self._results_directory,
             self._expectations, initial_results,
-            self._options.test_results_server,
-            "layout-tests",
-            self._options.master_name)
+            "layout-tests")
 
         if generator.generate_json_output():
             _log.debug("Finished writing JSON file for the test results server.")
@@ -575,78 +624,12 @@ class Manager(object):
             _log.debug("Failed to generate JSON file for the test results server.")
             return
 
-        json_files = ["incremental_results.json", "full_results.json", "times_ms.json"]
-
-        generator.upload_json_files(json_files)
-        if results_including_passes:
-            self.upload_results(results_json_path, start_time, end_time)
-
         incremental_results_path = self._filesystem.join(self._results_directory, "incremental_results.json")
 
         # Remove these files from the results directory so they don't take up too much space on the buildbot.
         # The tools use the version we uploaded to the results server anyway.
         self._filesystem.remove(times_json_path)
         self._filesystem.remove(incremental_results_path)
-        if results_including_passes:
-            self._filesystem.remove(results_json_path)
-
-    def upload_results(self, results_json_path, start_time, end_time):
-        if not self._options.results_server_host:
-            return
-        master_name = self._options.master_name
-        builder_name = self._options.builder_name
-        build_number = self._options.build_number
-        build_worker = self._options.build_slave
-        if not master_name or not builder_name or not build_number or not build_worker:
-            _log.error("--results-server-host was set, but --master-name, --builder-name, --build-number, or --build-slave was not. Not uploading JSON files.")
-            return
-
-        revisions = {}
-        # FIXME: This code is duplicated in PerfTestRunner._generate_results_dict
-        for (name, path) in self._port.repository_paths():
-            scm = SCMDetector(self._port.host.filesystem, self._port.host.executive).detect_scm_system(path) or self._port.host.scm()
-            revision = scm.native_revision(path)
-            revisions[name] = {'revision': revision, 'timestamp': scm.timestamp_of_native_revision(path, revision)}
-
-        for hostname in self._options.results_server_host:
-            _log.info("Uploading JSON files for master: {} builder: {} build: {} worker: {} to {}".format(master_name, builder_name, build_number, build_worker, hostname))
-
-            attrs = [
-                ('master', 'build.webkit.org' if master_name == 'webkit.org' else master_name),  # FIXME: Pass in build.webkit.org.
-                ('builder_name', builder_name),
-                ('build_number', build_number),
-                ('build_slave', build_worker),
-                ('revisions', json.dumps(revisions)),
-                ('start_time', str(start_time)),
-                ('end_time', str(end_time)),
-            ]
-
-            uploader = FileUploader("http://%s/api/report" % hostname, 360)
-            try:
-                response = uploader.upload_as_multipart_form_data(self._filesystem, [('results.json', results_json_path)], attrs)
-                if not response:
-                    _log.error("JSON upload failed; no response returned")
-                    continue
-
-                if response.code != 200:
-                    _log.error("JSON upload failed, %d: '%s'" % (response.code, response.read()))
-                    continue
-
-                response_text = response.read()
-                try:
-                    response_json = json.loads(response_text)
-                except ValueError:
-                    _log.error("JSON upload failed; failed to parse the response: %s", response_text)
-                    continue
-
-                if response_json['status'] != 'OK':
-                    _log.error("JSON upload failed, %s: %s", response_json['status'], response_text)
-                    continue
-
-                _log.info("JSON uploaded.")
-            except Exception as error:
-                _log.error("Upload failed: %s" % error)
-                continue
 
     def _copy_results_html_file(self, destination_path):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')

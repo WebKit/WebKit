@@ -30,6 +30,7 @@
 #include "WebsiteDataType.h"
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -153,6 +154,30 @@ OptionSet<WebsiteDataType> WebsiteData::filter(OptionSet<WebsiteDataType> unfilt
     }
     
     return filtered;
+}
+
+WebsiteData WebsiteData::isolatedCopy() const
+{
+    return WebsiteData {
+        crossThreadCopy(entries),
+        crossThreadCopy(hostNamesWithCookies),
+#if ENABLE(NETSCAPE_PLUGIN_API)
+        crossThreadCopy(hostNamesWithPluginData),
+#endif
+        crossThreadCopy(hostNamesWithHSTSCache),
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        crossThreadCopy(registrableDomainsWithResourceLoadStatistics),
+#endif
+    };
+}
+
+auto WebsiteData::Entry::isolatedCopy() const -> Entry
+{
+    return Entry {
+        crossThreadCopy(origin),
+        type,
+        size,
+    };
 }
 
 }

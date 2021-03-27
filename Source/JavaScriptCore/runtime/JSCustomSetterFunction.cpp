@@ -36,7 +36,6 @@ static JSC_DECLARE_HOST_FUNCTION(customSetterFunctionCall);
 JSC_DEFINE_HOST_FUNCTION(customSetterFunctionCall, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     PutValueFunc setter = jsCast<JSCustomSetterFunction*>(callFrame->jsCallee())->setter();
-    ASSERT(setter);
     setter(globalObject, JSValue::encode(callFrame->thisValue()), JSValue::encode(callFrame->argument(0)));
     return JSValue::encode(jsUndefined());
 }
@@ -49,6 +48,7 @@ JSCustomSetterFunction::JSCustomSetterFunction(VM& vm, NativeExecutable* executa
 
 JSCustomSetterFunction* JSCustomSetterFunction::create(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, PutValueFunc setter)
 {
+    ASSERT(setter);
     NativeExecutable* executable = vm.getHostFunction(customSetterFunctionCall, callHostFunctionAsConstructor, String(propertyName.publicName()));
     Structure* structure = globalObject->customSetterFunctionStructure();
     JSCustomSetterFunction* function = new (NotNull, allocateCell<JSCustomSetterFunction>(vm.heap)) JSCustomSetterFunction(vm, executable, globalObject, structure, setter);

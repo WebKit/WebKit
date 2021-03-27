@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html contenteditable=true>
+<script>
+function main() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.execCommand("selectAll",false,null);
+    document.documentElement.replaceChild(x4, document.body);
+    document.execCommand("indent",false,null);
+}
+</script>
+<body onload="main()">
+<span id="x4" style="white-space: pre-line" contenteditable=false>
+This tests indenting non-editable content. WebKit should not crash.

@@ -74,10 +74,10 @@ public:
     };
     WEBCORE_EXPORT void requestFullscreenForElement(Element*, FullscreenCheckType);
 
-    WEBCORE_EXPORT void willEnterFullscreen(Element&);
-    WEBCORE_EXPORT void didEnterFullscreen();
-    WEBCORE_EXPORT void willExitFullscreen();
-    WEBCORE_EXPORT void didExitFullscreen();
+    WEBCORE_EXPORT bool willEnterFullscreen(Element&);
+    WEBCORE_EXPORT bool didEnterFullscreen();
+    WEBCORE_EXPORT bool willExitFullscreen();
+    WEBCORE_EXPORT bool didExitFullscreen();
 
     void setFullscreenRenderer(RenderTreeBuilder&, RenderFullScreen&);
     RenderFullScreen* fullscreenRenderer() const;
@@ -106,6 +106,13 @@ protected:
     void addDocumentToFullscreenChangeEventQueue(Document&);
 
 private:
+#if !RELEASE_LOG_DISABLED
+    const WTF::Logger& logger() const { return m_document.logger(); }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "FullscreenManager"; }
+    WTFLogChannel& logChannel() const;
+#endif
+
     Document& m_document;
 
     RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }
@@ -124,6 +131,10 @@ private:
     bool m_areKeysEnabledInFullscreen { false };
     bool m_isAnimatingFullscreen { false };
     bool m_areFullscreenControlsHidden { false };
+
+#if !RELEASE_LOG_DISABLED
+    const void* m_logIdentifier;
+#endif
 };
 
 }

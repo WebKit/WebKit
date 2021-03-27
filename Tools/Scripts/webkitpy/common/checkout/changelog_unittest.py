@@ -420,8 +420,6 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_fuzzy_radar_match('rdar://1234', None)
         self._assert_fuzzy_radar_match('rdar://12345', None)
         self._assert_fuzzy_radar_match('rdar://123456', None)
-        self._assert_fuzzy_radar_match('rdar://1234567', None)
-        self._assert_fuzzy_radar_match('rdar://12345678', None)
 
         self._assert_fuzzy_radar_match('<rdar://1>', None)
         self._assert_fuzzy_radar_match('<rdar://12>', None)
@@ -429,8 +427,6 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_fuzzy_radar_match('<rdar://1234>', None)
         self._assert_fuzzy_radar_match('<rdar://12345>', None)
         self._assert_fuzzy_radar_match('<rdar://123456>', None)
-        self._assert_fuzzy_radar_match('<rdar://1234567>', None)
-        self._assert_fuzzy_radar_match('<rdar://12345678>', None)
 
         self._assert_fuzzy_radar_match('<rdar://problem/1>', None)
         self._assert_fuzzy_radar_match('<rdar://problem/12>', None)
@@ -469,21 +465,26 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_fuzzy_radar_match('                fixed in <rdar://problem/2345678>', None)
         self._assert_fuzzy_radar_match('                whitespace here <rdar://problem/12345678>', None)
 
-    def test_fuzzy_radar_match_format_1(self):
+    def test_fuzzy_radar_match_format_without_context(self):
         self._assert_fuzzy_radar_match('<rdar://problem/1234567>', 1234567)
         self._assert_fuzzy_radar_match('<rdar://problem/12345678>', 12345678)
 
         self._assert_fuzzy_radar_match('<rdar://problems/1234567>', 1234567)
         self._assert_fuzzy_radar_match('<rdar://problems/12345678>', 12345678)
 
-    def test_fuzzy_radar_match_format_2(self):
+        self._assert_fuzzy_radar_match('<rdar://1234567>', 1234567)
+        self._assert_fuzzy_radar_match('<rdar://12345678>', 12345678)
+
         self._assert_fuzzy_radar_match('rdar://problem/1234567', 1234567)
         self._assert_fuzzy_radar_match('rdar://problem/12345678', 12345678)
 
         self._assert_fuzzy_radar_match('rdar://problems/1234567', 1234567)
         self._assert_fuzzy_radar_match('rdar://problems/12345678', 12345678)
 
-    def test_fuzzy_radar_match_format_3(self):
+        self._assert_fuzzy_radar_match('rdar://1234567', 1234567)
+        self._assert_fuzzy_radar_match('rdar://12345678', 12345678)
+
+    def test_fuzzy_radar_match_format_with_context(self):
         contents = """
         2011-03-23  Ojan Vafai  <ojan@chromium.org>
 

@@ -31,12 +31,12 @@
 
     /* Cross-origin request is OK because the "Access-Control-Allow-Origin: *" is returned. */
     #shape-outside-allow-origin-url {
-        -webkit-shape-outside: url("http://localhost:8080/security/resources/image-access-control.php?file=../../resources/square100.png&allow=true");
+        -webkit-shape-outside: url("http://localhost:8080/security/resources/image-access-control.py?file=../../resources/square100.png&allow=true");
     } 
 
     /* Cross-origin request is not OK because a "Access-Control-Allow-Origin:" header is not returned. */
     #shape-outside-disallow-origin-url {
-        -webkit-shape-outside: url("http://localhost:8080/security/resources/image-access-control.php?file=../../resources/square100.png&allow=false");
+        -webkit-shape-outside: url("http://localhost:8080/security/resources/image-access-control.py?file=../../resources/square100.png&allow=false");
     } 
 </style>
 </head>

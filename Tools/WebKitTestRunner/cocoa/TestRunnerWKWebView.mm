@@ -136,6 +136,26 @@ IGNORE_WARNINGS_END
     [super dealloc];
 }
 
+- (void)_didShowContextMenu
+{
+    if (self.showingContextMenu)
+        return;
+
+    self.showingContextMenu = YES;
+    if (self.didShowContextMenuCallback)
+        self.didShowContextMenuCallback();
+}
+
+- (void)_didDismissContextMenu
+{
+    if (!self.showingContextMenu)
+        return;
+
+    self.showingContextMenu = NO;
+    if (self.didDismissContextMenuCallback)
+        self.didDismissContextMenuCallback();
+}
+
 - (void)_didShowMenu
 {
     if (self.showingMenu)
@@ -174,6 +194,8 @@ IGNORE_WARNINGS_END
 
 - (void)resetInteractionCallbacks
 {
+    self.didShowContextMenuCallback = nil;
+    self.didDismissContextMenuCallback = nil;
     self.didShowMenuCallback = nil;
     self.didHideMenuCallback = nil;
     self.didShowContactPickerCallback = nil;
@@ -181,8 +203,6 @@ IGNORE_WARNINGS_END
 #if PLATFORM(IOS_FAMILY)
     self.didStartFormControlInteractionCallback = nil;
     self.didEndFormControlInteractionCallback = nil;
-    self.didShowContextMenuCallback = nil;
-    self.didDismissContextMenuCallback = nil;
     self.willBeginZoomingCallback = nil;
     self.didEndZoomingCallback = nil;
     self.didShowKeyboardCallback = nil;
@@ -236,26 +256,6 @@ IGNORE_WARNINGS_END
             [(UIContextMenuInteraction *)interaction dismissMenu];
     }
 #endif
-}
-
-- (void)_didShowContextMenu
-{
-    if (self.showingContextMenu)
-        return;
-
-    self.showingContextMenu = YES;
-    if (self.didShowContextMenuCallback)
-        self.didShowContextMenuCallback();
-}
-
-- (void)_didDismissContextMenu
-{
-    if (!self.showingContextMenu)
-        return;
-
-    self.showingContextMenu = NO;
-    if (self.didDismissContextMenuCallback)
-        self.didDismissContextMenuCallback();
 }
 
 - (BOOL)becomeFirstResponder

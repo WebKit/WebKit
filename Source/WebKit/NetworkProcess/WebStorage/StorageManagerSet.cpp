@@ -127,17 +127,13 @@ void StorageManagerSet::waitUntilTasksFinished()
 {
     ASSERT(RunLoop::isMain());
 
-    BinarySemaphore semaphore;
-    m_queue->dispatch([this, &semaphore] {
+    m_queue->dispatchSync([this] {
         for (auto& storageManager : m_storageManagers.values())
             storageManager->clearStorageNamespaces();
 
         m_storageManagers.clear();
         m_storageAreas.clear();
-
-        semaphore.signal();
     });
-    semaphore.wait();
 }
 
 void StorageManagerSet::waitUntilSyncingLocalStorageFinished()
@@ -151,7 +147,6 @@ void StorageManagerSet::waitUntilSyncingLocalStorageFinished()
             if (storageArea)
                 storageArea->syncToDatabase();
         }
-
         semaphore.signal();
     });
     semaphore.wait();

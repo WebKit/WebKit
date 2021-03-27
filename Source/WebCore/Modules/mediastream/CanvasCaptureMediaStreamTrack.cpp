@@ -149,7 +149,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasResized(CanvasBase& canvas)
     setSize(IntSize(m_canvas->width(), m_canvas->height()));
 }
 
-void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, const FloatRect&)
+void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, const Optional<FloatRect>&)
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 

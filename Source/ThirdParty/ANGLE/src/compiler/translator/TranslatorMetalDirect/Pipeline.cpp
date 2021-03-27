@@ -78,6 +78,7 @@ bool Pipeline::uses(const TVariable &var) const
                 case TQualifier::EvqFragColor:
                 case TQualifier::EvqFragData:
                 case TQualifier::EvqFragDepth:
+                case TQualifier::EvqSampleMask:
                     return true;
                 default:
                     return false;
@@ -121,6 +122,14 @@ bool Pipeline::uses(const TVariable &var) const
                     return false;
             }
 
+        case Type::UniformBuffer:
+            switch(qualifier)
+            {
+                case TQualifier::EvqBuffer:
+                    return true;
+                default:
+                    return false;
+            }
         case Type::AngleUniforms:
             LOGIC_ERROR();  // globalInstanceVar should be non-null and thus never reach here.
             return false;
@@ -171,6 +180,8 @@ Name Pipeline::getStructTypeName(Variant variant) const
         case Type::InstanceId:
             name = VARIANT_NAME(variant, "InstanceId");
             break;
+        case Type::UniformBuffer:
+            name = VARIANT_NAME(variant, "UniformBuffer");
     }
     return Name(name);
 }
@@ -213,6 +224,8 @@ Name Pipeline::getStructInstanceName(Variant variant) const
         case Type::InstanceId:
             name = VARIANT_NAME(variant, "instanceId");
             break;
+        case Type::UniformBuffer:
+            name = VARIANT_NAME(variant, "uniformBuffer");
     }
     return Name(name);
 }
@@ -223,6 +236,7 @@ static bool AllowPacking(Pipeline::Type type)
 
     switch (type)
     {
+        case Type::UniformBuffer:
         case Type::UserUniforms:
             return true;
 
@@ -255,6 +269,7 @@ static bool AllowPadding(Pipeline::Type type)
         case Type::NonConstantGlobals:
         case Type::InvocationVertexGlobals:
         case Type::InvocationFragmentGlobals:
+        case Type::UniformBuffer:
             return true;
 
         case Type::Texture:
@@ -300,7 +315,6 @@ static int SaturateVectorOf(const TField &field)
     const bool cond = type.getBasicType() == BT && !type.isArray() &&
                       CompareBy(Cmp, type.getNominalSize(), MatchDim) && type.getQualifier() != TQualifier::EvqFragDepth;
 
-
     if (cond)
     {
         return NewDim;
@@ -344,6 +358,10 @@ ModifyStructConfig Pipeline::externalStructModifyConfig() const
             config.splitMatrixColumns     = Pred::True;
             config.inlineStruct           = Pred::True;
             config.saturateScalarOrVector = [](const TField &field) {
+                if (field.type()->getQualifier() == TQualifier::EvqSampleMask)
+                {
+                    return 1;
+                }
                 if (int s = SaturateVectorOf<TBasicType::EbtInt, LT, 4, 4>(field))
                 {
                     return s;
@@ -359,7 +377,6 @@ ModifyStructConfig Pipeline::externalStructModifyConfig() const
                 return 0;
             };
             break;
-
         case Type::UserUniforms:
             config.promoteBoolToUint            = Pred::True;
             config.saturateMatrixRows           = SatVec::FullySaturate;
@@ -373,7 +390,12 @@ ModifyStructConfig Pipeline::externalStructModifyConfig() const
 
         case Type::NonConstantGlobals:
             break;
-
+        case Type::UniformBuffer:
+            config.promoteBoolToUint            = Pred::True;
+            config.saturateMatrixRows           = SatVec::FullySaturate;
+            config.saturateScalarOrVectorArrays = SatVec::FullySaturate;
+            config.recurseStruct                = Pred::True;
+            break;
         case Type::InvocationVertexGlobals:
         case Type::InvocationFragmentGlobals:
         case Type::Texture:
@@ -392,6 +414,7 @@ bool Pipeline::alwaysRequiresLocalVariableDeclarationInMain() const
         case Type::FragmentIn:
         case Type::UserUniforms:
         case Type::AngleUniforms:
+        case Type::UniformBuffer:
             return false;
 
         case Type::VertexOut:
@@ -418,6 +441,7 @@ bool Pipeline::isPipelineOut() const
         case Type::InvocationFragmentGlobals:
         case Type::Texture:
         case Type::InstanceId:
+        case Type::UniformBuffer:
             return false;
 
         case Type::VertexOut:
@@ -443,11 +467,12 @@ AddressSpace Pipeline::externalAddressSpace() const
 
         case Type::UserUniforms:
         case Type::AngleUniforms:
+        case Type::UniformBuffer:
             return AddressSpace::Constant;
     }
 }
 
-bool PipelineStructs::matches(const TStructure *s, bool internal, bool external) const
+bool PipelineStructs::matches(const TStructure &s, bool internal, bool external) const
 {
     PipelineScoped<TStructure> ps[] = {
         fragmentIn,
@@ -455,20 +480,21 @@ bool PipelineStructs::matches(const TStructure *s, bool internal, bool external)
         vertexIn,
         vertexOut,
         userUniforms,
-        angleUniforms,
+        /* angleUniforms, */
         nonConstantGlobals,
         invocationVertexGlobals,
         invocationFragmentGlobals,
+        uniformBuffers,
         texture,
         instanceId,
     };
     for (const auto &p : ps)
     {
-        if (internal && p.internal == s)
+        if (internal && p.internal == &s)
         {
             return true;
         }
-        if (external && p.external == s)
+        if (external && p.external == &s)
         {
             return true;
         }

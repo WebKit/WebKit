@@ -168,14 +168,6 @@ enum MediaPlayerAVFoundationObservationContext {
     MediaPlayerAVFoundationObservationContextAVPlayerLayer,
 };
 
-static void ensureOnMainThread(Function<void()>&& f)
-{
-    if (isMainThread())
-        f();
-    else
-        callOnMainThread(WTFMove(f));
-}
-
 @interface WebCoreAVFMovieObserver : NSObject <AVPlayerItemLegibleOutputPushDelegate, AVPlayerItemMetadataOutputPushDelegate, AVPlayerItemMetadataCollectorPushDelegate>
 {
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
@@ -301,7 +293,7 @@ private:
         return MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCodecs(parameters);
     }
 
-    HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String& path) const final
+    HashSet<SecurityOriginData> originsInMediaCache(const String& path) const final
     {
         return MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(path);
     }
@@ -311,7 +303,7 @@ private:
         return MediaPlayerPrivateAVFoundationObjC::clearMediaCache(path, modifiedSince);
     }
 
-    void clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins) const final
+    void clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins) const final
     {
         return MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(path, origins);
     }
@@ -362,9 +354,9 @@ static AVAssetCache *ensureAssetCacheExistsForPath(const String& path)
     return assetCacheForPath(path);
 }
 
-HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(const String& path)
+HashSet<SecurityOriginData> MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(const String& path)
 {
-    HashSet<RefPtr<SecurityOrigin>> origins;
+    HashSet<SecurityOriginData> origins;
     AVAssetCache* assetCache = assetCacheForPath(path);
     if (!assetCache)
         return origins;
@@ -372,7 +364,7 @@ HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateAVFoundationObjC::originsInMed
     for (NSString *key in [assetCache allKeys]) {
         URL keyAsURL = URL(URL(), key);
         if (keyAsURL.isValid())
-            origins.add(SecurityOrigin::create(keyAsURL));
+            origins.add(SecurityOriginData::fromURL(keyAsURL));
     }
     return origins;
 }
@@ -427,7 +419,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, Wal
         [fileManager removeItemAtURL:fileURL error:nil];
 }
 
-void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
+void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins)
 {
     AVAssetCache* assetCache = assetCacheForPath(path);
     if (!assetCache)
@@ -436,7 +428,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
     for (NSString *key in [assetCache allKeys]) {
         URL keyAsURL = URL(URL(), key);
         if (keyAsURL.isValid()) {
-            if (origins.contains(SecurityOrigin::create(keyAsURL)))
+            if (origins.contains(SecurityOriginData::fromURL(keyAsURL)))
                 [assetCache removeEntryForKey:key];
         }
     }
@@ -1444,7 +1436,6 @@ void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
 void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate)
 {
     setDelayCallbacks(true);
-    m_cachedRate = rate;
 
     [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_cachedRate)];
 
@@ -2050,7 +2041,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateRotationSession()
         && m_imageRotationSession->size() == naturalSize)
         return;
 
-    m_imageRotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(finalTransform), naturalSize, kCVPixelFormatType_32BGRA, ImageRotationSessionVT::IsCGImageCompatible::Yes);
+    m_imageRotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(finalTransform), naturalSize, ImageRotationSessionVT::IsCGImageCompatible::Yes);
 }
 
 template <typename RefT, typename PassRefT>
@@ -2402,7 +2393,7 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::pixelBufferForCu
 
 RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()
 {
-    updateLastImage();
+    updateLastImage(UpdateType::UpdateSynchronously);
     return m_lastImage;
 }
 
@@ -3257,8 +3248,10 @@ void MediaPlayerPrivateAVFoundationObjC::durationDidChange(const MediaTime& dura
 
 void MediaPlayerPrivateAVFoundationObjC::rateDidChange(double rate)
 {
-    m_cachedRate = rate;
+    if (m_cachedRate == rate)
+        return;
 
+    m_cachedRate = rate;
     updateStates();
     rateChanged();
 }

@@ -1,0 +1,8 @@
+PASS windowScrollEventCount is 0
+PASS overflowScrollEventCount is 0
+PASS windowScrollEventCount is 0
+PASS overflowScrollEventCount >= expectedMinOverflowScrollEventCount is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

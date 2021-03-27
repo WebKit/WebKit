@@ -35,9 +35,9 @@
 #include "AudioParam.h"
 #include "AudioUtilities.h"
 #include "FloatConversion.h"
-#include "PannerNode.h"
 #include "ScriptExecutionContext.h"
 #include "WebKitAudioBufferSourceNode.h"
+#include "WebKitAudioPannerNode.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -538,8 +538,8 @@ void AudioBufferSourceNode::adjustGrainParameters()
 double AudioBufferSourceNode::totalPitchRate()
 {
     double dopplerRate = 1.0;
-    if (m_pannerNode)
-        dopplerRate = m_pannerNode->dopplerRate();
+    if (m_legacyPannerNode)
+        dopplerRate = m_legacyPannerNode->dopplerRate();
     
     // Incorporate buffer's sample-rate versus AudioContext's sample-rate.
     // Normally it's not an issue because buffers are loaded at the AudioContext's sample-rate, but we can handle it in any case.
@@ -567,21 +567,21 @@ bool AudioBufferSourceNode::propagatesSilence() const
     return !isPlayingOrScheduled() || hasFinished() || !m_buffer;
 }
 
-void AudioBufferSourceNode::setPannerNode(PannerNodeBase* pannerNode)
+void AudioBufferSourceNode::setPannerNode(WebKitAudioPannerNode* pannerNode)
 {
-    if (m_pannerNode != pannerNode && !hasFinished())
-        m_pannerNode = pannerNode;
+    if (m_legacyPannerNode != pannerNode && !hasFinished())
+        m_legacyPannerNode = pannerNode;
 }
 
 void AudioBufferSourceNode::clearPannerNode()
 {
-    m_pannerNode = nullptr;
+    m_legacyPannerNode = nullptr;
 }
 
 void AudioBufferSourceNode::finish()
 {
     clearPannerNode();
-    ASSERT(!m_pannerNode);
+    ASSERT(!m_legacyPannerNode);
     AudioScheduledSourceNode::finish();
 }
 

@@ -1,4 +1,6 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS basic with click()
 PASS basic with dispatchEvent()
 PASS basic with wrong event class
@@ -22,6 +24,10 @@ PASS disabled checkbox should get legacy-canceled-activation behavior
 PASS disabled radio should get legacy-canceled-activation behavior
 PASS disabled checkbox should get legacy-canceled-activation behavior 2
 PASS disabled radio should get legacy-canceled-activation behavior 2
+TIMEOUT disabling checkbox in onclick listener shouldn't suppress oninput Test timed out
+TIMEOUT disabling checkbox in onclick listener shouldn't suppress onchange Test timed out
+TIMEOUT disabling radio in onclick listener shouldn't suppress oninput Test timed out
+TIMEOUT disabling radio in onclick listener shouldn't suppress onchange Test timed out
 PASS disconnected form should not submit
 PASS disabled submit button should not activate
 PASS submit button should not activate if the event listener disables it

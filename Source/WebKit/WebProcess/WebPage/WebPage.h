@@ -324,7 +324,7 @@ class VisibleContentRectUpdateInfo;
 using SnapshotOptions = uint32_t;
 using WKEventModifiers = uint32_t;
 
-class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeWeakPtr<WebPage> {
+class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
     static Ref<WebPage> create(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -481,7 +481,7 @@ public:
     void setActiveOpenPanelResultListener(Ref<WebOpenPanelResultListener>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // -- InjectedBundle methods
 #if ENABLE(CONTEXT_MENUS)
@@ -628,8 +628,6 @@ public:
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);
-
-    void didUpdateRendering();
     
     void setUseSystemAppearance(bool);
 
@@ -1382,9 +1380,9 @@ public:
     void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool)>&&);
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #if PLATFORM(WIN)
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
@@ -1440,7 +1438,7 @@ private:
     void sendTouchBarMenuItemDataRemovedUpdate(WebCore::HTMLMenuItemElement&);
 #endif
 
-    void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
+    bool didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
 #if PLATFORM(IOS_FAMILY)
     void updateViewportSizeForCSSViewportUnits();
@@ -2143,9 +2141,6 @@ private:
     CompletionHandler<void(InteractionInformationAtPosition&&)> m_pendingSynchronousPositionInformationReply;
     Optional<std::pair<TransactionID, double>> m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
 #endif
-#if PLATFORM(MAC)
-    bool m_didUpdateRenderingAfterCommittingLoad { false };
-#endif
 
     WebCore::Timer m_layerVolatilityTimer;
     Vector<CompletionHandler<void(bool)>> m_markLayersAsVolatileCompletionHandlers;
@@ -2176,6 +2171,7 @@ private:
 
     enum class EditorStateIsContentEditable { No, Yes, Unset };
     mutable EditorStateIsContentEditable m_lastEditorStateWasContentEditable { EditorStateIsContentEditable::Unset };
+    mutable TransactionID m_lastEditorStateTransactionID;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     Optional<InputMethodState> m_inputMethodState;

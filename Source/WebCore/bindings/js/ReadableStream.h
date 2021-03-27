@@ -84,6 +84,11 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject*, JSC::JSGlobalObject*, ReadableStr
     return stream ? stream->readableStream() : JSC::jsUndefined();
 }
 
+inline JSC::JSValue toJS(JSC::JSGlobalObject*, JSC::JSGlobalObject*, ReadableStream& stream)
+{
+    return stream.readableStream();
+}
+
 inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<ReadableStream>&& stream)
 {
     return stream->readableStream();

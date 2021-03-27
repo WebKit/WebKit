@@ -34,6 +34,7 @@
 #import "WebKit2Initialize.h"
 #import "WebPageProxy.h"
 #import "_WKUserContentWorldInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKUserStyleSheet
@@ -63,6 +64,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKUserStyleSheet.class, self))
+        return;
+
     _userStyleSheet->~UserStyleSheet();
 
     [super dealloc];

@@ -41,7 +41,7 @@ function runNextScriptTest()
     var url = test.src + "?source=module-propagate&testId=" + (counter++);
     script.onload = () => test.onload(url);
     script.onerror = () => test.onerror(url);
-    script.src = "./resources/module-nest-import.php?url=" + encodeURIComponent(url);
+    script.src = "./resources/module-nest-import.py?url=" + encodeURIComponent(url);
     document.getElementById("test-container").appendChild(script);
 }
 
@@ -54,117 +54,117 @@ const DidNotLoadScript = "did not load script";
 
 var scriptTests = [
 {
-    src: "./cookie-protected-script.php",
+    src: "./cookie-protected-script.py",
     onload: (url) => pass(url, DidLoadScript),
     onerror: (url) => fail(url, DidNotLoadScript),
 },
 {
-    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.php",
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
     onload: (url) => pass(url, DidLoadScript),
     onerror: (url) => fail(url, DidNotLoadScript),
 },
 {
-    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.php",
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
 },
 {
-    src: "http://localhost:8000/security/resources/cookie-protected-script.php",
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
 },
 {
-    src: "./cookie-protected-script.php",
-    onload: (url) => pass(url, DidLoadScript),
-    onerror: (url) => fail(url, DidNotLoadScript),
-    crossOrigin: "",
-},
-{
-    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.php",
+    src: "./cookie-protected-script.py",
     onload: (url) => pass(url, DidLoadScript),
     onerror: (url) => fail(url, DidNotLoadScript),
     crossOrigin: "",
 },
 {
-    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.php",
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
+    onload: (url) => pass(url, DidLoadScript),
+    onerror: (url) => fail(url, DidNotLoadScript),
+    crossOrigin: "",
+},
+{
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "",
 },
 {
-    src: "http://localhost:8000/security/resources/cookie-protected-script.php",
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "",
 },
 {
-    src: "./cookie-protected-script.php",
+    src: "./cookie-protected-script.py",
     onload: (url) => pass(url, DidLoadScript),
     onerror: (url) => fail(url, DidNotLoadScript),
     crossOrigin: "anonymous",
 },
 {
-    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.php",
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
     onload: (url) => pass(url, DidLoadScript),
     onerror: (url) => fail(url, DidNotLoadScript),
     crossOrigin: "anonymous",
 },
 {
-    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.php",
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "anonymous",
 },
 {
-    src: "http://localhost:8000/security/resources/cookie-protected-script.php",
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "anonymous",
 },
 {
-    src: "./cookie-protected-script.php",
+    src: "./cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "omit",
 },
 {
-    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.php",
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "omit",
 },
 {
-    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.php",
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "omit",
 },
 {
-    src: "http://localhost:8000/security/resources/cookie-protected-script.php",
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "omit",
 },
 {
-    src: "./cookie-protected-script.php",
+    src: "./cookie-protected-script.py",
     onload: (url) => pass(url, DidLoadScript),
     onerror: (url) => fail(url, DidNotLoadScript),
     crossOrigin: "use-credentials",
 },
 {
-    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.php",
+    src: "http://127.0.0.1:8000/security/resources/cookie-protected-script.py",
     onload: (url) => pass(url, DidLoadScript),
     onerror: (url) => fail(url, DidNotLoadScript),
     crossOrigin: "use-credentials",
 },
 {
-    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.php",
+    src: "https://127.0.0.1:8443/security/resources/cookie-protected-script.py",
     onload: (url) => pass(url, DidLoadScript),
     onerror: (url) => fail(url, DidNotLoadScript),
     crossOrigin: "use-credentials",
 },
 {
-    src: "http://localhost:8000/security/resources/cookie-protected-script.php",
+    src: "http://localhost:8000/security/resources/cookie-protected-script.py",
     onload: (url) => fail(url, DidLoadScript),
     onerror: (url) => pass(url, DidNotLoadScript),
     crossOrigin: "use-credentials",

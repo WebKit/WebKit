@@ -388,8 +388,6 @@ for this property.
 - (void)_didEnableBrowserExtensions:(NSDictionary<NSString *, NSString *> *)extensionIDToNameMap WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_didDisableBrowserExtensions:(NSSet<NSString *> *)extensionIDs WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-@property (nonatomic, setter=_setHasBlankOverlay:) BOOL _hasBlankOverlay WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 @property (nonatomic, weak, setter=_setAppHighlightDelegate:) id <_WKAppHighlightDelegate> _appHighlightDelegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_restoreAppHighlights:(NSArray<NSData *> *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_addAppHighlight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
@@ -415,41 +413,18 @@ for this property.
 @property (nonatomic, readonly) NSColor *_pageExtendedBackgroundColor;
 #endif
 
-/*! @abstract Sets the webpage contents from the passed data as if it was the
- response to the supplied request. The request is never actually sent to the
- supplied URL, though loads of resources defined in the NSData object would
- be performed.
- @param request The request specifying the base URL and other loading details
- to be used while interpreting the supplied data object.
- @param response A response that is used to interpret the supplied data object.
- @param data The data to use as the contents of the webpage.
- @result A new navigation.
-*/
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/*! @abstract Navigates to the requested file URL on the filesystem.
- @param request The request specifying the file URL to which to navigate.
- @param readAccessURL The URL to allow read access to.
- @discussion If readAccessURL references a single file, only that file may be
- loaded by WebKit.
- If readAccessURL references a directory, files inside that file may be loaded by WebKit.
- @result A new navigation for the given file URL.
-*/
-- (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/*! @abstract Sets the webpage contents from the passed HTML string as if it was
- the response to the supplied request. The request is never actually sent to the
- supplied URL, though loads of resources defined in the HTML string would be
- performed.
- @param request The request specifying the base URL and other loading details
- to be used while interpreting the supplied data object.
- @param string The data to use as the contents of the webpage.
- @result A new navigation.
-*/
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 - (void)_grantAccessToAssetServices WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(14.0));
 - (void)_revokeAccessToAssetServices WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(14.0));
+
+/*! @abstract If the WKWebView was created with _shouldAllowUserInstalledFonts = NO,
+ the web process will automatically use an in-process font registry, and its sandbox
+ will be restricted to forbid access to fontd. Otherwise, the web process will use
+ fontd to look up fonts instead of using the in-process registry, and the web
+ process's sandbox will automatically be extended to allow access to fontd. This
+ method represents a one-time, web-process-wide switch from using the in-process
+ font registry to using fontd, including granting the relevant sandbox extension.
+*/
+- (void)_switchFromStaticFontRegistryToUserFontRegistry WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 @end
 

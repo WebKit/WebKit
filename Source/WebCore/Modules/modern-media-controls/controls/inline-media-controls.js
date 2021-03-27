@@ -126,10 +126,6 @@ class InlineMediaControls extends MediaControls
         if (!this.bottomControlsBar)
             return;
 
-        // Ensure the tracks panel is a child if it were presented.
-        if (this.tracksPanel.presented)
-            children.push(this.tracksPanel);
-
         // Update the top left controls bar.
         this._topLeftControlsBarContainer.children = this._topLeftContainerButtons();
         this._topLeftControlsBarContainer.layout();
@@ -262,7 +258,7 @@ class InlineMediaControls extends MediaControls
             return [this.muteButton, this.airplayButton, this.overflowButton];
 
         if (this._shouldUseSingleBarLayout)
-            return [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.overflowButton, this.fullscreenButton];
+            return [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton, this.overflowButton];
 
         const buttons = [];
         if (this.preferredMuteButtonStyle === Button.Styles.Bar)
@@ -274,11 +270,12 @@ class InlineMediaControls extends MediaControls
     _droppableButtons()
     {
         if (this._shouldUseSingleBarLayout)
-            return [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton, this.overflowButton, this.pipButton, this.fullscreenButton, this.muteButton];
+            return [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton, this.pipButton, this.muteButton, this.fullscreenButton, this.overflowButton];
 
-        const buttons = [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton, this.overflowButton];
+        const buttons = [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton];
         if (this.preferredMuteButtonStyle === Button.Styles.Bar)
             buttons.push(this.muteButton);
+        buttons.push(this.overflowButton);
         return buttons;
     }
 

@@ -34,6 +34,9 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
+#include "JSEventTarget.h"
+#include "JSHTMLModelElement.h"
+#include "Model.h"
 #include "RenderModel.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
@@ -67,6 +70,14 @@ RefPtr<SharedBuffer> HTMLModelElement::modelData() const
         return nullptr;
 
     return m_data;
+}
+
+RefPtr<Model> HTMLModelElement::model() const
+{
+    if (!m_dataComplete)
+        return nullptr;
+    
+    return m_model;
 }
 
 void HTMLModelElement::sourcesChanged()
@@ -180,6 +191,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     }
 
     m_dataComplete = true;
+    m_model = Model::create(*m_data);
 
     invalidateResourceHandleAndUpdateRenderer();
 

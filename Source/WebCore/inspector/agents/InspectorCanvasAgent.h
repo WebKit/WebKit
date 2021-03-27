@@ -91,9 +91,9 @@ public:
 #endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
     // CanvasObserver
-    void canvasChanged(CanvasBase&, const FloatRect&);
-    void canvasResized(CanvasBase&) { }
-    void canvasDestroyed(CanvasBase&);
+    void canvasChanged(CanvasBase&, const Optional<FloatRect>&) final;
+    void canvasResized(CanvasBase&) final { }
+    void canvasDestroyed(CanvasBase&) final;
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);

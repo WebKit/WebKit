@@ -146,6 +146,7 @@ public:
     using HTMLElement::weakPtrFactory;
 
     RefPtr<MediaPlayer> player() const { return m_player; }
+    bool supportsAcceleratedRendering() const { return m_cachedSupportsAcceleratedRendering; }
 
     virtual bool isVideo() const { return false; }
     bool hasVideo() const override { return false; }
@@ -452,9 +453,9 @@ public:
     // Media cache management.
     WEBCORE_EXPORT static void setMediaCacheDirectory(const String&);
     WEBCORE_EXPORT static const String& mediaCacheDirectory();
-    WEBCORE_EXPORT static HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String&);
+    WEBCORE_EXPORT static HashSet<SecurityOriginData> originsInMediaCache(const String&);
     WEBCORE_EXPORT static void clearMediaCache(const String&, WallTime modifiedSince = { });
-    WEBCORE_EXPORT static void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&);
+    WEBCORE_EXPORT static void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&);
     static void resetMediaEngines();
 
     bool isPlaying() const { return m_playing; }
@@ -1017,6 +1018,7 @@ private:
 #endif
 
     RefPtr<MediaPlayer> m_player;
+    bool m_cachedSupportsAcceleratedRendering { false };
 
     MediaPlayer::Preload m_preload { Preload::Auto };
 
@@ -1173,6 +1175,7 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
+    MonotonicTime m_currentPlaybackTargetIsWirelessEventFiredTime;
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     bool m_failedToPlayToWirelessTarget { false };
 #endif

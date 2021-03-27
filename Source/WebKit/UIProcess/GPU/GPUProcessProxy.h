@@ -41,6 +41,10 @@
 #include "LayerHostingContext.h"
 #endif
 
+#if PLATFORM(MAC)
+#include <CoreGraphics/CGDisplayConfiguration.h>
+#endif
+
 namespace WebCore {
 struct MockMediaDevice;
 }
@@ -52,7 +56,7 @@ class WebsiteDataStore;
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
 
-class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<GPUProcessProxy>, public RefCounted<GPUProcessProxy> {
+class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public RefCounted<GPUProcessProxy> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
     friend LazyNeverDestroyed<GPUProcessProxy>;
@@ -82,6 +86,12 @@ public:
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID contextIDForVisibilityPropagation() const;
 #endif
+
+#if PLATFORM(MAC)
+    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
+#endif
+
+    void updatePreferences();
 
 private:
     explicit GPUProcessProxy();

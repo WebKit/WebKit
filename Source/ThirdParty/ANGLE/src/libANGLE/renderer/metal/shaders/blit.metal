@@ -32,12 +32,10 @@ struct BlitParams
     float2 srcTexCoords[3];
     int srcLevel;  // Source texture level.
     int srcLayer;  // Source texture layer.
-    int srcLevel2;  // Source texture level.
-    int srcLayer2;  // Source texture layer.
     bool dstFlipViewportX;
     bool dstFlipViewportY;
     bool dstLuminance;  // destination texture is luminance. Unused by depth & stencil blitting.
-    uint8_t padding[9];
+    uint8_t padding[13];
 };
 
 struct BlitVSOut

@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class Document;
 class MediaMetadata;
 class Navigator;
 
@@ -60,6 +61,8 @@ public:
     ExceptionOr<void> setPositionState(Optional<MediaPositionState>&&);
     WEBCORE_EXPORT Optional<double> currentPosition() const;
 
+    Document* document() const;
+    
     void metadataUpdated();
 
     void actionHandlersUpdated();

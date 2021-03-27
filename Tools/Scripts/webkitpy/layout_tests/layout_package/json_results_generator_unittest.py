@@ -40,10 +40,6 @@ from webkitpy.thirdparty.mock import Mock
 
 class JSONGeneratorTest(unittest.TestCase):
     def setUp(self):
-        self.builder_name = 'DUMMY_BUILDER_NAME'
-        self.build_name = 'DUMMY_BUILD_NAME'
-        self.build_number = 'DUMMY_BUILDER_NUMBER'
-
         # For archived results.
         self._json = None
         self._num_runs = 0
@@ -91,8 +87,7 @@ class JSONGeneratorTest(unittest.TestCase):
         host = MockHost()
         port = Mock()
         port._filesystem = host.filesystem
-        generator = json_results_generator.JSONResultsGenerator(port,
-            self.builder_name, self.build_name, self.build_number, '', test_results_map)
+        generator = json_results_generator.JSONResultsGenerator(port, '', test_results_map)
 
         failed_count_map = dict([(t, 1) for t in failed_tests])
 
@@ -120,14 +115,9 @@ class JSONGeneratorTest(unittest.TestCase):
         # Aliasing to a short name for better access to its constants.
         JRG = json_results_generator.JSONResultsGenerator
 
-        self.assertIn(JRG.VERSION_KEY, json)
-        self.assertIn(self.builder_name, json)
-
-        buildinfo = json[self.builder_name]
+        buildinfo = json['results']
         self.assertIn(JRG.FIXABLE, buildinfo)
         self.assertIn(JRG.TESTS, buildinfo)
-        self.assertEqual(len(buildinfo[JRG.BUILD_NUMBERS]), num_runs)
-        self.assertEqual(buildinfo[JRG.BUILD_NUMBERS][0], self.build_number)
 
         if tests_set or DISABLED_count:
             fixable = {}

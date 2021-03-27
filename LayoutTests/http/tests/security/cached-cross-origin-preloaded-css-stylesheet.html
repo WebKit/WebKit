@@ -16,10 +16,10 @@ function preloaded()
         doTests();
 }
 </script>
-<link rel=preload onload="preloaded()" onerror="errorPreload(1)" as=style href="http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials">
-<link rel=preload onload="preloaded()" onerror="errorPreload(2)" as=style href="http://localhost:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials">
-<link rel=preload onload="preloaded()" onerror="errorPreload(3)" as=style crossorigin=use-credentials href="http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials">
-<link rel=preload onerror="preloaded()" onload="errorPreload(4)" as=style crossorigin=use-credentials href="http://localhost:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials">
+<link rel=preload onload="preloaded()" onerror="errorPreload(1)" as=style href="http://localhost:8000/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials">
+<link rel=preload onload="preloaded()" onerror="errorPreload(2)" as=style href="http://localhost:8080/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials">
+<link rel=preload onload="preloaded()" onerror="errorPreload(3)" as=style crossorigin=use-credentials href="http://localhost:8000/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials">
+<link rel=preload onerror="preloaded()" onload="errorPreload(4)" as=style crossorigin=use-credentials href="http://localhost:8080/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials">
 <div id ="log"></div>
 <script>
 if (window.testRunner) {
@@ -70,10 +70,10 @@ function createLinkElement(url, isCORS, expectSuccess)
 
 function doTests()
 {
-    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", true, false));
-    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", false, true));
-    document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials", true, true));
-    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials", true, true));
-    document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials", false, true));
+    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", true, false));
+    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", false, true));
+    document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials", true, true));
+    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials", true, true));
+    document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.py?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials", false, true));
 }
 </script>

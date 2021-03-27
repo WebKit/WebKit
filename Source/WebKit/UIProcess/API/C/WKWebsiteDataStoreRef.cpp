@@ -838,6 +838,14 @@ void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* cont
     });
 }
 
+void WKWebsiteDataStoreSetQuotaLoggingEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetQuotaLoggingEnabledCallback callback)
+{
+    WebKit::toImpl(dataStoreRef)->setQuotaLoggingEnabled(enabled, [context, callback] {
+        if (callback)
+            callback(context);
+    });
+}
+
 void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAppBoundSessionFunction completionHandler)
 {
 #if ENABLE(APP_BOUND_DOMAINS)

@@ -45,6 +45,7 @@
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -144,6 +145,12 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if ENABLE(MEDIA_STREAM)
     setMockCaptureDevicesEnabled(parameters.useMockCaptureDevices);
     SandboxExtension::consumePermanently(parameters.cameraSandboxExtensionHandle);
+#if HAVE(AUDIT_TOKEN)
+    SandboxExtension::consumePermanently(parameters.appleCameraServicePathSandboxExtensionHandle);
+#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+    SandboxExtension::consumePermanently(parameters.additionalAppleCameraServicePathSandboxExtensionHandle);
+#endif
+#endif // HAVE(AUDIT_TOKEN)
     SandboxExtension::consumePermanently(parameters.microphoneSandboxExtensionHandle);
 #if PLATFORM(IOS)
     SandboxExtension::consumePermanently(parameters.tccSandboxExtensionHandle);
@@ -253,6 +260,14 @@ void GPUProcess::resetMockMediaDevices()
 }
 #endif
 
+#if PLATFORM(MAC)
+void GPUProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+{
+    for (auto& connection : m_webProcessConnections.values())
+        connection->displayConfigurationChanged(displayID, flags);
+}
+#endif
+
 void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameters&& parameters)
 {
     ASSERT(!m_sessions.contains(sessionID));
@@ -350,6 +365,46 @@ void GPUProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnabl
         WebCore::registerWebKitVP9Decoder();
 #endif
     }
+}
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+void GPUProcess::setWebMParserEnabled(bool enabled)
+{
+    if (m_webMParserEnabled == enabled)
+        return;
+    m_webMParserEnabled = enabled;
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setWebMParserEnabled(m_webMParserEnabled);
+}
+#endif
+
+#if ENABLE(WEBM_FORMAT_READER)
+void GPUProcess::setWebMFormatReaderEnabled(bool enabled)
+{
+    if (m_webMFormatReaderEnabled == enabled)
+        return;
+    m_webMFormatReaderEnabled = enabled;
+    PlatformMediaSessionManager::setWebMFormatReaderEnabled(m_webMParserEnabled);
+}
+#endif
+
+#if ENABLE(OPUS)
+void GPUProcess::setOpusDecoderEnabled(bool enabled)
+{
+    if (m_opusEnabled == enabled)
+        return;
+    m_opusEnabled = enabled;
+    PlatformMediaSessionManager::setOpusDecoderEnabled(m_opusEnabled);
+}
+#endif
+
+#if ENABLE(VORBIS)
+void GPUProcess::setVorbisDecoderEnabled(bool enabled)
+{
+    if (m_vorbisEnabled == enabled)
+        return;
+    m_vorbisEnabled = enabled;
+    PlatformMediaSessionManager::setVorbisDecoderEnabled(m_vorbisEnabled);
 }
 #endif
 

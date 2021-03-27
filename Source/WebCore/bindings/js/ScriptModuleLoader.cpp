@@ -45,6 +45,7 @@
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerScriptFetcher.h"
 #include "WorkerScriptLoader.h"
+#include "WorkletGlobalScope.h"
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/JSModuleRecord.h>
@@ -53,6 +54,10 @@
 #include <JavaScriptCore/JSSourceCode.h>
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/Symbol.h>
+
+#if ENABLE(SERVICE_WORKER)
+#include "ServiceWorkerGlobalScope.h"
+#endif
 
 namespace WebCore {
 
@@ -258,10 +263,26 @@ static JSC::JSInternalPromise* rejectPromise(JSDOMGlobalObject& globalObject, Ex
     return jsPromise;
 }
 
+static bool isWorkletOrServiceWorker(ScriptExecutionContext& context)
+{
+    if (is<WorkletGlobalScope>(context))
+        return true;
+#if ENABLE(SERVICE_WORKER)
+    if (is<ServiceWorkerGlobalScope>(context))
+        return true;
+#endif
+    return false;
+}
+
 JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)
 {
     JSC::VM& vm = jsGlobalObject->vm();
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
+
+    // https://html.spec.whatwg.org/multipage/webappapis.html#hostimportmoduledynamically(referencingscriptormodule,-specifier,-promisecapability)
+    // If settings object's global object implements WorkletGlobalScope or ServiceWorkerGlobalScope, then:
+    if (isWorkletOrServiceWorker(m_context))
+        return rejectPromise(globalObject, TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_s);
 
     // If SourceOrigin and/or CachedScriptFetcher is null, we import the module with the default fetcher.
     // SourceOrigin can be null if the source code is not coupled with the script file.

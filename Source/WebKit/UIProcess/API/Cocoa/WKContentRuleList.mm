@@ -27,11 +27,15 @@
 #import "WKContentRuleListInternal.h"
 
 #import "WebCompiledContentRuleList.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKContentRuleList
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContentRuleList.class, self))
+        return;
+
     _contentRuleList->~ContentRuleList();
 
     [super dealloc];

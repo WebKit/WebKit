@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include "TransactionID.h"
 #include <WebCore/Color.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/IntRect.h>
@@ -69,6 +70,7 @@ enum ListType {
 };
 
 struct EditorState {
+    TransactionID transactionID;
     String originIdentifierForPasteboard;
     bool shouldIgnoreSelectionChanges { false };
     bool selectionIsNone { true }; // This will be false when there is a caret selection.

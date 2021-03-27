@@ -834,6 +834,21 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const Re
     setBlendingKeyframes(keyframeList);
 }
 
+const HashSet<CSSPropertyID>& KeyframeEffect::animatedProperties()
+{
+    if (!m_blendingKeyframes.isEmpty())
+        return m_blendingKeyframes.properties();
+
+    if (m_animatedProperties.isEmpty()) {
+        for (auto& keyframe : m_parsedKeyframes) {
+            for (auto keyframeProperty : keyframe.unparsedStyle.keys())
+                m_animatedProperties.add(keyframeProperty);
+        }
+    }
+
+    return m_animatedProperties;
+}
+
 bool KeyframeEffect::animatesProperty(CSSPropertyID property) const
 {
     if (!m_blendingKeyframes.isEmpty())
@@ -876,6 +891,7 @@ void KeyframeEffect::clearBlendingKeyframes()
 void KeyframeEffect::setBlendingKeyframes(KeyframeList& blendingKeyframes)
 {
     m_blendingKeyframes = WTFMove(blendingKeyframes);
+    m_animatedProperties.clear();
 
     computedNeedsForcedLayout();
     computeStackingContextImpact();

@@ -65,7 +65,7 @@ class MacOSFullscreenMediaControls extends MediaControls
         });
 
         this._rightContainer = new ButtonsContainer({
-            children: [this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton],
+            children: [this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton, this.overflowButton],
             cssClassName: "right",
             leftMargin: 12,
             rightMargin: 12

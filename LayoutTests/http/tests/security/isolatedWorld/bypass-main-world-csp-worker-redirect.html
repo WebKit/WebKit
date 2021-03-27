@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'; child-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php">
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'; child-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py">
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
@@ -24,7 +24,7 @@ function runTest()
 {
     var worker;
     try {
-        worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js");
+        worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py?url=http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js");
         worker.onerror = function () {
             window.postMessage("PASS worker failed to load script URL.", "*");
         }

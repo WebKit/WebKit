@@ -1,3 +1,1022 @@
+2021-03-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Error#cause should apply to WebAssembly error constructors too
+        https://bugs.webkit.org/show_bug.cgi?id=223404
+
+        Reviewed by Yusuke Suzuki.
+
+        Per https://www.w3.org/TR/wasm-js-api-1/#error-objects:
+        > The constructor and properties of WebAssembly errors is as specified for NativeError.
+
+        So Error#cause should "just work" for WebAssembly.{CompileError, LinkError, RuntimeError} too.
+
+        In the process:
+         - Eliminate JSWebAssemblyCompileError and kin since they add no functionality on top of ErrorInstance.
+         - Add an on-by-default feature flag (belated from the last patch).
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeError):
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObject.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructImpl):
+        (JSC::NativeErrorConstructor<errorType>::callImpl):
+        * runtime/OptionsList.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::createJSWebAssemblyCompileError):
+        (JSC::JSWebAssemblyCompileError::create): Deleted.
+        (JSC::JSWebAssemblyCompileError::JSWebAssemblyCompileError): Deleted.
+        * wasm/js/JSWebAssemblyCompileError.h:
+        (): Deleted.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::createJSWebAssemblyLinkError):
+        (JSC::JSWebAssemblyLinkError::create): Deleted.
+        (JSC::JSWebAssemblyLinkError::JSWebAssemblyLinkError): Deleted.
+        * wasm/js/JSWebAssemblyLinkError.h:
+        (): Deleted.
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::createJSWebAssemblyRuntimeError):
+        (JSC::JSWebAssemblyRuntimeError::create): Deleted.
+        (JSC::JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError): Deleted.
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        (): Deleted.
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-03-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        modern-media-controls script should not be allocated in heap
+        https://bugs.webkit.org/show_bug.cgi?id=223309
+
+        Reviewed by Devin Rousso.
+
+        Add --fail-if-non-ascii flag to ensure that input files do not include non-ASCII characters.
+
+        * Scripts/make-js-file-arrays.py:
+        (main):
+
+2021-03-17  Saam Barati  <sbarati@apple.com>
+
+        Determine if we have useFastJITPermissions on arm64e at runtime instead of hardcoding it as always enabled
+        https://bugs.webkit.org/show_bug.cgi?id=223388
+        <rdar://74819266>
+
+        Reviewed by Mark Lam.
+
+        * assembler/FastJITPermissions.h:
+        (threadSelfRestrictRWXToRW):
+        (threadSelfRestrictRWXToRX):
+        (useFastJITPermissions): Deleted.
+        (fastJITPermissionsIsSupported): Deleted.
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * runtime/JSCConfig.h:
+
+2021-03-17  Mark Lam  <mark.lam@apple.com>
+
+        Enhance --verboseVerifyGC=true to make it easier to debug GC verifier errors.
+        https://bugs.webkit.org/show_bug.cgi?id=223401
+
+        Reviewed by Saam Barati.
+
+        Previously, --verboseVerifyGC=true only dumps the stack trace of the immediate code
+        path (in the verifier GC) that marked the object that the real GC did not.  With
+        this patch, we'll also dump the trace of the marking chain all the way back to a
+        GC root.  This patch also adds support for tracing the marking chain through opaque
+        roots.
+
+        The marking chain provided is the one that the verifier GC walked.  To debug the
+        error, we use this info and check where the real GC deviates.
+
+        Here's an example of the new dump of a GC verifier error:
+
+            GC Verifier: ERROR cell 0x12c570500 was not marked
+            Object: 0x12c570500 with butterfly 0x0 (Structure 0x108eb6d10:[0x3ba8, ArrayBuffer, {}, NonArray, Proto:0x108ed7d90, Leaf]), StructureID: 15272
+            Cell 0x12c570500 was visited via opaque root 0x10e4b52c0 at:
+                1   0x100acccdc JSC::VerifierSlotVisitor::appendUnbarriered(JSC::JSCell*)
+                2   0x100ad0c2f void JSC::WeakBlock::specializedVisit<JSC::MarkedBlock, JSC::AbstractSlotVisitor>(JSC::MarkedBlock&, JSC::AbstractSlotVisitor&)
+                3   0x100abec2b void JSC::MarkedSpace::visitWeakSets<JSC::AbstractSlotVisitor>(JSC::AbstractSlotVisitor&)
+                4   0x100aa5167 WTF::Detail::CallableWrapper<JSC::Heap::addCoreConstraints()::$_38, void, JSC::AbstractSlotVisitor&>::call(JSC::AbstractSlotVisitor&)
+                5   0x100ac1411 JSC::MarkingConstraintSet::executeAllSynchronously(JSC::AbstractSlotVisitor&)
+                6   0x100a9bd7b JSC::Heap::verifyGC()
+                7   0x100a9b2f7 JSC::Heap::runEndPhase(JSC::GCConductor)
+                8   0x100a99434 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                9   0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                10  0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                11  0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                12  0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                13  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                14  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                15  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                16  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                17  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                18  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                19  0x5e4a38a010c7
+                20  0x5e4a38a02095
+                21  0x1004888d6 vmEntryToJavaScript
+                22  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                23  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                24  0x100007606 jscmain(int, char**)
+                25  0x10000644b main
+
+            In the real GC, opaque root0x10e4b52c0 was NOT added to the heap's opaque roots.
+            Opaque root 0x10e4b52c0 was added via cell 0x12c577720 at:
+                1   0x100ea4fc9 JSC::JSArrayBufferView::visitChildren(JSC::JSCell*, JSC::AbstractSlotVisitor&)
+                2   0x100acd4e9 JSC::VerifierSlotVisitor::drain()
+                3   0x100a9bd48 JSC::Heap::verifyGC()
+                4   0x100a9b2f7 JSC::Heap::runEndPhase(JSC::GCConductor)
+                5   0x100a99434 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                6   0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                7   0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                8   0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                9   0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                10  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                11  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                12  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                13  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                14  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                15  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                16  0x5e4a38a010c7
+                17  0x5e4a38a02095
+                18  0x1004888d6 vmEntryToJavaScript
+                19  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                20  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                21  0x100007606 jscmain(int, char**)
+                22  0x10000644b main
+                23  0x7fff203b4f3d start
+
+            Object: 0x12c577720 with butterfly 0x0 (Structure 0x108eb6e60:[0xe135, DataView, {}, NonArray, Proto:0x108ed7da0, Leaf]), StructureID: 57653
+            Cell 0x12c577720 was visited via cell 0x108b528e8 at:
+                1   0x100acccdc JSC::VerifierSlotVisitor::appendUnbarriered(JSC::JSCell*)
+                2   0x100f1623c JSC::JSObject::visitChildren(JSC::JSCell*, JSC::AbstractSlotVisitor&)
+                3   0x100acd4e9 JSC::VerifierSlotVisitor::drain()
+                4   0x100a9bd48 JSC::Heap::verifyGC()
+                5   0x100a9b2f7 JSC::Heap::runEndPhase(JSC::GCConductor)
+                6   0x100a99434 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                7   0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                8   0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                9   0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                10  0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                11  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                12  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                13  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                14  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                15  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                16  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                17  0x5e4a38a010c7
+                18  0x5e4a38a02095
+                19  0x1004888d6 vmEntryToJavaScript
+                20  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                21  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                22  0x100007606 jscmain(int, char**)
+                23  0x10000644b main
+
+            Object: 0x108b528e8 with butterfly 0x1806e93070 (Structure 0x108efb090:[0xde87, Array, {}, ArrayWithContiguous, Proto:0x108baf5e8]), StructureID: 56967
+            Cell 0x108b528e8 was visited via cell 0x108e8fcc0 at:
+                1   0x100accdd8 JSC::VerifierSlotVisitor::appendUnbarriered(JSC::JSCell*)
+                2   0x10070634e void JSC::CodeBlock::stronglyVisitWeakReferences<JSC::AbstractSlotVisitor>(JSC::ConcurrentJSLocker const&, JSC::AbstractSlotVisitor&)
+                3   0x1006eacd7 JSC::CodeBlock::visitChildren(JSC::JSCell*, JSC::AbstractSlotVisitor&)
+                4   0x100acd4e9 JSC::VerifierSlotVisitor::drain()
+                5   0x100a9bd48 JSC::Heap::verifyGC()
+                6   0x100a9b2f7 JSC::Heap::runEndPhase(JSC::GCConductor)
+                7   0x100a99434 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                8   0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                9   0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                10  0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                11  0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                12  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                13  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                14  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                15  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                16  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                17  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                18  0x5e4a38a010c7
+                19  0x5e4a38a02095
+                20  0x1004888d6 vmEntryToJavaScript
+                21  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                22  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                23  0x100007606 jscmain(int, char**)
+                24  0x10000644b main
+
+            Cell: 0x108e8fcc0 (0x108ef8c40:[0xc0e7, ProgramCodeBlock, {}, NonArray, Leaf]), StructureID: 49383
+            Cell 0x108e8fcc0 was visited from scan of ConservativeScan roots at:
+                1   0x100accaf8 JSC::VerifierSlotVisitor::append(JSC::ConservativeRoots const&)
+                2   0x100aa42a2 WTF::Detail::CallableWrapper<JSC::Heap::addCoreConstraints()::$_31, void, JSC::SlotVisitor&>::call(JSC::SlotVisitor&)
+                3   0x100ac1db2 JSC::MarkingConstraintSolver::runExecutionThread(JSC::SlotVisitor&, JSC::MarkingConstraintSolver::SchedulerPreference, WTF::ScopedLambda<WTF::Optional<unsigned int> ()>)
+                4   0x100a9f2de JSC::Heap::runTaskInParallel(WTF::RefPtr<WTF::SharedTask<void (JSC::SlotVisitor&)>, WTF::RawPtrTraits<WTF::SharedTask<void (JSC::SlotVisitor&)> >, WTF::DefaultRefDerefTraits<WTF::SharedTask<void (JSC::SlotVisitor&)> > >)
+                5   0x100ac188f JSC::MarkingConstraintSolver::execute(JSC::MarkingConstraintSolver::SchedulerPreference, WTF::ScopedLambda<WTF::Optional<unsigned int> ()>)
+                6   0x100ac125c JSC::MarkingConstraintSet::executeConvergenceImpl(JSC::SlotVisitor&)
+                7   0x100ac0f9b JSC::MarkingConstraintSet::executeConvergence(JSC::SlotVisitor&)
+                8   0x100a99f24 JSC::Heap::runFixpointPhase(JSC::GCConductor)
+                9   0x100a99418 JSC::Heap::runCurrentPhase(JSC::GCConductor, JSC::CurrentThreadState*)
+                10  0x100aa332d WTF::ScopedLambdaFunctor<void (JSC::CurrentThreadState&), JSC::Heap::collectInMutatorThread()::$_0>::implFunction(void*, JSC::CurrentThreadState&)
+                11  0x100ab8794 JSC::callWithCurrentThreadState(WTF::ScopedLambda<void (JSC::CurrentThreadState&)> const&)
+                12  0x100a9d2cd JSC::Heap::collectInMutatorThread()
+                13  0x100a99217 JSC::Heap::waitForCollection(unsigned long long)
+                14  0x100a98cb1 JSC::Heap::collectNow(JSC::Synchronousness, JSC::GCRequest)
+                15  0x100ab7b4d JSC::LocalAllocator::allocateSlowCase(JSC::Heap&, JSC::GCDeferralContext*, JSC::AllocationFailureMode)
+                16  0x100ec0785 void* JSC::allocateCell<JSC::JSDataView>(JSC::Heap&, unsigned long)
+                17  0x100ec0629 JSC::JSDataView::create(JSC::JSGlobalObject*, JSC::Structure*, WTF::RefPtr<JSC::ArrayBuffer, WTF::RawPtrTraits<JSC::ArrayBuffer>, WTF::DefaultRefDerefTraits<JSC::ArrayBuffer> >&&, unsigned int, unsigned int)
+                18  0x100f893d6 JSC::JSObject* JSC::constructGenericTypedArrayViewWithArguments<JSC::JSDataView>(JSC::JSGlobalObject*, JSC::Structure*, long long, unsigned int, WTF::Optional<unsigned int>)
+                19  0x100f731dc JSC::constructDataView(JSC::JSGlobalObject*, JSC::CallFrame*)
+                20  0x5e4a38a010c7
+                21  0x5e4a38a02095
+                22  0x1004888d6 vmEntryToJavaScript
+                23  0x100b83690 JSC::Interpreter::executeProgram(JSC::SourceCode const&, JSC::JSGlobalObject*, JSC::JSObject*)
+                24  0x100e39a82 JSC::evaluate(JSC::JSGlobalObject*, JSC::SourceCode const&, JSC::JSValue, WTF::NakedPtr<JSC::Exception>&)
+                25  0x100007606 jscmain(int, char**)
+                26  0x10000644b main
+
+        Note that in this example, the 2nd stack trace was for an opaque root.  The verifier
+        also noted that the opaque root (which was added for the verifier GC) was not added
+        for the real GC.  This pointed to the bug that caused the error (this bug was fixed
+        in https://bugs.webkit.org/show_bug.cgi?id=223241).
+
+        Additional changes in this patch:
+
+        1. Renamed AbstractSlotVisitor::Context to ReferrerContext.
+
+        2. Introduced AbstractSlotVisitor::ReferrerToken, which is an abstraction for
+           either a HeapCell*, an opaque root, or a GC root.  ReferrerContext now tracks
+           a ReferrerToken instead of a HeapCell*.
+
+        * heap/AbstractSlotVisitor.h:
+        (JSC::AbstractSlotVisitor::ReferrerToken::ReferrerToken):
+        (JSC::AbstractSlotVisitor::ReferrerToken::operator bool const):
+        (JSC::AbstractSlotVisitor::ReferrerToken::operator! const):
+        (JSC::AbstractSlotVisitor::ReferrerToken::isHeapCell const):
+        (JSC::AbstractSlotVisitor::ReferrerToken::isOpaqueRoot const):
+        (JSC::AbstractSlotVisitor::ReferrerToken::isRootMarkReason const):
+        (JSC::AbstractSlotVisitor::ReferrerContext::referrer const):
+        (JSC::AbstractSlotVisitor::ReferrerContext::setReferrer):
+        (JSC::AbstractSlotVisitor::ReferrerContext::isOpaqueRootContext const):
+        (JSC::AbstractSlotVisitor::didAddOpaqueRoot):
+        (JSC::AbstractSlotVisitor::didFindOpaqueRoot):
+        (JSC::SetRootMarkReasonScope::SetRootMarkReasonScope):
+        (JSC::AbstractSlotVisitor::Context::cell const): Deleted.
+        * heap/AbstractSlotVisitorInlines.h:
+        (JSC::ReferrerToken::ReferrerToken):
+        (JSC::ReferrerToken::asCell const):
+        (JSC::ReferrerToken::asOpaqueRoot const):
+        (JSC::ReferrerToken::asRootMarkReason const):
+        (JSC::AbstractSlotVisitor::ReferrerContext::ReferrerContext):
+        (JSC::AbstractSlotVisitor::ReferrerContext::~ReferrerContext):
+        (JSC::AbstractSlotVisitor::addOpaqueRoot):
+        (JSC::AbstractSlotVisitor::containsOpaqueRoot const):
+        (JSC::AbstractSlotVisitor::referrer const):
+        (JSC::AbstractSlotVisitor::Context::Context): Deleted.
+        (JSC::AbstractSlotVisitor::Context::~Context): Deleted.
+        (JSC::AbstractSlotVisitor::parentCell const): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorMacros.h:
+        * heap/VerifierSlotVisitor.cpp:
+        (JSC::MarkerData::MarkerData):
+        (JSC::VerifierSlotVisitor::MarkedBlockData::markerData const):
+        (JSC::VerifierSlotVisitor::PreciseAllocationData::markerData const):
+        (JSC::VerifierSlotVisitor::OpaqueRootData::markerData const):
+        (JSC::VerifierSlotVisitor::OpaqueRootData::addMarkerData):
+        (JSC::VerifierSlotVisitor::VerifierSlotVisitor):
+        (JSC::VerifierSlotVisitor::didAddOpaqueRoot):
+        (JSC::VerifierSlotVisitor::didFindOpaqueRoot):
+        (JSC::VerifierSlotVisitor::dump const):
+        (JSC::VerifierSlotVisitor::dumpMarkerData):
+        (JSC::VerifierSlotVisitor::testAndSetMarked):
+        * heap/VerifierSlotVisitor.h:
+        (JSC::VerifierSlotVisitor::MarkerData::referrer const):
+        (JSC::VerifierSlotVisitor::MarkerData::stack const):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+
+2021-03-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Fix convertRecord() to throw on enumerable symbol |key|
+        https://bugs.webkit.org/show_bug.cgi?id=223231
+
+        Reviewed by Darin Adler.
+
+        Export SymbolCoercionError.
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toStringSlowCase const):
+        * runtime/JSCJSValue.h:
+
+2021-03-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement Error#cause
+        https://bugs.webkit.org/show_bug.cgi?id=223302
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch implements the Error.prototype.cause proposal, which reached Stage 3 at last week's TC39 meeting:
+        https://github.com/tc39/proposal-error-cause
+
+        This very simple proposal allows to one reference the "error that caused this one" in a cascading scenario.
+        It does so by adding an options bag parameter to the Error, _NativeError_, and AggregateError constructors.
+        If it is an object with a `cause` property, the property will be used; if not, nothing happens at all.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeError):
+        * runtime/AggregateError.cpp:
+        (JSC::AggregateError::finishCreation):
+        (JSC::AggregateError::create):
+        * runtime/AggregateError.h:
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        (JSC::createGetterTypeError):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::create):
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructImpl):
+        (JSC::NativeErrorConstructor<errorType>::callImpl):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunctionInternal::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::JSWebAssemblyCompileError::create):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::JSWebAssemblyLinkError::create):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::JSWebAssemblyRuntimeError::create):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-03-16  Saam Barati  <sbarati@apple.com>
+
+        Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=221069
+        <rdar://problem/73686589>
+
+        Reviewed by Yusuke Suzuki.
+
+        Suppose we have two scope objects, A and B. Let's say A points to B, so B is
+        A's parent scope. A then depends on B. B has no dependencies here. When deciding
+        an order to materialize scope objects, we should always do it in reverse dependency
+        order. So above, we should materialize B, then A.
+        
+        Inside object allocation sinking phase, when at an object materialization
+        site, we do track both dependencies and reverse dependencies. In the above
+        object graph, we'd attempt to materialize the objects in the right order,
+        always picking things with no dependencies first (and updating the list of
+        dependencies as we materialzed objects).
+        
+        The code was using an std::list to track things to materialize, and it had
+        notions for materializing something first, and materializing something last.
+        However, there was a bug in how the code managed to insert things when
+        it first inserted last followed by inserting first. This patch simplifies
+        the code and makes it do the right thing.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
+2021-03-16  Mark Lam  <mark.lam@apple.com>
+
+        Fixed undefined behavior bug in Const32Value::checkNegConstant().
+        https://bugs.webkit.org/show_bug.cgi?id=223284
+
+        Reviewed by Darin Adler.
+
+        This was causing a failure in testb3 on a release build.
+        Also do the same for Const64Value::checkNegConstant().
+
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::checkNegConstant const):
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::checkNegConstant const):
+
+2021-03-16  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Cache cross-origin methods / accessors of Window and Location per lexical global object
+        https://bugs.webkit.org/show_bug.cgi?id=222739
+
+        Reviewed by Darin Adler.
+
+        1. Introduce WeakGCMap::ensureValue() to clean up JSObject::getOwnPropertyDescriptor() and
+           avoid double hashing. It decorates HashMap::ensure() to guarantee non-null return value.
+        2. Assert early that JSCustom{Getter,Setter}Function is created with non-null function pointer.
+        3. Rename getCustom{Getter,Setter}Function() to align with newly-added JSDOMGlobalObject methods.
+
+        * runtime/JSCustomGetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomGetterFunction::create):
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomSetterFunction::create):
+        * runtime/JSObject.cpp:
+        (JSC::createCustomGetterFunction):
+        (JSC::createCustomSetterFunction):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::getCustomGetterFunction): Deleted.
+        (JSC::getCustomSetterFunction): Deleted.
+        * runtime/Lookup.h:
+        (JSC::nonCachingStaticFunctionGetterImpl): Deleted.
+        * runtime/WeakGCMap.h:
+
+2021-03-16  Mark Lam  <mark.lam@apple.com>
+
+        Add a RootMarkReason printer and also add a few additional reasons.
+        https://bugs.webkit.org/show_bug.cgi?id=223263
+
+        Reviewed by Michael Saboff.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        (JSC::rootTypeToString): Deleted.
+        * heap/RootMarkReason.cpp: Added.
+        (JSC::rootMarkReasonDescription):
+        (WTF::printInternal):
+        * heap/RootMarkReason.h:
+
+2021-03-16  Khem Raj  <raj.khem@gmail.com>
+
+        [CMake] Build fails on RISC-V with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=222959
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Use renamed variable ATOMICS_REQUIRE_LIBATOMIC instead of ATOMIC_INT64_REQUIRES_LIBATOMIC
+
+        * CMakeLists.txt:
+
+2021-03-15  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        postprocess-asm/resolve-asm-file-conflicts.rb build failure after upgrading to F34
+        https://bugs.webkit.org/show_bug.cgi?id=223136
+
+        Reviewed by Michael Catanzaro.
+
+        When parsing .file assembler directives (for the purpose of
+        deduplicating the file slots), also accept
+
+          .file "path/to/CWD" "path/to/include"
+
+        that seems to be emitted by GCC in some configurations. This also
+        uses Pathname.cleanpath on the resulting path to canonicalize the
+        paths. We could use .realpath, but since we only run this on the
+        paths in a single compilation unit and the first component is
+        supposed to be the CWD, this both seems unnecessary and would
+        complicate our selftests.
+
+        * Scripts/resolve-asm-file-conflicts.rb:
+
+2021-03-14  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r274308): Two assertions in JSGlobalObject::defineOwnProperty() are failing
+        https://bugs.webkit.org/show_bug.cgi?id=223134
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch:
+
+        1. Simplifies exception check after validateAndApplyPropertyDescriptor() as it
+           conditionally throws on failure.
+        2. Creates new SymbolTableEntry when global variable is redefined as read-only
+           because setAttributes() performs pack(), which doesn't support fat entries.
+
+        Due to #2, symbolTableGet() overload is simplified to return fast entry, and
+        setAttributes() is removed as unused.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::defineOwnProperty):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::getAttributes const):
+        (JSC::SymbolTableEntry::setAttributes): Deleted.
+
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [Big Sur arm64] testb3 crashing
+        https://bugs.webkit.org/show_bug.cgi?id=222815
+
+        Reviewed by Mark Lam.
+
+        Fix dmb ish and dmb ishst's formats.
+
+        * b3/testb3_6.cpp:
+        (testMemoryFence):
+        (testStoreFence):
+        (testLoadFence):
+
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ARM64 branchAtomicWeakCAS should not use sign-extension
+        https://bugs.webkit.org/show_bug.cgi?id=222813
+
+        Reviewed by Mark Lam.
+
+        ARM64 branchAtomicWeakCAS implementation should not use sign-extension. Instead, it should use zero-extension.
+        This is because loadLinkAcq (ldaxr) will load a value with zero-extension. If we use sign-extension, we will
+        encounter the state where LL/SC never succeeds just because we are comparing sign-extended value and zero-extended
+        value. This implementation is aligned to how X86 implementation works: X86 only cares the effective bit width of branchAtomicWeakCAS.
+
+        This is already tested by stress/atomics-store-result-int52.js.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::zeroExtend):
+        (JSC::MacroAssemblerARM64::atomicStrongCAS):
+        (JSC::MacroAssemblerARM64::atomicRelaxedStrongCAS):
+        (JSC::MacroAssemblerARM64::branchAtomicWeakCAS):
+        (JSC::MacroAssemblerARM64::branchAtomicRelaxedWeakCAS):
+        (JSC::MacroAssemblerARM64::signExtend): Deleted.
+        (JSC::MacroAssemblerARM64::signExtend<8>): Deleted.
+        (JSC::MacroAssemblerARM64::signExtend<16>): Deleted.
+
+2021-03-14  Mark Lam  <mark.lam@apple.com>
+
+        GCSegmentedArray's size() and isEmpty() methods should be const.
+        https://bugs.webkit.org/show_bug.cgi?id=223156
+
+        Reviewed by Keith Miller.
+
+        * heap/GCSegmentedArray.h:
+        * heap/GCSegmentedArrayInlines.h:
+        (JSC::GCSegmentedArray<T>::isEmpty const):
+        (JSC::GCSegmentedArray<T>::size const):
+        (JSC::GCSegmentedArray<T>::isEmpty): Deleted.
+        (JSC::GCSegmentedArray<T>::size): Deleted.
+
+2021-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] wasm atomic wait offset is not index
+        https://bugs.webkit.org/show_bug.cgi?id=223159
+
+        Reviewed by Mark Lam.
+
+        While JS Atomics.wait's argument is "index" in the typed-array, argument of wasm wait and notify is address.
+        But we are handling it as an index incorrectly.
+        This patch uses it as an address.
+
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+
+2021-03-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274379.
+        https://bugs.webkit.org/show_bug.cgi?id=223154
+
+        Some LayoutTests are crashing
+
+        Reverted changeset:
+
+        "Cache cross-origin methods / accessors of Window and Location
+        per lexical global object"
+        https://bugs.webkit.org/show_bug.cgi?id=222739
+        https://trac.webkit.org/changeset/274379
+
+2021-03-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Cache cross-origin methods / accessors of Window and Location per lexical global object
+        https://bugs.webkit.org/show_bug.cgi?id=222739
+
+        Reviewed by Darin Adler.
+
+        1. Add WeakGCMap::ensure() to avoid double hashing and clean up JSObject::getOwnPropertyDescriptor().
+        2. Assert early that JSCustom{Getter,Setter}Function is created with non-null function pointer.
+        3. Rename getCustom{Getter,Setter}Function() to align with newly-added JSDOMGlobalObject methods.
+
+        * runtime/JSCustomGetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomGetterFunction::create):
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomSetterFunction::create):
+        * runtime/JSObject.cpp:
+        (JSC::createCustomGetterFunction):
+        (JSC::createCustomSetterFunction):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::getCustomGetterFunction): Deleted.
+        (JSC::getCustomSetterFunction): Deleted.
+        * runtime/Lookup.h:
+        (JSC::nonCachingStaticFunctionGetterImpl): Deleted.
+        * runtime/WeakGCMap.h:
+
+2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump API version when building with libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=223067
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use WEBKITGTK_API_DOC_VERSION instead of WEBKITGTK_API_VERSION for the gtkdoc configuration file.
+
+        * PlatformGTK.cmake:
+
+2021-03-11  Saam Barati  <sbarati@apple.com>
+
+        Adopt VM_FLAGS_PERMANENT for the config vm mapping
+        https://bugs.webkit.org/show_bug.cgi?id=222086
+        <rdar://74402690>
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        * runtime/JSCConfig.h:
+        (JSC::Config::configureForTesting):
+
+2021-03-11  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI validator patchpoint should read heap top
+        https://bugs.webkit.org/show_bug.cgi?id=223052
+        <rdar://75087095>
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, the patchpoint doesn't specify any reads, which allows it to be moved around by B3
+        and can cause false positives since it at least read the structure ID for comparing values.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+
+2021-03-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align JSGlobalObject::defineOwnProperty() with the spec and other runtimes
+        https://bugs.webkit.org/show_bug.cgi?id=203456
+
+        Reviewed by Robin Morisset.
+
+        Per spec, top-level `var` bindings are non-configurable properties of the global
+        object [1], while `undefined` / `NaN` / `Infinity` are also non-writable [2].
+
+        Prior to this change, redefining global `var` binding with accessor descriptor
+        failed silently (rather than throwing a TypeError); redefining with data or
+        generic descriptor created a structure property, which took precedence over
+        symbol table entry in JSGlobalObject::getOwnPropertySlot(), effectively
+        destroying live binding between `global.foo` and `var foo`.
+
+        This patch re-engineers JSGlobalObject::defineOwnProperty(), fixing both issues
+        mentioned above. If defineOwnProperty() override is removed, there is no way
+        a live binding can be maintained.
+
+        In a follow-up change, JSGlobalObject::getOwnPropertySlot() will be updated to
+        search symbol table first, aligning it with the spec [3], put(), and
+        defineOwnProperty(). Apart from consistency, this will bring a mild speed-up.
+
+        To accomodate global `var` binding reassignment right after it becomes read-only
+        (in the same scope), this patch introduces a watchpoint that can be fired by
+        JSGlobalObject::defineOwnProperty(). put_to_scope performance is neutral.
+
+        Also, this patch removes unused symbolTableGet() overload and orphaned
+        JSGlobalObject::defineGetter() / JSGlobalObject::defineSetter() declarations.
+
+        [1]: https://tc39.es/ecma262/#sec-object-environment-records-createmutablebinding-n-d
+        [2]: https://tc39.es/ecma262/#sec-value-properties-of-the-global-object
+        [3]: https://tc39.es/ecma262/#sec-global-environment-records-getbindingvalue-n-s
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::needsDynamicLookup):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitVarReadOnlyCheck):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_to_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_to_scope):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::varReadOnlyWatchpoint):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+
+2021-03-11  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: Occasional crash under RemoteConnectionToTargetCocoa::close()
+        https://bugs.webkit.org/show_bug.cgi?id=223038
+        <rdar://74920246>
+
+        Reviewed by Alex Christensen.
+
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::close):
+        Don't use a capture default, and copy the targetIdentifier.
+
+2021-03-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274263.
+        https://bugs.webkit.org/show_bug.cgi?id=223064
+
+        Added few broken tests
+
+        Reverted changeset:
+
+        "AI validator patchpoint should read heap top"
+        https://bugs.webkit.org/show_bug.cgi?id=223052
+        https://trac.webkit.org/changeset/274263
+
+2021-03-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AI validator patchpoint should read heap top
+        https://bugs.webkit.org/show_bug.cgi?id=223052
+        <rdar://75087095>
+
+        Reviewed by Saam Barati.
+
+        Currently, the patchpoint doesn't specify any reads, which allows it to be moved around by B3
+        and can cause false positives since it at least read the structure ID for comparing values.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.h:
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::RemoteInspectorXPCConnection):
+        (Inspector::RemoteInspectorXPCConnection::closeFromMessage):
+        (Inspector::RemoteInspectorXPCConnection::closeOnQueue):
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        (Inspector::RemoteInspectorXPCConnection::sendMessage):
+        * jsc.cpp:
+        (jscmain):
+
+2021-03-10  Keith Miller  <keith_miller@apple.com>
+
+        executeModuleProgram needs to ensure module argument array is still in scope
+        https://bugs.webkit.org/show_bug.cgi?id=223039
+
+        Reviewed by Saam Barati.
+
+        This was causing testing builds to crash for wasm tests.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeModuleProgram):
+
+2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Don Olmstead.
+
+        We need to export the destructor of IsoHeapCellType.
+
+        * heap/IsoHeapCellType.cpp:
+        * heap/IsoHeapCellType.h:
+
+2021-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        GLib JSC API headers should only include other GLib JSC API headers
+        https://bugs.webkit.org/show_bug.cgi?id=222803
+
+        Reviewed by Michael Catanzaro.
+
+        A number of private GLib JSC headers are directly including private JavaScriptCore headers.
+        To get this to compile ${FORWARDING_HEADERS_DIR}/JavaScriptCore was added to the list of
+        includes in targets that needed the JSC headers. This is incorrect because they are being
+        distributed in different directories.
+
+        The private JSC headers being used were replaced with forward declarations. The source
+        files were then updated accordingly.
+
+        Also the include directories that contained the <jsc/Foo.h> headers were added to
+        JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES so they're properly propagated to dependants.
+
+        * API/glib/JSCClassPrivate.h:
+        * API/glib/JSCContext.cpp:
+        * API/glib/JSCContextPrivate.h:
+        * API/glib/JSCVirtualMachine.cpp:
+        * API/glib/JSCVirtualMachinePrivate.h:
+        * API/glib/JSCWrapperMap.cpp:
+        * GLib.cmake:
+        * PlatformGTK.cmake:
+
+2021-03-09  Keith Miller  <keith_miller@apple.com>
+
+        JSC Crash in makeString() while creating Error object.
+        https://bugs.webkit.org/show_bug.cgi?id=222452
+
+        Reviewed by Mark Lam.
+
+        This patch clamps the user provided part of error messages to
+        2-KB of characters. Technically, it could actually be 4-KB of
+        data for 16-bit strings. This is a somewhat randomly picked length
+        but seems like it should be sufficient for any normal use case I
+        can think of.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::clampErrorMessage):
+        (JSC::defaultApproximateSourceError):
+        (JSC::defaultSourceAppender):
+
+2021-03-08  Saam Barati  <sbarati@apple.com>
+
+        Using an undeclared private field inside eval shouldn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=222834
+        <rdar://75035388>
+
+        Reviewed by Yusuke Suzuki.
+
+        The private methods patch regressed our behavior when using undeclared private
+        fields or methods from an inner eval inside a class. That patch made us crash.
+        This patch aligns us with the spec to throw a Syntax Error during eval parsing.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+
+2021-03-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274041.
+        https://bugs.webkit.org/show_bug.cgi?id=222873
+
+        Broke the build instead of fixing it
+
+        Reverted changeset:
+
+        "Fix the build"
+        https://trac.webkit.org/changeset/274041
+
+2021-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the build
+
+        Unreviewed.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+
+2021-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        BooleanConstructor should be inlined in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=220322
+
+        Reviewed by Yusuke Suzuki.
+
+        `array.filter(Boolean)` is a rather popular idiom for removing falsy items from an array.
+        Also, `Boolean(X)` is sometimes used for explicit type casting.
+
+        This patch introduces ToBoolean DFG node and reorganizes compileLogicalNot(node) into
+        compileToBoolean(node, bool invert), leveraging already existing emitConvertValueToBoolean().
+
+        This approach is better than emitting LogicalNot<KnownBooleanUse>(LogicalNot(X)) as it results
+        in cleaner DFG node tree and is ~7% faster w/o FTL. Also, it enables adding a op_to_boolean
+        bytecode that will be generated for very common `!!X` patterns, reducing instruction count.
+
+        Just as LogicalNot, BooleanConstructor should handle masquerader objects, because Annex B
+        patches ToBoolean abstract op [1], preventing us from emitting simpler code.
+
+        This change advances provided microbenchmark by 110%, and is neutral for other ToBoolean cases.
+
+        [1]: https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-to-boolean
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToBooleanString):
+        (JSC::DFG::SpeculativeJIT::compileToBooleanStringOrOther):
+        (JSC::DFG::SpeculativeJIT::compileStringZeroLength): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLogicalNotStringOrOther): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToBooleanObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::compileToBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToBooleanObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::compileToBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot): Deleted.
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToBoolean):
+
+2021-03-06  Tim Horton  <timothy_horton@apple.com>
+
+        <model> should create a model-owning compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=222798
+
+        Reviewed by Simon Fraser.
+
+        * inspector/protocol/LayerTree.json:
+        Add a compositing reason for <model>.
+
+2021-03-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, suppress warning as it is done in DFGOperations.cpp
+
+        We are intentionally using this feature to reduce size of JIT memory.
+
+        * dfg/DFGOSRExit.cpp:
+
+2021-03-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Simplify OSRExit side state materialization
+        https://bugs.webkit.org/show_bug.cgi?id=222648
+
+        Reviewed by Keith Miller.
+
+        Currently, JIT probe with lambda function has memory leaking issue. So we must not use it in production code.
+        To avoid the future use, we rename probe to probeDebug.
+
+        And to avoid using probe function in OSR exit side state materialization, we simplify the OSRExit side state materialization code,
+        and making it just a function call. To achieve that, we materialize exit values into scratch buffer before restoring them to
+        the stack. This aligns DFG to what FTL is doing. And DFG and FTL can use the same materialization operation function.
+
+        Caio helped me to fix 32bit issue in DFG.
+
+        * assembler/MacroAssembler.cpp:
+        (JSC::MacroAssembler::probeDebug):
+        (JSC::MacroAssembler::probe): Deleted.
+        * assembler/MacroAssembler.h:
+        * assembler/testmasm.cpp:
+        (JSC::testClearBits64WithMask):
+        (JSC::testClearBits64WithMaskTernary):
+        (JSC::testShiftAndAdd):
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesProgramCounter):
+        (JSC::testProbeModifiesStackValues):
+        * b3/air/testair.cpp:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExit.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+
 2021-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.12 or later

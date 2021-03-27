@@ -34,6 +34,7 @@
 #import "_WKInternalDebugFeatureInternal.h"
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/Settings.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKPreferences
@@ -49,6 +50,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKPreferences.class, self))
+        return;
+
     _preferences->~WebPreferences();
 
     [super dealloc];

@@ -70,7 +70,7 @@ static bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const 
 }
 #endif
 
-static EGLDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
+static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 {
     EGLint majorVersion = 0;
     EGLint minorVersion = 0;
@@ -102,7 +102,7 @@ static EGLDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 
     if (EGL_Initialize(display, &majorVersion, &minorVersion) == EGL_FALSE) {
         LOG(WebGL, "EGLDisplay Initialization failed.");
-        return EGL_NO_DISPLAY;
+        return { };
     }
     LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
     if (shouldInitializeWithVolatileContextSupport) {
@@ -111,7 +111,7 @@ static EGLDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_eagl", "EGL_ANGLE_device_eagl", EGL_EAGL_CONTEXT_ANGLE));
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_cgl", "EGL_ANGLE_device_cgl", EGL_CGL_CONTEXT_ANGLE));
     }
-    return display;
+    return ScopedEGLDefaultDisplay::adoptInitializedDisplay(display);
 }
 
 static const unsigned statusCheckThreshold = 5;
@@ -166,7 +166,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 
     m_displayObj = InitializeEGLDisplay(attrs);
-    if (m_displayObj == EGL_NO_DISPLAY)
+    if (!m_displayObj)
         return;
 
     bool supportsPowerPreference = false;
@@ -643,6 +643,11 @@ RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResults()
     EGLBoolean releaseOk = EGL_ReleaseTexImage(m_displayObj, displayBuffer.handle, EGL_BACK_BUFFER);
     ASSERT_UNUSED(releaseOk, releaseOk);
     return result;
+}
+
+void GraphicsContextGLOpenGL::releaseAllResourcesIfUnused()
+{
+    ScopedEGLDefaultDisplay::releaseAllResourcesIfUnused();
 }
 
 }

@@ -10,6 +10,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/glslang_wrapper_utils.h"
+#include "libANGLE/renderer/metal/mtl_constants.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 
 namespace rx

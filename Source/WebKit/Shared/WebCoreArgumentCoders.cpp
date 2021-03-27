@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "ShareableBitmap.h"
 #include "SharedBufferDataReference.h"
+#include "StreamConnectionEncoder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <WebCore/AuthenticationChallenge.h>
@@ -741,10 +742,16 @@ Optional<IntRect> ArgumentCoder<IntRect>::decode(Decoder& decoder)
     return rect;
 }
 
+template<typename Encoder>
 void ArgumentCoder<IntSize>::encode(Encoder& encoder, const IntSize& intSize)
 {
     SimpleArgumentCoder<IntSize>::encode(encoder, intSize);
 }
+
+template
+void ArgumentCoder<IntSize>::encode<Encoder>(Encoder&, const IntSize&);
+template
+void ArgumentCoder<IntSize>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const IntSize&);
 
 bool ArgumentCoder<IntSize>::decode(Decoder& decoder, IntSize& intSize)
 {
@@ -3096,6 +3103,7 @@ Optional<WebCore::CDMInstanceSession::KeyStatusVector> ArgumentCoder<WebCore::CD
 }
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
+template<typename Encoder>
 void ArgumentCoder<Ref<WebCore::ImageData>>::encode(Encoder& encoder, const Ref<WebCore::ImageData>& imageData)
 {
     encoder << imageData->size();
@@ -3104,6 +3112,11 @@ void ArgumentCoder<Ref<WebCore::ImageData>>::encode(Encoder& encoder, const Ref<
     encoder << static_cast<uint64_t>(rawData->byteLength());
     encoder.encodeFixedLengthData(rawData->data(), rawData->byteLength(), 1);
 }
+
+template
+void ArgumentCoder<Ref<WebCore::ImageData>>::encode<Encoder>(Encoder&, const Ref<WebCore::ImageData>&);
+template
+void ArgumentCoder<Ref<WebCore::ImageData>>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Ref<WebCore::ImageData>&);
 
 Optional<Ref<WebCore::ImageData>> ArgumentCoder<Ref<WebCore::ImageData>>::decode(Decoder& decoder)
 {
@@ -3128,6 +3141,7 @@ Optional<Ref<WebCore::ImageData>> ArgumentCoder<Ref<WebCore::ImageData>>::decode
     return { imageData.releaseNonNull() };
 }
 
+template<typename Encoder>
 void ArgumentCoder<RefPtr<WebCore::ImageData>>::encode(Encoder& encoder, const RefPtr<WebCore::ImageData>& imageData)
 {
     if (!imageData) {
@@ -3138,6 +3152,12 @@ void ArgumentCoder<RefPtr<WebCore::ImageData>>::encode(Encoder& encoder, const R
     encoder << true;
     ArgumentCoder<Ref<WebCore::ImageData>>::encode(encoder, imageData.copyRef().releaseNonNull());
 }
+
+template
+void ArgumentCoder<RefPtr<WebCore::ImageData>>::encode(Encoder&, const RefPtr<WebCore::ImageData>&);
+
+template
+void ArgumentCoder<RefPtr<WebCore::ImageData>>::encode(StreamConnectionEncoder&, const RefPtr<WebCore::ImageData>&);
 
 Optional<RefPtr<WebCore::ImageData>> ArgumentCoder<RefPtr<WebCore::ImageData>>::decode(Decoder& decoder)
 {
@@ -3211,12 +3231,18 @@ Optional<WebCore::GraphicsContextGLAttributes> ArgumentCoder<WebCore::GraphicsCo
     return attributes;
 }
 
+template<typename Encoder>
 void ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::ActiveInfo& activeInfo)
 {
     encoder << activeInfo.name;
     encoder << activeInfo.type;
     encoder << activeInfo.size;
 }
+
+template
+void ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::encode<Encoder>(Encoder&, const WebCore::GraphicsContextGL::ActiveInfo&);
+template
+void ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const WebCore::GraphicsContextGL::ActiveInfo&);
 
 Optional<WebCore::GraphicsContextGL::ActiveInfo> ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::decode(Decoder& decoder)
 {

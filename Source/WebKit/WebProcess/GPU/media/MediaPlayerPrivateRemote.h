@@ -66,9 +66,8 @@ struct TextTrackPrivateRemoteConfiguration;
 struct TrackPrivateRemoteConfiguration;
 
 class MediaPlayerPrivateRemote final
-    : public CanMakeWeakPtr<MediaPlayerPrivateRemote>
-    , public WebCore::MediaPlayerPrivateInterface
-    , private IPC::MessageReceiver
+    : public WebCore::MediaPlayerPrivateInterface
+    , public IPC::MessageReceiver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -82,8 +81,6 @@ public:
     MediaPlayerPrivateRemote(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier, WebCore::MediaPlayerIdentifier, RemoteMediaPlayerManager&);
     ~MediaPlayerPrivateRemote();
 
-    void setConfiguration(RemoteMediaPlayerConfiguration&&, WebCore::SecurityOriginData&&);
-
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     void invalidate() { m_invalid = true; }
@@ -93,6 +90,7 @@ public:
     WebCore::MediaPlayer* player() const { return m_player; }
 
     WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
+    void setReadyState(WebCore::MediaPlayer::ReadyState);
 
     void networkStateChanged(RemoteMediaPlayerState&&);
     void readyStateChanged(RemoteMediaPlayerState&&);
@@ -143,8 +141,6 @@ public:
     void removeResource(RemoteMediaResourceIdentifier);
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void resourceNotSupported();
-
-    void engineUpdated();
 
     void activeSourceBuffersChanged();
 
@@ -243,7 +239,7 @@ private:
 
     void setVisible(bool) final;
 
-    MediaTime durationMediaTime() const final { return m_cachedState.duration; }
+    MediaTime durationMediaTime() const final;
     MediaTime currentMediaTime() const final;
 
     MediaTime getStartDate() const final;

@@ -78,16 +78,16 @@ describe("/api/report-commits/ with insert=true", function () {
 
     it("should reject error when slave name is missing", () => {
         return TestServer.remoteAPI().postJSON('/api/report-commits/', {}).then((response) => {
-            assert.equal(response['status'], 'MissingSlaveName');
+            assert.strictEqual(response['status'], 'MissingSlaveName');
         });
     });
 
     it("should reject when there are no slaves", () => {
         return TestServer.remoteAPI().postJSON('/api/report-commits/', emptyReport).then((response) => {
-            assert.equal(response['status'], 'SlaveNotFound');
+            assert.strictEqual(response['status'], 'SlaveNotFound');
             return TestServer.database().selectAll('commits');
         }).then((rows) => {
-            assert.equal(rows.length, 0);
+            assert.strictEqual(rows.length, 0);
         });
     });
 
@@ -95,7 +95,7 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(emptyReport).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', emptyReport);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
         });
     });
 
@@ -103,11 +103,11 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(subversionCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return TestServer.database().selectAll('repositories');
         }).then((rows) => {
-            assert.equal(rows.length, 1);
-            assert.equal(rows[0]['name'], subversionCommit.commits[0]['repository']);
+            assert.strictEqual(rows.length, 1);
+            assert.strictEqual(rows[0]['name'], subversionCommit.commits[0]['repository']);
         });
     });
 
@@ -115,7 +115,7 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(subversionCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             const db = TestServer.database();
             return Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
         }).then((result) => {
@@ -123,14 +123,14 @@ describe("/api/report-commits/ with insert=true", function () {
             let committers = result[1];
             let reportedData = subversionCommit.commits[0];
 
-            assert.equal(commits.length, 1);
-            assert.equal(committers.length, 1);
-            assert.equal(commits[0]['revision'], reportedData['revision']);
-            assert.equal(commits[0]['time'].toString(), new Date('2013-02-06 08:55:20.9').toString());
-            assert.equal(commits[0]['message'], reportedData['message']);
-            assert.equal(commits[0]['committer'], committers[0]['id']);
-            assert.equal(committers[0]['name'], reportedData['author']['name']);
-            assert.equal(committers[0]['account'], reportedData['author']['account']);
+            assert.strictEqual(commits.length, 1);
+            assert.strictEqual(committers.length, 1);
+            assert.strictEqual(commits[0]['revision'], reportedData['revision']);
+            assert.strictEqual(commits[0]['time'].toString(), new Date('2013-02-06 08:55:20.9').toString());
+            assert.strictEqual(commits[0]['message'], reportedData['message']);
+            assert.strictEqual(commits[0]['committer'], committers[0]['id']);
+            assert.strictEqual(committers[0]['name'], reportedData['author']['name']);
+            assert.strictEqual(committers[0]['account'], reportedData['author']['account']);
         });
     });
 
@@ -138,10 +138,10 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(subversionCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionInvalidCommit);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidRevision');
+            assert.strictEqual(response['status'], 'InvalidRevision');
             return TestServer.database().selectAll('commits');
         }).then((rows) => {
-            assert.equal(rows.length, 0);
+            assert.strictEqual(rows.length, 0);
         });
     });
 
@@ -149,32 +149,32 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(subversionTwoCommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionTwoCommits);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             const db = TestServer.database();
             return Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
         }).then((result) => {
             const commits = result[0];
             const committers = result[1];
-            assert.equal(commits.length, 2);
-            assert.equal(committers.length, 2);
+            assert.strictEqual(commits.length, 2);
+            assert.strictEqual(committers.length, 2);
 
             let reportedData = subversionTwoCommits.commits[0];
-            assert.equal(commits[0]['revision'], reportedData['revision']);
-            assert.equal(commits[0]['time'].toString(), new Date('2013-02-06 08:55:20.9').toString());
-            assert.equal(commits[0]['message'], reportedData['message']);
-            assert.equal(commits[0]['committer'], committers[0]['id']);
-            assert.equal(commits[0]['previous_commit'], null);
-            assert.equal(committers[0]['name'], reportedData['author']['name']);
-            assert.equal(committers[0]['account'], reportedData['author']['account']);
+            assert.strictEqual(commits[0]['revision'], reportedData['revision']);
+            assert.strictEqual(commits[0]['time'].toString(), new Date('2013-02-06 08:55:20.9').toString());
+            assert.strictEqual(commits[0]['message'], reportedData['message']);
+            assert.strictEqual(commits[0]['committer'], committers[0]['id']);
+            assert.strictEqual(commits[0]['previous_commit'], null);
+            assert.strictEqual(committers[0]['name'], reportedData['author']['name']);
+            assert.strictEqual(committers[0]['account'], reportedData['author']['account']);
 
             reportedData = subversionTwoCommits.commits[1];
-            assert.equal(commits[1]['revision'], reportedData['revision']);
-            assert.equal(commits[1]['time'].toString(), new Date('2013-02-06 09:54:56.0').toString());
-            assert.equal(commits[1]['message'], reportedData['message']);
-            assert.equal(commits[1]['committer'], committers[1]['id']);
-            assert.equal(commits[1]['previous_commit'], commits[0]['id']);
-            assert.equal(committers[1]['name'], reportedData['author']['name']);
-            assert.equal(committers[1]['account'], reportedData['author']['account']);
+            assert.strictEqual(commits[1]['revision'], reportedData['revision']);
+            assert.strictEqual(commits[1]['time'].toString(), new Date('2013-02-06 09:54:56.0').toString());
+            assert.strictEqual(commits[1]['message'], reportedData['message']);
+            assert.strictEqual(commits[1]['committer'], committers[1]['id']);
+            assert.strictEqual(commits[1]['previous_commit'], commits[0]['id']);
+            assert.strictEqual(committers[1]['name'], reportedData['author']['name']);
+            assert.strictEqual(committers[1]['account'], reportedData['author']['account']);
         });
     });
 
@@ -182,10 +182,10 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(subversionInvalidPreviousCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionInvalidPreviousCommit);
         }).then((response) => {
-            assert.equal(response['status'], 'FailedToFindPreviousCommit');
+            assert.strictEqual(response['status'], 'FailedToFindPreviousCommit');
             return TestServer.database().selectAll('commits');
         }).then((result) => {
-            assert.equal(result.length, 0);
+            assert.strictEqual(result.length, 0);
         });
     });
 
@@ -200,18 +200,18 @@ describe("/api/report-commits/ with insert=true", function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
         }).then((result) => {
             const commits = result[0];
             const committers = result[1];
 
-            assert.equal(commits.length, 1);
-            assert.equal(committers.length, 1);
-            assert.equal(commits[0]['message'], reportedData['message']);
-            assert.equal(commits[0]['committer'], committers[0]['id']);
-            assert.equal(committers[0]['name'], reportedData['author']['name']);
-            assert.equal(committers[0]['account'], reportedData['author']['account']);
+            assert.strictEqual(commits.length, 1);
+            assert.strictEqual(committers.length, 1);
+            assert.strictEqual(commits[0]['message'], reportedData['message']);
+            assert.strictEqual(commits[0]['committer'], committers[0]['id']);
+            assert.strictEqual(committers[0]['name'], reportedData['author']['name']);
+            assert.strictEqual(committers[0]['account'], reportedData['author']['account']);
         });
     });
 
@@ -228,23 +228,23 @@ describe("/api/report-commits/ with insert=true", function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
         }).then((result) => {
             const commits = result[0];
             const committers = result[1];
 
-            assert.equal(commits.length, 2);
-            assert.equal(committers.length, 1);
-            assert.equal(commits[0]['id'], 2);
-            assert.equal(commits[0]['message'], firstData['message']);
-            assert.equal(commits[0]['committer'], committers[0]['id']);
-            assert.equal(committers[0]['name'], firstData['author']['name']);
-            assert.equal(committers[0]['account'], firstData['author']['account']);
+            assert.strictEqual(commits.length, 2);
+            assert.strictEqual(committers.length, 1);
+            assert.strictEqual(commits[0]['id'], 2);
+            assert.strictEqual(commits[0]['message'], firstData['message']);
+            assert.strictEqual(commits[0]['committer'], committers[0]['id']);
+            assert.strictEqual(committers[0]['name'], firstData['author']['name']);
+            assert.strictEqual(committers[0]['account'], firstData['author']['account']);
 
-            assert.equal(commits[1]['id'], 3);
-            assert.equal(commits[1]['message'], null);
-            assert.equal(commits[1]['committer'], null);
+            assert.strictEqual(commits[1]['id'], 3);
+            assert.strictEqual(commits[1]['message'], null);
+            assert.strictEqual(commits[1]['committer'], null);
         });
     });
 
@@ -259,12 +259,12 @@ describe("/api/report-commits/ with insert=true", function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommit);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return db.selectAll('committers');
         }).then((committers) => {
-            assert.equal(committers.length, 1);
-            assert.equal(committers[0]['name'], author['name']);
-            assert.equal(committers[0]['account'], author['account']);
+            assert.strictEqual(committers.length, 1);
+            assert.strictEqual(committers[0]['name'], author['name']);
+            assert.strictEqual(committers[0]['account'], author['account']);
         });
     });
 
@@ -302,15 +302,15 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(sameRepositoryNameInOwnedCommitAndMajorCommit).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', sameRepositoryNameInOwnedCommitAndMajorCommit);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return TestServer.database().selectRows('repositories', {'name': 'WebKit'});
         }).then((result) => {
-            assert.equal(result.length, 2);
+            assert.strictEqual(result.length, 2);
             let osWebKit = result[0];
             let webkitRepository = result[1];
-            assert.notEqual(osWebKit.id, webkitRepository.id);
-            assert.equal(osWebKit.name, webkitRepository.name);
-            assert.equal(webkitRepository.owner, null);
+            assert.notStrictEqual(osWebKit.id, webkitRepository.id);
+            assert.strictEqual(osWebKit.name, webkitRepository.name);
+            assert.strictEqual(webkitRepository.owner, null);
         });
     });
 
@@ -343,7 +343,7 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(systemVersionCommitWithOwnedCommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithOwnedCommits);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return Promise.all([db.selectRows('commits', {'revision': 'Sierra16D32'}),
                 db.selectRows('commits', {'message': 'WebKit Commit'}),
                 db.selectRows('commits', {'message': 'JavaScriptCore commit'}),
@@ -351,54 +351,54 @@ describe("/api/report-commits/ with insert=true", function () {
                 db.selectRows('repositories', {'name': "WebKit"}),
                 db.selectRows('repositories', {'name': 'JavaScriptCore'})])
         }).then((result) => {
-            assert.equal(result.length, 6);
+            assert.strictEqual(result.length, 6);
 
-            assert.equal(result[0].length, 1);
+            assert.strictEqual(result[0].length, 1);
             const osxCommit = result[0][0];
-            assert.notEqual(osxCommit, null);
+            assert.notStrictEqual(osxCommit, null);
 
-            assert.equal(result[1].length, 1);
+            assert.strictEqual(result[1].length, 1);
             const webkitCommit = result[1][0];
-            assert.notEqual(webkitCommit, null);
+            assert.notStrictEqual(webkitCommit, null);
 
-            assert.equal(result[2].length, 1);
+            assert.strictEqual(result[2].length, 1);
             const jscCommit = result[2][0];
-            assert.notEqual(jscCommit, null);
+            assert.notStrictEqual(jscCommit, null);
 
-            assert.equal(result[3].length, 1);
+            assert.strictEqual(result[3].length, 1);
             const osxRepository = result[3][0];
-            assert.notEqual(osxRepository, null);
+            assert.notStrictEqual(osxRepository, null);
 
-            assert.equal(result[4].length, 1);
+            assert.strictEqual(result[4].length, 1);
             const webkitRepository = result[4][0];
-            assert.notEqual(webkitRepository, null);
+            assert.notStrictEqual(webkitRepository, null);
 
-            assert.equal(result[5].length, 1);
+            assert.strictEqual(result[5].length, 1);
             const jscRepository = result[5][0];
-            assert.notEqual(jscRepository, null);
+            assert.notStrictEqual(jscRepository, null);
 
-            assert.equal(osxCommit.repository, osxRepository.id);
-            assert.equal(webkitCommit.repository, webkitRepository.id);
-            assert.equal(jscCommit.repository, jscRepository.id);
-            assert.equal(osxRepository.owner, null);
-            assert.equal(webkitRepository.owner, osxRepository.id);
-            assert.equal(jscRepository.owner, osxRepository.id);
+            assert.strictEqual(osxCommit.repository, osxRepository.id);
+            assert.strictEqual(webkitCommit.repository, webkitRepository.id);
+            assert.strictEqual(jscCommit.repository, jscRepository.id);
+            assert.strictEqual(osxRepository.owner, null);
+            assert.strictEqual(webkitRepository.owner, osxRepository.id);
+            assert.strictEqual(jscRepository.owner, osxRepository.id);
 
             return Promise.all([db.selectRows('commit_ownerships', {'owner': osxCommit.id, 'owned': webkitCommit.id}, {'sortBy': 'owner'}),
                 db.selectRows('commit_ownerships', {'owner': osxCommit.id, 'owned': jscCommit.id}, {'sortBy': 'owner'}),
                 db.selectRows('commits', {'repository': webkitRepository.id})]);
         }).then((result) => {
-            assert.equal(result.length, 3);
+            assert.strictEqual(result.length, 3);
 
-            assert.equal(result[0].length, 1);
+            assert.strictEqual(result[0].length, 1);
             const ownerCommitForWebKitCommit = result[0][0];
-            assert.notEqual(ownerCommitForWebKitCommit, null);
+            assert.notStrictEqual(ownerCommitForWebKitCommit, null);
 
-            assert.equal(result[1].length, 1);
+            assert.strictEqual(result[1].length, 1);
             const ownerCommitForJSCCommit =  result[1][0];
-            assert.notEqual(ownerCommitForJSCCommit, null);
+            assert.notStrictEqual(ownerCommitForJSCCommit, null);
 
-            assert.equal(result[2].length, 1);
+            assert.strictEqual(result[2].length, 1);
         });
     })
 
@@ -448,7 +448,7 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(multipleSystemVersionCommitsWithOwnedCommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', multipleSystemVersionCommitsWithOwnedCommits);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return Promise.all([db.selectRows('commits', {'revision': 'Sierra16D32'}),
                 db.selectRows('commits', {'revision': 'Sierra16C67'}),
                 db.selectRows('commits', {'message': 'WebKit Commit'}),
@@ -458,49 +458,49 @@ describe("/api/report-commits/ with insert=true", function () {
                 db.selectRows('repositories', {'name': "WebKit"}),
                 db.selectRows('repositories', {'name': 'JavaScriptCore'})])
         }).then((result) => {
-            assert.equal(result.length, 8);
+            assert.strictEqual(result.length, 8);
 
-            assert.equal(result[0].length, 1);
+            assert.strictEqual(result[0].length, 1);
             const osxCommit0 = result[0][0];
-            assert.notEqual(osxCommit0, null);
+            assert.notStrictEqual(osxCommit0, null);
 
-            assert.equal(result[1].length, 1);
+            assert.strictEqual(result[1].length, 1);
             const osxCommit1 = result[1][0];
-            assert.notEqual(osxCommit1, null);
+            assert.notStrictEqual(osxCommit1, null);
 
-            assert.equal(result[2].length, 1);
+            assert.strictEqual(result[2].length, 1);
             const webkitCommit = result[2][0];
-            assert.notEqual(webkitCommit, null);
+            assert.notStrictEqual(webkitCommit, null);
 
-            assert.equal(result[3].length, 1);
+            assert.strictEqual(result[3].length, 1);
             const jscCommit0 = result[3][0];
-            assert.notEqual(jscCommit0, null);
+            assert.notStrictEqual(jscCommit0, null);
 
-            assert.equal(result[4].length, 1);
+            assert.strictEqual(result[4].length, 1);
             const jscCommit1 = result[4][0];
-            assert.notEqual(jscCommit1, null);
+            assert.notStrictEqual(jscCommit1, null);
 
-            assert.equal(result[5].length, 1)
+            assert.strictEqual(result[5].length, 1)
             const osxRepository = result[5][0];
-            assert.notEqual(osxRepository, null);
-            assert.equal(osxRepository.owner, null);
+            assert.notStrictEqual(osxRepository, null);
+            assert.strictEqual(osxRepository.owner, null);
 
-            assert.equal(result[6].length, 1)
+            assert.strictEqual(result[6].length, 1)
             const webkitRepository = result[6][0];
-            assert.equal(webkitRepository.owner, osxRepository.id);
+            assert.strictEqual(webkitRepository.owner, osxRepository.id);
 
-            assert.equal(result[7].length, 1);
+            assert.strictEqual(result[7].length, 1);
             const jscRepository = result[7][0];
-            assert.equal(jscRepository.owner, osxRepository.id);
+            assert.strictEqual(jscRepository.owner, osxRepository.id);
 
-            assert.equal(osxCommit0.repository, osxRepository.id);
-            assert.equal(osxCommit1.repository, osxRepository.id);
-            assert.equal(webkitCommit.repository, webkitRepository.id);
-            assert.equal(jscCommit0.repository, jscRepository.id);
-            assert.equal(jscCommit1.repository, jscRepository.id);
-            assert.equal(osxRepository.owner, null);
-            assert.equal(webkitRepository.owner, osxRepository.id);
-            assert.equal(jscRepository.owner, osxRepository.id);
+            assert.strictEqual(osxCommit0.repository, osxRepository.id);
+            assert.strictEqual(osxCommit1.repository, osxRepository.id);
+            assert.strictEqual(webkitCommit.repository, webkitRepository.id);
+            assert.strictEqual(jscCommit0.repository, jscRepository.id);
+            assert.strictEqual(jscCommit1.repository, jscRepository.id);
+            assert.strictEqual(osxRepository.owner, null);
+            assert.strictEqual(webkitRepository.owner, osxRepository.id);
+            assert.strictEqual(jscRepository.owner, osxRepository.id);
 
             return Promise.all([db.selectRows('commit_ownerships', {'owner': osxCommit0.id, 'owned': webkitCommit.id}, {'sortBy': 'owner'}),
                 db.selectRows('commit_ownerships', {'owner': osxCommit1.id, 'owned': webkitCommit.id}, {'sortBy': 'owner'}),
@@ -508,25 +508,25 @@ describe("/api/report-commits/ with insert=true", function () {
                 db.selectRows('commit_ownerships', {'owner': osxCommit1.id, 'owned': jscCommit1.id}, {'sortBy': 'owner'}),
                 db.selectRows('commits', {'repository': webkitRepository.id})]);
         }).then((result) => {
-            assert.equal(result.length, 5);
+            assert.strictEqual(result.length, 5);
 
-            assert.equal(result[0].length, 1);
+            assert.strictEqual(result[0].length, 1);
             const ownerCommitForWebKitCommit0 = result[0][0];
-            assert.notEqual(ownerCommitForWebKitCommit0, null);
+            assert.notStrictEqual(ownerCommitForWebKitCommit0, null);
 
-            assert.equal(result[1].length, 1);
+            assert.strictEqual(result[1].length, 1);
             const ownerCommitForWebKitCommit1 = result[1][0];
-            assert.notEqual(ownerCommitForWebKitCommit1, null);
+            assert.notStrictEqual(ownerCommitForWebKitCommit1, null);
 
-            assert.equal(result[2].length, 1);
+            assert.strictEqual(result[2].length, 1);
             const ownerCommitForJSCCommit0 = result[2][0];
-            assert.notEqual(ownerCommitForJSCCommit0, null);
+            assert.notStrictEqual(ownerCommitForJSCCommit0, null);
 
-            assert.equal(result[3].length, 1);
+            assert.strictEqual(result[3].length, 1);
             const ownerCommitForJSCCommit1 = result[3][0];
-            assert.notEqual(ownerCommitForJSCCommit1, null);
+            assert.notStrictEqual(ownerCommitForJSCCommit1, null);
 
-            assert.equal(result[4].length, 1);
+            assert.strictEqual(result[4].length, 1);
         });
     });
 
@@ -548,18 +548,18 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(systemVersionCommitWithEmptyOwnedCommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithEmptyOwnedCommits);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             const db = TestServer.database();
             return Promise.all([db.selectAll('commits'), db.selectAll('repositories'), db.selectAll('commit_ownerships', 'owner')]);
         }).then((result) => {
             let commits = result[0];
             let repositories = result[1];
             let commit_ownerships = result[2];
-            assert.equal(commits.length, 1);
-            assert.equal(repositories.length, 1);
-            assert.equal(commits[0].repository, repositories[0].id);
-            assert.equal(repositories[0].name, 'OSX');
-            assert.equal(commit_ownerships.length, 0);
+            assert.strictEqual(commits.length, 1);
+            assert.strictEqual(repositories.length, 1);
+            assert.strictEqual(commits[0].repository, repositories[0].id);
+            assert.strictEqual(repositories[0].name, 'OSX');
+            assert.strictEqual(commit_ownerships.length, 0);
         });
     });
 
@@ -587,7 +587,7 @@ describe("/api/report-commits/ with insert=true", function () {
         return addSlaveForReport(systemVersionCommitAndOwnedCommitWithTimestamp).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitAndOwnedCommitWithTimestamp);
         }).then((response) => {
-            assert.equal(response['status'], 'OwnedCommitShouldNotContainTimestamp');
+            assert.strictEqual(response['status'], 'OwnedCommitShouldNotContainTimestamp');
         });
     });
 });
@@ -699,11 +699,11 @@ describe("/api/report-commits/ with insert=false", function () {
         await addSlaveForReport(subversionCommits);
         await TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommits);
         const result = await TestServer.remoteAPI().getJSON('/api/commits/WebKit/');
-        assert.equal(result['status'], 'OK');
+        assert.strictEqual(result['status'], 'OK');
         const commits = result['commits'];
-        assert.equal(commits.length, 2);
-        assert.equal(commits[0].testability, null);
-        assert.equal(commits[1].testability, null);
+        assert.strictEqual(commits.length, 2);
+        assert.strictEqual(commits[0].testability, null);
+        assert.strictEqual(commits[1].testability, null);
 
         return commits;
     }
@@ -712,7 +712,7 @@ describe("/api/report-commits/ with insert=false", function () {
     {
         await initialReportCommits();
         let result = await TestServer.remoteAPI().postJSON('/api/report-commits/', commitsUpdate);
-        assert.equal(result['status'], expectedStatus);
+        assert.strictEqual(result['status'], expectedStatus);
         result = await TestServer.remoteAPI().getJSON('/api/commits/WebKit/');
         return result['commits'];
     }
@@ -720,9 +720,9 @@ describe("/api/report-commits/ with insert=false", function () {
     async function testWithExpectedFailure(commitsUpdate, expectedFailureName)
     {
         const commits = await setUpTestsWithExpectedStatus(commitsUpdate, expectedFailureName);
-        assert.equal(commits.length, 2);
-        assert.equal(commits[0].testability, null);
-        assert.equal(commits[1].testability, null);
+        assert.strictEqual(commits.length, 2);
+        assert.strictEqual(commits[0].testability, null);
+        assert.strictEqual(commits[1].testability, null);
     }
 
     it('should fail with "MissingRevision" if commit update does not have commit revision specified', async () => {
@@ -746,32 +746,32 @@ describe("/api/report-commits/ with insert=false", function () {
         await initialReportCommits();
 
         let commits = await database.selectAll('commits');
-        assert.equal(commits[0].reported, true);
-        assert.equal(commits[1].reported, true);
+        assert.strictEqual(commits[0].reported, true);
+        assert.strictEqual(commits[1].reported, true);
 
         await database.query('UPDATE commits SET commit_reported=false');
         let result = await TestServer.remoteAPI().postJSON('/api/report-commits/', commitsUpdate);
-        assert.equal(result['status'], 'OK');
+        assert.strictEqual(result['status'], 'OK');
 
         commits = await database.selectAll('commits');
-        assert.equal(commits[0].reported, false);
-        assert.equal(commits[1].reported, false);
+        assert.strictEqual(commits[0].reported, false);
+        assert.strictEqual(commits[1].reported, false);
     });
 
     it("should be able to update commits message, time, order, author and previous commit", async () => {
         const commits = await setUpTestsWithExpectedStatus(commitsUpdate, 'OK');
 
-        assert.equal(commits.length, 2);
-        assert.equal(commits[0].testability, 'Breaks builds');
-        assert.equal(commits[1].testability, 'Crashes WebKit');
-        assert.equal(commits[0].message, 'another message');
-        assert.equal(commits[1].message, 'another message');
-        assert.equal(commits[0].authorName, 'Chris Dumez');
-        assert.equal(commits[1].authorName, 'Zalan Bujtas');
-        assert.equal(commits[0].order, 210948);
-        assert.equal(commits[1].order, 210949);
-        assert.equal(commits[0].time, 1484884354577);
-        assert.equal(commits[1].time, 1484886230645);
-        assert.equal(commits[1].previousCommit, commits[0].id);
+        assert.strictEqual(commits.length, 2);
+        assert.strictEqual(commits[0].testability, 'Breaks builds');
+        assert.strictEqual(commits[1].testability, 'Crashes WebKit');
+        assert.strictEqual(commits[0].message, 'another message');
+        assert.strictEqual(commits[1].message, 'another message');
+        assert.strictEqual(commits[0].authorName, 'Chris Dumez');
+        assert.strictEqual(commits[1].authorName, 'Zalan Bujtas');
+        assert.strictEqual(parseInt(commits[0].order), 210948);
+        assert.strictEqual(parseInt(commits[1].order), 210949);
+        assert.strictEqual(commits[0].time, 1484884354577);
+        assert.strictEqual(commits[1].time, 1484886230645);
+        assert.strictEqual(commits[1].previousCommit, commits[0].id);
     });
 });

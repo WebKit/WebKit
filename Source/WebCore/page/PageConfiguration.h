@@ -129,11 +129,12 @@ public:
     Vector<UserContentURLPattern> corsDisablingPatterns;
     UniqueRef<SpeechRecognitionProvider> speechRecognitionProvider;
     UniqueRef<MediaRecorderProvider> mediaRecorderProvider;
+
+    // FIXME: These should be all be Settings.
     bool loadsSubresources { true };
     bool loadsFromNetwork { true };
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
-    bool textInteractionEnabled { true };
     bool httpsUpgradeEnabled { true };
 };
 

@@ -48,10 +48,10 @@ describe("/admin/reprocess-report", function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', simpleReportWithRevisions);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return db.selectRows('repositories', {'name': 'WebKit'});
         }).then((repositories) => {
-            assert.equal(repositories.length, 2);
+            assert.strictEqual(repositories.length, 2);
             const webkitRepsitoryId = repositories[0].owner == 1 ? repositories[1].id : repositories[0].id;
             return db.selectRows('commits', {'revision': '213214', 'repository': webkitRepsitoryId});
         }).then((result) => {
@@ -65,27 +65,27 @@ describe("/admin/reprocess-report", function () {
         return addBuilderForReport(simpleReport[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', simpleReport);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return Promise.all([db.selectAll('builds'), db.selectAll('reports')]);
         }).then((result) => {
             const builds = result[0];
             const reports = result[1];
-            assert.equal(builds.length, 1);
-            assert.equal(builds[0]['tag'], 1986);
-            assert.equal(reports.length, 1);
+            assert.strictEqual(builds.length, 1);
+            assert.strictEqual(builds[0]['tag'], '1986');
+            assert.strictEqual(reports.length, 1);
             reportId = reports[0]['id'];
-            assert.equal(reports[0]['build_tag'], 1986);
+            assert.strictEqual(reports[0]['build_tag'], '1986');
             return db.query('UPDATE reports SET report_build = NULL; DELETE FROM builds');
         }).then(() => {
             return db.selectAll('builds');
         }).then((builds) => {
-            assert.equal(builds.length, 0);
+            assert.strictEqual(builds.length, 0);
             return TestServer.remoteAPI().getJSONWithStatus(`/admin/reprocess-report?report=${reportId}`);
         }).then(() => {
             return db.selectAll('builds');
         }).then((builds) => {
-            assert.equal(builds.length, 1);
-            assert.equal(builds[0]['tag'], 1986);
+            assert.strictEqual(builds.length, 1);
+            assert.strictEqual(builds[0]['tag'], '1986');
         });
     });
 
@@ -95,10 +95,10 @@ describe("/admin/reprocess-report", function () {
         return addBuilderForReport(simpleReport[0]).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', simpleReport);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return db.selectAll('reports');
         }).then((reports) => {
-            assert.equal(reports.length, 1);
+            assert.strictEqual(reports.length, 1);
             originalReprot = reports[0];
             return db.query('UPDATE reports SET report_build = NULL; DELETE FROM builds');
         }).then(() => {
@@ -106,14 +106,14 @@ describe("/admin/reprocess-report", function () {
         }).then(() => {
             return db.selectAll('reports');
         }).then((reports) => {
-            assert.equal(reports.length, 1);
+            assert.strictEqual(reports.length, 1);
             const newPort = reports[0];
             originalReprot['committed_at'] = null;
             newPort['committed_at'] = null;
-            assert.notEqual(originalReprot['build'], newPort['build']);
+            assert.notStrictEqual(originalReprot['build'], newPort['build']);
             originalReprot['build'] = null;
             newPort['build'] = null;
-            assert.deepEqual(originalReprot, newPort);
+            assert.deepStrictEqual(originalReprot, newPort);
         });
     });
 });

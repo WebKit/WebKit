@@ -186,12 +186,12 @@ typedef void (*WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTestingFuncti
 WK_EXPORT void WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTesting(WKPageRef page, WKURLRef urlString, WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTestingFunction callback, void* callbackContext);
 typedef void (*WKPageSetPrivateClickMeasurementTokenSignatureURLForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting(WKPageRef page, WKURLRef urlString, WKPageSetPrivateClickMeasurementTokenSignatureURLForTestingFunction callback, void* callbackContext);
-typedef void (*WKPageSetPrivateClickMeasurementAttributionReportURLForTestingFunction)(void* functionContext);
-WK_EXPORT void WKPageSetPrivateClickMeasurementAttributionReportURLForTesting(WKPageRef page, WKURLRef urlString, WKPageSetPrivateClickMeasurementAttributionReportURLForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageSetPrivateClickMeasurementAttributionReportURLsForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting(WKPageRef page, WKURLRef sourceURL, WKURLRef attributeOnURL, WKPageSetPrivateClickMeasurementAttributionReportURLsForTestingFunction callback, void* callbackContext);
 typedef void (*WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction callback, void* callbackContext);
-typedef void (*WKPageSetFraudPreventionValuesForTestingFunction)(void* functionContext);
-WK_EXPORT void WKPageSetFraudPreventionValuesForTesting(WKPageRef page, WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID, WKPageSetFraudPreventionValuesForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageSetPCMFraudPreventionValuesForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetPCMFraudPreventionValuesForTesting(WKPageRef page, WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID, WKPageSetPCMFraudPreventionValuesForTestingFunction callback, void* callbackContext);
 
 WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);

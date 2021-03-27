@@ -68,13 +68,9 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 
     self.cancellable = YES;
     self.cancellationHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKDownloadProgress> { self }] () mutable {
-        if (!RunLoop::isMain()) {
-            RunLoop::main().dispatch([weakSelf = WTFMove(weakSelf)] {
-                [weakSelf performCancel];
-            });
-            return;
-        }
-        [weakSelf performCancel];
+        ensureOnMainRunLoop([weakSelf = WTFMove(weakSelf)] {
+            [weakSelf performCancel];
+        });
     }).get();
 
     return self;

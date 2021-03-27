@@ -62,6 +62,7 @@ RTCPeerConnectionIceEvent conditional=WEB_RTC
 RTCDataChannelEvent conditional=WEB_RTC
 RTCDTMFToneChangeEvent conditional=WEB_RTC
 RTCTrackEvent conditional=WEB_RTC
+RTCTransformEvent conditional=WEB_RTC
 SpeechRecognitionErrorEvent
 SpeechRecognitionEvent
 SpeechSynthesisEvent conditional=SPEECH_SYNTHESIS

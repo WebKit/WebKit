@@ -33,6 +33,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventDispatcher.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "EventQueue.h"
 #include "IDBCursorWithValue.h"
@@ -97,8 +98,7 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
         auto* context = scriptExecutionContext();
         ASSERT(context);
 
-        JSC::VM& vm = context->vm();
-        vm.whenIdle([protectedThis = makeRef(*this)]() {
+        context->eventLoop().runAtEndOfMicrotaskCheckpoint([protectedThis = makeRef(*this)] {
             protectedThis->deactivate();
         });
 

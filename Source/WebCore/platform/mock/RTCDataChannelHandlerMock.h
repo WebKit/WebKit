@@ -38,7 +38,7 @@ public:
     RTCDataChannelHandlerMock(const String&, const RTCDataChannelInit&);
 
 private:
-    void setClient(RTCDataChannelHandlerClient&) final;
+    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
 
     bool sendStringData(const CString&) final;
     bool sendRawData(const char*, size_t) final;

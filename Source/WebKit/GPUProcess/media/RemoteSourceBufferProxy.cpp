@@ -33,6 +33,7 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SourceBufferPrivateRemoteMessages.h"
+#include <WebCore/ContentType.h>
 #include <WebCore/MediaDescription.h>
 #include <WebCore/PlatformTimeRanges.h>
 
@@ -163,7 +164,8 @@ void RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete(SourceBufferPriv
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult), m_identifier);
+    auto buffered = m_sourceBufferPrivate->buffered()->ranges();
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendComplete(appendResult, WTFMove(buffered)), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
@@ -188,14 +190,6 @@ void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
         return;
 
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);
-}
-
-void RemoteSourceBufferProxy::sourceBufferPrivateBufferedRangesChanged(const PlatformTimeRanges& timeRanges)
-{
-    if (!m_connectionToWebProcess)
-        return;
-
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedRangesChanged(timeRanges), m_identifier);
 }
 
 void RemoteSourceBufferProxy::append(const IPC::DataReference& data)
@@ -228,6 +222,11 @@ void RemoteSourceBufferProxy::setActive(bool active)
     m_sourceBufferPrivate->setActive(active);
 }
 
+void RemoteSourceBufferProxy::canSwitchToType(const ContentType& contentType, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(m_sourceBufferPrivate->canSwitchToType(contentType));
+}
+
 void RemoteSourceBufferProxy::setMode(WebCore::SourceBufferAppendMode appendMode)
 {
     m_sourceBufferPrivate->setMode(appendMode);
@@ -243,14 +242,19 @@ void RemoteSourceBufferProxy::startChangingType()
     m_sourceBufferPrivate->startChangingType();
 }
 
-void RemoteSourceBufferProxy::updateBufferedFromTrackBuffers(bool sourceIsEnded)
+void RemoteSourceBufferProxy::updateBufferedFromTrackBuffers(bool sourceIsEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&)>&& completionHandler)
 {
     m_sourceBufferPrivate->updateBufferedFromTrackBuffers(sourceIsEnded);
+    auto buffered = m_sourceBufferPrivate->buffered()->ranges();
+    completionHandler(WTFMove(buffered));
 }
 
-void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void()>&& completionHandler)
+void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(PlatformTimeRanges&&)>&& completionHandler)
 {
-    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, isEnded, WTFMove(completionHandler));
+    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, isEnded, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto buffered = m_sourceBufferPrivate->buffered()->ranges();
+        completionHandler(WTFMove(buffered));
+    });
 }
 
 void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)

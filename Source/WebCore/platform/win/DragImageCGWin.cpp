@@ -57,13 +57,11 @@ GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
     if (!targetRef || !hbmp)
         return hbmp;
 
-    CGContextRef bitmapContext = CGBitmapContextCreate(bits, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, 8,
-                                                       bmpInfo.bmiHeader.biWidth * 4, sRGBColorSpaceRef(),
-                                                       kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
+    auto bitmapContext = adoptCF(CGBitmapContextCreate(bits, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, 8, bmpInfo.bmiHeader.biWidth * 4, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst));
     if (!bitmapContext)
         return GDIObject<HBITMAP>();
 
-    *targetRef = bitmapContext;
+    *targetRef = bitmapContext.leakRef();
     return hbmp;
 }
 

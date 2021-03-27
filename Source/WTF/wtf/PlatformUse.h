@@ -161,7 +161,7 @@
 #define USE_BUILTIN_FRAME_ADDRESS 1
 #endif
 
-#if PLATFORM(IOS_FAMILY) && CPU(ARM64) && HAVE(REMAP_JIT)
+#if OS(DARWIN) && CPU(ARM64) && HAVE(REMAP_JIT)
 #define USE_EXECUTE_ONLY_JIT_WRITE_FUNCTION 1
 #endif
 
@@ -285,10 +285,6 @@
 #if PLATFORM(MAC) || PLATFORM(WPE) || PLATFORM(GTK)
 /* FIXME: This really needs a descriptive name, this "new theme" was added in 2008. */
 #define USE_NEW_THEME 1
-#endif
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500
-#define USE_REALPATH_FOR_DLOPEN_PREFLIGHT 1
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST)

@@ -63,15 +63,15 @@ public:
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
     void setTokenPublicKeyURLForTesting(URL&&);
     void setTokenSignatureURLForTesting(URL&&);
-    void setAttributionReportURLForTesting(URL&&);
+    void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& attributeOnURL);
     void markAllUnattributedAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
-    void setFraudPreventionValuesForTesting(String&& secretToken, String&& unlinkableToken, String&& signature, String&& keyID);
+    void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
     void startTimer(Seconds);
 
 private:
     void getTokenPublicKey(PrivateClickMeasurement&&, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
-    void getSignedSecretToken(PrivateClickMeasurement&&);
+    void getSignedUnlinkableToken(PrivateClickMeasurement&&);
     void clearSentAttribution(PrivateClickMeasurement&&);
     void attribute(const SourceSite&, const AttributeOnSite&, AttributionTriggerData&&);
     void fireConversionRequest(const PrivateClickMeasurement&);
@@ -85,15 +85,21 @@ private:
     bool m_isRunningTest { false };
     Optional<URL> m_tokenPublicKeyURLForTesting;
     Optional<URL> m_tokenSignatureURLForTesting;
-    Optional<URL> m_attributionReportBaseURLForTesting;
     WeakPtr<NetworkSession> m_networkSession;
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
     Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
 
+    struct AttributionReportTestConfig {
+        URL attributionReportSourceURL;
+        URL attributionReportAttributeOnURL;
+    };
+
+    Optional<AttributionReportTestConfig> m_attributionReportTestConfig;
+
     struct TestingFraudPreventionValues {
-        String secretToken;
         String unlinkableToken;
+        String secretToken;
         String signature;
         String keyID;
     };

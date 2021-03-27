@@ -274,12 +274,19 @@ endif ()
 if (COMPILER_IS_GCC_OR_CLANG)
     set(ATOMIC_TEST_SOURCE "
         #include <atomic>
-        int main() { std::atomic<int64_t> i(0); i++; return 0; }
+        int main() {
+          std::atomic<bool> y (false);
+          std::atomic<uint64_t> x (0);
+          bool expected = true;
+          bool j = y.compare_exchange_weak(expected,false);
+          x++;
+          return 0;
+        }
     ")
-    check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMIC_INT64_IS_BUILTIN)
-    if (NOT ATOMIC_INT64_IS_BUILTIN)
+    check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_ARE_BUILTIN)
+    if (NOT ATOMICS_ARE_BUILTIN)
         set(CMAKE_REQUIRED_LIBRARIES atomic)
-        check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMIC_INT64_REQUIRES_LIBATOMIC)
+        check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_REQUIRE_LIBATOMIC)
         unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()
 

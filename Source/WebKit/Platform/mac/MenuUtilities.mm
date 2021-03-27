@@ -49,6 +49,29 @@ NSString *menuItemTitleForTelephoneNumberGroup()
     return [getTUCallClass() supplementalDialTelephonyCallString];
 }
 
+#if HAVE(DATA_DETECTORS_MAC_ACTION)
+static DDMacAction *actionForMenuItem(NSMenuItem *item)
+#else
+static DDAction *actionForMenuItem(NSMenuItem *item)
+#endif
+{
+    NSDictionary *representedObject = item.representedObject;
+    if (![representedObject isKindOfClass:[NSDictionary class]])
+        return nil;
+
+    id action = [representedObject objectForKey:@"DDAction"];
+
+#if HAVE(DATA_DETECTORS_MAC_ACTION)
+    if (![action isKindOfClass:getDDMacActionClass()])
+        return nil;
+#else
+    if (![action isKindOfClass:getDDActionClass()])
+        return nil;
+#endif
+
+    return action;
+}
+
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 {
     if (!DataDetectorsLibrary())
@@ -59,15 +82,8 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 
     NSArray *proposedMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:actionContext.get()];
     for (NSMenuItem *item in proposedMenuItems) {
-        NSDictionary *representedObject = item.representedObject;
-        if (![representedObject isKindOfClass:[NSDictionary class]])
-            continue;
-
-        DDAction *actionObject = [representedObject objectForKey:@"DDAction"];
-        if (![actionObject isKindOfClass:getDDActionClass()])
-            continue;
-
-        if ([actionObject.actionUTI hasPrefix:@"com.apple.dial"]) {
+        auto action = actionForMenuItem(item);
+        if ([action.actionUTI hasPrefix:@"com.apple.dial"]) {
             item.title = formattedPhoneNumberString(telephoneNumber);
             return item;
         }
@@ -90,17 +106,10 @@ RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
 
     NSArray *proposedMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:actionContext.get()];
     for (NSMenuItem *item in proposedMenuItems) {
-        NSDictionary *representedObject = item.representedObject;
-        if (![representedObject isKindOfClass:[NSDictionary class]])
-            continue;
-
-        DDAction *actionObject = [representedObject objectForKey:@"DDAction"];
-        if (![actionObject isKindOfClass:getDDActionClass()])
-            continue;
-
-        if ([actionObject.actionUTI hasPrefix:@"com.apple.dial"])
+        auto action = actionForMenuItem(item);
+        if ([action.actionUTI hasPrefix:@"com.apple.dial"])
             dialItem = item;
-        else if ([actionObject.actionUTI hasPrefix:@"com.apple.facetime"])
+        else if ([action.actionUTI hasPrefix:@"com.apple.facetime"])
             [faceTimeItems addObject:item];
     }
 

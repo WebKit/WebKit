@@ -26,12 +26,10 @@ class Reducer : public TIntermRebuild
     std::unordered_map<const TInterfaceBlock *,  const TVariable *>
         mLiftedMap;
     std::unordered_map<const TVariable *, const TVariable *> mInstanceMap;
-    IdGen &mIdGen;
-
-public:
-    Reducer(TCompiler &compiler, IdGen &idGen)
-        : TIntermRebuild(compiler, true, false),
-          mIdGen(idGen)
+    IdGen & mIdGen;
+  public:
+    Reducer(TCompiler &compiler, IdGen & idGen) : TIntermRebuild(compiler, true, false),
+        mIdGen(idGen)
     {
 
     }

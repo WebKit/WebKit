@@ -31,6 +31,7 @@
 #import "WKNSString.h"
 #import "WKRetainPtr.h"
 #import "WebPageGroupProxy.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKWebProcessPlugInPageGroup {
     API::ObjectStorage<WebKit::WebPageGroupProxy> _bundlePageGroup;
@@ -43,6 +44,8 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInPageGroup.class, self))
+        return;
     _bundlePageGroup->~WebPageGroupProxy();
     [super dealloc];
 }

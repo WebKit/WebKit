@@ -133,7 +133,7 @@ Layout sh::MetalLayoutOf(const TType &type, MetalLayoutOfConfig config)
         }
         if (config.assumeStructsAreTailPadded)
         {
-            size_t pad = layout.sizeOf % 16;
+            size_t pad = (kDefaultStructAlignmentSize - layout.sizeOf) % kDefaultStructAlignmentSize;
             layout.sizeOf += pad;
         }
         layout.sizeOf = RoundUpToMultipleOf(layout.sizeOf, layout.alignOf);

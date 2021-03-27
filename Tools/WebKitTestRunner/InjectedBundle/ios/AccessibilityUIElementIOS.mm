@@ -78,6 +78,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIAColumnCount;
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
+- (NSString *)accessibilityInvalidStatus;
 - (BOOL)accessibilityIsInDescriptionListDefinition;
 - (BOOL)accessibilityIsInDescriptionListTerm;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
@@ -392,10 +393,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     if (JSStringIsEqualToUTF8CString(attribute, "AXExpandedTextValue"))
         return [[m_element accessibilityExpandedTextValue] createJSStringRef];
-    
+
+    if (JSStringIsEqualToUTF8CString(attribute, "AXInvalid"))
+        return [[m_element accessibilityInvalidStatus] createJSStringRef];
+
     if (JSStringIsEqualToUTF8CString(attribute, "AXSortDirection"))
         return [[m_element accessibilitySortDirection] createJSStringRef];
-    
+
     if (JSStringIsEqualToUTF8CString(attribute, "AXVisibleContentRect")) {
         CGRect screenRect = [m_element accessibilityVisibleContentRect];
         NSString *rectStr = [NSString stringWithFormat:@"{%.2f, %.2f, %.2f, %.2f}", screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height];
@@ -404,7 +408,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     if (JSStringIsEqualToUTF8CString(attribute, "AXTextualContext"))
         return [[m_element accessibilityTextualContext] createJSStringRef];
-    
+
     return createJSString();
 }
 

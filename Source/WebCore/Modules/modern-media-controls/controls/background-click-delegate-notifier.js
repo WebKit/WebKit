@@ -41,16 +41,18 @@ class BackgroundClickDelegateNotifier
         if (event.currentTarget !== mediaControls.element)
             return;
 
-        // Only notify that the background was clicked when the "mousedown" event
-        // was also received, which wouldn't happen if the "mousedown" event caused
-        // the tracks panel to be hidden, unless we're in fullscreen in which case
-        // we can simply check that the panel is not currently presented.
-        if (event.type === "mousedown" && !mediaControls.tracksPanel.presented)
+        // Only notify that the background was clicked when the "mousedown" event was also received, unless
+        // we're in fullscreen in which case we can simply check that the panel is not currently presented.
+        switch (event.type) {
+        case "mousedown":
             this._receivedMousedown = true;
-        else if (event.type === "click") {
+            return;
+
+        case "click":
             if (this._receivedMousedown && event.target === mediaControls.element && mediaControls.delegate && typeof mediaControls.delegate.macOSControlsBackgroundWasClicked === "function")
                 mediaControls.delegate.macOSControlsBackgroundWasClicked();
             delete this._receivedMousedown
+            return;
         }
     }
 

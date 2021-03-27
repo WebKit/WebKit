@@ -28,6 +28,9 @@
 
 #if ENABLE(B3_JIT)
 
+static const char* const dmbIsh = "dmb      ish";
+static const char* const dmbIshst = "dmb      ishst";
+
 void testBitAndSExt32(int32_t value, int64_t mask)
 {
     Procedure proc;
@@ -2601,9 +2604,9 @@ void testMemoryFence()
     if (isX86())
         checkUsesInstruction(*code, "lock or $0x0, (%rsp)");
     if (isARM64())
-        checkUsesInstruction(*code, "dmb     ish");
+        checkUsesInstruction(*code, dmbIsh);
     checkDoesNotUseInstruction(*code, "mfence");
-    checkDoesNotUseInstruction(*code, "dmb     ishst");
+    checkDoesNotUseInstruction(*code, dmbIshst);
 }
 
 void testStoreFence()
@@ -2620,7 +2623,7 @@ void testStoreFence()
     checkDoesNotUseInstruction(*code, "lock");
     checkDoesNotUseInstruction(*code, "mfence");
     if (isARM64())
-        checkUsesInstruction(*code, "dmb     ishst");
+        checkUsesInstruction(*code, dmbIshst);
 }
 
 void testLoadFence()
@@ -2637,8 +2640,8 @@ void testLoadFence()
     checkDoesNotUseInstruction(*code, "lock");
     checkDoesNotUseInstruction(*code, "mfence");
     if (isARM64())
-        checkUsesInstruction(*code, "dmb     ish");
-    checkDoesNotUseInstruction(*code, "dmb     ishst");
+        checkUsesInstruction(*code, dmbIsh);
+    checkDoesNotUseInstruction(*code, dmbIshst);
 }
 
 void testTrappingLoad()

@@ -608,6 +608,7 @@ testing/cocoa/WebViewVisualIdentificationOverlay.mm
 
 platform/graphics/angle/ExtensionsGLANGLE.cpp @no-unify
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
+platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.cpp @no-unify
 platform/graphics/angle/TemporaryANGLESetting.cpp @no-unify
 
 // Derived Sources

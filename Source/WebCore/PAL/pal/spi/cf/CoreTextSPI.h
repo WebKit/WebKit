@@ -130,6 +130,7 @@ CTFontDescriptorRef CTFontDescriptorCreateWithAttributesAndOptions(CFDictionaryR
 CTFontDescriptorRef CTFontDescriptorCreateLastResort();
 
 CFArrayRef CTFontManagerCreateFontDescriptorsFromData(CFDataRef);
+bool CTFontManagerEnableAllUserFonts(bool postFontChangeNotification);
 
 void CTParagraphStyleSetCompositionLanguage(CTParagraphStyleRef, CTCompositionLanguage);
 

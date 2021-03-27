@@ -1,5 +1,5 @@
 <?php
-    header("Content-Security-Policy-Report-Only: connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php");
+    header("Content-Security-Policy-Report-Only: connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py");
 ?>
 <!DOCTYPE html>
 <html>
@@ -18,7 +18,7 @@ function log(msg)
 }
 
 try {
-    navigator.sendBeacon("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/echo-report.php");
+    navigator.sendBeacon("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py?url=http://localhost:8000/security/contentSecurityPolicy/resources/echo-report.php");
     log("Pass");
 } catch(e) {
     log("Fail");

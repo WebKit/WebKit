@@ -137,6 +137,8 @@ private:
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
 #if ENABLE(CONTEXT_MENUS)
     Ref<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, ContextMenuContextData&&, const UserData&) override;
+    void didShowContextMenu() override;
+    void didDismissContextMenu() override;
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -274,6 +276,11 @@ private:
 
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor() override;
+#endif
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+    bool canHandleContextMenuTranslation() const override;
+    void handleContextMenuTranslation(const String&, const WebCore::IntRect&, const WebCore::IntPoint&) override;
 #endif
 
     NSView *m_view;

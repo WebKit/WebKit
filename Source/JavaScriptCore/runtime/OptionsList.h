@@ -527,6 +527,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, useIntlDateTimeFormatDayPeriod, true, Normal, "Expose the Intl.DateTimeFormat dayPeriod feature.") \
     v(Bool, useIntlDateTimeFormatRangeToParts, true, Normal, "Expose the Intl.DateTimeFormat#formatRangeToParts feature.") \
     v(Bool, useAtMethod, false, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
+    v(Bool, useErrorCause, true, Normal, "Allow a cause to be provided when constructing an Error, _NativeError_, or AggregateError.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useTopLevelAwait, true, Normal, "allow the await keyword at the top level of a module.") \
 

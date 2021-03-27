@@ -8,7 +8,7 @@ if (window.internals)
 function setServerState(string)
 {
     var xhr = new XMLHttpRequest;
-    xhr.open('POST', '/resources/write-temp-file.php?filename=cache-partitioned-cache-state&data=' + string, false);
+    xhr.open('POST', '/resources/write-temp-file.py?filename=cache-partitioned-cache-state&data=' + string, false);
     xhr.send();
 }
 
@@ -17,7 +17,7 @@ console.log('Setting server-side persistent state to "' + document.domain + '"')
 setServerState(document.domain);
 
 var scriptElement = document.createElement('script');
-scriptElement.setAttribute('src', 'http://localhost:8000/cache/resources/partitioned-cache-echo-state.php');
+scriptElement.setAttribute('src', 'http://localhost:8000/cache/resources/partitioned-cache-echo-state.py');
 document.head.appendChild(scriptElement);
 
 window.onload = function() {

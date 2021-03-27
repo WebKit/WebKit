@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation WKWebProcessPlugInScriptWorld {
     API::ObjectStorage<WebKit::InjectedBundleScriptWorld> _world;
 }
@@ -42,6 +44,8 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInScriptWorld.class, self))
+        return;
     _world->~InjectedBundleScriptWorld();
     [super dealloc];
 }

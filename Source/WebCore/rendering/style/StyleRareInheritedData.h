@@ -101,8 +101,8 @@ public:
     DataRef<StyleCustomPropertyData> customProperties;
 
     // Paged media properties.
-    short widows;
-    short orphans;
+    unsigned short widows;
+    unsigned short orphans;
     unsigned hasAutoWidows : 1;
     unsigned hasAutoOrphans : 1;
     

@@ -32,6 +32,10 @@
     }
 
     function mediaSegmentAppended() {
+        waitForEventOn(video, 'resize', videoFrameAvailable, false, true);
+    }
+
+    function videoFrameAvailable() {
         run('canvas = document.createElement("canvas")');
         run('gl = canvas.getContext("webgl")');
         run('texture = gl.createTexture()');
@@ -46,12 +50,14 @@
         video.addEventListener('timeupdate', timeupdate);
     }
 
-    function timeupdate() {
+    async function timeupdate() {
         if (video.currentTime == 0)
             return;
 
+        // There could be a delay that a video element gets the VideoPlaybackQualityMetrics
+        // from its media player (refer to RemoteMediaPlayerProxy::startUpdateCachedStateMessageTimer()).
         consoleWrite('EVENT(timeupdate)');
-        testExpected('video.getVideoPlaybackQuality().totalVideoFrames', '0', '>');
+        await testExpectedEventually('video.getVideoPlaybackQuality().totalVideoFrames', '0', '>');
         endTest();
     }
 

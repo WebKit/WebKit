@@ -285,21 +285,19 @@ CacheStorageEngineConnection& NetworkConnectionToWebProcess::cacheStorageConnect
     return *m_cacheStorageConnection;
 }
 
-void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& reply)
+bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& reply)
 {
     // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
     ASSERT(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
 
-    if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
-        didReceiveSyncNetworkConnectionToWebProcessMessage(connection, decoder, reply);
-        return;
-    }
+    if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName())
+        return didReceiveSyncNetworkConnectionToWebProcessMessage(connection, decoder, reply);
 
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
         if (m_swConnection)
-            m_swConnection->didReceiveSyncMessage(connection, decoder, reply);
-        return;
+            return m_swConnection->didReceiveSyncMessage(connection, decoder, reply);
+        return false;
     }
 #endif
 
@@ -310,6 +308,7 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 
     WTFLogAlways("Unhandled network process message '%s'", description(decoder.messageName()));
     ASSERT_NOT_REACHED();
+    return false;
 }
 
 void NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting(const ClientOrigin& origin)

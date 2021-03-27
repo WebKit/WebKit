@@ -36,8 +36,10 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
 
         var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WI.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
 
-        var fileExtension = WI.fileExtensionForURL(url) || "";
-        var fileExtensionMIMEType = WI.mimeTypeForFileExtension(fileExtension, true);
+        let fileExtension = WI.fileExtensionForURL(url) || "";
+
+        // React serves JSX resources with "js" extension.
+        let fileExtensionMIMEType = fileExtension === "js" ? "text/jsx" : WI.mimeTypeForFileExtension(fileExtension, true);
 
         // FIXME: This is a layering violation. It should use a helper function on the
         // Resource base-class to set _mimeType and _type.

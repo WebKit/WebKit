@@ -28,9 +28,6 @@ list(APPEND TestWTF_LIBRARIES
     GTK::GTK
 )
 
-# FIXME: Remove when turning on hidden visibility https://bugs.webkit.org/show_bug.cgi?id=181916
-list(APPEND TestJavaScriptCore_LIBRARIES WTF)
-
 # TestWebCore
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
@@ -54,7 +51,6 @@ list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
 list(APPEND TestWebCore_LIBRARIES
     GTK::GTK
 )
-ADD_WHOLE_ARCHIVE_TO_LIBRARIES(TestWebCore_LIBRARIES)
 
 # TestWebKit
 list(APPEND TestWebKit_SOURCES
@@ -108,10 +104,6 @@ set(TestJSC_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
     ${TESTWEBKITAPI_DIR}
     ${THIRDPARTY_DIR}/gtest/include
-    ${FORWARDING_HEADERS_DIR}
-    ${FORWARDING_HEADERS_DIR}/JavaScriptCore
-    ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
-    ${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}
 )
 
 set(TestJSC_LIBRARIES

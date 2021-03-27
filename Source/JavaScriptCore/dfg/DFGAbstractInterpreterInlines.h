@@ -1348,18 +1348,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         executeDoubleUnaryOpEffects(node, arithUnaryFunction(node->arithUnaryType()));
         break;
             
+    case ToBoolean:
     case LogicalNot: {
-        switch (booleanResult(node, forNode(node->child1()))) {
-        case TriState::True:
-            setConstant(node, jsBoolean(false));
-            break;
-        case TriState::False:
-            setConstant(node, jsBoolean(true));
-            break;
-        case TriState::Indeterminate:
+        TriState result = booleanResult(node, forNode(node->child1()));
+        if (result == TriState::Indeterminate) {
             setNonCellTypeForNode(node, SpecBoolean);
             break;
         }
+
+        bool resultAsBool = result == TriState::True;
+        if (node->op() == LogicalNot)
+            resultAsBool = !resultAsBool;
+        setConstant(node, jsBoolean(resultAsBool));
         break;
     }
 

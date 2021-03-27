@@ -1104,26 +1104,6 @@
         returnValue = m_context->getExtensions().getGraphicsResetStatusARB();
         completionHandler(returnValue);
     }
-    void createVertexArrayOES(CompletionHandler<void(uint32_t)>&& completionHandler)
-    {
-        PlatformGLObject returnValue = { };
-        returnValue = m_context->getExtensions().createVertexArrayOES();
-        completionHandler(returnValue);
-    }
-    void deleteVertexArrayOES(uint32_t arg0)
-    {
-        m_context->getExtensions().deleteVertexArrayOES(arg0);
-    }
-    void isVertexArrayOES(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        GCGLboolean returnValue = { };
-        returnValue = m_context->getExtensions().isVertexArrayOES(arg0);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void bindVertexArrayOES(uint32_t arg0)
-    {
-        m_context->getExtensions().bindVertexArrayOES(arg0);
-    }
     void getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
         String returnValue = { };

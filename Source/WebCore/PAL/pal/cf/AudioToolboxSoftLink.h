@@ -28,7 +28,13 @@
 
 #include <wtf/SoftLinking.h>
 
+typedef UInt32 AudioConverterPropertyID;
+typedef UInt32 AudioFormatPropertyID;
+typedef struct AudioStreamBasicDescription AudioStreamBasicDescription;
+typedef struct OpaqueAudioConverter* AudioConverterRef;
+
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AudioToolbox)
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AudioToolboxCore)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterGetProperty, OSStatus, (AudioConverterRef inAudioConverter, AudioConverterPropertyID inPropertyID, UInt32* ioPropertyDataSize, void* outPropertyData), (inAudioConverter, inPropertyID, ioPropertyDataSize, outPropertyData))
 #define AudioConverterGetProperty softLink_AudioToolbox_AudioConverterGetProperty
@@ -38,6 +44,9 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterSetProperty, OSSt
 #define AudioConverterSetProperty softLink_AudioToolbox_AudioConverterSetProperty
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFormatGetProperty, OSStatus, (AudioFormatPropertyID inPropertyID, UInt32 inSpecifierSize, const void* inSpecifier, UInt32* ioPropertyDataSize, void* outPropertyData), (inPropertyID, inSpecifierSize, inSpecifier, ioPropertyDataSize, outPropertyData))
 #define AudioFormatGetProperty softLink_AudioToolbox_AudioFormatGetProperty
-
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, AudioToolboxCore, AudioComponentFetchServerRegistrations, OSStatus, (CFDataRef* outBundleRegistrations), (outBundleRegistrations))
+#define AudioComponentFetchServerRegistrations softLinkAudioToolboxCoreAudioComponentFetchServerRegistrations
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, AudioToolboxCore, AudioComponentApplyServerRegistrations, OSStatus, (CFDataRef inBundleRegistrations), (inBundleRegistrations))
+#define AudioComponentApplyServerRegistrations softLinkAudioToolboxCoreAudioComponentApplyServerRegistrations
 
 #endif // USE(AVFOUNDATION)

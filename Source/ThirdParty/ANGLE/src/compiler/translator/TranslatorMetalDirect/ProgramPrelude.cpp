@@ -40,8 +40,27 @@ class ProgramPrelude : public TIntermTraverser
             equalMatrix();
         }
 
+        switch (ppc.shaderType)
+        {
+            case MetalShaderType::None:
+                ASSERT(0 && "ppc.shaderType should not be ShaderTypeNone");
+                break;
+            case MetalShaderType::Vertex:
+                transform_feedback_guard();
+                break;
+            case MetalShaderType::Fragment:
+                writeSampleMask();
+                break;
+            case MetalShaderType::Compute:
+                ASSERT(0 && "compute shaders not currently supported");
+                break;
+            default:
+                break;
+        }
+
 #if 1
         mOut << "#define ANGLE_tensor metal::array\n";
+        mOut << "#pragma clang diagnostic ignored \"-Wunused-value\"\n";
 #else
         tensor();
 #endif
@@ -85,6 +104,8 @@ class ProgramPrelude : public TIntermTraverser
     void include_metal_matrix();
     void include_metal_pack();
     void include_metal_relational();
+
+    void transform_feedback_guard();
 
     void enable_if();
     void scalar_of();
@@ -130,8 +151,10 @@ class ProgramPrelude : public TIntermTraverser
     void equalMatrix();
     void notEqualVector();
     void notEqualStruct();
+    void notEqualStructArray();
     void notEqualMatrix();
     void equalArray();
+    void equalStructArray();
     void notEqualArray();
     void sign();
     void pack_half_2x16();
@@ -145,6 +168,7 @@ class ProgramPrelude : public TIntermTraverser
     void castMatrix();
     void functionConstants();
     void gradient();
+    void writeSampleMask();
     void textureEnv();
     void texelFetch();
     void texelFetchOffset();
@@ -265,7 +289,14 @@ PROGRAM_PRELUDE_INCLUDE(metal_matrix)
 PROGRAM_PRELUDE_INCLUDE(metal_pack)
 PROGRAM_PRELUDE_INCLUDE(metal_relational)
 
-////////////////////////////////////////////////////////////////////////////////
+PROGRAM_PRELUDE_DECLARE(transform_feedback_guard, R"(
+#if TRANSFORM_FEEDBACK_ENABLED
+    #define __VERTEX_OUT(args) void
+#else
+    #define __VERTEX_OUT(args) args
+#endif
+)")
+
 
 PROGRAM_PRELUDE_DECLARE(ALWAYS_INLINE, R"(
 #define ANGLE_ALWAYS_INLINE __attribute__((always_inline))
@@ -1029,6 +1060,22 @@ ANGLE_ALWAYS_INLINE bool ANGLE_equal(metal::array<T, N> u, metal::array<T, N> v)
 }
 )")
 
+PROGRAM_PRELUDE_DECLARE(equalStructArray,
+                        R"(
+template <typename T, size_t N>
+ANGLE_ALWAYS_INLINE bool ANGLE_equalStructArray(metal::array<T, N> u, metal::array<T, N> v)
+{
+    for(size_t i = 0; i < N; i++)
+    {
+        if (ANGLE_equal(u[i], v[i]) == false) 
+            return false;
+    }
+    return true;
+}
+)")
+
+
+
 PROGRAM_PRELUDE_DECLARE(notEqualArray,
                         R"(
 template <typename T, size_t N>
@@ -1066,6 +1113,15 @@ ANGLE_ALWAYS_INLINE bool ANGLE_equal(metal::matrix<T, C, R> a, metal::matrix<T, 
 )",
                         equalVector())
 
+PROGRAM_PRELUDE_DECLARE(notEqualMatrix,
+                        R"(
+template <typename T, int C, int R>
+ANGLE_ALWAYS_INLINE bool ANGLE_notEqual(metal::matrix<T, C, R> u, metal::matrix<T, C, R> v)
+{
+    return !ANGLE_equal(u, v);
+}
+)",
+                        equalMatrix())
 
 PROGRAM_PRELUDE_DECLARE(notEqualVector,
                         R"(
@@ -1077,17 +1133,6 @@ ANGLE_ALWAYS_INLINE bool ANGLE_notEqual(metal::vec<T, N> u, metal::vec<T, N> v)
 )",
                         equalVector())
 
-PROGRAM_PRELUDE_DECLARE(notEqualMatrix,
-                        R"(
-template <typename T, int C, int R>
-ANGLE_ALWAYS_INLINE bool ANGLE_notEqual(metal::matrix<T, C, R> u, metal::matrix<T, C, R> v)
-{
-    return !ANGLE_equal(u, v);
-}
-)",
-                        equalMatrix())
-
-
 PROGRAM_PRELUDE_DECLARE(notEqualStruct,
                         R"(
 template <typename T>
@@ -1098,6 +1143,21 @@ ANGLE_ALWAYS_INLINE bool ANGLE_notEqualStruct(thread const T &a, thread const T 
 )",
                         equalVector(),
                         equalMatrix())
+
+PROGRAM_PRELUDE_DECLARE(notEqualStructArray,
+                        R"(
+template <typename T, size_t N>
+ANGLE_ALWAYS_INLINE bool ANGLE_notEqualStructArray(metal::array<T, N> u, metal::array<T, N> v)
+{
+    for(size_t i = 0; i < N; i++)
+    {
+        if (ANGLE_notEqualStruct(u[i], v[i]))
+            return true;
+    }
+    return false;
+}
+)",
+                        notEqualStruct())
 
 PROGRAM_PRELUDE_DECLARE(vectorElemRef, R"(
 template <typename T, int N>
@@ -1135,7 +1195,7 @@ struct ANGLE_SwizzleRef
             mVec[j] = mRef[i];
         }
     }
-    ANGLE_SwizzleRef(thread metal::vec<T, N> &vec, thread const int *indices)
+    ANGLE_SwizzleRef(thread metal::vec<T, VN> &vec, thread const int *indices)
         : mVec(vec)
     {
         for (int i = 0; i < SN; ++i)
@@ -1150,7 +1210,8 @@ struct ANGLE_SwizzleRef
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE ANGLE_VectorElemRef<T, N> ANGLE_swizzle_ref(thread metal::vec<T, N> &vec, int i0)
 {
-    return ANGLE_VectorElemRef<T, N>(vec, index);
+    const int is[] = { i0 };
+    return ANGLE_VectorElemRef<T, N>(vec, is);
 }
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE ANGLE_SwizzleRef<T, N, 2> ANGLE_swizzle_ref(thread metal::vec<T, N> &vec, int i0, int i1)
@@ -1379,6 +1440,19 @@ template <int N>
 using ANGLE_gradient = typename ANGLE_gradient_traits<N>::type;
 )")
 
+PROGRAM_PRELUDE_DECLARE(writeSampleMask,
+                        R"(
+ANGLE_ALWAYS_INLINE void ANGLE_writeSampleMask(const uint mask,
+                                               thread uint& gl_SampleMask)
+{
+    if (ANGLE_CoverageMaskEnabled)
+    {
+        gl_SampleMask = as_type<int>(mask);
+    }
+}
+)",
+                        functionConstants())
+
 PROGRAM_PRELUDE_DECLARE(textureEnv,
                         R"(
 template <typename T>
@@ -1394,10 +1468,12 @@ PROGRAM_PRELUDE_DECLARE(functionConstants,
 #define ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX 0
 #define ANGLE_SAMPLE_COMPARE_LOD_INDEX      1
 #define ANGLE_RASTERIZATION_DISCARD_INDEX   2
+#define ANGLE_COVERAGE_MASK_ENABLED_INDEX   3
 
 constant bool ANGLE_UseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];
 constant bool ANGLE_UseSampleCompareLod      [[function_constant(ANGLE_SAMPLE_COMPARE_LOD_INDEX)]];
 constant bool ANGLE_RasterizationDiscard     [[function_constant(ANGLE_RASTERIZATION_DISCARD_INDEX)]];
+constant bool ANGLE_CoverageMaskEnabled      [[function_constant(ANGLE_COVERAGE_MASK_ENABLED_INDEX)]];
 )")
 
 PROGRAM_PRELUDE_DECLARE(texelFetch,
@@ -1537,7 +1613,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture_impl(
     thread metal::sampler const &sampler,
     thread metal::float3 const &coord)
 {
-    return texture.sample(sampler, coord.xy);
+    return texture.sample_compare(sampler, coord.xy, coord.z);
 }
 )",
                         texture())
@@ -1551,7 +1627,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture_impl(
     thread metal::float3 const &coord,
     float bias)
 {
-    return texture.sample(sampler, coord.xy, metal::bias(bias));
+    return texture.sample_compare(sampler, coord.xy, coord.z, metal::bias(bias));
 }
 )",
                         texture())
@@ -1591,7 +1667,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture_impl(
     thread metal::sampler const &sampler,
     thread metal::float4 const &coord)
 {
-    return texture.sample(sampler, coord.xyz);
+    return texture.sample_compare(sampler, coord.xyz, coord.w);
 }
 )",
                         texture())
@@ -1605,7 +1681,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture_impl(
     thread metal::float4 const &coord,
     float bias)
 {
-    return texture.sample(sampler, coord.xyz, metal::bias(bias));
+    return texture.sample_compare(sampler, coord.xyz, coord.w, metal::bias(bias));
 }
 )",
                         texture())
@@ -1779,7 +1855,6 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture2D_impl(
 PROGRAM_PRELUDE_DECLARE(texture2DRect,
                         R"(
 #define ANGLE_texture2DRect(env, ...) ANGLE_texture2DRect_impl(*env.texture, *env.sampler, __VA_ARGS__)
-
 template <typename Texture>
 ANGLE_ALWAYS_INLINE auto ANGLE_texture2DRect_impl(
     thread Texture &texture,
@@ -1846,7 +1921,6 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture2DRectProj_impl(
 {
     return texture.sample(sampler, coord.xy/coord.z);
 }
-
 template <typename Texture>
 ANGLE_ALWAYS_INLINE auto ANGLE_texture2DRectProj_impl(
     thread Texture &texture,
@@ -1883,7 +1957,6 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture2DProjLod_impl(
 }
 )",
                         textureEnv())
-
 
 PROGRAM_PRELUDE_DECLARE(texture3DLod,
                         R"(
@@ -2018,9 +2091,9 @@ template <typename Texture, int N>
 ANGLE_ALWAYS_INLINE auto ANGLE_textureGrad_impl(
     thread Texture &texture,
     thread metal::sampler const &sampler,
-    thread metal::vec<float, N> const &coord,
-    thread metal::vec<float, N> const &dPdx,
-    thread metal::vec<float, N> const &dPdy)
+    metal::vec<float, N> const coord,
+    metal::vec<float, N> const dPdx,
+    metal::vec<float, N> const dPdy)
 {
     return texture.sample(sampler, coord, ANGLE_gradient<N>(dPdx, dPdy));
 }
@@ -2154,10 +2227,10 @@ template <typename Texture, int N>
 ANGLE_ALWAYS_INLINE auto ANGLE_textureGradOffset_impl(
     thread Texture &texture,
     thread metal::sampler const &sampler,
-    thread metal::vec<float, N> const &coord,
-    thread metal::vec<float, N> const &dPdx,
-    thread metal::vec<float, N> const &dPdy,
-    thread metal::vec<int, N> const &offset)
+    metal::vec<float, N> const coord,
+    metal::vec<float, N> const dPdx,
+    metal::vec<float, N> const dPdy,
+    metal::vec<int, N> const offset)
 {
     return texture.sample(sampler, coord, ANGLE_gradient<N>(dPdx, dPdy), offset);
 }
@@ -2256,7 +2329,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureGradOffset_impl(
     thread metal::float3 const &dPdy,
     thread metal::int3 const &offset)
 {
-    return texture.sample(sampler, coord.xyz, metal::gradientcube(dPdx, dPdy), offset);
+    return texture.sample_compare(sampler, coord.xyz, coord.w, metal::gradientcube(dPdx, dPdy), offset);
 }
 )",
                         textureGradOffset())
@@ -2504,7 +2577,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureOffset_impl(
     thread float3 const &coord,
     thread int2 const &offset)
 {
-    return texture.sample(sampler, coord.xy, offset);
+    return texture.sample_compare(sampler, coord.xy, coord.z, offset);
 }
 
 template <typename T>
@@ -2515,7 +2588,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureOffset_impl(
     thread int2 const &offset,
     float bias)
 {
-    return texture.sample(sampler, coord.xy, metal::bias(bias), offset);
+    return texture.sample_compare(sampler, coord.xy, coord.z, metal::bias(bias), offset);
 }
 )",
                         textureEnv())
@@ -3392,6 +3465,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             {
                 equalArray();
             }
+            if(argType0->getStruct() && argType1->getStruct() && argType0->isArray() && argType1->isArray())
+            {
+                equalStructArray();
+            }
             if(argType0->isMatrix() && argType1->isMatrix())
             {
                 equalMatrix();
@@ -3411,6 +3488,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             if (argType0->isArray() && argType1->isArray())
             {
                 notEqualArray();
+            }
+            if(argType0->getStruct() && argType1->getStruct() && argType0->isArray() && argType1->isArray())
+            {
+                notEqualStructArray();
             }
             if(argType0->isMatrix() && argType1->isMatrix())
             {

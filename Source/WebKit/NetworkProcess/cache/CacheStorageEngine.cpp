@@ -199,7 +199,7 @@ void Engine::clearCachesForOrigin(NetworkProcess& networkProcess, PAL::SessionID
 
 static uint64_t getDirectorySize(const String& directoryPath)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     uint64_t directorySize = 0;
     Deque<String> paths;
@@ -227,7 +227,7 @@ static uint64_t getDirectorySize(const String& directoryPath)
 
 uint64_t Engine::diskUsage(const String& rootPath, const WebCore::ClientOrigin& origin)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!isMainRunLoop());
 
     if (rootPath.isEmpty())
         return 0;
@@ -468,7 +468,7 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
             FileSystem::makeAllDirectories(directoryPath);
 
         auto channel = IOChannel::open(filename, IOChannel::Type::Create, WorkQueue::QOS::Default);
-        channel->write(0, data, nullptr, [this, weakThis = WTFMove(weakThis), identifier](int error) mutable {
+        channel->write(0, data, WorkQueue::main(), [this, weakThis = WTFMove(weakThis), identifier](int error) mutable {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
@@ -505,7 +505,7 @@ void Engine::readFile(const String& filename, CompletionHandler<void(const Netwo
             return;
         }
 
-        channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [this, weakThis = WTFMove(weakThis), identifier](const Data& data, int error) mutable {
+        channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [this, weakThis = WTFMove(weakThis), identifier](const Data& data, int error) mutable {
             RELEASE_LOG_ERROR_IF(error, CacheStorage, "CacheStorage::Engine::readFile failed with error %d", error);
 
             // FIXME: We should do the decoding in the background thread.

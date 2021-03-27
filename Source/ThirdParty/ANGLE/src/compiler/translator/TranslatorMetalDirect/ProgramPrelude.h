@@ -17,9 +17,24 @@ namespace sh
 class TInfoSinkBase;
 class TIntermBlock;
 
+enum class MetalShaderType
+{
+    None,
+    Vertex,
+    Fragment,
+    Compute, // Unused currently
+    Count,
+};
+
 struct ProgramPreludeConfig
 {
+public:
+    ProgramPreludeConfig() {}
+    explicit ProgramPreludeConfig(MetalShaderType shaderType)
+    : shaderType(shaderType)
+    {}
     bool hasStructEq = false;
+    MetalShaderType shaderType = MetalShaderType::None;
 };
 
 // This emits fixed helper Metal code directly without adding code to the AST. This walks the AST to

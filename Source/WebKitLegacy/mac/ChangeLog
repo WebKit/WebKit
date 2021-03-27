@@ -1,3 +1,178 @@
+2021-03-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274499.
+        https://bugs.webkit.org/show_bug.cgi?id=223268
+
+        Not a correct fix
+
+        Reverted changeset:
+
+        "[WebView _touchEventRegions] needs to take the web lock"
+        https://bugs.webkit.org/show_bug.cgi?id=223266
+        https://trac.webkit.org/changeset/274499
+
+2021-03-16  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r272300): [iOS] ASSERTION FAILED: Unsafe to ref/deref from different threads under WebViewLayerFlushScheduler::layerFlushCallback
+        https://bugs.webkit.org/show_bug.cgi?id=222712
+        <rdar://problem/75022845>
+
+        Reviewed by Simon Fraser.
+
+        We are scheduling a layer flush from a layerFlushCallback and so rescheduling the RunLoopObserver.
+        This is fine in itself but becomes a problem when the main thread web lock auto-unlock observer
+        runs before that observer. Then that layer flush runs without the web lock held and messes up
+        ref/deref main thread asserts (isMainThread() returns false when the web lock is not held).
+
+        * WebView/WebViewData.mm:
+        (WebViewLayerFlushScheduler::layerFlushCallback):
+
+        Fix by explicitly taking the lock.
+
+2021-03-16  Antti Koivisto  <antti@apple.com>
+
+        [WebView _touchEventRegions] needs to take the web lock
+        https://bugs.webkit.org/show_bug.cgi?id=223266
+
+        Reviewed by Simon Fraser.
+
+        Clicking anything in UIWebView test app in debug build hits thread assert immediately.
+
+        * WebView/WebView.mm:
+        (-[WebView _touchEventRegions]):
+
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce WorkQueue::main() to get the main thread's work queue
+        https://bugs.webkit.org/show_bug.cgi?id=223087
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce WorkQueue::main() to get the main thread's work queue. This allows us to port some more code from
+        dispatch_queue to WorkQueue. It also simplifies some code that has to deal that sometimes needs to run on
+        the main thread and other times on a background queue. Having a single WorkQueue type to represent both the
+        main thread and a background queue makes writing such code more convenient.
+
+        * Misc/WebDownload.mm:
+        (callOnDelegateThreadAndWait):
+
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebElementDictionary.mm:
+        (lookupTable):
+        (addLookupKey):
+        (+[WebElementDictionary initializeLookupTable]):
+        (-[WebElementDictionary _fillCache]):
+        (-[WebElementDictionary objectForKey:]):
+        * WebView/WebView.mm:
+        (+[WebView _makeAllWebViewsPerformSelector:]):
+        (-[WebView _removeFromAllWebViewsSet]):
+        (-[WebView _addToAllWebViewsSet]):
+        (+[WebView closeAllWebViews]):
+        (+[WebView _maxCacheModelInAnyInstance]):
+
+2021-03-09  Sam Weinig  <weinig@apple.com>
+
+        Remove CSSParserContext::enforcesCSSMIMETypeInNoQuirksMode as it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=222949
+
+        Reviewed by Darin Adler.
+
+        At some point in the past we stoped doing anything with the enforcesCSSMIMETypeInNoQuirksMode
+        bit on CSSParserContext.
+
+        The only time it was ever disabled was when running ancient versions of iWeb, a product that
+        itself hasn't existed for over a decade, so I think we are ok to remove it.
+
+        * WebView/WebPreferencesDefaultValues.h:
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::defaultEnforceCSSMIMETypeInNoQuirksMode): Deleted.
+
+2021-03-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add a way to trigger webpage translation via the context menu
+        https://bugs.webkit.org/show_bug.cgi?id=222953
+        <rdar://problem/73901967>
+
+        Reviewed by Devin Rousso.
+
+        Add (no-op) handling for the new enum value.
+
+        * WebView/WebHTMLView.mm:
+        (toTag):
+
+2021-03-08  Sam Weinig  <weinig@apple.com>
+
+        Remove quirks for the no longer supported iAd Producer
+        https://bugs.webkit.org/show_bug.cgi?id=222894
+
+        Reviewed by Chris Dumez.
+
+        Remove two quirks that were only for iAd Producer, which is no longer
+        supported on the latest macOS operating systems.
+
+        * WebView/WebPreferencesDefaultValues.h:
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::defaultNeedsIsLoadingInAPISenseQuirk): Deleted.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (shouldRespectPriorityInCSSAttributeSetters): Deleted.
+
+2021-03-06  Sam Weinig  <weinig@apple.com>
+
+        Simplify DumpRenderTree WebPreferences reset
+        https://bugs.webkit.org/show_bug.cgi?id=218024
+        <rdar://problem/70764568>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferences.mm:
+        (WebPreferencesPrivate::WebPreferencesPrivate):
+        (-[WebPreferences encodeWithCoder:]):
+        (-[WebPreferences _valueForKey:]):
+        (-[WebPreferences _setStringValue:forKey:]):
+        (-[WebPreferences _setStringArrayValueForKey:forKey:]):
+        (-[WebPreferences _setIntegerValue:forKey:]):
+        (-[WebPreferences _setUnsignedIntValue:forKey:]):
+        (-[WebPreferences _setFloatValue:forKey:]):
+        (-[WebPreferences _setBoolValue:forKey:]):
+        (-[WebPreferences _setLongLongValue:forKey:]):
+        (-[WebPreferences _setUnsignedLongLongValue:forKey:]):
+        (-[WebPreferences _startBatchingUpdates]):
+        (-[WebPreferences _stopBatchingUpdates]):
+        (-[WebPreferences _batchUpdatePreferencesInBlock:]):
+        (-[WebPreferences _resetForTesting]):
+        (-[WebPreferences _postPreferencesChangedNotification]):
+        (-[WebPreferences _postPreferencesChangedAPINotification]):
+        (-[WebPreferences _invalidateCachedPreferences]):
+        (WebPreferencesPrivate::~WebPreferencesPrivate): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        Add new helpers for testing to reset and batch updates.
+
+2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Update ApplicationCacheStorage::originsWithCache() to return a HashSet<SecurityOriginData> instead of a Vector<Ref<SecurityOrigin>>
+        https://bugs.webkit.org/show_bug.cgi?id=222828
+
+        Reviewed by Darin Adler.
+
+        Update ApplicationCacheStorage::originsWithCache() to return a HashSet<SecurityOriginData> instead of a Vector<Ref<SecurityOrigin>>.
+        Using a HashSet makes sure we do not return duplicates (which do occur as per ApplicationCacheStorage implementation) and makes typing
+        more consistent with other similar storage functions. Using SecurityOriginData is more lightweight and sufficient for our use cases.
+        It also takes care of a FIXME comment in WebsiteDataStore::fetchDataAndApply about switching to SecurityOriginData.
+
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache diskUsageForOrigin:]):
+        (+[WebApplicationCache deleteCacheForOrigin:]):
+        (+[WebApplicationCache originsWithCache]):
+        * WebCoreSupport/WebApplicationCacheQuotaManager.mm:
+        (-[WebApplicationCacheQuotaManager usage]):
+
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of CFRetain() / CFRelease() / CFAutoRelease() in WebKit

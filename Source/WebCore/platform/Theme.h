@@ -57,7 +57,7 @@ public:
     virtual LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float zoomFactor) const;
 
     // Returns the minimum size for a control in zoomed coordinates.
-    virtual LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float zoomFactor) const;
+    LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, const LengthSize& nonShrinkableZoomedSize, float zoomFactor) const;
     
     // Allows the theme to modify the existing padding/border.
     virtual LengthBox controlPadding(ControlPart, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const;
@@ -83,6 +83,8 @@ public:
 protected:
     Theme() = default;
     virtual ~Theme() = default;
+
+    virtual LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float zoomFactor) const;
 
 private:
     Theme(const Theme&) = delete;

@@ -57,3 +57,5 @@ WK_EXPORT extern NSString * const _WKMenuItemIdentifierSpeechMenu WK_API_AVAILAB
 
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierAddHighlightToCurrentGroup WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierAddHighlightToNewGroup WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierTranslate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));

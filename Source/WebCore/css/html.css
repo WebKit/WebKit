@@ -414,7 +414,7 @@ input {
 #endif
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border-radius: 5px;
-    border: 1px solid rgb(217, 217, 217);
+    border: 1px solid -apple-system-fill;
     font: 11px system-ui;
     padding: 0.2em 0.5em 0.3em 0.5em;
 #else
@@ -439,7 +439,7 @@ input[type="search"] {
     box-sizing: border-box;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: initial;
-    background-color: rgb(238, 238, 238);
+    background-color: -apple-system-tertiary-fill;
 #endif
 }
 
@@ -513,9 +513,9 @@ input:matches([type="date"], [type="time"], [type="datetime-local"], [type="mont
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     -webkit-appearance: menulist-button;
     border: initial;
-    background-color: rgb(238, 238, 238);
+    background-color: -apple-system-secondary-fill;
     font-family: system-ui;
-    color: rgb(0, 122, 255);
+    color: -apple-system-blue;
     padding: 0.2em 0.5em;
 #else
     -webkit-appearance: textfield;
@@ -526,6 +526,15 @@ input:matches([type="date"], [type="time"], [type="datetime-local"], [type="mont
     font-feature-settings: "ss03";
 #endif
 }
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input:matches([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]):disabled {
+    background-color: -apple-system-secondary-fill-disabled;
+    color: -apple-system-tertiary-label;
+    opacity: initial;
+}
+#endif
+
 #endif
 
 input::-webkit-date-and-time-value {
@@ -709,7 +718,7 @@ input::-webkit-list-button {
     -webkit-user-select: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     width: 11px;
-    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71 42"><path fill="rgb(0, 122, 255)" d="M36.00979 41.8692c1.70898 0 3.17383-.63483 4.49219-2.00201L69.45706 10.6192c1.02539-1.07428 1.61133-2.39264 1.61133-3.95514C71.06839 3.49017 68.52933 1 65.40433 1c-1.51367 0-2.97852.63477-4.10156 1.75781L36.05863 28.4414 10.76566 2.75781C9.64261 1.63476 8.2266 1 6.61527 1c-3.125 0-5.61523 2.49017-5.61523 5.66406 0 1.5625.53711 2.88086 1.61133 3.95514l28.95508 29.24799c1.36719 1.36719 2.7832 2.00201 4.44336 2.00201z"/></svg>');
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71 42"><path fill="-apple-system-blue" d="M36.00979 41.8692c1.70898 0 3.17383-.63483 4.49219-2.00201L69.45706 10.6192c1.02539-1.07428 1.61133-2.39264 1.61133-3.95514C71.06839 3.49017 68.52933 1 65.40433 1c-1.51367 0-2.97852.63477-4.10156 1.75781L36.05863 28.4414 10.76566 2.75781C9.64261 1.63476 8.2266 1 6.61527 1c-3.125 0-5.61523 2.49017-5.61523 5.66406 0 1.5625.53711 2.88086 1.61133 3.95514l28.95508 29.24799c1.36719 1.36719 2.7832 2.00201 4.44336 2.00201z"/></svg>');
     /* Make it easier to hit the button on iOS */
     padding: 7px;
     margin: -7px;
@@ -841,8 +850,8 @@ input:matches([type="button"], [type="submit"], [type="reset"]), input[type="fil
     padding: 0 1.0em;
     border: initial;
     font: 11px system-ui;
-    background-color: rgb(238, 238, 238);
-    color: rgb(0, 122, 255);
+    background-color: -apple-system-secondary-fill;
+    color: -apple-system-blue;
 #endif
     box-sizing: border-box;
 }
@@ -850,7 +859,7 @@ input:matches([type="button"], [type="submit"], [type="reset"]), input[type="fil
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 
 input[type="submit"] {
-    background-color: rgb(22, 122, 255);
+    background-color: -apple-system-blue;
     color: white;
     font-weight: bold;
 }
@@ -913,6 +922,8 @@ input[readonly], textarea[readonly] {
 }
 #endif
 
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+
 input:matches([type="button"], [type="submit"], [type="reset"]):disabled,
 input[type="file"]:disabled::file-selector-button, button:disabled,
 select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
@@ -920,7 +931,6 @@ select[disabled]>option {
     color: GrayText;
 }
 
-#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::file-selector-button, button:active {
     border-style: inset;
 }
@@ -929,6 +939,23 @@ input:matches([type="button"], [type="submit"], [type="reset"]):active:disabled,
 input[type="file"]:active:disabled::file-selector-button, button:active:disabled {
     border-style: outset;
 }
+
+#else
+
+input[type="file"]:disabled {
+    color: rgba(60, 60, 67, 0.3);
+    opacity: initial;
+}
+
+input:matches([type="button"], [type="submit"], [type="reset"]):disabled,
+input[type="file"]:disabled::file-selector-button,
+button:disabled,
+select:disabled {
+    background-color: -apple-system-secondary-fill-disabled;
+    color: -apple-system-tertiary-label;
+    opacity: initial;
+}
+
 #endif
 
 area, param {
@@ -965,7 +992,7 @@ input[type="checkbox"]:indeterminate {
 }
 
 input[type="checkbox"]:indeterminate:disabled {
-    opacity: 0.4;
+    opacity: initial;
     background: rgba(0, 0, 0, 0.8);
 }
 
@@ -973,8 +1000,12 @@ input:matches([type="checkbox"], [type="radio"]):checked {
     border-color: rgba(255, 255, 255, 0.0);
 }
 
+input:matches([type="checkbox"], [type="radio"]):disabled {
+    opacity: initial;
+}
+
 input:matches([type="checkbox"], [type="radio"]):checked:disabled {
-    opacity: 0.4;
+    opacity: initial;
     background: rgba(0, 0, 0, 0.8);
 }
 #endif
@@ -996,7 +1027,7 @@ select:focus {
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 input[type="color"] {
-    padding: 0.3em;
+    padding: 3px;
 }
 #endif
 
@@ -1004,7 +1035,7 @@ input[type="color"]::-webkit-color-swatch-wrapper {
     display: flex;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border-radius: inherit;
-    padding: 0;
+    padding: 2px;
 #else
     padding: 4px 2px 5px;
 #endif
@@ -1033,12 +1064,11 @@ select {
     word-spacing: normal;
     line-height: normal;
     padding: 0 0.4em 0 0.4em;
-    color: rgb(0, 122, 255);
+    color: -apple-system-blue;
     font: 11px system-ui;
-    font-weight: bold;
     border: initial;
     border-radius: initial;
-    background-color: rgb(235, 245, 255);
+    background-color: -apple-system-secondary-fill;
 #else
     -webkit-appearance: menulist;
     border: 1px solid;

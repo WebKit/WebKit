@@ -774,22 +774,29 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
 
     _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchStartDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch start deferrer (immediate reset)"];
+    [_touchStartDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Deferrer for touch start (immediate reset)"];
 
     _touchStartDeferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchStartDeferringGestureRecognizerForDelayedResettableGestures setName:@"Touch start deferrer (delayed reset)"];
+    [_touchStartDeferringGestureRecognizerForDelayedResettableGestures setName:@"Deferrer for touch start (delayed reset)"];
 
     _touchStartDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchStartDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch start deferrer (synthetic tap)"];
+    [_touchStartDeferringGestureRecognizerForSyntheticTapGestures setName:@"Deferrer for touch start (synthetic tap)"];
 
     _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch end deferrer (immediate reset)"];
+    [_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Deferrer for touch end (immediate reset)"];
 
     _touchEndDeferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchEndDeferringGestureRecognizerForDelayedResettableGestures setName:@"Touch end deferrer (delayed reset)"];
+    [_touchEndDeferringGestureRecognizerForDelayedResettableGestures setName:@"Deferrer for touch end (delayed reset)"];
 
     _touchEndDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_touchEndDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch end deferrer (synthetic tap)"];
+    [_touchEndDeferringGestureRecognizerForSyntheticTapGestures setName:@"Deferrer for touch end (synthetic tap)"];
+
+#if ENABLE(IMAGE_EXTRACTION)
+    _imageExtractionDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_imageExtractionDeferringGestureRecognizer setName:@"Deferrer for image extraction"];
+    [_imageExtractionDeferringGestureRecognizer setImmediatelyFailsAfterTouchEnd:YES];
+    [_imageExtractionDeferringGestureRecognizer setEnabled:self._imageExtractionEnabled];
+#endif
 
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {
         gesture.delegate = self;
@@ -1305,12 +1312,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         return NO;
 
     _isEditable = isEditable;
-
-#if ENABLE(IMAGE_EXTRACTION)
-    if (self._imageExtractionEnabled && (!_isBlurringFocusedElement || !_isChangingFocus))
-        _suppressImageExtractionToken = isEditable ? makeUnique<WebKit::SuppressInteractionToken>(self, _imageExtractionInteraction.get()) : nullptr;
-#endif
-
     return YES;
 }
 
@@ -1766,9 +1767,12 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 
 - (NSArray<WKDeferringGestureRecognizer *> *)deferringGestures
 {
-    auto gestures = [NSMutableArray arrayWithCapacity:6];
+    auto gestures = [NSMutableArray arrayWithCapacity:7];
     [gestures addObjectsFromArray:self._touchStartDeferringGestures];
     [gestures addObjectsFromArray:self._touchEndDeferringGestures];
+#if ENABLE(IMAGE_EXTRACTION)
+    [gestures addObject:_imageExtractionDeferringGestureRecognizer.get()];
+#endif
     return gestures;
 }
 
@@ -1803,13 +1807,13 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 - (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures
 {
     for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
-        [gesture setDefaultPrevented:preventNativeGestures];
+        [gesture endDeferral:preventNativeGestures ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
 }
 
 - (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures
 {
     for (WKDeferringGestureRecognizer *gesture in self._touchEndDeferringGestures)
-        [gesture setDefaultPrevented:preventNativeGestures];
+        [gesture endDeferral:preventNativeGestures ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
 }
 
 - (BOOL)_isTouchStartDeferringGesture:(WKDeferringGestureRecognizer *)gesture
@@ -2664,19 +2668,17 @@ static Class tapAndAHalfRecognizerClass()
     if (_suppressSelectionAssistantReasons)
         return NO;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if ([self _imageExtractionShouldPreventTextInteractionAtPoint:point])
-        return NO;
-
-    [self _cancelImageExtraction];
-#endif
-
     if (_inspectorNodeSearchEnabled)
         return NO;
 
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(point));
     if (![self ensurePositionInformationIsUpToDate:request])
         return NO;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (_elementPendingImageExtraction && _positionInformation.elementContext == _elementPendingImageExtraction)
+        return YES;
+#endif
 
     return _positionInformation.isSelectable;
 }
@@ -2716,13 +2718,6 @@ static Class tapAndAHalfRecognizerClass()
     if (_suppressSelectionAssistantReasons)
         return NO;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if ([self _imageExtractionShouldPreventTextInteractionAtPoint:point])
-        return NO;
-
-    [self _cancelImageExtraction];
-#endif
-
     if (!self.isFocusingElement) {
         if (gesture == UIWKGestureDoubleTap) {
             // Don't allow double tap text gestures in noneditable content.
@@ -2756,6 +2751,11 @@ static Class tapAndAHalfRecognizerClass()
 #if ENABLE(DATALIST_ELEMENT)
     if (_positionInformation.preventTextInteraction)
         return NO;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (_elementPendingImageExtraction && _positionInformation.elementContext == _elementPendingImageExtraction)
+        return YES;
 #endif
 
     // If we're currently focusing an editable element, only allow the selection to move within that focused element.
@@ -2890,10 +2890,6 @@ static Class tapAndAHalfRecognizerClass()
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = !_doubleTapGestureRecognizer.get().enabled;
-
-#if ENABLE(IMAGE_EXTRACTION)
-    [self _cancelImageExtractionIfNeededAfterTouchAt:gestureRecognizer.location];
-#endif
 }
 
 static void cancelPotentialTapIfNecessary(WKContentView* contentView)
@@ -4243,8 +4239,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 
     // Give the page some time to present custom editing UI before attempting to detect and evade it.
-    auto delayBeforeShowingCalloutBar = (0.25_s).nanoseconds();
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delayBeforeShowingCalloutBar), dispatch_get_main_queue(), [completion = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKContentView>(self)] () mutable {
+    auto delayBeforeShowingCalloutBar = 0.25_s;
+    WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKContentView>(self)] () mutable {
         if (!weakSelf) {
             completion(@[ ]);
             return;
@@ -4480,7 +4476,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self _setDoubleTapGesturesEnabled:NO];
     [_twoFingerDoubleTapGestureRecognizer _wk_cancel];
 #if ENABLE(IMAGE_EXTRACTION)
-    _suppressImageExtractionToken = nullptr;
     [self _cancelImageExtraction];
 #endif
 }
@@ -5691,6 +5686,14 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return NO;
 }
 
+- (NSArray<NSString *> *)filePickerAcceptedTypeIdentifiers
+{
+    if (!_fileUploadPanel)
+        return @[];
+
+    return [_fileUploadPanel acceptedTypeIdentifiers];
+}
+
 - (void)dismissFilePicker
 {
     [_fileUploadPanel dismiss];
@@ -6874,7 +6877,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 - (void)_selectionChanged
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    [self setUpAppHighlightMenus];
+    [self setUpAppHighlightMenusIfNeeded];
 #endif
 
     [self _updateSelectionAssistantSuppressionState];
@@ -7623,6 +7626,14 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (gestureRecognizer == _touchEventGestureRecognizer)
         return NO;
 
+    BOOL isLoupeGesture = gestureRecognizer == [_textInteractionAssistant loupeGesture];
+    BOOL isTapAndAHalfGesture = [gestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()];
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (deferringGestureRecognizer == _imageExtractionDeferringGestureRecognizer)
+        return isLoupeGesture || isTapAndAHalfGesture || gestureRecognizer == [_textInteractionAssistant forcePressGesture];
+#endif
+
     auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
 #if USE(UICONTEXTMENU) && HAVE(LINK_PREVIEW)
         if (gesture == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
@@ -7634,10 +7645,10 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
             return YES;
 #endif
 
-        if ([gesture isKindOfClass:tapAndAHalfRecognizerClass()])
+        if (isTapAndAHalfGesture)
             return YES;
 
-        if (gesture == [_textInteractionAssistant loupeGesture])
+        if (isLoupeGesture)
             return YES;
 
         if ([gesture isKindOfClass:UITapGestureRecognizer.class]) {
@@ -8491,21 +8502,12 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     [self cleanUpDragSourceSessionState];
 
-    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] {
+    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf)
+        if (!strongSelf || proceedWithImageExtraction == WebKit::ProceedWithImageExtraction::Yes)
             return;
 
         auto dragOrigin = [session locationInView:strongSelf.get()];
-#if ENABLE(IMAGE_EXTRACTION)
-        [strongSelf _cancelImageExtractionIfNeededAfterTouchAt:dragOrigin];
-        if (strongSelf->_imageExtractionState == WebKit::ImageExtractionState::Active) {
-            RELEASE_LOG(DragAndDrop, "Drag session failed: %p (deferring to active image extraction)", session.get());
-            completion();
-            return;
-        }
-#endif
-
         strongSelf->_dragDropInteractionState.prepareForDragSession(session.get(), completion.get());
         strongSelf->_page->requestDragStart(WebCore::roundedIntPoint(dragOrigin), WebCore::roundedIntPoint([strongSelf convertPoint:dragOrigin toView:[strongSelf window]]), [strongSelf _allowedDragSourceActions]);
         RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%.0f, %.0f}", session.get(), dragOrigin.x, dragOrigin.y);
@@ -8514,7 +8516,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #if ENABLE(IMAGE_EXTRACTION)
     [self _doAfterPendingImageExtraction:prepareForSession];
 #else
-    prepareForSession();
+    prepareForSession(WebKit::ProceedWithImageExtraction::No);
 #endif
 }
 
@@ -9020,17 +9022,15 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)setUpAppHighlightMenus
+- (void)setUpAppHighlightMenusIfNeeded
 {
-    if (_hasSetUpAppHighlightMenus)
+    if (_hasSetUpAppHighlightMenus || !_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange)
         return;
 
-    if (_page->preferences().appHighlightsEnabled()) {
-        auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
-        auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
-        [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
-        _hasSetUpAppHighlightMenus = YES;
-    }
+    auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
+    auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
+    [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
+    _hasSetUpAppHighlightMenus = YES;
 }
 
 - (void)createHighlightInCurrentGroupWithRange:(id)sender
@@ -9152,14 +9152,14 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 - (void)_showMediaControlsContextMenu:(WebCore::FloatRect&&)targetFrame items:(Vector<WebCore::MediaControlsContextMenuItem>&&)items completionHandler:(CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&)completionHandler
 {
     [_actionSheetAssistant showMediaControlsContextMenu:WTFMove(targetFrame) items:WTFMove(items) completionHandler:WTFMove(completionHandler)];
 }
 
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #if HAVE(UI_POINTER_INTERACTION)
 
@@ -9428,18 +9428,25 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(IMAGE_EXTRACTION)
 
-- (void)_doAfterPendingImageExtraction:(dispatch_block_t)block
+- (void)_endImageExtractionGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures
 {
-    if (_imageExtractionState == WebKit::ImageExtractionState::Pending)
-        _actionsToPerformAfterPendingImageExtraction.append(makeBlockPtr(block));
-    else
-        block();
+    [_imageExtractionDeferringGestureRecognizer endDeferral:shouldPreventGestures];
 }
 
-- (void)_invokeAllActionsToPerformAfterPendingImageExtraction
+- (void)_doAfterPendingImageExtraction:(void(^)(WebKit::ProceedWithImageExtraction proceedWithImageExtraction))block
 {
+    if (_hasPendingImageExtraction)
+        _actionsToPerformAfterPendingImageExtraction.append(makeBlockPtr(block));
+    else
+        block(WebKit::ProceedWithImageExtraction::No);
+}
+
+- (void)_invokeAllActionsToPerformAfterPendingImageExtraction:(WebKit::ProceedWithImageExtraction)proceedWithImageExtraction
+{
+    _hasPendingImageExtraction = NO;
+    _elementPendingImageExtraction = WTF::nullopt;
     for (auto block : std::exchange(_actionsToPerformAfterPendingImageExtraction, { }))
-        block();
+        block(proceedWithImageExtraction);
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
@@ -9633,10 +9640,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     if ([userInterfaceItem isEqualToString:@"mediaControlsContextMenu"])
         return @{ userInterfaceItem: [_actionSheetAssistant currentlyAvailableMediaControlsContextMenuItems] };
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
     if ([userInterfaceItem isEqualToString:@"fileUploadPanelMenu"]) {
         if (!_fileUploadPanel)
@@ -9936,19 +9943,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!self.webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
-    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion)] {
+    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion)] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-
-        auto position = [interaction locationInView:strongSelf.get()];
-#if ENABLE(IMAGE_EXTRACTION)
-        [strongSelf _cancelImageExtractionIfNeededAfterTouchAt:position];
-        if (strongSelf->_imageExtractionState == WebKit::ImageExtractionState::Active) {
+        if (!strongSelf || proceedWithImageExtraction == WebKit::ProceedWithImageExtraction::Yes) {
             completion(nil);
             return;
         }
-#endif
 
         [strongSelf->_webView _didShowContextMenu];
 
@@ -9956,7 +9956,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
             strongSelf->_showLinkPreviews = value.boolValue;
 
-        WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(position) };
+        WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([interaction locationInView:strongSelf.get()]) };
         request.includeSnapshot = true;
         request.includeLinkIndicator = true;
         request.linkIndicatorShouldHaveLegacyMargins = ![strongSelf _shouldUseContextMenus];
@@ -9972,7 +9972,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 #if ENABLE(IMAGE_EXTRACTION)
     [self _doAfterPendingImageExtraction:getConfigurationAndContinue];
 #else
-    getConfigurationAndContinue();
+    getConfigurationAndContinue(WebKit::ProceedWithImageExtraction::No);
 #endif
 }
 

@@ -251,7 +251,7 @@ class Texture final : public Resource,
 
     // Get stencil view
     TextureRef getStencilView();
-    //Get linear color
+    // Get linear color
     TextureRef getLinearColorView();
 
     // Change the wrapped metal object. Special case for swapchain image
@@ -323,9 +323,8 @@ class Texture final : public Resource,
     TextureRef mLinearColorView;
 
     TextureRef mStencilView;
-    //Readable copy of texture
+    // Readable copy of texture
     TextureRef mReadCopy;
-
 };
 
 class Buffer final : public Resource,

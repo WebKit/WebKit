@@ -27,7 +27,6 @@
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 constexpr char kANGLEPreferredDeviceEnv[] = "ANGLE_PREFERRED_DEVICE";
 #endif
-constexpr char kANGLETransformFeedbackEnv[] = "ANGLE_METAL_XFB_ENABLE";
 
 namespace rx
 {
@@ -326,7 +325,8 @@ StreamProducerImpl *DisplayMtl::createStreamProducerD3DTexture(
 gl::Version DisplayMtl::getMaxSupportedESVersion() const
 {
     // NOTE(hqle): Supports GLES 3.0 on iOS GPU Family 4+ for now.
-#if TARGET_OS_SIMULATOR // Simulator should be able to support ES3, despite not supporting iOS GPU Family 4 in its entirety.
+#if TARGET_OS_SIMULATOR  // Simulator should be able to support ES3, despite not supporting iOS GPU
+                         // Family 4 in its entirety.
     return gl::Version(3, 0);
 #else
     if (supportsEitherGPUFamily(4, 1))
@@ -418,9 +418,9 @@ egl::ConfigSet DisplayMtl::generateConfigs()
 #else
     config.bindToTextureTarget = EGL_TEXTURE_2D;
 #endif
-    config.maxPBufferWidth     = 4096;
-    config.maxPBufferHeight    = 4096;
-    config.maxPBufferPixels    = 4096 * 4096;
+    config.maxPBufferWidth  = 4096;
+    config.maxPBufferHeight = 4096;
+    config.maxPBufferPixels = 4096 * 4096;
 
     // Caveat
     config.configCaveat = EGL_NONE;
@@ -438,8 +438,8 @@ egl::ConfigSet DisplayMtl::generateConfigs()
     config.minSwapInterval = 0;
     config.maxSwapInterval = 1;
 #else
-    config.minSwapInterval = 1;
-    config.maxSwapInterval = 1;
+    config.minSwapInterval     = 1;
+    config.maxSwapInterval     = 1;
 #endif
 
     config.renderTargetFormat = GL_RGBA8;
@@ -612,12 +612,12 @@ void DisplayMtl::ensureCapsInitialized() const
     mNativeCaps.fragmentMediumpInt.setTwosComplementInt(32);
     mNativeCaps.fragmentLowpInt.setTwosComplementInt(32);
 
-    GLuint maxDefaultUniformVectors = mtl::kDefaultUniformsMaxSize / (sizeof(GLfloat) * 4);
+    GLuint maxDefaultUniformVectors = mtl::kDefaultUniformsMaxSize / (sizeof(GLfloat));
 
-    const GLuint maxDefaultUniformComponents = maxDefaultUniformVectors * 4;
+    const GLuint maxDefaultUniformComponents = maxDefaultUniformVectors;
 
     // Uniforms are implemented using a uniform buffer, so the max number of uniforms we can
-    // support is the max buffer range divided by the size of a single uniform (4X float).
+    // support is the max buffer range divided by the size of a single uniform (1X float).
     mNativeCaps.maxVertexUniformVectors                              = maxDefaultUniformVectors;
     mNativeCaps.maxShaderUniformComponents[gl::ShaderType::Vertex]   = maxDefaultUniformComponents;
     mNativeCaps.maxFragmentUniformVectors                            = maxDefaultUniformVectors;
@@ -853,9 +853,8 @@ void DisplayMtl::initializeFeatures()
 
     ANGLE_FEATURE_CONDITION((&mFeatures), allowSeparatedDepthStencilBuffers,
                             !isOSX && !isCatalyst && !isSimulator);
-
-    mFeatures.emulateTransformFeedback.enabled =
-        angle::GetEnvironmentVar(kANGLETransformFeedbackEnv)[0] == '1';
+    ANGLE_FEATURE_CONDITION((&mFeatures), rewriteRowMajorMatrices, true);
+    ANGLE_FEATURE_CONDITION((&mFeatures), emulateTransformFeedback, true);
 
     angle::PlatformMethods *platform = ANGLEPlatformCurrent();
     platform->overrideFeaturesMtl(platform, &mFeatures);
@@ -865,27 +864,27 @@ void DisplayMtl::initializeFeatures()
 
 angle::Result DisplayMtl::initializeShaderLibrary()
 {
-    #ifdef ANGLE_METAL_XCODE_BUILDS_SHADERS
-        mDefaultShadersAsyncInfo.reset(new DefaultShaderAsyncInfoMtl);
-        
-    
-        NSString *path = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].bundlePath;
-        NSError * error = nullptr;
-        mDefaultShadersAsyncInfo->defaultShaders = [getMetalDevice() newDefaultLibraryWithBundle:[NSBundle bundleWithPath:path] error:&error];
+#ifdef ANGLE_METAL_XCODE_BUILDS_SHADERS
+    mDefaultShadersAsyncInfo.reset(new DefaultShaderAsyncInfoMtl);
 
-        if (error && !mDefaultShadersAsyncInfo->defaultShaders)
+    NSString *path = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].bundlePath;
+    NSError *error = nullptr;
+    mDefaultShadersAsyncInfo->defaultShaders =
+        [getMetalDevice() newDefaultLibraryWithBundle:[NSBundle bundleWithPath:path] error:&error];
+
+    if (error && !mDefaultShadersAsyncInfo->defaultShaders)
+    {
+        ANGLE_MTL_OBJC_SCOPE
         {
-            ANGLE_MTL_OBJC_SCOPE
-            {
-                ERR() << "Internal error: newDefaultLibraryWithBundle failed. " << error.localizedDescription.UTF8String;
-            }
-            mDefaultShadersAsyncInfo->defaultShadersCompileError = std::move(error);
-            return angle::Result::Stop;
-                 
+            ERR() << "Internal error: newDefaultLibraryWithBundle failed. "
+                  << error.localizedDescription.UTF8String;
         }
-        mDefaultShadersAsyncInfo->compiled = true;
-        
-    #else
+        mDefaultShadersAsyncInfo->defaultShadersCompileError = std::move(error);
+        return angle::Result::Stop;
+    }
+    mDefaultShadersAsyncInfo->compiled = true;
+
+#else
     mDefaultShadersAsyncInfo.reset(new DefaultShaderAsyncInfoMtl);
 
     // Create references to async info struct since it might be released in terminate(), but the
@@ -914,7 +913,7 @@ angle::Result DisplayMtl::initializeShaderLibrary()
 
         [nsSource ANGLE_MTL_AUTORELEASE];
     }
-    #endif
+#endif
     return angle::Result::Continue;
 }
 

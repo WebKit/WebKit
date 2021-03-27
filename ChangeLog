@@ -1,3 +1,174 @@
+2021-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Bump API version when building with libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=223437
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use 1.1 as the API version when building with soup3.
+
+        * Source/PlatformWPE.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-03-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][WPE] Enable CSS scroll snap support by default
+        https://bugs.webkit.org/show_bug.cgi?id=222641
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Enable CSS scroll snap by default.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
+2021-03-16  Khem Raj  <raj.khem@gmail.com>
+
+        [CMake] Build fails on RISC-V with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=222959
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Check for 1 byte atomic operations along with 64bit ones, some
+        architevtures (e.g. RISCV) operations on less than 4 bytes are not lock-free
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
+2021-03-14  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Keep GPUProcess disabled when using experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=223155
+
+        Reviewed by Philippe Normand.
+
+        At least two recent GPUProcess-related revisions caused issues in
+        GLIB, causing serious regressions in the bots. Disabling it for now
+        until we improve its support.
+
+        Revisions:
+
+        r274327 - 2D Canvas enabled by default in GPUProcess
+        r272842 - Media enabled by default in GPUProcess
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump API version when building with libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=223067
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use 4.1 as the API version when building with soup3 and keep using 5.0 for GTK4. Also make it impossible to
+        build with GTK4 and soup2.
+
+        * Source/PlatformGTK.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK][WPE] Bump libsoup3 version to 2.99.3
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] Add support for ICC color management
+        https://bugs.webkit.org/show_bug.cgi?id=177185
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add optional lcms2 dependency.
+
+        * Source/cmake/FindLCMS2.cmake: Added.
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Don Olmstead.
+
+        In non-DEVELOPER_MODE builds, we rely on a linker version script to hide symbols that we
+        don't want to export. Building with hidden visibility might seem redundant with this, but
+        actually building with hidden visibility has advantages anyway. See
+        https://gcc.gnu.org/wiki/Visibility.
+
+        Note that I'm not confident GTK port can safely use -fvisibility-inlines-hidden, since it's
+        split between two shared objects. Also, because GTK is split into two shared objects, GTK
+        needs to build bmalloc and WTF as CMake OBJECT libraries, which is effectively the same as
+        using -Wl,--whole-archive to prevent symbols from being prematurely stripped away.
+
+        P.S. Major credit to Don Olmstead, who did most of the work to make this possible, which has
+        already landed in previous patches.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-03-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274166.
+        https://bugs.webkit.org/show_bug.cgi?id=223024
+
+        Broke GTK Debug builds
+
+        Reverted changeset:
+
+        "[GTK] Reenable -fvisibility=hidden"
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+        https://trac.webkit.org/changeset/274166
+
+2021-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        GLib JSC API headers should only include other GLib JSC API headers
+        https://bugs.webkit.org/show_bug.cgi?id=222803
+
+        Reviewed by Michael Catanzaro.
+
+        GTK and WPE both build the JavaScriptCore GLib API. However they diverged with their CMake
+        variable names for the directory containing jsc. Declare a single variable for that
+        directory, DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR, that is shared between GLib ports.
+
+        Remove the GLIB_API_DIR variant which will just be replaced with
+        ${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc in the CMake code.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-03-09  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Don Olmstead.
+
+        In non-DEVELOPER_MODE builds, we rely on a linker version script to hide symbols that we
+        don't want to export. Building with hidden visibility might seem redundant with this, but
+        actually building with hidden visibility has advantages anyway. See
+        https://gcc.gnu.org/wiki/Visibility.
+
+        Note that I'm not confident GTK port can safely use -fvisibility-inlines-hidden, since it's
+        split between two shared objects. Also, because GTK is split into two shared objects, GTK
+        needs to build bmalloc and WTF as CMake OBJECT libraries, which is effectively the same as
+        using -Wl,--whole-archive to prevent symbols from being prematurely stripped away.
+
+        P.S. Major credit to Don Olmstead, who did most of the work to make this possible, which has
+        already landed in previous patches.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-03-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Remove ADD_WHOLE_ARCHIVE_TO_LIBRARIES
+        https://bugs.webkit.org/show_bug.cgi?id=222826
+
+        Reviewed by Don Olmstead.
+
+        I don't know why it's no longer needed, but GTK links without it, so it can go away.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2021-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.12 or later

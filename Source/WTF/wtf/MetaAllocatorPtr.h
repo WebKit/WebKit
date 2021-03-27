@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,11 +37,12 @@ public:
     MetaAllocatorPtr() = default;
     MetaAllocatorPtr(std::nullptr_t) { }
 
-    explicit MetaAllocatorPtr(void* ptr)
-        : m_ptr(tagCodePtr<tag>(ptr))
-    {
-        assertIsNotTagged(ptr);
-    }
+    static MetaAllocatorPtr makeFromRawPointer(void* ptr) { return MetaAllocatorPtr(ptr); }
+
+    template<PtrTag otherTag>
+    explicit MetaAllocatorPtr(MetaAllocatorPtr<otherTag> other)
+        : m_ptr(other.template retaggedPtr<tag>())
+    { }
 
     explicit MetaAllocatorPtr(uintptr_t ptrAsInt)
         : MetaAllocatorPtr(reinterpret_cast<void*>(ptrAsInt))
@@ -93,6 +94,12 @@ public:
     unsigned hash() const { return PtrHash<void*>::hash(m_ptr); }
 
 private:
+    explicit MetaAllocatorPtr(void* ptr)
+        : m_ptr(tagCodePtr<tag>(ptr))
+    {
+        assertIsNotTagged(ptr);
+    }
+
     static void* emptyValue() { return reinterpret_cast<void*>(1); }
     static void* deletedValue() { return reinterpret_cast<void*>(2); }
 

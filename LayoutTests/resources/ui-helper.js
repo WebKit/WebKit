@@ -913,6 +913,31 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static dismissFilePicker()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        const script = `uiController.dismissFilePicker(() => {
+            uiController.uiScriptComplete();
+        })`;
+        return new Promise(resolve => testRunner.runUIScript(script, resolve));
+    }
+
+    static filePickerAcceptedTypeIdentifiers()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(JSON.stringify(uiController.filePickerAcceptedTypeIdentifiers));
+            })()`, jsonString => {
+                resolve(JSON.parse(jsonString));
+            });
+        });
+    }
+
     static activateDataListSuggestion(index) {
         const script = `uiController.activateDataListSuggestion(${index}, () => {
             uiController.uiScriptComplete("");
@@ -1219,11 +1244,17 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static async chooseMenuAction(action)
+    static chooseMenuAction(action)
     {
-        const menuRect = await this.rectForMenuAction(action);
-        if (menuRect)
-            await this.activateAt(menuRect.left + menuRect.width / 2, menuRect.top + menuRect.height / 2);
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (() => {
+                    uiController.chooseMenuAction("${action}", () => {
+                        uiController.uiScriptComplete();
+                    });
+                })();
+            `, resolve);
+        });
     }
 
     static waitForEvent(target, eventName)

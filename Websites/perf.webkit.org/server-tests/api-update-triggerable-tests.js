@@ -30,14 +30,14 @@ describe('/api/update-triggerable/', function () {
 
     it('should reject when slave name is missing', () => {
         return TestServer.remoteAPI().postJSON('/api/update-triggerable/', {}).then((response) => {
-            assert.equal(response['status'], 'MissingSlaveName');
+            assert.strictEqual(response['status'], 'MissingSlaveName');
         });
     });
 
     it('should reject when there are no slaves', () => {
         const update = {slaveName: emptyUpdate.slaveName, slavePassword: emptyUpdate.slavePassword};
         return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update).then((response) => {
-            assert.equal(response['status'], 'SlaveNotFound');
+            assert.strictEqual(response['status'], 'SlaveNotFound');
         });
     });
 
@@ -48,7 +48,7 @@ describe('/api/update-triggerable/', function () {
             const report = {slaveName: emptyUpdate.slaveName, slavePassword: 'badPassword'};
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', emptyUpdate);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
         });
     });
 
@@ -58,7 +58,7 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', emptyUpdate);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
         });
     });
 
@@ -73,10 +73,10 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', emptyUpdate);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return db.selectAll('triggerable_configurations', 'test');
         }).then((rows) => {
-            assert.equal(rows.length, 0);
+            assert.strictEqual(rows.length, 0);
         });
     });
 
@@ -87,12 +87,12 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', smallUpdate);
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return db.selectAll('triggerable_configurations', 'test');
         }).then((rows) => {
-            assert.equal(rows.length, 1);
-            assert.equal(rows[0]['test'], smallUpdate.configurations[0]['test']);
-            assert.equal(rows[0]['platform'], smallUpdate.configurations[0]['platform']);
+            assert.strictEqual(rows.length, 1);
+            assert.strictEqual(rows[0]['test'], smallUpdate.configurations[0]['test']);
+            assert.strictEqual(rows[0]['platform'], smallUpdate.configurations[0]['platform']);
         });
     });
 
@@ -108,7 +108,7 @@ describe('/api/update-triggerable/', function () {
             };
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidConfigurationEntry');
+            assert.strictEqual(response['status'], 'InvalidConfigurationEntry');
         });
     });
 
@@ -137,7 +137,7 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidRepositoryGroups');
+            assert.strictEqual(response['status'], 'InvalidRepositoryGroups');
         });
     });
 
@@ -149,7 +149,7 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidRepositoryGroup');
+            assert.strictEqual(response['status'], 'InvalidRepositoryGroup');
         });
     });
 
@@ -161,7 +161,7 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidRepositoryGroup');
+            assert.strictEqual(response['status'], 'InvalidRepositoryGroup');
         });
     });
 
@@ -173,7 +173,7 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidRepositoryGroup');
+            assert.strictEqual(response['status'], 'InvalidRepositoryGroup');
         });
     });
 
@@ -185,7 +185,7 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidRepositoryData');
+            assert.strictEqual(response['status'], 'InvalidRepositoryData');
         });
     });
 
@@ -197,7 +197,7 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidRepository');
+            assert.strictEqual(response['status'], 'InvalidRepository');
         });
     });
 
@@ -210,7 +210,7 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
-            assert.equal(response['status'], 'DuplicateRepository');
+            assert.strictEqual(response['status'], 'DuplicateRepository');
         });
     });
 
@@ -221,18 +221,18 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', updateWithOSXRepositoryGroup());
         }).then((response) => {
-            assert.equal(response['status'], 'OK');
+            assert.strictEqual(response['status'], 'OK');
             return Promise.all([db.selectAll('triggerable_configurations', 'test'), db.selectAll('triggerable_repository_groups')]);
         }).then((result) => {
             const [configurations, repositoryGroups] = result;
 
-            assert.equal(configurations.length, 1);
-            assert.equal(configurations[0]['test'], MockData.someTestId());
-            assert.equal(configurations[0]['platform'], MockData.somePlatformId());
+            assert.strictEqual(configurations.length, 1);
+            assert.strictEqual(configurations[0]['test'], MockData.someTestId());
+            assert.strictEqual(configurations[0]['platform'], MockData.somePlatformId());
 
-            assert.equal(repositoryGroups.length, 1);
-            assert.equal(repositoryGroups[0]['name'], 'system-only');
-            assert.equal(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
+            assert.strictEqual(repositoryGroups.length, 1);
+            assert.strictEqual(repositoryGroups[0]['name'], 'system-only');
+            assert.strictEqual(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
         });
     });
 
@@ -253,8 +253,8 @@ describe('/api/update-triggerable/', function () {
         }).then((result) => {
             const [initialConfigurations, initialRepositoryGroups] = initialResult;
             const [configurations, repositoryGroups] = result;
-            assert.deepEqual(configurations, initialConfigurations);
-            assert.deepEqual(repositoryGroups, initialRepositoryGroups);
+            assert.deepStrictEqual(configurations, initialConfigurations);
+            assert.deepStrictEqual(repositoryGroups, initialRepositoryGroups);
         })
     });
 
@@ -275,8 +275,8 @@ describe('/api/update-triggerable/', function () {
         }).then((result) => {
             const [initialConfigurations, initialRepositoryGroups] = initialResult;
             const [configurations, repositoryGroups] = result;
-            assert.deepEqual(configurations, initialConfigurations);
-            assert.deepEqual(repositoryGroups, initialRepositoryGroups);
+            assert.deepStrictEqual(configurations, initialConfigurations);
+            assert.deepStrictEqual(repositoryGroups, initialRepositoryGroups);
         })
     });
 
@@ -290,14 +290,14 @@ describe('/api/update-triggerable/', function () {
         }).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
         }).then((response) => db.selectAll('triggerable_repository_groups')).then((repositoryGroups) => {
-            assert.equal(repositoryGroups.length, 1);
-            assert.equal(repositoryGroups[0]['name'], 'system-only');
-            assert.equal(repositoryGroups[0]['description'], null);
+            assert.strictEqual(repositoryGroups.length, 1);
+            assert.strictEqual(repositoryGroups[0]['name'], 'system-only');
+            assert.strictEqual(repositoryGroups[0]['description'], null);
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', secondUpdate);
         }).then(() => db.selectAll('triggerable_repository_groups')).then((repositoryGroups) => {
-            assert.equal(repositoryGroups.length, 1);
-            assert.equal(repositoryGroups[0]['name'], 'system-only');
-            assert.equal(repositoryGroups[0]['description'], 'this group is awesome');
+            assert.strictEqual(repositoryGroups.length, 1);
+            assert.strictEqual(repositoryGroups[0]['name'], 'system-only');
+            assert.strictEqual(repositoryGroups[0]['description'], 'this group is awesome');
         });
     });
 
@@ -344,39 +344,39 @@ describe('/api/update-triggerable/', function () {
             const repositoryGroups = TriggerableRepositoryGroup.sortByName(TriggerableRepositoryGroup.all());
             const webkit = Repository.findTopLevelByName('WebKit');
             const macos = Repository.findTopLevelByName('macOS');
-            assert.equal(repositoryGroups.length, 2);
-            assert.equal(repositoryGroups[0].name(), 'system-and-webkit');
-            assert.equal(repositoryGroups[0].description(), 'system-and-webkit');
-            assert.equal(repositoryGroups[0].acceptsCustomRoots(), false);
-            assert.deepEqual(repositoryGroups[0].repositories(), [webkit, macos]);
-            assert.equal(repositoryGroups[0].acceptsPatchForRepository(webkit), false);
-            assert.equal(repositoryGroups[0].acceptsPatchForRepository(macos), false);
+            assert.strictEqual(repositoryGroups.length, 2);
+            assert.strictEqual(repositoryGroups[0].name(), 'system-and-webkit');
+            assert.strictEqual(repositoryGroups[0].description(), 'system-and-webkit');
+            assert.strictEqual(repositoryGroups[0].acceptsCustomRoots(), false);
+            assert.deepStrictEqual(repositoryGroups[0].repositories(), [webkit, macos]);
+            assert.strictEqual(repositoryGroups[0].acceptsPatchForRepository(webkit), false);
+            assert.strictEqual(repositoryGroups[0].acceptsPatchForRepository(macos), false);
 
-            assert.equal(repositoryGroups[1].name(), 'system-only');
-            assert.equal(repositoryGroups[1].description(), 'system-only');
-            assert.equal(repositoryGroups[1].acceptsCustomRoots(), false);
-            assert.deepEqual(repositoryGroups[1].repositories(), [macos]);
-            assert.equal(repositoryGroups[1].acceptsPatchForRepository(webkit), false);
-            assert.equal(repositoryGroups[1].acceptsPatchForRepository(macos), false);
+            assert.strictEqual(repositoryGroups[1].name(), 'system-only');
+            assert.strictEqual(repositoryGroups[1].description(), 'system-only');
+            assert.strictEqual(repositoryGroups[1].acceptsCustomRoots(), false);
+            assert.deepStrictEqual(repositoryGroups[1].repositories(), [macos]);
+            assert.strictEqual(repositoryGroups[1].acceptsPatchForRepository(webkit), false);
+            assert.strictEqual(repositoryGroups[1].acceptsPatchForRepository(macos), false);
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', secondUpdate);
         }).then(() => Manifest.fetch()).then(() => {
             const repositoryGroups = TriggerableRepositoryGroup.sortByName(TriggerableRepositoryGroup.all());
             const webkit = Repository.findTopLevelByName('WebKit');
             const macos = Repository.findTopLevelByName('macOS');
-            assert.equal(repositoryGroups.length, 2);
-            assert.equal(repositoryGroups[0].name(), 'system-and-webkit');
-            assert.equal(repositoryGroups[0].description(), 'system-and-webkit');
-            assert.equal(repositoryGroups[0].acceptsCustomRoots(), false);
-            assert.deepEqual(repositoryGroups[0].repositories(), [webkit, macos]);
-            assert.equal(repositoryGroups[0].acceptsPatchForRepository(webkit), true);
-            assert.equal(repositoryGroups[0].acceptsPatchForRepository(macos), false);
+            assert.strictEqual(repositoryGroups.length, 2);
+            assert.strictEqual(repositoryGroups[0].name(), 'system-and-webkit');
+            assert.strictEqual(repositoryGroups[0].description(), 'system-and-webkit');
+            assert.strictEqual(repositoryGroups[0].acceptsCustomRoots(), false);
+            assert.deepStrictEqual(repositoryGroups[0].repositories(), [webkit, macos]);
+            assert.strictEqual(repositoryGroups[0].acceptsPatchForRepository(webkit), true);
+            assert.strictEqual(repositoryGroups[0].acceptsPatchForRepository(macos), false);
 
-            assert.equal(repositoryGroups[1].name(), 'system-only');
-            assert.equal(repositoryGroups[1].description(), 'system-only');
-            assert.equal(repositoryGroups[1].acceptsCustomRoots(), true);
-            assert.deepEqual(repositoryGroups[1].repositories(), [macos]);
-            assert.equal(repositoryGroups[1].acceptsPatchForRepository(webkit), false);
-            assert.equal(repositoryGroups[1].acceptsPatchForRepository(macos), false);
+            assert.strictEqual(repositoryGroups[1].name(), 'system-only');
+            assert.strictEqual(repositoryGroups[1].description(), 'system-only');
+            assert.strictEqual(repositoryGroups[1].acceptsCustomRoots(), true);
+            assert.deepStrictEqual(repositoryGroups[1].repositories(), [macos]);
+            assert.strictEqual(repositoryGroups[1].acceptsPatchForRepository(webkit), false);
+            assert.strictEqual(repositoryGroups[1].acceptsPatchForRepository(macos), false);
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
         });
     });
@@ -395,29 +395,29 @@ describe('/api/update-triggerable/', function () {
             return Promise.all([db.selectAll('triggerable_repository_groups', 'name'), db.selectAll('triggerable_repositories', 'repository')]);
         }).then((result) => {
             const [repositoryGroups, repositories] = result;
-            assert.equal(repositoryGroups.length, 2);
-            assert.equal(repositoryGroups[0]['name'], 'system-and-webkit');
-            assert.equal(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
-            assert.equal(repositoryGroups[1]['name'], 'system-only');
-            assert.equal(repositoryGroups[1]['triggerable'], MockData.emptyTriggeragbleId());
+            assert.strictEqual(repositoryGroups.length, 2);
+            assert.strictEqual(repositoryGroups[0]['name'], 'system-and-webkit');
+            assert.strictEqual(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
+            assert.strictEqual(repositoryGroups[1]['name'], 'system-only');
+            assert.strictEqual(repositoryGroups[1]['triggerable'], MockData.emptyTriggeragbleId());
             initialGroups = repositoryGroups;
 
             const repositoriesByGroup = mapRepositoriesByGroup(repositories);
-            assert.equal(Object.keys(repositoriesByGroup).length, 2);
-            assert.deepEqual(repositoriesByGroup[repositoryGroups[0]['id']], [MockData.macosRepositoryId(), MockData.webkitRepositoryId()]);
-            assert.deepEqual(repositoriesByGroup[repositoryGroups[1]['id']], [MockData.macosRepositoryId()]);
+            assert.strictEqual(Object.keys(repositoriesByGroup).length, 2);
+            assert.deepStrictEqual(repositoriesByGroup[repositoryGroups[0]['id']], [MockData.macosRepositoryId(), MockData.webkitRepositoryId()]);
+            assert.deepStrictEqual(repositoriesByGroup[repositoryGroups[1]['id']], [MockData.macosRepositoryId()]);
 
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', secondUpdate);
         }).then(() => {
             return Promise.all([db.selectAll('triggerable_repository_groups', 'name'), db.selectAll('triggerable_repositories', 'repository')]);
         }).then((result) => {
             const [repositoryGroups, repositories] = result;
-            assert.deepEqual(repositoryGroups, initialGroups);
+            assert.deepStrictEqual(repositoryGroups, initialGroups);
 
             const repositoriesByGroup = mapRepositoriesByGroup(repositories);
-            assert.equal(Object.keys(repositoriesByGroup).length, 2);
-            assert.deepEqual(repositoriesByGroup[initialGroups[0]['id']], [MockData.macosRepositoryId(), MockData.gitWebkitRepositoryId()]);
-            assert.deepEqual(repositoriesByGroup[initialGroups[1]['id']], [MockData.macosRepositoryId()]);
+            assert.strictEqual(Object.keys(repositoriesByGroup).length, 2);
+            assert.deepStrictEqual(repositoriesByGroup[initialGroups[0]['id']], [MockData.macosRepositoryId(), MockData.gitWebkitRepositoryId()]);
+            assert.deepStrictEqual(repositoriesByGroup[initialGroups[1]['id']], [MockData.macosRepositoryId()]);
         });
     });
 
@@ -436,17 +436,17 @@ describe('/api/update-triggerable/', function () {
             return Promise.all([db.selectAll('triggerable_repository_groups', 'name'), db.selectAll('triggerable_repositories', 'repository')]);
         }).then((result) => {
             const [repositoryGroups, repositories] = result;
-            assert.equal(repositoryGroups.length, 2);
-            assert.equal(repositoryGroups[0]['name'], 'system-and-webkit');
-            assert.equal(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
-            assert.equal(repositoryGroups[1]['name'], 'system-only');
-            assert.equal(repositoryGroups[1]['triggerable'], MockData.emptyTriggeragbleId());
+            assert.strictEqual(repositoryGroups.length, 2);
+            assert.strictEqual(repositoryGroups[0]['name'], 'system-and-webkit');
+            assert.strictEqual(repositoryGroups[0]['triggerable'], MockData.emptyTriggeragbleId());
+            assert.strictEqual(repositoryGroups[1]['name'], 'system-only');
+            assert.strictEqual(repositoryGroups[1]['triggerable'], MockData.emptyTriggeragbleId());
             initialGroups = repositoryGroups;
 
             const repositoriesByGroup = mapRepositoriesByGroup(repositories);
-            assert.equal(Object.keys(repositoriesByGroup).length, 2);
-            assert.deepEqual(repositoriesByGroup[repositoryGroups[0]['id']], [MockData.macosRepositoryId(), MockData.webkitRepositoryId()]);
-            assert.deepEqual(repositoriesByGroup[repositoryGroups[1]['id']], [MockData.macosRepositoryId()]);
+            assert.strictEqual(Object.keys(repositoriesByGroup).length, 2);
+            assert.deepStrictEqual(repositoriesByGroup[repositoryGroups[0]['id']], [MockData.macosRepositoryId(), MockData.webkitRepositoryId()]);
+            assert.deepStrictEqual(repositoriesByGroup[repositoryGroups[1]['id']], [MockData.macosRepositoryId()]);
             initialRepositories = repositories;
 
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', secondUpdate);
@@ -455,13 +455,13 @@ describe('/api/update-triggerable/', function () {
         }).then((result) => {
             const [repositoryGroups, repositories] = result;
 
-            assert.equal(repositoryGroups.length, 2);
-            assert.equal(repositoryGroups[0]['name'], 'mac-only');
-            assert.equal(repositoryGroups[0]['triggerable'], initialGroups[1]['triggerable']);
-            assert.equal(repositoryGroups[1]['name'], 'system-and-webkit');
-            assert.equal(repositoryGroups[1]['triggerable'], initialGroups[0]['triggerable']);
+            assert.strictEqual(repositoryGroups.length, 2);
+            assert.strictEqual(repositoryGroups[0]['name'], 'mac-only');
+            assert.strictEqual(repositoryGroups[0]['triggerable'], initialGroups[1]['triggerable']);
+            assert.strictEqual(repositoryGroups[1]['name'], 'system-and-webkit');
+            assert.strictEqual(repositoryGroups[1]['triggerable'], initialGroups[0]['triggerable']);
 
-            assert.deepEqual(repositories, initialRepositories);
+            assert.deepStrictEqual(repositories, initialRepositories);
         });
     });
 

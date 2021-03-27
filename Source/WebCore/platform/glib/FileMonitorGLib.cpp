@@ -28,7 +28,6 @@
 
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -55,12 +54,9 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
         return;
     }
 
-    BinarySemaphore semaphore;
-    m_handlerQueue->dispatch([createPlatformMonitor = WTFMove(createPlatformMonitor), &semaphore] {
+    m_handlerQueue->dispatchSync([createPlatformMonitor = WTFMove(createPlatformMonitor)] {
         createPlatformMonitor();
-        semaphore.signal();
     });
-    semaphore.wait();
 }
 
 FileMonitor::~FileMonitor()
@@ -71,12 +67,9 @@ FileMonitor::~FileMonitor()
         return;
     }
 
-    BinarySemaphore semaphore;
-    m_handlerQueue->dispatch([&] {
+    m_handlerQueue->dispatchSync([this] {
         cancel();
-        semaphore.signal();
     });
-    semaphore.wait();
 }
 
 void FileMonitor::fileChangedCallback(GFileMonitor*, GFile*, GFile*, GFileMonitorEvent event, FileMonitor* monitor)

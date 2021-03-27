@@ -59,7 +59,13 @@ void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 
 ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url)
 {
-    return m_subresources.get(url.string());
+    if (auto* resource = m_subresources.get(url.string()))
+        return resource;
+    if (!url.protocolIs("https"))
+        return nullptr;
+    URL httpURL = url;
+    httpURL.setProtocol("http");
+    return m_subresources.get(httpURL.string());
 }
 
 RefPtr<Archive> ArchiveResourceCollection::popSubframeArchive(const String& frameName, const URL& url)

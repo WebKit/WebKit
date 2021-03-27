@@ -37,9 +37,13 @@ struct _WebKitFormDataInputStreamPrivate {
     GRefPtr<GInputStream> currentStream;
     unsigned nextIndex;
     long long currentStreamRangeLength;
+    bool canPoll;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitFormDataInputStream, webkit_form_data_input_stream, G_TYPE_INPUT_STREAM)
+static void webkitFormDataInputStreamPollableInterfaceInit(GPollableInputStreamInterface*);
+
+WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitFormDataInputStream, webkit_form_data_input_stream, G_TYPE_INPUT_STREAM,
+    G_IMPLEMENT_INTERFACE(G_TYPE_POLLABLE_INPUT_STREAM, webkitFormDataInputStreamPollableInterfaceInit))
 
 static bool webkitFormDataInputStreamCreateNextStream(WebKitFormDataInputStream* stream, GCancellable* cancellable)
 {
@@ -130,6 +134,15 @@ GRefPtr<GInputStream> webkitFormDataInputStreamNew(Ref<FormData>&& formData)
     stream->priv->formData = WTFMove(formData);
     stream->priv->currentStreamRangeLength = BlobDataItem::toEndOfFile;
 
+    // GFileInputStream is not pollable, so the stream is only pollable if FormData doesn't contain EncodedFileData elements.
+    stream->priv->canPoll = true;
+    for (const auto& element : stream->priv->formData->elements()) {
+        if (WTF::holds_alternative<FormDataElement::EncodedFileData>(element.data)) {
+            stream->priv->canPoll = false;
+            break;
+        }
+    }
+
     return adoptGRef(G_INPUT_STREAM((stream)));
 }
 
@@ -144,4 +157,29 @@ GBytes* webkitFormDataInputStreamReadAll(WebKitFormDataInputStream* stream)
         return nullptr;
 
     return g_memory_output_stream_steal_as_bytes(G_MEMORY_OUTPUT_STREAM(outputStream.get()));
+}
+
+static gboolean webkitFormDataInputStreamCanPoll(GPollableInputStream* stream)
+{
+    auto* priv = WEBKIT_FORM_DATA_INPUT_STREAM(stream)->priv;
+    return priv->canPoll;
+}
+
+static gboolean webkitFormDataInputStreamIsReadable(GPollableInputStream* stream)
+{
+    auto* priv = WEBKIT_FORM_DATA_INPUT_STREAM(stream)->priv;
+    return priv->currentStream || priv->nextIndex < priv->formData->elements().size();
+}
+
+static GSource* webkitFormDataInputStreamCreateSource(GPollableInputStream* stream, GCancellable* cancellable)
+{
+    GRefPtr<GSource> base = adoptGRef(g_timeout_source_new(0));
+    return g_pollable_source_new_full(stream, base.get(), cancellable);
+}
+
+static void webkitFormDataInputStreamPollableInterfaceInit(GPollableInputStreamInterface* iface)
+{
+    iface->can_poll = webkitFormDataInputStreamCanPoll;
+    iface->is_readable = webkitFormDataInputStreamIsReadable;
+    iface->create_source = webkitFormDataInputStreamCreateSource;
 }

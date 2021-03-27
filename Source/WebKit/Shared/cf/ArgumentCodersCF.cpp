@@ -458,11 +458,11 @@ bool decode(Decoder& decoder, RetainPtr<CFDictionaryRef>& result)
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     for (uint64_t i = 0; i < size; ++i) {
         RetainPtr<CFTypeRef> key;
-        if (!decode(decoder, key))
+        if (!decode(decoder, key) || !key)
             return false;
 
         RetainPtr<CFTypeRef> value;
-        if (!decode(decoder, value))
+        if (!decode(decoder, value) || !value)
             return false;
 
         CFDictionarySetValue(dictionary.get(), key.get(), value.get());
@@ -541,8 +541,7 @@ bool decode(Decoder& decoder, RetainPtr<CFNumberRef>& result)
         return false;
 
     ASSERT(dataReference.data());
-    CFNumberRef number = CFNumberCreate(0, numberType, dataReference.data());
-    result = adoptCF(number);
+    result = adoptCF(CFNumberCreate(0, numberType, dataReference.data()));
 
     return true;
 }
@@ -581,11 +580,11 @@ bool decode(Decoder& decoder, RetainPtr<CFStringRef>& result)
     if (!decoder.decode(dataReference))
         return false;
 
-    CFStringRef string = CFStringCreateWithBytes(0, dataReference.data(), dataReference.size(), encoding, false);
+    auto string = adoptCF(CFStringCreateWithBytes(0, dataReference.data(), dataReference.size(), encoding, false));
     if (!string)
         return false;
 
-    result = adoptCF(string);
+    result = WTFMove(string);
     return true;
 }
 

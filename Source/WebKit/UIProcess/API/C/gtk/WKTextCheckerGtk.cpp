@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,38 @@
 #include "WKTextCheckerGtk.h"
 
 #include "TextChecker.h"
+#include "WKAPICast.h"
+#include "WebPageProxy.h"
+#include "WebTextChecker.h"
+
+using namespace WebKit;
+
+void WKTextCheckerSetClient(const WKTextCheckerClientBase* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    WebTextChecker::singleton()->setClient(wkClient);
+}
+
+void WKTextCheckerContinuousSpellCheckingEnabledStateChanged(bool enabled)
+{
+    WebTextChecker::singleton()->continuousSpellCheckingEnabledStateChanged(enabled);
+}
+
+void WKTextCheckerGrammarCheckingEnabledStateChanged(bool enabled)
+{
+    WebTextChecker::singleton()->grammarCheckingEnabledStateChanged(enabled);
+}
+
+void WKTextCheckerCheckSpelling(WKPageRef page, bool startBeforeSelection)
+{
+    WebTextChecker::singleton()->checkSpelling(toImpl(page), startBeforeSelection);
+}
+
+void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word)
+{
+    WebTextChecker::singleton()->changeSpellingToWord(toImpl(page), toWTFString(word));
+}
 
 void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages)
 {
@@ -36,4 +68,9 @@ void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages)
         spellCheckingLanguages.append(String::fromUTF8(languages[i]));
     WebKit::TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
+}
+
+void WKTextCheckerSetContinuousSpellCheckingEnabled(bool enabled)
+{
+    WebKit::TextChecker::setContinuousSpellCheckingEnabled(enabled);
 }

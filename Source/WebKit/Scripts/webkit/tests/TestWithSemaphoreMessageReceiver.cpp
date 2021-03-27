@@ -35,26 +35,23 @@ namespace WebKit {
 void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithSemaphore::SendSemaphore::name()) {
-        IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(decoder, this, &TestWithSemaphore::sendSemaphore);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithSemaphore::SendSemaphore::name())
+        return IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(decoder, this, &TestWithSemaphore::sendSemaphore);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     ASSERT_NOT_REACHED();
 }
 
-void TestWithSemaphore::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool TestWithSemaphore::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name()) {
-        IPC::handleMessage<Messages::TestWithSemaphore::ReceiveSemaphore>(decoder, *replyEncoder, this, &TestWithSemaphore::receiveSemaphore);
-        return;
-    }
+    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name())
+        return IPC::handleMessage<Messages::TestWithSemaphore::ReceiveSemaphore>(decoder, *replyEncoder, this, &TestWithSemaphore::receiveSemaphore);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);
     ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebKit

@@ -53,6 +53,7 @@
 #include "WebProcess.h"
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Language.h>
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceSessionMessages.h"
@@ -88,10 +89,17 @@
 namespace WebKit {
 using namespace WebCore;
 
+static void languagesChanged(void* context)
+{
+    static_cast<GPUProcessConnection*>(context)->connection().send(Messages::GPUConnectionToWebProcess::SetUserPreferredLanguages(userPreferredLanguages()), { });
+}
+
 GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
 {
     m_connection->open();
+
+    addLanguageChangeObserver(this, languagesChanged);
 }
 
 GPUProcessConnection::~GPUProcessConnection()
@@ -101,6 +109,7 @@ GPUProcessConnection::~GPUProcessConnection()
     if (m_audioSourceProviderManager)
         m_audioSourceProviderManager->stopListeningForIPC();
 #endif
+    removeLanguageChangeObserver(this);
 }
 
 void GPUProcessConnection::didClose(IPC::Connection&)
@@ -228,7 +237,7 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
     return false;
 }
 
-bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }

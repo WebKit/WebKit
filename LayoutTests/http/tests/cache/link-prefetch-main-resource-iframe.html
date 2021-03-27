@@ -22,7 +22,7 @@ function iframeLoadFinished()
 function loadAfterPrefetch()
 {
     var newIframe = document.createElement("iframe");
-    newIframe.src = "http://localhost:8000/cache/resources/prefetched-main-resource-iframe.php";
+    newIframe.src = "http://localhost:8000/cache/resources/prefetched-main-resource-iframe.py";
     newIframe.onload = iframeLoadFinished;
     document.body.appendChild(newIframe);
 }
@@ -35,7 +35,7 @@ window.onmessage = function(message)
 function runTest() {
     var link = document.createElement("link");
     link.rel = "prefetch";
-    link.href = "http://localhost:8000/cache/resources/prefetched-main-resource-iframe.php";
+    link.href = "http://localhost:8000/cache/resources/prefetched-main-resource-iframe.py";
     if (internals)
         internals.addPrefetchLoadEventListener(link, () => { loadAfterPrefetch(); });
     document.body.appendChild(link);

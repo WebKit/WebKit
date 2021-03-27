@@ -29,8 +29,10 @@
 
 #include "CanvasBase.h"
 #include "ExceptionOr.h"
+#include "FloatRect.h"
 #include "WebXRLayer.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
@@ -87,7 +89,7 @@ private:
     static IntSize computeNativeWebGLFramebufferResolution();
     static IntSize computeRecommendedWebGLFramebufferResolution();
 
-    void canvasChanged(CanvasBase&, const FloatRect&) final { };
+    void canvasChanged(CanvasBase&, const Optional<FloatRect>&) final { };
     void canvasResized(CanvasBase&) final;
     void canvasDestroyed(CanvasBase&) final { };
 

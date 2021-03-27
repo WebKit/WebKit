@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "DOMWindow.h"
 #include "Logging.h"
 #include "MediaMetadata.h"
 #include "Navigator.h"
@@ -127,7 +128,7 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
         }
         PlatformMediaSessionManager::sharedManager().removeSupportedCommand(platformCommandForMediaSessionAction(action));
     }
-    
+
     actionHandlersUpdated();
 }
 
@@ -173,6 +174,13 @@ Optional<double> MediaSession::currentPosition() const
     auto elapsedTime = (MonotonicTime::now() - m_timeAtLastPositionUpdate) * actualPlaybackRate;
 
     return std::max(0., std::min(*m_lastReportedPosition + elapsedTime.value(), m_positionState->duration));
+}
+
+Document* MediaSession::document() const
+{
+    if (!m_navigator || !m_navigator->window())
+        return nullptr;
+    return m_navigator->window()->document();
 }
 
 void MediaSession::metadataUpdated()

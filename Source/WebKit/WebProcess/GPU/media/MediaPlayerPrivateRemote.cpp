@@ -111,6 +111,7 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_manager(manager)
     , m_remoteEngineIdentifier(engineIdentifier)
     , m_id(playerIdentifier)
+    , m_documentSecurityOrigin(player->documentSecurityOrigin())
 {
     INFO_LOG(LOGIDENTIFIER);
 }
@@ -128,13 +129,6 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
     if (m_audioSourceProvider)
         m_audioSourceProvider->close();
 #endif
-}
-
-void MediaPlayerPrivateRemote::setConfiguration(RemoteMediaPlayerConfiguration&& configuration, WebCore::SecurityOriginData&& documentSecurityOrigin)
-{
-    m_configuration = WTFMove(configuration);
-    m_documentSecurityOrigin = WTFMove(documentSecurityOrigin);
-    m_player->mediaEngineUpdated();
 }
 
 void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
@@ -181,9 +175,12 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         sandboxExtensionHandle = WTFMove(handle);
     }
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
-        if (weakThis)
-            weakThis->m_configuration = WTFMove(configuration);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, sandboxExtensionHandle, contentType, keySystem), [weakThis = makeWeakPtr(*this), this](auto&& configuration) {
+        if (!weakThis)
+            return;
+
+        m_configuration = WTFMove(configuration);
+        m_player->mediaEngineUpdated();
     }, m_id);
 }
 
@@ -239,6 +236,16 @@ void MediaPlayerPrivateRemote::setPrivateBrowsingMode(bool privateMode)
     connection().send(Messages::RemoteMediaPlayerProxy::SetPrivateBrowsingMode(privateMode), m_id);
 }
 
+MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
+{
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSourcePrivate)
+        return m_mediaSourcePrivate->duration();
+#endif
+
+    return m_cachedState.duration;
+}
+
 MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 {
     return m_cachedState.currentTime;
@@ -288,6 +295,12 @@ void MediaPlayerPrivateRemote::networkStateChanged(RemoteMediaPlayerState&& stat
 {
     updateCachedState(WTFMove(state));
     m_player->networkStateChanged();
+}
+
+void MediaPlayerPrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
+{
+    m_cachedState.readyState = readyState;
+    m_player->readyStateChanged();
 }
 
 void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state)
@@ -425,6 +438,10 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.canSaveMediaData = state.canSaveMediaData;
     m_cachedState.hasAudio = state.hasAudio;
     m_cachedState.hasVideo = state.hasVideo;
+
+    if (m_wantPlaybackQualityMetrics)
+        m_cachedState.videoMetrics = state.videoMetrics;
+
     m_cachedState.hasClosedCaptions = state.hasClosedCaptions;
     m_cachedState.hasAvailableVideoFrame = state.hasAvailableVideoFrame;
     m_cachedState.wirelessVideoPlaybackDisabled = state.wirelessVideoPlaybackDisabled;
@@ -661,16 +678,19 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 {
     if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE) {
         auto identifier = RemoteMediaSourceIdentifier::generate();
-        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled(), identifier), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
-            if (weakThis)
-                weakThis->m_configuration = WTFMove(configuration);
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled(), identifier), [weakThis = makeWeakPtr(*this), this](auto&& configuration) {
+            if (!weakThis)
+                return;
+
+            m_configuration = WTFMove(configuration);
+            m_player->mediaEngineUpdated();
         }, m_id);
         m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
 
         return;
     }
 
-    callOnMainThread([weakThis = makeWeakPtr(*this), this] {
+    callOnMainRunLoop([weakThis = makeWeakPtr(*this), this] {
         if (!weakThis)
             return;
 
@@ -683,7 +703,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 #if ENABLE(MEDIA_STREAM)
 void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
 {
-    callOnMainThread([weakThis = makeWeakPtr(*this), this] {
+    callOnMainRunLoop([weakThis = makeWeakPtr(*this), this] {
         if (!weakThis)
             return;
 
@@ -1219,11 +1239,6 @@ void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remo
 void MediaPlayerPrivateRemote::resourceNotSupported()
 {
     m_player->resourceNotSupported();
-}
-
-void MediaPlayerPrivateRemote::engineUpdated()
-{
-    m_player->mediaEngineUpdated();
 }
 
 void MediaPlayerPrivateRemote::activeSourceBuffersChanged()

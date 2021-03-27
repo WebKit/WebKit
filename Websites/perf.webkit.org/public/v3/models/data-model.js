@@ -1,6 +1,8 @@
 'use strict';
 
 class DataModelObject {
+    _id;
+
     constructor(id)
     {
         this._id = id;
@@ -10,7 +12,7 @@ class DataModelObject {
 
     static ensureSingleton(id, object)
     {
-        var singleton = this.findById(id);
+        const singleton = this.findById(id);
         if (singleton) {
             singleton.updateSingleton(object)
             return singleton;
@@ -24,18 +26,21 @@ class DataModelObject {
 
     static namedStaticMap(name)
     {
-        var staticMap = this[DataModelObject.StaticMapSymbol];
-        return staticMap ? staticMap[name] : null;
+        const staticMap = this[DataModelObject.StaticMapSymbol];
+        return staticMap ? staticMap.get(name) : null;
     }
 
     static ensureNamedStaticMap(name)
     {
         if (!this[DataModelObject.StaticMapSymbol])
-            this[DataModelObject.StaticMapSymbol] = {};
-        var staticMap = this[DataModelObject.StaticMapSymbol];
-        if (!staticMap[name])
-            staticMap[name] = {};
-        return staticMap[name];
+            this[DataModelObject.StaticMapSymbol] = new Map;
+        const staticMap = this[DataModelObject.StaticMapSymbol];
+        let namedMap = staticMap.get(name);
+        if (!namedMap) {
+            namedMap = { }; // Use a regular object to implicitly convert each key to a string.
+            staticMap.set(name, namedMap);
+        }
+        return namedMap;
     }
 
     namedStaticMap(name) { return this.__proto__.constructor.namedStaticMap(name); }
@@ -43,16 +48,16 @@ class DataModelObject {
 
     static findById(id)
     {
-        var idMap = this.namedStaticMap('id');
+        const idMap = this.namedStaticMap('id');
         return idMap ? idMap[id] : null;
     }
 
     static listForStaticMap(name)
     {
-        var list = [];
-        var idMap = this.namedStaticMap(name);
+        const list = [];
+        const idMap = this.namedStaticMap(name);
         if (idMap) {
-            for (var id in idMap)
+            for (const id in idMap)
                 list.push(idMap[id]);
         }
         return list;
@@ -60,7 +65,7 @@ class DataModelObject {
 
     static all() { return this.listForStaticMap('id'); }
 
-    static cachedFetch(path, params, noCache)
+    static async cachedFetch(path, params = { }, noCache = false)
     {
         const query = [];
         if (params) {
@@ -73,13 +78,15 @@ class DataModelObject {
         if (noCache)
             return RemoteAPI.getJSONWithStatus(path);
 
-        var cacheMap = this.ensureNamedStaticMap(DataModelObject.CacheMapSymbol);
-        if (!cacheMap[path])
-            cacheMap[path] = RemoteAPI.getJSONWithStatus(path);
+        const cacheMap = this.ensureNamedStaticMap(DataModelObject.CacheMapSymbol);
+        let promise = cacheMap[path];
+        if (!promise) {
+            promise = RemoteAPI.getJSONWithStatus(path);
+            cacheMap[path] = promise;
+        }
 
-        return cacheMap[path].then((content) => {
-            return JSON.parse(JSON.stringify(content));
-        });
+        const content = await cacheMap[path];
+        return JSON.parse(JSON.stringify(content));
     }
 
 }
@@ -87,6 +94,8 @@ DataModelObject.StaticMapSymbol = Symbol();
 DataModelObject.CacheMapSymbol = Symbol();
 
 class LabeledObject extends DataModelObject {
+    _name;
+
     constructor(id, object)
     {
         super(id);
@@ -97,7 +106,7 @@ class LabeledObject extends DataModelObject {
 
     static sortByName(list)
     {
-        return list.sort(function (a, b) {
+        return list.sort((a, b) => {
             if (a.name() < b.name())
                 return -1;
             else if (a.name() > b.name())

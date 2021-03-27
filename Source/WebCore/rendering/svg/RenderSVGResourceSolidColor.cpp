@@ -58,7 +58,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const R
         context->setAlpha(svgStyle.strokeOpacity());
         context->setStrokeColor(style.colorByApplyingColorFilter(m_color));
 
-        SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
+        SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
 
         if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))
             context->setTextDrawingMode(TextDrawingMode::Stroke);

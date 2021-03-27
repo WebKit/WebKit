@@ -55,12 +55,10 @@ struct BlitParamsUniform
     float srcTexCoords[3][2];
     int srcLevel         = 0;
     int srcLayer         = 0;
-    int srcLevel2        = 0;
-    int srcLayer2        = 0;
     uint8_t dstFlipX     = 0;
     uint8_t dstFlipY     = 0;
     uint8_t dstLuminance = 0;  // dest texture is luminace
-    uint8_t padding[9];
+    uint8_t padding[13];
 };
 
 struct BlitStencilToBufferParamsUniform
@@ -774,14 +772,8 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
     uniformParams.srcLayer = params.srcLayer;
     if (isColorBlit)
     {
-        const auto colorParams     = static_cast<const ColorBlitParams *>(&params);
-        uniformParams.dstLuminance = colorParams->dstLuminance ? 1 : 0;
-    }
-    else
-    {
-        const auto dsParams     = static_cast<const DepthStencilBlitParams *>(&params);
-        uniformParams.srcLevel2 = dsParams->srcStencilLevel;
-        uniformParams.srcLayer2 = dsParams->srcStencilLayer;
+        const ColorBlitParams *colorParams = static_cast<const ColorBlitParams *>(&params);
+        uniformParams.dstLuminance         = colorParams->dstLuminance ? 1 : 0;
     }
 
     // Compute source texCoords
@@ -795,8 +787,8 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
     {
         const DepthStencilBlitParams *dsParams =
             static_cast<const DepthStencilBlitParams *>(&params);
-        srcWidth  = dsParams->srcStencil->width(mtl::MipmapNativeLevel(dsParams->srcStencilLevel));
-        srcHeight = dsParams->srcStencil->height(mtl::MipmapNativeLevel(dsParams->srcStencilLevel));
+        srcWidth  = dsParams->srcStencil->width(dsParams->srcLevel);
+        srcHeight = dsParams->srcStencil->height(dsParams->srcLevel);
     }
     else
     {
@@ -807,8 +799,8 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
     GetBlitTexCoords(srcWidth, srcHeight, params.srcRect, params.srcYFlipped, params.unpackFlipX,
                      params.unpackFlipY, &u0, &v0, &u1, &v1);
 
-    auto du = u1 - u0;
-    auto dv = v1 - v0;
+    float du = u1 - u0;
+    float dv = v1 - v0;
 
     // lower left
     uniformParams.srcTexCoords[0][0] = u0;
@@ -3035,12 +3027,13 @@ AutoObjCPtr<id<MTLLibrary>> TransformFeedbackUtils::createMslXfbLibrary(
         // Convert to actual binary shader
         mtl::AutoObjCPtr<NSError *> err = nil;
         mtl::AutoObjCPtr<id<MTLLibrary>> mtlShaderLib =
-            mtl::CreateShaderLibrary(mtlDevice, translatedMsl, &err);
+        mtl::CreateShaderLibrary(mtlDevice, translatedMsl, @{@"TRANSFORM_FEEDBACK_ENABLED": @"1"}, &err);
         if (err && !mtlShaderLib)
         {
             NSLog(@"%@", err.get());
             assert(0);
         }
+        mtlShaderLib.get().label = @"TransformFeedback";
         return mtlShaderLib;
     }
 }
@@ -3058,7 +3051,7 @@ AutoObjCPtr<id<MTLRenderPipelineState>> TransformFeedbackUtils::getTransformFeed
         // Pipeline cache not intialized, do it now:
         ANGLE_MTL_OBJC_SCOPE
         {
-            auto shaderLib = createMslXfbLibrary(contextMtl, programMtl->getXfbMslSource());
+            auto shaderLib = createMslXfbLibrary(contextMtl, programMtl->getTranslatedShaderSource(gl::ShaderType::Vertex));
             // Non specialized constants provided, use default creation function.
             EnsureVertexShaderOnlyPipelineCacheInitialized(contextMtl, SHADER_ENTRY_NAME, shaderLib,
                                                            &cache);

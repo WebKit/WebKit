@@ -11,39 +11,39 @@ describe('/api/test-groups', function () {
     describe('/api/test-groups/ready-for-notification', () => {
         it('should give an empty list if there is not existing test group at all', async () => {
             const content = await TestServer.remoteAPI().getJSON('/api/test-groups/ready-for-notification');
-            assert.equal(content.status, 'OK');
-            assert.deepEqual(content.testGroups, []);
-            assert.deepEqual(content.buildRequests, []);
-            assert.deepEqual(content.commitSets, []);
-            assert.deepEqual(content.commits, []);
-            assert.deepEqual(content.uploadedFiles, []);
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups, []);
+            assert.deepStrictEqual(content.buildRequests, []);
+            assert.deepStrictEqual(content.commitSets, []);
+            assert.deepStrictEqual(content.commits, []);
+            assert.deepStrictEqual(content.uploadedFiles, []);
         });
 
         it('should not include a test group with "canceled" state in at least one build request', async () => {
             await MockData.addMockData(TestServer.database(), ['completed', 'completed', 'completed', 'canceled']);
             const content = await TestServer.remoteAPI().getJSON('/api/test-groups/ready-for-notification');
-            assert.equal(content.status, 'OK');
-            assert.deepEqual(content.testGroups, []);
-            assert.deepEqual(content.buildRequests, []);
-            assert.deepEqual(content.commitSets, []);
-            assert.deepEqual(content.commits, []);
-            assert.deepEqual(content.uploadedFiles, []);
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups, []);
+            assert.deepStrictEqual(content.buildRequests, []);
+            assert.deepStrictEqual(content.commitSets, []);
+            assert.deepStrictEqual(content.commits, []);
+            assert.deepStrictEqual(content.uploadedFiles, []);
         });
 
         it('should list all test groups with pending notification', async () => {
             await MockData.addMockData(TestServer.database(), ['completed', 'completed', 'completed', 'completed']);
             const content = await TestServer.remoteAPI().getJSON('/api/test-groups/ready-for-notification');
-            assert.equal(content.testGroups.length, 1);
+            assert.strictEqual(content.testGroups.length, 1);
             const testGroup = content.testGroups[0];
-            assert.equal(testGroup.id, 600);
-            assert.equal(testGroup.task, 500);
-            assert.equal(testGroup.name, 'some test group');
-            assert.equal(testGroup.author, null);
-            assert.equal(testGroup.hidden, false);
-            assert.equal(testGroup.needsNotification, true);
-            assert.equal(testGroup.platform, 65);
-            assert.deepEqual(testGroup.buildRequests, ['700','701', '702', '703']);
-            assert.deepEqual(testGroup.commitSets, ['401', '402', '401', '402']);
+            assert.strictEqual(parseInt(testGroup.id), 600);
+            assert.strictEqual(parseInt(testGroup.task), 500);
+            assert.strictEqual(testGroup.name, 'some test group');
+            assert.strictEqual(testGroup.author, null);
+            assert.strictEqual(testGroup.hidden, false);
+            assert.strictEqual(testGroup.needsNotification, true);
+            assert.strictEqual(parseInt(testGroup.platform), 65);
+            assert.deepStrictEqual(testGroup.buildRequests, ['700','701', '702', '703']);
+            assert.deepStrictEqual(testGroup.commitSets, ['401', '402', '401', '402']);
         });
 
         it('should not list hidden test group', async () => {
@@ -51,12 +51,12 @@ describe('/api/test-groups', function () {
             await MockData.addMockData(database, ['completed', 'completed', 'completed', 'completed']);
             await database.query('UPDATE analysis_test_groups SET testgroup_hidden = TRUE WHERE testgroup_id = 600');
             const content = await TestServer.remoteAPI().getJSON('/api/test-groups/ready-for-notification');
-            assert.equal(content.status, 'OK');
-            assert.deepEqual(content.testGroups, []);
-            assert.deepEqual(content.buildRequests, []);
-            assert.deepEqual(content.commitSets, []);
-            assert.deepEqual(content.commits, []);
-            assert.deepEqual(content.uploadedFiles, []);
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups, []);
+            assert.deepStrictEqual(content.buildRequests, []);
+            assert.deepStrictEqual(content.commitSets, []);
+            assert.deepStrictEqual(content.commits, []);
+            assert.deepStrictEqual(content.uploadedFiles, []);
         });
 
         it('should not list test groups without needs notification flag', async () => {
@@ -64,24 +64,24 @@ describe('/api/test-groups', function () {
             await MockData.addMockData(database, ['completed', 'completed', 'completed', 'completed']);
             await database.query('UPDATE analysis_test_groups SET testgroup_needs_notification = FALSE WHERE testgroup_id = 600');
             const content = await TestServer.remoteAPI().getJSON('/api/test-groups/ready-for-notification');
-            assert.equal(content.status, 'OK');
-            assert.deepEqual(content.testGroups, []);
-            assert.deepEqual(content.buildRequests, []);
-            assert.deepEqual(content.commitSets, []);
-            assert.deepEqual(content.commits, []);
-            assert.deepEqual(content.uploadedFiles, []);
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups, []);
+            assert.deepStrictEqual(content.buildRequests, []);
+            assert.deepStrictEqual(content.commitSets, []);
+            assert.deepStrictEqual(content.commits, []);
+            assert.deepStrictEqual(content.uploadedFiles, []);
         });
 
         it('should not list a test group that has some incompleted build requests', async () => {
             const database = TestServer.database();
             await MockData.addMockData(database, ['completed', 'completed', 'completed', 'running']);
             const content = await TestServer.remoteAPI().getJSON('/api/test-groups/ready-for-notification');
-            assert.equal(content.status, 'OK');
-            assert.deepEqual(content.testGroups, []);
-            assert.deepEqual(content.buildRequests, []);
-            assert.deepEqual(content.commitSets, []);
-            assert.deepEqual(content.commits, []);
-            assert.deepEqual(content.uploadedFiles, []);
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups, []);
+            assert.deepStrictEqual(content.buildRequests, []);
+            assert.deepStrictEqual(content.commitSets, []);
+            assert.deepStrictEqual(content.commits, []);
+            assert.deepStrictEqual(content.uploadedFiles, []);
         });
     });
 
@@ -138,18 +138,18 @@ describe('/api/test-groups', function () {
             await MockData.addMockData(TestServer.database(), ['completed', 'completed', 'failed', 'completed'], false);
             await TestServer.database().query('UPDATE analysis_test_groups SET testgroup_may_need_more_requests = TRUE WHERE testgroup_id = 600');
             const content = await TestServer.remoteAPI().getJSON('/api/test-groups/need-more-requests');
-            assert.equal(content.testGroups.length, 1);
+            assert.strictEqual(content.testGroups.length, 1);
             const testGroup = content.testGroups[0];
-            assert.equal(testGroup.id, 600);
-            assert.equal(testGroup.task, 500);
-            assert.equal(testGroup.name, 'some test group');
-            assert.equal(testGroup.author, null);
+            assert.strictEqual(parseInt(testGroup.id), 600);
+            assert.strictEqual(parseInt(testGroup.task), 500);
+            assert.strictEqual(testGroup.name, 'some test group');
+            assert.strictEqual(testGroup.author, null);
             assert.ok(!testGroup.hidden);
             assert.ok(!testGroup.needsNotification);
             assert.ok(testGroup.mayNeedMoreRequests);
-            assert.equal(testGroup.platform, 65);
-            assert.deepEqual(testGroup.buildRequests, ['700','701', '702', '703']);
-            assert.deepEqual(testGroup.commitSets, ['401', '402', '401', '402']);
+            assert.strictEqual(parseInt(testGroup.platform), 65);
+            assert.deepStrictEqual(testGroup.buildRequests, ['700','701', '702', '703']);
+            assert.deepStrictEqual(testGroup.commitSets, ['401', '402', '401', '402']);
         });
 
         it('should list all test groups may need additional build requests', async () => {
@@ -158,31 +158,31 @@ describe('/api/test-groups', function () {
             await TestServer.database().query('UPDATE analysis_test_groups SET testgroup_may_need_more_requests = TRUE WHERE testgroup_id = 600');
             await TestServer.database().query('UPDATE analysis_test_groups SET testgroup_may_need_more_requests = TRUE WHERE testgroup_id = 601');
             const content = await TestServer.remoteAPI().getJSON('/api/test-groups/need-more-requests');
-            assert.equal(content.testGroups.length, 2);
+            assert.strictEqual(content.testGroups.length, 2);
 
             const oneTestGroup = content.testGroups[0];
-            assert.equal(oneTestGroup.id, 600);
-            assert.equal(oneTestGroup.task, 500);
-            assert.equal(oneTestGroup.name, 'some test group');
-            assert.equal(oneTestGroup.author, null);
+            assert.strictEqual(parseInt(oneTestGroup.id), 600);
+            assert.strictEqual(parseInt(oneTestGroup.task), 500);
+            assert.strictEqual(oneTestGroup.name, 'some test group');
+            assert.strictEqual(oneTestGroup.author, null);
             assert.ok(!oneTestGroup.hidden);
             assert.ok(oneTestGroup.needsNotification);
             assert.ok(oneTestGroup.mayNeedMoreRequests);
-            assert.equal(oneTestGroup.platform, 65);
-            assert.deepEqual(oneTestGroup.buildRequests, ['700','701', '702', '703']);
-            assert.deepEqual(oneTestGroup.commitSets, ['401', '402', '401', '402']);
+            assert.strictEqual(parseInt(oneTestGroup.platform), 65);
+            assert.deepStrictEqual(oneTestGroup.buildRequests, ['700','701', '702', '703']);
+            assert.deepStrictEqual(oneTestGroup.commitSets, ['401', '402', '401', '402']);
 
             const anotherTestGroup = content.testGroups[1];
-            assert.equal(anotherTestGroup.id, 601);
-            assert.equal(anotherTestGroup.task, 500);
-            assert.equal(anotherTestGroup.name, 'another test group');
-            assert.equal(anotherTestGroup.author, 'webkit');
+            assert.strictEqual(parseInt(anotherTestGroup.id), 601);
+            assert.strictEqual(parseInt(anotherTestGroup.task), 500);
+            assert.strictEqual(anotherTestGroup.name, 'another test group');
+            assert.strictEqual(anotherTestGroup.author, 'webkit');
             assert.ok(!anotherTestGroup.hidden);
             assert.ok(!anotherTestGroup.needsNotification);
             assert.ok(anotherTestGroup.mayNeedMoreRequests);
-            assert.equal(anotherTestGroup.platform, 65);
-            assert.deepEqual(anotherTestGroup.buildRequests, ['710','711', '712', '713']);
-            assert.deepEqual(anotherTestGroup.commitSets, ['401', '402', '401', '402']);
+            assert.strictEqual(parseInt(anotherTestGroup.platform), 65);
+            assert.deepStrictEqual(anotherTestGroup.buildRequests, ['710','711', '712', '713']);
+            assert.deepStrictEqual(anotherTestGroup.commitSets, ['401', '402', '401', '402']);
         });
     });
 });

@@ -104,7 +104,7 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
         static NeverDestroyed<RetainPtr<NSAttributedString>> attributedStringWithRichContent;
         static std::once_flag attributedStringWithRichContentOnceFlag;
         std::call_once(attributedStringWithRichContentOnceFlag, [&] {
-            dispatch_sync(dispatch_get_main_queue(), [&] {
+            WorkQueue::main().dispatchSync([&] {
                 auto attachment = adoptNS([[NSTextAttachment alloc] init]);
                 auto cell = adoptNS([[NSTextAttachmentCell alloc] initImageCell:image]);
                 [attachment setAttachmentCell:cell.get()];

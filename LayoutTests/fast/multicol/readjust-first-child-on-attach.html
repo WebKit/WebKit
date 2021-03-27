@@ -1,0 +1,20 @@
+<style>
+  ruby {
+    columns: 1px;
+    -webkit-appearance: media-play-button;
+  }
+  ruby::before {
+    display: block;
+    content: url();
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.styleSheets[0].insertRule(`ruby {}`);
+  };
+</script>
+<body>
+<ruby>PASS if no crash or assert.</ruby>
+</body>

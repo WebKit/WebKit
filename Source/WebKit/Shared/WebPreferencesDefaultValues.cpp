@@ -185,7 +185,7 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
 #if PLATFORM(MAC)
-    return isFeatureFlagEnabled("gpu_process_webrtc");
+    return true;
 #elif PLATFORM(IOS_FAMILY)
     return isFeatureFlagEnabled("gpu_process_media");
 #endif
@@ -205,11 +205,13 @@ bool defaultCaptureAudioInUIProcessEnabled()
 
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if PLATFORM(IOS)
+    return true;
+#elif HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_webrtc");
-#endif
-
+#else
     return false;
+#endif
 }
 
 #endif // ENABLE(MEDIA_STREAM)

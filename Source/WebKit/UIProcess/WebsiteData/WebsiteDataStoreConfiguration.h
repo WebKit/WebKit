@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,6 +133,9 @@ public:
     const String& sourceApplicationSecondaryIdentifier() const { return m_sourceApplicationSecondaryIdentifier; }
     void setSourceApplicationSecondaryIdentifier(String&& identifier) { m_sourceApplicationSecondaryIdentifier = WTFMove(identifier); }
 
+    const String& attributedBundleIdentifier() const { return m_attributedBundleIdentifier; }
+    void setAttributedBundleIdentifier(String&& identifier) { m_attributedBundleIdentifier = WTFMove(identifier); }
+    
     const URL& httpProxy() const { return m_httpProxy; }
     void setHTTPProxy(URL&& proxy) { m_httpProxy = WTFMove(proxy); }
 
@@ -194,6 +197,7 @@ private:
     String m_cookieStorageFile;
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
+    String m_attributedBundleIdentifier;
     String m_boundInterfaceIdentifier;
     String m_dataConnectionServiceType;
     URL m_httpProxy;

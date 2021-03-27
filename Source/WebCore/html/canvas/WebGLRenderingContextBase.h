@@ -50,6 +50,8 @@
 #include <wtf/Lock.h>
 
 #if ENABLE(WEBGL2)
+#include "WebGLSampler.h"
+#include "WebGLTransformFeedback.h"
 #include "WebGLVertexArrayObject.h"
 #endif
 

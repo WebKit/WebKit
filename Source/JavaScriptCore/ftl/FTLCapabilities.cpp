@@ -195,6 +195,7 @@ inline CapabilityLevel canCompile(Node* node)
     case LoadVarargs:
     case ValueToInt32:
     case Branch:
+    case ToBoolean:
     case LogicalNot:
     case AssertInBounds:
     case CheckInBounds:

@@ -637,6 +637,7 @@ private:
 
             PatchpointValue* patchpoint = m_out.patchpoint(Void);
             patchpoint->effects = Effects::none();
+            patchpoint->effects.reads = HeapRange::top();
             patchpoint->effects.writesLocalState = true;
             patchpoint->appendSomeRegister(input);
             patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -646,7 +647,7 @@ private:
                     fpReg = params[0].fpr();
                 else
                     reg = params[0].gpr();
-                jit.probe([=] (Probe::Context& context) {
+                jit.probeDebug([=] (Probe::Context& context) {
                     JSValue input;
                     double doubleInput;
 
@@ -1319,6 +1320,9 @@ private:
             break;
         case SameValue:
             compileSameValue();
+            break;
+        case ToBoolean:
+            compileToBoolean();
             break;
         case LogicalNot:
             compileLogicalNot();
@@ -9637,6 +9641,11 @@ private:
         setBoolean(vmCall(Int32, operationSameValue, weakPointer(globalObject), lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
     }
     
+    void compileToBoolean()
+    {
+        setBoolean(boolify(m_node->child1()));
+    }
+
     void compileLogicalNot()
     {
         setBoolean(m_out.logicalNot(boolify(m_node->child1())));

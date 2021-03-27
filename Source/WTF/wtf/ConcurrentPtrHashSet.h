@@ -74,7 +74,10 @@ public:
     
     size_t size() const
     {
-        return m_table.loadRelaxed()->load.loadRelaxed();
+        Table* table = m_table.loadRelaxed();
+        if (table == &m_stubTable)
+            return sizeSlow();
+        return table->load.loadRelaxed();
     }
     
     // Only call when you know that no other thread can call add(). This frees up memory without changing
@@ -90,9 +93,15 @@ private:
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         
         static std::unique_ptr<Table> create(unsigned size);
-        
+        void initializeStub();
+
         unsigned maxLoad() const { return size / 2; }
-        
+
+        // This can be any value >= 1 because the stub's size is 0, ensuring that
+        // m_stubTable is always seen as "full". We choose 10 for no reason other
+        // than it gives some warm fuzzies since it is greater than 1.
+        static constexpr unsigned stubDefaultLoadValue = 10;
+
         unsigned size; // This is immutable.
         unsigned mask; // This is immutable.
         Atomic<unsigned> load;
@@ -122,6 +131,9 @@ private:
     bool containsImpl(void* ptr) const
     {
         Table* table = m_table.loadRelaxed();
+        if (table == &m_stubTable)
+            return containsImplSlow(ptr);
+
         unsigned mask = table->mask;
         unsigned startIndex = hash(ptr) & mask;
         unsigned index = startIndex;
@@ -155,13 +167,16 @@ private:
     }
     
     WTF_EXPORT_PRIVATE bool addSlow(Table* table, unsigned mask, unsigned startIndex, unsigned index, void* ptr);
+    WTF_EXPORT_PRIVATE bool containsImplSlow(void* ptr) const;
+    WTF_EXPORT_PRIVATE size_t sizeSlow() const;
 
     void resizeIfNecessary();
     bool resizeAndAdd(void* ptr);
-    
+
     Vector<std::unique_ptr<Table>, 4> m_allTables;
     Atomic<Table*> m_table; // This is never null.
-    Lock m_lock; // We just use this to control resize races.
+    Table m_stubTable;
+    mutable Lock m_lock; // We just use this to control resize races.
 };
 
 } // namespace WTF

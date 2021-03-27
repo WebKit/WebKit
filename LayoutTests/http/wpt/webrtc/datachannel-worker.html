@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script src ="routines.js"></script>
+        <script>
+var localChannel;
+var remoteChannel;
+
+async function waitForMessage(worker, data)
+{
+    while (true) {
+        const received = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+        if (data === received)
+            return;
+    }
+}
+
+promise_test(async (test) => {
+    worker = new Worker('datachannel-worker.js');
+    let data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(await data, "registered");
+
+    await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            localChannel = firstConnection.createDataChannel('sendDataChannel');
+            worker.postMessage({channel: localChannel}, [localChannel]);
+
+        }, (secondConnection) => {
+            secondConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onopen = resolve;
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 25000);
+    });
+
+    data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    remoteChannel.send("OK");
+    assert_equals(await data, "OK");
+
+    data = new Promise(resolve => remoteChannel.onmessage = (event) => resolve(event.data));
+    worker.postMessage({message: "OK2"});
+    assert_equals(await data, "OK2");
+}, "offerer data channel in workers");
+
+promise_test(async (test) => {
+    worker = new Worker('datachannel-worker.js');
+    let data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(await data, "registered");
+
+    data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            localChannel = firstConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = resolve;
+        }, (secondConnection) => {
+            secondConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                worker.postMessage({channel: remoteChannel}, [remoteChannel]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 25000);
+    });
+    assert_equals(await data, "opened");
+
+    data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    localChannel.send("OK");
+    assert_equals(await data, "OK");
+
+    data = new Promise(resolve => localChannel.onmessage = (event) => resolve(event.data));
+    worker.postMessage({message: "OK2"});
+    assert_equals(await data, "OK2");
+}, "answerer data channel in workers");
+
+promise_test(async (test) => {
+    worker = new Worker('datachannel-worker.js');
+    let data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(await data, "registered");
+
+    data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            localChannel = firstConnection.createDataChannel('sendDataChannel');
+            worker.postMessage({channel: localChannel}, [localChannel]);
+
+        }, (secondConnection) => {
+            secondConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onopen = resolve;
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 25000);
+    });
+    assert_equals(await data, "opened");
+
+    data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    remoteChannel.close();
+    assert_equals(await data, "closed");
+
+}, "data channel close event in worker");
+
+promise_test(async (test) => {
+    worker = new Worker('datachannel-worker.js');
+    let data = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(await data, "registered");
+
+    await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            localChannel = firstConnection.createDataChannel('sendDataChannel');
+        }, (secondConnection) => {
+            secondConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                setTimeout(() => {
+                    try {
+                        worker.postMessage({channel: remoteChannel}, [remoteChannel]);
+                        reject("postMessage ok");
+                    } catch(e) {
+                        resolve();
+                    }
+                }, 0);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+}, "Failing to transfer a data channel");
+        </script>
+    </body>
+</html>

@@ -16,6 +16,7 @@ fast/dom/Range/mac [ Pass ]
 fast/scrolling/latching [ Pass ]
 media/mac [ Pass ]
 model-element [ Pass ]
+webkit.org/b/223277 media/media-fragments [ Pass Failure ]
 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
 fast/forms/search/search-results-hidden-crash.html [ Pass ]
@@ -864,14 +865,6 @@ webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sou
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Skip ]
 webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 
-# webkit.org/b/221686
-imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
-media/media-source/media-source-resize.html [ Timeout ]
-platform/mac/media/media-source/videoplaybackquality-decompressionsession.html [ Failure ]
-
 # Requires WebM
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bitrate.html [ Skip ]
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html [ Skip ]
@@ -951,9 +944,6 @@ media/accessiblity-describes-video.html [ Pass Failure ]
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 webkit.org/b/140022 http/tests/media/track-in-band-hls-metadata.html [ Pass Timeout ]
-
-# See also: <rdar://problem/20622665>
-webkit.org/b/148597 http/tests/media/video-play-stall.html [ Pass Failure ]
 
 # <rdar://problem/21263363>
 http/tests/media/remove-while-loading.html [ Skip ]
@@ -1267,7 +1257,6 @@ media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html
 media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad [ Skip ]
-media/modern-media-controls/tracks-support/ios [ Skip ]
 
 # These tests are timing-related and can fail due to performance issues on bots
 webkit.org/b/169876 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Timeout ]
@@ -1282,8 +1271,6 @@ webkit.org/b/178127 media/modern-media-controls/media-controller/media-controlle
 # the image is dumped after the video is loaded and the control overlay is displayed. It seems the test still works
 # on iOS, and the bug it was created to regression-test was iOS-only, so there is no hurry to make it work on Mac.
 media/modern-media-controls/media-documents/background-color-and-centering.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/169158 media/modern-media-controls/tracks-support/mac/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
 
 webkit.org/b/178083 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
@@ -1395,10 +1382,6 @@ http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 
-# <rdar://problem/32620024> REGRESSION: LayoutTests canvas/philip/tests/2d.path.stroke.scale2.html and imported/w3c/canvas/2d.path.stroke.scale2.html are failing
-canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
-imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
-
 # <rdar://problem/32826391> LayoutTest imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm is failing on High Sierra
 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 
@@ -1458,8 +1441,6 @@ webkit.org/b/181831 fast/forms/searchfield-heights.html [ Pass Failure ]
 
 webkit.org/b/173946 [ Debug ] media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Pass Failure ]
 
-webkit.org/b/183490 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Failure ]
-webkit.org/b/183490 media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Failure ]
 webkit.org/b/183490 media/modern-media-controls/start-support/start-support-fullscreen.html [ Failure ]
 
 webkit.org/b/183764 fast/css/apple-system-control-colors.html [ Pass ]
@@ -2134,6 +2115,9 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 # rdar://66861801 ([AS Layout Tests] REGRESSION (r265487): svg/W3C-I18N/tspan-direction-rtl.svg is a constant failure)
 [ arm64 ] svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]
 
+webkit.org/b/223002 [ BigSur+ arm64 ] webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Skip ]
+webkit.org/b/223002 [ BigSur+ arm64 ] webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops.html [ Skip ]
+
 webkit.org/b/215506 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 
 # <rdar://problem/65269589> [ Mac and iOS ] media/vp9.html is failing consistently.
@@ -2225,8 +2209,10 @@ webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 # Mojave doesn't support COLR fonts.
 webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
 
-# rdar://rdar://71039166
-[ Mojave ] http/tests/canvas/color-fonts [ Skip ]
+webkit.org/b/223005 [ BigSur+ arm64 ] fast/text/canvas-color-fonts/stroke-color-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/223005 [ BigSur+ arm64 ] fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html [ ImageOnlyFailure ]
+webkit.org/b/223005 [ BigSur+ arm64 ] http/tests/canvas/color-fonts/stroke-color-sbix.html [ ImageOnlyFailure ]
+webkit.org/b/223005 [ BigSur+ arm64 ] http/tests/canvas/color-fonts/stroke-color-shadow-sbix.html [ ImageOnlyFailure ]
 
 webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
 
@@ -2285,8 +2271,6 @@ webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-
 
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
 
-webkit.org/b/222197 media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html [ Pass Timeout ]
-
 webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/222195 inspector/animation/lifecycle-css-transition.html [ Pass Timeout ]
@@ -2301,3 +2285,35 @@ webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
 webkit.org/b/222495 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
 
 webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]
+
+# webkit.org/b/223223 these two tests fail on Apple Silicon only
+[ Debug arm64 ] imported/w3c/web-platform-tests/svg/import/paths-data-03-f-manual.svg [ Failure ]
+[ Debug arm64 ] svg/W3C-SVG-1.1/paths-data-03-f.svg [ Failure ]
+
+# webkit.org/b/223043 the following tests have issues only on Apple Silicon
+[ arm64 ] webrtc/concurrentVideoPlayback2.html [ Pass Timeout ]
+[ arm64 ] webrtc/concurrentVideoPlayback.html [ Pass Timeout ]
+[ arm64 ] webrtc/direction-change.html [ Pass Timeout ]
+[ arm64 ] webrtc/multi-video.html [ Pass Timeout ]
+[ arm64 ] webrtc/multi-audio.html [ Pass Timeout ]
+[ arm64 ] webrtc/h265.html [ Pass Timeout ]
+[ arm64 ] webrtc/video-setDirection.html [ Pass Timeout ]
+[ arm64 ] webrtc/video-rotation.html [ Pass Timeout ]
+[ arm64 ] webrtc/video-rotation-no-cvo.html [ Pass Timeout ]
+[ arm64 ] webrtc/video-sframe.html [ Pass Timeout ]
+[ arm64 ] webrtc/video.html [ Pass Timeout ]
+[ arm64 ] webrtc/video-with-data-channel.html [ Pass Timeout ]
+[ arm64 ] webrtc/video-unmute.html [ Pass Timeout ]
+[ arm64 ] webrtc/h264-high.html [ Skip ]
+[ arm64 ] webrtc/vp9-profile2.html [ Skip ]
+[ arm64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure ]
+[ arm64 ] webrtc/h264-baseline.html  [ Failure Timeout ]
+[ arm64 ] webrtc/video-stats.html [ Pass Failure ]
+
+webkit.org/b/223259 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels.html [ Failure ]
+
+webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.worker.html [ Pass Failure ]
+
+webkit.org/b/223144 [ Debug arm64 ] fast/multicol/crash-when-spanner-candidate-is-out-of-flow.html [ Crash ]
+
+webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]

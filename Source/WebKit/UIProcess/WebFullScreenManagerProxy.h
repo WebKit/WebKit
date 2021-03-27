@@ -90,7 +90,7 @@ private:
     void callCloseCompletionHandlers();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     WebPageProxy& m_page;
     WebFullScreenManagerProxyClient& m_client;

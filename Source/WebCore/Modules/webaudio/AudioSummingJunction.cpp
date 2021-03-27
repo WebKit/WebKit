@@ -59,6 +59,12 @@ bool AudioSummingJunction::addOutput(AudioNodeOutput& output)
     ASSERT(context().isGraphOwner());
     if (!m_outputs.add(&output).isNewEntry)
         return false;
+
+    if (m_pendingRenderingOutputs.isEmpty())
+        m_pendingRenderingOutputs = copyToVector(m_outputs);
+    else
+        m_pendingRenderingOutputs.append(&output);
+
     markRenderingStateAsDirty();
     return true;
 }
@@ -68,6 +74,12 @@ bool AudioSummingJunction::removeOutput(AudioNodeOutput& output)
     ASSERT(context().isGraphOwner());
     if (!m_outputs.remove(&output))
         return false;
+
+    if (m_pendingRenderingOutputs.isEmpty())
+        m_pendingRenderingOutputs = copyToVector(m_outputs);
+    else
+        m_pendingRenderingOutputs.removeFirst(&output);
+
     markRenderingStateAsDirty();
     return true;
 }
@@ -78,12 +90,9 @@ void AudioSummingJunction::updateRenderingState()
 
     if (m_renderingStateNeedUpdating && canUpdateState()) {
         // Copy from m_outputs to m_renderingOutputs.
-        m_renderingOutputs.resize(m_outputs.size());
-        unsigned i = 0;
-        for (auto& output : m_outputs) {
-            m_renderingOutputs[i++] = output;
+        m_renderingOutputs = std::exchange(m_pendingRenderingOutputs, { });
+        for (auto& output : m_renderingOutputs)
             output->updateRenderingState();
-        }
 
         didUpdate();
 

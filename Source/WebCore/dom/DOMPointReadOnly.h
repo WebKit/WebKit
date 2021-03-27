@@ -33,6 +33,7 @@
 #include "DOMPointInit.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
+#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ struct DOMMatrixInit;
 class DOMPoint;
 
 class DOMPointReadOnly : public ScriptWrappable, public RefCounted<DOMPointReadOnly> {
-    WTF_MAKE_ISO_ALLOCATED(DOMPointReadOnly);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(DOMPointReadOnly, WEBCORE_EXPORT);
 public:
     static Ref<DOMPointReadOnly> create(double x, double y, double z, double w) { return adoptRef(*new DOMPointReadOnly(x, y, z, w)); }
     static Ref<DOMPointReadOnly> create(const DOMPointInit& init) { return create(init.x, init.y, init.z, init.w); }

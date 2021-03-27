@@ -36,6 +36,7 @@
 #include "GraphicsLayerFactory.h"
 #include "Image.h"
 #include "Logging.h"
+#include "Model.h"
 #include "PlatformCAFilters.h"
 #include "PlatformCALayer.h"
 #include "PlatformScreen.h"
@@ -383,6 +384,14 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platf
     return PlatformCALayerWin::create(platformLayer, owner);
 #endif
 }
+
+#if ENABLE(MODEL_ELEMENT)
+Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<WebCore::Model>, PlatformCALayerClient* owner)
+{
+    // By default, just make a plain layer; subclasses can override to provide a custom PlatformCALayer for Model.
+    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerTypeLayer, owner);
+}
+#endif
 
 Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
@@ -1203,6 +1212,37 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
 
     noteLayerPropertyChanged(ContentsImageChanged);
 }
+
+#if ENABLE(MODEL_ELEMENT)
+void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
+{
+    if (model == m_contentsModel)
+        return;
+
+    m_contentsModel = model;
+
+    bool contentsLayerChanged = false;
+
+    if (model) {
+        m_contentsLayer = createPlatformCALayer(*model, this);
+#if ENABLE(TREE_DEBUGGING)
+        m_contentsLayer->setName(makeString("contents model ", m_contentsLayer->layerID()));
+#else
+        m_contentsLayer->setName("contents model");
+#endif
+
+        m_contentsLayerPurpose = ContentsLayerPurpose::Model;
+        contentsLayerChanged = true;
+    } else {
+        contentsLayerChanged = m_contentsLayer;
+        m_contentsLayerPurpose = ContentsLayerPurpose::None;
+        m_contentsLayer = nullptr;
+    }
+
+    if (contentsLayerChanged)
+        noteSublayersChanged();
+}
+#endif
 
 void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose purpose)
 {

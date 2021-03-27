@@ -9,7 +9,7 @@ function redirectChain(length, uniqueId, onload)
 {
     internals.clearMemoryCache()
 
-    var url = "resources/redirect-chain.php?length=" + length + "&uniqueId=" + uniqueId;
+    var url = "resources/redirect-chain.py?length=" + length + "&uniqueId=" + uniqueId;
 
     xhr = new XMLHttpRequest();
     xhr.onload = onload;

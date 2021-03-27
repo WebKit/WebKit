@@ -221,30 +221,9 @@ struct WKAutoCorrectionData {
     CGRect textLastRect;
 };
 
-class SuppressInteractionToken {
-    WTF_MAKE_NONCOPYABLE(SuppressInteractionToken); WTF_MAKE_FAST_ALLOCATED;
-public:
-    SuppressInteractionToken(WKContentView *view, NSObject<UIInteraction> *interaction)
-        : m_view(view)
-        , m_interaction(interaction)
-    {
-        ASSERT(view);
-        ASSERT(interaction);
-        if (interaction)
-            [view removeInteraction:interaction];
-    }
-
-    ~SuppressInteractionToken()
-    {
-        if (!m_view || !m_interaction)
-            return;
-
-        [m_view addInteraction:m_interaction.get().get()];
-    }
-
-private:
-    WeakObjCPtr<WKContentView> m_view;
-    WeakObjCPtr<NSObject<UIInteraction>> m_interaction;
+enum class ProceedWithImageExtraction : bool {
+    No,
+    Yes
 };
 
 }
@@ -267,6 +246,9 @@ private:
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForSyntheticTapGestures;
+#if ENABLE(IMAGE_EXTRACTION)
+    RetainPtr<WKDeferringGestureRecognizer> _imageExtractionDeferringGestureRecognizer;
+#endif
     std::unique_ptr<WebKit::GestureRecognizerConsistencyEnforcer> _gestureRecognizerConsistencyEnforcer;
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
@@ -488,10 +470,9 @@ private:
 #if ENABLE(IMAGE_EXTRACTION)
     RetainPtr<WKImageExtractionGestureRecognizer> _imageExtractionGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _imageExtractionTimeoutGestureRecognizer;
-    WebKit::ImageExtractionState _imageExtractionState;
-    CGRect _imageExtractionInteractionBounds;
-    Vector<BlockPtr<void()>> _actionsToPerformAfterPendingImageExtraction;
-    std::unique_ptr<WebKit::SuppressInteractionToken> _suppressImageExtractionToken;
+    BOOL _hasPendingImageExtraction;
+    Optional<WebCore::ElementContext> _elementPendingImageExtraction;
+    Vector<BlockPtr<void(WebKit::ProceedWithImageExtraction)>> _actionsToPerformAfterPendingImageExtraction;
 #if USE(UICONTEXTMENU)
     RetainPtr<UIMenu> _imageExtractionContextMenu;
 #endif // USE(UICONTEXTMENU)
@@ -608,6 +589,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters frameInfo:(const WebKit::FrameInfoData&)frameInfo resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)shareData inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
 - (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler;
+- (NSArray<NSString *> *)filePickerAcceptedTypeIdentifiers;
 - (void)dismissFilePicker;
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (Vector<WebKit::OptionItem>&) focusedSelectElementOptions;
@@ -702,9 +684,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy;
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 - (void)_showMediaControlsContextMenu:(WebCore::FloatRect&&)targetFrame items:(Vector<WebCore::MediaControlsContextMenuItem>&&)items completionHandler:(CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&)completionHandler;
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 - (BOOL)_formControlRefreshEnabled;
@@ -712,6 +694,14 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if HAVE(PASTEBOARD_DATA_OWNER)
 - (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent;
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+- (void)setUpAppHighlightMenusIfNeeded;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+- (void)_endImageExtractionGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;
 #endif
 
 @end

@@ -77,9 +77,8 @@ class PaymentSetupFeatures;
 class WebPageProxy;
 
 class WebPaymentCoordinatorProxy
-    : private IPC::MessageReceiver
+    : public IPC::MessageReceiver
     , private IPC::MessageSender
-    , public CanMakeWeakPtr<WebPaymentCoordinatorProxy>
     , public PaymentAuthorizationPresenter::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -109,7 +108,7 @@ public:
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;

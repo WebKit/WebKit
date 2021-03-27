@@ -271,11 +271,13 @@ AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale)
 void Recorder::beginTransparencyLayer(float opacity)
 {
     append<BeginTransparencyLayer>(opacity);
+    m_stateStack.append(m_stateStack.last().cloneForTransparencyLayer());
 }
 
 void Recorder::endTransparencyLayer()
 {
     append<EndTransparencyLayer>();
+    m_stateStack.removeLast();
 }
 
 void Recorder::drawRect(const FloatRect& rect, float borderThickness)

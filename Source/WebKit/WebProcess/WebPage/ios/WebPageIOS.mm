@@ -790,7 +790,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         return;
     }
     contentChangeObserver.stopContentObservation();
-    callOnMainThread([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, pointerId] {
+    callOnMainRunLoop([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, pointerId] {
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;
 
@@ -811,7 +811,7 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishContentChangeObserving: pending target node(" << m_pendingSyntheticClickNode << ")");
     if (!m_pendingSyntheticClickNode)
         return;
-    callOnMainThread([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(*m_pendingSyntheticClickNode), originalDocument = makeWeakPtr(m_pendingSyntheticClickNode->document()), observedContentChange, location = m_pendingSyntheticClickLocation, modifiers = m_pendingSyntheticClickModifiers, pointerId = m_pendingSyntheticClickPointerId] {
+    callOnMainRunLoop([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(*m_pendingSyntheticClickNode), originalDocument = makeWeakPtr(m_pendingSyntheticClickNode->document()), observedContentChange, location = m_pendingSyntheticClickLocation, modifiers = m_pendingSyntheticClickModifiers, pointerId = m_pendingSyntheticClickPointerId] {
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;
         if (!originalDocument || &targetNode->document() != originalDocument)
@@ -1238,7 +1238,7 @@ void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Elemen
         return;
 
     m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = true;
-    callOnMainThread([this, protectedThis = makeRefPtr(this)] {
+    callOnMainRunLoop([this, protectedThis = makeRefPtr(this)] {
         if (m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement)
             send(Messages::WebPageProxy::UpdateInputContextAfterBlurringAndRefocusingElement());
         m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;
@@ -1513,13 +1513,20 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
                 pointInDocument.setY(endY);
         }
     }
-    
-    VisiblePosition result;
-    Optional<SimpleRange> range;
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
-    auto hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, hitType);
+    auto hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, {
+        HitTestRequest::ReadOnly,
+        HitTestRequest::Active,
+        HitTestRequest::AllowVisibleChildFrameContentOnly,
+    });
+
     auto targetNode = makeRefPtr(hitTest.targetNode());
+    if (targetNode && !HTMLElement::shouldExtendSelectionToTargetNode(*targetNode, existingSelection))
+        return WTF::nullopt;
+
+    Optional<SimpleRange> range;
+    VisiblePosition result;
+
     if (targetNode)
         result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), targetNode.get()).deepEquivalent();
     else
@@ -2117,7 +2124,7 @@ static inline bool rectIsTooBigForSelection(const IntRect& blockRect, const Fram
 
 void WebPage::setFocusedFrameBeforeSelectingTextAtLocation(const IntPoint& point)
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
     auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
     auto* hitNode = result.innerNode();
     if (hitNode && hitNode->renderer())
@@ -2696,7 +2703,7 @@ static void boundsPositionInformation(RenderObject& renderer, InteractionInforma
     }
 }
 
-static void elementPositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+static void elementPositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, const Node* innerNonSharedNode, InteractionInformationAtPosition& info)
 {
     Element* linkElement = nullptr;
     if (element.renderer() && element.renderer()->isRenderImage())
@@ -2732,7 +2739,14 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     }
 
     if (auto* renderer = element.renderer()) {
-        if (renderer->isRenderImage())
+        bool shouldCollectImagePositionInformation = renderer->isRenderImage();
+#if ENABLE(IMAGE_EXTRACTION)
+        if (innerNonSharedNode && HTMLElement::isImageOverlayText(*innerNonSharedNode))
+            shouldCollectImagePositionInformation = false;
+#else
+        UNUSED_PARAM(innerNonSharedNode);
+#endif
+        if (shouldCollectImagePositionInformation)
             imagePositionInformation(page, element, request, info);
         boundsPositionInformation(*renderer, info);
     }
@@ -2742,7 +2756,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     
 static void selectionPositionInformation(WebPage& page, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
     HitTestResult result = page.corePage()->mainFrame().eventHandler().hitTestResultAtPoint(request.point, hitType);
     Node* hitNode = result.innerNode();
 
@@ -2915,11 +2929,11 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
     auto& eventHandler = m_page->mainFrame().eventHandler();
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::AllowFrameScrollbars, HitTestRequest::AllowVisibleChildFrameContentOnly };
-    HitTestResult hitTestResultForCursor = eventHandler.hitTestResultAtPoint(request.point, hitType);
-    if (auto* hitFrame = hitTestResultForCursor.innerNodeFrame()) {
-        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResultForCursor, false);
+    auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitType);
+    if (auto* hitFrame = hitTestResult.innerNodeFrame()) {
+        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResult, false);
         if (request.includeCaretContext)
-            populateCaretContext(hitTestResultForCursor, request, info);
+            populateCaretContext(hitTestResult, request, info);
     }
 
     if (m_focusedElement)
@@ -2927,7 +2941,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
     if (is<Element>(nodeRespondingToClickEvents)) {
         auto& element = downcast<Element>(*nodeRespondingToClickEvents);
-        elementPositionInformation(*this, element, request, info);
+        elementPositionInformation(*this, element, request, hitTestResult.innerNonSharedNode(), info);
 
         if (info.isLink && !info.isImage && request.includeSnapshot)
             info.image = shareableBitmapSnapshotForNode(element);

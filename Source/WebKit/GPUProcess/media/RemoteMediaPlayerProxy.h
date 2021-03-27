@@ -81,9 +81,8 @@ class RemoteTextTrackProxy;
 class RemoteVideoTrackProxy;
 
 class RemoteMediaPlayerProxy final
-    : public CanMakeWeakPtr<RemoteMediaPlayerProxy>
-    , public WebCore::MediaPlayerClient
-    , private IPC::MessageReceiver {
+    : public WebCore::MediaPlayerClient
+    , public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);
@@ -106,7 +105,7 @@ public:
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
@@ -214,7 +213,6 @@ private:
     void mediaPlayerPlaybackStateChanged() final;
     void mediaPlayerResourceNotSupported() final;
     void mediaPlayerEngineFailedToLoad() const final;
-    void mediaPlayerEngineUpdated() final;
     void mediaPlayerActiveSourceBuffersChanged() final;
     void mediaPlayerBufferedTimeRangesChanged() final;
     void mediaPlayerSeekableTimeRangesChanged() final;

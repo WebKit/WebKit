@@ -129,7 +129,7 @@ bool LoadableClassicScript::load(Document& document, const URL& sourceURL)
 
     auto priority = [&]() -> Optional<ResourceLoadPriority> {
         if (m_isAsync)
-            return ResourceLoadPriority::Low;
+            return ResourceLoadPriority::Medium;
         // Use default.
         return { };
     };

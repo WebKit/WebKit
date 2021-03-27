@@ -250,13 +250,14 @@ void GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary(const IntRect& rec
     gl::BindFramebuffer(GL_DRAW_FRAMEBUFFER_ANGLE, m_fbo);
 
     // FIXME: figure out more efficient solution for iOS.
-    IntRect resolveRect = rect;
-    // When using an ES 2.0 context, the full framebuffer must always be
-    // resolved; partial blits are not allowed.
-    if (!isGLES2Compliant() || rect.isEmpty())
-        resolveRect = IntRect(0, 0, m_currentWidth, m_currentHeight);
-
-    gl::BlitFramebufferANGLE(resolveRect.x(), resolveRect.y(), resolveRect.maxX(), resolveRect.maxY(), resolveRect.x(), resolveRect.y(), resolveRect.maxX(), resolveRect.maxY(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    if (m_isForWebGL2) {
+        // ES 3.0 has BlitFramebuffer.
+        IntRect resolveRect = rect.isEmpty() ? IntRect { 0, 0, m_currentWidth, m_currentHeight } : rect;
+        gl::BlitFramebuffer(resolveRect.x(), resolveRect.y(), resolveRect.maxX(), resolveRect.maxY(), resolveRect.x(), resolveRect.y(), resolveRect.maxX(), resolveRect.maxY(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    } else {
+        // ES 2.0 has BlitFramebufferANGLE only.
+        gl::BlitFramebufferANGLE(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
     if (m_isForWebGL2) {
         gl::BindFramebuffer(GL_DRAW_FRAMEBUFFER, boundFrameBuffer);
         gl::BindFramebuffer(GL_READ_FRAMEBUFFER, boundReadFrameBuffer);
@@ -1710,7 +1711,10 @@ PlatformGLObject GraphicsContextGLOpenGL::createVertexArray()
         return 0;
 
     GLuint array = 0;
-    gl::GenVertexArrays(1, &array);
+    if (m_isForWebGL2)
+        gl::GenVertexArrays(1, &array);
+    else
+        gl::GenVertexArraysOES(1, &array);
     return array;
 }
 
@@ -1720,8 +1724,10 @@ void GraphicsContextGLOpenGL::deleteVertexArray(PlatformGLObject array)
         return;
     if (!makeContextCurrent())
         return;
-
-    gl::DeleteVertexArrays(1, &array);
+    if (m_isForWebGL2)
+        gl::DeleteVertexArrays(1, &array);
+    else
+        gl::DeleteVertexArraysOES(1, &array);
 }
 
 GCGLboolean GraphicsContextGLOpenGL::isVertexArray(PlatformGLObject array)
@@ -1731,15 +1737,19 @@ GCGLboolean GraphicsContextGLOpenGL::isVertexArray(PlatformGLObject array)
     if (!makeContextCurrent())
         return GL_FALSE;
 
-    return gl::IsVertexArray(array);
+    if (m_isForWebGL2)
+        return gl::IsVertexArray(array);
+    return gl::IsVertexArrayOES(array);
 }
 
 void GraphicsContextGLOpenGL::bindVertexArray(PlatformGLObject array)
 {
     if (!makeContextCurrent())
         return;
-
-    gl::BindVertexArray(array);
+    if (m_isForWebGL2)
+        gl::BindVertexArray(array);
+    else
+        gl::BindVertexArrayOES(array);
 }
 
 void GraphicsContextGLOpenGL::getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value)
@@ -2834,6 +2844,7 @@ GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
     return m_cv.get();
 }
 #endif
+
 }
 
 #endif // ENABLE(WEBGL) && USE(ANGLE)

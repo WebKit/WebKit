@@ -25,13 +25,8 @@
 
 #include "config.h"
 #include "WKTextChecker.h"
-#include "TextChecker.h"
 
-#if defined(BUILDING_GTK__)
-#include "WKAPICast.h"
-#include "WebPageProxy.h"
-#include "WebTextChecker.h"
-#endif
+#include "TextChecker.h"
 
 using namespace WebKit;
 
@@ -39,34 +34,3 @@ void WKTextCheckerSetTestingMode(bool enabled)
 {
     TextChecker::setTestingMode(enabled);
 }
-
-#if defined(BUILDING_GTK__)
-
-void WKTextCheckerSetClient(const WKTextCheckerClientBase* wkClient)
-{
-    if (wkClient && wkClient->version)
-        return;
-    WebTextChecker::singleton()->setClient(wkClient);
-}
-
-void WKTextCheckerContinuousSpellCheckingEnabledStateChanged(bool enabled)
-{
-    WebTextChecker::singleton()->continuousSpellCheckingEnabledStateChanged(enabled);
-}
-
-void WKTextCheckerGrammarCheckingEnabledStateChanged(bool enabled)
-{
-    WebTextChecker::singleton()->grammarCheckingEnabledStateChanged(enabled);
-}
-
-void WKTextCheckerCheckSpelling(WKPageRef page, bool startBeforeSelection)
-{
-    WebTextChecker::singleton()->checkSpelling(toImpl(page), startBeforeSelection);
-}
-
-void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word)
-{
-    WebTextChecker::singleton()->changeSpellingToWord(toImpl(page), toWTFString(word));
-}
-
-#endif

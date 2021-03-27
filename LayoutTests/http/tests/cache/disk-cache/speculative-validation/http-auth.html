@@ -12,7 +12,7 @@ state = "warmup";
 function clearCredentialStorage()
 {
     xhr = new XMLHttpRequest();
-    xhr.open("GET", "resources/resource-with-auth.php?other", false, "badUsername", "badPassword");
+    xhr.open("GET", "resources/resource-with-auth.py?other", false, "badUsername", "badPassword");
     xhr.send();
     shouldBe("xhr.status", "401");
 }
@@ -35,7 +35,7 @@ function frameLoaded()
         // Navigate frame to its original location again. This time it should speculatively
         // validate subresources as we have subresource loads metadata in the disk cache.
         state = "speculativeRevalidation";
-        document.getElementById("testFrame").src = "resources/frame-with-authenticated-resource.php";
+        document.getElementById("testFrame").src = "resources/frame-with-authenticated-resource.py";
         return;
     }
     if (state == "speculativeRevalidation") {
@@ -47,5 +47,5 @@ function frameLoaded()
 }
 
 </script>
-<iframe id="testFrame" src="resources/frame-with-authenticated-resource.php" onload="frameLoaded()"></iframe>
+<iframe id="testFrame" src="resources/frame-with-authenticated-resource.py" onload="frameLoaded()"></iframe>
 <script src="/js-test-resources/js-test-post.js"></script>

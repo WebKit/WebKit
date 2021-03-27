@@ -213,8 +213,8 @@
          "override_sim": {
             "R5G6B5_UNORM": "R8G8B8A8_UNORM",
             "R5G5B5A1_UNORM": "R8G8B8A8_UNORM",
-            "R4G4B4A4_UNORM": "R8G8B8A8_UNORM",
-            "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT"
+            "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT",
+            "R4G4B4A4_UNORM": "R8G8B8A8_UNORM"
         },
         "override_mac": {
             "R5G6B5_UNORM": "R8G8B8A8_UNORM",
@@ -241,7 +241,6 @@
             "EAC_R11G11_SNORM_BLOCK": "R16G16_SNORM"
         },
         "fallbacks_mac": {
-            "B8G8R8A8_UNORM": "R8G8B8A8_UNORM",
             "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT"
         },
         "fallbacks_ios": {

@@ -135,9 +135,9 @@ private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
-    static HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String&);
+    static HashSet<SecurityOriginData> originsInMediaCache(const String&);
     static void clearMediaCache(const String&, WallTime modifiedSince);
-    static void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&);
+    static void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&);
 
     void setBufferingPolicy(MediaPlayer::BufferingPolicy) final;
 

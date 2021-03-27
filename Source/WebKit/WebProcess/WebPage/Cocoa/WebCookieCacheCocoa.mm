@@ -39,7 +39,7 @@ NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
     if (!m_inMemoryStorageSession) {
         String sessionName = makeString("WebKitInProcessStorage-", getCurrentProcessID());
         auto cookieAcceptPolicy = WebProcess::singleton().ensureNetworkProcessConnection().cookieAcceptPolicy();
-        auto storageSession = adoptCF(WebCore::createPrivateStorageSession(sessionName.createCFString().get(), cookieAcceptPolicy));
+        auto storageSession = WebCore::createPrivateStorageSession(sessionName.createCFString().get(), cookieAcceptPolicy);
         auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
         m_inMemoryStorageSession = makeUnique<NetworkStorageSession>(WebProcess::singleton().sessionID(), WTFMove(storageSession), WTFMove(cookieStorage), NetworkStorageSession::IsInMemoryCookieStore::Yes);
     }

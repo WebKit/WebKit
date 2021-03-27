@@ -278,19 +278,20 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
     // If endOfNextParagraph was pointing at this same text node, endOfNextParagraph will be shifted by one paragraph.
     // Avoid this by splitting "\n"
     splitTextNode(*text, 1);
+    auto previousSiblingOfText = makeRefPtr(text->previousSibling());
 
-    if (text == start.containerNode() && is<Text>(text->previousSibling())) {
+    if (text == start.containerNode() && previousSiblingOfText && is<Text>(previousSiblingOfText)) {
         ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());
         start = Position(downcast<Text>(text->previousSibling()), start.offsetInContainerNode());
     }
-    if (text == end.containerNode() && is<Text>(text->previousSibling())) {
+    if (text == end.containerNode() && previousSiblingOfText && is<Text>(previousSiblingOfText)) {
         ASSERT(end.offsetInContainerNode() < position.offsetInContainerNode());
         end = Position(downcast<Text>(text->previousSibling()), end.offsetInContainerNode());
     }
     if (text == m_endOfLastParagraph.containerNode()) {
         if (m_endOfLastParagraph.offsetInContainerNode() < position.offsetInContainerNode()) {
             // We can only fix endOfLastParagraph if the previous node was still text and hasn't been modified by script.
-            if (is<Text>(*text->previousSibling())
+            if (previousSiblingOfText && is<Text>(previousSiblingOfText)
                 && static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) <= downcast<Text>(text->previousSibling())->length())
                 m_endOfLastParagraph = Position(downcast<Text>(text->previousSibling()), m_endOfLastParagraph.offsetInContainerNode());
         } else

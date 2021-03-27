@@ -109,15 +109,9 @@
 
     if ((CALayer *)object == _rootLayer.get()) {
         if ([keyPath isEqualToString:@"bounds"]) {
-            if (isMainThread()) {
-                if (_callback)
-                    _callback();
-                return;
-            }
-
-            callOnMainThread([protectedSelf = RetainPtr<WebRootSampleBufferBoundsChangeListener>(self)] {
-                if (protectedSelf->_callback)
-                    protectedSelf->_callback();
+            ensureOnMainThread([retainedSelf = retainPtr(self)] {
+                if (retainedSelf->_callback)
+                    retainedSelf->_callback();
             });
         }
     }

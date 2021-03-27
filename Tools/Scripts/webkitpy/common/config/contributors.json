@@ -400,7 +400,7 @@
          "ntrrgc",
          "aboya"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    "Allan Sandfeld Jensen" : {
       "emails" : [
@@ -441,6 +441,12 @@
       "nicks" : [
          "fischman"
       ]
+   },
+   "Amir Mark Jr" : {
+      "emails" : [
+         "amir_mark@apple.com"
+      ],
+      "status" : "committer"
    },
    "Amruth Raj" : {
       "emails" : [
@@ -2535,6 +2541,18 @@
       "nicks" : [
          "loislo"
       ]
+   },
+   "Imanol Fernandez" : {
+      "emails" : [
+         "ifernandez@igalia.com",
+         "mortimergoro@gmail.com"
+      ],
+      "expertise" : "Graphics, WebGL, WebXR",
+      "nicks" : [
+         "imanol",
+         "mortimergoro"
+      ],
+      "status" : "committer"
    },
    "Ion Rosca" : {
       "emails" : [
@@ -4989,10 +5007,11 @@
          "gsnedders@apple.com",
          "me@gsnedders.com"
       ],
-      "expertise" : "Web Standards, WPT",
+      "expertise" : "Web Standards, WPT, webkitpy",
       "nicks" : [
          "gsnedders"
-      ]
+      ],
+      "status" : "committer"
    },
    "Sam Weinig" : {
       "emails" : [

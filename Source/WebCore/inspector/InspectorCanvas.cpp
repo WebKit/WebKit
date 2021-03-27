@@ -31,7 +31,6 @@
 #include "CanvasBase.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
-#include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
 #include "ColorSerialization.h"
 #include "DOMMatrix2DInit.h"
@@ -1283,16 +1282,16 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
             auto statePayload = JSON::Object::create();
 
             statePayload->setArray(stringIndexForKey("setTransform"_s), buildArrayForAffineTransform(state.transform));
-            statePayload->setDouble(stringIndexForKey("globalAlpha"_s), context2d.globalAlpha());
-            statePayload->setInteger(stringIndexForKey("globalCompositeOperation"_s), indexForData(context2d.globalCompositeOperation()));
-            statePayload->setDouble(stringIndexForKey("lineWidth"_s), context2d.lineWidth());
-            statePayload->setInteger(stringIndexForKey("lineCap"_s), indexForData(convertEnumerationToString(context2d.lineCap())));
-            statePayload->setInteger(stringIndexForKey("lineJoin"_s), indexForData(convertEnumerationToString(context2d.lineJoin())));
-            statePayload->setDouble(stringIndexForKey("miterLimit"_s), context2d.miterLimit());
-            statePayload->setDouble(stringIndexForKey("shadowOffsetX"_s), context2d.shadowOffsetX());
-            statePayload->setDouble(stringIndexForKey("shadowOffsetY"_s), context2d.shadowOffsetY());
-            statePayload->setDouble(stringIndexForKey("shadowBlur"_s), context2d.shadowBlur());
-            statePayload->setInteger(stringIndexForKey("shadowColor"_s), indexForData(context2d.shadowColor()));
+            statePayload->setDouble(stringIndexForKey("globalAlpha"_s), state.globalAlpha);
+            statePayload->setInteger(stringIndexForKey("globalCompositeOperation"_s), indexForData(state.globalCompositeOperationString()));
+            statePayload->setDouble(stringIndexForKey("lineWidth"_s), state.lineWidth);
+            statePayload->setInteger(stringIndexForKey("lineCap"_s), indexForData(convertEnumerationToString(state.canvasLineCap())));
+            statePayload->setInteger(stringIndexForKey("lineJoin"_s), indexForData(convertEnumerationToString(state.canvasLineJoin())));
+            statePayload->setDouble(stringIndexForKey("miterLimit"_s), state.miterLimit);
+            statePayload->setDouble(stringIndexForKey("shadowOffsetX"_s), state.shadowOffset.width());
+            statePayload->setDouble(stringIndexForKey("shadowOffsetY"_s), state.shadowOffset.height());
+            statePayload->setDouble(stringIndexForKey("shadowBlur"_s), state.shadowBlur);
+            statePayload->setInteger(stringIndexForKey("shadowColor"_s), indexForData(serializationForHTML(state.shadowColor)));
 
             // The parameter to `setLineDash` is itself an array, so we need to wrap the parameters
             // list in an array to allow spreading.
@@ -1300,11 +1299,11 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
             setLineDash->addItem(buildArrayForVector(state.lineDash));
             statePayload->setArray(stringIndexForKey("setLineDash"_s), WTFMove(setLineDash));
 
-            statePayload->setDouble(stringIndexForKey("lineDashOffset"_s), context2d.lineDashOffset());
-            statePayload->setInteger(stringIndexForKey("font"_s), indexForData(context2d.font()));
-            statePayload->setInteger(stringIndexForKey("textAlign"_s), indexForData(convertEnumerationToString(context2d.textAlign())));
-            statePayload->setInteger(stringIndexForKey("textBaseline"_s), indexForData(convertEnumerationToString(context2d.textBaseline())));
-            statePayload->setInteger(stringIndexForKey("direction"_s), indexForData(convertEnumerationToString(context2d.direction())));
+            statePayload->setDouble(stringIndexForKey("lineDashOffset"_s), state.lineDashOffset);
+            statePayload->setInteger(stringIndexForKey("font"_s), indexForData(state.fontString()));
+            statePayload->setInteger(stringIndexForKey("textAlign"_s), indexForData(convertEnumerationToString(state.canvasTextAlign())));
+            statePayload->setInteger(stringIndexForKey("textBaseline"_s), indexForData(convertEnumerationToString(state.canvasTextBaseline())));
+            statePayload->setInteger(stringIndexForKey("direction"_s), indexForData(convertEnumerationToString(state.direction)));
 
             int strokeStyleIndex;
             if (auto canvasGradient = state.strokeStyle.canvasGradient())
@@ -1324,9 +1323,10 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
                 fillStyleIndex = indexForData(state.fillStyle.color());
             statePayload->setInteger(stringIndexForKey("fillStyle"_s), fillStyleIndex);
 
-            statePayload->setBoolean(stringIndexForKey("imageSmoothingEnabled"_s), context2d.imageSmoothingEnabled());
-            statePayload->setInteger(stringIndexForKey("imageSmoothingQuality"_s), indexForData(convertEnumerationToString(context2d.imageSmoothingQuality())));
+            statePayload->setBoolean(stringIndexForKey("imageSmoothingEnabled"_s), state.imageSmoothingEnabled);
+            statePayload->setInteger(stringIndexForKey("imageSmoothingQuality"_s), indexForData(convertEnumerationToString(state.imageSmoothingQuality)));
 
+            // FIXME: This is wrong: it will repeat the context's current path for every level in the stack, ignoring saved paths.
             auto setPath = JSON::ArrayOf<JSON::Value>::create();
             setPath->addItem(indexForData(buildStringFromPath(context2d.getPath()->path())));
             statePayload->setArray(stringIndexForKey("setPath"_s), WTFMove(setPath));

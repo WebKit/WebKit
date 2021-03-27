@@ -84,7 +84,7 @@ void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& qu
         }
 
         auto channel = IOChannel::open(filename, IOChannel::Type::Read);
-        channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [completionHandler = WTFMove(completionHandler)](const Data& data, int error) mutable {
+        channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [completionHandler = WTFMove(completionHandler)](const Data& data, int error) mutable {
             ASSERT(RunLoop::isMain());
             if (error) {
                 RELEASE_LOG_ERROR(CacheStorage, "Caches::retrieveOriginFromDirectory failed reading channel with error %d", error);

@@ -26,12 +26,17 @@
 #import "config.h"
 #import "WKNSData.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation WKNSData {
     API::ObjectStorage<API::Data> _data;
 }
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNSData.class, self))
+        return;
+
     _data->~Data();
 
     [super dealloc];

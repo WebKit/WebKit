@@ -15,6 +15,7 @@ namespace sh
 
 constexpr const auto kDefaultLayoutBlockStorage  = TLayoutBlockStorage::EbsShared;
 constexpr const auto kDefaultLayoutMatrixPacking = TLayoutMatrixPacking::EmpColumnMajor;
+constexpr const auto kDefaultStructAlignmentSize = 16;
 
 // Returns `oldStorage` if `type` has unspecified block storage.
 // Otherwise returns block storage of `type`.

@@ -481,6 +481,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
             addReason(WI.UIString("Element is a plug-in"));
         if (compositingReasons.iFrame)
             addReason(WI.UIString("Element is <iframe>"));
+        if (compositingReasons.model)
+            addReason(WI.UIString("Element is <model>"));
         if (compositingReasons.backfaceVisibilityHidden)
             addReason(WI.UIString("Element has \u201Cbackface-visibility: hidden\u201D style"));
         if (compositingReasons.clipsCompositingDescendants)

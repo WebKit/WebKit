@@ -56,6 +56,7 @@
 #import "WebProcessPool.h"
 #import "WebProtectionSpace.h"
 #import "_WKRemoteObjectRegistryInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -90,6 +91,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBrowsingContextController.class, self))
+        return;
+
     ASSERT(browsingContextControllerMap().get(_page.get()) == self);
     browsingContextControllerMap().remove(_page.get());
 
@@ -106,9 +110,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
     else {
         // This cannot be RunLoop::main().dispatch because it is called before the main runloop is initialized.  See rdar://problem/73615999
-        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([scheme = retainPtr(scheme)] {
+        WorkQueue::main().dispatch([scheme = retainPtr(scheme)] {
             WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme.get());
-        }).get());
+        });
     }
 }
 
@@ -118,9 +122,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
     else {
         // This cannot be RunLoop::main().dispatch because it is called before the main runloop is initialized.  See rdar://problem/73615999
-        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([scheme = retainPtr(scheme)] {
+        WorkQueue::main().dispatch([scheme = retainPtr(scheme)] {
             WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme.get());
-        }).get());
+        });
     }
 }
 

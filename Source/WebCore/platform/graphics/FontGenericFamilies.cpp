@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+using namespace WebKitFontFamilyNames;
+
 static bool setGenericFontFamilyForScript(ScriptFontFamilyMap& fontMap, const String& family, UScriptCode script)
 {
     if (family.isEmpty())
@@ -178,6 +180,31 @@ bool FontGenericFamilies::setFantasyFontFamily(const String& family, UScriptCode
 bool FontGenericFamilies::setPictographFontFamily(const String& family, UScriptCode script)
 {
     return setGenericFontFamilyForScript(m_pictographFontFamilyMap, family, script);
+}
+
+const String* FontGenericFamilies::fontFamily(FamilyNamesIndex family, UScriptCode script) const
+{
+    switch (family) {
+    case FamilyNamesIndex::CursiveFamily:
+        return &cursiveFontFamily(script);
+    case FamilyNamesIndex::FantasyFamily:
+        return &fantasyFontFamily(script);
+    case FamilyNamesIndex::MonospaceFamily:
+        return &fixedFontFamily(script);
+    case FamilyNamesIndex::PictographFamily:
+        return &pictographFontFamily(script);
+    case FamilyNamesIndex::SansSerifFamily:
+        return &sansSerifFontFamily(script);
+    case FamilyNamesIndex::SerifFamily:
+        return &serifFontFamily(script);
+    case FamilyNamesIndex::StandardFamily:
+        return &standardFontFamily(script);
+    case FamilyNamesIndex::SystemUiFamily:
+        return nullptr;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 }

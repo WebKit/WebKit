@@ -24,5 +24,5 @@
  */
 
 interface mixin RTCRtpScriptTransformProvider {
-    [MayThrowException] undefined registerRTCRtpScriptTransformer(DOMString name, RTCRtpScriptTransformerConstructor processorConstructor);
+    attribute EventHandler onrtctransform;
 };

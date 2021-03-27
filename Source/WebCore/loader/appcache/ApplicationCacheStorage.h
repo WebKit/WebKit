@@ -63,7 +63,7 @@ public:
 
     int64_t defaultOriginQuota() const { return m_defaultOriginQuota; }
     WEBCORE_EXPORT void setDefaultOriginQuota(int64_t quota);
-    WEBCORE_EXPORT bool calculateUsageForOrigin(const SecurityOrigin*, int64_t& usage);
+    WEBCORE_EXPORT bool calculateUsageForOrigin(const SecurityOriginData&, int64_t& usage);
     WEBCORE_EXPORT bool calculateQuotaForOrigin(const SecurityOrigin&, int64_t& quota);
     bool calculateRemainingSizeForOriginExcludingCache(const SecurityOrigin&, ApplicationCache*, int64_t& remainingSize);
     WEBCORE_EXPORT bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
@@ -86,17 +86,17 @@ public:
 
     WEBCORE_EXPORT void empty();
 
-    WEBCORE_EXPORT Vector<Ref<SecurityOrigin>> originsWithCache();
+    WEBCORE_EXPORT HashSet<SecurityOriginData> originsWithCache();
     WEBCORE_EXPORT void deleteAllEntries();
 
     // FIXME: This should be consolidated with deleteAllEntries().
     WEBCORE_EXPORT void deleteAllCaches();
 
     // FIXME: This should be consolidated with deleteCacheGroup().
-    WEBCORE_EXPORT void deleteCacheForOrigin(const SecurityOrigin&);
+    WEBCORE_EXPORT void deleteCacheForOrigin(const SecurityOriginData&);
 
     // FIXME: This should be consolidated with calculateUsageForOrigin().
-    WEBCORE_EXPORT int64_t diskUsageForOrigin(const SecurityOrigin&);
+    WEBCORE_EXPORT int64_t diskUsageForOrigin(const SecurityOriginData&);
 
     static int64_t unknownQuota() { return -1; }
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }

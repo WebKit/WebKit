@@ -242,7 +242,6 @@ struct WebPageCreationParameters {
     bool shouldEnableVP9Decoder { false };
     bool shouldEnableVP9SWDecoder { false };
 #if ENABLE(APP_BOUND_DOMAINS)
-    bool needsInAppBrowserPrivacyQuirks { false };
     bool limitsNavigationsToAppBoundDomains { false };
 #endif
     bool lastNavigationWasAppBound { false };
@@ -253,10 +252,9 @@ struct WebPageCreationParameters {
 #if PLATFORM(GTK)
     String themeName;
 #endif
-
-    bool textInteractionEnabled { true };
-    bool httpsUpgradeEnabled { true };
     
+    bool httpsUpgradeEnabled { true };
+
 #if PLATFORM(IOS)
     bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload { false };
 #endif

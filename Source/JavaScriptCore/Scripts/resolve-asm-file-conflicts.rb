@@ -69,16 +69,24 @@ class FileDirectiveArgScanner
     @s.skip(/\s*/)
 
     # We require at least one string literal
-    ret = parse_string_literal
-    if ret.respond_to?(:error)
-      return ret
+    ret1 = parse_string_literal
+    if ret1.respond_to?(:error)
+      return ret1
     end
 
     @s.skip(/\s*/)
-    if not @s.eos?
-      return ParseResultError.new("Expected end of line after #{ret.str}")
+    if @s.eos?
+      return ParseResultSuccess.new(Pathname.new(ret1.str).cleanpath.to_s)
     end
-    return ParseResultSuccess.new(ret.str)
+    # If anything follows, it needs to be a string literal
+    ret2 = parse_string_literal
+    if ret2.respond_to?(:error)
+      return ret2
+    end
+    if not @s.eos?
+      return ParseResultError.new("Expected end of line after #{ret2.str}")
+    end
+    return ParseResultSuccess.new((Pathname.new(ret1.str) / ret2.str).cleanpath.to_s)
   end
   def parse_string_literal
     if @s.scan(/"/).nil?
@@ -174,13 +182,26 @@ def selftest
     ['"/bar/baz"', ['/bar/baz']],
 
     # Can detect stray token
-    ['"foo" bar', "Expected end of line"],
+    ['"foo" bar', "Expected string literal"],
 
     # Can detect stray token without whitespace
-    ['"foo"bar', "Expected end of line"],
+    ['"foo"bar', "Expected string literal"],
 
-    # Will not accept clang-style .file directives
-    ['"working_directory" "path"', "Expected end of line"]
+    # Can parse two string literals
+    ['"working_directory" "path"', ['working_directory/path']],
+
+    # Will only accept up to 2 string literals
+    ['"first" "second" "third"', "Expected end of line"],
+
+    # Can detect stray token after 2nd string literal
+    ['"foo" "bar" baz', "Expected end of line"],
+
+    # Can detect stray token after 2nd string literal without whitespace
+    ['"foo" "bar"baz', "Expected end of line"],
+
+    # Can detect unterminated 3rd string literal
+    ['"foo" "bar" "baz', "Expected end of line"]
+
   ]
   outf = StringIO.new("")
   tests.each { |str, res|

@@ -142,7 +142,7 @@ if ($cgi->param('alert-cookie')) {
     print "<script>if (/xssAuditorTestCookie/.test(document.cookie)) { console.log('FAIL: ' + document.cookie); document.cookie = 'xssAuditorTestCookie=remove; max-age=-1'; } else console.log('PASS');</script>\n";
 }
 if ($cgi->param('echo-report')) {
-    print "<script src=/security/contentSecurityPolicy/resources/go-to-echo-report.php?test=" . $cgi->param('test') . "></script>\n";
+    print "<script src=/security/contentSecurityPolicy/resources/go-to-echo-report.py?test=" . $cgi->param('test') . "></script>\n";
 }
 if ($cgi->param('inHead')) {
     print "</head>\n";

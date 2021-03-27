@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/text-based-repaint.js"></script>
+    <style>
+        div {
+            margin: 50px;
+            width: 200px;
+            height: 50px;
+            border: 1px solid black;
+            transform-origin: top left;
+            transform: rotate(20deg);
+        }
+
+        body.changed div {
+            transform: rotate(30deg);
+        }
+    </style>
+    <script>
+        function repaintTest()
+        {
+            document.body.classList.add('changed');
+        }        
+    </script>
+</head>
+<body onload="runRepaintTest();">
+    <div id="target"></div>
+</body>
+</html>

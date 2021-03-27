@@ -90,7 +90,7 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
         }
 
         for (auto& mode : supportedModes)
-            simulatedDevice.setEnabledFeatures(mode, features);
+            simulatedDevice.setSupportedFeatures(mode, features);
 
         m_context->registerSimulatedXRDeviceForTesting(simulatedDevice);
 

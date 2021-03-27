@@ -57,6 +57,8 @@ WANTS_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsDispatchMessage'
 WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsAsyncDispatchMessage'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
+NOT_STREAM_ENCODABLE_ATTRIBUTE = 'NotStreamEncodable'
+NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE = 'NotStreamEncodableReply'
 
 def receiver_enumerator_order_key(receiver_name):
     if receiver_name == 'IPC':
@@ -194,7 +196,12 @@ def message_to_struct_declaration(receiver, message):
     result.append('    using Arguments = %s;\n' % arguments_type(message))
     result.append('\n')
     result.append('    static IPC::MessageName name() { return IPC::MessageName::%s_%s; }\n' % (receiver.name, message.name))
-    result.append('    static const bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters != None and not message.has_attribute(ASYNC_ATTRIBUTE)])
+    result.append('    static constexpr bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and not message.has_attribute(ASYNC_ATTRIBUTE)])
+    if receiver.has_attribute(STREAM_ATTRIBUTE):
+        result.append('    static constexpr bool isStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_ATTRIBUTE)])
+        if message.reply_parameters is not None:
+            result.append('    static constexpr bool isReplyStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE)])
+
     result.append('\n')
     if message.reply_parameters != None:
         send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
@@ -212,7 +219,7 @@ def message_to_struct_declaration(receiver, message):
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
         if (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)) and not receiver.has_attribute(STREAM_ATTRIBUTE):
-            result.append('    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&')
+            result.append('    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&')
             if len(send_parameters):
                 result.append(', %s' % completion_handler_parameters)
             result.append(');\n')
@@ -555,10 +562,8 @@ def async_message_statement(receiver, message):
             dispatch_function_args.insert(0, 'connection')
 
     result = []
-    result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-    result.append('        IPC::%s<Messages::%s::%s>(%s);\n' % (dispatch_function, receiver.name, message.name, ', '.join(dispatch_function_args)))
-    result.append('        return;\n')
-    result.append('    }\n')
+    result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
+    result.append('        return IPC::%s<Messages::%s::%s>(%s);\n' % (dispatch_function, receiver.name, message.name, ', '.join(dispatch_function_args)))
     return surround_in_condition(''.join(result), message.condition)
 
 
@@ -579,10 +584,8 @@ def sync_message_statement(receiver, message):
         maybe_reply_encoder = ', replyEncoder'
 
     result = []
-    result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-    result.append('        IPC::%s<Messages::%s::%s>(%sdecoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', maybe_reply_encoder, handler_function(receiver, message)))
-    result.append('        return;\n')
-    result.append('    }\n')
+    result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
+    result.append('        return IPC::%s<Messages::%s::%s>(%sdecoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', maybe_reply_encoder, handler_function(receiver, message)))
     return surround_in_condition(''.join(result), message.condition)
 
 
@@ -905,11 +908,11 @@ def generate_message_handler(receiver):
                 result.append(', '.join(['IPC::AsyncReplyError<' + reply_type(x.type) + '>::create()' for x in message.reply_parameters]))
                 result.append(');\n}\n\n')
 
-            result.append('void %s::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection' % (message.name))
+            result.append('void %s::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection' % (message.name))
             if len(send_parameters):
                 result.append(', %s' % ', '.join([' '.join(x) for x in send_parameters]))
             result.append(')\n{\n')
-            result += ['    *encoder << %s;\n' % x.name for x in message.reply_parameters]
+            result += ['    encoder.get() << %s;\n' % x.name for x in message.reply_parameters]
             result.append('    connection.sendSyncReply(WTFMove(encoder));\n')
             result.append('}\n')
             result.append('\n')
@@ -968,18 +971,19 @@ def generate_message_handler(receiver):
 
     if not receiver.has_attribute(STREAM_ATTRIBUTE) and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
         result.append('\n')
-        result.append('void %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
+        result.append('bool %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    auto protectedThis = makeRef(*this);\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
             result.append('    if (dispatchSyncMessage(connection, decoder, replyEncoder))\n')
-            result.append('        return;\n')
+            result.append('        return true;\n')
         result.append('    UNUSED_PARAM(connection);\n')
         result.append('    UNUSED_PARAM(decoder);\n')
         result.append('    UNUSED_PARAM(replyEncoder);\n')
         result.append('    ASSERT_NOT_REACHED();\n')
+        result.append('    return false;\n')
         result.append('}\n')
 
     result.append('\n} // namespace WebKit\n')

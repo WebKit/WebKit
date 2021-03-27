@@ -159,7 +159,7 @@ class SuiteFailuresView {
 
                                         return `<a href="/commits?${paramsToQuery(commitParams)}">${
                                             commits.length == repositories.size ?
-                                                commits.reverse().map(commit => commit.id.substring(0,12)).join(', ') :
+                                                commits.reverse().map(commit => commit.label()).join(', ') :
                                                 `${commits.length} commits`
                                         }</a>`;
                                     })()}
@@ -221,7 +221,7 @@ class SuiteFailuresView {
                                             </div>
                                             <a class="text block" style="width: calc(100% - var(--mediumSize) - 16px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; "href="/investigate?${paramsToQuery(failure.toParams())}">
                                                 ${commits.length ?
-                                                    `${commits[0].id.substring(0,12)} ${commits.length > 1 ? commits[commits.length - 1].id.substring(0,12) : ''}` :
+                                                    `${commits[0].label()} ${commits.length > 1 ? commits[commits.length - 1].label() : ''}` :
                                                     '?'} on ${failure.configuration}
                                             </a>
                                         </div>`;

@@ -1248,17 +1248,18 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
 
     RefPtr<JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
+    JSValue args[numberOfArguments] = {
+        record,
+        record->internalField(JSModuleRecord::Field::State).get(),
+        sentValue,
+        resumeMode,
+        scope,
+    };
+
     {
         DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
         jitCode = executable->generatedJITCode();
 
-        JSValue args[numberOfArguments] = {
-            record,
-            record->internalField(JSModuleRecord::Field::State).get(),
-            sentValue,
-            resumeMode,
-            scope,
-        };
         // The |this| of the module is always `undefined`.
         // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
         // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding

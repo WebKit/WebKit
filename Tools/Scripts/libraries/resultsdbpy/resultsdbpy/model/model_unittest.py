@@ -32,11 +32,12 @@ class ModelTest(WaitForDockerTestCase):
     KEYSPACE = 'model_test_keyspace'
 
     def init_database(self, redis=StrictRedis, cassandra=CassandraContext, async_processing=False):
-        cassandra.drop_keyspace(keyspace=self.KEYSPACE)
-        self.model = MockModelFactory.create(
-            redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True),
-            async_processing=async_processing,
-        )
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            self.model = MockModelFactory.create(
+                redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True),
+                async_processing=async_processing,
+            )
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_health(self, redis=StrictRedis, cassandra=CassandraContext):

@@ -522,13 +522,13 @@ void testClearBits64WithMask()
     auto test2 = compile([&] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
 
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             savedMask = context.gpr<uint64_t>(GPRInfo::argumentGPR1);
         });
 
         jit.clearBits64WithMask(GPRInfo::argumentGPR1, GPRInfo::argumentGPR0, CCallHelpers::ClearBitsAttributes::MustPreserveMask);
 
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             CHECK_EQ(savedMask, context.gpr<uint64_t>(GPRInfo::argumentGPR1));
         });
         jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
@@ -580,13 +580,13 @@ void testClearBits64WithMaskTernary()
         jit.move(GPRInfo::argumentGPR0, GPRInfo::argumentGPR2);
         jit.move(GPRInfo::argumentGPR1, GPRInfo::argumentGPR3);
 
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             savedMask = context.gpr<uint64_t>(GPRInfo::argumentGPR2);
         });
 
         jit.clearBits64WithMask(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, GPRInfo::returnValueGPR, CCallHelpers::ClearBitsAttributes::MustPreserveMask);
 
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             CHECK_EQ(savedMask, context.gpr<uint64_t>(GPRInfo::argumentGPR2));
         });
 
@@ -697,7 +697,7 @@ void testShiftAndAdd()
             jit.shiftAndAdd(baseGPR, indexGPR, shift, destGPR);
 
 #if ENABLE(MASM_PROBE)
-            jit.probe([=] (Probe::Context& context) {
+            jit.probeDebug([=] (Probe::Context& context) {
                 if (baseReg != destReg)
                     CHECK_EQ(context.gpr<intptr_t>(baseGPR), basePointer);
                 if (indexReg != destReg)
@@ -1766,7 +1766,7 @@ void testProbeReadsArgumentRegisters()
         jit.move(CCallHelpers::TrustedImm32(testWord(3)), GPRInfo::argumentGPR3);
 #endif
 
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeWasCalled = true;
             CHECK_EQ(cpu.gpr(GPRInfo::argumentGPR0), testWord(0));
@@ -1815,7 +1815,7 @@ void testProbeWritesArgumentRegisters()
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT1);
 
         // Write expected values.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             cpu.gpr(GPRInfo::argumentGPR0) = testWord(0);
@@ -1828,7 +1828,7 @@ void testProbeWritesArgumentRegisters()
         });
 
         // Validate that expected values were written.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             CHECK_EQ(cpu.gpr(GPRInfo::argumentGPR0), testWord(0));
@@ -1874,7 +1874,7 @@ void testProbePreservesGPRS()
         emitFunctionPrologue(jit);
 
         // Write expected values into the registers (except for sp, fp, and pc).
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -1890,14 +1890,14 @@ void testProbePreservesGPRS()
         });
 
         // Invoke the probe to call a lot of functions and trash register values.
-        jit.probe([&] (Probe::Context&) {
+        jit.probeDebug([&] (Probe::Context&) {
             probeCallCount++;
             CHECK_EQ(testFunctionToTrashGPRs(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10);
             CHECK_EQ(testFunctionToTrashFPRs(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10);
         });
 
         // Validate that the registers have the expected values.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -1917,7 +1917,7 @@ void testProbePreservesGPRS()
         });
 
         // Restore the original state.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -1930,7 +1930,7 @@ void testProbePreservesGPRS()
         });
 
         // Validate that the original state was restored.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -1977,7 +1977,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
 
         // Preserve original stack pointer and modify the sp, and
         // write expected values into other registers (except for fp, and pc).
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -2003,7 +2003,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
         });
 
         // Validate that the registers have the expected values.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -2027,7 +2027,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
         });
 
         // Restore the original state.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -2044,7 +2044,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
         });
 
         // Validate that the original state was restored.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -2108,7 +2108,7 @@ void testProbeModifiesProgramCounter()
 
     MacroAssemblerCodeRef<JSEntryPtrTag> continuation = compile([&] (CCallHelpers& jit) {
         // Validate that we reached the continuation.
-        jit.probe([&] (Probe::Context&) {
+        jit.probeDebug([&] (Probe::Context&) {
             probeCallCount++;
             continuationWasReached = true;
         });
@@ -2121,7 +2121,7 @@ void testProbeModifiesProgramCounter()
         emitFunctionPrologue(jit);
 
         // Write expected values into the registers.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             probeCallCount++;
             context.cpu.pc() = retagCodePtr<JSEntryPtrTag, JITProbePCPtrTag>(continuation.code().executableAddress());
         });
@@ -2158,7 +2158,7 @@ void testProbeModifiesStackValues()
         emitFunctionPrologue(jit);
 
         // Write expected values into the registers.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             auto& stack = context.stack();
             probeCallCount++;
@@ -2196,7 +2196,7 @@ void testProbeModifiesStackValues()
         });
 
         // Validate that the registers and stack have the expected values.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             auto& stack = context.stack();
             probeCallCount++;
@@ -2232,7 +2232,7 @@ void testProbeModifiesStackValues()
         });
 
         // Restore the original state.
-        jit.probe([&] (Probe::Context& context) {
+        jit.probeDebug([&] (Probe::Context& context) {
             auto& cpu = context.cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {

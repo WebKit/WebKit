@@ -315,6 +315,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setSpeechRecognitionEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE overscrollBehaviorEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setOverscrollBehaviorEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE resetForTesting();
+    virtual HRESULT STDMETHODCALLTYPE startBatchingUpdates();
+    virtual HRESULT STDMETHODCALLTYPE stopBatchingUpdates();
 
     // WebPreferences
 
@@ -376,6 +379,8 @@ private:
     bool m_autoSaves { false };
     bool m_automaticallyDetectsCacheModel { true };
     unsigned m_numWebViews { 0 };
+    unsigned m_updateBatchCount { 0 };
+    bool m_needsUpdateAfterBatch { false };
 
 #if USE(CF)
     RetainPtr<CFMutableDictionaryRef> m_privatePrefs;

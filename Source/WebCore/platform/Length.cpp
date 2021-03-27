@@ -296,18 +296,24 @@ Length convertTo100PercentMinusLength(const Length& length)
 
 static Length blendMixedTypes(const Length& from, const Length& to, double progress)
 {
-    if (progress <= 0.0)
+    if (!progress)
         return from;
-        
-    if (progress >= 1.0)
+
+    if (progress == 1.0)
         return to;
-        
+
     auto blend = makeUnique<CalcExpressionBlendLength>(from, to, progress);
     return Length(CalculationValue::create(WTFMove(blend), ValueRangeAll));
 }
 
 Length blend(const Length& from, const Length& to, double progress)
 {
+    if (!progress)
+        return from;
+
+    if (progress == 1)
+        return to;
+
     if (from.isAuto() || to.isAuto())
         return progress < 0.5 ? from : to;
 

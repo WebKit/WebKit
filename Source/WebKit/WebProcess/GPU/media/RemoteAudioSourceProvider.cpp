@@ -56,7 +56,7 @@ RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier ident
     , m_logIdentifier(helper.logIdentifier())
 #endif
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     UNUSED_PARAM(helper);
 
 #if ENABLE(WEB_AUDIO)
@@ -70,7 +70,7 @@ RemoteAudioSourceProvider::~RemoteAudioSourceProvider()
 
 void RemoteAudioSourceProvider::close()
 {
-    ASSERT(isMainThread());
+    ASSERT(isMainRunLoop());
     if (m_gpuProcessConnection)
         m_gpuProcessConnection->audioSourceProviderManager().removeProvider(m_identifier);
 }

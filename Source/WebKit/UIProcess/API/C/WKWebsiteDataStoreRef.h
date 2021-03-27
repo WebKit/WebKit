@@ -194,6 +194,9 @@ WK_EXPORT void WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(WKWebsiteD
 typedef void (*WKWebsiteDataStoreResetQuotaCallback)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreResetQuotaCallback callback);
 
+typedef void (*WKWebsiteDataStoreSetQuotaLoggingEnabledCallback)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreSetQuotaLoggingEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetQuotaLoggingEnabledCallback callback);
+
 typedef void (*WKWebsiteDataStoreClearAppBoundSessionFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAppBoundSessionFunction completionHandler);
 

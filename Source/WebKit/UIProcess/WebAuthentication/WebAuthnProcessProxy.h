@@ -41,7 +41,7 @@ class WebProcessProxy;
 class WebsiteDataStore;
 struct WebAuthnProcessCreationParameters;
 
-class WebAuthnProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<WebAuthnProcessProxy> {
+class WebAuthnProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebAuthnProcessProxy);
     friend LazyNeverDestroyed<WebAuthnProcessProxy>;

@@ -890,8 +890,7 @@ FloatPoint ScrollView::contentsToView(const FloatPoint& point) const
 {
     if (delegatesScrolling())
         return point;
-
-    return contentsToView(IntPoint(point));
+    return point - toFloatSize(documentScrollPositionRelativeToViewOrigin());
 }
 
 IntRect ScrollView::viewToContents(IntRect rect) const

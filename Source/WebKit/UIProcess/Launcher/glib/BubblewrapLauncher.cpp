@@ -783,9 +783,15 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         "--ro-bind-try", "/usr/lib", "/usr/lib",
         "--ro-bind-try", "/usr/local/lib", "/usr/local/lib",
         "--ro-bind-try", LIBDIR, LIBDIR,
+#if CPU(ADDRESS64)
         "--ro-bind-try", "/lib64", "/lib64",
         "--ro-bind-try", "/usr/lib64", "/usr/lib64",
         "--ro-bind-try", "/usr/local/lib64", "/usr/local/lib64",
+#else
+        "--ro-bind-try", "/lib32", "/lib32",
+        "--ro-bind-try", "/usr/lib32", "/usr/lib32",
+        "--ro-bind-try", "/usr/local/lib32", "/usr/local/lib32",
+#endif
 
         "--ro-bind-try", PKGLIBEXECDIR, PKGLIBEXECDIR,
     };

@@ -27,11 +27,12 @@
 #include "NetworkSendQueue.h"
 
 #include "BlobLoader.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-NetworkSendQueue::NetworkSendQueue(Document& document, WriteString&& writeString, WriteRawData&& writeRawData, ProcessError&& processError)
-    : m_document(makeWeakPtr(document))
+NetworkSendQueue::NetworkSendQueue(ScriptExecutionContext& context, WriteString&& writeString, WriteRawData&& writeRawData, ProcessError&& processError)
+    : ContextDestructionObserver(&context)
     , m_writeString(WTFMove(writeString))
     , m_writeRawData(WTFMove(writeRawData))
     , m_processError(WTFMove(processError))
@@ -61,6 +62,10 @@ void NetworkSendQueue::enqueue(const JSC::ArrayBuffer& binaryData, unsigned byte
 
 void NetworkSendQueue::enqueue(WebCore::Blob& blob)
 {
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
     auto byteLength = blob.size();
     if (!byteLength) {
         enqueue(JSC::ArrayBuffer::create(0U, 1), 0, 0);
@@ -71,7 +76,7 @@ void NetworkSendQueue::enqueue(WebCore::Blob& blob)
     });
     auto* blobLoaderPtr = &blobLoader.get();
     m_queue.append(WTFMove(blobLoader));
-    blobLoaderPtr->start(blob, m_document.get(), FileReaderLoader::ReadAsArrayBuffer);
+    blobLoaderPtr->start(blob, context, FileReaderLoader::ReadAsArrayBuffer);
 }
 
 void NetworkSendQueue::clear()

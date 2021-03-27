@@ -58,13 +58,11 @@ void WebPageProxy::bindAccessibilityTree(const String& plugID)
 #endif
 }
 
-void WebPageProxy::updateEditorState(const EditorState& editorState)
+void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState& newEditorState)
 {
-    m_editorState = editorState;
-    
-    if (editorState.shouldIgnoreSelectionChanges)
+    if (newEditorState.shouldIgnoreSelectionChanges)
         return;
-    if (m_editorState.selectionIsRange)
+    if (newEditorState.selectionIsRange)
         WebPasteboardProxy::singleton().setPrimarySelectionOwner(focusedFrame());
     pageClient().selectionDidChange();
 }

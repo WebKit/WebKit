@@ -155,12 +155,10 @@ void UserMediaPermissionRequestProxy::prompt()
         return;
     }
 
-    OptionSet<MediaPermissionType> requestedTypes;
+    MediaPermissionReason reason = MediaPermissionReason::Camera;
     if (requiresAudioCapture())
-        requestedTypes.add(MediaPermissionType::Audio);
-    if (requiresVideoCapture())
-        requestedTypes.add(MediaPermissionType::Video);
-    alertForPermission(m_manager->page(), MediaPermissionReason::UserMedia, requestedTypes, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = makeRef(*this)](bool granted) {
+        reason = requiresVideoCapture() ? MediaPermissionReason::CameraAndMicrophone : MediaPermissionReason::Microphone;
+    alertForPermission(m_manager->page(), reason, topLevelDocumentSecurityOrigin().data(), [this, protectedThis = makeRef(*this)](bool granted) {
         if (!granted)
             deny(UserMediaAccessDenialReason::PermissionDenied);
         else

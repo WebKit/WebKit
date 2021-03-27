@@ -71,13 +71,13 @@ public:
 
     bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 
-    unsigned separator() const { return m_valueListSeparator; }
+    unsigned separator() const { return m_valueSeparator; }
 
 protected:
-    CSSValueList(ClassType, ValueListSeparator);
+    CSSValueList(ClassType, ValueSeparator);
 
 private:
-    explicit CSSValueList(ValueListSeparator);
+    explicit CSSValueList(ValueSeparator);
 
     Vector<Ref<CSSValue>, 4> m_values;
 };

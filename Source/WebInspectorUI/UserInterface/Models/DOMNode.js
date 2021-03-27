@@ -574,34 +574,6 @@ WI.DOMNode = class DOMNode extends WI.Object
         target.DOMAgent.highlightNode(WI.DOMManager.buildHighlightConfig(mode), this.id);
     }
 
-    showGridOverlay(color, {showLineNames, showLineNumbers, showExtendedGridLines, showTrackSizes, showAreaNames} = {})
-    {
-        console.assert(color instanceof WI.Color, color);
-
-        if (this._destroyed)
-            return Promise.reject("Cannot show overlay, node is destroyed");
-
-        let target = WI.assumingMainTarget();
-        return target.DOMAgent.showGridOverlay.invoke({
-            nodeId: this.id,
-            gridColor: color.toProtocol(),
-            showLineNames: !!showLineNames,
-            showLineNumbers: !!showLineNumbers,
-            showExtendedGridLines: !!showExtendedGridLines,
-            showTrackSizes: !!showTrackSizes,
-            showAreaNames: !!showAreaNames,
-        });
-    }
-
-    hideGridOverlay()
-    {
-        if (this._destroyed)
-            return Promise.reject("Cannot hide overlay, node is destroyed");
-
-        let target = WI.assumingMainTarget();
-        return target.DOMAgent.hideGridOverlay(this.id);
-    }
-
     scrollIntoView()
     {
         WI.RemoteObject.resolveNode(this).then((object) => {

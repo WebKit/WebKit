@@ -40,11 +40,15 @@ class ScmBase(object):
     GIT_SVN_REVISION = re.compile(r'git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+')
     DEFAULT_BRANCHES = ['main', 'master', 'trunk']
 
-    def __init__(self, dev_branches=None, prod_branches=None, contributors=None):
+    def __init__(self, dev_branches=None, prod_branches=None, contributors=None, id=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES
         self.prod_branches = prod_branches or self.PROD_BRANCHES
         self.path = None
         self.contributors = Contributor.Mapping() if contributors is None else contributors
+
+        if id and not isinstance(id, six.string_types):
+            raise ValueError("Expected 'id' to be a string type, not '{}'".format(type(id)))
+        self.id = id
 
     @property
     def is_svn(self):

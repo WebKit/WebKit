@@ -49,9 +49,11 @@ function create3DContext(canvas, attributes, version2)
             context = canvas.getContext("webgl2", attributes);
         } catch(e) {}
     }
-    try {
-        context = canvas.getContext("experimental-webgl", attributes);
-    } catch(e) {}
+    if (!context) {
+        try {
+            context = canvas.getContext("experimental-webgl", attributes);
+        } catch(e) {}
+    }
     if (!context) {
         try {
             context = canvas.getContext("webkit-3d", attributes);

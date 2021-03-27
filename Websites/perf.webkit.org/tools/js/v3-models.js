@@ -7,6 +7,8 @@ function importFromV3(file, name)
     global[name] = require(modelsDirectory + file)[name];
 }
 
+require('./assert-override.js').makeConsoleAssertThrow();
+
 importFromV3('models/data-model.js', 'DataModelObject');
 importFromV3('models/data-model.js', 'LabeledObject');
 

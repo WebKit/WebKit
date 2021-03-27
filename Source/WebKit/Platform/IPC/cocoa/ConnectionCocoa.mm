@@ -147,8 +147,7 @@ void Connection::platformInvalidate()
     ASSERT(m_receivePort);
 
     // Unregister our ports.
-    dispatch_source_cancel(m_sendSource);
-    dispatch_release(m_sendSource);
+    dispatch_source_cancel(m_sendSource.get());
     m_sendSource = nullptr;
     m_sendPort = MACH_PORT_NULL;
 
@@ -157,8 +156,7 @@ void Connection::platformInvalidate()
 
 void Connection::cancelReceiveSource()
 {
-    dispatch_source_cancel(m_receiveSource);
-    dispatch_release(m_receiveSource);
+    dispatch_source_cancel(m_receiveSource.get());
     m_receiveSource = nullptr;
     m_receivePort = MACH_PORT_NULL;
 }
@@ -219,8 +217,8 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        auto encoder = makeUnique<Encoder>(MessageName::InitializeConnection, 0);
-        *encoder << MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
+        auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
+        encoder.get() << MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
 
         initializeSendSource();
 
@@ -230,11 +228,11 @@ bool Connection::open()
     // Change the message queue length for the receive port.
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
-    m_receiveSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->dispatchQueue());
-    dispatch_source_set_event_handler(m_receiveSource, [this, protectedThis = makeRefPtr(this)] {
+    m_receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->dispatchQueue()));
+    dispatch_source_set_event_handler(m_receiveSource.get(), [this, protectedThis = makeRefPtr(this)] {
         receiveSourceEventHandler();
     });
-    dispatch_source_set_cancel_handler(m_receiveSource, [protectedThis = makeRefPtr(this), receivePort = m_receivePort] {
+    dispatch_source_set_cancel_handler(m_receiveSource.get(), [protectedThis = makeRefPtr(this), receivePort = m_receivePort] {
 #if !PLATFORM(WATCHOS)
         mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(protectedThis.get()));
 #endif
@@ -243,10 +241,10 @@ bool Connection::open()
 
     ref();
     dispatch_async(m_connectionQueue->dispatchQueue(), ^{
-        dispatch_resume(m_receiveSource);
+        dispatch_resume(m_receiveSource.get());
 
         if (m_sendSource)
-            dispatch_resume(m_sendSource);
+            dispatch_resume(m_sendSource.get());
 
         deref();
     });
@@ -290,7 +288,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return !m_pendingOutgoingMachMessage && !m_isInitializingSendSource;
 }
 
-bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
+bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
     ASSERT(!m_pendingOutgoingMachMessage && !m_isInitializingSendSource);
 
@@ -371,20 +369,20 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 
 void Connection::initializeSendSource()
 {
-    m_sendSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_DEAD | DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->dispatchQueue());
+    m_sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_DEAD | DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->dispatchQueue()));
     m_isInitializingSendSource = true;
 
-    dispatch_source_set_registration_handler(m_sendSource, [this, protectedThis = makeRefPtr(this)] {
+    dispatch_source_set_registration_handler(m_sendSource.get(), [this, protectedThis = makeRefPtr(this)] {
         if (!m_sendSource)
             return;
         m_isInitializingSendSource = false;
         resumeSendSource();
     });
-    dispatch_source_set_event_handler(m_sendSource, [this, protectedThis = makeRefPtr(this)] {
+    dispatch_source_set_event_handler(m_sendSource.get(), [this, protectedThis = makeRefPtr(this)] {
         if (!m_sendSource)
             return;
 
-        unsigned long data = dispatch_source_get_data(m_sendSource);
+        unsigned long data = dispatch_source_get_data(m_sendSource.get());
 
         if (data & DISPATCH_MACH_SEND_DEAD) {
             connectionDidClose();
@@ -400,7 +398,7 @@ void Connection::initializeSendSource()
 
     if (MACH_PORT_VALID(m_sendPort)) {
         mach_port_t sendPort = m_sendPort;
-        dispatch_source_set_cancel_handler(m_sendSource, ^{
+        dispatch_source_set_cancel_handler(m_sendSource.get(), ^{
             // Release our send right.
             deallocateSendRightSafely(sendPort);
         });
@@ -580,7 +578,7 @@ void Connection::receiveSourceEventHandler()
                 deallocateSendRightSafely(previousNotificationPort);
 
             initializeSendSource();
-            dispatch_resume(m_sendSource);
+            dispatch_resume(m_sendSource.get());
         }
 
         m_isConnected = true;

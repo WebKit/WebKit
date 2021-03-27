@@ -68,6 +68,7 @@ public:
     WEBCORE_EXPORT void beginScanningForward() final;
     WEBCORE_EXPORT void beginScanningBackward() final;
     WEBCORE_EXPORT void endScanning() final;
+    WEBCORE_EXPORT void setDefaultPlaybackRate(float) final;
     WEBCORE_EXPORT void selectAudioMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void togglePictureInPicture() final;
@@ -82,6 +83,7 @@ public:
     double bufferedTime() const final;
     bool isPlaying() const final;
     bool isScrubbing() const final { return false; }
+    float defaultPlaybackRate() const final;
     float playbackRate() const final;
     Ref<TimeRanges> seekableRanges() const final;
     double seekableTimeRangesLastModifiedTime() const final;

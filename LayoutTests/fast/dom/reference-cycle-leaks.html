@@ -59,6 +59,20 @@ function createTreeWalkerFilterCycle()
     leakDetectionNode.treeWalker = document.createTreeWalker(document, 0, filter);
 }
 
+function createRangeCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    const range = new Range();
+    range.setStart(leakDetectionNode, 0);
+    leakDetectionNode.range = range;
+}
+
+function createStaticRangeCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    leakDetectionNode.staticRange = new StaticRange({startContainer: leakDetectionNode, startOffset: 0, endContainer: leakDetectionNode, endOffset: 0});
+}
+
 function createCustomEventDetailsCycle()
 {
     const leakDetectionNode = document.createTextNode("");
@@ -152,6 +166,8 @@ function startTest()
     runLeakTest('createEventListenerCycle');
     runLeakTest('createTreeWalkerNodeCycle');
     runLeakTest('createTreeWalkerFilterCycle');
+    runLeakTest('createRangeCycle');
+    runLeakTest('createStaticRangeCycle');
     runLeakTest('createPromiseCycle');
 
     runLeakTest('createCustomEventDetailsCycle');

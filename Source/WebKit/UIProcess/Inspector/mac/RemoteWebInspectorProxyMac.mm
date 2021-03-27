@@ -240,22 +240,26 @@ void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
 
 void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance appearance)
 {
-    NSWindow *window = m_window.get();
-    ASSERT(window);
-
+    NSAppearance *platformAppearance;
     switch (appearance) {
     case InspectorFrontendClient::Appearance::System:
-        window.appearance = nil;
+        platformAppearance = nil;
         break;
 
     case InspectorFrontendClient::Appearance::Light:
-        window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        platformAppearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         break;
 
     case InspectorFrontendClient::Appearance::Dark:
-        window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+        platformAppearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
         break;
     }
+
+    webView().appearance = platformAppearance;
+
+    NSWindow *window = m_window.get();
+    ASSERT(window);
+    window.appearance = platformAppearance;
 }
 
 void RemoteWebInspectorProxy::platformStartWindowDrag()

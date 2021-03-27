@@ -1,3 +1,4 @@
-Blocked access to external URL http://webkit.org/resources/missing.jpg
+CONSOLE MESSAGE: Promoted URL from http://webkit.org/resources/missing.jpg to https
+Blocked access to external URL https://webkit.org/resources/missing.jpg
 PASS if no crash or assert.
 

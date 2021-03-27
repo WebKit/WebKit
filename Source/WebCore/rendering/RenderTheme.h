@@ -87,7 +87,7 @@ public:
     virtual String mediaControlsStyleSheet() { return String(); }
     virtual String modernMediaControlsStyleSheet() { return String(); }
     virtual String extraMediaControlsStyleSheet() { return String(); }
-    virtual String mediaControlsScript() { return String(); }
+    virtual Vector<String, 3> mediaControlsScripts() { return { }; }
     virtual String mediaControlsBase64StringForIconNameAndType(const String&, const String&) { return String(); }
     virtual String mediaControlsFormattedStringForDuration(double) { return String(); }
 #endif
@@ -312,7 +312,7 @@ protected:
     virtual void paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
     virtual void paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const IntRect&);
+    virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&);
 #endif
 
     virtual void adjustTextFieldStyle(RenderStyle&, const Element*) const;

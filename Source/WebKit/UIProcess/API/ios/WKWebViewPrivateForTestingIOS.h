@@ -46,6 +46,7 @@
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;
 - (void)dismissFormAccessoryView;
+- (NSArray<NSString *> *)_filePickerAcceptedTypeIdentifiers;
 - (void)_dismissFilePicker;
 - (void)selectFormAccessoryPickerRow:(int)rowIndex;
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex;
@@ -66,8 +67,6 @@
 
 - (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString withCompletionHandler:(void (^)(void))completionHandler;
 
-- (void)_didShowContextMenu;
-- (void)_didDismissContextMenu;
 - (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action;
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID;

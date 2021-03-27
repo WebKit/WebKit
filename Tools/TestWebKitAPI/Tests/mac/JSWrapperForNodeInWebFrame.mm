@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "PlatformUtilities.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebScriptWorld.h>
@@ -98,6 +99,7 @@ TEST(WebKitLegacy, JSWrapperForNode)
 
 TEST(WebKitLegacy, JSDOMWindowWrapperBeforeOriginInitialization)
 {
+    [WKProcessPool _setLinkedOnOrBeforeEverythingForTesting];
     auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     auto frameLoadDelegate = adoptNS([[JSWrapperForNodeFrameLoadDelegate alloc] init]);
 

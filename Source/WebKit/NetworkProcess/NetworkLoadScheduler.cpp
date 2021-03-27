@@ -43,8 +43,6 @@ public:
     void unschedule(NetworkLoad&);
     void prioritize(NetworkLoad&);
 
-    void finishPage(WebCore::PageIdentifier);
-
 private:
     void start(NetworkLoad&);
     bool shouldDelayLowPriority() const { return m_activeLoads.size() >= maximumActiveCountForLowPriority; }
@@ -56,8 +54,11 @@ private:
 void NetworkLoadScheduler::HostContext::schedule(NetworkLoad& load)
 {
     auto startImmediately = [&] {
-        auto priority = load.parameters().request.priority();
-        if (priority > WebCore::ResourceLoadPriority::Low)
+        auto& request = load.currentRequest();
+        if (request.priority() > WebCore::ResourceLoadPriority::Low)
+            return true;
+        
+        if (request.isConditional())
             return true;
 
         if (!shouldDelayLowPriority())

@@ -1,0 +1,35 @@
+<style>
+svg { 
+  position: absolute;
+  white-space: pre;
+}
+span { 
+  display: contents;
+  letter-spacing: 1em;
+}
+
+#second {
+  -webkit-column-span: all;
+}
+
+#container {
+  -webkit-animation-name: keyframes4;
+  -webkit-animation-fill-mode: backwards;
+  animation-delay: 1s;
+}
+
+@keyframes keyframes4 {
+ 100% { column-width: 10px; }
+}
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+onload = () => {
+  second.style.columnWidth = "10px";
+  first.remove();
+}
+</script>
+PASS if no crash or assert.
+<div id=container><div id=first></div>text<svg><foreignObject><span>
+<div id=second></div></span></foreignObject></svg></div>

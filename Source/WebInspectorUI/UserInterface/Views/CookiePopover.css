@@ -45,8 +45,6 @@
     padding-inline-start: 4px;
 }
 
-/* FIXME: <https://webkit.org/b/209389> Web Inspector: use native datetime-local picker for changing `expires` value in cookie popover */
-
 .popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]) {
     width: 100%;
     padding: 3px 4px 2px;

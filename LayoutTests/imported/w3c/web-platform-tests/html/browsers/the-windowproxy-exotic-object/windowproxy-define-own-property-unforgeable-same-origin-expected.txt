@@ -1,0 +1,10 @@
+
+PASS [[DefineOwnProperty]] success: "window"
+PASS [[DefineOwnProperty]] failure: "window"
+PASS [[DefineOwnProperty]] success: "document"
+PASS [[DefineOwnProperty]] failure: "document"
+PASS [[DefineOwnProperty]] success: "location"
+PASS [[DefineOwnProperty]] failure: "location"
+PASS [[DefineOwnProperty]] success: "top"
+PASS [[DefineOwnProperty]] failure: "top"
+

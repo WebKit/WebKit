@@ -43,6 +43,7 @@
 #include "ShadowRoot.h"
 #include "TextEvent.h"
 #include "TouchEvent.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -144,7 +145,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(node));
     
-    LOG(Events, "EventDispatcher::dispatchEvent %s on node %s", event.type().string().utf8().data(), node.nodeName().utf8().data());
+    LOG_WITH_STREAM(Events, stream << "EventDispatcher::dispatchEvent " << event << " on node " << node);
 
     auto protectedNode = makeRef(node);
     auto protectedView = makeRefPtr(node.document().view());

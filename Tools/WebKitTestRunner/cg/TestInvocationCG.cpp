@@ -45,7 +45,7 @@ static const CFStringRef kUTTypePNG = CFSTR("public.png");
 
 namespace WTR {
 
-static CGContextRef createCGContextFromCGImage(CGImageRef image)
+static RetainPtr<CGContextRef> createCGContextFromCGImage(CGImageRef image)
 {
     size_t pixelsWide = CGImageGetWidth(image);
     size_t pixelsHigh = CGImageGetHeight(image);
@@ -53,15 +53,15 @@ static CGContextRef createCGContextFromCGImage(CGImageRef image)
 
     // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
     auto colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    CGContextRef context = CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    auto context = adoptCF(CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
     if (!context)
         return nullptr;
 
-    CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image);
+    CGContextDrawImage(context.get(), CGRectMake(0, 0, pixelsWide, pixelsHigh), image);
     return context;
 }
 
-static CGContextRef createCGContextFromImage(WKImageRef wkImage)
+static RetainPtr<CGContextRef> createCGContextFromImage(WKImageRef wkImage)
 {
     auto image = adoptCF(WKImageCreateCGImage(wkImage));
     return createCGContextFromCGImage(image.get());
@@ -158,7 +158,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
             WTFLogAlways("dumpPixelsAndCompareWithExpected: image is null\n");
             return;
         }
-        context = adoptCF(createCGContextFromImage(wkImage));
+        context = createCGContextFromImage(wkImage);
         imageSize = WKImageGetSize(wkImage);
         break;
     case SnapshotResultType::WebView:
@@ -167,7 +167,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
             WTFLogAlways("dumpPixelsAndCompareWithExpected: image is null\n");
             return;
         }
-        context = adoptCF(createCGContextFromCGImage(image.get()));
+        context = createCGContextFromCGImage(image.get());
         imageSize = WKSizeMake(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
         break;
     }

@@ -174,6 +174,7 @@ void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
 void RenderLineBreak::updateFromStyle()
 {
     m_cachedLineHeight = invalidLineHeight;
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isInline());
 }
 
 #if PLATFORM(IOS_FAMILY)

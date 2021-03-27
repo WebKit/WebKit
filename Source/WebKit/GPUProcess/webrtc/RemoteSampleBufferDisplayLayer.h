@@ -48,6 +48,9 @@ public:
     static std::unique_ptr<RemoteSampleBufferDisplayLayer> create(SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
     ~RemoteSampleBufferDisplayLayer();
 
+    using WebCore::SampleBufferDisplayLayer::Client::weakPtrFactory;
+    using WeakValueType = WebCore::SampleBufferDisplayLayer::Client::WeakValueType;
+
     using LayerInitializationCallback = CompletionHandler<void(Optional<LayerHostingContextID>)>;
     void initialize(bool hideRootLayer, WebCore::IntSize, LayerInitializationCallback&&);
 

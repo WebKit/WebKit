@@ -168,17 +168,6 @@ CaptureAudioInUIProcessEnabled:
     WebKit:
       default: WebKit::defaultCaptureAudioInUIProcessEnabled()
 
-CaptureVideoInGPUProcessEnabled:
-  type: bool
-  humanReadableName: "GPU Process: Video Capture"
-  humanReadableDescription: "Enable video capture in GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: WebKit::defaultCaptureVideoInGPUProcessEnabled()
-
 CaptureVideoInUIProcessEnabled:
   type: bool
   humanReadableName: "Capture video in UI Process"
@@ -764,17 +753,6 @@ UpgradeKnownHostsToHTTPSEnabled:
     WebKit:
       default: true
 
-UseGPUProcessForCanvasRenderingEnabled:
-  type: bool
-  humanReadableName: "GPU Process: Canvas Rendering"
-  humanReadableDescription: "Enable canvas rendering in GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: defaultUseGPUProcessForCanvasRenderingEnabled()
-
 UseGPUProcessForDOMRenderingEnabled:
   type: bool
   humanReadableName: "GPU Process: DOM Rendering"
@@ -893,18 +871,6 @@ WebRTCMDNSICECandidatesEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
-
-WindowObjectAlwaysInitializedWithSecurityOriginEnabled:
-  type: bool
-  humanReadableName: "Ensure Window object is initialized with a security origin"
-  humanReadableDescription: "Ensure Window object is initialized with a security origin"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
       default: true
 
 ZoomOnDoubleTapWhenRoot:

@@ -1183,6 +1183,10 @@
 		FF2D2F5425C8B14A002FB699 /* FixTypeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */; };
 		FF2D2F5525C8B14A002FB699 /* FixTypeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */; };
 		FF2D2F5625C8B14A002FB699 /* FixTypeConstructors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF2D2F5325C8B14A002FB699 /* FixTypeConstructors.cpp */; };
+		FF33284525F6CA9E005FDFC4 /* NameNamelessUniformBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = FF33284325F6CA9D005FDFC4 /* NameNamelessUniformBuffers.h */; };
+		FF33284625F6CA9E005FDFC4 /* NameNamelessUniformBuffers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF33284425F6CA9D005FDFC4 /* NameNamelessUniformBuffers.cpp */; };
+		FF33284925F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF33284725F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp */; };
+		FF33284A25F6CAB9005FDFC4 /* IntroduceVertexIndexID.h in Headers */ = {isa = PBXBuildFile; fileRef = FF33284825F6CAB9005FDFC4 /* IntroduceVertexIndexID.h */; };
 		FF81FED025818D6800894E24 /* mtl_glslang_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = FF81FE8025818D6800894E24 /* mtl_glslang_utils.h */; };
 		FF81FED125818D6800894E24 /* ProgramMtl.h in Headers */ = {isa = PBXBuildFile; fileRef = FF81FE8125818D6800894E24 /* ProgramMtl.h */; };
 		FF81FED225818D6800894E24 /* DisplayMtl_api.h in Headers */ = {isa = PBXBuildFile; fileRef = FF81FE8225818D6800894E24 /* DisplayMtl_api.h */; };
@@ -2172,6 +2176,10 @@
 		FB39D2BF1200F3E600088E69 /* ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ShaderLang.h; sourceTree = "<group>"; };
 		FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixTypeConstructors.h; sourceTree = "<group>"; };
 		FF2D2F5325C8B14A002FB699 /* FixTypeConstructors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FixTypeConstructors.cpp; sourceTree = "<group>"; };
+		FF33284325F6CA9D005FDFC4 /* NameNamelessUniformBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameNamelessUniformBuffers.h; sourceTree = "<group>"; };
+		FF33284425F6CA9D005FDFC4 /* NameNamelessUniformBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameNamelessUniformBuffers.cpp; sourceTree = "<group>"; };
+		FF33284725F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntroduceVertexIndexID.cpp; sourceTree = "<group>"; };
+		FF33284825F6CAB9005FDFC4 /* IntroduceVertexIndexID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroduceVertexIndexID.h; sourceTree = "<group>"; };
 		FF81FE8025818D6800894E24 /* mtl_glslang_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_glslang_utils.h; sourceTree = "<group>"; };
 		FF81FE8125818D6800894E24 /* ProgramMtl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramMtl.h; sourceTree = "<group>"; };
 		FF81FE8225818D6800894E24 /* DisplayMtl_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayMtl_api.h; sourceTree = "<group>"; };
@@ -2243,7 +2251,6 @@
 		FF81FF15258190CA00894E24 /* TranslatorMetalDirect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranslatorMetalDirect.h; sourceTree = "<group>"; };
 		FF81FF16258190CA00894E24 /* TranslatorMetalDirect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorMetalDirect.cpp; sourceTree = "<group>"; };
 		FF81FF17258190CA00894E24 /* StaticType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticType.h; sourceTree = "<group>"; };
-		FF81FF18258190CA00894E24 /* TranslatorMetalDirect */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TranslatorMetalDirect; sourceTree = "<group>"; };
 		FF81FF19258190CA00894E24 /* TranslatorMetalUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorMetalUtils.cpp; sourceTree = "<group>"; };
 		FF81FF1A258190CA00894E24 /* TranslatorMetalUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranslatorMetalUtils.h; sourceTree = "<group>"; };
 		FF81FF212581919700894E24 /* Name.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Name.cpp; sourceTree = "<group>"; };
@@ -2338,7 +2345,6 @@
 			isa = PBXGroup;
 			children = (
 				FF81FF202581919700894E24 /* TranslatorMetalDirect */,
-				FF81FF18258190CA00894E24 /* TranslatorMetalDirect */,
 				5CBD596922826A00002B22AA /* treeops */,
 				5C55D6EA22826C9800B5BA2C /* treeutil */,
 				5C1DBBFB1B04375F00235552 /* ASTMetadataHLSL.cpp */,
@@ -3083,6 +3089,8 @@
 				5C55D61F22826B9400B5BA2C /* InitializeVariables.h */,
 				5C55D63D22826B9B00B5BA2C /* NameEmbeddedUniformStructs.cpp */,
 				5C55D60D22826B9100B5BA2C /* NameEmbeddedUniformStructs.h */,
+				FF33284425F6CA9D005FDFC4 /* NameNamelessUniformBuffers.cpp */,
+				FF33284325F6CA9D005FDFC4 /* NameNamelessUniformBuffers.h */,
 				5C55D64A22826B9E00B5BA2C /* PruneEmptyCases.cpp */,
 				5C55D61B22826B9300B5BA2C /* PruneEmptyCases.h */,
 				5C55D61222826B9100B5BA2C /* PruneNoOps.cpp */,
@@ -3588,6 +3596,8 @@
 				FF81FF4C2581919700894E24 /* HoistConstants.h */,
 				FF81FF512581919700894E24 /* IdGen.cpp */,
 				FF81FF382581919700894E24 /* IdGen.h */,
+				FF33284725F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp */,
+				FF33284825F6CAB9005FDFC4 /* IntroduceVertexIndexID.h */,
 				FF81FF322581919700894E24 /* Layout.cpp */,
 				FF81FF402581919700894E24 /* Layout.h */,
 				FF81FF5A2581919700894E24 /* MapFunctionsToDefinitions.cpp */,
@@ -4252,6 +4262,7 @@
 				5C55D70822826CB300B5BA2C /* IntermNodePatternMatcher.h in Headers */,
 				FF81FF9E2581A3C200894E24 /* IntermRebuild.h in Headers */,
 				5C55D70122826CB300B5BA2C /* IntermTraverse.h in Headers */,
+				FF33284A25F6CAB9005FDFC4 /* IntroduceVertexIndexID.h in Headers */,
 				5CCD59772284FA830018F2D8 /* IOSurfaceSurfaceCGL.h in Headers */,
 				313BCE552361133A00FC39E5 /* IOSurfaceSurfaceEAGL.h in Headers */,
 				FF81FEF425818D6900894E24 /* IOSurfaceSurfaceMtl.h in Headers */,
@@ -4290,6 +4301,7 @@
 				FF81FF5E2581919700894E24 /* Name.h in Headers */,
 				5C55D66922826B9F00B5BA2C /* NameEmbeddedUniformStructs.h in Headers */,
 				FFA0C2C825CB6A7700105306 /* NameEmbeddedUniformStructsMetal.h in Headers */,
+				FF33284525F6CA9E005FDFC4 /* NameNamelessUniformBuffers.h in Headers */,
 				A303070B2305F6B5002DA972 /* no_destructor.h in Headers */,
 				5C55D70722826CB300B5BA2C /* NodeSearch.h in Headers */,
 				FF81FF9B2581A3C200894E24 /* NodeType.h in Headers */,
@@ -4811,6 +4823,7 @@
 				5C55D70422826CB300B5BA2C /* IntermNodePatternMatcher.cpp in Sources */,
 				FF81FF9D2581A3C200894E24 /* IntermRebuild.cpp in Sources */,
 				5C55D70222826CB300B5BA2C /* IntermTraverse.cpp in Sources */,
+				FF33284925F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp in Sources */,
 				5CCD59792284FA830018F2D8 /* IOSurfaceSurfaceCGL.cpp in Sources */,
 				313BCE5C2361133A00FC39E5 /* IOSurfaceSurfaceEAGL.mm in Sources */,
 				FF81FEED25818D6900894E24 /* IOSurfaceSurfaceMtl.mm in Sources */,
@@ -4846,6 +4859,7 @@
 				FF81FF5B2581919700894E24 /* Name.cpp in Sources */,
 				5C55D6B622826BC800B5BA2C /* NameEmbeddedUniformStructs.cpp in Sources */,
 				FFA0C2C725CB6A7700105306 /* NameEmbeddedUniformStructsMetal.cpp in Sources */,
+				FF33284625F6CA9E005FDFC4 /* NameNamelessUniformBuffers.cpp in Sources */,
 				315EBDBF1FCE44BF00AC7A89 /* null_functions.cpp in Sources */,
 				5CCD59692284F7960018F2D8 /* Observer.cpp in Sources */,
 				5C1DBC331B04375F00235552 /* Operator.cpp in Sources */,

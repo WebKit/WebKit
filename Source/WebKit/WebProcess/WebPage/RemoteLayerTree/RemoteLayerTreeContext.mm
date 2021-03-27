@@ -90,13 +90,7 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
     GraphicsLayer::PlatformLayerID layerID = layer.layerID();
 
     RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
-    creationProperties.layerID = layerID;
-    creationProperties.type = type;
-
-    if (layer.isPlatformCALayerRemoteCustom()) {
-        creationProperties.hostingContextID = layer.hostingContextID();
-        creationProperties.hostingDeviceScaleFactor = deviceScaleFactor();
-    }
+    layer.populateCreationProperties(creationProperties, *this, type);
 
     m_createdLayers.add(layerID, WTFMove(creationProperties));
     m_livePlatformLayers.add(layerID, &layer);

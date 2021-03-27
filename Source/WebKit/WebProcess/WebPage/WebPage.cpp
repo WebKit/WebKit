@@ -452,9 +452,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(WEBGL)
     , m_shouldRenderWebGLInGPUProcess { parameters.shouldRenderWebGLInGPUProcess}
 #endif
-#if ENABLE(APP_BOUND_DOMAINS)
-    , m_needsInAppBrowserPrivacyQuirks { parameters.needsInAppBrowserPrivacyQuirks }
-#endif
     , m_layerHostingMode(parameters.layerHostingMode)
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
     , m_textCheckingControllerProxy(makeUniqueRef<TextCheckingControllerProxy>(*this))
@@ -602,8 +599,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.shouldRelaxThirdPartyCookieBlocking = parameters.shouldRelaxThirdPartyCookieBlocking;
     pageConfiguration.httpsUpgradeEnabled = parameters.httpsUpgradeEnabled;
 
-    pageConfiguration.textInteractionEnabled = parameters.textInteractionEnabled;
-    
     if (!parameters.crossOriginAccessControlCheckEnabled)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);
 
@@ -1018,7 +1013,7 @@ WebPage::~WebPage()
             completionHandler(WTF::nullopt);
     }
 #endif
-    
+
 #if HAVE(STATIC_FONT_REGISTRY)
     if (m_fontExtension)
         m_fontExtension->revoke();
@@ -1188,6 +1183,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     const VisibleSelection& selection = frame->selection().selection();
     const Editor& editor = frame->editor();
 
+    result.transactionID = m_lastEditorStateTransactionID.increment();
     result.selectionIsNone = selection.isNone();
     result.selectionIsRange = selection.isRange();
     result.isContentEditable = selection.isContentEditable();
@@ -3935,8 +3931,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
 #endif
 
-    m_page->setTextInteractionEnabled(store.getBoolValueForKey(WebPreferencesKey::textInteractionEnabledKey()));
-
 #if ENABLE(WEB_AUTHN) && PLATFORM(IOS)
     if (auto* connection = WebProcess::singleton().parentProcessConnection()) {
         if (isParentProcessAFullWebBrowser(connection->getAuditToken()))
@@ -4886,9 +4880,9 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
     didReceiveWebPageMessage(connection, decoder);
 }
 
-void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {   
-    didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
 }
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -5915,7 +5909,7 @@ void WebPage::elementDidBlur(WebCore::Element& element)
 {
     if (m_focusedElement == &element) {
         m_recentlyBlurredElement = WTFMove(m_focusedElement);
-        callOnMainThread([protectedThis = makeRefPtr(this)] {
+        callOnMainRunLoop([protectedThis = makeRefPtr(this)] {
             if (protectedThis->m_recentlyBlurredElement) {
 #if PLATFORM(IOS_FAMILY)
                 protectedThis->send(Messages::WebPageProxy::ElementDidBlur());
@@ -6196,9 +6190,6 @@ void WebPage::didCommitLoad(WebFrame* frame)
             scalePage(1, IntPoint());
     }
 
-#if PLATFORM(MAC)
-    m_didUpdateRenderingAfterCommittingLoad = false;
-#endif
 #if PLATFORM(IOS_FAMILY)
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_hasRestoredExposedContentRectAfterDidCommitLoad = false;
@@ -7270,19 +7261,29 @@ void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, co
     }
 
     downcast<HTMLElement>(*elementToUpdate).updateWithImageExtractionResult(WTFMove(result));
+    auto hitTestResult = corePage()->mainFrame().eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
+        HitTestRequest::ReadOnly,
+        HitTestRequest::Active,
+        HitTestRequest::AllowVisibleChildFrameContentOnly,
+    });
 
-    // FIXME: Hit-test with location and return whether or not there is overlay text at the given location.
-    completionHandler(true);
+    auto nodeAtLocation = makeRefPtr(hitTestResult.innerNonSharedNode());
+    if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate) {
+        completionHandler(false);
+        return;
+    }
+
+    completionHandler(HTMLElement::isImageOverlayText(*nodeAtLocation));
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
 
-#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 void WebPage::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPageProxy::ShowMediaControlsContextMenu(WTFMove(targetFrame), WTFMove(items)), completionHandler);
 }
-#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #if !PLATFORM(IOS_FAMILY)
 

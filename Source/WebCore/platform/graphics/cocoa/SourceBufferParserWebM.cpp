@@ -1224,8 +1224,13 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
         m_samplePresentationTime = presentationTime;
     }
 
-    m_packetData.resize(m_packetBytesRead + metadata.size);
-    size_t packetDataOffset = m_packetBytesRead;
+    if (!m_currentPacketSize) {
+        m_currentPacketSize = metadata.size;
+        m_packetData.grow(m_packetData.size() + metadata.size);
+    }
+
+    if (!m_currentPacketByteOffset)
+        m_currentPacketByteOffset = m_packetBytesRead;
 
     ASSERT(m_partialBytesRead < metadata.size);
     size_t bytesToRead = metadata.size;
@@ -1275,7 +1280,10 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
         setFormatDescription(WTFMove(formatDescription));
     }
 
-    m_packetDescriptions.append({ static_cast<int64_t>(packetDataOffset), 0, static_cast<UInt32>(metadata.size) });
+    m_packetDescriptions.append({ static_cast<int64_t>(*m_currentPacketByteOffset), 0, static_cast<UInt32>(*m_currentPacketSize) });
+    m_currentPacketByteOffset = WTF::nullopt;
+    m_currentPacketSize = WTF::nullopt;
+
     auto sampleDuration = CMTimeGetSeconds(CMTimeSubtract(presentationTime, m_samplePresentationTime)) + CMTimeGetSeconds(m_packetDuration) * sampleCount;
     if (sampleDuration >= m_minimumSampleDuration)
         createSampleBuffer(metadata.position);

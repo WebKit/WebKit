@@ -495,6 +495,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_masqueradesAsUndefinedWatchpoint(WatchpointSet::create(IsWatched))
     , m_havingABadTimeWatchpoint(WatchpointSet::create(IsWatched))
     , m_varInjectionWatchpoint(WatchpointSet::create(IsWatched))
+    , m_varReadOnlyWatchpoint(WatchpointSet::create(IsWatched))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_arrayIteratorProtocolWatchpointSet(IsWatched)
     , m_mapIteratorProtocolWatchpointSet(IsWatched)
@@ -1480,13 +1481,34 @@ bool JSGlobalObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyNam
 bool JSGlobalObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
-    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
-    // silently ignore attempts to add accessors aliasing vars.
-    if (descriptor.isAccessorDescriptor() && symbolTableGet(thisObject, propertyName, slot))
-        return false;
-    slot.disallowVMEntry.reset();
-    return Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
+
+    SymbolTableEntry::Fast entry;
+    PropertyDescriptor currentDescriptor;
+    if (symbolTableGet(thisObject, propertyName, entry, currentDescriptor)) {
+        bool isExtensible = false; // ignored since current descriptor is present
+        bool isCurrentDefined = true;
+        bool isCompatibleDescriptor = validateAndApplyPropertyDescriptor(globalObject, nullptr, propertyName, isExtensible, descriptor, isCurrentDefined, currentDescriptor, shouldThrow);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (!isCompatibleDescriptor)
+            return false;
+
+        if (descriptor.value()) {
+            bool ignoreReadOnlyErrors = true;
+            bool putResult = false;
+            if (symbolTablePutTouchWatchpointSet(thisObject, globalObject, propertyName, descriptor.value(), shouldThrow, ignoreReadOnlyErrors, putResult))
+                ASSERT(putResult);
+            scope.assertNoException();
+        }
+        if (descriptor.writablePresent() && !descriptor.writable() && !entry.isReadOnly()) {
+            thisObject->symbolTable()->set(propertyName.uid(), SymbolTableEntry(entry.varOffset(), entry.getAttributes() | PropertyAttribute::ReadOnly));
+            thisObject->varReadOnlyWatchpoint()->fireAll(vm, "GlobalVar was redefined as ReadOnly");
+        }
+        return true;
+    }
+
+    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow));
 }
 
 void JSGlobalObject::addGlobalVar(const Identifier& ident)

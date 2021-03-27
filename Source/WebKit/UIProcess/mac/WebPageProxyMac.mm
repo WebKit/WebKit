@@ -574,17 +574,14 @@ CGRect WebPageProxy::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer)
     return pageClient().boundsOfLayerInLayerBackedWindowCoordinates(layer);
 }
 
-void WebPageProxy::updateEditorState(const EditorState& editorState)
+void WebPageProxy::didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState)
 {
-    bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
-    
-    m_editorState = editorState;
-    
+    bool couldChangeSecureInputState = newEditorState.isInPasswordField != oldEditorState.isInPasswordField || oldEditorState.selectionIsNone;
     // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
-    if (couldChangeSecureInputState && !editorState.selectionIsNone)
+    if (couldChangeSecureInputState && !newEditorState.selectionIsNone)
         pageClient().updateSecureInputState();
     
-    if (editorState.shouldIgnoreSelectionChanges)
+    if (newEditorState.shouldIgnoreSelectionChanges)
         return;
     
     pageClient().selectionDidChange();
@@ -633,6 +630,13 @@ NSWindow *WebPageProxy::paymentCoordinatorPresentingWindow(const WebPaymentCoord
 
 #if ENABLE(CONTEXT_MENUS)
 
+NSMenu *WebPageProxy::platformActiveContextMenu() const
+{
+    if (m_activeContextMenu)
+        return m_activeContextMenu->platformMenu();
+    return nil;
+}
+
 void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
 {
     if (item.action() == ContextMenuItemTagPaste)
@@ -654,15 +658,6 @@ PlatformView* WebPageProxy::platformView() const
 bool WebPageProxy::useiTunesAVOutputContext() const
 {
     return m_preferences->store().getBoolValueForKey(WebPreferencesKey::useiTunesAVOutputContextKey());
-}
-
-void WebPageProxy::didUpdateRenderingAfterCommittingLoad()
-{
-    if (m_hasUpdatedRenderingAfterDidCommitLoad)
-        return;
-
-    m_hasUpdatedRenderingAfterDidCommitLoad = true;
-    stopMakingViewBlankDueToLackOfRenderingUpdate();
 }
 
 #if ENABLE(UI_PROCESS_PDF_HUD)

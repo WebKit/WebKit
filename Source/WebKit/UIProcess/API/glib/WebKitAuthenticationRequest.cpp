@@ -365,7 +365,7 @@ WebKitSecurityOrigin* webkit_authentication_request_get_security_origin(WebKitAu
         protocol = "socks"_s;
         break;
     }
-    return webkitSecurityOriginCreate(SecurityOrigin::create(protocol, protectionSpace.host(), protectionSpace.port()));
+    return webkitSecurityOriginCreate(SecurityOriginData(protocol, protectionSpace.host(), protectionSpace.port()));
 }
 
 /**

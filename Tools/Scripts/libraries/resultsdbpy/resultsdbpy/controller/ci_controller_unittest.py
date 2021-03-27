@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
-        with URLFactoryTest.mock():
+        with URLFactoryTest.mock(), MockModelFactory.safari(), MockModelFactory.webkit():
             cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
             model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
             model.ci_context.add_url_factory(BuildbotURLFactory(master='build.webkit.org', redis=model.redis))
@@ -108,9 +108,8 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_single_queue_list(self, client, **kwargs):
-        response = client.get(self.URL + '/api/urls?version_name=Catalina&flavor=wk2&id=236542')
+        response = client.get(self.URL + '/api/urls?version_name=Catalina&flavor=wk2&id=1abe25b443e9')
         self.assertEqual(response.status_code, 200)
-        print(response.json()[0]['urls'])
         self.assertEqual(response.json()[0]['urls'][0]['build'], 'https://build.webkit.org/#/builders/5/builds/3')
         self.assertEqual(response.json()[0]['urls'][0]['queue'], 'https://build.webkit.org/#/builders/5')
         self.assertEqual(response.json()[0]['urls'][0]['worker'], 'https://build.webkit.org/#/workers/4')

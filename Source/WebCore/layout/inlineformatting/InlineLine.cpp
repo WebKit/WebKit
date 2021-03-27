@@ -52,6 +52,7 @@ Line::~Line()
 
 void Line::initialize()
 {
+    m_nonSpanningInlineLevelBoxCount = 0;
     m_contentLogicalWidth = { };
     m_runs.clear();
     m_trailingSoftHyphenWidth = { };
@@ -184,9 +185,9 @@ void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
     else if (inlineItem.isInlineBoxEnd())
         appendInlineBoxEnd(inlineItem, logicalWidth);
     else if (inlineItem.layoutBox().isReplacedBox())
-        appendReplacedInlineBox(inlineItem, logicalWidth);
+        appendReplacedInlineLevelBox(inlineItem, logicalWidth);
     else if (inlineItem.isBox())
-        appendNonReplacedInlineBox(inlineItem, logicalWidth);
+        appendNonReplacedInlineLevelBox(inlineItem, logicalWidth);
     else
         ASSERT_NOT_REACHED();
 }
@@ -202,6 +203,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, InlineLayoutUnit l
     // This is really just a placeholder to mark the start of the inline box <span>.
     auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
     auto adjustedRunStart = contentLogicalRight() + std::min(boxGeometry.marginStart(), 0_lu);
+    ++m_nonSpanningInlineLevelBoxCount;
     appendNonBreakableSpace(inlineItem, adjustedRunStart, logicalWidth);
 }
 
@@ -286,11 +288,12 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     m_trailingSoftHyphenWidth = inlineTextItem.hasTrailingSoftHyphen() ? makeOptional(style.fontCascade().width(TextRun { StringView { style.hyphenString() } })) : WTF::nullopt;
 }
 
-void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
+void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
 {
     m_trimmableTrailingContent.reset();
     m_trailingSoftHyphenWidth = { };
     m_contentLogicalWidth += marginBoxLogicalWidth;
+    ++m_nonSpanningInlineLevelBoxCount;
     auto marginStart = formattingContext().geometryForBox(inlineItem.layoutBox()).marginStart();
     if (marginStart >= 0) {
         m_runs.append({ inlineItem, contentLogicalRight(), marginBoxLogicalWidth });
@@ -303,18 +306,20 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayout
     m_runs.append({ inlineItem, contentLogicalRight() + marginStart, marginBoxLogicalWidth - marginStart });
 }
 
-void Line::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
+void Line::appendReplacedInlineLevelBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
 {
     ASSERT(inlineItem.layoutBox().isReplacedBox());
     // FIXME: Surely replaced boxes behave differently.
-    appendNonReplacedInlineBox(inlineItem, marginBoxLogicalWidth);
+    appendNonReplacedInlineLevelBox(inlineItem, marginBoxLogicalWidth);
 }
 
 void Line::appendLineBreak(const InlineItem& inlineItem)
 {
     m_trailingSoftHyphenWidth = { };
-    if (inlineItem.isHardLineBreak())
+    if (inlineItem.isHardLineBreak()) {
+        ++m_nonSpanningInlineLevelBoxCount;
         return m_runs.append({ inlineItem, contentLogicalRight(), 0_lu });
+    }
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.
     ASSERT(inlineItem.isSoftLineBreak());
     m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalRight() });

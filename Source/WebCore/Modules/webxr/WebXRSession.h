@@ -57,8 +57,9 @@ class WebXRSession final : public RefCounted<WebXRSession>, public EventTargetWi
 public:
     using RequestReferenceSpacePromise = DOMPromiseDeferred<IDLInterface<WebXRReferenceSpace>>;
     using EndPromise = DOMPromiseDeferred<void>;
+    using FeatureList = PlatformXR::Device::FeatureList;
 
-    static Ref<WebXRSession> create(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&);
+    static Ref<WebXRSession> create(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&, FeatureList&&);
     virtual ~WebXRSession();
 
     using RefCounted<WebXRSession>::ref;
@@ -97,7 +98,7 @@ public:
     bool posesCanBeReported(const Document&) const;
 
 private:
-    WebXRSession(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&);
+    WebXRSession(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&, FeatureList&&);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return WebXRSessionEventTargetInterfaceType; }
@@ -132,6 +133,7 @@ private:
     WebXRSystem& m_xrSystem;
     XRSessionMode m_mode;
     WeakPtr<PlatformXR::Device> m_device;
+    FeatureList m_requestedFeatures;
     RefPtr<WebXRRenderState> m_activeRenderState;
     RefPtr<WebXRRenderState> m_pendingRenderState;
     std::unique_ptr<WebXRViewerSpace> m_viewerReferenceSpace;

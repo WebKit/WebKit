@@ -259,13 +259,13 @@ function installDependenciesWithApt {
         gstreamer1.0-plugins-ugly \
         gstreamer1.0-pulseaudio"
 
-    apt-get install $packages
+    apt-get install -y --no-install-recommends $packages
 
     # Ubuntu Bionic doesn't ship pipenv. So fallback to the pip3 install path.
     if apt-cache show pipenv &>/dev/null; then
-        apt-get install pipenv
+        apt-get install -y --no-install-recommends pipenv
     else
-        apt-get install -y python3-pip
+        apt-get install -y --no-install-recommends python3-pip
         pip3 install pipenv
     fi
 }

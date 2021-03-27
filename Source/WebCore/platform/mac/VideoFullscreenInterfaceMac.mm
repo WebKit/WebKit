@@ -428,7 +428,7 @@ void VideoFullscreenInterfaceMac::clearMode(HTMLMediaElementEnums::VideoFullscre
         m_videoFullscreenModel->fullscreenModeChanged(m_mode);
 }
 
-void VideoFullscreenInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
+void VideoFullscreenInterfaceMac::rateChanged(bool isPlaying, float playbackRate, float /* defaultPlaybackRate */)
 {
     [videoFullscreenInterfaceObjC() updateIsPlaying:isPlaying newPlaybackRate:playbackRate];
 }

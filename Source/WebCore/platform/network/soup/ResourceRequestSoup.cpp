@@ -133,11 +133,11 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
         soup_message_body_append_buffer(soupMessage->request_body, soupBuffer);
         soup_buffer_free(soupBuffer);
     }
+    ASSERT(length == static_cast<uint64_t>(soupMessage->request_body->length));
 #else
     soup_message_set_request_body(soupMessage, nullptr, stream.get(), length);
 #endif
 
-    ASSERT(length == static_cast<uint64_t>(soupMessage->request_body->length));
 }
 
 void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const

@@ -461,7 +461,7 @@ class CreateRevert(AbstractRevertPrepCommand):
     def _prepare_state(self, options, args, tool):
         state = AbstractRevertPrepCommand._prepare_state(self, options, args, tool)
         state["bug_title"] = "REGRESSION(r%s): %s" % (state["revision"], state["reason"])
-        state["bug_description"] = "%s broke the build:\n%s" % (urls.view_revision_url(state["revision"]), state["reason"])
+        state["bug_description"] = "%s introduced a regression:\n%s" % (urls.view_revision_url(state["revision"]), state["reason"])
         # FIXME: If we had more context here, we could link to other open bugs
         #        that mention the test that regressed.
         if options.parent_command == "sheriff-bot":

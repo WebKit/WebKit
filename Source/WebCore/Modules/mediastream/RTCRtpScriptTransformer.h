@@ -29,48 +29,57 @@
 
 #include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
-#include "JSCallbackData.h"
+#include "RTCRtpTransformBackend.h"
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class MessagePort;
+class ReadableStream;
 class ScriptExecutionContext;
 class RTCRtpTransformBackend;
+class SerializedScriptValue;
 class SimpleReadableStreamSource;
+class WritableStream;
 
 class RTCRtpScriptTransformer
     : public RefCounted<RTCRtpScriptTransformer>
     , public ActiveDOMObject
     , public CanMakeWeakPtr<RTCRtpScriptTransformer> {
 public:
-    static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&);
+    static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Ref<MessagePort>&&);
     ~RTCRtpScriptTransformer();
 
-    void setCallback(std::unique_ptr<JSCallbackDataStrong>&& callback) { m_callback = WTFMove(callback); }
+    ReadableStream& readable();
+    ExceptionOr<Ref<WritableStream>> writable();
+    JSC::JSValue options(JSC::JSGlobalObject&);
+
+    ExceptionOr<void> requestKeyFrame();
     MessagePort& port() { return m_port.get(); }
 
+    void startPendingActivity() { m_pendingActivity = makePendingActivity(*this); }
     void start(Ref<RTCRtpTransformBackend>&&);
     void clear();
 
-    void startPendingActivity() { m_pendingActivity = makePendingActivity(*this); }
-
 private:
-    RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<MessagePort>&&);
-
-    RefPtr<SimpleReadableStreamSource> startStreams(RTCRtpTransformBackend&);
+    RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Ref<MessagePort>&&, Ref<ReadableStream>&&, Ref<SimpleReadableStreamSource>&&);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const { return "RTCRtpScriptTransformer"; }
     void stop() final { stopPendingActivity(); }
     void stopPendingActivity() { auto pendingActivity = WTFMove(m_pendingActivity); }
 
+    Ref<SerializedScriptValue> m_options;
     Ref<MessagePort> m_port;
-    std::unique_ptr<JSCallbackDataStrong> m_callback;
+
+    Ref<SimpleReadableStreamSource> m_readableSource;
+    Ref<ReadableStream> m_readable;
+    RefPtr<WritableStream> m_writable;
+
     RefPtr<RTCRtpTransformBackend> m_backend;
     RefPtr<PendingActivity<RTCRtpScriptTransformer>> m_pendingActivity;
-
 };
 
 } // namespace WebCore

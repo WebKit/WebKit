@@ -967,9 +967,8 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     // To avoid this, we add a placeholder node before the start of the paragraph.
     if (endOfParagraph(startOfParagraphToMove) == destination) {
         auto placeholder = HTMLBRElement::create(document());
-        auto* placeholderPtr = placeholder.ptr();
-        insertNodeBefore(WTFMove(placeholder), *startOfParagraphToMove.deepEquivalent().deprecatedNode());
-        destination = VisiblePosition(positionBeforeNode(placeholderPtr));
+        insertNodeBefore(placeholder.copyRef(), *startOfParagraphToMove.deepEquivalent().deprecatedNode());
+        destination = VisiblePosition(positionBeforeNode(placeholder.ptr()));
     }
 
     moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
@@ -1298,11 +1297,12 @@ void ReplaceSelectionCommand::doApply()
         insertNodeAt(HTMLBRElement::create(document()), startOfInsertedContent.deepEquivalent());
 
     if (endBR && (plainTextFragment || shouldRemoveEndBR(endBR.get(), originalVisPosBeforeEndBR))) {
-        RefPtr<Node> parent = endBR->parentNode();
+        auto parent = makeRefPtr(endBR->parentNode());
         insertedNodes.willRemoveNode(endBR.get());
         removeNode(*endBR);
-        if (Node* nodeToRemove = highestNodeToRemoveInPruning(parent.get())) {
-            insertedNodes.willRemoveNode(nodeToRemove);
+        document().updateLayoutIgnorePendingStylesheets();
+        if (auto nodeToRemove = makeRefPtr(highestNodeToRemoveInPruning(parent.get()))) {
+            insertedNodes.willRemoveNode(nodeToRemove.get());
             removeNode(*nodeToRemove);
         }
     }
@@ -1584,6 +1584,13 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         if (m_matchStyle) {
             ASSERT(m_insertionStyle);
             applyStyle(m_insertionStyle.get(), start, end);
+            // applyStyle may clone content to new block wrappers and make anchor nodes orphan.
+            if (start.isOrphan() || end.isOrphan()) {
+                start = endingSelection().start();
+                end = endingSelection().end();
+                m_startOfInsertedContent = start;
+                m_endOfInsertedContent = end;
+            }
         }
 
         if (lastPositionToSelect.isNotNull())

@@ -38,9 +38,9 @@ template<typename IDLStringType>
 struct IdentifierConverter;
 
 template<> struct IdentifierConverter<IDLDOMString> {
-    static String convert(JSC::JSGlobalObject&, const JSC::Identifier& identifier)
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier)
     {
-        return identifier.string();
+        return identifierToString(lexicalGlobalObject, identifier);
     }
 };
 
@@ -99,29 +99,32 @@ private:
         HashMap<KeyType, size_t> resultMap;
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
-        JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
+        JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::StringsAndSymbols, JSC::PrivateSymbolMode::Exclude);
         object->methodTable(vm)->getOwnPropertyNames(object, &lexicalGlobalObject, keys, JSC::DontEnumPropertiesMode::Include);
-
         RETURN_IF_EXCEPTION(scope, { });
 
         // 5. Repeat, for each element key of keys in List order:
         for (auto& key : keys) {
             // 1. Let desc be ? O.[[GetOwnProperty]](key).
-            JSC::PropertyDescriptor descriptor;
-            bool didGetDescriptor = object->getOwnPropertyDescriptor(&lexicalGlobalObject, key, descriptor);
+            JSC::PropertySlot slot(object, JSC::PropertySlot::InternalMethodType::GetOwnProperty);
+            bool hasProperty = object->methodTable(vm)->getOwnPropertySlot(object, &lexicalGlobalObject, key, slot);
             RETURN_IF_EXCEPTION(scope, { });
 
             // 2. If desc is not undefined and desc.[[Enumerable]] is true:
 
             // It's necessary to filter enumerable here rather than using DontEnumPropertiesMode::Exclude,
             // to prevent an observable extra [[GetOwnProperty]] operation in the case of ProxyObject records.
-            if (didGetDescriptor && descriptor.enumerable()) {
+            if (hasProperty && !(slot.attributes() & JSC::PropertyAttribute::DontEnum)) {
                 // 1. Let typedKey be key converted to an IDL value of type K.
                 auto typedKey = Detail::IdentifierConverter<K>::convert(lexicalGlobalObject, key);
                 RETURN_IF_EXCEPTION(scope, { });
 
                 // 2. Let value be ? Get(O, key).
-                auto subValue = object->get(&lexicalGlobalObject, key);
+                JSC::JSValue subValue;
+                if (LIKELY(!slot.isTaintedByOpaqueObject()))
+                    subValue = slot.getValue(&lexicalGlobalObject, key);
+                else
+                    subValue = object->get(&lexicalGlobalObject, key);
                 RETURN_IF_EXCEPTION(scope, { });
 
                 // 3. Let typedValue be value converted to an IDL value of type V.
@@ -132,13 +135,12 @@ private:
                 // Note: It's possible that typedKey is already in result if K is USVString and key contains unpaired surrogates.
                 if constexpr (std::is_same_v<K, IDLUSVString>) {
                     if (!typedKey.is8Bit()) {
-                        auto iterator = resultMap.find(typedKey);
-                        if (iterator != resultMap.end()) {
-                            ASSERT(result[iterator->value].key == typedKey);
-                            result[iterator->value].value = WTFMove(typedValue);
+                        auto addResult = resultMap.add(typedKey, result.size());
+                        if (!addResult.isNewEntry) {
+                            ASSERT(result[addResult.iterator->value].key == typedKey);
+                            result[addResult.iterator->value].value = WTFMove(typedValue);
                             continue;
                         }
-                        resultMap.add(typedKey, result.size());
                     }
                 } else
                     UNUSED_VARIABLE(resultMap);

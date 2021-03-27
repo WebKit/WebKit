@@ -26,10 +26,15 @@
 #import "config.h"
 #import "_WKExperimentalFeatureInternal.h"
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 @implementation _WKExperimentalFeature
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKExperimentalFeature.class, self))
+        return;
+
     _experimentalFeature->API::ExperimentalFeature::~ExperimentalFeature();
 
     [super dealloc];

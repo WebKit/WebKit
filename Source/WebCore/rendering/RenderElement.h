@@ -440,7 +440,7 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
 
 inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)
 {
-    return style.opacity() < 1.0f || style.hasMask() || style.clipPath() || style.hasFilter() || style.hasBackdropFilter() || style.hasBlendMode();
+    return style.hasOpacity() || style.hasMask() || style.clipPath() || style.hasFilter() || style.hasBackdropFilter() || style.hasBlendMode();
 }
 
 inline bool RenderObject::isRenderLayerModelObject() const

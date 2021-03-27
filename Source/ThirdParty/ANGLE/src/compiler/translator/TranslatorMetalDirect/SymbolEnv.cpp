@@ -432,6 +432,15 @@ void SymbolEnv::markSpace(VarField x,
     map[x] = space;
 }
 
+void SymbolEnv::removeSpace(VarField x,
+                          std::unordered_map<VarField, AddressSpace> &map)
+{
+    // It is in principle permissible to have references to pointers or multiple pointers, but this
+    // is not required for now and would require code changes to get right.
+    map.erase(x);
+}
+
+
 const AddressSpace *SymbolEnv::isSpace(VarField x,
                                        const std::unordered_map<VarField, AddressSpace> &map) const
 {
@@ -448,6 +457,11 @@ const AddressSpace *SymbolEnv::isSpace(VarField x,
 void SymbolEnv::markAsPointer(VarField x, AddressSpace space)
 {
     return markSpace(x, space, mPointers);
+}
+
+void SymbolEnv::removePointer(VarField x)
+{
+    return removeSpace(x, mPointers);
 }
 
 void SymbolEnv::markAsReference(VarField x, AddressSpace space)
@@ -473,6 +487,16 @@ void SymbolEnv::markAsPacked(const TField &field)
 bool SymbolEnv::isPacked(const TField &field) const
 {
     return mPackedFields.find(&field) != mPackedFields.end();
+}
+
+void SymbolEnv::markAsUBO(VarField x)
+{
+    mUboFields.insert(x);
+}
+
+bool SymbolEnv::isUBO(VarField x) const
+{
+    return mUboFields.find(x) != mUboFields.end();
 }
 
 static TBasicType GetTextureBasicType(TBasicType basicType)

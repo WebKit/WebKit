@@ -1,3 +1,686 @@
+2021-03-18  Youenn Fablet  <youenn@apple.com>
+
+        Move camera GPU Process flag to experimental
+        https://bugs.webkit.org/show_bug.cgi?id=223374
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-17  Saam Barati  <sbarati@apple.com>
+
+        Make sure we only set HAVE_VM_FLAGS_PERMANENT to 1 when targeting macOS >= 11.0
+        https://bugs.webkit.org/show_bug.cgi?id=223408
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/PlatformHave.h:
+
+2021-03-17  Mark Lam  <mark.lam@apple.com>
+
+        Fix race condition in ConcurrentPtrHashSet.
+        https://bugs.webkit.org/show_bug.cgi?id=223241
+        rdar://74637896
+
+        Reviewed by Yusuke Suzuki.
+
+        There exists a race condition where ConcurrentPtrHashSet::resizeIfNecessary() may
+        not capture an entry added by ConcurrentPtrHashSet::addSlow() concurrently.
+
+        ConcurrentPtrHashSet::addSlow() currently does the following:
+
+            {
+                if (table->load.exchangeAdd(1) >= table->maxLoad())     // (a1)
+                    return resizeAndAdd(ptr);                           // (a2)
+    
+                for (;;) {
+                    void* oldEntry = table->array[index].compareExchangeStrong(nullptr, ptr);   // (a3)
+                    if (!oldEntry) {
+                        if (m_table.load() != table) {                  // (a4)
+                            // We added an entry to an old table! We need to reexecute the add on the new table.
+                            return add(ptr);                            // (a5)
+                        }
+                        return true;                                    // (a6)
+                    }
+                    if (oldEntry == ptr)
+                        return false;
+
+                    ... // set index to next entry slot to try.
+                }
+            }
+
+        ConcurrentPtrHashSet::resizeIfNecessary() currently does the following:
+
+            {
+                auto locker = holdLock(m_lock);                         // (r1)
+                Table* table = m_table.loadRelaxed();
+                if (table->load.loadRelaxed() < table->maxLoad())
+                    return;
+
+                // (r2)
+
+                std::unique_ptr<Table> newTable = Table::create(table->size * 2);
+                ...
+                for (unsigned i = 0; i < table->size; ++i) {            // (r3)
+                    void* ptr = table->array[i].loadRelaxed();
+                    if (!ptr)
+                        continue;
+        
+                    ... // copy ptr to newTable.                        // (r4)
+                }
+    
+                ...
+                m_table.store(newTable.get());                          // (r5)
+                ...
+            }
+
+        Let's say thread T1 is executing addSlow(), and thread T2 is concurrently executing
+        resizeIfNecessary().
+
+        Consider the following scenario (in chronological order):
+        1. T2 has arrived at just before (r5) i.e. it is already done copying the entries
+           in the old m_table.  
+        2. T1 executes (a3) and writes a new entry into m_table.
+        3. T1 checks that the table hasn't been replaced at (a4), and sees that it has
+           not.
+        4. T1 returns at (a6), thinking that its new entry is committed.
+        5. T2 sets the new m_table at (r5), thereby discarding the new entry that T1 has
+           just written.
+
+        The fix is to set m_table to a newly introduced m_stubTable at (r2).  m_stubTable
+        is set up with a size of 0, and load value of 10.  This means it is always full.
+        With this, the following scenarios can play out:
+
+        Scenario 1: T2 installs m_stubTable before T1 reaches (a1)
+
+        1. At (a1), T1 sees that m_table (which is m_stubTable) is full.
+        2. T1 calls resizeAndAdd() at (a2), which ends up calling resizeIfNecessary()
+           and blocking on the lock at (r1).
+
+        Scenario 2: T2 installs m_stubTable after T1 reaches just before (a3)
+
+        1. T1 writes the new entry at (a3).
+        2. T1 checks m_table at (a4), and sees that it has changed (now pointing to
+           m_stubTable).
+        3. T1 calls add() again at (a5) to redo the operation, and ends with scenario 1.
+
+        Scenario 3: T2 installs m_stubTable after T1 reaches (a3), but before (a4)
+
+        1. The new entry has already been added, but we don't know if it made the cut off
+           for T2 to copy it or not.  But, it doesn't matter because ...
+        2. T1 checks m_table at (a4), and sees that it has changed (now pointing to
+           m_stubTable).
+        3. T1 calls add() again at (a5) to redo the operation, and ends with scenario 1.
+
+        Scenario 4: T2 installs m_stubTable after T1 reaches (a4)
+
+        1. The new entry has already been added.
+        2. T1 checks m_table at (a4), and sees that it has NOT changed (because T2 hasn't
+           installed m_stubTable yet).  This means T2's copy loop is guaranteed to not
+           have started yet i.e. the new entry will definitely be picked up by the copy
+           loop.
+        3. T1 returns at (a6), and all is well.
+
+        * wtf/ConcurrentPtrHashSet.cpp:
+        (WTF::ConcurrentPtrHashSet::deleteOldTables):
+        (WTF::ConcurrentPtrHashSet::initialize):
+        (WTF::ConcurrentPtrHashSet::containsImplSlow const):
+        (WTF::ConcurrentPtrHashSet::sizeSlow const):
+        (WTF::ConcurrentPtrHashSet::resizeIfNecessary):
+        (WTF::ConcurrentPtrHashSet::Table::initializeStub):
+        * wtf/ConcurrentPtrHashSet.h:
+
+2021-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 250 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=223398
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-03-17  Saam Barati  <sbarati@apple.com>
+
+        Determine if we have useFastJITPermissions on arm64e at runtime instead of hardcoding it as always enabled
+        https://bugs.webkit.org/show_bug.cgi?id=223388
+        <rdar://74819266>
+
+        Reviewed by Mark Lam.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformUse.h:
+
+2021-03-17  Chris Dumez  <cdumez@apple.com>
+
+        Memory limit per tab shrinks as you open tabs in the same WebContent process (may affect Google Drive, Dropbox, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=223394
+        <rdar://75499387>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure the process memory limit scales with the number of web pages it holds (without cap on the number of
+        pages).
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForMemoryKillOfInactiveProcess):
+
+2021-03-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Populate NSURLSession with attributed bundle ID
+        https://bugs.webkit.org/show_bug.cgi?id=223382
+        <rdar://problem/75498230>
+
+        Reviewed by Alex Christensen.
+
+        Add new HAVE_CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER macro.
+
+        * wtf/PlatformHave.h:
+
+2021-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        Allow UniqueRef to be the value of a HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=223240
+
+        Reviewed by Youenn Fablet.
+
+        This has the advantage over std::unique_ptr of never providing a null value when you iterate HashMap.values
+
+        * wtf/HashIterators.h:
+        (WTF::HashTableConstValuesIterator::get const):
+        * wtf/HashTraits.h:
+        (WTF::HashTraits<UniqueRef<T>>::emptyValue):
+        (WTF::HashTraits<UniqueRef<T>>::constructDeletedValue):
+        (WTF::HashTraits<UniqueRef<T>>::isDeletedValue):
+        (WTF::HashTraits<UniqueRef<T>>::peek):
+        (WTF::HashTraits<UniqueRef<T>>::take):
+
+2021-03-16  Devin Rousso  <drousso@apple.com>
+
+        [macOS] change for the language/subtitle tracks button to use an `NSMenu` instead of web content
+        https://bugs.webkit.org/show_bug.cgi?id=223239
+        <rdar://problem/75462340>
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformEnableCocoa.h:
+        Turn on `ENABLE_MEDIA_CONTROLS_CONTEXT_MENUS` for macOS.
+
+2021-03-16  Per Arne  <pvollan@apple.com>
+
+        Add signpost for injected bundle creation
+        https://bugs.webkit.org/show_bug.cgi?id=223068
+
+        Reviewed by Alex Christensen.
+
+        Add trace point codes for start and end of injected bundle creation.
+
+        * wtf/SystemTracing.h:
+
+2021-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Stop using g_memdup
+        https://bugs.webkit.org/show_bug.cgi?id=223189
+
+        Reviewed by Philippe Normand.
+
+        Add fastMemDup() to replace g_memdup() that is now deprecated in GLib because of the possibility of overflow
+        when converting from size_t to unsigned int. There's a replacement in GLib already, but we would need to depend
+        on very new GLib version, so better use fastMemDup() when possible. In cases where we still need to use GLib
+        allocator, we can simply call g_malloc() + memcpy().
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMemDup):
+        * wtf/FastMalloc.h:
+
+2021-03-16  Khem Raj  <raj.khem@gmail.com>
+
+        [CMake] Build fails on RISC-V with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=222959
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Link with libatomic if ATOMICS_REQUIRE_LIBATOMIC is set.
+
+        * wtf/CMakeLists.txt:
+
+2021-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: (r255611) [ Mac ] 3 lldb tests failing related to HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=207204
+
+        Reviewed by Simon Fraser.
+
+        * wtf/HashTable.h:
+
+2021-03-15  Chris Dumez  <cdumez@apple.com>
+
+        RunLoop::isMain() should not need to do any heap allocations
+        https://bugs.webkit.org/show_bug.cgi?id=223227
+
+        Reviewed by Darin Adler.
+
+        RunLoop::isMain() should not need to do any heap allocations. Before this change,
+        calling RunLoop::isMain() on a non-main thread would call RunLoop::current() which
+        would allocate the RunLoop for the current thread. This is inefficient and an issue
+        for WebAudio since we're not allowed to do heap allocation on the audio rendering
+        thread.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::runLoopHolder):
+        (WTF::RunLoop::current):
+        (WTF::RunLoop::isMain):
+        * wtf/RunLoop.h:
+
+2021-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r271642) Another app was relying on DOMWindow reuse
+        https://bugs.webkit.org/show_bug.cgi?id=223217
+        <rdar://75186172>
+
+        Reviewed by Geoff Garen.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-15  Rob Buis  <rbuis@igalia.com>
+
+        Turn CSS aspect-ratio on by default
+        https://bugs.webkit.org/show_bug.cgi?id=223117
+
+        Reviewed by Simon Fraser.
+
+        Turn CSS aspect-ratio on by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-03-13  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt DDMacAction instead of DDAction on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=223145
+        <rdar://problem/70127512>
+
+        Reviewed by Megan Gardner.
+
+        * wtf/PlatformHave.h:
+
+2021-03-12  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r274327) [GLIB] 2D Canvas tests timing out after enabling GPUProces in testing
+        https://bugs.webkit.org/show_bug.cgi?id=223130
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-03-12  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 400 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=223106
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-03-11  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r267775): Web Share API Level 2 is incorrectly disabled
+        https://bugs.webkit.org/show_bug.cgi?id=223110
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Through a series of minor mishaps related to r267623 and r267775,
+        the current state of the default value of WebShareFileAPIEnabled
+        in modern WebKit does not match what it was changed to in r267762
+        (is it now instead off everywhere).
+
+        Fix this regression by copying the condition from WebShareEnabled.
+
+2021-03-11  Said Abou-Hallawa  <said@apple.com>
+
+        [GPUP] Enable 2D Canvas in layout tests by default
+        https://bugs.webkit.org/show_bug.cgi?id=222835
+
+        Reviewed by Simon Fraser.
+
+        Move UseGPUProcessForCanvasRenderingEnabled from WebPreferencesInternal 
+        to WebPreferencesExperimental so that the WebKitTestRunner will turn it
+        on by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-11  Saam Barati  <sbarati@apple.com>
+
+        Adopt VM_FLAGS_PERMANENT for the config vm mapping
+        https://bugs.webkit.org/show_bug.cgi?id=222086
+        <rdar://74402690>
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        * wtf/PlatformHave.h:
+        * wtf/Threading.cpp:
+        (WTF::initialize):
+        * wtf/WTFConfig.cpp:
+        (WTF::setPermissionsOfConfigPage):
+        * wtf/WTFConfig.h:
+        (WTF::setPermissionsOfConfigPage):
+
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce ensureOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=223105
+
+        Reviewed by Darin Adler.
+
+        Introduce ensureOnMainThread(), similarly to the recently added ensureOnMainThreadRunLoop(). It runs
+        the task synchronously when on the main thread, otherwise dispatches the task to the main thread.
+
+        * wtf/MainThread.cpp:
+        (WTF::ensureOnMainThread):
+        * wtf/MainThread.h:
+        * wtf/ThreadSafeRefCounted.h:
+        (WTF::ThreadSafeRefCounted::deref const):
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringWrapperCFAllocator::deallocate):
+        * wtf/unix/MemoryPressureHandlerUnix.cpp:
+        (WTF::MemoryPressureHandler::triggerMemoryPressureEvent):
+
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce WorkQueue::main() to get the main thread's work queue
+        https://bugs.webkit.org/show_bug.cgi?id=223087
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce WorkQueue::main() to get the main thread's work queue. This allows us to port some more code from
+        dispatch_queue to WorkQueue. It also simplifies some code that has to deal that sometimes needs to run on
+        the main thread and other times on a background queue. Having a single WorkQueue type to represent both the
+        main thread and a background queue makes writing such code more convenient.
+
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::main):
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::constructMainWorkQueue):
+        (WTF::WorkQueue::WorkQueue):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WorkQueue::constructMainWorkQueue):
+        (WorkQueue::WorkQueue):
+
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Use BinarySemaphore in callOnMainAndWait()
+        https://bugs.webkit.org/show_bug.cgi?id=223092
+
+        Reviewed by Geoffrey Garen.
+
+        Use BinarySemaphore in callOnMainAndWait() instead of a Condition, this simplifies the code
+        a bit. Also templatize the function to make sure we avoid any runtime checks for the
+        the "mainStyle".
+
+        * wtf/MainThread.cpp:
+        (WTF::callOnMainAndWait):
+        (WTF::callOnMainRunLoopAndWait):
+        (WTF::callOnMainThreadAndWait):
+
+2021-03-11  Mark Lam  <mark.lam@apple.com>
+
+        Use tagged pointers in more places in the MetaAllocator code.
+        https://bugs.webkit.org/show_bug.cgi?id=223055
+        rdar://69971224
+
+        Reviewed by Saam Barati.
+
+        1. Made the MetaAllocatorPtr constructor that takes a raw pointer private, and
+           only call it from a static factory method, MetaAllocatorPtr::makeFromRawPointer()
+           to make it clear that we're using an untagged pointer as a source.
+        2. Added a MetaAllocatorPtr constructor that retags a pointer.
+           This allows minimizes the window of working with an untagged pointer.
+        3. Assert that MetaAllocator::addFreshFreeSpace() is only called at system
+           initialization time.
+        4. Removed an unused MetaAllocator::FreeSpaceNode constructor.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocator::FreeSpaceNode::FreeSpaceNode): Deleted.
+        * wtf/MetaAllocatorHandle.h:
+        * wtf/MetaAllocatorPtr.h:
+        (WTF::MetaAllocatorPtr::makeFromRawPointer):
+        (WTF::MetaAllocatorPtr::MetaAllocatorPtr):
+
+2021-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Introduce WorkQueue::dispatchSync()
+        https://bugs.webkit.org/show_bug.cgi?id=223049
+
+        Reviewed by Alex Christensen.
+
+        Introduce WorkQueue::dispatchSync(), which relies on GCD's dispatch_sync() internally on Cocoa
+        ports. For other ports, it relies on a BinarySemaphore for synchronization.
+
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::dispatchSync):
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatchSync):
+
+2021-03-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK][WPE] Bump libsoup3 version to 2.99.3
+
+        * wtf/Platform.h:
+        * wtf/URL.h:
+
+2021-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Use RetainPtr<> / OSObjectPtr<> more in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=223030
+
+        Reviewed by Darin Adler.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::setDispatchQueue):
+        * wtf/MemoryPressureHandler.h:
+        * wtf/WorkQueue.h:
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::uninstall):
+        (WTF::MemoryPressureHandler::holdOff):
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+        (WTF::WorkQueue::platformInitialize):
+        (WTF::WorkQueue::platformInvalidate):
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringWrapperCFAllocator::allocator):
+        (WTF::StringImpl::createCFString):
+
+2021-03-10  Dean Jackson  <dino@apple.com>
+
+        Use std::forward for forwarding references instead of WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=223040
+
+        Reviewed by Darin Adler.
+
+        A newer version of clang produced a helpful warning that told
+        us we were using WTFMove in places where we should use std::forward.
+
+        * wtf/Expected.h:
+        (std::experimental::fundamentals_v3::expected::operator=):
+        * wtf/Function.h:
+        (WTF::Function<Out):
+        * wtf/NeverDestroyed.h:
+        (WTF::makeNeverDestroyed):
+
+2021-03-09  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Make WebKit API Objective-C objects safe to release on non-main threads
+        https://bugs.webkit.org/show_bug.cgi?id=223013
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/MainThread.cpp:
+        (WTF::ensureOnMainRunLoop): Added. For use in cases where we want to be more
+        efficient, and synchronous, when already on the main run loop, but we can do
+        the work asynchronously when called and not on the main run loop.
+
+        * wtf/MainThread.h: Added ensureOnMainRunLoop.
+
+2021-03-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Don Olmstead.
+
+        We need to export WTF::filenameForDisplay.
+
+        * wtf/FileSystem.h:
+
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Use RELEASE_ASSERT() for Deque bounds checks
+        https://bugs.webkit.org/show_bug.cgi?id=223008
+
+        Reviewed by Alex Christensen.
+
+        Use RELEASE_ASSERT() for Deque bounds checks instead of ASSERT(), similarly to what we did for Vector.
+
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::removeFirst):
+        (WTF::inlineCapacity>::removeLast):
+
+2021-03-09  Sam Weinig  <weinig@apple.com>
+
+        Preferences do not need to be passed to the WebProcess via WebPageCreationParameters since the store already is
+        https://bugs.webkit.org/show_bug.cgi?id=222945
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/Preferences/WebPreferencesDebug.yaml:
+        NeedsInAppBrowserPrivacyQuirks is only ever accessed via the WebKit preferences store,
+        so does not need to be exposed in WebKitLegacy or WebCore. Achieve this by removing the
+        WebKitLegacy and WebCore defaults.
+
+2021-03-09  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce unnecessary string copies in ParsedContentRange
+        https://bugs.webkit.org/show_bug.cgi?id=221769
+
+        Reviewed by Geoff Garen.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::toInt64Strict const):
+        * wtf/text/WTFString.h:
+
+2021-03-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274171.
+        https://bugs.webkit.org/show_bug.cgi?id=223004
+
+        Broke canvas layout tests on Apple Silicon
+
+        Reverted changeset:
+
+        "[GPUP] Enable 2D Canvas in layout tests by default"
+        https://bugs.webkit.org/show_bug.cgi?id=222835
+        https://trac.webkit.org/changeset/274171
+
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Stop using callOnMainThread() / isMainThread() in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=222986
+
+        Reviewed by Alex Christensen.
+
+        * wtf/MainThread.h:
+
+2021-03-09  Said Abou-Hallawa  <said@apple.com>
+
+        [GPUP] Enable 2D Canvas in layout tests by default
+        https://bugs.webkit.org/show_bug.cgi?id=222835
+
+        Reviewed by Simon Fraser.
+
+        Move UseGPUProcessForCanvasRenderingEnabled from WebPreferencesInternal 
+        to WebPreferencesExperimental so that the WebKitTestRunner will turn it
+        on by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-09  Sam Weinig  <weinig@apple.com>
+
+        Remove CSSParserContext::enforcesCSSMIMETypeInNoQuirksMode as it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=222949
+
+        Reviewed by Darin Adler.
+
+        At some point in the past we stoped doing anything with the enforcesCSSMIMETypeInNoQuirksMode
+        bit on CSSParserContext.
+
+        The only time it was ever disabled was when running ancient versions of iWeb, a product that
+        itself hasn't existed for over a decade, so I think we are ok to remove it.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
+2021-03-09  Ben Nham  <nham@apple.com>
+
+        Adopt new NSURLSessionConfiguration SPI for connection cache configuration
+        https://bugs.webkit.org/show_bug.cgi?id=222934
+
+        Reviewed by Geoffrey Garen.
+
+        Add the HAVE_CFNETWORK_NSURLSESSION_CONNECTION_CACHE_LIMITS flag to control whether or not
+        to use the connection cache limit SPI on NSURLSessionConfiguration.
+
+        * wtf/PlatformHave.h:
+
+2021-03-08  Sam Weinig  <weinig@apple.com>
+
+        Remove quirks for the no longer supported iAd Producer
+        https://bugs.webkit.org/show_bug.cgi?id=222894
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        Remove NeedsIsLoadingInAPISenseQuirk preference which only existed to enable
+        a quirk for iAd Producer.
+
+2021-03-07  Sam Weinig  <weinig@apple.com>
+
+        Move new color(), lab() and lch() color functions behind runtime settings.
+        https://bugs.webkit.org/show_bug.cgi?id=222869
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Add experimental feature flag for the new CSS Color 4 color types. 
+
+2021-03-06  Dean Jackson  <dino@apple.com>
+
+        dlopen_preflight is failing (temporarily) but obsolete
+        https://bugs.webkit.org/show_bug.cgi?id=222829
+
+        Reviewed by Jer Noble.
+
+        I hit a bug where dlopen_preflight was failing in a particular build.
+        That is now fixed, but as I was discussing it with the dyld team
+        they said we should stop using it. The rationale was that it only
+        made sense during the PowerPC to Intel transition, and it is as
+        expensive as dlopen now.
+
+        * wtf/PlatformUse.h: No need for preflight linking code.
+        * wtf/cocoa/SoftLinking.h:
+
 2021-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Bump cmake_minimum_required version to 3.12 or later

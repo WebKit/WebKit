@@ -102,12 +102,12 @@ static bool contentRuleListsEnabled(const DocumentLoader& documentLoader)
     return true;
 }
     
-ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom)
 {
     if (!contentRuleListsEnabled(initiatingDocumentLoader))
         return { };
 
-    return userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader);
+    return userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom);
 }
 #endif
 

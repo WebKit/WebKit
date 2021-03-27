@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
+static RetainPtr<CGContextRef> CGContextWithHDC(HDC hdc, bool hasAlpha)
 {
     HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
 
@@ -55,12 +55,11 @@ static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
         return 0;
 
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | (hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst);
-    CGContextRef context = CGBitmapContextCreate(pixelData.buffer(), pixelData.size().width(), pixelData.size().height(), 8,
-                                                 pixelData.bytesPerRow(), sRGBColorSpaceRef(), bitmapInfo);
+    auto context = adoptCF(CGBitmapContextCreate(pixelData.buffer(), pixelData.size().width(), pixelData.size().height(), 8, pixelData.bytesPerRow(), sRGBColorSpaceRef(), bitmapInfo));
 
     // Flip coords
-    CGContextTranslateCTM(context, 0, pixelData.size().height());
-    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context.get(), 0, pixelData.size().height());
+    CGContextScaleCTM(context.get(), 1, -1);
     
     // Put the HDC In advanced mode so it will honor affine transforms.
     SetGraphicsMode(hdc, GM_ADVANCED);
@@ -79,7 +78,6 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
         return;
 
     m_data = new GraphicsContextPlatformPrivate(CGContextWithHDC(hdc, hasAlpha));
-    CGContextRelease(m_data->m_cgContext.get());
     m_data->m_hdc = hdc;
     if (m_data->m_cgContext) {
         // Make sure the context starts in sync with our state.

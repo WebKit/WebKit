@@ -72,7 +72,7 @@ void PlatformWebView::initialize(WKPageConfigurationRef configuration)
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
-    // Not implemented.
+    WKViewSetSize(m_view, WKSizeMake(width, height));
 }
 
 WKPageRef PlatformWebView::page() const

@@ -70,9 +70,8 @@ void WebPageProxy::loadRecentSearches(const String& name, CompletionHandler<void
     completionHandler(WTFMove(searchItems));
 }
 
-void WebPageProxy::updateEditorState(const EditorState& editorState)
+void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState&)
 {
-    m_editorState = editorState;
 }
 
 PlatformViewWidget WebPageProxy::viewWidget()

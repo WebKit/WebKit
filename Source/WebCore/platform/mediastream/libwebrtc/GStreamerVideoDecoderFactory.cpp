@@ -213,7 +213,7 @@ public:
         }
 
         // FIXME- Use a GstBufferPool.
-        auto buffer = adoptGRef(gst_buffer_new_wrapped(g_memdup(inputImage.data(), inputImage.size()),
+        auto buffer = adoptGRef(gstBufferNewWrappedFast(fastMemDup(inputImage.data(), inputImage.size()),
             inputImage.size()));
         GST_BUFFER_DTS(buffer.get()) = (static_cast<guint64>(inputImage.Timestamp()) * GST_MSECOND) - m_firstBufferDts;
         GST_BUFFER_PTS(buffer.get()) = (static_cast<guint64>(renderTimeMs) * GST_MSECOND) - m_firstBufferPts;

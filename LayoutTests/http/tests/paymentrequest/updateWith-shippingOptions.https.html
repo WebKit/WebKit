@@ -61,12 +61,7 @@ user_activation_test(async (test) => {
         assert_equals(internals.mockPaymentCoordinator.lineItems[i].label, detailsInit.displayItems[i].label, `display item ${i} label should not change`);
         assert_equals(internals.mockPaymentCoordinator.lineItems[i].amount, detailsInit.displayItems[i].amount.value, `display item ${i} value should not change`);
     }
-    assert_equals(internals.mockPaymentCoordinator.shippingMethods.length, detailsInit.shippingOptions.length, "number of shipping options should not change");
-    for (let i = 0; i < detailsInit.shippingOptions.length; ++i) {
-        assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].identifier, detailsInit.shippingOptions[i].id, `shipping option ${i} id should not change`);
-        assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].label, detailsInit.shippingOptions[i].label, `shipping option ${i} label should not change`);
-        assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].amount, detailsInit.shippingOptions[i].amount.value, `shipping option ${i} amount should not change`);
-    }
+    assert_equals(internals.mockPaymentCoordinator.shippingMethods.length, 0, "number of shipping options should not change");
     assert_equals(request.shippingOption, null, "selected shipping option should not be exposed on the request");
     assert_equals(response.shippingOption, null, "selected shipping option should not be exposed on the response");
 

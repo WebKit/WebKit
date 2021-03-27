@@ -32,15 +32,64 @@
 
 namespace JSC {
 
-inline AbstractSlotVisitor::Context::Context(AbstractSlotVisitor& visitor, HeapCell* cell)
+using ReferrerToken = AbstractSlotVisitor::ReferrerToken;
+
+inline ReferrerToken::ReferrerToken(HeapCell* cell)
+    : m_bits(bitwise_cast<uintptr_t>(cell) | HeapCellToken)
+{
+}
+
+inline ReferrerToken::ReferrerToken(OpaqueRootTag, void* opaqueRoot)
+    : m_bits(bitwise_cast<uintptr_t>(opaqueRoot) | OpaqueRootToken)
+{
+    ASSERT(opaqueRoot);
+}
+
+inline ReferrerToken::ReferrerToken(RootMarkReason reason)
+    : m_bits((static_cast<uintptr_t>(reason) << tokenTypeShift) | RootMarkReasonToken)
+{
+}
+
+inline HeapCell* ReferrerToken::asCell() const
+{
+    return isHeapCell() ? bitwise_cast<HeapCell*>(m_bits & ~tokenTypeMask) : nullptr;
+}
+
+inline void* ReferrerToken::asOpaqueRoot() const
+{
+    return isOpaqueRoot() ? bitwise_cast<HeapCell*>(m_bits & ~tokenTypeMask) : nullptr;
+}
+
+inline RootMarkReason ReferrerToken::asRootMarkReason() const
+{
+    return isRootMarkReason() ? static_cast<RootMarkReason>(m_bits >> tokenTypeShift) : RootMarkReason::None;
+}
+
+inline AbstractSlotVisitor::ReferrerContext::ReferrerContext(AbstractSlotVisitor& visitor, ReferrerToken referrer)
     : m_visitor(visitor)
-    , m_cell(cell)
+    , m_referrer(referrer)
 {
     m_previous = m_visitor.m_context;
+    if (m_previous) {
+        // An OpaqueRoot contexts can only be on the leaf.
+        RELEASE_ASSERT(!m_previous->m_isOpaqueRootContext);
+    }
     m_visitor.m_context = this;
 }
 
-inline AbstractSlotVisitor::Context::~Context()
+inline AbstractSlotVisitor::ReferrerContext::ReferrerContext(AbstractSlotVisitor& visitor, AbstractSlotVisitor::OpaqueRootTag)
+    : m_visitor(visitor)
+    , m_isOpaqueRootContext(true)
+{
+    m_previous = m_visitor.m_context;
+    if (m_previous) {
+        // An OpaqueRoot contexts can only be on the leaf.
+        RELEASE_ASSERT(!m_previous->m_isOpaqueRootContext);
+    }
+    m_visitor.m_context = this;
+}
+
+inline AbstractSlotVisitor::ReferrerContext::~ReferrerContext()
 {
     m_visitor.m_context = m_previous;
 }
@@ -75,13 +124,20 @@ inline bool AbstractSlotVisitor::addOpaqueRoot(void* ptr)
         return false;
     if (!m_opaqueRoots.add(ptr))
         return false;
+    if (UNLIKELY(m_needsExtraOpaqueRootHandling))
+        didAddOpaqueRoot(ptr);
     m_visitCount++;
     return true;
 }
 
 inline bool AbstractSlotVisitor::containsOpaqueRoot(void* ptr) const
 {
-    return m_opaqueRoots.contains(ptr);
+    bool found = m_opaqueRoots.contains(ptr);
+    if (UNLIKELY(m_needsExtraOpaqueRootHandling)) {
+        auto* nonConstThis = const_cast<AbstractSlotVisitor*>(this);
+        nonConstThis->didFindOpaqueRoot(ptr);
+    }
+    return found;
 }
 
 template<typename T>
@@ -139,11 +195,11 @@ ALWAYS_INLINE void AbstractSlotVisitor::appendUnbarriered(JSValue* slot, size_t 
         appendUnbarriered(slot[i]);
 }
 
-ALWAYS_INLINE HeapCell* AbstractSlotVisitor::parentCell() const
+ALWAYS_INLINE ReferrerToken AbstractSlotVisitor::referrer() const
 {
     if (!m_context)
         return nullptr;
-    return m_context->cell();
+    return m_context->referrer();
 }
 
 ALWAYS_INLINE void AbstractSlotVisitor::reset()

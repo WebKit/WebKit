@@ -46,10 +46,11 @@ public:
     bool isEnabled(const String&) override;
     int getGraphicsResetStatusARB() override;
 
-    PlatformGLObject createVertexArrayOES() override = 0;
-    void deleteVertexArrayOES(PlatformGLObject) override = 0;
-    GCGLboolean isVertexArrayOES(PlatformGLObject) override = 0;
-    void bindVertexArrayOES(PlatformGLObject) override = 0;
+    // GL_OES_vertex_array_object
+    virtual PlatformGLObject createVertexArrayOES() = 0;
+    virtual void deleteVertexArrayOES(PlatformGLObject) = 0;
+    virtual GCGLboolean isVertexArrayOES(PlatformGLObject) = 0;
+    virtual void bindVertexArrayOES(PlatformGLObject) = 0;
 
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override = 0;
 

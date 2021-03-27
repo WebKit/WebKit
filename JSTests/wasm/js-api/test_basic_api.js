@@ -108,7 +108,7 @@ for (const c in constructorProperties) {
             assert.eq(typeof e.stack, "string");
             const sillyString = "uh-oh!";
             const e2 = new WebAssembly[c](sillyString);
-            assert.eq(e2.message, sillyString + " (evaluating 'new WebAssembly[c](sillyString)')");
+            assert.eq(e2.message, sillyString);
         }
         {
             const e = WebAssembly[c]();

@@ -383,6 +383,11 @@ void TestRunner::setDatabaseQuota(uint64_t quota)
     return WKBundleSetDatabaseQuota(InjectedBundle::singleton().bundle(), quota);
 }
 
+void TestRunner::setQuotaLoggingEnabled(bool enabled)
+{
+    postSynchronousPageMessage("SetQuotaLoggingEnabled", enabled);
+}
+
 void TestRunner::syncLocalStorage()
 {
     postSynchronousMessage("SyncLocalStorage", true);
@@ -2038,10 +2043,12 @@ void TestRunner::setPrivateClickMeasurementTokenSignatureURLForTesting(JSStringR
         adoptWK(WKURLCreateWithUTF8CString(toWTFString(urlString).utf8().data())));
 }
 
-void TestRunner::setPrivateClickMeasurementAttributionReportURLForTesting(JSStringRef urlString)
+void TestRunner::setPrivateClickMeasurementAttributionReportURLsForTesting(JSStringRef sourceURLString, JSStringRef attributeOnURLString)
 {
-    postSynchronousPageMessage("SetPrivateClickMeasurementAttributionReportURLForTesting",
-        adoptWK(WKURLCreateWithUTF8CString(toWTFString(urlString).utf8().data())));
+    postSynchronousPageMessage("SetPrivateClickMeasurementAttributionReportURLsForTesting", createWKDictionary({
+        { "SourceURLString", toWK(sourceURLString) },
+        { "AttributeOnURLString", toWK(attributeOnURLString) },
+    }));
 }
 
 void TestRunner::markPrivateClickMeasurementsAsExpiredForTesting()
@@ -2049,11 +2056,11 @@ void TestRunner::markPrivateClickMeasurementsAsExpiredForTesting()
     postSynchronousPageMessage("MarkPrivateClickMeasurementsAsExpiredForTesting");
 }
 
-void TestRunner::setFraudPreventionValuesForTesting(JSStringRef secretToken, JSStringRef unlinkableToken, JSStringRef signature, JSStringRef keyID)
+void TestRunner::setPrivateClickMeasurementFraudPreventionValuesForTesting(JSStringRef unlinkableToken, JSStringRef secretToken, JSStringRef signature, JSStringRef keyID)
 {
-    postSynchronousMessage("SetFraudPreventionValuesForTesting", createWKDictionary({
-        { "SecretToken", toWK(secretToken) },
+    postSynchronousMessage("SetPCMFraudPreventionValuesForTesting", createWKDictionary({
         { "UnlinkableToken", toWK(unlinkableToken) },
+        { "SecretToken", toWK(secretToken) },
         { "Signature", toWK(signature) },
         { "KeyID", toWK(keyID) },
     }));
@@ -2104,12 +2111,12 @@ void TestRunner::didSetAppBoundDomainsCallback()
 
 void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)
 {
-    postSynchronousPageMessage("setIsSpeechRecognitionPermissionGranted", granted);
+    postSynchronousPageMessage("SetIsSpeechRecognitionPermissionGranted", granted);
 }
 
 void TestRunner::setIsMediaKeySystemPermissionGranted(bool granted)
 {
-    postSynchronousPageMessage("setIsMediaKeySystemPermissionGranted", granted);
+    postSynchronousPageMessage("SetIsMediaKeySystemPermissionGranted", granted);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

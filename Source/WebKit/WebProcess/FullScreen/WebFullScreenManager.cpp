@@ -161,7 +161,11 @@ void WebFullScreenManager::willEnterFullScreen()
     if (!m_element)
         return;
 
-    m_element->document().fullscreenManager().willEnterFullscreen(*m_element);
+    if (!m_element->document().fullscreenManager().willEnterFullscreen(*m_element)) {
+        close();
+        return;
+    }
+
 #if !PLATFORM(IOS_FAMILY)
     m_page->hidePageBanners();
 #endif
@@ -178,7 +182,10 @@ void WebFullScreenManager::didEnterFullScreen()
     if (!m_element)
         return;
 
-    m_element->document().fullscreenManager().didEnterFullscreen();
+    if (!m_element->document().fullscreenManager().didEnterFullscreen()) {
+        close();
+        return;
+    }
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
@@ -198,7 +205,10 @@ void WebFullScreenManager::willExitFullScreen()
 #endif
 
     m_finalFrame = screenRectOfContents(m_element.get());
-    m_element->document().fullscreenManager().willExitFullscreen();
+    if (!m_element->document().fullscreenManager().willExitFullscreen()) {
+        close();
+        return;
+    }
 #if !PLATFORM(IOS_FAMILY)
     m_page->showPageBanners();
 #endif
@@ -238,8 +248,16 @@ void WebFullScreenManager::requestEnterFullScreen()
 void WebFullScreenManager::requestExitFullScreen()
 {
     ASSERT(m_element);
-    if (!m_element)
+    if (!m_element) {
+        close();
         return;
+    }
+
+    auto& topDocument = m_element->document().topDocument();
+    if (!topDocument.fullscreenManager().fullscreenElement()) {
+        close();
+        return;
+    }
     m_element->document().fullscreenManager().cancelFullscreen();
 }
 

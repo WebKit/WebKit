@@ -36,7 +36,7 @@
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
-static CGColorRef leakCGColor(const Color&) CF_RETURNS_RETAINED;
+static RetainPtr<CGColorRef> createCGColor(const Color&);
 }
 
 namespace WTF {
@@ -44,7 +44,7 @@ namespace WTF {
 template<>
 RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>::createValueForKey(const WebCore::Color& color)
 {
-    return adoptCF(WebCore::leakCGColor(color));
+    return WebCore::createCGColor(color);
 }
 
 } // namespace WTF
@@ -89,7 +89,7 @@ Color::Color(CGColorRef color, OptionSet<Flags> flags)
 {
 }
 
-static CGColorRef leakCGColor(const Color& color)
+static RetainPtr<CGColorRef> createCGColor(const Color& color)
 {
     auto [colorSpace, components] = color.colorSpaceAndComponents();
 
@@ -118,7 +118,7 @@ static CGColorRef leakCGColor(const Color& color)
     auto [r, g, b, a] = components;
     CGFloat cgFloatComponents[4] { r, g, b, a };
 
-    return CGColorCreate(cgColorSpace, cgFloatComponents);
+    return adoptCF(CGColorCreate(cgColorSpace, cgFloatComponents));
 }
 
 CGColorRef cachedCGColor(const Color& color)
@@ -126,16 +126,16 @@ CGColorRef cachedCGColor(const Color& color)
     if (auto srgb = color.tryGetAsSRGBABytes()) {
         switch (PackedColor::RGBA { *srgb }.value) {
         case PackedColor::RGBA { Color::transparentBlack }.value: {
-            static CGColorRef transparentCGColor = leakCGColor(color);
-            return transparentCGColor;
+            static NeverDestroyed<RetainPtr<CGColorRef>> transparentCGColor = createCGColor(color);
+            return transparentCGColor.get().get();
         }
         case PackedColor::RGBA { Color::black }.value: {
-            static CGColorRef blackCGColor = leakCGColor(color);
-            return blackCGColor;
+            static NeverDestroyed<RetainPtr<CGColorRef>> blackCGColor = createCGColor(color);
+            return blackCGColor.get().get();
         }
         case PackedColor::RGBA { Color::white }.value: {
-            static CGColorRef whiteCGColor = leakCGColor(color);
-            return whiteCGColor;
+            static NeverDestroyed<RetainPtr<CGColorRef>> whiteCGColor = createCGColor(color);
+            return whiteCGColor.get().get();
         }
         }
     }

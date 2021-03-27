@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='resultsdbpy',
-    version='1.1.3',
+    version='2.0.3',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
@@ -70,6 +70,7 @@ setup(
         'xmltodict',
         'selenium',
         'webkitcorepy',
+        'webkitscmpy',
     ],
     include_package_data=True,
     zip_safe=False,

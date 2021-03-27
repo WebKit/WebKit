@@ -104,6 +104,18 @@ const documentation = {
                 ],
             ),
             documentEndpoint(
+                '/api/commits/representations',
+                ['GET'],
+                [],
+                [
+                    `Return a dictionary of prioritized valid commit representations for repositories tracked by this instance to the results database. The output is of the form:`,
+                    codeBlock('{\n' +
+                    '    <repository-id (a)>: ["hash", "identifier"],\n' +
+                    '    <repository-id (b)>: ["identifier", "revision"]\n' +
+                    '}'),
+                ],
+            ),
+            documentEndpoint(
                 '/api/commits/branches',
                 ['GET'],
                 ['Limit', 'Repository'],

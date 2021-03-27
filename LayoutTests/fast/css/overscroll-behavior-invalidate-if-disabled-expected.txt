@@ -7,6 +7,7 @@ PASS 'overscrollBehavior' in document.documentElement.style is false
 PASS 'overscroll-behavior' in getComputedStyle(document.documentElement) is false
 PASS CSS.supports('overscroll-behavior: contain') is false
 PASS CSS.supports('overscroll-behavior: inherit') is false
+PASS CSS.supports('overscroll-behavior', 'inherit') is false
 PASS CSS.supports('overscroll-behavior-x: inherit') is false
 PASS CSS.supports('overscroll-behavior-y: inherit') is false
 PASS successfullyParsed is true

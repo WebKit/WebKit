@@ -40,9 +40,9 @@ AggregateError::AggregateError(VM& vm, Structure* structure)
 {
 }
 
-void AggregateError::finishCreation(VM& vm, JSGlobalObject* globalObject, const MarkedArgumentBuffer& errors, const String& message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+void AggregateError::finishCreation(VM& vm, JSGlobalObject* globalObject, const MarkedArgumentBuffer& errors, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
-    Base::finishCreation(vm, globalObject, message, appender, type, useCurrentFrame);
+    Base::finishCreation(vm, globalObject, message, cause, appender, type, useCurrentFrame);
     ASSERT(inherits(vm, info()));
 
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -50,15 +50,15 @@ void AggregateError::finishCreation(VM& vm, JSGlobalObject* globalObject, const 
     RETURN_IF_EXCEPTION(scope, void());
 }
 
-AggregateError* AggregateError::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, JSValue errors, JSValue message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+AggregateError* AggregateError::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, JSValue errors, JSValue message, JSValue options, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String messageString;
-    if (!message.isUndefined()) {
-        messageString = message.toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-    }
+    String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    JSValue cause = !options.isObject() ? jsUndefined() : options.get(globalObject, vm.propertyNames->cause);
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     MarkedArgumentBuffer errorsList;
     forEachInIterable(globalObject, errors, [&] (VM&, JSGlobalObject*, JSValue nextValue) {
@@ -68,7 +68,7 @@ AggregateError* AggregateError::create(JSGlobalObject* globalObject, VM& vm, Str
     });
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    RELEASE_AND_RETURN(scope, create(globalObject, vm, structure, errorsList, messageString, appender, type, useCurrentFrame));
+    RELEASE_AND_RETURN(scope, create(globalObject, vm, structure, errorsList, messageString, cause, appender, type, useCurrentFrame));
 }
 
 } // namespace JSC

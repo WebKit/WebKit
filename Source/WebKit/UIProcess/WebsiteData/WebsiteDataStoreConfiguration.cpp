@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,6 +77,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_cookieStorageFile = this->m_cookieStorageFile;
     copy->m_sourceApplicationBundleIdentifier = this->m_sourceApplicationBundleIdentifier;
     copy->m_sourceApplicationSecondaryIdentifier = this->m_sourceApplicationSecondaryIdentifier;
+    copy->m_attributedBundleIdentifier = this->m_attributedBundleIdentifier;
     copy->m_httpProxy = this->m_httpProxy;
     copy->m_httpsProxy = this->m_httpsProxy;
     copy->m_deviceManagementRestrictionsEnabled = this->m_deviceManagementRestrictionsEnabled;

@@ -141,3 +141,12 @@ class Class8:
     """
     def __init__(self):
         pass
+
+
+MULTILINE_STRING_VARIABLE = '''
+some text
+some more text
+'''
+
+class Class9:
+    pass

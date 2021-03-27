@@ -276,39 +276,39 @@ PASS request.show() rejected promise  with TypeError: "EUR" does not match the e
 Testing PaymentDetails.shippingOptions
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = '';
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Value is not a sequence.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 'invalid';
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Value is not a sequence.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = null;
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Value is not a sequence.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 7;
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Value is not a sequence.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = { };
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Type error.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ }];
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentShippingOption.amount is required and must be an instance of PaymentCurrencyAmount.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Member PaymentShippingOption.amount is required and must be an instance of PaymentCurrencyAmount.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', }];
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Type error.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '' }];
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Type error.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '' }];
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Type error.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '', label: '' }];
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Type error.
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '-1', detail: '', identifier: '', label: '' }];
-PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true}) threw exception TypeError: Type error.
 
-SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: { currency: 'EUR', value: '10.00' }, id: '', label: '' }]; request = new PaymentRequest([validPaymentMethod()], paymentDetails)
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: { currency: 'EUR', value: '10.00' }, id: '', label: '' }]; request = new PaymentRequest([validPaymentMethod()], paymentDetails, {requestShipping: true})
 PASS request.show() rejected promise  with TypeError: "EUR" does not match the expected currency of "USD". Apple Pay requires all PaymentCurrencyAmounts to use the same currency code..
 Testing PaymentOptions
 

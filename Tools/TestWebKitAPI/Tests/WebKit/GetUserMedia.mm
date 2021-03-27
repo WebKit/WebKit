@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -46,6 +47,31 @@
 #import <wtf/text/WTFString.h>
 
 static bool done;
+
+@interface UserMediaCaptureUIDelegateForParameters : NSObject<WKUIDelegate>
+// WKUIDelegate
+- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler;
+@end
+
+@implementation UserMediaCaptureUIDelegateForParameters
+- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler {
+    EXPECT_WK_STREQ(origin.protocol, @"http");
+    EXPECT_WK_STREQ(origin.host, @"127.0.0.1");
+    EXPECT_EQ(origin.port, 9090U);
+
+    EXPECT_WK_STREQ(frame.securityOrigin.protocol, @"http");
+    EXPECT_WK_STREQ(frame.securityOrigin.host, @"127.0.0.1");
+    EXPECT_EQ(frame.securityOrigin.port, 9091U);
+    EXPECT_FALSE(frame.isMainFrame);
+    EXPECT_TRUE(frame.webView == webView);
+
+    EXPECT_FALSE(audio);
+    EXPECT_TRUE(video);
+
+    done = true;
+    decisionHandler(_WKPermissionDecisionGrant);
+}
+@end
 
 @interface GUMMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -310,6 +336,46 @@ TEST(WebKit, InterruptionBetweenSameProcessPages)
 #else
     [webView1 stringByEvaluatingJavaScript:@"checkIsPlaying()"];
 #endif
+    TestWebKitAPI::Util::run(&done);
+}
+
+static const char* mainFrameText = R"DOCDOCDOC(
+<html><body>
+<iframe src='http://127.0.0.1:9091/frame' allow='camera:http://127.0.0.1:9091'></iframe>
+</body></html>
+)DOCDOCDOC";
+static const char* frameText = R"DOCDOCDOC(
+<html><body><script>
+navigator.mediaDevices.getUserMedia({video:true});
+</script></body></html>
+)DOCDOCDOC";
+
+TEST(WebKit, PermissionDelegateParameters)
+{
+    TestWebKitAPI::HTTPServer server1({
+        { "/", { mainFrameText } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9090);
+
+    TestWebKitAPI::HTTPServer server2({
+        { "/frame", { frameText } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9091);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+#if PLATFORM(IOS_FAMILY)
+    [configuration setAllowsInlineMediaPlayback:YES];
+#endif
+
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    done = false;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegateForParameters alloc] init]);
+    webView.get().UIDelegate = delegate.get();
+    [webView loadRequest:server1.request()];
     TestWebKitAPI::Util::run(&done);
 }
 

@@ -1800,7 +1800,7 @@ void SpeculativeJIT::compileCompareEqPtr(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
+void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
 {
     JSValueOperand value(this, nodeUse, ManualOperandSpeculation);
     GPRTemporary result(this);
@@ -1848,7 +1848,7 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
 
         isNotMasqueradesAsUndefined.link(&m_jit);
     }
-    m_jit.move(TrustedImm32(JSValue::ValueFalse), resultGPR);
+    m_jit.move(invert ? TrustedImm32(JSValue::ValueFalse) : TrustedImm32(JSValue::ValueTrue), resultGPR);
     MacroAssembler::Jump done = m_jit.jump();
     
     notCell.link(&m_jit);
@@ -1862,25 +1862,25 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
                 resultGPR, 
                 MacroAssembler::TrustedImm64(JSValue::ValueNull)));
     }
-    m_jit.move(TrustedImm32(JSValue::ValueTrue), resultGPR);
+    m_jit.move(invert ? TrustedImm32(JSValue::ValueTrue) : TrustedImm32(JSValue::ValueFalse), resultGPR);
     
     done.link(&m_jit);
     
     jsValueResult(resultGPR, m_currentNode, DataFormatJSBoolean);
 }
 
-void SpeculativeJIT::compileLogicalNot(Node* node)
+void SpeculativeJIT::compileToBoolean(Node* node, bool invert)
 {
     switch (node->child1().useKind()) {
     case ObjectOrOtherUse: {
-        compileObjectOrOtherLogicalNot(node->child1());
+        compileToBooleanObjectOrOther(node->child1(), invert);
         return;
     }
         
     case Int32Use: {
         SpeculateInt32Operand value(this, node->child1());
         GPRTemporary result(this, Reuse, value);
-        m_jit.compare32(MacroAssembler::Equal, value.gpr(), MacroAssembler::TrustedImm32(0), result.gpr());
+        m_jit.compare32(invert ? MacroAssembler::Equal : MacroAssembler::NotEqual, value.gpr(), MacroAssembler::TrustedImm32(0), result.gpr());
         m_jit.or32(TrustedImm32(JSValue::ValueFalse), result.gpr());
         jsValueResult(result.gpr(), node, DataFormatJSBoolean);
         return;
@@ -1890,9 +1890,9 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         SpeculateDoubleOperand value(this, node->child1());
         FPRTemporary scratch(this);
         GPRTemporary result(this);
-        m_jit.move(TrustedImm32(JSValue::ValueFalse), result.gpr());
+        m_jit.move(invert ? TrustedImm32(JSValue::ValueFalse) : TrustedImm32(JSValue::ValueTrue), result.gpr());
         MacroAssembler::Jump nonZero = m_jit.branchDoubleNonZero(value.fpr(), scratch.fpr());
-        m_jit.xor32(TrustedImm32(true), result.gpr());
+        m_jit.move(invert ? TrustedImm32(JSValue::ValueTrue) : TrustedImm32(JSValue::ValueFalse), result.gpr());
         nonZero.link(&m_jit);
         jsValueResult(result.gpr(), node, DataFormatJSBoolean);
         return;
@@ -1904,8 +1904,10 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
             SpeculateBooleanOperand value(this, node->child1());
             GPRTemporary result(this, Reuse, value);
             
-            m_jit.move(value.gpr(), result.gpr());
-            m_jit.xor64(TrustedImm32(true), result.gpr());
+            if (invert)
+                m_jit.xor32(TrustedImm32(1), value.gpr(), result.gpr());
+            else
+                m_jit.move(value.gpr(), result.gpr());
             
             jsValueResult(result.gpr(), node, DataFormatJSBoolean);
             return;
@@ -1919,7 +1921,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         typeCheck(
             JSValueRegs(value.gpr()), node->child1(), SpecBoolean, m_jit.branchTest64(
                 JITCompiler::NonZero, result.gpr(), TrustedImm32(static_cast<int32_t>(~1))));
-        m_jit.xor64(TrustedImm32(JSValue::ValueTrue), result.gpr());
+        m_jit.xor64(invert ? TrustedImm32(JSValue::ValueTrue) : TrustedImm32(JSValue::ValueFalse), result.gpr());
         
         // If we add a DataFormatBool, we should use it here.
         jsValueResult(result.gpr(), node, DataFormatJSBoolean);
@@ -1944,17 +1946,18 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
             scratch.emplace(this);
             scratchGPR = scratch->gpr();
         }
-        bool negateResult = true;
-        m_jit.emitConvertValueToBoolean(vm(), JSValueRegs(arg1GPR), resultGPR, scratchGPR, valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject, negateResult);
+        m_jit.emitConvertValueToBoolean(vm(), JSValueRegs(arg1GPR), resultGPR, scratchGPR, valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject, invert);
         m_jit.or32(TrustedImm32(JSValue::ValueFalse), resultGPR);
         jsValueResult(resultGPR, node, DataFormatJSBoolean);
         return;
     }
     case StringUse:
-        return compileStringZeroLength(node);
+        compileToBooleanString(node, invert);
+        return;
 
     case StringOrOtherUse:
-        return compileLogicalNotStringOrOther(node);
+        compileToBooleanStringOrOther(node, invert);
+        return;
 
     default:
         DFG_CRASH(m_jit.graph(), node, "Bad use kind");
@@ -2529,9 +2532,17 @@ void SpeculativeJIT::compile(Node* node)
         compileArithUnary(node);
         break;
 
-    case LogicalNot:
-        compileLogicalNot(node);
+    case ToBoolean: {
+        bool invert = false;
+        compileToBoolean(node, invert);
         break;
+    }
+
+    case LogicalNot: {
+        bool invert = true;
+        compileToBoolean(node, invert);
+        break;
+    }
 
     case CompareLess:
         if (compare(node, JITCompiler::LessThan, JITCompiler::DoubleLessThanAndOrdered, operationCompareLess))

@@ -50,6 +50,7 @@ WEBCORE_EXPORT
     RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _legibleTouchBarMediaSelectionOptions;
     RetainPtr<AVTouchBarMediaSelectionOption> _currentLegibleTouchBarMediaSelectionOption;
     RefPtr<WebCore::PlaybackSessionInterfaceMac> _playbackSessionInterfaceMac;
+    double _defaultPlaybackRate;
     float _rate;
     BOOL _playing;
     BOOL _hasEnabledAudio;
@@ -66,6 +67,7 @@ WEBCORE_EXPORT
 @property (nonatomic) BOOL hasEnabledVideo;
 @property (getter=isPlaying) BOOL playing;
 @property BOOL canTogglePlayback;
+@property double defaultPlaybackRate;
 @property (nonatomic) float rate;
 @property BOOL allowsPictureInPicturePlayback;
 @property (getter=isPictureInPictureActive) BOOL pictureInPictureActive;

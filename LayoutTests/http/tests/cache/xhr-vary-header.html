@@ -12,7 +12,7 @@ var testStep = 1;
 function testCrossOrigin()
 {
     var req = new XMLHttpRequest;
-    req.open("get", "http://localhost:8000/cache/resources/xhr-vary-header-response.php");
+    req.open("get", "http://localhost:8000/cache/resources/xhr-vary-header-response.py");
     req.onload=function() { receivedResponse(req.responseText) }
     req.send();
 }

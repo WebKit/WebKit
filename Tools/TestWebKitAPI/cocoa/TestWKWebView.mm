@@ -37,6 +37,7 @@
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <objc/runtime.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -255,6 +256,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 @implementation TestMessageHandler {
     NSMutableDictionary<NSString *, dispatch_block_t> *_messageHandlers;
+    BlockPtr<void(NSString *)> _wildcardMessageHandler;
 }
 
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler
@@ -263,6 +265,11 @@ static NSString *overrideBundleIdentifier(id, SEL)
         _messageHandlers = [NSMutableDictionary dictionary];
 
     _messageHandlers[message] = [handler copy];
+}
+
+- (void)setWildcardMessageHandler:(void (^)(NSString *))handler
+{
+    _wildcardMessageHandler = handler;
 }
 
 - (void)removeMessage:(NSString *)message
@@ -275,6 +282,9 @@ static NSString *overrideBundleIdentifier(id, SEL)
     dispatch_block_t handler = _messageHandlers[message.body];
     if (handler)
         handler();
+
+    if (_wildcardMessageHandler)
+        _wildcardMessageHandler(message.body);
 }
 
 @end
@@ -509,6 +519,15 @@ static UICalloutBar *suppressUICalloutBar()
     }
 
     [_testHandler addMessage:message withHandler:action];
+}
+
+- (void)performAfterReceivingAnyMessage:(void (^)(NSString *))action
+{
+    if (!_testHandler) {
+        _testHandler = adoptNS([[TestMessageHandler alloc] init]);
+        [[[self configuration] userContentController] addScriptMessageHandler:_testHandler.get() name:@"testHandler"];
+    }
+    [_testHandler setWildcardMessageHandler:action];
 }
 
 - (void)synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:(NSString *)html

@@ -35,7 +35,7 @@
 
 #if USE(CG)
 typedef struct CGPattern* CGPatternRef;
-typedef CGPatternRef PlatformPatternPtr;
+typedef RetainPtr<CGPatternRef> PlatformPatternPtr;
 #elif USE(DIRECT2D)
 interface ID2D1BitmapBrush;
 typedef ID2D1BitmapBrush* PlatformPatternPtr;

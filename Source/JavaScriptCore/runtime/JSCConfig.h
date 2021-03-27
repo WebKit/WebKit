@@ -49,6 +49,7 @@ struct Config {
 
     static void configureForTesting()
     {
+        WTF::setPermissionsOfConfigPage();
         disableFreezingForTesting();
         enableRestrictedOptions();
     }
@@ -62,6 +63,8 @@ struct Config {
     bool disabledFreezingForTesting;
     bool restrictedOptionsEnabled;
     bool jitDisabled;
+
+    bool useFastJITPermissions;
 
     // The following HasBeenCalled flags are for auditing call_once initialization functions.
     bool initializeHasBeenCalled;

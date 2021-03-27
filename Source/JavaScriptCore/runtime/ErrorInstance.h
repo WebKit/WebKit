@@ -54,14 +54,14 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
     }
 
-    static ErrorInstance* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, ErrorType errorType = ErrorType::Error, bool useCurrentFrame = true)
+    static ErrorInstance* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message, JSValue cause, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, ErrorType errorType = ErrorType::Error, bool useCurrentFrame = true)
     {
         ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure, errorType);
-        instance->finishCreation(vm, globalObject, message, appender, type, useCurrentFrame);
+        instance->finishCreation(vm, globalObject, message, cause, appender, type, useCurrentFrame);
         return instance;
     }
 
-    static ErrorInstance* create(JSGlobalObject*, Structure*, JSValue message, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true);
+    static ErrorInstance* create(JSGlobalObject*, Structure*, JSValue message, JSValue options, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true);
 
     bool hasSourceAppender() const { return !!m_sourceAppender; }
     SourceAppender sourceAppender() const { return m_sourceAppender; }
@@ -94,7 +94,7 @@ public:
 protected:
     explicit ErrorInstance(VM&, Structure*, ErrorType);
 
-    void finishCreation(VM&, JSGlobalObject*, const String&, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
+    void finishCreation(VM&, JSGlobalObject*, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);

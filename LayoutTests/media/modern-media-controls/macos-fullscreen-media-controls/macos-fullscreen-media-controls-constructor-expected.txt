@@ -28,7 +28,7 @@ PASS mediaControls.bottomControlsBar.children[2].rightMargin is 27
 PASS mediaControls.bottomControlsBar.children[2].buttonMargin is 27
 
 Right container
-PASS mediaControls.bottomControlsBar.children[3].children is [mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
+PASS mediaControls.bottomControlsBar.children[3].children is [mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton, mediaControls.overflowButton]
 PASS mediaControls.bottomControlsBar.children[3].element.className is "buttons-container right"
 PASS mediaControls.bottomControlsBar.children[3].leftMargin is 12
 PASS mediaControls.bottomControlsBar.children[3].rightMargin is 12

@@ -49,6 +49,7 @@ AudioParam::AudioParam(BaseAudioContext& context, const String& name, float defa
     , m_automationRate(automationRate)
     , m_automationRateMode(automationRateMode)
     , m_smoothedValue(defaultValue)
+    , m_summingBus(AudioBus::create(1, AudioUtilities::renderQuantumSize, false).releaseNonNull())
 #if !RELEASE_LOG_DISABLED
     , m_logger(context.logger())
     , m_logIdentifier(context.nextAudioParameterLogIdentifier())
@@ -274,12 +275,11 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
 
     // Now sum all of the audio-rate connections together (unity-gain summing junction).
     // Note that connections would normally be mono, but we mix down to mono if necessary.
-    auto summingBus = AudioBus::create(1, numberOfValues, false);
-
     // If we're not sample accurate, we only need one value, so make the summing
     // bus have length 1. When the connections are added in, only the first
     // value will be added. Which is exactly what we want.
-    summingBus->setChannelMemory(0, values, sampleAccurate ? numberOfValues : 1);
+    ASSERT(numberOfValues <= AudioUtilities::renderQuantumSize);
+    m_summingBus->setChannelMemory(0, values, sampleAccurate ? numberOfValues : 1);
 
     for (auto& output : m_renderingOutputs) {
         ASSERT(output);
@@ -288,7 +288,7 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
         AudioBus* connectionBus = output->pull(0, AudioUtilities::renderQuantumSize);
 
         // Sum, with unity-gain.
-        summingBus->sumFrom(*connectionBus);
+        m_summingBus->sumFrom(*connectionBus);
     }
 
     // If we're not sample accurate, duplicate the first element of |values| to all of the elements.

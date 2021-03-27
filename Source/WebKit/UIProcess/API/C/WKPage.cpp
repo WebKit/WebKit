@@ -1928,13 +1928,14 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
 #if ENABLE(DEVICE_ORIENTATION)
-        void shouldAllowDeviceOrientationAndMotionAccess(WebPageProxy& page, WebFrameProxy&, FrameInfoData&& frameInfo, CompletionHandler<void(bool)>&& completionHandler) final
+        void shouldAllowDeviceOrientationAndMotionAccess(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, CompletionHandler<void(bool)>&& completionHandler) final
         {
             if (!m_client.shouldAllowDeviceOrientationAndMotionAccess)
                 return completionHandler(false);
 
-            auto origin = API::SecurityOrigin::create(frameInfo.securityOrigin.securityOrigin());
-            completionHandler(m_client.shouldAllowDeviceOrientationAndMotionAccess(toAPI(&page), toAPI(origin.ptr()), m_client.base.clientInfo));
+            auto origin = API::SecurityOrigin::create(SecurityOrigin::createFromString(page.pageLoadState().activeURL()).get());
+            auto apiFrameInfo = API::FrameInfo::create(WTFMove(frameInfo), &page);
+            completionHandler(m_client.shouldAllowDeviceOrientationAndMotionAccess(toAPI(&page), toAPI(origin.ptr()), toAPI(apiFrameInfo.ptr()), m_client.base.clientInfo));
         }
 #endif
 
@@ -2959,9 +2960,9 @@ void WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting(WKPageRef page,
     });
 }
 
-void WKPageSetPrivateClickMeasurementAttributionReportURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetPrivateClickMeasurementAttributionReportURLForTestingFunction callback, void* callbackContext)
+void WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting(WKPageRef page, WKURLRef sourceURL, WKURLRef attributeOnURL, WKPageSetPrivateClickMeasurementAttributionReportURLsForTestingFunction callback, void* callbackContext)
 {
-    toImpl(page)->setPrivateClickMeasurementAttributionReportURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+    toImpl(page)->setPrivateClickMeasurementAttributionReportURLsForTesting(URL(URL(), toWTFString(sourceURL)), URL(URL(), toWTFString(attributeOnURL)), [callbackContext, callback] () {
         callback(callbackContext);
     });
 }
@@ -2973,9 +2974,9 @@ void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPag
     });
 }
 
-void WKPageSetFraudPreventionValuesForTesting(WKPageRef page, WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID, WKPageSetFraudPreventionValuesForTestingFunction callback, void* callbackContext)
+void WKPageSetPCMFraudPreventionValuesForTesting(WKPageRef page, WKStringRef unlinkableToken, WKStringRef secretToken, WKStringRef signature, WKStringRef keyID, WKPageSetPCMFraudPreventionValuesForTestingFunction callback, void* callbackContext)
 {
-    toImpl(page)->setFraudPreventionValuesForTesting(toWTFString(secretToken), toWTFString(unlinkableToken), toWTFString(signature), toWTFString(keyID), [callbackContext, callback] () {
+    toImpl(page)->setPCMFraudPreventionValuesForTesting(toWTFString(unlinkableToken), toWTFString(secretToken), toWTFString(signature), toWTFString(keyID), [callbackContext, callback] () {
         callback(callbackContext);
     });
 }

@@ -53,15 +53,59 @@ class AbstractSlotVisitor {
     WTF_MAKE_NONCOPYABLE(AbstractSlotVisitor);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Context {
+    enum OpaqueRootTag { OpaqueRoot };
+
+    class ReferrerToken {
     public:
-        Context(AbstractSlotVisitor&, HeapCell*);
-        ~Context();
-        HeapCell* cell() const { return m_cell; }
+        ReferrerToken() = default;
+        ReferrerToken(std::nullptr_t) { }
+        ReferrerToken(HeapCell*);
+        ReferrerToken(OpaqueRootTag, void* opaqueRoot);
+        ReferrerToken(RootMarkReason);
+
+        explicit operator bool() const { return m_bits; }
+        bool operator!() const { return !m_bits; }
+
+        HeapCell* asCell() const;
+        void* asOpaqueRoot() const;
+        RootMarkReason asRootMarkReason() const;
+
+    private:
+        enum {
+            HeapCellToken = 0,
+            OpaqueRootToken = 0b01,
+            RootMarkReasonToken = 0b10,
+        };
+
+        static constexpr uintptr_t tokenTypeShift = 2;
+        static constexpr uintptr_t tokenTypeMask = 0x3;
+
+        bool isHeapCell() const { return (m_bits & tokenTypeMask) == HeapCellToken; }
+        bool isOpaqueRoot() const { return (m_bits & tokenTypeMask) == OpaqueRootToken; }
+        bool isRootMarkReason() const { return (m_bits & tokenTypeMask) == RootMarkReasonToken; }
+        uintptr_t m_bits { 0 };
+    };
+
+    class ReferrerContext {
+    public:
+        ReferrerContext(AbstractSlotVisitor&, ReferrerToken);
+        ReferrerContext(AbstractSlotVisitor&, OpaqueRootTag);
+        ~ReferrerContext();
+
+        ReferrerToken referrer() const { return m_referrer; }
+        void setReferrer(ReferrerToken referrer)
+        {
+            ASSERT(!m_referrer);
+            m_referrer = referrer;
+        }
+
+        bool isOpaqueRootContext() const { return m_isOpaqueRootContext; }
+
     private:
         AbstractSlotVisitor& m_visitor;
-        HeapCell* m_cell;
-        Context* m_previous;
+        ReferrerToken m_referrer;
+        ReferrerContext* m_previous;
+        bool m_isOpaqueRootContext { false };
     };
 
     class SuppressGCVerifierScope {
@@ -163,7 +207,10 @@ public:
 protected:
     inline AbstractSlotVisitor(Heap&, CString codeName, ConcurrentPtrHashSet&);
 
-    HeapCell* parentCell() const;
+    virtual void didAddOpaqueRoot(void*) { }
+    virtual void didFindOpaqueRoot(void*) { }
+
+    ReferrerToken referrer() const;
     void reset();
 
     MarkStackArray m_collectorStack;
@@ -172,7 +219,7 @@ protected:
     size_t m_visitCount { 0 };
 
     Heap& m_heap;
-    Context* m_context { nullptr };
+    ReferrerContext* m_context { nullptr };
     CString m_codeName;
 
     MarkingConstraint* m_currentConstraint { nullptr };
@@ -182,15 +229,18 @@ protected:
     RootMarkReason m_rootMarkReason { RootMarkReason::None };
     bool m_suppressVerifier { false };
     bool m_ignoreNewOpaqueRoots { false }; // Useful as a debugging mode.
+    bool m_needsExtraOpaqueRootHandling { false };
 
     friend class MarkingConstraintSolver;
 };
 
+template<typename Visitor>
 class SetRootMarkReasonScope {
 public:
-    SetRootMarkReasonScope(AbstractSlotVisitor& visitor, RootMarkReason reason)
+    SetRootMarkReasonScope(Visitor& visitor, RootMarkReason reason)
         : m_visitor(visitor)
         , m_previousReason(visitor.rootMarkReason())
+        , m_context(visitor, reason)
     {
         m_visitor.setRootMarkReason(reason);
     }
@@ -201,8 +251,9 @@ public:
     }
 
 private:
-    AbstractSlotVisitor& m_visitor;
+    Visitor& m_visitor;
     RootMarkReason m_previousReason;
+    typename Visitor::ReferrerContext m_context;
 };
 
 } // namespace JSC

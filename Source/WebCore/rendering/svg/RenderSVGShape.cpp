@@ -43,29 +43,12 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
-#include "StrokeStyleApplier.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGShape);
-
-class BoundingRectStrokeStyleApplier final : public StrokeStyleApplier {
-public:
-    BoundingRectStrokeStyleApplier(const RenderSVGShape& renderer)
-        : m_renderer(renderer)
-    {
-    }
-
-    void strokeStyle(GraphicsContext* context) override
-    {
-        SVGRenderSupport::applyStrokeStyleToContext(context, m_renderer.style(), m_renderer);
-    }
-
-private:
-    const RenderSVGShape& m_renderer;
-};
 
 RenderSVGShape::RenderSVGShape(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGModelObject(element, WTFMove(style))
@@ -114,16 +97,18 @@ void RenderSVGShape::strokeShape(GraphicsContext& context) const
 bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
     ASSERT(m_path);
-    BoundingRectStrokeStyleApplier applier(*this);
 
     if (hasNonScalingStroke() && pointCoordinateSpace != LocalCoordinateSpace) {
         AffineTransform nonScalingTransform = nonScalingStrokeTransform();
         Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
-
-        return usePath->strokeContains(applier, nonScalingTransform.mapPoint(point));
+        return usePath->strokeContains(nonScalingTransform.mapPoint(point), [this] (GraphicsContext& context) {
+            SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+        });
     }
 
-    return m_path->strokeContains(applier, point);
+    return m_path->strokeContains(point, [this] (GraphicsContext& context) {
+        SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+    });
 }
 
 bool RenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
@@ -432,19 +417,22 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
     ASSERT(m_path);
     FloatRect strokeBoundingBox = m_fillBoundingBox;
 
-    const SVGRenderStyle& svgStyle = style().svgStyle();
-    if (svgStyle.hasStroke()) {
-        BoundingRectStrokeStyleApplier strokeStyle(*this);
+    if (style().svgStyle().hasStroke()) {
         if (hasNonScalingStroke()) {
             AffineTransform nonScalingTransform = nonScalingStrokeTransform();
             if (Optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
                 Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
-                FloatRect strokeBoundingRect = usePath->strokeBoundingRect(&strokeStyle);
+                FloatRect strokeBoundingRect = usePath->strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
+                    SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+                }});
                 strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
                 strokeBoundingBox.unite(strokeBoundingRect);
             }
-        } else
-            strokeBoundingBox.unite(path().strokeBoundingRect(&strokeStyle));
+        } else {
+            strokeBoundingBox.unite(path().strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
+                SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+            }}));
+        }
     }
 
     if (!m_markerPositions.isEmpty())

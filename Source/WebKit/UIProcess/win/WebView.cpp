@@ -640,6 +640,7 @@ LRESULT WebView::onSetCursor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 LRESULT WebView::onMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
+#if ENABLE(CONTEXT_MENUS)
     auto hMenu = reinterpret_cast<HMENU>(lParam);
     auto index = static_cast<unsigned>(wParam);
 
@@ -664,6 +665,14 @@ LRESULT WebView::onMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     m_page->contextMenuItemSelected(item);
 
     handled = true;
+#else
+    UNUSED_PARAM(hWnd);
+    UNUSED_PARAM(message);
+    UNUSED_PARAM(wParam);
+    UNUSED_PARAM(lParam);
+    handled = false;
+#endif
+
     return 0;
 }
 

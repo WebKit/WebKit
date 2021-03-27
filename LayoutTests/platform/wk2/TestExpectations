@@ -211,31 +211,22 @@ http/tests/images/loading-image-border.html
 http/tests/images/loading-image-no-border.html
 
 # webkit.org/b/221694
-http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
 http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
 http/tests/media/hls/hls-progress.html [ Failure ]
-http/tests/media/video-play-stall.html [ Failure ]
 
 # webkit.org/b/221685
-media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Timeout Failure Pass ]
-media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Timeout Pass ]
-media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Crash Pass ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Timeout Pass ]
-media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Failure Timeout ]
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Failure Pass ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Timeout Pass ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Timeout Pass ]
 media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback.html [ Failure Pass ]
 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Timeout Pass ]
 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout Pass ]
-media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Timeout Pass ]
-http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Timeout ]
 
 # webkit.org/b/221693
 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash ]
 media/media-controller-unpause.html [ Timeout ]
 media/video-controller-child-rate.html [ Failure Pass ]
-media/video-set-rate-from-pause.html [ Timeout Pass ]
 
 # webkit.org/b/220805
 webaudio/Panner/hrtf-database.html [ Timeout ]
@@ -245,27 +236,12 @@ webaudio/codec-tests/mp3/128kbps-44khz.html [ Timeout ]
 # webkit.org/b/221696
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Failure ]
-
-# webkit.org/b/221795
-fast/images/animated-image-mp4.html [ Timeout ]
-fast/images/animated-image-mp4-crash.html [ Timeout ]
 
 webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 
 webkit.org/b/221817 imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]
 
 webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
-
-# webkit.org/b/221820
-media/video-orientation-canvas.html [ Failure ]
-
-webkit.org/b/221783 [ Debug ] loader/change-src-during-iframe-load-crash.html [ Skip ]
-
-# webkit.org/b/220375
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html [ Crash Pass ]
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html [ Crash Pass ]
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html [ Crash Pass ]
 
 webkit.org/b/222569 fast/mediastream/media-stream-track-interrupted.html [ Crash Pass ]
 
@@ -713,7 +689,7 @@ fast/text/shaping
 # We explicitly Skip the following tests instead of marking them as Failure because some of these tests will naturally pass
 # as a consequence of testRunner.setPrivateBrowsingEnabled_DEPRECATED() effectively being a no-op as of the time of writing (07/08/2015).
 webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.php [ Skip ]
-webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.php [ Skip ]
+webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.py [ Skip ]
 
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################

@@ -203,7 +203,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                 const char* body =
                 "<script>"
                     "fetch("
-                        "'http://webkit.org/path3',"
+                        "'http://www.webkit.org/path3',"
                         "{credentials:'include'}"
                     ").then(()=>{"
                         "alert('fetched')"
@@ -213,7 +213,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                 "</script>";
                 switch (connectionCount) {
                 case 1: {
-                    EXPECT_TRUE(strstr(request.data(), "GET http://webkit.org/path1 HTTP/1.1\r\n"));
+                    EXPECT_TRUE(strstr(request.data(), "GET http://www.webkit.org/path1 HTTP/1.1\r\n"));
                     reply = makeString(
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Length: ", strlen(body), "\r\n"
@@ -240,7 +240,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                         EXPECT_TRUE(strstr(request.data(), "Cookie: a=b\r\n"));
                     else
                         EXPECT_FALSE(strstr(request.data(), "Cookie: a=b\r\n"));
-                    EXPECT_TRUE(strstr(request.data(), "GET http://webkit.org/path3 HTTP/1.1\r\n"));
+                    EXPECT_TRUE(strstr(request.data(), "GET http://www.webkit.org/path3 HTTP/1.1\r\n"));
                     reply =
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Length: 0\r\n"
@@ -269,7 +269,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
         [viewConfiguration setWebsiteDataStore:dataStore.get()];
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
 
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://webkit.org/path1"]]];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.webkit.org/path1"]]];
         EXPECT_WK_STREQ([webView _test_waitForAlert], "fetched");
 
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/path2"]]];

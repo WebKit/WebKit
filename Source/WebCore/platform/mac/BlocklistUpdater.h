@@ -27,7 +27,7 @@
 
 #if PLATFORM(MAC)
 
-#import <dispatch/dispatch.h>
+#import <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -36,10 +36,9 @@ class WebGLBlocklist;
 
 class BlocklistUpdater {
 public:
-    static void initializeQueue();
     static void reloadIfNecessary();
 
-    static dispatch_queue_t queue() { return s_queue; }
+    static WorkQueue& queue();
     static PluginBlocklist* pluginBlocklist() { return s_pluginBlocklist; }
     static WebGLBlocklist* webGLBlocklist() { return s_webGLBlocklist; };
 
@@ -47,7 +46,6 @@ private:
 
     static NSDictionary *readBlocklistData();
 
-    static dispatch_queue_t s_queue;
     static PluginBlocklist* s_pluginBlocklist;
     static WebGLBlocklist* s_webGLBlocklist;
 };

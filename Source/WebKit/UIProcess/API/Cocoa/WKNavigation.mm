@@ -28,6 +28,7 @@
 #import "WKWebpagePreferencesInternal.h"
 
 #import "APINavigation.h"
+#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation WKNavigation {
     API::ObjectStorage<API::Navigation> _navigation;
@@ -35,6 +36,9 @@
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNavigation.class, self))
+        return;
+
     _navigation->~Navigation();
 
     [super dealloc];

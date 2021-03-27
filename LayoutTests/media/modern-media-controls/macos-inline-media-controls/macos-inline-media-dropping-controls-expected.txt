@@ -9,9 +9,9 @@ SkipForwardButton was dropped at 482.
 SkipBackButton was dropped at 453.
 AirplayButton was dropped at 424.
 TracksButton was dropped at 392.
-PiPButton was dropped at 360.
-FullscreenButton was dropped at 325.
-MuteButton was dropped at 294.
+PiPButton was dropped at 392.
+FullscreenButton was dropped at 319.
+MuteButton was dropped at 319.
 
 PASS successfullyParsed is true
 

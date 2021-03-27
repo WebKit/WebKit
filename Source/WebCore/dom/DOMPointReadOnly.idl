@@ -30,6 +30,7 @@
 
 // The DOMPointInit constructor exists in https://www.w3.org/TR/geometry-1/ but is removed in https://drafts.fxtf.org/geometry/
 [
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     ImplementationLacksVTable
 ] interface DOMPointReadOnly {

@@ -434,7 +434,7 @@ bool ApplicationCacheStorage::calculateQuotaForOrigin(const SecurityOrigin& orig
     return false;
 }
 
-bool ApplicationCacheStorage::calculateUsageForOrigin(const SecurityOrigin* origin, int64_t& usage)
+bool ApplicationCacheStorage::calculateUsageForOrigin(const SecurityOriginData& origin, int64_t& usage)
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
@@ -448,7 +448,7 @@ bool ApplicationCacheStorage::calculateUsageForOrigin(const SecurityOrigin* orig
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, origin->data().databaseIdentifier());
+    statement.bindText(1, origin.databaseIdentifier());
     int result = statement.step();
 
     if (result == SQLITE_ROW) {
@@ -1467,7 +1467,7 @@ long long ApplicationCacheStorage::flatFileAreaSize()
     return totalSize;
 }
 
-Vector<Ref<SecurityOrigin>> ApplicationCacheStorage::originsWithCache()
+HashSet<SecurityOriginData> ApplicationCacheStorage::originsWithCache()
 {
     auto urls = manifestURLs();
     if (!urls)
@@ -1475,10 +1475,9 @@ Vector<Ref<SecurityOrigin>> ApplicationCacheStorage::originsWithCache()
 
     // Multiple manifest URLs might share the same SecurityOrigin, so we might be creating extra, wasted origins here.
     // The current schema doesn't allow for a more efficient way of building this list.
-    Vector<Ref<SecurityOrigin>> origins;
-    origins.reserveInitialCapacity(urls->size());
+    HashSet<SecurityOriginData> origins;
     for (auto& url : *urls)
-        origins.uncheckedAppend(SecurityOrigin::create(url));
+        origins.add(SecurityOriginData::fromURL(url));
     return origins;
 }
 
@@ -1497,7 +1496,7 @@ void ApplicationCacheStorage::deleteAllCaches()
     vacuumDatabaseFile();
 }
 
-void ApplicationCacheStorage::deleteCacheForOrigin(const SecurityOrigin& securityOrigin)
+void ApplicationCacheStorage::deleteCacheForOrigin(const SecurityOriginData& securityOrigin)
 {
     auto urls = manifestURLs();
     if (!urls) {
@@ -1518,10 +1517,10 @@ void ApplicationCacheStorage::deleteCacheForOrigin(const SecurityOrigin& securit
     }
 }
 
-int64_t ApplicationCacheStorage::diskUsageForOrigin(const SecurityOrigin& securityOrigin)
+int64_t ApplicationCacheStorage::diskUsageForOrigin(const SecurityOriginData& securityOrigin)
 {
     int64_t usage = 0;
-    calculateUsageForOrigin(&securityOrigin, usage);
+    calculateUsageForOrigin(securityOrigin, usage);
     return usage;
 }
 

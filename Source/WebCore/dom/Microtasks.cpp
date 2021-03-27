@@ -67,6 +67,25 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
 
     vm().finalizeSynchronousJSExecution();
     m_microtaskQueue = WTFMove(toKeep);
+
+    auto checkpointTasks = std::exchange(m_checkpointTasks, { });
+    for (auto& checkpointTask : checkpointTasks) {
+        auto* group = checkpointTask->group();
+        if (!group || group->isStoppedPermanently())
+            continue;
+
+        if (group->isSuspended()) {
+            m_checkpointTasks.append(WTFMove(checkpointTask));
+            continue;
+        }
+
+        checkpointTask->execute();
+    }
+}
+
+void MicrotaskQueue::addCheckpointTask(std::unique_ptr<EventLoopTask>&& task)
+{
+    m_checkpointTasks.append(WTFMove(task));
 }
 
 } // namespace WebCore

@@ -39,6 +39,7 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/ImageBuffer.h>
+#import <WebCore/Model.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <WebCore/WebLayer.h>
 #import <mach/mach_port.h>
@@ -322,6 +323,9 @@ bool RemoteLayerBackingStore::display()
     case WebCore::PlatformCALayer::LayerTypeContentsProvidedLayer:
     case WebCore::PlatformCALayer::LayerTypeShapeLayer:
     case WebCore::PlatformCALayer::LayerTypeScrollContainerLayer:
+#if ENABLE(MODEL_ELEMENT)
+    case WebCore::PlatformCALayer::LayerTypeModelLayer:
+#endif
     case WebCore::PlatformCALayer::LayerTypeCustom:
         ASSERT_NOT_REACHED();
         break;

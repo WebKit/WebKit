@@ -29,6 +29,8 @@
 #include <WebCore/ContextMenuClient.h>
 #include <wtf/Forward.h>
 
+#if ENABLE(CONTEXT_MENUS)
+
 class WebView;
 
 class WebContextMenuClient : public WebCore::ContextMenuClient {
@@ -48,3 +50,6 @@ public:
 private:
     WebView* m_webView;
 };
+
+#endif
+

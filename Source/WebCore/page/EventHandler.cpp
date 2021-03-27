@@ -708,8 +708,7 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
 
 bool EventHandler::mouseDownMayStartSelect() const
 {
-    auto* page = m_frame.page();
-    if (page && !page->textInteractionEnabled())
+    if (!m_frame.settings().textInteractionEnabled())
         return false;
 
     return m_mouseDownMayStartSelect;
@@ -941,7 +940,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (!target)
         return;
 
-    if (!HTMLElement::shouldUpdateSelectionForMouseDrag(*target, m_frame.selection().selection()))
+    if (!HTMLElement::shouldExtendSelectionToTargetNode(*target, m_frame.selection().selection()))
         return;
 
     VisiblePosition targetPosition = selectionExtentRespectingEditingBoundary(m_frame.selection().selection(), hitTestResult.localPoint(), target);
@@ -1000,6 +999,10 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
 
     m_frame.selection().setSelectionByMouseIfDifferent(newSelection, m_frame.selection().granularity(),
         FrameSelection::EndPointsAdjustmentMode::AdjustAtBidiBoundary);
+
+    if (newSelection.start().containerNode() && HTMLElement::isImageOverlayText(*newSelection.start().containerNode())
+        && newSelection.end().containerNode() && HTMLElement::isImageOverlayText(*newSelection.end().containerNode()))
+        invalidateClick();
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
@@ -3075,7 +3078,10 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     if (!m_frame.page())
         return;
 
-    if (!m_currentWheelEventAllowsScrolling)
+    auto platformEvent = wheelEvent.underlyingPlatformEvent();
+    bool isUserEvent = platformEvent.hasValue();
+
+    if (isUserEvent && !m_currentWheelEventAllowsScrolling)
         return;
 
     auto protectedFrame = makeRef(m_frame);
@@ -3101,13 +3107,12 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     if (!m_frame.page()->scrollLatchingController().latchingAllowsScrollingInFrame(m_frame, latchedScroller))
         return;
 
-    if (latchedScroller) {
+    if (isUserEvent && latchedScroller) {
         if (latchedScroller == m_frame.view()) {
             // FrameView scrolling is handled via processWheelEventForScrolling().
             return;
         }
 
-        auto platformEvent = wheelEvent.underlyingPlatformEvent();
         if (platformEvent) {
             auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
             if (handleWheelEventInScrollableArea(copiedEvent, *latchedScroller, eventHandling))
@@ -3532,10 +3537,15 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         keydown->preventDefault();
     keydown->setTarget(element);
 
-    // If the user interacts with the page via the keyboard, the currently focused element should match :focus-visible.
-    // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
-    if (keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty()))
-        element->setHasFocusVisible(true);
+    auto shouldMatchFocusVisible = [initialKeyEvent, keydown](const Element& element) {
+        if (!element.focused())
+            return false;
+
+        // If the user interacts with the page via the keyboard, the currently focused element should match :focus-visible.
+        // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
+        return keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
+    };
+    element->setHasFocusVisible(shouldMatchFocusVisible(*element));
 
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
         element->dispatchEvent(keydown);
@@ -3582,9 +3592,11 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     // Focus may have changed during keydown handling, so refetch element.
     // But if we are dispatching a fake backward compatibility keypress, then we pretend that the keypress happened on the original element.
     if (!keydownResult) {
+        element->setHasFocusVisible(false);
         element = eventTargetElementForDocument(m_frame.document());
         if (!element)
             return false;
+        element->setHasFocusVisible(shouldMatchFocusVisible(*element));
     }
 
     PlatformKeyboardEvent keyPressEvent = initialKeyEvent;

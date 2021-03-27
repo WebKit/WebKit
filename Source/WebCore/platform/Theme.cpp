@@ -48,6 +48,18 @@ LengthSize Theme::controlSize(ControlPart, const FontCascade&, const LengthSize&
     return zoomedSize;
 }
 
+LengthSize Theme::minimumControlSize(ControlPart part, const FontCascade& fontCascade, const LengthSize& zoomedSize, const LengthSize& nonShrinkableZoomedSize, float zoom) const
+{
+    auto minSize = minimumControlSize(part, fontCascade, zoomedSize, zoom);
+    if (part == ControlPart::RadioPart) {
+        if (zoomedSize.width.isIntrinsicOrAuto())
+            minSize.width = nonShrinkableZoomedSize.width;
+        if (zoomedSize.height.isIntrinsicOrAuto())
+            minSize.height = nonShrinkableZoomedSize.height;
+    }
+    return minSize;
+}
+
 LengthSize Theme::minimumControlSize(ControlPart, const FontCascade&, const LengthSize&, float) const
 {
     return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };

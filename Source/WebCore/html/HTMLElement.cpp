@@ -1201,7 +1201,7 @@ static const AtomString& imageOverlayElementIdentifier()
     return identifier;
 }
 
-bool HTMLElement::shouldUpdateSelectionForMouseDrag(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate)
+bool HTMLElement::shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate)
 {
     if (!is<HTMLDivElement>(targetNode))
         return true;
@@ -1234,10 +1234,42 @@ bool HTMLElement::hasImageOverlay() const
     return shadowRoot->hasElementWithId(*imageOverlayElementIdentifier().impl());
 }
 
+bool HTMLElement::isImageOverlayText(const Node& node)
+{
+    auto shadowHost = node.shadowHost();
+    if (!shadowHost)
+        return false;
+
+    auto shadowRoot = shadowHost->shadowRoot();
+    if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent || shadowRoot != node.containingShadowRoot())
+        return false;
+
+    for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
+        if (child.getIdAttribute() == imageOverlayElementIdentifier())
+            return node.isDescendantOf(&child);
+    }
+
+    return false;
+}
+
 #if ENABLE(IMAGE_EXTRACTION)
 
 void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result)
 {
+    RefPtr<HTMLDivElement> previousContainer;
+    if (auto shadowRoot = userAgentShadowRoot(); shadowRoot && hasImageOverlay()) {
+        for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
+            if (child.getIdAttribute() == imageOverlayElementIdentifier()) {
+                previousContainer = &child;
+                break;
+            }
+        }
+        if (previousContainer)
+            previousContainer->remove();
+        else
+            ASSERT_NOT_REACHED();
+    }
+
     if (result.isEmpty())
         return;
 
@@ -1248,15 +1280,18 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         downcast<RenderImage>(*renderer).setHasImageOverlay();
     }
 
-    static NeverDestroyed<const String> shadowStyle(imageOverlayUserAgentStyleSheet, String::ConstructFromLiteral);
-    auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
-    style->setTextContent(shadowStyle);
-
     auto shadowRoot = makeRef(ensureUserAgentShadowRoot());
-    shadowRoot->appendChild(WTFMove(style));
+    if (!previousContainer) {
+        static NeverDestroyed<const String> shadowStyle(imageOverlayUserAgentStyleSheet, String::ConstructFromLiteral);
+        auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
+        style->setTextContent(shadowStyle);
+        shadowRoot->appendChild(WTFMove(style));
+    }
 
     auto container = HTMLDivElement::create(document());
     container->setIdAttribute(imageOverlayElementIdentifier());
+    if (document().isImageDocument())
+        container->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
     shadowRoot->appendChild(container);
 
     static MainThreadNeverDestroyed<const AtomString> imageOverlayTextClass("image-overlay-text", AtomString::ConstructFromLiteral);
@@ -1267,7 +1302,7 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         child->classList().add(imageOverlayTextClass);
 
         container->appendChild(child);
-        child->appendChild(Text::create(document(), data.text));
+        child->appendChild(Text::create(document(), makeString('\n', data.text)));
         child->appendChild(HTMLBRElement::create(document()));
 
         IntSize originalSize { child->offsetWidth(), child->offsetHeight() };
@@ -1289,6 +1324,9 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
             rotationTransformationAsText,
             "scale("_s, scale.width(), ", "_s, scale.height(), ") "_s
         ));
+
+        if (document().isImageDocument())
+            child->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);
     }
 
     if (auto frame = makeRefPtr(document().frame()))

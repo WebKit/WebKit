@@ -41,6 +41,7 @@
 #include "MediaOverridesForTesting.h"
 #include "RemoteAudioHardwareListenerProxy.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
+#include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"
@@ -62,6 +63,7 @@
 #include "WebProcessMessages.h"
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NowPlayingManager.h>
+#include <wtf/Language.h>
 
 #if PLATFORM(COCOA)
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
@@ -196,6 +198,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #endif
 {
     RELEASE_ASSERT(RunLoop::isMain());
+
+    if (!parameters.overrideLanguages.isEmpty())
+        overrideUserPreferredLanguages(parameters.overrideLanguages);
 
     // Use this flag to force synchronous messages to be treated as asynchronous messages in the WebProcess.
     // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
@@ -361,10 +366,15 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContext
 
 void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdentifier graphicsContextGLIdentifier)
 {
-    bool found = m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
-    ASSERT_UNUSED(found, found);
+    m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
+}
+
+void GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier identifier)
+{
+    releaseGraphicsContextGL(identifier);
 }
 #endif
+
 void GPUConnectionToWebProcess::clearNowPlayingInfo()
 {
     m_isActiveNowPlayingProcess = false;
@@ -470,6 +480,11 @@ void GPUConnectionToWebProcess::setMediaOverridesForTesting(MediaOverridesForTes
 #endif
 }
 
+void GPUConnectionToWebProcess::setUserPreferredLanguages(const Vector<String>& languages)
+{
+    overrideUserPreferredLanguages(languages);
+}
+
 bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
 #if ENABLE(WEB_AUDIO)
@@ -555,6 +570,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+#if ENABLE(WEBGL)
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName()) {
+        // Skip messages for already removed receivers.
+        return true;
+    }
+#endif
 
     if (m_remoteRemoteCommandListener && decoder.messageReceiverName() == Messages::RemoteRemoteCommandListenerProxy::messageReceiverName()) {
         m_remoteRemoteCommandListener->didReceiveMessage(connection, decoder);
@@ -564,7 +585,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
 
-bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
 #if ENABLE(WEB_AUDIO)
     if (decoder.messageReceiverName() == Messages::RemoteAudioDestinationManager::messageReceiverName()) {
@@ -619,7 +640,11 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
         return true;
     }
 #endif
-
+#if ENABLE(WEBGL)
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName())
+        // Skip messages for already removed receivers.
+        return true;
+#endif
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
@@ -649,6 +674,26 @@ void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool
     m_allowsAudioCapture |= allowAudioCapture;
     m_allowsVideoCapture |= allowVideoCapture;
     m_allowsDisplayCapture |= allowDisplayCapture;
+}
+#endif
+
+#if PLATFORM(MAC)
+void GPUConnectionToWebProcess::displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags)
+{
+#if ENABLE(WEBGL)
+    if (flags & kCGDisplaySetModeFlag)
+        dispatchDisplayWasReconfigured();
+#else
+    UNUSED_VARIABLE(flags);
+#endif
+}
+#endif
+
+#if PLATFORM(MAC) && ENABLE(WEBGL)
+void GPUConnectionToWebProcess::dispatchDisplayWasReconfigured()
+{
+    for (auto& context : m_remoteGraphicsContextGLMap.values())
+        context->displayWasReconfigured();
 }
 #endif
 

@@ -36,6 +36,7 @@
 #include <wtf/UniqueArray.h>
 
 #if PLATFORM(COCOA)
+#include "GraphicsContextGLANGLEEGLUtilities.h"
 #include "IOSurface.h"
 #endif
 
@@ -127,6 +128,9 @@ public:
         ReleaseThreadResources
     };
     static bool releaseCurrentContext(ReleaseBehavior);
+#endif
+#if PLATFORM(COCOA)
+    static void releaseAllResourcesIfUnused();
 #endif
 
     // With multisampling on, blit from multisampleFBO to regular FBO.
@@ -569,8 +573,8 @@ private:
     GraphicsContextGLIOSurfaceSwapChain* m_swapChain { nullptr };
     // TODO: this should be removed once the context draws to a image buffer. See https://bugs.webkit.org/show_bug.cgi?id=218179 .
     RetainPtr<WebGLLayer> m_webGLLayer;
+    ScopedEGLDefaultDisplay m_displayObj;
     PlatformGraphicsContextGL m_contextObj { nullptr };
-    PlatformGraphicsContextGLDisplay m_displayObj { nullptr };
     PlatformGraphicsContextGLConfig m_configObj { nullptr };
 #endif // PLATFORM(COCOA)
 

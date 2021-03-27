@@ -36,6 +36,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
+#import <wtf/WorkQueue.h>
 
 using WebKit::ProcessAndUIAssertion;
 
@@ -135,15 +136,10 @@ static bool processHasActiveRunTimeLimitation()
         return;
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: _scheduleReleaseTask because the expiration handler has been called", self);
-    _pendingTaskReleaseTask = dispatch_block_create((dispatch_block_flags_t)0, ^{
+    WorkQueue::main().dispatchAfter(releaseBackgroundTaskAfterExpirationDelay, [self, retainedSelf = retainPtr(self)] {
         _pendingTaskReleaseTask = nil;
         [self _releaseBackgroundTask];
     });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, releaseBackgroundTaskAfterExpirationDelay.value() * NSEC_PER_SEC), dispatch_get_main_queue(), _pendingTaskReleaseTask);
-#if !__has_feature(objc_arc)
-    // dispatch_async() does a Block_copy() / Block_release() on behalf of the caller.
-    Block_release(_pendingTaskReleaseTask);
-#endif
 }
 
 - (void)_cancelPendingReleaseTask

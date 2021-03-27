@@ -136,10 +136,10 @@ class TestFind(unittest.TestCase):
             captured.stdout.getvalue(),
             '''Title: 4th commit
 Author: Jonathan Bedard <jbedard@apple.com>
-Identifier: 3@main
 Date: {}
 Revision: 4
 Hash: 1abe25b443e9
+Identifier: 3@main
 '''.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
         )
 
@@ -153,10 +153,10 @@ Hash: 1abe25b443e9
             captured.stdout.getvalue(),
             '''Title: 4th commit
 Author: Jonathan Bedard <jbedard@apple.com>
-Identifier: 3@main
 Date: {}
 Revision: 4
 Hash: 1abe25b443e9
+Identifier: 3@main
     4th commit
     svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
@@ -228,8 +228,36 @@ Hash: 1abe25b443e9
             captured.stdout.getvalue(),
             '''Title: 4th commit
 Author: jbedard@apple.com <jbedard@apple.com>
-Identifier: 3@trunk
 Date: {}
 Revision: 4
+Identifier: 3@trunk
 '''.format(datetime.fromtimestamp(1601686700).strftime('%a %b %d %H:%M:%S %Y')),
         )
+
+
+class TestInfo(unittest.TestCase):
+    path = '/mock/repository'
+
+    def test_basic_git(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(
+                args=('info', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '5@main | d8bce26fa65c | Patch Series\n')
+
+    def test_basic_git_svn(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(
+                args=('info', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '5@main | d8bce26fa65c, r9 | Patch Series\n')
+
+    def test_basic_svn(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
+            self.assertEqual(0, program.main(
+                args=('info', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6 | 6th commit\n')

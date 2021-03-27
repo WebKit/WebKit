@@ -46,7 +46,10 @@ private:
     const char* renderName() const final { return "RenderModel"; }
     bool isRenderModel() const final { return true; }
 
+    bool requiresLayer() const final;
     void updateFromElement() final;
+
+    void update();
 };
 
 } // namespace WebCore

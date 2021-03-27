@@ -1450,6 +1450,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
     _page->webViewDidMoveToWindow();
+
+#if ENABLE(APP_HIGHLIGHTS)
+    [_contentView setUpAppHighlightMenusIfNeeded];
+#endif
 }
 
 - (void)_setOpaqueInternal:(BOOL)opaque

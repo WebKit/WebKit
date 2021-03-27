@@ -370,6 +370,7 @@ void initialize()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
+        setPermissionsOfConfigPage();
         Config::AssertNotFrozenScope assertScope;
         initializeRandomNumberGenerator();
 #if !HAVE(FAST_TLS) && !OS(WINDOWS)

@@ -49,7 +49,7 @@ class RemoteCDMInstanceProxy;
 struct RemoteCDMInstanceConfiguration;
 struct RemoteCDMConfiguration;
 
-class RemoteCDMProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<RemoteCDMProxy> {
+class RemoteCDMProxy : public IPC::MessageReceiver {
 public:
     static std::unique_ptr<RemoteCDMProxy> create(WeakPtr<RemoteCDMFactoryProxy>&&, std::unique_ptr<WebCore::CDMPrivate>&&);
     ~RemoteCDMProxy();
@@ -68,7 +68,7 @@ private:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
     void getSupportedConfiguration(WebCore::CDMKeySystemConfiguration&&, WebCore::CDMPrivate::LocalStorageAccess, WebCore::CDMPrivate::SupportedConfigurationCallback&&);
