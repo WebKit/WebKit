@@ -1,3 +1,23 @@
+2021-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Avoid heap allocation on the audio thread in BaseAudioContext::scheduleNodeDeletion()
+        https://bugs.webkit.org/show_bug.cgi?id=223825
+
+        Reviewed by Darin Adler.
+
+        Avoid heap allocation on the audio thread in BaseAudioContext::scheduleNodeDeletion()
+        for performance. Stop calling appendVector() on m_nodesToDelete since m_nodesToDelete
+        is always empty. We can use std::exchange() instead of appendVector() and clear() to
+        avoid the heap allocation.
+
+        The reason m_nodesToDelete is always empty is that BaseAudioContext::scheduleNodeDeletion()
+        relies on the m_isDeletionScheduled flag to avoid adding to m_nodesToDelete until
+        m_nodesToDelete is cleared on the main thread and the m_isDeletionScheduled gets reset.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::clear):
+        (WebCore::BaseAudioContext::scheduleNodeDeletion):
+
 2021-03-26  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Grid layout labels can be drawn outside the viewport

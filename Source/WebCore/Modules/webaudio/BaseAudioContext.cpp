@@ -210,9 +210,8 @@ void BaseAudioContext::clear()
     // Audio thread is dead. Nobody will schedule node deletion action. Let's do it ourselves.
     do {
         deleteMarkedNodes();
-        m_nodesToDelete.appendVector(m_nodesMarkedForDeletion);
-        m_nodesMarkedForDeletion.clear();
-    } while (m_nodesToDelete.size());
+        m_nodesToDelete = std::exchange(m_nodesMarkedForDeletion, { });
+    } while (!m_nodesToDelete.isEmpty());
 
     clearPendingActivity();
 }
@@ -781,16 +780,15 @@ void BaseAudioContext::scheduleNodeDeletion()
         return;
 
     // Make sure to call deleteMarkedNodes() on main thread.    
-    if (m_nodesMarkedForDeletion.size() && !m_isDeletionScheduled) {
-        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
-        // explicitly allow the following allocation(s).
-        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-
-        m_nodesToDelete.appendVector(m_nodesMarkedForDeletion);
-        m_nodesMarkedForDeletion.clear();
+    if (!m_nodesMarkedForDeletion.isEmpty() && !m_isDeletionScheduled) {
+        ASSERT(m_nodesToDelete.isEmpty());
+        m_nodesToDelete = std::exchange(m_nodesMarkedForDeletion, { });
 
         m_isDeletionScheduled = true;
 
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         callOnMainThread([protectedThis = makeRef(*this)]() mutable {
             protectedThis->deleteMarkedNodes();
         });
