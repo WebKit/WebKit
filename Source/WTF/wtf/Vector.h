@@ -1256,6 +1256,9 @@ template<FailureAction action, typename U>
 ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::append(const U* data, size_t dataSize)
 {
     static_assert(action == FailureAction::Crash || action == FailureAction::Report);
+    if (!dataSize)
+        return true;
+
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {
         data = expandCapacity<action>(newSize, data);

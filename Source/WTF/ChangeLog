@@ -1,3 +1,21 @@
+2021-03-27  Chris Dumez  <cdumez@apple.com>
+
+        wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WebCore::Style::RuleFeature'
+        https://bugs.webkit.org/show_bug.cgi?id=223828
+
+        Reviewed by David Kilzer.
+
+        Fix issue found by UBSan in Vector::append(const U*, size_t):
+        wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WebCore::Style::RuleFeature'
+        wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WebCore::LayoutRect'
+        wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WTF::RefPtr<WebCore::CSSStyleSheet, WTF::RawPtrTraits<WebCore::CSSStyleSheet>, WTF::DefaultRefDerefTraits<WebCore::CSSStyleSheet> >'
+
+        * wtf/Vector.h:
+        (WTF::Malloc>::append):
+        Return early if dataSize is 0. For some call sites, the pointer may be null and dataSize is 0. In such cases,
+        we should just return early instead of proceeding and using the null pointer. I believe this can happen if
+        you call Vector::appendVector() with an empty Vector for example.
+
 2021-03-26  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r275038?): Perf test IndexedDB/stress/large-binary-keys.html failing with logging about memory pressure events
