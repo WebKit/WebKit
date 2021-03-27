@@ -447,14 +447,14 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     if (!parent.renderTreeBeingDestroyed()) {
         newChild->insertedIntoTree();
 
-        auto* fragmentedFlow = newChild->enclosingFragmentedFlow();
-        if (is<RenderMultiColumnFlow>(fragmentedFlow))
-            multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
-
-        // FIXME: needsStateReset could probably be used for multicolumn as well.
         auto needsStateReset = reinsertAfterMove == ReinsertAfterMove::No;
-        if (needsStateReset && is<RenderElement>(*newChild))
-            RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
+        if (needsStateReset) {
+            if (auto* fragmentedFlow = newChild->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(fragmentedFlow))
+                multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
+
+            if (is<RenderElement>(*newChild))
+                RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
+        }
     }
 
     newChild->setNeedsLayoutAndPrefWidthsRecalc();

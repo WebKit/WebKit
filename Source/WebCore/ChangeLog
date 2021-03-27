@@ -1,3 +1,23 @@
+2021-03-27  Zalan Bujtas  <zalan@apple.com>
+
+        [Multicolumn] Do not try to re-validate a multicol spanner when the renderer is moved internally
+        https://bugs.webkit.org/show_bug.cgi?id=223836
+        <rdar://75742694>
+
+        Reviewed by Ryosuke Niwa.
+
+        When a renderer becomes a multicol spanner 
+        1. it is moved out of its original tree position and placed as a sibling of the enclosing multicolumn flow and
+        2. a spanner placeholder is constructed and inserted at the original position
+
+        This patch fixes the case when an already placed multicol spanner is internally moved (e.g. collapsing an anonymous block parent)
+        and we attempt to re-insert this spanner to the multicolumn flow. No spanner state should change due to internal re-parenting. 
+
+        Test: fast/multicol/spanner-get-re-added-on-move-crash.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::attachToRenderElementInternal):
+
 2021-03-26  Ian Gilbert  <iang@apple.com>
 
         Dirty layout for floating children of inline on full layout

@@ -5002,3 +5002,4 @@ imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
 
 webkit.org/b/223170 [ Debug ] fast/multicol/widow-relayout-with-border-fit.html [ Skip ]
+webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.html [ Skip ]
