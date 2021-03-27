@@ -1,3 +1,13 @@
+2021-03-27  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r275111) [GLIB] Fix build with new derived sources and forwarding headers scheme
+        https://bugs.webkit.org/show_bug.cgi?id=223834
+
+        Unreviewed build fix.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-03-26  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r275111) [GLIB] Fix build with new derived sources and forwarding headers scheme
