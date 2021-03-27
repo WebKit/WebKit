@@ -1,3 +1,29 @@
+2021-03-26  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Fix TypeError: Can't mix strings and bytes in path components in Tools/Scripts/dump-class-layout
+        https://bugs.webkit.org/show_bug.cgi?id=223819
+
+        Reviewed by Jonathan Bedard.
+
+        Prior to this patch, I received this error when trying to run the
+        dump-class-layout script.  This happens because `webkit_build_dir()` returns
+        bytes rather than a string.
+
+        $ dump-class-layout -c Release WebCore Pair
+        Traceback (most recent call last):
+          File "/home/twilco/projects/webkit/Tools/Scripts//dump-class-layout", line 88, in <module>
+            main()
+          File "/home/twilco/projects/webkit/Tools/Scripts//dump-class-layout", line 80, in main
+            target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
+          File "/usr/lib/python3.9/posixpath.py", line 90, in join
+            genericpath._check_arg_types('join', a, *p)
+          File "/usr/lib/python3.9/genericpath.py", line 155, in _check_arg_types
+            raise TypeError("Can't mix strings and bytes in path components") from None
+        TypeError: Can't mix strings and bytes in path components
+
+        * Scripts/dump-class-layout:
+        Update `webkit_build_dir()` to decode its output into a UTF-8 string.
+
 2021-03-26  Jonathan Bedard  <jbedard@apple.com>
 
         System installing webkitcorepy can break certain scripts
