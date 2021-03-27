@@ -1,3 +1,17 @@
+2021-03-26  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r275038?): Perf test IndexedDB/stress/large-binary-keys.html failing with logging about memory pressure events
+        https://bugs.webkit.org/show_bug.cgi?id=223826
+        <rdar://problem/75906134>
+
+        Reviewed by Darin Adler.
+
+        Use RELEASE_LOG() instead of WTFLogAlways() to log memory pressure events, so that they don't
+        show on stdout in the performance tests and make them fail.
+
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+
 2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Use PUICQuickboardController for text input when HAVE(QUICKBOARD_CONTROLLER) is defined
