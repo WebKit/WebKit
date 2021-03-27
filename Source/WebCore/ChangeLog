@@ -1,3 +1,19 @@
+2021-03-26  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] No need to update the counters when the renderer is moved internally
+        https://bugs.webkit.org/show_bug.cgi?id=223801
+        <rdar://75835208>
+
+        Reviewed by Ryosuke Niwa.
+
+        When the renderer re-parenting is initiated by an "internal move" (e.g. anonymous block parent is not needed anymore so all the descendants
+        are moved "one level" up), we don't need to re-compute the counters. Their state should not be any different after this re-parenting.
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::attachToRenderElementInternal):
+        (WebCore::RenderTreeBuilder::move):
+        * rendering/updating/RenderTreeBuilder.h:
+
 2021-03-26  Chris Fleizach  <cfleizach@apple.com>
 
         AX: crash at aom.apple.WebCore: WebCore::AccessibilityProgressIndicator::element const
