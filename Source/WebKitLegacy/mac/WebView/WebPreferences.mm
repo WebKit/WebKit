@@ -2774,16 +2774,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitCSSOMViewScrollingAPIEnabledPreferenceKey];
 }
 
-- (BOOL)modernMediaControlsEnabled
-{
-    return [self _boolValueForKey:WebKitModernMediaControlsEnabledPreferenceKey];
-}
-
-- (void)setModernMediaControlsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitModernMediaControlsEnabledPreferenceKey];
-}
-
 - (BOOL)menuItemElementEnabled
 {
     return [self _boolValueForKey:WebKitMenuItemElementEnabledPreferenceKey];

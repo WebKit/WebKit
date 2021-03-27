@@ -82,6 +82,11 @@ static std::wstring appleApplicationSupportDirectory()
     return applePathFromRegistry(L"SOFTWARE\\Apple Inc.\\Apple Application Support", L"InstallDir");
 }
 
+static std::wstring iTunesDirectory()
+{
+    return applePathFromRegistry(L"SOFTWARE\\Apple Computer, Inc.\\iTunes\\", L"InstallDir");
+}
+
 static bool prependPath(const std::wstring& directoryToPrepend)
 {
     std::wstring pathVariable = L"PATH";
@@ -128,18 +133,23 @@ static bool modifyPath(const std::wstring& programName)
     return true;
 
 #else
-
-    const std::wstring& pathPrefix = appleApplicationSupportDirectory();
-
-    if (!directoryExists(pathPrefix)) {
-        fatalError(programName, L"Failed to determine path to AAS directory.");
-        return false;
-    }
-
-    if (prependPath(pathPrefix))
+    auto modifyPathWith = [&] (const std::wstring& pathPrefix) {
+        if (!prependPath(pathPrefix)) {
+            fatalError(programName, L"Failed to modify PATH environment variable.");
+            return false;
+        }
         return true;
+    };
 
-    fatalError(programName, L"Failed to modify PATH environment variable.");
+    const std::wstring& applicationSupportPathPrefix = appleApplicationSupportDirectory();
+    if (directoryExists(applicationSupportPathPrefix))
+        return modifyPathWith(applicationSupportPathPrefix);
+
+    const std::wstring& iTunesPathPrefix = iTunesDirectory();
+    if (directoryExists(iTunesPathPrefix))
+        return modifyPathWith(iTunesPathPrefix);
+
+    fatalError(programName, L"Couldn't find path to Apple Application Support (AAS) or iTunes via the registry.  Do you have iTunes installed?");
     return false;
 #endif
 }

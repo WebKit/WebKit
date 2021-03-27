@@ -1,0 +1,10 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "AudioParam NaN"
+PASS Audit report
+PASS > [AudioParam NaN]
+PASS   AudioParam input contains only NaN is true.
+PASS   AudioParam output contains only the constant 100.
+PASS < [AudioParam NaN] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

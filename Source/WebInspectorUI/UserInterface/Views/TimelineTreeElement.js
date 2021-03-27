@@ -78,7 +78,7 @@ WI.TimelineTreeElement = class TimelineTreeElement extends WI.GeneralTreeElement
         let button = new WI.TreeElementStatusButton(WI.ImageUtilities.useSVGSymbol("Images/CloseLarge.svg", "close-button", tooltip));
         button.addEventListener(WI.TreeElementStatusButton.Event.Clicked, function(event) {
             this.deselect();
-        }, button);
+        }, this);
         this.status = button.element;
     }
 

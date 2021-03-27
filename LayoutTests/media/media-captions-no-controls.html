@@ -1,11 +1,10 @@
-<!DOCTYPE html><!-- webkit-test-runner [ ModernMediaControlsEnabled=false ] -->
+<!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
         <script src=media-file.js></script>
         <script src=video-test.js></script>
-        <script src=media-controls.js></script>
         <script>
 
             function canplaythrough()
@@ -25,9 +24,7 @@
                 run("video.setAttribute('controls','controls')");
                 testExpected("video.textTracks.length", 1);
                 testExpected("video.controls", true);
-                controlsElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-panel");
                 testExpected("internals.shadowRoot(video)", null, "!=");
-                testExpected("controlsElement.style['display']", 'none', "!=");
 
                 consoleWrite("");
                 endTest();

@@ -309,6 +309,17 @@ Ref<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& ctx)
     return adoptRef(*new WebGLFramebuffer(ctx));
 }
 
+#if ENABLE(WEBXR)
+
+Ref<WebGLFramebuffer> WebGLFramebuffer::createOpaque(WebGLRenderingContextBase& ctx)
+{
+    auto framebuffer = adoptRef(*new WebGLFramebuffer(ctx));
+    framebuffer->m_opaque = true;
+    return framebuffer;
+}
+
+#endif
+
 WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase& ctx)
     : WebGLContextObject(ctx)
     , m_hasEverBeenBound(false)
@@ -489,6 +500,16 @@ GCGLenum WebGLFramebuffer::getColorBufferFormat() const
 
 GCGLenum WebGLFramebuffer::checkStatus(const char** reason) const
 {
+#if ENABLE(WEBXR)
+    // https://immersive-web.github.io/webxr/#opaque-framebuffer
+    if (m_opaque) {
+        if (m_opaqueActive)
+            return GL_FRAMEBUFFER_COMPLETE;
+        *reason = "An opaque framebuffer is considered incomplete outside of a requestAnimationFrame";
+        return GL_FRAMEBUFFER_UNSUPPORTED;
+    }
+#endif
+
     unsigned int count = 0;
     GCGLsizei width = 0, height = 0;
     bool haveDepth = false;

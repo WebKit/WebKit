@@ -4,7 +4,7 @@ const assert = require('assert');
 
 const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
-const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
+const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 const assertThrows = require('./resources/common-operations.js').assertThrows;
 
@@ -23,8 +23,8 @@ async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
             }
         },
         "builderName": "someBuilder",
-        "slaveName": "someSlave",
-        "slavePassword": "somePassword",
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
         "platform": "some platform",
         "tests": {
             "some test": {
@@ -52,8 +52,8 @@ async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
             }
         },
         "builderName": "someBuilder",
-        "slaveName": "someSlave",
-        "slavePassword": "somePassword",
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
         "platform": "some platform",
         "tests": {
             "some test": {
@@ -70,7 +70,7 @@ async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
 
     const db = TestServer.database();
     const remote = TestServer.remoteAPI();
-    await addSlaveForReport(reportWithRevision[0]);
+    await addWorkerForReport(reportWithRevision[0]);
     await remote.postJSON('/api/report/', reportWithRevision);
     await remote.postJSON('/api/report/', anotherReportWithRevision);
     await Manifest.fetch();
@@ -92,8 +92,8 @@ async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
 async function addTriggerableAndCreateTask(name, webkitRevisions)
 {
     const report = {
-        'slaveName': 'anotherSlave',
-        'slavePassword': 'anotherPassword',
+        'workerName': 'anotherWorker',
+        'workerPassword': 'anotherPassword',
         'triggerable': 'build-webkit',
         'configurations': [
             {test: MockData.someTestId(), platform: MockData.somePlatformId()},
@@ -118,7 +118,7 @@ async function addTriggerableAndCreateTask(name, webkitRevisions)
         ]
     };
     await MockData.addMockData(TestServer.database());
-    await addSlaveForReport(report);
+    await addWorkerForReport(report);
     await TestServer.remoteAPI().postJSON('/api/update-triggerable/', report);
     await createAnalysisTask(name, webkitRevisions);
 }
@@ -129,11 +129,11 @@ describe('/privileged-api/update-test-group', function(){
         PrivilegedAPI.configure('test', 'password');
     });
 
-    it('should return "SlaveNotFound" if invalid slave name and password combination is provided', async () => {
+    it('should return "WorkerNotFound" if invalid worker name and password combination is provided', async () => {
         await addTriggerableAndCreateTask('some task');
         PrivilegedAPI.configure('test', 'wrongpassword');
 
-        await assertThrows('SlaveNotFound', () => PrivilegedAPI.sendRequest('update-test-group', {}));
+        await assertThrows('WorkerNotFound', () => PrivilegedAPI.sendRequest('update-test-group', {}));
     });
 
     it('should return "TestGroupNotSpecified" if test group is not specified', async () => {

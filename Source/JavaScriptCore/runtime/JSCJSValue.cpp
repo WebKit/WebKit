@@ -264,7 +264,7 @@ bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName property
             if (gs.isCustomGetterSetter()) {
                 auto setter = jsCast<CustomGetterSetter*>(gs.asCell())->setter();
                 bool isAccessor = attributes & PropertyAttribute::CustomAccessor;
-                auto result = callCustomSetter(globalObject, setter, isAccessor, obj, slot.thisValue(), value);
+                auto result = callCustomSetter(globalObject, setter, isAccessor, obj, slot.thisValue(), value, propertyName);
                 if (result != TriState::Indeterminate)
                     RELEASE_AND_RETURN(scope, result == TriState::True);
             }

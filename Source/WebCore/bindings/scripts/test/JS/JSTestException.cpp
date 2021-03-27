@@ -176,9 +176,9 @@ static inline JSValue jsTestException_nameGetter(JSGlobalObject& lexicalGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.name())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestException_name, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestException_name, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestException>::get<jsTestException_nameGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "name");
+    return IDLAttribute<JSTestException>::get<jsTestException_nameGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 JSC::IsoSubspace* JSTestException::subspaceForImpl(JSC::VM& vm)

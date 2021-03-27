@@ -33,8 +33,8 @@
 // prime and determines a next prime number. This interface is used
 // in Google Test samples demonstrating use of parameterized tests.
 
-#ifndef GTEST_SAMPLES_PRIME_TABLES_H_
-#define GTEST_SAMPLES_PRIME_TABLES_H_
+#ifndef GOOGLETEST_SAMPLES_PRIME_TABLES_H_
+#define GOOGLETEST_SAMPLES_PRIME_TABLES_H_
 
 #include <algorithm>
 
@@ -43,7 +43,7 @@ class PrimeTable {
  public:
   virtual ~PrimeTable() {}
 
-  // Returns true iff n is a prime number.
+  // Returns true if and only if n is a prime number.
   virtual bool IsPrime(int n) const = 0;
 
   // Returns the smallest prime number greater than p; or returns -1
@@ -54,7 +54,7 @@ class PrimeTable {
 // Implementation #1 calculates the primes on-the-fly.
 class OnTheFlyPrimeTable : public PrimeTable {
  public:
-  virtual bool IsPrime(int n) const {
+  bool IsPrime(int n) const override {
     if (n <= 1) return false;
 
     for (int i = 2; i*i <= n; i++) {
@@ -65,12 +65,12 @@ class OnTheFlyPrimeTable : public PrimeTable {
     return true;
   }
 
-  virtual int GetNextPrime(int p) const {
-    for (int n = p + 1; n > 0; n++) {
+  int GetNextPrime(int p) const override {
+    if (p < 0) return -1;
+
+    for (int n = p + 1;; n++) {
       if (IsPrime(n)) return n;
     }
-
-    return -1;
   }
 };
 
@@ -83,13 +83,13 @@ class PreCalculatedPrimeTable : public PrimeTable {
       : is_prime_size_(max + 1), is_prime_(new bool[max + 1]) {
     CalculatePrimesUpTo(max);
   }
-  virtual ~PreCalculatedPrimeTable() { delete[] is_prime_; }
+  ~PreCalculatedPrimeTable() override { delete[] is_prime_; }
 
-  virtual bool IsPrime(int n) const {
+  bool IsPrime(int n) const override {
     return 0 <= n && n < is_prime_size_ && is_prime_[n];
   }
 
-  virtual int GetNextPrime(int p) const {
+  int GetNextPrime(int p) const override {
     for (int n = p + 1; n < is_prime_size_; n++) {
       if (is_prime_[n]) return n;
     }
@@ -123,4 +123,4 @@ class PreCalculatedPrimeTable : public PrimeTable {
   void operator=(const PreCalculatedPrimeTable& rhs);
 };
 
-#endif  // GTEST_SAMPLES_PRIME_TABLES_H_
+#endif  // GOOGLETEST_SAMPLES_PRIME_TABLES_H_

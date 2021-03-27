@@ -380,9 +380,6 @@
         "MasqueradesAsUndefined": {
             "contextsAllowed": ["interface"]
         },
-        "MayThrowException": {
-            "contextsAllowed": ["attribute", "operation"]
-        },
         "NewImpurePropertyFiresWatchpoints": {
             "contextsAllowed": ["interface"]
         },

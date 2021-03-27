@@ -1,4 +1,0 @@
-
-
-PASS Cues are displayed
-

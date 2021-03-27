@@ -1356,6 +1356,15 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->swizzled = false;
             break;
 
+        case angle::FormatID::D24_UNORM_S8_UINT:
+            
+            this->metalFormat = MTLPixelFormatDepth32Float_Stencil8;
+            this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
+            this->initFunction = nullptr;
+
+            this->swizzled = false;
+            break;
+
         case angle::FormatID::R4G4B4A4_UNORM:
             
             this->metalFormat = MTLPixelFormatRGBA8Unorm;

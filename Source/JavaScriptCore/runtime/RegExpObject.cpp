@@ -121,12 +121,12 @@ bool RegExpObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObj
     RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, globalObject, propertyName, descriptor, shouldThrow));
 }
 
-JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value))
+JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value, PropertyName))
 {
     return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(globalObject, JSValue::decode(value), true);
 }
 
-JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value))
+JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value, PropertyName))
 {
     return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(globalObject, JSValue::decode(value), false);
 }

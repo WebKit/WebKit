@@ -4,7 +4,7 @@ require_once('../include/json-header.php');
 
 function main() {
     $db = connect();
-    $data = ensure_privileged_api_data_and_token_or_slave($db);
+    $data = ensure_privileged_api_data_and_token_or_worker($db);
 
     $test_group_id = array_get($data, 'group');
     if (!$test_group_id)

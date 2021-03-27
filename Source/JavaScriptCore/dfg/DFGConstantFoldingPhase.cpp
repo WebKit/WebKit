@@ -1419,28 +1419,22 @@ private:
         RegisteredStructureSet newSet;
         TransitionVector transitions;
         for (const PutByIdVariant& variant : status.variants()) {
-            for (const ObjectPropertyCondition& condition : variant.conditionSet()) {
-                if (m_graph.watchCondition(condition))
-                    continue;
+            if (variant.kind() == PutByIdVariant::Transition) {
+                for (const ObjectPropertyCondition& condition : variant.conditionSet()) {
+                    if (m_graph.watchCondition(condition))
+                        continue;
 
-                Structure* structure = condition.object()->structure(m_graph.m_vm);
-                if (!condition.structureEnsuresValidity(structure))
-                    return;
-
-                if (variant.kind() == PutByIdVariant::Replace) {
-                    auto* watchpoints = structure->propertyReplacementWatchpointSet(condition.offset());
-                    if (!watchpoints || watchpoints->isStillValid())
+                    Structure* structure = condition.object()->structure(m_graph.m_vm);
+                    if (!condition.structureEnsuresValidity(structure))
                         return;
+
+                    m_insertionSet.insertNode(
+                        indexInBlock, SpecNone, CheckStructure, node->origin,
+                        OpInfo(m_graph.addStructureSet(structure)),
+                        m_insertionSet.insertConstantForUse(
+                            indexInBlock, node->origin, condition.object(), KnownCellUse));
                 }
 
-                m_insertionSet.insertNode(
-                    indexInBlock, SpecNone, CheckStructure, node->origin,
-                    OpInfo(m_graph.addStructureSet(structure)),
-                    m_insertionSet.insertConstantForUse(
-                        indexInBlock, node->origin, condition.object(), KnownCellUse));
-            }
-
-            if (variant.kind() == PutByIdVariant::Transition) {
                 ASSERT(privateFieldPutKind.isNone() || privateFieldPutKind.isDefine());
                 RegisteredStructure newStructure = m_graph.registerStructure(variant.newStructure());
                 transitions.append(
@@ -1450,6 +1444,7 @@ private:
             } else {
                 ASSERT(variant.kind() == PutByIdVariant::Replace);
                 ASSERT(privateFieldPutKind.isNone() || privateFieldPutKind.isSet());
+                DFG_ASSERT(m_graph, node, variant.conditionSet().isEmpty());
                 newSet.merge(*m_graph.addStructureSet(variant.oldStructure()));
             }
         }

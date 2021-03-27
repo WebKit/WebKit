@@ -37,12 +37,13 @@
 
 namespace WebCore {
 
+class Document;
 class PlatformSpeechSynthesizerClient;
 class SpeechSynthesisVoice;
 
 class SpeechSynthesis : public PlatformSpeechSynthesizerClient, public SpeechSynthesisClientObserver, public RefCounted<SpeechSynthesis> {
 public:
-    static Ref<SpeechSynthesis> create(WeakPtr<SpeechSynthesisClient>);
+    static Ref<SpeechSynthesis> create(WeakPtr<SpeechSynthesisClient>, Document&);
 
     bool pending() const;
     bool speaking() const;
@@ -59,7 +60,7 @@ public:
     WEBCORE_EXPORT void setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer>);
 
 private:
-    SpeechSynthesis(WeakPtr<SpeechSynthesisClient>);
+    SpeechSynthesis(WeakPtr<SpeechSynthesisClient>, Document&);
 
     // PlatformSpeechSynthesizerClient override methods.
     void voicesDidChange() override;

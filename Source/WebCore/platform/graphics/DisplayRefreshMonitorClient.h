@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class DisplayRefreshMonitor;
+class DisplayRefreshMonitorFactory;
 
 class DisplayRefreshMonitorClient {
 public:
@@ -41,7 +42,7 @@ public:
     // Always called on the main thread.
     virtual void displayRefreshFired() = 0;
 
-    virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;
+    virtual DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const = 0;
 
     PlatformDisplayID displayID() const { return m_displayID.value(); }
     bool hasDisplayID() const { return !!m_displayID; }

@@ -36,21 +36,29 @@
 #include "UserGestureIndicator.h"
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include "Document.h"
+#endif
+
 namespace WebCore {
 
-Ref<SpeechSynthesis> SpeechSynthesis::create(WeakPtr<SpeechSynthesisClient> client)
+Ref<SpeechSynthesis> SpeechSynthesis::create(WeakPtr<SpeechSynthesisClient> client, Document& document)
 {
-    return adoptRef(*new SpeechSynthesis(client));
+    return adoptRef(*new SpeechSynthesis(client, document));
 }
 
-SpeechSynthesis::SpeechSynthesis(WeakPtr<SpeechSynthesisClient> client)
+SpeechSynthesis::SpeechSynthesis(WeakPtr<SpeechSynthesisClient> client, Document& document)
     : m_currentSpeechUtterance(nullptr)
     , m_isPaused(false)
 #if PLATFORM(IOS_FAMILY)
-    , m_restrictions(RequireUserGestureForSpeechStartRestriction)
+    , m_restrictions(document.audioPlaybackRequiresUserGesture() ? RequireUserGestureForSpeechStartRestriction : NoRestrictions)
 #endif
     , m_speechSynthesisClient(client)
 {
+#if !PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(document);
+#endif
+
     if (m_speechSynthesisClient)
         m_speechSynthesisClient->setObserver(makeWeakPtr(this));
 }

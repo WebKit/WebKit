@@ -391,7 +391,8 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
             // Last styled node was not parent node of this text node, but we wish to style this
             // text node. To make this possible, add a style span to surround this text node.
             auto span = createStyleSpanElement(document());
-            surroundNodeRangeWithElement(*node, *node, span.copyRef());
+            if (!surroundNodeRangeWithElement(*node, *node, span.copyRef()))
+                continue;
             reachedEnd = node->isDescendantOf(beyondEnd);
             element = WTFMove(span);
         }  else {
@@ -1305,12 +1306,16 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const
     return true;
 }
 
-void ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endNode, Ref<Element>&& elementToInsert)
+bool ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endNode, Ref<Element>&& elementToInsert)
 {
     Ref<Node> protectedStartNode = startNode;
     Ref<Element> element = WTFMove(elementToInsert);
 
     insertNodeBefore(element.copyRef(), startNode);
+    if (!element->isContentRichlyEditable()) {
+        removeNode(element);
+        return false;
+    }
 
     RefPtr<Node> node = &startNode;
     while (node) {
@@ -1340,6 +1345,7 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     // FIXME: We should probably call updateStartEnd if the start or end was in the node
     // range so that the endingSelection() is canonicalized.  See the comments at the end of
     // VisibleSelection::validate().
+    return true;
 }
 
 static String joinWithSpace(const String& a, const String& b)

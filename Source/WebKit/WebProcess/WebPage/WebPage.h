@@ -1413,6 +1413,8 @@ public:
     void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
 
+    bool isParentProcessAWebBrowser() const;
+    
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

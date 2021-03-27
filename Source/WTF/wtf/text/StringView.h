@@ -837,9 +837,12 @@ public:
     bool operator!=(const Iterator&) const;
 
 private:
-    std::reference_wrapper<const StringView> m_stringView;
-    Optional<unsigned> m_nextCodePointOffset;
-    UChar32 m_codePoint;
+    const void* m_current;
+    const void* m_end;
+    bool m_is8Bit;
+#if CHECK_STRINGVIEW_LIFETIME
+    StringView m_stringView;
+#endif
 };
 
 class StringView::CodeUnits::Iterator {
@@ -894,37 +897,61 @@ inline StringView::CodePoints::CodePoints(const StringView& stringView)
 }
 
 inline StringView::CodePoints::Iterator::Iterator(const StringView& stringView, unsigned index)
-    : m_stringView(stringView)
-    , m_nextCodePointOffset(index)
+    : m_is8Bit(stringView.is8Bit())
+#if CHECK_STRINGVIEW_LIFETIME
+    , m_stringView(stringView)
+#endif
 {
-    operator++();
+    if (m_is8Bit) {
+        const LChar* begin = stringView.characters8();
+        m_current = begin + index;
+        m_end = begin + stringView.length();
+    } else {
+        const UChar* begin = stringView.characters16();
+        m_current = begin + index;
+        m_end = begin + stringView.length();
+    }
 }
 
 inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
 {
-    ASSERT(m_nextCodePointOffset);
-    if (m_nextCodePointOffset.value() == m_stringView.get().length()) {
-        m_nextCodePointOffset = WTF::nullopt;
-        return *this;
+#if CHECK_STRINGVIEW_LIFETIME
+    ASSERT(m_stringView.underlyingStringIsValid());
+#endif
+    ASSERT(m_current < m_end);
+    if (m_is8Bit)
+        m_current = static_cast<const LChar*>(m_current) + 1;
+    else {
+        unsigned i = 0;
+        size_t length = static_cast<const UChar*>(m_end) - static_cast<const UChar*>(m_current);
+        U16_FWD_1(static_cast<const UChar*>(m_current), i, length);
+        m_current = static_cast<const UChar*>(m_current) + i;
     }
-    if (m_stringView.get().is8Bit())
-        m_codePoint = m_stringView.get().characters8()[m_nextCodePointOffset.value()++];
-    else
-        U16_NEXT(m_stringView.get().characters16(), m_nextCodePointOffset.value(), m_stringView.get().length(), m_codePoint);
-    ASSERT(m_nextCodePointOffset.value() <= m_stringView.get().length());
     return *this;
 }
 
 inline UChar32 StringView::CodePoints::Iterator::operator*() const
 {
-    ASSERT(m_nextCodePointOffset);
-    return m_codePoint;
+#if CHECK_STRINGVIEW_LIFETIME
+    ASSERT(m_stringView.underlyingStringIsValid());
+#endif
+    ASSERT(m_current < m_end);
+    if (m_is8Bit)
+        return *static_cast<const LChar*>(m_current);
+    UChar32 codePoint;
+    size_t length = static_cast<const UChar*>(m_end) - static_cast<const UChar*>(m_current);
+    U16_GET(static_cast<const UChar*>(m_current), 0, 0, length, codePoint);
+    return codePoint;
 }
 
 inline bool StringView::CodePoints::Iterator::operator==(const Iterator& other) const
 {
-    ASSERT(&m_stringView.get() == &other.m_stringView.get());
-    return m_nextCodePointOffset == other.m_nextCodePointOffset;
+#if CHECK_STRINGVIEW_LIFETIME
+    ASSERT(m_stringView.underlyingStringIsValid());
+#endif
+    ASSERT(m_is8Bit == other.m_is8Bit);
+    ASSERT(m_end == other.m_end);
+    return m_current == other.m_current;
 }
 
 inline bool StringView::CodePoints::Iterator::operator!=(const Iterator& other) const

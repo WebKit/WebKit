@@ -52,6 +52,10 @@
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
 
+#if ENABLE(Condition11) || (ENABLE(Condition11) && ENABLE(Condition22)) || ENABLE(Condition12) || ENABLE(Condition22) || (ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
+#include "IDLTypes.h"
+#endif
+
 #if ENABLE(Condition11) || ENABLE(Condition12)
 #include "TestSupplementalBuiltins.h"
 #endif
@@ -533,9 +537,9 @@ static inline JSValue jsTestInterface_mixinReadOnlyAttributeGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.mixinReadOnlyAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_mixinReadOnlyAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_mixinReadOnlyAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_mixinReadOnlyAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mixinReadOnlyAttribute");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_mixinReadOnlyAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -549,9 +553,9 @@ static inline JSValue jsTestInterface_mixinAttributeGetter(JSGlobalObject& lexic
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.mixinAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_mixinAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_mixinAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_mixinAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mixinAttribute");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_mixinAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -564,15 +568,15 @@ static inline bool setJSTestInterface_mixinAttributeSetter(JSGlobalObject& lexic
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setMixinAttribute(WTFMove(nativeValue));
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinAttribute");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -584,9 +588,9 @@ static inline JSValue jsTestInterface_mixinCustomAttributeGetter(JSGlobalObject&
     return thisObject.mixinCustomAttribute(lexicalGlobalObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_mixinCustomAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_mixinCustomAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_mixinCustomAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mixinCustomAttribute");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_mixinCustomAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -599,9 +603,9 @@ static inline bool setJSTestInterface_mixinCustomAttributeSetter(JSGlobalObject&
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinCustomAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinCustomAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinCustomAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinCustomAttribute");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinCustomAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -615,9 +619,9 @@ static inline JSValue jsTestInterface_mixinNodeAttributeGetter(JSGlobalObject& l
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.mixinNodeAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_mixinNodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_mixinNodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_mixinNodeAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mixinNodeAttribute");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_mixinNodeAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -630,15 +634,15 @@ static inline bool setJSTestInterface_mixinNodeAttributeSetter(JSGlobalObject& l
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestInterface", "mixinNodeAttribute", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setMixinNodeAttribute(*nativeValue);
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinNodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_mixinNodeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinNodeAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinNodeAttribute");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_mixinNodeAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -652,9 +656,9 @@ static inline JSValue jsTestInterface_partialMixinAttributeFromPartialGetter(JSG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.partialMixinAttributeFromPartial())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_partialMixinAttributeFromPartial, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_partialMixinAttributeFromPartial, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_partialMixinAttributeFromPartialGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "partialMixinAttributeFromPartial");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_partialMixinAttributeFromPartialGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -667,9 +671,9 @@ static inline JSValue jsTestInterfaceConstructor_supplementalStaticReadOnlyAttrG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, WebCore::TestSupplemental::supplementalStaticReadOnlyAttr())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceConstructor_supplementalStaticReadOnlyAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceConstructor_supplementalStaticReadOnlyAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructor_supplementalStaticReadOnlyAttrGetter>(*lexicalGlobalObject, thisValue, "supplementalStaticReadOnlyAttr");
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructor_supplementalStaticReadOnlyAttrGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -682,9 +686,9 @@ static inline JSValue jsTestInterfaceConstructor_supplementalStaticAttrGetter(JS
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, WebCore::TestSupplemental::supplementalStaticAttr())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceConstructor_supplementalStaticAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceConstructor_supplementalStaticAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructor_supplementalStaticAttrGetter>(*lexicalGlobalObject, thisValue, "supplementalStaticAttr");
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructor_supplementalStaticAttrGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -696,15 +700,15 @@ static inline bool setJSTestInterfaceConstructor_supplementalStaticAttrSetter(JS
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterfaceConstructor_supplementalStaticAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterfaceConstructor_supplementalStaticAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructor_supplementalStaticAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStaticAttr");
+    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructor_supplementalStaticAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -718,9 +722,9 @@ static inline JSValue jsTestInterface_supplementalStr1Getter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, WebCore::TestSupplemental::supplementalStr1(impl))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_supplementalStr1, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_supplementalStr1, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_supplementalStr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalStr1");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_supplementalStr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -734,9 +738,9 @@ static inline JSValue jsTestInterface_supplementalStr2Getter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, WebCore::TestSupplemental::supplementalStr2(impl))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_supplementalStr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_supplementalStr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_supplementalStr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalStr2");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_supplementalStr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -749,15 +753,15 @@ static inline bool setJSTestInterface_supplementalStr2Setter(JSGlobalObject& lex
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue));
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalStr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalStr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalStr2Setter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStr2");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalStr2Setter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -769,9 +773,9 @@ static inline JSValue jsTestInterface_supplementalStr3Getter(JSGlobalObject& lex
     return thisObject.supplementalStr3(lexicalGlobalObject);
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_supplementalStr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_supplementalStr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_supplementalStr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalStr3");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_supplementalStr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -784,9 +788,9 @@ static inline bool setJSTestInterface_supplementalStr3Setter(JSGlobalObject& lex
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalStr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalStr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalStr3Setter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStr3");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalStr3Setter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -800,9 +804,9 @@ static inline JSValue jsTestInterface_supplementalNodeGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, WebCore::TestSupplemental::supplementalNode(impl))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_supplementalNode, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_supplementalNode, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_supplementalNodeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalNode");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_supplementalNodeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -815,15 +819,15 @@ static inline bool setJSTestInterface_supplementalNodeSetter(JSGlobalObject& lex
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestInterface", "supplementalNode", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue);
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalNode, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_supplementalNode, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalNodeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalNode");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_supplementalNodeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -837,9 +841,9 @@ static inline JSValue jsTestInterface_reflectAttributeGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_reflectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_reflectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterface_reflectAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectAttribute");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterface_reflectAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -852,15 +856,15 @@ static inline bool setJSTestInterface_reflectAttributeSetter(JSGlobalObject& lex
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue));
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_reflectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestInterface_reflectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_reflectAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectAttribute");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterface_reflectAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -873,9 +877,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinOperatio
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    throwScope.release();
-    impl.mixinOperation();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -939,9 +941,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinConditio
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    throwScope.release();
-    impl.mixinConditionalOperation();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinConditionalOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -959,9 +959,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinSettings
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    throwScope.release();
-    impl.mixinSettingsConditionalOperation();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.mixinSettingsConditionalOperation(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinSettingsConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -980,7 +978,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinResultFi
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     auto implResult = impl.mixinResultFieldOperation();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLSequence<IDLInterface<Node>>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(implResult.nodes))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLSequence<IDLInterface<Node>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(implResult.nodes))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_mixinResultFieldOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -998,9 +996,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_partialMixinO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    throwScope.release();
-    impl.partialMixinOperationFromPartial();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.partialMixinOperationFromPartial(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_partialMixinOperationFromPartial, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -1018,9 +1014,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_supplementalM
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    throwScope.release();
-    WebCore::TestSupplemental::supplementalMethod1(impl);
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return WebCore::TestSupplemental::supplementalMethod1(impl); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_supplementalMethod1, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -1083,9 +1077,7 @@ static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunction_supplementa
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    throwScope.release();
-    WebCore::TestSupplemental::supplementalMethod4();
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return WebCore::TestSupplemental::supplementalMethod4(); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfaceConstructorFunction_supplementalMethod4, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

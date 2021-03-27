@@ -1,3 +1,179 @@
+2021-03-22  Dewei Zhu  <dewei_zhu@apple.com>
+
+        [perf dashboard] Remove v1 and v2 code.
+        https://bugs.webkit.org/show_bug.cgi?id=223617
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove v1 and v2 code from perf dashboard.
+        Remove detect-changes.js script since run-analysis.js is the v3 version equivalent.
+
+        * public/index.html: Keep the redirection to v3.
+        * public/js/helper-classes.js: Removed.
+        * public/js/jquery.colorhelpers.js: Removed.
+        * public/js/jquery.flot.categories.js: Removed.
+        * public/js/jquery.flot.crosshair.js: Removed.
+        * public/js/jquery.flot.errorbars.js: Removed.
+        * public/js/jquery.flot.fillbetween.js: Removed.
+        * public/js/jquery.flot.js: Removed.
+        * public/js/jquery.flot.navigate.js: Removed.
+        * public/js/jquery.flot.plugins.js: Removed.
+        * public/js/jquery.flot.resize.js: Removed.
+        * public/js/jquery.flot.selection.js: Removed.
+        * public/js/jquery.flot.stack.js: Removed.
+        * public/js/jquery.flot.symbol.js: Removed.
+        * public/js/jquery.flot.threshold.js: Removed.
+        * public/js/jquery.flot.time.js: Removed.
+        * public/js/jquery.js: Removed.
+        * public/v2/analysis.js: Removed.
+        * public/v2/app.css: Removed.
+        * public/v2/app.js: Removed.
+        * public/v2/chart-pane.css: Removed.
+        * public/v2/commits-viewer.js: Removed.
+        * public/v2/data.js: Removed.
+        * public/v2/index.html: Keep the redirection to v3.
+        * public/v2/interactive-chart.js: Removed.
+        * public/v2/js/d3/LICENSE: Removed.
+        * public/v2/js/d3/d3.js: Removed.
+        * public/v2/js/d3/d3.min.js: Removed.
+        * public/v2/js/ember-data.js: Removed.
+        * public/v2/js/ember.js: Removed.
+        * public/v2/js/handlebars.js: Removed.
+        * public/v2/js/jquery.min.js: Removed.
+        * public/v2/manifest.js: Removed.
+        * public/v2/popup.js: Removed.
+        * public/v2/statistics-strategies.js: Removed.
+        * tools/detect-changes.js: Removed.
+
+2021-03-21  Dewei Zhu  <dewei_zhu@apple.com>
+
+        [perf dashboard] Remove non-inclusive words from perf dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=223505
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed most of non-inclusive terminology and replaced it with 'worker'.
+        Make impacted APIs backward compatible during transition.
+        The non-inclusive terminology will be removed after transition.
+
+        * ReadMe.md: Removed non-inclusive words.
+        * init-database.sql: Rename tables with non-inclusive words.
+        * migrate-database.sql: Added migration SQL for existing database.
+        * public/admin/build-workers.php: Renamed from Websites/perf.webkit.org/public/admin/build-slaves.php.
+        * public/api/build-requests.php:
+        * public/api/measurement-set.php:
+        * public/api/report-commits.php:
+        * public/api/runs.php:
+        * public/api/update-triggerable.php:
+        * public/api/upload-root.php:
+        * public/include/admin-header.php:
+        * public/include/json-header.php:
+        * public/include/report-processor.php:
+        * public/privileged-api/add-build-requests.php:
+        * public/privileged-api/create-analysis-task.php:
+        * public/privileged-api/create-test-group.php:
+        * public/privileged-api/update-test-group.php:
+        * public/v2/js/ember.js:
+        * server-tests/api-build-requests-tests.js:
+        * server-tests/api-commits-tests.js:
+        * server-tests/api-report-commits-tests.js:
+        * server-tests/api-report-tests.js:
+        (emptyReport):
+        (reportWitMismatchingCommitTime):
+        (reportWithOneSecondCommitTimeDifference):
+        (emptyWorkerReport):
+        (emptySlaveReport): Deleted.
+        * server-tests/api-test-groups.js:
+        * server-tests/api-update-triggerable-tests.js:
+        (updateWithOSXRepositoryGroup):
+        (updateWithMacWebKitRepositoryGroups):
+        * server-tests/api-upload-root-tests.js:
+        (makeReport):
+        (addWorkerAndCreateRootFile):
+        * server-tests/privileged-api-add-build-requests-tests.js:
+        (async createAnalysisTask):
+        (async addTriggerableAndCreateTask):
+        * server-tests/privileged-api-create-analysis-task-tests.js:
+        * server-tests/privileged-api-create-test-group-tests.js:
+        (createAnalysisTask):
+        * server-tests/privileged-api-update-test-group-tests.js:
+        (async createAnalysisTask):
+        (async addTriggerableAndCreateTask):
+        * server-tests/resources/common-operations.js:
+        * server-tests/resources/mock-data.js:
+        (MockData.addMockConfiguration):
+        (MockData.set mockTestSyncConfigWithSingleBuilder):
+        (MockData.sampleBuildData):
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype.testConfig):
+        * server-tests/tools-buildbot-triggerable-tests.js:
+        * server-tests/tools-os-build-fetcher-tests.js:
+        * server-tests/tools-sync-buildbot-integration-tests.js:
+        (createTriggerable):
+        * tools/detect-changes.js:
+        (loadServerConfig):
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.prototype.buildTag):
+        (BuildbotSyncer):
+        (BuildbotSyncer.prototype.scheduleRequest):
+        (BuildbotSyncer.prototype.scheduleRequestInGroupIfAvailable):
+        (BuildbotSyncer.prototype.pullBuildbot):
+        (BuildbotSyncer._loadConfig):
+        (BuildbotSyncer._validateAndMergeConfig):
+        (BuildbotBuildEntry.prototype.slaveName): Deleted.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable):
+        (BuildbotTriggerable.prototype.updateTriggerable):
+        (BuildbotTriggerable.prototype.async syncOnce):
+        (BuildbotTriggerable.prototype.async _scheduleRequest):
+        (BuildbotTriggerable.prototype._scheduleRequestIfWorkerIsAvailable):
+        (BuildbotTriggerable.prototype._scheduleRequestWithLog):
+        (BuildbotTriggerable._testGroupMapForBuildRequests):
+        (BuildbotTriggerable.prototype._scheduleRequestIfSlaveIsAvailable): Deleted.
+        * tools/js/database.js:
+        * tools/js/os-build-fetcher.js:
+        (prototype.async _reportCommits):
+        * tools/js/privileged-api.js:
+        (NodePrivilegedAPI.prototype.sendRequest):
+        (NodePrivilegedAPI.configure):
+        (NodePrivilegedAPI):
+        * tools/pull-os-versions.py:
+        (OSBuildFetcher.fetch_and_report_new_builds):
+        * tools/run-analysis.js:
+        (async analysisLoop):
+        * tools/sync-buildbot.js:
+        (syncLoop.const.makeTriggerable):
+        (syncLoop):
+        * tools/sync-commits.py:
+        (Repository.fetch_commits_and_submit):
+        * tools/sync-os-versions.js:
+        (syncLoop):
+        * tools/util.py:
+        (submit_commits):
+        * unit-tests/analysis-task-tests.js:
+        * unit-tests/buildbot-syncer-tests.js:
+        (sampleiOSConfig):
+        (sampleBuildData):
+        (async const):
+        * unit-tests/checkconfig.js:
+        * unit-tests/measurement-set-analyzer-tests.js:
+        * unit-tests/privileged-api-tests.js:
+        * unit-tests/retry-failed-build-requests-tests.js:
+        * unit-tests/test-groups-tests.js:
+
+2021-03-21  Dewei Zhu  <dewei_zhu@apple.com>
+
+        [perf dashboard] Perf dashboard should be compatible with newer version of postgres.
+        https://bugs.webkit.org/show_bug.cgi?id=223567
+
+        Reviewed by Ryosuke Niwa.
+
+        Newer version of postgres requires explicit ROW expression while updating a single column
+        using multi-column update syntax. However, 'ROW' is not supported in postgres < 10. In order
+        to keep compatibility, using a separate query when only updating one row.
+
+        * public/include/db.php: Use 'column = value' when there is only one column to update.
+
 2021-03-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         [perf dashboard] Use async/await in tests for TimeSeriesChart and InteractiveTimeSeriesChart

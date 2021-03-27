@@ -122,7 +122,9 @@ inline JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject& lexicalGlobalObject
 {
     if (cachedValue && isWorldCompatible(lexicalGlobalObject, cachedValue))
         return cachedValue;
-    cachedValue = cloneAcrossWorlds(lexicalGlobalObject, owner, function());
+    auto value = function();
+    cachedValue = cloneAcrossWorlds(lexicalGlobalObject, owner, value);
+    lexicalGlobalObject.vm().heap.writeBarrier(&owner, value);
     ASSERT(isWorldCompatible(lexicalGlobalObject, cachedValue));
     return cachedValue;
 }

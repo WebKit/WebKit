@@ -488,7 +488,7 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         PrivilegedAPI.configure('test', 'password');
     });
 
-    it('should return "SlaveNotFound" when incorrect slave user and password combination is provided and no analysis task, test group or build request should be created', async () => {
+    it('should return "WorkerNotFound" when incorrect worker user and password combination is provided and no analysis task, test group or build request should be created', async () => {
         PrivilegedAPI.configure('test', 'wrongpassword');
         const db = TestServer.database();
         await addBuilderForReport(reportWithRevision[0]);
@@ -508,7 +508,7 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
         const oneRevisionSet = {[webkitId]: {revision: '191622'}};
         const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
 
-        await assertThrows('SlaveNotFound', () =>
+        await assertThrows('WorkerNotFound', () =>
             PrivilegedAPI.sendRequest('create-analysis-task', {name: 'confirm', repetitionCount: 1,
                 revisionSets: [oneRevisionSet, anotherRevisionSet],
                 startRun: testRuns[0]['id'], endRun: testRuns[1]['id']}));

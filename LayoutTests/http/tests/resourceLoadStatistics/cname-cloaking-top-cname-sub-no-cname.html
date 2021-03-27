@@ -31,7 +31,7 @@
     const oneWeekInSeconds = 7 * 24 * 60 * 60;
     const overOneWeekInSeconds = oneWeekInSeconds + 600;
     const cookieName = "cnameTestCookie";
-    const subPathToSetFirstPartyCookie = "resources/set-cookie.php?name=" + cookieName + "&value=value&dummy=" + Math.random();
+    const subPathToSetFirstPartyCookie = "resources/set-cookie.py?name=" + cookieName + "&value=value&dummy=" + Math.random();
 
     function setAndCheckCookie() {
         fetch(subPathToSetFirstPartyCookie).then(function() {

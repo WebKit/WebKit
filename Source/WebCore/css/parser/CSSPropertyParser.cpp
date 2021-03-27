@@ -3924,6 +3924,44 @@ static RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
     return RefPtr<CSSValue>(WTFMove(list));
 }
 
+static RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
+{
+    if (auto singleValue = consumeIdent<CSSValueNone, CSSValueStrict, CSSValueContent>(range))
+        return singleValue;
+    auto list = CSSValueList::createSpaceSeparated();
+    RefPtr<CSSPrimitiveValue> size, layout, paint;
+    while (!range.atEnd()) {
+        switch (range.peek().id()) {
+        case CSSValueSize:
+            if (size)
+                return nullptr;
+            size = consumeIdent(range);
+            break;
+        case CSSValueLayout:
+            if (layout)
+                return nullptr;
+            layout = consumeIdent(range);
+            break;
+        case CSSValuePaint:
+            if (paint)
+                return nullptr;
+            paint = consumeIdent(range);
+            break;
+        default:
+            return nullptr;
+        }
+    }
+    if (size)
+        list->append(size.releaseNonNull());
+    if (layout)
+        list->append(layout.releaseNonNull());
+    if (paint)
+        list->append(paint.releaseNonNull());
+    if (!list->length())
+        return nullptr;
+    return RefPtr<CSSValue>(WTFMove(list));
+}
+
 static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 {
     bool foundOverOrUnder = false;
@@ -4499,6 +4537,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.aspectRatioEnabled)
             return nullptr;
         return consumeAspectRatio(m_range);
+    case CSSPropertyContain:
+        if (!m_context.containmentEnabled)
+            return nullptr;
+        return consumeContain(m_range);
     case CSSPropertyWebkitTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
 #if ENABLE(DARK_MODE_CSS)

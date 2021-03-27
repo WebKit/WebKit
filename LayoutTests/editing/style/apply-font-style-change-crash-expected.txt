@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: This test passes if it does not crash.
+onload = () => { if (window.testRunner) testRunner.dumpAsText(); console.log("This test passes if it does not crash."); document.execCommand('SelectAll'); document.designMode = 'on'; document.execCommand('FontSizeDelta', false, '1'); };

@@ -558,7 +558,7 @@ TEST(URLSchemeHandler, SyncXHR)
         TestWebKitAPI::Util::run(&startedXHR);
         receivedMessage = false;
 
-        webView = nil;
+        [webView _close];
     }
     
     TestWebKitAPI::Util::run(&receivedStop);
@@ -1388,4 +1388,48 @@ TEST(URLSchemeHandler, Origin)
     [webView setUIDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"registered:///"]]];
     EXPECT_WK_STREQ([delegate waitForAlert], "registered://host:123, null");
+}
+
+
+static bool receivedScriptMessage = false;
+static RetainPtr<WKScriptMessage> lastScriptMessage;
+@interface URLSchemeHandlerMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation URLSchemeHandlerMessageHandler
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    lastScriptMessage = message;
+    receivedScriptMessage = true;
+}
+@end
+
+TEST(URLSchemeHandler, isSecureContext)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([TestURLSchemeHandler new]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *responseString = @"<script>window.webkit.messageHandlers.testHandler.postMessage(window.isSecureContext ? 'secure': 'not secure');</script>";
+        [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:responseString.length textEncodingName:nil]).get()];
+        [task didReceiveData:[responseString dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }];
+
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"testing"];
+
+    auto messageHandler = adoptNS([[URLSchemeHandlerMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    receivedScriptMessage = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://localhost/test.html"]]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"secure", [lastScriptMessage body]);
+
+    receivedScriptMessage = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://main/test.html"]]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"secure", [lastScriptMessage body]);
 }

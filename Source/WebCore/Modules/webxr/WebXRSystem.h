@@ -115,6 +115,8 @@ private:
 
         void requestFrame(PlatformXR::Device::RequestFrameCallback&&) final;
         Vector<Device::ViewData> views(XRSessionMode) const final;
+        Optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool) final { return WTF::nullopt; }
+        void deleteLayer(PlatformXR::LayerHandle) final { }
     };
     DummyInlineDevice m_defaultInlineDevice;
 

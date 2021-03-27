@@ -168,9 +168,9 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
         console.assert(bytes >= 0);
 
         // Prefer KB over B. And prefer 1 decimal point to keep sizes simple
-        // but we will still need B if bytes is less than 0.1 KB (103 B).
+        // but we will still need B if bytes is less than 0.1 KB (100 B).
         const higherResolution = false;
-        const bytesThreshold = 103;
+        const bytesThreshold = 100;
         return Number.bytesToString(bytes, higherResolution, bytesThreshold);
     }
 

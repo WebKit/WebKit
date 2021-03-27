@@ -280,7 +280,7 @@ enum TreeType {
     boolean isPaintingFrequently(Element element);
     undefined incrementFrequentPaintCounter(Element element);
 
-    [MayThrowException] DOMString elementRenderTreeAsText(Element element);
+    DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
     DOMString fetchResponseSource(FetchResponse response);
@@ -309,23 +309,23 @@ enum TreeType {
     long deferredGroupRulesCount(StyleSheet sheet);
     long deferredKeyframesRulesCount(StyleSheet sheet);
 
-    [MayThrowException] DOMString shadowRootType(Node root);
+    DOMString shadowRootType(Node root);
     DOMString shadowPseudoId(Element element);
     undefined setShadowPseudoId(Element element, DOMString id);
     Node treeScopeRootNode(Node node);
     Node parentTreeScope(Node node);
 
     // Spatial Navigation testing
-    [MayThrowException] unsigned long lastSpatialNavigationCandidateCount();
+    unsigned long lastSpatialNavigationCandidateCount();
 
     readonly attribute unsigned long inflightBeaconsCount;
 
     // CSS Animation testing.
     boolean animationWithIdExists(DOMString id);
     unsigned long numberOfActiveAnimations();
-    [MayThrowException] undefined suspendAnimations();
-    [MayThrowException] undefined resumeAnimations();
-    [MayThrowException] boolean animationsAreSuspended();
+    undefined suspendAnimations();
+    undefined resumeAnimations();
+    boolean animationsAreSuspended();
     readonly attribute double animationsInterval;
 
     // Web Animations testing.
@@ -334,52 +334,52 @@ enum TreeType {
     double timeToNextAnimationTick(WebAnimation animation);
 
     // For animations testing, we need a way to get at pseudo elements.
-    [MayThrowException] Element? pseudoElement(Element element, DOMString pseudoId);
+    Element? pseudoElement(Element element, DOMString pseudoId);
 
     DOMString visiblePlaceholder(Element element);
     undefined selectColorInColorChooser(HTMLInputElement element, DOMString colorValue);
-    [MayThrowException] sequence<DOMString> formControlStateOfPreviousHistoryItem();
-    [MayThrowException] undefined setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
+    sequence<DOMString> formControlStateOfPreviousHistoryItem();
+    undefined setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 
-    [MayThrowException] DOMRect absoluteCaretBounds();
-    [MayThrowException] boolean isCaretBlinkingSuspended();
+    DOMRect absoluteCaretBounds();
+    boolean isCaretBlinkingSuspended();
 
     DOMRect boundingBox(Element element);
 
-    [MayThrowException] unsigned long inspectorGridOverlayCount();
-    [MayThrowException] DOMRectList inspectorHighlightRects();
+    unsigned long inspectorGridOverlayCount();
+    DOMRectList inspectorHighlightRects();
 
-    [MayThrowException] unsigned long markerCountForNode(Node node, DOMString markerType);
-    [MayThrowException] Range? markerRangeForNode(Node node, DOMString markerType, unsigned long index);
-    [MayThrowException] DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
-    [MayThrowException] DOMString dumpMarkerRects(DOMString markerType);
-    [MayThrowException] undefined setMarkedTextMatchesAreHighlighted(boolean flag);
+    unsigned long markerCountForNode(Node node, DOMString markerType);
+    Range? markerRangeForNode(Node node, DOMString markerType, unsigned long index);
+    DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
+    DOMString dumpMarkerRects(DOMString markerType);
+    undefined setMarkedTextMatchesAreHighlighted(boolean flag);
 
     undefined invalidateFontCache();
     undefined setFontSmoothingEnabled(boolean enabled);
 
-    [MayThrowException] undefined setScrollViewPosition(long x, long y);
+    undefined setScrollViewPosition(long x, long y);
 
     // Like Element.scrollTo(), but without constaints, for testing rubber-banding.
-    [MayThrowException] undefined unconstrainedScrollTo(Element element, unrestricted double x, unrestricted double y);
+    undefined unconstrainedScrollTo(Element element, unrestricted double x, unrestricted double y);
 
     // Scrolls the element by the given delta, approximating the async wheel event handling code path where available.
-    [MayThrowException] undefined scrollBySimulatingWheelEvent(Element element, unrestricted double deltaX, unrestricted double deltaY);
+    undefined scrollBySimulatingWheelEvent(Element element, unrestricted double deltaX, unrestricted double deltaY);
 
-    [MayThrowException] DOMRect layoutViewportRect();
-    [MayThrowException] DOMRect visualViewportRect();
+    DOMRect layoutViewportRect();
+    DOMRect visualViewportRect();
 
-    [MayThrowException] undefined setViewIsTransparent(boolean trnasparent);
+    undefined setViewIsTransparent(boolean trnasparent);
 
-    [MayThrowException] DOMString viewBaseBackgroundColor();
-    [MayThrowException] undefined setViewBaseBackgroundColor(DOMString colorValue);
+    DOMString viewBaseBackgroundColor();
+    undefined setViewBaseBackgroundColor(DOMString colorValue);
 
-    [MayThrowException] undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);
-    [MayThrowException] undefined setPaginationLineGridEnabled(boolean enabled);
+    undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);
+    undefined setPaginationLineGridEnabled(boolean enabled);
 
-    [MayThrowException] DOMString configurationForViewport(unrestricted float devicePixelRatio, long deviceWidth, long deviceHeight, long availableWidth, long availableHeight);
+    DOMString configurationForViewport(unrestricted float devicePixelRatio, long deviceWidth, long deviceHeight, long availableWidth, long availableHeight);
 
-    [MayThrowException] boolean wasLastChangeUserEdit(Element textField);
+    boolean wasLastChangeUserEdit(Element textField);
     boolean elementShouldAutoComplete(HTMLInputElement inputElement);
     undefined setAutofilled(HTMLInputElement inputElement, boolean enabled);
     undefined setAutoFilledAndViewable(HTMLInputElement inputElement, boolean enabled);
@@ -392,16 +392,16 @@ enum TreeType {
     Element insertTextPlaceholder(long width, long height);
     undefined removeTextPlaceholder(Element element);
 
-    [MayThrowException] Range? rangeOfString(DOMString text, Range? referenceRange, sequence<DOMString> findOptions);
-    [MayThrowException] unsigned long countMatchesForText(DOMString text, sequence<DOMString> findOptions, DOMString markMatches);
-    [MayThrowException] unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);
+    Range? rangeOfString(DOMString text, Range? referenceRange, sequence<DOMString> findOptions);
+    unsigned long countMatchesForText(DOMString text, sequence<DOMString> findOptions, DOMString markMatches);
+    unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);
 
-    [MayThrowException] DOMString autofillFieldName(Element formControlElement);
+    DOMString autofillFieldName(Element formControlElement);
     boolean isSpellcheckDisabledExceptTextReplacement(HTMLInputElement inputElement);
 
-    [MayThrowException] undefined invalidateControlTints();
+    undefined invalidateControlTints();
 
-    [MayThrowException] undefined scrollElementToRect(Element element, long x, long y, long w, long h);
+    undefined scrollElementToRect(Element element, long x, long y, long w, long h);
 
     Range? rangeFromLocationAndLength(Element scope, unsigned long rangeLocation, unsigned long rangeLength);
     unsigned long locationFromRange(Element scope, Range range);
@@ -409,13 +409,13 @@ enum TreeType {
     DOMString rangeAsText(Range range);
     DOMString rangeAsTextUsingBackwardsTextIterator(Range range);
     Range subrange(Range range, unsigned long rangeLocation, unsigned long rangeLength);
-    [MayThrowException] Range? rangeForDictionaryLookupAtLocation(long x, long y);
+    Range? rangeForDictionaryLookupAtLocation(long x, long y);
     Range? rangeOfStringNearLocation(Range range, DOMString text, long targetOffset);
 
-    [MayThrowException] undefined setDelegatesScrolling(boolean enabled);
+    undefined setDelegatesScrolling(boolean enabled);
 
-    [MayThrowException] unsigned long long lastSpellCheckRequestSequence();
-    [MayThrowException] unsigned long long lastSpellCheckProcessedSequence();
+    unsigned long long lastSpellCheckRequestSequence();
+    unsigned long long lastSpellCheckProcessedSequence();
     undefined advanceToNextMisspelling();
 
     sequence<DOMString> userPreferredLanguages();
@@ -424,13 +424,13 @@ enum TreeType {
     sequence<DOMString> userPreferredAudioCharacteristics();
     undefined setUserPreferredAudioCharacteristic(DOMString characteristic);
 
-    [MayThrowException] unsigned long wheelEventHandlerCount();
-    [MayThrowException] unsigned long touchEventHandlerCount();
+    unsigned long wheelEventHandlerCount();
+    unsigned long touchEventHandlerCount();
 
-    [MayThrowException] DOMRectList touchEventRectsForEvent(DOMString eventName);
-    [MayThrowException] DOMRectList passiveTouchEventListenerRects();
+    DOMRectList touchEventRectsForEvent(DOMString eventName);
+    DOMRectList passiveTouchEventListenerRects();
 
-    [MayThrowException] NodeList? nodesFromRect(Document document, long x, long y,
+    NodeList? nodesFromRect(Document document, long x, long y,
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
         boolean ignoreClipping, boolean allowShadowContent, boolean allowChildFrameContent);
 
@@ -460,7 +460,7 @@ enum TreeType {
 
     unsigned long numberOfScrollableAreas();
 
-    [MayThrowException] boolean isPageBoxVisible(long pageNumber);
+    boolean isPageBoxVisible(long pageNumber);
 
     unsigned long imageFrameIndex(HTMLImageElement element);
     unsigned long imageFrameCount(HTMLImageElement element);
@@ -480,8 +480,8 @@ enum TreeType {
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;
 
-    [MayThrowException] readonly attribute boolean areSVGAnimationsPaused;
-    [MayThrowException] double svgAnimationsInterval(SVGSVGElement element);
+    readonly attribute boolean areSVGAnimationsPaused;
+    double svgAnimationsInterval(SVGSVGElement element);
 
     boolean testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
 
@@ -497,37 +497,37 @@ enum TreeType {
     const unsigned short LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES = 256;
     const unsigned short LAYER_TREE_INCLUDES_EVENT_REGION = 512;
     const unsigned short LAYER_TREE_INCLUDES_DEEP_COLOR = 1024;
-    [MayThrowException] DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
+    DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
 
-    [MayThrowException] unsigned long long layerIDForElement(Element element);
+    unsigned long long layerIDForElement(Element element);
 
-    [MayThrowException] DOMString scrollbarOverlayStyle(optional Node? node = null);
-    [MayThrowException] boolean scrollbarUsingDarkAppearance(optional Node? node = null);
-    [MayThrowException] DOMString horizontalScrollbarState(optional Node? node = null);
-    [MayThrowException] DOMString verticalScrollbarState(optional Node? node = null);
+    DOMString scrollbarOverlayStyle(optional Node? node = null);
+    boolean scrollbarUsingDarkAppearance(optional Node? node = null);
+    DOMString horizontalScrollbarState(optional Node? node = null);
+    DOMString verticalScrollbarState(optional Node? node = null);
 
-    [MayThrowException] DOMString scrollingStateTreeAsText();
-    [MayThrowException] DOMString scrollingTreeAsText();
-    [MayThrowException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
-    [MayThrowException] DOMRectList nonFastScrollableRects();
+    DOMString scrollingStateTreeAsText();
+    DOMString scrollingTreeAsText();
+    DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
+    DOMRectList nonFastScrollableRects();
 
-    [MayThrowException] DOMString repaintRectsAsText();
+    DOMString repaintRectsAsText();
 
     // These throw if the element does not have a compositing layer.
-    [MayThrowException] undefined setElementUsesDisplayListDrawing(Element element, boolean usesDisplayListDrawing);
-    [MayThrowException] undefined setElementTracksDisplayListReplay(Element element, boolean trackReplay);
+    undefined setElementUsesDisplayListDrawing(Element element, boolean usesDisplayListDrawing);
+    undefined setElementTracksDisplayListReplay(Element element, boolean trackReplay);
 
     // Flags for displayListForElement.
     const unsigned short DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS = 1;
     // Returns the recorded display list.
-    [MayThrowException] DOMString displayListForElement(Element element, optional unsigned short flags = 0);
+    DOMString displayListForElement(Element element, optional unsigned short flags = 0);
     // Returns the display list that was actually painted.
-    [MayThrowException] DOMString replayDisplayListForElement(Element element, optional unsigned short flags = 0);
+    DOMString replayDisplayListForElement(Element element, optional unsigned short flags = 0);
 
-    [MayThrowException] undefined garbageCollectDocumentResources();
+    undefined garbageCollectDocumentResources();
 
-    [MayThrowException] undefined insertAuthorCSS(DOMString css);
-    [MayThrowException] undefined insertUserCSS(DOMString css);
+    undefined insertAuthorCSS(DOMString css);
+    undefined insertUserCSS(DOMString css);
 
     readonly attribute boolean isUnderMemoryPressure;
     undefined beginSimulatedMemoryPressure();
@@ -542,26 +542,26 @@ enum TreeType {
     [Conditional = RESIZE_OBSERVER] unsigned long numberOfResizeObservers(Document document);
     WindowProxy? openDummyInspectorFrontend(DOMString url);
     undefined closeDummyInspectorFrontend();
-    [MayThrowException] undefined setInspectorIsUnderTest(boolean isUnderTest);
+    undefined setInspectorIsUnderTest(boolean isUnderTest);
 
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
     sequence<DOMString> shortcutIconURLs();
     long numberOfPages(optional unrestricted double pageWidthInPixels = 800, optional unrestricted double pageHeightInPixels = 600);
-    [MayThrowException] DOMString pageProperty(DOMString propertyName, long pageNumber);
-    [MayThrowException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
+    DOMString pageProperty(DOMString propertyName, long pageNumber);
+    DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
 
-    [MayThrowException] undefined setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
-    [MayThrowException] float pageScaleFactor();
+    undefined setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
+    float pageScaleFactor();
 
-    [MayThrowException] undefined setPageZoomFactor(unrestricted float zoomFactor);
-    [MayThrowException] undefined setTextZoomFactor(unrestricted float zoomFactor);
+    undefined setPageZoomFactor(unrestricted float zoomFactor);
+    undefined setTextZoomFactor(unrestricted float zoomFactor);
 
-    [MayThrowException] undefined setUseFixedLayout(boolean useFixedLayout);
-    [MayThrowException] undefined setFixedLayoutSize(long width, long height);
+    undefined setUseFixedLayout(boolean useFixedLayout);
+    undefined setFixedLayoutSize(long width, long height);
     undefined setPrinting(long width, long height);
 
-    [MayThrowException] undefined setViewExposedRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+    undefined setViewExposedRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
 
     undefined setHeaderHeight(unrestricted float height);
     undefined setFooterHeight(unrestricted float height);
@@ -596,35 +596,35 @@ enum TreeType {
 
     // These functions both reset the tracked repaint rects. They are intended to be used in the following order:
     //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
-    [MayThrowException] undefined startTrackingRepaints();
-    [MayThrowException] undefined stopTrackingRepaints();
+    undefined startTrackingRepaints();
+    undefined stopTrackingRepaints();
 
-    [MayThrowException] undefined startTrackingLayerFlushes();
-    [MayThrowException] unsigned long layerFlushCount();
+    undefined startTrackingLayerFlushes();
+    unsigned long layerFlushCount();
 
     // Query if a timer is currently throttled, to debug timer throttling.
-    [MayThrowException] boolean isTimerThrottled(long timerHandle);
+    boolean isTimerThrottled(long timerHandle);
 
     DOMString requestAnimationFrameThrottlingReasons();
     boolean areTimersThrottled();
 
-    [MayThrowException] undefined setLowPowerModeEnabled(boolean enabled);
-    [MayThrowException] undefined setOutsideViewportThrottlingEnabled(boolean enabled);
+    undefined setLowPowerModeEnabled(boolean enabled);
+    undefined setOutsideViewportThrottlingEnabled(boolean enabled);
     readonly attribute double requestAnimationFrameInterval;
     readonly attribute boolean scriptedAnimationsAreSuspended;
 
     // Override the behavior of WebPage::eventThrottlingDelay(), which only affects iOS.
     attribute EventThrottlingBehavior? eventThrottlingBehaviorOverride;
 
-    [MayThrowException] undefined startTrackingStyleRecalcs();
-    [MayThrowException] unsigned long styleRecalcCount();
+    undefined startTrackingStyleRecalcs();
+    unsigned long styleRecalcCount();
     readonly attribute unsigned long lastStyleUpdateSize;
 
-    [MayThrowException] undefined startTrackingCompositingUpdates();
-    [MayThrowException] unsigned long compositingUpdateCount();
+    undefined startTrackingCompositingUpdates();
+    unsigned long compositingUpdateCount();
 
-    [MayThrowException] undefined startTrackingRenderingUpdates();
-    [MayThrowException] unsigned long renderingUpdateCount();
+    undefined startTrackingRenderingUpdates();
+    unsigned long renderingUpdateCount();
 
     attribute CompositingPolicy? compositingPolicyOverride;
 
@@ -633,12 +633,12 @@ enum TreeType {
     // |node| should be Document, HTMLIFrameElement, or unspecified.
     // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
     // specified without security checks. Unspecified or null means this document.
-    [MayThrowException] undefined updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node? node = null);
+    undefined updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node? node = null);
 
     readonly attribute unsigned long layoutCount;
 
     // Returns a string with information about the mouse cursor used at the specified client location.
-    [MayThrowException] DOMString getCurrentCursorInfo();
+    DOMString getCurrentCursorInfo();
 
     DOMString markerTextForListItem(Element element);
 
@@ -662,7 +662,7 @@ enum TreeType {
     [Conditional=VIDEO] sequence<DOMString> mediaResponseSources(HTMLMediaElement media);
     [Conditional=VIDEO] sequence<DOMString> mediaResponseContentRanges(HTMLMediaElement media);
     [Conditional=VIDEO] undefined simulateAudioInterruption(HTMLMediaElement element);
-    [Conditional=VIDEO, MayThrowException] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
+    [Conditional=VIDEO] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
     [Conditional=VIDEO] undefined beginSimulatedHDCPError(HTMLMediaElement media);
     [Conditional=VIDEO] undefined endSimulatedHDCPError(HTMLMediaElement media);
 
@@ -670,9 +670,9 @@ enum TreeType {
     [Conditional=VIDEO] DOMString elementBufferingPolicy(HTMLMediaElement media);
     [Conditional=VIDEO] double privatePlayerVolume(HTMLMediaElement media);
     [Conditional=VIDEO] boolean privatePlayerMuted(HTMLMediaElement media);
-    [Conditional=VIDEO, MayThrowException] undefined setOverridePreferredDynamicRangeMode(HTMLMediaElement media, DOMString mode);
+    [Conditional=VIDEO] undefined setOverridePreferredDynamicRangeMode(HTMLMediaElement media, DOMString mode);
 
-    [MayThrowException] undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
+    undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
 
     [Conditional=LEGACY_ENCRYPTED_MEDIA] undefined initializeMockCDM();
     [Conditional=ENCRYPTED_MEDIA] MockCDMFactory registerMockCDM();
@@ -682,12 +682,12 @@ enum TreeType {
 
     DOMString getImageSourceURL(Element element);
 
-    [Conditional=VIDEO, MayThrowException] DOMString captionsStyleSheetOverride();
-    [Conditional=VIDEO, MayThrowException] undefined setCaptionsStyleSheetOverride(DOMString override);
-    [Conditional=VIDEO, MayThrowException] undefined setPrimaryAudioTrackLanguageOverride(DOMString language);
-    [Conditional=VIDEO, MayThrowException] undefined setCaptionDisplayMode(DOMString mode);
+    [Conditional=VIDEO] DOMString captionsStyleSheetOverride();
+    [Conditional=VIDEO] undefined setCaptionsStyleSheetOverride(DOMString override);
+    [Conditional=VIDEO] undefined setPrimaryAudioTrackLanguageOverride(DOMString language);
+    [Conditional=VIDEO] undefined setCaptionDisplayMode(DOMString mode);
     [Conditional=VIDEO] TextTrackCueGeneric createGenericCue(double startTime, double endTime, DOMString text);
-    [Conditional=VIDEO, MayThrowException] DOMString textTrackBCP47Language(TextTrack track);
+    [Conditional=VIDEO] DOMString textTrackBCP47Language(TextTrack track);
 
     [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array
      endTimes);
@@ -695,12 +695,12 @@ enum TreeType {
 
     boolean isSelectPopupVisible(HTMLSelectElement element);
 
-    [MayThrowException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
-    [MayThrowException] DOMString unavailablePluginReplacementText(Element element);
+    boolean isPluginUnavailabilityIndicatorObscured(Element element);
+    DOMString unavailablePluginReplacementText(Element element);
     boolean isPluginSnapshotted(Element element);
     boolean pluginIsBelowSizeThreshold(Element element);
 
-    [MayThrowException] DOMRect selectionBounds();
+    DOMRect selectionBounds();
     undefined setSelectionWithoutValidation(Node baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
 
     [Conditional=MEDIA_SOURCE] undefined initializeMockMediaSource();
@@ -710,19 +710,19 @@ enum TreeType {
     [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, DOMString trackID, unsigned long maxQueueDepth);
 
-    [Conditional=VIDEO, MayThrowException] undefined beginMediaSessionInterruption(DOMString interruptionType);
+    [Conditional=VIDEO] undefined beginMediaSessionInterruption(DOMString interruptionType);
     [Conditional=VIDEO] undefined endMediaSessionInterruption(DOMString flags);
     [Conditional=VIDEO] undefined applicationWillBecomeInactive();
     [Conditional=VIDEO] undefined applicationDidBecomeActive();
     [Conditional=VIDEO] undefined applicationWillEnterForeground(optional boolean suspendedUnderLock = false);
     [Conditional=VIDEO] undefined applicationDidEnterBackground(optional boolean suspendedUnderLock = false);
-    [Conditional=VIDEO, MayThrowException] undefined setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
-    [Conditional=VIDEO, MayThrowException] DOMString mediaSessionRestrictions(DOMString mediaType);
+    [Conditional=VIDEO] undefined setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
+    [Conditional=VIDEO] DOMString mediaSessionRestrictions(DOMString mediaType);
     [Conditional=VIDEO] undefined setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
     [Conditional=WEB_AUDIO] undefined setAudioContextRestrictions((AudioContext or WebKitAudioContext) context, DOMString restrictions);
-    [Conditional=VIDEO, MayThrowException] undefined postRemoteControlCommand(DOMString command, optional unrestricted float argument = 0);
+    [Conditional=VIDEO] undefined postRemoteControlCommand(DOMString command, optional unrestricted float argument = 0);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
-    [Conditional=WIRELESS_PLAYBACK_TARGET, MayThrowException] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
+    [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined mockMediaPlaybackTargetPickerDismissPopup();
     [Conditional=MEDIA_STREAM] undefined setCustomPrivateRecorderCreator();
 
@@ -741,14 +741,14 @@ enum TreeType {
     [Conditional=VIDEO] undefined simulateSystemWake();
     [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(HTMLMediaElement element);
 
-    [MayThrowException] MockPageOverlay installMockPageOverlay(PageOverlayType type);
-    [MayThrowException] DOMString pageOverlayLayerTreeAsText(optional unsigned short flags = 0);
+    MockPageOverlay installMockPageOverlay(PageOverlayType type);
+    DOMString pageOverlayLayerTreeAsText(optional unsigned short flags = 0);
 
     undefined setPageMuted(DOMString mutedState);
     DOMString pageMediaState();
 
     undefined setPageDefersLoading(boolean defersLoading);
-    [MayThrowException] boolean pageDefersLoading();
+    boolean pageDefersLoading();
 
     File? createFile(DOMString url);
     undefined queueMicroTask(long testNumber);
@@ -756,11 +756,11 @@ enum TreeType {
 
     [Conditional=CONTENT_FILTERING] readonly attribute MockContentFilterSettings mockContentFilterSettings;
 
-    [Conditional=CSS_SCROLL_SNAP, MayThrowException] DOMString scrollSnapOffsets(Element element);
-    [Conditional=CSS_SCROLL_SNAP, MayThrowException] boolean isScrollSnapInProgress(Element element);
+    [Conditional=CSS_SCROLL_SNAP] DOMString scrollSnapOffsets(Element element);
+    [Conditional=CSS_SCROLL_SNAP] boolean isScrollSnapInProgress(Element element);
     [Conditional=CSS_SCROLL_SNAP] undefined setPlatformMomentumScrollingPredictionEnabled(boolean enabled);
 
-    [MayThrowException] DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
+    DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
 
     [Conditional=VIDEO] DOMString getCurrentMediaControlsStatusForElement(HTMLMediaElement element);
 
@@ -774,7 +774,7 @@ enum TreeType {
     DOMString resourceLoadStatisticsForURL(DOMURL url);
     undefined setResourceLoadStatisticsEnabled(boolean enable);
 
-    [MayThrowException] undefined setCanShowModalDialogOverride(boolean allow);
+    undefined setCanShowModalDialogOverride(boolean allow);
 
     DOMString composedTreeAsText(Node parent);
 
@@ -887,9 +887,9 @@ enum TreeType {
     boolean usingGStreamer();
 
     undefined postTask(VoidCallback callback);
-    [CallWith=ScriptExecutionContext, MayThrowException] undefined queueTask(DOMString source, VoidCallback callback);
+    [CallWith=ScriptExecutionContext] undefined queueTask(DOMString source, VoidCallback callback);
     [CallWith=Document] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
-    [MayThrowException] boolean hasSameEventLoopAs(WindowProxy windowProxy);
+    boolean hasSameEventLoopAs(WindowProxy windowProxy);
 
     DOMString windowLocationHost(DOMWindow window);
 
@@ -897,13 +897,13 @@ enum TreeType {
 
     undefined setMaxCanvasPixelMemory(unsigned long size);
 
-    [Conditional=VIDEO, MayThrowException] readonly attribute NowPlayingState nowPlayingState;
+    [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose purpose);
     [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
 
-    [Conditional=VIDEO, MayThrowException] MediaUsageState mediaUsageState(HTMLMediaElement element);
-    [Conditional=VIDEO, MayThrowException] boolean elementShouldDisplayPosterImage(HTMLVideoElement element);
+    [Conditional=VIDEO] MediaUsageState mediaUsageState(HTMLMediaElement element);
+    [Conditional=VIDEO] boolean elementShouldDisplayPosterImage(HTMLVideoElement element);
 
     DOMString ongoingLoadsDescriptions();
     undefined setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
@@ -978,17 +978,17 @@ enum TreeType {
     
     [Conditional=APP_HIGHLIGHTS] unsigned long numberOfAppHighlights();
 
-    [Conditional=WEBXR, MayThrowException] readonly attribute WebXRTest xrTest;
+    [Conditional=WEBXR] readonly attribute WebXRTest xrTest;
 
     [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeysInternalInstanceObjectRefCount(MediaKeys mediaKeys);
     [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeySessionInternalInstanceSessionObjectRefCount(MediaKeySession session);
 
     undefined setContentSizeCategory(ContentSizeCategory category);
 
-    [Conditional=ATTACHMENT_ELEMENT, MayThrowException] AttachmentThumbnailInfo attachmentThumbnailInfo(HTMLAttachmentElement element);
+    [Conditional=ATTACHMENT_ELEMENT] AttachmentThumbnailInfo attachmentThumbnailInfo(HTMLAttachmentElement element);
 
-    [Conditional=MEDIA_SESSION, MayThrowException] double currentMediaSessionPosition(MediaSession session);
-    [Conditional=MEDIA_SESSION, MayThrowException] undefined sendMediaSessionAction(MediaSession session, MediaSessionActionDetails actionDetails);
+    [Conditional=MEDIA_SESSION] double currentMediaSessionPosition(MediaSession session);
+    [Conditional=MEDIA_SESSION] undefined sendMediaSessionAction(MediaSession session, MediaSessionActionDetails actionDetails);
     [Conditional=MEDIA_SESSION] Promise<ImageData> loadArtworkImage(DOMString url);
     
     DOMString treeOrder(Node a, Node b, optional TreeType tree = "Tree");

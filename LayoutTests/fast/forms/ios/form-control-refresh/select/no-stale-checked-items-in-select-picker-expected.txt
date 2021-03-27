@@ -1,0 +1,13 @@
+This test verifies that tapping on a select element, choosing an option, and then tapping on the same element presents a context menu with the correct checked item.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "January"
+PASS checkedItem is "January"
+PASS select.value is "April"
+PASS checkedItem is "April"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

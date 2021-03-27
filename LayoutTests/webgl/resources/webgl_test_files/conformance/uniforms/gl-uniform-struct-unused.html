@@ -1,0 +1,83 @@
+<!--
+Copyright (c) 2019 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL uniform struct Conformance Test</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="example" width="2" height="2"> </canvas>
+
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+uniform vec4 u0;
+struct MyStruct {
+  vec4 var1;
+  vec4 var2;
+  vec4 var3;
+  vec4 var4;
+};
+uniform MyStruct u1;
+uniform vec4 u2;
+varying vec4 v_color;
+void main()
+{
+  gl_Position = vPosition;
+  v_color = (u0 + u2 + u1.var1) - vec4(2.0);
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 v_color;
+void main()
+{
+  gl_FragColor = v_color;
+}
+</script>
+
+<script>
+"use strict";
+description("This test ensures WebGL implementations handle unused members at the end of structs correctly.");
+
+var wtu = WebGLTestUtils;
+var gl = wtu.create3DContext();
+var c = document.getElementById("console");
+program = wtu.setupProgram(gl, ["vshader", "fshader"], [ "vPosition"]);
+
+wtu.setupUnitQuad(gl, [0, 1]);
+var white = [1.0, 1.0, 1.0, 1.0];
+var black = [0.0, 0.0, 0.0, 0.0];
+gl.uniform4fv(gl.getUniformLocation(program, "u0"), white);
+gl.uniform4fv(gl.getUniformLocation(program, "u1.var1"), white);
+gl.uniform4fv(gl.getUniformLocation(program, "u1.var2"), black);
+gl.uniform4fv(gl.getUniformLocation(program, "u1.var3"), black);
+gl.uniform4fv(gl.getUniformLocation(program, "u1.var4"), black);
+gl.uniform4fv(gl.getUniformLocation(program, "u2"), white);
+wtu.clearAndDrawUnitQuad(gl);
+wtu.checkCanvas(gl, [255, 255, 255, 255], "should be white", 0);
+gl.uniform4fv(gl.getUniformLocation(program, "u1.var2"), black);
+gl.uniform4fv(gl.getUniformLocation(program, "u1.var3"), black);
+gl.uniform4fv(gl.getUniformLocation(program, "u1.var4"), black);
+wtu.clearAndDrawUnitQuad(gl, [0, 0, 0, 0]);
+wtu.checkCanvas(gl, [255, 255, 255, 255], "should still be white", 0);
+
+wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no GL errors");
+debug("");
+var successfullyParsed = true;
+
+</script>
+<script src="../../js/js-test-post.js"></script>
+
+</body>
+</html>

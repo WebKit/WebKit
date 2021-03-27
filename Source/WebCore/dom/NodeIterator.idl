@@ -31,8 +31,8 @@
     readonly attribute unsigned long whatToShow;
     readonly attribute NodeFilter? filter;
 
-    [MayThrowException] Node? nextNode();
-    [MayThrowException] Node? previousNode();
+    Node? nextNode();
+    Node? previousNode();
 
     undefined detach();
 };

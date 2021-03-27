@@ -6,46 +6,46 @@ require('../tools/js/v3-models.js');
 
 const TestServer = require('./resources/test-server.js');
 const MockData = require('./resources/mock-data.js');
-const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
+const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe('/api/update-triggerable/', function () {
     prepareServerTest(this);
 
     const emptyUpdate = {
-        'slaveName': 'someSlave',
-        'slavePassword': 'somePassword',
+        'workerName': 'someWorker',
+        'workerPassword': 'somePassword',
         'triggerable': 'build-webkit',
         'configurations': [],
     };
 
     const smallUpdate = {
-        'slaveName': 'someSlave',
-        'slavePassword': 'somePassword',
+        'workerName': 'someWorker',
+        'workerPassword': 'somePassword',
         'triggerable': 'build-webkit',
         'configurations': [
             {test: MockData.someTestId(), platform: MockData.somePlatformId()}
         ],
     };
 
-    it('should reject when slave name is missing', () => {
+    it('should reject when worker name is missing', () => {
         return TestServer.remoteAPI().postJSON('/api/update-triggerable/', {}).then((response) => {
-            assert.strictEqual(response['status'], 'MissingSlaveName');
+            assert.strictEqual(response['status'], 'MissingWorkerName');
         });
     });
 
-    it('should reject when there are no slaves', () => {
-        const update = {slaveName: emptyUpdate.slaveName, slavePassword: emptyUpdate.slavePassword};
+    it('should reject when there are no workers', () => {
+        const update = {workerName: emptyUpdate.workerName, workerPassword: emptyUpdate.workerPassword};
         return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update).then((response) => {
-            assert.strictEqual(response['status'], 'SlaveNotFound');
+            assert.strictEqual(response['status'], 'WorkerNotFound');
         });
     });
 
-    it('should reject when the slave password doesn\'t match', () => {
+    it('should reject when the worker password doesn\'t match', () => {
         return MockData.addMockData(TestServer.database()).then(() => {
-            return addSlaveForReport(emptyUpdate);
+            return addWorkerForReport(emptyUpdate);
         }).then(() => {
-            const report = {slaveName: emptyUpdate.slaveName, slavePassword: 'badPassword'};
+            const report = {workerName: emptyUpdate.workerName, workerPassword: 'badPassword'};
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', emptyUpdate);
         }).then((response) => {
             assert.strictEqual(response['status'], 'OK');
@@ -54,7 +54,7 @@ describe('/api/update-triggerable/', function () {
 
     it('should accept an empty report', () => {
         return MockData.addMockData(TestServer.database()).then(() => {
-            return addSlaveForReport(emptyUpdate);
+            return addWorkerForReport(emptyUpdate);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', emptyUpdate);
         }).then((response) => {
@@ -66,7 +66,7 @@ describe('/api/update-triggerable/', function () {
         const db = TestServer.database();
         return MockData.addMockData(db).then(() => {
             return Promise.all([
-                addSlaveForReport(emptyUpdate),
+                addWorkerForReport(emptyUpdate),
                 db.insert('triggerable_configurations', {'triggerable': 1000 // build-webkit
                     , 'test': MockData.someTestId(), 'platform': MockData.somePlatformId()})
             ]);
@@ -83,7 +83,7 @@ describe('/api/update-triggerable/', function () {
     it('should add configurations in the update', () => {
         const db = TestServer.database();
         return MockData.addMockData(db).then(() => {
-            return addSlaveForReport(smallUpdate);
+            return addWorkerForReport(smallUpdate);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', smallUpdate);
         }).then((response) => {
@@ -98,11 +98,11 @@ describe('/api/update-triggerable/', function () {
 
     it('should reject when a configuration is malformed', () => {
         return MockData.addMockData(TestServer.database()).then(() => {
-            return addSlaveForReport(smallUpdate);
+            return addWorkerForReport(smallUpdate);
         }).then(() => {
             const update = {
-                'slaveName': 'someSlave',
-                'slavePassword': 'somePassword',
+                'workerName': 'someWorker',
+                'workerPassword': 'somePassword',
                 'triggerable': 'build-webkit',
                 'configurations': [{}],
             };
@@ -115,8 +115,8 @@ describe('/api/update-triggerable/', function () {
     function updateWithOSXRepositoryGroup()
     {
         return {
-            'slaveName': 'someSlave',
-            'slavePassword': 'somePassword',
+            'workerName': 'someWorker',
+            'workerPassword': 'somePassword',
             'triggerable': 'empty-triggerable',
             'configurations': [
                 {test: MockData.someTestId(), platform: MockData.somePlatformId()}
@@ -133,7 +133,7 @@ describe('/api/update-triggerable/', function () {
         const update = updateWithOSXRepositoryGroup();
         update.repositoryGroups = 1;
         return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
-            return addSlaveForReport(update);
+            return addWorkerForReport(update);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
@@ -145,7 +145,7 @@ describe('/api/update-triggerable/', function () {
         const update = updateWithOSXRepositoryGroup();
         delete update.repositoryGroups[0].name;
         return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
-            return addSlaveForReport(update);
+            return addWorkerForReport(update);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
@@ -157,7 +157,7 @@ describe('/api/update-triggerable/', function () {
         const update = updateWithOSXRepositoryGroup();
         delete update.repositoryGroups[0].repositories;
         return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
-            return addSlaveForReport(update);
+            return addWorkerForReport(update);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
@@ -169,7 +169,7 @@ describe('/api/update-triggerable/', function () {
         const update = updateWithOSXRepositoryGroup();
         update.repositoryGroups[0].repositories = 'hi';
         return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
-            return addSlaveForReport(update);
+            return addWorkerForReport(update);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
@@ -181,7 +181,7 @@ describe('/api/update-triggerable/', function () {
         const update = updateWithOSXRepositoryGroup();
         update.repositoryGroups[0].repositories[0] = 999;
         return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
-            return addSlaveForReport(update);
+            return addWorkerForReport(update);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
@@ -193,7 +193,7 @@ describe('/api/update-triggerable/', function () {
         const update = updateWithOSXRepositoryGroup();
         update.repositoryGroups[0].repositories[0] = {repository: 999};
         return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
-            return addSlaveForReport(update);
+            return addWorkerForReport(update);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
@@ -206,7 +206,7 @@ describe('/api/update-triggerable/', function () {
         const group = update.repositoryGroups[0];
         group.repositories.push(group.repositories[0]);
         return MockData.addEmptyTriggerable(TestServer.database()).then(() => {
-            return addSlaveForReport(update);
+            return addWorkerForReport(update);
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', update);
         }).then((response) => {
@@ -217,7 +217,7 @@ describe('/api/update-triggerable/', function () {
     it('should add a new repository group when there are none', () => {
         const db = TestServer.database();
         return MockData.addEmptyTriggerable(db).then(() => {
-            return addSlaveForReport(updateWithOSXRepositoryGroup());
+            return addWorkerForReport(updateWithOSXRepositoryGroup());
         }).then(() => {
             return TestServer.remoteAPI().postJSON('/api/update-triggerable/', updateWithOSXRepositoryGroup());
         }).then((response) => {
@@ -240,7 +240,7 @@ describe('/api/update-triggerable/', function () {
         const db = TestServer.database();
         let initialResult;
         return MockData.addEmptyTriggerable(db).then(() => {
-            return addSlaveForReport(updateWithOSXRepositoryGroup());
+            return addWorkerForReport(updateWithOSXRepositoryGroup());
         }).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', updateWithOSXRepositoryGroup());
         }).then((response) => {
@@ -262,7 +262,7 @@ describe('/api/update-triggerable/', function () {
         const db = TestServer.database();
         let initialResult;
         return MockData.addEmptyTriggerable(db).then(() => {
-            return addSlaveForReport(updateWithOSXRepositoryGroup());
+            return addWorkerForReport(updateWithOSXRepositoryGroup());
         }).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', updateWithOSXRepositoryGroup());
         }).then((response) => {
@@ -286,7 +286,7 @@ describe('/api/update-triggerable/', function () {
         const secondUpdate = updateWithOSXRepositoryGroup();
         secondUpdate.repositoryGroups[0].description = 'this group is awesome';
         return MockData.addEmptyTriggerable(db).then(() => {
-            return addSlaveForReport(initialUpdate);
+            return addWorkerForReport(initialUpdate);
         }).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
         }).then((response) => db.selectAll('triggerable_repository_groups')).then((repositoryGroups) => {
@@ -304,8 +304,8 @@ describe('/api/update-triggerable/', function () {
     function updateWithMacWebKitRepositoryGroups()
     {
         return {
-            'slaveName': 'someSlave',
-            'slavePassword': 'somePassword',
+            'workerName': 'someWorker',
+            'workerPassword': 'somePassword',
             'triggerable': 'empty-triggerable',
             'configurations': [
                 {test: MockData.someTestId(), platform: MockData.somePlatformId()}
@@ -337,7 +337,7 @@ describe('/api/update-triggerable/', function () {
         secondUpdate.repositoryGroups[0].acceptsRoots = true;
         secondUpdate.repositoryGroups[1].repositories[0].acceptsPatch = true;
         return MockData.addEmptyTriggerable(db).then(() => {
-            return addSlaveForReport(initialUpdate);
+            return addWorkerForReport(initialUpdate);
         }).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
         }).then(() => Manifest.fetch()).then(() => {
@@ -388,7 +388,7 @@ describe('/api/update-triggerable/', function () {
         let initialGroups;
         secondUpdate.repositoryGroups[1].repositories[0] = {repository: MockData.gitWebkitRepositoryId()}
         return MockData.addEmptyTriggerable(db).then(() => {
-            return addSlaveForReport(initialUpdate);
+            return addWorkerForReport(initialUpdate);
         }).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
         }).then((response) => {
@@ -429,7 +429,7 @@ describe('/api/update-triggerable/', function () {
         let initialRepositories;
         secondUpdate.repositoryGroups[0].name = 'mac-only';
         return MockData.addEmptyTriggerable(db).then(() => {
-            return addSlaveForReport(initialUpdate);
+            return addWorkerForReport(initialUpdate);
         }).then(() => {
             return TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable/', initialUpdate);
         }).then((response) => {

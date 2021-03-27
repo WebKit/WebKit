@@ -99,7 +99,7 @@ public:
     void timeChanged(RemoteMediaPlayerState&&);
     void durationChanged(RemoteMediaPlayerState&&);
     void rateChanged(double);
-    void playbackStateChanged(bool);
+    void playbackStateChanged(bool, MediaTime&&, WallTime&&);
     void engineFailedToLoad(long);
     void updateCachedState(RemoteMediaPlayerState&&);
     void characteristicChanged(RemoteMediaPlayerState&&);
@@ -145,7 +145,7 @@ public:
     void activeSourceBuffersChanged();
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void waitingForKeyChanged();
+    void waitingForKeyChanged(bool);
     void initializationDataEncountered(const String&, IPC::DataReference&&);
 #endif
 
@@ -422,6 +422,7 @@ private:
     bool m_isCurrentPlaybackTargetWireless { false };
     bool m_invalid { false };
     bool m_wantPlaybackQualityMetrics { false };
+    bool m_waitingForKey { false };
 };
 
 } // namespace WebKit

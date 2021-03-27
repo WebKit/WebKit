@@ -132,6 +132,8 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(MetaCommandChangeDestinationImageBuffer);
     case ItemType::MetaCommandChangeItemBuffer:
         return sizeof(MetaCommandChangeItemBuffer);
+    case ItemType::GetImageData:
+        return sizeof(GetImageData);
     case ItemType::PutImageData:
         return sizeof(PutImageData);
     case ItemType::PaintFrameForMedia:
@@ -169,6 +171,9 @@ static size_t sizeOfItemInBytes(ItemType type)
 
 bool isDrawingItem(ItemType type)
 {
+    /* See the comment at the top of DisplayListItems.h for what this means.
+     * This needs to match all the "static constexpr bool isDrawingItem"s inside the individual item classes. */
+
     switch (type) {
     case ItemType::ApplyDeviceScaleFactor:
 #if USE(CG)
@@ -202,6 +207,7 @@ bool isDrawingItem(ItemType type)
     case ItemType::SetState:
     case ItemType::SetStrokeThickness:
     case ItemType::Translate:
+    case ItemType::GetImageData:
         return false;
     case ItemType::BeginTransparencyLayer:
     case ItemType::ClearRect:
@@ -251,6 +257,10 @@ size_t paddedSizeOfTypeAndItemInBytes(ItemType type)
 
 bool isInlineItem(ItemType type)
 {
+    /* See the comment at the top of DisplayListItems.h for what this means.
+     * This needs to match (1) RemoteImageBufferProxy::encodeItem(), (2) RemoteRenderingBackend::decodeItem(),
+     * and (3) all the "static constexpr bool isInlineItem"s inside the individual item classes. */
+
     switch (type) {
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
@@ -320,6 +330,7 @@ bool isInlineItem(ItemType type)
     case ItemType::StrokeRect:
     case ItemType::StrokeLine:
     case ItemType::Translate:
+    case ItemType::GetImageData:
         return true;
     }
     ASSERT_NOT_REACHED();

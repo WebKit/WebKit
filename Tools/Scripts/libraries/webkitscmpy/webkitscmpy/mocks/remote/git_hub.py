@@ -32,7 +32,7 @@ class GitHub(mocks.Requests):
     top = None
 
     def __init__(
-        self, remote='github.example.com/WebKit/webkit', datafile=None,
+        self, remote='github.example.com/WebKit/WebKit', datafile=None,
         default_branch='main', git_svn=False,
     ):
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
@@ -208,11 +208,11 @@ class GitHub(mocks.Requests):
             '    <div class="Box-header Box-header--blue position-relative">\n'
             '        <h2 class="sr-only">Latest commit</h2>\n'
             '        <div class="..." data-issue-and-pr-hovercards-enabled>\n'
-            '            <include-fragment src="/WebKit/webkit/tree-commit/{ref}" aria-label="Loading latest commit">\n'
+            '            <include-fragment src="/{project}/tree-commit/{ref}" aria-label="Loading latest commit">\n'
             '            </include-fragment>\n'
             '        <ul class="list-style-none d-flex">\n'
             '            <li class="ml-0 ml-md-3">\n'
-            '                <a data-pjax href="/WebKit/webkit/commits/{ref}">\n'
+            '                <a data-pjax href="/{project}/commits/{ref}">\n'
             '                    <svg class="octicon octicon-history text-gray"><path></path></svg>\n'
             '                    <span class="d-none d-sm-inline">\n'
             '                        <strong>{count}</strong>\n'
@@ -226,6 +226,7 @@ class GitHub(mocks.Requests):
             '</div>\n'
             '...\n'
             '</html>\n'.format(
+                project='/'.join(self.remote.split('/')[1:]),
                 ref=commit.hash,
                 count=commit.identifier + (commit.branch_point or 0),
             ), url=url

@@ -172,17 +172,17 @@ describe('BrowserPrivilegedAPI', () => {
 describe('NodePrivilegedAPI', () => {
     let requests = MockRemoteAPI.inject(null, NodePrivilegedAPI);
     beforeEach(() => {
-        PrivilegedAPI.configure('slave_name', 'password');
+        PrivilegedAPI.configure('worker_name', 'password');
     });
 
     describe('sendRequest', () => {
-        it('should post slave name and password in data', async () => {
+        it('should post worker name and password in data', async () => {
             const request = PrivilegedAPI.sendRequest('test', {foo: 'bar'});
 
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '/privileged-api/test');
             assert.equal(requests[0].method, 'POST');
-            assert.deepEqual(requests[0].data,  {foo: 'bar', slaveName: 'slave_name', slavePassword: 'password'});
+            assert.deepEqual(requests[0].data,  {foo: 'bar', workerName: 'worker_name', workerPassword: 'password'});
 
             requests[0].resolve({test: 'success'});
             const result = await request;

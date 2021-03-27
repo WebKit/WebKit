@@ -769,6 +769,13 @@ static TextStream& operator<<(TextStream& ts, const FillEllipse& item)
     return ts;
 }
 
+static TextStream& operator<<(TextStream& ts, const GetImageData& item)
+{
+    ts.dumpProperty("outputFormat", item.outputFormat());
+    ts.dumpProperty("srcRect", item.srcRect());
+    return ts;
+}
+
 PutImageData::PutImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
     : m_srcRect(srcRect)
     , m_destPoint(destPoint)
@@ -785,12 +792,6 @@ PutImageData::PutImageData(AlphaPremultiplication inputFormat, Ref<ImageData>&& 
     , m_inputFormat(inputFormat)
     , m_destFormat(destFormat)
 {
-}
-
-NO_RETURN_DUE_TO_ASSERT void PutImageData::apply(GraphicsContext&) const
-{
-    // Should be handled by the delegate.
-    ASSERT_NOT_REACHED();
 }
 
 static TextStream& operator<<(TextStream& ts, const PutImageData& item)
@@ -1061,6 +1062,7 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FlushContext: ts << "flush-context"; break;
     case ItemType::MetaCommandChangeDestinationImageBuffer: ts << "meta-command-change-destination-image-buffer"; break;
     case ItemType::MetaCommandChangeItemBuffer: ts << "meta-command-change-item-buffer"; break;
+    case ItemType::GetImageData: ts << "get-image-data"; break;
     case ItemType::PutImageData: ts << "put-image-data"; break;
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
@@ -1224,6 +1226,9 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::MetaCommandChangeItemBuffer:
         ts << item.get<MetaCommandChangeItemBuffer>();
+        break;
+    case ItemType::GetImageData:
+        ts << item.get<GetImageData>();
         break;
     case ItemType::PutImageData:
         ts << item.get<PutImageData>();

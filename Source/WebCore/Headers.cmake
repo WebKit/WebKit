@@ -103,11 +103,15 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/mediasource/SampleMap.h
 
+    Modules/mediastream/DetachedRTCDataChannel.h
     Modules/mediastream/DoubleRange.h
     Modules/mediastream/LongRange.h
     Modules/mediastream/MediaStreamTrack.h
     Modules/mediastream/MediaTrackConstraints.h
     Modules/mediastream/RTCController.h
+    Modules/mediastream/RTCDataChannel.h
+    Modules/mediastream/RTCDataChannelRemoteHandler.h
+    Modules/mediastream/RTCDataChannelRemoteSource.h
     Modules/mediastream/STUNMessageParsing.h
     Modules/mediastream/UserMediaClient.h
     Modules/mediastream/UserMediaController.h
@@ -463,6 +467,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ExceptionCode.h
     dom/ExceptionData.h
     dom/ExceptionOr.h
+    dom/FocusOptions.h
     dom/FragmentScriptingPermission.h
     dom/FullscreenManager.h
     dom/GCReachableRef.h
@@ -1080,6 +1085,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/RuntimeApplicationChecks.h
     platform/SSLKeyGenerator.h
     platform/ScreenProperties.h
+    platform/ScriptExecutionContextIdentifier.h
     platform/ScrollAnimator.h
     platform/ScrollTypes.h
     platform/ScrollView.h
@@ -1180,8 +1186,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/DecodingOptions.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
+    platform/graphics/DisplayRefreshMonitorFactory.h
     platform/graphics/DisplayRefreshMonitorManager.h
     platform/graphics/ExtensionsGL.h
+    platform/graphics/FloatLine.h
     platform/graphics/FloatPoint.h
     platform/graphics/FloatPoint3D.h
     platform/graphics/FloatQuad.h
@@ -1365,6 +1373,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/MediaStreamPrivate.h
     platform/mediastream/MediaStreamRequest.h
     platform/mediastream/MediaStreamTrackPrivate.h
+    platform/mediastream/RTCDataChannelHandler.h
+    platform/mediastream/RTCDataChannelHandlerClient.h
+    platform/mediastream/RTCDataChannelIdentifier.h
+    platform/mediastream/RTCDataChannelRemoteHandlerConnection.h
+    platform/mediastream/RTCDataChannelRemoteSourceConnection.h
+    platform/mediastream/RTCDataChannelState.h
+    platform/mediastream/RTCPriorityType.h
     platform/mediastream/RealtimeMediaSource.h
     platform/mediastream/RealtimeMediaSourceCapabilities.h
     platform/mediastream/RealtimeMediaSourceCenter.h
@@ -1462,6 +1477,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/TextFlags.h
     platform/text/UnicodeBidi.h
     platform/text/WritingMode.h
+
+    platform/xr/PlatformXR.h
 
     plugins/PluginData.h
     plugins/PluginInfoProvider.h

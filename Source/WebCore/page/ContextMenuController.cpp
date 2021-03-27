@@ -914,7 +914,25 @@ void ContextMenuController::populate()
             }
         }
 
-        if (imageURL.isEmpty() && linkURL.isEmpty() && mediaURL.isEmpty()) {
+        bool shouldShowItemsForNonEditableText = ([&] {
+            if (!linkURL.isEmpty())
+                return false;
+
+            if (!mediaURL.isEmpty())
+                return false;
+
+            if (!imageURL.isEmpty()) {
+                auto selectedRange = frame->selection().selection().range();
+                return selectedRange && HTMLElement::isInsideImageOverlay(*selectedRange);
+            }
+
+            return true;
+        })();
+
+        if (shouldShowItemsForNonEditableText) {
+            if (!imageURL.isEmpty())
+                appendItem(*separatorItem(), m_contextMenu.get());
+
             if (m_context.hitTestResult().isSelected()) {
                 if (!selectedString.isEmpty()) {
 #if PLATFORM(COCOA)

@@ -35,6 +35,6 @@
 
     getter DOMString? item(unsigned long index);
 
-    [MayThrowException] undefined deleteMedium(DOMString oldMedium);
+    undefined deleteMedium(DOMString oldMedium);
     undefined appendMedium(DOMString newMedium);
 };

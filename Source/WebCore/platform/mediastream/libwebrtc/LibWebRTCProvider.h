@@ -27,6 +27,7 @@
 
 #include "DocumentIdentifier.h"
 #include "LibWebRTCMacros.h"
+#include "RTCDataChannelRemoteHandlerConnection.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/UniqueRef.h>
@@ -90,6 +91,8 @@ public:
         UNUSED_PARAM(ipAddress);
         callback(makeUnexpected(MDNSRegisterError::NotImplemented));
     }
+
+    virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() { return nullptr; }
 
 #if USE(LIBWEBRTC)
     virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&);

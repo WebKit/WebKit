@@ -365,6 +365,8 @@ public:
     std::unique_ptr<IsoHeapCellType> callbackConstructorHeapCellType;
     std::unique_ptr<IsoHeapCellType> callbackGlobalObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> callbackObjectHeapCellType;
+    std::unique_ptr<IsoHeapCellType> customGetterFunctionHeapCellType;
+    std::unique_ptr<IsoHeapCellType> customSetterFunctionHeapCellType;
     std::unique_ptr<IsoHeapCellType> dateInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType> errorInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType> finalizationRegistryCellType;

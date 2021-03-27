@@ -1443,15 +1443,7 @@ vs
 
 // color-mix()
 color-mix
-shorter
-longer
-increasing
-decreasing
-specified
-lightness
-chroma
-whiteness
-blackness
+in
 
 // prefers-default-appearance
 prefers
@@ -1516,3 +1508,13 @@ compact
 x
 y
 z
+
+// contain
+// none
+// strict
+// content
+size
+layout
+#if !(defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API)
+paint
+#endif

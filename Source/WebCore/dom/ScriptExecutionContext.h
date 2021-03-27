@@ -29,6 +29,8 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMTimer.h"
+#include "RTCDataChannelRemoteHandlerConnection.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "SecurityContext.h"
 #include "ServiceWorkerTypes.h"
 #include "Settings.h"
@@ -80,9 +82,6 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-enum ScriptExecutionContextIdentifierType { };
-using ScriptExecutionContextIdentifier = ObjectIdentifier<ScriptExecutionContextIdentifierType>;
-
 class ScriptExecutionContext : public SecurityContext, public CanMakeWeakPtr<ScriptExecutionContext> {
 public:
     ScriptExecutionContext();
@@ -114,6 +113,8 @@ public:
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 #endif
     virtual SocketProvider* socketProvider() = 0;
+
+    virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() { return nullptr; }
 
     virtual String resourceRequestIdentifier() const { return String(); };
 

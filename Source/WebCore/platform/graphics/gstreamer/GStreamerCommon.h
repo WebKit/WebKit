@@ -307,4 +307,13 @@ GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 #ifndef GST_BUFFER_DTS_OR_PTS
 #define GST_BUFFER_DTS_OR_PTS(buffer) (GST_BUFFER_DTS_IS_VALID(buffer) ? GST_BUFFER_DTS(buffer) : GST_BUFFER_PTS(buffer))
 #endif
+
+// In GStreamer 1.20 gst_audio_format_fill_silence() will be deprecated in favor of
+// gst_audio_format_info_fill_silence().
+#if GST_CHECK_VERSION(1, 19, 0)
+#define webkitGstAudioFormatFillSilence gst_audio_format_info_fill_silence
+#else
+#define webkitGstAudioFormatFillSilence gst_audio_format_fill_silence
+#endif
+
 #endif // USE(GSTREAMER)

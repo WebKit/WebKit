@@ -435,6 +435,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientOutputs.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorAssertionResponse.idl \
+    $(WebCore)/Modules/webauthn/AuthenticatorAttachment.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorAttestationResponse.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorResponse.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorTransport.idl \
@@ -727,6 +728,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/EventModifierInit.idl \
     $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \
+    $(WebCore)/dom/FocusOptions.idl \
     $(WebCore)/dom/GlobalEventHandlers+PointerEvents.idl \
     $(WebCore)/dom/GlobalEventHandlers+Selection.idl \
     $(WebCore)/dom/GlobalEventHandlers.idl \

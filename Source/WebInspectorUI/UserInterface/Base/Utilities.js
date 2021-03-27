@@ -1359,26 +1359,26 @@ Object.defineProperty(Number, "bytesToString",
     value(bytes, higherResolution, bytesThreshold)
     {
         higherResolution ??= true;
-        bytesThreshold ??= 1024;
+        bytesThreshold ??= 1000;
 
         if (Math.abs(bytes) < bytesThreshold)
             return WI.UIString("%.0f B").format(bytes);
 
-        let kilobytes = bytes / 1024;
-        if (Math.abs(kilobytes) < 1024) {
+        let kilobytes = bytes / 1000;
+        if (Math.abs(kilobytes) < 1000) {
             if (higherResolution || Math.abs(kilobytes) < 10)
                 return WI.UIString("%.2f KB").format(kilobytes);
             return WI.UIString("%.1f KB").format(kilobytes);
         }
 
-        let megabytes = kilobytes / 1024;
-        if (Math.abs(megabytes) < 1024) {
+        let megabytes = kilobytes / 1000;
+        if (Math.abs(megabytes) < 1000) {
             if (higherResolution || Math.abs(megabytes) < 10)
                 return WI.UIString("%.2f MB").format(megabytes);
             return WI.UIString("%.1f MB").format(megabytes);
         }
 
-        let gigabytes = megabytes / 1024;
+        let gigabytes = megabytes / 1000;
         if (higherResolution || Math.abs(gigabytes) < 10)
             return WI.UIString("%.2f GB").format(gigabytes);
         return WI.UIString("%.1f GB").format(gigabytes);

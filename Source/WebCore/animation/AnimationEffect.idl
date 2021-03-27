@@ -29,5 +29,5 @@
 ] interface AnimationEffect {
     [ImplementedAs=getBindingsTiming] EffectTiming getTiming();
     [ImplementedAs=getBindingsComputedTiming] ComputedEffectTiming getComputedTiming();
-    [MayThrowException, ImplementedAs=bindingsUpdateTiming] undefined updateTiming(optional OptionalEffectTiming timing);
+    [ImplementedAs=bindingsUpdateTiming] undefined updateTiming(optional OptionalEffectTiming timing);
 };

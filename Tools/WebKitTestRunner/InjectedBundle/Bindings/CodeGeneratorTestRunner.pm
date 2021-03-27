@@ -249,6 +249,7 @@ EOF
     push(@contents, <<EOF);
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/GetPtr.h>
+#include <wtf/MathExtras.h>
 
 namespace WTR {
 
@@ -459,6 +460,27 @@ sub _parentInterface
     return $interface->parentType;
 }
 
+sub _nativeNumericType
+{
+    my ($self, $type) = @_;
+    my %numericTypeHash = (
+        "byte" => "int8_t",
+        "long long" => "int64_t",
+        "long" => "int32_t",
+        "octet" => "uint8_t",
+        "short" => "int16_t",
+        "unsigned long long" => "uint64_t",
+        "unsigned long" => "uint32_t",
+        "unsigned short" => "uint16_t",
+        "float" => "float",
+        "unrestricted float" => "float",
+        "double" => "double",
+        "unrestricted double" => "double",
+    );
+    my $result = $numericTypeHash{$type->name};
+    return ($result) ? $result : "double";
+}
+
 sub _platformType
 {
     my ($self, $type) = @_;
@@ -468,7 +490,7 @@ sub _platformType
     return "bool" if $type->name eq "boolean";
     return "JSValueRef" if $type->name eq "object";
     return "JSRetainPtr<JSStringRef>" if $$self{codeGenerator}->IsStringType($type);
-    return "double" if $$self{codeGenerator}->IsPrimitiveType($type);
+    return $self->_nativeNumericType($type) if $$self{codeGenerator}->IsPrimitiveType($type);
     return _implementationClassName($type);
 }
 
@@ -481,7 +503,12 @@ sub _platformTypeConstructor
     return "$argumentName" if $type->name eq "object";
     return "createJSString(context, $argumentName)" if $$self{codeGenerator}->IsStringType($type);
     return "toOptionalDouble(context, $argumentName)" if $$self{codeGenerator}->IsPrimitiveType($type) && $type->isNullable;
-    return "JSValueToNumber(context, $argumentName, nullptr)" if $$self{codeGenerator}->IsPrimitiveType($type);
+    if ($$self{codeGenerator}->IsPrimitiveType($type)) {
+        my $convertToDouble = "JSValueToNumber(context, $argumentName, nullptr)";
+        my $nativeNumericType = $self->_nativeNumericType($type);
+        return "clampTo<$nativeNumericType>($convertToDouble)" if $nativeNumericType ne "double";
+        return $convertToDouble;
+    }
     return "to" . _implementationClassName($type) . "(context, $argumentName)";
 }
 
@@ -494,7 +521,6 @@ sub _platformTypeVariableDeclaration
 
     my %nonPointerTypes = (
         "bool" => 1,
-        "double" => 1,
         "JSRetainPtr<JSStringRef>" => 1,
         "JSValueRef" => 1,
     );
@@ -502,7 +528,7 @@ sub _platformTypeVariableDeclaration
     my $nullValue = "nullptr";
     if ($platformType eq "JSValueRef") {
         $nullValue = "JSValueMakeUndefined(context)";
-    } elsif (defined $nonPointerTypes{$platformType}) {
+    } elsif (defined $nonPointerTypes{$platformType} || $$self{codeGenerator}->IsNumericType($type)) {
         $nullValue = $type->isNullable ? "WTF::nullopt" : "$platformType()";
     }
 

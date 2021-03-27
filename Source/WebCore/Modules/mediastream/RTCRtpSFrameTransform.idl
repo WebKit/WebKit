@@ -55,6 +55,6 @@ dictionary RTCRtpSFrameTransformOptions {
     // Promise<undefined> ratchetEncryptionKey();
     // Promise<undefined> setSigningKey(CryptoKey key);
 
-    [MayThrowException] readonly attribute ReadableStream readable;
-    [MayThrowException] readonly attribute WritableStream writable;
+    readonly attribute ReadableStream readable;
+    readonly attribute WritableStream writable;
 };

@@ -5,7 +5,7 @@ require_once('../include/commit-sets-helpers.php');
 
 function main() {
     $db = connect();
-    $data = ensure_privileged_api_data_and_token_or_slave($db);
+    $data = ensure_privileged_api_data_and_token_or_worker($db);
 
     $additional_build_request_count = array_get($data, 'addCount');
     if (!$additional_build_request_count)

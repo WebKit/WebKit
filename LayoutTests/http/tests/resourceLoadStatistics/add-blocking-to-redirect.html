@@ -15,12 +15,12 @@
     const resourcePath = "/resourceLoadStatistics/resources";
     const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
     const firstPartyCookieName = "firstPartyCookie";
-    const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
+    const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
     const partitionedCookieName = "partitionedCookie";
-    const subPathToSetPartitionedCookie = "/set-cookie.php?name=" + partitionedCookieName + "&value=value";
+    const subPathToSetPartitionedCookie = "/set-cookie.py?name=" + partitionedCookieName + "&value=value";
     const returnUrl = "http://" + partitionHost + "/resourceLoadStatistics/add-blocking-to-redirect.html";
-    const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
-    const redirectChainUrl = "http://" + partitionHost + resourcePath + "/redirect.php?redirectTo=" + thirdPartyBaseUrl + subPathToGetCookies;
+    const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
+    const redirectChainUrl = "http://" + partitionHost + resourcePath + "/redirect.py?redirectTo=" + thirdPartyBaseUrl + subPathToGetCookies;
 
     function openIframe(url, onLoadHandler) {
         const element = document.createElement("iframe");

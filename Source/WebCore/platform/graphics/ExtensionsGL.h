@@ -287,11 +287,6 @@ public:
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
 
-    // GL_ANGLE_instanced_arrays
-    virtual void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
-    virtual void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) = 0;
-    virtual void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) = 0;
-
     // Other functions.
 #if !USE(ANGLE)
     // EXT Robustness - uses getGraphicsResetStatusARB

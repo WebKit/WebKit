@@ -161,7 +161,7 @@ describe('TestGroup', function () {
             assert.equal(requests[1].method, 'POST');
             assert.equal(requests[1].url, '/privileged-api/update-test-group');
             delete requests[1].data.notificationSentAt;
-            assert.deepEqual(requests[1].data, {group: '2128', needsNotification: false, slaveName: 'test', slavePassword: 'password'});
+            assert.deepEqual(requests[1].data, {group: '2128', needsNotification: false, workerName: 'test', workerPassword: 'password'});
             requests[1].resolve();
 
             await MockRemoteAPI.waitForRequest();
@@ -221,7 +221,7 @@ describe('TestGroup', function () {
             assert.equal(requests.length, 2);
             assert.equal(requests[1].method, 'POST');
             assert.equal(requests[1].url, '/privileged-api/update-test-group');
-            assert.deepEqual(requests[1].data, {group: '2128', mayNeedMoreRequests: false, slaveName: 'test', slavePassword: 'password'});
+            assert.deepEqual(requests[1].data, {group: '2128', mayNeedMoreRequests: false, workerName: 'test', workerPassword: 'password'});
             requests[1].resolve();
 
             await MockRemoteAPI.waitForRequest();

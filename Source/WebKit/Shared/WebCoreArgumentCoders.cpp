@@ -1650,6 +1650,7 @@ void ArgumentCoder<InspectorOverlay::Highlight>::encode(Encoder& encoder, const 
     encoder << highlight.borderColor;
     encoder << highlight.marginColor;
     encoder << highlight.quads;
+    encoder << highlight.gridHighlightOverlays;
 }
 
 bool ArgumentCoder<InspectorOverlay::Highlight>::decode(Decoder& decoder, InspectorOverlay::Highlight& highlight)
@@ -1672,6 +1673,8 @@ bool ArgumentCoder<InspectorOverlay::Highlight>::decode(Decoder& decoder, Inspec
     if (!decoder.decode(highlight.marginColor))
         return false;
     if (!decoder.decode(highlight.quads))
+        return false;
+    if (!decoder.decode(highlight.gridHighlightOverlays))
         return false;
     return true;
 }

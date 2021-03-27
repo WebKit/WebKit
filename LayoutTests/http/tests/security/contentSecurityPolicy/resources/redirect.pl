@@ -28,7 +28,7 @@ if ($resourceType eq "stylesheet") {
 
 if ($resourceType eq "xhr") {
     print "Access-Control-Allow-Origin: http://127.0.0.1:8000\r\n";
-    print "Location: http://127.0.0.1:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl";
+    print "Location: http://127.0.0.1:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.py";
 }
 
 print "\r\n\r\n";

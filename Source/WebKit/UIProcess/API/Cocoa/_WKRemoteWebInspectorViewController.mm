@@ -31,7 +31,7 @@
 #import "APIDebuggableInfo.h"
 #import "APIInspectorConfiguration.h"
 #import "DebuggableInfoData.h"
-#import "RemoteWebInspectorProxy.h"
+#import "RemoteWebInspectorUIProxy.h"
 #import "WKWebViewInternal.h"
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
@@ -53,15 +53,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 namespace WebKit {
 
-class _WKRemoteWebInspectorProxyClient final : public RemoteWebInspectorProxyClient {
+class _WKRemoteWebInspectorUIProxyClient final : public RemoteWebInspectorUIProxyClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    _WKRemoteWebInspectorProxyClient(_WKRemoteWebInspectorViewController *controller)
+    _WKRemoteWebInspectorUIProxyClient(_WKRemoteWebInspectorViewController *controller)
         : m_controller(controller)
     {
     }
 
-    virtual ~_WKRemoteWebInspectorProxyClient()
+    virtual ~_WKRemoteWebInspectorUIProxyClient()
     {
     }
 
@@ -75,7 +75,7 @@ public:
         [m_controller closeFromFrontend];
     }
     
-    Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorProxy& inspector) override
+    Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorUIProxy& inspector) override
     {
         return static_cast<API::InspectorConfiguration&>([m_controller.configuration _apiObject]);
     }
@@ -87,7 +87,7 @@ private:
 } // namespace WebKit
 
 @implementation _WKRemoteWebInspectorViewController {
-    std::unique_ptr<WebKit::_WKRemoteWebInspectorProxyClient> m_remoteInspectorClient;
+    std::unique_ptr<WebKit::_WKRemoteWebInspectorUIProxyClient> m_remoteInspectorClient;
     _WKInspectorConfiguration *_configuration;
 }
 
@@ -98,8 +98,8 @@ private:
 
     _configuration = [configuration copy];
 
-    m_remoteInspectorProxy = WebKit::RemoteWebInspectorProxy::create();
-    m_remoteInspectorClient = makeUnique<WebKit::_WKRemoteWebInspectorProxyClient>(self);
+    m_remoteInspectorProxy = WebKit::RemoteWebInspectorUIProxy::create();
+    m_remoteInspectorClient = makeUnique<WebKit::_WKRemoteWebInspectorUIProxyClient>(self);
     m_remoteInspectorProxy->setClient(m_remoteInspectorClient.get());
 
     return self;
@@ -135,7 +135,7 @@ private:
     m_remoteInspectorProxy->sendMessageToFrontend(message);
 }
 
-// MARK: RemoteWebInspectorProxyClient methods
+// MARK: RemoteWebInspectorUIProxyClient methods
 
 - (void)sendMessageToBackend:(NSString *)message
 {

@@ -41,22 +41,12 @@ bool WebInspectorUI::canSave()
 
 String WebInspectorUI::localizedStringsURL() const
 {
-#if USE(CF)
-    RetainPtr<CFURLRef> stringsURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), CFSTR("WebInspectorUI")));
-    return CFURLGetString(stringsURLRef.get());
-#else
-    return { };
-#endif
+    return "inspector-resource:///localizedStrings.js"_s;
 }
 
 String RemoteWebInspectorUI::localizedStringsURL() const
 {
-#if USE(CF)
-    RetainPtr<CFURLRef> stringsURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), CFSTR("WebInspectorUI")));
-    return CFURLGetString(stringsURLRef.get());
-#else
-    return { };
-#endif
+    return "inspector-resource:///localizedStrings.js"_s;
 }
 
 } // namespace WebKit

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 template<typename> struct AlphaTraits;
-template<typename> struct ColorComponentRange;
+template<typename> struct ColorComponentInfo;
 template<typename> struct ExtendedRGBModel;
 template<typename> struct HSLModel;
 template<typename> struct HWBModel;
@@ -51,79 +51,86 @@ template<> struct AlphaTraits<uint8_t> {
     static constexpr uint8_t opaque = 255;
 };
 
-template<typename T> struct ColorComponentRange {
+enum class ColorComponentType {
+    Angle,
+    Number,
+    Percentage
+};
+
+template<typename T> struct ColorComponentInfo {
     T min;
     T max;
+    ColorComponentType type;
 };
 
 template<> struct ExtendedRGBModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() }
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = false;
 };
 
 template<> struct HSLModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, 360 },
-        { 0, 100 },
-        { 0, 100 }
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { 0, 360, ColorComponentType::Angle },
+        { 0, 100, ColorComponentType::Percentage },
+        { 0, 100, ColorComponentType::Percentage }
     } };
     static constexpr bool isInvertible = false;
 };
 
 template<> struct HWBModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, 360 },
-        { 0, 100 },
-        { 0, 100 }
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { 0, 360, ColorComponentType::Angle },
+        { 0, 100, ColorComponentType::Percentage },
+        { 0, 100, ColorComponentType::Percentage }
     } };
     static constexpr bool isInvertible = false;
 };
 
 template<> struct LabModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() }
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = false;
 };
 
 template<> struct LCHModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, std::numeric_limits<float>::infinity() },
-        { 0, std::numeric_limits<float>::infinity() },
-        { 0, 360 }
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { 0, 360, ColorComponentType::Angle }
     } };
     static constexpr bool isInvertible = false;
 };
 
 template<> struct RGBModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, 1 },
-        { 0, 1 },
-        { 0, 1 }
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { 0, 1, ColorComponentType::Number },
+        { 0, 1, ColorComponentType::Number },
+        { 0, 1, ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = true;
 };
 
 template<> struct RGBModel<uint8_t> {
-    static constexpr std::array<ColorComponentRange<uint8_t>, 3> ranges { {
-        { 0, 255 },
-        { 0, 255 },
-        { 0, 255 }
+    static constexpr std::array<ColorComponentInfo<uint8_t>, 3> componentInfo { {
+        { 0, 255, ColorComponentType::Number },
+        { 0, 255, ColorComponentType::Number },
+        { 0, 255, ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = true;
 };
 
 template<> struct XYZModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() }
+    static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number }
     } };
     static constexpr bool isInvertible = false;
 };

@@ -64,7 +64,7 @@ struct DateTimeChooserParameters;
 struct ShareDataWithParsedURL;
 struct ViewportArguments;
 struct WindowFeatures;
-    
+
 class Chrome : public HostWindow {
 public:
     Chrome(Page&, ChromeClient&);
@@ -92,7 +92,7 @@ public:
 #endif
 
     PlatformDisplayID displayID() const override;
-    void windowScreenDidChange(PlatformDisplayID, Optional<unsigned>) override;
+    void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond>) override;
 
     FloatSize screenSize() const override;
     FloatSize availableScreenSize() const override;

@@ -14,7 +14,7 @@ const BuildbotSyncer = require('../tools/js/buildbot-syncer.js').BuildbotSyncer;
 function sampleiOSConfig()
 {
     return {
-        'slaveArgument': 'slavename',
+        'workerArgument': 'workername',
         'buildRequestArgument': 'build_request_id',
         'repositoryGroups': {
             'ios-svn-webkit': {
@@ -43,12 +43,12 @@ function sampleiOSConfig()
             'iPhone-bench': {
                 'builder': 'ABTest-iPhone-RunBenchmark-Tests',
                 'properties': {'forcescheduler': 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler'},
-                'slaveList': ['ABTest-iPhone-0'],
+                'workerList': ['ABTest-iPhone-0'],
             },
             'iPad-bench': {
                 'builder': 'ABTest-iPad-RunBenchmark-Tests',
                 'properties': {'forcescheduler': 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler'},
-                'slaveList': ['ABTest-iPad-0', 'ABTest-iPad-1'],
+                'workerList': ['ABTest-iPad-0', 'ABTest-iPad-1'],
             },
             'iOS-builder': {
                 'builder': 'ABTest-iOS-Builder',
@@ -270,7 +270,7 @@ function samplePendingBuildRequestData(buildRequestId, buildTime, workerName, bu
         "properties": {
             "build_request_id": [buildRequestId || 16733, "Force Build Form"],
             "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
-            "slavename": [workerName, "Worker (deprecated)"],
+            "workername": [workerName, "Worker (deprecated)"],
             "workername": [workerName, "Worker"]
         }
     };
@@ -301,7 +301,7 @@ function sampleBuildData(workerName, isComplete, buildRequestId, buildTag, build
             "build_request_id": [buildRequestId || 16733, "Force Build Form"],
             "platform": ["mac", "Unknown"],
             "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
-            "slavename": [workerName || "ABTest-iPad-0", "Worker (deprecated)"],
+            "workername": [workerName || "ABTest-iPad-0", "Worker (deprecated)"],
             "workername": [workerName || "ABTest-iPad-0", "Worker"],
         }
     };
@@ -1177,7 +1177,7 @@ describe('BuildbotSyncer', () => {
             entry = entries[1];
             assert.ok(entry instanceof BuildbotBuildEntry);
             assert.equal(entry.buildTag(), 1755);
-            assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+            assert.equal(entry.workerName(), 'ABTest-iPad-0');
             assert.equal(entry.buildRequestId(), 18935);
             assert.ok(!entry.isPending());
             assert.ok(!entry.isInProgress());
@@ -1236,7 +1236,7 @@ describe('BuildbotSyncer', () => {
             entry = entries[1];
             assert.ok(entry instanceof BuildbotBuildEntry);
             assert.equal(entry.buildTag(), 614);
-            assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+            assert.equal(entry.workerName(), 'ABTest-iPad-0');
             assert.equal(entry.buildRequestId(), 16733);
             assert.ok(!entry.isPending());
             assert.ok(entry.isInProgress());
@@ -1292,7 +1292,7 @@ describe('BuildbotSyncer', () => {
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.ok(!entry.buildTag());
-                assert.ok(!entry.slaveName());
+                assert.ok(!entry.workerName());
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(entry.isPending());
                 assert.ok(!entry.isInProgress());
@@ -1316,7 +1316,7 @@ describe('BuildbotSyncer', () => {
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), 614);
-                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.workerName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
                 assert.ok(entry.isInProgress());
@@ -1340,7 +1340,7 @@ describe('BuildbotSyncer', () => {
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), 1755);
-                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.workerName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 18935);
                 assert.ok(!entry.isPending());
                 assert.ok(!entry.isInProgress());
@@ -1367,7 +1367,7 @@ describe('BuildbotSyncer', () => {
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), null);
-                assert.equal(entry.slaveName(), null);
+                assert.equal(entry.workerName(), null);
                 assert.equal(entry.buildRequestId(), 123);
                 assert.ok(entry.isPending());
                 assert.ok(!entry.isInProgress());
@@ -1377,7 +1377,7 @@ describe('BuildbotSyncer', () => {
                 entry = entries[1];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), 614);
-                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.workerName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
                 assert.ok(entry.isInProgress());
@@ -1387,7 +1387,7 @@ describe('BuildbotSyncer', () => {
                 entry = entries[2];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), 1755);
-                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.workerName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 18935);
                 assert.ok(!entry.isPending());
                 assert.ok(!entry.isInProgress());
@@ -1414,7 +1414,7 @@ describe('BuildbotSyncer', () => {
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), null);
-                assert.equal(entry.slaveName(), null);
+                assert.equal(entry.workerName(), null);
                 assert.equal(entry.buildRequestId(), 123);
                 assert.ok(entry.isPending());
                 assert.ok(!entry.isInProgress());
@@ -1424,7 +1424,7 @@ describe('BuildbotSyncer', () => {
                 entry = entries[1];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), null);
-                assert.equal(entry.slaveName(), null);
+                assert.equal(entry.workerName(), null);
                 assert.equal(entry.buildRequestId(), 456);
                 assert.ok(entry.isPending());
                 assert.ok(!entry.isInProgress());
@@ -1434,7 +1434,7 @@ describe('BuildbotSyncer', () => {
                 entry = entries[2];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), 614);
-                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.workerName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
                 assert.ok(entry.isInProgress());
@@ -1444,7 +1444,7 @@ describe('BuildbotSyncer', () => {
                 entry = entries[3];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), 1755);
-                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.workerName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 18935);
                 assert.ok(!entry.isPending());
                 assert.ok(!entry.isInProgress());
@@ -1471,7 +1471,7 @@ describe('BuildbotSyncer', () => {
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), 614);
-                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.workerName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
                 assert.ok(entry.isInProgress());
@@ -1498,7 +1498,7 @@ describe('BuildbotSyncer', () => {
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
                 assert.equal(entry.buildTag(), 1755);
-                assert.equal(entry.slaveName(), 'ABTest-iPad-0');
+                assert.equal(entry.workerName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
                 assert.ok(!entry.isInProgress());
@@ -1536,12 +1536,12 @@ describe('BuildbotSyncer', () => {
     });
 
     describe('scheduleRequest', () => {
-        it('should schedule a build request on a specified slave', () => {
+        it('should schedule a build request on a specified worker', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[0];
 
             const waitForRequest = MockRemoteAPI.waitForRequest();
             const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
-            syncer.scheduleRequest(request, [request], 'some-slave');
+            syncer.scheduleRequest(request, [request], 'some-worker');
             return waitForRequest.then(() => {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/api/v2/forceschedulers/ABTest-iPhone-RunBenchmark-Tests-ForceScheduler');
@@ -1555,7 +1555,7 @@ describe('BuildbotSyncer', () => {
                         'desired_image': '13A452',
                         'opensource': '197463',
                         'forcescheduler': 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler',
-                        'slavename': 'some-slave',
+                        'workername': 'some-worker',
                         'test_name': 'speedometer'
                     }
                 });
@@ -1578,7 +1578,7 @@ describe('BuildbotSyncer', () => {
             });
         }
 
-        it('should schedule a build if builder has no builds if slaveList is not specified', () => {
+        it('should schedule a build if builder has no builds if workerList is not specified', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration(), builderNameToIDMap())[0];
 
             return pullBuildbotWithAssertion(syncer, {}, {}).then(() => {
@@ -1592,7 +1592,7 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should schedule a build if builder only has finished builds if slaveList is not specified', () => {
+        it('should schedule a build if builder only has finished builds if workerList is not specified', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration(), builderNameToIDMap())[0];
 
             return pullBuildbotWithAssertion(syncer, {}, smallFinishedBuild()).then(() => {
@@ -1606,7 +1606,7 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should not schedule a build if builder has a pending build if slaveList is not specified', () => {
+        it('should not schedule a build if builder has a pending build if workerList is not specified', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration(), builderNameToIDMap())[0];
 
             return pullBuildbotWithAssertion(syncer, smallPendingBuild(), {}).then(() => {
@@ -1615,7 +1615,7 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should schedule a build if builder does not have pending or completed builds on the matching slave', () => {
+        it('should schedule a build if builder does not have pending or completed builds on the matching worker', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[0];
 
             return pullBuildbotWithAssertion(syncer, {}, {}).then(() => {
@@ -1627,7 +1627,7 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should schedule a build if builder only has finished builds on the matching slave', () => {
+        it('should schedule a build if builder only has finished builds on the matching worker', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
             pullBuildbotWithAssertion(syncer, {}, sampleFinishedBuild()).then(() => {
@@ -1639,7 +1639,7 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should not schedule a build if builder has a pending build on the maching slave', () => {
+        it('should not schedule a build if builder has a pending build on the maching worker', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
             pullBuildbotWithAssertion(syncer, samplePendingBuildRequests(), {}).then(() => {
@@ -1649,17 +1649,17 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should schedule a build if builder only has a pending build on a non-maching slave', () => {
+        it('should schedule a build if builder only has a pending build on a non-maching worker', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
-            return pullBuildbotWithAssertion(syncer, samplePendingBuildRequests(1, 1, 'another-slave'), {}).then(() => {
+            return pullBuildbotWithAssertion(syncer, samplePendingBuildRequests(1, 1, 'another-worker'), {}).then(() => {
                 const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
                 syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
             });
         });
 
-        it('should schedule a build if builder only has an in-progress build on the matching slave', () => {
+        it('should schedule a build if builder only has an in-progress build on the matching worker', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
             return pullBuildbotWithAssertion(syncer, {}, sampleInProgressBuild()).then(() => {
@@ -1669,10 +1669,10 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should schedule a build if builder has an in-progress build on another slave', () => {
+        it('should schedule a build if builder has an in-progress build on another worker', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
-            return pullBuildbotWithAssertion(syncer, {}, sampleInProgressBuild('other-slave')).then(() => {
+            return pullBuildbotWithAssertion(syncer, {}, sampleInProgressBuild('other-worker')).then(() => {
                 const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
                 syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
@@ -1689,7 +1689,7 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should not schedule a build if a new request had been submitted to the same slave', (done) => {
+        it('should not schedule a build if a new request had been submitted to the same worker', (done) => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
             pullBuildbotWithAssertion(syncer, {}, {}).then(() => {
@@ -1707,7 +1707,7 @@ describe('BuildbotSyncer', () => {
             }).catch(done);
         });
 
-        it('should schedule a build if a new request had been submitted to another slave', () => {
+        it('should schedule a build if a new request had been submitted to another worker', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
             return pullBuildbotWithAssertion(syncer, {}, {}).then(() => {
@@ -1720,7 +1720,7 @@ describe('BuildbotSyncer', () => {
             });
         });
 
-        it('should not schedule a build if a new request had been submitted to the same builder without slaveList', () => {
+        it('should not schedule a build if a new request had been submitted to the same builder without workerList', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, smallConfiguration(), builderNameToIDMap())[0];
 
             return pullBuildbotWithAssertion(syncer, {}, {}).then(() => {

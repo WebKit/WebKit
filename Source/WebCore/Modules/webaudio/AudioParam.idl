@@ -39,18 +39,18 @@
     readonly attribute float maxValue;
 
     // Parameter automation.
-    [MayThrowException] AudioParam setValueAtTime(float value, double startTime);
-    [MayThrowException] AudioParam linearRampToValueAtTime(float value, double endTime);
-    [MayThrowException] AudioParam exponentialRampToValueAtTime(float value, double endTime);
+    AudioParam setValueAtTime(float value, double startTime);
+    AudioParam linearRampToValueAtTime(float value, double endTime);
+    AudioParam exponentialRampToValueAtTime(float value, double endTime);
 
     // Exponentially approach the target with a rate having the given time constant.
-    [MayThrowException] AudioParam setTargetAtTime(float target, double startTime, float timeConstant);
+    AudioParam setTargetAtTime(float target, double startTime, float timeConstant);
 
     // Sets an array of arbitrary parameter values starting at time for the given duration.
     // The number of values will be scaled to fit into the desired duration.
-    [MayThrowException] AudioParam setValueCurveAtTime(sequence<float> values, double startTime, double duration);
+    AudioParam setValueCurveAtTime(sequence<float> values, double startTime, double duration);
 
     // Cancels all scheduled parameter changes with times greater than or equal to startTime.
-    [MayThrowException] AudioParam cancelScheduledValues(double cancelTime);
-    [MayThrowException] AudioParam cancelAndHoldAtTime(double cancelTime);
+    AudioParam cancelScheduledValues(double cancelTime);
+    AudioParam cancelAndHoldAtTime(double cancelTime);
 };

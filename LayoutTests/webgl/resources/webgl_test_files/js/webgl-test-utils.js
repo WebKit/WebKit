@@ -1283,7 +1283,7 @@ var checkCanvasRectColor = function(gl, x, y, width, height, color, opt_errorRan
           was += "," + buf[offset + j];
         }
         differentFn('at (' + (x + (i % width)) + ', ' + (y + Math.floor(i / width)) +
-                    ') expected: ' + color + ' was ' + was);
+                    ') expected: ' + color + ' was ' + was, buf);
         return;
       }
     }
@@ -1751,13 +1751,23 @@ var framebufferStatusShouldBe = function(gl, target, glStatuses, opt_msg) {
     return glEnumToString(gl, status);
   }).join(' or ');
   if (ndx < 0) {
-    var msg = "checkFramebufferStatus expected" + ((glStatuses.length > 1) ? " one of: " : ": ");
-    testFailed(msg + expected +  ". Was " + glEnumToString(gl, status) + " : " + opt_msg);
-  } else {
-    var msg = "checkFramebufferStatus was " + ((glStatuses.length > 1) ? "one of: " : "expected value: ");
-    testPassed(msg + expected + " : " + opt_msg);
+    let msg = "checkFramebufferStatus expected" + ((glStatuses.length > 1) ? " one of: " : ": ") +
+      expected +  ". Was " + glEnumToString(gl, status);
+    if (opt_msg) {
+      msg += ": " + opt_msg;
+    }
+    testFailed(msg);
+    return false;
   }
-  return status;
+  let msg = `checkFramebufferStatus was ${glEnumToString(gl, status)}`;
+  if (glStatuses.length > 1) {
+    msg += `, one of: ${expected}`;
+  }
+  if (opt_msg) {
+    msg += ": " + opt_msg;
+  }
+  testPassed(msg);
+  return [status];
 }
 
 /**

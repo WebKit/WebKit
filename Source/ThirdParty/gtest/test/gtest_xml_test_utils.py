@@ -94,7 +94,7 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
     self.assertEquals(
         len(expected_children), len(actual_children),
         'number of child elements differ in element ' + actual_node.tagName)
-    for child_id, child in expected_children.iteritems():
+    for child_id, child in expected_children.items():
       self.assert_(child_id in actual_children,
                    '<%s> is not in <%s> (in element %s)' %
                    (child_id, actual_children, actual_node.tagName))
@@ -105,6 +105,7 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
       'testsuite': 'name',
       'testcase': 'name',
       'failure': 'message',
+      'skipped': 'message',
       'property': 'name',
   }
 
@@ -169,9 +170,9 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
     *  The stack traces are removed.
     """
 
-    if element.tagName == 'testsuites':
+    if element.tagName in ('testsuites', 'testsuite', 'testcase'):
       timestamp = element.getAttributeNode('timestamp')
-      timestamp.value = re.sub(r'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d$',
+      timestamp.value = re.sub(r'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d$',
                                '*', timestamp.value)
     if element.tagName in ('testsuites', 'testsuite', 'testcase'):
       time = element.getAttributeNode('time')
@@ -179,7 +180,7 @@ class GTestXMLTestCase(gtest_test_utils.TestCase):
       type_param = element.getAttributeNode('type_param')
       if type_param and type_param.value:
         type_param.value = '*'
-    elif element.tagName == 'failure':
+    elif element.tagName == 'failure' or element.tagName == 'skipped':
       source_line_pat = r'^.*[/\\](.*:)\d+\n'
       # Replaces the source line information with a normalized form.
       message = element.getAttributeNode('message')

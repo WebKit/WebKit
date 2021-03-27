@@ -7,14 +7,14 @@ require('../tools/js/v3-models.js');
 const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
 const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
-const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
+const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 function makeReport(rootFile, buildRequestId = 1, repositoryList = ['WebKit'], buildTime = '2017-05-10T02:54:08.666')
 {
     return {
-        slaveName: 'someSlave',
-        slavePassword: 'somePassword',
+        workerName: 'someWorker',
+        workerPassword: 'somePassword',
         builderName: 'someBuilder',
         buildTag: "123",
         buildTime: buildTime,
@@ -24,9 +24,9 @@ function makeReport(rootFile, buildRequestId = 1, repositoryList = ['WebKit'], b
     };
 }
 
-function addSlaveAndCreateRootFile(slaveInfo = makeReport())
+function addWorkerAndCreateRootFile(workerInfo = makeReport())
 {
-    return addSlaveForReport(slaveInfo).then(() => {
+    return addWorkerForReport(workerInfo).then(() => {
         return TemporaryFile.makeTemporaryFile('some.dat', 'some content');
     });
 }
@@ -34,8 +34,8 @@ function addSlaveAndCreateRootFile(slaveInfo = makeReport())
 function createTestGroupWihPatch()
 {
     const triggerableConfiguration = {
-        'slaveName': 'sync-slave',
-        'slavePassword': 'password',
+        'workerName': 'sync-worker',
+        'workerPassword': 'password',
         'triggerable': 'build-webkit',
         'configurations': [
             {test: MockData.someTestId(), platform: MockData.somePlatformId()},
@@ -76,8 +76,8 @@ function createTestGroupWihPatch()
 function createTestGroupWithPatchAndOwnedCommits()
 {
     const triggerableConfiguration = {
-        'slaveName': 'sync-slave',
-        'slavePassword': 'password',
+        'workerName': 'sync-worker',
+        'workerPassword': 'password',
         'triggerable': 'build-webkit',
         'configurations': [
             {test: MockData.someTestId(), platform: MockData.somePlatformId()},
@@ -125,26 +125,26 @@ describe('/api/upload-root/', function () {
         });
     });
 
-    it('should reject when there are no slaves', () => {
+    it('should reject when there are no workers', () => {
         return TemporaryFile.makeTemporaryFile('some.dat', 'some content').then((rootFile) => {
             return TestServer.remoteAPI().postFormData('/api/upload-root/', makeReport(rootFile));
         }).then((response) => {
-            assert.strictEqual(response['status'], 'SlaveNotFound');
+            assert.strictEqual(response['status'], 'WorkerNotFound');
         });
     });
 
-    it('should reject when slave name is missing', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+    it('should reject when worker name is missing', () => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
-            delete report.slaveName;
+            delete report.workerName;
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
         }).then((response) => {
-            assert.strictEqual(response['status'], 'MissingSlaveName');
+            assert.strictEqual(response['status'], 'MissingWorkerName');
         });
     });
 
     it('should reject when builder name is missing', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             delete report.builderName;
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -154,7 +154,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when build tag is missing', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             delete report.buildTag;
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -164,7 +164,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when build number is not a number', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             delete report.buildTag;
             report.buildNumber = '1abc';
@@ -175,7 +175,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject if both build number and build tag exists but different', async () => {
-        const rootFile = await addSlaveAndCreateRootFile();
+        const rootFile = await addWorkerAndCreateRootFile();
         const report = makeReport(rootFile);
         report.buildNumber = '456';
         const response = await TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -216,7 +216,7 @@ describe('/api/upload-root/', function () {
         assert.strictEqual(otherCommitSet.rootForRepository(ownedJSC), null);
         assert.deepStrictEqual(otherCommitSet.allRootFiles(), []);
 
-        const rootFile = await addSlaveAndCreateRootFile();
+        const rootFile = await addWorkerAndCreateRootFile();
         const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
         report.buildNumber = report.buildTag;
         const response = await TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -257,7 +257,7 @@ describe('/api/upload-root/', function () {
         assert.strictEqual(otherCommitSet.rootForRepository(ownedJSC), null);
         assert.deepStrictEqual(otherCommitSet.allRootFiles(), []);
 
-        const rootFile = await addSlaveAndCreateRootFile();
+        const rootFile = await addWorkerAndCreateRootFile();
         const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
         delete report.buildTag;
         report.buildNumber = '123';
@@ -266,7 +266,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when build time is missing', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             delete report.buildTime;
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -276,7 +276,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when build time is malformed', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             report.buildTime = 'Wed, 10 May 2017 03:02:30 GMT';
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -286,7 +286,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when build request ID is missing', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             delete report.buildRequest;
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -296,7 +296,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when build request ID is not a number', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             report.buildRequest = 'abc';
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -306,7 +306,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when build request does not exist', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             return TestServer.remoteAPI().postFormData('/api/upload-root/', makeReport(rootFile));
         }).then((response) => {
             assert.strictEqual(response['status'], 'InvalidBuildRequestType');
@@ -314,7 +314,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when repository list is missing', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             delete report.repositoryList;
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -324,7 +324,7 @@ describe('/api/upload-root/', function () {
     });
 
     it('should reject when repository list is not a valid JSON string', () => {
-        return addSlaveAndCreateRootFile().then((rootFile) => {
+        return addWorkerAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
             report.repositoryList = 'a+b';
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -375,7 +375,7 @@ describe('/api/upload-root/', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(ownedJSC), null);
             assert.deepStrictEqual(otherCommitSet.allRootFiles(), []);
 
-            return addSlaveAndCreateRootFile();
+            return addWorkerAndCreateRootFile();
         }).then((rootFile) => {
             const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -452,7 +452,7 @@ describe('/api/upload-root/', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(ownedJSC), null);
             assert.deepStrictEqual(otherCommitSet.allRootFiles(), []);
 
-            return addSlaveAndCreateRootFile();
+            return addWorkerAndCreateRootFile();
         }).then((rootFile) => {
             const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
@@ -530,7 +530,7 @@ describe('/api/upload-root/', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(shared), null);
             assert.deepStrictEqual(otherCommitSet.allRootFiles(), []);
 
-            return addSlaveAndCreateRootFile();
+            return addWorkerAndCreateRootFile();
         }).then((rootFile) => {
             return TestServer.remoteAPI().postFormData('/api/upload-root/', makeReport(rootFile, buildRequest.id()));
         }).then((response) => {
@@ -581,7 +581,7 @@ describe('/api/upload-root/', function () {
         let buildRequest;
         return createTestGroupWihPatch().then((group) => {
             buildRequest = group.buildRequests()[0];
-            return addSlaveAndCreateRootFile();
+            return addWorkerAndCreateRootFile();
         }).then((rootFile) => {
             const report = makeReport(rootFile, buildRequest.id());
             report.repositoryList = '"a"';
@@ -595,7 +595,7 @@ describe('/api/upload-root/', function () {
         let buildRequest;
         return createTestGroupWihPatch().then((group) => {
             buildRequest = group.buildRequests()[0];
-            return addSlaveAndCreateRootFile();
+            return addWorkerAndCreateRootFile();
         }).then((rootFile) => {
             const report = makeReport(rootFile, buildRequest.id());
             report.repositoryList = '["WebKit", "BadRepositoryName"]';
@@ -610,7 +610,7 @@ describe('/api/upload-root/', function () {
         let buildRequest;
         return createTestGroupWihPatch().then((group) => {
             buildRequest = group.buildRequests()[0];
-            return addSlaveAndCreateRootFile();
+            return addWorkerAndCreateRootFile();
         }).then((rootFile) => {
             const report = makeReport(rootFile, buildRequest.id());
             report.repositoryList = '["WebKit", "macOS"]';
@@ -664,7 +664,7 @@ describe('/api/upload-root/', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(shared), null);
             assert.deepStrictEqual(otherCommitSet.allRootFiles(), []);
 
-            return addSlaveAndCreateRootFile();
+            return addWorkerAndCreateRootFile();
         }).then((rootFile) => {
             const report = makeReport(rootFile, buildRequest.id());
             report.repositoryList = '["WebKit", "Shared"]';
@@ -755,7 +755,7 @@ describe('/api/upload-root/', function () {
             assert.strictEqual(otherCommitSet.rootForRepository(ownedJSC), null);
             assert.deepStrictEqual(otherCommitSet.allRootFiles(), []);
 
-            return addSlaveAndCreateRootFile();
+            return addWorkerAndCreateRootFile();
         }).then((rootFile) => {
             const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);

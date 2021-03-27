@@ -20,8 +20,8 @@
 #include "config.h"
 #include "WebKitWebInspector.h"
 
-#include "WebInspectorProxy.h"
-#include "WebInspectorProxyClient.h"
+#include "WebInspectorUIProxy.h"
+#include "WebInspectorUIProxyClient.h"
 #include "WebKitWebInspectorPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
@@ -83,7 +83,7 @@ struct _WebKitWebInspectorPrivate {
         webInspector->setClient(nullptr);
     }
 
-    RefPtr<WebInspectorProxy> webInspector;
+    RefPtr<WebInspectorUIProxy> webInspector;
     CString inspectedURI;
     unsigned attachedHeight;
     bool canAttach;
@@ -283,7 +283,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
         G_TYPE_BOOLEAN, 0);
 }
 
-class WebKitInspectorClient final : public WebInspectorProxyClient {
+class WebKitInspectorClient final : public WebInspectorUIProxyClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebKitInspectorClient(WebKitWebInspector* inspector)
@@ -292,26 +292,26 @@ public:
     }
 
 private:
-    bool openWindow(WebInspectorProxy&) override
+    bool openWindow(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
         g_signal_emit(m_inspector, signals[OPEN_WINDOW], 0, &returnValue);
         return returnValue;
     }
 
-    void didClose(WebInspectorProxy&) override
+    void didClose(WebInspectorUIProxy&) override
     {
         g_signal_emit(m_inspector, signals[CLOSED], 0);
     }
 
-    bool bringToFront(WebInspectorProxy&) override
+    bool bringToFront(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
         g_signal_emit(m_inspector, signals[BRING_TO_FRONT], 0, &returnValue);
         return returnValue;
     }
 
-    void inspectedURLChanged(WebInspectorProxy&, const String& url) override
+    void inspectedURLChanged(WebInspectorUIProxy&, const String& url) override
     {
         CString uri = url.utf8();
         if (uri == m_inspector->priv->inspectedURI)
@@ -320,21 +320,21 @@ private:
         g_object_notify(G_OBJECT(m_inspector), "inspected-uri");
     }
 
-    bool attach(WebInspectorProxy&) override
+    bool attach(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
         g_signal_emit(m_inspector, signals[ATTACH], 0, &returnValue);
         return returnValue;
     }
 
-    bool detach(WebInspectorProxy&) override
+    bool detach(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
         g_signal_emit(m_inspector, signals[DETACH], 0, &returnValue);
         return returnValue;
     }
 
-    void didChangeAttachedHeight(WebInspectorProxy&, unsigned height) override
+    void didChangeAttachedHeight(WebInspectorUIProxy&, unsigned height) override
     {
         if (m_inspector->priv->attachedHeight == height)
             return;
@@ -342,11 +342,11 @@ private:
         g_object_notify(G_OBJECT(m_inspector), "attached-height");
     }
 
-    void didChangeAttachedWidth(WebInspectorProxy&, unsigned width) override
+    void didChangeAttachedWidth(WebInspectorUIProxy&, unsigned width) override
     {
     }
 
-    void didChangeAttachAvailability(WebInspectorProxy&, bool available) override
+    void didChangeAttachAvailability(WebInspectorUIProxy&, bool available) override
     {
         if (m_inspector->priv->canAttach == available)
             return;
@@ -357,7 +357,7 @@ private:
     WebKitWebInspector* m_inspector;
 };
 
-WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy* webInspector)
+WebKitWebInspector* webkitWebInspectorCreate(WebInspectorUIProxy* webInspector)
 {
     WebKitWebInspector* inspector = WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL));
     inspector->priv->webInspector = webInspector;

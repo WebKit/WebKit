@@ -37,7 +37,6 @@
     static attribute DOMString staticStringAttribute;
 
     undefined voidOperation();
-    [CallWith=ScriptExecutionContext, MayThrowException] TestObj throwingOperation(DOMString strArg, TestObj objArg);
     [Custom] undefined customOperation();
     static undefined staticOperation();
 

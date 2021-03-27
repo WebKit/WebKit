@@ -161,6 +161,17 @@ SocketProvider* WorkerGlobalScope::socketProvider()
     return m_socketProvider.get();
 }
 
+RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerGlobalScope::createRTCDataChannelRemoteHandlerConnection()
+{
+    RefPtr<RTCDataChannelRemoteHandlerConnection> connection;
+    callOnMainThreadAndWait([workerThread = makeRef(thread()), &connection]() mutable {
+        connection = workerThread->workerLoaderProxy().createRTCDataChannelRemoteHandlerConnection();
+    });
+    ASSERT(connection);
+
+    return connection;
+}
+
 #if ENABLE(INDEXED_DATABASE)
 
 IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()

@@ -3,7 +3,7 @@
 const assert = require('assert');
 
 const TestServer = require('./resources/test-server.js');
-const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
+const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 const submitReport = require('./resources/common-operations.js').submitReport;
 
@@ -11,8 +11,8 @@ describe("/api/commits/", function () {
     prepareServerTest(this);
 
     const subversionCommits = {
-        "slaveName": "someSlave",
-        "slavePassword": "somePassword",
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
         "commits": [
             {
                 "repository": "WebKit",
@@ -40,8 +40,8 @@ describe("/api/commits/", function () {
     }
 
     const commitsOnePrefixOfTheOther = {
-        "slaveName": "someSlave",
-        "slavePassword": "somePassword",
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
         "commits": [
             {
                 "repository": "WebKit",
@@ -61,8 +61,8 @@ describe("/api/commits/", function () {
     }
 
     const systemVersionCommits = {
-        "slaveName": "someSlave",
-        "slavePassword": "somePassword",
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
         "commits": [
             {
                 "repository": "OSX",
@@ -152,7 +152,7 @@ describe("/api/commits/", function () {
         });
 
         it("should return the list of all commits for a given repository", () => {
-            return addSlaveForReport(subversionCommits).then(() => {
+            return addWorkerForReport(subversionCommits).then(() => {
                 return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommits);
             }).then(function (response) {
                 assert.strictEqual(response['status'], 'OK');
@@ -171,7 +171,7 @@ describe("/api/commits/", function () {
         });
 
         it("should return the list of ordered commits for a given repository", () => {
-            return addSlaveForReport(subversionCommits).then(() => {
+            return addWorkerForReport(subversionCommits).then(() => {
                 return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommits);
             }).then(function (response) {
                 assert.strictEqual(response['status'], 'OK');
@@ -209,7 +209,7 @@ describe("/api/commits/", function () {
 
         it("should return the oldest commit", () => {
             const remote = TestServer.remoteAPI();
-            return addSlaveForReport(subversionCommits).then(() => {
+            return addWorkerForReport(subversionCommits).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             }).then(() => {
                 return remote.getJSON('/api/commits/WebKit/oldest');
@@ -222,7 +222,7 @@ describe("/api/commits/", function () {
 
         it("should return the oldest commit based on 'commit_order' when 'commit_time' is missing", () => {
             const remote = TestServer.remoteAPI();
-            return addSlaveForReport(systemVersionCommits).then(() => {
+            return addWorkerForReport(systemVersionCommits).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', systemVersionCommits);
             }).then(() => {
                 return remote.getJSON('/api/commits/OSX/oldest');
@@ -252,7 +252,7 @@ describe("/api/commits/", function () {
 
         it("should return the oldest commit", () => {
             const remote = TestServer.remoteAPI();
-            return addSlaveForReport(subversionCommits).then(() => {
+            return addWorkerForReport(subversionCommits).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             }).then(() => {
                 return remote.getJSON('/api/commits/WebKit/latest');
@@ -265,7 +265,7 @@ describe("/api/commits/", function () {
 
         it("should return the latest commit based on 'commit_order' when 'commit_time' is missing", () => {
             const remote = TestServer.remoteAPI();
-            return addSlaveForReport(systemVersionCommits).then(() => {
+            return addWorkerForReport(systemVersionCommits).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', systemVersionCommits);
             }).then(() => {
                 return remote.getJSON('/api/commits/OSX/latest');
@@ -332,7 +332,7 @@ describe("/api/commits/", function () {
             const db = TestServer.database();
             const remote = TestServer.remoteAPI();
             return Promise.all([
-                addSlaveForReport(subversionCommits),
+                addWorkerForReport(subversionCommits),
                 db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
                 db.insert('commits', {'repository': 1, 'revision': notYetReportedCommit.revision, 'time': notYetReportedCommit.time}),
             ]).then(() => {
@@ -348,7 +348,7 @@ describe("/api/commits/", function () {
 
         it("should return the last reported commit based on 'commit_order' when 'commit_time' is missing", () => {
             const remote = TestServer.remoteAPI();
-            return addSlaveForReport(systemVersionCommits).then(() => {
+            return addWorkerForReport(systemVersionCommits).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', systemVersionCommits);
             }).then(() => {
                 return remote.getJSON('/api/commits/OSX/last-reported');
@@ -442,7 +442,7 @@ describe("/api/commits/", function () {
 
         it("should return the full result for a reported commit", () => {
             const remote = TestServer.remoteAPI();
-            return addSlaveForReport(subversionCommits).then(() => {
+            return addWorkerForReport(subversionCommits).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             }).then(() => {
                 return remote.getJSON('/api/commits/WebKit/210949');
@@ -455,7 +455,7 @@ describe("/api/commits/", function () {
 
         it("should return the full result for a reported commit with prefix-match to be false", async () => {
             const remote = TestServer.remoteAPI();
-            await addSlaveForReport(subversionCommits);
+            await addWorkerForReport(subversionCommits);
             await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             const result = await remote.getJSON('/api/commits/WebKit/210949?prefix-match=false');
             assert.strictEqual(result['status'], 'OK');
@@ -465,7 +465,7 @@ describe("/api/commits/", function () {
 
         it("should return the full result for a reported commit with prefix-match to be true", async () => {
             const remote = TestServer.remoteAPI();
-            await addSlaveForReport(subversionCommits);
+            await addWorkerForReport(subversionCommits);
             await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             const result = await remote.getJSON('/api/commits/WebKit/210949?prefix-match=true');
             assert.strictEqual(result['status'], 'OK');
@@ -475,7 +475,7 @@ describe("/api/commits/", function () {
 
         it("should return 'AmbiguousRevisionPrefix' when more than one commits are found for a revision prefix", async () => {
             const remote = TestServer.remoteAPI();
-            await addSlaveForReport(subversionCommits);
+            await addWorkerForReport(subversionCommits);
             await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             const result = await remote.getJSON('/api/commits/WebKit/21094?prefix-match=true');
             assert.strictEqual(result['status'], 'AmbiguousRevisionPrefix');
@@ -483,7 +483,7 @@ describe("/api/commits/", function () {
 
         it("should not return 'AmbiguousRevisionPrefix' when there is a commit revision extract matches specified revision prefix", async () => {
             const remote = TestServer.remoteAPI();
-            await addSlaveForReport(commitsOnePrefixOfTheOther);
+            await addWorkerForReport(commitsOnePrefixOfTheOther);
             await remote.postJSONWithStatus('/api/report-commits/', commitsOnePrefixOfTheOther);
             const result = await remote.getJSON('/api/commits/WebKit/21094?prefix-match=true');
             assert.strictEqual(result['status'], 'OK');
@@ -493,7 +493,7 @@ describe("/api/commits/", function () {
 
         it("should return 'UnknownCommit' when no commit is found for a revision prefix", async () => {
             const remote = TestServer.remoteAPI();
-            await addSlaveForReport(subversionCommits);
+            await addWorkerForReport(subversionCommits);
             await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             const result = await remote.getJSON('/api/commits/WebKit/21090?prefix-match=true');
             assert.strictEqual(result['status'], 'UnknownCommit');
@@ -501,7 +501,7 @@ describe("/api/commits/", function () {
 
         it("should not match prefix and return 'UnkownCommit' when svn commit starts with 'r' prefix and there is no exact match", async () => {
             const remote = TestServer.remoteAPI();
-            await addSlaveForReport(subversionCommits);
+            await addWorkerForReport(subversionCommits);
             await remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             const result = await remote.getJSON('/api/commits/WebKit/r21095?prefix-match=true');
             assert.strictEqual(result['status'], 'UnknownCommit');
@@ -737,7 +737,7 @@ describe("/api/commits/", function () {
                 db.insert('commits', {'repository': 1, 'revision': '210949', 'time': '2017-01-20T03:23:50.645Z', 'reported': false}),
                 db.insert('commits', {'repository': 1, 'revision': '210950', 'time': '2017-01-20T03:49:37.887Z', 'reported': false}),
             ]).then(() => {
-                return addSlaveForReport(subversionCommits);
+                return addWorkerForReport(subversionCommits);
             }).then(() => {
                 return remote.postJSONWithStatus('/api/report-commits/', subversionCommits);
             }).then(() => {

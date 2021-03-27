@@ -777,7 +777,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback() const
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (IOSApplication::isIBooks())
+    if (CocoaApplication::isIBooks())
         return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) && !m_element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
     if (applicationSDKVersion() < DYLD_IOS_VERSION_10_0)
         return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr);

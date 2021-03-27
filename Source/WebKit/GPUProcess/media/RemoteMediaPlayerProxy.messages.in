@@ -57,6 +57,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
     SetShouldDisableSleep(bool disable)
     SetRate(double rate)
+    DidLoadingProgress() -> (bool flag) Synchronous
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     UpdateVideoFullscreenInlineImage()
@@ -69,9 +70,6 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #if PLATFORM(COCOA)
     SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
 #endif
-
-    # Paint
-    # PaintCurrentFrameInContext
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     SetWirelessVideoPlaybackDisabled(bool disabled)
@@ -113,7 +111,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)
 #endif
 
-    PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime) Async
+    PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<WallTime> wallTime) Async
     WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous
     SetShouldUpdatePlaybackMetrics(bool should)
 

@@ -3,11 +3,11 @@ import sys
 import urllib2
 
 
-def submit_commits(commits, dashboard_url, slave_name, slave_password, status_to_accept=['OK']):
+def submit_commits(commits, dashboard_url, worker_name, worker_password, status_to_accept=['OK']):
     try:
         payload = json.dumps({
-            'slaveName': slave_name,
-            'slavePassword': slave_password,
+            'workerName': worker_name,
+            'workerPassword': worker_password,
             'commits': commits,
         })
         request = urllib2.Request(dashboard_url + '/api/report-commits')

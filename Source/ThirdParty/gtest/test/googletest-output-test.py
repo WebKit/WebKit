@@ -29,7 +29,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Tests the text output of Google C++ Testing and Mocking Framework.
+r"""Tests the text output of Google C++ Testing and Mocking Framework.
 
 To update the golden file:
 googletest_output_test.py --build_dir=BUILD/DIR --gengolden
@@ -55,7 +55,6 @@ NO_STACKTRACE_SUPPORT_FLAG = '--no_stacktrace_support'
 IS_LINUX = os.name == 'posix' and os.uname()[0] == 'Linux'
 IS_WINDOWS = os.name == 'nt'
 
-# FIXME: remove the _lin suffix.
 GOLDEN_NAME = 'googletest-output-test-golden-lin.txt'
 
 PROGRAM_PATH = gtest_test_utils.GetTestExecutablePath('googletest-output-test_')
@@ -287,7 +286,7 @@ class GTestOutputTest(gtest_test_utils.TestCase):
     # sequences when we read the golden file irrespective of an operating
     # system used. Therefore, we need to strip those \r's from newlines
     # unconditionally.
-    golden = ToUnixLineEnding(golden_file.read())
+    golden = ToUnixLineEnding(golden_file.read().decode())
     golden_file.close()
 
     # We want the test to pass regardless of certain features being
@@ -332,7 +331,7 @@ if __name__ == '__main__':
     if CAN_GENERATE_GOLDEN_FILE:
       output = GetOutputOfAllCommands()
       golden_file = open(GOLDEN_PATH, 'wb')
-      golden_file.write(output)
+      golden_file.write(output.encode())
       golden_file.close()
     else:
       message = (

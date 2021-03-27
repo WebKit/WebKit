@@ -33,7 +33,7 @@ def replace(line):
     match = re.match('#include [<"](.*)[>"]', line)
     if match:
         header = match.group(1)
-        match = re.match('(EGL|GLES[23]?|KHR)/(.*)', header)
+        match = re.match(r'(?:\.\./)*(EGL|GLES[23]?|KHR)/(.*)', header)
         if match:
             return "#include <ANGLE/" + match.group(2) + ">\n"
         match = re.match(r'(eglext_angle|gl2ext_angle|ShaderVars)\.h', header)
@@ -41,13 +41,14 @@ def replace(line):
             return "#include <ANGLE/" + match.group(1) + ".h>\n"
         if header == 'export.h':
             return "#include <ANGLE/export.h>\n"
+
     return line
 
 os.chdir(output_dir)
 for filename in os.listdir('.'):
     if not os.path.isfile(filename):
         continue
-    if not filename.endswith('.h'):
+    if not (filename.endswith('.h') or filename.endswith('.inc')):
         continue
     lines = open(filename, 'r').readlines()
     newLines = [ replace(line) for line in lines ]

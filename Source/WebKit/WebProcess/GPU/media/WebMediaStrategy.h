@@ -42,10 +42,7 @@ private:
     Ref<WebCore::AudioDestination> createAudioDestination(WebCore::AudioIOCallback&,
         const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) override;
 #endif
-#if PLATFORM(COCOA)
-    void clearNowPlayingInfo() final;
-    void setNowPlayingInfo(bool setAsNowPlayingApplication, const WebCore::NowPlayingInfo&) final;
-#endif
+    std::unique_ptr<WebCore::NowPlayingManager> createNowPlayingManager() const final;
 
 #if ENABLE(GPU_PROCESS)
     bool m_useGPUProcess { false };

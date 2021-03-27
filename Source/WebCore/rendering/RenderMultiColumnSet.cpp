@@ -438,15 +438,16 @@ unsigned RenderMultiColumnSet::columnCount() const
 {
     // We must always return a value of 1 or greater. Column count = 0 is a meaningless situation,
     // and will confuse and cause problems in other parts of the code.
-    if (!computedColumnHeight())
+    auto computedColumnHeight = this->computedColumnHeight();
+    if (computedColumnHeight <= 0)
         return 1;
 
     // Our portion rect determines our column count. We have as many columns as needed to fit all the content.
-    LayoutUnit logicalHeightInColumns = fragmentedFlow()->isHorizontalWritingMode() ? fragmentedFlowPortionRect().height() : fragmentedFlowPortionRect().width();
-    if (!logicalHeightInColumns)
+    auto logicalHeightInColumns = fragmentedFlow()->isHorizontalWritingMode() ? fragmentedFlowPortionRect().height() : fragmentedFlowPortionRect().width();
+    if (logicalHeightInColumns <= 0)
         return 1;
     
-    unsigned count = ceil(static_cast<float>(logicalHeightInColumns) / computedColumnHeight());
+    unsigned count = ceilf(static_cast<float>(logicalHeightInColumns) / computedColumnHeight);
     ASSERT(count >= 1);
     return count;
 }

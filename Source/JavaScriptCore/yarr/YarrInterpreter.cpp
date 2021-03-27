@@ -425,13 +425,20 @@ public:
 
     bool checkCharacterClass(CharacterClass* characterClass, bool invert, unsigned negativeInputOffset)
     {
-        bool match = testCharacterClass(characterClass, input.readChecked(negativeInputOffset));
+        int inputChar = input.readChecked(negativeInputOffset);
+        if (inputChar < 0)
+            return false;
+
+        bool match = testCharacterClass(characterClass, inputChar);
         return invert ? !match : match;
     }
     
     bool checkCharacterClassDontAdvanceInputForNonBMP(CharacterClass* characterClass, unsigned negativeInputOffset)
     {
         int readCharacter = characterClass->hasOnlyNonBMPCharacters() ? input.readSurrogatePairChecked(negativeInputOffset) :  input.readChecked(negativeInputOffset);
+        if (readCharacter < 0)
+            return false;
+
         return testCharacterClass(characterClass, readCharacter);
     }
 

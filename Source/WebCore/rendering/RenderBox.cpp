@@ -2044,8 +2044,10 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
-    if (hasOverridingContainingBlockContentLogicalWidth())
-        return overridingContainingBlockContentLogicalWidth().valueOr(0_lu);
+    if (hasOverridingContainingBlockContentLogicalWidth()) {
+        if (auto width = overridingContainingBlockContentLogicalWidth())
+            return width.value();
+    }
 
     if (RenderBlock* cb = containingBlock())
         return cb->availableLogicalWidth();
@@ -2055,9 +2057,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHeightType heightType) const
 {
     if (hasOverridingContainingBlockContentLogicalHeight()) {
-        // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
-        // height value we get from overridingContainingBlockContentLogicalHeight() here, including WTF::nullopt.
-        return overridingContainingBlockContentLogicalHeight().valueOr(0_lu);
+        if (auto height = overridingContainingBlockContentLogicalHeight())
+            return height.value();
     }
 
     if (RenderBlock* cb = containingBlock())
@@ -3222,12 +3223,11 @@ LayoutUnit RenderBox::computeReplacedLogicalHeight(Optional<LayoutUnit>) const
 
 static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
 {
-#if PLATFORM(MAC)
-    return MacApplication::isIBooks();
-#elif PLATFORM(IOS_FAMILY)
-    return IOSApplication::isIBooks();
-#endif
+#if PLATFORM(COCOA)
+    return CocoaApplication::isIBooks();
+#else
     return false;
+#endif
 }
 
 void RenderBox::computePreferredLogicalWidths(const Length& minWidth, const Length& maxWidth, LayoutUnit borderAndPadding)
@@ -3311,8 +3311,8 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
         if (is<RenderBlock>(container)) {
             auto* block = downcast<RenderBlock>(container);
             block->addPercentHeightDescendant(*const_cast<RenderBox*>(this));
-            if (block->isFlexItem())
-                stretchedHeight = downcast<RenderFlexibleBox>(block->parent())->childLogicalHeightForPercentageResolution(*block);
+            if (block->isFlexItem() && downcast<RenderFlexibleBox>(block->parent())->useChildOverridingLogicalHeightForPercentageResolution(*block))
+                stretchedHeight = block->overridingContentLogicalHeight();
             else if (block->isGridItem() && block->hasOverridingLogicalHeight() && !hasPerpendicularContainingBlock)
                 stretchedHeight = block->overridingContentLogicalHeight();
         }
@@ -3384,12 +3384,8 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
         return logicalHeight() - borderAndPaddingLogicalHeight();
     }
 
-    if (isFlexItem()) {
-        auto& flexBox = downcast<RenderFlexibleBox>(*parent());
-        auto stretchedHeight = flexBox.childLogicalHeightForPercentageResolution(*this);
-        if (stretchedHeight)
-            return stretchedHeight.value();
-    }
+    if (isFlexItem() && downcast<RenderFlexibleBox>(*parent()).useChildOverridingLogicalHeightForPercentageResolution(*this))
+        return overridingContentLogicalHeight();
 
     if (shouldComputeLogicalHeightFromAspectRatio())
         return blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit(style().logicalAspectRatio()), style().boxSizingForAspectRatio(), logicalWidth());

@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "LibWebRTCNetwork.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "RTCDataChannelRemoteManager.h"
 #include "StorageAreaMap.h"
 #include "StorageAreaMapMessages.h"
 #include "WebCacheStorageProvider.h"
@@ -319,5 +320,12 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
             frame->addConsoleMessage(source, level, message);
     }
 }
+
+#if ENABLE(WEB_RTC)
+void NetworkProcessConnection::connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier, CompletionHandler<void(Optional<bool>)>&& callback)
+{
+    callback(RTCDataChannelRemoteManager::sharedManager().connectToRemoteSource(localIdentifier, remoteIdentifier));
+}
+#endif
 
 } // namespace WebKit

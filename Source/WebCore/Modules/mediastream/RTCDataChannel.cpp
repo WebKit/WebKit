@@ -33,6 +33,7 @@
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include "MessageEvent.h"
+#include "RTCDataChannelRemoteHandler.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBufferView.h>
@@ -93,7 +94,7 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(ScriptExecutionContext& cont
 RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
     : ActiveDOMObject(&context)
     , m_handler(WTFMove(handler))
-    , m_identifier(RTCDataChannelIdentifier { Process::identifier(), ObjectIdentifier<RTCDataChannelIdentifierType>::generateThreadSafe() })
+    , m_identifier(RTCDataChannelIdentifier { Process::identifier(), ObjectIdentifier<RTCDataChannelLocalIdentifierType>::generateThreadSafe() })
     , m_contextIdentifier(context.isDocument() ? ScriptExecutionContextIdentifier { } : context.contextIdentifier())
     , m_label(WTFMove(label))
     , m_options(WTFMove(options))
@@ -252,10 +253,10 @@ void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
 }
 
 static Lock s_rtcDataChannelLocalMapLock;
-static HashMap<ObjectIdentifier<RTCDataChannelIdentifierType>, std::unique_ptr<RTCDataChannelHandler>>& rtcDataChannelLocalMap()
+static HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>& rtcDataChannelLocalMap()
 {
     ASSERT(s_rtcDataChannelLocalMapLock.isHeld());
-    static LazyNeverDestroyed<HashMap<ObjectIdentifier<RTCDataChannelIdentifierType>, std::unique_ptr<RTCDataChannelHandler>>> map;
+    static LazyNeverDestroyed<HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>> map;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         map.construct();
@@ -293,6 +294,12 @@ void RTCDataChannel::removeFromDataChannelLocalMapIfNeeded()
     rtcDataChannelLocalMap().remove(identifier().channelIdentifier);
 }
 
+std::unique_ptr<RTCDataChannelHandler> RTCDataChannel::handlerFromIdentifier(RTCDataChannelLocalIdentifier channelIdentifier)
+{
+    auto locker = holdLock(s_rtcDataChannelLocalMapLock);
+    return rtcDataChannelLocalMap().take(channelIdentifier);
+}
+
 static Ref<RTCDataChannel> createClosedChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)
 {
     auto channel = RTCDataChannel::create(context, nullptr, WTFMove(label), WTFMove(options));
@@ -302,18 +309,25 @@ static Ref<RTCDataChannel> createClosedChannel(ScriptExecutionContext& context, 
 
 Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
 {
-    if (identifier.processIdentifier != Process::identifier()) {
-        RELEASE_LOG_ERROR(WebRTC, "Out-of-process data channels are not yet supported");
-        return createClosedChannel(context, WTFMove(label), WTFMove(options));
+    RTCDataChannelRemoteHandler* remoteHandlerPtr = nullptr;
+    std::unique_ptr<RTCDataChannelHandler> handler;
+    if (identifier.processIdentifier == Process::identifier())
+        handler = RTCDataChannel::handlerFromIdentifier(identifier.channelIdentifier);
+    else {
+        auto remoteHandler = RTCDataChannelRemoteHandler::create(identifier, context.createRTCDataChannelRemoteHandlerConnection());
+        remoteHandlerPtr = remoteHandler.get();
+        handler = WTFMove(remoteHandler);
     }
 
-    auto locker = holdLock(s_rtcDataChannelLocalMapLock);
-    auto handler = rtcDataChannelLocalMap().take(identifier.channelIdentifier);
     if (!handler)
         return createClosedChannel(context, WTFMove(label), WTFMove(options));
 
     auto channel = RTCDataChannel::create(context, WTFMove(handler), WTFMove(label), WTFMove(options));
     channel->m_readyState = state;
+
+    if (remoteHandlerPtr)
+        remoteHandlerPtr->setLocalIdentifier(channel->identifier());
+
     return channel;
 }
 

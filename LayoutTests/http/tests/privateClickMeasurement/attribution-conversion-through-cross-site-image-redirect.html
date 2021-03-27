@@ -31,7 +31,7 @@
         if (window.testRunner) {
             if (window.location.search === "?stepTwo") {
                 let imageElement = document.createElement("img");
-                imageElement.src = "https://localhost:8443/privateClickMeasurement/resources/redirectToConversionOnIPAddress.php?conversionData=12";
+                imageElement.src = "https://localhost:8443/privateClickMeasurement/resources/redirectToConversionOnIPAddress.py?conversionData=12";
                 imageElement.id = "pixel";
                 imageElement.onerror = function(e) {
                     testRunner.dumpPrivateClickMeasurement();

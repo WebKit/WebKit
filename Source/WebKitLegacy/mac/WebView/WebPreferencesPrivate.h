@@ -227,7 +227,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL cacheAPIEnabled;
 @property (nonatomic) BOOL downloadAttributeEnabled;
 @property (nonatomic) BOOL directoryUploadEnabled;
-@property (nonatomic) BOOL modernMediaControlsEnabled;
 @property (nonatomic) BOOL selectionAcrossShadowBoundariesEnabled;
 @property (nonatomic, getter=cssLogicalEnabled) BOOL CSSLogicalEnabled;
 @property (nonatomic) BOOL lineHeightUnitsEnabled;

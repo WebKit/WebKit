@@ -50,15 +50,15 @@ interface mixin WindowOrWorkerGlobalScope {
     // readonly attribute boolean crossOriginIsolated;
  
     // Base64 utility methods.
-    [MayThrowException] DOMString atob(DOMString string);
-    [MayThrowException] DOMString btoa(DOMString string);
+    DOMString atob(DOMString string);
+    DOMString btoa(DOMString string);
 
     // Timers.
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
-    [CallWith=GlobalObject, MayThrowException] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
+    [CallWith=GlobalObject] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
     undefined clearTimeout(optional long handle = 0);
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
-    [CallWith=GlobalObject, MayThrowException] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
+    [CallWith=GlobalObject] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
     undefined clearInterval(optional long handle = 0);
 
     // microtask queuing.

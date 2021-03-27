@@ -89,6 +89,10 @@ bool JSString::equalSlowCase(JSGlobalObject* globalObject, JSString* other) cons
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (length() != other->length())
+        return false;
+
     String str1 = value(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
     String str2 = other->value(globalObject);

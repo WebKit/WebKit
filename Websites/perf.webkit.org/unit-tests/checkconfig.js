@@ -159,8 +159,8 @@ describe('config.json', () => {
                 assert.equal(Config.value('maintenanceDirectory'), 'string');
         });
 
-        it('`universalSlavePassword` should be `null` or a string', () => {
-            assertNullOrType(Config.value('universalSlavePassword'), 'string');
+        it('`universalWorkerPassword` should be `null` or a string', () => {
+            assertNullOrType(Config.value('universalWorkerPassword'), 'string');
         });
 
         it('`database.ssl` should be `null` or a dictionary', () => {

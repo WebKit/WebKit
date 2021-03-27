@@ -190,6 +190,10 @@ class ViewGestureController;
     WebKit::DynamicViewportSizeUpdateID _currentDynamicViewportSizeUpdateID;
     CATransform3D _resizeAnimationTransformAdjustments;
     CGFloat _animatedResizeOriginalContentWidth;
+    CGRect _animatedResizeOldBounds;
+    CGFloat _animatedResizeOldMinimumEffectiveDeviceWidth;
+    int32_t _animatedResizeOldOrientation;
+    UIEdgeInsets _animatedResizeOldObscuredInsets;
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
     Optional<CGRect> _frozenVisibleContentRect;
@@ -279,7 +283,6 @@ class ViewGestureController;
 
 @end
 
-WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&);
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

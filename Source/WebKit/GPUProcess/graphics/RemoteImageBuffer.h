@@ -76,6 +76,13 @@ public:
 private:
     bool apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& context) override
     {
+        if (item.is<WebCore::DisplayList::GetImageData>()) {
+            auto& getImageDataItem = item.get<WebCore::DisplayList::GetImageData>();
+            UNUSED_VARIABLE(getImageDataItem);
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=220649 Implement this.
+            return true;
+        }
+
         if (item.is<WebCore::DisplayList::PutImageData>()) {
             auto& putImageDataItem = item.get<WebCore::DisplayList::PutImageData>();
             putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint(), putImageDataItem.destFormat());

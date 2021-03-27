@@ -175,9 +175,9 @@ static inline JSValue jsTestEnabledForContext_TestSubObjEnabledForContextConstru
     return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledForContext_TestSubObjEnabledForContextConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledForContext_TestSubObjEnabledForContextConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledForContext>::get<jsTestEnabledForContext_TestSubObjEnabledForContextConstructorGetter>(*lexicalGlobalObject, thisValue, "TestSubObjEnabledForContext");
+    return IDLAttribute<JSTestEnabledForContext>::get<jsTestEnabledForContext_TestSubObjEnabledForContextConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 JSC::IsoSubspace* JSTestEnabledForContext::subspaceForImpl(JSC::VM& vm)

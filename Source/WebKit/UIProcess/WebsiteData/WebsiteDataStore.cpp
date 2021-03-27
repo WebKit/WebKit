@@ -1734,7 +1734,8 @@ void WebsiteDataStore::networkProcessCrashed(NetworkProcessProxy&)
 
 void WebsiteDataStore::terminateNetworkProcess()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    auto processPools = copyToVectorOf<RefPtr<WebProcessPool>>(WebProcessPool::allProcessPools());
+    for (auto& processPool : processPools)
         processPool->terminateServiceWorkers();
 
     if (!m_networkProcess)

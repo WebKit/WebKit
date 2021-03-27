@@ -59,11 +59,11 @@
     attribute unrestricted double appendWindowEnd;
 
     // Append segment data.
-    [MayThrowException] undefined appendBuffer(BufferSource data);
+    undefined appendBuffer(BufferSource data);
 
     // Abort the current segment append sequence.
-    [MayThrowException] undefined abort();
-    [MayThrowException] undefined remove(double start, unrestricted double end);
+    undefined abort();
+    undefined remove(double start, unrestricted double end);
 
     attribute EventHandler onupdatestart;
     attribute EventHandler onupdate;
@@ -71,5 +71,5 @@
     attribute EventHandler onerror;
     attribute EventHandler onabort;
 
-    [EnabledBySetting=SourceBufferChangeType, MayThrowException] undefined changeType(DOMString type);
+    [EnabledBySetting=SourceBufferChangeType] undefined changeType(DOMString type);
 };

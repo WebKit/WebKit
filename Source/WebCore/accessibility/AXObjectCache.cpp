@@ -2033,14 +2033,23 @@ SimpleRange AXObjectCache::rangeForNodeContents(Node& node)
     
 Optional<SimpleRange> AXObjectCache::rangeMatchesTextNearRange(const SimpleRange& originalRange, const String& matchText)
 {
-    // Create a large enough range for searching the text within.
+    // Create a large enough range to find the text within it that's being searched for.
     unsigned textLength = matchText.length();
-    auto startPosition = visiblePositionForPositionWithOffset(makeContainerOffsetPosition(originalRange.start), -textLength);
-    auto endPosition = visiblePositionForPositionWithOffset(makeContainerOffsetPosition(originalRange.start), 2 * textLength);
-    if (startPosition.isNull())
-        startPosition = firstPositionInOrBeforeNode(originalRange.start.container.ptr());
-    if (endPosition.isNull())
-        endPosition = lastPositionInOrAfterNode(originalRange.end.container.ptr());
+    auto startPosition = VisiblePosition(makeContainerOffsetPosition(originalRange.start));
+    for (unsigned k = 0; k < textLength; k++) {
+        auto testPosition = startPosition.previous();
+        if (testPosition.isNull())
+            break;
+        startPosition = testPosition;
+    }
+
+    auto endPosition = VisiblePosition(makeContainerOffsetPosition(originalRange.end));
+    for (unsigned k = 0; k < textLength; k++) {
+        auto testPosition = endPosition.next();
+        if (testPosition.isNull())
+            break;
+        endPosition = testPosition;
+    }
 
     auto searchRange = makeSimpleRange(startPosition, endPosition);
     if (!searchRange || searchRange->collapsed())

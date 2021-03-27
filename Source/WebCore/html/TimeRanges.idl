@@ -30,6 +30,6 @@
     Exposed=Window
 ] interface TimeRanges {
     readonly attribute unsigned long length;
-    [MayThrowException] unrestricted double start(unsigned long index);
-    [MayThrowException] unrestricted double end(unsigned long index);
+    unrestricted double start(unsigned long index);
+    unrestricted double end(unsigned long index);
 };

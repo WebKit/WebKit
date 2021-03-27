@@ -1,4 +1,0 @@
-
-
-FAIL preventScroll: true on a textarea element assert_equals: TEXTAREA: Should not have scrolled expected 0 but got 920
-

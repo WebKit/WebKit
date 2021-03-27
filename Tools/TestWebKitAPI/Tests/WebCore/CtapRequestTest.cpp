@@ -59,7 +59,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
     user.displayName = "John P. Smith";
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform, true, UserVerificationRequirement::Preferred };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, true, UserVerificationRequirement::Preferred };
 
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, WTF::nullopt, { }, selection, AttestationConveyancePreference::None, WTF::nullopt };
     Vector<uint8_t> hash;
@@ -82,7 +82,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamNoUVNoRK)
     user.displayName = "John P. Smith";
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform, false, UserVerificationRequirement::Discouraged };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, false, UserVerificationRequirement::Discouraged };
 
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, WTF::nullopt, { }, selection, AttestationConveyancePreference::None, WTF::nullopt };
     Vector<uint8_t> hash;
@@ -105,7 +105,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamUVRequiredButNotSup
     user.displayName = "John P. Smith";
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform, false, UserVerificationRequirement::Required };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, false, UserVerificationRequirement::Required };
 
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, WTF::nullopt, { }, selection, AttestationConveyancePreference::None, WTF::nullopt };
     Vector<uint8_t> hash;
@@ -128,7 +128,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamWithPin)
     user.displayName = "John P. Smith";
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform, true, UserVerificationRequirement::Preferred };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, true, UserVerificationRequirement::Preferred };
 
     PinParameters pin;
     pin.protocol = pin::kProtocolVersion;

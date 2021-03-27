@@ -53,15 +53,15 @@ log("Document", "Проверка");
 log("Document, Workers", "All XHR responses should match this: " + String.fromCharCode(0x41F, 0x440, 0x438, 0x432, 0x435, 0x442));
 
 // Run a worker w/o http header. It should inherit the encoding of the document.
-var worker1 = new Worker("resources/worker-encoded.php");
+var worker1 = new Worker("resources/worker-encoded.py");
 worker1.onmessage = function(evt) { log("worker 1", evt.data); };
 
 // Run a worker with http header specifying charset. This new charset should be in effect.
-var worker2 = new Worker("resources/worker-encoded.php?charset=koi8-r");
+var worker2 = new Worker("resources/worker-encoded.py?charset=koi8-r");
 worker2.onmessage = function(evt) { log("worker 2", evt.data); };
 
 // Request some content. It should be decoded using UTF-8 even though current document is Windows-1251.
-var xhr = new XMLHttpRequest();xhr.open("GET", "resources/xhr-response.php", false);
+var xhr = new XMLHttpRequest();xhr.open("GET", "resources/xhr-response.py", false);
 xhr.send();log("Document: ", xhr.responseText);
 
 </script>

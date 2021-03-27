@@ -2719,8 +2719,8 @@ bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 {
     // Bypass this policy when the world is known, and it not the normal world.
     JSC::VM& vm = commonVM();
-    auto& callFrame = *vm.topCallFrame;
-    return &callFrame != JSC::CallFrame::noCaller() && !currentWorld(*callFrame.lexicalGlobalObject(vm)).isNormal();
+    auto* callFrame = vm.topCallFrame;
+    return callFrame && callFrame != JSC::CallFrame::noCaller() && !currentWorld(*callFrame->lexicalGlobalObject(vm)).isNormal();
 }
 
 void Document::platformSuspendOrStopActiveDOMObjects()
@@ -3491,7 +3491,16 @@ SocketProvider* Document::socketProvider()
 {
     return m_socketProvider.get();
 }
-    
+
+RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemoteHandlerConnection()
+{
+    ASSERT(isMainThread());
+    auto* page = this->page();
+    if (!page)
+        return nullptr;
+    return page->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+}
+
 bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
 {
     if (!m_frame)

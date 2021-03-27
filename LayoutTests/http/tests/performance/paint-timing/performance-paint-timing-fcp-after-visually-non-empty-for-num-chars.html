@@ -20,7 +20,7 @@
     function slowString(str, delay) {
         const script = document.createElement('script')
         const source = `document.write('${str}'); timestamps.push(${performance.now()}); check();`
-        script.src = `./resources/slowscript.php?cacheBuster=${performance.now()}&delay=${delay}&script=${source}`
+        script.src = `./resources/slowscript.py?cacheBuster=${performance.now()}&delay=${delay}&script=${source}`
         document.write(script.outerHTML)
     }
 

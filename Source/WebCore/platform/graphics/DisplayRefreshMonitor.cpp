@@ -27,13 +27,15 @@
 #include "DisplayRefreshMonitor.h"
 
 #include "DisplayRefreshMonitorClient.h"
+#include "DisplayRefreshMonitorFactory.h"
 #include "DisplayRefreshMonitorManager.h"
 #include "Logging.h"
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "DisplayRefreshMonitorIOS.h"
 #elif PLATFORM(MAC)
-#include "DisplayRefreshMonitorMac.h"
+#include "LegacyDisplayRefreshMonitorMac.h"
 #elif PLATFORM(GTK)
 #include "DisplayRefreshMonitorGtk.h"
 #elif PLATFORM(WIN)
@@ -45,7 +47,7 @@ namespace WebCore {
 RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
 #if PLATFORM(MAC)
-    return DisplayRefreshMonitorMac::create(displayID);
+    return LegacyDisplayRefreshMonitorMac::create(displayID);
 #endif
 #if PLATFORM(IOS_FAMILY)
     return DisplayRefreshMonitorIOS::create(displayID);
@@ -60,9 +62,15 @@ RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefresh
     return nullptr;
 }
 
-RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonitorClient& client)
+RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::create(DisplayRefreshMonitorFactory* factory, PlatformDisplayID displayID)
 {
-    return client.createDisplayRefreshMonitor(client.displayID());
+    if (factory) {
+        auto monitor = factory->createDisplayRefreshMonitor(displayID);
+        if (monitor)
+            return monitor;
+    }
+    
+    return createDefaultDisplayRefreshMonitor(displayID);
 }
 
 DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
@@ -94,7 +102,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
 {
     {
         LockHolder lock(m_mutex);
-        LOG(RequestAnimationFrame, "DisplayRefreshMonitor::displayDidRefresh(%p) - m_scheduled(%d), m_unscheduledFireCount(%d)", this, m_scheduled, m_unscheduledFireCount);
+        LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitor " << this << " displayDidRefresh for display " << displayID() << " scheduled " << m_scheduled << " unscheduledFireCount " << m_unscheduledFireCount);
         if (!m_scheduled)
             ++m_unscheduledFireCount;
         else

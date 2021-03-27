@@ -14,12 +14,12 @@
     const thirdPartyOrigin = "http://localhost:8000";
     const thirdPartyResourceUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const firstPartyCookieName = "firstPartyCookie";
-    const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
+    const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
     const partitionedCookieName = "partitionedCookie";
-    const subPathToSetPartitionedCookie = "/set-cookie.php?name=" + partitionedCookieName + "&value=value";
+    const subPathToSetPartitionedCookie = "/set-cookie.py?name=" + partitionedCookieName + "&value=value";
     const returnUrl = firstPartyOrigin + "/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-cookie-blocking-between-each-other.html";
-    const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
-    const redirectChainUrl = thirdPartyResourceUrl + "/redirect.php?redirectTo=" + thirdPartyResourceUrl + subPathToGetCookies;
+    const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
+    const redirectChainUrl = thirdPartyResourceUrl + "/redirect.py?redirectTo=" + thirdPartyResourceUrl + subPathToGetCookies;
 
     function openIframe(url, onLoadHandler) {
         const element = document.createElement("iframe");

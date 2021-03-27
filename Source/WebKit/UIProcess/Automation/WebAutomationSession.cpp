@@ -38,7 +38,7 @@
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebCookieManagerProxy.h"
 #include "WebFullScreenManagerProxy.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"

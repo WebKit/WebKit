@@ -12,11 +12,11 @@ function mapInSerialPromiseChain(list, callback)
 
 class OSBuildFetcher {
 
-    constructor(osConfig, remoteAPI, slaveAuth, subprocess, logger)
+    constructor(osConfig, remoteAPI, workerAuth, subprocess, logger)
     {
         this._osConfig = osConfig;
         this._logger = logger;
-        this._slaveAuth = slaveAuth;
+        this._workerAuth = workerAuth;
         this._remoteAPI = remoteAPI;
         this._subprocess = subprocess;
         this._maxSubmitCount = osConfig['maxSubmitCount'] || 20;
@@ -136,7 +136,7 @@ class OSBuildFetcher {
             return;
 
         for(let commitsToSubmit = commitsToPost.splice(0, this._maxSubmitCount); commitsToSubmit.length; commitsToSubmit = commitsToPost.splice(0, this._maxSubmitCount)) {
-            const report = {"slaveName": this._slaveAuth['name'], "slavePassword": this._slaveAuth['password'], 'commits': commitsToSubmit, insert};
+            const report = {"workerName": this._workerAuth['name'], "workerPassword": this._workerAuth['password'], 'commits': commitsToSubmit, insert};
             const response = await this._remoteAPI.postJSONWithStatus('/api/report-commits/', report);
             assert(response['status'] === 'OK');
         }

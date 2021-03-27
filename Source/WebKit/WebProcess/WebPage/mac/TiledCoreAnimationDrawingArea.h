@@ -117,6 +117,8 @@ private:
 
     void applyTransientZoomToLayers(double scale, WebCore::FloatPoint origin);
 
+    RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) final;
+
     void updateLayerHostingContext();
 
     void setRootCompositingLayer(CALayer *);

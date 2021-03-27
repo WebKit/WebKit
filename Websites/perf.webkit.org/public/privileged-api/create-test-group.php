@@ -6,7 +6,7 @@ require_once('../include/commit-sets-helpers.php');
 function main()
 {
     $db = connect();
-    $data = ensure_privileged_api_data_and_token_or_slave($db);
+    $data = ensure_privileged_api_data_and_token_or_worker($db);
     $author = remote_user_name($data);
 
     $arguments = validate_arguments($data, array(

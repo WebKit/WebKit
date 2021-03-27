@@ -450,9 +450,7 @@ const String& CDMInstanceClearKey::keySystem() const
 
 RefPtr<CDMInstanceSession> CDMInstanceClearKey::createSession()
 {
-    auto newSession = adoptRef(new CDMInstanceSessionClearKey(*this));
-    trackSession(*newSession);
-    return newSession;
+    return adoptRef(new CDMInstanceSessionClearKey(*this));
 }
 
 void CDMInstanceSessionClearKey::requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)

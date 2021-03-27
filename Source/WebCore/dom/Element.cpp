@@ -390,8 +390,15 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
     if (dispatchPointerEventIfNeeded(*this, mouseEvent.get(), platformEvent, didNotSwallowEvent) == ShouldIgnoreMouseEvent::Yes)
         return false;
-
-    if (Quirks::StorageAccessResult::ShouldCancelEvent == document().quirks().triggerOptionalStorageAccessQuirk(*this, platformEvent, eventType, detail, relatedTarget))
+    
+    auto isParentProcessAFullWebBrowser = false;
+#if PLATFORM(IOS_FAMILY)
+    if (Frame* frame = document().frame())
+        isParentProcessAFullWebBrowser = frame->loader().client().isParentProcessAFullWebBrowser();
+#elif PLATFORM(MAC)
+    isParentProcessAFullWebBrowser = MacApplication::isSafari();
+#endif
+    if (Quirks::StorageAccessResult::ShouldCancelEvent == document().quirks().triggerOptionalStorageAccessQuirk(*this, platformEvent, eventType, detail, relatedTarget, isParentProcessAFullWebBrowser))
         return false;
 
     ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
@@ -2354,13 +2361,13 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
         notifyChildNodeInserted(*this, shadowRoot);
 #endif
 
+        InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
+
         invalidateStyleAndRenderersForSubtree();
     }
 
     if (shadowRoot.mode() == ShadowRootMode::UserAgent)
         didAddUserAgentShadowRoot(shadowRoot);
-
-    InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
 }
 
 void Element::removeShadowRoot()
@@ -3033,7 +3040,7 @@ static RefPtr<Element> findFirstProgramaticallyFocusableElementInComposedTree(El
     return nullptr;
 }
 
-void Element::focus(SelectionRestorationMode restorationMode, FocusDirection direction)
+void Element::focus(const FocusOptions& options)
 {
     if (!isConnected())
         return;
@@ -3077,11 +3084,12 @@ void Element::focus(SelectionRestorationMode restorationMode, FocusDirection dir
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), direction))
+        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), options.direction))
             return;
     }
 
-    newTarget->revealFocusedElement(restorationMode);
+    if (!options.preventScroll)
+        newTarget->revealFocusedElement(options.selectionRestorationMode);
 }
 
 void Element::revealFocusedElement(SelectionRestorationMode selectionMode)
@@ -4584,11 +4592,6 @@ ElementIdentifier Element::createElementIdentifier()
     ASSERT(!hasNodeFlag(NodeFlag::HasElementIdentifier));
     setNodeFlag(NodeFlag::HasElementIdentifier);
     return ElementIdentifier::generate();
-}
-
-void Element::didChangeRenderer(RenderObject* oldRenderer)
-{
-    InspectorInstrumentation::nodeLayoutContextChanged(*this, oldRenderer);
 }
 
 #if ENABLE(CSS_TYPED_OM)

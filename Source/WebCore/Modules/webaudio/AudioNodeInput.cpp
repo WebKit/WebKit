@@ -53,13 +53,7 @@ void AudioNodeInput::connect(AudioNodeOutput* output)
     if (!output || !node())
         return;
 
-    auto addPotentiallyDisabledOutput = [this](AudioNodeOutput& output) {
-        if (output.isEnabled())
-            return addOutput(output);
-        return m_disabledOutputs.add(&output).isNewEntry;
-    };
-
-    if (addPotentiallyDisabledOutput(*output))
+    if (addOutput(*output))
         output->addInput(this);
 }
 
@@ -76,48 +70,23 @@ void AudioNodeInput::disconnect(AudioNodeOutput* output)
         output->removeInput(this); // Note: it's important to return immediately after this since the node may be deleted.
         return;
     }
-    
-    // Otherwise, try to disconnect from disabled connections.
-    if (m_disabledOutputs.remove(output)) {
-        output->removeInput(this); // Note: it's important to return immediately after this since the node may be deleted.
-        return;
-    }
 
     ASSERT_NOT_REACHED();
 }
 
-void AudioNodeInput::disable(AudioNodeOutput* output)
+void AudioNodeInput::outputEnabledStateChanged(AudioNodeOutput& output)
 {
     ASSERT(context().isGraphOwner());
-
-    ASSERT(output && node());
-    if (!output || !node())
-        return;
-
-    m_disabledOutputs.add(output);
-    bool wasRemoved = removeOutput(*output);
-    ASSERT_UNUSED(wasRemoved, wasRemoved);
+    AudioSummingJunction::outputEnabledStateChanged(output);
 
     // Propagate disabled state to outputs.
-    node()->disableOutputsIfNecessary();
-}
-
-void AudioNodeInput::enable(AudioNodeOutput* output)
-{
-    ASSERT(context().isGraphOwner());
-
-    ASSERT(output && node());
-    if (!output || !node())
+    ASSERT(node());
+    if (!node())
         return;
-
-    ASSERT(m_disabledOutputs.contains(output));
-
-    // Move output from disabled list to active list.
-    addOutput(*output);
-    m_disabledOutputs.remove(output);
-
-    // Propagate enabled state to outputs.
-    node()->enableOutputsIfNecessary();
+    if (output.isEnabled())
+        node()->enableOutputsIfNecessary();
+    else
+        node()->disableOutputsIfNecessary();
 }
 
 void AudioNodeInput::didUpdate()
@@ -158,7 +127,7 @@ AudioBus* AudioNodeInput::bus()
 
     // Handle single connection specially to allow for in-place processing.
     if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max)
-        return renderingOutput(0)->bus();
+        return (*renderingOutputs().begin())->bus();
 
     // Multiple connections case or complex ChannelCountMode (or no connections).
     return internalSummingBus();
@@ -186,7 +155,7 @@ void AudioNodeInput::sumAllConnections(AudioBus* summingBus, size_t framesToProc
 
     auto interpretation = node()->channelInterpretation();
 
-    for (auto& output : m_renderingOutputs) {
+    for (auto* output : renderingOutputs()) {
         ASSERT(output);
 
         // Render audio from this output.
@@ -201,16 +170,17 @@ AudioBus* AudioNodeInput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
 {
     ASSERT(context().isAudioThread());
 
+    auto numberOfRenderingConnections = this->numberOfRenderingConnections();
     // Handle single connection case.
-    if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max) {
+    if (numberOfRenderingConnections == 1 && node()->channelCountMode() == ChannelCountMode::Max) {
         // The output will optimize processing using inPlaceBus if it's able.
-        AudioNodeOutput* output = this->renderingOutput(0);
+        AudioNodeOutput* output = *renderingOutputs().begin();
         return output->pull(inPlaceBus, framesToProcess);
     }
 
     AudioBus* internalSummingBus = this->internalSummingBus();
 
-    if (!numberOfRenderingConnections()) {
+    if (!numberOfRenderingConnections) {
         // At least, generate silence if we're not connected to anything.
         // FIXME: if we wanted to get fancy, we could propagate a 'silent hint' here to optimize the downstream graph processing.
         internalSummingBus->zero();

@@ -8,7 +8,7 @@ function main()
     $input_file = validate_uploaded_file('rootFile');
 
     $db = connect();
-    $slave_id = verify_slave($db, $_POST);
+    $worker_id = verify_worker($db, $_POST);
 
     if (array_key_exists('buildNumber', $_POST) && array_key_exists('buildTag', $_POST) && $_POST['buildNumber'] != $_POST['buildTag'])
         exit_with_error('BuilderNumberTagMismatch', array('buildNumber' => $_POST['buildNumber'], 'buildTag' => $_POST['buildTag']));
@@ -34,7 +34,7 @@ function main()
     assert($test_group);
 
     $builder_id = $db->select_or_insert_row('builders', 'builder', array('name' => $arguments['builderName']));
-    $build_info = array('builder' => $builder_id, 'slave' => $slave_id, 'tag' => $arguments['buildTag'], 'time' => $arguments['buildTime']);
+    $build_info = array('builder' => $builder_id, 'worker' => $worker_id, 'tag' => $arguments['buildTag'], 'time' => $arguments['buildTime']);
 
     $commit_set_id = $request_row['request_commit_set'];
     $commit_set_items_to_update = compute_commit_set_items_to_update($db, $commit_set_id, $arguments['repositoryList']);

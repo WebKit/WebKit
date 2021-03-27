@@ -160,6 +160,8 @@ Modules/mediastream/RTCDTMFSender.cpp
 Modules/mediastream/RTCDTMFToneChangeEvent.cpp
 Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCDataChannelEvent.cpp
+Modules/mediastream/RTCDataChannelRemoteHandler.cpp
+Modules/mediastream/RTCDataChannelRemoteSource.cpp
 Modules/mediastream/RTCEncodedAudioFrame.cpp
 Modules/mediastream/RTCEncodedFrame.cpp
 Modules/mediastream/RTCEncodedVideoFrame.cpp
@@ -1923,7 +1925,6 @@ platform/encryptedmedia/clearkey/CDMClearKey.cpp
 platform/gamepad/EmptyGamepadProvider.cpp
 platform/gamepad/GamepadConstants.cpp
 platform/gamepad/GamepadProvider.cpp
-platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/AnimationFrameRate.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
@@ -2182,6 +2183,8 @@ platform/text/TextEncodingDetectorICU.cpp
 platform/text/TextEncodingRegistry.cpp
 platform/xr/openxr/OpenXRInstance.cpp @no-unify
 platform/xr/openxr/OpenXRExtensions.cpp @no-unify
+platform/xr/openxr/OpenXRLayer.cpp @no-unify
+platform/xr/openxr/OpenXRSwapchain.cpp @no-unify
 platform/xr/openxr/PlatformXROpenXR.cpp @no-unify
 plugins/DOMMimeType.cpp
 plugins/DOMMimeTypeArray.cpp
@@ -2796,6 +2799,7 @@ JSAudioWorkletProcessorConstructor.cpp
 JSAuthenticationExtensionsClientInputs.cpp
 JSAuthenticationExtensionsClientOutputs.cpp
 JSAuthenticatorAssertionResponse.cpp
+JSAuthenticatorAttachment.cpp
 JSAuthenticatorAttestationResponse.cpp
 JSAuthenticatorResponse.cpp
 JSAuthenticatorTransport.cpp
@@ -3021,6 +3025,7 @@ JSFileSystemEntryCallback.cpp
 JSFileSystemFileEntry.cpp
 JSFillMode.cpp
 JSFocusEvent.cpp
+JSFocusOptions.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
 JSGPUBindGroupLayoutBinding.cpp

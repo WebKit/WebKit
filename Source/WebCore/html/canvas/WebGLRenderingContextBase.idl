@@ -508,10 +508,10 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     undefined compileShader(WebGLShader shader);
 
     undefined texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
-    [MayThrowException] undefined texImage2D(GLenum target, GLint level, GLenum internalformat, GLenum format, GLenum type, TexImageSource source);
+    undefined texImage2D(GLenum target, GLint level, GLenum internalformat, GLenum format, GLenum type, TexImageSource source);
 
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
-    [MayThrowException] undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, TexImageSource source);
+    undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, TexImageSource source);
 
     undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, [AllowShared] ArrayBufferView data);
     undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, [AllowShared] ArrayBufferView data);

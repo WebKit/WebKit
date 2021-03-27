@@ -133,34 +133,38 @@ bool ContentChangeObserver::isConsideredVisible(const Node& node)
     return true;
 }
 
-enum class ElementHadRenderer { No, Yes };
-static bool isConsideredClickable(const Element& candidateElement, ElementHadRenderer hadRenderer)
+bool ContentChangeObserver::isConsideredActionableContent(const Element& candidateElement, ElementHadRenderer hadRenderer) const
 {
-    auto& element = const_cast<Element&>(candidateElement);
-    if (element.isInUserAgentShadowTree())
-        return false;
-
-    if (is<HTMLIFrameElement>(element))
+    if (m_document.quirks().shouldTooltipPreventFromProceedingWithClick(candidateElement))
         return true;
 
-    if (is<HTMLImageElement>(element)) {
-        // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
-        return element.Element::willRespondToMouseClickEvents();
-    }
+    auto isConsideredClickable = [&] {
+        auto& element = const_cast<Element&>(candidateElement);
+        if (element.isInUserAgentShadowTree())
+            return false;
 
-    bool hasRenderer = element.renderer();
-    auto willRespondToMouseClickEvents = element.willRespondToMouseClickEvents();
-    if (willRespondToMouseClickEvents || !hasRenderer || hadRenderer == ElementHadRenderer::No)
-        return willRespondToMouseClickEvents;
-
-    // In case when the content already had renderers it's not sufficient to check the candidate element only since it might just be the container for the clickable content.  
-    for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
-        if (!descendant.element())
-            continue;
-        if (descendant.element()->willRespondToMouseClickEvents())
+        if (is<HTMLIFrameElement>(element))
             return true;
-    }
-    return false;
+
+        if (is<HTMLImageElement>(element)) {
+            // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
+            return element.Element::willRespondToMouseClickEvents();
+        }
+        bool hasRenderer = element.renderer();
+        auto willRespondToMouseClickEvents = element.willRespondToMouseClickEvents();
+        if (willRespondToMouseClickEvents || !hasRenderer || hadRenderer == ElementHadRenderer::No)
+            return willRespondToMouseClickEvents;
+
+        // In case when the content already had renderers it's not sufficient to check the candidate element only since it might just be the container for the clickable content.  
+        for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
+            if (!descendant.element())
+                continue;
+            if (descendant.element()->willRespondToMouseClickEvents())
+                return true;
+        }
+        return false;
+    };
+    return isConsideredClickable();
 }
 
 ContentChangeObserver::ContentChangeObserver(Document& document)
@@ -247,7 +251,7 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
 
-    // isConsideredClickable may trigger style update through Node::computeEditability. Let's adjust the state in the next runloop.
+    // isConsideredActionableContent may trigger style update through Node::computeEditability. Let's adjust the state in the next runloop.
     callOnMainThread([weakThis = makeWeakPtr(*this), targetElement = makeWeakPtr(element)] {
         if (!weakThis || !targetElement)
             return;
@@ -255,7 +259,7 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
             weakThis->adjustObservedState(Event::EndedTransitionButFinalStyleIsNotDefiniteYet);
             return;
         }
-        if (isConsideredClickable(*targetElement, ElementHadRenderer::Yes))
+        if (weakThis->isConsideredActionableContent(*targetElement, ElementHadRenderer::Yes))
             weakThis->elementDidBecomeVisible(*targetElement);
         weakThis->adjustObservedState(Event::CompletedTransition);
     });
@@ -658,7 +662,7 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
     if (!m_wasHidden.hasValue())
         return;
 
-    if (!isConsideredClickable(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
+    if (!m_contentChangeObserver.isConsideredActionableContent(m_element, m_hadRenderer ? ElementHadRenderer::Yes : ElementHadRenderer::No))
         return;
 
     auto wasVisible = !m_wasHidden.value();

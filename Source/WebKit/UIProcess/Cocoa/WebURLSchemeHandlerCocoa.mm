@@ -35,7 +35,6 @@
 #import <wtf/RunLoop.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 Ref<WebURLSchemeHandlerCocoa> WebURLSchemeHandlerCocoa::create(id <WKURLSchemeHandler> apiHandler)
 {
@@ -52,7 +51,8 @@ void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchem
     auto result = m_apiTasks.add(task.identifier(), API::URLSchemeTask::create(task));
     ASSERT(result.isNewEntry);
 
-    [m_apiHandler.get() webView:fromWebPageProxy(page) startURLSchemeTask:wrapper(result.iterator->value.get())];
+    if (auto webView = page.cocoaView())
+        [m_apiHandler.get() webView:webView.get() startURLSchemeTask:wrapper(result.iterator->value.get())];
 }
 
 void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLSchemeTask& task)
@@ -61,7 +61,10 @@ void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLScheme
     if (iterator == m_apiTasks.end())
         return;
 
-    [m_apiHandler.get() webView:fromWebPageProxy(page) stopURLSchemeTask:wrapper(iterator->value.get())];
+    if (auto webView = page.cocoaView())
+        [m_apiHandler.get() webView:webView.get() stopURLSchemeTask:wrapper(iterator->value.get())];
+    else
+        task.suppressTaskStoppedExceptions();
 
     m_apiTasks.remove(iterator);
 }

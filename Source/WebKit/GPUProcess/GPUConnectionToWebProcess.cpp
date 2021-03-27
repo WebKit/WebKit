@@ -378,13 +378,14 @@ void GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting(GraphicsConte
 void GPUConnectionToWebProcess::clearNowPlayingInfo()
 {
     m_isActiveNowPlayingProcess = false;
-    gpuProcess().nowPlayingManager().clearNowPlayingInfoClient(*this);
+    gpuProcess().nowPlayingManager().removeClient(*this);
 }
 
-void GPUConnectionToWebProcess::setNowPlayingInfo(bool setAsNowPlayingApplication, NowPlayingInfo&& nowPlayingInfo)
+void GPUConnectionToWebProcess::setNowPlayingInfo(NowPlayingInfo&& nowPlayingInfo)
 {
     m_isActiveNowPlayingProcess = true;
-    gpuProcess().nowPlayingManager().setNowPlayingInfo(*this, WTFMove(nowPlayingInfo));
+    gpuProcess().nowPlayingManager().addClient(*this);
+    gpuProcess().nowPlayingManager().setNowPlayingInfo(WTFMove(nowPlayingInfo));
     updateSupportedRemoteCommands();
 }
 
@@ -393,8 +394,8 @@ void GPUConnectionToWebProcess::updateSupportedRemoteCommands()
     if (!m_isActiveNowPlayingProcess || !m_remoteRemoteCommandListener)
         return;
 
-    gpuProcess().nowPlayingManager().setSupportedRemoteCommands(m_remoteRemoteCommandListener->supportedCommands(), m_remoteRemoteCommandListener->supportsSeeking());
-
+    gpuProcess().nowPlayingManager().setSupportsSeeking(m_remoteRemoteCommandListener->supportsSeeking());
+    gpuProcess().nowPlayingManager().setSupportedRemoteCommands(m_remoteRemoteCommandListener->supportedCommands());
 }
 
 void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)

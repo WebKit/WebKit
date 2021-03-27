@@ -29,6 +29,7 @@
 #include <WebCore/Font.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/FontCache.h>
+#include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/FontDescription.h>
 #include <wtf/win/GDIObject.h>
 
@@ -47,35 +48,41 @@ Optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decod
     return WTF::nullopt;
 }
 
+template<> struct ArgumentCoder<LOGFONT> {
+    static void encode(Encoder& encoder, const LOGFONT& logFont)
+    {
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&logFont), sizeof logFont, 1);
+    }
+    static Optional<LOGFONT> decode(Decoder& decoder)
+    {
+        LOGFONT logFont;
+        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&logFont), sizeof(logFont), 1))
+            return WTF::nullopt;
+        return logFont;
+    }
+};
+
 void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<Font>& font)
 {
     const auto& platformData = font->platformData();
-    encoder << platformData.orientation();
-    encoder << platformData.widthVariant();
-    encoder << platformData.textRenderingMode();
     encoder << platformData.size();
     encoder << platformData.syntheticBold();
     encoder << platformData.syntheticOblique();
-    encoder << platformData.familyName();
+
+    const auto& creationData = platformData.creationData();
+    encoder << static_cast<bool>(creationData);
+    if (creationData) {
+        encoder << creationData->fontFaceData;
+        encoder << creationData->itemInCollection;
+    }
+
+    LOGFONT logFont;
+    GetObject(platformData.hfont(), sizeof logFont, &logFont);
+    encoder << logFont;
 }
 
 Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder)
 {
-    Optional<FontOrientation> orientation;
-    decoder >> orientation;
-    if (!orientation.hasValue())
-        return WTF::nullopt;
-
-    Optional<FontWidthVariant> widthVariant;
-    decoder >> widthVariant;
-    if (!widthVariant.hasValue())
-        return WTF::nullopt;
-
-    Optional<TextRenderingMode> textRenderingMode;
-    decoder >> textRenderingMode;
-    if (!textRenderingMode.hasValue())
-        return WTF::nullopt;
-
     Optional<float> size;
     decoder >> size;
     if (!size.hasValue())
@@ -91,26 +98,41 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
     if (!syntheticOblique.hasValue())
         return WTF::nullopt;
 
-    Optional<String> familyName;
-    decoder >> familyName;
-    if (!familyName.hasValue())
+    Optional<bool> includesCreationData;
+    decoder >> includesCreationData;
+    if (!includesCreationData.hasValue())
         return WTF::nullopt;
 
-    FontDescription description;
-    description.setOrientation(*orientation);
-    description.setWidthVariant(*widthVariant);
-    description.setTextRenderingMode(*textRenderingMode);
-    description.setComputedSize(*size);
-    RefPtr<Font> font = FontCache::singleton().fontForFamily(description, *familyName);
-    if (!font)
+    std::unique_ptr<FontCustomPlatformData> fontCustomPlatformData;
+
+    if (includesCreationData.value()) {
+        Optional<Ref<SharedBuffer>> fontFaceData;
+        decoder >> fontFaceData;
+        if (!fontFaceData.hasValue())
+            return WTF::nullopt;
+
+        Optional<String> itemInCollection;
+        decoder >> itemInCollection;
+        if (!itemInCollection.hasValue())
+            return WTF::nullopt;
+
+        fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
+        if (!fontCustomPlatformData)
+            return WTF::nullopt;
+    }
+
+    Optional<LOGFONT> logFont;
+    decoder >> logFont;
+    if (!logFont.hasValue())
         return WTF::nullopt;
+
+    if (fontCustomPlatformData)
+        wcscpy_s(logFont->lfFaceName, LF_FACESIZE, fontCustomPlatformData->name.wideCharacters().data());
     
-    LOGFONT logFont;
-    GetObject(font->platformData().hfont(), sizeof logFont, &logFont);
-    auto gdiFont = adoptGDIObject(CreateFontIndirect(&logFont));
+    auto gdiFont = adoptGDIObject(CreateFontIndirect(&*logFont));
     if (!gdiFont)
         return WTF::nullopt;
-    
+
     return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, false);
 }
 

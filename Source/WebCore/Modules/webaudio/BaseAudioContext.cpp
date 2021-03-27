@@ -118,13 +118,14 @@ bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
 unsigned BaseAudioContext::s_hardwareContextCount = 0;
 
 // Constructor for rendering to the audio hardware.
-BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions& contextOptions)
+BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, const AudioContextOptions& contextOptions)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_worklet(AudioWorklet::create(*this))
+    , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
 {
     // According to spec AudioContext must die only after page navigate.
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
@@ -146,7 +147,7 @@ BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions
 }
 
 // Constructor for offline (non-realtime) rendering.
-BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -155,6 +156,7 @@ BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels
     , m_worklet(AudioWorklet::create(*this))
     , m_isOfflineContext(true)
     , m_renderTarget(WTFMove(renderTarget))
+    , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
 {
     FFTFrame::initialize();
 
@@ -171,7 +173,6 @@ BaseAudioContext::~BaseAudioContext()
     ASSERT(m_isStopScheduled);
     ASSERT(m_nodesToDelete.isEmpty());
     ASSERT(m_referencedSourceNodes.isEmpty());
-    ASSERT(m_finishedSourceNodes.isEmpty());
     ASSERT(m_automaticPullNodes.isEmpty());
     if (m_automaticPullNodesNeedUpdating)
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
@@ -244,7 +245,7 @@ void BaseAudioContext::uninitialize()
         AutoLocker locker(*this);
         // This should have been called from handlePostRenderTasks() at the end of rendering.
         // However, in case of lock contention, the tryLock() call could have failed in handlePostRenderTasks(),
-        // leaving nodes in m_finishedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
+        // leaving nodes in m_referencedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
         // before the BaseAudioContext gets destroyed.
         derefFinishedSourceNodes();
     }
@@ -366,13 +367,7 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
 
 AudioListener& WebCore::BaseAudioContext::listener()
 {
-    if (!m_listener) {
-        if (isWebKitAudioContext())
-            m_listener = WebKitAudioListener::create(*this);
-        else
-            m_listener = AudioListener::create(*this);
-    }
-    return *m_listener;
+    return m_listener;
 }
 
 ExceptionOr<Ref<AudioBufferSourceNode>> BaseAudioContext::createBufferSource()
@@ -575,14 +570,21 @@ ExceptionOr<Ref<IIRFilterNode>> BaseAudioContext::createIIRFilter(ScriptExecutio
     return IIRFilterNode::create(scriptExecutionContext, *this, WTFMove(options));
 }
 
+static bool isFinishedSourceNode(const AudioConnectionRefPtr<AudioNode>& node)
+{
+    return node->isFinishedSourceNode();
+}
+
 void BaseAudioContext::derefFinishedSourceNodes()
 {
     ASSERT(isGraphOwner());
     ASSERT(isAudioThread() || isAudioThreadFinished());
-    for (auto& node : m_finishedSourceNodes)
-        derefSourceNode(*node);
 
-    m_finishedSourceNodes.clear();
+    if (!m_hasFinishedAudioSourceNodes)
+        return;
+
+    m_referencedSourceNodes.removeAllMatching(isFinishedSourceNode);
+    m_hasFinishedAudioSourceNodes = false;
 }
 
 void BaseAudioContext::refSourceNode(AudioNode& node)
@@ -1055,7 +1057,8 @@ void BaseAudioContext::sourceNodeDidFinishPlayback(AudioNode& node)
 {
     ASSERT(isAudioThread());
 
-    m_finishedSourceNodes.append(&node);
+    node.setIsFinishedSourceNode();
+    m_hasFinishedAudioSourceNodes = true;
 }
 
 void BaseAudioContext::workletIsReady()

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editor" contenteditable><div id="host"><hr><br><br></div></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+host.attachShadow({mode: 'closed'}).innerHTML = '<slot></slot>';
+editor.focus();
+getSelection().setPosition(document.querySelector('br'), 0);
+document.execCommand('InsertParagraph');
+</script>
+</body>
+<p>This tests inserting a paragraph between hr and br assigned to a slot. WebKit should not hit any assertions or crash.</p>
+</html>

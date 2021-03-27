@@ -2822,4 +2822,14 @@ void NetworkProcess::clearAppBoundNavigationData(PAL::SessionID sessionID, Compl
 }
 #endif
 
+#if ENABLE(WEB_RTC)
+RTCDataChannelRemoteManagerProxy& NetworkProcess::rtcDataChannelProxy()
+{
+    ASSERT(isMainRunLoop());
+    if (!m_rtcDataChannelProxy)
+        m_rtcDataChannelProxy = RTCDataChannelRemoteManagerProxy::create();
+    return *m_rtcDataChannelProxy;
+}
+#endif
+
 } // namespace WebKit

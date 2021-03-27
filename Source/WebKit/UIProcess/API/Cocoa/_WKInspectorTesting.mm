@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import "_WKInspectorInternal.h"
 #import "_WKInspectorPrivateForTesting.h"
 
@@ -41,9 +42,8 @@ static NSString *JavaScriptSnippetToOpenURLExternally(NSURL *url)
 
 - (WKWebView *)inspectorWebView
 {
-    if (auto* page = _inspector->inspectorPage())
-        return fromWebPageProxy(*page);
-    return nil;
+    auto page = _inspector->inspectorPage();
+    return page ? page->cocoaView().autorelease() : nil;
 }
 
 - (void)_openURLExternallyForTesting:(NSURL *)url useFrontendAPI:(BOOL)useFrontendAPI

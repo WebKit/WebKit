@@ -38,7 +38,6 @@ RUN(trackElement.setAttribute('kind', 'subtitles'))
 EXPECTED (trackElement.kind == 'subtitles') OK
 EXPECTED (trackElement.track.kind == 'subtitles') OK
 EXPECTED (trackElement.getAttribute('kind') == 'subtitles') OK
-No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 ++ 'captions'
 set via DOM
@@ -53,7 +52,6 @@ RUN(trackElement.setAttribute('kind', 'captions'))
 EXPECTED (trackElement.kind == 'captions') OK
 EXPECTED (trackElement.track.kind == 'captions') OK
 EXPECTED (trackElement.getAttribute('kind') == 'captions') OK
-No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 ++ 'descriptions'
 set via DOM
@@ -68,7 +66,6 @@ RUN(trackElement.setAttribute('kind', 'descriptions'))
 EXPECTED (trackElement.kind == 'descriptions') OK
 EXPECTED (trackElement.track.kind == 'descriptions') OK
 EXPECTED (trackElement.getAttribute('kind') == 'descriptions') OK
-No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 ++ 'chapters'
 set via DOM
@@ -83,7 +80,6 @@ RUN(trackElement.setAttribute('kind', 'chapters'))
 EXPECTED (trackElement.kind == 'chapters') OK
 EXPECTED (trackElement.track.kind == 'chapters') OK
 EXPECTED (trackElement.getAttribute('kind') == 'chapters') OK
-No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 ++ 'metadata'
 set via DOM
@@ -98,7 +94,6 @@ RUN(trackElement.setAttribute('kind', 'metadata'))
 EXPECTED (trackElement.kind == 'metadata') OK
 EXPECTED (trackElement.track.kind == 'metadata') OK
 EXPECTED (trackElement.getAttribute('kind') == 'metadata') OK
-No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 END OF TEST
 

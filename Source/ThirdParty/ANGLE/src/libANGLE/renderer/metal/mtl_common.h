@@ -296,11 +296,11 @@ using AutoObjCObj = AutoObjCPtr<T *>;
 
 // NOTE: SharedEvent is only declared on iOS 12.0+ or mac 10.14+
 #if defined(__IPHONE_12_0) || defined(__MAC_10_14)
-using SharedEventRef = AutoObjCPtr<id<MTLSharedEvent>>;
 #define ANGLE_MTL_EVENT_AVAILABLE 1
+using SharedEventRef = AutoObjCPtr<id<MTLSharedEvent>>;
 #else
-using SharedEventRef                                       = AutoObjCObj<NSObject>;
 #define ANGLE_MTL_EVENT_AVAILABLE 0
+using SharedEventRef = AutoObjCObj<NSObject>;
 #endif
 
 // The native image index used by Metal back-end,  the image index uses native mipmap level instead

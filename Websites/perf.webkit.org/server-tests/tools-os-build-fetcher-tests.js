@@ -5,7 +5,7 @@ const assert = require('assert');
 const OSBuildFetcher = require('../tools/js/os-build-fetcher.js').OSBuildFetcher;
 const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').MockRemoteAPI;
 const TestServer = require('./resources/test-server.js');
-const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
+const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 const MockSubprocess = require('./resources/mock-subprocess.js').MockSubprocess;
 const MockLogger = require('./resources/mock-logger.js').MockLogger;
@@ -21,12 +21,12 @@ describe('OSBuildFetcher', function() {
     });
 
     const emptyReport = {
-        'slaveName': 'someSlave',
-        'slavePassword': 'somePassword',
+        'workerName': 'someWorker',
+        'workerPassword': 'somePassword',
     };
 
-    const slaveAuth = {
-        'name': 'someSlave',
+    const workerAuth = {
+        'name': 'someWorker',
         'password': 'somePassword'
     };
 
@@ -272,13 +272,13 @@ describe('OSBuildFetcher', function() {
 
         it('should be backward compatible and report all build commits with owned-commits', () => {
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
 
             let fetchReportAndUpdateBuildsPromise = null;
             let fetchAvailableBuildsPromise = null;
 
-            return addSlaveForReport(emptyReport).then(() => {
+            return addWorkerForReport(emptyReport).then(() => {
                 return Promise.all([
                     db.insert('repositories', {'id': 10, 'name': 'OSX'}),
                     db.insert('commits', {'repository': 10, 'revision': 'Sierra16D67', 'order': 1603006700, 'reported': true}),
@@ -403,7 +403,7 @@ describe('OSBuildFetcher', function() {
 
         it('should report all build commits with owned-commits', () => {
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
             const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69"], commitsWithTestability: {}};
             const resultsForSierraE = {allRevisions: ["Sierra16E32", "Sierra16E33", "Sierra16E33h", "Sierra16E34"], commitsWithTestability: {}};
@@ -411,7 +411,7 @@ describe('OSBuildFetcher', function() {
             let fetchReportAndUpdateBuildsPromise = null;
             let fetchAvailableBuildsPromise = null;
 
-            return addSlaveForReport(emptyReport).then(() => {
+            return addWorkerForReport(emptyReport).then(() => {
                 return Promise.all([
                     db.insert('repositories', {'id': 10, 'name': 'OSX'}),
                     db.insert('commits', {'repository': 10, 'revision': 'Sierra16D67', 'order': 1603006700, 'reported': true}),
@@ -536,12 +536,12 @@ describe('OSBuildFetcher', function() {
 
         it('should update testability message for commits', async () => {
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
             const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69"], commitsWithTestability: {"Sierra16D68": "Panic", "Sierra16D69": "Spin CPU"}};
             const resultsForSierraE = {allRevisions: ["Sierra16E32", "Sierra16E33", "Sierra16E33h", "Sierra16E34"], commitsWithTestability: {"Sierra16E31": "WebKit crashes"}};
 
-            await addSlaveForReport(emptyReport);
+            await addWorkerForReport(emptyReport);
 
             await Promise.all([
                 db.insert('repositories', {'id': 10, 'name': 'OSX'}),
@@ -643,12 +643,12 @@ describe('OSBuildFetcher', function() {
         it('should report commits without owned-commits if "ownedCommitCommand" is not specified in config', async () => {
 
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(configWithoutOwnedCommitCommand, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(configWithoutOwnedCommitCommand, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
             const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69"], commitsWithTestability: {}};
             const resultsForSierraE = {allRevisions: ["Sierra16E32", "Sierra16E33", "Sierra16E33h", "Sierra16E34"], commitsWithTestability: {}};
 
-            await addSlaveForReport(emptyReport);
+            await addWorkerForReport(emptyReport);
             await Promise.all([
                 db.insert('repositories', {'id': 10, 'name': 'OSX'}),
                 db.insert('commits', {'repository': 10, 'revision': 'Sierra16D67', 'order': 1603006700, 'reported': true}),
@@ -722,12 +722,12 @@ describe('OSBuildFetcher', function() {
 
         it('should report commits within specified revision range', async () => {
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(configWithoutOwnedCommitCommand, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(configWithoutOwnedCommitCommand, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
             const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69", "Sierra16D10000"], commitsWithTestability: {}};
             const resultsForSierraE = {allRevisions: ["Sierra16E32", "Sierra16E33", "Sierra16E33h", "Sierra16E34", "Sierra16E10000"], commitsWithTestability: {}};
 
-            await addSlaveForReport(emptyReport);
+            await addWorkerForReport(emptyReport);
             await Promise.all([
                 db.insert('repositories', {'id': 10, 'name': 'OSX'}),
                 db.insert('commits', {'repository': 10, 'revision': 'Sierra16D67', 'order': 1603006700, 'reported': true}),
@@ -801,12 +801,12 @@ describe('OSBuildFetcher', function() {
 
         it('should update commits within specified revision range', async () => {
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(configWithoutOwnedCommitCommand, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(configWithoutOwnedCommitCommand, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
             const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69"], commitsWithTestability: {"Sierra16D10000": "Panic"}};
             const resultsForSierraE = {allRevisions: ["Sierra16E32", "Sierra16E33", "Sierra16E33h", "Sierra16E34", "Sierra16E10000"], commitsWithTestability: {}};
 
-            await addSlaveForReport(emptyReport);
+            await addWorkerForReport(emptyReport);
             await Promise.all([
                 db.insert('repositories', {'id': 10, 'name': 'OSX'}),
                 db.insert('commits', {'repository': 10, 'revision': 'Sierra16D67', 'order': 1603006700, 'reported': true}),
@@ -844,11 +844,11 @@ describe('OSBuildFetcher', function() {
 
         it('should use "last-reported" order + 1 as "minOrder"', async () => {
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(configTrackingOneOS, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(configTrackingOneOS, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
             const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69", "Sierra16D100", "Sierra16D100a"], commitsWithTestability: {}};
 
-            await addSlaveForReport(emptyReport);
+            await addWorkerForReport(emptyReport);
             await db.insert('repositories', {'id': 10, 'name': 'OSX'});
             await db.insert('commits', {'repository': 10, 'revision': 'Sierra16D100', 'order': 1603010000, 'reported': true});
 
@@ -893,11 +893,11 @@ describe('OSBuildFetcher', function() {
 
         it('should use minRevision in the config if there is no commit', async () => {
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(configTrackingOneOS, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(configTrackingOneOS, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
             const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69", "Sierra16D100", "Sierra16D101"], commitsWithTestability: {}};
 
-            await addSlaveForReport(emptyReport);
+            await addWorkerForReport(emptyReport);
             await db.insert('repositories', {'id': 10, 'name': 'OSX'});
 
             let result = await TestServer.remoteAPI().getJSON('/api/commits/OSX/last-reported?from=1603010000&to=1603099900');
@@ -945,13 +945,13 @@ describe('OSBuildFetcher', function() {
 
         it('should stop reporting if any custom command fails', () => {
             const logger = new MockLogger;
-            const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), slaveAuth, MockSubprocess, logger);
+            const fetcher = new OSBuildFetcher(config, TestServer.remoteAPI(), workerAuth, MockSubprocess, logger);
             const db = TestServer.database();
             const resultsForSierraD = {allRevisions: ["Sierra16D68", "Sierra16D69"], commitsWithTestability: {}};
             const resultsForSierraE = {allRevisions: ["Sierra16E32", "Sierra16E33", "Sierra16E33h", "Sierra16E34"], commitsWithTestability: {}};
             let fetchAndReportPromise = null;
 
-            return addSlaveForReport(emptyReport).then(() => {
+            return addWorkerForReport(emptyReport).then(() => {
                 return Promise.all([
                     db.insert('repositories', {'id': 10, 'name': 'OSX'}),
                     db.insert('commits', {'repository': 10, 'revision': 'Sierra16D67', 'order': 1603006700, 'reported': true}),

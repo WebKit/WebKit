@@ -55,24 +55,24 @@ template<typename ColorType, unsigned Index, typename T> constexpr auto clampedC
 {
     static_assert(std::is_integral_v<T>);
 
-    constexpr auto range = ColorType::Model::ranges[Index];
-    return std::clamp<T>(c, range.min, range.max);
+    constexpr auto componentInfo = ColorType::Model::componentInfo[Index];
+    return std::clamp<T>(c, componentInfo.min, componentInfo.max);
 }
 
 template<typename ColorType, unsigned Index> constexpr float clampedComponent(float c)
 {
-    constexpr auto range = ColorType::Model::ranges[Index];
+    constexpr auto componentInfo = ColorType::Model::componentInfo[Index];
 
-    if constexpr (range.min == -std::numeric_limits<float>::infinity() && range.max == std::numeric_limits<float>::infinity())
+    if constexpr (componentInfo.min == -std::numeric_limits<float>::infinity() && componentInfo.max == std::numeric_limits<float>::infinity())
         return c;
 
-    if constexpr (range.min == -std::numeric_limits<float>::infinity())
-        return std::min(c, range.max);
+    if constexpr (componentInfo.min == -std::numeric_limits<float>::infinity())
+        return std::min(c, componentInfo.max);
 
-    if constexpr (range.max == std::numeric_limits<float>::infinity())
-        return std::max(c, range.min);
+    if constexpr (componentInfo.max == std::numeric_limits<float>::infinity())
+        return std::max(c, componentInfo.min);
 
-    return std::clamp(c, range.min, range.max);
+    return std::clamp(c, componentInfo.min, componentInfo.max);
 }
 
 template<typename ColorType, unsigned Index, typename T> constexpr T clampedComponent(const ColorComponents<T>& c)
@@ -127,8 +127,8 @@ template<typename T> constexpr void assertInRange(T color)
     if constexpr (std::is_same_v<typename T::ComponentType, float>) {
         auto components = asColorComponents(color);
         for (unsigned i = 0; i < 3; ++i) {
-            ASSERT_WITH_MESSAGE(components[i] >= T::Model::ranges[i].min, "Component at index %d is %f and is less than the allowed minimum %f", i,  components[i], T::Model::ranges[i].min);
-            ASSERT_WITH_MESSAGE(components[i] <= T::Model::ranges[i].max, "Component at index %d is %f and is greater than the allowed maximum %f", i,  components[i], T::Model::ranges[i].max);
+            ASSERT_WITH_MESSAGE(components[i] >= T::Model::componentInfo[i].min, "Component at index %d is %f and is less than the allowed minimum %f", i,  components[i], T::Model::componentInfo[i].min);
+            ASSERT_WITH_MESSAGE(components[i] <= T::Model::componentInfo[i].max, "Component at index %d is %f and is greater than the allowed maximum %f", i,  components[i], T::Model::componentInfo[i].max);
         }
         ASSERT_WITH_MESSAGE(color.alpha >= AlphaTraits<typename T::ComponentType>::transparent, "Alpha is %f and is less than the allowed minimum (transparent) %f", color.alpha, AlphaTraits<typename T::ComponentType>::transparent);
         ASSERT_WITH_MESSAGE(color.alpha <= AlphaTraits<typename T::ComponentType>::opaque, "Alpha is %f and is greater than the allowed maximum (opaque) %f", color.alpha, AlphaTraits<typename T::ComponentType>::opaque);

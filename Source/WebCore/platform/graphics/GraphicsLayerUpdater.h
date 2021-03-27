@@ -30,17 +30,17 @@
 
 namespace WebCore {
 
+class DisplayRefreshMonitorFactory;
 class GraphicsLayerUpdater;
 
 class GraphicsLayerUpdaterClient {
 public:
     virtual ~GraphicsLayerUpdaterClient() = default;
     virtual void flushLayersSoon(GraphicsLayerUpdater&) = 0;
-    virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;
+    virtual DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() = 0;
 };
 
-class GraphicsLayerUpdater : public DisplayRefreshMonitorClient
-{
+class GraphicsLayerUpdater final : public DisplayRefreshMonitorClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GraphicsLayerUpdater(GraphicsLayerUpdaterClient&, PlatformDisplayID);
@@ -49,10 +49,10 @@ public:
     void scheduleUpdate();
     void screenDidChange(PlatformDisplayID);
 
-    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
-
 private:
-    void displayRefreshFired() override;
+    void displayRefreshFired() final;
+    DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;
+
     GraphicsLayerUpdaterClient& m_client;
     bool m_scheduled { false };
 };

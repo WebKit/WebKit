@@ -198,3 +198,26 @@ class TestCanonicalize(unittest.TestCase):
             'Rewrite 0148c0df0faf248aa133d6d5ad911d7cb1b56a5b (2/2) (--- seconds passed, remaining --- predicted)\n'
             '2 commits successfully canonicalized!\n',
         )
+
+    def test_number(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
+            contirbutors = Contributor.Mapping()
+            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+
+            self.assertEqual(0, program.main(
+                args=('canonicalize', '--number', '3'),
+                path=self.path,
+                contributors=contirbutors,
+            ))
+
+            self.assertEqual(local.Git(self.path).commit(identifier='5@main').message, 'Patch Series\nIdentifier: 5@main')
+            self.assertEqual(local.Git(self.path).commit(identifier='4@main').message, '8th commit\nIdentifier: 4@main')
+            self.assertEqual(local.Git(self.path).commit(identifier='3@main').message, '4th commit\nIdentifier: 3@main')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Rewrite 1abe25b443e985f93b90d830e4a7e3731336af4d (1/3) (--- seconds passed, remaining --- predicted)\n'
+            'Rewrite bae5d1e90999d4f916a8a15810ccfa43f37a2fd6 (2/3) (--- seconds passed, remaining --- predicted)\n'
+            'Rewrite d8bce26fa65c6fc8f39c17927abb77f69fab82fc (3/3) (--- seconds passed, remaining --- predicted)\n'
+            '3 commits successfully canonicalized!\n',
+        )

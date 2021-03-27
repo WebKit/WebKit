@@ -281,9 +281,9 @@ static inline JSValue jsTestEventConstructor_attr1Getter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr1())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructor_attr1, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructor_attr1, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructor_attr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr1");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructor_attr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsTestEventConstructor_attr2Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject)
@@ -294,9 +294,9 @@ static inline JSValue jsTestEventConstructor_attr2Getter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr2())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructor_attr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructor_attr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructor_attr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr2");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructor_attr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #if ENABLE(SPECIAL_EVENT)
@@ -308,9 +308,9 @@ static inline JSValue jsTestEventConstructor_attr3Getter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr3())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructor_attr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructor_attr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructor_attr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr3");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructor_attr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif

@@ -29,7 +29,6 @@ class BuildbotBuildEntry {
 
     syncer() { return this._syncer; }
     buildTag() { return this._buildTag; }
-    slaveName() { return this._workerName; }
     workerName() { return this._workerName; }
     buildRequestId() { return this._buildRequestId; }
     isPending() { return this._isPending; }
@@ -67,15 +66,15 @@ class BuildbotSyncer {
         this._type = null;
         this._configurations = [];
         this._repositoryGroups = commonConfigurations.repositoryGroups;
-        this._slavePropertyName = commonConfigurations.slaveArgument;
+        this._workerPropertyName = commonConfigurations.workerArgument;
         this._platformPropertyName = commonConfigurations.platformArgument;
         this._buildRequestPropertyName = commonConfigurations.buildRequestArgument;
         this._builderName = object.builder;
         this._builderID = object.builderID;
-        this._slaveList = object.slaveList;
+        this._workerList = object.workerList;
         this._entryList = null;
         this._lastCompletedBuild = null;
-        this._slavesWithNewRequests = new Set;
+        this._workersWithNewRequests = new Set;
     }
 
     builderName() { return this._builderName; }
@@ -111,20 +110,20 @@ class BuildbotSyncer {
         return this._configurations.some((config) => config.platform == request.platform() && config.test == request.test());
     }
 
-    scheduleRequest(newRequest, requestsInGroup, slaveName)
+    scheduleRequest(newRequest, requestsInGroup, workerName)
     {
-        assert(!this._slavesWithNewRequests.has(slaveName));
+        assert(!this._workersWithNewRequests.has(workerName));
         let properties = this._propertiesForBuildRequest(newRequest, requestsInGroup);
 
         assert(properties['forcescheduler'], `forcescheduler was not specified in buildbot properties for build request ${newRequest.id()} on platform "${newRequest.platform().name()}" for builder "${this.builderName()}"`);
-        assert.strictEqual(!this._slavePropertyName, !slaveName);
-        if (this._slavePropertyName)
-            properties[this._slavePropertyName] = slaveName;
+        assert.strictEqual(!this._workerPropertyName, !workerName);
+        if (this._workerPropertyName)
+            properties[this._workerPropertyName] = workerName;
 
         if (this._platformPropertyName)
             properties[this._platformPropertyName] = newRequest.platform().name();
 
-        this._slavesWithNewRequests.add(slaveName);
+        this._workersWithNewRequests.add(workerName);
         return this.scheduleBuildOnBuildbot(properties);
     }
 
@@ -135,15 +134,15 @@ class BuildbotSyncer {
         return this._remote.postJSON(path, data);
     }
 
-    scheduleRequestInGroupIfAvailable(newRequest, requestsInGroup, slaveName)
+    scheduleRequestInGroupIfAvailable(newRequest, requestsInGroup, workerName)
     {
         assert(newRequest instanceof BuildRequest);
 
         if (!this.matchesConfiguration(newRequest))
             return null;
 
-        let hasPendingBuildsWithoutSlaveNameSpecified = false;
-        let usedSlaves = new Set;
+        let hasPendingBuildsWithoutWorkerNameSpecified = false;
+        let usedWorkers = new Set;
         for (let entry of this._entryList) {
             let entryPreventsNewRequest = entry.isPending();
             if (entry.isInProgress()) {
@@ -152,27 +151,27 @@ class BuildbotSyncer {
                     entryPreventsNewRequest = true;
             }
             if (entryPreventsNewRequest) {
-                if (!entry.slaveName())
-                    hasPendingBuildsWithoutSlaveNameSpecified = true;
-                usedSlaves.add(entry.slaveName());
+                if (!entry.workerName())
+                    hasPendingBuildsWithoutWorkerNameSpecified = true;
+                usedWorkers.add(entry.workerName());
             }
         }
 
-        if (!this._slaveList || hasPendingBuildsWithoutSlaveNameSpecified) {
-            if (usedSlaves.size || this._slavesWithNewRequests.size)
+        if (!this._workerList || hasPendingBuildsWithoutWorkerNameSpecified) {
+            if (usedWorkers.size || this._workersWithNewRequests.size)
                 return null;
             return this.scheduleRequest(newRequest, requestsInGroup, null);
         }
 
-        if (slaveName) {
-            if (!usedSlaves.has(slaveName) && !this._slavesWithNewRequests.has(slaveName))
-                return this.scheduleRequest(newRequest, requestsInGroup, slaveName);
+        if (workerName) {
+            if (!usedWorkers.has(workerName) && !this._workersWithNewRequests.has(workerName))
+                return this.scheduleRequest(newRequest, requestsInGroup, workerName);
             return null;
         }
 
-        for (let slaveName of this._slaveList) {
-            if (!usedSlaves.has(slaveName) && !this._slavesWithNewRequests.has(slaveName))
-                return this.scheduleRequest(newRequest, requestsInGroup, slaveName);
+        for (let workerName of this._workerList) {
+            if (!usedWorkers.has(workerName) && !this._workersWithNewRequests.has(workerName))
+                return this.scheduleRequest(newRequest, requestsInGroup, workerName);
         }
 
         return null;
@@ -199,7 +198,7 @@ class BuildbotSyncer {
                     entryList.push(entryByRequest[id]);
 
                 this._entryList = entryList;
-                this._slavesWithNewRequests.clear();
+                this._workersWithNewRequests.clear();
 
                 return entryList;
             });
@@ -345,7 +344,7 @@ class BuildbotSyncer {
 
         const commonConfigurations = {
             repositoryGroups,
-            slaveArgument: config.slaveArgument,
+            workerArgument: config.workerArgument,
             buildRequestArgument: config.buildRequestArgument,
             platformArgument: config.platformArgument,
         };
@@ -574,7 +573,7 @@ class BuildbotSyncer {
                 }
                 break;
             case 'test': // Fallthrough
-            case 'slaveList': // Fallthrough
+            case 'workerList': // Fallthrough
                 assert(value instanceof Array, `${name} should be an array`);
                 assert(value.every(function (part) { return typeof part == 'string'; }), `${name} should be an array of strings`);
                 config[name] = value.slice();

@@ -72,6 +72,7 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
         return pixelBuffer;
 
     if (!m_rotationSession || rotation != m_currentRotationSessionAngle) {
+        RELEASE_LOG_ERROR(WebRTC, "RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer creating rotation session for rotation %u", rotationToAngle(rotation));
         IntSize size = { (int)CVPixelBufferGetWidth(pixelBuffer) , (int)CVPixelBufferGetHeight(pixelBuffer) };
         AffineTransform transform;
         transform.rotate(rotationToAngle(rotation));

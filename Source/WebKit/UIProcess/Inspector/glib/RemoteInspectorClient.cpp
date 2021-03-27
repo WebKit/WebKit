@@ -30,7 +30,7 @@
 
 #include "APIDebuggableInfo.h"
 #include "APIInspectorConfiguration.h"
-#include "RemoteWebInspectorProxy.h"
+#include "RemoteWebInspectorUIProxy.h"
 #include <JavaScriptCore/RemoteInspectorUtils.h>
 #include <WebCore/InspectorDebuggableType.h>
 #include <gio/gio.h>
@@ -40,11 +40,11 @@
 
 namespace WebKit {
 
-class RemoteInspectorProxy final : public RemoteWebInspectorProxyClient {
+class RemoteInspectorProxy final : public RemoteWebInspectorUIProxyClient {
     WTF_MAKE_FAST_ALLOCATED();
 public:
     RemoteInspectorProxy(RemoteInspectorClient& inspectorClient, uint64_t connectionID, uint64_t targetID)
-        : m_proxy(RemoteWebInspectorProxy::create())
+        : m_proxy(RemoteWebInspectorUIProxy::create())
         , m_inspectorClient(inspectorClient)
         , m_connectionID(connectionID)
         , m_targetID(targetID)
@@ -78,7 +78,7 @@ public:
 #endif
     }
 
-    // MARK: RemoteWebInspectorProxyClient methods
+    // MARK: RemoteWebInspectorUIProxyClient methods
 
     void sendMessageToFrontend(const String& message)
     {
@@ -95,13 +95,13 @@ public:
         m_inspectorClient.closeFromFrontend(m_connectionID, m_targetID);
     }
 
-    Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorProxy&) override
+    Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorUIProxy&) override
     {
         return API::InspectorConfiguration::create();
     }
 
 private:
-    Ref<RemoteWebInspectorProxy> m_proxy;
+    Ref<RemoteWebInspectorUIProxy> m_proxy;
     RemoteInspectorClient& m_inspectorClient;
     uint64_t m_connectionID;
     uint64_t m_targetID;

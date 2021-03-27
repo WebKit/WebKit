@@ -1261,19 +1261,22 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                         m_parseErrorMessage = "Unexpected token '}'"_s;
                         return JSValue();
                     case TokIdentifier: {
-                        typename Lexer::LiteralParserTokenPtr token = m_lexer.currentToken();
+                        auto token = m_lexer.currentToken();
 
-                        auto tryMakeErrorString = [=] (typename Lexer::LiteralParserTokenPtr token, unsigned length, bool addEllipsis) -> String {
+                        auto tryMakeErrorString = [&] (unsigned length) -> String {
+                            bool addEllipsis = length != token->stringLength;
                             if (token->stringIs8Bit)
                                 return tryMakeString("Unexpected identifier \"", StringView { token->stringToken8, length }, addEllipsis ? "..." : "", '"');
                             return tryMakeString("Unexpected identifier \"", StringView { token->stringToken16, length }, addEllipsis ? "..." : "", '"');
                         };
 
-                        String errorString = tryMakeErrorString(token, token->stringLength, false);
+                        constexpr unsigned maxLength = 200;
+
+                        String errorString = tryMakeErrorString(std::min(token->stringLength, maxLength));
                         if (!errorString) {
                             constexpr unsigned shortLength = 10;
                             if (token->stringLength > shortLength)
-                                errorString = tryMakeErrorString(token, shortLength, true);
+                                errorString = tryMakeErrorString(shortLength);
                             if (!errorString)
                                 errorString = "Unexpected identifier";
                         }

@@ -84,6 +84,9 @@ elseif (APPLE)
         VERBATIM)
     list(APPEND WTF_SOURCES
         cocoa/MemoryFootprintCocoa.cpp
+
+        generic/MemoryPressureHandlerGeneric.cpp
+
         ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
         ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
     )

@@ -50,15 +50,39 @@ public:
     
     float length() const { return m_length; }
 
-    const FloatPoint pointAtAbsoluteDistance(float) const;
+    WEBCORE_EXPORT const FloatPoint pointAtAbsoluteDistance(float) const;
     const FloatPoint pointAtRelativeDistance(float) const;
     const FloatLine extendedToBounds(const FloatRect&) const;
     const Optional<FloatPoint> intersectionWith(const FloatLine&) const;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<FloatLine> decode(Decoder&);
     
 private:
     FloatPoint m_start { 0, 0 };
     FloatPoint m_end { 0, 0 };
     float m_length { 0 };
 };
+
+template<class Encoder> void FloatLine::encode(Encoder& encoder) const
+{
+    encoder << m_start;
+    encoder << m_end;
+}
+
+template<class Decoder> Optional<FloatLine> FloatLine::decode(Decoder& decoder)
+{
+    Optional<FloatPoint> start;
+    decoder >> start;
+    if (!start)
+        return WTF::nullopt;
+
+    Optional<FloatPoint> end;
+    decoder >> end;
+    if (!end)
+        return WTF::nullopt;
+
+    return {{ *start, *end }};
+}
 
 }

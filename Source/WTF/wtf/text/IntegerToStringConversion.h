@@ -51,7 +51,7 @@ template<typename T, typename SignedIntegerType>
 inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringSigned(SignedIntegerType number, typename IntegerToStringConversionTrait<T>::AdditionalArgumentType* additionalArgument = nullptr)
 {
     if (number < 0)
-        return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, NegativeNumber>(-number, additionalArgument);
+        return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, NegativeNumber>(-static_cast<typename std::make_unsigned_t<SignedIntegerType>>(number), additionalArgument);
     return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, PositiveNumber>(number, additionalArgument);
 }
 

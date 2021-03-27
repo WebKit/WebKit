@@ -29,12 +29,12 @@
     readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowException] undefined clear();
-    [MayThrowException] DOMString initialize(DOMString newItem);
-    [MayThrowException] getter DOMString getItem(unsigned long index);
-    [MayThrowException] DOMString insertItemBefore(DOMString newItem, unsigned long index);
-    [MayThrowException] DOMString replaceItem(DOMString newItem, unsigned long index);
-    [MayThrowException] DOMString removeItem(unsigned long index);
-    [MayThrowException] DOMString appendItem(DOMString newItem);
+    undefined clear();
+    DOMString initialize(DOMString newItem);
+    getter DOMString getItem(unsigned long index);
+    DOMString insertItemBefore(DOMString newItem, unsigned long index);
+    DOMString replaceItem(DOMString newItem, unsigned long index);
+    DOMString removeItem(unsigned long index);
+    DOMString appendItem(DOMString newItem);
     setter undefined (unsigned long index, DOMString newItem);
 };

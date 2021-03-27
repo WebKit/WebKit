@@ -11,7 +11,7 @@ function main($post_data)
 
     $report = json_decode($post_data, true);
 
-    verify_slave($db, $report);
+    verify_worker($db, $report);
 
     $commit_info_list = array_get($report, 'commits', array());
     $should_insert = array_get($report, 'insert', true);

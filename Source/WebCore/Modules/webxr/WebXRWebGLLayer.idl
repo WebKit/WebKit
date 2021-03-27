@@ -49,7 +49,7 @@ typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
     readonly attribute unsigned long framebufferHeight;
 
     // Methods
-    [MayThrowException] WebXRViewport? getViewport(WebXRView view);
+    WebXRViewport? getViewport(WebXRView view);
 
     // Static Methods
     static double getNativeFramebufferScaleFactor(WebXRSession session);

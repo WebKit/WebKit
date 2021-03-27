@@ -83,68 +83,68 @@ void AutomationSessionClient::requestNewPageWithOptions(WebAutomationSession& se
 
 void AutomationSessionClient::requestSwitchToPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_delegateMethods.requestSwitchToWebView)
-        [m_delegate.get() _automationSession:wrapper(session) requestSwitchToWebView:fromWebPageProxy(page) completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.requestSwitchToWebView)
+        [m_delegate.get() _automationSession:wrapper(session) requestSwitchToWebView:webView.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
     else
         completionHandler();
 }
 
 void AutomationSessionClient::requestHideWindowOfPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_delegateMethods.requestHideWindowOfWebView)
-        [m_delegate.get() _automationSession:wrapper(session) requestHideWindowOfWebView:fromWebPageProxy(page) completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.requestHideWindowOfWebView)
+        [m_delegate.get() _automationSession:wrapper(session) requestHideWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
     else
         completionHandler();
 }
 
 void AutomationSessionClient::requestRestoreWindowOfPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_delegateMethods.requestRestoreWindowOfWebView)
-        [m_delegate.get() _automationSession:wrapper(session) requestRestoreWindowOfWebView:fromWebPageProxy(page) completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.requestRestoreWindowOfWebView)
+        [m_delegate.get() _automationSession:wrapper(session) requestRestoreWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
     else
         completionHandler();
 }
 
 void AutomationSessionClient::requestMaximizeWindowOfPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_delegateMethods.requestMaximizeWindowOfWebView)
-        [m_delegate.get() _automationSession:wrapper(session) requestMaximizeWindowOfWebView:fromWebPageProxy(page) completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.requestMaximizeWindowOfWebView)
+        [m_delegate.get() _automationSession:wrapper(session) requestMaximizeWindowOfWebView:webView.get() completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
     else
         completionHandler();
 }
 
 bool AutomationSessionClient::isShowingJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
-    if (m_delegateMethods.isShowingJavaScriptDialogForWebView)
-        return [m_delegate.get() _automationSession:wrapper(session) isShowingJavaScriptDialogForWebView:fromWebPageProxy(page)];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.isShowingJavaScriptDialogForWebView)
+        return [m_delegate.get() _automationSession:wrapper(session) isShowingJavaScriptDialogForWebView:webView.get()];
     
     return false;
 }
 
 void AutomationSessionClient::dismissCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
-    if (m_delegateMethods.dismissCurrentJavaScriptDialogForWebView)
-        [m_delegate.get() _automationSession:wrapper(session) dismissCurrentJavaScriptDialogForWebView:fromWebPageProxy(page)];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.dismissCurrentJavaScriptDialogForWebView)
+        [m_delegate.get() _automationSession:wrapper(session) dismissCurrentJavaScriptDialogForWebView:webView.get()];
 }
 
 void AutomationSessionClient::acceptCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
-    if (m_delegateMethods.acceptCurrentJavaScriptDialogForWebView)
-        [m_delegate.get() _automationSession:wrapper(session) acceptCurrentJavaScriptDialogForWebView:fromWebPageProxy(page)];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.acceptCurrentJavaScriptDialogForWebView)
+        [m_delegate.get() _automationSession:wrapper(session) acceptCurrentJavaScriptDialogForWebView:webView.get()];
 }
 
 String AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
-    if (m_delegateMethods.messageOfCurrentJavaScriptDialogForWebView)
-        return [m_delegate.get() _automationSession:wrapper(session) messageOfCurrentJavaScriptDialogForWebView:fromWebPageProxy(page)];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.messageOfCurrentJavaScriptDialogForWebView)
+        return [m_delegate.get() _automationSession:wrapper(session) messageOfCurrentJavaScriptDialogForWebView:webView.get()];
 
     return String();
 }
 
 void AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession& session, WebPageProxy& page, const String& value)
 {
-    if (m_delegateMethods.setUserInputForCurrentJavaScriptPromptForWebView)
-        [m_delegate.get() _automationSession:wrapper(session) setUserInput:value forCurrentJavaScriptDialogForWebView:fromWebPageProxy(page)];
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.setUserInputForCurrentJavaScriptPromptForWebView)
+        [m_delegate.get() _automationSession:wrapper(session) setUserInput:value forCurrentJavaScriptDialogForWebView:webView.get()];
 }
 
 static Optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(_WKAutomationSessionJavaScriptDialogType type)
@@ -173,16 +173,16 @@ static API::AutomationSessionClient::BrowsingContextPresentation toImpl(_WKAutom
 
 Optional<API::AutomationSessionClient::JavaScriptDialogType> AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
-    if (m_delegateMethods.typeOfCurrentJavaScriptDialogForWebView)
-        return toImpl([m_delegate.get() _automationSession:wrapper(session) typeOfCurrentJavaScriptDialogForWebView:fromWebPageProxy(page)]);
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.typeOfCurrentJavaScriptDialogForWebView)
+        return toImpl([m_delegate.get() _automationSession:wrapper(session) typeOfCurrentJavaScriptDialogForWebView:webView.get()]);
 
     return API::AutomationSessionClient::JavaScriptDialogType::Prompt;
 }
 
 API::AutomationSessionClient::BrowsingContextPresentation AutomationSessionClient::currentPresentationOfPage(WebAutomationSession& session, WebPageProxy& page)
 {
-    if (m_delegateMethods.currentPresentationForWebView)
-        return toImpl([m_delegate.get() _automationSession:wrapper(session) currentPresentationForWebView:fromWebPageProxy(page)]);
+    if (auto webView = page.cocoaView(); webView && m_delegateMethods.currentPresentationForWebView)
+        return toImpl([m_delegate.get() _automationSession:wrapper(session) currentPresentationForWebView:webView.get()]);
 
     return API::AutomationSessionClient::BrowsingContextPresentation::Window;
 }

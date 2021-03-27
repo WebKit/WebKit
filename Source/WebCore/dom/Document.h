@@ -705,6 +705,7 @@ public:
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
 #endif
     SocketProvider* socketProvider() final;
+    RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
     bool canNavigate(Frame* targetFrame, const URL& destinationURL = URL());
 

@@ -32,9 +32,9 @@
 ] interface DOMMatrix : DOMMatrixReadOnly {
     [CallWith=ScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 
-    [MayThrowException, NewObject] static DOMMatrix fromMatrix(optional DOMMatrixInit other);
-    [MayThrowException, NewObject] static DOMMatrix fromFloat32Array(Float32Array array32);
-    [MayThrowException, NewObject] static DOMMatrix fromFloat64Array(Float64Array array64);
+    [NewObject] static DOMMatrix fromMatrix(optional DOMMatrixInit other);
+    [NewObject] static DOMMatrix fromFloat32Array(Float32Array array32);
+    [NewObject] static DOMMatrix fromFloat64Array(Float64Array array64);
 
     // These attributes are simple aliases for certain elements of the 4x4 matrix
     inherit attribute unrestricted double a; // Alias for m11.
@@ -62,8 +62,8 @@
     inherit attribute unrestricted double m44;
 
     // Mutable transform methods
-    [MayThrowException] DOMMatrix multiplySelf(optional DOMMatrixInit other);
-    [MayThrowException] DOMMatrix preMultiplySelf(optional DOMMatrixInit other);
+    DOMMatrix multiplySelf(optional DOMMatrixInit other);
+    DOMMatrix preMultiplySelf(optional DOMMatrixInit other);
     DOMMatrix translateSelf(optional unrestricted double tx = 0,
                             optional unrestricted double ty = 0,
                             optional unrestricted double tz = 0);
@@ -90,5 +90,5 @@
     DOMMatrix skewYSelf(optional unrestricted double sy = 0); // Angle is in degrees.
     DOMMatrix invertSelf();
 
-    [Exposed=Window, MayThrowException, ImplementedAs=setMatrixValueForBindings] DOMMatrix setMatrixValue(DOMString transformList);
+    [Exposed=Window, ImplementedAs=setMatrixValueForBindings] DOMMatrix setMatrixValue(DOMString transformList);
 };

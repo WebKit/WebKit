@@ -185,7 +185,7 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
     }
 #endif
 
-    auto *webView = fromWebPageProxy(page);
+    auto webView = page.cocoaView();
     if (!webView) {
         completionHandler(false);
         return;
@@ -208,7 +208,7 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
     button.keyEquivalent = @"";
     button = [alert addButtonWithTitle:doNotAllowButtonString];
     button.keyEquivalent = @"\E";
-    [alert beginSheetModalForWindow:webView.window completionHandler:[completionBlock](NSModalResponse returnCode) {
+    [alert beginSheetModalForWindow:[webView window] completionHandler:[completionBlock](NSModalResponse returnCode) {
         auto shouldAllow = returnCode == NSAlertFirstButtonReturn;
         completionBlock(shouldAllow);
     }];
@@ -225,7 +225,7 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
     [alert addAction:doNotAllowAction];
     [alert addAction:allowAction];
 
-    [[UIViewController _viewControllerForFullScreenPresentationFromView:webView] presentViewController:alert animated:YES completion:nil];
+    [[UIViewController _viewControllerForFullScreenPresentationFromView:webView.get()] presentViewController:alert animated:YES completion:nil];
 #endif
 }
 

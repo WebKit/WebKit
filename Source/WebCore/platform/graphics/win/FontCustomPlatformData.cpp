@@ -104,14 +104,15 @@ static String createUniqueFontName()
     return fontName;
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String&)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
     String fontName = createUniqueFontName();
     HANDLE fontReference;
     fontReference = renameAndActivateFont(buffer, fontName);
     if (!fontReference)
         return nullptr;
-    auto result = makeUnique<FontCustomPlatformData>(fontReference, fontName);
+    FontPlatformData::CreationData creationData = { buffer, itemInCollection };
+    auto result = makeUnique<FontCustomPlatformData>(fontReference, fontName, WTFMove(creationData));
 #if USE(CORE_TEXT)
     result->fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(buffer.createCFData().get()));
 #endif

@@ -42,6 +42,7 @@ struct PublicKeyCredentialRequestOptions {
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
+    Optional<AuthenticatorAttachment> authenticatorAttachment;
     mutable Optional<AuthenticationExtensionsClientInputs> extensions;
 
     template<class Encoder> void encode(Encoder&) const;

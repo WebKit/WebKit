@@ -42,6 +42,6 @@
     attribute unrestricted float valueInSpecifiedUnits;
     attribute DOMString valueAsString;
 
-    [MayThrowException] undefined newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
-    [MayThrowException] undefined convertToSpecifiedUnits(unsigned short unitType);
+    undefined newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
+    undefined convertToSpecifiedUnits(unsigned short unitType);
 };

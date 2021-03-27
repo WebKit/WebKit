@@ -104,14 +104,6 @@ private:
 
     bool canPaint(const PaintInfo&, const Settings&) const final;
 
-#if ENABLE(VIDEO)
-    // Media controls
-    String mediaControlsStyleSheet() final;
-    String modernMediaControlsStyleSheet() final;
-    Vector<String, 3> mediaControlsScripts() final;
-    String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
-#endif
-
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
 
@@ -167,8 +159,6 @@ private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
     Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const final;
-
-    void purgeCaches() final;
 
     // Get the control size based off the font. Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(const RenderStyle&) const;
@@ -236,13 +226,6 @@ private:
     bool m_isSliderThumbVerticalPressed { false };
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
-
-    String m_legacyMediaControlsScript;
-    String m_mediaControlsLocalizedStringsScript;
-    String m_mediaControlsScript;
-    String m_mediaControlsAdditionalScript;
-    String m_legacyMediaControlsStyleSheet;
-    String m_mediaControlsStyleSheet;
 };
 
 } // namespace WebCore

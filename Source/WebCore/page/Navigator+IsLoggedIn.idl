@@ -30,5 +30,5 @@
 ] partial interface Navigator {
     Promise<undefined> setLoggedIn();
     Promise<undefined> setLoggedOut();
-    Promise<bool> isLoggedIn();
+    Promise<boolean> isLoggedIn();
 };

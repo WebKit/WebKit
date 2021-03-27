@@ -340,7 +340,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
         else
             [actionTitles addObject:@"Take Photo"];
     }
-    [actionTitles addObject:@"Browse"];
+    [actionTitles addObject:[self _chooseFilesButtonLabel]];
     return actionTitles;
 }
 
@@ -405,9 +405,12 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 #pragma mark - Source selection menu
 
-- (NSString *)_browseFilesButtonLabel
+- (NSString *)_chooseFilesButtonLabel
 {
-    return WEB_UI_STRING_KEY("Browse", "Browse (file upload action sheet)", "File Upload alert sheet button string for choosing an existing file from the file brower");
+    if (_allowMultipleFiles)
+        return WebCore::fileButtonChooseMultipleFilesLabel();
+
+    return WebCore::fileButtonChooseFileLabel();
 }
 
 - (NSString *)_photoLibraryButtonLabel
@@ -452,7 +455,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
             return nil;
 
         self->_isPresentingSubMenu = NO;
-        UIAction *browseAction = [UIAction actionWithTitle:[strongSelf _browseFilesButtonLabel] image:[UIImage systemImageNamed:@"ellipsis"] identifier:@"browse" handler:^(__kindof UIAction *action) {
+        UIAction *chooseAction = [UIAction actionWithTitle:[strongSelf _chooseFilesButtonLabel] image:[UIImage systemImageNamed:@"folder"] identifier:@"choose" handler:^(__kindof UIAction *action) {
             self->_isPresentingSubMenu = YES;
             [self showFilePickerMenu];
         }];
@@ -469,9 +472,9 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
                 self->_isPresentingSubMenu = YES;
                 [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
             }];
-            actions = @[photoAction, cameraAction, browseAction];
+            actions = @[photoAction, cameraAction, chooseAction];
         } else
-            actions = @[photoAction, browseAction];
+            actions = @[photoAction, chooseAction];
 
         return [UIMenu menuWithTitle:@"" children:actions];
     };

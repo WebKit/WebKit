@@ -30,8 +30,9 @@
  */
 
 #include "config.h"
-#include "WTFStringUtilities.h"
 
+#include "WTFStringUtilities.h"
+#include <sstream>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace TestWebKitAPI {
@@ -116,6 +117,20 @@ TEST(StringBuilderTest, Append)
         const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
         expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builder);
     }
+}
+
+TEST(StringBuilderTest, AppendIntMin)
+{
+    constexpr int intMin = std::numeric_limits<int>::min();
+    StringBuilder builder;
+    builder.appendNumber(intMin);
+
+    std::stringstream stringStream;
+    stringStream << intMin;
+    std::string expectedString;
+    stringStream >> expectedString;
+
+    expectBuilderContent(String(expectedString.c_str()), builder);
 }
 
 TEST(StringBuilderTest, VariadicAppend)

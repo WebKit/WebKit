@@ -130,9 +130,6 @@ void SVGAElement::defaultEventHandler(Event& event)
                     event.setDefaultHandled();
                     return;
                 }
-                // Only allow navigation to internal <view> anchors.
-                if (targetElement && !targetElement->hasTagName(SVGNames::viewTag))
-                    return;
             }
 
             String target = this->target();

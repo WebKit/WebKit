@@ -490,9 +490,6 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
     _view = view;
     _interactionPoint = [_view lastInteractionLocation];
-#if USE(UICONTEXTMENU)
-    _selectMenu = [self createMenu];
-#endif
 
     return self;
 }
@@ -507,6 +504,8 @@ static const float GroupOptionTextColorAlpha = 0.5;
     [_view startRelinquishingFirstResponderToFocusedElement];
 
 #if USE(UICONTEXTMENU)
+    _selectMenu = [self createMenu];
+
     WebKit::InteractionInformationRequest positionInformationRequest { WebCore::IntPoint(_view.focusedElementInformation.lastInteractionLocation) };
     [_view doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
         [self showSelectPicker];
@@ -533,6 +532,15 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (void)didSelectOptionIndex:(NSInteger)index
 {
+    NSInteger optionIndex = 0;
+    for (auto& option : _view.focusedSelectElementOptions) {
+        if (option.isGroup)
+            continue;
+
+        option.isSelected = optionIndex == index;
+        optionIndex++;
+    }
+
     [_view page]->setFocusedElementSelectedIndex(index);
 }
 
@@ -558,11 +566,11 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
             currentIndex++;
             while (currentIndex < _view.focusedSelectElementOptions.size()) {
-                optionItem = _view.focusedSelectElementOptions[currentIndex];
-                if (optionItem.isGroup)
+                auto& childOptionItem = _view.focusedSelectElementOptions[currentIndex];
+                if (childOptionItem.isGroup)
                     break;
 
-                UIAction *action = [self actionForOptionItem:optionItem withIndex:optionIndex];
+                UIAction *action = [self actionForOptionItem:childOptionItem withIndex:optionIndex];
                 [groupedItems addObject:action];
                 optionIndex++;
                 currentIndex++;
@@ -595,6 +603,30 @@ static const float GroupOptionTextColorAlpha = 0.5;
         optionAction.state = UIMenuElementStateOn;
 
     return optionAction;
+}
+
+- (UIAction *)actionForOptionIndex:(NSInteger)optionIndex
+{
+    NSInteger currentIndex = 0;
+
+    NSArray<UIMenuElement *> *menuElements = [_selectMenu children];
+    for (UIMenuElement *menuElement in menuElements) {
+        if ([menuElement isKindOfClass:UIAction.class]) {
+            if (currentIndex == optionIndex)
+                return (UIAction *)menuElement;
+
+            currentIndex++;
+            continue;
+        }
+
+        UIMenu *groupedMenu = (UIMenu *)menuElement;
+        if (currentIndex + groupedMenu.children.count <= (NSUInteger)optionIndex)
+            currentIndex += groupedMenu.children.count;
+        else
+            return (UIAction *)[groupedMenu.children objectAtIndex:optionIndex - currentIndex];
+    }
+
+    return nil;
 }
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
@@ -671,35 +703,27 @@ static const float GroupOptionTextColorAlpha = 0.5;
 #endif // USE(UICONTEXTMENU)
 
 // WKSelectTesting
+
 - (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection
 {
 #if USE(UICONTEXTMENU)
-    NSInteger currentRow = 0;
-
-    NSArray<UIMenuElement *> *menuElements = [_selectMenu children];
-    for (UIMenuElement *menuElement in menuElements) {
-        if ([menuElement isKindOfClass:UIAction.class]) {
-            if (currentRow == rowIndex) {
-                [(UIAction *)menuElement _performActionWithSender:nil];
-                break;
-            }
-
-            currentRow++;
-            continue;
-        }
-
-        UIMenu *groupedMenu = (UIMenu *)menuElement;
-        if (currentRow + groupedMenu.children.count <= (NSUInteger)rowIndex)
-            currentRow += groupedMenu.children.count;
-        else {
-            UIAction *action = (UIAction *)[groupedMenu.children objectAtIndex:rowIndex - currentRow];
-            [action _performActionWithSender:nil];
-            break;
-        }
+    UIAction *optionAction = [self actionForOptionIndex:rowIndex];
+    if (optionAction) {
+        [optionAction _performActionWithSender:nil];
+        [_view accessoryDone];
     }
-
-    [self removeContextMenuInteraction];
 #endif
+}
+
+- (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex
+{
+#if USE(UICONTEXTMENU)
+    UIAction *optionAction = [self actionForOptionIndex:rowIndex];
+    if (optionAction)
+        return optionAction.state == UIMenuElementStateOn;
+#endif
+
+    return NO;
 }
 
 @end

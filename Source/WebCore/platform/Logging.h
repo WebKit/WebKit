@@ -50,6 +50,7 @@ namespace WebCore {
     M(ContentFiltering) \
     M(ContentObservation) \
     M(DatabaseTracker) \
+    M(DisplayLink) \
     M(DisplayLists) \
     M(DOMTimers) \
     M(Editing) \

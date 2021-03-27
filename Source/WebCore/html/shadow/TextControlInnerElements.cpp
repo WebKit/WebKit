@@ -227,6 +227,8 @@ Optional<Style::ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(
 inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document& document)
     : HTMLDivElement(divTag, document)
 {
+    if (document.quirks().shouldHideSearchFieldResultsButton())
+        setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
 }
 
 Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Document& document)

@@ -105,7 +105,7 @@ public:
     {
     }
 
-    void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, Optional<LayoutUnit> availableSpace, Optional<LayoutUnit> freeSpace);
+    void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, Optional<LayoutUnit> availableSpace);
     void run();
     void reset();
 

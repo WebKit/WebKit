@@ -676,6 +676,11 @@ void RenderLayerCompositor::flushLayersSoon(GraphicsLayerUpdater&)
     scheduleRenderingUpdate();
 }
 
+DisplayRefreshMonitorFactory* RenderLayerCompositor::displayRefreshMonitorFactory()
+{
+    return page().chrome().client().displayRefreshMonitorFactory();
+}
+
 void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer* graphicsLayer, bool usingTiledBacking)
 {
     if (usingTiledBacking) {
@@ -4980,14 +4985,6 @@ ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const
 GraphicsLayerFactory* RenderLayerCompositor::graphicsLayerFactory() const
 {
     return page().chrome().client().graphicsLayerFactory();
-}
-
-RefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
-{
-    if (auto monitor = page().chrome().client().createDisplayRefreshMonitor(displayID))
-        return monitor;
-
-    return DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(displayID);
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)

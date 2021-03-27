@@ -180,7 +180,7 @@ JSC_DEFINE_CUSTOM_GETTER(regExpConstructorRightContext, (JSGlobalObject*, Encode
     return JSValue::encode(globalObject->regExpGlobalData().getRightContext(globalObject));
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorInput, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value))
+JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorInput, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -195,7 +195,7 @@ JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorInput, (JSGlobalObject* globalObjec
     return false;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorMultiline, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value))
+JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorMultiline, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -59,6 +59,16 @@ WEBCORE_EXPORT void setApplicationBundleIdentifierOverride(const String&);
 WEBCORE_EXPORT String applicationBundleIdentifier();
 WEBCORE_EXPORT void clearApplicationBundleIdentifierTestingOverride();
 
+#if PLATFORM(COCOA)
+
+namespace CocoaApplication {
+
+WEBCORE_EXPORT bool isIBooks();
+
+}
+
+#endif // PLATFORM(COCOA)
+
 #if PLATFORM(MAC)
 
 namespace MacApplication {
@@ -67,7 +77,6 @@ WEBCORE_EXPORT bool isAOLInstantMessenger();
 WEBCORE_EXPORT bool isAdobeInstaller();
 WEBCORE_EXPORT bool isAperture();
 WEBCORE_EXPORT bool isAppleMail();
-WEBCORE_EXPORT bool isIBooks();
 WEBCORE_EXPORT bool isITunes();
 WEBCORE_EXPORT bool isMicrosoftMessenger();
 WEBCORE_EXPORT bool isMicrosoftMyDay();
@@ -100,7 +109,6 @@ WEBCORE_EXPORT bool isMiniBrowser();
 bool isMobileStore();
 bool isSpringBoard();
 WEBCORE_EXPORT bool isWebProcess();
-WEBCORE_EXPORT bool isIBooks();
 bool isIBooksStorytime();
 WEBCORE_EXPORT bool isTheSecretSocietyHiddenMystery();
 WEBCORE_EXPORT bool isCardiogram();

@@ -29,6 +29,6 @@
     EnabledBySetting=storageAccessAPI,
     ImplementedBy=DocumentStorageAccess
 ] partial interface Document {
-    Promise<bool> hasStorageAccess();
+    Promise<boolean> hasStorageAccess();
     Promise<undefined> requestStorageAccess();
 };

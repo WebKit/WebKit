@@ -56,6 +56,12 @@ class Canonicalize(Command):
             dest='remote',
             default='origin',
         )
+        output_args.add_argument(
+            '--number', '-n',  type=int,
+            help='Number of commits to be canonicalized, regardless of the state of the remote',
+            dest='number',
+            default=None,
+        )
 
     @classmethod
     def main(cls, args, repository, identifier_template=None, **kwargs):
@@ -70,21 +76,24 @@ class Canonicalize(Command):
         if not branch:
             sys.stderr.write('Failed to determine current branch\n')
             return -1
-        result = run([
-            repository.executable(), 'rev-list',
-            '--count', '--no-merges',
-            '{remote}/{branch}..{branch}'.format(remote=args.remote, branch=branch),
-        ], capture_output=True, cwd=repository.root_path)
-        if result.returncode:
-            sys.stderr.write('Failed to find local commits\n')
-            return -1
-        difference = int(result.stdout.rstrip())
-        if difference <= 0:
+
+        num_commits_to_canonicalize = args.number
+        if not num_commits_to_canonicalize:
+            result = run([
+                repository.executable(), 'rev-list',
+                '--count', '--no-merges',
+                '{remote}/{branch}..{branch}'.format(remote=args.remote, branch=branch),
+            ], capture_output=True, cwd=repository.root_path)
+            if result.returncode:
+                sys.stderr.write('Failed to find local commits\n')
+                return -1
+            num_commits_to_canonicalize = int(result.stdout.rstrip())
+        if num_commits_to_canonicalize <= 0:
             print('No local commits to be edited')
             return 0
-        log.warning('{} to be editted...'.format(string_utils.pluralize(difference, 'commit')))
+        log.warning('{} to be editted...'.format(string_utils.pluralize(num_commits_to_canonicalize, 'commit')))
 
-        base = repository.find('{}~{}'.format(branch, difference))
+        base = repository.find('{}~{}'.format(branch, num_commits_to_canonicalize))
         log.info('Base commit is {} (ref {})'.format(base, base.hash))
 
         log.debug('Saving contributors to temp file to be picked up by child processes')
@@ -148,6 +157,6 @@ fi'''.format(
         finally:
             os.remove(contributors)
 
-        print('{} successfully canonicalized!'.format(string_utils.pluralize(difference, 'commit')))
+        print('{} successfully canonicalized!'.format(string_utils.pluralize(num_commits_to_canonicalize, 'commit')))
 
         return 0

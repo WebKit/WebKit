@@ -77,6 +77,7 @@ void MediaRecorderPrivateMock::videoSampleAvailable(MediaSample&)
 
 void MediaRecorderPrivateMock::audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
 {
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     auto locker = holdLock(m_bufferLock);
     m_buffer.append("Audio Track ID: ");
     m_buffer.append(m_audioTrackID);

@@ -910,7 +910,7 @@ public:
 
     // Creates a GraphicsContextGL instance to render into offscreen destination in context of HostWindow.
     // HostWindow might affect the decision which backend is to be used.
-    static RefPtr<GraphicsContextGL> create(const GraphicsContextGLAttributes&, HostWindow*);
+    WEBCORE_EXPORT static RefPtr<GraphicsContextGL> create(const GraphicsContextGLAttributes&, HostWindow*);
 
     GraphicsContextGL(GraphicsContextGLAttributes, GraphicsContextGL* sharedContext = nullptr);
     virtual ~GraphicsContextGL() = default;

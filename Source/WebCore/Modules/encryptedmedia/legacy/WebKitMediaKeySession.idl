@@ -34,7 +34,7 @@
     readonly attribute DOMString keySystem;
     readonly attribute DOMString sessionId;
 
-    [MayThrowException] undefined update(Uint8Array key);
+    undefined update(Uint8Array key);
     undefined close();
     
     attribute EventHandler onwebkitkeyadded;

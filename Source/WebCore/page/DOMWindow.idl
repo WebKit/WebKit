@@ -75,7 +75,7 @@
     [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
-    [CallWith=ActiveWindow&FirstWindow, MayThrowException] WindowProxy? open(optional USVString url = "", optional DOMString target = "_blank", optional [LegacyNullToEmptyString] DOMString features = "");
+    [CallWith=ActiveWindow&FirstWindow] WindowProxy? open(optional USVString url = "", optional DOMString target = "_blank", optional [LegacyNullToEmptyString] DOMString features = "");
 
     // the user agent
     readonly attribute Navigator navigator;
@@ -91,8 +91,8 @@
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
     undefined print();
 
-    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, MayThrowException] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, MayThrowException] undefined postMessage(any message, optional WindowPostMessageOptions options);
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, optional WindowPostMessageOptions options);
 
 
     // Obsolete: Still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).
@@ -130,8 +130,8 @@
     WebKitPoint webkitConvertPointFromNodeToPage(optional Node? node = null, optional WebKitPoint? p = null);
 
     // Internal operations, not exposed to the Web.
-    [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen] NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);
-    [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen] Element? matchingElementInFlatTree(Node scope, DOMString selectors);
+    [EnabledForWorld=shadowRootIsAlwaysOpen] NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);
+    [EnabledForWorld=shadowRootIsAlwaysOpen] Element? matchingElementInFlatTree(Node scope, DOMString selectors);
 };
 
 [

@@ -121,6 +121,7 @@ fast/images/eps-as-image.html [ Skip ]
 # These tests don't have to be platform-specific, but they are only implemented on GTK now.
 fast/images/avif-image-decoding.html [ Skip ]
 fast/images/avif-as-image.html [ Skip ]
+fast/images/animated-avif.html [ Skip ]
 
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
@@ -1084,8 +1085,6 @@ fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 webkit.org/b/127697 fast/writing-mode/ruby-text-logical-left.html [ Skip ]
 
-webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
-
 # These tests will be rewritten, just skip them until that time.
 webkit.org/b/148036 http/tests/inspector/css/ [ Skip ]
 webkit.org/b/148036 http/tests/inspector/page/ [ Skip ]
@@ -1219,8 +1218,8 @@ webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10.html [ ImageOnlyFailure ]
+webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Failure ]
 webkit.org/b/149890 fast/css-grid-layout/grid-shorthands-style-format.html [ Failure ]
-webkit.org/b/191507 fast/css-grid-layout/positioned-grid-container-percentage-tracks.html [ Failure ]
 webkit.org/b/191508 fast/css-grid-layout/crash-large-positions.html [ Skip ]
 
 # Flaky tests at import time
@@ -2276,9 +2275,6 @@ webkit.org/b/158085 http/tests/css/shared-stylesheet-mutation.html [ Pass Failur
 http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
 
 # PiP tests are only relevant on macOS Sierra and newer.
-media/click-placeholder-not-pausing.html [ WontFix ]
-media/controls/picture-in-picture.html [ WontFix ]
-media/controls/pip-placeholder-without-video-controls.html [ WontFix ]
 media/element-containing-pip-video-going-into-fullscreen.html [ WontFix ]
 media/fullscreen-api-enabled-media-with-presentation-mode.html [ WontFix ]
 media/navigate-with-pip-should-not-crash.html [ WontFix ]
@@ -2378,7 +2374,6 @@ fast/text/letterpress-different.html [ ImageOnlyFailure ]
 webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-010.html [ Skip ]
 webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-024.html [ Skip ]
 webkit.org/b/172537 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass Failure ]
-imported/blink/http/tests/security/shape-image-cors-disallow-origin.html [ ImageOnlyFailure ]
 imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure ]
 webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass Crash ]
 
@@ -2582,7 +2577,7 @@ webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display/display-cont
 ### END OF display: contents failures
 ########################################
 
-webkit.org/b/170122 http/tests/preload/single_download_preload_headers_charset.php [ Pass Failure ]
+webkit.org/b/170122 http/tests/preload/single_download_preload_headers_charset.py [ Pass Failure ]
 
 ########################################
 ### START OF -disabled tests
@@ -2756,7 +2751,7 @@ webkit.org/b/172961 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-eve
 webkit.org/b/172378 fast/loader/recursive-before-unload-crash.html [ Skip ]
 webkit.org/b/172378 fast/repaint/table-hover-on-link.html [ Skip ]
 webkit.org/b/172378 http/tests/misc/slow-loading-mask.html [ Skip ]
-webkit.org/b/172378 http/tests/multipart/policy-ignore-crash.php [ Skip ]
+webkit.org/b/172378 http/tests/multipart/policy-ignore-crash.py [ Skip ]
 webkit.org/b/172378 http/tests/navigation/back-twice-without-commit.html [ Skip ]
 webkit.org/b/172378 imported/blink/fast/block/float/float-mark-descendants-for-layout-crash.html [ Skip ]
 webkit.org/b/172378 imported/blink/fast/frames/freed-frame.html [ Skip ]
@@ -3465,6 +3460,12 @@ webkit.org/b/220753 webgl/conformance/extensions/webgl-multi-draw.html [ Pass Fa
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ]
 fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
 
+# WebGL conformance test suite 1.0.x is skipped until 1.0.3 is retired.
+webgl/1.0.x [ Skip ]
+
+# WebGL conformance test suite 2.0.1 is skipped until 2.0.0 is retired.
+webgl/2.0.y [ Skip ]
+
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]
 
@@ -3925,7 +3926,6 @@ webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013.html [ ImageOnlyFailure ]
 
 webkit.org/b/145176 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-3.html [ ImageOnlyFailure ]
-webkit.org/b/210093 imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-001.html [ ImageOnlyFailure ]
 webkit.org/b/210093 imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.html [ ImageOnlyFailure ]
 webkit.org/b/210144 imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-005.html [ ImageOnlyFailure ]
 webkit.org/b/210478 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-006.html [ ImageOnlyFailure ]
@@ -4013,6 +4013,8 @@ webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-just
 webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-006.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-vert-006.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-001.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-start.html [ ImageOnlyFailure ]
+webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-start-rtl.html [ ImageOnlyFailure ]
 
 # align-content in flexbox.
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_center.html [ ImageOnlyFailure ]
@@ -4042,6 +4044,9 @@ webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-002b.html [ ImageOnlyFailure ]
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a.html [ ImageOnlyFailure ]
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a.html [ ImageOnlyFailure ]
+
+# Percentages in flex-basis in nested flexboxes.
+webkit.org/b/222581 imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-011.html [ ImageOnlyFailure ]
 
 # break request in flexbox.
 webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-break-request-horiz-001a.html [ ImageOnlyFailure ]
@@ -4389,9 +4394,7 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/fon
 
 webkit.org/b/214387 imported/w3c/web-platform-tests/svg/animations/seeking-events-4.html [ Pass Failure ]
 
-webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1a.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1b.html [ ImageOnlyFailure ]
-webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-2.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text.html [ ImageOnlyFailure ]
 webkit.org/b/214453 imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-table-cell-001.html [ ImageOnlyFailure ]

@@ -826,16 +826,6 @@ bool WKPreferencesGetMediaControlsScaleWithPageZoom(WKPreferencesRef preferences
     return toImpl(preferencesRef)->mediaControlsScaleWithPageZoom();
 }
 
-void WKPreferencesSetModernMediaControlsEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setModernMediaControlsEnabled(flag);
-}
-
-bool WKPreferencesGetModernMediaControlsEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->modernMediaControlsEnabled();
-}
-
 void WKPreferencesSetWebAuthenticationEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebAuthenticationEnabled(flag);

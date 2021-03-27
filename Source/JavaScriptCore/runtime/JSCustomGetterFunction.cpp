@@ -52,7 +52,7 @@ JSC_DEFINE_HOST_FUNCTION(customGetterFunctionCall, (JSGlobalObject* globalObject
 
 JSCustomGetterFunction::JSCustomGetterFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, const PropertyName& propertyName, GetValueFunc getter, Optional<DOMAttributeAnnotation> domAttribute)
     : Base(vm, executable, globalObject, structure)
-    , m_propertyName(propertyName)
+    , m_propertyName(Identifier::fromUid(vm, propertyName.uid()))
     , m_getter(getter)
     , m_domAttribute(domAttribute)
 {
@@ -69,6 +69,11 @@ JSCustomGetterFunction* JSCustomGetterFunction::create(VM& vm, JSGlobalObject* g
     String name = makeString("get ", String(propertyName.publicName()));
     function->finishCreation(vm, executable, 0, name);
     return function;
+}
+
+void JSCustomGetterFunction::destroy(JSCell* cell)
+{
+    static_cast<JSCustomGetterFunction*>(cell)->~JSCustomGetterFunction();
 }
 
 } // namespace JSC

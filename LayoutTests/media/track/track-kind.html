@@ -4,7 +4,6 @@
 
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
-        <script src=../media-controls.js></script>
         <script>
 
             var trackElement;
@@ -23,7 +22,6 @@
                 testExpected("trackElement.kind", value);
                 testExpected("trackElement.track.kind", value);
                 testExpected("trackElement.getAttribute('kind')", value);
-                testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem ipsum dolor sit amet, ");
                 consoleWrite("");
 
             }

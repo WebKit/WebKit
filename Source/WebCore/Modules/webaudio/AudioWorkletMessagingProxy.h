@@ -59,6 +59,7 @@ private:
 
     // WorkerLoaderProxy.
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
+    RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
     bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
 

@@ -32,6 +32,7 @@
 #include "DownloadManager.h"
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkContentRuleListManager.h"
+#include "RTCDataChannelRemoteManagerProxy.h"
 #include "SandboxExtension.h"
 #include "WebIDBServer.h"
 #include "WebPageProxyIdentifier.h"
@@ -380,6 +381,10 @@ public:
     void clearAppBoundNavigationData(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
 
+#if ENABLE(WEB_RTC)
+    RTCDataChannelRemoteManagerProxy& rtcDataChannelProxy();
+#endif
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
@@ -584,6 +589,10 @@ private:
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
 #endif
     
+#if ENABLE(WEB_RTC)
+    RefPtr<RTCDataChannelRemoteManagerProxy> m_rtcDataChannelProxy;
+#endif
+
     Lock m_sessionStorageQuotaManagersLock;
     HashMap<PAL::SessionID, std::unique_ptr<SessionStorageQuotaManager>> m_sessionStorageQuotaManagers;
     bool m_quotaLoggingEnabled { false };

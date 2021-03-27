@@ -30,6 +30,7 @@
 #pragma once
 
 #include "Color.h"
+#include "FloatLine.h"
 #include "FloatQuad.h"
 #include "FloatRect.h"
 #include "Path.h"
@@ -64,10 +65,19 @@ public:
     InspectorOverlay(Page&, InspectorClient*);
     ~InspectorOverlay();
 
+    enum class LabelArrowDirection {
+        None,
+        Down,
+        Up,
+        Left,
+        Right,
+    };
+
     struct Highlight {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
         enum class Type {
+            None, // Provides only non-quad information, including grid overlays.
             Node, // Provides 4 quads: margin, border, padding, content.
             NodeList, // Provides a list of nodes.
             Rects, // Provides a list of quads.
@@ -82,6 +92,45 @@ public:
             Color margin;
             bool showInfo;
             bool usePageCoordinates;
+        };
+
+        struct GridHighlightOverlay {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+            struct Label {
+                WTF_MAKE_STRUCT_FAST_ALLOCATED;
+                String text;
+                FloatPoint location;
+                Color backgroundColor;
+                LabelArrowDirection arrowDirection;
+
+#if PLATFORM(IOS_FAMILY)
+                template<class Encoder> void encode(Encoder&) const;
+                template<class Decoder> static Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Label> decode(Decoder&);
+#endif
+            };
+
+            struct Area {
+                WTF_MAKE_STRUCT_FAST_ALLOCATED;
+                String name;
+                FloatQuad quad;
+
+#if PLATFORM(IOS_FAMILY)
+                template<class Encoder> void encode(Encoder&) const;
+                template<class Decoder> static Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Area> decode(Decoder&);
+#endif
+            };
+
+            Color color;
+            Vector<FloatLine> gridLines;
+            Vector<FloatQuad> gaps;
+            Vector<Area> areas;
+            Vector<Label> labels;
+
+#if PLATFORM(IOS_FAMILY)
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static Optional<InspectorOverlay::Highlight::GridHighlightOverlay> decode(Decoder&);
+#endif
         };
 
         void setDataFromConfig(const Config& config)
@@ -102,6 +151,7 @@ public:
 
         Type type {Type::Node};
         Vector<FloatQuad> quads;
+        Vector<GridHighlightOverlay> gridHighlightOverlays;
         bool usePageCoordinates {true};
 
         using Bounds = FloatRect;
@@ -132,7 +182,7 @@ public:
 
     void update();
     void paint(GraphicsContext&);
-    void getHighlight(Highlight&, CoordinateSystem) const;
+    void getHighlight(Highlight&, CoordinateSystem);
     bool shouldShowOverlay() const;
 
     void hideHighlight();
@@ -166,14 +216,6 @@ private:
         Highlight::Bounds bounds;
         Path titlePath;
     };
-    
-    enum class LabelArrowDirection {
-        None,
-        Down,
-        Up,
-        Left,
-        Right,
-    };
 
     RulerExclusion drawNodeHighlight(GraphicsContext&, Node&);
     RulerExclusion drawQuadHighlight(GraphicsContext&, const FloatQuad&);
@@ -186,7 +228,8 @@ private:
     void drawLayoutHatching(GraphicsContext&, FloatQuad);
     void drawLayoutLabel(GraphicsContext&, String, FloatPoint, LabelArrowDirection, Color backgroundColor = Color::white, float maximumWidth = 0);
 
-    void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Grid&);
+    void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Highlight::GridHighlightOverlay&);
+    Optional<InspectorOverlay::Highlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
 
     void updatePaintRectsTimerFired();
 
@@ -212,5 +255,76 @@ private:
     bool m_showRulers { false };
     bool m_showRulersDuringElementSelection { false };
 };
+
+#if PLATFORM(IOS_FAMILY)
+
+template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::encode(Encoder& encoder) const
+{
+    encoder << color;
+    encoder << gridLines;
+    encoder << gaps;
+    encoder << areas;
+    encoder << labels;
+}
+
+template<class Decoder> Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::Highlight::GridHighlightOverlay::decode(Decoder& decoder)
+{
+    InspectorOverlay::Highlight::GridHighlightOverlay gridHighlightOverlay;
+    if (!decoder.decode(gridHighlightOverlay.color))
+        return { };
+    if (!decoder.decode(gridHighlightOverlay.gridLines))
+        return { };
+    if (!decoder.decode(gridHighlightOverlay.gaps))
+        return { };
+    if (!decoder.decode(gridHighlightOverlay.areas))
+        return { };
+    if (!decoder.decode(gridHighlightOverlay.labels))
+        return { };
+    return { gridHighlightOverlay };
+}
+
+template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::Label::encode(Encoder& encoder) const
+{
+    encoder << text;
+    encoder << location;
+    encoder << backgroundColor;
+    encoder << static_cast<uint32_t>(arrowDirection);
+}
+
+template<class Decoder> Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Label> InspectorOverlay::Highlight::GridHighlightOverlay::Label::decode(Decoder& decoder)
+{
+    InspectorOverlay::Highlight::GridHighlightOverlay::Label label;
+    if (!decoder.decode(label.text))
+        return { };
+    if (!decoder.decode(label.location))
+        return { };
+    if (!decoder.decode(label.backgroundColor))
+        return { };
+
+    uint32_t arrowDirection;
+    if (!decoder.decode(arrowDirection))
+        return { };
+    label.arrowDirection = (InspectorOverlay::LabelArrowDirection)arrowDirection;
+
+    return { label };
+}
+
+template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::Area::encode(Encoder& encoder) const
+{
+    encoder << name;
+    encoder << quad;
+}
+
+template<class Decoder> Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Area> InspectorOverlay::Highlight::GridHighlightOverlay::Area::decode(Decoder& decoder)
+{
+    InspectorOverlay::Highlight::GridHighlightOverlay::Area area;
+    if (!decoder.decode(area.name))
+        return { };
+    if (!decoder.decode(area.quad))
+        return { };
+    return { area };
+}
+
+#endif
 
 } // namespace WebCore

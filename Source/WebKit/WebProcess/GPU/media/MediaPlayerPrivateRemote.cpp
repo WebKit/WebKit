@@ -203,6 +203,9 @@ void MediaPlayerPrivateRemote::play()
 void MediaPlayerPrivateRemote::pause()
 {
     m_cachedState.paused = true;
+    auto now = WallTime::now();
+    m_cachedState.currentTime += MediaTime::createWithDouble(m_rate * (now - m_cachedState.wallTime).seconds());
+    m_cachedState.wallTime = now;
     connection().send(Messages::RemoteMediaPlayerProxy::Pause(), m_id);
 }
 
@@ -248,7 +251,10 @@ MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 {
-    return m_cachedState.currentTime;
+    if (m_cachedState.paused || !m_cachedState.currentTime)
+        return m_cachedState.currentTime;
+
+    return m_cachedState.currentTime + MediaTime::createWithDouble(m_rate * (WallTime::now() - m_cachedState.wallTime).seconds());
 }
 
 void MediaPlayerPrivateRemote::seek(const MediaTime& time)
@@ -265,7 +271,9 @@ void MediaPlayerPrivateRemote::seekWithTolerance(const MediaTime& time, const Me
 
 bool MediaPlayerPrivateRemote::didLoadingProgress() const
 {
-    return m_cachedState.loadingProgressed;
+    bool flag = false;
+    connection().sendSync(Messages::RemoteMediaPlayerProxy::DidLoadingProgress(), Messages::RemoteMediaPlayerProxy::DidLoadingProgress::Reply(flag), m_id);
+    return flag;
 }
 
 bool MediaPlayerPrivateRemote::hasVideo() const
@@ -340,9 +348,11 @@ void MediaPlayerPrivateRemote::rateChanged(double rate)
     m_player->rateChanged();
 }
 
-void MediaPlayerPrivateRemote::playbackStateChanged(bool paused)
+void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& mediaTime, WallTime&& wallTime)
 {
     m_cachedState.paused = paused;
+    m_cachedState.currentTime = mediaTime;
+    m_cachedState.wallTime = wallTime;
     m_player->playbackStateChanged();
 }
 
@@ -415,6 +425,7 @@ bool MediaPlayerPrivateRemote::canPlayToWirelessPlaybackTarget() const
 
 void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 {
+    m_cachedState.wallTime = state.wallTime;
     m_cachedState.currentTime = state.currentTime;
     m_cachedState.duration = state.duration;
     m_cachedState.minTimeSeekable = state.minTimeSeekable;
@@ -422,7 +433,6 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.networkState = state.networkState;
     m_cachedState.readyState = state.readyState;
     m_cachedState.paused = state.paused;
-    m_cachedState.loadingProgressed = state.loadingProgressed;
     m_cachedState.naturalSize = state.naturalSize;
     m_cachedState.movieLoadType = state.movieLoadType;
     m_cachedState.wirelessPlaybackTargetType = state.wirelessPlaybackTargetType;
@@ -1084,8 +1094,9 @@ void MediaPlayerPrivateRemote::attemptToDecryptWithInstance(CDMInstance& instanc
         connection().send(Messages::RemoteMediaPlayerProxy::AttemptToDecryptWithInstance(downcast<RemoteCDMInstance>(instance).identifier()), m_id);
 }
 
-void MediaPlayerPrivateRemote::waitingForKeyChanged()
+void MediaPlayerPrivateRemote::waitingForKeyChanged(bool waitingForKey)
 {
+    m_waitingForKey = waitingForKey;
     m_player->waitingForKeyChanged();
 }
 
@@ -1097,8 +1108,7 @@ void MediaPlayerPrivateRemote::initializationDataEncountered(const String& initD
 
 bool MediaPlayerPrivateRemote::waitingForKey() const
 {
-    notImplemented();
-    return false;
+    return m_waitingForKey;
 }
 #endif
 
@@ -1194,11 +1204,12 @@ void MediaPlayerPrivateRemote::applicationDidBecomeActive()
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](Optional<MediaTime> currentTime) mutable {
-        if (!weakThis || !currentTime)
+    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](Optional<MediaTime> currentTime, Optional<WallTime> wallTime) mutable {
+        if (!weakThis || !currentTime || !wallTime)
             return;
 
         m_cachedState.currentTime = *currentTime;
+        m_cachedState.wallTime = *wallTime;
         completionHandler();
     };
 

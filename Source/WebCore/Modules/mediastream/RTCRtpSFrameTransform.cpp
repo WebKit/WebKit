@@ -101,7 +101,7 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
         m_writable->lock();
 
     m_transformer->setIsEncrypting(side == Side::Sender);
-    m_transformer->setAuthenticationSize(backend.mediaType() == RTCRtpTransformBackend::MediaType::Audio ? 4 : 10);
+    m_transformer->setMediaType(backend.mediaType());
 
     backend.setTransformableFrameCallback([transformer = m_transformer, backend = makeRef(backend)](auto&& frame) {
         auto chunk = frame->data();

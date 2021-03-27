@@ -175,13 +175,13 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     if (m_hasStartedProducingData)
         return;
 
-    callOnMainThread([this, weakThis = makeWeakPtr(this)] {
-        if (!weakThis)
+    // Dispatching a Function to the main thread requires heap allocations.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (protectedThis->m_hasStartedProducingData)
             return;
-        if (m_hasStartedProducingData)
-            return;
-        m_hasStartedProducingData = true;
-        forEachObserver([&](auto& observer) {
+        protectedThis->m_hasStartedProducingData = true;
+        protectedThis->forEachObserver([&](auto& observer) {
             observer.hasStartedProducingData();
         });
     });

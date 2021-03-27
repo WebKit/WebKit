@@ -9,6 +9,7 @@
 #include <limits>
 #include <unordered_map>
 #include <unordered_set>
+#include <map>
 
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
 #include "compiler/translator/TranslatorMetalDirect/Debug.h"
@@ -36,6 +37,7 @@ class Rewriter : public TIntermRebuild
     Remapping<TInterfaceBlock> mInterfaceBlocks;
     Remapping<TStructure> mStructures;
     Remapping<TVariable> mVariables;
+    std::map<ImmutableString, std::string> mPredefinedNames;
     std::string mNewNameBuffer;
 
   private:
@@ -44,6 +46,11 @@ class Rewriter : public TIntermRebuild
     {
         if (needsRenaming(object, false))
         {
+            auto it = mPredefinedNames.find(Name(object).rawName());
+            if (it != mPredefinedNames.end())
+            {
+                return ImmutableString(it->second);
+            }
             return mIdGen.createNewName(Name(object)).rawName();
         }
         return Name(object).rawName();
@@ -344,7 +351,7 @@ class Rewriter : public TIntermRebuild
         : TIntermRebuild(compiler, false, true), mKeywords(keywords), mIdGen(idGen)
     {}
 
-    PostResult visitSymbol(TIntermSymbol &symbolNode)
+    PostResult visitSymbolPost(TIntermSymbol &symbolNode)
     {
         const TVariable &var = symbolNode.variable();
         if (needsRenaming(var, true))
@@ -364,6 +371,18 @@ class Rewriter : public TIntermRebuild
             return *new TIntermFunctionPrototype(&rFunc);
         }
         return funcProtoNode;
+    }
+
+    PostResult visitDeclarationPost(TIntermDeclaration &declNode) override
+    {
+        Declaration decl     = ViewDeclaration(declNode);
+        const TVariable &var = decl.symbol.variable();
+        if (needsRenaming(var, true))
+        {
+            const TVariable &rVar = getRenamedOrOriginal(var);
+            return *new TIntermDeclaration(&rVar, decl.initExpr);
+        }
+        return declNode;
     }
 
     PostResult visitFunctionDefinitionPost(TIntermFunctionDefinition &funcDefNode) override
@@ -414,6 +433,11 @@ class Rewriter : public TIntermRebuild
         }
         return aggregateNode;
     }
+
+    const void predefineName(const ImmutableString name, std::string prePopulatedName)
+    {
+        mPredefinedNames[name] = prePopulatedName;
+    }
 };
 
 }  // anonymous namespace
@@ -426,6 +450,11 @@ bool sh::RewriteKeywords(TCompiler &compiler,
                          const std::set<ImmutableString> &keywords)
 {
     Rewriter rewriter(compiler, idGen, keywords);
+    const auto &inputAttrs     = compiler.getAttributes();
+    for(const auto & var : inputAttrs)
+    {
+        rewriter.predefineName(ImmutableString(var.name), var.mappedName);
+    }
     if (!rewriter.rebuildRoot(root))
     {
         return false;

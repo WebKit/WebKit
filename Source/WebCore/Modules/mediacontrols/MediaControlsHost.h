@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(VIDEO)
+
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -89,13 +91,14 @@ public:
 
     static String generateUUID();
 
+#if ENABLE(MODERN_MEDIA_CONTROLS)
     static String shadowRootCSSText();
     static String base64StringForIconNameAndType(const String& iconName, const String& iconType);
     static String formattedStringForDuration(double);
-
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     bool showMediaControlsContextMenu(HTMLElement&, String&& optionsJSONString, Ref<VoidCallback>&&);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#endif // ENABLE(MODERN_MEDIA_CONTROLS)
 
 private:
     explicit MediaControlsHost(HTMLMediaElement&);
@@ -108,5 +111,7 @@ private:
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 };
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO)
 

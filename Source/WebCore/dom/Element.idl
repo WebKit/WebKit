@@ -42,33 +42,33 @@
     sequence<DOMString> getAttributeNames();
     [DOMJIT=ReadDOM] DOMString? getAttribute(DOMString qualifiedName);
     DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
-    [CEReactions, MayThrowException] undefined setAttribute(DOMString qualifiedName, DOMString value);
-    [CEReactions, MayThrowException] undefined setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
-    [CEReactions] undefined removeAttribute(DOMString qualifiedName);
-    [CEReactions] undefined removeAttributeNS(DOMString? namespaceURI, DOMString localName);
-    [CEReactions, MayThrowException] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
+    [CEReactions] undefined setAttribute(DOMString qualifiedName, DOMString value);
+    [CEReactions] undefined setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
+    [CEReactions, ImplementedAs=removeAttributeForBindings] undefined removeAttribute(DOMString qualifiedName);
+    [CEReactions, ImplementedAs=removeAttributeNSForBindings] undefined removeAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
     boolean hasAttribute(DOMString qualifiedName);
     boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     [DOMJIT=ReadDOM] Attr? getAttributeNode(DOMString qualifiedName);
     Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
-    [CEReactions, MayThrowException] Attr? setAttributeNode(Attr attr);
-    [CEReactions, MayThrowException] Attr? setAttributeNodeNS(Attr attr);
-    [CEReactions, MayThrowException] Attr removeAttributeNode(Attr attr);
+    [CEReactions] Attr? setAttributeNode(Attr attr);
+    [CEReactions] Attr? setAttributeNodeNS(Attr attr);
+    [CEReactions] Attr removeAttributeNode(Attr attr);
 
-    [MayThrowException] ShadowRoot attachShadow(ShadowRootInit init);
+    ShadowRoot attachShadow(ShadowRootInit init);
     [ImplementedAs=shadowRootForBindings, CallWith=GlobalObject] readonly attribute ShadowRoot? shadowRoot;
 
-    [MayThrowException] Element? closest(DOMString selectors);
-    [MayThrowException] boolean matches(DOMString selectors);
-    [ImplementedAs=matches, MayThrowException] boolean webkitMatchesSelector(DOMString selectors); // Historical alias of .matches.
+    Element? closest(DOMString selectors);
+    boolean matches(DOMString selectors);
+    [ImplementedAs=matches] boolean webkitMatchesSelector(DOMString selectors); // Historical alias of .matches.
 
     [DOMJIT=ReadDOM] HTMLCollection getElementsByTagName(DOMString qualifiedName);
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
     HTMLCollection getElementsByClassName(DOMString name);
 
-    [CEReactions, MayThrowException] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
-    [MayThrowException] undefined insertAdjacentText(DOMString where, DOMString data); // Historical.
+    [CEReactions] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
+    undefined insertAdjacentText(DOMString where, DOMString data); // Historical.
 
     
     // FIXME: Most of the following non-standard event handlers probably make more sense as part of the GlobalEventHandlers mixin.

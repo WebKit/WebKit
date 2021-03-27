@@ -29,5 +29,5 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
     [CEReactions=NotNeeded, Reflect] attribute DOMString width;
 
-    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
+    [CheckSecurityForNode] Document getSVGDocument();
 };

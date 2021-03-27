@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessMessages.h"
+#include "RTCDataChannelRemoteManager.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "ServiceWorkerInitializationData.h"
 #include "WebCacheStorageProvider.h"
@@ -73,6 +74,16 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+
+#if ENABLE(WEB_RTC)
+class ServiceWorkerLibWebRTCProvider final : public WebCore::LibWebRTCProvider {
+public:
+    ServiceWorkerLibWebRTCProvider() = default;
+
+private:
+    RefPtr<WebCore::RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final { return &RTCDataChannelRemoteManager::sharedManager().remoteHandlerConnection(); }
+};
+#endif
 
 ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient(WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, FrameIdentifier frameID, const String& userAgent)
     : m_webPageProxyID(webPageProxyID)
@@ -133,6 +144,9 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
 #endif
     pageConfiguration.socketProvider = WebSocketProvider::create();
     pageConfiguration.userContentProvider = m_userContentController;
+#if ENABLE(WEB_RTC)
+    pageConfiguration.libWebRTCProvider = makeUniqueRef<ServiceWorkerLibWebRTCProvider>();
+#endif
 
     auto effectiveUserAgent =  WTFMove(userAgent);
     if (effectiveUserAgent.isNull())
@@ -212,6 +226,8 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier);
         return;
     }
+
+    serviceWorkerThreadProxy->setLastNavigationWasAppBound(request.isAppBound());
 
     if (!isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer)) {
         m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier);

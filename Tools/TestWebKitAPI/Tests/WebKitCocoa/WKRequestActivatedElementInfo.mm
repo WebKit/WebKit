@@ -312,6 +312,40 @@ TEST(_WKActivatedElementInfo, InfoWithNestedRequests)
     TestWebKitAPI::Util::run(&finishedWithInner);
 }
 
+TEST(_WKActivatedElementInfo, HitTestPointOutsideView)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
+    [webView synchronouslyLoadHTMLString:@R"(
+        <!DOCTYPE html>
+        <html>
+            <meta name='viewport' content='width = device-width, initial-scale = 1'>
+            <head>
+            <style>
+            html, body {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+            }
+            div {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100px;
+                height: 100px;
+                border: 1px solid tomato;
+                box-sizing: border-box;
+            }
+            </style>
+            </head>
+            <body><div onclick='return true;'></body>
+        </html>
+    )"];
+
+    auto elementRect = [webView activatedElementAtPosition:CGPointMake(101, 101)].boundingRect;
+    EXPECT_TRUE(CGPointEqualToPoint(elementRect.origin, CGPointZero));
+    EXPECT_TRUE(CGSizeEqualToSize(elementRect.size, CGSizeMake(100, 100)));
+}
+
 }
 
 #endif

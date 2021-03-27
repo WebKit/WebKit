@@ -6,7 +6,6 @@
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
         <script src=../trackmenu-test.js></script>
-        <script src=../media-controls.js></script>
         <script>
 
             function seeked()
@@ -14,7 +13,6 @@
                 consoleWrite("<br><i>** Check to make sure captions are displaying<" + "/i>");
 
                 testExpected("video.textTracks[0].cues", null, '!=');
-                testExpected("textTrackDisplayElement(video, 'cue').textContent", null, '!=');
 
                 consoleWrite("");
                 endTest();

@@ -477,12 +477,12 @@ bool PlaybackSessionModelMediaElement::isStalled() const
 
 float PlaybackSessionModelMediaElement::defaultPlaybackRate() const
 {
-    return m_mediaElement ? m_mediaElement->defaultPlaybackRate() : -1;
+    return m_mediaElement ? m_mediaElement->defaultPlaybackRate() : 0;
 }
 
 float PlaybackSessionModelMediaElement::playbackRate() const
 {
-    return m_mediaElement ? m_mediaElement->playbackRate() : -1;
+    return m_mediaElement ? m_mediaElement->playbackRate() : 0;
 }
 
 Ref<TimeRanges> PlaybackSessionModelMediaElement::seekableRanges() const

@@ -122,17 +122,18 @@ function ensure_privileged_api_data_and_token() {
 }
 
 function remote_user_name($data = NULL) {
-    return $data && should_authenticate_as_slave($data) ? NULL : array_get($_SERVER, 'REMOTE_USER');
+    return $data && should_authenticate_as_worker($data) ? NULL : array_get($_SERVER, 'REMOTE_USER');
 }
 
-function should_authenticate_as_slave($data) {
-    return array_key_exists('slaveName', $data) && array_key_exists('slavePassword', $data);
+function should_authenticate_as_worker($data) {
+    return (array_key_exists('workerName', $data) && array_key_exists('workerPassword', $data)) ||
+        (array_key_exists('slaveName', $data) && array_key_exists('slavePassword', $data));
 }
 
-function ensure_privileged_api_data_and_token_or_slave($db) {
+function ensure_privileged_api_data_and_token_or_worker($db) {
     $data = ensure_privileged_api_data();
-    if (should_authenticate_as_slave($data))
-        verify_slave($db, $data);
+    if (should_authenticate_as_worker($data))
+        verify_worker($db, $data);
     else if (!verify_token(array_get($data, 'token')))
         exit_with_error('InvalidToken');
     return $data;
@@ -152,20 +153,20 @@ function verify_token($token) {
     return $expected_token && $token == $expected_token && $_COOKIE['CSRFExpiration'] > time();
 }
 
-function verify_slave($db, $params) {
-    array_key_exists('slaveName', $params) or exit_with_error('MissingSlaveName');
-    array_key_exists('slavePassword', $params) or exit_with_error('MissingSlavePassword');
+function verify_worker($db, $params) {
+    array_key_exists('workerName', $params) or array_key_exists('slaveName', $params) or exit_with_error('MissingWorkerName');
+    array_key_exists('workerPassword', $params) or array_key_exists('slavePassword', $params) or exit_with_error('MissingWorkerPassword');
 
-    $slave_info = array(
-        'name' => $params['slaveName'],
-        'password_hash' => hash('sha256', $params['slavePassword'])
+    $worker_info = array(
+        'name' => array_get($params, 'workerName', array_get($params, 'slaveName')),
+        'password_hash' => hash('sha256', array_get($params, 'workerPassword', array_get($params, 'slavePassword')))
     );
 
-    $matched_slave = $db->select_first_row('build_slaves', 'slave', $slave_info);
-    if (!$matched_slave)
-        exit_with_error('SlaveNotFound', array('name' => $slave_info['name']));
+    $matched_worker = $db->select_first_row('build_workers', 'worker', $worker_info);
+    if (!$matched_worker)
+        exit_with_error('WorkerNotFound', array('name' => $worker_info['name']));
 
-    return $matched_slave['slave_id'];
+    return $matched_worker['worker_id'];
 }
 
 function find_triggerable_for_task($db, $task_id) {

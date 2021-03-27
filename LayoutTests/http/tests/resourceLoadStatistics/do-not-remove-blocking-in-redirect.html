@@ -18,9 +18,9 @@
     const firstPartyCookieNameIP = firstPartyCookieNamePrefix + "IP";
     const firstPartyCookieNameLocalhost = firstPartyCookieNamePrefix + "Localhost";
     const thirdPartyCookieName = "thirdPartyCookie";
-    const subPathToSetThirdPartyCookie = "/set-cookie.php?name=" + thirdPartyCookieName + "&value=value";
-    const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieNameIP + "&name2=" + firstPartyCookieNameLocalhost + "&name3=" + thirdPartyCookieName;
-    const redirectChainUrl = thirdPartyOrigin + resourcePath + "/redirect.php?redirectTo=http://" + partitionHost + resourcePath + subPathToGetCookies;
+    const subPathToSetThirdPartyCookie = "/set-cookie.py?name=" + thirdPartyCookieName + "&value=value";
+    const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieNameIP + "&name2=" + firstPartyCookieNameLocalhost + "&name3=" + thirdPartyCookieName;
+    const redirectChainUrl = thirdPartyOrigin + resourcePath + "/redirect.py?redirectTo=http://" + partitionHost + resourcePath + subPathToGetCookies;
 
     function openIframe(url, onLoadHandler) {
         const element = document.createElement("iframe");

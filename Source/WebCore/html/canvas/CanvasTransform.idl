@@ -35,6 +35,6 @@ interface mixin CanvasTransform {
 
     [NewObject] DOMMatrix getTransform();
     undefined setTransform(unrestricted float a, unrestricted float b, unrestricted float c, unrestricted float d, unrestricted float e, unrestricted float f);
-    [MayThrowException] undefined setTransform(optional DOMMatrix2DInit transform);
+    undefined setTransform(optional DOMMatrix2DInit transform);
     undefined resetTransform();
 };

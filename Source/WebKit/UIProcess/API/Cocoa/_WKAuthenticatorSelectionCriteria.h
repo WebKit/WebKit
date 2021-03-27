@@ -28,15 +28,10 @@
 #import <WebKit/WKFoundation.h>
 
 #import <Foundation/Foundation.h>
+#import <WebKit/_WKAuthenticatorAttachment.h>
 #import <WebKit/_WKUserVerificationRequirement.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef NS_ENUM(NSInteger, _WKAuthenticatorAttachment) {
-    _WKAuthenticatorAttachmentAll,
-    _WKAuthenticatorAttachmentPlatform,
-    _WKAuthenticatorAttachmentCrossPlatform,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKAuthenticatorSelectionCriteria : NSObject

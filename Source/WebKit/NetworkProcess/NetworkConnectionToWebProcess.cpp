@@ -52,6 +52,7 @@
 #include "NetworkSocketStreamMessages.h"
 #include "PingLoad.h"
 #include "PreconnectTask.h"
+#include "RTCDataChannelRemoteManagerProxy.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -146,6 +147,9 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 #if USE(LIBWEBRTC)
     if (m_rtcProvider)
         m_rtcProvider->close();
+#endif
+#if ENABLE(WEB_RTC)
+    unregisterToRTCDataChannelProxy();
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -277,6 +281,34 @@ void NetworkConnectionToWebProcess::createRTCProvider(CompletionHandler<void()>&
 #endif
     callback();
 }
+
+#if ENABLE(WEB_RTC)
+void NetworkConnectionToWebProcess::connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier, CompletionHandler<void(Optional<bool>)>&& callback)
+{
+    auto* connectionToWebProcess = m_networkProcess->webProcessConnection(remoteIdentifier.processIdentifier);
+    if (!connectionToWebProcess) {
+        callback(false);
+        return;
+    }
+    registerToRTCDataChannelProxy();
+    connectionToWebProcess->registerToRTCDataChannelProxy();
+    connectionToWebProcess->connection().sendWithAsyncReply(Messages::NetworkProcessConnection::ConnectToRTCDataChannelRemoteSource { remoteIdentifier, localIdentifier }, WTFMove(callback), 0);
+}
+
+void NetworkConnectionToWebProcess::registerToRTCDataChannelProxy()
+{
+    if (m_isRegisteredToRTCDataChannelProxy)
+        return;
+    m_isRegisteredToRTCDataChannelProxy = true;
+    m_networkProcess->rtcDataChannelProxy().registerConnectionToWebProcess(*this);
+}
+
+void NetworkConnectionToWebProcess::unregisterToRTCDataChannelProxy()
+{
+    if (m_isRegisteredToRTCDataChannelProxy)
+        m_networkProcess->rtcDataChannelProxy().unregisterConnectionToWebProcess(*this);
+}
+#endif
 
 CacheStorageEngineConnection& NetworkConnectionToWebProcess::cacheStorageConnection()
 {

@@ -30,9 +30,9 @@
 ] interface DOMMatrixReadOnly {
     [CallWith=ScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 
-    [MayThrowException, NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other);
-    [MayThrowException, NewObject] static DOMMatrixReadOnly fromFloat32Array(Float32Array array32);
-    [MayThrowException, NewObject] static DOMMatrixReadOnly fromFloat64Array(Float64Array array64);
+    [NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other);
+    [NewObject] static DOMMatrixReadOnly fromFloat32Array(Float32Array array32);
+    [NewObject] static DOMMatrixReadOnly fromFloat64Array(Float64Array array64);
 
     // These attributes are simple aliases for certain elements of the 4x4 matrix
     readonly attribute unrestricted double a; // Alias for m11.
@@ -87,15 +87,15 @@
                                           optional unrestricted double angle = 0); // Angle is in degrees.
     [NewObject] DOMMatrix skewX(optional unrestricted double sx = 0); // Angle is in degrees.
     [NewObject] DOMMatrix skewY(optional unrestricted double sy = 0); // Angle is in degrees.
-    [MayThrowException, NewObject] DOMMatrix multiply(optional DOMMatrixInit other);
+    [NewObject] DOMMatrix multiply(optional DOMMatrixInit other);
     [NewObject] DOMMatrix flipX();
     [NewObject] DOMMatrix flipY();
     [NewObject] DOMMatrix inverse();
 
     [NewObject] DOMPoint transformPoint(optional DOMPointInit point);
-    [MayThrowException] Float32Array toFloat32Array();
-    [MayThrowException] Float64Array toFloat64Array();
+    Float32Array toFloat32Array();
+    Float64Array toFloat64Array();
 
-    [Exposed=Window, MayThrowException] stringifier;
+    [Exposed=Window] stringifier;
     [Default] object toJSON();
 };

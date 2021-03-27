@@ -37,6 +37,7 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AVFoundation)
 // because they make it difficult to use the class name in source code.
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetCache)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetCollection)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetImageGenerator)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetReader)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetReaderSampleReferenceOutput)

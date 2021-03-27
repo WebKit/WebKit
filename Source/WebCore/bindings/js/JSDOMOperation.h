@@ -43,10 +43,12 @@ public:
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
         
         auto* thisObject = cast(lexicalGlobalObject, callFrame);
-        if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject))
-            return throwThisTypeError(lexicalGlobalObject, throwScope, JSClass::info()->className, operationName);
-        
-        ASSERT(thisObject);
+        if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {
+            if (UNLIKELY(!thisObject))
+                return throwThisTypeError(lexicalGlobalObject, throwScope, JSClass::info()->className, operationName);
+        } else
+            ASSERT(thisObject);
+
         ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
         
         // FIXME: We should refactor the binding generated code to use references for lexicalGlobalObject and thisObject.

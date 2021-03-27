@@ -69,7 +69,6 @@ struct CaptureSourceOrError;
 
 class WEBCORE_EXPORT RealtimeMediaSource
     : public ThreadSafeRefCounted<RealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
-    , public CanMakeWeakPtr<RealtimeMediaSource, WeakPtrFactoryInitialization::Eager>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif

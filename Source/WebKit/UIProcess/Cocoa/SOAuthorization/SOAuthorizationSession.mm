@@ -182,7 +182,7 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
 #if PLATFORM(IOS)
-    if (![fromWebPageProxy(*m_page).UIDelegate respondsToSelector:@selector(_presentingViewControllerForWebView:)])
+    if (![[m_page->cocoaView() UIDelegate] respondsToSelector:@selector(_presentingViewControllerForWebView:)])
         [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
 #endif
 

@@ -47,6 +47,6 @@
     HTMLElement createCaption();
     [CEReactions] undefined deleteCaption();
 
-    [MayThrowException] HTMLElement insertRow(optional long index = -1);
-    [CEReactions, MayThrowException] undefined deleteRow(long index);
+    HTMLElement insertRow(optional long index = -1);
+    [CEReactions] undefined deleteRow(long index);
 };

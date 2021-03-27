@@ -30,11 +30,6 @@ webkit.org/b/194234 media/modern-media-controls/media-documents/background-color
 
 webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
 
-webkit.org/b/194223 media/controls-strict.html [ Failure ]
-webkit.org/b/194223 media/controls-without-preload.html [ Skip ]
-webkit.org/b/194223 media/video-controls-rendering.html [ Failure ]
-webkit.org/b/194223 media/video-zoom-controls.html [ Failure ]
-
 webkit.org/b/194226 quicklook/word-legacy.html [ Failure ]
 webkit.org/b/194226 quicklook/word.html [ Failure ]
 

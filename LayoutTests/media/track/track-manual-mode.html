@@ -3,7 +3,6 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <script src=../media-controls.js></script>
         <script src=../trackmenu-test.js></script>
         <script src=../video-test.js></script>
         <script>
@@ -12,19 +11,6 @@
             {
                 consoleWrite(`<br><i>** Forced tracks should be in .textTracks as well as in the menu`);
                 testExpected("video.textTracks.length", 9);
-
-                // Click the CC button to show the menu because it isn't created until it becomes visible.
-                clickCCButton();
-
-                trackMenuItems = captionTrackMenuList();
-                if (!trackMenuItems) {
-                    failTest("Failed to find track menu!");
-                    return;
-                }
-                testExpected("trackMenuItems.length", 11);
-
-                consoleWrite(`<br><i>** 'forced' should be in the title of a forced track menu item<i>`);
-                listTrackMenu();
 
                 consoleWrite("<br><i>** No track should be enabled by default<" + "/i>");
                 testExpected("video.textTracks[0].language", "en");

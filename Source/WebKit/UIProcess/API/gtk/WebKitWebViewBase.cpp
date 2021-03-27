@@ -43,7 +43,7 @@
 #include "PointerLockManager.h"
 #include "ViewGestureController.h"
 #include "WebEventFactory.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebKit2Initialize.h"
 #include "WebKitEmojiChooser.h"
 #include "WebKitInitialize.h"

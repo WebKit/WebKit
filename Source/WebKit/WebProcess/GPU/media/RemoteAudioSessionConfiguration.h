@@ -37,9 +37,10 @@ struct RemoteAudioSessionConfiguration {
     WebCore::RouteSharingPolicy routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     String routingContextUID;
     float sampleRate { 0 };
-    uint64_t bufferSize { 0 };
-    uint64_t numberOfOutputChannels { 0 };
-    uint64_t preferredBufferSize { 0 };
+    size_t bufferSize { 0 };
+    size_t numberOfOutputChannels { 0 };
+    size_t maximumNumberOfOutputChannels { 0 };
+    size_t preferredBufferSize { 0 };
     bool isMuted { false };
     bool isActive { false };
 
@@ -52,6 +53,7 @@ struct RemoteAudioSessionConfiguration {
         encoder << sampleRate;
         encoder << bufferSize;
         encoder << numberOfOutputChannels;
+        encoder << maximumNumberOfOutputChannels;
         encoder << preferredBufferSize;
         encoder << isMuted;
         encoder << isActive;
@@ -80,17 +82,22 @@ struct RemoteAudioSessionConfiguration {
         if (!sampleRate)
             return WTF::nullopt;
 
-        Optional<uint64_t> bufferSize;
+        Optional<size_t> bufferSize;
         decoder >> bufferSize;
         if (!bufferSize)
             return WTF::nullopt;
 
-        Optional<uint64_t> numberOfOutputChannels;
+        Optional<size_t> numberOfOutputChannels;
         decoder >> numberOfOutputChannels;
         if (!numberOfOutputChannels)
             return WTF::nullopt;
 
-        Optional<uint64_t> preferredBufferSize;
+        Optional<size_t> maximumNumberOfOutputChannels;
+        decoder >> maximumNumberOfOutputChannels;
+        if (!maximumNumberOfOutputChannels)
+            return WTF::nullopt;
+
+        Optional<size_t> preferredBufferSize;
         decoder >> preferredBufferSize;
         if (!preferredBufferSize)
             return WTF::nullopt;
@@ -112,6 +119,7 @@ struct RemoteAudioSessionConfiguration {
             *sampleRate,
             *bufferSize,
             *numberOfOutputChannels,
+            *maximumNumberOfOutputChannels,
             *preferredBufferSize,
             *isMuted,
             *isActive,

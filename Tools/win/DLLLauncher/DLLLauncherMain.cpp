@@ -84,6 +84,11 @@ static wstring appleApplicationSupportDirectory()
     return applePathFromRegistry(L"SOFTWARE\\Apple Inc.\\Apple Application Support", L"InstallDir");
 }
 
+static wstring iTunesDirectory()
+{
+    return applePathFromRegistry(L"SOFTWARE\\Apple Computer, Inc.\\iTunes\\", L"InstallDir");
+}
+
 static bool prependPath(const wstring& directoryToPrepend)
 {
     wstring pathVariable = L"PATH";
@@ -130,18 +135,23 @@ static bool modifyPath(const wstring& programName)
     return true;
 
 #else
-
-    const wstring& pathPrefix = appleApplicationSupportDirectory();
-
-    if (!directoryExists(pathPrefix)) {
-        fatalError(programName, L"Failed to determine path to AAS directory.");
-        return false;
-    }
-
-    if (prependPath(pathPrefix))
+    auto modifyPathWith = [&] (const wstring& pathPrefix) {
+        if (!prependPath(pathPrefix)) {
+            fatalError(programName, L"Failed to modify PATH environment variable.");
+            return false;
+        }
         return true;
+    };
 
-    fatalError(programName, L"Failed to modify PATH environment variable.");
+    const wstring& applicationSupportPathPrefix = appleApplicationSupportDirectory();
+    if (directoryExists(applicationSupportPathPrefix))
+        return modifyPathWith(applicationSupportPathPrefix);
+
+    const wstring& iTunesPathPrefix = iTunesDirectory();
+    if (directoryExists(iTunesPathPrefix))
+        return modifyPathWith(iTunesPathPrefix);
+
+    fatalError(programName, L"Couldn't find path to Apple Application Support (AAS) or iTunes via the registry.  Do you have iTunes installed?");
     return false;
 #endif
 }

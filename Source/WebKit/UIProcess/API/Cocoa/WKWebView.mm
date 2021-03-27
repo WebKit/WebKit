@@ -197,17 +197,6 @@ static const BOOL defaultFastClickingEnabled = NO;
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif // PLATFORM(IOS_FAMILY)
 
-static HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKWebView *>& pageToViewMap()
-{
-    static NeverDestroyed<HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKWebView *>> map;
-    return map;
-}
-
-WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
-{
-    return pageToViewMap().get(&page);
-}
-
 RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
@@ -440,7 +429,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     for (auto& pair : pageConfiguration->urlSchemeHandlers())
         _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
 
-    pageToViewMap().add(_page.get(), self);
+    _page->setCocoaView(self);
 
     [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WKWebView" deprecated:NO];
 
@@ -449,7 +438,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _timeOfRequestForVisibleContentRectUpdate = timeNow;
     _timeOfLastVisibleContentRectUpdate = timeNow;
     _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;
-#endif // PLATFORM(IOS_FAMILY)
+#endif
 }
 
 - (void)_setupPageConfiguration:(Ref<API::PageConfiguration>&)pageConfiguration
@@ -642,9 +631,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr);
 #endif
-
-    if (_page)
-        pageToViewMap().remove(_page.get());
 
     [super dealloc];
 }
@@ -1568,17 +1554,29 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
 }
 
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request response:(NSURLResponse *)response responseData:(NSData *)data
 {
     return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
 }
 
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
+// FIXME(223658): Remove this once adopters have moved to the final API.
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
+{
+    return [self loadSimulatedRequest:request response:response responseData:data];
+}
+
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)string
 {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
 
-    return [self loadSimulatedRequest:request withResponse:response.get() responseData:data];
+    return [self loadSimulatedRequest:request response:response.get() responseData:data];
+}
+
+// FIXME(223658): Remove this once adopters have moved to the final API.
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
+{
+    return [self loadSimulatedRequest:request responseHTMLString:string];
 }
 
 - (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
@@ -3337,31 +3335,6 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         return @[ ];
 
     return (__bridge NSArray *)certificateInfo->certificateInfo().certificateChain() ?: @[ ];
-}
-
-- (void)pauseAllMediaPlayback:(void (^)(void))completionHandler
-{
-    [self pauseAllMediaPlaybackWithCompletionHandler:completionHandler];
-}
-
-- (void)suspendAllMediaPlayback:(void (^)(void))completionHandler
-{
-    [self setAllMediaPlaybackSuspended:YES completionHandler:completionHandler];
-}
-
-- (void)resumeAllMediaPlayback:(void (^)(void))completionHandler
-{
-    [self setAllMediaPlaybackSuspended:NO completionHandler:completionHandler];
-}
-
-- (void)closeAllMediaPresentations:(void (^)(void))completionHandler
-{
-    [self closeAllMediaPresentationsWithCompletionHandler:completionHandler];
-}
-
-- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler
-{
-    [self requestMediaPlaybackStateWithCompletionHandler:completionHandler];
 }
 
 @end

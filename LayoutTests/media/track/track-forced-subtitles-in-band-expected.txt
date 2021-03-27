@@ -10,7 +10,6 @@ EVENT(canplaythrough)
 
 ** Forced tracks should be in .textTracks, but not in the menu
 EXPECTED (video.textTracks.length == '9') OK
-EXPECTED (trackMenuItems.length == '6') OK
 
 ** Only the 'fr' forced track should be showing
 EXPECTED (video.textTracks[0].language == 'en') OK
@@ -54,7 +53,6 @@ RUN(video.currentTime = 9.5)
 EVENT(seeked)
 EVENT(cuechange)
 EXPECTED (video.textTracks[3].activeCues.length == '1') OK
-EXPECTED (textTrackDisplayElement(video, 'cue') != 'null') OK
 
 END OF TEST
 

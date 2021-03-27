@@ -33,10 +33,10 @@
     readonly attribute boolean lowerOpen;
     readonly attribute boolean upperOpen;
 
-    [NewObject, CallWith=GlobalObject, MayThrowException] static IDBKeyRange only(any value);
-    [NewObject, CallWith=GlobalObject, MayThrowException] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
-    [NewObject, CallWith=GlobalObject, MayThrowException] static IDBKeyRange upperBound(any upper, optional boolean open = false);
-    [NewObject, CallWith=GlobalObject, MayThrowException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
+    [NewObject, CallWith=GlobalObject] static IDBKeyRange only(any value);
+    [NewObject, CallWith=GlobalObject] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
+    [NewObject, CallWith=GlobalObject] static IDBKeyRange upperBound(any upper, optional boolean open = false);
+    [NewObject, CallWith=GlobalObject] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
 
-    [CallWith=GlobalObject, MayThrowException] boolean includes(any key);
+    [CallWith=GlobalObject] boolean includes(any key);
 };

@@ -34,6 +34,7 @@
         return nil;
 
     self.userVerification = _WKUserVerificationRequirementPreferred;
+    self.authenticatorAttachment = _WKAuthenticatorAttachmentAll;
     return self;
 }
 

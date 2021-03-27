@@ -113,7 +113,7 @@
 #include "WebFullScreenManagerProxy.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebImage.h"
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include "WebInspectorUtilities.h"
 #include "WebKeyboardEvent.h"
 #include "WebNavigationDataStore.h"
@@ -549,7 +549,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_preferences->addPage(*this);
     m_pageGroup->addPage(*this);
 
-    m_inspector = WebInspectorProxy::create(*this);
+    m_inspector = WebInspectorUIProxy::create(*this);
 
     if (hasRunningProcess())
         didAttachToRunningProcess();
@@ -6194,7 +6194,7 @@ void WebPageProxy::didEndDateTimePicker()
 
 #endif
 
-WebInspectorProxy* WebPageProxy::inspector() const
+WebInspectorUIProxy* WebPageProxy::inspector() const
 {
     if (isClosed())
         return nullptr;

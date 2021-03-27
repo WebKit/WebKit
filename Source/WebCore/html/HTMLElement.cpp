@@ -1227,26 +1227,45 @@ bool HTMLElement::shouldExtendSelectionToTargetNode(const Node& targetNode, cons
 
 bool HTMLElement::hasImageOverlay() const
 {
-    auto shadowRoot = userAgentShadowRoot();
-    if (LIKELY(!shadowRoot))
+    auto shadowRoot = this->shadowRoot();
+    if (LIKELY(!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent))
         return false;
 
     return shadowRoot->hasElementWithId(*imageOverlayElementIdentifier().impl());
 }
 
+static RefPtr<HTMLElement> imageOverlayHost(const Node& node)
+{
+    auto host = node.shadowHost();
+    if (!is<HTMLElement>(host))
+        return nullptr;
+
+    auto element = makeRefPtr(downcast<HTMLElement>(*host));
+    return element->hasImageOverlay() ? element : nullptr;
+}
+
+bool HTMLElement::isInsideImageOverlay(const SimpleRange& range)
+{
+    auto commonAncestor = makeRefPtr(commonInclusiveAncestor<ComposedTree>(range));
+    if (!commonAncestor)
+        return false;
+
+    auto host = imageOverlayHost(*commonAncestor);
+    if (!host)
+        return false;
+
+    return host->userAgentShadowRoot()->contains(*commonAncestor);
+}
+
 bool HTMLElement::isImageOverlayText(const Node& node)
 {
-    auto shadowHost = node.shadowHost();
-    if (!shadowHost)
+    auto host = imageOverlayHost(node);
+    if (!host)
         return false;
 
-    auto shadowRoot = shadowHost->shadowRoot();
-    if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent || shadowRoot != node.containingShadowRoot())
-        return false;
-
-    for (auto& child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
+    for (auto& child : childrenOfType<HTMLDivElement>(*host->userAgentShadowRoot())) {
         if (child.getIdAttribute() == imageOverlayElementIdentifier())
-            return node.isDescendantOf(&child);
+            return node.isDescendantOf(child);
     }
 
     return false;

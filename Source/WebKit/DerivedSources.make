@@ -132,6 +132,7 @@ MESSAGE_RECEIVERS = \
 	NetworkProcess/webrtc/NetworkMDNSRegister \
 	NetworkProcess/webrtc/NetworkRTCProvider \
 	NetworkProcess/webrtc/NetworkRTCMonitor \
+	NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy \
 	NetworkProcess/Cookies/WebCookieManager \
 	Shared/Plugins/NPObjectMessageReceiver \
 	Shared/AuxiliaryProcess \
@@ -146,8 +147,8 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebAuthentication/WebAuthnProcessProxy \
 	UIProcess/WebPasteboardProxy \
 	UIProcess/UserContent/WebUserContentControllerProxy \
-	UIProcess/Inspector/WebInspectorProxy \
-	UIProcess/Inspector/RemoteWebInspectorProxy \
+	UIProcess/Inspector/WebInspectorUIProxy \
+	UIProcess/Inspector/RemoteWebInspectorUIProxy \
 	UIProcess/Inspector/WebInspectorUIExtensionControllerProxy \
 	UIProcess/Plugins/PluginProcessProxy \
 	UIProcess/DrawingAreaProxy \
@@ -203,8 +204,9 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Network/NetworkProcessConnection \
 	WebProcess/Network/WebSocketStream \
 	WebProcess/Network/WebResourceLoader \
-	WebProcess/Network/webrtc/WebRTCMonitor \
 	WebProcess/Network/webrtc/LibWebRTCNetwork \
+	WebProcess/Network/webrtc/RTCDataChannelRemoteManager \
+	WebProcess/Network/webrtc/WebRTCMonitor \
 	WebProcess/Network/webrtc/WebMDNSRegister \
 	WebProcess/Network/webrtc/WebRTCResolver \
 	WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider \

@@ -125,7 +125,7 @@ template<typename ColorType> constexpr ColorType invertedColorWithOverriddenAlph
     auto copy = components;
 
     for (unsigned i = 0; i < 3; ++i)
-        copy[i] = ColorType::Model::ranges[i].max - components[i];
+        copy[i] = ColorType::Model::componentInfo[i].max - components[i];
     copy[3] = convertByteAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
 
     return makeFromComponents<ColorType>(copy);
@@ -139,7 +139,7 @@ template<typename ColorType> ColorType invertedColorWithOverriddenAlpha(const Co
     auto copy = components;
 
     for (unsigned i = 0; i < 3; ++i)
-        copy[i] = ColorType::Model::ranges[i].max - components[i];
+        copy[i] = ColorType::Model::componentInfo[i].max - components[i];
     copy[3] = convertFloatAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
 
     return makeFromComponents<ColorType>(copy);
@@ -164,8 +164,8 @@ template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename C
 constexpr bool isBlack(const ColorType& color)
 {
     auto [c1, c2, c3, alpha] = color;
-    constexpr auto ranges = ColorType::Model::ranges;
-    return c1 == ranges[0].min && c2 == ranges[1].min && c3 == ranges[2].min && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
+    constexpr auto componentInfo = ColorType::Model::componentInfo;
+    return c1 == componentInfo[0].min && c2 == componentInfo[1].min && c3 == componentInfo[2].min && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
 }
 
 template<WhitePoint W> constexpr bool isWhite(const XYZA<float, W>& color)
@@ -187,8 +187,8 @@ template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename C
 constexpr bool isWhite(const ColorType& color)
 {
     auto [c1, c2, c3, alpha] = color;
-    constexpr auto ranges = ColorType::Model::ranges;
-    return c1 == ranges[0].max && c2 == ranges[1].max && c3 == ranges[2].max && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
+    constexpr auto componentInfo = ColorType::Model::componentInfo;
+    return c1 == componentInfo[0].max && c2 == componentInfo[1].max && c3 == componentInfo[2].max && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
 }
 
 constexpr uint16_t fastMultiplyBy255(uint16_t value)

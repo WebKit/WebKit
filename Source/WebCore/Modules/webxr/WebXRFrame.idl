@@ -33,6 +33,6 @@
 ] interface WebXRFrame {
     [SameObject] readonly attribute WebXRSession session;
 
-    [MayThrowException, CallWith=Document] WebXRViewerPose? getViewerPose(WebXRReferenceSpace referenceSpace);
-    [MayThrowException, CallWith=Document] WebXRPose? getPose(WebXRSpace space, WebXRSpace baseSpace);
+    [CallWith=Document] WebXRViewerPose? getViewerPose(WebXRReferenceSpace referenceSpace);
+    [CallWith=Document] WebXRPose? getPose(WebXRSpace space, WebXRSpace baseSpace);
 };

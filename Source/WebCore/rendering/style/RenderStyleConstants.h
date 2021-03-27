@@ -1208,6 +1208,12 @@ enum class MathStyle : uint8_t {
     Compact,
 };
 
+enum class Containment : uint8_t {
+    Layout   = 1 << 0,
+    Paint    = 1 << 1,
+    Size     = 1 << 2,
+};
+
 extern const float defaultMiterLimit;
 
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationFillMode);

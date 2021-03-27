@@ -129,6 +129,11 @@ void PopUpSOAuthorizationSession::abortInternal()
     }
 
     initSecretWebView();
+    if (!m_secretWebView) {
+        m_newPageCallback(nullptr);
+        return;
+    }
+
     m_newPageCallback(m_secretWebView->_page.get());
     [m_secretWebView evaluateJavaScript: @"window.close()" completionHandler:nil];
 }
@@ -141,6 +146,11 @@ void PopUpSOAuthorizationSession::completeInternal(const WebCore::ResourceRespon
     }
 
     initSecretWebView();
+    if (!m_secretWebView) {
+        fallBackToWebPathInternal();
+        return;
+    }
+
     m_newPageCallback(m_secretWebView->_page.get());
     [m_secretWebView loadData:data MIMEType:@"text/html" characterEncodingName:@"UTF-8" baseURL:response.url()];
 }
@@ -160,9 +170,11 @@ void PopUpSOAuthorizationSession::close(WKWebView *webView)
 void PopUpSOAuthorizationSession::initSecretWebView()
 {
     ASSERT(page());
-    auto initiatorWebView = fromWebPageProxy(*page());
-    auto configuration = adoptNS([initiatorWebView.configuration copy]);
-    [configuration _setRelatedWebView:initiatorWebView];
+    auto initiatorWebView = page()->cocoaView();
+    if (!initiatorWebView)
+        return;
+    auto configuration = adoptNS([[initiatorWebView configuration] copy]);
+    [configuration _setRelatedWebView:initiatorWebView.get()];
     m_secretWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
     m_secretDelegate = adoptNS([[WKSOSecretDelegate alloc] initWithSession:this]);

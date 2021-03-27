@@ -61,7 +61,7 @@
     [CEReactions] attribute DOMString? textContent;
     [CEReactions] undefined normalize();
 
-    [CEReactions, ImplementedAs=cloneNodeForBindings, MayThrowException, NewObject] Node cloneNode(optional boolean deep = false);
+    [CEReactions, ImplementedAs=cloneNodeForBindings, NewObject] Node cloneNode(optional boolean deep = false);
     boolean isEqualNode(Node? other);
     boolean isSameNode(Node? other); // Historical alias of ===.
 
@@ -78,10 +78,10 @@
     DOMString? lookupNamespaceURI(DOMString? prefix);
     boolean isDefaultNamespace(DOMString? namespaceURI);
 
-    [CEReactions, MayThrowException] Node insertBefore([ReturnValue] Node node, Node? child);
-    [CEReactions, MayThrowException] Node appendChild([ReturnValue] Node node);
-    [CEReactions, MayThrowException] Node replaceChild(Node node, [ReturnValue] Node child);
-    [CEReactions, MayThrowException] Node removeChild([ReturnValue] Node child);
+    [CEReactions] Node insertBefore([ReturnValue] Node node, Node? child);
+    [CEReactions] Node appendChild([ReturnValue] Node node);
+    [CEReactions] Node replaceChild(Node node, [ReturnValue] Node child);
+    [CEReactions] Node removeChild([ReturnValue] Node child);
 };
 
 dictionary GetRootNodeOptions {

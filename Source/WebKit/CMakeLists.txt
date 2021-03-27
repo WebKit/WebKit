@@ -175,6 +175,7 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/webrtc/NetworkMDNSRegister
     NetworkProcess/webrtc/NetworkRTCMonitor
     NetworkProcess/webrtc/NetworkRTCProvider
+    NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy
 
     PluginProcess/PluginControllerProxy
     PluginProcess/PluginProcess
@@ -205,8 +206,8 @@ set(WebKit_MESSAGES_IN_FILES
 
     UIProcess/GPU/GPUProcessProxy
 
-    UIProcess/Inspector/RemoteWebInspectorProxy
-    UIProcess/Inspector/WebInspectorProxy
+    UIProcess/Inspector/RemoteWebInspectorUIProxy
+    UIProcess/Inspector/WebInspectorUIProxy
 
     UIProcess/Network/NetworkProcessProxy
 
@@ -249,6 +250,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Inspector/WebInspectorUI
 
     WebProcess/Network/webrtc/LibWebRTCNetwork
+    WebProcess/Network/webrtc/RTCDataChannelRemoteManager
     WebProcess/Network/webrtc/WebMDNSRegister
     WebProcess/Network/webrtc/WebRTCMonitor
     WebProcess/Network/webrtc/WebRTCResolver

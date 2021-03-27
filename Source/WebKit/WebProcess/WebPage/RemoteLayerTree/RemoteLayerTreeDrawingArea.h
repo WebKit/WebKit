@@ -72,7 +72,7 @@ private:
 
     void addTransactionCallbackID(CallbackID) override;
 
-    RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
+    RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) final;
     void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond);
 

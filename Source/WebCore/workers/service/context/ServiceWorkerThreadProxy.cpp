@@ -29,11 +29,13 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "CacheStorageProvider.h"
+#include "DocumentLoader.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FetchLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
@@ -123,6 +125,12 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
     allServiceWorkerThreadProxies().remove(this);
 }
 
+void ServiceWorkerThreadProxy::setLastNavigationWasAppBound(bool wasAppBound)
+{
+    if (m_document->loader())
+        m_document->loader()->setLastNavigationWasAppBound(wasAppBound);
+}
+
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
     if (m_isTerminatingOrTerminated)
@@ -161,6 +169,12 @@ RefPtr<CacheStorageConnection> ServiceWorkerThreadProxy::createCacheStorageConne
     if (!m_cacheStorageConnection)
         m_cacheStorageConnection = m_cacheStorageProvider.createCacheStorageConnection();
     return m_cacheStorageConnection;
+}
+
+RefPtr<RTCDataChannelRemoteHandlerConnection> ServiceWorkerThreadProxy::createRTCDataChannelRemoteHandlerConnection()
+{
+    ASSERT(isMainThread());
+    return m_page->libWebRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
 std::unique_ptr<FetchLoader> ServiceWorkerThreadProxy::createBlobLoader(FetchLoaderClient& client, const URL& blobURL)

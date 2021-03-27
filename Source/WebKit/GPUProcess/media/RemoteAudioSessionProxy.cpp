@@ -66,6 +66,7 @@ RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
         session.sampleRate(),
         session.bufferSize(),
         session.numberOfOutputChannels(),
+        session.maximumNumberOfOutputChannels(),
         session.preferredBufferSize(),
         session.isMuted(),
         m_active

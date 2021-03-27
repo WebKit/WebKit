@@ -365,7 +365,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self insertSubview:_inspectorHighlightView.get() aboveSubview:_rootContentView.get()];
     }
 
-    [_inspectorHighlightView update:highlight];
+    [_inspectorHighlightView update:highlight scale:[self _contentZoomScale]];
 }
 
 - (void)_hideInspectorHighlight

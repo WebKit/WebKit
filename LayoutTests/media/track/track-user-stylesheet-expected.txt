@@ -12,8 +12,6 @@ EVENT(seeked)
 
 ** Track should be visible, cue should be styled appropriately. **
 EXPECTED (video.textTracks[0].mode == 'showing') OK
-EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).color == 'rgb(0, 0, 255)') OK
-EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor == 'rgb(255, 255, 0)') OK
 
 ** Remove the video from the document, add it back. **
 RUN(video.parentNode.removeChild(video))

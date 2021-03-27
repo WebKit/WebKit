@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-static constexpr size_t maximumActiveCountForLowPriority = 6;
+static constexpr size_t maximumActiveCountForLowPriority = 2;
 
 class NetworkLoadScheduler::HostContext {
     WTF_MAKE_FAST_ALLOCATED;

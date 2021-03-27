@@ -28,7 +28,7 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
-#import "WebInspectorProxy.h"
+#import "WebInspectorUIProxy.h"
 #import "_WKInspectorExtensionDelegate.h"
 #import "_WKInspectorExtensionInternal.h"
 #import <wtf/UniqueRef.h>

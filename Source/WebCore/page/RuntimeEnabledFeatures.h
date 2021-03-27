@@ -56,9 +56,6 @@ public:
     void setCustomPasteboardDataEnabled(bool isEnabled) { m_isCustomPasteboardDataEnabled = isEnabled; }
     bool customPasteboardDataEnabled() const { return m_isCustomPasteboardDataEnabled; }
 
-    void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
-    bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
-
     void setImageBitmapEnabled(bool isEnabled) { m_isImageBitmapEnabled = isEnabled; }
     bool imageBitmapEnabled() const { return m_isImageBitmapEnabled; }
 
@@ -279,7 +276,6 @@ private:
     // Never instantiate.
     RuntimeEnabledFeatures();
 
-    bool m_areModernMediaControlsEnabled { false };
     bool m_isPaintTimingEnabled { false };
     bool m_isMenuItemElementEnabled { false };
     bool m_isDirectoryUploadEnabled { false };

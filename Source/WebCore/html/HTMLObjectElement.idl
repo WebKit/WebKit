@@ -49,5 +49,5 @@
     [CheckSecurityForNode] readonly attribute Document contentDocument;
     readonly attribute WindowProxy contentWindow;
 
-    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
+    [CheckSecurityForNode] Document getSVGDocument();
 };

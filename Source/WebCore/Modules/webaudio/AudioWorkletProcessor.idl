@@ -32,6 +32,6 @@
     ImplementationLacksVTable,
     JSCustomMarkFunction
 ] interface AudioWorkletProcessor {
-    [CallWith=ScriptExecutionContext, MayThrowException] constructor();
+    [CallWith=ScriptExecutionContext] constructor();
     readonly attribute MessagePort port;
 };

@@ -1280,30 +1280,30 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Lay
     if (!tableElt->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
         return;
 
-    LayoutPoint adjustedPaintOffset = paintOffset;
-    if (backgroundObject != this)
-        adjustedPaintOffset.moveBy(location());
-
     const auto& style = backgroundObject->style();
     auto& bgLayer = style.backgroundLayers();
 
     auto color = style.visitedDependentColor(CSSPropertyBackgroundColor);
-    auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
+    if (!bgLayer.hasImage() && !color.isVisible())
+        return;
 
     color = style.colorByApplyingColorFilter(color);
 
-    if (bgLayer.hasImage() || color.isValid()) {
-        // We have to clip here because the background would paint
-        // on top of the borders otherwise.  This only matters for cells and rows.
-        bool shouldClip = backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders();
-        GraphicsContextStateSaver stateSaver(paintInfo.context(), shouldClip);
-        if (shouldClip) {
-            LayoutRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
-                width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
-            paintInfo.context().clip(clipRect);
-        }
-        paintFillLayers(paintInfo, color, bgLayer, LayoutRect(adjustedPaintOffset, frameRect().size()), BackgroundBleedNone, compositeOp, backgroundObject);
+    LayoutPoint adjustedPaintOffset = paintOffset;
+    if (backgroundObject != this)
+        adjustedPaintOffset.moveBy(location());
+
+    // We have to clip here because the background would paint
+    // on top of the borders otherwise. This only matters for cells and rows.
+    bool shouldClip = backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders();
+    GraphicsContextStateSaver stateSaver(paintInfo.context(), shouldClip);
+    if (shouldClip) {
+        LayoutRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
+            width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
+        paintInfo.context().clip(clipRect);
     }
+    auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
+    paintFillLayers(paintInfo, color, bgLayer, LayoutRect(adjustedPaintOffset, frameRect().size()), BackgroundBleedNone, compositeOp, backgroundObject);
 }
 
 void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

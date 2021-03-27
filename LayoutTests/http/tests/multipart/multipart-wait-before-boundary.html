@@ -6,7 +6,7 @@
             testRunner.waitUntilDone();
         }
         function childLoaded() {
-            setTimeout("window.frames['iframe'].location = 'resources/multipart-wait-before-boundary.php?done=1'", 0);
+            setTimeout("window.frames['iframe'].location = 'resources/multipart-wait-before-boundary.py?done=1'", 0);
         }
         function success() {
             if (window.testRunner) {
@@ -18,6 +18,6 @@
 </head>
 <body>
     <p id="status">RUNNING...</p>
-    <iframe id="iframe" name="iframe" src="resources/multipart-wait-before-boundary.php">
+    <iframe id="iframe" name="iframe" src="resources/multipart-wait-before-boundary.py">
 </body>
 </html>

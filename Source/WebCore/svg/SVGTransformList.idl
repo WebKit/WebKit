@@ -30,15 +30,15 @@
     readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowException] undefined clear();
-    [MayThrowException] SVGTransform initialize(SVGTransform newItem);
-    [MayThrowException] getter SVGTransform getItem(unsigned long index);
-    [MayThrowException] SVGTransform insertItemBefore(SVGTransform newItem, unsigned long index);
-    [MayThrowException] SVGTransform replaceItem(SVGTransform newItem, unsigned long index);
-    [MayThrowException] SVGTransform removeItem(unsigned long index);
-    [MayThrowException] SVGTransform appendItem(SVGTransform newItem);
+    undefined clear();
+    SVGTransform initialize(SVGTransform newItem);
+    getter SVGTransform getItem(unsigned long index);
+    SVGTransform insertItemBefore(SVGTransform newItem, unsigned long index);
+    SVGTransform replaceItem(SVGTransform newItem, unsigned long index);
+    SVGTransform removeItem(unsigned long index);
+    SVGTransform appendItem(SVGTransform newItem);
     setter undefined (unsigned long index, SVGTransform newItem);
 
-    [MayThrowException, NewObject] SVGTransform createSVGTransformFromMatrix(optional DOMMatrix2DInit matrix);
-    [MayThrowException] SVGTransform consolidate();
+    [NewObject] SVGTransform createSVGTransformFromMatrix(optional DOMMatrix2DInit matrix);
+    SVGTransform consolidate();
 };

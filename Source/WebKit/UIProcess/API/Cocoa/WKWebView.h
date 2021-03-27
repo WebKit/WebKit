@@ -489,7 +489,8 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  @param data The data to use as the contents of the webpage.
  @result A new navigation.
 */
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request response:(NSURLResponse *)response responseData:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data WK_API_DEPRECATED_WITH_REPLACEMENT("loadSimulatedRequest:response:responseData:", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
 
 /*! @abstract Navigates to the requested file URL on the filesystem.
  @param request The request specifying the file URL to which to navigate.
@@ -510,7 +511,8 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  @param string The data to use as the contents of the webpage.
  @result A new navigation.
 */
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string NS_SWIFT_NAME(loadSimulatedRequest(_:withResponseHTML:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)string NS_SWIFT_NAME(loadSimulatedRequest(_:responseHTML:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string NS_SWIFT_NAME(loadSimulatedRequest(_:withResponseHTML:)) WK_API_DEPRECATED_WITH_REPLACEMENT("loadSimulatedRequest:responseHTMLString:", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
 
 #if !TARGET_OS_IPHONE
 /* @abstract Returns an NSPrintOperation object configured to print the contents of this WKWebView
@@ -565,13 +567,6 @@ WK_API_AVAILABLE(macos(10.15.4))
 
 @property (nonatomic, readonly, copy) NSArray *certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("serverTrust", macos(10.11, 10.12), ios(9.0, 10.0));
 
-#ifndef __swift__
-- (void)pauseAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("pauseAllMediaPlaybackWithCompletionHandler", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
-- (void)suspendAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:suspended", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
-- (void)resumeAllMediaPlayback:(void (^ _Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:suspended", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
-- (void)closeAllMediaPresentations:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("closeAllMediaPresentationsWithCompletionHandler", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
-- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("requestMediaPlaybackStateWithCompletionHandler", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
-#endif
 @end
 
 NS_ASSUME_NONNULL_END

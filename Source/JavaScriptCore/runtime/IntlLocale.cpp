@@ -150,15 +150,21 @@ void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringVi
         else
             hasAppended = true;
 
-        ASSERT(subtag.is8Bit() && subtag.isAllASCII());
-        buffer.append(reinterpret_cast<const char*>(subtag.characters8()), subtag.length());
+        ASSERT(subtag.isAllASCII());
+        if (subtag.is8Bit())
+            buffer.append(subtag.characters8(), subtag.length());
+        else
+            buffer.append(subtag.characters16(), subtag.length());
     }
 
     if (endOfLanguageScriptRegionVariant != length) {
         auto rest = localeIDView.right(length - endOfLanguageScriptRegionVariant);
 
-        ASSERT(rest.is8Bit() && rest.isAllASCII());
-        buffer.append(reinterpret_cast<const char*>(rest.characters8()), rest.length());
+        ASSERT(rest.isAllASCII());
+        if (rest.is8Bit())
+            buffer.append(rest.characters8(), rest.length());
+        else
+            buffer.append(rest.characters16(), rest.length());
     }
 
     buffer.append('\0');
@@ -169,8 +175,13 @@ void LocaleIDBuilder::setKeywordValue(ASCIILiteral key, StringView value)
 {
     ASSERT(m_buffer.size());
 
-    ASSERT(value.is8Bit() && value.isAllASCII());
-    CString rawValue { reinterpret_cast<const char*>(value.characters8()), value.length() };
+    ASSERT(value.isAllASCII());
+    Vector<char, 32> rawValue(value.length() + 1);
+    if (value.is8Bit())
+        StringImpl::copyCharacters(reinterpret_cast<LChar*>(rawValue.data()), value.characters8(), value.length());
+    else
+        StringImpl::copyCharacters(reinterpret_cast<LChar*>(rawValue.data()), value.characters16(), value.length());
+    rawValue[value.length()] = '\0';
 
     UErrorCode status = U_ZERO_ERROR;
     auto length = uloc_setKeywordValue(key.characters(), rawValue.data(), m_buffer.data(), m_buffer.size(), &status);

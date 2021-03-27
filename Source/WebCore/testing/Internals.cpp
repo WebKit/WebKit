@@ -535,6 +535,7 @@ void Internals::resetToConsistentState(Page& page)
     page.group().captionPreferences().setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
     page.group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
     page.group().captionPreferences().setTestingMode(false);
+    PlatformMediaSessionManager::sharedManager().resetHaveEverRegisteredAsNowPlayingApplicationForTesting();
     PlatformMediaSessionManager::sharedManager().resetRestrictions();
     PlatformMediaSessionManager::sharedManager().setWillIgnoreSystemInterruptions(true);
 #endif
@@ -6104,7 +6105,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
             if (!imageData.hasException())
                 m_artworkImagePromise->resolve(imageData.releaseReturnValue());
             else
-                m_nextTrackFramePromise->reject(imageData.exception().code());
+                m_artworkImagePromise->reject(imageData.exception().code());
         } else
             m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieve."  });
         m_artworkImagePromise = nullptr;

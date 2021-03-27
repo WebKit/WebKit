@@ -8,21 +8,6 @@ EVENT(canplaythrough)
 
 ** Forced tracks should be in .textTracks as well as in the menu
 EXPECTED (video.textTracks.length == '9') OK
-EXPECTED (trackMenuItems.length == '11') OK
-
-** 'forced' should be in the title of a forced track menu item
-Track menu:
-0: "Off", checked
-1: "Auto (Recommended)"
-2: "English Closed Captions CC"
-3: "English Subtitles"
-4: "English Subtitles Forced"
-5: "French Subtitles"
-6: "French Subtitles Forced"
-7: "German Subtitles"
-8: "German Subtitles Forced"
-9: "Spanish Subtitles"
-10: "Spanish Subtitles Forced"
 
 ** No track should be enabled by default
 EXPECTED (video.textTracks[0].language == 'en') OK

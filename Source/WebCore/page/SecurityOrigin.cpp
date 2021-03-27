@@ -165,6 +165,9 @@ static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, const St
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
         return true;
 
+    if (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(protocol))
+        return true;
+
     return false;
 }
 

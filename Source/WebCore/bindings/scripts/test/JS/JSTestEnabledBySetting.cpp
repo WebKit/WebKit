@@ -44,6 +44,10 @@
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
 
+#if ENABLE(TEST_FEATURE)
+#include "IDLTypes.h"
+#endif
+
 
 namespace WebCore {
 using namespace JSC;
@@ -298,9 +302,9 @@ static inline JSValue jsTestEnabledBySetting_TestSubObjEnabledBySettingConstruct
     return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_TestSubObjEnabledBySettingConstructorGetter>(*lexicalGlobalObject, thisValue, "TestSubObjEnabledBySetting");
+    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_TestSubObjEnabledBySettingConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledBySetting& thisObject)
@@ -309,9 +313,9 @@ static inline JSValue jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateCo
     return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructorGetter>(*lexicalGlobalObject, thisValue, "TestSubObjEnabledBySettingPrivate");
+    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivateConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledBySetting& thisObject)
@@ -320,9 +324,9 @@ static inline JSValue jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePu
     return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructorGetter>(*lexicalGlobalObject, thisValue, "TestSubObjEnabledBySettingPrivatePublic");
+    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_TestSubObjEnabledBySettingPrivatePublicConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #if ENABLE(TEST_FEATURE)
@@ -334,9 +338,9 @@ static inline JSValue jsTestEnabledBySetting_enabledBySettingAttributeGetter(JSG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.enabledBySettingAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_enabledBySettingAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_enabledBySettingAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_enabledBySettingAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "enabledBySettingAttribute");
+    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_enabledBySettingAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -349,15 +353,15 @@ static inline bool setJSTestEnabledBySetting_enabledBySettingAttributeSetter(JSG
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setEnabledBySettingAttribute(WTFMove(nativeValue));
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_enabledBySettingAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_enabledBySettingAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_enabledBySettingAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "enabledBySettingAttribute");
+    return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_enabledBySettingAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -371,9 +375,9 @@ static inline JSValue jsTestEnabledBySetting_enabledByTwoSettingsAttributeGetter
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.enabledByTwoSettingsAttribute())));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_enabledByTwoSettingsAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_enabledByTwoSettingsAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_enabledByTwoSettingsAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "enabledByTwoSettingsAttribute");
+    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_enabledByTwoSettingsAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #endif
@@ -386,15 +390,15 @@ static inline bool setJSTestEnabledBySetting_enabledByTwoSettingsAttributeSetter
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setEnabledByTwoSettingsAttribute(WTFMove(nativeValue));
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_enabledByTwoSettingsAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_enabledByTwoSettingsAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_enabledByTwoSettingsAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "enabledByTwoSettingsAttribute");
+    return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_enabledByTwoSettingsAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #endif
@@ -407,9 +411,9 @@ static inline JSValue jsTestEnabledBySetting_supplementalAttributeGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, WebCore::TestEnabledBySettingSupplemental::supplementalAttribute(impl))));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_supplementalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySetting_supplementalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_supplementalAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalAttribute");
+    return IDLAttribute<JSTestEnabledBySetting>::get<jsTestEnabledBySetting_supplementalAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline bool setJSTestEnabledBySetting_supplementalAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledBySetting& thisObject, JSValue value)
@@ -419,15 +423,15 @@ static inline bool setJSTestEnabledBySetting_supplementalAttributeSetter(JSGloba
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return WebCore::TestEnabledBySettingSupplemental::setSupplementalAttribute(impl, WTFMove(nativeValue));
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_supplementalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestEnabledBySetting_supplementalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_supplementalAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalAttribute");
+    return IDLAttribute<JSTestEnabledBySetting>::set<setJSTestEnabledBySetting_supplementalAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #if ENABLE(TEST_FEATURE)
@@ -443,9 +447,7 @@ static inline JSC::EncodedJSValue jsTestEnabledBySettingPrototypeFunction_enable
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto testParam = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.enabledBySettingOperation(WTFMove(testParam));
-    return JSValue::encode(jsUndefined());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.enabledBySettingOperation(WTFMove(testParam)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestEnabledBySettingPrototypeFunction_enabledBySettingOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

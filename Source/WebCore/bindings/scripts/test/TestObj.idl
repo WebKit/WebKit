@@ -155,7 +155,6 @@ enum TestConfidence { "high", "kinda-low" };
     undefined methodWithStandaloneEnumArg(TestStandaloneEnumeration enumArg);
     undefined methodWithOptionalEnumArg(optional TestEnumType enumArg);
     undefined methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
-    [MayThrowException] TestObj methodThatRequiresAllArgsAndThrows(DOMString strArg, TestObj objArg);
 
     undefined methodWithUSVStringArg(USVString str);
     undefined methodWithNullableUSVStringArg(USVString? str);
@@ -168,11 +167,6 @@ enum TestConfidence { "high", "kinda-low" };
     undefined serializedValue(SerializedScriptValue serializedArg);
 
     undefined methodWithRecord(record<DOMString, long> recordParameter);
-
-    // Exceptions
-    [MayThrowException] undefined methodWithException();
-    [MayThrowException] long methodWithExceptionReturningLong();
-    [MayThrowException] TestObj methodWithExceptionReturningObject();
 
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
@@ -197,11 +191,8 @@ enum TestConfidence { "high", "kinda-low" };
     // 'CallWith' extended attribute
     [CallWith=GlobalObject] undefined withExecStateVoid();
     [CallWith=GlobalObject] TestObj withExecStateObj();
-    [CallWith=GlobalObject, MayThrowException] undefined withExecStateVoidException();
-    [CallWith=GlobalObject, MayThrowException] TestObj withExecStateObjException();
     [CallWith=ScriptExecutionContext] undefined withScriptExecutionContext();
     [CallWith=ScriptExecutionContext&ExecState] undefined withScriptExecutionContextAndExecState();
-    [CallWith=ScriptExecutionContext&ExecState, MayThrowException] TestObj withScriptExecutionContextAndExecStateObjException();
     [CallWith=  ScriptExecutionContext  &  ExecState  ] TestObj withScriptExecutionContextAndExecStateWithSpaces();
     [CallWith=Document] undefined withDocumentArgument();
     [CallWith=IncumbentDocument] undefined withCallerDocumentArgument();
@@ -342,8 +333,8 @@ enum TestConfidence { "high", "kinda-low" };
     undefined classMethodWithEnforceRangeOnOptional(optional [EnforceRange] long objArgsLong = 0);
 
     undefined methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);
-    [MayThrowException] sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
-    [MayThrowException] DOMStringList domStringListFunction(DOMStringList values);
+    sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
+    DOMStringList domStringListFunction(DOMStringList values);
 
     undefined operationWithOptionalUnionParameter(optional (DOMString or sequence<unrestricted double>) optionalUnion);
 
@@ -352,7 +343,7 @@ enum TestConfidence { "high", "kinda-low" };
     Element? getElementById([RequiresExistingAtomString] DOMString elementId);
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
-    [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
+    [CheckSecurityForNode] Document getSVGDocument();
 
     undefined convert1(TestNode value);
     undefined convert2(TestNode? value);
@@ -413,12 +404,10 @@ enum TestConfidence { "high", "kinda-low" };
     // Promise function
     Promise<undefined> testPromiseFunction();
     Promise<undefined> testPromiseFunctionWithFloatArgument(float a);
-    [MayThrowException] Promise<undefined> testPromiseFunctionWithException();
     Promise<undefined> testPromiseFunctionWithOptionalIntArgument(optional long a);
     Promise<undefined> testPromiseOverloadedFunction(float a);
     Promise<undefined> testPromiseOverloadedFunction(FetchRequest request);
     static Promise<undefined> testStaticPromiseFunction();
-    [MayThrowException] static Promise<undefined> testStaticPromiseFunctionWithException();
     [Custom] Promise<undefined> testCustomPromiseFunction();
     [Custom] static Promise<undefined> testStaticCustomPromiseFunction();
     [Custom, ReturnsOwnPromise] Promise<undefined> testCustomReturnsOwnPromiseFunction();
@@ -443,7 +432,6 @@ enum TestConfidence { "high", "kinda-low" };
     undefined bufferSourceParameter(BufferSource data);
 
     Node testReturnValueOptimization([ReturnValue] Node a, Node b);
-    [MayThrowException] Node testReturnValueOptimizationWithException([ReturnValue] Node a, Node b);
 
     [Exposed=Window] attribute long conditionallyExposedToWindowAttribute;
     [Exposed=Worker] attribute long conditionallyExposedToWorkerAttribute;

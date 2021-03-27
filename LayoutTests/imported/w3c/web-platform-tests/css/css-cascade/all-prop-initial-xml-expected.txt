@@ -93,6 +93,7 @@ PASS column-rule-style
 PASS column-rule-width
 PASS column-span
 PASS column-width
+PASS contain
 PASS content
 PASS counter-increment
 PASS counter-reset

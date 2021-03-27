@@ -32,7 +32,7 @@ window.addEventListener("pagehide", function(event) {
 
 async function test() {
     let scopeURL = "/workers/service/resources/";
-    registration = await registerAndWaitForActive("resources/updating-fetch-worker.php", scopeURL);
+    registration = await registerAndWaitForActive("resources/updating-fetch-worker.py", scopeURL);
     worker = registration.active;
     if (!worker) {
         log("FAIL: No active service worker");

@@ -7,7 +7,7 @@ require('./v3-models.js');
 let BuildbotSyncer = require('./buildbot-syncer').BuildbotSyncer;
 
 class BuildbotTriggerable {
-    constructor(config, remote, buildbotRemote, slaveInfo, logger)
+    constructor(config, remote, buildbotRemote, workerInfo, logger)
     {
         this._name = config.triggerableName;
         assert(typeof(this._name) == 'string', 'triggerableName must be specified');
@@ -19,9 +19,9 @@ class BuildbotTriggerable {
         this._config = config;
         this._buildbotRemote = buildbotRemote;
 
-        this._slaveInfo = slaveInfo;
-        assert(typeof(slaveInfo.name) == 'string', 'slave name must be specified');
-        assert(typeof(slaveInfo.password) == 'string', 'slave password must be specified');
+        this._workerInfo = workerInfo;
+        assert(typeof(workerInfo.name) == 'string', 'worker name must be specified');
+        assert(typeof(workerInfo.password) == 'string', 'worker password must be specified');
 
         this._syncers = null;
         this._logger = logger || {log: () => { }, error: () => { }};
@@ -62,8 +62,8 @@ class BuildbotTriggerable {
             repositoryGroups = syncer.repositoryGroups();
         }
         return this._remote.postJSONWithStatus(`/api/update-triggerable/`, {
-            'slaveName': this._slaveInfo.name,
-            'slavePassword': this._slaveInfo.password,
+            'workerName': this._workerInfo.name,
+            'workerPassword': this._workerInfo.password,
             'triggerable': this._name,
             'configurations': Array.from(map.values()),
             'repositoryGroups': Object.keys(repositoryGroups).map((groupName) => {
@@ -102,8 +102,8 @@ class BuildbotTriggerable {
             ...updates
         };
         return await this._remote.postJSONWithStatus(`/api/build-requests/${this._name}`, {
-            'slaveName': this._slaveInfo.name,
-            'slavePassword': this._slaveInfo.password,
+            'workerName': this._workerInfo.name,
+            'workerPassword': this._workerInfo.password,
             'buildRequestUpdates': updates});
     }
 
@@ -123,9 +123,9 @@ class BuildbotTriggerable {
             return;
         }
 
-        return await this._scheduleRequestIfSlaveIsAvailable(buildRequest, testGroup.requests,
+        return await this._scheduleRequestIfWorkerIsAvailable(buildRequest, testGroup.requests,
             buildRequest.isBuild() ? testGroup.buildSyncer : testGroup.testSyncer,
-            buildRequest.isBuild() ? testGroup.buildSlaveName : testGroup.testSlaveName);
+            buildRequest.isBuild() ? testGroup.buildWorkerName : testGroup.testWorkerName);
     }
 
     _validateRequests(buildRequests)
@@ -186,16 +186,16 @@ class BuildbotTriggerable {
 
                 if (request.isBuild()) {
                     assert(!info.buildSyncer || info.buildSyncer == syncer);
-                    if (entry.slaveName()) {
-                        assert(!info.buildSlaveName || info.buildSlaveName == entry.slaveName());
-                        info.buildSlaveName = entry.slaveName();
+                    if (entry.workerName()) {
+                        assert(!info.buildWorkerName || info.buildWorkerName == entry.workerName());
+                        info.buildWorkerName = entry.workerName();
                     }
                     info.buildSyncer = syncer;
                 } else {
                     assert(!info.testSyncer || info.testSyncer == syncer);
-                    if (entry.slaveName()) {
-                        assert(!info.testSlaveName || info.testSlaveName == entry.slaveName());
-                        info.testSlaveName = entry.slaveName();
+                    if (entry.workerName()) {
+                        assert(!info.testWorkerName || info.testWorkerName == entry.workerName());
+                        info.testWorkerName = entry.workerName();
                     }
                     info.testSyncer = syncer;
                 }
@@ -237,7 +237,7 @@ class BuildbotTriggerable {
         return null;
     }
 
-    _scheduleRequestIfSlaveIsAvailable(nextRequest, requestsInGroup, syncer, slaveName)
+    _scheduleRequestIfWorkerIsAvailable(nextRequest, requestsInGroup, syncer, workerName)
     {
         if (!nextRequest)
             return null;
@@ -245,7 +245,7 @@ class BuildbotTriggerable {
         const isFirstRequest = nextRequest == requestsInGroup[0] || !nextRequest.order();
         if (!isFirstRequest) {
             if (syncer)
-                return this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, slaveName);
+                return this._scheduleRequestWithLog(syncer, nextRequest, requestsInGroup, workerName);
             this._logger.error(`Could not identify the syncer for ${nextRequest.id()}.`);
         }
 
@@ -262,12 +262,12 @@ class BuildbotTriggerable {
         return null;
     }
 
-    _scheduleRequestWithLog(syncer, request, requestsInGroup, slaveName)
+    _scheduleRequestWithLog(syncer, request, requestsInGroup, workerName)
     {
-        const promise = syncer.scheduleRequestInGroupIfAvailable(request, requestsInGroup, slaveName);
+        const promise = syncer.scheduleRequestInGroupIfAvailable(request, requestsInGroup, workerName);
         if (!promise)
             return promise;
-        this._logger.log(`Scheduling build request ${request.id()}${slaveName ? ' on ' + slaveName : ''} in ${syncer.builderName()}`);
+        this._logger.log(`Scheduling build request ${request.id()}${workerName ? ' on ' + workerName : ''} in ${syncer.builderName()}`);
         return promise;
     }
 
@@ -278,7 +278,7 @@ class BuildbotTriggerable {
         for (let request of buildRequests) {
             let groupId = request.testGroupId();
             if (!map.has(groupId)) // Don't use real TestGroup objects to avoid executing postgres query in the server
-                map.set(groupId, {id: groupId, groupOrder: groupOrder++, requests: [request], buildSyncer: null, testSyncer: null, slaveName: null});
+                map.set(groupId, {id: groupId, groupOrder: groupOrder++, requests: [request], buildSyncer: null, testSyncer: null, workerName: null});
             else
                 map.get(groupId).requests.push(request);
         }

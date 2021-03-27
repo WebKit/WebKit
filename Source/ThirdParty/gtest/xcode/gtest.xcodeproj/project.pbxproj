@@ -22,18 +22,6 @@
 			name = Check;
 			productName = Check;
 		};
-		40C44ADC0E3798F4008FCC51 /* Version Info */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 40C44AE40E379905008FCC51 /* Build configuration list for PBXAggregateTarget "Version Info" */;
-			buildPhases = (
-				40C44ADB0E3798F4008FCC51 /* Generate Version.h */,
-			);
-			comments = "The generation of Version.h must be performed in its own target. Since the Info.plist is preprocessed before any of the other build phases in gtest, the Version.h file would not be ready if included as a build phase of that target.";
-			dependencies = (
-			);
-			name = "Version Info";
-			productName = Version.h;
-		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -52,11 +40,8 @@
 		404884A20E2F7BE600CF7658 /* gtest-internal.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 404883E40E2F799B00CF7658 /* gtest-internal.h */; };
 		404884A30E2F7BE600CF7658 /* gtest-port.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 404883E50E2F799B00CF7658 /* gtest-port.h */; };
 		404884A40E2F7BE600CF7658 /* gtest-string.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 404883E60E2F799B00CF7658 /* gtest-string.h */; };
-		404884AC0E2F7CD900CF7658 /* CHANGES in Resources */ = {isa = PBXBuildFile; fileRef = 404884A90E2F7CD900CF7658 /* CHANGES */; };
-		404884AD0E2F7CD900CF7658 /* CONTRIBUTORS in Resources */ = {isa = PBXBuildFile; fileRef = 404884AA0E2F7CD900CF7658 /* CONTRIBUTORS */; };
 		404884AE0E2F7CD900CF7658 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 404884AB0E2F7CD900CF7658 /* LICENSE */; };
 		40899F3A0FFA70D4000B29AE /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 224A12A10E9EADA700BD17FD /* gtest-all.cc */; };
-		40899F500FFA7281000B29AE /* gtest-tuple.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 40899F4D0FFA7271000B29AE /* gtest-tuple.h */; };
 		40899F530FFA72A0000B29AE /* gtest_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3B238C120E7FE13C00846E11 /* gtest_unittest.cc */; };
 		4089A0440FFAD1BE000B29AE /* sample1.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4089A02C0FFACF7F000B29AE /* sample1.cc */; };
 		4089A0460FFAD1BE000B29AE /* sample1_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4089A02E0FFACF7F000B29AE /* sample1_unittest.cc */; };
@@ -75,10 +60,9 @@
 		40C849A2101A37050083642A /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4539C8FF0EC27F6400A70F4C /* gtest.framework */; };
 		40C849A4101A37150083642A /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4539C8FF0EC27F6400A70F4C /* gtest.framework */; };
 		4539C9340EC280AE00A70F4C /* gtest-param-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4539C9330EC280AE00A70F4C /* gtest-param-test.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4539C9380EC280E200A70F4C /* gtest-linked_ptr.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 4539C9350EC280E200A70F4C /* gtest-linked_ptr.h */; };
-		4539C9390EC280E200A70F4C /* gtest-param-util-generated.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 4539C9360EC280E200A70F4C /* gtest-param-util-generated.h */; };
 		4539C93A0EC280E200A70F4C /* gtest-param-util.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 4539C9370EC280E200A70F4C /* gtest-param-util.h */; };
 		4567C8181264FF71007740BE /* gtest-printers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4567C8171264FF71007740BE /* gtest-printers.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A3C10BE0260952C60023155D /* gtest-matchers.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C10BDF260952C50023155D /* gtest-matchers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F67D4F3E1C7F5D8B0017C729 /* gtest-port-arch.h in Headers */ = {isa = PBXBuildFile; fileRef = F67D4F3D1C7F5D8B0017C729 /* gtest-port-arch.h */; };
 		F67D4F3F1C7F5DA70017C729 /* gtest-port-arch.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = F67D4F3D1C7F5D8B0017C729 /* gtest-port-arch.h */; };
 		F67D4F441C7F5DD00017C729 /* gtest-port.h in Headers */ = {isa = PBXBuildFile; fileRef = F67D4F411C7F5DD00017C729 /* gtest-port.h */; };
@@ -109,13 +93,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 40C848F9101A209C0083642A;
 			remoteInfo = "gtest-static";
-		};
-		40C44AE50E379922008FCC51 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 40C44ADC0E3798F4008FCC51;
-			remoteInfo = Version.h;
 		};
 		40C8497C101A36850083642A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -192,13 +169,10 @@
 				404884A00E2F7BE600CF7658 /* gtest-death-test-internal.h in Copy Headers Internal */,
 				404884A10E2F7BE600CF7658 /* gtest-filepath.h in Copy Headers Internal */,
 				404884A20E2F7BE600CF7658 /* gtest-internal.h in Copy Headers Internal */,
-				4539C9380EC280E200A70F4C /* gtest-linked_ptr.h in Copy Headers Internal */,
-				4539C9390EC280E200A70F4C /* gtest-param-util-generated.h in Copy Headers Internal */,
 				4539C93A0EC280E200A70F4C /* gtest-param-util.h in Copy Headers Internal */,
 				F67D4F3F1C7F5DA70017C729 /* gtest-port-arch.h in Copy Headers Internal */,
 				404884A30E2F7BE600CF7658 /* gtest-port.h in Copy Headers Internal */,
 				404884A40E2F7BE600CF7658 /* gtest-string.h in Copy Headers Internal */,
-				40899F500FFA7281000B29AE /* gtest-tuple.h in Copy Headers Internal */,
 				3BF6F2A00E79B5AD000F2EEE /* gtest-type-util.h in Copy Headers Internal */,
 			);
 			name = "Copy Headers Internal";
@@ -225,7 +199,6 @@
 		3B87D2100E96B92E000D1852 /* runtests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = runtests.sh; sourceTree = "<group>"; };
 		3BF6F29F0E79B5AD000F2EEE /* gtest-type-util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-type-util.h"; sourceTree = "<group>"; };
 		3BF6F2A40E79B616000F2EEE /* gtest-typed-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-typed-test.h"; sourceTree = "<group>"; };
-		403EE37C0E377822004BD1E2 /* versiongenerate.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = versiongenerate.py; sourceTree = "<group>"; };
 		404883DB0E2F799B00CF7658 /* gtest-death-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-death-test.h"; sourceTree = "<group>"; };
 		404883DC0E2F799B00CF7658 /* gtest-message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-message.h"; sourceTree = "<group>"; };
 		404883DD0E2F799B00CF7658 /* gtest-spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-spi.h"; sourceTree = "<group>"; };
@@ -239,11 +212,8 @@
 		404883E60E2F799B00CF7658 /* gtest-string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-string.h"; sourceTree = "<group>"; };
 		404883F60E2F799B00CF7658 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = SOURCE_ROOT; };
 		4048840D0E2F799B00CF7658 /* gtest_main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_main.cc; sourceTree = "<group>"; };
-		404884A90E2F7CD900CF7658 /* CHANGES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CHANGES; path = ../CHANGES; sourceTree = SOURCE_ROOT; };
-		404884AA0E2F7CD900CF7658 /* CONTRIBUTORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CONTRIBUTORS; path = ../CONTRIBUTORS; sourceTree = SOURCE_ROOT; };
 		404884AB0E2F7CD900CF7658 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = SOURCE_ROOT; };
 		40899F430FFA7184000B29AE /* gtest_unittest-framework */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "gtest_unittest-framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		40899F4D0FFA7271000B29AE /* gtest-tuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-tuple.h"; sourceTree = "<group>"; };
 		40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = StaticLibraryTarget.xcconfig; sourceTree = "<group>"; };
 		4089A0130FFACEFC000B29AE /* sample1_unittest-framework */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sample1_unittest-framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4089A02C0FFACF7F000B29AE /* sample1.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample1.cc; sourceTree = "<group>"; };
@@ -261,10 +231,9 @@
 		44C48DFF14A4098F00A2D9C7 /* ProductionProject.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ProductionProject.xcconfig; sourceTree = "<group>"; };
 		4539C8FF0EC27F6400A70F4C /* gtest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = gtest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4539C9330EC280AE00A70F4C /* gtest-param-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-param-test.h"; sourceTree = "<group>"; };
-		4539C9350EC280E200A70F4C /* gtest-linked_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-linked_ptr.h"; sourceTree = "<group>"; };
-		4539C9360EC280E200A70F4C /* gtest-param-util-generated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-param-util-generated.h"; sourceTree = "<group>"; };
 		4539C9370EC280E200A70F4C /* gtest-param-util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-param-util.h"; sourceTree = "<group>"; };
 		4567C8171264FF71007740BE /* gtest-printers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-printers.h"; sourceTree = "<group>"; };
+		A3C10BDF260952C50023155D /* gtest-matchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-matchers.h"; sourceTree = "<group>"; };
 		F67D4F3D1C7F5D8B0017C729 /* gtest-port-arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-port-arch.h"; sourceTree = "<group>"; };
 		F67D4F411C7F5DD00017C729 /* gtest-port.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-port.h"; sourceTree = "<group>"; };
 		F67D4F421C7F5DD00017C729 /* gtest-printers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-printers.h"; sourceTree = "<group>"; };
@@ -340,8 +309,6 @@
 		08FB77ACFE841707C02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				404884A90E2F7CD900CF7658 /* CHANGES */,
-				404884AA0E2F7CD900CF7658 /* CONTRIBUTORS */,
 				404883D90E2F799B00CF7658 /* include */,
 				404884AB0E2F7CD900CF7658 /* LICENSE */,
 				4089A02F0FFACF84000B29AE /* samples */,
@@ -365,7 +332,6 @@
 			isa = PBXGroup;
 			children = (
 				3B87D2100E96B92E000D1852 /* runtests.sh */,
-				403EE37C0E377822004BD1E2 /* versiongenerate.py */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -384,6 +350,7 @@
 			children = (
 				404883E10E2F799B00CF7658 /* internal */,
 				404883DB0E2F799B00CF7658 /* gtest-death-test.h */,
+				A3C10BDF260952C50023155D /* gtest-matchers.h */,
 				404883DC0E2F799B00CF7658 /* gtest-message.h */,
 				4539C9330EC280AE00A70F4C /* gtest-param-test.h */,
 				4567C8171264FF71007740BE /* gtest-printers.h */,
@@ -404,13 +371,10 @@
 				404883E20E2F799B00CF7658 /* gtest-death-test-internal.h */,
 				404883E30E2F799B00CF7658 /* gtest-filepath.h */,
 				404883E40E2F799B00CF7658 /* gtest-internal.h */,
-				4539C9350EC280E200A70F4C /* gtest-linked_ptr.h */,
-				4539C9360EC280E200A70F4C /* gtest-param-util-generated.h */,
 				4539C9370EC280E200A70F4C /* gtest-param-util.h */,
 				F67D4F3D1C7F5D8B0017C729 /* gtest-port-arch.h */,
 				404883E50E2F799B00CF7658 /* gtest-port.h */,
 				404883E60E2F799B00CF7658 /* gtest-string.h */,
-				40899F4D0FFA7271000B29AE /* gtest-tuple.h */,
 				3BF6F29F0E79B5AD000F2EEE /* gtest-type-util.h */,
 			);
 			path = internal;
@@ -476,6 +440,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				404884380E2F799B00CF7658 /* gtest-death-test.h in Headers */,
+				A3C10BE0260952C60023155D /* gtest-matchers.h in Headers */,
 				404884390E2F799B00CF7658 /* gtest-message.h in Headers */,
 				4539C9340EC280AE00A70F4C /* gtest-param-test.h in Headers */,
 				F67D4F3E1C7F5D8B0017C729 /* gtest-port-arch.h in Headers */,
@@ -608,7 +573,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				40C44AE60E379922008FCC51 /* PBXTargetDependency */,
 				408BEC101046CFE900DEF522 /* PBXTargetDependency */,
 				40C8499C101A36DC0083642A /* PBXTargetDependency */,
 			);
@@ -648,7 +612,6 @@
 				4089A0120FFACEFC000B29AE /* sample1_unittest-framework */,
 				40C84989101A36A60083642A /* sample1_unittest-static */,
 				3B238F5F0E828B5400846E11 /* Check */,
-				40C44ADC0E3798F4008FCC51 /* Version Info */,
 			);
 		};
 /* End PBXProject section */
@@ -658,8 +621,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				404884AC0E2F7CD900CF7658 /* CHANGES in Resources */,
-				404884AD0E2F7CD900CF7658 /* CONTRIBUTORS in Resources */,
 				40C84978101A36540083642A /* libgtest_main.a in Resources */,
 				404884AE0E2F7CD900CF7658 /* LICENSE in Resources */,
 				404884500E2F799B00CF7658 /* README.md in Resources */,
@@ -680,24 +641,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Remember, this \"Run Script\" build phase will be executed from $SRCROOT\n/bin/bash Scripts/runtests.sh";
-		};
-		40C44ADB0E3798F4008FCC51 /* Generate Version.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Scripts/versiongenerate.py",
-				"$(SRCROOT)/../configure.ac",
-			);
-			name = "Generate Version.h";
-			outputPaths = (
-				"$(PROJECT_TEMP_DIR)/Version.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Remember, this \"Run Script\" build phase will be executed from $SRCROOT\n/usr/bin/python Scripts/versiongenerate.py ../ $PROJECT_TEMP_DIR";
+			shellScript = "# Remember, this \"Run Script\" build phase will be executed from $SRCROOT\n/bin/bash Scripts/runtests.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -777,11 +721,6 @@
 			isa = PBXTargetDependency;
 			target = 40C848F9101A209C0083642A /* gtest-static */;
 			targetProxy = 408BEC0F1046CFE900DEF522 /* PBXContainerItemProxy */;
-		};
-		40C44AE60E379922008FCC51 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 40C44ADC0E3798F4008FCC51 /* Version Info */;
-			targetProxy = 40C44AE50E379922008FCC51 /* PBXContainerItemProxy */;
 		};
 		40C8497B101A36850083642A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -879,22 +818,6 @@
 			};
 			name = Release;
 		};
-		40C44ADF0E3798F4008FCC51 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = gtest;
-				TARGET_NAME = gtest;
-			};
-			name = Debug;
-		};
-		40C44AE00E3798F4008FCC51 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = gtest;
-				TARGET_NAME = gtest;
-			};
-			name = Release;
-		};
 		40C848FB101A209D0083642A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
@@ -970,11 +893,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1.10.0;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
+				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = YES;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_NAME = gtest;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1036,23 +961,17 @@
 			};
 			name = Production;
 		};
-		44C48E0D14A409DE00A2D9C7 /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = gtest;
-				TARGET_NAME = gtest;
-			};
-			name = Production;
-		};
 		4FADC24308B4156D00ABE55E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1.10.0;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
+				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = YES;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_NAME = gtest;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1062,11 +981,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1.10.0;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
+				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = YES;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_NAME = gtest;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1115,16 +1036,6 @@
 				4089A0150FFACEFD000B29AE /* Debug */,
 				4089A0160FFACEFD000B29AE /* Release */,
 				44C48E0A14A409DE00A2D9C7 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		40C44AE40E379905008FCC51 /* Build configuration list for PBXAggregateTarget "Version Info" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				40C44ADF0E3798F4008FCC51 /* Debug */,
-				40C44AE00E3798F4008FCC51 /* Release */,
-				44C48E0D14A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

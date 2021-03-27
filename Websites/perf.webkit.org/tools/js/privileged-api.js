@@ -4,7 +4,7 @@ class NodePrivilegedAPI {
 
     static sendRequest(path, data, options = {useFormData: false})
     {
-        const clonedData = {slaveName: this._slaveName, slavePassword: this._slavePassword};
+        const clonedData = {workerName: this._workerName, workerPassword: this._workerPassword};
         for (const key in data)
             clonedData[key] = data[key];
 
@@ -15,10 +15,10 @@ class NodePrivilegedAPI {
             : RemoteAPI.postJSONWithStatus(fullPath, clonedData, options);
     }
 
-    static configure(slaveName, slavePassword)
+    static configure(workerName, workerPassword)
     {
-        this._slaveName = slaveName;
-        this._slavePassword = slavePassword;
+        this._workerName = workerName;
+        this._workerPassword = workerPassword;
     }
 }
 

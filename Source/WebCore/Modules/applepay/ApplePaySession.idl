@@ -41,23 +41,23 @@
     const unsigned short STATUS_PIN_INCORRECT = 6;
     const unsigned short STATUS_PIN_LOCKOUT = 7;
 
-    [CallWith=Document, MayThrowException] static boolean supportsVersion(unsigned long version);
-    [CallWith=Document, MayThrowException] static boolean canMakePayments();
-    [CallWith=Document, MayThrowException] static Promise<boolean> canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
-    [CallWith=Document, MayThrowException] static Promise<boolean> openPaymentSetup(DOMString merchantIdentifier);
+    [CallWith=Document] static boolean supportsVersion(unsigned long version);
+    [CallWith=Document] static boolean canMakePayments();
+    [CallWith=Document] static Promise<boolean> canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
+    [CallWith=Document] static Promise<boolean> openPaymentSetup(DOMString merchantIdentifier);
 
-    [CallWith=Document, MayThrowException] undefined begin();
-    [MayThrowException] undefined abort();
-    [MayThrowException, CallWith=GlobalObject] undefined completeMerchantValidation(any merchantSession);
-    [MayThrowException] undefined completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
-    [MayThrowException] undefined completeShippingContactSelection(ApplePayShippingContactUpdate update);
-    [MayThrowException] undefined completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
-    [MayThrowException] undefined completePayment(ApplePayPaymentAuthorizationResult result);
+    [CallWith=Document] undefined begin();
+    undefined abort();
+    [CallWith=GlobalObject] undefined completeMerchantValidation(any merchantSession);
+    undefined completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
+    undefined completeShippingContactSelection(ApplePayShippingContactUpdate update);
+    undefined completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
+    undefined completePayment(ApplePayPaymentAuthorizationResult result);
 
-    [MayThrowException] undefined completeShippingMethodSelection(unsigned short status, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
-    [MayThrowException] undefined completeShippingContactSelection(unsigned short status, sequence<ApplePayShippingMethod> newShippingMethods, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
-    [MayThrowException] undefined completePaymentMethodSelection(ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
-    [MayThrowException] undefined completePayment(unsigned short status);
+    undefined completeShippingMethodSelection(unsigned short status, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    undefined completeShippingContactSelection(unsigned short status, sequence<ApplePayShippingMethod> newShippingMethods, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    undefined completePaymentMethodSelection(ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    undefined completePayment(unsigned short status);
 
     attribute EventHandler onvalidatemerchant;
     attribute EventHandler onpaymentmethodselected;

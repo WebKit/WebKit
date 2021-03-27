@@ -66,9 +66,8 @@
 
 - (WKWebView *)webView
 {
-    if (auto* page = _inspector->inspectedPage())
-        return fromWebPageProxy(*page);
-    return nil;
+    auto page = _inspector->inspectedPage();
+    return page ? page->cocoaView().autorelease() : nil;
 }
 
 - (BOOL)isConnected

@@ -43,6 +43,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     : opacity(RenderStyle::initialOpacity())
     , aspectRatioWidth(RenderStyle::initialAspectRatioWidth())
     , aspectRatioHeight(RenderStyle::initialAspectRatioHeight())
+    , contain(RenderStyle::initialContainment())
     , perspective(RenderStyle::initialPerspective())
     , perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
@@ -120,6 +121,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , opacity(o.opacity)
     , aspectRatioWidth(o.aspectRatioWidth)
     , aspectRatioHeight(o.aspectRatioHeight)
+    , contain(o.contain)
     , perspective(o.perspective)
     , perspectiveOriginX(o.perspectiveOriginX)
     , perspectiveOriginY(o.perspectiveOriginY)
@@ -227,6 +229,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
     return opacity == o.opacity
         && aspectRatioWidth == o.aspectRatioWidth
         && aspectRatioHeight == o.aspectRatioHeight
+        && contain == o.contain
         && perspective == o.perspective
         && perspectiveOriginX == o.perspectiveOriginX
         && perspectiveOriginY == o.perspectiveOriginY

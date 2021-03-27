@@ -27,6 +27,7 @@
 
 #include "WTFStringUtilities.h"
 #include <limits>
+#include <sstream>
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -224,6 +225,19 @@ TEST(WTF, StringNumber)
     EXPECT_STREQ("110000000000000000000", testStringNumber(1.1e20));
     EXPECT_STREQ("1.1e+21", testStringNumber(1.1e21));
     EXPECT_STREQ("1.1e+30", testStringNumber(1.1e30));
+}
+
+TEST(WTF, StringNumberIntMin)
+{
+    constexpr int intMin = std::numeric_limits<int>::min();
+    String result = String::number(intMin);
+
+    std::stringstream stringStream;
+    stringStream << intMin;
+    std::string expectedString;
+    stringStream >> expectedString;
+
+    EXPECT_TRUE(result == String(expectedString.c_str()));
 }
 
 TEST(WTF, StringReplaceWithLiteral)

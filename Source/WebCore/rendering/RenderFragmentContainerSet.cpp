@@ -50,7 +50,7 @@ void RenderFragmentContainerSet::expandToEncompassFragmentedFlowContentsIfNeeded
     // Whenever the last region is a set, it always expands its region rect to consume all
     // of the flow thread content. This is because it is always capable of generating an
     // infinite number of boxes in order to hold all of the remaining content.
-    LayoutRect rect(fragmentedFlowPortionRect());
+    auto rect = fragmentedFlowPortionRect();
     
     // Get the offset within the flow thread in its block progression direction. Then get the
     // flow thread's remaining logical height including its overflow and expand our rect
@@ -58,10 +58,10 @@ void RenderFragmentContainerSet::expandToEncompassFragmentedFlowContentsIfNeeded
     // additional columns and pages to hold that overflow, since people do write bad
     // content like <body style="height:0px"> in multi-column layouts.
     bool isHorizontal = fragmentedFlow()->isHorizontalWritingMode();
-    LayoutUnit logicalTopOffset = isHorizontal ? rect.y() : rect.x();
-    LayoutRect layoutRect = fragmentedFlow()->layoutOverflowRect();
-    LayoutUnit logicalHeightWithOverflow = (isHorizontal ? layoutRect.maxY() : layoutRect.maxX()) - logicalTopOffset;
-    setFragmentedFlowPortionRect(LayoutRect(rect.x(), rect.y(), isHorizontal ? rect.width() : logicalHeightWithOverflow, isHorizontal ? logicalHeightWithOverflow : rect.height()));
+    auto logicalTopOffset = isHorizontal ? rect.y() : rect.x();
+    auto overflowHeight = isHorizontal ? fragmentedFlow()->layoutOverflowRect().maxY() : fragmentedFlow()->layoutOverflowRect().maxX();
+    auto logicalHeightWithOverflow = logicalTopOffset == RenderFragmentedFlow::maxLogicalHeight() ? overflowHeight : overflowHeight - logicalTopOffset;
+    setFragmentedFlowPortionRect({ rect.x(), rect.y(), isHorizontal ? rect.width() : logicalHeightWithOverflow, isHorizontal ? logicalHeightWithOverflow : rect.height() });
 }
 
 }

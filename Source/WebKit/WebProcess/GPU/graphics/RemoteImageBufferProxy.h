@@ -143,15 +143,6 @@ protected:
         return m_backend.get();
     }
 
-    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
-    {
-        if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return nullptr;
-
-        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        return m_remoteRenderingBackendProxy->getImageData(outputFormat, srcRect, m_renderingResourceIdentifier);
-    }
-
     String toDataURL(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
@@ -195,6 +186,19 @@ protected:
         if (!bitmap)
             return { };
         return bitmap->createImage();
+    }
+
+    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return nullptr;
+
+        auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
+        mutableThis.m_drawingContext.recorder().getImageData(outputFormat, srcRect);
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=220649 Use the recorded command instead of the synchronous IPC message.
+
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
+        return m_remoteRenderingBackendProxy->getImageData(outputFormat, srcRect, m_renderingResourceIdentifier);
     }
 
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
@@ -299,6 +303,10 @@ protected:
 
     RefPtr<WebCore::SharedBuffer> encodeItem(WebCore::DisplayList::ItemHandle item) const override
     {
+        /* This needs to match (1) isInlineItem() in DisplayListItemType.cpp, (2) RemoteRenderingBackend::decodeItem(),
+         * and (3) all the "static constexpr bool isInlineItem"s inside the individual item classes.
+         * See the comment at the top of DisplayListItems.h for why. */
+
         switch (item.type()) {
         case WebCore::DisplayList::ItemType::ClipOutToPath:
             return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipOutToPath>(item.get<WebCore::DisplayList::ClipOutToPath>());

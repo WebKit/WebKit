@@ -28,17 +28,17 @@
     JSGenerateToJSObject,
     LegacyNoInterfaceObject,
 ] interface InspectorAuditAccessibilityObject {
-    [CallWith=Document, MayThrowException] sequence<Node> getElementsByComputedRole(DOMString role, optional Node? container);
+    [CallWith=Document] sequence<Node> getElementsByComputedRole(DOMString role, optional Node? container);
 
-    [MayThrowException] Node? getActiveDescendant(Node node);
-    [MayThrowException] sequence<Node>? getChildNodes(Node node);
-    [MayThrowException] ComputedProperties? getComputedProperties(Node node);
-    [MayThrowException] sequence<Node>? getControlledNodes(Node node);
-    [MayThrowException] sequence<Node>? getFlowedNodes(Node node);
-    [MayThrowException] Node? getMouseEventNode(Node node);
-    [MayThrowException] sequence<Node>? getOwnedNodes(Node node);
-    [MayThrowException] Node? getParentNode(Node node);
-    [MayThrowException] sequence<Node>? getSelectedChildNodes(Node node);
+    Node? getActiveDescendant(Node node);
+    sequence<Node>? getChildNodes(Node node);
+    ComputedProperties? getComputedProperties(Node node);
+    sequence<Node>? getControlledNodes(Node node);
+    sequence<Node>? getFlowedNodes(Node node);
+    Node? getMouseEventNode(Node node);
+    sequence<Node>? getOwnedNodes(Node node);
+    Node? getParentNode(Node node);
+    sequence<Node>? getSelectedChildNodes(Node node);
 };
 
 [

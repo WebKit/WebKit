@@ -37,18 +37,48 @@ AVIFImageDecoder::AVIFImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
 
 AVIFImageDecoder::~AVIFImageDecoder() = default;
 
+RepetitionCount AVIFImageDecoder::repetitionCount() const
+{
+    // FIXME: Repetition of avifs is tricky. We deal with it in webkit.org/b/223127
+    // To make the animation tests reliable, we animate avifs one time for now.
+    return RepetitionCountOnce;
+}
+
+size_t AVIFImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex)
+{
+    // The first frame doesn't depend on any other.
+    if (!frameIndex)
+        return 0;
+
+    size_t firstIncompleteFrame = frameIndex;
+    while (firstIncompleteFrame > 0) {
+        if (m_frameBufferCache[firstIncompleteFrame - 1].isComplete())
+            break;
+        --firstIncompleteFrame;
+    }
+
+    return firstIncompleteFrame;
+}
+
 ScalableImageDecoderFrame* AVIFImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (index)
+    const size_t imageCount = frameCount();
+    if (index >= imageCount)
         return nullptr;
 
-    if (m_frameBufferCache.isEmpty())
-        m_frameBufferCache.grow(1);
+    if ((m_frameBufferCache.size() > index) && m_frameBufferCache[index].isComplete())
+        return &m_frameBufferCache[index];
 
-    auto& frame = m_frameBufferCache[0];
-    if (!frame.isComplete())
-        decode(frame, isAllDataReceived());
-    return &frame;
+    if (imageCount && m_frameBufferCache.size() != imageCount)
+        m_frameBufferCache.resize(imageCount);
+
+    for (size_t i = findFirstRequiredFrameToDecode(index); i <= index; ++i) {
+        if (m_frameBufferCache[i].isComplete())
+            continue;
+        decode(i, isAllDataReceived());
+    }
+
+    return &m_frameBufferCache[index];
 }
 
 bool AVIFImageDecoder::setFailed()
@@ -57,22 +87,36 @@ bool AVIFImageDecoder::setFailed()
     return ScalableImageDecoder::setFailed();
 }
 
+bool AVIFImageDecoder::isComplete()
+{
+    if (m_frameBufferCache.isEmpty())
+        return false;
+
+    for (auto& frameBuffer : m_frameBufferCache) {
+        if (!frameBuffer.isComplete())
+            return false;
+    }
+    return true;
+}
+
 void AVIFImageDecoder::tryDecodeSize(bool allDataReceived)
 {
     if (!m_reader)
         m_reader = makeUnique<AVIFImageReader>(this);
     m_reader->parseHeader(*m_data, allDataReceived);
+
+    m_frameCount = m_reader->imageCount();
 }
 
-void AVIFImageDecoder::decode(ScalableImageDecoderFrame& frame, bool allDataReceived)
+void AVIFImageDecoder::decode(size_t frameIndex, bool allDataReceived)
 {
     if (failed())
         return;
 
     ASSERT(m_reader);
-    m_reader->decodeFrame(0, frame, *m_data);
+    m_reader->decodeFrame(frameIndex, m_frameBufferCache[frameIndex], *m_data);
 
-    if (allDataReceived && !m_frameBufferCache.isEmpty() && frame.isComplete())
+    if (allDataReceived && !m_frameBufferCache.isEmpty() && isComplete())
         m_reader = nullptr;
 }
 

@@ -142,6 +142,8 @@ public:
         WEBCORE_EXPORT void advance();
         bool atEnd() const;
 
+        ItemBuffer* itemBuffer() const { return m_displayList.itemBufferIfExists(); }
+
         const DisplayList& m_displayList;
         uint8_t* m_cursor { nullptr };
         size_t m_readOnlyBufferIndex { 0 };

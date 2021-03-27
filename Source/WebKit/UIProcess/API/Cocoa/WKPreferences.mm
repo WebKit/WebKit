@@ -145,7 +145,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _preferences->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
 }
 
-- (BOOL)textInteractionEnabled
+- (BOOL)isTextInteractionEnabled
 {
     return _preferences->textInteractionEnabled();
 }

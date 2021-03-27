@@ -1262,8 +1262,20 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
         auto& privateData = track().codec_private.value();
         if (codec() == CodecType::Vorbis)
             formatDescription = createVorbisAudioFormatDescription(privateData.size(), privateData.data());
-        else if (codec() == CodecType::Opus)
-            formatDescription = createOpusAudioFormatDescription(privateData.size(), privateData.data(), m_packetData.size(), m_packetData.data());
+        else if (codec() == CodecType::Opus) {
+            OpusCookieContents cookieContents;
+            if (!parseOpusPrivateData(privateData.size(), privateData.data(), m_packetData.size(), m_packetData.data(), cookieContents)) {
+                PARSER_LOG_ERROR_IF_POSSIBLE("Failed to parse Opus private data");
+                return Skip(&reader, bytesRemaining);
+            }
+            if (!cookieContents.framesPerPacket) {
+                PARSER_LOG_ERROR_IF_POSSIBLE("Opus private data indicates 0 frames per packet; bailing");
+                return Skip(&reader, bytesRemaining);
+            }
+            m_framesPerPacket = cookieContents.framesPerPacket;
+            m_frameDuration = cookieContents.frameDuration;
+            formatDescription = createOpusAudioFormatDescription(cookieContents);
+        }
 
         if (!formatDescription) {
             PARSER_LOG_ERROR_IF_POSSIBLE("Failed to create format description from audio track header");
@@ -1278,7 +1290,20 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
         m_packetDuration = CMTimeMake(streamDescription->mFramesPerPacket, streamDescription->mSampleRate);
 
         setFormatDescription(WTFMove(formatDescription));
+    } else if (codec() == CodecType::Opus) {
+        // Opus technically allows the frame duration and frames-per-packet values to change from packet to packet.
+        // CoreAudio doesn't support ASBD values like these to change on a per-packet basis, so throw an error when
+        // that kind of variablility is encountered.
+        OpusCookieContents cookieContents;
+        auto& privateData = track().codec_private.value();
+        if (!parseOpusPrivateData(privateData.size(), privateData.data(), m_packetData.size(), m_packetData.data(), cookieContents)
+            || cookieContents.framesPerPacket != m_framesPerPacket
+            || cookieContents.frameDuration != m_frameDuration) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("Opus frames-per-packet changed within a track; error");
+            return Status(Status::Code(ErrorCode::VariableFrameDuration));
+        }
     }
+
 
     m_packetDescriptions.append({ static_cast<int64_t>(*m_currentPacketByteOffset), 0, static_cast<UInt32>(*m_currentPacketSize) });
     m_currentPacketByteOffset = WTF::nullopt;

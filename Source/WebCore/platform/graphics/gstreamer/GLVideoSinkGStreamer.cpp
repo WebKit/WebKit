@@ -68,6 +68,17 @@ static void webKitGLVideoSinkConstructed(GObject* object)
     ASSERT(sink->priv->appSink);
     g_object_set(sink->priv->appSink.get(), "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
 
+    auto* imxVideoConvertG2D =
+        []() -> GstElement*
+        {
+            auto elementFactor = adoptGRef(gst_element_factory_find("imxvideoconvert_g2d"));
+            if (elementFactor)
+                return gst_element_factory_create(elementFactor.get(), nullptr);
+            return nullptr;
+        }();
+    if (imxVideoConvertG2D)
+        gst_bin_add(GST_BIN_CAST(sink), imxVideoConvertG2D);
+
     GstElement* upload = gst_element_factory_make("glupload", nullptr);
     GstElement* colorconvert = gst_element_factory_make("glcolorconvert", nullptr);
     ASSERT(upload);
@@ -96,9 +107,17 @@ static void webKitGLVideoSinkConstructed(GObject* object)
     gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
     g_object_set(sink->priv->appSink.get(), "caps", caps.get(), nullptr);
 
+    if (imxVideoConvertG2D)
+        gst_element_link(imxVideoConvertG2D, upload);
     gst_element_link_many(upload, colorconvert, sink->priv->appSink.get(), nullptr);
 
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
+    GstElement* sinkElement =
+        [&] {
+            if (imxVideoConvertG2D)
+                return imxVideoConvertG2D;
+            return upload;
+        }();
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(sinkElement, "sink"));
     gst_element_add_pad(GST_ELEMENT_CAST(sink), gst_ghost_pad_new("sink", pad.get()));
 }
 

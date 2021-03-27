@@ -234,8 +234,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setShadowDOMEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE customElementsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setCustomElementsEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE modernMediaControlsEnabled(_Out_ BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setModernMediaControlsEnabled(BOOL);
     
     // IWebPreferencesPrivate4
     virtual HRESULT STDMETHODCALLTYPE setApplicationId(BSTR);

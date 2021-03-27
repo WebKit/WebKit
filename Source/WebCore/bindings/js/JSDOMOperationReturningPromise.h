@@ -40,10 +40,12 @@ public:
     {
         return JSC::JSValue::encode(callPromiseFunction(lexicalGlobalObject, callFrame, [&operationName] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise) {
             auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
-            if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject))
-                return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
-            
-            ASSERT(thisObject);
+            if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {
+                if (UNLIKELY(!thisObject))
+                    return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
+            } else
+                ASSERT(thisObject);
+
             ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
             
             // FIXME: We should refactor the binding generated code to use references for lexicalGlobalObject and thisObject.
@@ -57,10 +59,12 @@ public:
     static JSC::EncodedJSValue callReturningOwnPromise(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
     {
         auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
-        if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject))
-            return rejectPromiseWithThisTypeError(lexicalGlobalObject, JSClass::info()->className, operationName);
+        if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {
+            if (UNLIKELY(!thisObject))
+                return rejectPromiseWithThisTypeError(lexicalGlobalObject, JSClass::info()->className, operationName);
+        } else
+            ASSERT(thisObject);
 
-        ASSERT(thisObject);
         ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
 
         // FIXME: We should refactor the binding generated code to use references for lexicalGlobalObject and thisObject.

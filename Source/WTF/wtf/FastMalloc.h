@@ -122,6 +122,38 @@ WTF_EXPORT_PRIVATE void fastEnableMiniMode();
 
 WTF_EXPORT_PRIVATE void fastDisableScavenger();
 
+class ForbidMallocUseForCurrentThreadScope {
+public:
+#if ASSERT_ENABLED
+    WTF_EXPORT_PRIVATE ForbidMallocUseForCurrentThreadScope();
+    WTF_EXPORT_PRIVATE ~ForbidMallocUseForCurrentThreadScope();
+#else
+    ForbidMallocUseForCurrentThreadScope() = default;
+    ~ForbidMallocUseForCurrentThreadScope() { }
+#endif
+
+    ForbidMallocUseForCurrentThreadScope(const ForbidMallocUseForCurrentThreadScope&) = delete;
+    ForbidMallocUseForCurrentThreadScope(ForbidMallocUseForCurrentThreadScope&&) = delete;
+    ForbidMallocUseForCurrentThreadScope& operator=(const ForbidMallocUseForCurrentThreadScope&) = delete;
+    ForbidMallocUseForCurrentThreadScope& operator=(ForbidMallocUseForCurrentThreadScope&&) = delete;
+};
+
+class DisableMallocRestrictionsForCurrentThreadScope {
+public:
+#if ASSERT_ENABLED
+    WTF_EXPORT_PRIVATE DisableMallocRestrictionsForCurrentThreadScope();
+    WTF_EXPORT_PRIVATE ~DisableMallocRestrictionsForCurrentThreadScope();
+#else
+    DisableMallocRestrictionsForCurrentThreadScope() = default;
+    ~DisableMallocRestrictionsForCurrentThreadScope() { }
+#endif
+
+    DisableMallocRestrictionsForCurrentThreadScope(const DisableMallocRestrictionsForCurrentThreadScope&) = delete;
+    DisableMallocRestrictionsForCurrentThreadScope(DisableMallocRestrictionsForCurrentThreadScope&&) = delete;
+    DisableMallocRestrictionsForCurrentThreadScope& operator=(const DisableMallocRestrictionsForCurrentThreadScope&) = delete;
+    DisableMallocRestrictionsForCurrentThreadScope& operator=(DisableMallocRestrictionsForCurrentThreadScope&&) = delete;
+};
+
 struct FastMallocStatistics {
     size_t reservedVMBytes;
     size_t committedVMBytes;
@@ -300,9 +332,11 @@ struct FastFree<T[]> {
 using WTF::fastSetMaxSingleAllocationSize;
 #endif
 
+using WTF::DisableMallocRestrictionsForCurrentThreadScope;
 using WTF::FastAllocator;
 using WTF::FastMalloc;
 using WTF::FastFree;
+using WTF::ForbidMallocUseForCurrentThreadScope;
 using WTF::isFastMallocEnabled;
 using WTF::fastCalloc;
 using WTF::fastFree;

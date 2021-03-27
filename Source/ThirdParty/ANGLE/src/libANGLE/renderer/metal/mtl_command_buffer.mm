@@ -791,11 +791,13 @@ void CommandBuffer::forceEndingCurrentEncoder()
 
 void CommandBuffer::setPendingEvents()
 {
+#if ANGLE_MTL_EVENT_AVAILABLE
     for (const std::pair<mtl::SharedEventRef, uint64_t> &eventEntry : mPendingSignalEvents)
     {
         setEventImpl(eventEntry.first, eventEntry.second);
     }
     mPendingSignalEvents.clear();
+#endif
 }
 
 void CommandBuffer::setEventImpl(const mtl::SharedEventRef &event, uint64_t value)

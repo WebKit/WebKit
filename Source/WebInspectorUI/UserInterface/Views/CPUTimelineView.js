@@ -437,7 +437,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         let graphStartTime = this.startTime;
         let graphEndTime = this.endTime;
-        let visibleEndTime = Math.min(this.endTime, this.currentTime);
+
+        // When viewing a timeline recording from JSON, this.currentTime is always 0.
+        let visibleEndTime = Math.min(this.endTime, this.currentTime) || this.endTime;
         let visibleDuration = visibleEndTime - graphStartTime;
 
         let discontinuities = this._recording.discontinuitiesInTimeRange(graphStartTime, visibleEndTime);

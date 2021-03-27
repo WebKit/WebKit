@@ -65,12 +65,12 @@ static AuthenticatorManager::TransportSet collectTransports(const Optional<Publi
         return result;
     }
 
-    if (authenticatorSelection->authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::Platform) {
+    if (authenticatorSelection->authenticatorAttachment == AuthenticatorAttachment::Platform) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
-    if (authenticatorSelection->authenticatorAttachment == PublicKeyCredentialCreationOptions::AuthenticatorAttachment::CrossPlatform) {
+    if (authenticatorSelection->authenticatorAttachment == AuthenticatorAttachment::CrossPlatform) {
         auto addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
@@ -87,7 +87,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Optional<Publi
 // If it is not specified or any of its credentials doesn't specify its own. We should discover all.
 // This is a variant of Step. 18.*.4 from https://www.w3.org/TR/webauthn/#discover-from-external-source
 // as of 7 August 2018.
-static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicKeyCredentialDescriptor>& allowCredentials)
+static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicKeyCredentialDescriptor>& allowCredentials, const Optional<AuthenticatorAttachment>& authenticatorAttachment)
 {
     AuthenticatorManager::TransportSet result;
     if (allowCredentials.isEmpty()) {
@@ -97,7 +97,6 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-        return result;
     }
 
     for (auto& allowCredential : allowCredentials) {
@@ -105,19 +104,32 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             result.add(AuthenticatorTransport::Internal);
             result.add(AuthenticatorTransport::Usb);
             result.add(AuthenticatorTransport::Nfc);
-            return result;
+
+            break;
         }
 
         for (const auto& transport : allowCredential.transports) {
             if (transport == AuthenticatorTransport::Ble)
                 continue;
+
             result.add(transport);
+
             if (result.size() >= AuthenticatorManager::maxTransportNumber)
-                return result;
+                break;
         }
     }
 
-    ASSERT(result.size() < AuthenticatorManager::maxTransportNumber);
+    if (authenticatorAttachment) {
+        if (authenticatorAttachment == AuthenticatorAttachment::Platform) {
+            result.remove(AuthenticatorTransport::Usb);
+            result.remove(AuthenticatorTransport::Nfc);
+        }
+
+        if (authenticatorAttachment == AuthenticatorAttachment::CrossPlatform)
+            result.remove(AuthenticatorTransport::Internal);
+    }
+
+    ASSERT(result.size() <= AuthenticatorManager::maxTransportNumber);
     return result;
 }
 
@@ -500,7 +512,7 @@ auto AuthenticatorManager::getTransports() const -> TransportSet
         transports = collectTransports(options.authenticatorSelection);
         processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
-        transports = collectTransports(options.allowCredentials);
+        transports = collectTransports(options.allowCredentials, options.authenticatorAttachment);
     });
     filterTransports(transports);
     return transports;

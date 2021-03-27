@@ -33,7 +33,6 @@
 <input id="match-19" type="text" pattern="10|11|12|[0-9]" value="12" />
 <input id="match-20" type="text" pattern="f(o|e)\1" value="foo" />
 <input id="match-21" type="text" pattern="a.b" value="a&#x1D306;b" />
-<input id="match-22" type="text" pattern="a..b" value="a&#x1D306;b" />
 <input id="empty-pattern-match" type="text" pattern="" value="" />
 <input id="wrong-gray-or-grey" type="text" pattern="gr[ae]y" value="Wrong!"
 /><input id="gray" type="text" pattern="gr[ae]y" value="gray"
@@ -60,7 +59,8 @@
 /><input id="mismatch-19" type="text" pattern="^" value="wrong"
 /><input id="mismatch-20" type="text" pattern="$" value="wrong"
 /><input id="mismatch-21" type="text" pattern="f(o|e)\1" value="foe"
-/><input id="mismatch-22" type="text" pattern="a...b" value="a&#x1D306;b" />
+/><input id="mismatch-22" type="text" pattern="a..b" value="a&#x1D306;b" />
+<input id="mismatch-23" type="text" pattern="a...b" value="a&#x1D306;b" />
 
 <input id="invalid-01" type="text" pattern=")foo(" value="foo"/>
 <input id="invalid-02" type="text" pattern=")foo(" value="foobar"/>
@@ -107,7 +107,6 @@ shouldBeFalse('patternMismatchFor("match-18")');
 shouldBeFalse('patternMismatchFor("match-19")');
 shouldBeFalse('patternMismatchFor("match-20")');
 shouldBeFalse('patternMismatchFor("match-21")');
-shouldBeFalse('patternMismatchFor("match-22")');
 
 shouldBeTrue('patternMismatchFor("wrong-gray-or-grey")');
 shouldBeFalse('patternMismatchFor("gray")');
@@ -136,6 +135,7 @@ shouldBeTrue('patternMismatchFor("mismatch-19")');
 shouldBeTrue('patternMismatchFor("mismatch-20")');
 shouldBeTrue('patternMismatchFor("mismatch-21")');
 shouldBeTrue('patternMismatchFor("mismatch-22")');
+shouldBeTrue('patternMismatchFor("mismatch-23")');
 
 shouldBeFalse('patternMismatchFor("empty-pattern-match")');
 shouldBeTrue('patternMismatchFor("empty-pattern-mismatch")');

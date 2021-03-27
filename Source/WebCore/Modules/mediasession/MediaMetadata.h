@@ -87,7 +87,7 @@ public:
     ExceptionOr<void> setArtwork(ScriptExecutionContext&, Vector<MediaImage>&&);
 
     const String& artworkSrc() const { return m_artworkImageSrc; }
-    RefPtr<Image> artworkImage() const { return m_artworkImage; }
+    const RefPtr<Image>& artworkImage() const { return m_artworkImage; }
 
     const MediaSessionMetadata& metadata() const { return m_metadata; }
 

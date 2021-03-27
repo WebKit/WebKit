@@ -192,8 +192,10 @@ void LibWebRTCDataChannelHandler::postTask(Function<void()>&& function)
 {
     ASSERT(m_clientLock.isHeld());
 
-    if (!m_contextIdentifier)
+    if (!m_contextIdentifier) {
         callOnMainThread(WTFMove(function));
+        return;
+    }
     ScriptExecutionContext::postTaskTo(m_contextIdentifier, WTFMove(function));
 }
 

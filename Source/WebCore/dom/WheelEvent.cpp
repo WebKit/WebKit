@@ -38,13 +38,21 @@ inline static unsigned determineDeltaMode(const PlatformWheelEvent& event)
     return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::DOM_DELTA_PAGE : WheelEvent::DOM_DELTA_PIXEL;
 }
 
+static double wheelDeltaToDelta(int wheelDelta)
+{
+    // Avoid returning negative zero.
+    if (!wheelDelta)
+        return 0;
+    return -static_cast<double>(wheelDelta);
+}
+
 inline WheelEvent::WheelEvent() = default;
 
 inline WheelEvent::WheelEvent(const AtomString& type, const Init& initializer)
     : MouseEvent(type, initializer)
-    , m_wheelDelta(initializer.wheelDeltaX ? initializer.wheelDeltaX : -initializer.deltaX, initializer.wheelDeltaY ? initializer.wheelDeltaY : -initializer.deltaY)
-    , m_deltaX(initializer.deltaX ? initializer.deltaX : -initializer.wheelDeltaX)
-    , m_deltaY(initializer.deltaY ? initializer.deltaY : -initializer.wheelDeltaY)
+    , m_wheelDelta(initializer.wheelDeltaX ? initializer.wheelDeltaX : clampTo<int>(-initializer.deltaX), initializer.wheelDeltaY ? initializer.wheelDeltaY : clampTo<int>(-initializer.deltaY))
+    , m_deltaX(initializer.deltaX ? initializer.deltaX : wheelDeltaToDelta(initializer.wheelDeltaX))
+    , m_deltaY(initializer.deltaY ? initializer.deltaY : wheelDeltaToDelta(initializer.wheelDeltaY))
     , m_deltaZ(initializer.deltaZ)
     , m_deltaMode(initializer.deltaMode)
 {
@@ -85,8 +93,8 @@ void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, RefPtr<Windo
 
     // Normalize to 120 multiple for compatibility with IE.
     m_wheelDelta = { rawDeltaX * TickMultiplier, rawDeltaY * TickMultiplier };
-    m_deltaX = -rawDeltaX;
-    m_deltaY = -rawDeltaY;
+    m_deltaX = wheelDeltaToDelta(rawDeltaX);
+    m_deltaY = wheelDeltaToDelta(rawDeltaY);
 
     m_deltaMode = DOM_DELTA_PIXEL;
 

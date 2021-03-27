@@ -28,13 +28,14 @@
 #if ENABLE(WEB_RTC)
 
 #include "ActiveDOMObject.h"
+#include "DetachedRTCDataChannel.h"
 #include "Event.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "NetworkSendQueue.h"
-#include "ProcessIdentifier.h"
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelHandlerClient.h"
+#include "RTCDataChannelIdentifier.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
 #include "Timer.h"
@@ -48,39 +49,6 @@ namespace WebCore {
 
 class Blob;
 class RTCPeerConnectionHandler;
-
-enum RTCDataChannelIdentifierType { };
-struct RTCDataChannelIdentifier {
-    ProcessIdentifier processIdentifier;
-    ObjectIdentifier<RTCDataChannelIdentifierType> channelIdentifier;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<RTCDataChannelIdentifier> decode(Decoder&);
-
-#if !LOG_DISABLED
-    String logString() const;
-#endif
-};
-
-struct DetachedRTCDataChannel {
-    WTF_MAKE_NONCOPYABLE(DetachedRTCDataChannel);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, const String& label, const RTCDataChannelInit& options, RTCDataChannelState state)
-        : identifier(identifier)
-        , label(label.isolatedCopy())
-        , options(options.isolatedCopy())
-        , state(state)
-    {
-    }
-
-    size_t memoryCost() const { return label.sizeInBytes(); }
-
-    RTCDataChannelIdentifier identifier;
-    String label;
-    RTCDataChannelInit options;
-    RTCDataChannelState state { RTCDataChannelState::Closed };
-};
 
 class RTCDataChannel final : public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(RTCDataChannel);
@@ -119,6 +87,8 @@ public:
 
     using RTCDataChannelHandlerClient::ref;
     using RTCDataChannelHandlerClient::deref;
+
+    WEBCORE_EXPORT static std::unique_ptr<RTCDataChannelHandler> handlerFromIdentifier(RTCDataChannelLocalIdentifier);
 
 private:
     RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);

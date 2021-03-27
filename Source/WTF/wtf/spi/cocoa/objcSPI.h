@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <objc/objc.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <objc/objc-internal.h>
@@ -36,12 +38,10 @@ WTF_EXTERN_C_BEGIN
 void* objc_autoreleasePoolPush(void);
 void objc_autoreleasePoolPop(void* context);
 
-#ifdef __OBJC__
 id objc_loadWeakRetained(id*);
 id objc_initWeak(id*, id);
 void objc_destroyWeak(id*);
 void objc_copyWeak(id*, id*);
 void objc_moveWeak(id*, id*);
-#endif
 
 WTF_EXTERN_C_END

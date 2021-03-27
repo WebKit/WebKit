@@ -197,6 +197,8 @@ void AudioScheduledSourceNode::finish()
     m_playbackState = FINISHED_STATE;
     context().decrementActiveSourceCount();
 
+    // Dispatching a Function to the main thread requires heap allocations.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     callOnMainThread([this, protectedThis = makeRef(*this)] {
         auto release = makeScopeExit([&] () {
             AudioContext::AutoLocker locker(context());

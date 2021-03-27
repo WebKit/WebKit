@@ -1,4 +1,4 @@
 Download started.
-Downloading URL with suggested filename "download-binary.php"
+Downloading URL with suggested filename "download-binary.py"
 Download completed.
 

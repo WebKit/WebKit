@@ -211,13 +211,6 @@ void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, J
     DeferredPromise::create(globalObject, promise)->reject<IDLAny>(error);
 }
 
-Ref<DeferredPromise> createDeferredPromise(JSC::JSGlobalObject&, JSDOMWindow& domWindow)
-{
-    auto* promise = JSPromise::create(domWindow.vm(), domWindow.promiseStructure());
-    RELEASE_ASSERT(promise);
-    return DeferredPromise::create(domWindow, *promise);
-}
-
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexicalGlobalObject, const String& errorMessage, RejectedPromiseWithTypeErrorCause cause)
 {
     auto& globalObject = lexicalGlobalObject;

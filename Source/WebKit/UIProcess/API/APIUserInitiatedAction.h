@@ -36,19 +36,14 @@ public:
         return adoptRef(*new UserInitiatedAction);
     }
 
-    virtual ~UserInitiatedAction()
-    {
-    }
+    UserInitiatedAction() = default;
+    virtual ~UserInitiatedAction() = default;
 
     void setConsumed() { m_consumed = true; }
     bool consumed() const { return m_consumed; }
 
 private:
-    UserInitiatedAction()
-    {
-    }
-
-    bool m_consumed = false;
+    bool m_consumed { false };
 };
 
 } // namespace API

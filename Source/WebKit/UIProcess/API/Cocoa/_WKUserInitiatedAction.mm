@@ -30,6 +30,14 @@
 
 @implementation _WKUserInitiatedAction
 
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    API::Object::constructInWrapper<API::UserInitiatedAction>(self);
+    return self;
+}
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKUserInitiatedAction.class, self))

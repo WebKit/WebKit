@@ -28,8 +28,8 @@
     JSGenerateToJSObject,
     LegacyNoInterfaceObject,
 ] interface InspectorAuditResourcesObject {
-    [CallWith=Document, MayThrowException] sequence<Resource> getResources();
-    [CallWith=Document, MayThrowException] ResourceContent getResourceContent(DOMString id);
+    [CallWith=Document] sequence<Resource> getResources();
+    [CallWith=Document] ResourceContent getResourceContent(DOMString id);
 };
 
 [

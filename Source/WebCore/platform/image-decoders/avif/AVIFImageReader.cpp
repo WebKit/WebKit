@@ -36,9 +36,7 @@ AVIFImageReader::AVIFImageReader(RefPtr<AVIFImageDecoder>&& decoder)
 {
 }
 
-AVIFImageReader::~AVIFImageReader()
-{
-}
+AVIFImageReader::~AVIFImageReader() = default;
 
 void AVIFImageReader::parseHeader(const SharedBuffer::DataSegment& data, bool allDataReceived)
 {
@@ -108,7 +106,13 @@ void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& 
     }
 
     buffer.setHasAlpha(avifRGBFormatHasAlpha(decodedRGBImage.format));
+    buffer.setDuration(Seconds(m_avifDecoder->imageTiming.duration));
     buffer.setDecodingStatus(DecodingStatus::Complete);
+}
+
+size_t AVIFImageReader::imageCount() const
+{
+    return m_avifDecoder->imageCount;
 }
 
 }

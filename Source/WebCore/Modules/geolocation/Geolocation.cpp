@@ -343,10 +343,8 @@ static void logError(const String& target, const bool isSecure, const bool isMix
 // FIXME: remove this function when rdar://problem/32137821 is fixed.
 static bool isRequestFromIBooks()
 {
-#if PLATFORM(MAC)
-    return MacApplication::isIBooks();
-#elif PLATFORM(IOS_FAMILY)
-    return IOSApplication::isIBooks();
+#if PLATFORM(COCOA)
+    return CocoaApplication::isIBooks();
 #endif
     return false;
 }

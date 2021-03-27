@@ -22,7 +22,7 @@
             }
         ).then(function(response) {
             loadedUrl = response.url;
-            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=1234");
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.py?value=1234");
             secondFetch();
         }).catch(function(error) {
             testFailed(error.message);
@@ -41,7 +41,7 @@
             }
         ).then(function(response) {
             loadedUrl = response.url;
-            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=4321");
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.py?value=4321");
             thirdFetch();
         }).catch(function(error) {
             testFailed(error.message);
@@ -57,7 +57,7 @@
             }
         ).then(function(response) {
             loadedUrl = response.url;
-            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=");
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.py?value=");
             fourthFetch();
         }).catch(function(error) {
             testFailed(error.message);
@@ -73,7 +73,7 @@
             }
         ).then(function(response) {
             loadedUrl = response.url;
-            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=");
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.py?value=");
             fifthFetch();
         }).catch(function(error) {
             testFailed(error.message);
@@ -91,7 +91,7 @@
             }
         ).then(function(response) {
             loadedUrl = response.url;
-            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.php?value=");
+            shouldBeEqualToString("loadedUrl", "http://localhost:8000/resourceLoadStatistics/resources/echo-query.py?value=");
             setEnableFeature(false, finishJSTest);
         }).catch(function(error) {
             testFailed(error.message);

@@ -73,6 +73,7 @@ public:
     XRVisibilityState visibilityState() const;
     const WebXRRenderState& renderState() const;
     const WebXRInputSourceArray& inputSources() const;
+    PlatformXR::Device* device() const { return m_device.get(); }
 
     ExceptionOr<void> updateRenderState(const XRRenderStateInit&);
     void requestReferenceSpace(XRReferenceSpaceType, RequestReferenceSpacePromise&&);

@@ -30,11 +30,11 @@
     readonly attribute NodeFilter? filter;
     attribute Node currentNode;
 
-    [MayThrowException] Node? parentNode();
-    [MayThrowException] Node? firstChild();
-    [MayThrowException] Node? lastChild();
-    [MayThrowException] Node? previousSibling();
-    [MayThrowException] Node? nextSibling();
-    [MayThrowException] Node? previousNode();
-    [MayThrowException] Node? nextNode();
+    Node? parentNode();
+    Node? firstChild();
+    Node? lastChild();
+    Node? previousSibling();
+    Node? nextSibling();
+    Node? previousNode();
+    Node? nextNode();
 };

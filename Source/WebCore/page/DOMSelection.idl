@@ -44,23 +44,23 @@
 
     readonly attribute DOMString type;
 
-    [MayThrowException] Range getRangeAt(unsigned long index);
+    Range getRangeAt(unsigned long index);
     undefined addRange(Range range);
-    [EnabledBySetting=LiveRangeSelection, MayThrowException] undefined removeRange(Range range);
+    [EnabledBySetting=LiveRangeSelection] undefined removeRange(Range range);
     undefined removeAllRanges();
 
     undefined empty();
 
-    [MayThrowException] undefined collapse(Node? node, optional unsigned long offset = 0);
-    [MayThrowException] undefined setPosition(Node? node, optional unsigned long offset = 0);
+    undefined collapse(Node? node, optional unsigned long offset = 0);
+    undefined setPosition(Node? node, optional unsigned long offset = 0);
 
-    [MayThrowException] undefined collapseToStart();
-    [MayThrowException] undefined collapseToEnd();
+    undefined collapseToStart();
+    undefined collapseToEnd();
 
-    [MayThrowException] undefined extend(Node node, optional unsigned long offset = 0);
+    undefined extend(Node node, optional unsigned long offset = 0);
 
-    [MayThrowException] undefined setBaseAndExtent(Node? baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
-    [MayThrowException] undefined selectAllChildren(Node node);
+    undefined setBaseAndExtent(Node? baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
+    undefined selectAllChildren(Node node);
 
     [CEReactions] undefined deleteFromDocument();
     boolean containsNode(Node node, optional boolean allowPartialContainment = false);

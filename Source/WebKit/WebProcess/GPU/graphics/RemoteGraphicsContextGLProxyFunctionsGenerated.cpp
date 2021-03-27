@@ -2318,33 +2318,6 @@ void RemoteGraphicsContextGLProxy::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
     }
 }
 
-void RemoteGraphicsContextGLProxy::drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
-{
-    if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::DrawArraysInstancedANGLE(mode, first, count, primcount));
-        if (!sendResult)
-            markContextLost();
-    }
-}
-
-void RemoteGraphicsContextGLProxy::drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount)
-{
-    if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::DrawElementsInstancedANGLE(mode, count, type, static_cast<uint64_t>(offset), primcount));
-        if (!sendResult)
-            markContextLost();
-    }
-}
-
-void RemoteGraphicsContextGLProxy::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor)
-{
-    if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::VertexAttribDivisorANGLE(index, divisor));
-        if (!sendResult)
-            markContextLost();
-    }
-}
-
 void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> params)
 {
     IPC::ArrayReference<int32_t> paramsReply;

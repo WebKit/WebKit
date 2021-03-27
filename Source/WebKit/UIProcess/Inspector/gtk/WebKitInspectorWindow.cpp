@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebKitInspectorWindow.h"
 
-#include "WebInspectorProxy.h"
+#include "WebInspectorUIProxy.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -92,7 +92,7 @@ GtkWidget* webkitInspectorWindowNew()
 #if !USE(GTK4)
         "type", GTK_WINDOW_TOPLEVEL,
 #endif
-        "default-width", WebInspectorProxy::initialWindowWidth, "default-height", WebInspectorProxy::initialWindowHeight, nullptr));
+        "default-width", WebInspectorUIProxy::initialWindowWidth, "default-height", WebInspectorUIProxy::initialWindowHeight, nullptr));
 }
 
 void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow* window, const char* subtitle)

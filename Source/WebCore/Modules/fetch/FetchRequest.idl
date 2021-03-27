@@ -57,7 +57,7 @@ typedef (FetchRequest or USVString) RequestInfo;
     // readonly attribute boolean isHistoryNavigation;
     readonly attribute AbortSignal signal;
 
-    [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchRequest clone();
+    [CallWith=ScriptExecutionContext, NewObject] FetchRequest clone();
 };
 
 FetchRequest includes FetchBody;

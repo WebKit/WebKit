@@ -1,0 +1,11 @@
+This is some testing content.
+This tests that we are able to get the rects for a range correctly with matching text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Rect for range should not be empty: NSRect: {{75, 26}, {37, 17}}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -18,4 +18,4 @@ Object.defineProperty(obj, "foo", {value: s, writable: false, enumerable: true, 
 
 shouldThrow(() => {
     Object.defineProperty(obj, "foo", {value: "bar"});
-}, "RangeError: Out of memory");
+}, "TypeError: Attempting to change value of a readonly property.");

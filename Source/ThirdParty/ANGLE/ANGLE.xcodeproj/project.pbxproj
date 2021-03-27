@@ -1006,6 +1006,16 @@
 		6ED7BDF32432CD1B00E01503 /* InfoLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED7BDF22432CD1B00E01503 /* InfoLog.h */; };
 		6ED7BDF62432CD6200E01503 /* ProgramExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BDF42432CD6200E01503 /* ProgramExecutable.cpp */; };
 		6ED7BDF72432CD6200E01503 /* ProgramExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED7BDF52432CD6200E01503 /* ProgramExecutable.h */; };
+		7B0A2A5E2603D4020040DCEB /* gl32ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A562603D3E00040DCEB /* gl32ext_explicit_context_autogen.inc */; };
+		7B0A2A5F2603D4020040DCEB /* gl31ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A572603D3E00040DCEB /* gl31ext_explicit_context_autogen.inc */; };
+		7B0A2A602603D4020040DCEB /* gl2ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A522603D3D10040DCEB /* gl2ext_explicit_context_autogen.inc */; };
+		7B0A2A612603D4020040DCEB /* gl3ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A552603D3E00040DCEB /* gl3ext_explicit_context_autogen.inc */; };
+		7B0A2A622603D4020040DCEB /* glext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A4F2603D3C60040DCEB /* glext_explicit_context_autogen.inc */; };
+		7B0A2A632603D4040040DCEB /* gl32ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A562603D3E00040DCEB /* gl32ext_explicit_context_autogen.inc */; settings = {ATTRIBUTES = (Public, ); }; };
+		7B0A2A642603D4040040DCEB /* gl31ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A572603D3E00040DCEB /* gl31ext_explicit_context_autogen.inc */; settings = {ATTRIBUTES = (Public, ); }; };
+		7B0A2A652603D4040040DCEB /* gl2ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A522603D3D10040DCEB /* gl2ext_explicit_context_autogen.inc */; settings = {ATTRIBUTES = (Public, ); }; };
+		7B0A2A662603D4040040DCEB /* gl3ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A552603D3E00040DCEB /* gl3ext_explicit_context_autogen.inc */; settings = {ATTRIBUTES = (Public, ); }; };
+		7B0A2A672603D4040040DCEB /* glext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A4F2603D3C60040DCEB /* glext_explicit_context_autogen.inc */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */; };
 		A08C3CDD16D6CB61003F0B83 /* ArrayBoundsClamper.h in Headers */ = {isa = PBXBuildFile; fileRef = A08C3CDB16D6CB61003F0B83 /* ArrayBoundsClamper.h */; };
 		A264F8AC16974DED006FAA5A /* DiagnosticsBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89316974DED006FAA5A /* DiagnosticsBase.cpp */; };
@@ -2000,6 +2010,11 @@
 		6ED7BDF52432CD6200E01503 /* ProgramExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutable.h; sourceTree = "<group>"; };
 		6EE2FD2C22BAE99C001D369E /* eglext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eglext_angle.h; path = include/EGL/eglext_angle.h; sourceTree = "<group>"; };
 		6EE2FD2E22BAE9CD001D369E /* gl2ext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl2ext_angle.h; path = include/GLES2/gl2ext_angle.h; sourceTree = "<group>"; };
+		7B0A2A4F2603D3C60040DCEB /* glext_explicit_context_autogen.inc */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = glext_explicit_context_autogen.inc; path = include/GLES/glext_explicit_context_autogen.inc; sourceTree = "<group>"; };
+		7B0A2A522603D3D10040DCEB /* gl2ext_explicit_context_autogen.inc */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gl2ext_explicit_context_autogen.inc; path = include/GLES2/gl2ext_explicit_context_autogen.inc; sourceTree = "<group>"; };
+		7B0A2A552603D3E00040DCEB /* gl3ext_explicit_context_autogen.inc */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gl3ext_explicit_context_autogen.inc; path = include/GLES3/gl3ext_explicit_context_autogen.inc; sourceTree = "<group>"; };
+		7B0A2A562603D3E00040DCEB /* gl32ext_explicit_context_autogen.inc */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gl32ext_explicit_context_autogen.inc; path = include/GLES3/gl32ext_explicit_context_autogen.inc; sourceTree = "<group>"; };
+		7B0A2A572603D3E00040DCEB /* gl31ext_explicit_context_autogen.inc */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gl31ext_explicit_context_autogen.inc; path = include/GLES3/gl31ext_explicit_context_autogen.inc; sourceTree = "<group>"; };
 		A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayBoundsClamper.cpp; path = compiler/ArrayBoundsClamper.cpp; sourceTree = "<group>"; };
 		A08C3CDB16D6CB61003F0B83 /* ArrayBoundsClamper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayBoundsClamper.h; path = compiler/ArrayBoundsClamper.h; sourceTree = "<group>"; };
 		A1B89B89221E003A00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
@@ -2598,6 +2613,7 @@
 				5C1BAA9E1DFB610E002906BB /* gl2.h */,
 				5C1BAA9F1DFB610E002906BB /* gl2ext.h */,
 				6EE2FD2E22BAE9CD001D369E /* gl2ext_angle.h */,
+				7B0A2A522603D3D10040DCEB /* gl2ext_explicit_context_autogen.inc */,
 				5C1BAAA01DFB610E002906BB /* gl2platform.h */,
 			);
 			name = GLES2;
@@ -2608,7 +2624,10 @@
 			children = (
 				5C1BAA961DFB60FF002906BB /* gl3.h */,
 				5C1BAA981DFB60FF002906BB /* gl31.h */,
+				7B0A2A572603D3E00040DCEB /* gl31ext_explicit_context_autogen.inc */,
 				5C1BAA991DFB60FF002906BB /* gl32.h */,
+				7B0A2A562603D3E00040DCEB /* gl32ext_explicit_context_autogen.inc */,
+				7B0A2A552603D3E00040DCEB /* gl3ext_explicit_context_autogen.inc */,
 				5C1BAA971DFB60FF002906BB /* gl3platform.h */,
 			);
 			name = GLES3;
@@ -3303,6 +3322,7 @@
 				6ED70A0922CD630E008688CE /* gl.h */,
 				6ED70A0A22CD630E008688CE /* glext.h */,
 				6ED70A0F22CD6822008688CE /* glext_angle.h */,
+				7B0A2A4F2603D3C60040DCEB /* glext_explicit_context_autogen.inc */,
 				6ED70A0B22CD630E008688CE /* glplatform.h */,
 			);
 			name = GLES;
@@ -3785,15 +3805,20 @@
 				31CDFE03249183BE00486F27 /* gl2.h in Headers */,
 				31CDFE01249183BE00486F27 /* gl2ext.h in Headers */,
 				31CDFE02249183BE00486F27 /* gl2ext_angle.h in Headers */,
+				7B0A2A652603D4040040DCEB /* gl2ext_explicit_context_autogen.inc in Headers */,
 				31CDFE04249183BE00486F27 /* gl2platform.h in Headers */,
 				31CDFE0B249183CF00486F27 /* gl3.h in Headers */,
 				31CDFE09249183CF00486F27 /* gl31.h in Headers */,
+				7B0A2A642603D4040040DCEB /* gl31ext_explicit_context_autogen.inc in Headers */,
 				31CDFE0A249183CF00486F27 /* gl32.h in Headers */,
+				7B0A2A632603D4040040DCEB /* gl32ext_explicit_context_autogen.inc in Headers */,
+				7B0A2A662603D4040040DCEB /* gl3ext_explicit_context_autogen.inc in Headers */,
 				31CDFE0C249183CF00486F27 /* gl3platform.h in Headers */,
 				31CD0066249184FC00486F27 /* GLES1Renderer.h in Headers */,
 				31CD0087249184FD00486F27 /* GLES1State.h in Headers */,
 				31CDFE00249183B600486F27 /* glext.h in Headers */,
 				31CDFDFE249183B600486F27 /* glext_angle.h in Headers */,
+				7B0A2A672603D4040040DCEB /* glext_explicit_context_autogen.inc in Headers */,
 				31CD003D249184F400486F27 /* GLImplFactory.h in Headers */,
 				31CD00BF2491854500486F27 /* global_state.h in Headers */,
 				31CDFDFD249183B600486F27 /* glplatform.h in Headers */,
@@ -4220,15 +4245,20 @@
 				31DB795C2491C86800982878 /* gl2.h in Headers */,
 				31DB795D2491C86800982878 /* gl2ext.h in Headers */,
 				31DB795E2491C86800982878 /* gl2ext_angle.h in Headers */,
+				7B0A2A602603D4020040DCEB /* gl2ext_explicit_context_autogen.inc in Headers */,
 				31DB795F2491C86800982878 /* gl2platform.h in Headers */,
 				31DB79602491C87000982878 /* gl3.h in Headers */,
 				31DB79612491C87000982878 /* gl31.h in Headers */,
+				7B0A2A5F2603D4020040DCEB /* gl31ext_explicit_context_autogen.inc in Headers */,
 				31DB79622491C87000982878 /* gl32.h in Headers */,
+				7B0A2A5E2603D4020040DCEB /* gl32ext_explicit_context_autogen.inc in Headers */,
+				7B0A2A612603D4020040DCEB /* gl3ext_explicit_context_autogen.inc in Headers */,
 				31DB79632491C87000982878 /* gl3platform.h in Headers */,
 				5CCD59602284F7960018F2D8 /* GLES1Renderer.h in Headers */,
 				5CCD59622284F7960018F2D8 /* GLES1State.h in Headers */,
 				6ED70A0D22CD630E008688CE /* glext.h in Headers */,
 				6ED70A1022CD6822008688CE /* glext_angle.h in Headers */,
+				7B0A2A622603D4020040DCEB /* glext_explicit_context_autogen.inc in Headers */,
 				5CB304EC1DE4164800D2C405 /* GLImplFactory.h in Headers */,
 				5CB304A21DE4157B00D2C405 /* global_state.h in Headers */,
 				6ED70A0E22CD630E008688CE /* glplatform.h in Headers */,

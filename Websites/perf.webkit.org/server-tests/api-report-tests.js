@@ -4,7 +4,7 @@ const assert = require('assert');
 
 const TestServer = require('./resources/test-server.js');
 const addBuilderForReport = require('./resources/common-operations.js').addBuilderForReport;
-const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
+const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 const MockData = require('./resources/mock-data.js');
 
@@ -17,7 +17,7 @@ describe("/api/report", function () {
             "buildTag": "123",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
-            "slaveName": "someSlave",
+            "workerName": "someWorker",
             "builderPassword": "somePassword",
             "platform": "Mountain Lion",
             "tests": {},
@@ -39,7 +39,7 @@ describe("/api/report", function () {
             "buildTag": "124",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
-            "slaveName": "someSlave",
+            "workerName": "someWorker",
             "builderPassword": "somePassword",
             "platform": "Mountain Lion",
             "tests": {},
@@ -61,7 +61,7 @@ describe("/api/report", function () {
             "buildTag": "125",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
-            "slaveName": "someSlave",
+            "workerName": "someWorker",
             "builderPassword": "somePassword",
             "platform": "Mountain Lion",
             "tests": {},
@@ -77,14 +77,14 @@ describe("/api/report", function () {
         };
     }
 
-    function emptySlaveReport()
+    function emptyWorkerReport()
     {
         return {
             "buildTag": "123",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
-            "slaveName": "someSlave",
-            "slavePassword": "otherPassword",
+            "workerName": "someWorker",
+            "workerPassword": "otherPassword",
             "platform": "Mountain Lion",
             "tests": {},
             "revisions": {
@@ -189,12 +189,12 @@ describe("/api/report", function () {
         });
     });
 
-    it("should treat the slave password as the builder password if there is no matching slave", () => {
+    it("should treat the worker password as the builder password if there is no matching worker", () => {
         let report = emptyReport();
-        report['slavePassword'] = report['builderPassword'];
+        report['workerPassword'] = report['builderPassword'];
         delete report['builderPassword'];
 
-        return addSlaveForReport(report).then(() => {
+        return addWorkerForReport(report).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [report]);
         }).then((response) => {
             assert.strictEqual(response['status'], 'OK');
@@ -205,16 +205,16 @@ describe("/api/report", function () {
             assert.strictEqual(reports.length, 1);
             const storedContent = JSON.parse(reports[0]['content']);
 
-            delete report['slavePassword'];
+            delete report['workerPassword'];
             delete report['tests'];
             delete storedContent['tests'];
             assert.deepStrictEqual(storedContent, report);
         });
     });
 
-    it("should store a report from a valid slave", () => {
-        return addSlaveForReport(emptySlaveReport()).then(() => {
-            return TestServer.remoteAPI().postJSON('/api/report/', [emptySlaveReport()]);
+    it("should store a report from a valid worker", () => {
+        return addWorkerForReport(emptyWorkerReport()).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report/', [emptyWorkerReport()]);
         }).then((response) => {
             assert.strictEqual(response['status'], 'OK');
             assert.strictEqual(response['failureStored'], false);
@@ -222,10 +222,10 @@ describe("/api/report", function () {
             return TestServer.database().selectAll('reports');
         }).then((reports) => {
             assert.strictEqual(reports.length, 1);
-            const submittedContent = emptySlaveReport();
+            const submittedContent = emptyWorkerReport();
             const storedContent = JSON.parse(reports[0]['content']);
 
-            delete submittedContent['slavePassword'];
+            delete submittedContent['workerPassword'];
             delete submittedContent['tests'];
             delete storedContent['tests'];
             assert.deepStrictEqual(storedContent, submittedContent);
@@ -245,20 +245,20 @@ describe("/api/report", function () {
         });
     });
 
-    it("should add a slave if there isn't one and the report was authenticated by a builder", () => {
+    it("should add a worker if there isn't one and the report was authenticated by a builder", () => {
         return addBuilderForReport(emptyReport()).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report/', [emptyReport()]);
         }).then((response) => {
-            return TestServer.database().selectAll('build_slaves');
-        }).then((slaves) => {
-            assert.strictEqual(slaves.length, 1);
-            assert.strictEqual(slaves[0]['name'], emptyReport()['slaveName']);
+            return TestServer.database().selectAll('build_workers');
+        }).then((workers) => {
+            assert.strictEqual(workers.length, 1);
+            assert.strictEqual(workers[0]['name'], emptyReport()['workerName']);
         });
     });
 
-    it("should add a builder if there isn't one and the report was authenticated by a slave", () => {
-        return addSlaveForReport(emptySlaveReport()).then(() => {
-            return TestServer.remoteAPI().postJSON('/api/report/', [emptySlaveReport()]);
+    it("should add a builder if there isn't one and the report was authenticated by a worker", () => {
+        return addWorkerForReport(emptyWorkerReport()).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report/', [emptyWorkerReport()]);
         }).then((response) => {
             return TestServer.database().selectAll('builders');
         }).then((builders) => {

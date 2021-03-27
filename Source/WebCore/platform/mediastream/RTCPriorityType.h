@@ -27,10 +27,26 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class RTCPriorityType { VeryLow, Low, Medium, High };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::RTCPriorityType> {
+    using values = EnumValues<
+        WebCore::RTCPriorityType,
+        WebCore::RTCPriorityType::VeryLow,
+        WebCore::RTCPriorityType::Low,
+        WebCore::RTCPriorityType::Medium,
+        WebCore::RTCPriorityType::High
+    >;
+};
+
+}
 
 #endif // ENABLE(WEB_RTC)

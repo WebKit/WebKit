@@ -1,2 +1,2 @@
-importScripts("cacheable-script-worker.php");
+importScripts("cacheable-script-worker.py");
 

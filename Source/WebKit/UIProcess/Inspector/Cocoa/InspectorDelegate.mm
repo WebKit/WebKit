@@ -26,7 +26,7 @@
 #import "config.h"
 #import "InspectorDelegate.h"
 
-#import "WebInspectorProxy.h"
+#import "WebInspectorUIProxy.h"
 #import "_WKInspectorDelegate.h"
 #import "_WKInspectorInternal.h"
 
@@ -57,7 +57,7 @@ InspectorDelegate::InspectorClient::~InspectorClient()
 {
 }
 
-void InspectorDelegate::InspectorClient::openURLExternally(WebInspectorProxy&, const String& url)
+void InspectorDelegate::InspectorClient::openURLExternally(WebInspectorUIProxy&, const String& url)
 {
     if (!m_inspectorDelegate.m_delegateMethods.inspectorOpenURLExternally)
         return;

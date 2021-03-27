@@ -856,19 +856,23 @@ input:matches([type="button"], [type="submit"], [type="reset"]), input[type="fil
     box-sizing: border-box;
 }
 
+input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::file-selector-button:active, button:active {
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    color: ActiveButtonText;
+#else
+    color: -apple-system-blue;
+#endif
+}
+
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 
-input[type="submit"] {
+input[type="submit"], input[type="submit"]:active {
     background-color: -apple-system-blue;
     color: white;
     font-weight: bold;
 }
 
 #endif
-
-input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::file-selector-button:active, button:active {
-    color: ActiveButtonText;
-}
 
 input[type="range"] {
     -webkit-appearance: slider-horizontal;

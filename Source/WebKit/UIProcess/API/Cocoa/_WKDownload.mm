@@ -84,9 +84,8 @@ IGNORE_WARNINGS_END
 
 - (WKWebView *)originatingWebView
 {
-    if (auto* originatingPage = _download->_download->originatingPage())
-        return retainPtr(fromWebPageProxy(*originatingPage)).autorelease();
-    return nil;
+    auto page = _download->_download->originatingPage();
+    return page ? page->cocoaView().autorelease() : nil;
 }
 
 -(NSArray<NSURL *> *)redirectChain
