@@ -1,3 +1,19 @@
+2021-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=223837
+
+        Reviewed by Tim Horton.
+        
+        handleDisplayRefreshedNotificationOnMainThread() is an anachronism left over from
+        the non-main-thread nature of the CVDisplayLink callback. There's no need to burden
+        all subclasses of DisplayRefreshMonitor with that detail.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers):
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::displayLinkFired):
+
 2021-03-26  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Grid layout labels can be drawn outside the viewport

@@ -89,7 +89,7 @@ void DisplayRefreshMonitorGtk::displayLinkFired()
         setIsPreviousFrameDone(false);
     }
     ASSERT(isMainThread());
-    handleDisplayRefreshedNotificationOnMainThread(this);
+    displayDidRefresh();
 }
 
 } // namespace WebCore

@@ -68,7 +68,7 @@ void RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers()
         return;
 
     setIsPreviousFrameDone(false);
-    handleDisplayRefreshedNotificationOnMainThread(this);
+    displayDidRefresh();
 }
 
 void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDrawingArea& drawingArea)

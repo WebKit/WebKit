@@ -99,7 +99,7 @@ void LegacyDisplayRefreshMonitorMac::displayLinkFired()
 
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
         if (m_displayLink)
-            handleDisplayRefreshedNotificationOnMainThread(this);
+            displayDidRefresh();
     });
 }
 

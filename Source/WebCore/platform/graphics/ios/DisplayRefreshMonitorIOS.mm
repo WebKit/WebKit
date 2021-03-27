@@ -118,7 +118,7 @@ void DisplayRefreshMonitorIOS::displayLinkFired()
         return;
 
     setIsPreviousFrameDone(false);
-    handleDisplayRefreshedNotificationOnMainThread(this);
+    displayDidRefresh();
 }
 
 }

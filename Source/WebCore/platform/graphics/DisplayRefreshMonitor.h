@@ -71,7 +71,6 @@ public:
 
 protected:
     WEBCORE_EXPORT explicit DisplayRefreshMonitor(PlatformDisplayID);
-    WEBCORE_EXPORT static void handleDisplayRefreshedNotificationOnMainThread(void* data);
 
     friend class DisplayRefreshMonitorManager;
     
@@ -87,9 +86,9 @@ protected:
     void setIsPreviousFrameDone(bool done) { m_previousFrameDone = done; }
 
     virtual bool hasRequestedRefreshCallback() const { return false; }
+    WEBCORE_EXPORT void displayDidRefresh();
 
 private:
-    void displayDidRefresh();
 
     HashSet<DisplayRefreshMonitorClient*> m_clients;
     HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified { nullptr };

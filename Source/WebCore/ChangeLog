@@ -1,3 +1,27 @@
+2021-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=223837
+
+        Reviewed by Tim Horton.
+
+        handleDisplayRefreshedNotificationOnMainThread() is an anachronism left over from
+        the non-main-thread nature of the CVDisplayLink callback. There's no need to burden
+        all subclasses of DisplayRefreshMonitor with that detail.
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        (WebCore::DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread): Deleted.
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp:
+        (WebCore::DisplayRefreshMonitorGtk::displayLinkFired):
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        (WebCore::DisplayRefreshMonitorIOS::displayLinkFired):
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp:
+        (WebCore::LegacyDisplayRefreshMonitorMac::displayLinkFired):
+        * platform/graphics/win/DisplayRefreshMonitorWin.cpp:
+        (WebCore::DisplayRefreshMonitorWin::displayLinkFired):
+
 2021-03-27  Zalan Bujtas  <zalan@apple.com>
 
         [Multicolumn] Do not try to re-validate a multicol spanner when the renderer is moved internally

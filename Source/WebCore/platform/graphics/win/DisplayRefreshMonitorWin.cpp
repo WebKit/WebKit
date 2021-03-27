@@ -55,8 +55,7 @@ void DisplayRefreshMonitorWin::displayLinkFired()
         return;
 
     setIsPreviousFrameDone(false);
-
-    handleDisplayRefreshedNotificationOnMainThread(this);
+    displayDidRefresh();
 }
 
 } // namespace WebCore

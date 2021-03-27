@@ -76,12 +76,12 @@ void DisplayRefreshMonitorMac::displayLinkFired()
     ASSERT(isMainRunLoop());
     if (!m_firstCallbackInCurrentRunloop)
         return;
+
     m_firstCallbackInCurrentRunloop = false;
 
     LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorMac::displayLinkFired() for display " << displayID());
 
-    // Since we are on the main thread, we can just call handleDisplayRefreshedNotificationOnMainThread here.
-    handleDisplayRefreshedNotificationOnMainThread(this);
+    displayDidRefresh();
 }
 
 } // namespace WebKit

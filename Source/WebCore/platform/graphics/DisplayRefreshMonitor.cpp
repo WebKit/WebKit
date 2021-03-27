@@ -80,12 +80,6 @@ DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
 
 DisplayRefreshMonitor::~DisplayRefreshMonitor() = default;
 
-void DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(void* data)
-{
-    DisplayRefreshMonitor* monitor = static_cast<DisplayRefreshMonitor*>(data);
-    monitor->displayDidRefresh();
-}
-
 void DisplayRefreshMonitor::addClient(DisplayRefreshMonitorClient& client)
 {
     m_clients.add(&client);
@@ -100,6 +94,8 @@ bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient& client)
 
 void DisplayRefreshMonitor::displayDidRefresh()
 {
+    ASSERT(isMainRunLoop());
+
     {
         LockHolder lock(m_mutex);
         LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitor " << this << " displayDidRefresh for display " << displayID() << " scheduled " << m_scheduled << " unscheduledFireCount " << m_unscheduledFireCount);
