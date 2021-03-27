@@ -1,3 +1,18 @@
+2021-03-26  David Kilzer  <ddkilzer@apple.com>
+
+        WebFeature class fails to copy/retain its instance variables
+        <https://webkit.org/b/223823>
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebFeature.m:
+        (-[WebFeature initWithKey:preferenceKey:name:details:defaultValue:hidden:]):
+        - Copy (and thereby retain) instance variables, fulfilling the
+          promise of its @property declarations and preventing
+          use-after-release issues.
+        (-[WebFeature dealloc]): Add.
+        - Release the instance variables copied in the constructor.
+
 2021-03-26  Jessie Berlin  <jberlin@webkit.org>
 
         Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags

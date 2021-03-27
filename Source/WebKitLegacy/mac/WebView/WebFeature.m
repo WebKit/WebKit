@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,13 +32,22 @@
     if (!(self = [super init]))
         return nil;
 
-    _key = key;
-    _preferenceKey = preferenceKey;
-    _name = name;
-    _details = details;
+    _key = [key copy];
+    _preferenceKey = [preferenceKey copy];
+    _name = [name copy];
+    _details = [details copy];
     _defaultValue = defaultValue;
     _hidden = hidden;
     return self;
+}
+
+- (void)dealloc
+{
+    [_key release];
+    [_preferenceKey release];
+    [_name release];
+    [_details release];
+    [super dealloc];
 }
 
 - (NSString *)description
