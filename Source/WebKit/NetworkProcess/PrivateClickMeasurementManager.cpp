@@ -77,7 +77,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
     if (attribution.ephemeralSourceNonce()) {
         auto attributionCopy = attribution;
-        getTokenPublicKey(WTFMove(attributionCopy), [weakThis = makeWeakPtr(*this), this] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+        getTokenPublicKey(WTFMove(attributionCopy), PrivateClickMeasurement::AttributionReportEndpoint::Source, [weakThis = makeWeakPtr(*this), this] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
             if (!weakThis)
                 return;
 
@@ -144,7 +144,7 @@ static NetworkResourceLoadParameters generateNetworkResourceLoadParametersForHtt
     return generateNetworkResourceLoadParameters(WTFMove(url), "GET"_s, nullptr, dataTypeCarried);
 }
 
-void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&& callback)
+void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&& callback)
 {
     if (!featureEnabled())
         return;
@@ -153,6 +153,8 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     auto pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
     auto tokenPublicKeyURL = attribution.tokenPublicKeyURL();
     if (m_tokenPublicKeyURLForTesting) {
+        if (attributionReportEndpoint == PrivateClickMeasurement::AttributionReportEndpoint::Destination)
+            return;
         tokenPublicKeyURL = *m_tokenPublicKeyURLForTesting;
         pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
     }
@@ -270,39 +272,48 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
         return;
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics()) {
-        resourceLoadStatistics->attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData), [this, weakThis = makeWeakPtr(*this)] (auto optionalSecondsUntilSend) {
+        resourceLoadStatistics->attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData) {
             if (!weakThis)
                 return;
-            if (optionalSecondsUntilSend) {
-                auto secondsUntilSend = *optionalSecondsUntilSend;
-                if (m_firePendingAttributionRequestsTimer.isActive() && m_firePendingAttributionRequestsTimer.nextFireInterval() < secondsUntilSend)
+            
+            if (!attributionSecondsUntilSendData)
+                return;
+
+            if (attributionSecondsUntilSendData.value().hasValidSecondsUntilSendValues()) {
+                auto minSecondsUntilSend = attributionSecondsUntilSendData.value().minSecondsUntilSend();
+
+                ASSERT(minSecondsUntilSend);
+                if (!minSecondsUntilSend)
+                    return;
+
+                if (m_firePendingAttributionRequestsTimer.isActive() && m_firePendingAttributionRequestsTimer.nextFireInterval() < *minSecondsUntilSend)
                     return;
 
                 if (UNLIKELY(debugModeEnabled())) {
-                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, secondsUntilSend.seconds(), " seconds."_s));
-                    secondsUntilSend = debugModeSecondsUntilSend;
+                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, minSecondsUntilSend.value().seconds(), " seconds."_s));
+                    minSecondsUntilSend = debugModeSecondsUntilSend;
                 } else
-                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the timeout of "_s, secondsUntilSend.seconds(), " seconds."_s));
+                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the timeout of "_s, minSecondsUntilSend.value().seconds(), " seconds."_s));
 
-                startTimer(secondsUntilSend);
+                startTimer(*minSecondsUntilSend);
             }
         });
     }
 #endif
 }
 
-void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMeasurement& attribution)
+void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMeasurement& attribution, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint)
 {
     if (!featureEnabled())
         return;
 
     if (!attribution.sourceUnlinkableToken()) {
-        fireConversionRequestImpl(attribution);
+        fireConversionRequestImpl(attribution, attributionReportEndpoint);
         return;
     }
 
     auto attributionCopy = attribution;
-    getTokenPublicKey(WTFMove(attributionCopy), [weakThis = makeWeakPtr(*this), this] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+    getTokenPublicKey(WTFMove(attributionCopy), attributionReportEndpoint, [weakThis = makeWeakPtr(*this), this, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
         if (!weakThis)
             return;
 
@@ -318,13 +329,21 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
         if (keyID != attribution.sourceUnlinkableToken()->keyIDBase64URL)
             return;
 
-        fireConversionRequestImpl(attribution);
+        fireConversionRequestImpl(attribution, attributionReportEndpoint);
     });
 }
 
-void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClickMeasurement& attribution)
+void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClickMeasurement& attribution, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint)
 {
-    auto attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportSourceURL : attribution.attributionReportSourceURL();
+    URL attributionURL;
+    switch (attributionReportEndpoint) {
+    case PrivateClickMeasurement::AttributionReportEndpoint::Source:
+        attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportSourceURL : attribution.attributionReportSourceURL();
+        break;
+    case PrivateClickMeasurement::AttributionReportEndpoint::Destination:
+        attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportAttributeOnURL : attribution.attributionReportAttributeOnURL();
+    }
+
     if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
 
@@ -343,14 +362,14 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     });
 }
 
-void PrivateClickMeasurementManager::clearSentAttribution(PrivateClickMeasurement&& sentConversion)
+void PrivateClickMeasurementManager::clearSentAttribution(PrivateClickMeasurement&& sentConversion, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!featureEnabled())
         return;
 
     if (auto* resourceLoadStatistics = m_networkSession->resourceLoadStatistics())
-        resourceLoadStatistics->clearSentAttribution(WTFMove(sentConversion));
+        resourceLoadStatistics->clearSentAttribution(WTFMove(sentConversion), attributionReportEndpoint);
 #endif
 }
 
@@ -371,8 +390,10 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
         bool hasSentAttribution = false;
 
         for (auto& attribution : attributions) {
-            auto earliestTimeToSend = attribution.earliestTimeToSend();
-            if (!earliestTimeToSend) {
+            Optional<WallTime> earliestTimeToSend = attribution.timesToSend().earliestTimeToSend();
+            Optional<WebCore::PrivateClickMeasurement::AttributionReportEndpoint> attributionReportEndpoint = attribution.timesToSend().attributionReportEndpoint();
+
+            if (!earliestTimeToSend || !attributionReportEndpoint) {
                 ASSERT_NOT_REACHED();
                 continue;
             }
@@ -388,9 +409,15 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
                     return;
                 }
 
-                fireConversionRequest(attribution);
-                clearSentAttribution(WTFMove(attribution));
+                auto laterTimeToSend = attribution.timesToSend().latestTimeToSend();
+                fireConversionRequest(attribution, *attributionReportEndpoint);
+                clearSentAttribution(WTFMove(attribution), *attributionReportEndpoint);
                 hasSentAttribution = true;
+
+                // Update nextTimeToFire in case the later report time for this attribution is sooner than the scheduled next time to fire.
+                if (laterTimeToSend)
+                    nextTimeToFire = std::min(nextTimeToFire, laterTimeToSend.value().secondsSinceEpoch());
+
                 continue;
             }
 

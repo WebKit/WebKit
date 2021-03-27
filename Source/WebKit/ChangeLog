@@ -1,3 +1,66 @@
+2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Send report to both click source and attribution destination website
+        https://bugs.webkit.org/show_bug.cgi?id=223615
+        <rdar://problem/75849443>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        Move these queries to the correct INSERT OR REPLACE category. Stop
+        inserting null for earliestTimeToSendToDestination and starting
+        binding a parameter to it now that we are supporting reports to both
+        sites.
+
+        Now that earliestTimeToSend* can be null if a report has been sent
+        to a site, we need queries to set the value to null, and also need
+        to sort attributions by the minimum of either the two reporting times,
+        or the non-null time if one is null.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::destroyStatements):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeasurement):
+        We should not attribute a PCM value if it has already been reported to
+        either the source or destination. This is covered by checking
+        secondsUntilSend.hasValidSecondsUntilSendValues() and 
+        previouslyAttributed.value().hasPreviouslyBeenReported() before
+        inserting anything into the attributed PCM table.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::earliestTimesToSend):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markReportAsSentToSource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markReportAsSentToDestination):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttribution):
+        Clear a value from the attributed table only if it has been sent to
+        both source and destination site. Otherwise, set the corresponding
+        attribution endpoint to null so we don't send it here again.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        For the sake of testing we can set the destination earliest time to
+        send to null. We are only confirming here that the expired attribution
+        gets sent.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::attributePrivateClickMeasurement):
+        (WebKit::WebResourceLoadStatisticsStore::clearSentAttribution):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        We currently have no way of setting the destination token URL site for
+        testing. To avoid flakiness, we should not make a ping load for the
+        token URL if we are reporting to the destination in test mode.
+
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        (WebKit::PrivateClickMeasurementManager::clearSentAttribution):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+
 2021-03-27  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Remove DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread()

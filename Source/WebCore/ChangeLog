@@ -1,3 +1,36 @@
+2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Send report to both click source and attribution destination website
+        https://bugs.webkit.org/show_bug.cgi?id=223615
+        <rdar://problem/75849443>
+
+        Reviewed by Brent Fulgham.
+
+        Introduce 2 new structs for storing the earliest time to send and 
+        seconds until send for the source and destination sites.
+
+        * loader/PrivateClickMeasurement.cpp:
+        (WebCore::PrivateClickMeasurement::isValid const):
+        (WebCore::PrivateClickMeasurement::hasPreviouslyBeenReported):
+        (WebCore::randomlyBetweenTwentyFourAndFortyEightHours):
+        (WebCore::PrivateClickMeasurement::attributeAndGetEarliestTimeToSend):
+        * loader/PrivateClickMeasurement.h:
+        (WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData::hasValidSecondsUntilSendValues):
+        (WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData::minSecondsUntilSend):
+        (WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData::encode const):
+        (WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData::decode):
+        (WebCore::PrivateClickMeasurement::AttributionTimeToSendData::earliestTimeToSend):
+        (WebCore::PrivateClickMeasurement::AttributionTimeToSendData::latestTimeToSend):
+        (WebCore::PrivateClickMeasurement::AttributionTimeToSendData::attributionReportEndpoint):
+        (WebCore::PrivateClickMeasurement::AttributionTimeToSendData::encode const):
+        (WebCore::PrivateClickMeasurement::AttributionTimeToSendData::decode):
+        (WebCore::PrivateClickMeasurement::timesToSend const):
+        (WebCore::PrivateClickMeasurement::setTimesToSend):
+        (WebCore::PrivateClickMeasurement::encode const):
+        (WebCore::PrivateClickMeasurement::decode):
+        (WebCore::PrivateClickMeasurement::earliestTimeToSend const): Deleted.
+        (WebCore::PrivateClickMeasurement::setEarliestTimeToSend): Deleted.
+
 2021-03-27  Simon Fraser  <simon.fraser@apple.com>
 
         Remove DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread()

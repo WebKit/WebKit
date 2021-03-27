@@ -64,6 +64,10 @@ using ExistingColumns = Vector<String>;
 using ExpectedColumns = Vector<String>;
 using ExistingColumnName = String;
 using ExpectedColumnName = String;
+using SourceEarliestTimeToSend = double;
+using DestinationEarliestTimeToSend = double;
+using SourceDomainID = unsigned;
+using DestinationDomainID = unsigned;
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore {
@@ -138,12 +142,12 @@ public:
     // Private Click Measurement.
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) override;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() override;
-    Optional<Seconds> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) override;
+    Optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) override;
     Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement() override;
     void clearPrivateClickMeasurement(Optional<RegistrableDomain>) override;
     void clearExpiredPrivateClickMeasurement() override;
     String privateClickMeasurementToString() override;
-    void clearSentAttribution(WebCore::PrivateClickMeasurement&&) override;
+    void clearSentAttribution(WebCore::PrivateClickMeasurement&&, WebCore::PrivateClickMeasurement::AttributionReportEndpoint) override;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting() override;
     Vector<String> columnsForTable(const String&);
 
@@ -192,6 +196,10 @@ private:
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor() const;
     Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty() const;
     HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccess() const;
+
+    void markReportAsSentToDestination(SourceDomainID, DestinationDomainID);
+    void markReportAsSentToSource(SourceDomainID, DestinationDomainID);
+    std::pair<Optional<SourceEarliestTimeToSend>, Optional<DestinationEarliestTimeToSend>> earliestTimesToSend(const WebCore::PrivateClickMeasurement&);
 
     struct DomainData {
         unsigned domainID;
@@ -289,6 +297,7 @@ private:
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_uniqueRedirectExistsStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainsExistsStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_removeAllDataStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_earliestTimesToSendStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_insertUnattributedPrivateClickMeasurementStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_insertAttributedPrivateClickMeasurementStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_setUnattributedPrivateClickMeasurementAsExpiredStatement;
@@ -301,7 +310,9 @@ private:
     std::unique_ptr<WebCore::SQLiteStatement> m_findAttributedStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_updateAttributionsEarliestTimeToSendStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_removeUnattributedStatement;
-    
+    std::unique_ptr<WebCore::SQLiteStatement> m_markReportAsSentToSourceStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_markReportAsSentToDestinationStatement;
+
     PAL::SessionID m_sessionID;
     bool m_isNewResourceLoadStatisticsDatabaseFile { false };
     unsigned m_operatingDatesSize { 0 };

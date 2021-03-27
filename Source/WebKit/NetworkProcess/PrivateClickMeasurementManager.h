@@ -70,12 +70,12 @@ public:
     void startTimer(Seconds);
 
 private:
-    void getTokenPublicKey(PrivateClickMeasurement&&, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
+    void getTokenPublicKey(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
     void getSignedUnlinkableToken(PrivateClickMeasurement&&);
-    void clearSentAttribution(PrivateClickMeasurement&&);
+    void clearSentAttribution(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint);
     void attribute(const SourceSite&, const AttributionDestinationSite&, AttributionTriggerData&&);
-    void fireConversionRequest(const PrivateClickMeasurement&);
-    void fireConversionRequestImpl(const PrivateClickMeasurement&);
+    void fireConversionRequest(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
+    void fireConversionRequestImpl(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
     void firePendingAttributionRequests();
     void clearExpired();
     bool featureEnabled() const;

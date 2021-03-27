@@ -1522,7 +1522,7 @@ void WebResourceLoadStatisticsStore::markAllUnattributedPrivateClickMeasurementA
     });
 }
 
-void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributionDestinationSite& destinationSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(Optional<Seconds>)>&& completionHandler)
+void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributionDestinationSite& destinationSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(Optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -1639,18 +1639,18 @@ void WebResourceLoadStatisticsStore::privateClickMeasurementToString(CompletionH
     });
 }
 
-void WebResourceLoadStatisticsStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear)
+void WebResourceLoadStatisticsStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint)
 {
     ASSERT(RunLoop::isMain());
 
     if (isEphemeral())
         return;
 
-    postTask([this, attributionToClear = WTFMove(attributionToClear)]() mutable {
+    postTask([this, attributionToClear = WTFMove(attributionToClear), attributionReportEndpoint]() mutable {
         if (!m_statisticsStore)
             return;
 
-        m_statisticsStore->clearSentAttribution(WTFMove(attributionToClear));
+        m_statisticsStore->clearSentAttribution(WTFMove(attributionToClear), attributionReportEndpoint);
     });
 }
 

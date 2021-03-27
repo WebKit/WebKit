@@ -1,3 +1,17 @@
+2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Send report to both click source and attribution destination website
+        https://bugs.webkit.org/show_bug.cgi?id=223615
+        <rdar://problem/75849443>
+
+        Reviewed by Brent Fulgham.
+
+        Update API tests to check for a valid time to send for both the source
+        and destination site.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-03-26  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r275111) [GLIB] Fix build with new derived sources and forwarding headers scheme

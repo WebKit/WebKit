@@ -82,9 +82,10 @@ TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
     auto now = WallTime::now();
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)));
-    auto earliestTimeToSend = attribution.earliestTimeToSend();
-    ASSERT_TRUE(earliestTimeToSend);
-    ASSERT_TRUE(earliestTimeToSend.value().secondsSinceEpoch() - 24_h >= now.secondsSinceEpoch());
+    auto earliestTimeToSend = attribution.timesToSend();
+    ASSERT_TRUE(earliestTimeToSend.sourceEarliestTimeToSend && earliestTimeToSend.destinationEarliestTimeToSend);
+    ASSERT_TRUE(earliestTimeToSend.sourceEarliestTimeToSend.value().secondsSinceEpoch() - 24_h >= now.secondsSinceEpoch());
+    ASSERT_TRUE(earliestTimeToSend.destinationEarliestTimeToSend.value().secondsSinceEpoch() - 24_h >= now.secondsSinceEpoch());
 }
 
 TEST(PrivateClickMeasurement, ValidConversionURLs)
@@ -182,7 +183,7 @@ TEST(PrivateClickMeasurement, InvalidMissingConversion)
 
     ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
     ASSERT_TRUE(attribution.attributionReportAttributeOnURL().isEmpty());
-    ASSERT_FALSE(attribution.earliestTimeToSend());
+    ASSERT_FALSE(attribution.timesToSend().sourceEarliestTimeToSend && attribution.timesToSend().destinationEarliestTimeToSend);
 }
 
 TEST(PrivateClickMeasurement, InvalidConversionURLs)

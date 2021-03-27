@@ -53,6 +53,7 @@ public:
     using PriorityValue = uint32_t;
 
     enum class PcmDataCarried : bool { NonPersonallyIdentifiable, PersonallyIdentifiable };
+    enum class AttributionReportEndpoint : bool { Source, Destination };
 
     struct SourceID {
         static constexpr uint32_t MaxEntropy = 255;
@@ -247,6 +248,116 @@ public:
         template<class Decoder> static Optional<AttributionTriggerData> decode(Decoder&);
     };
 
+    struct AttributionSecondsUntilSendData {
+        Optional<Seconds> sourceSeconds;
+        Optional<Seconds> destinationSeconds;
+
+        bool hasValidSecondsUntilSendValues()
+        {
+            return sourceSeconds && destinationSeconds;
+        }
+
+        Optional<Seconds> minSecondsUntilSend()
+        {
+            if (!sourceSeconds && !destinationSeconds)
+                return WTF::nullopt;
+
+            if (sourceSeconds && destinationSeconds)
+                return std::min(sourceSeconds, destinationSeconds);
+
+            return sourceSeconds ? sourceSeconds : destinationSeconds;
+        }
+
+        template<class Encoder>
+        void encode(Encoder& encoder) const
+        {
+            encoder << sourceSeconds << destinationSeconds;
+        }
+
+        template<class Decoder>
+        static Optional<AttributionSecondsUntilSendData> decode(Decoder& decoder)
+        {
+            Optional<Optional<Seconds>> sourceSeconds;
+            decoder >> sourceSeconds;
+            if (!sourceSeconds)
+                return WTF::nullopt;
+
+            Optional<Optional<Seconds>> destinationSeconds;
+            decoder >> destinationSeconds;
+            if (!destinationSeconds)
+                return WTF::nullopt;
+
+            return AttributionSecondsUntilSendData { WTFMove(*sourceSeconds), WTFMove(*destinationSeconds) };
+        }
+    };
+
+    struct AttributionTimeToSendData {
+        Optional<WallTime> sourceEarliestTimeToSend;
+        Optional<WallTime> destinationEarliestTimeToSend;
+
+        Optional<WallTime> earliestTimeToSend()
+        {
+            if (!sourceEarliestTimeToSend && !destinationEarliestTimeToSend)
+                return WTF::nullopt;
+
+            if (sourceEarliestTimeToSend && destinationEarliestTimeToSend)
+                return std::min(sourceEarliestTimeToSend, destinationEarliestTimeToSend);
+
+            return sourceEarliestTimeToSend ? sourceEarliestTimeToSend : destinationEarliestTimeToSend;
+        }
+
+        Optional<WallTime> latestTimeToSend()
+        {
+            if (!sourceEarliestTimeToSend && !destinationEarliestTimeToSend)
+                return WTF::nullopt;
+
+            if (sourceEarliestTimeToSend && destinationEarliestTimeToSend)
+                return std::max(sourceEarliestTimeToSend, destinationEarliestTimeToSend);
+
+            return sourceEarliestTimeToSend ? sourceEarliestTimeToSend : destinationEarliestTimeToSend;
+        }
+
+        Optional<AttributionReportEndpoint> attributionReportEndpoint()
+        {
+            if (sourceEarliestTimeToSend && destinationEarliestTimeToSend) {
+                if (*sourceEarliestTimeToSend < *destinationEarliestTimeToSend)
+                    return AttributionReportEndpoint::Source;
+
+                return AttributionReportEndpoint::Destination;
+            }
+
+            if (sourceEarliestTimeToSend)
+                return AttributionReportEndpoint::Source;
+
+            if (destinationEarliestTimeToSend)
+                return AttributionReportEndpoint::Destination;
+
+            return WTF::nullopt;
+        }
+
+        template<class Encoder>
+        void encode(Encoder& encoder) const
+        {
+            encoder << sourceEarliestTimeToSend << destinationEarliestTimeToSend;
+        }
+
+        template<class Decoder>
+        static Optional<AttributionTimeToSendData> decode(Decoder& decoder)
+        {
+            Optional<Optional<WallTime>> sourceEarliestTimeToSend;
+            decoder >> sourceEarliestTimeToSend;
+            if (!sourceEarliestTimeToSend)
+                return WTF::nullopt;
+
+            Optional<Optional<WallTime>> destinationEarliestTimeToSend;
+            decoder >> destinationEarliestTimeToSend;
+            if (!destinationEarliestTimeToSend)
+                return WTF::nullopt;
+
+            return AttributionTimeToSendData { WTFMove(*sourceEarliestTimeToSend), WTFMove(*destinationEarliestTimeToSend) };
+        }
+    };
+
     PrivateClickMeasurement() = default;
     PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, String&& sourceDescription = { }, String&& purchaser = { }, WallTime timeOfAdClick = WallTime::now())
         : m_sourceID { sourceID }
@@ -260,7 +371,7 @@ public:
 
     WEBCORE_EXPORT static const Seconds maxAge();
     WEBCORE_EXPORT static Expected<AttributionTriggerData, String> parseAttributionRequest(const URL& redirectURL);
-    WEBCORE_EXPORT Optional<Seconds> attributeAndGetEarliestTimeToSend(AttributionTriggerData&&);
+    WEBCORE_EXPORT AttributionSecondsUntilSendData attributeAndGetEarliestTimeToSend(AttributionTriggerData&&);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const PrivateClickMeasurement&) const;
     WEBCORE_EXPORT URL attributionReportSourceURL() const;
     WEBCORE_EXPORT URL attributionReportAttributeOnURL() const;
@@ -268,8 +379,9 @@ public:
     const SourceSite& sourceSite() const { return m_sourceSite; };
     const AttributionDestinationSite& destinationSite() const { return m_destinationSite; };
     WallTime timeOfAdClick() const { return m_timeOfAdClick; }
-    Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };
-    void setEarliestTimeToSend(WallTime time) { m_earliestTimeToSend = time; }
+    WEBCORE_EXPORT bool hasPreviouslyBeenReported();
+    AttributionTimeToSendData timesToSend() const { return m_timesToSend; };
+    void setTimesToSend(AttributionTimeToSendData data) { m_timesToSend = data; }
     const SourceID& sourceID() const { return m_sourceID; }
     Optional<AttributionTriggerData> attributionTriggerData() { return m_attributionTriggerData; }
     void setAttribution(AttributionTriggerData&& attributionTriggerData) { m_attributionTriggerData = WTFMove(attributionTriggerData); }
@@ -327,7 +439,7 @@ private:
     WallTime m_timeOfAdClick;
 
     Optional<AttributionTriggerData> m_attributionTriggerData;
-    Optional<WallTime> m_earliestTimeToSend;
+    AttributionTimeToSendData m_timesToSend;
 
     struct SourceUnlinkableToken {
 #if PLATFORM(COCOA)
@@ -354,7 +466,7 @@ void PrivateClickMeasurement::encode(Encoder& encoder) const
         << m_timeOfAdClick
         << m_ephemeralSourceNonce
         << m_attributionTriggerData
-        << m_earliestTimeToSend;
+        << m_timesToSend;
 }
 
 template<class Decoder>
@@ -400,9 +512,9 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     if (!attributionTriggerData)
         return WTF::nullopt;
     
-    Optional<Optional<WallTime>> earliestTimeToSend;
-    decoder >> earliestTimeToSend;
-    if (!earliestTimeToSend)
+    Optional<AttributionTimeToSendData> timesToSend;
+    decoder >> timesToSend;
+    if (!timesToSend)
         return WTF::nullopt;
     
     PrivateClickMeasurement attribution {
@@ -415,7 +527,7 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     };
     attribution.m_ephemeralSourceNonce = WTFMove(*ephemeralSourceNonce);
     attribution.m_attributionTriggerData = WTFMove(*attributionTriggerData);
-    attribution.m_earliestTimeToSend = WTFMove(*earliestTimeToSend);
+    attribution.m_timesToSend = WTFMove(*timesToSend);
     
     return attribution;
 }

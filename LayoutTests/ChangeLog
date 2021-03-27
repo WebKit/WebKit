@@ -1,3 +1,20 @@
+2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Send report to both click source and attribution destination website
+        https://bugs.webkit.org/show_bug.cgi?id=223615
+        <rdar://problem/75849443>
+
+        Reviewed by Brent Fulgham.
+
+        Layout test coverage.
+
+        * http/tests/privateClickMeasurement/resources/conversionFilePath.py:
+        * http/tests/privateClickMeasurement/resources/conversionReport.py:
+        * http/tests/privateClickMeasurement/resources/fraudPreventionTestURL.py:
+        * http/tests/privateClickMeasurement/resources/getConversionData.py:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request-expected.txt:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+
 2021-03-27  Zalan Bujtas  <zalan@apple.com>
 
         [Multicolumn] Do not try to re-validate a multicol spanner when the renderer is moved internally

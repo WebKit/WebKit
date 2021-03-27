@@ -55,7 +55,7 @@ bool PrivateClickMeasurement::isValid() const
         && m_sourceID.isValid()
         && !m_sourceSite.registrableDomain.isEmpty()
         && !m_destinationSite.registrableDomain.isEmpty()
-        && m_earliestTimeToSend;
+        && (m_timesToSend.sourceEarliestTimeToSend || m_timesToSend.destinationEarliestTimeToSend);
 }
 
 Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
@@ -92,7 +92,17 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
     return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL path contained unrecognized parts."_s);
 }
 
-Optional<Seconds> PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(AttributionTriggerData&& attributionTriggerData)
+bool PrivateClickMeasurement::hasPreviouslyBeenReported()
+{
+    return !m_timesToSend.sourceEarliestTimeToSend || !m_timesToSend.destinationEarliestTimeToSend;
+}
+
+static Seconds randomlyBetweenTwentyFourAndFortyEightHours()
+{
+    return 24_h + Seconds(randomNumber() * (24_h).value());
+}
+
+PrivateClickMeasurement::AttributionSecondsUntilSendData PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(AttributionTriggerData&& attributionTriggerData)
 {
     if (!attributionTriggerData.isValid() || (m_attributionTriggerData && m_attributionTriggerData->priority >= attributionTriggerData.priority))
         return { };
@@ -100,9 +110,11 @@ Optional<Seconds> PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(Att
     m_attributionTriggerData = WTFMove(attributionTriggerData);
     // 24-48 hour delay before sending. This helps privacy since the conversion and the attribution
     // requests are detached and the time of the attribution does not reveal the time of the conversion.
-    auto seconds = 24_h + Seconds(randomNumber() * (24_h).value());
-    m_earliestTimeToSend = WallTime::now() + seconds;
-    return seconds;
+    auto sourceSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours();
+    auto destinationSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours();
+    m_timesToSend = { WallTime::now() + sourceSecondsUntilSend, WallTime::now() + destinationSecondsUntilSend };
+
+    return AttributionSecondsUntilSendData { sourceSecondsUntilSend, destinationSecondsUntilSend };
 }
 
 bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasurement& other) const
