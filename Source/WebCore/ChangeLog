@@ -1,3 +1,15 @@
+2021-03-26  Ian Gilbert  <iang@apple.com>
+
+        Dirty layout for floating children of inline on full layout
+        https://bugs.webkit.org/show_bug.cgi?id=223660
+
+        Reviewed by Zalan Bujtas.
+
+        Avoid consuming an object on an empty line when that object is floating or out-of-flow.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleEndOfLine):
+
 2021-03-26  Chris Dumez  <cdumez@apple.com>
 
         Avoid heap allocation on the audio thread in BaseAudioContext::scheduleNodeDeletion()
