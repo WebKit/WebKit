@@ -1,3 +1,18 @@
+2021-03-28  Youenn Fablet  <youenn@apple.com>
+
+        Use-after-move in UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=223842
+        <rdar://problem/75791668>
+
+        Reviewed by Eric Carlson.
+
+        * fast/speechrecognition/start-recognition-after-denied-gum-expected.txt: Added.
+        * fast/speechrecognition/start-recognition-after-denied-gum.html: Added.
+        * fast/speechrecognition/start-recognition-after-gum-expected.txt: Added.
+        * fast/speechrecognition/start-recognition-after-gum.html: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Send report to both click source and attribution destination website
