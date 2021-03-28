@@ -1,3 +1,20 @@
+2021-03-27  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix a bug that http server for run-benchmark script does not work on python3.
+        https://bugs.webkit.org/show_bug.cgi?id=223839
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix encoding issue on run-benchmark http server.
+        Extract argument parser configure code for run-benchmark so that we can reuse it elsewhere.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        (ServerControl.render_POST):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (config_argument_parser): Extract argument parser configure code so that we can reuse it elsewhere.
+        (parse_args):
+        (main):
+
 2021-03-28  Sam Weinig  <weinig@apple.com>
 
         Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports

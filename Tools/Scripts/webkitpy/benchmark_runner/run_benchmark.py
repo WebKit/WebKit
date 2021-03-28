@@ -31,7 +31,7 @@ def default_browser():
     return 'safari'
 
 
-def parse_args():
+def config_argument_parser():
     parser = argparse.ArgumentParser(description='Run browser based performance benchmarks. To run a single benchmark in the recommended way, use run-benchmark --plan. To see the vailable benchmarks, use run-benchmark --list-plans.')
     mutual_group = parser.add_mutually_exclusive_group(required=True)
     mutual_group.add_argument('--plan', help='Run a specific benchmark plan (e.g. speedometer, jetstream).')
@@ -54,6 +54,13 @@ def parse_args():
     group.add_argument('--browser-path', help='Specify the path to a non-default copy of the target browser as a path to the .app.')
     group.add_argument('--build-directory', dest='build_dir', help='Path to the browser executable (e.g. WebKitBuild/Release/).')
 
+    return parser
+
+
+# FIXME: Remove default arguments when all dependent scripts adopt this change.
+def parse_args(parser=None):
+    if parser is None:
+        parser = config_argument_parser()
     args = parser.parse_args()
 
     if args.debug:
@@ -126,4 +133,4 @@ def format_logger(logger):
 
 
 def main():
-    return start(parse_args())
+    return start(parse_args(config_argument_parser()))
