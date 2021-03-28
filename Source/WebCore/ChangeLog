@@ -1,3 +1,13 @@
+2021-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add an exception for a heap allocation on the WebAudio thread.
+
+        I recently added assertions to catch heap allocations on the WebAudio threads and failed to
+        mark this one as allowed (for now).
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::markForDeletion):
+
 2021-03-27  Simon Fraser  <simon.fraser@apple.com>
 
         Allow DisplayRefreshMonitor to be more long-lived objects

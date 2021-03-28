@@ -762,8 +762,12 @@ void BaseAudioContext::markForDeletion(AudioNode& node)
 
     if (isAudioThreadFinished())
         m_nodesToDelete.append(&node);
-    else
+    else {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         m_nodesMarkedForDeletion.append(&node);
+    }
 
     // This is probably the best time for us to remove the node from automatic pull list,
     // since all connections are gone and we hold the graph lock. Then when handlePostRenderTasks()
