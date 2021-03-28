@@ -1,5 +1,22 @@
 2021-03-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Have DisplayLink compute its displayNominalFramesPerSecond just once
+        https://bugs.webkit.org/show_bug.cgi?id=223845
+
+        Reviewed by Zalan Bujtas.
+
+        Rather than calling CVDisplayLinkGetNominalOutputVideoRefreshPeriod() every time, 
+        just store displayNominalFramesPerSecond in a member variable.
+
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::nominalFramesPerSecondFromDisplayLink):
+        (WebKit::DisplayLink::nominalFramesPerSecond const): Deleted.
+        * UIProcess/mac/DisplayLink.h:
+        (WebKit::DisplayLink::nominalFramesPerSecond const):
+
+2021-03-27  Simon Fraser  <simon.fraser@apple.com>
+
         Allow DisplayRefreshMonitor to be more long-lived objects
         https://bugs.webkit.org/show_bug.cgi?id=223844
 

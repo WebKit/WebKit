@@ -29,6 +29,7 @@
 
 #include "DisplayLinkObserverID.h"
 #include <CoreVideo/CVDisplayLink.h>
+#include <WebCore/AnimationFrameRate.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -51,7 +52,7 @@ public:
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     
-    Optional<unsigned> nominalFramesPerSecond() const;
+    WebCore::FramesPerSecond nominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
 
     // When responsiveness is critical, we send the IPC to a background queue. Otherwise, we send it to the
     // main thread to avoid unnecessary thread hopping and save power.
@@ -60,11 +61,14 @@ public:
 private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     void notifyObserversDisplayWasRefreshed();
+    
+    static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 
     CVDisplayLinkRef m_displayLink { nullptr };
     Lock m_observersLock;
     HashMap<RefPtr<IPC::Connection>, Vector<DisplayLinkObserverID>> m_observers;
     WebCore::PlatformDisplayID m_displayID;
+    WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
     unsigned m_fireCountWithoutObservers { 0 };
     static bool shouldSendIPCOnBackgroundQueue;
 };

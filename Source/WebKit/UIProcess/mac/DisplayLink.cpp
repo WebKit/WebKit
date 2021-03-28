@@ -58,6 +58,8 @@ DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
         WTFLogAlways("Could not set the display link output callback for display %u: error %d", displayID, error);
         return;
     }
+
+    m_displayNominalFramesPerSecond = nominalFramesPerSecondFromDisplayLink(m_displayLink);
 }
 
 DisplayLink::~DisplayLink()
@@ -73,9 +75,9 @@ DisplayLink::~DisplayLink()
     CVDisplayLinkRelease(m_displayLink);
 }
 
-Optional<unsigned> DisplayLink::nominalFramesPerSecond() const
+WebCore::FramesPerSecond DisplayLink::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
 {
-    CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(m_displayLink);
+    CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
     return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
 }
 
