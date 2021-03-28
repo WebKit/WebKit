@@ -71,9 +71,6 @@ static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_webkit);
 template<typename Visitor>
 void JSDOMWindow::visitAdditionalChildren(Visitor& visitor)
 {
-    if (Frame* frame = wrapped().frame())
-        visitor.addOpaqueRoot(frame);
-
     visitor.addOpaqueRoot(&wrapped());
     
     // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
