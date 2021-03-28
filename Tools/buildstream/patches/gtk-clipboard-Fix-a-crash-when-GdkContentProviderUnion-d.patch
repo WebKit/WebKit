@@ -1,0 +1,32 @@
+From 50b70298c0100fb49fbe4ac20f7f2574e7837e9d Mon Sep 17 00:00:00 2001
+From: Carlos Garcia Campos <cgarcia@igalia.com>
+Date: Thu, 25 Mar 2021 15:10:00 +0100
+Subject: [PATCH] clipboard: Fix a crash when GdkContentProviderUnion doesn't
+ support the given data format
+
+After iterating all the providers, all of them returning unsupported
+error, gdk_content_provider_union_get_value() returns FALSE without
+filing the given GError. Then gdk_clipboard_read_value_internal()
+assumes there's a GError when FALSE is returned and
+g_task_return_error() fails. We can just chain up to parent
+implementation to ensure the GError is filled with unsupported error.
+---
+ gdk/gdkcontentproviderimpl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gdk/gdkcontentproviderimpl.c b/gdk/gdkcontentproviderimpl.c
+index df9525e9e6..9c337c7b77 100644
+--- a/gdk/gdkcontentproviderimpl.c
++++ b/gdk/gdkcontentproviderimpl.c
+@@ -349,7 +349,7 @@ gdk_content_provider_union_get_value (GdkContentProvider  *provider,
+       g_clear_error (&provider_error);
+     }
+ 
+-  return FALSE;
++  return GDK_CONTENT_PROVIDER_CLASS (gdk_content_provider_union_parent_class)->get_value (provider, value, error);
+ }
+ 
+ static void
+-- 
+2.25.1
+
