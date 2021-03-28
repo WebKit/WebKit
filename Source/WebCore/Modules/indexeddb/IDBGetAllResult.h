@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
 #include "IDBValue.h"
@@ -100,5 +98,3 @@ bool IDBGetAllResult::decode(Decoder& decoder, IDBGetAllResult& result)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

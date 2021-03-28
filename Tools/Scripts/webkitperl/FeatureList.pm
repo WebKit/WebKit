@@ -95,8 +95,6 @@ my (
     $geolocationSupport,
     $gpuProcessSupport,
     $gstreamerGLSupport,
-    $indexedDatabaseInWorkersSupport,
-    $indexedDatabaseSupport,
     $inputTypeColorSupport,
     $inputTypeDateSupport,
     $inputTypeDatetimelocalSupport,
@@ -326,12 +324,6 @@ my @features = (
 
     { option => "gpu-process", desc => "Toggle GPU Process support",
       define => "ENABLE_GPU_PROCESS", value => \$gpuProcessSupport },
-
-    { option => "indexed-database", desc => "Toggle Indexed Database support",
-      define => "ENABLE_INDEXED_DATABASE", value => \$indexedDatabaseSupport },
-
-    { option => "indexed-database-in-workers", desc => "Toggle support for Indexed Database in workers",
-      define => "ENABLE_INDEXED_DATABASE_IN_WORKERS", value => \$indexedDatabaseInWorkersSupport },
 
     { option => "input-type-color", desc => "Toggle Input Type Color support",
       define => "ENABLE_INPUT_TYPE_COLOR", value => \$inputTypeColorSupport },

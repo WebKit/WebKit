@@ -28,8 +28,6 @@
 
 #include "config.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "JSDOMBinding.h"
 #include "JSIDBObjectStore.h"
 
@@ -46,5 +44,3 @@ void JSIDBObjectStore::visitAdditionalChildren(Visitor& visitor)
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBObjectStore);
 
 } // namespace WebCore
-
-#endif

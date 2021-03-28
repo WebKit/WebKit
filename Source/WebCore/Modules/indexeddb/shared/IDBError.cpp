@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBError.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "DOMException.h"
 
 namespace WebCore {
@@ -66,5 +64,3 @@ RefPtr<DOMException> IDBError::toDOMException() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

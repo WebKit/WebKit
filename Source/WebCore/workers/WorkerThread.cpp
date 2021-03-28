@@ -91,14 +91,9 @@ WorkerThread::WorkerThread(const WorkerParameters& params, const String& sourceC
     , m_workerReportingProxy(workerReportingProxy)
     , m_runtimeFlags(runtimeFlags)
     , m_startupData(makeUnique<WorkerThreadStartupData>(params, sourceCode, startMode, topOrigin))
-#if ENABLE(INDEXED_DATABASE)
     , m_idbConnectionProxy(connectionProxy)
-#endif
     , m_socketProvider(socketProvider)
 {
-#if !ENABLE(INDEXED_DATABASE)
-    UNUSED_PARAM(connectionProxy);
-#endif
     ++workerThreadCounter;
 }
 
@@ -159,11 +154,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
 
 IDBClient::IDBConnectionProxy* WorkerThread::idbConnectionProxy()
 {
-#if ENABLE(INDEXED_DATABASE)
     return m_idbConnectionProxy.get();
-#else
-    return nullptr;
-#endif
 }
 
 SocketProvider* WorkerThread::socketProvider()

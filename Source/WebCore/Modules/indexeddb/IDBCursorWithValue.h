@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCursor.h"
 #include <wtf/TypeCasts.h>
 
@@ -52,5 +50,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::IDBCursorWithValue)
     static bool isType(const WebCore::IDBCursor& cursor) { return cursor.isKeyCursorWithValue(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(INDEXED_DATABASE)

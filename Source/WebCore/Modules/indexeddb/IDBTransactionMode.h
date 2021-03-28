@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include <wtf/EnumTraits.h>
 
 namespace WebCore {
@@ -51,5 +49,3 @@ template<> struct EnumTraits<WebCore::IDBTransactionMode> {
 };
 
 } // namespace WTF
-
-#endif

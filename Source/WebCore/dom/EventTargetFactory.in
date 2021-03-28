@@ -14,10 +14,10 @@ DOMWindow
 EventSource
 FileReader
 FontFaceSet
-IDBDatabase conditional=INDEXED_DATABASE
-IDBOpenDBRequest conditional=INDEXED_DATABASE
-IDBRequest conditional=INDEXED_DATABASE
-IDBTransaction conditional=INDEXED_DATABASE
+IDBDatabase
+IDBOpenDBRequest
+IDBRequest
+IDBTransaction
 MediaController conditional=VIDEO
 MediaDevices conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA

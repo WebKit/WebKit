@@ -2768,7 +2768,6 @@
 ,
 {
     "domain": "IndexedDB",
-    "condition": "defined(ENABLE_INDEXED_DATABASE) && ENABLE_INDEXED_DATABASE",
     "debuggableTypes": ["page", "web-page"],
     "targetTypes": ["page"],
     "types": [

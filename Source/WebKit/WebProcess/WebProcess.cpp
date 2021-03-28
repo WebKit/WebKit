@@ -1116,7 +1116,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     for (auto* storageAreaMap : copyToVector(m_storageAreaMaps.values()))
         storageAreaMap->disconnect();
 
-#if ENABLE(INDEXED_DATABASE)
     for (auto& page : m_pageMap.values()) {
         auto idbConnection = page->corePage()->optionalIDBConnection();
         if (!idbConnection)
@@ -1127,7 +1126,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
             page->corePage()->clearIDBConnection();
         }
     }
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     if (SWContextManager::singleton().connection())

@@ -115,6 +115,8 @@
 #include "HighlightRegister.h"
 #include "History.h"
 #include "HitTestResult.h"
+#include "IDBConnectionProxy.h"
+#include "IDBOpenDBRequest.h"
 #include "IdleCallbackController.h"
 #include "ImageBitmapRenderingContext.h"
 #include "ImageLoader.h"
@@ -278,11 +280,6 @@
 
 #if ENABLE(FULLSCREEN_API)
 #include "RenderFullScreen.h"
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBConnectionProxy.h"
-#include "IDBOpenDBRequest.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -3474,7 +3471,6 @@ void Document::disableWebAssembly(const String& errorMessage)
     frame()->script().disableWebAssembly(errorMessage);
 }
 
-#if ENABLE(INDEXED_DATABASE)
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
 {
     if (!m_idbConnectionProxy) {
@@ -3485,7 +3481,6 @@ IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
     }
     return m_idbConnectionProxy.get();
 }
-#endif
 
 SocketProvider* Document::socketProvider()
 {
@@ -5455,18 +5450,14 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 
         clearSharedObjectPool();
 
-#if ENABLE(INDEXED_DATABASE)
         if (m_idbConnectionProxy)
             m_idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), true);
-#endif
         break;
     case NotInBackForwardCache:
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
-#if ENABLE(INDEXED_DATABASE)
         if (m_idbConnectionProxy)
             m_idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), false);
-#endif
         break;
     case AboutToEnterBackForwardCache:
         break;

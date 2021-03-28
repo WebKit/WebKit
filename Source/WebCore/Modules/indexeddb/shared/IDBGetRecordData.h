@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyRangeData.h"
 #include <wtf/EnumTraits.h>
 
@@ -71,5 +69,3 @@ bool IDBGetRecordData::decode(Decoder& decoder, IDBGetRecordData& getRecordData)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

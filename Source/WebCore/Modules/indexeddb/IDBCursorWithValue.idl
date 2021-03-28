@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=INDEXED_DATABASE,
     SkipVTableValidation,
     JSCustomMarkFunction,
     Exposed=(Window,Worker)

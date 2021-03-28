@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBOpenDBRequest.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "DOMException.h"
 #include "EventNames.h"
 #include "IDBConnectionProxy.h"
@@ -251,5 +249,3 @@ void IDBOpenDBRequest::setIsContextSuspended(bool isContextSuspended)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBResultData.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseTransaction.h"
@@ -246,5 +244,3 @@ const IDBGetAllResult& IDBResultData::getAllResult() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

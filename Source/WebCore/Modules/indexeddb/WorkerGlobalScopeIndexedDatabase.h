@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-
 #include "Supplementable.h"
 #include <wtf/text/WTFString.h>
 
@@ -59,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE_IN_WORKERS)

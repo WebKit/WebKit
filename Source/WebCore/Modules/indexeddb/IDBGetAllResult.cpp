@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBGetAllResult.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/HashSet.h>
 
@@ -85,5 +83,3 @@ Vector<String> IDBGetAllResult::allBlobFilePaths() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

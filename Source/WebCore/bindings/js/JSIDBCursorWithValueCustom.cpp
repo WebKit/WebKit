@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSIDBCursorWithValue.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "IDBCursorWithValue.h"
 #include <JavaScriptCore/JSCInlines.h>
@@ -53,5 +51,3 @@ void JSIDBCursorWithValue::visitAdditionalChildren(Visitor& visitor)
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBCursorWithValue);
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

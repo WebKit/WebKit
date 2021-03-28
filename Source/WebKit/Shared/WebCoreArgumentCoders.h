@@ -161,6 +161,7 @@ struct WindowFeatures;
     
 template<typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
+using IDBKeyPath = Variant<String, Vector<String>>;
 
 #if PLATFORM(COCOA)
 struct KeypressCommand;
@@ -199,10 +200,6 @@ struct MediaConstraints;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 struct SerializedAttachmentData;
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-using IDBKeyPath = Variant<String, Vector<String>>;
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
@@ -721,14 +718,10 @@ template<> struct ArgumentCoder<WebCore::MediaConstraints> {
 };
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
-
 template<> struct ArgumentCoder<WebCore::IDBKeyPath> {
     static void encode(Encoder&, const WebCore::IDBKeyPath&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::IDBKeyPath&);
 };
-
-#endif
 
 #if ENABLE(SERVICE_WORKER)
 
@@ -904,7 +897,6 @@ template<> struct EnumTraits<WebCore::NotificationDirection> {
     >;
 };
 
-#if ENABLE(INDEXED_DATABASE)
 template<> struct EnumTraits<WebCore::IndexedDB::GetAllType> {
     using values = EnumValues<
         WebCore::IndexedDB::GetAllType,
@@ -912,7 +904,6 @@ template<> struct EnumTraits<WebCore::IndexedDB::GetAllType> {
         WebCore::IndexedDB::GetAllType::Values
     >;
 };
-#endif
 
 #if ENABLE(MEDIA_STREAM)
 template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {

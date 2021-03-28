@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSIDBRequest.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "JSDOMConvertIndexedDB.h"
 #include "JSDOMConvertInterface.h"
@@ -100,5 +98,3 @@ void JSIDBRequest::visitAdditionalChildren(Visitor& visitor)
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBRequest);
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

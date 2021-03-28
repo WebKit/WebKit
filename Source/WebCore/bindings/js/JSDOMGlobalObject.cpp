@@ -236,10 +236,9 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
     if (inherits<JSWorkletGlobalScopeBase>(vm()))
         return jsCast<const JSWorkletGlobalScopeBase*>(this)->scriptExecutionContext();
-#if ENABLE(INDEXED_DATABASE)
     if (inherits<JSIDBSerializationGlobalObject>(vm()))
         return jsCast<const JSIDBSerializationGlobalObject*>(this)->scriptExecutionContext();
-#endif
+
     dataLog("Unexpected global object: ", JSValue(this), "\n");
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
@@ -475,10 +474,9 @@ static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
         return &jsCast<const JSWorkerGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
     if (globalObject->inherits<JSWorkletGlobalScopeBase>(vm))
         return &jsCast<const JSWorkletGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
-#if ENABLE(INDEXED_DATABASE)
     if (globalObject->inherits<JSIDBSerializationGlobalObject>(vm))
         return nullptr;
-#endif
+
     dataLog("Unexpected global object: ", JSValue(globalObject), "\n");
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

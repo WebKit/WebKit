@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDBActiveDOMObject.h"
@@ -198,5 +196,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

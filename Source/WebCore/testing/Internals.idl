@@ -533,7 +533,7 @@ enum TreeType {
     undefined beginSimulatedMemoryPressure();
     undefined endSimulatedMemoryPressure();
 
-    [Conditional=INDEXED_DATABASE] unsigned long numberOfIDBTransactions();
+    unsigned long numberOfIDBTransactions();
 
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();

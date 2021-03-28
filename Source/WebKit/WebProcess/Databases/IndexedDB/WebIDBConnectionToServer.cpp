@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebIDBConnectionToServer.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "DataReference.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
@@ -333,5 +331,3 @@ void WebIDBConnectionToServer::connectionToServerLost()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INDEXED_DATABASE)

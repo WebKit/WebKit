@@ -4287,7 +4287,6 @@ uint32_t SerializedScriptValue::wireFormatVersion()
     return CurrentVersion;
 }
 
-#if ENABLE(INDEXED_DATABASE)
 Vector<String> SerializedScriptValue::blobURLsIsolatedCopy() const
 {
     Vector<String> result;
@@ -4337,7 +4336,5 @@ IDBValue SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously()
 
     return value;
 }
-
-#endif // ENABLE(INDEXED_DATABASE)
 
 } // namespace WebCore

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "Event.h"
 #include "IDBResourceIdentifier.h"
 #include <wtf/Optional.h>
@@ -79,5 +77,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::IDBVersionChangeEvent)
     static bool isType(const WebCore::Event& event) { return event.isVersionChangeEvent(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(INDEXED_DATABASE)

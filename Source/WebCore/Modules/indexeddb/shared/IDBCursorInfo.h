@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyRangeData.h"
 #include "IDBResourceIdentifier.h"
 
@@ -133,5 +131,3 @@ bool IDBCursorInfo::decode(Decoder& decoder, IDBCursorInfo& info)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

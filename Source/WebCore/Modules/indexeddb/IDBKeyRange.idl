@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=INDEXED_DATABASE,
     ImplementationLacksVTable,
     Exposed=(Window,Worker)
 ] interface IDBKeyRange {

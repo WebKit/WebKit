@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBObjectStoreInfo.h"
 #include <wtf/HashMap.h>
 
@@ -116,5 +114,3 @@ bool IDBDatabaseInfo::decode(Decoder& decoder, IDBDatabaseInfo& info)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

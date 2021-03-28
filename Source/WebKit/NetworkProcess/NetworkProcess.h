@@ -298,9 +298,7 @@ public:
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_networkContentRuleListManager; }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
     WebIDBServer& webIDBServer(PAL::SessionID);
-#endif
 
     void syncLocalStorage(CompletionHandler<void()>&&);
 
@@ -477,12 +475,10 @@ private:
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
 
-#if ENABLE(INDEXED_DATABASE)
     void addIndexedDatabaseSession(PAL::SessionID, String&, SandboxExtension::Handle&);
     Ref<WebIDBServer> createWebIDBServer(PAL::SessionID);
     void setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID, const String& idbRootPath);
     void removeWebIDBServerIfPossible(PAL::SessionID);
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     void didCreateWorkerContextProcessConnection(const IPC::Attachment&);
@@ -520,16 +516,13 @@ private:
         auto existingStorageQuotaManagers() { return m_storageQuotaManagers.values(); }
 
         const String& cacheRootPath() const { return m_cacheRootPath; }
-#if ENABLE(INDEXED_DATABASE)
+
         void setIDBRootPath(const String& idbRootPath) { m_idbRootPath = idbRootPath; }
         const String& idbRootPath() const { return m_idbRootPath; }
-#endif
 
     private:
         String m_cacheRootPath;
-#if ENABLE(INDEXED_DATABASE)
         String m_idbRootPath;
-#endif
         uint64_t m_defaultQuota { WebCore::StorageQuotaManager::defaultQuota() };
         uint64_t m_defaultThirdPartyQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
         HashMap<WebCore::ClientOrigin, RefPtr<WebCore::StorageQuotaManager>> m_storageQuotaManagers;
@@ -576,10 +569,8 @@ private:
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;
     HashMap<PAL::SessionID, RefPtr<WebIDBServer>> m_webIDBServers;
-#endif
     
 #if ENABLE(SERVICE_WORKER)
     struct ServiceWorkerInfo {

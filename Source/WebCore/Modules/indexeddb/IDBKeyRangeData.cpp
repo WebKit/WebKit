@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBKeyRangeData.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKey.h"
 
 namespace WebCore {
@@ -127,5 +125,3 @@ String IDBKeyRangeData::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SQLiteIDBCursor.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCursorInfo.h"
 #include "IDBGetResult.h"
 #include "IDBSerialization.h"
@@ -707,5 +705,3 @@ int64_t SQLiteIDBCursor::currentRecordRowID() const
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

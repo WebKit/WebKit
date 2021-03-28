@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SQLiteIDBBackingStore.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "IDBCursorInfo.h"
 #include "IDBGetAllRecordsData.h"
@@ -3085,5 +3083,3 @@ bool SQLiteIDBBackingStore::hasTransaction(const IDBResourceIdentifier& transact
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

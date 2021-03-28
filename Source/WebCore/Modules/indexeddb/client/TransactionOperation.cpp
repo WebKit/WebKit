@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TransactionOperation.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCursor.h"
 #include <JavaScriptCore/HeapInlines.h>
 
@@ -50,5 +48,3 @@ TransactionOperation::TransactionOperation(IDBTransaction& transaction, IDBReque
 
 } // namespace IDBClient
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

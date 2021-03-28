@@ -25,8 +25,6 @@
 
 #include "InProcessIDBServer.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "StorageThread.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/IDBConnectionToClient.h>
@@ -510,5 +508,3 @@ void InProcessIDBServer::dispatchTaskReply(Function<void()>&& function)
     ASSERT(!isMainThread());
     callOnMainThread(WTFMove(function));
 }
-
-#endif // ENABLE(INDEXED_DATABASE)

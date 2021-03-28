@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "ProcessIdentifier.h"
 #include <wtf/text/StringHash.h>
 
@@ -153,5 +151,3 @@ inline WebCore::IDBConnectionIdentifier crossThreadCopy(WebCore::IDBConnectionId
 }
 
 } // namespace WTF
-
-#endif // ENABLE(INDEXED_DATABASE)

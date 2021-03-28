@@ -26,9 +26,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-
 #include "WorkerGlobalScopeIndexedDatabase.h"
 
 #include "IDBConnectionProxy.h"
@@ -81,5 +78,3 @@ IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE_IN_WORKERS)

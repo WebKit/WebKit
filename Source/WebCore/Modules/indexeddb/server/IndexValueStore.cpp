@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IndexValueStore.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBError.h"
 #include "IDBKeyRangeData.h"
 #include "Logging.h"
@@ -415,5 +413,3 @@ String IndexValueStore::loggingString() const
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

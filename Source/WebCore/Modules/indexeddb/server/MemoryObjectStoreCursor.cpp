@@ -26,8 +26,6 @@
 #include "config.h"
 #include "MemoryObjectStoreCursor.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBGetResult.h"
 #include "Logging.h"
 #include "MemoryObjectStore.h"
@@ -352,5 +350,3 @@ void MemoryObjectStoreCursor::iterate(const IDBKeyData& key, const IDBKeyData& p
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

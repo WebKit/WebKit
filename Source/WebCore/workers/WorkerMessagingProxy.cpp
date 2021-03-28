@@ -83,11 +83,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     WorkerThreadStartMode startMode = m_inspectorProxy->workerStartMode(*m_scriptExecutionContext.get());
     String identifier = m_inspectorProxy->identifier();
 
-#if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* proxy = document.idbConnectionProxy();
-#else
-    IDBClient::IDBConnectionProxy* proxy = nullptr;
-#endif
 
     SocketProvider* socketProvider = document.socketProvider();
 

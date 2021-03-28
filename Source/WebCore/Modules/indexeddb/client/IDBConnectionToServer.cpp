@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBConnectionToServer.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBConnectionProxy.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseNameAndVersion.h"
@@ -520,5 +518,3 @@ void IDBConnectionToServer::didGetAllDatabaseNamesAndVersions(const IDBResourceI
 
 } // namespace IDBClient
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

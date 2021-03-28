@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebIDBResult.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
@@ -56,5 +54,3 @@ bool WebIDBResult::decode(IPC::Decoder& decoder, WebIDBResult& result)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBFactory.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "Document.h"
 #include "IDBBindingUtilities.h"
 #include "IDBConnectionProxy.h"
@@ -173,5 +171,3 @@ void IDBFactory::getAllDatabaseNames(ScriptExecutionContext& context, Function<v
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

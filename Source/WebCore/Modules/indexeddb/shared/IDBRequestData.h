@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBDatabaseIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include "IndexedDB.h"
@@ -184,5 +182,3 @@ bool IDBRequestData::decode(Decoder& decoder, IDBRequestData& request)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -1,3 +1,213 @@
+2021-03-28  Sam Weinig  <weinig@apple.com>
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=223810
+
+        Reviewed by Simon Fraser.
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS conditionals.
+
+        * Modules/indexeddb/DOMWindow+IndexedDatabase.idl:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.h:
+        * Modules/indexeddb/IDBActiveDOMObject.h:
+        * Modules/indexeddb/IDBCursor.cpp:
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorDirection.idl:
+        * Modules/indexeddb/IDBCursorWithValue.cpp:
+        * Modules/indexeddb/IDBCursorWithValue.h:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        * Modules/indexeddb/IDBDatabaseNameAndVersionRequest.cpp:
+        * Modules/indexeddb/IDBDatabaseNameAndVersionRequest.h:
+        * Modules/indexeddb/IDBFactory.cpp:
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBGetAllResult.cpp:
+        * Modules/indexeddb/IDBGetAllResult.h:
+        * Modules/indexeddb/IDBGetResult.cpp:
+        * Modules/indexeddb/IDBGetResult.h:
+        * Modules/indexeddb/IDBIndex.cpp:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKey.cpp:
+        * Modules/indexeddb/IDBKey.h:
+        * Modules/indexeddb/IDBKeyData.cpp:
+        * Modules/indexeddb/IDBKeyData.h:
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        * Modules/indexeddb/IDBKeyPath.h:
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        * Modules/indexeddb/IDBKeyRange.h:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBKeyRangeData.cpp:
+        * Modules/indexeddb/IDBKeyRangeData.h:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+        * Modules/indexeddb/IDBOpenDBRequest.idl:
+        * Modules/indexeddb/IDBRecordIdentifier.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBRequestCompletionEvent.cpp:
+        * Modules/indexeddb/IDBRequestCompletionEvent.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/IDBTransactionMode.h:
+        * Modules/indexeddb/IDBTransactionMode.idl:
+        * Modules/indexeddb/IDBValue.cpp:
+        * Modules/indexeddb/IDBValue.h:
+        * Modules/indexeddb/IDBVersionChangeEvent.cpp:
+        * Modules/indexeddb/IDBVersionChangeEvent.h:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+        * Modules/indexeddb/IndexedDB.h:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        * Modules/indexeddb/client/TransactionOperation.cpp:
+        * Modules/indexeddb/client/TransactionOperation.h:
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        * Modules/indexeddb/server/IDBSerialization.h:
+        * Modules/indexeddb/server/IDBSerializationContext.cpp:
+        * Modules/indexeddb/server/IDBSerializationContext.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/IndexValueEntry.cpp:
+        * Modules/indexeddb/server/IndexValueEntry.h:
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        * Modules/indexeddb/server/IndexValueStore.h:
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.h:
+        * Modules/indexeddb/server/MemoryCursor.cpp:
+        * Modules/indexeddb/server/MemoryCursor.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/MemoryIndex.cpp:
+        * Modules/indexeddb/server/MemoryIndex.h:
+        * Modules/indexeddb/server/MemoryIndexCursor.cpp:
+        * Modules/indexeddb/server/MemoryIndexCursor.h:
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.cpp:
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+        * Modules/indexeddb/server/ServerOpenDBRequest.cpp:
+        * Modules/indexeddb/server/ServerOpenDBRequest.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        * Modules/indexeddb/shared/IDBCursorRecord.h:
+        * Modules/indexeddb/shared/IDBDatabaseInfo.cpp:
+        * Modules/indexeddb/shared/IDBDatabaseInfo.h:
+        * Modules/indexeddb/shared/IDBDatabaseNameAndVersion.h:
+        * Modules/indexeddb/shared/IDBError.cpp:
+        * Modules/indexeddb/shared/IDBError.h:
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.cpp:
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.h:
+        * Modules/indexeddb/shared/IDBGetRecordData.cpp:
+        * Modules/indexeddb/shared/IDBGetRecordData.h:
+        * Modules/indexeddb/shared/IDBIndexInfo.cpp:
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp:
+        * Modules/indexeddb/shared/IDBIterateCursorData.h:
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        * Modules/indexeddb/shared/IDBRequestData.cpp:
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        * Modules/indexeddb/shared/IDBResultData.h:
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        * Modules/indexeddb/shared/IndexKey.cpp:
+        * Modules/indexeddb/shared/IndexKey.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/IDBBindingUtilities.cpp:
+        * bindings/js/IDBBindingUtilities.h:
+        * bindings/js/JSDOMConvertIndexedDB.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext const):
+        (WebCore::scriptModuleLoader):
+        * bindings/js/JSIDBCursorCustom.cpp:
+        * bindings/js/JSIDBCursorWithValueCustom.cpp:
+        * bindings/js/JSIDBIndexCustom.cpp:
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        * bindings/js/JSIDBRequestCustom.cpp:
+        * bindings/js/JSIDBSerializationGlobalObject.cpp:
+        * bindings/js/JSIDBSerializationGlobalObject.h:
+        * bindings/js/JSIDBTransactionCustom.cpp:
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/js/SerializedScriptValue.h:
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+        * bindings/js/WebCoreJSClientData.h:
+        * dom/Document.cpp:
+        (WebCore::Document::idbConnectionProxy):
+        (WebCore::Document::setBackForwardCacheState):
+        * dom/Document.h:
+        * dom/EmptyScriptExecutionContext.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * dom/ScriptExecutionContext.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::createLazyAgents):
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        * inspector/agents/InspectorIndexedDBAgent.h:
+        * loader/EmptyClients.cpp:
+        * page/DatabaseProvider.h:
+        * page/Page.cpp:
+        (WebCore::Page::setSessionID):
+        (WebCore::Page::clearIDBConnection):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfIDBTransactions const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::prepareForDestruction):
+        (WebCore::WorkerGlobalScope::idbConnectionProxy):
+        (WebCore::WorkerGlobalScope::stopIndexedDatabase):
+        (WebCore::WorkerGlobalScope::suspend):
+        (WebCore::WorkerGlobalScope::resume):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::idbConnectionProxy):
+        * workers/WorkerThread.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::idbConnectionProxy):
+        * worklets/WorkletGlobalScope.h:
+
 2021-03-28  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r274527): [GStreamer] media/webaudio-background-playback.html now failing

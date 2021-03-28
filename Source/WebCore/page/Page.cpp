@@ -72,6 +72,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "IDBConnectionToServer.h"
 #include "ImageOverlayController.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
@@ -161,10 +162,6 @@
 
 #if PLATFORM(MAC)
 #include "ServicesOverlayController.h"
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBConnectionToServer.h"
 #endif
 
 #if ENABLE(WEBGL)
@@ -2882,10 +2879,8 @@ void Page::setSessionID(PAL::SessionID sessionID)
     ASSERT(m_sessionID == PAL::SessionID::legacyPrivateSessionID() || m_sessionID == PAL::SessionID::defaultSessionID());
     ASSERT(sessionID == PAL::SessionID::legacyPrivateSessionID() || sessionID == PAL::SessionID::defaultSessionID());
 
-#if ENABLE(INDEXED_DATABASE)
     if (sessionID != m_sessionID)
         m_idbConnectionToServer = nullptr;
-#endif
 
     if (sessionID != m_sessionID && m_sessionStorage)
         m_sessionStorage->setSessionIDForTesting(sessionID);
@@ -3041,7 +3036,6 @@ void Page::setAllowsMediaDocumentInlinePlayback(bool flag)
 
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
 IDBClient::IDBConnectionToServer& Page::idbConnection()
 {
     if (!m_idbConnectionToServer)
@@ -3059,7 +3053,6 @@ void Page::clearIDBConnection()
 {
     m_idbConnectionToServer = nullptr;
 }
-#endif
 
 #if ENABLE(RESOURCE_USAGE)
 void Page::setResourceUsageOverlayVisible(bool visible)

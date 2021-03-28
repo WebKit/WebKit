@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "MessageSender.h"
 #include <WebCore/IDBConnectionToClient.h>
 #include <WebCore/IndexedDB.h>
@@ -92,5 +90,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(INDEXED_DATABASE)

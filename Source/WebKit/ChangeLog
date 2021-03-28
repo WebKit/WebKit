@@ -1,3 +1,66 @@
+2021-03-28  Sam Weinig  <weinig@apple.com>
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=223810
+
+        Reviewed by Simon Fraser.
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS conditionals.
+
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/IndexedDB/WebIDBServer.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::NetworkProcess::renameOriginInWebsiteData):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        (WebKit::NetworkProcess::connectionToWebProcessClosed):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::idbRootPath const):
+        * Shared/Databases/IndexedDB/IDBUtilities.cpp:
+        * Shared/Databases/IndexedDB/IDBUtilities.h:
+        * Shared/Databases/IndexedDB/WebIDBResult.cpp:
+        * Shared/Databases/IndexedDB/WebIDBResult.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IDBKeyPath>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::addSession):
+        (WebKit::NetworkProcessProxy::createSymLinkForFileUpgrade):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in:
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::idbConnectionToServerForSession):
+        * WebProcess/Databases/WebDatabaseProvider.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didClose):
+        (WebKit::NetworkProcessConnection::idbConnectionToServer):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+
 2021-03-28  Youenn Fablet  <youenn@apple.com>
 
         Use-after-move in UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition

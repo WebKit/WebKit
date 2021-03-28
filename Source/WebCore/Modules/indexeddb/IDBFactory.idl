@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=INDEXED_DATABASE,
     SkipVTableValidation,
     Exposed=(Window,Worker)
 ] interface IDBFactory {
@@ -37,7 +36,6 @@
 };
 
 [
-    Conditional=INDEXED_DATABASE,
     JSGenerateToJSObject,
 ] dictionary IDBDatabaseInfo {
     DOMString name;

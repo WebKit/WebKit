@@ -97,12 +97,9 @@ public:
     const Vector<uint8_t>& data() const { return m_data; }
     bool hasBlobURLs() const { return !m_blobURLs.isEmpty(); }
 
-#if ENABLE(INDEXED_DATABASE)
     Vector<String> blobURLsIsolatedCopy() const;
     void writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously();
-#endif // ENABLE(INDEXED_DATABASE)
-
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)
     {
         return adoptRef(*new SerializedScriptValue(WTFMove(data)));

@@ -163,7 +163,6 @@ private:
 };
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
-#if ENABLE(INDEXED_DATABASE)
     struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate {
         IDBConnectionIdentifier identifier() const final { return { }; }
         void deleteDatabase(const IDBRequestData&) final { }
@@ -201,7 +200,6 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         static auto& emptyConnection = IDBClient::IDBConnectionToServer::create(emptyDelegate.get()).leakRef();
         return emptyConnection;
     }
-#endif
 };
 
 class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {

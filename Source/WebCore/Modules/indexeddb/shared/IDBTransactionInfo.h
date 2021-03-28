@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBDatabaseInfo.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionMode.h"
@@ -129,5 +127,3 @@ bool IDBTransactionInfo::decode(Decoder& decoder, IDBTransactionInfo& info)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

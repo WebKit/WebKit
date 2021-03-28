@@ -24,12 +24,9 @@
  *
  */
 
-#ifndef IDBUtilities_h
-#define IDBUtilities_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
@@ -42,6 +39,3 @@ namespace WebKit {
 String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
     
 } // namespace WebKit
-
-#endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBUtilities_h

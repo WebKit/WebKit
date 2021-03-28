@@ -226,9 +226,7 @@ public:
     void addSession(WebsiteDataStore&, SendParametersToNetworkProcess);
     void removeSession(WebsiteDataStore&);
     
-#if ENABLE(INDEXED_DATABASE)
     void createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory);
-#endif
 
     // ProcessThrottlerClient
     void sendProcessDidResume() final;

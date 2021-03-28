@@ -701,9 +701,7 @@ public:
     void disableEval(const String& errorMessage) final;
     void disableWebAssembly(const String& errorMessage) final;
 
-#if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
-#endif
     SocketProvider* socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
@@ -1994,9 +1992,7 @@ private:
     TargetClientToIdMap m_clientToIDMap;
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
     RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     HashMap<String, Ref<HTMLAttachmentElement>> m_attachmentIdentifierToElementMap;

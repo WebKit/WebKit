@@ -27,7 +27,6 @@
 // https://w3c.github.io/IndexedDB/#factory-interface
 // FIXME: This should be merged with DOMWindow+IndexedDatabase.idl into a new WindowOrWorkerGlobalScope+IndexedDatabase.idl to match the spec.
 [
-    Conditional=INDEXED_DATABASE_IN_WORKERS,
     ImplementedBy=WorkerGlobalScopeIndexedDatabase
 ] partial interface WorkerGlobalScope {
     [SameObject] readonly attribute IDBFactory indexedDB;

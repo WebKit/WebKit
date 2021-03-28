@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "SandboxExtension.h"
 #include <WebCore/IDBResultData.h>
 #include <wtf/Noncopyable.h>
@@ -66,5 +64,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(INDEXED_DATABASE)

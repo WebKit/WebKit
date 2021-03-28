@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBGetAllRecordsData.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyRangeData.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -50,5 +48,3 @@ String IDBGetAllRecordsData::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

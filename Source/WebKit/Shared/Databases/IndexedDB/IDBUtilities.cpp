@@ -30,8 +30,6 @@
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebKit {
 
 String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin)
@@ -56,5 +54,3 @@ String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::Secur
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INDEXED_DATABASE)

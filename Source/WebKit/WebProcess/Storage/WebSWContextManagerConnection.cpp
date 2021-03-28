@@ -139,9 +139,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
 {
     auto pageConfiguration = pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
 
-#if ENABLE(INDEXED_DATABASE)
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
-#endif
     pageConfiguration.socketProvider = WebSocketProvider::create(m_webPageProxyID);
     pageConfiguration.userContentProvider = m_userContentController;
 #if ENABLE(WEB_RTC)

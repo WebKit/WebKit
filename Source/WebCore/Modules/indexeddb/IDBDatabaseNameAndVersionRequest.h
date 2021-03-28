@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBActiveDOMObject.h"
 #include "IDBDatabaseNameAndVersion.h"
 #include "IDBResourceIdentifier.h"
@@ -84,5 +82,3 @@ inline IDBDatabaseNameAndVersionRequest::~IDBDatabaseNameAndVersionRequest()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -745,11 +745,9 @@ public:
     bool allowsPlaybackControlsForAutoplayingAudio() const { return m_allowsPlaybackControlsForAutoplayingAudio; }
     void setAllowsPlaybackControlsForAutoplayingAudio(bool allowsPlaybackControlsForAutoplayingAudio) { m_allowsPlaybackControlsForAutoplayingAudio = allowsPlaybackControlsForAutoplayingAudio; }
 
-#if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionToServer& idbConnection();
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer* optionalIDBConnection();
     WEBCORE_EXPORT void clearIDBConnection();
-#endif
 
     void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
     bool showAllPlugins() const;
@@ -1033,9 +1031,7 @@ private:
     const std::unique_ptr<PageDebuggable> m_inspectorDebuggable;
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
     RefPtr<IDBClient::IDBConnectionToServer> m_idbConnectionToServer;
-#endif
 
     HashSet<String> m_seenPlugins;
     HashSet<String> m_seenMediaEngines;

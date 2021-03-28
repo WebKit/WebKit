@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IndexedDB.h"
 #include "ThreadSafeDataBuffer.h"
 #include <wtf/Forward.h>
@@ -215,5 +213,3 @@ inline int compareBinaryKeyData(const ThreadSafeDataBuffer& a, const ThreadSafeD
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

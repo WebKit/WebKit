@@ -26,8 +26,6 @@
 #include "config.h"
 #include "MemoryIndexCursor.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCursorInfo.h"
 #include "IDBGetResult.h"
 #include "IndexValueStore.h"
@@ -222,5 +220,3 @@ void MemoryIndexCursor::indexValueChanged(const IDBKeyData& key, const IDBKeyDat
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

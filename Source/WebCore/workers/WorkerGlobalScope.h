@@ -68,11 +68,9 @@ public:
     String origin() const;
     const String& identifier() const { return m_identifier; }
 
-#if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     void suspend() final;
     void resume() final;
-#endif
 
     WorkerCacheStorageConnection& cacheStorageConnection();
     MessagePortChannelProvider& messagePortChannelProvider();
@@ -155,9 +153,7 @@ private:
     bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) final;
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
     void stopIndexedDatabase();
-#endif
 
     URL m_url;
     String m_identifier;
@@ -171,9 +167,7 @@ private:
 
     Ref<SecurityOrigin> m_topOrigin;
 
-#if ENABLE(INDEXED_DATABASE)
     RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
-#endif
 
     RefPtr<SocketProvider> m_socketProvider;
 

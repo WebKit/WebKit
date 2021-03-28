@@ -67,9 +67,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_isOnline(params.isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
     , m_topOrigin(WTFMove(topOrigin))
-#if ENABLE(INDEXED_DATABASE)
     , m_connectionProxy(connectionProxy)
-#endif
     , m_socketProvider(socketProvider)
     , m_performance(Performance::create(this, params.timeOrigin))
     , m_referrerPolicy(params.referrerPolicy)
@@ -77,10 +75,6 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_workerType(params.workerType)
     , m_credentials(params.credentials)
 {
-#if !ENABLE(INDEXED_DATABASE)
-    UNUSED_PARAM(connectionProxy);
-#endif
-
     if (m_topOrigin->hasUniversalAccess())
         origin->grantUniversalAccess();
     if (m_topOrigin->needsStorageAccessFromFileURLsQuirk())
@@ -113,9 +107,7 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
-#if ENABLE(INDEXED_DATABASE)
     stopIndexedDatabase();
-#endif
 
     if (m_cacheStorageConnection)
         m_cacheStorageConnection->clearPendingRequests();
@@ -172,42 +164,28 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerGlobalScope::createRTCDataCh
     return connection;
 }
 
-#if ENABLE(INDEXED_DATABASE)
-
 IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
 {
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     return m_connectionProxy.get();
-#else
-    return nullptr;
-#endif
 }
 
 void WorkerGlobalScope::stopIndexedDatabase()
 {
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     if (m_connectionProxy)
         m_connectionProxy->forgetActivityForCurrentThread();
-#endif
 }
 
 void WorkerGlobalScope::suspend()
 {
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, true);
-#endif
 }
 
 void WorkerGlobalScope::resume()
 {
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, false);
-#endif
 }
-
-#endif // ENABLE(INDEXED_DATABASE)
 
 WorkerLocation& WorkerGlobalScope::location() const
 {

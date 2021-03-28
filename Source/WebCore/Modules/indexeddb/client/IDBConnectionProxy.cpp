@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBConnectionProxy.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCursorInfo.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseNameAndVersion.h"
@@ -648,5 +646,3 @@ void IDBConnectionProxy::setContextSuspended(ScriptExecutionContext& currentCont
 
 } // namesapce IDBClient
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

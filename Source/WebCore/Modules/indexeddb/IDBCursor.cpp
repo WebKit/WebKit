@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBCursor.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "IDBDatabase.h"
 #include "IDBGetResult.h"
@@ -388,5 +386,3 @@ void IDBCursor::clearPrefetchedRecords()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

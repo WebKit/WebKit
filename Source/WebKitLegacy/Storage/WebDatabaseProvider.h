@@ -25,14 +25,11 @@
 
 #pragma once
 
+#include "InProcessIDBServer.h"
 #include <WebCore/DatabaseProvider.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
-
-#if ENABLE(INDEXED_DATABASE)
-#include "InProcessIDBServer.h"
-#endif
 
 class WebDatabaseProvider final : public WebCore::DatabaseProvider {
     friend class NeverDestroyed<WebDatabaseProvider>;
@@ -40,18 +37,14 @@ public:
     static WebDatabaseProvider& singleton();
     virtual ~WebDatabaseProvider();
 
-#if ENABLE(INDEXED_DATABASE)
     WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) override;
 
     void deleteAllDatabases();
-#endif
 
 private:
     explicit WebDatabaseProvider();
 
     static String indexedDatabaseDirectoryPath();
 
-#if ENABLE(INDEXED_DATABASE)
     HashMap<PAL::SessionID, RefPtr<InProcessIDBServer>> m_idbServerMap;
-#endif
 };

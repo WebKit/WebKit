@@ -124,9 +124,7 @@ private:
     NotificationClient* m_notificationClient { nullptr };
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
     RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
-#endif
     RefPtr<SocketProvider> m_socketProvider;
 };
 

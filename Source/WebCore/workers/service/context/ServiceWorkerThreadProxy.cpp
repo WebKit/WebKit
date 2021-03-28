@@ -83,11 +83,7 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
 
 static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& document)
 {
-#if ENABLE(INDEXED_DATABASE)
     return document.idbConnectionProxy();
-#else
-    return nullptr;
-#endif
 }
 
 static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()

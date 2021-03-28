@@ -32,8 +32,6 @@
 #include <WebCore/StorageQuotaManager.h>
 #include <wtf/threads/BinarySemaphore.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebKit {
 
 Ref<WebIDBServer> WebIDBServer::create(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
@@ -418,4 +416,3 @@ void WebIDBServer::close()
 }
 
 } // namespace WebKit
-#endif

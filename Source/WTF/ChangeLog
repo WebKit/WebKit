@@ -1,3 +1,14 @@
+2021-03-28  Sam Weinig  <weinig@apple.com>
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=223810
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+        Remove ENABLE_INDEXED_DATABASE and ENABLE_INDEXED_DATABASE_IN_WORKERS.
+
 2021-03-27  Chris Dumez  <cdumez@apple.com>
 
         wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WebCore::Style::RuleFeature'

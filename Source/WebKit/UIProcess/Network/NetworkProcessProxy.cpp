@@ -1349,11 +1349,8 @@ void NetworkProcessProxy::addSession(WebsiteDataStore& store, SendParametersToNe
     if (canSendMessage() && sendParametersToNetworkProcess == SendParametersToNetworkProcess::Yes)
         send(Messages::NetworkProcess::AddWebsiteDataStore { store.parameters() }, 0);
     auto sessionID = store.sessionID();
-    if (!sessionID.isEphemeral()) {
-#if ENABLE(INDEXED_DATABASE)
+    if (!sessionID.isEphemeral())
         createSymLinkForFileUpgrade(store.resolvedIndexedDatabaseDirectory());
-#endif
-    }
 }
 
 void NetworkProcessProxy::removeSession(WebsiteDataStore& websiteDataStore)
@@ -1546,7 +1543,6 @@ void NetworkProcessProxy::testProcessIncomingSyncMessagesWhenWaitingForSyncReply
     reply(handled);
 }
 
-#if ENABLE(INDEXED_DATABASE)
 void NetworkProcessProxy::createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory)
 {
     if (indexedDatabaseDirectory.isEmpty())
@@ -1557,7 +1553,6 @@ void NetworkProcessProxy::createSymLinkForFileUpgrade(const String& indexedDatab
     if (!FileSystem::fileExists(oldVersionDirectory))
         FileSystem::createSymbolicLink(indexedDatabaseDirectory, oldVersionDirectory);
 }
-#endif
 
 void NetworkProcessProxy::getLocalStorageDetails(PAL::SessionID sessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
 {

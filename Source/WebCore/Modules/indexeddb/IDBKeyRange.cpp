@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBKeyRange.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "IDBKey.h"
 #include "IDBKeyData.h"
@@ -163,5 +161,3 @@ ExceptionOr<bool> IDBKeyRange::includes(JSC::JSGlobalObject& state, JSC::JSValue
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

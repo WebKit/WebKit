@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "ClientOrigin.h"
 #include "SecurityOriginData.h"
 #include <wtf/text/StringHash.h>
@@ -152,5 +150,3 @@ template<> struct HashTraits<WebCore::IDBDatabaseIdentifier> : WebCore::IDBDatab
 template<> struct DefaultHash<WebCore::IDBDatabaseIdentifier> : WebCore::IDBDatabaseIdentifierHash { };
 
 } // namespace WTF
-
-#endif // ENABLE(INDEXED_DATABASE)

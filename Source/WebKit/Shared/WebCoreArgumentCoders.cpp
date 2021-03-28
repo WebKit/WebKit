@@ -2716,7 +2716,6 @@ bool ArgumentCoder<MediaConstraints>::decode(Decoder& decoder, WebCore::MediaCon
 }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
 void ArgumentCoder<IDBKeyPath>::encode(Encoder& encoder, const IDBKeyPath& keyPath)
 {
     bool isString = WTF::holds_alternative<String>(keyPath);
@@ -2745,7 +2744,6 @@ bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
     }
     return true;
 }
-#endif
 
 #if ENABLE(SERVICE_WORKER)
 void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)

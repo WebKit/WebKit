@@ -40,10 +40,7 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << networkSessionParameters;
     encoder << uiProcessCookieStorageIdentifier;
     encoder << cookieStoragePathExtensionHandle;
-
-#if ENABLE(INDEXED_DATABASE)
     encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << serviceWorkerProcessTerminationDelayEnabled;
@@ -79,7 +76,6 @@ Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Dec
         return WTF::nullopt;
     parameters.cookieStoragePathExtensionHandle = WTFMove(*cookieStoragePathExtensionHandle);
 
-#if ENABLE(INDEXED_DATABASE)
     Optional<String> indexedDatabaseDirectory;
     decoder >> indexedDatabaseDirectory;
     if (!indexedDatabaseDirectory)
@@ -91,7 +87,6 @@ Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Dec
     if (!indexedDatabaseDirectoryExtensionHandle)
         return WTF::nullopt;
     parameters.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     Optional<String> serviceWorkerRegistrationDirectory;

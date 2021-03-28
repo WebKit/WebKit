@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Function.h>
@@ -80,5 +78,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

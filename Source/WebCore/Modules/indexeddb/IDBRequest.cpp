@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBRequest.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "DOMException.h"
 #include "Event.h"
 #include "EventDispatcher.h"
@@ -572,5 +570,3 @@ void IDBRequest::clearWrappers()
 
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

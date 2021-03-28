@@ -1999,11 +1999,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 
-#if ENABLE(INDEXED_DATABASE)
     parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
     if (!parameters.indexedDatabaseDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     parameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBConnectionToClient.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBDatabaseNameAndVersion.h"
 #include "UniqueIDBDatabaseConnection.h"
 
@@ -214,5 +212,3 @@ void IDBConnectionToClient::connectionToClientClosed()
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

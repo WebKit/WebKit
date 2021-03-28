@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBKey.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyData.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
@@ -160,5 +158,3 @@ String IDBKey::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif

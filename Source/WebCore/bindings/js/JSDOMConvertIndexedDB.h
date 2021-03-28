@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
@@ -67,5 +65,3 @@ template<> struct JSConverter<IDLIDBValue> {
 };
 
 } // namespace WebCore
-
-#endif

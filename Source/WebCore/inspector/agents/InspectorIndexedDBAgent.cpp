@@ -32,8 +32,6 @@
 #include "config.h"
 #include "InspectorIndexedDBAgent.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "AddEventListenerOptions.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
@@ -740,4 +738,3 @@ void InspectorIndexedDBAgent::clearObjectStore(const String& securityOrigin, con
 }
 
 } // namespace WebCore
-#endif // ENABLE(INDEXED_DATABASE)

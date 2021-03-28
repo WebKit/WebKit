@@ -27,8 +27,6 @@
 #include "IDBIterateCursorData.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 IDBIterateCursorData IDBIterateCursorData::isolatedCopy() const
@@ -46,5 +44,3 @@ String IDBIterateCursorData::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)
