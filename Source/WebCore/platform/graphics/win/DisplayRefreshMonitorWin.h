@@ -34,11 +34,12 @@ class DisplayRefreshMonitorWin : public DisplayRefreshMonitor {
 public:
     static RefPtr<DisplayRefreshMonitorWin> create(PlatformDisplayID);
 
-    void displayLinkFired() override;
-    bool requestRefreshCallback() override;
-
 private:
     explicit DisplayRefreshMonitorWin(PlatformDisplayID);
+
+    bool startNotificationMechanism() final;
+    void stopNotificationMechanism() final;
+
     RunLoop::Timer<DisplayRefreshMonitorWin> m_timer;
 };
 

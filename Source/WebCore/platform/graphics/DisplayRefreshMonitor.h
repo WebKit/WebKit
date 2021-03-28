@@ -39,19 +39,18 @@ class DisplayRefreshMonitorClient;
 class DisplayRefreshMonitorFactory;
 
 class DisplayRefreshMonitor : public ThreadSafeRefCounted<DisplayRefreshMonitor> {
+    friend class DisplayRefreshMonitorManager;
 public:
     static RefPtr<DisplayRefreshMonitor> create(DisplayRefreshMonitorFactory*, PlatformDisplayID);
     WEBCORE_EXPORT virtual ~DisplayRefreshMonitor();
-
-    virtual void displayLinkFired() { }
+    
+    WEBCORE_EXPORT virtual void stop();
 
     virtual void setPreferredFramesPerSecond(FramesPerSecond) { }
 
     // Return true if callback request was scheduled, false if it couldn't be
     // (e.g., hardware refresh is not available)
-    virtual bool requestRefreshCallback() = 0;
-
-    virtual void stop() { }
+    WEBCORE_EXPORT virtual bool requestRefreshCallback();
 
     void windowScreenDidChange(PlatformDisplayID);
     
@@ -61,23 +60,20 @@ public:
     
     PlatformDisplayID displayID() const { return m_displayID; }
 
-    bool shouldBeTerminated() const
-    {
-        const int maxInactiveFireCount = 1;
-        return !m_scheduled && m_unscheduledFireCount > maxInactiveFireCount;
-    }
-
     static RefPtr<DisplayRefreshMonitor> createDefaultDisplayRefreshMonitor(PlatformDisplayID);
+    WEBCORE_EXPORT virtual void displayLinkFired();
 
 protected:
     WEBCORE_EXPORT explicit DisplayRefreshMonitor(PlatformDisplayID);
 
-    friend class DisplayRefreshMonitorManager;
-    
-    Lock& mutex() { return m_mutex; }
+    WEBCORE_EXPORT virtual void dispatchDisplayDidRefresh();
 
-    bool isActive() const { return m_active; }
-    void setIsActive(bool active) { m_active = active; }
+    Lock& lock() { return m_lock; }
+    void setMaxUnscheduledFireCount(unsigned count) { m_maxUnscheduledFireCount = count; }
+
+    // Returns true if the start was successful.
+    WEBCORE_EXPORT virtual bool startNotificationMechanism() = 0;
+    WEBCORE_EXPORT virtual void stopNotificationMechanism() = 0;
 
     bool isScheduled() const { return m_scheduled; }
     void setIsScheduled(bool scheduled) { m_scheduled = scheduled; }
@@ -85,19 +81,21 @@ protected:
     bool isPreviousFrameDone() const { return m_previousFrameDone; }
     void setIsPreviousFrameDone(bool done) { m_previousFrameDone = done; }
 
-    virtual bool hasRequestedRefreshCallback() const { return false; }
     WEBCORE_EXPORT void displayDidRefresh();
 
 private:
+    bool firedAndReachedMaxUnscheduledFireCount();
 
     HashSet<DisplayRefreshMonitorClient*> m_clients;
     HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified { nullptr };
-    Lock m_mutex;
     PlatformDisplayID m_displayID { 0 };
-    int m_unscheduledFireCount { 0 }; // Number of times the display link has fired with no clients.
-    bool m_active { true };
+
+    Lock m_lock;
     bool m_scheduled { false };
     bool m_previousFrameDone { true };
+    
+    unsigned m_unscheduledFireCount { 0 };
+    unsigned m_maxUnscheduledFireCount { 0 };
 };
 
 }

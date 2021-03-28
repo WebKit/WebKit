@@ -137,6 +137,9 @@ public:
     bool requestRefreshCallback() final { return false; }
     void stop() final { }
 
+    bool startNotificationMechanism() final { return true; }
+    void stopNotificationMechanism() final { }
+
 private:
     explicit EmptyDisplayRefreshMonitor(PlatformDisplayID displayID)
         : DisplayRefreshMonitor(displayID)

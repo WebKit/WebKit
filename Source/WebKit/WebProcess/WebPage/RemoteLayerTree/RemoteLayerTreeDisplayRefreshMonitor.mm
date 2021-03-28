@@ -26,6 +26,9 @@
 #import "config.h"
 #import "RemoteLayerTreeDisplayRefreshMonitor.h"
 
+#import "Logging.h"
+#include <wtf/text/TextStream.h>
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -49,13 +52,14 @@ void RemoteLayerTreeDisplayRefreshMonitor::setPreferredFramesPerSecond(FramesPer
 
 bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
 {
-    if (!m_drawingArea || !isActive())
+    if (!m_drawingArea)
         return false;
 
-    if (!isScheduled())
+    if (!isScheduled()) {
+        LOG_WITH_STREAM(DisplayLink, stream << "RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback - triggering update");
         static_cast<DrawingArea&>(*m_drawingArea.get()).triggerRenderingUpdate();
+    }
 
-    setIsActive(true);
     setIsScheduled(true);
     return true;
 }

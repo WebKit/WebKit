@@ -72,11 +72,9 @@ void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient&
     auto index = findMonitorForDisplayID(clientDisplayID);
     if (index == notFound)
         return;
+
     RefPtr<DisplayRefreshMonitor> monitor = m_monitors[index].monitor;
-    if (monitor->removeClient(client)) {
-        if (!monitor->hasClients())
-            m_monitors.remove(index);
-    }
+    monitor->removeClient(client);
 }
 
 void DisplayRefreshMonitorManager::setPreferredFramesPerSecond(DisplayRefreshMonitorClient& client, FramesPerSecond preferredFramesPerSecond)
@@ -94,16 +92,9 @@ bool DisplayRefreshMonitorManager::scheduleAnimation(DisplayRefreshMonitorClient
     return false;
 }
 
-void DisplayRefreshMonitorManager::displayDidRefresh(DisplayRefreshMonitor& monitor)
+void DisplayRefreshMonitorManager::displayDidRefresh(DisplayRefreshMonitor&)
 {
-    if (!monitor.shouldBeTerminated())
-        return;
-
-    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorManager::displayDidRefresh() - destroying monitor " << &monitor);
-
-    m_monitors.removeFirstMatching([&](auto& monitorWrapper) {
-        return monitorWrapper.monitor == &monitor;
-    });
+    // Maybe we should remove monitors that haven't been active for some time.
 }
 
 void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displayID, DisplayRefreshMonitorClient& client)
@@ -120,7 +111,7 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
 void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID)
 {
     auto* monitor = monitorForDisplayID(displayID);
-    if (monitor && monitor->hasRequestedRefreshCallback())
+    if (monitor)
         monitor->displayLinkFired();
 }
 

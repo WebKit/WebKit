@@ -40,14 +40,7 @@ DisplayRefreshMonitorGtk::DisplayRefreshMonitorGtk(PlatformDisplayID displayID)
 
 DisplayRefreshMonitorGtk::~DisplayRefreshMonitorGtk()
 {
-    if (!m_window)
-        return;
-
-    auto* frameClock = gtk_widget_get_frame_clock(m_window);
-    ASSERT(frameClock);
-    g_signal_handlers_disconnect_matched(frameClock, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-    gdk_frame_clock_end_updating(frameClock);
-    gtk_widget_destroy(m_window);
+    ASSERT(!m_window);
 }
 
 static void onFrameClockUpdate(GdkFrameClock*, DisplayRefreshMonitorGtk* monitor)
@@ -55,41 +48,53 @@ static void onFrameClockUpdate(GdkFrameClock*, DisplayRefreshMonitorGtk* monitor
     monitor->displayLinkFired();
 }
 
-bool DisplayRefreshMonitorGtk::requestRefreshCallback()
+void DisplayRefreshMonitorGtk::stop()
 {
-    if (!isActive())
-        return false;
+    if (!m_window)
+        return;
 
+    auto* frameClock = gtk_widget_get_frame_clock(m_window);
+    ASSERT(frameClock);
+    g_signal_handlers_disconnect_matched(frameClock, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
+    gtk_widget_destroy(m_window);
+    m_window = nullptr;
+}
+
+bool DisplayRefreshMonitorGtk::startNotificationMechanism()
+{
+    if (m_clockIsActive)
+        return true;
+
+    GdkFrameClock* frameClock;
     if (!m_window) {
         // GdkFrameClockIdle is private in GDK, so we need to create a toplevel to get its frame clock.
         m_window = gtk_offscreen_window_new();
         gtk_widget_realize(m_window);
 
-        auto* frameClock = gtk_widget_get_frame_clock(m_window);
+        frameClock = gtk_widget_get_frame_clock(m_window);
         ASSERT(frameClock);
-
         g_signal_connect(frameClock, "update", G_CALLBACK(onFrameClockUpdate), this);
-        gdk_frame_clock_begin_updating(frameClock);
+    } else
+        frameClock = gtk_widget_get_frame_clock(m_window);
 
-        setIsActive(true);
-    }
+    ASSERT(frameClock);
+    gdk_frame_clock_begin_updating(frameClock);
 
-    LockHolder lock(mutex());
-    setIsScheduled(true);
+    m_clockIsActive = true;
     return true;
 }
 
-void DisplayRefreshMonitorGtk::displayLinkFired()
+void DisplayRefreshMonitorGtk::stopNotificationMechanism()
 {
-    {
-        LockHolder lock(mutex());
-        if (!isPreviousFrameDone())
-            return;
+    if (!m_clockIsActive)
+        return;
 
-        setIsPreviousFrameDone(false);
-    }
-    ASSERT(isMainThread());
-    displayDidRefresh();
+    auto* frameClock = gtk_widget_get_frame_clock(m_window);
+    ASSERT(frameClock);
+    gdk_frame_clock_end_updating(frameClock);
+
+    m_clockIsActive = false;    
 }
 
 } // namespace WebCore

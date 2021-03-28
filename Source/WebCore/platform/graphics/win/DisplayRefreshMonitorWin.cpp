@@ -35,27 +35,21 @@ RefPtr<DisplayRefreshMonitorWin> DisplayRefreshMonitorWin::create(PlatformDispla
 
 DisplayRefreshMonitorWin::DisplayRefreshMonitorWin(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
-    , m_timer(RunLoop::main(), this, &DisplayRefreshMonitorWin::displayLinkFired)
+    , m_timer(RunLoop::main(), this, &DisplayRefreshMonitor::displayLinkFired)
 {
 }
 
-bool DisplayRefreshMonitorWin::requestRefreshCallback()
+bool DisplayRefreshMonitorWin::startNotificationMechanism()
 {
-    if (!isActive())
-        return false;
-    m_timer.startOneShot(16_ms);
-    setIsActive(true);
-    setIsScheduled(true);
+    if (!m_timer.isActive())
+        m_timer.startRepeating(16_ms);
+
     return true;
 }
 
-void DisplayRefreshMonitorWin::displayLinkFired()
+void DisplayRefreshMonitorWin::stopNotificationMechanism()
 {
-    if (!isPreviousFrameDone())
-        return;
-
-    setIsPreviousFrameDone(false);
-    displayDidRefresh();
+    m_timer.stop();
 }
 
 } // namespace WebCore

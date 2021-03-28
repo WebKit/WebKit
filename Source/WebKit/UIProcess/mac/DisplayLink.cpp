@@ -29,8 +29,10 @@
 #if HAVE(CVDISPLAYLINK)
 
 #include "EventDispatcherMessages.h"
+#include "Logging.h"
 #include "WebProcessMessages.h"
 #include <wtf/ProcessPrivilege.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
 
@@ -40,6 +42,8 @@ constexpr unsigned maxFireCountWithoutObservers { 20 };
 DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
     : m_displayID(displayID)
 {
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] Creating DisplayLink for display " << displayID);
+
     // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case CVDisplayLinkCreateWithCGDisplay()
     // probably defaults to the main screen.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -58,6 +62,8 @@ DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
 
 DisplayLink::~DisplayLink()
 {
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] Destroying DisplayLink for display " << m_displayID);
+
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     ASSERT(m_displayLink);
     if (!m_displayLink)
@@ -85,6 +91,7 @@ void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID
     }
 
     if (!CVDisplayLinkIsRunning(m_displayLink)) {
+        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " starting CVDisplayLink");
         CVReturn error = CVDisplayLinkStart(m_displayLink);
         if (error)
             WTFLogAlways("Could not start the display link: %d", error);
@@ -134,13 +141,16 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
 
     LockHolder locker(m_observersLock);
     if (m_observers.isEmpty()) {
-        if (++m_fireCountWithoutObservers >= maxFireCountWithoutObservers)
+        if (++m_fireCountWithoutObservers >= maxFireCountWithoutObservers) {
+            LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " fired " << m_fireCountWithoutObservers << " times with no observers; stopping CVDisplayLink");
             CVDisplayLinkStop(m_displayLink);
+        }
         return;
     }
     m_fireCountWithoutObservers = 0;
 
     for (auto& connection : m_observers.keys()) {
+        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " sending for connection " << connection->uniqueID() << " on background queue " << shouldSendIPCOnBackgroundQueue);
         if (shouldSendIPCOnBackgroundQueue)
             connection->send(Messages::EventDispatcher::DisplayWasRefreshed(m_displayID), 0);
         else

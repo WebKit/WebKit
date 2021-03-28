@@ -1,3 +1,51 @@
+2021-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow DisplayRefreshMonitor to be more long-lived objects
+        https://bugs.webkit.org/show_bug.cgi?id=223844
+
+        Reviewed by Chris Dumez.
+
+        The existing behavior for DisplayRefreshMonitors was that they were created and destroyed
+        frequently, as their clients are registered and unregistered. In addition, some of
+        their subclasses had duplicated logic related to how often they fired without clients
+        before they were removed.
+
+        The 1:1 correspondance between DisplayRefreshMonitors and physical displays makes them
+        a useful place to store per-display information (like refresh rate), which should
+        persist whether or not they have clients, so this change prepares for that.
+        
+        The main changes in this patch are:
+          1. Provide virtual startNotificationMechanism()/stopNotificationMechanism() functions on
+             DisplayRefreshMonitor that subclasses can use to start their CVDisplayLink or related
+             functionality.
+
+          2. Provide some shared maxUnscheduledFireCount logic that subclasses can tune to
+             provide the hysteresis used to control the start/stop of the underlying
+             notification mechanism.
+
+         3. Provide a shared dispatchDisplayDidRefresh() function that most implementations
+            can use.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.h:
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::~DisplayLink):
+        (WebKit::DisplayLink::addObserver):
+        (WebKit::DisplayLink::notifyObserversDisplayWasRefreshed):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback):
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::dispatchDisplayDidRefresh):
+        (WebKit::DisplayRefreshMonitorMac::startNotificationMechanism):
+        (WebKit::DisplayRefreshMonitorMac::stopNotificationMechanism):
+        (WebKit::DisplayRefreshMonitorMac::requestRefreshCallback): Deleted.
+        (WebKit::DisplayRefreshMonitorMac::displayLinkFired): Deleted.
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.h:
+
 2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Send report to both click source and attribution destination website

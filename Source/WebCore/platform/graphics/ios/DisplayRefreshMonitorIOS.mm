@@ -28,11 +28,14 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "Logging.h"
 #import "WebCoreThread.h"
 #import <QuartzCore/CADisplayLink.h>
 #import <wtf/MainThread.h>
+#import <wtf/text/TextStream.h>
 
 using WebCore::DisplayRefreshMonitorIOS;
+
 @interface WebDisplayLinkHandler : NSObject
 {
     DisplayRefreshMonitorIOS* m_monitor;
@@ -42,6 +45,7 @@ using WebCore::DisplayRefreshMonitorIOS;
 - (id)initWithMonitor:(DisplayRefreshMonitorIOS*)monitor;
 - (void)setPreferredFramesPerSecond:(NSInteger)preferredFramesPerSecond;
 - (void)handleDisplayLink:(CADisplayLink *)sender;
+- (void)setPaused:(BOOL)paused;
 - (void)invalidate;
 
 @end
@@ -78,6 +82,11 @@ using WebCore::DisplayRefreshMonitorIOS;
     m_monitor->displayLinkFired();
 }
 
+- (void)setPaused:(BOOL)paused
+{
+    [m_displayLink setPaused:paused];
+}
+
 - (void)invalidate
 {
     [m_displayLink invalidate];
@@ -88,39 +97,51 @@ using WebCore::DisplayRefreshMonitorIOS;
 
 namespace WebCore {
 
+constexpr unsigned maxUnscheduledFireCount { 1 };
+
 DisplayRefreshMonitorIOS::DisplayRefreshMonitorIOS(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
 {
+    setMaxUnscheduledFireCount(maxUnscheduledFireCount);
 }
 
 DisplayRefreshMonitorIOS::~DisplayRefreshMonitorIOS()
 {
-    [m_handler invalidate];
+    ASSERT(!m_handler);
 }
 
-bool DisplayRefreshMonitorIOS::requestRefreshCallback()
+void DisplayRefreshMonitorIOS::stop()
 {
-    if (!isActive())
-        return false;
+    [m_handler invalidate];
+    m_handler = nil;
+}
+
+bool DisplayRefreshMonitorIOS::startNotificationMechanism()
+{
+    if (m_displayLinkIsActive)
+        return true;
 
     if (!m_handler) {
+        LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorIOS::startNotificationMechanism - creating WebDisplayLinkHandler");
         m_handler = adoptNS([[WebDisplayLinkHandler alloc] initWithMonitor:this]);
-        setIsActive(true);
     }
 
-    setIsScheduled(true);
+    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorIOS::startNotificationMechanism - starting WebDisplayLinkHandler");
+    [m_handler setPaused:NO];
+    m_displayLinkIsActive = true;
     return true;
 }
 
-void DisplayRefreshMonitorIOS::displayLinkFired()
+void DisplayRefreshMonitorIOS::stopNotificationMechanism()
 {
-    if (!isPreviousFrameDone())
+    if (!m_displayLinkIsActive)
         return;
 
-    setIsPreviousFrameDone(false);
-    displayDidRefresh();
+    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorIOS::stopNotificationMechanism - pausing WebDisplayLinkHandler");
+    [m_handler setPaused:YES];
+    m_displayLinkIsActive = false;
 }
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(IOS_FAMILY)

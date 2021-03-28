@@ -1,3 +1,93 @@
+2021-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow DisplayRefreshMonitor to be more long-lived objects
+        https://bugs.webkit.org/show_bug.cgi?id=223844
+
+        Reviewed by Chris Dumez.
+
+        The existing behavior for DisplayRefreshMonitors was that they were created and destroyed
+        frequently, as their clients are registered and unregistered. In addition, some of
+        their subclasses had duplicated logic related to how often they fired without clients
+        before they were removed.
+
+        The 1:1 correspondance between DisplayRefreshMonitors and physical displays makes them
+        a useful place to store per-display information (like refresh rate), which should
+        persist whether or not they have clients, so this change prepares for that.
+        
+        The main changes in this patch are:
+          1. Provide virtual startNotificationMechanism()/stopNotificationMechanism() functions on
+             DisplayRefreshMonitor that subclasses can use to start their CVDisplayLink or related
+             functionality.
+
+          2. Provide some shared maxUnscheduledFireCount logic that subclasses can tune to
+             provide the hysteresis used to control the start/stop of the underlying
+             notification mechanism.
+
+         3. Provide a shared dispatchDisplayDidRefresh() function that most implementations
+            can use.
+
+        DisplayRefreshMonitorManager no longer destroys DisplayRefreshMonitors when they lose
+        all their clients. This means that DisplayRefreshMonitors are never removed, but there
+        should only ever be as many as there are physical displays, and they are only
+        active if being scheduled by clients.
+
+        * loader/EmptyClients.cpp:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::stop):
+        (WebCore::DisplayRefreshMonitor::removeClient):
+        (WebCore::DisplayRefreshMonitor::requestRefreshCallback):
+        (WebCore::DisplayRefreshMonitor::firedAndReachedMaxUnscheduledFireCount):
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+        (WebCore::DisplayRefreshMonitor::dispatchDisplayDidRefresh):
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        * platform/graphics/DisplayRefreshMonitor.h:
+        (WebCore::DisplayRefreshMonitor::setMaxUnscheduledFireCount):
+        (WebCore::DisplayRefreshMonitor::mutex):
+        (WebCore::DisplayRefreshMonitor::displayLinkFired): Deleted.
+        (WebCore::DisplayRefreshMonitor::stop): Deleted.
+        (WebCore::DisplayRefreshMonitor::shouldBeTerminated const): Deleted.
+        (WebCore::DisplayRefreshMonitor::isActive const): Deleted.
+        (WebCore::DisplayRefreshMonitor::setIsActive): Deleted.
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::unregisterClient):
+        (WebCore::DisplayRefreshMonitorManager::displayDidRefresh):
+        (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp:
+        (WebCore::DisplayRefreshMonitorGtk::~DisplayRefreshMonitorGtk):
+        (WebCore::onFrameClockUpdate):
+        (WebCore::DisplayRefreshMonitorGtk::stop):
+        (WebCore::DisplayRefreshMonitorGtk::startNotificationMechanism):
+        (WebCore::DisplayRefreshMonitorGtk::stopNotificationMechanism):
+        (WebCore::DisplayRefreshMonitorGtk::requestRefreshCallback): Deleted.
+        (WebCore::DisplayRefreshMonitorGtk::displayLinkFired): Deleted.
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        (-[WebDisplayLinkHandler setPaused:]):
+        (WebCore::DisplayRefreshMonitorIOS::DisplayRefreshMonitorIOS):
+        (WebCore::DisplayRefreshMonitorIOS::~DisplayRefreshMonitorIOS):
+        (WebCore::DisplayRefreshMonitorIOS::stop):
+        (WebCore::DisplayRefreshMonitorIOS::startNotificationMechanism):
+        (WebCore::DisplayRefreshMonitorIOS::stopNotificationMechanism):
+        (WebCore::DisplayRefreshMonitorIOS::requestRefreshCallback): Deleted.
+        (WebCore::DisplayRefreshMonitorIOS::displayLinkFired): Deleted.
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp:
+        (WebCore::LegacyDisplayRefreshMonitorMac::LegacyDisplayRefreshMonitorMac):
+        (WebCore::LegacyDisplayRefreshMonitorMac::stop):
+        (WebCore::LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh):
+        (WebCore::LegacyDisplayRefreshMonitorMac::startNotificationMechanism):
+        (WebCore::LegacyDisplayRefreshMonitorMac::stopNotificationMechanism):
+        (WebCore::LegacyDisplayRefreshMonitorMac::requestRefreshCallback): Deleted.
+        (WebCore::LegacyDisplayRefreshMonitorMac::displayLinkFired): Deleted.
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.h:
+        * platform/graphics/win/DisplayRefreshMonitorWin.cpp:
+        (WebCore::DisplayRefreshMonitorWin::DisplayRefreshMonitorWin):
+        (WebCore::DisplayRefreshMonitorWin::startNotificationMechanism):
+        (WebCore::DisplayRefreshMonitorWin::stopNotificationMechanism):
+        (WebCore::DisplayRefreshMonitorWin::requestRefreshCallback): Deleted.
+        (WebCore::DisplayRefreshMonitorWin::displayLinkFired): Deleted.
+        * platform/graphics/win/DisplayRefreshMonitorWin.h:
+
 2021-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't add Frame as an opaque root of DOMWindow

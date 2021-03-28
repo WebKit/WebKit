@@ -41,13 +41,16 @@ public:
     virtual ~RemoteLayerTreeDisplayRefreshMonitor();
 
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
-    bool requestRefreshCallback() override;
+    bool requestRefreshCallback() final;
 
     void didUpdateLayers();
     void updateDrawingArea(RemoteLayerTreeDrawingArea&);
 
 private:
     explicit RemoteLayerTreeDisplayRefreshMonitor(WebCore::PlatformDisplayID, RemoteLayerTreeDrawingArea&);
+
+    bool startNotificationMechanism() final { return true; }
+    void stopNotificationMechanism() final { }
 
     WeakPtr<RemoteLayerTreeDrawingArea> m_drawingArea;
 };

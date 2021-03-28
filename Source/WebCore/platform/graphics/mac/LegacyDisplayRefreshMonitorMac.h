@@ -43,16 +43,20 @@ public:
     
     virtual ~LegacyDisplayRefreshMonitorMac();
 
-    void displayLinkFired() final;
-    bool requestRefreshCallback() final;
-    void stop() final;
-
 private:
     explicit LegacyDisplayRefreshMonitorMac(PlatformDisplayID);
 
+    void dispatchDisplayDidRefresh() final;
+
+    void stop() final;
+
+    bool startNotificationMechanism() final;
+    void stopNotificationMechanism() final;
+
     CVDisplayLinkRef m_displayLink { nullptr };
+    bool m_displayLinkIsActive { false };
 };
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

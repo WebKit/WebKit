@@ -44,6 +44,8 @@
 
 namespace WebCore {
 
+constexpr unsigned maxUnscheduledFireCount { 1 };
+
 RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
 #if PLATFORM(MAC)
@@ -80,6 +82,12 @@ DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
 
 DisplayRefreshMonitor::~DisplayRefreshMonitor() = default;
 
+void DisplayRefreshMonitor::stop()
+{
+    stopNotificationMechanism();
+    setIsScheduled(false);
+}
+
 void DisplayRefreshMonitor::addClient(DisplayRefreshMonitorClient& client)
 {
     m_clients.add(&client);
@@ -89,23 +97,67 @@ bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient& client)
 {
     if (m_clientsToBeNotified)
         m_clientsToBeNotified->remove(&client);
+
     return m_clients.remove(&client);
+}
+
+bool DisplayRefreshMonitor::requestRefreshCallback()
+{
+    auto locker = holdLock(m_lock);
+    
+    if (isScheduled())
+        return true;
+
+    if (!startNotificationMechanism())
+        return false;
+
+    setIsScheduled(true);
+    return true;
+}
+
+bool DisplayRefreshMonitor::firedAndReachedMaxUnscheduledFireCount()
+{
+    ASSERT(m_lock.isLocked());
+
+    if (isScheduled()) {
+        m_unscheduledFireCount = 0;
+        return false;
+    }
+
+    ++m_unscheduledFireCount;
+    return m_unscheduledFireCount > m_maxUnscheduledFireCount;
+}
+
+void DisplayRefreshMonitor::displayLinkFired()
+{
+    {
+        auto locker = holdLock(m_lock);
+
+        // This may be off the main thread.
+        if (!isPreviousFrameDone())
+            return;
+
+        LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitor::displayLinkFired for display " << displayID() << " - scheduled " << isScheduled() << " unscheduledFireCount " << m_unscheduledFireCount << " of " << m_maxUnscheduledFireCount);
+        if (firedAndReachedMaxUnscheduledFireCount()) {
+            stopNotificationMechanism();
+            return;
+        }
+
+        setIsScheduled(false);
+        setIsPreviousFrameDone(false);
+    }
+    dispatchDisplayDidRefresh();
+}
+
+void DisplayRefreshMonitor::dispatchDisplayDidRefresh()
+{
+    ASSERT(isMainThread());
+    displayDidRefresh();
 }
 
 void DisplayRefreshMonitor::displayDidRefresh()
 {
-    ASSERT(isMainRunLoop());
-
-    {
-        LockHolder lock(m_mutex);
-        LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitor " << this << " displayDidRefresh for display " << displayID() << " scheduled " << m_scheduled << " unscheduledFireCount " << m_unscheduledFireCount);
-        if (!m_scheduled)
-            ++m_unscheduledFireCount;
-        else
-            m_unscheduledFireCount = 0;
-
-        m_scheduled = false;
-    }
+    ASSERT(isMainThread());
 
     // The call back can cause all our clients to be unregistered, so we need to protect
     // against deletion until the end of the method.
@@ -129,7 +181,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
         m_clientsToBeNotified = nullptr;
 
     {
-        LockHolder lock(m_mutex);
+        auto locker = holdLock(m_lock);
         setIsPreviousFrameDone(true);
     }
 
