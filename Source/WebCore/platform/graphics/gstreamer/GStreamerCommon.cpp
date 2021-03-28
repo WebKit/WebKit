@@ -468,7 +468,7 @@ bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState target
 
     GstState currentState;
     auto result = gst_element_get_state(pipeline, &currentState, nullptr, 10);
-    if (result == GST_STATE_CHANGE_SUCCESS && currentState >= targetState) {
+    if (result == GST_STATE_CHANGE_SUCCESS && currentState == targetState) {
         GST_DEBUG_OBJECT(pipeline, "Target state already reached");
         return true;
     }

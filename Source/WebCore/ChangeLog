@@ -1,3 +1,26 @@
+2021-03-28  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r274527): [GStreamer] media/webaudio-background-playback.html now failing
+        https://bugs.webkit.org/show_bug.cgi?id=223840
+
+        Reviewed by Chris Dumez.
+
+        r274527 actually exposed a bug that was present since r271197. The AudioDestination pipeline
+        was not stopping properly because webkitGstSetElementStateSynchronously() was returning too
+        early.
+
+        This patch also includes a few improvements in the webaudiosrc element, most notably
+        regarding its preroll state. The element now stops emitting buffers downstream as soon as
+        the AudioDestination is scheduled to stop.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcRenderAndPushFrames): Return early as soon as the destination is scheduled to stop.
+        (webKitWebAudioSrcChangeState): Synchronize preroll state with element state.
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::webkitGstSetElementStateSynchronously): targetState might be lower than current
+        state, e.g, when stopping a running pipeline, so we can't return early for those cases,
+        otherwise the pipeline won't stop.
+
 2021-03-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add an exception for a heap allocation on the WebAudio thread.
