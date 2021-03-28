@@ -77,6 +77,14 @@ TSAN_OPTION=--no-tsan
 endif
 endif
 
+ifeq ($(UBSAN),YES)
+UBSAN_OPTION=--ubsan
+else
+ifeq ($(UBSAN),NO)
+UBSAN_OPTION=--no-ubsan
+endif
+endif
+
 ifeq ($(WK_LTO_MODE),full)
 WK_LTO_OPTION=--lto-mode=full
 else ifeq ($(WK_LTO_MODE),thin)
@@ -93,7 +101,7 @@ export PATH = $(shell getconf PATH)
 
 
 define set_webkit_configuration
-	$(SCRIPTS_PATH)/set-webkit-configuration $1 $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION)
+	$(SCRIPTS_PATH)/set-webkit-configuration $1 $(ASAN_OPTION) $(TSAN_OPTION) $(UBSAN_OPTION) $(WK_LTO_OPTION)
 endef
 
 define invoke_xcode
@@ -107,7 +115,7 @@ define invoke_xcode
 endef
 
 all:
-ifneq (,$(strip $(ASAN_OPTION) $(TSAN_OPTION) $(WK_LTO_OPTION)))
+ifneq (,$(strip $(ASAN_OPTION) $(TSAN_OPTION) $(UBSAN_OPTION) $(WK_LTO_OPTION)))
 	@$(call set_webkit_configuration,)
 endif
 	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')

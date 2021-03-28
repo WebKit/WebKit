@@ -1,4 +1,4 @@
-# Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2021 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
@@ -131,6 +131,7 @@ my $architecture;
 my %nativeArchitectureMap = ();
 my $asanIsEnabled;
 my $tsanIsEnabled;
+my $ubsanIsEnabled;
 my $forceOptimizationLevel;
 my $coverageIsEnabled;
 my $ltoMode;
@@ -432,36 +433,39 @@ sub determineArchitecture
     $architecture = 'arm64' if $architecture =~ /aarch64/i;
 }
 
+sub readSanitizerConfiguration($)
+{
+    my ($fileName) = @_;
+
+    if (open FILE, File::Spec->catfile($baseProductDir, $fileName)) {
+        my $value = <FILE>;
+        close FILE;
+        chomp $value;
+        return ($value eq "YES");
+    }
+
+    return 0;
+}
+
 sub determineASanIsEnabled
 {
     return if defined $asanIsEnabled;
     determineBaseProductDir();
-
-    $asanIsEnabled = 0;
-    my $asanConfigurationValue;
-
-    if (open ASAN, "$baseProductDir/ASan") {
-        $asanConfigurationValue = <ASAN>;
-        close ASAN;
-        chomp $asanConfigurationValue;
-        $asanIsEnabled = 1 if $asanConfigurationValue eq "YES";
-    }
+    $asanIsEnabled = readSanitizerConfiguration("ASan");
 }
 
 sub determineTSanIsEnabled
 {
     return if defined $tsanIsEnabled;
     determineBaseProductDir();
+    $tsanIsEnabled = readSanitizerConfiguration("TSan");
+}
 
-    $tsanIsEnabled = 0;
-    my $tsanConfigurationValue;
-
-    if (open TSAN, "$baseProductDir/TSan") {
-        $tsanConfigurationValue = <TSAN>;
-        close TSAN;
-        chomp $tsanConfigurationValue;
-        $tsanIsEnabled = 1 if $tsanConfigurationValue eq "YES";
-    }
+sub determineUBSanIsEnabled
+{
+    return if defined $ubsanIsEnabled;
+    determineBaseProductDir();
+    $ubsanIsEnabled = readSanitizerConfiguration("UBSan");
 }
 
 sub determineForceOptimizationLevel
@@ -909,6 +913,12 @@ sub tsanIsEnabled()
     return $tsanIsEnabled;
 }
 
+sub ubsanIsEnabled()
+{
+    determineUBSanIsEnabled();
+    return $ubsanIsEnabled;
+}
+
 sub forceOptimizationLevel()
 {
     determineForceOptimizationLevel();
@@ -964,6 +974,7 @@ sub XcodeOptions
     determineArchitecture();
     determineASanIsEnabled();
     determineTSanIsEnabled();
+    determineUBSanIsEnabled();
     determineForceOptimizationLevel();
     determineCoverageIsEnabled();
     determineLTOMode();
@@ -980,6 +991,7 @@ sub XcodeOptions
     } elsif ($tsanIsEnabled) {
         push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "tsan.xcconfig"));
     }
+    push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "ubsan.xcconfig")) if $ubsanIsEnabled;
     push @options, ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig") if $coverageIsEnabled;
     push @options, ("GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel") if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
@@ -2470,6 +2482,7 @@ sub generateBuildSystemFromCMakeProject
 
     push @args, "-DENABLE_SANITIZERS=address" if asanIsEnabled();
     push @args, "-DENABLE_SANITIZERS=thread" if tsanIsEnabled();
+    push @args, "-DENABLE_SANITIZERS=undefined" if ubsanIsEnabled();
 
     push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
 

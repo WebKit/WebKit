@@ -1,3 +1,32 @@
+2021-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        Compile WebKit with UBSan
+        <https://webkit.org/b/176131>
+        <rdar://problem/34174018>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/set-webkit-configuration:
+        - Add support for --[no-]ubsan command-line switch.
+        - Add warning when enabling ASan and TSan together.
+        (updateOrDeleteConfigurationFile):
+        - Extract common code for updating configuration files.
+
+        * Scripts/webkitdirs.pm:
+        (readSanitizerConfiguration): Add.
+        - Extract common code for reading sanitizer configuration files.
+        (determineASanIsEnabled):
+        (determineTSanIsEnabled):
+        (determineUBSanIsEnabled): Add.
+        - Make use of readSanitizerConfiguration().
+        (ubsanIsEnabled): Add.
+        (XcodeOptions):
+        - Add command-line switches for UBSan.
+        (generateBuildSystemFromCMakeProject): Ditto.
+
+        * sanitizer/ubsan.xcconfig: Add.
+        - Contains Xcode settings for enabling UBSan.
+
 2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: Send report to both click source and attribution destination website

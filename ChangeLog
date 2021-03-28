@@ -1,3 +1,14 @@
+2021-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        Compile WebKit with UBSan
+        <https://webkit.org/b/176131>
+        <rdar://problem/34174018>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Makefile.shared:
+        - Add support for "UBSAN=YES" argument to make.
+
 2021-03-27  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r275111) [GLIB] Fix build with new derived sources and forwarding headers scheme
