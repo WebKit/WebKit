@@ -1,3 +1,11 @@
+2021-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix.
+
+        * platform/graphics/SourceBufferPrivateClient.h:
+        I have a build that can't find the MediaDescription destructor from the AudioTrackInformation declaration.
+        Including MediaDescription.h fixes it.
+
 2021-03-29  Frédéric Wang  <fwang@igalia.com>
 
         Release assert in Vector::at in RenderLayoutState::establishLineGrid
