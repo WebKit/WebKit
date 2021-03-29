@@ -97,6 +97,8 @@ void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID
         CVReturn error = CVDisplayLinkStart(m_displayLink);
         if (error)
             WTFLogAlways("Could not start the display link: %d", error);
+
+        m_currentUpdate = { 0, m_displayNominalFramesPerSecond };
     }
 }
 
@@ -152,12 +154,15 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
     m_fireCountWithoutObservers = 0;
 
     for (auto& connection : m_observers.keys()) {
-        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " sending for connection " << connection->uniqueID() << " on background queue " << shouldSendIPCOnBackgroundQueue);
+        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " (display fps " << m_displayNominalFramesPerSecond << ") update " << m_currentUpdate << " connection " << connection->uniqueID() << " on background queue " << shouldSendIPCOnBackgroundQueue);
+
         if (shouldSendIPCOnBackgroundQueue)
-            connection->send(Messages::EventDispatcher::DisplayWasRefreshed(m_displayID), 0);
+            connection->send(Messages::EventDispatcher::DisplayWasRefreshed(m_displayID, m_currentUpdate), 0);
         else
-            connection->send(Messages::WebProcess::DisplayWasRefreshed(m_displayID), 0);
+            connection->send(Messages::WebProcess::DisplayWasRefreshed(m_displayID, m_currentUpdate), 0);
     }
+
+    m_currentUpdate = m_currentUpdate.nextUpdate();
 }
 
 } // namespace WebKit

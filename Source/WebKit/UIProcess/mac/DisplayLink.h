@@ -30,6 +30,7 @@
 #include "DisplayLinkObserverID.h"
 #include <CoreVideo/CVDisplayLink.h>
 #include <WebCore/AnimationFrameRate.h>
+#include <WebCore/DisplayUpdate.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -69,6 +70,7 @@ private:
     HashMap<RefPtr<IPC::Connection>, Vector<DisplayLinkObserverID>> m_observers;
     WebCore::PlatformDisplayID m_displayID;
     WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
+    WebCore::DisplayUpdate m_currentUpdate;
     unsigned m_fireCountWithoutObservers { 0 };
     static bool shouldSendIPCOnBackgroundQueue;
 };

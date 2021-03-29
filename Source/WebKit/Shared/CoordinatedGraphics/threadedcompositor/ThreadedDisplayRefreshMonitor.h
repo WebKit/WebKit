@@ -63,6 +63,7 @@ private:
     void displayRefreshCallback();
     RunLoop::Timer<ThreadedDisplayRefreshMonitor> m_displayRefreshTimer;
     Client* m_client;
+    WebCore::DisplayUpdate m_currentUpdate;
 };
 
 } // namespace WebKit

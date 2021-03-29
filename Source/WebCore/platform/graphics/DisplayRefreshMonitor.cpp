@@ -128,7 +128,7 @@ bool DisplayRefreshMonitor::firedAndReachedMaxUnscheduledFireCount()
     return m_unscheduledFireCount > m_maxUnscheduledFireCount;
 }
 
-void DisplayRefreshMonitor::displayLinkFired()
+void DisplayRefreshMonitor::displayLinkFired(const DisplayUpdate& displayUpdate)
 {
     {
         auto locker = holdLock(m_lock);
@@ -146,18 +146,21 @@ void DisplayRefreshMonitor::displayLinkFired()
         setIsScheduled(false);
         setIsPreviousFrameDone(false);
     }
-    dispatchDisplayDidRefresh();
+    dispatchDisplayDidRefresh(displayUpdate);
 }
 
-void DisplayRefreshMonitor::dispatchDisplayDidRefresh()
+void DisplayRefreshMonitor::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
 {
     ASSERT(isMainThread());
-    displayDidRefresh();
+    displayDidRefresh(displayUpdate);
 }
 
-void DisplayRefreshMonitor::displayDidRefresh()
+void DisplayRefreshMonitor::displayDidRefresh(const DisplayUpdate& displayUpdate)
 {
     ASSERT(isMainThread());
+
+    UNUSED_PARAM(displayUpdate);
+    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitor::displayDidRefresh for display " << displayID() << " update " << displayUpdate);
 
     // The call back can cause all our clients to be unregistered, so we need to protect
     // against deletion until the end of the method.

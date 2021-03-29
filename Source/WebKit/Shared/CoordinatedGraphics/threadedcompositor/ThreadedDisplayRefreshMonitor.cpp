@@ -37,10 +37,14 @@
 
 namespace WebKit {
 
+// FIXME: Use the correct frame rate.
+constexpr WebCore::FramesPerSecond DefaultFramesPerSecond = 60;
+
 ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client)
     : WebCore::DisplayRefreshMonitor(displayID)
     , m_displayRefreshTimer(RunLoop::main(), this, &ThreadedDisplayRefreshMonitor::displayRefreshCallback)
     , m_client(&client)
+    , m_currentUpdate({ 0, DefaultFramesPerSecond })
 {
 #if USE(GLIB_EVENT_LOOP)
     m_displayRefreshTimer.setPriority(RunLoopSourcePriority::DisplayRefreshMonitorTimer);
@@ -90,8 +94,10 @@ void ThreadedDisplayRefreshMonitor::invalidate()
         auto locker = holdLock(lock());
         wasScheduled = isScheduled();
     }
-    if (wasScheduled)
-        displayDidRefresh();
+    if (wasScheduled) {
+        displayDidRefresh(m_currentUpdate);
+        m_currentUpdate = m_currentUpdate.nextUpdate();
+    }
     m_client = nullptr;
 }
 
@@ -106,8 +112,10 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
             setIsPreviousFrameDone(false);
     }
 
-    if (shouldHandleDisplayRefreshNotification)
-        displayDidRefresh();
+    if (shouldHandleDisplayRefreshNotification) {
+        displayDidRefresh(m_currentUpdate);
+        m_currentUpdate = m_currentUpdate.nextUpdate();
+    }
 
     // Retrieve the scheduled status for this DisplayRefreshMonitor.
     bool hasBeenRescheduled { false };

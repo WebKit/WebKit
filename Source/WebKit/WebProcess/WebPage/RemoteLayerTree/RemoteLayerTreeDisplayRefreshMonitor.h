@@ -53,6 +53,9 @@ private:
     void stopNotificationMechanism() final { }
 
     WeakPtr<RemoteLayerTreeDrawingArea> m_drawingArea;
+
+    WebCore::FramesPerSecond m_preferredFramesPerSecond;
+    WebCore::DisplayUpdate m_currentUpdate;
 };
 
-}
+} // namespace WebKit

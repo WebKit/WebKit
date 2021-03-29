@@ -39,8 +39,11 @@ private:
 
     bool startNotificationMechanism() final;
     void stopNotificationMechanism() final;
+    
+    void displayLinkCallbackFired();
 
     RunLoop::Timer<DisplayRefreshMonitorWin> m_timer;
+    DisplayUpdate m_currentUpdate;
 };
 
 } // namespace WebCore

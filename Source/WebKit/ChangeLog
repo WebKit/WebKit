@@ -1,3 +1,62 @@
+2021-03-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Plumb DisplayUpdate through the display refresh monitors
+        https://bugs.webkit.org/show_bug.cgi?id=223847
+
+        Reviewed by Sam Weinig.
+
+        Future work will allow DisplayRefreshMonitorClients to request different frame rates, which
+        are whole fractions of the display's nominal refresh rate. These various frame rate requests
+        flow up through the DisplayRefreshMonitors, and in WebKit2, up through IPC to the
+        per-display DisplayLink which may even service multiple processes.
+
+        For power reasons, we don't want to trigger display refresh notifications down the chain at
+        the highest possible frequency; at various stages of propagation the rate might be halved if
+        that's necessary for downstream clients.
+        
+        To make this frequency splitting logic simple, this patch introduces DisplayUpdate, which
+        represents an update of the display, and contains data about it in the form of a numerator
+        is the frame index, and the denominator is the nominal frame rate. Frame index wraps to zero
+        every second.
+        
+        For example, a 60Hz display will generate display refreshes with DisplayUpdates which
+        sequentially will be { 0, 60 }, { 1, 60 }, { 2, 60 } ... { 59, 60 }, { 0, 60 }. The
+        zeroth frame is at some arbitrary time and not aligned with wallclock time.
+        
+        Thus a client with a 30Hz update requirement can simply ignore every odd-numbered frame, and
+        a client downstream from it with a 15Hz requirement, which only receives those even-numbered
+        frames, still has enough information to compute which frames to ignore.
+        
+        Classes which are sources of callbacks for DisplayRefreshMonitor need to generate these
+        DisplayUpdates; that includes the various platform DisplayRefreshMonitor subclasses in
+        WebCore, and those in WebKit that live in the UI process and trigger updates over IPC.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::invalidate):
+        (WebKit::ThreadedDisplayRefreshMonitor::displayRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.h:
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::addObserver):
+        (WebKit::DisplayLink::notifyObserversDisplayWasRefreshed):
+        * UIProcess/mac/DisplayLink.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::displayWasRefreshed):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor):
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::setPreferredFramesPerSecond):
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers):
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::dispatchDisplayDidRefresh):
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::displayWasRefreshed):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2021-03-29  Youenn Fablet  <youenn@apple.com>
 
         Promote WKWebView getUserMedia SPI to API

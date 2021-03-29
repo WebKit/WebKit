@@ -94,6 +94,7 @@ class UserGestureToken;
 enum class EventMakesGamepadsVisible : bool;
 
 struct BackForwardItemIdentifier;
+struct DisplayUpdate;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 struct MockMediaDevice;
@@ -507,7 +508,7 @@ private:
 #endif
 
 #if HAVE(CVDISPLAYLINK)
-    void displayWasRefreshed(uint32_t displayID);
+    void displayWasRefreshed(uint32_t displayID, const WebCore::DisplayUpdate&);
 #endif
 
 #if PLATFORM(MAC)

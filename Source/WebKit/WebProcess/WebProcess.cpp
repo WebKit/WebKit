@@ -1893,11 +1893,11 @@ bool WebProcess::areAllPagesThrottleable() const
 }
 
 #if HAVE(CVDISPLAYLINK)
-void WebProcess::displayWasRefreshed(uint32_t displayID)
+void WebProcess::displayWasRefreshed(uint32_t displayID, const DisplayUpdate& displayUpdate)
 {
     ASSERT(RunLoop::isMain());
     m_eventDispatcher->notifyScrollingTreesDisplayWasRefreshed(displayID);
-    DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
+    DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID, displayUpdate);
 }
 #endif
 

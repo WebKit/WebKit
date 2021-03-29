@@ -32,9 +32,13 @@
 namespace WebKit {
 using namespace WebCore;
 
+constexpr FramesPerSecond DefaultPreferredFramesPerSecond = 60;
+
 RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor(PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     : DisplayRefreshMonitor(displayID)
     , m_drawingArea(makeWeakPtr(drawingArea))
+    , m_preferredFramesPerSecond(DefaultPreferredFramesPerSecond)
+    , m_currentUpdate({ 0, m_preferredFramesPerSecond })
 {
 }
 
@@ -46,6 +50,12 @@ RemoteLayerTreeDisplayRefreshMonitor::~RemoteLayerTreeDisplayRefreshMonitor()
 
 void RemoteLayerTreeDisplayRefreshMonitor::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
 {
+    if (preferredFramesPerSecond == m_preferredFramesPerSecond)
+        return;
+
+    m_preferredFramesPerSecond = preferredFramesPerSecond;
+    m_currentUpdate = { 0, m_preferredFramesPerSecond };
+
     if (m_drawingArea)
         m_drawingArea->setPreferredFramesPerSecond(preferredFramesPerSecond);
 }
@@ -72,7 +82,8 @@ void RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers()
         return;
 
     setIsPreviousFrameDone(false);
-    displayDidRefresh();
+    displayDidRefresh(m_currentUpdate);
+    m_currentUpdate = m_currentUpdate.nextUpdate();
 }
 
 void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDrawingArea& drawingArea)
@@ -80,4 +91,4 @@ void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDraw
     m_drawingArea = makeWeakPtr(drawingArea);
 }
 
-}
+} // namespace WebKit

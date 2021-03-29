@@ -133,7 +133,7 @@ public:
         return adoptRef(*new EmptyDisplayRefreshMonitor(displayID));
     }
 
-    void displayLinkFired() final { }
+    void displayLinkFired(const DisplayUpdate&) final { }
     bool requestRefreshCallback() final { return false; }
     void stop() final { }
 

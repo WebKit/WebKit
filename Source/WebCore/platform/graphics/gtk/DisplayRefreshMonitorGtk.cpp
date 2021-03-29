@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+constexpr FramesPerSecond DefaultFramesPerSecond = 60;
+
 DisplayRefreshMonitorGtk::DisplayRefreshMonitorGtk(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
 {
@@ -45,7 +47,13 @@ DisplayRefreshMonitorGtk::~DisplayRefreshMonitorGtk()
 
 static void onFrameClockUpdate(GdkFrameClock*, DisplayRefreshMonitorGtk* monitor)
 {
-    monitor->displayLinkFired();
+    monitor->displayLinkCallbackFired();
+}
+
+void DisplayRefreshMonitorGtk::displayLinkCallbackFired()
+{
+    displayLinkFired(m_currentUpdate);
+    m_currentUpdate = m_currentUpdate.nextUpdate();
 }
 
 void DisplayRefreshMonitorGtk::stop()
@@ -80,6 +88,9 @@ bool DisplayRefreshMonitorGtk::startNotificationMechanism()
 
     ASSERT(frameClock);
     gdk_frame_clock_begin_updating(frameClock);
+
+    // FIXME: Use gdk_frame_clock_get_refresh_info to get the correct frame rate.
+    m_currentUpdate = { 0, DefaultFramesPerSecond };
 
     m_clockIsActive = true;
     return true;

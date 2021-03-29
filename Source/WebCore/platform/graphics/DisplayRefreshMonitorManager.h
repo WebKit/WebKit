@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+struct DisplayUpdate;
+
 class DisplayRefreshMonitorManager {
     friend class NeverDestroyed<DisplayRefreshMonitorManager>;
     friend class DisplayRefreshMonitor;
@@ -46,7 +48,7 @@ public:
     bool scheduleAnimation(DisplayRefreshMonitorClient&);
     void windowScreenDidChange(PlatformDisplayID, DisplayRefreshMonitorClient&);
 
-    WEBCORE_EXPORT void displayWasUpdated(PlatformDisplayID);
+    WEBCORE_EXPORT void displayWasUpdated(PlatformDisplayID, const DisplayUpdate&);
 
 private:
     DisplayRefreshMonitorManager() = default;

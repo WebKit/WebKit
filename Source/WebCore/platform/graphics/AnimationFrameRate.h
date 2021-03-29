@@ -26,8 +26,12 @@
 #pragma once
 
 #include <wtf/OptionSet.h>
+#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
-#include <wtf/text/TextStream.h>
+
+namespace WTF {
+class TextStream;
+}
 
 namespace WebCore {
 
@@ -54,6 +58,6 @@ WEBCORE_EXPORT FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond);
 WEBCORE_EXPORT Seconds preferredFrameInterval(const OptionSet<ThrottlingReason>&, Optional<FramesPerSecond> nominalFramesPerSecond);
 WEBCORE_EXPORT FramesPerSecond preferredFramesPerSecondFromInterval(Seconds);
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const OptionSet<ThrottlingReason>&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const OptionSet<ThrottlingReason>&);
 
-}
+} // namespace WebCore

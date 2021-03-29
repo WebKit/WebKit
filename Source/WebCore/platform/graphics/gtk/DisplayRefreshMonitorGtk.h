@@ -42,6 +42,8 @@ public:
 
     virtual ~DisplayRefreshMonitorGtk();
 
+    void displayLinkCallbackFired();
+
 private:
     explicit DisplayRefreshMonitorGtk(PlatformDisplayID);
 
@@ -50,6 +52,7 @@ private:
     void stopNotificationMechanism() final;
 
     GtkWidget* m_window { nullptr };
+    DisplayUpdate m_currentUpdate;
     bool m_clockIsActive { false };
 };
 

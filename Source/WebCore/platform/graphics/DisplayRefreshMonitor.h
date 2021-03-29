@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationFrameRate.h"
+#include "DisplayUpdate.h"
 #include "PlatformScreen.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -61,12 +62,12 @@ public:
     PlatformDisplayID displayID() const { return m_displayID; }
 
     static RefPtr<DisplayRefreshMonitor> createDefaultDisplayRefreshMonitor(PlatformDisplayID);
-    WEBCORE_EXPORT virtual void displayLinkFired();
+    WEBCORE_EXPORT virtual void displayLinkFired(const DisplayUpdate&);
 
 protected:
     WEBCORE_EXPORT explicit DisplayRefreshMonitor(PlatformDisplayID);
 
-    WEBCORE_EXPORT virtual void dispatchDisplayDidRefresh();
+    WEBCORE_EXPORT virtual void dispatchDisplayDidRefresh(const DisplayUpdate&);
 
     Lock& lock() { return m_lock; }
     void setMaxUnscheduledFireCount(unsigned count) { m_maxUnscheduledFireCount = count; }
@@ -81,7 +82,7 @@ protected:
     bool isPreviousFrameDone() const { return m_previousFrameDone; }
     void setIsPreviousFrameDone(bool done) { m_previousFrameDone = done; }
 
-    WEBCORE_EXPORT void displayDidRefresh();
+    WEBCORE_EXPORT void displayDidRefresh(const DisplayUpdate&);
 
 private:
     bool firedAndReachedMaxUnscheduledFireCount();

@@ -45,7 +45,7 @@ public:
 private:
     explicit DisplayRefreshMonitorMac(WebCore::PlatformDisplayID);
 
-    void dispatchDisplayDidRefresh() final;
+    void dispatchDisplayDidRefresh(const WebCore::DisplayUpdate&) final;
 
     bool startNotificationMechanism() final;
     void stopNotificationMechanism() final;

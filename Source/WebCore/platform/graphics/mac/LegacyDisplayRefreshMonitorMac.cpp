@@ -61,16 +61,28 @@ void LegacyDisplayRefreshMonitorMac::stop()
 static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
     LegacyDisplayRefreshMonitorMac* monitor = static_cast<LegacyDisplayRefreshMonitorMac*>(data);
-    monitor->displayLinkFired();
+    monitor->displayLinkCallbackFired();
     return kCVReturnSuccess;
 }
 
-void LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh()
+void LegacyDisplayRefreshMonitorMac::displayLinkCallbackFired()
 {
-    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
+    displayLinkFired(m_currentUpdate);
+    m_currentUpdate = m_currentUpdate.nextUpdate();
+}
+
+void LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
+{
+    RunLoop::main().dispatch([this, displayUpdate, protectedThis = makeRef(*this)] {
         if (m_displayLink)
-            displayDidRefresh();
+            displayDidRefresh(displayUpdate);
     });
+}
+
+WebCore::FramesPerSecond LegacyDisplayRefreshMonitorMac::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
+{
+    CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
+    return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
 }
 
 bool LegacyDisplayRefreshMonitorMac::startNotificationMechanism()
@@ -83,6 +95,8 @@ bool LegacyDisplayRefreshMonitorMac::startNotificationMechanism()
         error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
         if (error)
             return false;
+
+        m_currentUpdate = { 0, nominalFramesPerSecondFromDisplayLink(m_displayLink) };
     }
 
     if (!m_displayLinkIsActive) {
@@ -93,6 +107,7 @@ bool LegacyDisplayRefreshMonitorMac::startNotificationMechanism()
             return false;
         
         m_displayLinkIsActive = true;
+        m_currentUpdate.updateIndex = 0;
     }
 
     return true;

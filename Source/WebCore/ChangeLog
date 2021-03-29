@@ -1,3 +1,81 @@
+2021-03-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Plumb DisplayUpdate through the display refresh monitors
+        https://bugs.webkit.org/show_bug.cgi?id=223847
+
+        Reviewed by Sam Weinig.
+
+        Future work will allow DisplayRefreshMonitorClients to request different frame rates, which
+        are whole fractions of the display's nominal refresh rate. These various frame rate requests
+        flow up through the DisplayRefreshMonitors, and in WebKit2, up through IPC to the
+        per-display DisplayLink which may even service multiple processes.
+
+        For power reasons, we don't want to trigger display refresh notifications down the chain at
+        the highest possible frequency; at various stages of propagation the rate might be halved if
+        that's necessary for downstream clients.
+        
+        To make this frequency splitting logic simple, this patch introduces DisplayUpdate, which
+        represents an update of the display, and contains data about it in the form of a numerator
+        is the frame index, and the denominator is the nominal frame rate. Frame index wraps to zero
+        every second.
+        
+        For example, a 60Hz display will generate display refreshes with DisplayUpdates which
+        sequentially will be { 0, 60 }, { 1, 60 }, { 2, 60 } ... { 59, 60 }, { 0, 60 }. The
+        zeroth frame is at some arbitrary time and not aligned with wallclock time.
+        
+        Thus a client with a 30Hz update requirement can simply ignore every odd-numbered frame, and
+        a client downstream from it with a 15Hz requirement, which only receives those even-numbered
+        frames, still has enough information to compute which frames to ignore.
+        
+        Classes which are sources of callbacks for DisplayRefreshMonitor need to generate these
+        DisplayUpdates; that includes the various platform DisplayRefreshMonitor subclasses in
+        WebCore, and those in WebKit that live in the UI process and trigger updates over IPC.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        * platform/graphics/AnimationFrameRate.cpp:
+        * platform/graphics/AnimationFrameRate.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+        (WebCore::DisplayRefreshMonitor::dispatchDisplayDidRefresh):
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+        * platform/graphics/DisplayRefreshMonitorManager.h:
+        * platform/graphics/DisplayUpdate.cpp: Copied from Source/WebCore/platform/graphics/win/DisplayRefreshMonitorWin.h.
+        (WebCore::operator<<):
+        * platform/graphics/DisplayUpdate.h: Copied from Source/WebCore/platform/graphics/gtk/DisplayRefreshMonitorGtk.h.
+        (WebCore::DisplayUpdate::didUpdate):
+        (WebCore::DisplayUpdate::encode const):
+        (WebCore::DisplayUpdate::decode):
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp: Assume a 60fps refresh rate but this code
+        should probably use gdk_frame_clock_get_refresh_info() to get the correct rate.
+        (WebCore::onFrameClockUpdate):
+        (WebCore::DisplayRefreshMonitorGtk::displayLinkCallbackFired):
+        (WebCore::DisplayRefreshMonitorGtk::startNotificationMechanism):
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        (-[WebDisplayLinkHandler initWithMonitor:]):
+        (-[WebDisplayLinkHandler handleDisplayLink:]):
+        (WebCore::DisplayRefreshMonitorIOS::displayLinkCallbackFired):
+        (WebCore::DisplayRefreshMonitorIOS::startNotificationMechanism):
+        (-[WebDisplayLinkHandler setPreferredFramesPerSecond:]): Deleted.
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp:
+        (WebCore::displayLinkCallback):
+        (WebCore::LegacyDisplayRefreshMonitorMac::displayLinkCallbackFired):
+        (WebCore::LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh):
+        (WebCore::LegacyDisplayRefreshMonitorMac::nominalFramesPerSecondFromDisplayLink):
+        (WebCore::LegacyDisplayRefreshMonitorMac::startNotificationMechanism):
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.h:
+        (WebCore::LegacyDisplayRefreshMonitorMac::currentUpdate const):
+        * platform/graphics/win/DisplayRefreshMonitorWin.cpp:
+        (WebCore::DisplayRefreshMonitorWin::DisplayRefreshMonitorWin):
+        (WebCore::DisplayRefreshMonitorWin::displayLinkCallbackFired):
+        * platform/graphics/win/DisplayRefreshMonitorWin.h:
+
 2021-03-29  Aditya Keerthi  <akeerthi@apple.com>
 
         Use enum classes and OptionSets for ControlStates::States

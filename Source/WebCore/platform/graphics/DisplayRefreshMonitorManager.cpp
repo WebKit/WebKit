@@ -108,11 +108,11 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
         scheduleAnimation(client);
 }
 
-void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID)
+void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate)
 {
     auto* monitor = monitorForDisplayID(displayID);
     if (monitor)
-        monitor->displayLinkFired();
+        monitor->displayLinkFired(displayUpdate);
 }
 
 size_t DisplayRefreshMonitorManager::findMonitorForDisplayID(PlatformDisplayID displayID) const

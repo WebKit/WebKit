@@ -43,17 +43,23 @@ public:
     
     virtual ~LegacyDisplayRefreshMonitorMac();
 
+    void displayLinkCallbackFired();
+
 private:
     explicit LegacyDisplayRefreshMonitorMac(PlatformDisplayID);
 
-    void dispatchDisplayDidRefresh() final;
+    void dispatchDisplayDidRefresh(const DisplayUpdate&) final;
 
     void stop() final;
 
     bool startNotificationMechanism() final;
     void stopNotificationMechanism() final;
 
+    static FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
+
     CVDisplayLinkRef m_displayLink { nullptr };
+    
+    DisplayUpdate m_currentUpdate;
     bool m_displayLinkIsActive { false };
 };
 

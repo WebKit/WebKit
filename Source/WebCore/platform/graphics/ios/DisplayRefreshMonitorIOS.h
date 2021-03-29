@@ -43,6 +43,8 @@ public:
     
     virtual ~DisplayRefreshMonitorIOS();
 
+    void displayLinkCallbackFired();
+
 private:
     explicit DisplayRefreshMonitorIOS(PlatformDisplayID);
 
@@ -51,6 +53,7 @@ private:
     void stopNotificationMechanism() final;
 
     RetainPtr<WebDisplayLinkHandler> m_handler;
+    DisplayUpdate m_currentUpdate;
     bool m_displayLinkIsActive { false };
 };
 

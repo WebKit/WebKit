@@ -56,12 +56,13 @@ DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac()
     ASSERT(!m_displayLinkIsActive);
 }
 
-void DisplayRefreshMonitorMac::dispatchDisplayDidRefresh()
+void DisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
 {
+    // FIXME: This will perturb displayUpdate.
     if (!m_firstCallbackInCurrentRunloop)
         return;
 
-    DisplayRefreshMonitor::dispatchDisplayDidRefresh();
+    DisplayRefreshMonitor::dispatchDisplayDidRefresh(displayUpdate);
 }
 
 bool DisplayRefreshMonitorMac::startNotificationMechanism()
