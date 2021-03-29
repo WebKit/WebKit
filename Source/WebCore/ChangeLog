@@ -1,3 +1,13 @@
+2021-03-28  Sam Weinig  <weinig@apple.com>
+
+        Remove JSCustomXPathNSResolver.h/JSCustomXPathNSResolver.cpp from the Xcode project as they don't exist
+        https://bugs.webkit.org/show_bug.cgi?id=223852
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove long deleted files.
+
 2021-03-28  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Exception thrown from -setShouldProvideMediaDataForTrackID:
