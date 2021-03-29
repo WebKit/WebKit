@@ -1,3 +1,16 @@
+2021-03-28  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Exception thrown from -setShouldProvideMediaDataForTrackID:
+        https://bugs.webkit.org/show_bug.cgi?id=223859
+        <rdar://75936746>
+
+        Reviewed by Eric Carlson.
+
+        Protect against undocumented exceptions thrown from -setShouldProvideMediaDataForTrackID:.
+
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        (WebCore::SourceBufferParserAVFObjC::setShouldProvideMediaDataForTrackID):
+
 2021-03-28  Sam Weinig  <weinig@apple.com>
 
         Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports
