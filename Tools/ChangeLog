@@ -1,3 +1,11 @@
+2021-03-29  Robert Jenner  <jenner@apple.com>
+
+        Unreviewed build fix, cherry-pick parts of r273181. rdar://75904391
+
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h: 
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate waitForDidFailProvisionalNavigation]):
+
 2021-03-19  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r273875. rdar://problem/75635901
