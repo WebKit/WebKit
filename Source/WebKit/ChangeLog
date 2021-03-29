@@ -1,3 +1,47 @@
+2021-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process]: Improve getImageData() perf part 2: Use shared memory and a semaphore
+        https://bugs.webkit.org/show_bug.cgi?id=223732
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch implements a design for getImageData() where the web process and the GPU process
+        set up a shmem + semaphore ahead-of-time, so that when we encounter a call to getImageData(),
+        the GPU process can just write into the shmem and signal the semaphore. The web process just
+        encodes the getImageData() call into the regular display list, flushAsync()s to kick the GPU
+        process, then just waits on the semaphore. Initial performance testing shows that this is
+        way, way faster than sending messages containing pixel color data payloads.
+
+        This patch causes a ~40% progression on the Images test in MotionMark on my Mac with the GPU
+        process enabled. When compared to the GPU process disabled, the results after just running
+        just a few times seem to be pretty close (within the noise).
+
+        If we need more performance, the next step is to try to reduce the memcpy()s.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryForGetImageDataHelper):
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryForGetImageData):
+        (WebKit::RemoteRenderingBackend::semaphoreForGetImageData):
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetImageData):
+        (WebKit::RemoteRenderingBackend::destroyGetImageDataSharedMemory):
+        (WebKit::RemoteRenderingBackend::populateGetImageDataSharedMemory):
+        (WebKit::RemoteRenderingBackend::getImageData): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Platform/IPC/IPCSemaphore.h:
+        * Platform/IPC/darwin/IPCSemaphoreDarwin.cpp:
+        (IPC::Semaphore::waitFor):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::sharedMemoryForGetImageData):
+        (WebKit::RemoteRenderingBackendProxy::waitForGetImageDataToComplete):
+        (WebKit::RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory):
+        (WebKit::RemoteRenderingBackendProxy::getImageData): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2021-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Custom fonts don't work in GPU process mode

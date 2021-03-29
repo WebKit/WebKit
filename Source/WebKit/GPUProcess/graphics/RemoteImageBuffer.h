@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,8 +78,8 @@ private:
     {
         if (item.is<WebCore::DisplayList::GetImageData>()) {
             auto& getImageDataItem = item.get<WebCore::DisplayList::GetImageData>();
-            UNUSED_VARIABLE(getImageDataItem);
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=220649 Implement this.
+            auto imageData = BaseConcreteImageBuffer::getImageData(getImageDataItem.outputFormat(), getImageDataItem.srcRect());
+            m_remoteRenderingBackend.populateGetImageDataSharedMemory(imageData.get());
             return true;
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -196,12 +196,24 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return nullptr;
 
+        auto imageData = WebCore::ImageData::create(srcRect.size());
+        if (!imageData || !imageData->data())
+            return nullptr;
+        size_t dataSize = imageData->data()->byteLength();
+
+        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetImageData(dataSize);
+        if (!sharedMemory)
+            return nullptr;
+
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
         mutableThis.m_drawingContext.recorder().getImageData(outputFormat, srcRect);
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=220649 Use the recorded command instead of the synchronous IPC message.
+        mutableThis.flushDrawingContextAsync();
 
-        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        return m_remoteRenderingBackendProxy->getImageData(outputFormat, srcRect, m_renderingResourceIdentifier);
+        if (m_remoteRenderingBackendProxy->waitForGetImageDataToComplete())
+            memcpy(imageData->data()->data(), sharedMemory->data(), dataSize);
+        else
+            memset(imageData->data()->data(), 0, dataSize);
+        return imageData;
     }
 
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override

@@ -78,12 +78,13 @@ void Semaphore::wait()
     ASSERT_UNUSED(ret, ret == KERN_SUCCESS);
 }
 
-void Semaphore::waitFor(Timeout timeout)
+bool Semaphore::waitFor(Timeout timeout)
 {
     Seconds waitTime = timeout.secondsUntilDeadline();
     auto seconds = waitTime.secondsAs<unsigned>();
     auto ret = semaphore_timedwait(m_semaphore, { seconds, static_cast<clock_res_t>(waitTime.nanosecondsAs<uint64_t>() - seconds * NSEC_PER_SEC) });
-    ASSERT_UNUSED(ret, ret == KERN_SUCCESS || ret == KERN_OPERATION_TIMED_OUT);
+    ASSERT(ret == KERN_SUCCESS || ret == KERN_OPERATION_TIMED_OUT);
+    return ret == KERN_SUCCESS;
 }
 
 MachSendRight Semaphore::createSendRight() const

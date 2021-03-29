@@ -57,7 +57,7 @@ public:
 
     void signal();
     void wait();
-    void waitFor(Timeout);
+    bool waitFor(Timeout);
     MachSendRight createSendRight() const;
     explicit operator bool() const { return m_sendRight || m_semaphore != SEMAPHORE_NULL; }
 #else
