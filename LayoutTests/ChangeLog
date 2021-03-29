@@ -1,3 +1,15 @@
+2021-03-29  Frédéric Wang  <fwang@igalia.com>
+
+        Release assert in Vector::at in RenderLayoutState::establishLineGrid
+        https://bugs.webkit.org/show_bug.cgi?id=223362
+
+        Reviewed by Zalan Bujtas.
+
+        Add regression test.
+
+        * fast/line-grid/establish-line-grid-crash-expected.txt: Added.
+        * fast/line-grid/establish-line-grid-crash.html: Added.
+
 2021-03-28  Antoine Quint  <graouts@webkit.org>
 
         Add support for animating the vertical-align CSS property

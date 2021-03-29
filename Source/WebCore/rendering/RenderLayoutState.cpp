@@ -232,7 +232,7 @@ void RenderLayoutState::establishLineGrid(const FrameViewLayoutContext::LayoutSt
         if (m_lineGrid->style().lineGrid() == renderer.style().lineGrid())
             return;
         auto* currentGrid = m_lineGrid.get();
-        for (int i = layoutStateStack.size() - 1; i <= 0; --i) {
+        for (int i = layoutStateStack.size() - 1; i >= 0; --i) {
             auto& currentState = *layoutStateStack[i].get();
             if (currentState.m_lineGrid == currentGrid)
                 continue;

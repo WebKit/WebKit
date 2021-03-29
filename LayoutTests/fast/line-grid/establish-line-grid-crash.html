@@ -1,0 +1,22 @@
+<style>
+  :first-child {
+    display: inline-block;
+    -webkit-line-grid: b;
+  }
+  div {
+    -webkit-line-grid: a;
+  }
+  div, head {
+    min-height: calc(1px + 0%);
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    console.log('This test passes if it does not crash.');
+    document.head.appendChild(document.createElement('div'));
+    document.execCommand('SelectAll');
+  };
+</script>
+<div></div>
