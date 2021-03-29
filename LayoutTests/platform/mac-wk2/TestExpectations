@@ -1369,3 +1369,5 @@ webkit.org/b/223486 [ arm64 ] inspector/css/modify-inline-style.html [ Pass Fail
 webkit.org/b/223750 [ Debug ] security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html  [ Pass Crash ]
 
 webkit.org/b/223762 media/pip-video-going-into-fullscreen.html [ Pass Timeout ]
+
+webkit.org/b/223900 [ Debug ] compositing/video/video-update-rendering.html [ Pass Failure ]
