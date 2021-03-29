@@ -114,7 +114,7 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
 
     DisplayList originalList;
     WritingClient writer;
-    originalList.setItemBufferClient(&writer);
+    originalList.setItemBufferWritingClient(&writer);
 
     Path path;
     path.moveTo({ 10., 10. });
@@ -125,7 +125,7 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
 
     DisplayList shallowCopy {{ ItemBufferHandle { globalBufferIdentifier, globalItemBuffer, originalList.sizeInBytes() } }};
     ReadingClient reader;
-    shallowCopy.setItemBufferClient(&reader);
+    shallowCopy.setItemBufferReadingClient(&reader);
 
     Replayer replayer { context, shallowCopy };
     auto result = replayer.replay();
@@ -145,7 +145,7 @@ TEST(DisplayListTests, InlineItemValidationFailure)
 
     DisplayList list;
     ReadingClient reader;
-    list.setItemBufferClient(&reader);
+    list.setItemBufferReadingClient(&reader);
     list.append<FlushContext>(FlushIdentifier { });
 
     Replayer replayer { context, list };

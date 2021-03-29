@@ -1,3 +1,32 @@
+2021-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 2: Rename setItemBufferClient to setItemBuffer{Writing,Reading}Client
+        https://bugs.webkit.org/show_bug.cgi?id=223863
+
+        Reviewed by Wenson Hsieh.
+
+        Currently, we have:
+        void setItemBufferClient(ItemBufferReadingClient*);
+        void setItemBufferClient(ItemBufferWritingClient*);
+
+        This is unfortunate, because if you want to set one of these clients to nullptr, you have to do:
+        setItemBufferClient(static_cast<ItemBufferReadingClient*>(nullptr));
+
+        Instead, we can just rename these functions to:
+        void setItemBufferReadingClient(ItemBufferReadingClient*);
+        void setItemBufferWritingClient(ItemBufferWritingClient*);
+
+        So you can just do
+        setItemBufferReadingClient(nullptr);
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::setItemBufferReadingClient):
+        (WebCore::DisplayList::DisplayList::setItemBufferWritingClient):
+        (WebCore::DisplayList::DisplayList::setItemBufferClient): Deleted.
+        * platform/graphics/displaylists/DisplayList.h:
+
 2021-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Playback is paused after scrubbing with the touch bar

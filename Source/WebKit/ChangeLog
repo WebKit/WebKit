@@ -1,3 +1,15 @@
+2021-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 2: Rename setItemBufferClient to setItemBuffer{Writing,Reading}Client
+        https://bugs.webkit.org/show_bug.cgi?id=223863
+
+        Reviewed by Wenson Hsieh.
+
+        * GPUProcess/graphics/DisplayListReaderHandle.cpp:
+        (WebKit::DisplayListReaderHandle::displayListForReading const):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+
 2021-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process]: Improve getImageData() perf part 2: Use shared memory and a semaphore

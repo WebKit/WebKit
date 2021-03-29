@@ -103,7 +103,7 @@ protected:
         ASSERT(m_remoteRenderingBackendProxy);
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
 
-        m_drawingContext.displayList().setItemBufferClient(this);
+        m_drawingContext.displayList().setItemBufferWritingClient(this);
         m_drawingContext.displayList().setTracksDrawingItemExtents(false);
     }
 

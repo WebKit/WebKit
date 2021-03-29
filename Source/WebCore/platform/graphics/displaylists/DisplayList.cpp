@@ -159,12 +159,12 @@ ItemBuffer& DisplayList::itemBuffer()
     return *m_items;
 }
 
-void DisplayList::setItemBufferClient(ItemBufferReadingClient* client)
+void DisplayList::setItemBufferReadingClient(ItemBufferReadingClient* client)
 {
     itemBuffer().setClient(client);
 }
 
-void DisplayList::setItemBufferClient(ItemBufferWritingClient* client)
+void DisplayList::setItemBufferWritingClient(ItemBufferWritingClient* client)
 {
     itemBuffer().setClient(client);
 }

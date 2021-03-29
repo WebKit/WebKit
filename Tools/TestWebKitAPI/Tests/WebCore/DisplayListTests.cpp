@@ -212,7 +212,7 @@ TEST(DisplayListTests, ItemBufferClient)
 
     DisplayList list;
     StrokePathWriter writer { strokePathItems };
-    list.setItemBufferClient(&writer);
+    list.setItemBufferWritingClient(&writer);
 
     auto path = createComplexPath();
     list.append<SetInlineStrokeColor>(Color::blue);
@@ -222,7 +222,7 @@ TEST(DisplayListTests, ItemBufferClient)
 
     DisplayList shallowCopy {{ ItemBufferHandle { globalBufferIdentifier, globalItemBuffer, list.sizeInBytes() } }};
     StrokePathReader reader { strokePathItems };
-    shallowCopy.setItemBufferClient(&reader);
+    shallowCopy.setItemBufferReadingClient(&reader);
 
     Vector<ItemType> itemTypes;
     for (auto [handle, extent, size] : shallowCopy)
