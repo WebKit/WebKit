@@ -57,7 +57,7 @@ PASS outline-offset length-em(em) / values
 PASS outline-offset length-em(em) / events
 PASS outline-width length-em(em) / values
 PASS outline-width length-em(em) / events
-FAIL vertical-align length-em(em) / values assert_not_equals: must not be target value after start got disallowed value "33px"
-FAIL vertical-align length-em(em) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "vertical-align:2s" but got ""
+PASS vertical-align length-em(em) / values
+PASS vertical-align length-em(em) / events
 Text sample
 

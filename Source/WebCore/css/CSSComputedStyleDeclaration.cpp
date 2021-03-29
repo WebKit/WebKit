@@ -3301,7 +3301,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             case VerticalAlign::BaselineMiddle:
                 return cssValuePool.createIdentifierValue(CSSValueWebkitBaselineMiddle);
             case VerticalAlign::Length:
-                return cssValuePool.createValue(style.verticalAlignLength());
+                return cssValuePool.createValue(style.verticalAlignLength(), style);
             }
             ASSERT_NOT_REACHED();
             return nullptr;

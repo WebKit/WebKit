@@ -139,6 +139,7 @@ public:
     // Custom handling of value setting only.
     static void applyValueBaselineShift(BuilderState&, CSSValue&);
     static void applyValueDirection(BuilderState&, CSSValue&);
+    static void applyInheritVerticalAlign(BuilderState&);
     static void applyValueVerticalAlign(BuilderState&, CSSValue&);
     static void applyInitialTextAlign(BuilderState&);
     static void applyValueTextAlign(BuilderState&, CSSValue&);
@@ -328,6 +329,12 @@ bool BuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrim
         }
     }
     return true;
+}
+
+inline void BuilderCustom::applyInheritVerticalAlign(BuilderState& builderState)
+{
+    builderState.style().setVerticalAlignLength(forwardInheritedValue(builderState.parentStyle().verticalAlignLength()));
+    builderState.style().setVerticalAlign(forwardInheritedValue(builderState.parentStyle().verticalAlign()));
 }
 
 inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, CSSValue& value)

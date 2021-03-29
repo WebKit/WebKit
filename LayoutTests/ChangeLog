@@ -1,3 +1,13 @@
+2021-03-28  Antoine Quint  <graouts@webkit.org>
+
+        Add support for animating the vertical-align CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223853
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: Unskip tests related to vertical-align interpolation since they are
+        no longer crashing.
+
 2021-03-28  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Add several A11y test failures to TestExpectations.

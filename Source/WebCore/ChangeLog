@@ -1,3 +1,31 @@
+2021-03-28  Antoine Quint  <graouts@webkit.org>
+
+        Add support for animating the vertical-align CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223853
+
+        Reviewed by Antti Koivisto.
+
+        Adding support for animating vertical-align revealed a couple of long-standing issues with
+        regards to our support for this property.
+
+        First off, we didn't honor the "inherit" value since it required a custom builder method
+        to deal with both RenderStyle::verticalAlign() (the type) and RenderStyle::verticalAlignLength()
+        (the value).
+
+        Then, we would hit an assertion when obtaining the computed style for this property and a
+        calculated value since we didn't pass the RenderStyle to createValue().
+
+        We now correctly interpolate this property per the dedicated WPT test, the only issues remaining
+        being about how our calc serialization (https://bugs.webkit.org/show_bug.cgi?id=223875).
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInheritVerticalAlign):
+
 2021-03-28  Sam Weinig  <weinig@apple.com>
 
         Remove JSCustomXPathNSResolver.h/JSCustomXPathNSResolver.cpp from the Xcode project as they don't exist

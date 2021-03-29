@@ -1,3 +1,19 @@
+2021-03-28  Antoine Quint  <graouts@webkit.org>
+
+        Add support for animating the vertical-align CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223853
+
+        Reviewed by Antti Koivisto.
+
+        Add 161 PASS results in the WPT suite now that we support animating vertical-align.
+
+        * web-platform-tests/css/css-transitions/animations/vertical-align-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-001-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-implicit-001-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-inherit-001-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-inherit-002-expected.txt:
+
 2021-03-26  Tim Nguyen  <ntim.bugs@gmail.com>
 
         Add interpolation for object-position CSS property

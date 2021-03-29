@@ -720,7 +720,7 @@ static bool canInterpolateLengths(const Length& from, const Length& to, bool isL
     return false;
 }
 
-class LengthPropertyWrapper final : public PropertyWrapperGetter<const Length&> {
+class LengthPropertyWrapper : public PropertyWrapperGetter<const Length&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Flags {
@@ -734,18 +734,19 @@ public:
     {
     }
 
-private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+protected:
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const override
     {
         return canInterpolateLengths(value(from), value(to), m_flags.contains(Flags::IsLengthPercentage));
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const override
     {
         auto valueRange = m_flags.contains(Flags::NegativeLengthsAreInvalid) ? ValueRangeNonNegative : ValueRangeAll;
         (destination->*m_setter)(blendFunc(client, value(from), value(to), progress, valueRange));
     }
 
+private:
     void (RenderStyle::*m_setter)(Length&&);
     OptionSet<Flags> m_flags;
 };
@@ -1925,6 +1926,28 @@ protected:
     }
 };
 
+class VerticalAlignWrapper final : public LengthPropertyWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    VerticalAlignWrapper()
+        : LengthPropertyWrapper(CSSPropertyVerticalAlign, &RenderStyle::verticalAlignLength, &RenderStyle::setVerticalAlignLength, LengthPropertyWrapper::Flags::IsLengthPercentage)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    {
+        return from->verticalAlign() == VerticalAlign::Length && to->verticalAlign() == VerticalAlign::Length && LengthPropertyWrapper::canInterpolate(from, to);
+    }
+
+    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    {
+        LengthPropertyWrapper::blend(client, destination, from, to, progress);
+        auto* blendingStyle = !canInterpolate(from, to) && progress ? to : from;
+        destination->setVerticalAlign(blendingStyle->verticalAlign());
+    }
+};
+
 class PerspectiveWrapper final : public NonNegativeFloatPropertyWrapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -2147,6 +2170,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<float>(CSSPropertyLetterSpacing, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing),
         new LengthPropertyWrapper(CSSPropertyWordSpacing, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing),
         new LengthPropertyWrapper(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent, LengthPropertyWrapper::Flags::IsLengthPercentage),
+        new VerticalAlignWrapper,
 
         new PerspectiveWrapper,
         new LengthPropertyWrapper(CSSPropertyPerspectiveOriginX, &RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX, LengthPropertyWrapper::Flags::IsLengthPercentage),

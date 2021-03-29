@@ -3618,8 +3618,6 @@ webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 
 webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ ImageOnlyFailure ]
 
-webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/animations/vertical-align-composition.html [ Skip ]
-webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/animations/vertical-align-interpolation.html [ Skip ]
 webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-outset-composition.html [ Skip ]
 webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-composition.html [ Skip ]
 

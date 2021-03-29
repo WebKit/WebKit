@@ -535,24 +535,24 @@ PASS outline-width length(in) / values
 PASS outline-width length(in) / events
 PASS clip rectangle(rectangle) / values
 PASS clip rectangle(rectangle) / events
-FAIL vertical-align length(pt) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align length(pt) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
-FAIL vertical-align length(pc) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align length(pc) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
-FAIL vertical-align length(px) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align length(px) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
-FAIL vertical-align length(em) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align length(em) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
-FAIL vertical-align length(ex) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align length(ex) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
-FAIL vertical-align length(mm) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align length(mm) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
-FAIL vertical-align length(cm) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align length(cm) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
-FAIL vertical-align length(in) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align length(in) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
-FAIL vertical-align percentage(%) / values assert_not_equals: initial and target values may not match got disallowed value "auto"
-FAIL vertical-align percentage(%) / events assert_equals: Expected TransitionEnd events triggered on .container expected "vertical-align:2s" but got ""
+PASS vertical-align length(pt) / values
+PASS vertical-align length(pt) / events
+PASS vertical-align length(pc) / values
+PASS vertical-align length(pc) / events
+PASS vertical-align length(px) / values
+PASS vertical-align length(px) / events
+PASS vertical-align length(em) / values
+PASS vertical-align length(em) / events
+PASS vertical-align length(ex) / values
+PASS vertical-align length(ex) / events
+PASS vertical-align length(mm) / values
+PASS vertical-align length(mm) / events
+PASS vertical-align length(cm) / values
+PASS vertical-align length(cm) / events
+PASS vertical-align length(in) / values
+PASS vertical-align length(in) / events
+PASS vertical-align percentage(%) / values
+PASS vertical-align percentage(%) / events
 PASS opacity number[0,1](zero-to-one) / values
 PASS opacity number[0,1](zero-to-one) / events
 FAIL visibility visibility(keyword) / values assert_equals: must be target value after transitioning on .transition expected (string) "hidden" but got (undefined) undefined
