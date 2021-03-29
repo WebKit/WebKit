@@ -1,3 +1,17 @@
+2021-03-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r275170.
+
+        Broke the build
+
+        Reverted changeset:
+
+        "[Big Sur arm64]
+        TestWebKitAPI.WebKit.AccessibilityReduceMotion is a flaky
+        crash"
+        https://bugs.webkit.org/show_bug.cgi?id=222824
+        https://commits.webkit.org/r275170
+
 2021-03-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Big Sur arm64] TestWebKitAPI.WebKit.AccessibilityReduceMotion is a flaky crash

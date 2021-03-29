@@ -50,8 +50,6 @@ static bool receivedPreferenceNotification = false;
 }
 @end
 
-// FIXME: Re-enable this test for arm64 once webkit.org/b/222824 is resolved.
-#if CPU(X86_64)
 TEST(WebKit, AccessibilityReduceMotion)
 {
     RetainPtr<NSObject> accessibilityObserver = [[NSDistributedNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXInterfaceReduceMotionStatusDidChangeNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
@@ -87,6 +85,5 @@ TEST(WebKit, AccessibilityReduceMotion)
 
     [[NSNotificationCenter defaultCenter] removeObserver:accessibilityObserver.get()];
 }
-#endif // CPU(X86_64)
 
 #endif
