@@ -2008,30 +2008,30 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 
-Color RenderThemeIOS::checkboxRadioBackgroundColor(ControlStates::States states, OptionSet<StyleColor::Options> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBackgroundColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
 {
-    if (!(states & ControlStates::EnabledState))
+    if (!states.contains(ControlStates::States::Enabled))
         return systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions);
 
     Color enabledBackgroundColor;
-    if (states & ControlStates::CheckedState || states & ControlStates::IndeterminateState)
+    if (states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate }))
         enabledBackgroundColor = systemColor(CSSValueAppleSystemBlue, styleColorOptions);
     else
         enabledBackgroundColor = systemColor(CSSValueAppleSystemSecondaryFill, styleColorOptions);
 
-    if (states & ControlStates::PressedState)
+    if (states.contains(ControlStates::States::Pressed))
         return enabledBackgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
     return enabledBackgroundColor;
 }
 
-Color RenderThemeIOS::checkboxRadioIndicatorColor(ControlStates::States states, OptionSet<StyleColor::Options> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
 {
-    if (!(states & ControlStates::EnabledState))
+    if (!states.contains(ControlStates::States::Enabled))
         return systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions);
 
     Color enabledIndicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColor::Options::UseDarkAppearance);
-    if (states & ControlStates::PressedState)
+    if (states.contains(ControlStates::States::Pressed))
         return enabledIndicatorColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
     return enabledIndicatorColor;
@@ -2055,8 +2055,8 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
 
     context.fillRoundedRect(checkboxRect, checkboxRadioBackgroundColor(controlStates, styleColorOptions));
 
-    bool checked = controlStates & ControlStates::CheckedState;
-    bool indeterminate = controlStates & ControlStates::IndeterminateState;
+    bool checked = controlStates.contains(ControlStates::States::Checked);
+    bool indeterminate = controlStates.contains(ControlStates::States::Indeterminate);
 
     if (!checked && !indeterminate)
         return false;
@@ -2113,7 +2113,7 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     context.setFillColor(checkboxRadioBackgroundColor(controlStates, styleColorOptions));
     context.fillEllipse(rect);
 
-    if (controlStates & ControlStates::CheckedState) {
+    if (controlStates.contains(ControlStates::States::Checked)) {
         // The inner circle is 6 / 14 the size of the surrounding circle,
         // leaving 8 / 14 around it. (8 / 14) / 2 = 2 / 7.
         constexpr float innerInverseRatio = 2 / 7.0f;

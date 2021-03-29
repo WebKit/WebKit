@@ -183,7 +183,7 @@ void HTMLFormControlElement::disabledStateChanged()
     updateWillValidateAndValidity();
     invalidateStyleForSubtree();
     if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
+        renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
 }
 
 void HTMLFormControlElement::readOnlyStateChanged()

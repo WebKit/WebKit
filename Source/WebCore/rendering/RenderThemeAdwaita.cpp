@@ -268,13 +268,13 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    ControlStates::States states = 0;
+    OptionSet<ControlStates::States> states;
     if (isEnabled(renderObject))
-        states |= ControlStates::EnabledState;
+        states.add(ControlStates::States::Enabled);
     if (isPressed(renderObject))
-        states |= ControlStates::PressedState;
+        states.add(ControlStates::States::Pressed);
     if (isHovered(renderObject))
-        states |= ControlStates::HoverState;
+        states.add(ControlStates::States::Hovered);
     ControlStates controlStates(states);
     Theme::singleton().paint(ButtonPart, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, false);
 

@@ -711,7 +711,7 @@ void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalida
         return;
 
     bool reactsToPress = false;
-    if (renderer()->style().hasAppearance() && renderer()->theme().stateChanged(*renderer(), ControlStates::PressedState))
+    if (renderer()->style().hasAppearance() && renderer()->theme().stateChanged(*renderer(), ControlStates::States::Pressed))
         reactsToPress = true;
 
     // The rest of this function implements a feature that only works if the
@@ -805,7 +805,7 @@ void Element::setHovered(bool flag, Style::InvalidationScope invalidationScope)
     }
 
     if (auto* style = renderStyle(); style && style->hasAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStates::HoverState);
+        renderer()->theme().stateChanged(*renderer(), ControlStates::States::Hovered);
 }
 
 void Element::setBeingDragged(bool flag)

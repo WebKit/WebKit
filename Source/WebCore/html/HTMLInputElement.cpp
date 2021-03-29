@@ -965,7 +965,7 @@ void HTMLInputElement::setChecked(bool nowChecked)
     if (RadioButtonGroups* buttons = radioButtonGroups())
         buttons->updateCheckedState(*this);
     if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStates::CheckedState);
+        renderer()->theme().stateChanged(*renderer(), ControlStates::States::Checked);
     updateValidity();
 
     // Ideally we'd do this from the render tree (matching
@@ -989,7 +989,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
     invalidateStyleForSubtree();
 
     if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStates::CheckedState);
+        renderer()->theme().stateChanged(*renderer(), ControlStates::States::Checked);
 }
 
 unsigned HTMLInputElement::size() const

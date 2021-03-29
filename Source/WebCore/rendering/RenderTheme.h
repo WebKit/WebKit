@@ -403,7 +403,7 @@ protected:
 
 public:
     void updateControlStatesForRenderer(const RenderBox&, ControlStates&) const;
-    ControlStates::States extractControlStatesForRenderer(const RenderObject&) const;
+    OptionSet<ControlStates::States> extractControlStatesForRenderer(const RenderObject&) const;
     bool isActive(const RenderObject&) const;
     bool isChecked(const RenderObject&) const;
     bool isIndeterminate(const RenderObject&) const;

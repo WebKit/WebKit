@@ -1,3 +1,54 @@
+2021-03-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        Use enum classes and OptionSets for ControlStates::States
+        https://bugs.webkit.org/show_bug.cgi?id=223647
+
+        Reviewed by Sam Weinig.
+
+        No behavior change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+        (WebCore::Element::setHovered):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::disabledStateChanged):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute):
+        * platform/ControlStates.h:
+        (WebCore::ControlStates::ControlStates):
+        (WebCore::ControlStates::states const):
+        (WebCore::ControlStates::setStates):
+        * platform/adwaita/ThemeAdwaita.cpp:
+        (WebCore::ThemeAdwaita::paintCheckbox):
+        (WebCore::ThemeAdwaita::paintRadio):
+        (WebCore::ThemeAdwaita::paintButton):
+        (WebCore::ThemeAdwaita::paintSpinButton):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::updateStates):
+        (WebCore::paintToggleButton):
+        (WebCore::button):
+        (WebCore::paintButton):
+        (WebCore::paintStepper):
+        (WebCore::ThemeMac::ensuredView):
+        (WebCore::paintColorWell):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::stateChanged const):
+        (WebCore::RenderTheme::extractControlStatesForRenderer const):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeAdwaita.cpp:
+        (WebCore::RenderThemeAdwaita::paintMenuList):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::checkboxRadioBackgroundColor):
+        (WebCore::RenderThemeIOS::checkboxRadioIndicatorColor):
+        (WebCore::RenderThemeIOS::paintCheckbox):
+        (WebCore::RenderThemeIOS::paintRadio):
+
 2021-03-28  Antoine Quint  <graouts@webkit.org>
 
         Add support for animating the vertical-align CSS property

@@ -26,6 +26,7 @@
 #ifndef ControlStates_h
 #define ControlStates_h
 
+#include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
 
@@ -44,34 +45,28 @@ typedef id PlatformControlInstance;
 class ControlStates {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum {
-        HoverState = 1,
-        PressedState = 1 << 1,
-        FocusState = 1 << 2,
-        EnabledState = 1 << 3,
-        CheckedState = 1 << 4,
-        DefaultState = 1 << 5,
-        WindowInactiveState = 1 << 6,
-        IndeterminateState = 1 << 7,
-        SpinUpState = 1 << 8, // Sub-state for HoverState and PressedState.
-        PresentingState = 1 << 9,
-        AllStates = 0xffffffff
+    enum class States : uint16_t {
+        Hovered = 1 << 0,
+        Pressed = 1 << 1,
+        Focused = 1 << 2,
+        Enabled = 1 << 3,
+        Checked = 1 << 4,
+        Default = 1 << 5,
+        WindowInactive = 1 << 6,
+        Indeterminate = 1 << 7,
+        SpinUp = 1 << 8, // Sub-state for HoverState and PressedState.
+        Presenting = 1 << 9,
     };
 
-    typedef unsigned States;
-
-    ControlStates(States states)
+    ControlStates(OptionSet<States> states)
         : m_states(states)
     {
     }
 
-    ControlStates()
-        : ControlStates(0)
-    {
-    }
+    ControlStates() = default;
 
-    States states() const { return m_states; }
-    void setStates(States newStates)
+    OptionSet<States> states() const { return m_states; }
+    void setStates(OptionSet<States> newStates)
     {
         if (newStates == m_states)
             return;
@@ -95,7 +90,7 @@ public:
 #endif
 
 private:
-    States m_states;
+    OptionSet<States> m_states;
     bool m_initialized { false };
     bool m_needsRepaint { false };
     bool m_isDirty { false };
