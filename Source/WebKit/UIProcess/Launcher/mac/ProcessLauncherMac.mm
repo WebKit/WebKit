@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
+#import "ReasonSPI.h"
 #import "WebPreferencesDefaultValues.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <crt_externs.h>
@@ -336,10 +337,7 @@ void ProcessLauncher::platformInvalidate()
         return;
 
     xpc_connection_cancel(m_xpcConnection.get());
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: This was deprecated in favor of terminate_with_reason().
-    xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
-ALLOW_DEPRECATED_DECLARATIONS_END
+    terminate_with_reason(xpc_connection_get_pid(m_xpcConnection.get()), OS_REASON_WEBKIT, static_cast<uint64_t>(WebKit::ReasonCode::Invalidation), "ProcessLauncher::platformInvalidate", 0);
     m_xpcConnection = nullptr;
 }
 

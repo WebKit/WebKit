@@ -1,3 +1,12 @@
+2021-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Use terminate_with_reason instead of xpc_connection_kill
+        https://bugs.webkit.org/show_bug.cgi?id=223618
+
+        Reviewed by Darin Adler.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2021-03-28  Cameron McCormack  <heycam@apple.com>
 
         Enable AspectRatioOfImgFromWidthAndHeightEnabled for WebKitLegacy.

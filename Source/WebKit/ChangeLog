@@ -1,3 +1,21 @@
+2021-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Use terminate_with_reason instead of xpc_connection_kill
+        https://bugs.webkit.org/show_bug.cgi?id=223618
+
+        Reviewed by Darin Adler.
+
+        The former was deprecated in rdar://70461770
+        This does the same thing but adds debugging information so that people looking at process terminations have more information about what is going on.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+        (IPC::Connection::kill):
+        * Platform/spi/Cocoa/ReasonSPI.h: Added.
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::platformInvalidate):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add remote MediaSessionCoordinator
