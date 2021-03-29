@@ -68,6 +68,12 @@ typedef NS_ENUM(NSInteger, WKMediaPlaybackState) {
     WKMediaPlaybackStateSuspended
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+typedef NS_ENUM(NSInteger, WKMediaCaptureState) {
+    WKMediaCaptureStateNone,
+    WKMediaCaptureStateActive,
+    WKMediaCaptureStateMuted,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 /*! @abstract A copy of the configuration with which the web view was
  initialized. */
 @property (nonatomic, readonly, copy) WKWebViewConfiguration *configuration;
@@ -353,6 +359,39 @@ typedef NS_ENUM(NSInteger, WKMediaPlaybackState) {
  WKMediaPlaybackStateNone.
  */
 - (void)requestMediaPlaybackStateWithCompletionHandler:(void (^)(WKMediaPlaybackState))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+
+/*! @abstract The state of camera capture on a web page.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant
+ for this property.
+ */
+@property (nonatomic, readonly) WKMediaCaptureState cameraCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract The state of microphone capture on a web page.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant
+ for this property.
+ */
+@property (nonatomic, readonly) WKMediaCaptureState microphoneCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Set camera capture state of a WKWebView.
+ @param state State to apply for capture.
+ @param completionHandler A block to invoke after the camera state has been changed.
+ @discussion
+ If value is WKMediaCaptureStateNone, this will stop any camera capture.
+ If value is WKMediaCaptureStateMuted, any active camera capture will become muted.
+ If value is WKMediaCaptureStateActive, any muted camera capture will become active.
+ */
+- (void)setCameraCaptureState:(WKMediaCaptureState)state completionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Set microphone capture state of a WKWebView.
+ @param state state to apply for capture.
+ @param completionHandler A block to invoke after the camera state has been changed.
+ @discussion
+ If value is WKMediaCaptureStateNone, this will stop any microphone capture.
+ If value is WKMediaCaptureStateMuted, any active microphone capture will become muted.
+ If value is WKMediaCaptureStateActive, any muted microphone capture will become active.
+ */
+- (void)setMicrophoneCaptureState:(WKMediaCaptureState)state completionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Get a snapshot for the visible viewport of WKWebView.
  @param snapshotConfiguration An object that specifies how the snapshot is configured.

@@ -218,7 +218,7 @@ TEST(WebKit, GeolocationPermission)
 @end
 
 @implementation GeolocationDelegateNew
-- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler {
+- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
     EXPECT_WK_STREQ(origin.protocol, @"https");
     EXPECT_WK_STREQ(origin.host, @"127.0.0.1");
     EXPECT_EQ(origin.port, 9090);
@@ -230,7 +230,7 @@ TEST(WebKit, GeolocationPermission)
     EXPECT_TRUE(frame.webView == webView);
 
     done  = true;
-    decisionHandler(_WKPermissionDecisionGrant);
+    decisionHandler(WKPermissionDecisionGrant);
 }
 @end
 

@@ -31,7 +31,7 @@
 #import "Test.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -42,17 +42,17 @@ static bool okToProceed = false;
 static bool shouldReleaseInEnumerate = false;
 
 @interface NavigationWhileGetUserMediaPromptDisplayedUIDelegate : NSObject<WKUIDelegate>
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler;
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler;
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
 @end
 
 @implementation NavigationWhileGetUserMediaPromptDisplayedUIDelegate
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler
 {
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
     [webView release];
     okToProceed = true;
-    decisionHandler(_WKPermissionDecisionGrant);
+    decisionHandler(WKPermissionDecisionGrant);
 }
 
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler

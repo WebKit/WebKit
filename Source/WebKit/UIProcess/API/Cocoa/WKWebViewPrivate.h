@@ -48,12 +48,6 @@ typedef NS_OPTIONS(NSUInteger, _WKMediaCaptureStateDeprecated) {
     _WKMediaCaptureStateDeprecatedMutedCamera = 1 << 3,
 } WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
-typedef NS_OPTIONS(NSUInteger, _WKMediaCaptureState) {
-    _WKMediaCaptureStateNone = 0,
-    _WKMediaCaptureStateActive = 1 << 0,
-    _WKMediaCaptureStateMuted = 1 << 1,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 typedef NS_OPTIONS(NSUInteger, _WKMediaMutedState) {
     _WKMediaNoneMuted = 0,
     _WKMediaAudioMuted = 1 << 0,
@@ -66,12 +60,6 @@ typedef NS_OPTIONS(NSUInteger, _WKCaptureDevices) {
     _WKCaptureDeviceCamera = 1 << 1,
     _WKCaptureDeviceDisplay = 1 << 2,
 } WK_API_AVAILABLE(macos(10.13), ios(11.0));
-
-typedef NS_OPTIONS(NSUInteger, _WKPermissionDecision) {
-    _WKPermissionDecisionPrompt = 1 << 0,
-    _WKPermissionDecisionGrant = 1 << 1,
-    _WKPermissionDecisionDeny = 1 << 2,
-} WK_API_AVAILABLE(macos(12.00), ios(15.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKSelectionAttributes) {
     _WKSelectionAttributeNoSelection = 0,
@@ -192,16 +180,6 @@ has been loaded over a connection using TLS 1.0 or TLS 1.1.
 for this property.
 */
 @property (nonatomic, readonly) BOOL _negotiatedLegacyTLS WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
-
-/*! @abstract The state of media capture on a web page.
- @discussion @link WKWebView @/link is key-value observing (KVO) compliant
- for this property.
- */
-@property (nonatomic, readonly) _WKMediaCaptureState _cameraCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, readonly) _WKMediaCaptureState _microphoneCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-- (void)setMicrophoneCaptureState:(_WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)setCameraCaptureState:(_WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 

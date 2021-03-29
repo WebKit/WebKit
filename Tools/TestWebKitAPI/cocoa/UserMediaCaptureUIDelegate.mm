@@ -39,8 +39,8 @@
     if (self != nil) {
         _wasPrompted = false;
         _numberOfPrompts = 0;
-        _audioDecision = _WKPermissionDecisionGrant;
-        _videoDecision = _WKPermissionDecisionGrant;
+        _audioDecision = WKPermissionDecisionGrant;
+        _videoDecision = WKPermissionDecisionGrant;
     }
 
     return self;
@@ -59,34 +59,38 @@
     _wasPrompted = false;
 }
 
--(void)setAudioDecision:(_WKPermissionDecision)decision {
+-(void)setAudioDecision:(WKPermissionDecision)decision {
     _audioDecision = decision;
 }
 
--(void)setVideoDecision:(_WKPermissionDecision)decision {
+-(void)setVideoDecision:(WKPermissionDecision)decision {
     _videoDecision = decision;
 }
 
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler {
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
     ++_numberOfPrompts;
     _wasPrompted = true;
-    if (audio && _audioDecision == _WKPermissionDecisionDeny) {
-        decisionHandler(_WKPermissionDecisionDeny);
-        return;
+    switch (type) {
+    case WKMediaCaptureTypeCamera:
+        if (_videoDecision == WKPermissionDecisionDeny) {
+            decisionHandler(WKPermissionDecisionDeny);
+            return;
+        }
+        break;
+    case WKMediaCaptureTypeMicrophone:
+        if (_audioDecision == WKPermissionDecisionDeny) {
+            decisionHandler(WKPermissionDecisionDeny);
+            return;
+        }
+        break;
+    case WKMediaCaptureTypeCameraAndMicrophone:
+        if (_audioDecision == WKPermissionDecisionDeny || _videoDecision == WKPermissionDecisionDeny) {
+            decisionHandler(WKPermissionDecisionDeny);
+            return;
+        }
+        break;
     }
-    if (video && _videoDecision == _WKPermissionDecisionDeny) {
-        decisionHandler(_WKPermissionDecisionDeny);
-        return;
-    }
-    if (audio && _audioDecision == _WKPermissionDecisionPrompt) {
-        decisionHandler(_WKPermissionDecisionPrompt);
-        return;
-    }
-    if (video && _videoDecision == _WKPermissionDecisionPrompt) {
-        decisionHandler(_WKPermissionDecisionPrompt);
-        return;
-    }
-    decisionHandler(_WKPermissionDecisionGrant);
+    decisionHandler(WKPermissionDecisionGrant);
 }
 
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler {

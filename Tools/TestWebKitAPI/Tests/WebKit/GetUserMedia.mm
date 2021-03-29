@@ -50,11 +50,11 @@ static bool done;
 
 @interface UserMediaCaptureUIDelegateForParameters : NSObject<WKUIDelegate>
 // WKUIDelegate
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler;
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler;
 @end
 
 @implementation UserMediaCaptureUIDelegateForParameters
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler {
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
     EXPECT_WK_STREQ(origin.protocol, @"http");
     EXPECT_WK_STREQ(origin.host, @"127.0.0.1");
     EXPECT_EQ(origin.port, 9090U);
@@ -65,11 +65,10 @@ static bool done;
     EXPECT_FALSE(frame.isMainFrame);
     EXPECT_TRUE(frame.webView == webView);
 
-    EXPECT_FALSE(audio);
-    EXPECT_TRUE(video);
+    EXPECT_EQ(type, WKMediaCaptureTypeCamera);
 
     done = true;
-    decisionHandler(_WKPermissionDecisionGrant);
+    decisionHandler(WKPermissionDecisionGrant);
 }
 @end
 

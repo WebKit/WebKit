@@ -1,3 +1,37 @@
+2021-03-29  Youenn Fablet  <youenn@apple.com>
+
+        Promote WKWebView getUserMedia SPI to API
+        https://bugs.webkit.org/show_bug.cgi?id=223806
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (-[UserMediaCaptureUIDelegateForParameters webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+        (-[NavigationWhileGetUserMediaPromptDisplayedUIDelegate webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/MediaStreamTrackDetached.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm:
+        (-[DeviceOrientationPermissionUIDelegate _webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:]):
+        (-[DeviceOrientationPermissionValidationDelegate _webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/SpeechRecognition.mm:
+        (-[SpeechRecognitionUIDelegate webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[GeolocationDelegateNew _webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaDisabled.mm:
+        (-[UserMediaUIDelegate webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        (-[SimulateFailedSandboxUIDelegate webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesDeviceOrientationUIDelegate _webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:]):
+        * TestWebKitAPI/cocoa/UserMediaCaptureUIDelegate.h:
+        * TestWebKitAPI/cocoa/UserMediaCaptureUIDelegate.mm:
+        (-[UserMediaCaptureUIDelegate init]):
+        (-[UserMediaCaptureUIDelegate setAudioDecision:]):
+        (-[UserMediaCaptureUIDelegate setVideoDecision:]):
+        (-[UserMediaCaptureUIDelegate webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:]):
+
 2021-03-28  Cameron McCormack  <heycam@apple.com>
 
         Enable AspectRatioOfImgFromWidthAndHeightEnabled for WebKitLegacy.
