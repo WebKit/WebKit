@@ -1,0 +1,25 @@
+Tests that user gestures are propagated through requestAnimationFrame
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isProcessingUserGesture() is false
+
+Calling requestAnimationFrame without a user gesture...
+PASS internals.isProcessingUserGesture() is false
+
+Triggering a user gesture...
+Calling requestAnimationFrame with a user gesture...
+PASS internals.isProcessingUserGesture() is true
+
+Calling requestAnimationFrame inside the callback of a prior requestAnimationFrame...
+PASS internals.isProcessingUserGesture() is true
+
+Overriding the user gesture...
+Calling requestAnimationFrame without a user gesture...
+PASS internals.isProcessingUserGesture() is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

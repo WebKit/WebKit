@@ -39,6 +39,7 @@ namespace WebCore {
 class Document;
 class Page;
 class RequestAnimationFrameCallback;
+class UserGestureToken;
 
 class ScriptedAnimationController : public RefCounted<ScriptedAnimationController>
 {
@@ -74,8 +75,11 @@ private:
     bool shouldRescheduleRequestAnimationFrame(ReducedResolutionSeconds) const;
     void scheduleAnimation();
 
-    using CallbackList = Vector<RefPtr<RequestAnimationFrameCallback>>;
-    CallbackList m_callbacks;
+    struct CallbackData {
+        Ref<RequestAnimationFrameCallback> callback;
+        RefPtr<UserGestureToken> userGestureTokenToForward;
+    };
+    Vector<CallbackData> m_callbackDataList;
 
     WeakPtr<Document> m_document;
     CallbackId m_nextCallbackId { 0 };

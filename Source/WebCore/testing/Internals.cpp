@@ -4852,6 +4852,12 @@ void Internals::withUserGesture(RefPtr<VoidCallback>&& callback)
     callback->handleEvent();
 }
 
+void Internals::withoutUserGesture(RefPtr<VoidCallback>&& callback)
+{
+    UserGestureIndicator gestureIndicator(NotProcessingUserGesture, contextDocument());
+    callback->handleEvent();
+}
+
 bool Internals::userIsInteracting()
 {
     if (auto* document = contextDocument()) {

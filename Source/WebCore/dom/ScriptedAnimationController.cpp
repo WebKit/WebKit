@@ -32,6 +32,7 @@
 #include "Quirks.h"
 #include "RequestAnimationFrameCallback.h"
 #include "Settings.h"
+#include "UserGestureIndicator.h"
 #include <wtf/Ref.h>
 #include <wtf/SystemTracing.h>
 
@@ -61,7 +62,7 @@ void ScriptedAnimationController::resume()
     if (m_suspendCount > 0)
         --m_suspendCount;
 
-    if (!m_suspendCount && m_callbacks.size())
+    if (!m_suspendCount && m_callbackDataList.size())
         scheduleAnimation();
 }
 
@@ -111,7 +112,7 @@ ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCal
     CallbackId callbackId = ++m_nextCallbackId;
     callback->m_firedOrCancelled = false;
     callback->m_id = callbackId;
-    m_callbacks.append(WTFMove(callback));
+    m_callbackDataList.append({ WTFMove(callback), UserGestureIndicator::currentUserGesture() });
 
     if (m_document)
         InspectorInstrumentation::didRequestAnimationFrame(*m_document, callbackId);
@@ -123,10 +124,10 @@ ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCal
 
 void ScriptedAnimationController::cancelCallback(CallbackId callbackId)
 {
-    bool cancelled = m_callbacks.removeFirstMatching([callbackId](auto& callback) {
-        if (callback->m_id != callbackId)
+    bool cancelled = m_callbackDataList.removeFirstMatching([callbackId](auto& data) {
+        if (data.callback->m_id != callbackId)
             return false;
-        callback->m_firedOrCancelled = true;
+        data.callback->m_firedOrCancelled = true;
         return true;
     });
 
@@ -136,7 +137,7 @@ void ScriptedAnimationController::cancelCallback(CallbackId callbackId)
 
 void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedResolutionSeconds timestamp)
 {
-    if (!m_callbacks.size() || m_suspendCount || !requestAnimationFrameEnabled())
+    if (!m_callbackDataList.size() || m_suspendCount || !requestAnimationFrameEnabled())
         return;
 
     if (shouldRescheduleRequestAnimationFrame(timestamp)) {
@@ -152,17 +153,21 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.
-    CallbackList callbacks(m_callbacks);
+    Vector<CallbackData> callbackDataList(m_callbackDataList);
 
     // Invoking callbacks may detach elements from our document, which clears the document's
     // reference to us, so take a defensive reference.
     Ref<ScriptedAnimationController> protectedThis(*this);
     Ref<Document> protectedDocument(*m_document);
 
-    for (auto& callback : callbacks) {
+    for (auto& [callback, userGestureTokenToForward] : callbackDataList) {
         if (callback->m_firedOrCancelled)
             continue;
         callback->m_firedOrCancelled = true;
+
+        if (userGestureTokenToForward && userGestureTokenToForward->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwarding))
+            userGestureTokenToForward = nullptr;
+        UserGestureIndicator gestureIndicator(userGestureTokenToForward);
 
         InspectorInstrumentation::willFireAnimationFrame(protectedDocument, callback->m_id);
         callback->handleEvent(highResNowMs);
@@ -170,13 +175,13 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
     }
 
     // Remove any callbacks we fired from the list of pending callbacks.
-    m_callbacks.removeAllMatching([](auto& callback) {
-        return callback->m_firedOrCancelled;
+    m_callbackDataList.removeAllMatching([](auto& data) {
+        return data.callback->m_firedOrCancelled;
     });
 
     m_lastAnimationFrameTimestamp = timestamp;
 
-    if (m_callbacks.size())
+    if (m_callbackDataList.size())
         scheduleAnimation();
 }
 

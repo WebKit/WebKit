@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that user gestures are propagated through requestAnimationFrame");
+jsTestIsAsync = true;
+
+shouldBeFalse("internals.isProcessingUserGesture()");
+
+debug("");
+
+debug("Calling requestAnimationFrame without a user gesture...");
+requestAnimationFrame(() => {
+    shouldBeFalse("internals.isProcessingUserGesture()");
+
+    debug("");
+
+    debug("Triggering a user gesture...");
+    internals.withUserGesture(() => {
+        debug("Calling requestAnimationFrame with a user gesture...");
+        requestAnimationFrame(() => {
+            shouldBeTrue("internals.isProcessingUserGesture()");
+
+            debug("");
+
+            debug("Calling requestAnimationFrame inside the callback of a prior requestAnimationFrame...");
+            requestAnimationFrame(() => {
+                shouldBeTrue("internals.isProcessingUserGesture()");
+
+                debug("");
+
+                debug("Overriding the user gesture...");
+                internals.withoutUserGesture(() => {
+                    debug("Calling requestAnimationFrame without a user gesture...");
+                    requestAnimationFrame(() => {
+                        shouldBeFalse("internals.isProcessingUserGesture()");
+
+                        debug("");
+
+                        finishJSTest();
+                    });
+                });
+            });
+        });
+    });
+});
+
+</script>
+</body>
+</html>

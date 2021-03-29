@@ -745,6 +745,7 @@ public:
     double lastHandledUserGestureTimestamp();
 
     void withUserGesture(RefPtr<VoidCallback>&&);
+    void withoutUserGesture(RefPtr<VoidCallback>&&);
 
     bool userIsInteracting();
 

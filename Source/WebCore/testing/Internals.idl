@@ -782,6 +782,7 @@ enum TreeType {
     double lastHandledUserGestureTimestamp();
 
     undefined withUserGesture(VoidCallback callback);
+    undefined withoutUserGesture(VoidCallback callback);
 
     boolean userIsInteracting();
 
