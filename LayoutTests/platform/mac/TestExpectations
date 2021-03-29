@@ -2282,3 +2282,5 @@ fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
 [ Catalina Mojave ] inspector/canvas/updateShader-webgl.html [ Skip ]
 
 webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeout ]
+
+webkit.org/b/222748 [ Debug ] http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html [ Pass Failure ]
