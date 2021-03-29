@@ -601,8 +601,6 @@ webkit.org/b/210236 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
 webkit.org/b/210236 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
 webkit.org/b/210236 webgl/webgl-vertex-array-object-defined.html [ Failure ]
 
-webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Failure ]
-
 webkit.org/b/210262 fast/selectors/text-field-selection-stroke-color.html [ ImageOnlyFailure ]
 webkit.org/b/210262 fast/selectors/text-field-selection-text-shadow.html [ ImageOnlyFailure ]
 

@@ -1031,6 +1031,8 @@ webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip
 
 webkit.org/b/223624 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
+webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Slow ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
