@@ -687,18 +687,7 @@ public:
         ASSERT(entry.isHeader());
         loadPtr(Address(from, entry.offset() * sizeof(Register)), to);
     }
-    void emitGetFromCallFrameHeader32(VirtualRegister entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
-    {
-        ASSERT(entry.isHeader());
-        load32(Address(from, entry.offset() * sizeof(Register)), to);
-    }
-#if USE(JSVALUE64)
-    void emitGetFromCallFrameHeader64(VirtualRegister entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
-    {
-        ASSERT(entry.isHeader());
-        load64(Address(from, entry.offset() * sizeof(Register)), to);
-    }
-#endif // USE(JSVALUE64)
+
     void emitPutToCallFrameHeader(GPRReg from, VirtualRegister entry)
     {
         ASSERT(entry.isHeader());
@@ -711,47 +700,12 @@ public:
         storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
     }
 
-    void emitGetCallerFrameFromCallFrameHeaderPtr(RegisterID to)
+    void emitZeroToCallFrameHeader(VirtualRegister entry)
     {
-        loadPtr(Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()), to);
-    }
-    void emitPutCallerFrameToCallFrameHeader(RegisterID from)
-    {
-        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()));
+        ASSERT(entry.isHeader());
+        storePtr(TrustedImmPtr(nullptr), Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
     }
 
-    void emitPutReturnPCToCallFrameHeader(RegisterID from)
-    {
-        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
-    }
-    void emitPutReturnPCToCallFrameHeader(TrustedImmPtr from)
-    {
-        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
-    }
-
-    // emitPutToCallFrameHeaderBeforePrologue() and related are used to access callee frame header
-    // fields before the code from emitFunctionPrologue() has executed.
-    // First, the access is via the stack pointer. Second, the address calculation must also take
-    // into account that the stack pointer may not have been adjusted down for the return PC and/or
-    // caller's frame pointer. On some platforms, the callee is responsible for pushing the
-    // "link register" containing the return address in the function prologue.
-#if USE(JSVALUE64)
-    void emitPutToCallFrameHeaderBeforePrologue(GPRReg from, VirtualRegister entry)
-    {
-        storePtr(from, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()));
-    }
-#else
-    void emitPutPayloadToCallFrameHeaderBeforePrologue(GPRReg from, VirtualRegister entry)
-    {
-        storePtr(from, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-    }
-
-    void emitPutTagToCallFrameHeaderBeforePrologue(TrustedImm32 tag, VirtualRegister entry)
-    {
-        storePtr(tag, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
-    }
-#endif
-    
     JumpList branchIfNotEqual(JSValueRegs regs, JSValue value)
     {
 #if USE(JSVALUE64)
