@@ -66,14 +66,12 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 + (instancetype)defaultStore
 {
-    const bool legacyFilename = false;
-    return wrapper(API::ContentRuleListStore::defaultStore(legacyFilename));
+    return wrapper(API::ContentRuleListStore::defaultStore());
 }
 
 + (instancetype)storeWithURL:(NSURL *)url
 {
-    const bool legacyFilename = false;
-    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation, legacyFilename));
+    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation));
 }
 
 - (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *)encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
@@ -166,14 +164,12 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 + (instancetype)defaultStoreWithLegacyFilename
 {
-    const bool legacyFilename = true;
-    return wrapper(API::ContentRuleListStore::defaultStore(legacyFilename));
+    return wrapper(API::ContentRuleListStore::defaultStore());
 }
 
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url
 {
-    const bool legacyFilename = true;
-    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation, legacyFilename));
+    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation));
 }
 
 @end

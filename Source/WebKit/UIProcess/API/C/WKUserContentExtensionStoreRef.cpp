@@ -45,7 +45,7 @@ WKTypeID WKUserContentExtensionStoreGetTypeID()
 WKUserContentExtensionStoreRef WKUserContentExtensionStoreCreate(WKStringRef path)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return toAPI(&API::ContentRuleListStore::storeWithPath(toWTFString(path), false).leakRef());
+    return toAPI(&API::ContentRuleListStore::storeWithPath(toWTFString(path)).leakRef());
 #else
     UNUSED_PARAM(path);
     return nullptr;

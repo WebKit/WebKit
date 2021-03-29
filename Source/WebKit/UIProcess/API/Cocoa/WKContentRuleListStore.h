@@ -35,9 +35,9 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 + (instancetype)defaultStore;
 + (instancetype)storeWithURL:(NSURL *)url;
 
-- (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *) encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler;
+- (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *)encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler;
 - (void)lookUpContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler;
 - (void)removeContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler;
-- (void)getAvailableContentRuleListIdentifiers:(void (^)(NSArray<NSString *>*))completionHandler;
+- (void)getAvailableContentRuleListIdentifiers:(void (^)(NSArray<NSString *> *))completionHandler;
 
 @end

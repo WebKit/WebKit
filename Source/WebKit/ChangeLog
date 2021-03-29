@@ -1,3 +1,54 @@
+2021-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Migrate _WKUserContentExtension and older versions of WKContentRuleList to WKContentRuleList during lookup
+        https://bugs.webkit.org/show_bug.cgi?id=223831
+
+        Reviewed by Brady Eidson.
+
+        r275078 incremented CurrentContentRuleListFileVersion for the first time in a few years.
+        As a result, we will get a WKErrorContentRuleListStoreVersionMismatch during lookup for existing compiled WKContentRuleLists.
+        To make this as compatible as possible, if we see such a WKContentRuleList, try extracting its source and recompiling.
+
+        Also, _WKUserContentExtension is used by Safari and being migrated from in rdar://75889414.
+        To make this succeed and not leave any files behind, we move legacy files to modern filenames during lookup.
+        We also remove them if they're there when removing the WKContentRuleList from the WKContentRuleListStore,
+        and we include them in getAvailableContentRuleListIdentifiers.  compileContentRuleList only compiles to the modern locations,
+        and invalidateContentRuleListVersion is only used for tests.  All this is done on non-main WorkQueues, so the few additional
+        file reads/writes aren't an issue.
+
+        Luckily, _WKUserContentExtensionStore was only used by Safari, and its defaultStore was never used.
+
+        All this is covered by API tests.
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListStore::defaultStore):
+        (API::ContentRuleListStore::storeWithPath):
+        (API::ContentRuleListStore::ContentRuleListStore):
+        (API::openAndMapContentRuleList):
+        (API::getContentRuleListSourceFromMappedFile):
+        (API::ContentRuleListStore::lookupContentRuleList):
+        (API::ContentRuleListStore::getAvailableContentRuleListIdentifiers):
+        (API::ContentRuleListStore::compileContentRuleList):
+        (API::ContentRuleListStore::removeContentRuleList):
+        (API::ContentRuleListStore::invalidateContentRuleListVersion):
+        (API::ContentRuleListStore::getContentRuleListSource):
+        (API::ContentRuleListStore::legacyDefaultStore): Deleted.
+        (API::ContentRuleListStore::nonLegacyDefaultStore): Deleted.
+        (API::ContentRuleListStore::~ContentRuleListStore): Deleted.
+        (API::openAndMapOrCopyContentRuleList): Deleted.
+        * UIProcess/API/APIContentRuleListStore.h:
+        * UIProcess/API/C/WKUserContentExtensionStoreRef.cpp:
+        (WKUserContentExtensionStoreCreate):
+        * UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm:
+        (API::ContentRuleListStore::defaultStorePath):
+        * UIProcess/API/Cocoa/WKContentRuleListStore.h:
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (+[WKContentRuleListStore defaultStore]):
+        (+[WKContentRuleListStore storeWithURL:]):
+        (+[WKContentRuleListStore defaultStoreWithLegacyFilename]):
+        (+[WKContentRuleListStore storeWithURLAndLegacyFilename:]):
+        * UIProcess/API/Cocoa/WKContentRuleListStorePrivate.h:
+
 2021-03-28  Simon Fraser  <simon.fraser@apple.com>
 
         Plumb DisplayUpdate through the display refresh monitors

@@ -1,3 +1,17 @@
+2021-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Migrate _WKUserContentExtension and older versions of WKContentRuleList to WKContentRuleList during lookup
+        https://bugs.webkit.org/show_bug.cgi?id=223831
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (respond):
+        (TEST):
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[WKWebView _test_waitForDidFailProvisionalNavigation]):
+
 2021-03-29  Youenn Fablet  <youenn@apple.com>
 
         Promote WKWebView getUserMedia SPI to API
