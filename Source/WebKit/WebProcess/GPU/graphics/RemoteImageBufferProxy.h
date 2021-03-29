@@ -64,8 +64,11 @@ public:
 
     ~RemoteImageBufferProxy()
     {
-        if (!m_remoteRenderingBackendProxy)
+        if (!m_remoteRenderingBackendProxy) {
+            clearDisplayList();
             return;
+        }
+
         flushDrawingContext();
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
         m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier);
