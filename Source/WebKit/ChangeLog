@@ -1,3 +1,13 @@
+2021-03-29  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Don't record DisplayList items if the GPU Process has been terminated
+        https://bugs.webkit.org/show_bug.cgi?id=223864
+        <rdar://73586187>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2021-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 2: Rename setItemBufferClient to setItemBuffer{Writing,Reading}Client

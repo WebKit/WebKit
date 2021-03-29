@@ -289,10 +289,12 @@ protected:
         m_drawingContext.displayList().clear();
     }
 
-    void willAppendItemOfType(WebCore::DisplayList::ItemType) override
+    bool canAppendItemOfType(WebCore::DisplayList::ItemType) override
     {
-        if (LIKELY(m_remoteRenderingBackendProxy))
-            m_remoteRenderingBackendProxy->willAppendItem(m_renderingResourceIdentifier);
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return false;
+        m_remoteRenderingBackendProxy->willAppendItem(m_renderingResourceIdentifier);
+        return true;
     }
 
     void didAppendData(const WebCore::DisplayList::ItemBufferHandle& handle, size_t numberOfBytes, WebCore::DisplayList::DidChangeItemBuffer didChangeItemBuffer) override
