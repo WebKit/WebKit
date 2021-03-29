@@ -1,3 +1,15 @@
+2021-03-29  Ian Gilbert  <iang@apple.com>
+
+        Make a Ref to HTMLPlugInElement when resolving callback
+        https://bugs.webkit.org/show_bug.cgi?id=223846
+
+        Reviewed by Ryosuke Niwa.
+
+        Take a Ref to the HTMLPlugInElement to keep it alive while invoking HTMLPlugInElement::swapRendererTimerFired()
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::swapRendererTimerFired):
+
 2021-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Build fix.
