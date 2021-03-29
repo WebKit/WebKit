@@ -146,7 +146,7 @@ using WebCore::PlaybackSessionInterfaceMac;
         return;
         
     _playbackSessionInterfaceMac->willBeginScrubbing();
-    model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbing, { });
+    model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand, { });
 }
 
 - (void)endTouchBarScrubbing
@@ -155,7 +155,7 @@ using WebCore::PlaybackSessionInterfaceMac;
         return;
 
     if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
-        model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbing, { });
+        model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand, { });
 }
 
 - (NSArray<AVTouchBarMediaSelectionOption *> *)audioTouchBarMediaSelectionOptions

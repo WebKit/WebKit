@@ -4316,6 +4316,10 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
         command = PlatformMediaSession::EndSeekingForwardCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "seektoplaybackposition"))
         command = PlatformMediaSession::SeekToPlaybackPositionCommand;
+    else if (equalLettersIgnoringASCIICase(commandString, "beginscrubbing"))
+        command = PlatformMediaSession::BeginScrubbingCommand;
+    else if (equalLettersIgnoringASCIICase(commandString, "endscrubbing"))
+        command = PlatformMediaSession::EndScrubbingCommand;
     else
         return Exception { InvalidAccessError };
 

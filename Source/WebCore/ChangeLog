@@ -1,3 +1,33 @@
+2021-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Playback is paused after scrubbing with the touch bar
+        https://bugs.webkit.org/show_bug.cgi?id=223887
+        rdar://75597684
+
+        Reviewed by Jer Noble.
+
+        Test: media/remote-control-command-scrubbing.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pauseInternal): Don't pause if `m_pausedInternal` is true.
+        (WebCore::HTMLMediaElement::didReceiveRemoteControlCommand): Support BeginScrubbingCommand
+        and EndScrubbingCommand.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::didReceiveRemoteControlCommand): Update enum names.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::convertEnumerationToString): Ditto.
+
+        * platform/audio/PlatformMediaSession.h:  Add "Command" suffix to BeginScrubbing
+        and EndScrubbing so they math the enum's naming pattern.
+
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager beginTouchBarScrubbing]): Update enum names.
+        (-[WebPlaybackControlsManager endTouchBarScrubbing]): Update enum names.
+        * testing/Internals.cpp:
+        (WebCore::Internals::postRemoteControlCommand): Add "beginscrubbing" and "endscrubbing".
+
 2021-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Custom fonts don't work in GPU process mode

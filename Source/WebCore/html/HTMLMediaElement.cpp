@@ -3574,7 +3574,7 @@ void HTMLMediaElement::pauseInternal()
 
     setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);
 
-    if (!m_paused) {
+    if (!m_paused && !m_pausedInternal) {
         m_paused = true;
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
@@ -7546,6 +7546,12 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     case PlatformMediaSession::EndSeekingBackwardCommand:
     case PlatformMediaSession::EndSeekingForwardCommand:
         endScanning();
+        break;
+    case PlatformMediaSession::BeginScrubbingCommand:
+        beginScrubbing();
+        break;
+    case PlatformMediaSession::EndScrubbingCommand:
+        endScrubbing();
         break;
     case PlatformMediaSession::SkipForwardCommand: {
         auto delta = argument.time ? argument.time.value() : defaultSkipAmount;

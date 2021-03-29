@@ -1051,10 +1051,10 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
     case TogglePlayPauseCommand:
         actionDetails.action = m_element.paused() ? MediaSessionAction::Play : MediaSessionAction::Pause;
         break;
-    case BeginScrubbing:
+    case BeginScrubbingCommand:
         m_isScrubbing = true;
         return;
-    case EndScrubbing:
+    case EndScrubbingCommand:
         m_isScrubbing = false;
         return;
     case SeekToPlaybackPositionCommand:
