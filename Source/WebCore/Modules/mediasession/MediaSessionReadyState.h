@@ -39,4 +39,19 @@ enum class MediaSessionReadyState : uint8_t {
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::MediaSessionReadyState> {
+    using values = EnumValues<
+        WebCore::MediaSessionReadyState,
+        WebCore::MediaSessionReadyState::HaveNothing,
+        WebCore::MediaSessionReadyState::HaveMetadata,
+        WebCore::MediaSessionReadyState::HaveCurrentData,
+        WebCore::MediaSessionReadyState::HaveFutureData,
+        WebCore::MediaSessionReadyState::HaveEnoughData
+    >;
+};
+
+}
+
 #endif // ENABLE(MEDIA_SESSION_COORDINATOR)

@@ -30,9 +30,6 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
-#include "JSMediaPositionState.h"
-#include "JSMediaSessionAction.h"
-#include "JSMediaSessionPlaybackState.h"
 #include "MediaPositionState.h"
 #include "MediaSessionAction.h"
 #include "MediaSessionActionHandler.h"
@@ -155,6 +152,9 @@ private:
     Vector<Ref<MediaMetadata>> m_playlist;
 #endif
 };
+
+String convertEnumerationToString(MediaSessionPlaybackState);
+String convertEnumerationToString(MediaSessionAction);
 
 }
 

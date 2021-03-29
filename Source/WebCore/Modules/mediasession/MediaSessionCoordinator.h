@@ -27,6 +27,8 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#include "MediaSession.h"
+#include "MediaSessionCoordinatorPrivate.h"
 #include <wtf/Logger.h>
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
@@ -35,12 +37,12 @@ namespace WebCore {
 
 template<typename> class DOMPromiseDeferred;
 
-class PlatformMediaSessionCoordinator;
-class MediaSession;
-
-class MediaSessionCoordinator : public RefCounted<MediaSessionCoordinator>, public MediaSession::Observer {
+class MediaSessionCoordinator
+    : public RefCounted<MediaSessionCoordinator>
+    , public MediaSessionCoordinatorClient
+    , public MediaSession::Observer {
 public:
-    WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(Ref<PlatformMediaSessionCoordinator>&&);
+    WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(Ref<MediaSessionCoordinatorPrivate>&&);
     WEBCORE_EXPORT ~MediaSessionCoordinator();
 
     void seekTo(double, DOMPromiseDeferred<void>&&);
@@ -50,13 +52,27 @@ public:
 
     void setMediaSession(MediaSession*);
 
+    using MediaSessionCoordinatorClient::weakPtrFactory;
+    using WeakValueType = MediaSessionCoordinatorClient::WeakValueType;
+
+private:
+    explicit MediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
+
     // MediaSession::Observer
     void positionStateChanged(Optional<MediaPositionState>) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
     void readyStateChanged(MediaSessionReadyState) final;
 
-private:
-    explicit MediaSessionCoordinator(Ref<PlatformMediaSessionCoordinator>&&);
+    // MediaSessionCoordinatorClient
+    void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
+    void playSession(CompletionHandler<void(bool)>&&) final;
+    void pauseSession(CompletionHandler<void(bool)>) final;
+    void setSessionTrack(const String&, CompletionHandler<void(bool)>) final;
+
+    bool internalSeekTo(double);
+    bool internalPlay();
+    bool internalPause();
+    bool internalSetTrack(const String&);
 
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
@@ -64,14 +80,9 @@ private:
     static const char* logClassName() { return "MediaSessionCoordinator"; }
 
     WeakPtr<MediaSession> m_session;
-    Ref<PlatformMediaSessionCoordinator> m_platformCoordinator;
+    Ref<MediaSessionCoordinatorPrivate> m_privateCoordinator;
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
-
-    std::unique_ptr<DOMPromiseDeferred<void>> m_seekToPromise;
-    std::unique_ptr<DOMPromiseDeferred<void>> m_playPromise;
-    std::unique_ptr<DOMPromiseDeferred<void>> m_pausePromise;
-    std::unique_ptr<DOMPromiseDeferred<void>> m_setTrackPromise;
 };
 
 }

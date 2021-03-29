@@ -1,3 +1,61 @@
+2021-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Add remote MediaSessionCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=223854
+        <rdar://problem/75934650>
+
+        Reviewed by Jer Noble.
+
+        Define the interface for a remote MediaSessionCoordinatorPrivate and implement
+        message senders and receivers RemoteMediaSessionCoordinator and 
+        RemoteMediaSessionCoordinatorProxy.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * SourcesCocoa.txt:
+        * UIProcess/Media/MediaSessionCoordinatorPrivateProxy.h:
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp: Added.
+        (WebKit::RemoteMediaSessionCoordinatorProxy::create):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::~RemoteMediaSessionCoordinatorProxy):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinateSeekTo):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatePlay):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatePause):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::::coordinateSetTrack):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::positionStateChanged):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::playbackStateChanged):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::readyStateChanged):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.h:
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.messages.in: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createMediaSessionCoordinator):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp: Added.
+        (WebKit::RemoteMediaSessionCoordinator::create):
+        (WebKit::RemoteMediaSessionCoordinator::RemoteMediaSessionCoordinator):
+        (WebKit::RemoteMediaSessionCoordinator::~RemoteMediaSessionCoordinator):
+        (WebKit::RemoteMediaSessionCoordinator::seekTo):
+        (WebKit::RemoteMediaSessionCoordinator::play):
+        (WebKit::RemoteMediaSessionCoordinator::pause):
+        (WebKit::RemoteMediaSessionCoordinator::setTrack):
+        (WebKit::RemoteMediaSessionCoordinator::positionStateChanged):
+        (WebKit::RemoteMediaSessionCoordinator::readyStateChanged):
+        (WebKit::RemoteMediaSessionCoordinator::playbackStateChanged):
+        (WebKit::RemoteMediaSessionCoordinator::seekSessionToTime):
+        (WebKit::RemoteMediaSessionCoordinator::playSession):
+        (WebKit::RemoteMediaSessionCoordinator::pauseSession):
+        (WebKit::RemoteMediaSessionCoordinator::setSessionTrack):
+        (WebKit::RemoteMediaSessionCoordinator::logChannel const):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.h: Added.
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createMediaSessionCoordinator):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Migrate _WKUserContentExtension and older versions of WKContentRuleList to WKContentRuleList during lookup

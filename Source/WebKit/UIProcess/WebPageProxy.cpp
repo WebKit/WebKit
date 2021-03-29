@@ -296,6 +296,11 @@
 #include "WebDateTimePicker.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#include "MediaSessionCoordinatorPrivateProxy.h"
+#include "RemoteMediaSessionCoordinatorProxy.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -10374,6 +10379,24 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
     return SandboxExtension::HandleArray();
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivateProxy>&& privateCoordinator, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&& completionHandler)
+{
+    ASSERT(!m_mediaSessionCoordinatorProxy);
+
+    sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
+
+        if (!weakThis || !success) {
+            completionHandler({ });
+            return;
+        }
+
+        weakThis->m_mediaSessionCoordinatorProxy = RemoteMediaSessionCoordinatorProxy::create(*weakThis, WTFMove(privateCoordinator));
+        completionHandler(makeWeakPtr(weakThis->m_mediaSessionCoordinatorProxy.get()));
+    });
 }
 #endif
 

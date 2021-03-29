@@ -358,6 +358,12 @@
 #include <WebCore/ImageExtractionResult.h>
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#include "RemoteMediaSessionCoordinator.h"
+#include <WebCore/MediaSessionCoordinator.h>
+#include <WebCore/NavigatorMediaSession.h>
+#endif
+
 #if PLATFORM(IOS)
 #include "WebPreferencesDefaultValuesIOS.h"
 #endif
@@ -7377,6 +7383,25 @@ void WebPage::restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&& memor
             continue;
         document->appHighlightStorage().restoreAppHighlight(SharedBuffer::create(static_cast<const char*>(sharedMemory->data()), sharedMemory->size()));
     }
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void WebPage::createMediaSessionCoordinator(CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* document = m_mainFrame->coreFrame()->document();
+    if (!document || !document->domWindow()) {
+        completionHandler(false);
+        return;
+    }
+
+    auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
+    auto coordinator = RemoteMediaSessionCoordinator::create(*this);
+    m_remoteMediaSessionCoordinator = coordinator.ptr();
+    m_mediaSessionCoordinator = MediaSessionCoordinator::create(coordinator.get());
+    session.setCoordinator(m_mediaSessionCoordinator.get());
+
+    completionHandler(true);
 }
 #endif
 

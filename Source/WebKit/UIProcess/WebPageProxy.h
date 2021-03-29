@@ -329,10 +329,12 @@ class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class PageClient;
+class MediaSessionCoordinatorPrivateProxy;
 class ProvisionalPageProxy;
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
+class RemoteMediaSessionCoordinatorProxy;
 class RemoteScrollingCoordinatorProxy;
 class SecKeyProxyStore;
 class SpeechRecognitionPermissionManager;
@@ -1885,6 +1887,10 @@ public:
     bool canHandleContextMenuTranslation() const;
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivateProxy>&&, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&&);
+#endif
+
 #if PLATFORM(COCOA)
     void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
@@ -2913,6 +2919,10 @@ private:
 #endif
 
     std::unique_ptr<SpeechRecognitionPermissionManager> m_speechRecognitionPermissionManager;
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<RemoteMediaSessionCoordinatorProxy> m_mediaSessionCoordinatorProxy;
+#endif
 
 #if USE(DIRECT2D)
     COMPtr<ID3D11Device1> m_device;

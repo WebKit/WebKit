@@ -30,6 +30,9 @@
 
 #include "DOMWindow.h"
 #include "EventNames.h"
+#include "JSMediaPositionState.h"
+#include "JSMediaSessionAction.h"
+#include "JSMediaSessionPlaybackState.h"
 #include "Logging.h"
 #include "MediaMetadata.h"
 #include "MediaSessionCoordinator.h"

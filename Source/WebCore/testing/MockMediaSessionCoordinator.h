@@ -28,15 +28,16 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
 #include "GenericEventQueue.h"
-#include "PlatformMediaSessionCoordinator.h"
+#include "MediaSessionCoordinatorPrivate.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
 class StringCallback;
 
-class MockMediaSessionCoordinator : public PlatformMediaSessionCoordinator {
+class MockMediaSessionCoordinator : public MediaSessionCoordinatorPrivate, public CanMakeWeakPtr<MockMediaSessionCoordinator> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MockMediaSessionCoordinator> create(ScriptExecutionContext&, RefPtr<StringCallback>&&);
@@ -46,14 +47,17 @@ public:
 private:
     MockMediaSessionCoordinator(ScriptExecutionContext&, RefPtr<StringCallback>&&);
 
-    void seekTo(double, SeekCompletedCallback&&) final;
-    void play(PlayCompletedCallback&&) final;
-    void pause(PauseCompletedCallback&&) final;
-    void setTrack(const String, SetTrackCompletedCallback&&) final;
+    void seekTo(double, CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void play(CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void pause(CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void setTrack(const String&, CompletionHandler<void(Optional<Exception>&&)>&&) final;
 
     void positionStateChanged(Optional<MediaPositionState>) final;
     void readyStateChanged(MediaSessionReadyState) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
+
+    const char* logClassName() const { return "MockMediaSessionCoordinator"; }
+    WTFLogChannel& logChannel() const;
 
     Optional<Exception> result() const;
 

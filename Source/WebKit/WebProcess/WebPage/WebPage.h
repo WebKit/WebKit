@@ -190,6 +190,7 @@ class IntPoint;
 class KeyboardEvent;
 class MediaPlaybackTargetContext;
 class MediaPlayerRequestInstallMissingPluginsCallback;
+class MediaSessionCoordinator;
 class Page;
 class PrintContext;
 class Range;
@@ -255,6 +256,7 @@ class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
 class PluginView;
+class RemoteMediaSessionCoordinator;
 class RemoteRenderingBackendProxy;
 class RemoteWebInspectorUI;
 class TextCheckingControllerProxy;
@@ -1410,6 +1412,10 @@ public:
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    void createMediaSessionCoordinator(CompletionHandler<void(bool)>&&);
+#endif
+
     void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
 
@@ -2249,6 +2255,11 @@ private:
 #if ENABLE(IPC_TESTING_API)
     bool m_ipcTestingAPIEnabled { false };
     uint64_t m_visitedLinkTableID;
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<WebCore::MediaSessionCoordinator> m_mediaSessionCoordinator;
+    RefPtr<RemoteMediaSessionCoordinator> m_remoteMediaSessionCoordinator;
 #endif
 
 #if ENABLE(GPU_PROCESS)

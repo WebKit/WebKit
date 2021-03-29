@@ -1,3 +1,66 @@
+2021-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Add remote MediaSessionCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=223854
+        <rdar://problem/75934650>
+
+        Reviewed by Jer Noble.
+
+        Rename PlatformMediaSessionCoordinator to MediaSessionCoordinatorPrivate and make
+        it possible for the MediaSessionCoordinator implementation to be located in another
+        process.
+
+        * Modules/mediasession/MediaPositionState.h:
+        (WebCore::MediaPositionState::encode const):
+        (WebCore::MediaPositionState::decode):
+        * Modules/mediasession/MediaSession.cpp:
+        * Modules/mediasession/MediaSession.h:
+        * Modules/mediasession/MediaSessionActionHandler.h:
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::create):
+        (WebCore::MediaSessionCoordinator::MediaSessionCoordinator):
+        (WebCore::MediaSessionCoordinator::seekTo):
+        (WebCore::MediaSessionCoordinator::play):
+        (WebCore::MediaSessionCoordinator::pause):
+        (WebCore::MediaSessionCoordinator::setTrack):
+        (WebCore::MediaSessionCoordinator::positionStateChanged):
+        (WebCore::MediaSessionCoordinator::playbackStateChanged):
+        (WebCore::MediaSessionCoordinator::readyStateChanged):
+        (WebCore::MediaSessionCoordinator::seekSessionToTime):
+        (WebCore::MediaSessionCoordinator::playSession):
+        (WebCore::MediaSessionCoordinator::pauseSession):
+        (WebCore::MediaSessionCoordinator::setSessionTrack):
+        (WebCore::MediaSessionCoordinator::internalSeekTo):
+        (WebCore::MediaSessionCoordinator::internalPlay):
+        (WebCore::MediaSessionCoordinator::internalPause):
+        (WebCore::MediaSessionCoordinator::internalSetTrack):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.cpp: Copied from Source/WebCore/platform/graphics/PlatformMediaSessionCoordinator.cpp
+        (WebCore::MediaSessionCoordinatorPrivate::setLogger):
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.h:  Copied from Source/WebCore/platform/graphics/PlatformMediaSessionCoordinator.h
+        (WebCore::MediaSessionCoordinatorPrivate::setClient):
+        (WebCore::MediaSessionCoordinatorPrivate::loggerPtr const):
+        (WebCore::MediaSessionCoordinatorPrivate::logIdentifier const):
+        (WebCore::MediaSessionCoordinatorPrivate::client const):
+        * Modules/mediasession/MediaSessionPlaybackState.h:
+        * Modules/mediasession/MediaSessionReadyState.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/PlatformMediaSession.h:
+        * platform/graphics/PlatformMediaSessionCoordinator.cpp: Removed.
+        * platform/graphics/PlatformMediaSessionCoordinator.h: Removed.
+        * testing/MockMediaSessionCoordinator.cpp:
+        (WebCore::MockMediaSessionCoordinator::seekTo):
+        (WebCore::MockMediaSessionCoordinator::play):
+        (WebCore::MockMediaSessionCoordinator::pause):
+        (WebCore::MockMediaSessionCoordinator::setTrack):
+        (WebCore::MockMediaSessionCoordinator::positionStateChanged):
+        (WebCore::MockMediaSessionCoordinator::readyStateChanged):
+        (WebCore::MockMediaSessionCoordinator::playbackStateChanged):
+        (WebCore::MockMediaSessionCoordinator::logChannel const):
+        * testing/MockMediaSessionCoordinator.h:
+        (WebCore::MockMediaSessionCoordinator::logClassName const):
+
 2021-03-29  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] move added `object data` to `ApplePayModifier`

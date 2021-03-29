@@ -33,7 +33,32 @@ struct MediaPositionState {
     double duration = std::numeric_limits<double>::infinity();
     double playbackRate = 1;
     double position = 0;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<MediaPositionState> decode(Decoder&);
 };
+
+template<class Encoder> inline void MediaPositionState::encode(Encoder& encoder) const
+{
+    encoder << duration << playbackRate << position;
+}
+
+template<class Decoder> inline Optional<MediaPositionState> MediaPositionState::decode(Decoder& decoder)
+{
+    double duration;
+    if (!decoder.decode(duration))
+        return { };
+
+    double playbackRate;
+    if (!decoder.decode(playbackRate))
+        return { };
+
+    double position;
+    if (!decoder.decode(position))
+        return { };
+
+    return MediaPositionState { WTFMove(duration), WTFMove(playbackRate), WTFMove(position) };
+}
 
 }
 
