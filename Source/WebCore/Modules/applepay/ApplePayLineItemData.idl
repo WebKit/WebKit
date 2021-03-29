@@ -25,6 +25,5 @@
 
 [
     Conditional=APPLE_PAY,
-    JSGenerateToJSObject,
 ] dictionary ApplePayLineItemData {
 };

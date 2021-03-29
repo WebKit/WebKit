@@ -25,7 +25,7 @@
 
 [
     Conditional=APPLE_PAY,
-] dictionary ApplePayDetailsUpdateBase {
+] dictionary ApplePayDetailsUpdateBase : ApplePayDetailsUpdateData {
     required ApplePayLineItem newTotal;
     sequence<ApplePayLineItem> newLineItems;
 };

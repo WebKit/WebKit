@@ -1,3 +1,57 @@
+2021-03-29  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] move added `object data` to `ApplePayModifier`
+        https://bugs.webkit.org/show_bug.cgi?id=223621
+        <rdar://problem/75720879>
+
+        Reviewed by Wenson Hsieh.
+
+        The `object data` in `PaymentDetailsModifier` has a sibling property `required DOMString supportedMethods`
+        which acts as a "guard" to make sure that the structure of `data` is only limited to that `supportedMethods`
+        meaning that there's no concern over naming collisions between two different `supportedMethods`. As such,
+        the `object data` added to `PaymentItem` and `PaymentDetailsBase` and `PaymentShippingOption` should really
+        be part of `ApplePayModifier` (which is what the `object data` in `PaymentDetailsModifier` is parsed into).
+
+        * Modules/applepay/paymentrequest/ApplePayModifier.idl:
+        * Modules/applepay/paymentrequest/ApplePayModifier.h:
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::convertAndValidate):
+        (WebCore::merge):
+        (WebCore::ApplePayPaymentHandler::show):
+        (WebCore::ApplePayPaymentHandler::computeShippingMethods const):
+        (WebCore::ApplePayPaymentHandler::computeTotalAndLineItems const):
+        (WebCore::validate):
+        (WebCore::ApplePayPaymentHandler::firstApplicableModifier const): Added.
+        (WebCore::ApplePayPaymentHandler::shippingAddressUpdated):
+        (WebCore::ApplePayPaymentHandler::shippingOptionUpdated):
+        (WebCore::ApplePayPaymentHandler::paymentMethodUpdated):
+        Instead of validating and merging data from the various `ApplePay*Data` objects, get the
+        first applicable `ApplePayModifier` from the list of `PaymentDetailsModifier` and use that
+        for validation and data merging (since, as explained above, it now contains the data).
+
+        * Modules/paymentrequest/PaymentDetailsBase.idl:
+        * Modules/paymentrequest/PaymentDetailsBase.h:
+        * Modules/paymentrequest/PaymentItem.idl:
+        * Modules/paymentrequest/PaymentItem.h:
+        * Modules/paymentrequest/PaymentShippingOption.idl:
+        * Modules/paymentrequest/PaymentShippingOption.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::checkAndCanonicalizePaymentItem):
+        (WebCore::checkAndCanonicalizeTotal):
+        (WebCore::checkAndCanonicalizeDetails):
+        (WebCore::PaymentRequest::create):
+        (WebCore::PaymentRequest::settleDetailsPromise):
+        Remove the IDL `object data;` and associated members/logic now that the parsed data is all
+        part of `ApplePayModifier`. These objects are now back to being spec compliant.
+
+        * Modules/applepay/ApplePayDetailsUpdateBase.idl:
+        Drive-by: Add missing inheritance to `ApplePayDetailsUpdateData`.
+
+        * Modules/applepay/ApplePayLineItemData.idl:
+        * Modules/applepay/ApplePayShippingMethodData.idl:
+        Drive-by: Remove unnecessary attributes.
+
 2021-03-29  Ian Gilbert  <iang@apple.com>
 
         Make a Ref to HTMLPlugInElement when resolving callback

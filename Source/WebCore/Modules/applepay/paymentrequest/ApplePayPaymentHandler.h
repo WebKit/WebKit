@@ -33,13 +33,17 @@
 #include "PaymentHandler.h"
 #include "PaymentRequest.h"
 #include "PaymentSession.h"
+#include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class ApplePayError;
 class PaymentCoordinator;
+struct ApplePayModifier;
+struct PaymentDetailsModifier;
 
 class ApplePayPaymentHandler final : public PaymentHandler, public PaymentSession, private ContextDestructionObserver {
 public:
@@ -54,13 +58,14 @@ private:
     Document& document() const;
     PaymentCoordinator& paymentCoordinator() const;
 
-    ExceptionOr<Vector<ApplePayShippingMethod>> computeShippingMethods();
+    ExceptionOr<Vector<ApplePayShippingMethod>> computeShippingMethods() const;
     ExceptionOr<std::tuple<ApplePayLineItem, Vector<ApplePayLineItem>>> computeTotalAndLineItems() const;
     Vector<RefPtr<ApplePayError>> computeErrors(String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) const;
     Vector<RefPtr<ApplePayError>> computeErrors(JSC::JSObject* paymentMethodErrors) const;
     void computeAddressErrors(String&& error, AddressErrors&&, Vector<RefPtr<ApplePayError>>&) const;
     void computePayerErrors(PayerErrorFields&&, Vector<RefPtr<ApplePayError>>&) const;
     ExceptionOr<void> computePaymentMethodErrors(JSC::JSObject* paymentMethodErrors, Vector<RefPtr<ApplePayError>>&) const;
+    ExceptionOr<Optional<std::tuple<PaymentDetailsModifier, ApplePayModifier>>> firstApplicableModifier() const;
 
     ExceptionOr<void> shippingAddressUpdated(Vector<RefPtr<ApplePayError>>&& errors);
     ExceptionOr<void> shippingOptionUpdated();

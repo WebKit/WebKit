@@ -99,7 +99,7 @@ static ExceptionOr<void> checkAndCanonicalizeAmount(PaymentCurrencyAmount& amoun
 }
 
 enum class NegativeAmountAllowed { Yes, No };
-static ExceptionOr<void> checkAndCanonicalizePaymentItem(ScriptExecutionContext& context, PaymentItem& item, NegativeAmountAllowed negativeAmountAllowed)
+static ExceptionOr<void> checkAndCanonicalizePaymentItem(PaymentItem& item, NegativeAmountAllowed negativeAmountAllowed)
 {
     auto exception = checkAndCanonicalizeAmount(item.amount);
     if (exception.hasException())
@@ -108,22 +108,14 @@ static ExceptionOr<void> checkAndCanonicalizePaymentItem(ScriptExecutionContext&
     if (negativeAmountAllowed == NegativeAmountAllowed::No && item.amount.value[0] == '-')
         return Exception { TypeError, "Total currency values cannot be negative."_s };
 
-    if (item.data) {
-        auto dataResult = checkAndCanonicalizeData(context, item);
-        if (dataResult.hasException())
-            return dataResult.releaseException();
-
-        item.serializedData = dataResult.releaseReturnValue();
-    }
-
     return { };
 }
 
 // Implements the "check and canonicalize total" validity checker
 // https://www.w3.org/TR/payment-request/#dfn-check-and-canonicalize-total
-static ExceptionOr<void> checkAndCanonicalizeTotal(ScriptExecutionContext& context, PaymentItem& total)
+static ExceptionOr<void> checkAndCanonicalizeTotal(PaymentItem& total)
 {
-    return checkAndCanonicalizePaymentItem(context, total, NegativeAmountAllowed::No);
+    return checkAndCanonicalizePaymentItem(total, NegativeAmountAllowed::No);
 }
 
 // Implements "validate a standardized payment method identifier"
@@ -206,7 +198,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 {
     if (details.displayItems) {
         for (auto& item : *details.displayItems) {
-            auto paymentItemResult = checkAndCanonicalizePaymentItem(context, item, NegativeAmountAllowed::Yes);
+            auto paymentItemResult = checkAndCanonicalizePaymentItem(item, NegativeAmountAllowed::Yes);
             if (paymentItemResult.hasException())
                 return paymentItemResult.releaseException();
         }
@@ -233,14 +225,6 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
                     context.addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Warning, "WebKit currently uses the first shipping option even if other shipping options are marked as selected."_s);
                     didLog = true;
                 }
-
-                if (shippingOption.data) {
-                    auto dataResult = checkAndCanonicalizeData(context, shippingOption);
-                    if (dataResult.hasException())
-                        return dataResult.releaseException();
-
-                    shippingOption.serializedData = dataResult.releaseReturnValue();
-                }
             }
         } else if (isUpdate == IsUpdate::No)
             details.shippingOptions = { { } };
@@ -258,13 +242,13 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
             }
 
             if (modifier.total) {
-                auto totalResult = checkAndCanonicalizeTotal(context, *modifier.total);
+                auto totalResult = checkAndCanonicalizeTotal(*modifier.total);
                 if (totalResult.hasException())
                     return totalResult.releaseException();
             }
 
             for (auto& item : modifier.additionalDisplayItems) {
-                auto paymentItemResult = checkAndCanonicalizePaymentItem(context, item, NegativeAmountAllowed::Yes);
+                auto paymentItemResult = checkAndCanonicalizePaymentItem(item, NegativeAmountAllowed::Yes);
                 if (paymentItemResult.hasException())
                     return paymentItemResult.releaseException();
             }
@@ -281,14 +265,6 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
         }
     } else if (isUpdate == IsUpdate::No)
         details.modifiers = { { } };
-
-    if (details.data) {
-        auto dataResult = checkAndCanonicalizeData(context, details);
-        if (dataResult.hasException())
-            return dataResult.releaseException();
-
-        details.serializedData = dataResult.releaseReturnValue();
-    }
 
     return std::make_tuple(WTFMove(selectedShippingOption), WTFMove(serializedModifierData));
 }
@@ -353,7 +329,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
         serializedMethodData.uncheckedAppend({ WTFMove(*identifier), WTFMove(serializedData) });
     }
 
-    auto totalResult = checkAndCanonicalizeTotal(document, details.total);
+    auto totalResult = checkAndCanonicalizeTotal(details.total);
     if (totalResult.hasException())
         return totalResult.releaseException();
 
@@ -664,7 +640,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
     }
 
     if (detailsUpdate.total) {
-        auto totalResult = checkAndCanonicalizeTotal(context, *detailsUpdate.total);
+        auto totalResult = checkAndCanonicalizeTotal(*detailsUpdate.total);
         if (totalResult.hasException()) {
             abortWithException(totalResult.releaseException());
             return;
@@ -691,8 +667,6 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         m_details.modifiers = WTFMove(*detailsUpdate.modifiers);
         m_serializedModifierData = WTFMove(std::get<1>(shippingOptionAndModifierData));
     }
-    if (!detailsUpdate.serializedData.isEmpty())
-        m_details.serializedData = WTFMove(detailsUpdate.serializedData);
 
     auto result = activePaymentHandler()->detailsUpdated(reason, WTFMove(detailsUpdate.error), WTFMove(detailsUpdate.shippingAddressErrors), WTFMove(detailsUpdate.payerErrors), detailsUpdate.paymentMethodErrors.get());
     if (result.hasException()) {
