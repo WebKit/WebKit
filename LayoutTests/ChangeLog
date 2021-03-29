@@ -1,3 +1,12 @@
+2021-03-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Emit baseline for imported/w3c/web-platform-tests/css/css-color/system-color-compute.html
+
+        r271968 added a specific result for iOS to account for different system colors.
+        GLIB fails on the same test as iOS, so emiting a specific baseline is justified.
+
+        * platform/glib/imported/w3c/web-platform-tests/css/css-color/system-color-compute-expected.txt: Added.
+
 2021-03-28  Youenn Fablet  <youenn@apple.com>
 
         Use-after-move in UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition
