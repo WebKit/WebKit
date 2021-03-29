@@ -1,3 +1,33 @@
+2021-03-29  ChangSeok Oh  <changseok@webkit.org>
+
+        Implement repetition of animated AVIF
+        https://bugs.webkit.org/show_bug.cgi?id=223127
+        <rdar://problem/75629284>
+
+        Reviewed by Philippe Normand.
+
+        This change implements repeating AVIF animation, reflecting the AVIF sequence spec.
+        As the libavif does not provide a clear repetition count yet, we calculate it
+        by dividing the track duration by the sum of each frame duration. If the track duration
+        is not specified, the animation repeats indefinitely. Chromium just indefinitely
+        repeats all animated avif images.
+        The repetition count of avif sequence images is not necessarily an integer.
+        Since ScalableImageDecoder accepts an integer value for repetition,
+        we round the repetition count in floating point values to conform the current
+        image decoder design. Later, when we have more reliable testing environment
+        for the avifs repetition, we will revisit the repetition count in floating point numbers.
+
+        No new tests since no reliable test could be created. The latest avif encoder
+        does not support the repetition count yet.
+
+        * platform/image-decoders/avif/AVIFImageDecoder.cpp:
+        (WebCore::AVIFImageDecoder::repetitionCount const):
+        (WebCore::AVIFImageDecoder::tryDecodeSize):
+        * platform/image-decoders/avif/AVIFImageDecoder.h:
+        * platform/image-decoders/avif/AVIFImageReader.cpp:
+        (WebCore::AVIFImageReader::repetitionCount const):
+        * platform/image-decoders/avif/AVIFImageReader.h:
+
 2021-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 2: Rename setItemBufferClient to setItemBuffer{Writing,Reading}Client
