@@ -1,3 +1,9 @@
+2021-03-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Add several A11y test failures to TestExpectations.
+
+        * platform/gtk/TestExpectations:
+
 2021-03-28  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Garden fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html as slow

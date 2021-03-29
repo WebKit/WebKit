@@ -138,6 +138,14 @@ webkit.org/b/215405 accessibility/gtk/caret-browsing-select-focus.html [ Failure
 webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-embedded-objects.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-entry-and-password.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-formatted.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-heading.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-list-items.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-simple.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-table-cells.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-with-link.html [ Failure ]
 
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
