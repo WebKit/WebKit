@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc.  All rights reserved.
- * Copyright (C) 2009 Torch Mobile, Inc.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef OpenTypeUtilities_h
-#define OpenTypeUtilities_h
+#pragma once
 
-#include <windows.h>
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#if OS(WINDOWS)
+
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-struct BigEndianUShort;
-struct EOTPrefix;
-class FontMemoryResource;
-class SharedBuffer;
+class FontMemoryResource : public RefCounted<FontMemoryResource> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<FontMemoryResource> create(HANDLE handle)
+    {
+        return adoptRef(*new FontMemoryResource(handle));
+    }
 
-struct EOTHeader {
-    EOTHeader();
-
-    size_t size() const { return m_buffer.size(); }
-    const uint8_t* data() const { return m_buffer.data(); }
-
-    EOTPrefix* prefix() { return reinterpret_cast<EOTPrefix*>(m_buffer.data()); }
-    void updateEOTSize(size_t);
-    void appendBigEndianString(const BigEndianUShort*, unsigned short length);
-    void appendPaddingShort();
-
+    ~FontMemoryResource()
+    {
+        RemoveFontMemResourceEx(m_fontResourceHandle);
+    }
+    
 private:
-    Vector<uint8_t, 512> m_buffer;
+    explicit FontMemoryResource(HANDLE handle)
+        : m_fontResourceHandle(handle)
+    {
+        ASSERT(handle);
+    }
+
+    HANDLE m_fontResourceHandle;
 };
-
-bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength);
-bool renameFont(const SharedBuffer&, const String&, Vector<char>&);
-RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer&, const String&);
-
+    
 } // namespace WebCore
 
-#endif // OpenTypeUtilities_h
+#endif // OS(WINDOWS)

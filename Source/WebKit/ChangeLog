@@ -1,3 +1,13 @@
+2021-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Custom fonts don't work in GPU process mode
+        https://bugs.webkit.org/show_bug.cgi?id=223861
+
+        Reviewed by Don Olmstead.
+
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (IPC::ArgumentCoder<Ref<Font>>::decodePlatformData):
+
 2021-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Use terminate_with_reason instead of xpc_connection_kill

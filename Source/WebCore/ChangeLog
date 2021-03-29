@@ -1,3 +1,45 @@
+2021-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Custom fonts don't work in GPU process mode
+        https://bugs.webkit.org/show_bug.cgi?id=223861
+
+        Reviewed by Don Olmstead.
+
+        Custom fonts didn't work in GPU process mode of WinCairo port
+        because FontCustomPlatformData was destructed soon. In non-GPU
+        process mode, FontCustomPlatformData is retained by CachedFont. In
+        GPU process mode, there is no CachedFont. So, the font resource
+        handle should be ref-counted and retained by FontPlatformData.
+
+        Added a new class FontMemoryResource to ref-count the font
+        resource handle. Added a new member of Ref<FontMemoryResource> to
+        FontPlatformData::CreationData struct.
+
+        Converted by existing canvas custom font tests.
+
+        * PlatformWin.cmake:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/opentype/FontMemoryResource.h:
+        (WebCore::FontMemoryResource::create):
+        (WebCore::FontMemoryResource::~FontMemoryResource):
+        (WebCore::FontMemoryResource::FontMemoryResource):
+        * platform/graphics/opentype/OpenTypeUtilities.cpp:
+        (WebCore::renameAndActivateFont):
+        * platform/graphics/opentype/OpenTypeUtilities.h:
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Deleted.
+        * platform/graphics/win/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Deleted.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Deleted.
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2021-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add remote MediaSessionCoordinator
