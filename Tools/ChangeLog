@@ -1,3 +1,27 @@
+2021-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a way for internal clients to hit-test for selectable text in user agent shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=223894
+        <rdar://problem/75968068>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to exercise `-[WKWebProcessPlugInFrame hitTest:options:]`.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleHitTest.mm: Added.
+        (-[WKWebViewWithHitTester hasSelectableTextAt:]):
+        (TestWebKitAPI::createWebViewWithHitTester):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/simple-responsive-page.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/InjectedBundleHitTestPlugIn.mm: Added.
+        (-[InjectedBundleHitTestPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[InjectedBundleHitTestPlugIn webProcessPlugInBrowserContextController:didClearWindowObjectForFrame:inScriptWorld:]):
+        (-[InjectedBundleHitTestPlugIn webProcessPlugInBrowserContextController:didFinishLoadForFrame:]):
+        (-[InjectedBundleHitTestPlugIn hasSelectableTextAt:completionHandler:]):
+        (-[InjectedBundleHitTestPlugIn dealloc]):
+        * TestWebKitAPI/Tests/WebKitCocoa/InjectedBundleHitTestProtocol.h: Added.
+
 2021-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 2: Rename setItemBufferClient to setItemBuffer{Writing,Reading}Client
