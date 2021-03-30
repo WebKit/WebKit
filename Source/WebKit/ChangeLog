@@ -1,3 +1,22 @@
+2021-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Address post-commit comments on r275180
+        https://bugs.webkit.org/show_bug.cgi?id=223915
+
+        Reviewed by Kimmo Kinnunen.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidFlush):
+        (WebKit::RemoteRenderingBackendProxy::sharedMemoryForGetImageData):
+        (WebKit::RemoteRenderingBackendProxy::waitForGetImageDataToComplete):
+        (WebKit::RemoteRenderingBackendProxy::getDataURLForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getDataForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getBGRADataForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getShareableBitmap):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2021-03-30  Jon Lee  <jonlee@apple.com>
 
         Remove obsolete WebGL2 feature flag

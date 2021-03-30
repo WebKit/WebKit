@@ -76,8 +76,8 @@ public:
     void willAppendItem(WebCore::RenderingResourceIdentifier);
     void sendDeferredWakeupMessageIfNeeded();
 
-    SharedMemory* sharedMemoryForGetImageData(size_t dataSize);
-    bool waitForGetImageDataToComplete();
+    SharedMemory* sharedMemoryForGetImageData(size_t dataSize, IPC::Timeout);
+    bool waitForGetImageDataToComplete(IPC::Timeout);
     void destroyGetImageDataSharedMemory();
 
     // IPC::MessageSender.

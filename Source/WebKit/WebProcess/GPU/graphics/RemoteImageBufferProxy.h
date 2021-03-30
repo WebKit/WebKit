@@ -201,7 +201,8 @@ protected:
             return nullptr;
         size_t dataSize = imageData->data()->byteLength();
 
-        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetImageData(dataSize);
+        IPC::Timeout timeout = 5_s;
+        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetImageData(dataSize, timeout);
         if (!sharedMemory)
             return nullptr;
 
@@ -209,7 +210,7 @@ protected:
         mutableThis.m_drawingContext.recorder().getImageData(outputFormat, srcRect);
         mutableThis.flushDrawingContextAsync();
 
-        if (m_remoteRenderingBackendProxy->waitForGetImageDataToComplete())
+        if (m_remoteRenderingBackendProxy->waitForGetImageDataToComplete(timeout))
             memcpy(imageData->data()->data(), sharedMemory->data(), dataSize);
         else
             memset(imageData->data()->data(), 0, dataSize);
