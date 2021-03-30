@@ -2063,6 +2063,7 @@ class RunWebKitTests(shell.Test):
     jsonFileName = 'layout-test-results/full_results.json'
     logfiles = {'json': jsonFileName}
     test_failures_log_name = 'test-failures'
+    EXIT_AFTER_FAILURES = '30'
     command = ['python', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
                '--no-show-results',
@@ -2084,12 +2085,7 @@ class RunWebKitTests(shell.Test):
         return not ((self.getProperty('buildername', '').lower() == 'commit-queue') and
                     (self.getProperty('revert') or self.getProperty('passed_mac_wk2')))
 
-    def start(self):
-        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-        self.log_observer_json = logobserver.BufferLogObserver()
-        self.addLogObserver('json', self.log_observer_json)
-
+    def setLayoutTestCommand(self):
         platform = self.getProperty('platform')
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         additionalArguments = self.getProperty('additionalArguments')
@@ -2104,7 +2100,7 @@ class RunWebKitTests(shell.Test):
         if patch_author in ['webkit-wpt-import-bot@igalia.com']:
             self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
         else:
-            self.setCommand(self.command + ['--exit-after-n-failures', '30', '--skip-failing-tests'])
+            self.setCommand(self.command + ['--exit-after-n-failures', self.EXIT_AFTER_FAILURES, '--skip-failing-tests'])
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
@@ -2134,6 +2130,12 @@ class RunWebKitTests(shell.Test):
                     list_retry_tests = sorted(first_results_failing_tests.union(second_results_failing_tests))
                     self.setCommand(self.command + list_retry_tests)
 
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        self.log_observer_json = logobserver.BufferLogObserver()
+        self.addLogObserver('json', self.log_observer_json)
+        self.setLayoutTestCommand()
         return shell.Test.start(self)
 
     # FIXME: This will break if run-webkit-tests changes its default log formatter.
