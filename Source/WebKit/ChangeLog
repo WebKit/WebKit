@@ -1,3 +1,18 @@
+2021-03-29  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Safari crashed and lost all tabs, after unlocking sleeping device
+        https://bugs.webkit.org/show_bug.cgi?id=223832
+        <rdar://75555287>
+
+        Reviewed by David Kilzer.
+
+        A speculative fix for this crash. A possible explanation from the crash log suggests that the protectedThis
+        could be elided because of compiler optimization given it is not used in the block. To prevent such optimization,
+        protectedThis is therefore used explicitly in the block.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::dismissViewController):
+
 2021-03-29  Alex Christensen  <achristensen@webkit.org>
 
         [Big Sur arm64] TestWebKitAPI.WebKit.AccessibilityReduceMotion is a flaky crash

@@ -302,10 +302,10 @@ void SOAuthorizationSession::dismissViewController()
         if (presentingWindow.miniaturized) {
             if (m_presentingWindowDidDeminiaturizeObserver)
                 return;
-            m_presentingWindowDidDeminiaturizeObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidDeminiaturizeNotification object:presentingWindow queue:nil usingBlock:[protectedThis = makeRefPtr(this), this] (NSNotification *) {
-                dismissViewController();
-                [[NSNotificationCenter defaultCenter] removeObserver:m_presentingWindowDidDeminiaturizeObserver.get()];
-                m_presentingWindowDidDeminiaturizeObserver = nullptr;
+            m_presentingWindowDidDeminiaturizeObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidDeminiaturizeNotification object:presentingWindow queue:nil usingBlock:[protectedThis = makeRef(*this)] (NSNotification *) {
+                protectedThis->dismissViewController();
+                [[NSNotificationCenter defaultCenter] removeObserver:protectedThis->m_presentingWindowDidDeminiaturizeObserver.get()];
+                protectedThis->m_presentingWindowDidDeminiaturizeObserver = nullptr;
             }];
             return;
         }
@@ -314,10 +314,10 @@ void SOAuthorizationSession::dismissViewController()
     if (NSApp.hidden) {
         if (m_applicationDidUnhideObserver)
             return;
-        m_applicationDidUnhideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidUnhideNotification object:NSApp queue:nil usingBlock:[protectedThis = makeRefPtr(this), this] (NSNotification *) {
-            dismissViewController();
-            [[NSNotificationCenter defaultCenter] removeObserver:m_applicationDidUnhideObserver.get()];
-            m_applicationDidUnhideObserver = nullptr;
+        m_applicationDidUnhideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidUnhideNotification object:NSApp queue:nil usingBlock:[protectedThis = makeRef(*this)] (NSNotification *) {
+            protectedThis->dismissViewController();
+            [[NSNotificationCenter defaultCenter] removeObserver:protectedThis->m_applicationDidUnhideObserver.get()];
+            protectedThis->m_applicationDidUnhideObserver = nullptr;
         }];
         return;
     }
