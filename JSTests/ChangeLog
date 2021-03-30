@@ -1,3 +1,9 @@
+2021-03-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * stress/early-return-from-builtin.js: Disable this test for memoryLimited configurations.
+
 2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use AppleICU SPI for canonicalization
