@@ -248,27 +248,25 @@ bool RenderTreeBuilder::Table::childRequiresTable(const RenderElement& parent, c
 }
 
 template <typename Parent, typename Child>
-void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblings(Parent* parent, Child* previousSibling, Child* nextSibling)
+RenderPtr<RenderObject> RenderTreeBuilder::Table::collapseAndDetachAnonymousNextSibling(Parent* parent, Child* previousSibling, Child* nextSibling)
 {
     if (!parent || !previousSibling || !nextSibling)
-        return;
-
-    if (previousSibling->isAnonymous() && nextSibling->isAnonymous()) {
-        m_builder.moveAllChildren(*nextSibling, *previousSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
-        auto toDestroy = m_builder.detach(*parent, *nextSibling);
-    }
-
-    previousSibling->setNeedsLayout();
+        return { };
+    if (!previousSibling->isAnonymous() || !nextSibling->isAnonymous())
+        return { };
+    m_builder.moveAllChildren(*nextSibling, *previousSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
+    return m_builder.detach(*parent, *nextSibling);
 }
 
-void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingCells(RenderTableCell& cell)
+void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingCells(const RenderTableCell& willBeDestroyed)
 {
-    collapseAndDestroyAnonymousSiblings(cell.row(), cell.previousCell(), cell.nextCell());
+    if (auto nextCellToDestroy = collapseAndDetachAnonymousNextSibling(willBeDestroyed.row(), willBeDestroyed.previousCell(), willBeDestroyed.nextCell()))
+        downcast<RenderTableCell>(*nextCellToDestroy).deleteLines();
 }
 
-void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(RenderTableRow& row)
+void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(const RenderTableRow& willBeDestroyed)
 {
-    collapseAndDestroyAnonymousSiblings(row.section(), row.previousRow(), row.nextRow());
+    auto toDestroy = collapseAndDetachAnonymousNextSibling(willBeDestroyed.section(), willBeDestroyed.previousRow(), willBeDestroyed.nextRow());
 }
 
 }

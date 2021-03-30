@@ -1,3 +1,20 @@
+2021-03-30  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Anonymous table cell collapsing should also cleanup the inline tree
+        https://bugs.webkit.org/show_bug.cgi?id=223910
+
+        Reviewed by Antti Koivisto.
+
+        Let's delete the inline tree when the anonymous table cell is collapsed.
+        It's completely redundant at this point as the content is moved over to a previous sibling.
+
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::collapseAndDetachAnonymousNextSibling):
+        (WebCore::RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingCells):
+        (WebCore::RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows):
+        (WebCore::RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblings): Deleted.
+        * rendering/updating/RenderTreeBuilderTable.h:
+
 2021-03-30  Jean-Yves Avenard  <jya@apple.com>
 
         Now Playing content isn't updated when media session's Metadata is modified

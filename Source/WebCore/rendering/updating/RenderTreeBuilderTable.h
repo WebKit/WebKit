@@ -52,12 +52,12 @@ public:
 
     bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
 
-    void collapseAndDestroyAnonymousSiblingCells(RenderTableCell&);
-    void collapseAndDestroyAnonymousSiblingRows(RenderTableRow&);
+    void collapseAndDestroyAnonymousSiblingCells(const RenderTableCell& willBeDestroyed);
+    void collapseAndDestroyAnonymousSiblingRows(const RenderTableRow& willBeDestroyed);
 
 private:
     template <typename Parent, typename Child>
-    void collapseAndDestroyAnonymousSiblings(Parent*, Child* previousChild, Child* nextChild);
+    RenderPtr<RenderObject> collapseAndDetachAnonymousNextSibling(Parent*, Child* previousChild, Child* nextChild);
 
     RenderTreeBuilder& m_builder;
 };
