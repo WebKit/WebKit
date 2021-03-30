@@ -63,7 +63,7 @@ void RemoteImageDecoderAVFProxy::createDecoder(const IPC::DataReference& data, c
     completionHandler(WTFMove(imageDecoderIdentifier));
 }
 
-void RemoteImageDecoderAVFProxy::deleteDecoder(const ImageDecoderIdentifier& identifier)
+void RemoteImageDecoderAVFProxy::deleteDecoder(ImageDecoderIdentifier identifier)
 {
     ASSERT(m_imageDecoders.contains(identifier));
     if (!m_imageDecoders.contains(identifier))
@@ -72,7 +72,7 @@ void RemoteImageDecoderAVFProxy::deleteDecoder(const ImageDecoderIdentifier& ide
     m_imageDecoders.take(identifier);
 }
 
-void RemoteImageDecoderAVFProxy::encodedDataStatusChanged(const ImageDecoderIdentifier& identifier)
+void RemoteImageDecoderAVFProxy::encodedDataStatusChanged(ImageDecoderIdentifier identifier)
 {
     if (!m_connectionToWebProcess || !m_imageDecoders.contains(identifier))
         return;
@@ -81,7 +81,7 @@ void RemoteImageDecoderAVFProxy::encodedDataStatusChanged(const ImageDecoderIden
     m_connectionToWebProcess->connection().send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
 }
 
-void RemoteImageDecoderAVFProxy::setExpectedContentSize(const ImageDecoderIdentifier& identifier, long long expectedContentSize)
+void RemoteImageDecoderAVFProxy::setExpectedContentSize(ImageDecoderIdentifier identifier, long long expectedContentSize)
 {
     ASSERT(m_imageDecoders.contains(identifier));
     if (!m_imageDecoders.contains(identifier))
@@ -90,7 +90,7 @@ void RemoteImageDecoderAVFProxy::setExpectedContentSize(const ImageDecoderIdenti
     m_imageDecoders.get(identifier)->setExpectedContentSize(expectedContentSize);
 }
 
-void RemoteImageDecoderAVFProxy::setData(const ImageDecoderIdentifier& identifier, const IPC::DataReference& data, bool allDataReceived, CompletionHandler<void(size_t frameCount, const IntSize& size, bool hasTrack, Optional<Vector<ImageDecoder::FrameInfo>>&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, const IPC::DataReference& data, bool allDataReceived, CompletionHandler<void(size_t frameCount, const IntSize& size, bool hasTrack, Optional<Vector<ImageDecoder::FrameInfo>>&&)>&& completionHandler)
 {
     ASSERT(m_imageDecoders.contains(identifier));
     if (!m_imageDecoders.contains(identifier)) {
@@ -110,7 +110,7 @@ void RemoteImageDecoderAVFProxy::setData(const ImageDecoderIdentifier& identifie
     completionHandler(frameCount, imageDecoder->size(), imageDecoder->hasTrack(), WTFMove(frameInfos));
 }
 
-void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(const ImageDecoderIdentifier& identifier, size_t index, CompletionHandler<void(Optional<WTF::MachSendRight>&&, ColorSpaceData&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(Optional<WTF::MachSendRight>&&, ColorSpaceData&&)>&& completionHandler)
 {
     ASSERT(m_imageDecoders.contains(identifier));
     Optional<WTF::MachSendRight> sendRight;
@@ -132,6 +132,13 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(const ImageDecoderIdent
     }
 
     completionHandler(WTFMove(sendRight), WTFMove(colorSpaceData));
+}
+
+void RemoteImageDecoderAVFProxy::clearFrameBufferCache(ImageDecoderIdentifier identifier, size_t index)
+{
+    ASSERT(m_imageDecoders.contains(identifier));
+    if (auto* imageDecoder = m_imageDecoders.get(identifier))
+        imageDecoder->clearFrameBufferCache(std::min(index, imageDecoder->frameCount() - 1));
 }
 
 }

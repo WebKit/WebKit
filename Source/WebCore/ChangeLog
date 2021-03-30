@@ -1,3 +1,15 @@
+2021-03-30  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Add an IPC message to implement RemoteImageDecoderAVF::clearFrameBufferCache()
+        https://bugs.webkit.org/show_bug.cgi?id=223707
+
+        Reviewed by Youenn Fablet.
+
+        No change in observable functionality.
+
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.h:
+        Export method `clearFrameBufferCache()` so that we can call it from WebKit.
+
 2021-03-30  Antti Koivisto  <antti@apple.com>
 
         Nullptr crash in applyCommonButtonPaddingToStyle

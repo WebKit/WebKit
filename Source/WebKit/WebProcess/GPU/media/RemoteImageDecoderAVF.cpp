@@ -208,7 +208,7 @@ void RemoteImageDecoderAVF::setData(SharedBuffer& data, bool allDataReceived)
 
     IPC::SharedBufferDataReference dataReference { data };
 
-    uint32_t frameCount;
+    size_t frameCount;
     IntSize size;
     bool hasTrack;
     Optional<Vector<ImageDecoder::FrameInfo>> frameInfos;
@@ -225,9 +225,12 @@ void RemoteImageDecoderAVF::setData(SharedBuffer& data, bool allDataReceived)
         m_frameInfos.swap(*frameInfos);
 }
 
-void RemoteImageDecoderAVF::clearFrameBufferCache(size_t)
+void RemoteImageDecoderAVF::clearFrameBufferCache(size_t index)
 {
-    m_frameImages.clear();
+    for (size_t i = 0; i < std::min(index + 1, m_frameCount); ++i)
+        m_frameImages.remove(i);
+
+    m_gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::ClearFrameBufferCache(m_identifier, index), 0);
 }
 
 void RemoteImageDecoderAVF::encodedDataStatusChanged(size_t frameCount, const WebCore::IntSize& size, bool hasTrack)
