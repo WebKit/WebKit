@@ -1,3 +1,14 @@
+2021-03-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Ensure that GlobalPropertyInfo is allocated on the stack.
+        https://bugs.webkit.org/show_bug.cgi?id=223911
+
+        Unreviewed test gardening.
+
+        Rebaseline builtins generator tests after r275212.
+
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+
 2021-03-30  Mark Lam  <mark.lam@apple.com>
 
         Add more information to GC verifier verbose dumps.
