@@ -1,3 +1,12 @@
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Account for "cover" and "contain" when interpolating background-size
+        https://bugs.webkit.org/show_bug.cgi?id=223879
+
+        Reviewed by Antti Koivisto.
+
+        * animation/CSSPropertyAnimation.cpp:
+
 2021-03-30  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Timeouts on WPT css/css-images ref-tests after updating WPT import

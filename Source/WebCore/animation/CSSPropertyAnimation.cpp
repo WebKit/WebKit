@@ -1626,6 +1626,9 @@ private:
         auto* toLayer = &(to->*m_layersGetter)();
 
         while (fromLayer && toLayer) {
+            if (fromLayer->sizeType() != toLayer->sizeType())
+                return false;
+
             if (!m_fillLayerPropertyWrapper->canInterpolate(fromLayer, toLayer))
                 return false;
 
@@ -1643,6 +1646,7 @@ private:
         auto* dstLayer = &(destination->*m_layersAccessor)();
 
         while (fromLayer && toLayer && dstLayer) {
+            dstLayer->setSizeType((progress ? toLayer : fromLayer)->sizeType());
             m_fillLayerPropertyWrapper->blend(client, dstLayer, fromLayer, toLayer, progress);
             fromLayer = fromLayer->next();
             toLayer = toLayer->next();

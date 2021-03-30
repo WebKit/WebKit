@@ -1,3 +1,14 @@
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Account for "cover" and "contain" when interpolating background-size
+        https://bugs.webkit.org/show_bug.cgi?id=223879
+
+        Reviewed by Antti Koivisto.
+
+        Add 40 PASS results for the background-size interpolation test.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-size-interpolation-expected.txt:
+
 2021-03-29  Antoine Quint  <graouts@webkit.org>
 
         Enable "hanging" and "each-line" keywords for the text-indent CSS property
