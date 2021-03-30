@@ -1079,8 +1079,6 @@ enum class AutoRepeatType : uint8_t {
 // Reasonable maximum to prevent insane font sizes from causing crashes on some platforms (such as Windows).
 static const float maximumAllowedFontSize = 1000000.0f;
 
-#if ENABLE(CSS3_TEXT)
-
 enum class TextIndentLine : uint8_t {
     FirstLine,
     EachLine
@@ -1090,8 +1088,6 @@ enum class TextIndentType : uint8_t {
     Normal,
     Hanging
 };
-
-#endif
 
 enum class Isolation : uint8_t {
     Auto,

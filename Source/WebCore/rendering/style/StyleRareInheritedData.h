@@ -120,10 +120,8 @@ public:
     unsigned textEmphasisMark : 3; // TextEmphasisMark
     unsigned textEmphasisPosition : 4; // TextEmphasisPosition
     unsigned textOrientation : 2; // TextOrientation
-#if ENABLE(CSS3_TEXT)
     unsigned textIndentLine : 1; // TextIndentLine
     unsigned textIndentType : 1; // TextIndentType
-#endif
     unsigned lineBoxContain: 7; // OptionSet<LineBoxContain>
     // CSS Image Values Level 3
     unsigned imageOrientation : 1; // ImageOrientation

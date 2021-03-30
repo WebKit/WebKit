@@ -3234,22 +3234,16 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             }
             RELEASE_ASSERT_NOT_REACHED();
         case CSSPropertyTextIndent: {
-            // If CSS3_TEXT is disabled or text-indent has only one value(<length> | <percentage>),
-            // getPropertyCSSValue() returns CSSValue.
             auto textIndent = zoomAdjustedPixelValueForLength(style.textIndent(), style);
-#if ENABLE(CSS3_TEXT)
-            // If CSS3_TEXT is enabled and text-indent has -webkit-each-line or -webkit-hanging,
-            // getPropertyCSSValue() returns CSSValueList.
             if (style.textIndentLine() == TextIndentLine::EachLine || style.textIndentType() == TextIndentType::Hanging) {
                 auto list = CSSValueList::createSpaceSeparated();
                 list->append(WTFMove(textIndent));
-                if (style.textIndentLine() == TextIndentLine::EachLine)
-                    list->append(cssValuePool.createIdentifierValue(CSSValueEachLine));
                 if (style.textIndentType() == TextIndentType::Hanging)
                     list->append(cssValuePool.createIdentifierValue(CSSValueHanging));
+                if (style.textIndentLine() == TextIndentLine::EachLine)
+                    list->append(cssValuePool.createIdentifierValue(CSSValueEachLine));
                 return list;
             }
-#endif
             return textIndent;
         }
         case CSSPropertyTextShadow:

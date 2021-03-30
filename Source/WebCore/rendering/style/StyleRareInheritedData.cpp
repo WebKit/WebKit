@@ -101,10 +101,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textEmphasisMark(static_cast<unsigned>(TextEmphasisMark::None))
     , textEmphasisPosition(static_cast<unsigned>(RenderStyle::initialTextEmphasisPosition().toRaw()))
     , textOrientation(static_cast<unsigned>(TextOrientation::Mixed))
-#if ENABLE(CSS3_TEXT)
     , textIndentLine(static_cast<unsigned>(RenderStyle::initialTextIndentLine()))
     , textIndentType(static_cast<unsigned>(RenderStyle::initialTextIndentType()))
-#endif
     , lineBoxContain(static_cast<unsigned>(RenderStyle::initialLineBoxContain().toRaw()))
     , imageOrientation(RenderStyle::initialImageOrientation())
     , imageRendering(static_cast<unsigned>(RenderStyle::initialImageRendering()))
@@ -199,10 +197,8 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
     , textOrientation(o.textOrientation)
-#if ENABLE(CSS3_TEXT)
     , textIndentLine(o.textIndentLine)
     , textIndentType(o.textIndentType)
-#endif
     , lineBoxContain(o.lineBoxContain)
     , imageOrientation(o.imageOrientation)
     , imageRendering(o.imageRendering)
@@ -320,10 +316,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textEmphasisMark == o.textEmphasisMark
         && textEmphasisPosition == o.textEmphasisPosition
         && textOrientation == o.textOrientation
-#if ENABLE(CSS3_TEXT)
         && textIndentLine == o.textIndentLine
         && textIndentType == o.textIndentType
-#endif
         && lineBoxContain == o.lineBoxContain
 #if PLATFORM(IOS_FAMILY)
         && touchCalloutEnabled == o.touchCalloutEnabled

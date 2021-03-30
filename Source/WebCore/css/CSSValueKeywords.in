@@ -1356,11 +1356,9 @@ minmax
 auto-flow
 dense
 
-#if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
 // text-indent
 each-line
 // hanging
-#endif
 
 // -webkit-column-fill
 balance

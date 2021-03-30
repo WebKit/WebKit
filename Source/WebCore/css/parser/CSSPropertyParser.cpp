@@ -1170,44 +1170,41 @@ static RefPtr<CSSValueList> consumeSize(CSSParserTokenRange& range, CSSParserMod
 static RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     // [ <length> | <percentage> ] && hanging? && each-line?
-    // Keywords only allowed when css3Text is enabled.
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-
-    bool hasLengthOrPercentage = false;
-#if ENABLE(CSS3_TEXT)
-    bool hasEachLine = false;
-#endif
-    bool hasHanging = false;
+    RefPtr<CSSValue> lengthOrPercentage;
+    RefPtr<CSSPrimitiveValue> eachLine;
+    RefPtr<CSSPrimitiveValue> hanging;
 
     do {
-        if (!hasLengthOrPercentage) {
+        if (!lengthOrPercentage) {
             if (RefPtr<CSSValue> textIndent = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow)) {
-                list->append(*textIndent);
-                hasLengthOrPercentage = true;
+                lengthOrPercentage = textIndent;
                 continue;
             }
         }
 
         CSSValueID id = range.peek().id();
-#if ENABLE(CSS3_TEXT)
-        if (!hasEachLine && id == CSSValueEachLine) {
-            list->append(consumeIdent(range).releaseNonNull());
-            hasEachLine = true;
+        if (!eachLine && id == CSSValueEachLine) {
+            eachLine = consumeIdent(range);
             continue;
         }
-#endif
 
-        if (!hasHanging && id == CSSValueHanging) {
-            list->append(consumeIdent(range).releaseNonNull());
-            hasHanging = true;
+        if (!hanging && id == CSSValueHanging) {
+            hanging = consumeIdent(range);
             continue;
         }
 
         return nullptr;
     } while (!range.atEnd());
 
-    if (!hasLengthOrPercentage)
+    if (!lengthOrPercentage)
         return nullptr;
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    list->append(*lengthOrPercentage);
+    if (hanging)
+        list->append(hanging.releaseNonNull());
+    if (eachLine)
+        list->append(eachLine.releaseNonNull());
 
     return list;
 }

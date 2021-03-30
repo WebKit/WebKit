@@ -1,3 +1,18 @@
+2021-03-29  Antoine Quint  <graouts@webkit.org>
+
+        Enable "hanging" and "each-line" keywords for the text-indent CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223851
+
+        Reviewed by Antti Koivisto.
+
+        Mark all tests in the parsing-related tests as PASS results for text-indent.
+        The animation tests will be dealt with in bug 223914.
+
+        * web-platform-tests/css/css-text/animations/text-indent-composition-expected.txt:
+        * web-platform-tests/css/css-text/animations/text-indent-interpolation-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-indent-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-indent-valid-expected.txt:
+
 2021-03-28  Antoine Quint  <graouts@webkit.org>
 
         Add support for animating the vertical-align CSS property

@@ -1,3 +1,46 @@
+2021-03-29  Antoine Quint  <graouts@webkit.org>
+
+        Enable "hanging" and "each-line" keywords for the text-indent CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223851
+
+        Reviewed by Antti Koivisto.
+
+        We've had support for "hanging" and "each-line" behind the ENABLE_CSS3_TEXT flag. Probably by mistake,
+        "hanging" itself was parsed and Web-exposed by default. Presumably that was the case because that CSS
+        keyword existed in the context of SVG.
+
+        But LineWidth.cpp already knew how to handle these keywords, so there seems to be no reason to keep
+        these behind a flag.
+
+        So we remove all the ENABLE_CSS3_TEXT guards related to they keywords and address some spec compliance
+        issue, namely:
+        
+            1. add the text-indent length or percentage, the "hanging" and "each-line" keywords in that order
+               in consumeTextIndent(),
+            2. use that same order for the computed style.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTextIndent):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::initialConstraintsForLine const):
+        * rendering/line/LineWidth.cpp:
+        (WebCore::requiresIndent):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareInheritedDataChangeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInheritTextIndent):
+        (WebCore::Style::BuilderCustom::applyInitialTextIndent):
+        (WebCore::Style::BuilderCustom::applyValueTextIndent):
+
 2021-03-29  David Kilzer  <ddkilzer@apple.com>
 
         Remove unused struct WebCore::AlternativeTextController::AlternativeTextInfo

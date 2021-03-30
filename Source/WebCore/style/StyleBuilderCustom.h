@@ -466,48 +466,38 @@ inline void BuilderCustom::applyValueSize(BuilderState& builderState, CSSValue& 
 inline void BuilderCustom::applyInheritTextIndent(BuilderState& builderState)
 {
     builderState.style().setTextIndent(Length { builderState.parentStyle().textIndent() });
-#if ENABLE(CSS3_TEXT)
     builderState.style().setTextIndentLine(builderState.parentStyle().textIndentLine());
     builderState.style().setTextIndentType(builderState.parentStyle().textIndentType());
-#endif
 }
 
 inline void BuilderCustom::applyInitialTextIndent(BuilderState& builderState)
 {
     builderState.style().setTextIndent(RenderStyle::initialTextIndent());
-#if ENABLE(CSS3_TEXT)
     builderState.style().setTextIndentLine(RenderStyle::initialTextIndentLine());
     builderState.style().setTextIndentType(RenderStyle::initialTextIndentType());
-#endif
 }
 
 inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSValue& value)
 {
     Length lengthOrPercentageValue;
-#if ENABLE(CSS3_TEXT)
     TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
     TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
-#endif
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
         if (!primitiveValue.valueID())
             lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
-#if ENABLE(CSS3_TEXT)
         else if (primitiveValue.valueID() == CSSValueEachLine)
             textIndentLineValue = TextIndentLine::EachLine;
         else if (primitiveValue.valueID() == CSSValueHanging)
             textIndentTypeValue = TextIndentType::Hanging;
-#endif
     }
 
     if (lengthOrPercentageValue.isUndefined())
         return;
 
     builderState.style().setTextIndent(WTFMove(lengthOrPercentageValue));
-#if ENABLE(CSS3_TEXT)
     builderState.style().setTextIndentLine(textIndentLineValue);
     builderState.style().setTextIndentType(textIndentTypeValue);
-#endif
 }
 
 enum BorderImageType { BorderImage, WebkitMaskBoxImage };

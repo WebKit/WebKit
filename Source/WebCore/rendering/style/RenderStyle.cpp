@@ -749,8 +749,8 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
 #if ENABLE(CSS3_TEXT)
         || first.textAlignLast != second.textAlignLast
         || first.textJustify != second.textJustify
-        || first.textIndentLine != second.textIndentLine
 #endif
+        || first.textIndentLine != second.textIndentLine
         || first.effectiveZoom != second.effectiveZoom
         || first.textZoom != second.textZoom
 #if ENABLE(TEXT_AUTOSIZING)
