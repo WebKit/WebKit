@@ -44,7 +44,7 @@ public:
     virtual void pause(CompletionHandler<void(const WebCore::ExceptionData&)>&&) = 0;
     virtual void setTrack(const String&, CompletionHandler<void(const WebCore::ExceptionData&)>&&) = 0;
 
-    virtual void positionStateChanged(Optional<WebCore::MediaPositionState>) = 0;
+    virtual void positionStateChanged(const Optional<WebCore::MediaPositionState>&) = 0;
     virtual void readyStateChanged(WebCore::MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(WebCore::MediaSessionPlaybackState) = 0;
 

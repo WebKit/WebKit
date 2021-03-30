@@ -190,7 +190,7 @@ void MediaSessionCoordinator::setMediaSession(MediaSession* session)
         m_session->addObserver(*this);
 }
 
-void MediaSessionCoordinator::positionStateChanged(Optional<MediaPositionState> state)
+void MediaSessionCoordinator::positionStateChanged(const Optional<MediaPositionState>& state)
 {
     if (!state) {
         m_privateCoordinator->positionStateChanged({ });

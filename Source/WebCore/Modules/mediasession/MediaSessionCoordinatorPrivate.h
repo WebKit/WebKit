@@ -58,7 +58,7 @@ public:
     virtual void pause(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
     virtual void setTrack(const String&, CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
 
-    virtual void positionStateChanged(Optional<MediaPositionState>) = 0;
+    virtual void positionStateChanged(const Optional<MediaPositionState>&) = 0;
     virtual void readyStateChanged(MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(MediaSessionPlaybackState) = 0;
 

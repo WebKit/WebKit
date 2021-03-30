@@ -91,7 +91,7 @@ void MockMediaSessionCoordinator::setTrack(const String&, CompletionHandler<void
     });
 }
 
-void MockMediaSessionCoordinator::positionStateChanged(Optional<MediaPositionState>)
+void MockMediaSessionCoordinator::positionStateChanged(const Optional<MediaPositionState>&)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_stateChangeListener->scheduleCallback(m_context.get(), "positionStateChanged");

@@ -56,7 +56,9 @@
 
 #if ENABLE(MEDIA_SESSION)
 #include "MediaMetadata.h"
+#include "MediaPositionState.h"
 #include "MediaSession.h"
+#include "MediaSessionPlaybackState.h"
 #include "NavigatorMediaSession.h"
 #endif
 
@@ -114,6 +116,46 @@ static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& 
     return document.isMediaDocument() && !document.ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
 }
 
+#if ENABLE(MEDIA_SESSION)
+class MediaSessionObserver : public MediaSession::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    MediaSessionObserver(MediaElementSession& session, const Ref<MediaSession>& mediaSession)
+        : m_session(makeWeakPtr(session)), m_mediaSession(mediaSession)
+    {
+        m_mediaSession->addObserver(*this);
+    }
+    ~MediaSessionObserver()
+    {
+        m_mediaSession->removeObserver(*this);
+    }
+    void metadataChanged(const RefPtr<MediaMetadata>& metadata) final
+    {
+        if (m_session)
+            m_session->metadataChanged(metadata);
+    }
+    void positionStateChanged(const Optional<MediaPositionState>& state) final
+    {
+        if (m_session)
+            m_session->positionStateChanged(state);
+    }
+    void playbackStateChanged(MediaSessionPlaybackState state) final
+    {
+        if (m_session)
+            m_session->playbackStateChanged(state);
+    }
+    void actionHandlersChanged()
+    {
+        if (m_session)
+            m_session->actionHandlersChanged();
+    }
+private:
+    WeakPtr<MediaElementSession> m_session;
+    Ref<MediaSession> m_mediaSession;
+};
+#endif
+
 MediaElementSession::MediaElementSession(HTMLMediaElement& element)
     : PlatformMediaSession(PlatformMediaSessionManager::sharedManager(), element)
     , m_element(element)
@@ -161,6 +203,7 @@ void MediaElementSession::registerWithDocument(Document& document)
 #else
     UNUSED_PARAM(document);
 #endif
+    ensureIsObservingMediaSession();
 }
 
 void MediaElementSession::unregisterWithDocument(Document& document)
@@ -169,6 +212,9 @@ void MediaElementSession::unregisterWithDocument(Document& document)
     document.removePlaybackTargetPickerClient(*this);
 #else
     UNUSED_PARAM(document);
+#endif
+#if ENABLE(MEDIA_SESSION)
+    m_observer = nullptr;
 #endif
 }
 
@@ -1028,8 +1074,7 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 #if ENABLE(MEDIA_SESSION)
 void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandType commandType, const RemoteCommandArgument& argument)
 {
-    auto* window = m_element.document().domWindow();
-    auto* session = window ? &NavigatorMediaSession::mediaSession(window->navigator()) : nullptr;
+    auto* session = mediaSession();
     if (!session || !session->hasActiveActionHandlers()) {
         PlatformMediaSession::didReceiveRemoteControlCommand(commandType, argument);
         return;
@@ -1108,12 +1153,11 @@ Optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
         currentTime = MediaPlayer::invalidTime();
 
 #if ENABLE(MEDIA_SESSION)
-    auto* window = m_element.document().domWindow();
-    auto* sessionMetadata = window ? NavigatorMediaSession::mediaSession(window->navigator()).metadata() : nullptr;
+    auto* session = mediaSession();
+    auto* sessionMetadata = session ? session->metadata() : nullptr;
     if (sessionMetadata) {
         Optional<NowPlayingInfoArtwork> artwork;
         if (sessionMetadata->artworkImage()) {
-            // FIXME: Optimize so that we only send an image if it changes.
             artwork = NowPlayingInfoArtwork { sessionMetadata->artworkSrc(), sessionMetadata->artworkImage()->mimeType(), sessionMetadata->artworkImage()->data() };
         }
         return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), m_element.sourceApplicationIdentifier(), duration, currentTime, supportsSeeking, m_element.mediaSessionUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
@@ -1200,6 +1244,39 @@ String convertEnumerationToString(const MediaPlaybackDenialReason enumerationVal
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
+
+MediaSession* MediaElementSession::mediaSession() const
+{
+#if ENABLE(MEDIA_SESSION)
+    auto* window = m_element.document().domWindow();
+    if (!window)
+        return nullptr;
+    return &NavigatorMediaSession::mediaSession(window->navigator());
+#else
+    return nullptr;
+#endif
+}
+
+void MediaElementSession::ensureIsObservingMediaSession()
+{
+#if ENABLE(MEDIA_SESSION)
+    auto* session = mediaSession();
+    if (!session || m_observer)
+        return;
+    m_observer = makeUnique<MediaSessionObserver>(*this, *session);
+#endif
+}
+
+void MediaElementSession::metadataChanged(const RefPtr<MediaMetadata>&)
+{
+    clientCharacteristicsChanged();
+}
+
+void MediaElementSession::positionStateChanged(const Optional<MediaPositionState>&) { }
+
+void MediaElementSession::playbackStateChanged(MediaSessionPlaybackState) { }
+
+void MediaElementSession::actionHandlersChanged() { }
 
 }
 

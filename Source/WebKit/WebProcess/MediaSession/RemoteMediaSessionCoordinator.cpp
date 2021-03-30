@@ -133,7 +133,7 @@ void RemoteMediaSessionCoordinator::setTrack(const String& trackIdentifier, Comp
     }, 0);
 }
 
-void RemoteMediaSessionCoordinator::positionStateChanged(Optional<WebCore::MediaPositionState> state)
+void RemoteMediaSessionCoordinator::positionStateChanged(const Optional<WebCore::MediaPositionState>& state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::PositionStateChanged { state }, 0);

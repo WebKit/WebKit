@@ -59,7 +59,7 @@ private:
     explicit MediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
 
     // MediaSession::Observer
-    void positionStateChanged(Optional<MediaPositionState>) final;
+    void positionStateChanged(const Optional<MediaPositionState>&) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
     void readyStateChanged(MediaSessionReadyState) final;
 

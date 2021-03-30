@@ -65,7 +65,7 @@ private:
     void pause(CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
     void setTrack(const String&, CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
 
-    void positionStateChanged(Optional<WebCore::MediaPositionState>) final;
+    void positionStateChanged(const Optional<WebCore::MediaPositionState>&) final;
     void readyStateChanged(WebCore::MediaSessionReadyState) final;
     void playbackStateChanged(WebCore::MediaSessionPlaybackState) final;
 

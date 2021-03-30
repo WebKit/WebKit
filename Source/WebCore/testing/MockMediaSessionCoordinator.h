@@ -52,7 +52,7 @@ private:
     void pause(CompletionHandler<void(Optional<Exception>&&)>&&) final;
     void setTrack(const String&, CompletionHandler<void(Optional<Exception>&&)>&&) final;
 
-    void positionStateChanged(Optional<MediaPositionState>) final;
+    void positionStateChanged(const Optional<MediaPositionState>&) final;
     void readyStateChanged(MediaSessionReadyState) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
 

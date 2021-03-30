@@ -1,3 +1,40 @@
+2021-03-30  Jean-Yves Avenard  <jya@apple.com>
+
+        Now Playing content isn't updated when media session's Metadata is modified
+        https://bugs.webkit.org/show_bug.cgi?id=223795
+        <rdar://problem/75883478>
+
+        Reviewed by Eric Carlson.
+
+        Manually tested. Ensuring that immediately after modifying the MediaSession metadata, NowPlaying reflects the change.
+
+        * Modules/mediasession/MediaSession.h:
+        (WebCore::MediaSession::Observer::metadataChanged): Change method prototype to avoid unnecessary refcount.
+        (WebCore::MediaSession::Observer::positionStateChanged): Change method prototype to pass argument by reference rather than value (and easier forward declaration).
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::positionStateChanged):  Pass argument by reference rather than value.
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.h:
+        * html/MediaElementSession.cpp: Add MediaSessionObserver class, we use separate proxy to avoid multiple inheritance of CanMakeWeakPtr.
+        (WebCore::MediaSessionObserver::MediaSessionObserver):
+        (WebCore::MediaSessionObserver::~MediaSessionObserver):
+        (WebCore::MediaSessionObserver::actionHandlersChanged):
+        (WebCore::MediaElementSession::registerWithDocument): Add MediaElementSession as Media Session observer when it's added to the DOM.
+        (WebCore::MediaElementSession::unregisterWithDocument): Remove MediaElementSession as Media Session observer when it's removed from the DOM.
+        (WebCore::MediaElementSession::didReceiveRemoteControlCommand): Simplify with new mediaSession() helper.
+        (WebCore::MediaElementSession::nowPlayingInfo const): Simplify with new mediaSession() helper.
+        (WebCore::MediaElementSession::mediaSession const): Helper to retrieve associated mediaSession object.
+        (WebCore::MediaElementSession::ensureIsObservingMediaSession):
+        (WebCore::MediaElementSession::metadataChanged): Call clientCharacteristicsChanged which will trigger the PlatformMediaSessionManager to refresh the NowPlayingInfo content.
+        (WebCore::MediaElementSession::positionStateChanged): Method currently doing nothing. Preparing for future change.
+        (WebCore::MediaElementSession::playbackStateChanged): Method currently doing nothing. Preparing for future change.
+        (WebCore::MediaElementSession::actionHandlersChanged): Method currently doing nothing. Preparing for future change.
+        * html/MediaElementSession.h: Add methods.
+        * platform/cocoa/RemoteCommandListenerCocoa.h: Remove trailing whitespace.
+        * testing/MockMediaSessionCoordinator.cpp:
+        (WebCore::MockMediaSessionCoordinator::positionStateChanged): Update for new method prototyping.
+        * testing/MockMediaSessionCoordinator.h:
+
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
         Account for "cover" and "contain" when interpolating background-size

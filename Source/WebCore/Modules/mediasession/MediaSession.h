@@ -100,8 +100,8 @@ public:
     public:
         virtual ~Observer() = default;
 
-        virtual void metadataChanged(RefPtr<MediaMetadata>) { }
-        virtual void positionStateChanged(Optional<MediaPositionState>) { }
+        virtual void metadataChanged(const RefPtr<MediaMetadata>&) { }
+        virtual void positionStateChanged(const Optional<MediaPositionState>&) { }
         virtual void playbackStateChanged(MediaSessionPlaybackState) { }
         virtual void actionHandlersChanged() { }
 

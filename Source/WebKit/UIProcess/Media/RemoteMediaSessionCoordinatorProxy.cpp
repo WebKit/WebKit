@@ -102,7 +102,7 @@ void RemoteMediaSessionCoordinatorProxy::::coordinateSetTrack(const String& trac
     });
 }
 
-void RemoteMediaSessionCoordinatorProxy::positionStateChanged(Optional<WebCore::MediaPositionState> state)
+void RemoteMediaSessionCoordinatorProxy::positionStateChanged(const Optional<WebCore::MediaPositionState>& state)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_privateCoordinator->positionStateChanged(state);
