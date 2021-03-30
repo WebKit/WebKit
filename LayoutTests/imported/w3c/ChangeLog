@@ -1,5 +1,17 @@
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
+        [CSS Backgrounds] WPT test css/css-backgrounds/animations/border-image-width-interpolation.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=206578
+
+        Reviewed by Dean Jackson.
+
+        Update the test output, the remaining failures are due to issues with calc() serialization (see
+        https://bugs.webkit.org/show_bug.cgi?id=223875).
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
         Account for "cover" and "contain" when interpolating background-size
         https://bugs.webkit.org/show_bug.cgi?id=223879
 
