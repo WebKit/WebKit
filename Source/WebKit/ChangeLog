@@ -1,3 +1,13 @@
+2021-03-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Allow WebAuthn process talk to the ASD
+        https://bugs.webkit.org/show_bug.cgi?id=223947
+        <rdar://75908828>
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+
 2021-03-30  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r275172): Many com.apple.WebKit.Networking.Development crashes appearing in "other crashes"
