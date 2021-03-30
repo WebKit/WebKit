@@ -1,5 +1,15 @@
 2021-03-30  Robert Jenner  <jenner@apple.com>
 
+        [ Mac wk2 and iOS wk2 ] webrtc/libwebrtc/descriptionGetters.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=214084
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: removed release tag, as it is occurring outside of release.
+        * platform/mac-wk2/TestExpectations: removed release tag, as it is occurring outside of release.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
         [ macOS iOS ] crypto/crypto-random-values-oom.html is a flakey timeout
         https://bugs.webkit.org/show_bug.cgi?id=223949
 
