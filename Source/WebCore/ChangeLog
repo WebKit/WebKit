@@ -1,3 +1,25 @@
+2021-03-30  Frédéric Wang  <fwang@igalia.com>
+
+        Release assert in compareAnimationsByCompositeOrder
+        https://bugs.webkit.org/show_bug.cgi?id=223368
+
+        Reviewed by Antoine Quint.
+
+        AnimationTimeline::cancelDeclarativeAnimationsForStyleable currently only calls cancel() on
+        the declarative animation, which means the owning element is still associated to the
+        animation and that one continues to be accessible via Element's getAnimations(). When members
+        like pause() are called on that animation, one can obtain inconsistent state for
+        KeyframeEffectStack, leading to a debug ASSERT(!cssAnimationList->isEmpty()); and a
+        RELEASE_ASSERT_NOT_REACHED() in compareCSSAnimations(). This patch forces the owning element
+        to be clear during cancelDeclarativeAnimationsForStyleable in order to address these issues.
+        More code refactoring and cleanup should be done in follow-up patches, though.
+
+        Test: animations/animation-remove-element-crash.html
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForStyleable): Use cancelFromStyle()
+        so that the owning element is also cleared.
+
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
         CSS properties backed by StyleImage should not interpolate when one of the values is "none"

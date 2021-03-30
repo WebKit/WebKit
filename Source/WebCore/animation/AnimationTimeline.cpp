@@ -170,14 +170,14 @@ void AnimationTimeline::willChangeRendererForStyleable(const Styleable& styleabl
     }
 }
 
-void AnimationTimeline::cancelDeclarativeAnimationsForStyleable(const Styleable& styleable, WebAnimation::Silently silently)
+void AnimationTimeline::cancelDeclarativeAnimationsForStyleable(const Styleable& styleable, WebAnimation::Silently)
 {
     if (auto* animations = styleable.animations()) {
         for (auto& animation : *animations) {
             if (is<DeclarativeAnimation>(animation)) {
                 if (is<CSSAnimation>(animation))
                     removeCSSAnimationCreatedByMarkup(styleable, downcast<CSSAnimation>(*animation));
-                animation->cancel(silently);
+                downcast<DeclarativeAnimation>(*animation).cancelFromStyle();
             }
         }
     }

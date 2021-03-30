@@ -1,3 +1,15 @@
+2021-03-30  Frédéric Wang  <fwang@igalia.com>
+
+        Release assert in compareAnimationsByCompositeOrder
+        https://bugs.webkit.org/show_bug.cgi?id=223368
+
+        Reviewed by Antoine Quint.
+
+        Add regression test.
+
+        * animations/animation-remove-element-crash-expected.txt: Added.
+        * animations/animation-remove-element-crash.html: Added.
+
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
         [CSS Backgrounds] WPT test css/css-backgrounds/animations/border-image-width-interpolation.html asserts
