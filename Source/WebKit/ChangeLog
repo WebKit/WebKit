@@ -1,3 +1,17 @@
+2021-03-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Reduce logging for uninteresting sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=223943
+        <rdar://problem/76014115>
+
+        Reviewed by Per Arne Vollan.
+
+        Testing has shown some IOKit properties needed by the macOS Network Process, and a handful of items needed when running in recovery mode. We should
+        allow these items to support proper function and to reduce telemetry for items that we don't need to learn more about.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Address post-commit comments on r275180

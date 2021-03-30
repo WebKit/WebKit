@@ -827,7 +827,9 @@
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
 (allow file-read*
+    (literal "/Library/Preferences/.GlobalPreferences.plist")
     (home-subpath "/Library/Preferences/.GlobalPreferences.plist")
+    (home-subpath "/Library/Preferences/.GlobalPreferences_m.plist")
     (home-subpath "/Library/Preferences/com.apple.security.plist")
     (home-subpath "/Library/Preferences/com.apple.Accessibility.plist")
     (home-subpath "/Library/Preferences/com.apple.ATS.plist")
