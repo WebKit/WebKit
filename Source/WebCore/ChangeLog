@@ -1,3 +1,20 @@
+2021-03-30  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Elements that overflow inline-blocks are not hit tested correctly
+        https://bugs.webkit.org/show_bug.cgi?id=223932
+        rdar://75888718
+
+        Reviewed by Zalan Bujtas.
+        
+        If an inline block has overflowing children (for example due to negative margin) we may fail to hit test them.
+
+        Test: fast/inline-block/hit-test-negative-margin-child.html
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+        
+        Always descend into inline blocks even if their run didn't hit.
+
 2021-03-30  Mark Lam  <mark.lam@apple.com>
 
         Ensure that GlobalPropertyInfo is allocated on the stack.
