@@ -1,5 +1,18 @@
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
+        CSS properties backed by StyleImage should not interpolate when one of the values is "none"
+        https://bugs.webkit.org/show_bug.cgi?id=223929
+
+        Reviewed by Dean Jackson.
+
+        Mark 76 new PASS results.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-image-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-source-interpolation-expected.txt:
+        * web-platform-tests/css/css-lists/animations/list-style-image-interpolation-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
         Account for "hanging" and "each-line" when blending text-interpolation
         https://bugs.webkit.org/show_bug.cgi?id=223914
 

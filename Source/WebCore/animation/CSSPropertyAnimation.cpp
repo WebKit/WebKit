@@ -449,14 +449,19 @@ static inline RefPtr<StyleImage> crossfadeBlend(const CSSPropertyBlendingClient*
 
 static inline RefPtr<StyleImage> blendFunc(const CSSPropertyBlendingClient* client, StyleImage* from, StyleImage* to, double progress)
 {
-    if (!from || !to)
+    if (!progress)
+        return from;
+
+    if (progress == 1.0)
         return to;
+
+    ASSERT(from && to);
 
     from = from->selectedImage();
     to = to->selectedImage();
 
     if (!from || !to)
-        return to;    
+        return to;
 
     // Animation between two generated images. Cross fade for all other cases.
     if (is<StyleGeneratedImage>(*from) && is<StyleGeneratedImage>(*to)) {
@@ -982,6 +987,11 @@ private:
         auto* imageA = value(a);
         auto* imageB = value(b);
         return arePointingToEqualData(imageA, imageB);
+    }
+
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    {
+        return value(from) && value(to);
     }
 };
 
@@ -1555,6 +1565,11 @@ private:
         if (!a || !b)
             return false;
         return arePointingToEqualData(value(a), value(b));
+    }
+
+    bool canInterpolate(const FillLayer* from, const FillLayer* to) const final
+    {
+        return value(from) && value(to);
     }
 
 #if !LOG_DISABLED
