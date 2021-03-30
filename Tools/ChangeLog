@@ -1,3 +1,14 @@
+2021-03-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Return new-style commits (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=223262
+        <rdar://problem/75483361>
+
+        Unreviewed follow-up fix.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_controller.py:
+        (CommitController.register): Allow branch in commit uploads.
+
 2021-03-30  Jessie Berlin  <jberlin@webkit.org>
 
         Reinstate my committer status.

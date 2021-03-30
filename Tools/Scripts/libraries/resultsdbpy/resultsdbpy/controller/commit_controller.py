@@ -308,9 +308,9 @@ class CommitController(HasCommitContext):
 
 
         for arg in commit.keys():
-            if arg in required_args or arg in one_of_args:
+            if arg in required_args or arg in one_of_args or arg in ['branch']:
                 continue
-            if arg in ['branch', 'timestamp', 'order', 'committer', 'message']:
+            if arg in ['timestamp', 'order', 'committer', 'message']:
                 abort(400, description='Not enough arguments provided to define a commit, but too many to search for a commit')
             abort(400, description=f"'{arg}' is not valid for defining commits")
 
