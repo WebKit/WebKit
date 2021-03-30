@@ -46,6 +46,8 @@ int terminate_with_reason(int pid, uint32_t reasonNamespace, uint64_t reasonCode
 }
 #endif
 
+#define OS_REASON_FLAG_NO_CRASH_REPORT 0x1
+
 #define OS_REASON_WEBKIT 31
 
 #endif

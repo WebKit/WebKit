@@ -1,3 +1,19 @@
+2021-03-30  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r275172): Many com.apple.WebKit.Networking.Development crashes appearing in "other crashes"
+        https://bugs.webkit.org/show_bug.cgi?id=223952
+
+        Reviewed by Geoffrey Garen.
+
+        Use OS_REASON_FLAG_NO_CRASH_REPORT to prevent crash reports.  xpc_connection_kill didn't generate crash reports.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+        (IPC::Connection::kill):
+        * Platform/spi/Cocoa/ReasonSPI.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::platformInvalidate):
+
 2021-03-30  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Reduce logging for uninteresting sandbox violations
