@@ -1,5 +1,15 @@
 2021-03-30  Mark Lam  <mark.lam@apple.com>
 
+        Add more information to GC verifier verbose dumps.
+        https://bugs.webkit.org/show_bug.cgi?id=223951
+
+        Reviewed by Yusuke Suzuki.
+
+        * heap/VerifierSlotVisitor.cpp:
+        (JSC::VerifierSlotVisitor::dumpMarkerData):
+
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
         Ensure that GlobalPropertyInfo is allocated on the stack.
         https://bugs.webkit.org/show_bug.cgi?id=223911
         rdar://75865742
