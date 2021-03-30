@@ -1,3 +1,35 @@
+2021-03-30  Peng Liu  <peng.liu6@apple.com>
+
+        Rename MediaElementSession::playbackPermitted() to MediaElementSession::playbackStateChangePermitted()
+        https://bugs.webkit.org/show_bug.cgi?id=220939
+
+        Reviewed by Youenn Fablet.
+
+        A follow-up patch of r271870 to rename function `playbackPermitted()` and
+        the enum class `MediaPlaybackOperation`.
+
+        No new tests as there is no change in functionality.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::userGestureRequired const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay const):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::updateShouldPlay):
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackStateChangePermitted const):
+        (WebCore::MediaElementSession::canShowControlsManager const):
+        (WebCore::MediaElementSession::updateMediaUsageIfChanged):
+        (WebCore::MediaElementSession::playbackPermitted const): Deleted.
+        * html/MediaElementSession.h:
+
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
         Account for "hanging" and "each-line" when blending text-interpolation

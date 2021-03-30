@@ -326,8 +326,9 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     m_restrictions &= ~restriction;
 }
 
-SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(MediaPlaybackOperation operation) const
+SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "state = ", state);
     if (m_element.isSuspended()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is suspended");
         return MediaPlaybackDenialReason::InvalidState;
@@ -367,7 +368,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(Medi
     const auto& topDocument = document.topDocument();
     if (topDocument.quirks().requiresUserGestureToPauseInPictureInPicture()
         && m_element.fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture
-        && !m_element.paused() && operation == MediaPlaybackOperation::Pause
+        && !m_element.paused() && state == MediaPlaybackState::Paused
         && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a quirk requires a user gesture to pause while in Picture-in-Picture");
         return MediaPlaybackDenialReason::UserGestureRequired;
@@ -549,7 +550,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return false;
     }
 
-    if (!playbackPermitted()) {
+    if (!playbackStateChangePermitted(MediaPlaybackState::Playing)) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE: playback not permitted");
         return false;
     }
@@ -1202,7 +1203,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
         isAudio && hasBehaviorRestriction(RequireUserGestureToControlControlsManager) && !processingUserGesture,
         m_element.hasAudio() && isPlaying && allowsPlaybackControlsForAutoplayingAudio(), // userHasPlayedAudioBefore
         isElementRectMostlyInMainFrame(m_element),
-        !!playbackPermitted(),
+        !!playbackStateChangePermitted(MediaPlaybackState::Playing),
         page->mediaPlaybackIsSuspended(),
         document.isMediaDocument() && !document.ownerElement(),
         pageExplicitlyAllowsElementToAutoplayInline(m_element),

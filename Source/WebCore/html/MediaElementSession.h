@@ -47,9 +47,9 @@ enum class MediaSessionMainContentPurpose {
     Autoplay
 };
 
-enum class MediaPlaybackOperation {
-    All,
-    Pause
+enum class MediaPlaybackState {
+    Playing,
+    Paused
 };
 
 enum class MediaPlaybackDenialReason {
@@ -86,8 +86,7 @@ public:
     void isVisibleInViewportChanged();
     void inActiveDocumentChanged();
 
-    // FIXME: <http://webkit.org/b/220939>
-    SuccessOr<MediaPlaybackDenialReason> playbackPermitted(MediaPlaybackOperation = MediaPlaybackOperation::All) const;
+    SuccessOr<MediaPlaybackDenialReason> playbackStateChangePermitted(MediaPlaybackState) const;
     bool autoplayPermitted() const;
     bool dataLoadingPermitted() const;
     MediaPlayer::BufferingPolicy preferredBufferingPolicy() const;

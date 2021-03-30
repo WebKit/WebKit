@@ -2300,7 +2300,7 @@ SuccessOr<MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplay
         return MediaPlaybackDenialReason::PageConsentRequired;
     }
 
-    auto permitted = mediaSession().playbackPermitted();
+    auto permitted = mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
 #if !RELEASE_LOG_DISABLED
     if (!permitted)
         ALWAYS_LOG(LOGIDENTIFIER, permitted.value());
@@ -2434,7 +2434,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
     // If we transition to the Future Data state and we're about to begin playing, ensure playback is actually permitted first,
     // honoring any playback denial reasons such as the requirement of a user gesture.
-    if (m_readyState == HAVE_FUTURE_DATA && oldState < HAVE_FUTURE_DATA && potentiallyPlaying() && !m_mediaSession->playbackPermitted()) {
+    if (m_readyState == HAVE_FUTURE_DATA && oldState < HAVE_FUTURE_DATA && potentiallyPlaying() && !m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing)) {
         auto canTransition = canTransitionFromAutoplayToPlay();
         if (canTransition && canTransition.value() == MediaPlaybackDenialReason::UserGestureRequired)
             ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
@@ -3423,7 +3423,7 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto success = m_mediaSession->playbackPermitted();
+    auto success = m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing);
     if (!success) {
         if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
             setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
@@ -3449,7 +3449,7 @@ void HTMLMediaElement::play()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto success = m_mediaSession->playbackPermitted();
+    auto success = m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing);
     if (!success) {
         ERROR_LOG(LOGIDENTIFIER, "playback not permitted: ", success.value());
         if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
@@ -3530,7 +3530,7 @@ void HTMLMediaElement::pause()
     if (m_waitingToEnterFullscreen)
         m_waitingToEnterFullscreen = false;
 
-    if (!m_mediaSession->playbackPermitted(MediaPlaybackOperation::Pause))
+    if (!m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Paused))
         return;
 
     if (processingUserGestureForMedia())
@@ -3562,7 +3562,7 @@ void HTMLMediaElement::pauseInternal()
     if (!m_player || m_networkState == NETWORK_EMPTY) {
         // Unless the restriction on media requiring user action has been lifted
         // don't trigger loading if a script calls pause().
-        if (!m_mediaSession->playbackPermitted())
+        if (!m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing))
             return;
         selectMediaResource();
     }
@@ -3651,7 +3651,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     updateVolume();
     scheduleEvent(eventNames().volumechangeEvent);
 
-    if (isPlaying() && !m_mediaSession->playbackPermitted()) {
+    if (isPlaying() && !m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing)) {
         scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
@@ -3919,7 +3919,7 @@ double HTMLMediaElement::percentLoaded() const
 
 void HTMLMediaElement::mediaPlayerDidAddAudioTrack(AudioTrackPrivate& track)
 {
-    if (isPlaying() && !m_mediaSession->playbackPermitted()) {
+    if (isPlaying() && !m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing)) {
         scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
@@ -5092,7 +5092,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged()
 
     updateRenderer();
 
-    if (!paused() && !m_mediaSession->playbackPermitted()) {
+    if (!paused() && !m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing)) {
         scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
@@ -7867,7 +7867,7 @@ void HTMLMediaElement::updateShouldAutoplay()
 
 void HTMLMediaElement::updateShouldPlay()
 {
-    if (!paused() && !m_mediaSession->playbackPermitted()) {
+    if (!paused() && !m_mediaSession->playbackStateChangePermitted(MediaPlaybackState::Playing)) {
         scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);

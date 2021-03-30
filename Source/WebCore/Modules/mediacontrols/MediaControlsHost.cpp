@@ -265,7 +265,7 @@ bool MediaControlsHost::isInMediaDocument() const
 
 bool MediaControlsHost::userGestureRequired() const
 {
-    return m_mediaElement && !m_mediaElement->mediaSession().playbackPermitted();
+    return m_mediaElement && !m_mediaElement->mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
 }
 
 bool MediaControlsHost::shouldForceControlsDisplay() const
