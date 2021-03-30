@@ -11,11 +11,11 @@ function loadLinkWithPing() {
     var iframe = document.getElementById("link_frame");
     var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
     iframeDoc.write('' +
-        '<img src="resources/delete-ping.php?test=contentextensions-block-ping-resource-type-ping" ' +
+        '<img src="resources/delete-ping.py?test=contentextensions-block-ping-resource-type-ping" ' +
             'onerror="parent.clickOnLinkWithPing();">' +
         '<a id="a" ' +
             'href="resources/check-ping.html" ' + // check-ping.html calls showPingResult()
-            'ping="resources/save-ping.php?test=contentextensions-block-ping-resource-type-ping"> ' +
+            'ping="resources/save-ping.py?test=contentextensions-block-ping-resource-type-ping"> ' +
             'Link with ping' +
         '</a>'
         
@@ -38,14 +38,14 @@ function clickOnLinkWithPing() {
 function showPingResult() {
     var iframe = document.getElementById("result_frame");
     iframe.onload = function() {
-        fetch("resources/save-ping.php?test=contentextensions-block-ping-resource-type-ping").then(()=>{
-            fetch("resources/delete-ping.php?test=contentextensions-block-ping-resource-type-ping").then(()=>{
+        fetch("resources/save-ping.py?test=contentextensions-block-ping-resource-type-ping").then(()=>{
+            fetch("resources/delete-ping.py?test=contentextensions-block-ping-resource-type-ping").then(()=>{
                 alert("PASS: successfully loaded ping url with fetch");
                 if (window.testRunner) { testRunner.notifyDone(); }
             })
         }).catch(error => { alert("FAIL:" + error); if (window.testRunner) { testRunner.notifyDone(); } });
     }
-    iframe.src = "resources/get-ping-data.php?test=contentextensions-block-ping-resource-type-ping&timeout_ms=1000";
+    iframe.src = "resources/get-ping-data.py?test=contentextensions-block-ping-resource-type-ping&timeout_ms=1000";
     // Why timeout_ms=1000:
     // To pass the test, the ping shouldn't arrive, so we need to
     // timeout at some point. We don't have to wait too long because

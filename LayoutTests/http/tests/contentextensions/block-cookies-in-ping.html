@@ -11,11 +11,11 @@ function loadLinkWithPing() {
     var iframe = document.getElementById("link_frame");
     var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
     iframeDoc.write('' +
-        '<img src="resources/delete-ping.php?test=contentextensions-block-cookies-in-ping" ' + 
+        '<img src="resources/delete-ping.py?test=contentextensions-block-cookies-in-ping" ' + 
             'onerror="parent.clickOnLinkWithPing();">' +
         '<a id="a" ' +
             'href="resources/check-ping.html" ' + // check-ping.html calls showPingResult()
-            'ping="resources/save-ping.php?test=contentextensions-block-cookies-in-ping"> ' +
+            'ping="resources/save-ping.py?test=contentextensions-block-cookies-in-ping"> ' +
             'Link with ping' +
         '</a>'
         
@@ -40,7 +40,7 @@ function showPingResult() {
     iframe.onload = function() {
         if (window.testRunner) { testRunner.notifyDone() }
     }
-    iframe.src = "resources/get-ping-data.php?test=contentextensions-block-cookies-in-ping";
+    iframe.src = "resources/get-ping-data.py?test=contentextensions-block-cookies-in-ping";
 }
 </script>
 </head>

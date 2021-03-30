@@ -1,7 +1,13 @@
-<?php
-    header("Content-Security-Policy: img-src 'self'; report-uri http://localhost:8000/contentextensions/resources/save-ping.php?test=contentextensions-hide-on-csp-report");
-?>
-<head>
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Content-Security-Policy: img-src \'self\'; report-uri http://localhost:8000/contentextensions/resources/save-ping.py?test=contentextensions-hide-on-csp-report\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<head>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
@@ -22,7 +28,7 @@ function showPingResult() {
     iframe.onload = function() {
         if (window.testRunner) { testRunner.notifyDone(); }
     }
-    iframe.src = "resources/get-ping-data.php?test=contentextensions-hide-on-csp-report";
+    iframe.src = "resources/get-ping-data.py?test=contentextensions-hide-on-csp-report";
 }
 </script>
 </head>
@@ -31,7 +37,6 @@ function showPingResult() {
 This test creates a CSP violation report, but the report URL matches a 'css-display-none' rule.
 <p class="foo">This text should be hidden once the report is sent.</p>
 <p class="bar">This text should remain visible.</p>
-<img src="resources/delete-ping.php?test=contentextensions-hide-on-csp-report" onerror="loadCrossDomainImage();">
+<img src="resources/delete-ping.py?test=contentextensions-hide-on-csp-report" onerror="loadCrossDomainImage();">
 <iframe id="result_frame" name="result_frame"><!-- Will contain ping data received by server --></iframe>
-</body>
-
+</body>''')

@@ -23,7 +23,7 @@ function showPingResult() {
     iframe.onload = function() {
         if (window.testRunner) { testRunner.notifyDone(); }
     }
-    iframe.src = "resources/get-ping-data.php?test=contentextensions-hide-on-ping";
+    iframe.src = "resources/get-ping-data.py?test=contentextensions-hide-on-ping";
 }
 </script>
 </head>
@@ -33,8 +33,8 @@ This test follows a link with a ping attribute where the ping URL matches a 'css
 <div class="foo">This text should be hidden once the ping is sent.</div>
 <div class="bar">This text should remain visible.</div>
 <div>
-<img src="resources/delete-ping.php?test=contentextensions-hide-on-ping" onerror="clickOnLinkWithPing();">
-<a id="a" href="#a" ping="resources/save-ping.php?test=contentextensions-hide-on-ping" onclick="showPingResult();">Link with ping</a>
+<img src="resources/delete-ping.py?test=contentextensions-hide-on-ping" onerror="clickOnLinkWithPing();">
+<a id="a" href="#a" ping="resources/save-ping.py?test=contentextensions-hide-on-ping" onclick="showPingResult();">Link with ping</a>
 </div>
 <iframe id="result_frame" name="result_frame"><!-- Will contain ping data received by server --></iframe>
 </body>

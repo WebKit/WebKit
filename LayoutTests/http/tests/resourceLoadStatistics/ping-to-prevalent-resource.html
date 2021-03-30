@@ -7,7 +7,7 @@
 </head>
 <body>
 <div id="description">Tests that cookie blocking is applied to ping loads.</div>
-<a id="targetLink" href="#" ping="http://localhost:8000/contentextensions/resources/save-ping.php?test=ping-to-prevalent-resource">The link</a>
+<a id="targetLink" href="#" ping="http://localhost:8000/contentextensions/resources/save-ping.py?test=ping-to-prevalent-resource">The link</a>
 <script>
     if (testRunner)
         testRunner.waitUntilDone();
@@ -70,10 +70,10 @@
             case "#step5":
                 // Click the link to trigger the ping.
                 activateElement("targetLink", function() {
-                    openIframe(thirdPartyOrigin + "/contentextensions/resources/get-ping-data.php?test=ping-to-prevalent-resource", function() {
+                    openIframe(thirdPartyOrigin + "/contentextensions/resources/get-ping-data.py?test=ping-to-prevalent-resource", function() {
                         document.body.removeChild(document.getElementById("targetLink"));
                         setEnableFeature(false, function() {
-                            fetch("/contentextensions/resources/delete-ping.php?test=ping-to-prevalent-resource").then(()=>{ testRunner.notifyDone(); });
+                            fetch("/contentextensions/resources/delete-ping.py?test=ping-to-prevalent-resource").then(()=>{ testRunner.notifyDone(); });
                         });
                     });
                 });

@@ -17,7 +17,7 @@ if (!window.internals)
 
 async function doTest(shouldFail)
 {
-    const result = await fetch("resources/subresource-redirect.php", { mode : "no-cors" }).then(() => {
+    const result = await fetch("resources/subresource-redirect.py", { mode : "no-cors" }).then(() => {
         return !shouldFail;
     }, () => {
         return shouldFail;

@@ -16,4 +16,4 @@ sys.stdout.write(
 if conversion_data is not None and priority is not None:
     sys.stdout.write('Location: https://127.0.0.1:8000/.well-known/private-click-measurement/trigger-attribution/{}/{}\r\n\r\n'.format(conversion_data, priority))
 elif conversion_data is not None:
-    sys.stodut.write('Location: https://127.0.0.1:8000/.well-known/private-click-measurement/trigger-attribution/{}\r\n\r\n'.format(conversion_data))
+    sys.stdout.write('Location: https://127.0.0.1:8000/.well-known/private-click-measurement/trigger-attribution/{}\r\n\r\n'.format(conversion_data))

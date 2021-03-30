@@ -1,7 +1,13 @@
-<?php
-    header("Content-Security-Policy: img-src 'self'; report-uri /contentextensions/resources/save-ping.php?test=contentextensions-block-cookies-in-csp-report");
-?>
-<head>
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Content-Security-Policy: img-src \'self\'; report-uri /contentextensions/resources/save-ping.py?test=contentextensions-block-cookies-in-csp-report\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<head>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
@@ -11,7 +17,7 @@ if (window.testRunner) {
 
 function deletePing() {
     var deletePingContainer = document.getElementById("delete_ping_container");
-    deletePingContainer.innerHTML = '<img src="resources/delete-ping.php?test=contentextensions-block-cookies-in-csp-report" onerror="loadCrossDomainImage();">';
+    deletePingContainer.innerHTML = '<img src="resources/delete-ping.py?test=contentextensions-block-cookies-in-csp-report" onerror="loadCrossDomainImage();">';
 }
 
 function loadCrossDomainImage() {
@@ -27,7 +33,7 @@ function showPingResult() {
     iframe.onload = function() {
         if (window.testRunner) { testRunner.notifyDone(); }
     }
-    iframe.src = "resources/get-ping-data.php?test=contentextensions-block-cookies-in-csp-report";
+    iframe.src = "resources/get-ping-data.py?test=contentextensions-block-cookies-in-csp-report";
 }
 </script>
 </head>
@@ -38,5 +44,4 @@ This test creates a CSP violation report, but the report URL matches a 'block-co
     onerror="deletePing();">
 <div id="delete_ping_container"></div>
 <iframe id="result_frame" name="result_frame"><!-- Will contain ping data received by server --></iframe>
-</body>
-
+</body>''')
