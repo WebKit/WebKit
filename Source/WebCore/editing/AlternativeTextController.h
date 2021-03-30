@@ -106,14 +106,6 @@ private:
 #if USE(AUTOCORRECTION_PANEL)
     using AutocorrectionReplacement = String;
 
-    struct AlternativeTextInfo {
-        SimpleRange rangeWithAlternative;
-        bool isActive;
-        AlternativeTextType type;
-        String originalText;
-        Variant<AutocorrectionReplacement, DictationContext> details;
-    };
-
     String dismissSoon(ReasonForDismissingAlternativeText);
     void timerFired();
     void recordSpellcheckerResponseForModifiedCorrection(const SimpleRange& rangeOfCorrection, const String& corrected, const String& correction);

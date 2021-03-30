@@ -1,3 +1,13 @@
+2021-03-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove unused struct WebCore::AlternativeTextController::AlternativeTextInfo
+        <https://webkit.org/b/223902>
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/AlternativeTextController.h:
+        - Remove unused struct definition.
+
 2021-03-29  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r274992): Nullptr crash in FontCache::retrieveOrAddCachedFonts
