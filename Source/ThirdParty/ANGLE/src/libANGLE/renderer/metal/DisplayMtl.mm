@@ -826,6 +826,11 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                             supportsEitherGPUFamily(3, 1));
 
+    ANGLE_FEATURE_CONDITION((&mFeatures), allowRuntimeSamplerCompareMode,
+                                supportsEitherGPUFamily(3, 1));
+    ANGLE_FEATURE_CONDITION((&mFeatures), allowSamplerCompareGradient, supportsEitherGPUFamily(3,1));
+    ANGLE_FEATURE_CONDITION((&mFeatures), allowSamplerCompareLod, supportsEitherGPUFamily(3,1));
+
     // http://anglebug.com/4919
     // Stencil blit shader is not compiled on Intel & NVIDIA, need investigation.
     ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilOutput,
