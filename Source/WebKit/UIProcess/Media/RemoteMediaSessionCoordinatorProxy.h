@@ -54,6 +54,9 @@ public:
     void pause();
     void setTrack(const String&);
 
+    using MediaSessionCoordinatorClient::weakPtrFactory;
+    using WeakValueType = MediaSessionCoordinatorClient::WeakValueType;
+
 private:
     explicit RemoteMediaSessionCoordinatorProxy(WebPageProxy&, Ref<MediaSessionCoordinatorPrivateProxy>&&);
 
