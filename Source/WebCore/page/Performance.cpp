@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "PerformanceEntry.h"
@@ -57,19 +58,16 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Performance);
 
 Performance::Performance(ScriptExecutionContext* context, MonotonicTime timeOrigin)
     : ContextDestructionObserver(context)
-    , m_resourceTimingBufferFullTimer(*this, &Performance::resourceTimingBufferFullTimerFired)
+    , m_resourceTimingBufferFullTimer(*this, &Performance::resourceTimingBufferFullTimerFired) // FIXME: Migrate this to the event loop as well.
     , m_timeOrigin(timeOrigin)
-    , m_performanceTimelineTaskQueue(context)
 {
     ASSERT(m_timeOrigin);
-    ASSERT(context || m_performanceTimelineTaskQueue.isClosed());
 }
 
 Performance::~Performance() = default;
 
 void Performance::contextDestroyed()
 {
-    m_performanceTimelineTaskQueue.close();
     m_resourceTimingBufferFullTimer.stop();
     ContextDestructionObserver::contextDestroyed();
 }
@@ -368,10 +366,20 @@ void Performance::queueEntry(PerformanceEntry& entry)
     if (!shouldScheduleTask)
         return;
 
-    if (m_performanceTimelineTaskQueue.hasPendingTasks())
+    if (m_hasScheduledTimingBufferDeliveryTask)
         return;
 
-    m_performanceTimelineTaskQueue.enqueueTask([this] () {
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    m_hasScheduledTimingBufferDeliveryTask = true;
+    context->eventLoop().queueTask(TaskSource::PerformanceTimeline, [protectedThis = makeRef(*this), this] {
+        auto* context = scriptExecutionContext();
+        if (!context)
+            return;
+
+        m_hasScheduledTimingBufferDeliveryTask = false;
         for (auto& observer : copyToVector(m_observers))
             observer->deliver();
     });

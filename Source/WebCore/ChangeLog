@@ -1,3 +1,27 @@
+2021-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Occasional debug assert in GenericTaskQueue::~GenericTaskQueue
+        https://bugs.webkit.org/show_bug.cgi?id=223913
+
+        Reviewed by Eric Carlson.
+
+        Eagerly initialize WeakPtrImpl so that we don't hit debug assertions.
+
+        Also made Performance object use EventLoop.
+
+        No new tests since there is no test case that reliably reproduces this issue.
+
+        * dom/TaskSource.h:
+        (TaskSource): Added PerformanceTimeline.
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::contextDestroyed):
+        (WebCore::Performance::queueEntry): Use EventLoopTaskGroup instead of GenericTaskQueue to deliver entries.
+        * page/Performance.h:
+        * platform/GenericTaskQueue.h:
+        (WebCore::GenericTaskQueue::GenericTaskQueue): Eagerly initialize WeakPtrImpl.
+        Also assert that we're creating this object in the main thread.
+
 2021-03-30  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Add an IPC message to implement RemoteImageDecoderAVF::clearFrameBufferCache()
