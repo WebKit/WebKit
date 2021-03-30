@@ -1,3 +1,15 @@
+2021-03-30  Jon Lee  <jonlee@apple.com>
+
+        Remove obsolete WebGL2 feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=223945
+
+        Reviewed by Darin Adler.
+
+        * FeatureFlags/WebKit-appletvos.plist: Feature flag is not referenced anywhere.
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+
 2021-03-30  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Add an IPC message to implement RemoteImageDecoderAVF::clearFrameBufferCache()

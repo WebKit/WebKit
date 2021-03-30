@@ -67,11 +67,6 @@
         <key>Enabled</key>
         <true/>
     </dict>
-    <key>WebGL2</key>
-    <dict>
-        <key>Enabled</key>
-        <false/>
-    </dict>
     <key>WebGPU</key>
     <dict>
         <key>Enabled</key>
