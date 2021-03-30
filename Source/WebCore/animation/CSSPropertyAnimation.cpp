@@ -1952,6 +1952,33 @@ private:
     }
 };
 
+class TextIndentWrapper final : public LengthPropertyWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    TextIndentWrapper()
+        : LengthPropertyWrapper(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent, LengthPropertyWrapper::Flags::IsLengthPercentage)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    {
+        if (from->textIndentLine() != to->textIndentLine())
+            return false;
+        if (from->textIndentType() != to->textIndentType())
+            return false;
+        return LengthPropertyWrapper::canInterpolate(from, to);
+    }
+
+    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    {
+        auto* blendingStyle = !canInterpolate(from, to) && progress ? to : from;
+        destination->setTextIndentLine(blendingStyle->textIndentLine());
+        destination->setTextIndentType(blendingStyle->textIndentType());
+        LengthPropertyWrapper::blend(client, destination, from, to, progress);
+    }
+};
+
 class PerspectiveWrapper final : public NonNegativeFloatPropertyWrapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -2173,7 +2200,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new NonNegativeFloatPropertyWrapper(CSSPropertyOutlineWidth, &RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth),
         new PropertyWrapper<float>(CSSPropertyLetterSpacing, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing),
         new LengthPropertyWrapper(CSSPropertyWordSpacing, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing),
-        new LengthPropertyWrapper(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent, LengthPropertyWrapper::Flags::IsLengthPercentage),
+        new TextIndentWrapper,
         new VerticalAlignWrapper,
 
         new PerspectiveWrapper,

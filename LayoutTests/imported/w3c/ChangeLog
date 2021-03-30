@@ -1,5 +1,15 @@
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
+        Account for "hanging" and "each-line" when blending text-interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=223914
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-text/animations/text-indent-composition-expected.txt:
+        * web-platform-tests/css/css-text/animations/text-indent-interpolation-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
         [CSS Backgrounds] WPT test css/css-backgrounds/animations/border-image-width-interpolation.html asserts
         https://bugs.webkit.org/show_bug.cgi?id=206578
 
