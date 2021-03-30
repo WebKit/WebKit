@@ -1,3 +1,18 @@
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that GlobalPropertyInfo is allocated on the stack.
+        https://bugs.webkit.org/show_bug.cgi?id=223911
+        rdar://75865742
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::finishCreation):
+        (WebCore::JSDOMWindowBase::initStaticGlobals):
+        * bindings/js/JSDOMWindowBase.h:
+
 2021-03-30  Sam Weinig  <weinig@apple.com>
 
         Generalize ColorComponents to support an arbritrary number of components (though really we will only ever want 3, 4, or 5)

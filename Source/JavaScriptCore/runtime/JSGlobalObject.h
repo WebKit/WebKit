@@ -1116,6 +1116,7 @@ protected:
             , value(v)
             , attributes(a)
         {
+            ASSERT(Thread::current().stack().contains(this));
         }
 
         const Identifier identifier;
@@ -1138,6 +1139,7 @@ private:
     void initializeAggregateErrorConstructor(LazyClassStructure::Initializer&);
 
     JS_EXPORT_PRIVATE void init(VM&);
+    void initStaticGlobals(VM&);
     void fixupPrototypeChainWithObjectPrototype(VM&);
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
