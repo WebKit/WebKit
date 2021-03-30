@@ -2240,23 +2240,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return backingObject->isPasswordField() ? nil : [NSValue valueWithRange: NSMakeRange(0, backingObject->textLength())];
 
         if ([attributeName isEqualToString:NSAccessibilityInsertionPointLineNumberAttribute]) {
-            // if selectionEnd > 0, then there is selected text and this question should not be answered
-            if (backingObject->isPasswordField() || backingObject->selectionEnd() > 0)
-                return nil;
-
-            auto* focusedObject = backingObject->focusedUIElement();
-            if (focusedObject != backingObject)
-                return nil;
-
-            int lineNumber = Accessibility::retrieveValueFromMainThread<int>([protectedSelf = retainPtr(self)] () -> int {
-                auto* backingObject = protectedSelf.get().axBackingObject;
-                if (!backingObject)
-                    return -1;
-
-                auto focusedPosition = backingObject->visiblePositionForIndex(backingObject->selectionStart(), true);
-                return backingObject->lineForPosition(focusedPosition);
-            });
-
+            int lineNumber = backingObject->insertionPointLineNumber();
             return lineNumber >= 0 ? @(lineNumber) : nil;
         }
     }

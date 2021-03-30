@@ -1,3 +1,32 @@
+2021-03-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/textarea-insertion-point-line-number.html.
+        https://bugs.webkit.org/show_bug.cgi?id=223936
+        <rdar://problem/76007361>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/textarea-insertion-point-line-number.html
+
+        Added AXCoreObject::insertionPointLineNumber to support this functionality.
+        This replaces the previous implementation in the wrapper's accessibilityAttributeValue.
+        There were several problems with the previous implementation that was
+        doing an unnecessary and buggy round trip from Ranges to indexes and
+        back to VisiblePositions.
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::insertionPointLineNumber const):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::insertionPointLineNumber const):
+        (WebCore::AXIsolatedObject::selectionStart const): Deleted.
+        (WebCore::AXIsolatedObject::selectionEnd const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2021-03-29  Simon Fraser  <simon.fraser@apple.com>
 
         Allow non-60fps display updates to be driven by DisplayRefreshMonitor
