@@ -91,7 +91,7 @@ found in the LICENSE.txt file.
       let fps = 60;
       let pending_outputs = 0;
       let stream = cnv.captureStream(fps);
-      let vtr = new VideoTrackReader(stream.getVideoTracks()[0]);
+      let processor = new MediaStreamTrackProcessor(stream.getVideoTracks()[0]);
 
       const init = {
         output: (chunk) => {
@@ -117,21 +117,33 @@ found in the LICENSE.txt file.
       let encoder = new VideoEncoder(init);
       encoder.configure(config);
 
-      vtr.start((frame) => {
+      const frame_reader = processor.readable.getReader();
+      frame_reader.read().then(function processFrame({done, value}) {
+        if (done)
+          return;
+
         if (pending_outputs > 30) {
           console.log("drop this frame");
           // Too many frames in flight, encoder is overwhelmed
           // let's drop this frame.
+          value.close();
+          frame_reader.read().then(processFrame);
           return;
         }
-        if (frame_counter == kMaxFrame) {
+
+        if(frame_counter == kMaxFrame) {
+          frame_reader.releaseLock();
+          processor.readable.cancel();
+          value.close();
           return;
         }
 
         frame_counter++;
         pending_outputs++;
         const insert_keyframe = (frame_counter % 150) == 0;
-        encoder.encode(frame, { keyFrame: insert_keyframe });
+        encoder.encode(value, { keyFrame: insert_keyframe });
+
+        frame_reader.read().then(processFrame);
       });
     }
 

@@ -1,3 +1,27 @@
+2021-03-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Update WebGL conformance test suite 2021-03-24
+        https://bugs.webkit.org/show_bug.cgi?id=223736
+
+        Reviewed by Dean Jackson.
+
+        To commit 44ac38b3b23be26fa8812334ec3e9bf67ecb5a9f  Fix whitespace by rerunning IDL extraction scripts. (#3265)
+        As per it looks like there's been a significant recent regression in the video-related conformance tests
+        in the test suite.
+
+        * webgl/2.0.y/conformance2/textures/misc/immutable-tex-render-feedback-expected.txt: Added.
+        * webgl/2.0.y/conformance2/textures/misc/immutable-tex-render-feedback.html: Added.
+        * webgl/resources/webgl_test_files/conformance/extensions/webgl-webcodecs-video-frame.html:
+        * webgl/resources/webgl_test_files/conformance/textures/misc/video-rotation.html:
+        * webgl/resources/webgl_test_files/conformance2/extensions/oes-draw-buffers-indexed.html:
+        * webgl/resources/webgl_test_files/conformance2/textures/misc/immutable-tex-render-feedback.html: Added.
+        * webgl/resources/webgl_test_files/js/webgl-test-utils.js:
+        (destroyContext):
+        * webgl/resources/webgl_test_files/resources/video-rotation-0.vp9.mp4: Added.
+        * webgl/resources/webgl_test_files/resources/video-rotation-180.vp9.mp4: Added.
+        * webgl/resources/webgl_test_files/resources/video-rotation-270.vp9.mp4: Added.
+        * webgl/resources/webgl_test_files/resources/video-rotation-90.vp9.mp4: Added.
+
 2021-03-29  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS Debug] http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html is a flakey failure

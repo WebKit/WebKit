@@ -3132,7 +3132,16 @@ var runSteps = function(steps) {
  * @param {!function(!HTMLVideoElement): void} callback Function to call when
  *        video is ready.
  */
-var startPlayingAndWaitForVideo = function(video, callback) {
+function startPlayingAndWaitForVideo(video, callback) {
+  if (video.error) {
+    testFailed('Video failed to load: ' + video.error);
+    return;
+  }
+
+  video.addEventListener(
+      'error', e => { testFailed('Video playback failed: ' + e.message); },
+      true);
+
   var rvfc = getRequestVidFrameCallback();
   if (rvfc === undefined) {
     var timeWatcher = function() {
@@ -3329,12 +3338,12 @@ function comparePixels(cmp, ref, tolerance, diff) {
 }
 
 function destroyContext(gl) {
-  gl.canvas.width = 1;
-  gl.canvas.height = 1;
   const ext = gl.getExtension('WEBGL_lose_context');
   if (ext) {
     ext.loseContext();
   }
+  gl.canvas.width = 1;
+  gl.canvas.height = 1;
 }
 
 function destroyAllContexts() {
