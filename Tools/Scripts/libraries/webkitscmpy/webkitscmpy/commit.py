@@ -39,6 +39,10 @@ class Commit(object):
     class Encoder(json.JSONEncoder):
 
         def default(self, obj):
+            if isinstance(obj, dict):
+                return {key: self.default(value) for key, value in obj.items()}
+            if isinstance(obj, list):
+                return [self.default(value) for value in obj]
             if not isinstance(obj, Commit):
                 return super(Commit.Encoder, self).default(obj)
 
@@ -270,7 +274,7 @@ class Commit(object):
 
     @property
     def uuid(self):
-        if not self.timestamp:
+        if self.timestamp is None:
             return None
         return self.timestamp * self.UUID_MULTIPLIER + self.order
 
@@ -285,7 +289,7 @@ class Commit(object):
             return self.hash[:self.HASH_LABEL_SIZE]
         if self.identifier is not None:
             return str(self.identifier)
-        raise ValueError('Incomplete commit format')
+        return '?'
 
     def __hash__(self):
         if self.identifier and self.branch:
@@ -301,8 +305,11 @@ class Commit(object):
     def __cmp__(self, other):
         if not isinstance(other, Commit):
             raise ValueError('Cannot compare commit and {}'.format(type(other)))
-        if self.uuid and other.uuid and self.uuid != other.uuid:
-            return self.uuid - other.uuid
+        if self.uuid and other.uuid:
+            if self.uuid != other.uuid:
+                return self.uuid - other.uuid
+            if self.repository_id != other.repository_id:
+                return 1 if self.repository_id > other.repository_id else -1
         if self.revision and other.revision:
             return self.revision - other.revision
         if self.identifier and other.identifier and self.branch == other.branch:

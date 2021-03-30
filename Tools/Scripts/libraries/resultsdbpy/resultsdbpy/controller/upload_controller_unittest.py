@@ -49,8 +49,10 @@ class UploadControllerPostTest(FlaskTestCase, WaitForDockerTestCase):
     def test_upload(self, client, **kwargs):
         upload_dict = dict(
             suite='layout-tests',
-            commits=[dict(repository_id='safari', id='d8bce26fa65c6fc8f39c17927abb77f69fab82fc'), dict(repository_id='webkit', id=6)],
-            configuration=Configuration.Encoder().default(Configuration(
+            commits=[
+                dict(repository_id='safari', hash='d8bce26fa65c6fc8f39c17927abb77f69fab82fc'),
+                dict(repository_id='webkit', hash='75eaef1c9242f92a8d7694e8ccd310f69cf9683b'),
+            ], configuration=Configuration.Encoder().default(Configuration(
                 platform='Mac', version='10.14.0', sdk='18A391',
                 is_simulator=False, architecture='x86_64',
                 style='Release', flavor='wk2',
@@ -67,7 +69,7 @@ class UploadControllerPostTest(FlaskTestCase, WaitForDockerTestCase):
         self.assertEqual(response.status_code, 200)
 
         retrieved = response.json()[0]
-        retrieved['commits'] = [dict(repository_id=commit['repository_id'], id=commit.get('hash', commit.get('revision'))) for commit in retrieved['commits']]
+        retrieved['commits'] = [dict(repository_id=commit['repository_id'], hash=commit.get('hash', commit.get('revision'))) for commit in retrieved['commits']]
         self.assertEqual(retrieved, upload_dict)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)

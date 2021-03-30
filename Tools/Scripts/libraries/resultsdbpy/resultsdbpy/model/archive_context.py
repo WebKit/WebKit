@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,13 +27,13 @@ import zipfile
 
 from cassandra.cqlengine import columns
 from datetime import datetime
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.model.archiver import Archiver
 from resultsdbpy.model.cassandra_archiver import CassandraArchiver
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 from resultsdbpy.model.s3_archiver import S3Archiver
 from resultsdbpy.model.upload_context import UploadContext
+from webkitscmpy import Commit
 
 
 def _get_time(input_time):
@@ -114,7 +114,7 @@ class ArchiveContext(object):
 
         with self:
             uuid = self.commit_context.uuid_for_commits(commits)
-            ttl = int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
+            ttl = int((uuid // Commit.UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
 
             for branch in self.commit_context.branch_keys_for_commits(commits):
                 self.configuration_context.register_configuration(configuration, branch=branch, timestamp=timestamp)

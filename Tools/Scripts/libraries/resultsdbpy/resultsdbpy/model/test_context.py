@@ -28,10 +28,10 @@ import time
 from cassandra.cqlengine import columns
 from cassandra.cqlengine.models import Model
 from datetime import datetime
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 from resultsdbpy.model.upload_context import UploadCallbackContext
+from webkitscmpy import Commit
 
 
 class Expectations:
@@ -159,7 +159,7 @@ class TestContext(UploadCallbackContext):
 
             with self:
                 uuid = self.commit_context.uuid_for_commits(commits)
-                ttl = int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
+                ttl = int((uuid // Commit.UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
 
                 def callback(test, result, branch):
                     self.cassandra.insert_row(self.TestNameBySuite.__table_name__, suite=suite, test=test, ttl=ttl)

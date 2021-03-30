@@ -148,6 +148,7 @@ class SuiteFailuresView {
                                         const branches = new Set(commits.map(commit => commit.branch));
                                         branches.delete('trunk');
                                         branches.delete('master');
+                                        branches.delete('main');
 
                                         const repositories = new Set(commits.map(commit => commit.repository_id));
 

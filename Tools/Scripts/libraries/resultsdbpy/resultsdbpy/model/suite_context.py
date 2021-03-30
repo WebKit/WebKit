@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,11 +26,11 @@ import time
 
 from cassandra.cqlengine import columns
 from datetime import datetime
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 from resultsdbpy.model.test_context import Expectations
 from resultsdbpy.model.upload_context import UploadCallbackContext
+from webkitscmpy import Commit
 
 
 class SuiteContext(UploadCallbackContext):
@@ -116,7 +116,7 @@ class SuiteContext(UploadCallbackContext):
             Expectations.iterate_through_nested_results(test_results.get('results'), callback)
 
             uuid = self.commit_context.uuid_for_commits(commits)
-            ttl = int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
+            ttl = int((uuid // Commit.UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
 
             with self, self.cassandra.batch_query_context():
                 for branch in self.commit_context.branch_keys_for_commits(commits):

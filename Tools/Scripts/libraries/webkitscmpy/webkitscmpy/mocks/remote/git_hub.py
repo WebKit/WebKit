@@ -23,7 +23,6 @@
 import os
 import json
 
-from datetime import datetime
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
 
@@ -134,6 +133,8 @@ class GitHub(mocks.Requests):
         ], url=url)
 
     def _commit_response(self, url, ref):
+        from datetime import datetime, timedelta
+
         commit = self.commit(ref)
         if not commit:
             return mocks.Response(
@@ -147,11 +148,11 @@ class GitHub(mocks.Requests):
                 'author': {
                     'name': commit.author.name,
                     'email': commit.author.email,
-                    'date': datetime.fromtimestamp(commit.timestamp).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
                 }, 'committer': {
                     'name': commit.author.name,
                     'email': commit.author.email,
-                    'date': datetime.fromtimestamp(commit.timestamp).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
                 }, 'message': commit.message + '\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
                     'trunk' if commit.branch == self.default_branch else commit.branch, commit.revision,
                 ) if commit.revision else '',

@@ -186,9 +186,9 @@ class BitBucket(mocks.Requests):
                     displayName=commit.author.name,
                 ),
                 committerTimestamp=commit.timestamp * 1000,
-                message=commit.message + '\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
+                message=commit.message + ('\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
                     'trunk' if commit.branch == self.default_branch else commit.branch, commit.revision,
-                ),
+                ) if commit.revision else ''),
             ))
 
         if stripped_url.startswith('{}/rest/branch-utils/latest/{}/branches/info/'.format(self.hosts[0], self.project)):

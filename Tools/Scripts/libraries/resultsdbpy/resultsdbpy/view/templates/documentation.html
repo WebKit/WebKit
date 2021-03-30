@@ -73,11 +73,15 @@ const documentation = {
             codeBlock('{\n' + 
                 '    "repository_id": <string representing repository identifier>,\n' +
                 '    "branch": <branch commit is registered on>,\n' +
-                '    "id": <git hash or svn revision>,\n' +
+                '    "identifier": <commit identifier>,\n' +
+                '    "hash": <git hash>,\n' +
+                '    "revision": <svn revision>,\n' +
                 '    "timestamp": <integer UTC timestamp when commit was committed>,\n' +
                 '    "order": <order of commit within patch series>,\n' +
-                '    "committer": <person who committed the change>,\n' +
-                '    "message": <commit message or changelog associated with commit>\n' +
+                '    "author": {\n' +
+                '        "name": <name of person who authored change>,\n' +
+                '        "emails": [<list of emails associated with change author>]\n' +
+                '    }, "message": <commit message or changelog associated with commit>\n' +
                 '}'),
             documentEndpoint(
                 '/api/commits',
@@ -123,7 +127,7 @@ const documentation = {
                     `Returns a dictionary of lists of branches associated with each repository. The output is of the form:`,
                     codeBlock('{\n' +
                     '    <repository-id (a)>: ["master", "branch-a", "branch-b"],\n' +
-                    '    <repository-id (b)>: ["trunk", "branch-a", "branch-c"]\n' +
+                    '    <repository-id (b)>: ["main", "branch-a", "branch-c"]\n' +
                     '}'),
                 ],
             ),
@@ -158,7 +162,7 @@ const documentation = {
                 ['Branch', 'Repository'],
                 [
                     `Register a single commit in the results database. This commit must be associated with a repository already known by the results database. While a ${localLink(['API', 'Commits'], 'commit objects')} can be uploaded to this endpoint, it is recommended that the registration of commits outside of automation allow the results database to leverage your source control's API. Such a request looks like this`,
-                    codeBlock('/api/commits/register?repository_id=webkit&branch=trunk&id=247355'),
+                    codeBlock('/api/commits/register?repository_id=webkit&branch=main&id=247355'),
                     `More generally, any definition of a commit which defines the repository_id, id and branch provides enough information for the results database to query your source control's API and retreive commit information.`,
                 ],
             ),
@@ -479,7 +483,7 @@ const documentation = {
             `By default, this flag is 'True' and endpoints will ignore tests which matched their expected behavior. If set to 'False', endpoints will return results for all failing tests, regardless of what their expectation is.`,
         ],
         'Branch': [
-            `Most data in the results database is partitioned by branch, and it is generally expected that results on seperate branches are independent of one another. By default, endpoints that support the branch query will assume that the branch is master for git repositories and trunk for SVN repositories if no value is specified. If multiple values for branch are specified, only the first will be respected. A request which intended to search for results on only results on the safari-607 branch would use a query like this:`,
+            `Most data in the results database is partitioned by branch, and it is generally expected that results on seperate branches are independent of one another. By default, endpoints that support the branch query will assume that the branch is master or main for git repositories and trunk for SVN repositories if no value is specified. If multiple values for branch are specified, only the first will be respected. A request which intended to search for results on only results on the safari-607 branch would use a query like this:`,
             codeBlock('branch=safari-607'),
         ],
         'Configuration': [
@@ -544,13 +548,13 @@ const documentation = {
             `We also know that timestamps can be easily converted to UUIDs. Endpoints which support querying by UUID also support querying by UTC timestamp. Our previous query could be instead written like this:`,
             codeBlock('after_timestamp=1562951491&before_timestamp=1562952473'),
             `Commits can also be translated to timestamp, although with a bit more work required from the back-end. Endpoints which support querying by UUID also support querying by commit information. In the first example in this section, we queried by UUID 156295247300. This corresponds to ${externalLink('https://trac.webkit.org/changeset/247391/webkit', 'r247391')}. We could instead query by the commit information:`,
-            codeBlock('id=247391&repository_id=webkit&branch=trunk'),
+            codeBlock('id=247391&repository_id=webkit&branch=main'),
             `But, as outlined in the overviews about ${localLink(['Query Parameters', 'Branch'], 'branches')} and ${localLink(['Query Parameters', 'Repository'], 'repositories')}, endpoints which support those queries have defaults which cover many cases, so the previous query could be simplified to:`,
             codeBlock('id=247391'),
             `Because endpoints supporting time are convert everything to UUID on the backend, the queries to these endpoints are quite flexible. The following are all examples of valid time queries:`,
             codeBlock('after_id=247391&repository_id=webkit'),
             codeBlock('after_id=247390&before_timestamp=1562952473'),
-            codeBlock('before_id=247391&after_uuid=156295149100&before_branch=trunk'),
+            codeBlock('before_id=247391&after_uuid=156295149100&before_branch=main'),
         ],
     }
 }

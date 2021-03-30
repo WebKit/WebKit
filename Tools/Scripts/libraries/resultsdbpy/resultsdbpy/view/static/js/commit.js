@@ -101,16 +101,17 @@ function CommitTable(commits, repositoryIds = [], oneLine = false) {
                     let commitArgs = paramsToQuery({
                         repository_id: [cell.commit.repository_id],
                         branch: [cell.commit.branch],
-                        id: [cell.commit.identifier],
+                        ref: [cell.commit.label()],
                     });
-                    let investigateArgs = {id: [cell.commit.identifier]};
+                    let investigateArgs = {ref: [cell.commit.label()]};
                     if (!['master', 'main', 'trunk'].includes(cell.commit.branch))
                         investigateArgs.branch = [cell.commit.branch];
 
                     return `<td rowspan="${cell.rowspan}">
                         <a href="/commit?${commitArgs}">${cell.commit.label()}</a> <br>
-                        Branch: ${cell.commit.branch} <br>
-                        Author: ${escapeHTML(cell.commit.author)} <br>
+                        ${cell.commit.label().includes('@') ? '' : `Branch: ${cell.commit.branch} <br>`}
+                        ${cell.commit.author ? `Author: ${escapeHTML(cell.commit.author.name)}
+                            &#60<a href="mailto:${escapeHTML(cell.commit.author.emails[0])}">${escapeHTML(cell.commit.author.emails[0])}</a>&#62 <br>` : ''}
                         <a href="/commit/info?${commitArgs}">More Info</a><br>
                         <a href="/investigate?${paramsToQuery(investigateArgs)}">Test results for commit</a>
                         ${function() {
@@ -130,10 +131,12 @@ function CommitTable(commits, repositoryIds = [], oneLine = false) {
 class Commit {
     constructor(json) {
         this.identifier = json.identifier ? json.identifier : json.id;
-        this.revision = json.revision;
-        this.hash = json.hash;
+        this.revision = json.revision ? json.revision : null;
+        this.hash = json.hash ? json.hash : null;
 
-        this.author = json.author ? json.author.name : json.committer;
+        this.author = null;
+        if (json.author && json.author.name && json.author.emails && json.author.emails[0])
+            this.author = json.author
 
         this.repository_id = json.repository_id;
         this.branch = json.branch;
@@ -149,13 +152,13 @@ class Commit {
     label() {
         const preference = CommitBank._representationCache ? CommitBank._representationCache[this.repository_id].representation : null;
 
-        if (preference === 'identifier')
+        if (preference === 'identifier' && this.identifier)
             return this.identifier;
-        if (preference === 'hash') {
+        if (preference === 'hash' && this.hash) {
             // Per the birthday paradox, 10% chance of collision with 7.7 million commits with 12 character commits
             return this.hash.substring(0,12)
         }
-        if (preference === 'revision')
+        if (preference === 'revision' && this.revision)
             return `r${this.revision}`;
 
         return this.revision ? `r${this.revision}` : this.hash.substring(0,12);
@@ -345,7 +348,7 @@ class _CommitBank {
         const query = paramsToQuery({
             branch: [commit.branch],
             repository_id: [commit.repository_id],
-            id: [commit.identifier],
+            ref: [commit.hash ? commit.hash : commit.revision],
         });
         return fetch('api/commits/siblings?' + query).then(response => {
             let self = this;

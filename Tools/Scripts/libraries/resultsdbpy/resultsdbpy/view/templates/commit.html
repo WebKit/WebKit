@@ -32,13 +32,13 @@
     <div class="col-12">
         <div class="row">
             <div class="col-4" style="text-align:left">
-                <a class="button" href="/commit/previous?repository_id={{ commit.repository_id }}&branch={{ commit.branch }}&id={{ commit.id }}">◀ Previous</a>
+                <a class="button" href="/commit/previous?repository_id={{ commit.repository_id }}&ref={{ commit.hash or commit.revision }}">◀ Previous</a>
             </div>
             <div class="col-4" style="text-align:center">
-                <a class="button" href="/commit/info?repository_id={{ commit.repository_id }}&branch={{ commit.branch }}&id={{ commit.id }}">{{ commit.id }}</a>
+                <a class="button" href="/commit/info?repository_id={{ commit.repository_id }}&ref={{ commit.hash or commit.revision }}">{{ commit }}</a>
             </div>
             <div class="col-4" style="text-align:right">
-                <a class="button" href="/commit/next?repository_id={{ commit.repository_id }}&branch={{ commit.branch }}&id={{ commit.id }}">Next ▶</a>
+                <a class="button" href="/commit/next?repository_id={{ commit.repository_id }}&ref={{ commit.hash or commit.revision }}">Next ▶</a>
             </div>
         </div>
         <div id="commitTable"></div>
@@ -46,7 +46,7 @@
 </div>
 
 <script type="module">
-import {CommitTable} from '/assets/js/commit.js';
+import {Commit, CommitTable, CommitBank} from '/assets/js/commit.js';
 
 function unescapeJinjaText(text) {
     return text.replace(/&([^;]+);/g, function(match, encoded) {
@@ -68,17 +68,23 @@ function unescapeJinjaText(text) {
 }
 
 let commits = [
-{% for commit in commits %}    {
-    {% for key, value in commit.items() %}
-        {{ key }}:
-        {% if 'str' in value.__class__.__name__ %}
-            unescapeJinjaText('{{ value | replace("\\", "\\\\") | replace("\n", "\\n") }}')
-        {% else %}
-            {{ value }}
-        {% endif %},
-    {% endfor %}},
+{% for commit in commits %}    new Commit({
+        repository_id: '{{ commit.repository_id }}',
+        revision: {{ commit.revision if commit.revision else 'null' }},
+        hash: '{{ commit.hash if commit.hash else '' }}',
+        identifier: '{{ commit.identifier if commit.identifier else '' }}',
+        branch: '{{ commit.branch }}',
+        timestamp: {{ commit.timestamp }},
+        author: {
+            name: unescapeJinjaText('{{ commit.author.name }}'),
+            emails: [{% for e in commit.author.emails %} unescapeJinjaText('{{ e }}') {% endfor %}],
+        }, order: {{ commit.order }},
+        message: unescapeJinjaText('{{ commit.message | replace("\\", "\\\\") | replace("\n", "\\n") }}'),
+    }),
 {% endfor %}];
 
-document.getElementById('commitTable').innerHTML = CommitTable(commits, {{ repository|safe }});
+CommitBank.commitRepresentations(() => {
+    document.getElementById('commitTable').innerHTML = CommitTable(commits, {{ repository|safe }});
+});
 </script>
 {% endblock %}

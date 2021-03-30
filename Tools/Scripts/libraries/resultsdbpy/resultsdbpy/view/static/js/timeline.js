@@ -190,8 +190,9 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
             const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
             ToolTip.set(
                 `<div class="content">
-                    Time: ${new Date(node.label.timestamp * 1000).toLocaleString()}<br>
-                    Author: ${node.label.author}
+                    Time: ${new Date(node.label.timestamp * 1000).toLocaleString()}
+                    ${node.label.author ? `<br>Author: ${escapeHTML(node.label.author.name)}
+                            &#60<a href="mailto:${escapeHTML(node.label.author.emails[0])}">${escapeHTML(node.label.author.emails[0])}</a>&#62` : ''}
                     ${node.label.message ? `<br><div>${escapeHTML(node.label.message.split('\n')[0])}</div>` : ''}
                 </div>`,
                 node.tipPoints.map((point) => {
@@ -206,7 +207,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
             if (!ToolTip.isIn({x: event.x, y: event.y - scrollDelta}))
                 ToolTip.unset();
         },
-        getLabelFunc: (commit) => {return commit ? commit.label() : '?';},
+        getLabelFunc: (commit) => {return commit && commit.label ? commit.label() : '?';},
         getScaleFunc: (commit) => commit.uuid,
         exporter: (updateFunction) => {
             updatesArray.push((scale) => {updateFunction(scaleForRepository(scale));});

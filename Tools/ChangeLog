@@ -1,3 +1,111 @@
+2021-03-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Return new-style commits
+        https://bugs.webkit.org/show_bug.cgi?id=223262
+        <rdar://problem/75483361>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit.py: Removed.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_controller.py:
+        (_find_comparison): Replace id with ref.
+        (uuid_range_for_commit_range_query): Support both id and ref in REST API.
+        (uuid_range_for_query): Ditto.
+        (CommitController._find): Ditto.
+        (CommitController.register): Return webkitscmpy.Commit object.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_controller_unittest.py:
+        (CommitControllerTest.test_branches): WebKit's default branch is now main.
+        (CommitControllerTest.test_register_with_full_commit): Registered commits should be webkitscmpy Commit objects.
+        (CommitControllerTest.test_find_range_id): Returned revisions are now integers.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_unittest.py: Removed.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/upload_controller_unittest.py:
+        (UploadControllerPostTest.test_upload): WebKit commits are under-pinned by Git now.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/archive_context.py:
+        (ArchiveContext.register): Use webkitscmpy Commit objects.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/ci_context.py:
+        (CIContext.register): Use webkitscmpy Commit objects.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/commit_context.py:
+        (CommitContext.CommitModel): Renamed from CommitModelMk2.
+        (CommitContext.CommitByUuidAscending): Renamed from CommitByUuidAscendingMk2.
+        (CommitContext.CommitByUuidDescending): Renamed from CommitByUuidDescendingMk2.
+        (CommitContext.__init__): Remove old tables.
+        (CommitContext.timestamp_to_uuid): Use webkitscmpy Commit objects.
+        (CommitContext.branch_keys_for_commits): All default branches should be treated the same.
+        (CommitContext.find_commits_by_ref): Find commits by revision, hash and identifier.
+        (CommitContext.register):
+        (CommitContext.register_commit): Save commit to new tables.
+        (CommitContext.url): Pass commit object to repository url generator.
+        (CommitContext.CommitByID): Deleted.
+        (CommitContext.CommitModelMk2): Renamed to CommitModel.
+        (CommitContext.CommitByUuidAscendingMk2): Renamed to CommitByUuidAscending.
+        (CommitContext.CommitByUuidDescendingMk2): Renamed to CommitByUuidDescending.
+        (CommitContext.find_commits_by_id): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/commit_context_unittest.py:
+        (CommitContextTest): Use ref instead of id.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/failure_context.py:
+        (FailureContext.register): Use webkitscmpy Commit objects.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/mock_model_factory.py:
+        (MockModelFactory):
+        (MockModelFactory.webkit): Mock both Subversion and GitHub for WebKit.
+        (MockModelFactory.create):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/repository.py:
+        (Repository.commit): By default, fully define commits.
+        (StashRepository.commit): Ditto.
+        (StashRepository.url_for_commit): Create a URL for a commit object.
+        (WebKitRepository.__init__): Use both GitHub and Subversion.
+        (WebKitRepository.commit): Determine which remote to use based on provided arguments.
+        (WebKitRepository.url_for_commit): Create a URL for a commit object.
+        (WebKitRepository.representations): WebKit commits can be represented by hashes.
+        (Repository.commit_for_id): Deleted.
+        (StashRepository.commit_for_id): Deleted.
+        (WebKitRepository.commit_for_id): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/repository_unittest.py:
+        (RepositoryTest.test_svn): WebKit default branch is now main.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/suite_context.py:
+        (SuiteContext.register): Use webkitscmpy Commit objects.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/test_context.py:
+        (TestContext.register): Use webkitscmpy Commit objects.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/upload_context.py:
+        (UploadContext.UploadsByConfigurationLegacy.unpack): Use webkitscmpy Commit objects.
+        (UploadContext.UploadsByConfiguration.unpack): Ditto.
+        (UploadContext._do_job_for_key): Ditto.
+        (UploadContext.upload_test_results): Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/archive_view_unittest.py:
+        (ArchiveViewUnittest.register_archive): Use webkitscmpy Commit objects.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/commit_view.py:
+        (CommitView.commit): Use webkitscmpy Commit objects.
+        (CommitView.info): Ditto.
+        (CommitView.previous): Ditto.
+        (CommitView.next): Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (Commit): 
+        (Commit.prototype.label): Only print identifier/hash/revision if they are defined.
+        (_CommitBank.prototype._loadSiblings): Use ref over id.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/drawer.js: main is a default branch.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale): Only print author if the author exists.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/commit.html: prefer ref over id, use
+        webkitscmpy Commit object in Jinja template.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/documentation.html: Update documentation
+        to match webkitscmpy Commit object.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/investigate.html: main is a default branch.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/search.html: Correct CommitRepresentation callback.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/suite_results.html: Ditto.
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/setup.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/commit.py:
+        (Commit.Encoder.default): Handle dict and list in JSON correctly.
+        (Commit.uuid): uuid should be 'None' when timestamp is 'None'.
+        (Commit.__repr__): Return a ? for an undefined commit.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/bitbucket.py:
+        (BitBucket.request): Do not add git-svn-id for undefined revision.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub._commit_response): Fix unit tests.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase): Do not mach git-svn ID with a space before it.
+
 2021-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a way for internal clients to hit-test for selectable text in user agent shadow roots
