@@ -1,3 +1,35 @@
+2021-03-29  Cameron McCormack  <heycam@apple.com>
+
+        Avoid calling `xcodebuild -showsdks` where possible.
+        https://bugs.webkit.org/show_bug.cgi?id=223727
+
+        Reviewed by Sam Weinig.
+
+        run-minibrowser needs to know what port it's running on, since that
+        affects the build directory to look in to find the MiniBrowser binary.
+        On macOS, webkitdirs.pm's determinePortName ends up running
+        `xcodebuild -showsdks` to see if the current SDK has an internal
+        variant available, but this is slow.  But we don't need to know the
+        exact SDK name here, just the SDK platform name, to determine the
+        port name.
+
+        So we shuffle some code around to avoid calling `xcodebuild -showsdks`
+        where we can.  This reduces the time spent in run-minibrowser before
+        MiniBrowser is launched (crudely measured with `time run-minibrowser
+        --help`) from 2s to 0.6s on this machine.
+
+        * Scripts/webkitdirs.pm:
+        (readXcodeUserDefault):
+        (determineArchitecture):
+        (argumentsForConfiguration):
+        (availableXcodeSDKs):
+        (isValidXcodeSDKPlatformName):
+        (determineXcodeSDKPlatformName):
+        (determineXcodeSDK):
+        (setXcodeSDK):
+        (xcodeSDKPlatformName):
+        (determinePortName):
+
 2021-03-29  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Return new-style commits
