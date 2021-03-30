@@ -27,9 +27,17 @@
 #include "config.h"
 #include "DisplayUpdate.h"
 
+#include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+bool DisplayUpdate::relevantForUpdateFrequency(FramesPerSecond preferredFramesPerSecond) const
+{
+    ASSERT(WTF::isIntegral(static_cast<float>(updatesPerSecond) / preferredFramesPerSecond));
+    unsigned rateFactor = updatesPerSecond / preferredFramesPerSecond;
+    return !(updateIndex % rateFactor);
+}
 
 TextStream& operator<<(TextStream& ts, const DisplayUpdate& update)
 {

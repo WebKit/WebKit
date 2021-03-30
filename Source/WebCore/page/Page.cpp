@@ -1198,6 +1198,7 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPer
         m_scrollingCoordinator->windowScreenDidChange(displayID, nominalFramesPerSecond);
 
     renderingUpdateScheduler().windowScreenDidChange(displayID);
+    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 
     setNeedsRecalcStyleInAllFrames();
 }
@@ -1775,11 +1776,14 @@ void Page::resumeScriptedAnimations()
     });
 }
 
+Optional<FramesPerSecond> Page::preferredRenderingUpdateFramesPerSecond() const
+{
+    return preferredFramesPerSecond(m_throttlingReasons, m_displayNominalFramesPerSecond, settings().preferPageRenderingUpdatesNear60FPSEnabled());
+}
+
 Seconds Page::preferredRenderingUpdateInterval() const
 {
-    if (!settings().preferPageRenderingUpdatesNear60FPSEnabled())
-        return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond);
-    return preferredFrameInterval(m_throttlingReasons, WTF::nullopt);
+    return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond, settings().preferPageRenderingUpdatesNear60FPSEnabled());
 }
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
@@ -1787,7 +1791,7 @@ void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
     if (isVisuallyIdle == m_throttlingReasons.contains(ThrottlingReason::VisuallyIdle))
         return;
 
-    m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::VisuallyIdle;
+    m_throttlingReasons.set(ThrottlingReason::VisuallyIdle, isVisuallyIdle);
     renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 }
 
@@ -1799,7 +1803,7 @@ void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
     if (isLowPowerModeEnabled == m_throttlingReasons.contains(ThrottlingReason::LowPowerMode))
         return;
 
-    m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::LowPowerMode;
+    m_throttlingReasons.set(ThrottlingReason::LowPowerMode, isLowPowerModeEnabled);
     renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 
     updateDOMTimerAlignmentInterval();

@@ -422,7 +422,13 @@ public:
     WEBCORE_EXPORT void screenPropertiesDidChange();
     void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID() const { return m_displayID; }
-    Optional<unsigned> displayNominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
+    Optional<FramesPerSecond> displayNominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
+
+    // This can return nullopt if throttling reasons result in a frequency less than one, in which case
+    // preferredRenderingUpdateInterval provides the frequency.
+    // FIXME: Have a single function that returns a Variant<>.
+    Optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond() const;
+    Seconds preferredRenderingUpdateInterval() const;
 
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
@@ -794,7 +800,6 @@ public:
     WEBCORE_EXPORT void setOutsideViewportThrottlingEnabledForTesting(bool);
 
     OptionSet<ThrottlingReason> throttlingReasons() const { return m_throttlingReasons; }
-    Seconds preferredRenderingUpdateInterval() const;
 
     WEBCORE_EXPORT void applicationWillResignActive();
     WEBCORE_EXPORT void applicationDidEnterBackground();
@@ -929,7 +934,7 @@ private:
     RTCController m_rtcController;
 
     PlatformDisplayID m_displayID { 0 };
-    Optional<unsigned> m_displayNominalFramesPerSecond;
+    Optional<FramesPerSecond> m_displayNominalFramesPerSecond;
 
     int m_nestedRunLoopCount { 0 };
     WTF::Function<void()> m_unnestCallback;

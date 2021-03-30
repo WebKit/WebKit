@@ -172,7 +172,7 @@ void DisplayRefreshMonitor::displayDidRefresh(const DisplayUpdate& displayUpdate
     m_clientsToBeNotified = &clientsToBeNotified;
     while (!clientsToBeNotified.isEmpty()) {
         DisplayRefreshMonitorClient* client = clientsToBeNotified.takeAny();
-        client->fireDisplayRefreshIfNeeded();
+        client->fireDisplayRefreshIfNeeded(displayUpdate);
 
         // This checks if this function was reentered. In that case, stop iterating
         // since it's not safe to use the set any more.

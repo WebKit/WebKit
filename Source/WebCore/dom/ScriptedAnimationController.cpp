@@ -28,6 +28,7 @@
 #include "ScriptedAnimationController.h"
 
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
 #include "Page.h"
 #include "Quirks.h"
 #include "RequestAnimationFrameCallback.h"
@@ -73,26 +74,24 @@ Page* ScriptedAnimationController::page() const
 
 Seconds ScriptedAnimationController::interval() const
 {
-    if (auto* page = this->page())
-        return std::max(preferredScriptedAnimationInterval(), page->preferredRenderingUpdateInterval());
-    return FullSpeedAnimationInterval;
+    return preferredScriptedAnimationInterval();
 }
 
 Seconds ScriptedAnimationController::preferredScriptedAnimationInterval() const
 {
-    Optional<FramesPerSecond> preferredFPS;
-    if (auto* page = this->page()) {
-        if (page->settings().preferPageRenderingUpdatesNear60FPSEnabled())
-            preferredFPS = page->displayNominalFramesPerSecond();
-    }
-    return preferredFrameInterval(m_throttlingReasons, preferredFPS);
+    auto* page = this->page();
+    if (!page)
+        return FullSpeedAnimationInterval;
+
+    return preferredFrameInterval(throttlingReasons(), page->displayNominalFramesPerSecond(), page->settings().preferPageRenderingUpdatesNear60FPSEnabled());
 }
 
 OptionSet<ThrottlingReason> ScriptedAnimationController::throttlingReasons() const
 {
     if (auto* page = this->page())
         return page->throttlingReasons() | m_throttlingReasons;
-    return { };
+
+    return m_throttlingReasons;
 }
 
 bool ScriptedAnimationController::isThrottledRelativeToPage() const
@@ -104,6 +103,9 @@ bool ScriptedAnimationController::isThrottledRelativeToPage() const
 
 bool ScriptedAnimationController::shouldRescheduleRequestAnimationFrame(ReducedResolutionSeconds timestamp) const
 {
+    LOG_WITH_STREAM(RequestAnimationFrame, stream << "ScriptedAnimationController::shouldRescheduleRequestAnimationFrame - throttled relative to page " << isThrottledRelativeToPage()
+        << ", last delta " << (timestamp - m_lastAnimationFrameTimestamp).milliseconds() << "ms, preferred interval " << preferredScriptedAnimationInterval().milliseconds() << ")");
+
     return timestamp <= m_lastAnimationFrameTimestamp || (isThrottledRelativeToPage() && (timestamp - m_lastAnimationFrameTimestamp < preferredScriptedAnimationInterval()));
 }
 
@@ -141,6 +143,7 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
         return;
 
     if (shouldRescheduleRequestAnimationFrame(timestamp)) {
+        LOG_WITH_STREAM(RequestAnimationFrame, stream << "ScriptedAnimationController::serviceRequestAnimationFrameCallbacks - rescheduling (page update interval " << (page() ? page()->preferredRenderingUpdateInterval() : 0_s) << ", raf interval " << preferredScriptedAnimationInterval() << ")");
         scheduleAnimation();
         return;
     }
@@ -150,6 +153,8 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
     auto highResNowMs = std::round(1000 * timestamp.seconds());
     if (m_document && m_document->quirks().needsMillisecondResolutionForHighResTimeStamp())
         highResNowMs += 0.1;
+
+    LOG_WITH_STREAM(RequestAnimationFrame, stream << "ScriptedAnimationController::serviceRequestAnimationFrameCallbacks at " << highResNowMs << " (throttling reasons " << throttlingReasons() << ", preferred interval " << preferredScriptedAnimationInterval().milliseconds() << "ms)");
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.

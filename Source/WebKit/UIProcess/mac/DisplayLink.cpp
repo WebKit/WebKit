@@ -42,8 +42,6 @@ constexpr unsigned maxFireCountWithoutObservers { 20 };
 DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
     : m_displayID(displayID)
 {
-    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] Creating DisplayLink for display " << displayID);
-
     // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case CVDisplayLinkCreateWithCGDisplay()
     // probably defaults to the main screen.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -60,6 +58,8 @@ DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
     }
 
     m_displayNominalFramesPerSecond = nominalFramesPerSecondFromDisplayLink(m_displayLink);
+
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] Creating DisplayLink for display " << displayID << " with nominal fps " << m_displayNominalFramesPerSecond);
 }
 
 DisplayLink::~DisplayLink()
@@ -93,7 +93,7 @@ void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID
     }
 
     if (!CVDisplayLinkIsRunning(m_displayLink)) {
-        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " starting CVDisplayLink");
+        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " starting CVDisplayLink with fps " << m_displayNominalFramesPerSecond);
         CVReturn error = CVDisplayLinkStart(m_displayLink);
         if (error)
             WTFLogAlways("Could not start the display link: %d", error);

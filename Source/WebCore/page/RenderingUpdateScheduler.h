@@ -52,8 +52,7 @@ public:
     void windowScreenDidChange(PlatformDisplayID);
 
 private:
-    void setPreferredFramesPerSecond(FramesPerSecond);
-    bool scheduleAnimation(FramesPerSecond);
+    bool scheduleAnimation();
 
     void displayRefreshFired() final;
     DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;
@@ -66,7 +65,7 @@ private:
 
     Page& m_page;
     std::unique_ptr<Timer> m_refreshTimer;
-    FramesPerSecond m_preferredFramesPerSecond { FullSpeedFramesPerSecond };
+    bool m_useTimer { false };
     bool m_scheduled { false };
 };
 

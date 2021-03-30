@@ -38,9 +38,17 @@ DisplayRefreshMonitorClient::~DisplayRefreshMonitorClient()
     DisplayRefreshMonitorManager::sharedManager().unregisterClient(*this);
 }
 
-void DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded()
+void DisplayRefreshMonitorClient::setPreferredFramesPerSecond(FramesPerSecond preferredFrameRate)
+{
+    m_preferredFramesPerSecond = preferredFrameRate;
+}
+
+void DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded(const DisplayUpdate& displayUpdate)
 {
     if (!m_scheduled)
+        return;
+
+    if (!displayUpdate.relevantForUpdateFrequency(m_preferredFramesPerSecond))
         return;
 
     m_scheduled = false;

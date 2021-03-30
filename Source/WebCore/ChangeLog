@@ -1,3 +1,78 @@
+2021-03-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow non-60fps display updates to be driven by DisplayRefreshMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=223912
+
+        Reviewed by Sam Weinig.
+        
+        Previously, RenderingUpdateScheduler::scheduleAnimation() would return false for any
+        preferredFramesPerSecond which is not 60fps, causing RenderingUpdateScheduler to fall back
+        to its timer mechanism. This meant that throttled (e.g. by low power) pages and display
+        updates on non-60fps display would all use timers. This is undesirable because we want
+        alignment with display refresh, and to avoid timer drift between multiple throttled
+        documents.
+
+        The fix has two parts. First, we need to fix RenderingUpdateScheduler and
+        ScriptedAnimationController to compute their frame rates in terms of FramesPerSecond, rather
+        than Seconds, because using the latter requires conversion to Seconds and back via
+        m_page.preferredRenderingUpdateInterval() which was awkward. So have Page expose
+        preferredRenderingUpdateFramesPerSecond().
+
+        Also add preferredFramesPerSecond(), and have both it and preferredFrameInterval() take the
+        "near 60fps" flag as an argument, so doing the common math in AnimationFrameRate.
+
+        The second part of the fix is to move "preferredFramesPerSecond" from
+        RenderingUpdateScheduler to DisplayRefreshMonitorClient, since clients should be able to
+        request different frame rates. Then we pass the DisplayUpdate to
+        DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded(), and finally use it to do the math
+        of whether to skip an update for this client.
+
+        Tested by API tests in AnimationFrameRate.cpp, and by
+        fast/animation/request-animation-frame-throttling-lowPowerMode.html
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::interval const): This function (used for testing)
+        is just a synonym for preferredScriptedAnimationInterval(), but left here because it's exported
+        and maybe the compiler can inline preferredScriptedAnimationInterval().
+        (WebCore::ScriptedAnimationController::preferredScriptedAnimationInterval const): Just call
+        preferredFrameInterval() with throttlingReasons(), which is the union of the reasons for
+        the page and for this ScriptedAnimationController.
+        (WebCore::ScriptedAnimationController::throttlingReasons const): No reason not to return m_throttlingReasons
+        if we don't have a page. Should never happen.
+        (WebCore::ScriptedAnimationController::shouldRescheduleRequestAnimationFrame const): Logging.
+        (WebCore::ScriptedAnimationController::serviceRequestAnimationFrameCallbacks): Logging.
+        * page/Page.cpp:
+        (WebCore::Page::windowScreenDidChange): The display nominal FPS may have changed so recompute the update frequency.
+        (WebCore::Page::preferredRenderingUpdateFramesPerSecond const): Return the preferred update in FramesPerSecond. Will return
+        null if throttling results in a < 1fps update.
+        (WebCore::Page::preferredRenderingUpdateInterval const): Push the "near 60fps" logic into the helper function.
+        (WebCore::Page::setIsVisuallyIdleInternal): Clearer to use OptionSet<>::set().
+        (WebCore::Page::handleLowModePowerChange): Ditto.
+        * page/Page.h:
+        (WebCore::Page::displayNominalFramesPerSecond const):
+        (WebCore::Page::throttlingReasons const):
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::scheduleAnimation): Remove code that fell back to a timer for any non-60fps rate.
+        (WebCore::RenderingUpdateScheduler::adjustRenderingUpdateFrequency): Compute if we have to use a timer.
+        (WebCore::RenderingUpdateScheduler::scheduleRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::setPreferredFramesPerSecond): Deleted.
+        * page/RenderingUpdateScheduler.h:
+        * platform/graphics/AnimationFrameRate.cpp: Simplify some code with halfSpeedThrottlingReasons.
+        (WebCore::preferredFramesPerSecond): Similar logic to preferredFrameInterval, but for FramesPerSecond values.
+        (WebCore::preferredFrameInterval):
+        * platform/graphics/AnimationFrameRate.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        * platform/graphics/DisplayRefreshMonitorClient.cpp:
+        (WebCore::DisplayRefreshMonitorClient::setPreferredFramesPerSecond):
+        (WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded):
+        * platform/graphics/DisplayRefreshMonitorClient.h:
+        (WebCore::DisplayRefreshMonitorClient::preferredFramesPerSecond const):
+        * platform/graphics/DisplayUpdate.cpp:
+        (WebCore::DisplayUpdate::relevantForUpdateFrequency const): Compute whether this update is relevant
+        for a client who wants updates at 'preferredFramesPerSecond'.
+        * platform/graphics/DisplayUpdate.h:
+
 2021-03-30  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Elements that overflow inline-blocks are not hit tested correctly
