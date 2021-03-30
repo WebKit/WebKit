@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
 #include "MediaSessionCoordinatorPrivateProxy.h"
+#include "RemoteMediaSessionCoordinatorMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ExceptionData.h>
@@ -118,6 +119,26 @@ void RemoteMediaSessionCoordinatorProxy::readyStateChanged(MediaSessionReadyStat
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_privateCoordinator->readyStateChanged(state);
+}
+
+void RemoteMediaSessionCoordinatorProxy::seekSessionToTime(double time, CompletionHandler<void(bool)>&& callback)
+{
+    m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SeekSessionToTime { time }, callback);
+}
+
+void RemoteMediaSessionCoordinatorProxy::playSession(CompletionHandler<void(bool)>&& callback)
+{
+    m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PlaySession { }, callback);
+}
+
+void RemoteMediaSessionCoordinatorProxy::pauseSession(CompletionHandler<void(bool)> callback)
+{
+    m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PauseSession { }, callback);
+}
+
+void RemoteMediaSessionCoordinatorProxy::setSessionTrack(const String& trackId, CompletionHandler<void(bool)> callback)
+{
+    m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SetSessionTrack { trackId }, callback);
 }
 
 } // namespace WebKit

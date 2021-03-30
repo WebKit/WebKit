@@ -27,13 +27,13 @@
 
 messages -> RemoteMediaSessionCoordinator NotRefCounted {
 
-    seekSessionToTime(double time) -> (bool result) Async
+    SeekSessionToTime(double time) -> (bool result) Async
 
-    playSession() -> (bool result) Async
+    PlaySession() -> (bool result) Async
 
-    pauseSession() -> (bool result) Async
+    PauseSession() -> (bool result) Async
 
-    setSessionTrack(String trackIdentifier) -> (bool result) Async
+    SetSessionTrack(String trackIdentifier) -> (bool result) Async
 }
 
 #endif

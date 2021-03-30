@@ -1,3 +1,25 @@
+2021-03-30  Jer Noble  <jer.noble@apple.com>
+
+        MediaSessionCoordinatorPrivateProxy should have a Client
+        https://bugs.webkit.org/show_bug.cgi?id=223935
+
+        Reviewed by Eric Carlson.
+
+        Similar to the non-proxy MediaSessionCoordinatorPrivate, the Proxy
+        version should have a client, used for communicating state changes
+        downstream.
+
+        * UIProcess/Media/MediaSessionCoordinatorPrivateProxy.h:
+        (WebKit::MediaSessionCoordinatorPrivateProxy::setClient):
+        (WebKit::MediaSessionCoordinatorPrivateProxy::client const):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::seekSessionToTime):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::playSession):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::pauseSession):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::setSessionTrack):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.h:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in:
+
 2021-03-30  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Add "CodeComplete" attribute to some feature flags

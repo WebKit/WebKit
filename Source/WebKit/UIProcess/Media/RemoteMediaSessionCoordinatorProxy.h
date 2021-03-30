@@ -40,7 +40,10 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class RemoteMediaSessionCoordinatorProxy : public IPC::MessageReceiver, public RefCounted<RemoteMediaSessionCoordinatorProxy> {
+class RemoteMediaSessionCoordinatorProxy
+    : public IPC::MessageReceiver
+    , public RefCounted<RemoteMediaSessionCoordinatorProxy>
+    , public WebCore::MediaSessionCoordinatorClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteMediaSessionCoordinatorProxy> create(WebPageProxy&, Ref<MediaSessionCoordinatorPrivateProxy>&&);
@@ -67,6 +70,12 @@ private:
     void positionStateChanged(Optional<WebCore::MediaPositionState>);
     void readyStateChanged(WebCore::MediaSessionReadyState);
     void playbackStateChanged(WebCore::MediaSessionPlaybackState);
+
+    // MediaSessionCoordinatorClient
+    void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
+    void playSession(CompletionHandler<void(bool)>&&) final;
+    void pauseSession(CompletionHandler<void(bool)>) final;
+    void setSessionTrack(const String&, CompletionHandler<void(bool)>) final;
 
     WebPageProxy& m_webPageProxy;
     Ref<MediaSessionCoordinatorPrivateProxy> m_privateCoordinator;

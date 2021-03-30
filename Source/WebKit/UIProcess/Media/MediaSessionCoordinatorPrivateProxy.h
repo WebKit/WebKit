@@ -48,8 +48,15 @@ public:
     virtual void readyStateChanged(WebCore::MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(WebCore::MediaSessionPlaybackState) = 0;
 
+    virtual void setClient(WeakPtr<WebCore::MediaSessionCoordinatorClient> client) { m_client = client; }
+
 protected:
     explicit MediaSessionCoordinatorPrivateProxy() = default;
+
+    WeakPtr<WebCore::MediaSessionCoordinatorClient> client() const { return m_client; }
+
+private:
+    WeakPtr<WebCore::MediaSessionCoordinatorClient> m_client;
 };
 
 } // namespace WebKit
