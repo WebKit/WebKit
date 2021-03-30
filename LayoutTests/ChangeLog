@@ -1,3 +1,12 @@
+2021-03-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Timeouts on WPT css/css-images ref-tests after updating WPT import
+        https://bugs.webkit.org/show_bug.cgi?id=214472
+
+        Reviewed by Žan Doberšek.
+
+        * platform/glib/TestExpectations: Change expectations back to passes
+
 2021-03-30  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Update WebGL conformance test suite 2021-03-24

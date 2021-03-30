@@ -1,3 +1,24 @@
+2021-03-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Timeouts on WPT css/css-images ref-tests after updating WPT import
+        https://bugs.webkit.org/show_bug.cgi?id=214472
+
+        Reviewed by Žan Doberšek.
+
+        In some cases, degenerated and corner cases of grandient stops might
+        trigger really slow operations in Cairo due to extremely high bezier
+        parameters. For example, the normalization-conic-2.html triggered this
+        by making the conic code calculate the tangent of 90 degrees for an
+        interpolation stop.
+
+        This commit adds some special handling for these cases to make sure the
+        interpolation will be inside reasonable values.
+
+        Covered by existing tests.
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::createConic): Handle degenerated stops
+
 2021-03-29  Antoine Quint  <graouts@webkit.org>
 
         Enable "hanging" and "each-line" keywords for the text-indent CSS property

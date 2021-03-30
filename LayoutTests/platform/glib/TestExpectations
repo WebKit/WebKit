@@ -1259,8 +1259,9 @@ webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-select
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-053.html [ Pass ]
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-054.html [ Pass ]
 
-webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-degenerate.html [ Timeout ]
-webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic.html [ Timeout ]
+webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-degenerate.html [ Pass ]
+webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic.html [ Pass ]
+webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-2.html [ Pass ]
 
 webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-computed-style.html [ Failure Pass ]
 webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style.html [ Failure Pass ]
