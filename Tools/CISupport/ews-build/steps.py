@@ -333,12 +333,36 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
         return rc
 
 
-class CheckPatchRelevance(buildstep.BuildStep):
+class AnalyzePatch(buildstep.BuildStep):
+    flunkOnFailure = True
+    haltOnFailure = True
+
+    def _get_patch(self):
+        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
+        if not sourcestamp or not sourcestamp.patch:
+            return None
+        return sourcestamp.patch[1]
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': 'Patch doesn\'t have relevant changes'}
+        if self.results == SUCCESS:
+            return {'step': 'Patch contains relevant changes'}
+        return buildstep.BuildStep.getResultSummary(self)
+
+
+class CheckPatchRelevance(AnalyzePatch):
     name = 'check-patch-relevance'
     description = ['check-patch-relevance running']
     descriptionDone = ['Patch contains relevant changes']
-    flunkOnFailure = True
-    haltOnFailure = True
 
     bindings_paths = [
         'Source/WebCore',
@@ -415,20 +439,6 @@ class CheckPatchRelevance(buildstep.BuildStep):
                     return True
         return False
 
-    def _get_patch(self):
-        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
-        if not sourcestamp or not sourcestamp.patch:
-            return None
-        return sourcestamp.patch[1]
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
-
     def start(self):
         patch = self._get_patch()
         if not patch:
@@ -447,10 +457,45 @@ class CheckPatchRelevance(buildstep.BuildStep):
         self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
         return None
 
-    def getResultSummary(self):
-        if self.results == FAILURE:
-            return {'step': 'Patch doesn\'t have relevant changes'}
-        return super(CheckPatchRelevance, self).getResultSummary()
+
+class FindModifiedLayoutTests(AnalyzePatch):
+    name = 'find-modified-layout-tests'
+    RE_LAYOUT_TEST = b'^(\+\+\+).*(LayoutTests.*\.html)'
+    DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
+    SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
+
+    def find_test_names_from_patch(self, patch):
+        tests = []
+        for line in patch.splitlines():
+            match = re.search(self.RE_LAYOUT_TEST, line, re.IGNORECASE)
+            if match:
+                if any((suffix + '.html').encode('utf-8') in line for suffix in self.SUFFIXES_TO_IGNORE):
+                    continue
+                test_name = match.group(2).decode('utf-8')
+                if any(directory in test_name.split('/') for directory in self.DIRECTORIES_TO_IGNORE):
+                    continue
+                tests.append(test_name)
+        return list(set(tests))
+
+    def start(self):
+        patch = self._get_patch()
+        if not patch:
+            self.finished(SUCCESS)
+            return None
+
+        tests = self.find_test_names_from_patch(patch)
+
+        if tests:
+            self._addToLog('stdio', 'This patch modifies following tests: {}'.format(tests))
+            self.setProperty('modified_tests', tests)
+            self.finished(SUCCESS)
+            return None
+
+        self._addToLog('stdio', 'This patch does not modify any layout tests')
+        self.finished(FAILURE)
+        self.build.results = SKIPPED
+        self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
+        return None
 
 
 class Bugzilla(object):

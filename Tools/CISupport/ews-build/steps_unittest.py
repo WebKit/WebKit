@@ -46,8 +46,8 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch, CompileWebKit,
                    CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
-                   PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
+                   FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, InstallGtkDependencies, InstallWpeDependencies,
+                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                    RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
@@ -2634,6 +2634,61 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
             self.setProperty('buildername', queue)
             self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
             rc = self.runStep()
+        return rc
+
+
+class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_relevant_patch(self):
+        self.setupStep(FindModifiedLayoutTests())
+        self.assertEqual(FindModifiedLayoutTests.haltOnFailure, True)
+        self.assertEqual(FindModifiedLayoutTests.flunkOnFailure, True)
+        FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'])
+        return rc
+
+    def test_ignore_certain_directories(self):
+        self.setupStep(FindModifiedLayoutTests())
+        dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
+        for dir_name in dir_names:
+            FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/{}/test-name.html'.format(dir_name).encode('utf-8')
+            self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('modified_tests'), None)
+        return rc
+
+    def test_ignore_certain_suffixes(self):
+        self.setupStep(FindModifiedLayoutTests())
+        suffixes = ['-expected', '-expected-mismatch', '-ref', '-notref']
+        for suffix in suffixes:
+            FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/http/tests/events/device-motion-{}.html'.format(suffix).encode('utf-8')
+            self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('modified_tests'), None)
+        return rc
+
+    def test_ignore_non_layout_test_in_html_directory(self):
+        self.setupStep(FindModifiedLayoutTests())
+        FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/html/test.txt'.encode('utf-8')
+        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), None)
+        return rc
+
+    def test_non_relevant_patch(self):
+        self.setupStep(FindModifiedLayoutTests())
+        FindModifiedLayoutTests._get_patch = lambda x: b'Sample patch which does not modify any layout test'
+        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_tests'), None)
         return rc
 
 
