@@ -1662,12 +1662,12 @@ static ColorMixPercentages normalizedMixPercentages(const ColorMixComponent& mix
 // Normalization is special cased for HWBA, which needs to normalize the whiteness and blackness components and convert to sRGB
 // and HSLA, which just needs to be converted to sRGB. All other color types can go through this non-specialized case.
 
-template<typename ColorType> inline Color makeColorTypeByNormalizingComponentsAfterMix(const ColorComponents<float>& colorComponents)
+template<typename ColorType> inline Color makeColorTypeByNormalizingComponentsAfterMix(const ColorComponents<float, 4>& colorComponents)
 {
     return makeFromComponents<ColorType>(colorComponents);
 }
 
-template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>(const ColorComponents<float>& colorComponents)
+template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>(const ColorComponents<float, 4>& colorComponents)
 {
     auto [hue, whiteness, blackness, alpha] = colorComponents;
     auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(whiteness, blackness);
@@ -1675,12 +1675,12 @@ template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>
     return convertColor<SRGBA<uint8_t>>(HWBA<float> { hue, normalizedWhitness, normalizedBlackness, alpha });
 }
 
-template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>(const ColorComponents<float>& colorComponents)
+template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>(const ColorComponents<float, 4>& colorComponents)
 {
     return convertColor<SRGBA<uint8_t>>(makeFromComponents<HSLA<float>>(colorComponents));
 }
 
-template<size_t I, typename ComponentType> static void fixupHueComponentsPriorToMix(ColorComponents<ComponentType>& colorComponents1, ColorComponents<ComponentType>& colorComponents2)
+template<size_t I, typename ComponentType> static void fixupHueComponentsPriorToMix(ColorComponents<ComponentType, 4>& colorComponents1, ColorComponents<ComponentType, 4>& colorComponents2)
 {
     auto normalizeAnglesUsingShorterAlgorithm = [] (auto theta1, auto theta2) -> std::pair<ComponentType, ComponentType> {
         // https://drafts.csswg.org/css-color-4/#hue-shorter

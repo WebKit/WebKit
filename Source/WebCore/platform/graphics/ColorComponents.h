@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,17 +32,24 @@
 
 namespace WebCore {
 
-template<typename T>
+template<typename T, size_t N>
 struct ColorComponents {
-    constexpr static size_t Size = 4;
+    constexpr static size_t Size = N;
 
-    constexpr ColorComponents(T a = 0, T b = 0, T c = 0, T d = 0)
-        : components { a, b, c, d }
+    constexpr ColorComponents()
+        : components { }
     {
     }
 
+    template<typename ...Ts>
+    constexpr ColorComponents(Ts ...input)
+        : components {{ input ... }}
+    {
+        static_assert(sizeof...(Ts) == N);
+    }
+
     template<typename F>
-    constexpr auto map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>()))>;
+    constexpr auto map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>())), N>;
 
     constexpr ColorComponents& operator+=(const ColorComponents&);
 
@@ -55,88 +62,104 @@ struct ColorComponents {
     constexpr T& operator[](size_t i) { return components[i]; }
     constexpr const T& operator[](size_t i) const { return components[i]; }
 
-    template<std::size_t N>
+    template<size_t I>
     constexpr T get() const;
 
-    std::array<T, Size> components;
+    template<size_t Start, size_t End>
+    constexpr ColorComponents<T, End - Start> subset() const;
+
+    std::array<T, N> components;
 };
 
+template<typename T, typename ...Ts>
+ColorComponents(T, Ts...) -> ColorComponents<T, 1 + sizeof...(Ts)>;
+
 template<typename F, typename T, typename... Ts>
-constexpr auto mapColorComponents(F&& function, T component, Ts... components) -> ColorComponents<decltype(function(component[0], components[0]...))>
+constexpr auto mapColorComponents(F&& function, T component, Ts... components) -> ColorComponents<decltype(function(component[0], components[0]...)), T::Size>
 {
     static_assert(std::conjunction_v<std::bool_constant<Ts::Size == T::Size>...>, "All ColorComponents passed to mapColorComponents must have the same size");
 
-    ColorComponents<decltype(function(component[0], components[0]...))> result;
+    ColorComponents<decltype(function(component[0], components[0]...)), T::Size> result;
     for (std::remove_const_t<decltype(T::Size)> i = 0; i < T::Size; ++i)
         result[i] = function(component[i], components[i]...);
     return result;
 }
 
-template<typename T>
+template<typename T, size_t N>
 template<typename F>
-constexpr auto ColorComponents<T>::map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>()))>
+constexpr auto ColorComponents<T, N>::map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>())), N>
 {
     return mapColorComponents(std::forward<F>(function), *this);
 }
 
-template<typename T>
-constexpr ColorComponents<T>& ColorComponents<T>::operator+=(const ColorComponents& rhs)
+template<typename T, size_t N>
+constexpr ColorComponents<T, N>& ColorComponents<T, N>::operator+=(const ColorComponents& rhs)
 {
     *this = mapColorComponents([](T c1, T c2) { return c1 + c2; }, *this, rhs);
     return *this;
 }
 
-template<typename T>
-constexpr ColorComponents<T> ColorComponents<T>::operator+(T rhs) const
+template<typename T, size_t N>
+constexpr ColorComponents<T, N> ColorComponents<T, N>::operator+(T rhs) const
 {
     return map([rhs](T c) { return c + rhs; });
 }
 
-template<typename T>
-constexpr ColorComponents<T> ColorComponents<T>::operator/(T denominator) const
+template<typename T, size_t N>
+constexpr ColorComponents<T, N> ColorComponents<T, N>::operator/(T denominator) const
 {
     return map([denominator](T c) { return c / denominator; });
 }
 
-template<typename T>
-constexpr ColorComponents<T> ColorComponents<T>::operator*(T factor) const
+template<typename T, size_t N>
+constexpr ColorComponents<T, N> ColorComponents<T, N>::operator*(T factor) const
 {
     return map([factor](T c) { return c * factor; });
 }
 
-template<typename T>
-constexpr ColorComponents<T> ColorComponents<T>::abs() const
+template<typename T, size_t N>
+constexpr ColorComponents<T, N> ColorComponents<T, N>::abs() const
 {
     return map([](T c) { return std::abs(c); });
 }
 
-template<typename T>
-template<std::size_t N>
-constexpr T ColorComponents<T>::get() const
+template<typename T, size_t N>
+template<size_t I>
+constexpr T ColorComponents<T, N>::get() const
 {
-    return components[N];
+    return components[I];
 }
 
-template<typename T>
-constexpr ColorComponents<T> perComponentMax(const ColorComponents<T>& a, const ColorComponents<T>& b)
+template<typename T, size_t N>
+template<size_t Start, size_t End>
+constexpr ColorComponents<T, End - Start> ColorComponents<T, N>::subset() const
+{
+    ColorComponents<T, End - Start> result;
+    for (std::remove_const_t<decltype(T::Size)> i = Start; i < End; ++i)
+        result[i - Start] = components[i];
+    return result;
+}
+
+template<typename T, size_t N>
+constexpr ColorComponents<T, N> perComponentMax(const ColorComponents<T, N>& a, const ColorComponents<T, N>& b)
 {
     return mapColorComponents([](T c1, T c2) { return std::max(c1, c2); }, a, b);
 }
 
-template<typename T>
-constexpr ColorComponents<T> perComponentMin(const ColorComponents<T>& a, const ColorComponents<T>& b)
+template<typename T, size_t N>
+constexpr ColorComponents<T, N> perComponentMin(const ColorComponents<T, N>& a, const ColorComponents<T, N>& b)
 {
     return mapColorComponents([](T c1, T c2) { return std::min(c1, c2); }, a, b);
 }
 
-template<typename T>
-constexpr bool operator==(const ColorComponents<T>& a, const ColorComponents<T>& b)
+template<typename T, size_t N>
+constexpr bool operator==(const ColorComponents<T, N>& a, const ColorComponents<T, N>& b)
 {
     return a.components == b.components;
 }
 
-template<typename T>
-constexpr bool operator!=(const ColorComponents<T>& a, const ColorComponents<T>& b)
+template<typename T, size_t N>
+constexpr bool operator!=(const ColorComponents<T, N>& a, const ColorComponents<T, N>& b)
 {
     return !(a == b);
 }
@@ -145,12 +168,12 @@ constexpr bool operator!=(const ColorComponents<T>& a, const ColorComponents<T>&
 
 namespace std {
 
-template<typename T>
-class tuple_size<WebCore::ColorComponents<T>> : public std::integral_constant<std::size_t, WebCore::ColorComponents<T>::Size> {
+template<typename T, size_t N>
+class tuple_size<WebCore::ColorComponents<T, N>> : public std::integral_constant<size_t, N> {
 };
 
-template<std::size_t N, typename T>
-class tuple_element<N, WebCore::ColorComponents<T>> {
+template<size_t I, typename T, size_t N>
+class tuple_element<I, WebCore::ColorComponents<T, N>> {
 public:
     using type = T;
 };

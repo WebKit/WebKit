@@ -1,3 +1,73 @@
+2021-03-30  Sam Weinig  <weinig@apple.com>
+
+        Generalize ColorComponents to support an arbritrary number of components (though really we will only ever want 3, 4, or 5)
+        https://bugs.webkit.org/show_bug.cgi?id=223901
+
+        Reviewed by Darin Adler.
+
+        Add a length to ColorComponents to allow an arbitrary number of components. This
+        will be used to support cases where we only want to carry the three color components
+        (not alpha) and will be useful if we ever need to add back CMYKA support.
+
+        A new dedecution guide added allows for cases that currently deduce to remain.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::makeColorTypeByNormalizingComponentsAfterMix):
+        (WebCore::CSSPropertyParserHelpers::makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>):
+        (WebCore::CSSPropertyParserHelpers::makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>):
+        (WebCore::CSSPropertyParserHelpers::fixupHueComponentsPriorToMix):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::colorSpaceAndComponents const):
+        * platform/graphics/Color.h:
+        (WebCore::Color::OutOfLineComponents::create):
+        (WebCore::Color::OutOfLineComponents::components const):
+        (WebCore::Color::OutOfLineComponents::OutOfLineComponents):
+        * platform/graphics/ColorComponents.h:
+        (WebCore::ColorComponents::ColorComponents):
+        (WebCore::mapColorComponents):
+        (WebCore::N>::map const):
+        (WebCore::=):
+        (WebCore::N>::operator const):
+        (WebCore::N>::abs const):
+        (WebCore::N>::get const):
+        (WebCore::N>::subset const):
+        (WebCore::perComponentMax):
+        (WebCore::perComponentMin):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::ColorComponents<T>::map const): Deleted.
+        (WebCore::ColorComponents<T>::operator const): Deleted.
+        (WebCore::ColorComponents<T>::abs const): Deleted.
+        (WebCore::ColorComponents<T>::get const): Deleted.
+        * platform/graphics/ColorMatrix.h:
+        (WebCore::RowCount>::transformedColorComponents const):
+        (WebCore::applyMatricesToColorComponents):
+        * platform/graphics/ColorSpace.h:
+        (WebCore::callWithColorType):
+        * platform/graphics/ColorTypes.h:
+        (WebCore::makeFromComponents):
+        (WebCore::clampedComponent):
+        (WebCore::clampedComponents):
+        (WebCore::clampedComponentsExceptAlpha):
+        (WebCore::makeFromComponentsClamping):
+        (WebCore::makeFromComponentsClampingExceptAlpha):
+        (WebCore::asColorComponents):
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::makeColorComponentsfromPixelValue):
+        (WebCore::makePixelValueFromColorComponents):
+        (WebCore::minOrMax):
+        (WebCore::columnExtremum):
+        (WebCore::kernelExtremum):
+        (WebCore::FEMorphology::platformApplyGeneric):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::noise2D const):
+        (WebCore::toIntBasedColorComponents):
+        (WebCore::FETurbulence::calculateTurbulenceValueForPoint const):
+        * platform/graphics/filters/FETurbulence.h:
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::hueRotate):
+
 2021-03-30  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Anonymous table cell collapsing should also cleanup the inline tree
