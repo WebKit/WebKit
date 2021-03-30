@@ -1,3 +1,16 @@
+2021-03-30  Antti Koivisto  <antti@apple.com>
+
+        Nullptr crash in applyCommonButtonPaddingToStyle
+        https://bugs.webkit.org/show_bug.cgi?id=223917
+        rdar://57262957
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::applyCommonButtonPaddingToStyle):
+        
+        Null check frame.
+
 2021-03-30  Frédéric Wang  <fwang@igalia.com>
 
         Release assert in compareAnimationsByCompositeOrder
