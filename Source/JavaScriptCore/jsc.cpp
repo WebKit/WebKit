@@ -2824,6 +2824,9 @@ int main(int argc, char** argv)
     // yet, since that would do somethings that we'd like to defer until after we
     // have a chance to parse options.
     WTF::initialize();
+#if PLATFORM(COCOA)
+    WTF::disableForwardingVPrintfStdErrToOSLog();
+#endif
 
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling

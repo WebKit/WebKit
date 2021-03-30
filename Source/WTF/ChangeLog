@@ -1,3 +1,15 @@
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add disableForwardingVPrintfStdErrToOSLog() and use it in the jsc shell.
+        https://bugs.webkit.org/show_bug.cgi?id=223963
+
+        Reviewed by Saam Barati.
+
+        * wtf/Assertions.cpp:
+        (WTF::disableForwardingVPrintfStdErrToOSLog):
+        * wtf/Assertions.h:
+        * wtf/WTFConfig.h:
+
 2021-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Use terminate_with_reason instead of xpc_connection_kill

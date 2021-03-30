@@ -1,5 +1,19 @@
 2021-03-30  Mark Lam  <mark.lam@apple.com>
 
+        Add disableForwardingVPrintfStdErrToOSLog() and use it in the jsc shell.
+        https://bugs.webkit.org/show_bug.cgi?id=223963
+
+        Reviewed by Saam Barati.
+
+        This prevents automatic forwarding of vprintf_stderr_common() to os_log_with_args(),
+        which results in duplicate output when using the jsc shell.  As a result, ASSERT
+        fail messages and crash stack traces will be more readable.
+
+        * jsc.cpp:
+        (main):
+
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
         Add Options::exitOnResourceExhaustion() to enable exiting instead of crashing on resource exhaustion.
         https://bugs.webkit.org/show_bug.cgi?id=223959
         rdar://63934158
