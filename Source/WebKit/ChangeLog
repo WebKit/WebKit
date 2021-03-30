@@ -1,3 +1,16 @@
+2021-03-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, reverting r275197.
+
+        The change is spooky.
+
+        Reverted changeset:
+
+        "Safari crashed and lost all tabs, after unlocking sleeping
+        device"
+        https://bugs.webkit.org/show_bug.cgi?id=223832
+        https://commits.webkit.org/r275197
+
 2021-03-30  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Two taps required to view <select> options on Square Checkout
