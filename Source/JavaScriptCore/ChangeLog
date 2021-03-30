@@ -1,3 +1,27 @@
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add Options::exitOnResourceExhaustion() to enable exiting instead of crashing on resource exhaustion.
+        https://bugs.webkit.org/show_bug.cgi?id=223959
+        rdar://63934158
+
+        Reviewed by Tadeu Zagallo.
+
+        This is useful to unblock fuzzers from false positive crashes due to resource
+        exhaustion.  Currently, this is only applied to StructureID exhaustion.
+
+        Since we're adding this facility, we might as well implement it in such a way that
+        it can be easily deployed for other types of resource exhaustion as well.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/OptionsList.h:
+        * runtime/ResourceExhaustion.cpp: Added.
+        (JSC::handleResourceExhaustion):
+        * runtime/ResourceExhaustion.h: Added.
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::resize):
+
 2021-03-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Ensure that GlobalPropertyInfo is allocated on the stack.

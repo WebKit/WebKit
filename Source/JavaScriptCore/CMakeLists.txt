@@ -1044,6 +1044,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/RegExpKey.h
     runtime/RegExpObject.h
     runtime/RegExpStringIteratorPrototype.h
+    runtime/ResourceExhaustion.h
     runtime/RuntimeFlags.h
     runtime/RuntimeType.h
     runtime/SamplingProfiler.h
