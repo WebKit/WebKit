@@ -583,6 +583,12 @@ static const float GroupOptionTextColorAlpha = 0.5;
         currentIndex++;
     }
 
+    // Some sites, such as Square Checkout, wrap all the element's <option>s in
+    // an a single <optgroup>. In this case, promote the grouped submenu to the
+    // root menu, avoiding the need for an additional tap to view the options.
+    if (items.count == 1 && [[items firstObject] isKindOfClass:UIMenu.class])
+        return [items firstObject];
+
     return [UIMenu menuWithTitle:@"" children:items];
 }
 

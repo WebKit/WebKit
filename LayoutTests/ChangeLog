@@ -1,3 +1,17 @@
+2021-03-30  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Two taps required to view <select> options on Square Checkout
+        https://bugs.webkit.org/show_bug.cgi?id=223933
+        <rdar://problem/74828029>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a layout test to exercise the new codepath when a <select>
+        has a single <optgroup> containing all of the <option>s.
+
+        * fast/forms/ios/form-control-refresh/select/all-options-in-single-optgroup-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/select/all-options-in-single-optgroup.html: Added.
+
 2021-03-30  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Elements that overflow inline-blocks are not hit tested correctly

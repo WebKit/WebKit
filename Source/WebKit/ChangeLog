@@ -1,3 +1,25 @@
+2021-03-30  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Two taps required to view <select> options on Square Checkout
+        https://bugs.webkit.org/show_bug.cgi?id=223933
+        <rdar://problem/74828029>
+
+        Reviewed by Wenson Hsieh.
+
+        Some sites, such as Square Checkout, wrap all the <option>s in a
+        <select> element in a single <optgroup>. With the new context menu
+        appearance for <select> on iOS, this means that users have to tap twice
+        to view the options on some sites (once to bring up the menu and once
+        to expand the grouped menu).
+
+        To fix, promote the the contents of the grouped submenu to the root menu
+        if all the options are contained within a single submenu.
+
+        Test: fast/forms/ios/form-control-refresh/select/all-options-in-single-optgroup.html
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker createMenu]):
+
 2021-03-29  Simon Fraser  <simon.fraser@apple.com>
 
         Allow non-60fps display updates to be driven by DisplayRefreshMonitor
