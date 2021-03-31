@@ -48,10 +48,10 @@
         document.body.removeChild(document.getElementById("targetLink"));
         document.body.removeChild(document.getElementById("pixel"));
 
-        appendIframe("http://127.0.0.1:8000/cookies/resources/echo-cookies.php");
+        appendIframe("http://127.0.0.1:8000/cookies/resources/echo-cookies.py");
         // Click source.
         appendIframe("http://127.0.0.1:8000/privateClickMeasurement/resources/getConversionData.py?timeout_ms=2000&recipient=ClickSource&nonce=" + nonce, function() {
-            appendIframe("http://127.0.0.1:8000/cookies/resources/echo-cookies.php", function() {
+            appendIframe("http://127.0.0.1:8000/cookies/resources/echo-cookies.py", function() {
                 reportsReceived++;
                 if (reportsReceived >= 2)
                     tearDownAndFinish();
@@ -60,7 +60,7 @@
 
         // Click destination.
         appendIframe("http://127.0.0.1:8000/privateClickMeasurement/resources/getConversionData.py?timeout_ms=2000&recipient=ClickDestination&nonce=" + nonce, function() {
-            appendIframe("http://127.0.0.1:8000/cookies/resources/echo-cookies.php", function() {
+            appendIframe("http://127.0.0.1:8000/cookies/resources/echo-cookies.py", function() {
                 reportsReceived++;
                 if (reportsReceived >= 2)
                     tearDownAndFinish();

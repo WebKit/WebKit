@@ -22,6 +22,17 @@
 
 import os
 
+def get_cookies():
+    cookies = {}
+    if 'HTTP_COOKIE' in os.environ:
+        header_cookies = os.environ['HTTP_COOKIE']
+        header_cookies = header_cookies.split('; ')
+
+        for cookie in header_cookies:
+            cookie = cookie.split('=')
+            cookies[cookie[0]] = cookie[1]
+
+    return cookies
 
 def setState(state, file):
     with open(file, 'w') as file:

@@ -20,7 +20,7 @@ async function runTest()
     await setCookie("implicit-strict", "11", {"SameSite": null, "Max-Age": 100, "path": "/"});
     await setCookie("strict-because-invalid-SameSite-value", "11", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
     await setCookie("lax", "11", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
-    await interceptedFrame("resources/passthrough-service-worker.js", "resources/fetch-in-same-origin-service-worker.php");
+    await interceptedFrame("resources/passthrough-service-worker.js", "resources/fetch-in-same-origin-service-worker.py");
 }
 runTest();
 </script>

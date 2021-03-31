@@ -21,7 +21,7 @@
     window.jsTestIsAsync = true;
 
     function doTest() {
-        const resultUrl = 'resources/cookie-with-multiple-level-path.php';
+        const resultUrl = 'resources/cookie-with-multiple-level-path.py';
 
         setCookie('foo', 'bar', '/')
             .then(() => setCookie('foo', 'buz', '/cookies/resources')) // override foo

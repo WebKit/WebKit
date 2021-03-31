@@ -1,3 +1,112 @@
+2021-03-31  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/contentextensions convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223891
+        <rdar://problem/75965634>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/contentextensions/block-cookies-basic.html:
+        * http/tests/contentextensions/block-cookies-basic.html.json:
+        * http/tests/contentextensions/block-cookies-in-image-load-in-onunload.html:
+        * http/tests/contentextensions/block-cookies-in-ping.html:
+        * http/tests/contentextensions/block-cookies-send.html:
+        * http/tests/contentextensions/resources/save_ping.py:
+        (not_being_called):
+        * http/tests/cookies/cookie-with-multiple-level-path.html:
+        * http/tests/cookies/document-cookie-after-showModalDialog.html:
+        * http/tests/cookies/document-cookie-during-iframe-parsing.html:
+        * http/tests/cookies/only-accept-first-party-cookies.html:
+        * http/tests/cookies/resources/cookie-utilities.js:
+        * http/tests/cookies/resources/cookie-utility.php: Removed.
+        * http/tests/cookies/resources/cookie-utility.py: Added.
+        (delete_cookie):
+        * http/tests/cookies/resources/cookie-with-multiple-level-path.php: Removed.
+        * http/tests/cookies/resources/cookie-with-multiple-level-path.py: Added.
+        * http/tests/cookies/resources/echo-cookies.php: Removed.
+        * http/tests/cookies/resources/echo-cookies.py: Added.
+        * http/tests/cookies/resources/echo-http-and-dom-cookies-and-notify-done.php: Removed.
+        * http/tests/cookies/resources/echo-http-and-dom-cookies-and-notify-done.py: Added.
+        * http/tests/cookies/resources/echo-json.php: Removed.
+        * http/tests/cookies/resources/echo-json.py: Added.
+        * http/tests/cookies/resources/post-cookies-onmessage.php: Removed.
+        * http/tests/cookies/resources/post-cookies-onmessage.py: Added.
+        * http/tests/cookies/resources/post-cookies-to-opener.php: Removed.
+        * http/tests/cookies/resources/post-cookies-to-opener.py: Added.
+        * http/tests/cookies/resources/resetCookies.js:
+        (resetCookies):
+        * http/tests/cookies/resources/set-cookie-and-redirect-back.php: Removed.
+        * http/tests/cookies/resources/set-cookie-and-redirect-back.py: Added.
+        * http/tests/cookies/resources/set-cookie-and-serve.php: Removed.
+        * http/tests/cookies/resources/set-cookie-and-serve.py: Added.
+        * http/tests/cookies/resources/set-cookie-on-redirect.php: Removed.
+        * http/tests/cookies/resources/set-cookie-on-redirect.py: Added.
+        * http/tests/cookies/resources/set-http-only-cookie.php: Removed.
+        * http/tests/cookies/resources/set-http-only-cookie.py: Added.
+        * http/tests/cookies/resources/setArraycookies-result.php: Removed.
+        * http/tests/cookies/resources/setArraycookies.php: Removed.
+        * http/tests/cookies/resources/setUtf8Cookies-result.php: Removed.
+        * http/tests/cookies/resources/setUtf8Cookies.php: Removed.
+        * http/tests/cookies/resources/third-party-cookie-relaxing-iframe.html:
+        * http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-same-origin-redirect.html:
+        * http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html:
+        * http/tests/cookies/same-site/lax-samesite-cookie-after-cross-site-history-load.php: Removed.
+        * http/tests/cookies/same-site/lax-samesite-cookie-after-cross-site-history-load.py: Added.
+        * http/tests/cookies/same-site/popup-cross-site-post.html:
+        * http/tests/cookies/same-site/popup-cross-site.html:
+        * http/tests/cookies/same-site/popup-same-site-post.html:
+        * http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html:
+        * http/tests/cookies/same-site/popup-same-site-via-same-site-redirect.html:
+        * http/tests/cookies/same-site/popup-same-site.html:
+        * http/tests/cookies/same-site/resources/click-hyperlink.php: Removed.
+        * http/tests/cookies/same-site/resources/click-hyperlink.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-navigating-iframe-in-cross-origin-page.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-navigating-iframe-in-cross-origin-page.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-same-origin-redirect.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-same-origin-redirect.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-in-same-origin-service-worker.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-in-same-origin-service-worker.py: Added.
+        * http/tests/cookies/same-site/resources/post-from-popup.html:
+        * http/tests/cookies/same-site/set-first-party-cross-site-cookies.php:
+        * http/tests/cookies/same-site/set-first-party-same-site-cookies.php:
+        * http/tests/cookies/set-cookie-on-redirect.html:
+        * http/tests/cookies/third-party-cookie-relaxing-expected.txt:
+        * http/tests/plugins/resources/third-party-cookie-accept-policy-iframe.html:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+        * http/tests/resourceLoadStatistics/delete-script-accessible-cookies.html:
+        * http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion-database.html:
+        * http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion.html:
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html:
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html:
+        * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html:
+        * http/tests/resourceLoadStatistics/resources/set-all-kinds-of-cookies.py:
+        * http/tests/resourceLoadStatistics/resources/set-cookie-on-redirect.py:
+        * http/tests/resourceLoadStatistics/resources/set-cookie.py:
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html:
+        * http/tests/resources/__init__.py: Removed.
+        * http/tests/resources/portabilityLayer.py:
+        (get_cookies):
+        (getState):
+        * http/tests/security/cookies/third-party-cookie-blocking-redirect.html:
+        * http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html:
+        * http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html:
+        * http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html:
+        * http/tests/xmlhttprequest/access-control-preflight-credential-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-credential-sync-expected.txt:
+
 2021-03-31  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] MediaSessionCoordinator should have join and leave methods

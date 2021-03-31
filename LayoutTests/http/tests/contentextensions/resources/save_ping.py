@@ -7,7 +7,7 @@ from ping_file_path import ping_filepath
 
 def not_being_called():
     cookies = {}
-    expires= datetime.utcnow() - timedelta(seconds=60)
+    expires = datetime.utcnow() - timedelta(seconds=60)
     if 'HTTP_COOKIE' in os.environ:
         header_cookies = os.environ['HTTP_COOKIE']
         header_cookies = header_cookies.split('; ')

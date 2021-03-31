@@ -10,7 +10,7 @@ name = query.get('name', [''])[0]
 value = query.get('value', [''])[0]
 message = query.get('message', [''])[0]
 
-expires= datetime.utcnow() + timedelta(seconds=60*60*24*30)
+expires = datetime.utcnow() + timedelta(seconds=60*60*24*30)
 
 sys.stdout.write(
     'Set-Cookie: {name}={value}; expires={expires} GMT; Max-Age=2592000; path=/\r\n'

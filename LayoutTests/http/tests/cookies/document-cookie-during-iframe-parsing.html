@@ -25,7 +25,7 @@ onload = () => {
     registerCookieForCleanup('foo=bar; path=/');
 
     let iframe = document.createElement("iframe");
-    iframe.src = "resources/set-cookie-and-serve.php?cookie-name=foo&cookie-value=bar&destination=document-cookie-during-iframe-parsing-iframe.html";
+    iframe.src = "resources/set-cookie-and-serve.py?cookie-name=foo&cookie-value=bar&destination=document-cookie-during-iframe-parsing-iframe.html";
     document.body.appendChild(iframe);
 };
 </script>

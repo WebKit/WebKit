@@ -18,7 +18,7 @@ var plugin = document.getElementById("plugin");
 
 if (window.testRunner)
     testRunner.setAlwaysAcceptCookies(true);
-plugin.getURLNotify("http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=deleteCookies", null, "trySetCookie");
+plugin.getURLNotify("http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=deleteCookies", null, "trySetCookie");
 
 function trySetCookie()
 {
@@ -26,7 +26,7 @@ function trySetCookie()
    console.log("About to set a cookie, but on localhost instead of 127.0.0.1, which is our main document domain - This should fail.");
     if (window.testRunner)
         testRunner.setAlwaysAcceptCookies(false);
-   plugin.getURLNotify("http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooCookie", null, "completeTest");
+   plugin.getURLNotify("http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=setFooCookie", null, "completeTest");
 }
 
 function completeTest()
