@@ -1,5 +1,27 @@
 2021-03-30  Chris Dumez  <cdumez@apple.com>
 
+        ASSERT(m_sendPort) in IPC::Connection::open() when running some iOS unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=223982
+        <rdar://75974285>
+
+        Reviewed by Alexey Proskuryakov.
+
+        If the UIProcess exits or severs it connection to the WebProcess while the WebProcess is
+        launching, the WebProcess ends up getting an invalid mach port upon initialization. This
+        is expected and XPCServiceInitializerDelegate::getConnectionIdentifier() was dealing with
+        this. getConnectionIdentifier() was checking if the port was invalid by checking if it was
+        MACH_PORT_NULL and calling exit() in such case. However, something has changed (likely
+        at OS level) and we are now sometimes getting MACH_PORT_DEAD instead of MACH_PORT_NULL.
+        The proper way to check if a mach port is valid is to call MACH_PORT_VALID(), which checks
+        for both MACH_PORT_NULL and MACH_PORT_DEAD. I therefore updated getConnectionIdentifier()
+        to use MACH_PORT_VALID() instead of an explicit check for MACH_PORT_NULL. This gets rid
+        of debug assertions we were seeing in the output of some iOS unit tests.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getConnectionIdentifier):
+
+2021-03-30  Chris Dumez  <cdumez@apple.com>
+
         Service Worker scripts use too much memory in the network process
         https://bugs.webkit.org/show_bug.cgi?id=223808
         <rdar://75637093>

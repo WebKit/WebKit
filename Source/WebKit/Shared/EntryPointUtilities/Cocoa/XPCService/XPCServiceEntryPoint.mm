@@ -62,7 +62,7 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
 bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Identifier& identifier)
 {
     mach_port_t port = xpc_dictionary_copy_mach_send(m_initializerMessage, "server-port");
-    if (port == MACH_PORT_NULL)
+    if (!MACH_PORT_VALID(port))
         return false;
 
     identifier = IPC::Connection::Identifier(port, m_connection);
