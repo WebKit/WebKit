@@ -2517,14 +2517,14 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
         return nullptr;
 
     String idbRootPath = sessionStorageQuotaManager->idbRootPath();
-    StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()](StorageQuotaManager::ShouldPrintUsageDetail shouldPrintusageDetail) {
+    StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()](StorageQuotaManager::ShouldPrintUsageDetail shouldPrintUsageDetail) {
         ASSERT(!isMainRunLoop());
 
         uint64_t cacheUsage = CacheStorage::Engine::diskUsage(cacheRootPath, origin);
-        uint64_t usage = cacheUsage + IDBServer::IDBServer::diskUsage(idbRootPath, origin);
+        uint64_t usage = cacheUsage + IDBServer::IDBServer::diskUsage(idbRootPath, origin, shouldPrintUsageDetail);
 
-        if (shouldPrintusageDetail == StorageQuotaManager::ShouldPrintUsageDetail::Yes)
-            WTFLogAlways("StorageQuotaManager::UsageGetter Cache usage %" PRIu64 ", IDB usage %" PRIu64, cacheUsage, usage);
+        if (shouldPrintUsageDetail == StorageQuotaManager::ShouldPrintUsageDetail::Yes)
+            WTFLogAlways("StorageQuotaManager::UsageGetter Cache usage %" PRIu64 ", IDB usage %" PRIu64, cacheUsage, usage - cacheUsage);
 
         return usage;
     };

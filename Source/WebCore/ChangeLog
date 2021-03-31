@@ -1,3 +1,21 @@
+2021-03-31  Sihui Liu  <sihui_liu@apple.com>
+
+        Add logging in IndexedDB to help debug flaky quota tests
+        https://bugs.webkit.org/show_bug.cgi?id=223578
+        <rdar://problem/75956789>
+
+        Reviewed by Alexey Proskuryakov.
+
+        With r274323, we know that the tests fail because of IndexedDB. IndexedDB data should be cleared between tests, 
+        so let's add more logging to see what databases are left.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::diskUsage):
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForDirectory):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
 2021-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Add deprecation macros.
