@@ -1,3 +1,22 @@
+2021-03-31  Youenn Fablet  <youenn@apple.com>
+
+        Apply permission policy to geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=223248
+
+        Reviewed by Eric Carlson.
+
+        Only allow third-party iframes if allowed by permission policy,
+        following https://w3c.github.io/geolocation-api/#permissions-policy.
+        Covered by API tests.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::shouldBlockGeolocationRequests):
+        * html/FeaturePolicy.cpp:
+        (WebCore::policyTypeName):
+        (WebCore::FeaturePolicy::parse):
+        (WebCore::FeaturePolicy::allows const):
+        * html/FeaturePolicy.h:
+
 2021-03-31  Thibault Saunier  <tsaunier@igalia.com> and Philippe Normand  <pnormand@igalia.com>
 
         [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system

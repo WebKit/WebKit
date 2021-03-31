@@ -1,3 +1,15 @@
+2021-03-31  Youenn Fablet  <youenn@apple.com>
+
+        Apply permission policy to geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=223248
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[GeolocationDelegateNew setValidationHandler:]):
+        (-[GeolocationDelegateNew _webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:]):
+        (-[GeolocationPermissionMessageHandler userContentController:didReceiveScriptMessage:]):
+
 2021-03-30  Chris Dumez  <cdumez@apple.com>
 
         Service Worker scripts use too much memory in the network process
