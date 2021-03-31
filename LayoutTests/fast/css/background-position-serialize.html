@@ -117,7 +117,7 @@ shouldBe("window.getComputedStyle(t).backgroundPosition", "right 20px bottom 10p
 
 run("t.setAttribute('style', 'background-position: top 10px right 20px');");
 shouldBe("t.style.backgroundPosition", "right 20px top 10px");
-shouldBe("window.getComputedStyle(t).backgroundPosition", "right 20px top 10px");
+shouldBe("window.getComputedStyle(t).backgroundPosition", "right 20px 10px");
 
 run("t.setAttribute('style', 'background-position: 50% left');"); // Invalid per spec.
 shouldBe("t.style.backgroundPosition", "");

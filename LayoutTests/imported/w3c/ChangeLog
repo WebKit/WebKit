@@ -1,5 +1,19 @@
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
+        Computed style for background-position should not use "left" and "top" keywords
+        https://bugs.webkit.org/show_bug.cgi?id=223878
+
+        Reviewed by Simon Fraser.
+
+        Add 106 new PASS results.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-position-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-computed-expected.txt:
+        * web-platform-tests/css/css-pseudo/first-letter-allowed-properties.html: Update the test per WPT PR #28284.
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
         CSS properties backed by StyleImage should not interpolate when one of the values is "none"
         https://bugs.webkit.org/show_bug.cgi?id=223929
 

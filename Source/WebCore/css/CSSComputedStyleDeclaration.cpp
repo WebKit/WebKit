@@ -288,12 +288,12 @@ static Ref<CSSValue> valueForReflection(const StyleReflection* reflection, const
 static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, const FillLayer& layer, const RenderStyle& style)
 {
     auto list = CSSValueList::createSpaceSeparated();
-    if (layer.isBackgroundXOriginSet()) {
+    if (layer.isBackgroundXOriginSet() && layer.backgroundXOrigin() != Edge::Left) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
         list->append(CSSValuePool::singleton().createValue(layer.backgroundXOrigin()));
     }
     list->append(zoomAdjustedPixelValueForLength(layer.xPosition(), style));
-    if (layer.isBackgroundYOriginSet()) {
+    if (layer.isBackgroundYOriginSet() && layer.backgroundYOrigin() != Edge::Top) {
         ASSERT(propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
         list->append(CSSValuePool::singleton().createValue(layer.backgroundYOrigin()));
     }
@@ -2688,11 +2688,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitMaskPositionX: {
             auto& layers = propertyID == CSSPropertyWebkitMaskPositionX ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
-                return cssValuePool.createValue(layers.xPosition());
+                return cssValuePool.createValue(layers.xPosition(), style);
 
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(cssValuePool.createValue(currLayer->xPosition()));
+                list->append(cssValuePool.createValue(currLayer->xPosition(), style));
 
             return list;
         }
@@ -2700,11 +2700,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitMaskPositionY: {
             auto& layers = propertyID == CSSPropertyWebkitMaskPositionY ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
-                return cssValuePool.createValue(layers.yPosition());
+                return cssValuePool.createValue(layers.yPosition(), style);
 
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(cssValuePool.createValue(currLayer->yPosition()));
+                list->append(cssValuePool.createValue(currLayer->yPosition(), style));
 
             return list;
         }

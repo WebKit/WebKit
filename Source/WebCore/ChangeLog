@@ -1,3 +1,15 @@
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Computed style for background-position should not use "left" and "top" keywords
+        https://bugs.webkit.org/show_bug.cgi?id=223878
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle): Ensure querying the computed
+        style for background-position longhands passes in the RenderStyle for the calc() case.
+        (WebCore::createPositionListForLayer):
+
 2021-03-30  Chris Dumez  <cdumez@apple.com>
 
         Service Worker scripts use too much memory in the network process
