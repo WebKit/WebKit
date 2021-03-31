@@ -1,3 +1,12 @@
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] inspector/protocol/condition.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223975
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Timeout while test is reviewed.
+
 2021-03-30  Venky Dass  <yaranamavenkataramana@apple.com>
 
         Nullptr crash in Crash in WebCore::positionInParentBeforeNode(..) where a NULL check is missing.
