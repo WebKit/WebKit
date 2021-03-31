@@ -1,3 +1,17 @@
+2021-03-30  Venky Dass  <yaranamavenkataramana@apple.com>
+
+        Nullptr crash in Crash in WebCore::positionInParentBeforeNode(..) where a NULL check is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=223639
+
+        Reviewed by Ryosuke Niwa.
+
+        In positionInParentBeforeNode(..) there is a null check missing on a pointer - hence the crash.
+
+        Test: LayoutTests/editing/inserting/edit-style-and-insert-image.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2021-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Occasional debug assert in GenericTaskQueue::~GenericTaskQueue

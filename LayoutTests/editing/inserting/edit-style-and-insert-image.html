@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body contenteditable>
+<p>This tests Pass.</p>
+<blockquote type="cite"><input></blockquote>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+getSelection().setPosition(document.querySelector('input'), 1);
+document.documentElement.style = 'content: url();'
+document.execCommand('InsertImage');
+</script>
+This tests InsertImage after setting content property on the document element.<br>
+WebKit should not crash.<br>
+<br>
+PASS
+</body>
+</html>

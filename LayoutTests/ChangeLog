@@ -1,3 +1,15 @@
+2021-03-30  Venky Dass  <yaranamavenkataramana@apple.com>
+
+        Nullptr crash in Crash in WebCore::positionInParentBeforeNode(..) where a NULL check is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=223639
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding a regression test case.
+
+        * editing/inserting/edit-style-and-insert-image-expected.txt: Added.
+        * editing/inserting/edit-style-and-insert-image.html: Added.
+
 2021-03-30  Robert Jenner  <jenner@apple.com>
 
         [ macOS Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html is a flakey text failure
