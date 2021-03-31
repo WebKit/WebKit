@@ -48,6 +48,12 @@ from webkitpy.style.checkers import cpp as cpp_style
 from webkitpy.style.checkers.cpp import CppChecker, _split_identifier_into_words
 from webkitpy.style.filter import FilterConfiguration
 
+# Enable this if you need to see the full diff when debugging failures.
+# https://stackoverflow.com/questions/43842675/how-to-prevent-truncating-of-string-in-unit-test-python
+if False:
+    if 'unittest.util' in __import__('sys').modules:
+        # Show full diff in self.assertEqual.
+        __import__('sys').modules['unittest.util']._MAX_LENGTH = 999999999
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
@@ -6385,20 +6391,25 @@ class WebKitStyleTest(CppStyleTestBase):
 
         self.assert_lint('MYMACRO(a ? b() : c);', '')
 
-    def test_min_versions_of_wk_api_available(self):
-        self.assert_lint('WK_API_AVAILABLE(macosx(1.2.3))', 'macosx() is deprecated; use macos() instead  [build/wk_api_available] [5]')
+    def test_arguments_for_wk_api_available(self):
+        self.assert_lint('WK_API_AVAILABLE(macosx(10.2.3))', 'macosx() is deprecated; use macos() instead  [build/wk_api_available] [5]')
         self.assert_lint('WK_API_AVAILABLE(macosx(WK_MAC_TBA))', 'macosx() is deprecated; use macos() instead  [build/wk_api_available] [5]')
-        self.assert_lint('WK_API_AVAILABLE(macos(1.2.3), ios(3.4.5))', '')  # version numbers are OK.
-        self.assert_lint('WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))', '')  # WK_MAC_TBA and WK_IOS_TBA are OK.
-        self.assert_lint('WK_API_AVAILABLE(macos(WK_IOS_TBA), ios(3.4.5))', 'macos(WK_IOS_TBA) is invalid; expected WK_MAC_TBA or a number  [build/wk_api_available] [5]')
-        self.assert_lint('WK_API_AVAILABLE(macos(1.2.3), ios(WK_MAC_TBA))', 'ios(WK_MAC_TBA) is invalid; expected WK_IOS_TBA or a number  [build/wk_api_available] [5]')
-        self.assert_lint('WK_API_AVAILABLE(macos(1.2.3))', '')  # version numbers are OK.
-        self.assert_lint('WK_API_AVAILABLE(macos(WK_MAC_TBA))', '')  # WK_MAC_TBA is OK.
-        self.assert_lint('WK_API_AVAILABLE(ios(3.4.5))', '')  # version numbers are OK.
+
+        self.assert_lint('WK_API_AVAILABLE(macos(11.0))', '')  # version numbers are OK.
+        self.assert_lint('WK_API_AVAILABLE(ios(11.0))', '')  # version numbers are OK.
+        self.assert_lint('WK_API_AVAILABLE(macos(10.2.3))', '')  # Extended version numbers are OK.
+        self.assert_lint('WK_API_AVAILABLE(ios(10.1.1))', ''),  # Extended version numbers are OK.
+
+        self.assert_lint('WK_API_AVAILABLE(macos(11))', 'macos(11) is invalid; version number should have one decimal  [build/wk_api_available] [5]')
+        self.assert_lint('WK_API_AVAILABLE(macos(11.))', 'macos(11.) is invalid; expected WK_MAC_TBA or a major.minor version  [build/wk_api_available] [5]')
+        self.assert_lint('WK_API_AVAILABLE(ios(10.))', 'ios(10.) is invalid; expected WK_IOS_TBA or a major.minor version  [build/wk_api_available] [5]')
+
         self.assert_lint('WK_API_AVAILABLE(ios(WK_IOS_TBA))', '')  # WK_IOS_TBA is OK.
-        self.assert_lint('WK_API_AVAILABLE(macos(WK_IOS_TBA))', 'macos(WK_IOS_TBA) is invalid; expected WK_MAC_TBA or a number  [build/wk_api_available] [5]')
-        self.assert_lint('WK_API_AVAILABLE(macos(WK_IOS_TBA))', 'macos(WK_IOS_TBA) is invalid; expected WK_MAC_TBA or a number  [build/wk_api_available] [5]')
-        self.assert_lint('WK_API_AVAILABLE(ios(WK_MAC_TBA))', 'ios(WK_MAC_TBA) is invalid; expected WK_IOS_TBA or a number  [build/wk_api_available] [5]')
+        self.assert_lint('WK_API_AVAILABLE(macos(WK_MAC_TBA))', '')  # WK_MAC_TBA is OK.
+        self.assert_lint('WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))', '')  # WK_MAC_TBA and WK_IOS_TBA are OK.
+        self.assert_lint('WK_API_AVAILABLE(ios(WK_IOS_TBA), macos(WK_MAC_TBA))', '')  # WK_MAC_TBA and WK_IOS_TBA are OK, backwards.
+        self.assert_lint('WK_API_AVAILABLE(macos(WK_IOS_TBA))', 'macos(WK_IOS_TBA) is invalid; expected WK_MAC_TBA or a major.minor version  [build/wk_api_available] [5]')
+        self.assert_lint('WK_API_AVAILABLE(ios(WK_MAC_TBA))', 'ios(WK_MAC_TBA) is invalid; expected WK_IOS_TBA or a major.minor version  [build/wk_api_available] [5]')
 
     def test_os_version_checks(self):
         self.assert_lint('#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')

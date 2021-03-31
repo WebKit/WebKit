@@ -1,3 +1,28 @@
+2021-03-31  BJ Burg  <bburg@apple.com>
+
+        Style checker should warn about use of future OS versions in WK_API_AVAILABLE
+        https://bugs.webkit.org/show_bug.cgi?id=223881
+
+        Reviewed by Jonathan Bedard.
+
+        Add some more brains to the WK_API_AVAILABLE style checker. It is now more
+        fussy and won't allow anything except a valid version string or a TBA macro.
+        There is also a mechanism to prevent adding version numbers that exceed the
+        publicly available SDK version for the relevant OS.
+
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.mapping_for_platform): Add 'macos' as an alias for 'mac'.
+        (VersionNameMap.max_public_version): Added.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_arguments_for_wk_api_available):
+        (check_arguments_for_wk_api_available.max_version_for_platform):
+        (check_arguments_for_wk_api_available.check_version_string):
+        (check_style):
+        (check_min_versions_of_wk_api_available): Deleted.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest):
+
 2021-03-31  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should stress test newly added tests

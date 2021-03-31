@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2021 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,10 +45,11 @@ import re
 import string
 import unicodedata
 
-from webkitcorepy import unicode
+from webkitcorepy import unicode, Version
 
 from webkitpy.style.checkers.common import match, search, sub, subn
 from webkitpy.common.memoized import memoized
+from webkitpy.common.version_name_map import VersionNameMap
 
 # The key to use to provide a class to fake loading a header file.
 INCLUDE_IO_INJECTION_KEY = 'include_header_io'
@@ -3296,8 +3297,8 @@ def get_line_width(line):
     return len(line)
 
 
-def check_min_versions_of_wk_api_available(clean_lines, line_number, error):
-    """Checks the min version numbers of WK_API_AVAILABLE
+def check_arguments_for_wk_api_available(clean_lines, line_number, error):
+    """Checks the allowable arguments of WK_API_AVAILABLE
 
     Args:
       clean_lines: A CleansedLines instance containing the file.
@@ -3305,34 +3306,60 @@ def check_min_versions_of_wk_api_available(clean_lines, line_number, error):
       error: The function to call with any errors found.
     """
 
+    @memoized
+    def max_version_for_platform(platform_name):
+        return VersionNameMap.map().max_public_version(platform=platform_name)
+
+    def check_version_string(version_string, platform_name):
+        mapping = {
+            'macos': 'WK_MAC_TBA',
+            'ios': 'WK_IOS_TBA',
+        }
+
+        platform_tba_macro = mapping.get(platform_name)
+        if version_string == platform_tba_macro:
+            return
+
+        try:
+            version = Version.from_string(version_string)
+        except ValueError:
+            error(line_number, 'build/wk_api_available', 5, '%s(%s) is invalid; expected %s or a major.minor version' % (platform_name, version_string, platform_tba_macro))
+            return
+
+        if not version_string.count('.'):
+            error(line_number, 'build/wk_api_available', 5, '%s(%s) is invalid; version number should have one decimal' % (platform_name, version_string))
+            return
+
+        max_version = max_version_for_platform(platform_name)
+        if version > max_version:
+            error(line_number, 'build/wk_api_available', 5, '%s(%s) is invalid; version number should not exceed %s' % (platform_name, version_string, max_version))
+            return
+
     line = clean_lines.elided[line_number]  # Get rid of comments and strings.
 
     wk_api_available = search(r'WK_API_AVAILABLE\(macosx\(', line)
     if wk_api_available:
         error(line_number, 'build/wk_api_available', 5, 'macosx() is deprecated; use macos() instead')
+        return
 
-    # FIXME: This should support any order.
     wk_api_available = search(r'WK_API_AVAILABLE\(macos\(([^\)]+)\), ios\(([^\)]+)\)\)', line)
     if wk_api_available:
-        macosMinVersion = wk_api_available.group(1)
-        if not match(r'^([\d\.]+|WK_MAC_TBA)$', macosMinVersion):
-            error(line_number, 'build/wk_api_available', 5, 'macos(%s) is invalid; expected WK_MAC_TBA or a number' % macosMinVersion)
+        check_version_string(wk_api_available.group(1), "macos")
+        check_version_string(wk_api_available.group(2), "ios")
 
-        iosMinVersion = wk_api_available.group(2)
-        if not match(r'^([\d\.]+|WK_IOS_TBA)$', iosMinVersion):
-            error(line_number, 'build/wk_api_available', 5, 'ios(%s) is invalid; expected WK_IOS_TBA or a number' % iosMinVersion)
+    wk_api_available = search(r'WK_API_AVAILABLE\(ios\(([^\)]+)\), macos\(([^\)]+)\)\)', line)
+    if wk_api_available:
+        check_version_string(wk_api_available.group(1), "ios")
+        check_version_string(wk_api_available.group(2), "macos")
 
     wk_api_available = search(r'WK_API_AVAILABLE\(macos\(([^\)]+)\)\)', line)
     if wk_api_available:
-        macosMinVersion = wk_api_available.group(1)
-        if not match(r'^([\d\.]+|WK_MAC_TBA)$', macosMinVersion):
-            error(line_number, 'build/wk_api_available', 5, 'macos(%s) is invalid; expected WK_MAC_TBA or a number' % macosMinVersion)
+        check_version_string(wk_api_available.group(1), "macos")
 
     wk_api_available = search(r'WK_API_AVAILABLE\(ios\(([^\)]+)\)\)', line)
     if wk_api_available:
-        iosMinVersion = wk_api_available.group(1)
-        if not match(r'^([\d\.]+|WK_IOS_TBA)$', iosMinVersion):
-            error(line_number, 'build/wk_api_available', 5, 'ios(%s) is invalid; expected WK_IOS_TBA or a number' % iosMinVersion)
+        check_version_string(wk_api_available.group(1), "ios")
+
 
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
@@ -3415,7 +3442,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_indentation_amount(clean_lines, line_number, error)
     check_enum_casing(clean_lines, line_number, enum_state, error)
     check_once_flag(clean_lines, line_number, file_state, error)
-    check_min_versions_of_wk_api_available(clean_lines, line_number, error)
+    check_arguments_for_wk_api_available(clean_lines, line_number, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#(?:include|import) +"[^/]+\.h"')
