@@ -1,3 +1,36 @@
+2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKContentView should support UIKit protocol methods for becoming focused
+        https://bugs.webkit.org/show_bug.cgi?id=224003
+        <rdar://problem/75313658>
+
+        Reviewed by Megan Gardner.
+
+        Implement a few protocol methods on `UIFocusEnvironment`. See below for more details.
+
+        Test: UIFocusTests.OverrideCanBecomeFocused
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView canBecomeFocused]):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView canBecomeFocused]):
+        (-[WKContentView canBecomeFocusedForWebView]):
+
+        Implement `-canBecomeFocused`, and return `YES` by default. If `-canBecomeFocused` is overridden on `WKWebView`,
+        then defer to that overridden method instead.
+
+        (-[WKContentView didUpdateFocusInContext:withAnimationCoordinator:]):
+
+        Handle the focus environment change by advancing to the next or previous focusable element, depending on the
+        focus context's heading direction.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]):
+
+        Add a null check so that callers that don't need to know when the focus change is complete are able to pass in a
+        `nil` completion handler.
+
 2021-03-31  Youenn Fablet  <youenn@apple.com>
 
         Make use of NSURLSessionWebSocket.sendCloseCode if available

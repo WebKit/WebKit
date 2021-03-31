@@ -1187,6 +1187,7 @@
 		F460F657261116EA0064F2B6 /* InjectedBundleHitTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = F460F656261116EA0064F2B6 /* InjectedBundleHitTest.mm */; };
 		F460F65B261119580064F2B6 /* InjectedBundleHitTestPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = F460F659261117E70064F2B6 /* InjectedBundleHitTestPlugIn.mm */; };
 		F460F669261263370064F2B6 /* simple-responsive-page.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F460F668261262C70064F2B6 /* simple-responsive-page.html */; };
+		F460F6752614DE2F0064F2B6 /* UIFocusTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F460F6742614DE2F0064F2B6 /* UIFocusTests.mm */; };
 		F46128B7211C8ED500D9FADB /* DragAndDropSimulatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46128B6211C8ED500D9FADB /* DragAndDropSimulatorMac.mm */; };
 		F46128CB211D475100D9FADB /* TestDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46128CA211D475100D9FADB /* TestDraggingInfo.mm */; };
 		F46128D4211E40FD00D9FADB /* link-in-iframe-and-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46128D1211E2D2500D9FADB /* link-in-iframe-and-input.html */; };
@@ -2994,6 +2995,7 @@
 		F460F659261117E70064F2B6 /* InjectedBundleHitTestPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleHitTestPlugIn.mm; sourceTree = "<group>"; };
 		F460F65A2611183F0064F2B6 /* InjectedBundleHitTestProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestProtocol.h; sourceTree = "<group>"; };
 		F460F668261262C70064F2B6 /* simple-responsive-page.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-responsive-page.html"; sourceTree = "<group>"; };
+		F460F6742614DE2F0064F2B6 /* UIFocusTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIFocusTests.mm; sourceTree = "<group>"; };
 		F46128B4211C861A00D9FADB /* DragAndDropSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DragAndDropSimulator.h; path = cocoa/DragAndDropSimulator.h; sourceTree = "<group>"; };
 		F46128B6211C8ED500D9FADB /* DragAndDropSimulatorMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropSimulatorMac.mm; sourceTree = "<group>"; };
 		F46128C9211D475100D9FADB /* TestDraggingInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestDraggingInfo.h; sourceTree = "<group>"; };
@@ -3774,6 +3776,7 @@
 				F45E15742112CE6200307E82 /* TestInputDelegate.h */,
 				F45E15752112CE6200307E82 /* TestInputDelegate.mm */,
 				F45033F4206BEC95009351CE /* TextAutosizingBoost.mm */,
+				F460F6742614DE2F0064F2B6 /* UIFocusTests.mm */,
 				F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */,
 				F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */,
 				E5AA42F1259128AE00410A3D /* UserInterfaceIdiomUpdate.mm */,
@@ -5680,6 +5683,7 @@
 				7CCE7ED31A411A7E00447C4C /* TypingStyleCrash.mm in Sources */,
 				57152B7821DD4E8D000C37CA /* U2fCommandConstructorTest.cpp in Sources */,
 				5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */,
+				F460F6752614DE2F0064F2B6 /* UIFocusTests.mm in Sources */,
 				F46849BE1EEF58E400B937FE /* UIPasteboardTests.mm in Sources */,
 				F402F56C23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm in Sources */,
 				5C9D922E22D7DE1C008E9266 /* UnifiedSource1.cpp in Sources */,

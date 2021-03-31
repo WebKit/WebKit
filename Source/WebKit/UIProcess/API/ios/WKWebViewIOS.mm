@@ -2518,6 +2518,14 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         _page->setUserInterfaceLayoutDirection(toUserInterfaceLayoutDirection(contentAttribute));
 }
 
+- (BOOL)canBecomeFocused
+{
+    if (self.usesStandardContentView)
+        return [_contentView canBecomeFocusedForWebView];
+
+    return [_customContentView canBecomeFocused];
+}
+
 @end
 
 @implementation WKWebView (WKPrivateIOS)

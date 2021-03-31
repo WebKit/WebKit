@@ -4548,7 +4548,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     constexpr bool isKeyboardEventValid = false;
     _page->setInitialFocus(selectingForward, isKeyboardEventValid, { }, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler([protectedSelf becomeFirstResponder]);
+        if (completionHandler)
+            completionHandler([protectedSelf becomeFirstResponder]);
     });
 }
 
