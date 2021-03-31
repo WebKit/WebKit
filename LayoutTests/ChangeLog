@@ -1,5 +1,14 @@
 2021-03-30  Robert Jenner  <jenner@apple.com>
 
+        [ macOS Debug ] imported/w3c/web-platform-tests/cors/redirect-preflight.htm is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223976
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Failure while test is reviewed.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
         [ Mac ] http/wpt/service-workers/service-worker-spinning-activate.https.html is flaky failing
         Nhttps://bugs.webkit.org/show_bug.cgi?id=220754
 
