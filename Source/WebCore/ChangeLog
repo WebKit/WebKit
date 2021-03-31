@@ -1,3 +1,15 @@
+2021-03-31  Zalan Bujtas  <zalan@apple.com>
+
+        Remove misleading FIXME comment in RenderBox::shouldComputeLogicalWidthFromAspectRatioAndInsets
+        https://bugs.webkit.org/show_bug.cgi?id=224020
+
+        Reviewed by Simon Fraser.
+
+        RenderStyle should not contain such logic (or any layout related logic for that matter).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shouldComputeLogicalWidthFromAspectRatioAndInsets const):
+
 2021-03-31  Chris Lord  <clord@igalia.com>
 
         Make FontCache self-contained (remove static global variables)
