@@ -2248,6 +2248,37 @@ class RunWebKitTests(shell.Test):
         return super(RunWebKitTests, self).getResultSummary()
 
 
+class RunWebKitTestsInStressMode(RunWebKitTests):
+    name = 'run-layout-tests-in-stress-mode'
+    suffix = 'stress-mode'
+    EXIT_AFTER_FAILURES = '10'
+    NUM_ITERATIONS = 100
+
+    def setLayoutTestCommand(self):
+        RunWebKitTests.setLayoutTestCommand(self)
+
+        self.setCommand(self.command + ['--iterations', self.NUM_ITERATIONS])
+        modified_tests = self.getProperty('modified_tests')
+        if modified_tests:
+            self.setCommand(self.command + modified_tests)
+
+    def evaluateCommand(self, cmd):
+        rc = self.evaluateResult(cmd)
+        if rc == SUCCESS or rc == WARNINGS:
+            message = 'Passed layout tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.setProperty('build_summary', message)
+        else:
+            self.setProperty('build_summary', 'Found test failures')
+            self.build.addStepsAfterCurrentStep([
+                ArchiveTestResults(),
+                UploadTestResults(identifier=self.suffix),
+                ExtractTestResults(identifier=self.suffix),
+            ])
+        return rc
+
+
 class ReRunWebKitTests(RunWebKitTests):
     name = 're-run-layout-tests'
     NUM_FAILURES_TO_DISPLAY = 10
