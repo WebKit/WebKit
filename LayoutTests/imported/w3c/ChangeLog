@@ -1,3 +1,14 @@
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION (r275227): [ macOS iOS Release ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=224006
+
+        Uneviewed test gardening.
+
+        Rebaseline test that started to consantly fail. 
+
+        * web-platform-tests/css/css-transitions/properties-value-003-expected.txt:
+
 2021-03-31  Antoine Quint  <graouts@webkit.org>
 
         font-stretch should support 0% and disallow animating to a value below 0%
