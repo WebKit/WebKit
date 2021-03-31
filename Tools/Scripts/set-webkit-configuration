@@ -137,11 +137,37 @@ sub updateOrDeleteConfigurationFile($$)
     }
 }
 
-updateOrDeleteConfigurationFile("Configuration", $configuration);
-updateOrDeleteConfigurationFile("Architecture", $architecture && $architecture ne "x86_64" ? $architecture : undef);
+if ($configuration) {
+    open CONFIGURATION, ">", "$baseProductDir/Configuration" or die;
+    print CONFIGURATION $configuration;
+    close CONFIGURATION;
+}
+
+if ($architecture) {
+    if ($architecture ne "x86_64") {
+        open ARCHITECTURE, ">", "$baseProductDir/Architecture" or die;
+        print ARCHITECTURE $architecture;
+        close ARCHITECTURE;
+    } else {
+        unlink "$baseProductDir/Architecture";
+    }
+}
+
 updateOrDeleteConfigurationFile("ASan", $enableASAN ? "YES" : undef);
 updateOrDeleteConfigurationFile("Coverage", $enableCoverage ? "YES" : undef);
 updateOrDeleteConfigurationFile("TSan", $enableTSAN ? "YES" : undef);
 updateOrDeleteConfigurationFile("UBSan", $enableUBSAN ? "YES" : undef);
-updateOrDeleteConfigurationFile("ForceOptimizationLevel", (!$forceOptimizationLevel || $forceOptimizationLevel eq "none") ? undef : substr($forceOptimizationLevel, 1) . "\n");
-updateOrDeleteConfigurationFile("LTO", $ltoMode);
+
+if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {
+    unlink "$baseProductDir/ForceOptimizationLevel";
+} elsif ($forceOptimizationLevel) {
+    open ForceOptimizationLevel, ">", "$baseProductDir/ForceOptimizationLevel" or die;
+    print ForceOptimizationLevel substr($forceOptimizationLevel, 1) . "\n";
+    close ForceOptimizationLevel;
+}
+
+if ($ltoMode) {
+    open LTO, ">", "$baseProductDir/LTO" or die;
+    print LTO "$ltoMode";
+    close LTO;
+}

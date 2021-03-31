@@ -1,3 +1,15 @@
+2021-03-31  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r275150): set-webkit-configuration is too aggressive at deleting config files when switch is not set
+        <https://webkit.org/b/224009>
+
+        Reviewed by Mark Lam.
+
+        * Scripts/set-webkit-configuration:
+        - Partially revert changes in r275150 when the config file
+          wasn't always deleted for $architecture, $configuration,
+          $forceOptimizationLevel and $ltoMode.
+
 2021-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Add deprecation macros.
