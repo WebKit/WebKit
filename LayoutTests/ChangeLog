@@ -1,3 +1,24 @@
+2021-03-31  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/download convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222618
+        <rdar://problem/74949253>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/download/default-encoding-expected.txt:
+        * http/tests/download/default-encoding.html:
+        * http/tests/download/inherited-encoding-expected.txt:
+        * http/tests/download/inherited-encoding-form-submission-result-expected.txt:
+        * http/tests/download/inherited-encoding-form-submission-result.html:
+        * http/tests/download/inherited-encoding.html:
+        * http/tests/download/literal-utf-8-expected.txt:
+        * http/tests/download/literal-utf-8.html:
+        * http/tests/download/resources/literal-koi8-r.php: Removed.
+        * http/tests/download/resources/literal-koi8-r.py: Added.
+        * http/tests/download/resources/literal-utf-8.php: Removed.
+        * http/tests/download/resources/literal-utf-8.py: Added.
+
 2021-03-31  Antti Koivisto  <antti@apple.com>
 
         Animated pseudo element style resolved against wrong parent style
