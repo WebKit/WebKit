@@ -1,3 +1,17 @@
+2021-03-31  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should stress test newly added tests
+        https://bugs.webkit.org/show_bug.cgi?id=223938
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/config.json:
+        * CISupport/ews-build/factories.py:
+        (Factory):
+        (StressTestFactory):
+        * CISupport/ews-build/factories_unittest.py: Added unit-tests.
+        * CISupport/ews-build/loadConfig.py:
+
 2021-03-31  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r275150): set-webkit-configuration is too aggressive at deleting config files when switch is not set
