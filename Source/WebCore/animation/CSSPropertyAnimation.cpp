@@ -559,12 +559,12 @@ static inline FontVariationSettings blendFunc(const CSSPropertyBlendingClient* c
 
 static inline FontSelectionValue blendFunc(const CSSPropertyBlendingClient* client, FontSelectionValue from, FontSelectionValue to, double progress)
 {
-    return FontSelectionValue(blendFunc(client, static_cast<float>(from), static_cast<float>(to), progress));
+    return FontSelectionValue(std::max(0.0f, blendFunc(client, static_cast<float>(from), static_cast<float>(to), progress)));
 }
 
 static inline Optional<FontSelectionValue> blendFunc(const CSSPropertyBlendingClient* client, Optional<FontSelectionValue> from, Optional<FontSelectionValue> to, double progress)
 {
-    return FontSelectionValue(blendFunc(client, static_cast<float>(from.value()), static_cast<float>(to.value()), progress));
+    return blendFunc(client, *from, *to, progress);
 }
 
 class AnimationPropertyWrapperBase {

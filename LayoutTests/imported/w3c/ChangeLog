@@ -1,3 +1,17 @@
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
+        font-stretch should support 0% and disallow animating to a value below 0%
+        https://bugs.webkit.org/show_bug.cgi?id=223994
+
+        Reviewed by Antti Koivisto.
+
+        Mark 23 tests as PASS results.
+
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/at-font-face-descriptors-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-parse-numeric-stretch-style-weight-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-stretch-expected.txt:
+
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
         Computed style for a border-radius corner should never be 0px when the provided width isn't 0px

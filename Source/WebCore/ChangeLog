@@ -1,5 +1,24 @@
 2021-03-31  Antoine Quint  <graouts@webkit.org>
 
+        font-stretch should support 0% and disallow animating to a value below 0%
+        https://bugs.webkit.org/show_bug.cgi?id=223994
+
+        Reviewed by Antti Koivisto.
+
+        Trying to fix css/css-fonts/animations/font-stretch-interpolation.html showed two issues:
+        
+        1. we disallowed 0% as a valid value when parsing font-stretch,
+        2. we allowed negative values when blending.
+
+        This patch addresses both.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::fontStretchIsWithinRange):
+
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
         Remove the Silently argument to WebAnimation::cancel()
         https://bugs.webkit.org/show_bug.cgi?id=223992
 

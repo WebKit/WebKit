@@ -892,7 +892,7 @@ static RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRa
 #if ENABLE(VARIATION_FONTS)
 static bool fontStretchIsWithinRange(float stretch)
 {
-    return stretch > 0;
+    return stretch >= 0;
 }
 #endif
 
