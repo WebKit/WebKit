@@ -1590,6 +1590,9 @@ webrtc/video-sframe.html [ Skip ]
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]
 
+# Needs Cocoa specific features
+editing/pasteboard/copy-paste-data-detected-links.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2045,6 +2048,14 @@ webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
 
+webkit.org/b/223965 http/tests/contentextensions/block-cookies-in-csp-report.py [ Crash ]
+webkit.org/b/223965 http/tests/contentextensions/block-csp-report.py [ Crash ]
+webkit.org/b/223965 http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Crash ]
+webkit.org/b/223965 http/tests/contentextensions/hide-on-csp-report.py [ Crash ]
+webkit.org/b/223965 http/tests/contentextensions/main-resource-redirect-blocked.py [ Crash ]
+
+webkit.org/b/223978 http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.py [ Crash ]
+webkit.org/b/223978 http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.py [ Crash ]
 
 # End: Common failures between GTK and WPE.
 

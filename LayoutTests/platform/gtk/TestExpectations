@@ -1159,6 +1159,8 @@ webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Ski
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
+webkit.org/b/223960 editing/execCommand/insert-image-in-composed-list.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2450,6 +2452,10 @@ webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_mo
 webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure Pass ]
 
 webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
+
+webkit.org/b/223980 editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
+
+webkit.org/b/223981 inspector/canvas/recording-2d-saves.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
