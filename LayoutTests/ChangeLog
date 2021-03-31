@@ -1,3 +1,14 @@
+2021-03-31  Antti Koivisto  <antti@apple.com>
+
+        Animated pseudo element style resolved against wrong parent style
+        https://bugs.webkit.org/show_bug.cgi?id=223990
+        rdar://74997361
+
+        Reviewed by Antoine Quint.
+
+        * fast/animation/pseudo-element-style-adjuster-expected.html: Added.
+        * fast/animation/pseudo-element-style-adjuster.html: Added.
+
 2021-03-31  Youenn Fablet  <youenn@apple.com>
 
         Apply permission policy to geolocation
