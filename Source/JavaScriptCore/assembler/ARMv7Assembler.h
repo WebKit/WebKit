@@ -446,11 +446,17 @@ public:
             data.realTypes.m_linkType = LinkInvalid;
             data.realTypes.m_condition = condition;
         }
-        void operator=(const LinkRecord& other)
+        // We are defining a copy constructor and assignment operator
+        // because the ones provided by the compiler are not
+        // optimal. See https://bugs.webkit.org/show_bug.cgi?id=90930
+        LinkRecord(const LinkRecord& other)
         {
-            data.copyTypes.content[0] = other.data.copyTypes.content[0];
-            data.copyTypes.content[1] = other.data.copyTypes.content[1];
-            data.copyTypes.content[2] = other.data.copyTypes.content[2];
+            data.copyTypes = other.data.copyTypes;
+        }
+        LinkRecord& operator=(const LinkRecord& other)
+        {
+            data.copyTypes = other.data.copyTypes;
+            return *this;
         }
         intptr_t from() const { return data.realTypes.m_from; }
         void setFrom(intptr_t from) { data.realTypes.m_from = from; }

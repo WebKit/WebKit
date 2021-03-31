@@ -1,3 +1,21 @@
+2021-03-31  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Remove warnings about unnecessary operator= for ARMv7Assembler LinkRecord
+        https://bugs.webkit.org/show_bug.cgi?id=223916
+
+        Reviewed by Darin Adler.
+
+        Many years ago we defined an assignment operator for LinkRecord in
+        order to speed up build times (see #90930). Recent GCC versions
+        tell us that if we do that we almost certainly want to define a
+        copy constructor too. The ARM64Assembler file already does it, so
+        do it too for ARMv7 to remove the warnings.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::LinkRecord::LinkRecord):
+        (JSC::ARMv7Assembler::LinkRecord::operator=):
+
 2021-03-31  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Optimize constructors of ES6 collections
