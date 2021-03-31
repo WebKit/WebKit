@@ -1085,7 +1085,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CompileWebKit())
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('configuration', 'debug')
-        self.setProperty('revert', True)
+        self.setProperty('fast_commit_queue', True)
         self.expectOutcome(result=SKIPPED, state_string='Compiled WebKit (skipped)')
         return self.runStep()
 
@@ -1685,7 +1685,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
-        self.setProperty('revert', True)
+        self.setProperty('fast_commit_queue', True)
         self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
         return self.runStep()
 
@@ -2108,7 +2108,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
-        self.setProperty('revert', True)
+        self.setProperty('fast_commit_queue', True)
         self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
         return self.runStep()
 

@@ -1,3 +1,17 @@
+2021-03-31  Aakash Jain  <aakash_jain@apple.com>
+
+        Add a fast-cq mode for commit-queue which will skip build and test
+        https://bugs.webkit.org/show_bug.cgi?id=223954
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py: Enable fast-cq mode when patch name on bugzilla starts with [fast-cq].
+        (BugzillaMixin):
+        (BugzillaMixin._is_patch_obsolete):
+        (CompileWebKit.doStepIf): Skip building on commit-queue when fast_commit_queue property is set.
+        (RunWebKitTests.doStepIf): Skip testing on commit-queue when fast_commit_queue property is set.
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-03-31  Youenn Fablet  <youenn@apple.com>
 
         Apply permission policy to geolocation
