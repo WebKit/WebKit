@@ -29,6 +29,10 @@
 
 namespace JSC {
 
+extern const ASCIILiteral WeakMapNonObjectKeyError;
+
+JSC_DECLARE_HOST_FUNCTION(protoFuncWeakMapSet);
+
 class WeakMapPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;

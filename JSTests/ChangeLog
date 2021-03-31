@@ -1,3 +1,22 @@
+2021-03-31  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize constructors of ES6 collections
+        https://bugs.webkit.org/show_bug.cgi?id=223953
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/map-constructor.js:
+        * microbenchmarks/set-constructor.js: Added.
+        * microbenchmarks/weak-map-constructor.js: Added.
+        * microbenchmarks/weak-set-constructor.js: Added.
+        * stress/map-constructor-adder.js:
+        * stress/set-constructor-adder.js:
+        * stress/weak-map-constructor-adder-error-cross-realm.js: Added.
+        * stress/weak-map-constructor-adder.js:
+        * stress/weak-set-constructor-adder-error-cross-realm.js: Added.
+        * stress/weak-set-constructor-adder.js:
+        * stress/weak-set-constructor.js:
+
 2021-03-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening.

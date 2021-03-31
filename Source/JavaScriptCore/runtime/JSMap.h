@@ -59,8 +59,8 @@ public:
         add(globalObject, key, value);
     }
 
+    static bool isSetFastAndNonObservable(Structure*);
     bool isIteratorProtocolFastAndNonObservable();
-    bool canCloneFastAndNonObservable(Structure*);
     JSMap* clone(JSGlobalObject*, VM&, Structure*);
 
 private:

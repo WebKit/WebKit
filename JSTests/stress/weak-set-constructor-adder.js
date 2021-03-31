@@ -1,5 +1,18 @@
 // WeakSet constructor with adder change.
 
+function shouldThrow(func, errorMessage) {
+    var errorThrown = false;
+    try {
+        func();
+    } catch (error) {
+        errorThrown = true;
+        if (String(error) !== errorMessage)
+            throw new Error(`Bad error: ${error}`);
+    }
+    if (!errorThrown)
+        throw new Error("Didn't throw!");
+}
+
 var originalAdder = WeakSet.prototype.add;
 var counter = 0;
 
@@ -38,14 +51,12 @@ WeakSet.prototype.add = function () {
 
 var set = new WeakSet();
 var set = new WeakSet([]);
-var error = null;
-try {
-    var set = new WeakSet([ 0 ]);
-} catch (e) {
-    error = e;
-}
-if (!error)
-    throw new Error("error not thrown");
-if (String(error) !== "Error: adder called")
-    throw new Error("bad error " + String(error));
 
+shouldThrow(() => {
+    new WeakSet([ 0 ]);
+}, "Error: adder called");
+
+WeakSet.prototype.add = "foo";
+shouldThrow(() => {
+    new WeakSet([ 0 ]);
+}, "TypeError: 'add' property of a WeakSet should be callable.");

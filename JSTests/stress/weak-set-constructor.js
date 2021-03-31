@@ -141,6 +141,6 @@ var nonObjectKeys = [
 ];
 
 for (var item of nonObjectKeys) {
-    testTypeError(item, 'TypeError: Attempted to add a non-object key to a WeakSet');
+    testTypeError(item, 'TypeError: Attempted to add a non-object value to a WeakSet');
     testCallTypeError(item);
 }

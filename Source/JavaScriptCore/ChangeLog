@@ -1,3 +1,51 @@
+2021-03-31  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize constructors of ES6 collections
+        https://bugs.webkit.org/show_bug.cgi?id=223953
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch speeds up the constructors by avoiding call() for non-observable
+        "set" / "add" methods and using getIndex() for Map / WeakMap collections.
+
+        For Map / Set, this change leverages existing cloning helpers, which rely on
+        watchpoints, to avoid even a method lookup. However, slower path is used for
+        subclasses. Results in 1.9x speed-up for common case.
+
+        For WeakMap / WeakSet, adder function is checked by C++ pointer, which enables
+        fast path even for cross-realm subclasses. Results in 2.3x progression.
+
+        Both approaches require special handling of a cross-realm NewTarget to ensure
+        that raised exceptions (OOM / TypeError) belong to realm of the adder function,
+        and not to constructor's or NewTarget's.
+
+        Also, adds descriptve error messages for non-callable "set" / "add" properties.
+
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::isSetFastAndNonObservable):
+        (JSC::JSMap::canCloneFastAndNonObservable): Deleted.
+        * runtime/JSMap.h:
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::isAddFastAndNonObservable):
+        (JSC::JSSet::canCloneFastAndNonObservable): Deleted.
+        * runtime/JSSet.h:
+        * runtime/MapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/SetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakMapPrototype.h:
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakSetPrototype.h:
+
 2021-03-30  Devin Rousso  <drousso@apple.com>
 
         REGRESSION(r274607): media controls script is visible in Web Inspector even without the engineering "Show WebKit-internal scripts" enabled

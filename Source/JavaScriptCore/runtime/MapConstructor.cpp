@@ -70,20 +70,25 @@ JSC_DEFINE_HOST_FUNCTION(constructMap, (JSGlobalObject* globalObject, CallFrame*
     if (iterable.isUndefinedOrNull())
         RELEASE_AND_RETURN(scope, JSValue::encode(JSMap::create(globalObject, vm, mapStructure)));
 
+    bool canPerformFastSet = JSMap::isSetFastAndNonObservable(mapStructure);
     if (auto* iterableMap = jsDynamicCast<JSMap*>(vm, iterable)) {
-        if (iterableMap->canCloneFastAndNonObservable(mapStructure))
+        if (canPerformFastSet && iterableMap->isIteratorProtocolFastAndNonObservable())
             RELEASE_AND_RETURN(scope, JSValue::encode(iterableMap->clone(globalObject, vm, mapStructure)));
     }
 
     JSMap* map = JSMap::create(globalObject, vm, mapStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue adderFunction = map->JSObject::get(globalObject, vm.propertyNames->set);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSValue adderFunction;
+    CallData adderFunctionCallData;
+    if (!canPerformFastSet) {
+        adderFunction = map->JSObject::get(globalObject, vm.propertyNames->set);
+        RETURN_IF_EXCEPTION(scope, { });
 
-    auto adderFunctionCallData = getCallData(vm, adderFunction);
-    if (adderFunctionCallData.type == CallData::Type::None)
-        return JSValue::encode(throwTypeError(globalObject, scope));
+        adderFunctionCallData = getCallData(vm, adderFunction);
+        if (UNLIKELY(adderFunctionCallData.type == CallData::Type::None))
+            return throwVMTypeError(globalObject, scope, "'set' property of a Map should be callable."_s);
+    }
 
     scope.release();
     forEachInIterable(globalObject, iterable, [&](VM& vm, JSGlobalObject* globalObject, JSValue nextItem) {
@@ -93,17 +98,24 @@ JSC_DEFINE_HOST_FUNCTION(constructMap, (JSGlobalObject* globalObject, CallFrame*
             return;
         }
 
-        JSValue key = nextItem.get(globalObject, static_cast<unsigned>(0));
+        JSObject* nextObject = asObject(nextItem);
+
+        JSValue key = nextObject->getIndex(globalObject, static_cast<unsigned>(0));
         RETURN_IF_EXCEPTION(scope, void());
 
-        JSValue value = nextItem.get(globalObject, static_cast<unsigned>(1));
+        JSValue value = nextObject->getIndex(globalObject, static_cast<unsigned>(1));
         RETURN_IF_EXCEPTION(scope, void());
+
+        scope.release();
+        if (canPerformFastSet) {
+            map->set(mapStructure->globalObject(), key, value);
+            return;
+        }
 
         MarkedArgumentBuffer arguments;
         arguments.append(key);
         arguments.append(value);
         ASSERT(!arguments.hasOverflowed());
-        scope.release();
         call(globalObject, adderFunction, adderFunctionCallData, map, arguments);
     });
 

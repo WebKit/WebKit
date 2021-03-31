@@ -31,11 +31,12 @@
 
 namespace JSC {
 
+const ASCIILiteral WeakSetNonObjectValueError { "Attempted to add a non-object value to a WeakSet"_s };
+
 const ClassInfo WeakSetPrototype::s_info = { "WeakSet", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakSetPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetDelete);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetHas);
-static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetAdd);
 
 void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -96,7 +97,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakSetAdd, (JSGlobalObject* globalObject, Cal
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
-        return JSValue::encode(throwTypeError(globalObject, scope, "Attempted to add a non-object key to a WeakSet"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, WeakSetNonObjectValueError));
     set->add(vm, asObject(key));
     return JSValue::encode(callFrame->thisValue());
 }

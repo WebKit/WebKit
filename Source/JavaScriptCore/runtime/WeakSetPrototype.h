@@ -29,6 +29,10 @@
 
 namespace JSC {
 
+extern const ASCIILiteral WeakSetNonObjectValueError;
+
+JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetAdd);
+
 class WeakSetPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
