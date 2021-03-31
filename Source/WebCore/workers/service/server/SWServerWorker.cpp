@@ -49,7 +49,7 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
 }
 
 // FIXME: Use r-value references for script and contentSecurityPolicy
-SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const String& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
+SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, SharedBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
     : m_server(makeWeakPtr(server))
     , m_registrationKey(registration.key())
     , m_registration(makeWeakPtr(registration))
@@ -236,6 +236,21 @@ String SWServerWorker::userAgent() const
 void SWServerWorker::setScriptResource(URL&& url, ServiceWorkerContextData::ImportedScript&& script)
 {
     m_scriptResourceMap.set(WTFMove(url), WTFMove(script));
+}
+
+void SWServerWorker::didSaveScriptsToDisk(Ref<SharedBuffer>&& mainScript, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts)
+{
+    // The scripts were saved to disk, replace our scripts with the mmap'd version to save memory.
+    ASSERT(mainScript.get() == m_script.get()); // Do a memcmp to make sure the scripts are identical.
+    m_script = WTFMove(mainScript);
+    for (auto& pair : importedScripts) {
+        auto it = m_scriptResourceMap.find(pair.key);
+        ASSERT(it != m_scriptResourceMap.end());
+        if (it == m_scriptResourceMap.end())
+            continue;
+        ASSERT(*it->value.script == *pair.value); // Do a memcmp to make sure the scripts are identical.
+        it->value.script = WTFMove(pair.value);
+    }
 }
 
 void SWServerWorker::skipWaiting()

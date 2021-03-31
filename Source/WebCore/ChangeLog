@@ -1,3 +1,186 @@
+2021-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Service Worker scripts use too much memory in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=223808
+        <rdar://75637093>
+
+        Reviewed by Geoff Garen.
+
+        Previously, the network process would store service worker scripts in a SQLite database.
+        When starting to use service workers, we would load all those scripts from the database
+        into memory. This would use a decent amount of memory in the network process.
+
+        To address the issue, the approach is this patch is to store the scripts as separate
+        files on the filesystem instead. This when, when loading them, we can simply mmap() them
+        and greatly reduce dirty memory usage.
+
+        Note that the service worker process (which may be the WebContent process) also keeps a
+        copy of the imported service worker scripts for the service workers it is running. More
+        work will be needed in a follow-up but we should be able to extend the approach so that
+        the service worker process would only have a mmap'd version of those scripts. This would
+        reduce dirty memory usage on the WebContent/ServiceWorker process side as well. I am
+        doing this separately though to reduce patch size and facilitate review.
+
+        No new tests, there should be no Web-facing behavior change, just a decreased
+        dirty memory usage in the network process when service workers are used.
+
+        I did manual memory testing with a very large service worker that had one ~100MB main
+        script, importing another ~100MB script.
+
+        Here are the memory results without my change:
+        - Networking (Dirty): 238MB (cold) / 331MB (warm)
+        - WebContent (Dirty): 441MB (cold) / 857MB (warm)
+
+        Here are the memory results with my change:
+        - Networking (Dirty): 22MB (cold) / 14MB (warm)
+        - WebContent (Dirty): 440MB (cold) / 438MB (warm)
+
+        This shows that ALL memory from the scripts in the network process is no longer marked
+        as dirty. We also see a significant progression in the WebProcess in the warm case, since
+        the scripts are coming from the network process as shared memory in this case. There is
+        no progression in the WebProcess in the cold case yet, since the script were just
+        downloaded and are coming from the WebProcess to the NetworkProcess. In a follow-up, the
+        network process could send shared memory back to the WebProcess, after saving the scripts
+        to disk, so that the WebProcess can replace the copies of its scripts and save more memory.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new SWScriptStorage class to the project.
+
+        * inspector/agents/worker/ServiceWorkerAgent.cpp:
+        (WebCore::ServiceWorkerAgent::getInitializationInfo):
+        Convert the script type from SharedBuffer to String.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::operator== const):
+        Fix assertions that were hitting when comparing to empty SharedBuffers (offset would be 0
+        and size would be 0). This was caught by API tests since we have some service worker API
+        tests that use empty worker scripts.
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        Add some conversion from String to SharedBuffer to the script, and vice-versa, in the
+        service worker case.
+
+        * workers/service/ServiceWorkerContextData.cpp:
+        (WebCore::ServiceWorkerContextData::isolatedCopy const):
+        (WebCore::scriptBufferToString):
+        (WebCore::stringToScriptBuffer):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::ImportedScript::isolatedCopy const):
+        (WebCore::ServiceWorkerContextData::ImportedScript::decode):
+        (WebCore::ServiceWorkerContextData::decode):
+        - Store scripts as SharedBuffer instead of String, so that they can hold
+          mmap'd data.
+        - Add scriptBufferToString() / stringToScriptBuffer() utility functions to
+          convert script sources between String and SharedBuffer.
+
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        Convert from script from SharedBuffer to String.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::recordsTableSchema):
+        Update database schema and bump version now that we no longer store the
+        service worker script inside the SQLite database. Instead, those scripts
+        are stored separately on the filesystem via SWScriptStorage.
+
+        (WebCore::ImportedScriptAttributes::encode const):
+        (WebCore::ImportedScriptAttributes::decode):
+        Introduce new ImportedScriptAttributes struct which contains all the data
+        members of ServiceWorkerContextData::ImportedScript, except for the actual
+        script source. We now save a HashMap of ImportedScriptAttributes in the
+        databasae instead of HashMap of ImportedScript since we no longer want to
+        store imported script sources in the database, but rather store them
+        separately on the file system.
+
+        (WebCore::stripScriptSources):
+        Utility function to convert a HashMap of ServiceWorkerContextData::ImportedScript
+        into a HashMap of ImportedScriptAttributes (identical but without the script
+        source), ready to save in the SQLite database.
+
+        (WebCore::populateScriptSourcesFromDisk):
+        Utility function to construct a HashMap of ServiceWorkerContextData::ImportedScript
+        from a HasMap of ImportedScriptAttributes, coming from the SQLiteDatabase. The
+        missing script sources are fetched from the disk via SWScriptStorage.
+
+        (WebCore::RegistrationDatabase::~RegistrationDatabase):
+        Make sure we destroy the SWScriptStorage on the background queue for thread-safety.
+
+        (WebCore::RegistrationDatabase::scriptStorageDirectory const):
+        Returns the path on the filesystem where service worker scripts are stored.
+
+        (WebCore::RegistrationDatabase::scriptStorage):
+        Constructs (if necessary) a SWScriptStorage and return it.
+
+        (WebCore::RegistrationDatabase::clearAll):
+        Make sure we clear all the service worker scripts on disk in addition to the database,
+        now that they are stored separately.
+
+        (WebCore::RegistrationDatabase::doPushChanges):
+        - Stop storing the script sources in the SQLite database, and instead store them as separate
+        files on the file system via SWScriptStorage.
+        - Improve logging
+        - When done storing the scripts to disk, send these new mmap'd versions back to the
+          SWServerWorker on the main thread, so that it can replace it's heavy script sources with
+          these ones. This helps reduce memory usage.
+
+        (WebCore::RegistrationDatabase::importRecords):
+        - Load the script sources from the disk via SWScriptStorage, now that they are no longer
+          stored in the SQLite database.
+        - Improve logging.
+
+        * workers/service/server/RegistrationDatabase.h:
+
+        * workers/service/server/RegistrationStore.cpp:
+        (WebCore::RegistrationStore::didSaveWorkerScriptsToDisk):
+        * workers/service/server/RegistrationStore.h:
+        Pass scripts that were saved to disk from the store to the SWServerWorker so that it
+        can replace its scripts sources with those new mmap'd version, in order to save memory.
+
+        * workers/service/server/SWScriptStorage.cpp: Added.
+        (WebCore::hashURL):
+        (WebCore::SWScriptStorage::SWScriptStorage):
+        (WebCore::SWScriptStorage::registrationDirectory const):
+        (WebCore::SWScriptStorage::scriptPath const):
+        (WebCore::SWScriptStorage::store):
+        (WebCore::SWScriptStorage::retrieve):
+        (WebCore::SWScriptStorage::clear):
+        * workers/service/server/SWScriptStorage.h: Added.
+        Add SWScriptStorage to deal with the storage / retrieval of Service
+        Worker scripts to / from disk, as files on the file system. When
+        going a retrieval, we return a script as a SharedBuffer which usually contains
+        mmap'd() data (we don't use mmap() for files that are smaller than the PAGE_SIZE).
+        The scripts reside in a Scripts/ folder, beside the database. The scripts are separated
+        by origin (using SHA256 of the origin as folder name with salt), and then by registration (by
+        using SHA256 of the registration scope as subfolder name with salt). The file name for the script
+        is a SHA256 of the script URL with salt.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::didSaveWorkerScriptsToDisk):
+        Pass scripts that were saved to disk from the store to the SWServerWorker so that it
+        can replace its scripts sources with those new mmap'd version, in order to save memory.
+
+        (WebCore::SWServer::updateWorker):
+        Convert script from String to SharedBuffer.
+
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+        Convert script from SharedBuffer to String.
+
+        * workers/service/server/SWServerToContextConnection.cpp:
+        (WebCore::SWServerToContextConnection::setScriptResource):
+        * workers/service/server/SWServerToContextConnection.h:
+        Take in a ServiceWorkerContextData::ImportedScript for convenience, instead of taking
+        all its data members as separate parameters.
+
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+        * workers/service/server/SWServerWorker.h:
+        (WebCore::SWServerWorker::script const):
+        Use SharedBuffer type for script instead of String type, so that we can hold on the
+        mmap'd data and reduce memory usage.
+
 2021-03-30  Devin Rousso  <drousso@apple.com>
 
         REGRESSION(r274607): media controls script is visible in Web Inspector even without the engineering "Show WebKit-internal scripts" enabled

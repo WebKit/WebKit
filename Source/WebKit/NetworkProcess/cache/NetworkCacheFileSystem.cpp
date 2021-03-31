@@ -62,23 +62,6 @@ void traverseDirectory(const String& path, const Function<void (const String&, D
     }
 }
 
-void deleteDirectoryRecursively(const String& path)
-{
-    traverseDirectory(path, [&path](const String& name, DirectoryEntryType type) {
-        String entryPath = FileSystem::pathByAppendingComponent(path, name);
-        switch (type) {
-        case DirectoryEntryType::File:
-            FileSystem::deleteFile(entryPath);
-            break;
-        case DirectoryEntryType::Directory:
-            deleteDirectoryRecursively(entryPath);
-            break;
-        // This doesn't follow symlinks.
-        }
-    });
-    FileSystem::deleteEmptyDirectory(path);
-}
-
 FileTimes fileTimes(const String& path)
 {
 #if HAVE(STAT_BIRTHTIME)

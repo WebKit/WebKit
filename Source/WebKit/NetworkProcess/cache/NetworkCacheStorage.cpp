@@ -33,6 +33,7 @@
 #include "NetworkCacheIOChannel.h"
 #include <mutex>
 #include <wtf/Condition.h>
+#include <wtf/FileSystem.h>
 #include <wtf/Lock.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RandomNumber.h>
@@ -206,7 +207,7 @@ RefPtr<Storage> Storage::open(const String& baseCachePath, Mode mode, size_t cap
     if (!FileSystem::makeAllDirectories(makeVersionedDirectoryPath(cachePath)))
         return nullptr;
 
-    auto salt = readOrMakeSalt(makeSaltFilePath(cachePath));
+    auto salt = FileSystem::readOrMakeSalt(makeSaltFilePath(cachePath));
     if (!salt)
         return nullptr;
 
@@ -1193,7 +1194,7 @@ void Storage::deleteOldVersions()
             auto oldVersionPath = FileSystem::pathByAppendingComponent(cachePath, subdirName);
             LOG(NetworkCacheStorage, "(NetworkProcess) deleting old cache version, path %s", oldVersionPath.utf8().data());
 
-            deleteDirectoryRecursively(oldVersionPath);
+            FileSystem::deleteNonEmptyDirectory(oldVersionPath);
         });
     });
 }

@@ -290,60 +290,6 @@ TEST(WebKit, WebsiteDataStoreCustomPathsWithPrewarming)
     runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming::Yes);
 }
 
-TEST(WebKit, CustomDataStorePathsVersusCompletionHandlers)
-{
-    // Copy the baked database files to the database directory
-    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"SimpleServiceWorkerRegistrations-4" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
-
-    NSURL *swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/" stringByExpandingTildeInPath]];
-    [[NSFileManager defaultManager] removeItemAtURL:swPath error:nil];
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swPath.path]);
-
-    [[NSFileManager defaultManager] createDirectoryAtURL:swPath withIntermediateDirectories:YES attributes:nil error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-5.sqlite3"] error:nil];
-
-    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath;
-    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-
-    // Fetch SW records
-    auto websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);
-    static bool readyToContinue;
-    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
-        EXPECT_EQ(1U, dataRecords.count);
-        readyToContinue = true;
-    }];
-    TestWebKitAPI::Util::run(&readyToContinue);
-    readyToContinue = false;
-
-    // Fetch records again, this time releasing our reference to the data store while the request is in flight.
-    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
-        EXPECT_EQ(1U, dataRecords.count);
-        readyToContinue = true;
-    }];
-    dataStore = nil;
-    TestWebKitAPI::Util::run(&readyToContinue);
-    readyToContinue = false;
-
-    // Delete all SW records, releasing our reference to the data store while the request is in flight.
-    dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-    [dataStore removeDataOfTypes:websiteDataTypes.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
-        readyToContinue = true;
-    }];
-    dataStore = nil;
-    TestWebKitAPI::Util::run(&readyToContinue);
-    readyToContinue = false;
-
-    // The records should have been deleted, and the callback should have been made.
-    // Now refetch the records to verify they are gone.
-    dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-    [dataStore fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
-        EXPECT_EQ(0U, dataRecords.count);
-        readyToContinue = true;
-    }];
-    TestWebKitAPI::Util::run(&readyToContinue);
-}
-
 TEST(WebKit, CustomDataStoreDestroyWhileFetchingNetworkProcessData)
 {
     NSURL *cookieStorageFile = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/CookieStorage/Cookie.File" stringByExpandingTildeInPath] isDirectory:NO];

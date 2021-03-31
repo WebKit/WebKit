@@ -122,7 +122,12 @@ using namespace WebKit;
 
 static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 {
-    uint64_t bufferSize = buffer ? buffer->size() : 0;
+    bool isNull = !buffer;
+    encoder << isNull;
+    if (isNull)
+        return;
+
+    uint64_t bufferSize = buffer->size();
     encoder << bufferSize;
     if (!bufferSize)
         return;
@@ -144,12 +149,24 @@ static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 
 static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
 {
+    Optional<bool> isNull;
+    decoder >> isNull;
+    if (!isNull)
+        return false;
+
+    if (*isNull) {
+        buffer = nullptr;
+        return true;
+    }
+
     uint64_t bufferSize = 0;
     if (!decoder.decode(bufferSize))
         return false;
 
-    if (!bufferSize)
+    if (!bufferSize) {
+        buffer = SharedBuffer::create();
         return true;
+    }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(bufferSize))

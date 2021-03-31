@@ -1,3 +1,27 @@
+2021-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Service Worker scripts use too much memory in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=223808
+        <rdar://75637093>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::deleteNonEmptyDirectory):
+        Add an implementation of FileSystem::deleteNonEmptyDirectory() on all supported platforms.
+        We previously only had implemetations for Cocoa and Windows.
+
+        (WTF::FileSystemImpl::mapToFile):
+        Moved most of the mapToFile() logic from NetworkCacheData::mapToFile() to FileSystem, so that
+        it can be reused by the new SWScriptStorage class. It creates the destination file, mmap's it,
+        writes the provided data to it and then returns the mmap'd file.
+
+        (WTF::FileSystemImpl::readOrMakeSalt):
+        Move readOrMakeSalt() from NetworkCacheData to FileSystem so that it can be reused by the new
+        SWScriptStorage.
+        
+        * wtf/FileSystem.h:
+
 2021-03-30  Sam Weinig  <weinig@apple.com>
 
         JSGlobalObject's m_customGetterFunctionMap and m_customSetterFunctionMap should be sets, not maps, and should use both the identifier and function pointer as the key

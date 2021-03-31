@@ -28,6 +28,7 @@
 
 #include <fcntl.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/FileSystem.h>
 
 #if !OS(WINDOWS)
 #include <sys/mman.h>
@@ -40,41 +41,9 @@ namespace NetworkCache {
 
 Data Data::mapToFile(const String& path) const
 {
-    constexpr bool failIfFileExists = true;
-    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite, FileSystem::FileAccessPermission::User, failIfFileExists);
-    if (!FileSystem::isHandleValid(handle) || !FileSystem::truncateFile(handle, m_size)) {
-        FileSystem::closeFile(handle);
-        return { };
-    }
-    
-    FileSystem::makeSafeToUseMemoryMapForPath(path);
-    bool success;
-    FileSystem::MappedFileData mappedFile(handle, FileSystem::FileOpenMode::ReadWrite, FileSystem::MappedFileMode::Shared, success);
-    if (!success) {
-        FileSystem::closeFile(handle);
-        return { };
-    }
-
-    void* map = const_cast<void*>(mappedFile.data());
-    uint8_t* mapData = static_cast<uint8_t*>(map);
-    apply([&mapData](const uint8_t* bytes, size_t bytesSize) {
-        memcpy(mapData, bytes, bytesSize);
-        mapData += bytesSize;
-        return true;
-    });
-
-#if OS(WINDOWS)
-    DWORD oldProtection;
-    VirtualProtect(map, m_size, FILE_MAP_READ, &oldProtection);
-    FlushViewOfFile(map, m_size);
-#else
-    // Drop the write permission.
-    mprotect(map, m_size, PROT_READ);
-
-    // Flush (asynchronously) to file, turning this into clean memory.
-    msync(map, m_size, MS_ASYNC);
-#endif
-
+    FileSystem::PlatformFileHandle handle;
+    auto applyData = [&](const Function<bool(const uint8_t*, size_t)>& applier) { apply(applier); };
+    auto mappedFile = FileSystem::mapToFile(path, size(), WTFMove(applyData), &handle);
     return Data::adoptMap(WTFMove(mappedFile), handle);
 }
 
@@ -133,41 +102,6 @@ bool bytesEqual(const Data& a, const Data& b)
     if (a.size() != b.size())
         return false;
     return !memcmp(a.data(), b.data(), a.size());
-}
-
-static Salt makeSalt()
-{
-    Salt salt;
-    static_assert(salt.size() == 8, "Salt size");
-    *reinterpret_cast<uint32_t*>(&salt[0]) = cryptographicallyRandomNumber();
-    *reinterpret_cast<uint32_t*>(&salt[4]) = cryptographicallyRandomNumber();
-    return salt;
-}
-
-Optional<Salt> readOrMakeSalt(const String& path)
-{
-    if (FileSystem::fileExists(path)) {
-        auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
-        Salt salt;
-        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, reinterpret_cast<char*>(salt.data()), salt.size()));
-        FileSystem::closeFile(file);
-        if (bytesRead == salt.size())
-            return salt;
-
-        FileSystem::deleteFile(path);
-    }
-
-    Salt salt = makeSalt();
-    auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Write, FileSystem::FileAccessPermission::User);
-    if (!FileSystem::isHandleValid(file))
-        return { };
-
-    bool success = static_cast<std::size_t>(FileSystem::writeToFile(file, reinterpret_cast<char*>(salt.data()), salt.size())) == salt.size();
-    FileSystem::closeFile(file);
-    if (!success)
-        return { };
-
-    return salt;
 }
 
 } // namespace NetworkCache

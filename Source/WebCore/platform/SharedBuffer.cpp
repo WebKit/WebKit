@@ -70,15 +70,15 @@ SharedBuffer::SharedBuffer(GstMappedOwnedBuffer& mappedBuffer)
 }
 #endif
 
-RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
+RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath, FileSystem::MappedFileMode mappedFileMode, MayUseFileMapping mayUseFileMapping)
 {
-    bool mappingSuccess;
-    FileSystem::MappedFileData mappedFileData(filePath, FileSystem::MappedFileMode::Shared, mappingSuccess);
-
-    if (!mappingSuccess)
-        return SharedBuffer::createFromReadingFile(filePath);
-
-    return adoptRef(new SharedBuffer(WTFMove(mappedFileData)));
+    if (mayUseFileMapping == MayUseFileMapping::Yes) {
+        bool mappingSuccess;
+        FileSystem::MappedFileData mappedFileData(filePath, mappedFileMode, mappingSuccess);
+        if (mappingSuccess)
+            return adoptRef(new SharedBuffer(WTFMove(mappedFileData)));
+    }
+    return SharedBuffer::createFromReadingFile(filePath);
 }
 
 Ref<SharedBuffer> SharedBuffer::create(Vector<char>&& vector)
@@ -281,8 +281,8 @@ bool SharedBuffer::operator==(const SharedBuffer& other) const
             continue;
         }
 
-        ASSERT(thisOffset < thisSegment.size());
-        ASSERT(otherOffset < otherSegment.size());
+        ASSERT(thisOffset <= thisSegment.size());
+        ASSERT(otherOffset <= otherSegment.size());
 
         size_t thisRemaining = thisSegment.size() - thisOffset;
         size_t otherRemaining = otherSegment.size() - otherOffset;

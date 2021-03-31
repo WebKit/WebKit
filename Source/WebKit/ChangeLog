@@ -1,3 +1,44 @@
+2021-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Service Worker scripts use too much memory in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=223808
+        <rdar://75637093>
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        Pass a ServiceWorkerContextData::ImportedScript struct in the SetScriptResource IPC
+        for convenience. We used to pass the ImportedScript data members separately.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::clearAllCachesFromDisk):
+        (WebKit::CacheStorage::Engine::clearCachesForOriginFromDirectories):
+        (WebKit::CacheStorage::Engine::deleteNonEmptyDirectoryOnBackgroundThread):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        * NetworkProcess/cache/NetworkCacheFileSystem.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+        Drop deleteDirectoryRecursively() implementation and use the existing
+        FileSystem::deleteNonEmptyDirectory() in wtf instead.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::Data::mapToFile const):
+        Moved some of the mapToFile() logic to WTF, so that it can be reused.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeSharedBuffer):
+        (IPC::decodeSharedBuffer):
+        Update SharedBuffer's IPC argument coder to distinguish a null SharedBuffer
+        and an empty one. We now use SharedBuffer to store service worker script sources
+        and it is possible for the script sources to be empty (and they are in some of
+        our API tests).
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::setScriptResource):
+        Pass a ServiceWorkerContextData::ImportedScript struct in the SetScriptResource IPC
+        for convenience. We used to pass the ImportedScript data members separately.
+
 2021-03-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Introduce PrivateClickMeasurementNetworkLoader

@@ -60,7 +60,7 @@ Protocol::ErrorStringOr<Ref<Protocol::ServiceWorker::Configuration>> ServiceWork
         .setTargetId(m_serviceWorkerGlobalScope.identifier())
         .setSecurityOrigin(m_serviceWorkerGlobalScope.securityOrigin()->toRawString())
         .setUrl(m_serviceWorkerGlobalScope.thread().contextData().scriptURL.string())
-        .setContent(m_serviceWorkerGlobalScope.thread().contextData().script)
+        .setContent(scriptBufferToString(m_serviceWorkerGlobalScope.thread().contextData().script))
         .release();
 }
 

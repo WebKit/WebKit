@@ -128,6 +128,11 @@ void RegistrationStore::addRegistrationFromDatabase(ServiceWorkerContextData&& d
     m_server.addRegistrationFromStore(WTFMove(data));
 }
 
+void RegistrationStore::didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, Ref<SharedBuffer>&& mainScript, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts)
+{
+    m_server.didSaveWorkerScriptsToDisk(serviceWorkerIdentifier, WTFMove(mainScript), WTFMove(importedScripts));
+}
+
 void RegistrationStore::databaseFailedToOpen()
 {
     m_server.registrationStoreDatabaseFailedToOpen();

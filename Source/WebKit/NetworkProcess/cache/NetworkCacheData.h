@@ -112,9 +112,7 @@ Data adoptAndMapFile(FileSystem::PlatformFileHandle, size_t offset, size_t);
 Data mapFile(const char* path);
 Data mapFile(const String& path);
 
-using Salt = std::array<uint8_t, 8>;
-
-Optional<Salt> readOrMakeSalt(const String& path);
+using Salt = FileSystem::Salt;
 SHA1::Digest computeSHA1(const Data&, const Salt&);
 
 }

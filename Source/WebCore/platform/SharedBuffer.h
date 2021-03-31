@@ -68,7 +68,10 @@ public:
     static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer); }
     static Ref<SharedBuffer> create(const char* data, size_t size) { return adoptRef(*new SharedBuffer(data, size)); }
     static Ref<SharedBuffer> create(const unsigned char* data, size_t size) { return adoptRef(*new SharedBuffer(data, size)); }
-    static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
+    static Ref<SharedBuffer> create(FileSystem::MappedFileData&& mappedFileData) { return adoptRef(*new SharedBuffer(WTFMove(mappedFileData))); }
+
+    enum class MayUseFileMapping : bool { No, Yes };
+    static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath, FileSystem::MappedFileMode = FileSystem::MappedFileMode::Shared, MayUseFileMapping = MayUseFileMapping::Yes);
 
     static Ref<SharedBuffer> create(Vector<char>&&);
     static Ref<SharedBuffer> create(Vector<uint8_t>&&);

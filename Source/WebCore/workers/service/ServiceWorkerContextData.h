@@ -30,6 +30,7 @@
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
+#include "SharedBuffer.h"
 #include "WorkerType.h"
 #include <wtf/HashMap.h>
 #include <wtf/URL.h>
@@ -39,13 +40,16 @@
 
 namespace WebCore {
 
+String scriptBufferToString(SharedBuffer&);
+Ref<SharedBuffer> stringToScriptBuffer(const String&);
+
 struct ServiceWorkerContextData {
     struct ImportedScript {
-        String script;
+        RefPtr<SharedBuffer> script;
         URL responseURL;
         String mimeType;
 
-        ImportedScript isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
+        ImportedScript isolatedCopy() const { return { script->copy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
 
         template<class Encoder> void encode(Encoder& encoder) const
         {
@@ -54,7 +58,7 @@ struct ServiceWorkerContextData {
 
         template<class Decoder> static Optional<ImportedScript> decode(Decoder& decoder)
         {
-            Optional<String> script;
+            Optional<RefPtr<SharedBuffer>> script;
             decoder >> script;
             if (!script)
                 return WTF::nullopt;
@@ -80,7 +84,7 @@ struct ServiceWorkerContextData {
     Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
     ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
-    String script;
+    Ref<SharedBuffer> script;
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     String referrerPolicy;
@@ -120,8 +124,9 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!serviceWorkerIdentifier)
         return WTF::nullopt;
 
-    String script;
-    if (!decoder.decode(script))
+    Optional<Ref<SharedBuffer>> script;
+    decoder >> script;
+    if (!script)
         return WTF::nullopt;
 
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
@@ -157,7 +162,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
         WTFMove(*jobDataIdentifier),
         WTFMove(*registration),
         WTFMove(*serviceWorkerIdentifier),
-        WTFMove(script),
+        WTFMove(*script),
         WTFMove(*certificateInfo),
         WTFMove(contentSecurityPolicy),
         WTFMove(referrerPolicy),
