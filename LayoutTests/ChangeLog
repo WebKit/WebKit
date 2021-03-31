@@ -1,3 +1,17 @@
+2021-03-30  Devin Rousso  <drousso@apple.com>
+
+        [Catalina WK2] 5 media/modern-media-controls/tracks-support tests consistently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=223673
+        <rdar://problem/75769577>
+
+        Unreviewed, check that the `subtitlesMenu` exists before attempting to look at its `children`.
+
+        * media/modern-media-controls/tracks-support/auto-text-track.html:
+        * media/modern-media-controls/tracks-support/click-track-in-contextmenu.html:
+        * media/modern-media-controls/tracks-support/hidden-tracks.html:
+        * media/modern-media-controls/tracks-support/off-text-track.html:
+        * media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html:
+
 2021-03-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening of tests.
