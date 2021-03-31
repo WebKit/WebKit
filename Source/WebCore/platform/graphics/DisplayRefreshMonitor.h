@@ -58,7 +58,9 @@ public:
     bool hasClients() const { return m_clients.size(); }
     void addClient(DisplayRefreshMonitorClient&);
     bool removeClient(DisplayRefreshMonitorClient&);
-    
+
+    virtual Optional<FramesPerSecond> displayNominalFramesPerSecond() { return WTF::nullopt; }
+
     PlatformDisplayID displayID() const { return m_displayID; }
 
     static RefPtr<DisplayRefreshMonitor> createDefaultDisplayRefreshMonitor(PlatformDisplayID);

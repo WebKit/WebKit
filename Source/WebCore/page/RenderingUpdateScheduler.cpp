@@ -115,6 +115,7 @@ DisplayRefreshMonitorFactory* RenderingUpdateScheduler::displayRefreshMonitorFac
 
 void RenderingUpdateScheduler::windowScreenDidChange(PlatformDisplayID displayID)
 {
+    adjustRenderingUpdateFrequency();
     DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
 }
 

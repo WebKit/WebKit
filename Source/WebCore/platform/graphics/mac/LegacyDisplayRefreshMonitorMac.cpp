@@ -85,18 +85,27 @@ WebCore::FramesPerSecond LegacyDisplayRefreshMonitorMac::nominalFramesPerSecondF
     return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
 }
 
+bool LegacyDisplayRefreshMonitorMac::ensureDisplayLink()
+{
+    if (m_displayLink)
+        return true;
+
+    auto error = CVDisplayLinkCreateWithCGDisplay(displayID(), &m_displayLink);
+    if (error)
+        return false;
+
+    error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
+    if (error)
+        return false;
+        
+    return true;
+}
+
 bool LegacyDisplayRefreshMonitorMac::startNotificationMechanism()
 {
     if (!m_displayLink) {
-        auto error = CVDisplayLinkCreateWithCGDisplay(displayID(), &m_displayLink);
-        if (error)
+        if (!ensureDisplayLink())
             return false;
-
-        error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
-        if (error)
-            return false;
-
-        m_currentUpdate = { 0, nominalFramesPerSecondFromDisplayLink(m_displayLink) };
     }
 
     if (!m_displayLinkIsActive) {
@@ -107,7 +116,7 @@ bool LegacyDisplayRefreshMonitorMac::startNotificationMechanism()
             return false;
         
         m_displayLinkIsActive = true;
-        m_currentUpdate.updateIndex = 0;
+        m_currentUpdate = { 0, nominalFramesPerSecondFromDisplayLink(m_displayLink) };
     }
 
     return true;
@@ -124,6 +133,14 @@ void LegacyDisplayRefreshMonitorMac::stopNotificationMechanism()
     }
         
     m_displayLinkIsActive = false;
+}
+
+Optional<FramesPerSecond> LegacyDisplayRefreshMonitorMac::displayNominalFramesPerSecond()
+{
+    if (!ensureDisplayLink())
+        return WTF::nullopt;
+        
+    return nominalFramesPerSecondFromDisplayLink(m_displayLink);
 }
 
 } // namespace WebCore

@@ -149,6 +149,11 @@ void DisplayRefreshMonitorIOS::stopNotificationMechanism()
     m_displayLinkIsActive = false;
 }
 
+Optional<FramesPerSecond> DisplayRefreshMonitorIOS::displayNominalFramesPerSecond()
+{
+    return DisplayLinkFramesPerSecond;
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(IOS_FAMILY)

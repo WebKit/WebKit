@@ -1,3 +1,17 @@
+2021-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Assertions in DisplayUpdate when dragging WebView windows between screens with different refresh rates
+        https://bugs.webkit.org/show_bug.cgi?id=223984
+
+        Reviewed by Sam Weinig.
+
+        RemoteLayerTreeDisplayRefreshMonitor knows its m_preferredFramesPerSecond so can
+        return that.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::displayNominalFramesPerSecond):
+
 2021-03-31  Sihui Liu  <sihui_liu@apple.com>
 
         Add logging in IndexedDB to help debug flaky quota tests

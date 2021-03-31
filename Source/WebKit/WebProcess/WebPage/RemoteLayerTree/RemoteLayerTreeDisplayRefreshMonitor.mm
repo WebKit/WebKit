@@ -91,4 +91,9 @@ void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDraw
     m_drawingArea = makeWeakPtr(drawingArea);
 }
 
+Optional<FramesPerSecond> RemoteLayerTreeDisplayRefreshMonitor::displayNominalFramesPerSecond()
+{
+    return m_preferredFramesPerSecond;
+}
+
 } // namespace WebKit

@@ -54,6 +54,9 @@ private:
 
     bool startNotificationMechanism() final;
     void stopNotificationMechanism() final;
+    Optional<FramesPerSecond> displayNominalFramesPerSecond() final;
+    
+    bool ensureDisplayLink();
 
     static FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 

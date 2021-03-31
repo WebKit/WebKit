@@ -45,6 +45,7 @@
 #include "DebugPageOverlays.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
+#include "DisplayRefreshMonitorManager.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentTimeline.h"
@@ -1181,6 +1182,11 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPer
 
     m_displayID = displayID;
     m_displayNominalFramesPerSecond = nominalFramesPerSecond;
+    if (!m_displayNominalFramesPerSecond) {
+        // If the caller didn't give us a refresh rate, maybe the relevant DisplayRefreshMonitor can? This happens in WebKitLegacy
+        // because WebView doesn't have a convenient way to access the display refresh rate.
+        m_displayNominalFramesPerSecond = DisplayRefreshMonitorManager::sharedManager().nominalFramesPerSecondForDisplay(m_displayID, chrome().client().displayRefreshMonitorFactory());
+    }
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
@@ -1195,10 +1201,9 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPer
 #endif
 
     if (m_scrollingCoordinator)
-        m_scrollingCoordinator->windowScreenDidChange(displayID, nominalFramesPerSecond);
+        m_scrollingCoordinator->windowScreenDidChange(displayID, m_displayNominalFramesPerSecond);
 
     renderingUpdateScheduler().windowScreenDidChange(displayID);
-    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 
     setNeedsRecalcStyleInAllFrames();
 }

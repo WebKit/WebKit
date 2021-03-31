@@ -1,3 +1,57 @@
+2021-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Assertions in DisplayUpdate when dragging WebView windows between screens with different refresh rates
+        https://bugs.webkit.org/show_bug.cgi?id=223984
+
+        Reviewed by Sam Weinig.
+
+        There are various reasons why rigorous assertions in DisplayUpdate::relevantForUpdateFrequency()
+        are ill advised.
+
+        When WebKitLegacy calls windowScreenDidChange() it does not pass in a nominal display
+        refresh rate, so we assume 60fps. If the screen actually has a non-60fps refresh rate, then
+        we can get mixed 60/50 state in various places; this change fixes one of them, but such bugs
+        have to not result in assertions or divide by zero crashes in
+        DisplayUpdate::relevantForUpdateFrequency().
+
+        The second reason is webkit.org/b/212120; we may start DisplayRefreshMonitors with DisplayID
+        0 before we know what screen we're on, again risking a situation where the actual screen has
+        a non-60fps refresh rate.
+
+        To fix the case where no nominal refresh rate is passed through
+        Chrome::windowScreenDidChange(), allow a DisplayRefreshMonitor to supply a rate; often, a
+        DisplayRefreshMonitor can compute one from its knowledge of the display. This requires
+        DisplayRefreshMonitorManager is able to create a DisplayRefreshMonitor with no client, so
+        support that with a little refactoring.
+
+        Have some DisplayRefreshMonitor implementations supply their nominal display refresh rate
+        when known.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::windowScreenDidChange): No need to early return here; Page does the same check.
+        * page/Page.cpp:
+        (WebCore::Page::windowScreenDidChange): Push the call to adjustRenderingUpdateFrequency() into 
+        renderingUpdateScheduler().windowScreenDidChange() as suggested in a previous review.
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::windowScreenDidChange):
+        * platform/graphics/DisplayRefreshMonitor.h:
+        (WebCore::DisplayRefreshMonitor::displayNominalFramesPerSecond):
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::ensureMonitorForDisplayID):
+        (WebCore::DisplayRefreshMonitorManager::nominalFramesPerSecondForDisplay):
+        (WebCore::DisplayRefreshMonitorManager::monitorForClient):
+        * platform/graphics/DisplayRefreshMonitorManager.h:
+        * platform/graphics/DisplayUpdate.cpp:
+        (WebCore::DisplayUpdate::relevantForUpdateFrequency const):
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        (WebCore::DisplayRefreshMonitorIOS::displayNominalFramesPerSecond):
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp:
+        (WebCore::LegacyDisplayRefreshMonitorMac::ensureDisplayLink):
+        (WebCore::LegacyDisplayRefreshMonitorMac::startNotificationMechanism):
+        (WebCore::LegacyDisplayRefreshMonitorMac::displayNominalFramesPerSecond):
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.h:
+
 2021-03-31  Sihui Liu  <sihui_liu@apple.com>
 
         Add logging in IndexedDB to help debug flaky quota tests

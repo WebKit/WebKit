@@ -51,6 +51,7 @@ private:
 
     bool startNotificationMechanism() final { return true; }
     void stopNotificationMechanism() final { }
+    Optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() final;
 
     WeakPtr<RemoteLayerTreeDrawingArea> m_drawingArea;
 
