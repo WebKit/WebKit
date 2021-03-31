@@ -2064,6 +2064,7 @@ class RunWebKitTests(shell.Test):
     jsonFileName = 'layout-test-results/full_results.json'
     logfiles = {'json': jsonFileName}
     test_failures_log_name = 'test-failures'
+    ENABLE_GUARD_MALLOC = False
     EXIT_AFTER_FAILURES = '30'
     command = ['python', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
@@ -2105,6 +2106,9 @@ class RunWebKitTests(shell.Test):
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
+
+        if self.ENABLE_GUARD_MALLOC:
+            self.setCommand(self.command + ['--guard-malloc'])
 
         if self.name == 'run-layout-tests-without-patch':
             # In order to speed up testing, on the step that retries running the layout tests without patch
@@ -2277,6 +2281,12 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
                 ExtractTestResults(identifier=self.suffix),
             ])
         return rc
+
+
+class RunWebKitTestsInStressGuardmallocMode(RunWebKitTestsInStressMode):
+    name = 'run-layout-tests-in-guard-malloc-stress-mode'
+    suffix = 'guard-malloc'
+    ENABLE_GUARD_MALLOC = True
 
 
 class ReRunWebKitTests(RunWebKitTests):
