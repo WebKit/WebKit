@@ -1,5 +1,25 @@
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
+        Fix interpolation of box-shadow and text-shadow CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=223924
+
+        Reviewed by Dean Jackson.
+
+        There were three issues with interpolation of ShadowData-backed properties such
+        as box-shadow and text-shadow:
+
+        1. the blur radius should not be allowed to be negative,
+        2. blending LayoutUnit had accuracy issues,
+        3. we would allow interpolation to happen when items in lists did not have
+           matching shadow styles ("inset" vs. unspecified).
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * platform/animation/AnimationUtilities.h:
+        (WebCore::blend):
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
         Computed style for background-position should not use "left" and "top" keywords
         https://bugs.webkit.org/show_bug.cgi?id=223878
 

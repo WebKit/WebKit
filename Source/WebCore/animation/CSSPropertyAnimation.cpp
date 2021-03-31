@@ -133,11 +133,10 @@ static inline ShadowStyle blendFunc(const CSSPropertyBlendingClient* client, Sha
 static inline std::unique_ptr<ShadowData> blendFunc(const CSSPropertyBlendingClient* client, const ShadowData* from, const ShadowData* to, double progress)
 {
     ASSERT(from && to);
-    if (from->style() != to->style())
-        return makeUnique<ShadowData>(*to);
+    ASSERT(from->style() == to->style());
 
     return makeUnique<ShadowData>(blend(from->location(), to->location(), progress),
-        blend(from->radius(), to->radius(), progress),
+        std::max(0, blend(from->radius(), to->radius(), progress)),
         blend(from->spread(), to->spread(), progress),
         blendFunc(client, from->style(), to->style(), progress),
         from->isWebkitBoxShadow(),
@@ -1114,10 +1113,33 @@ private:
         return true;
     }
 
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    {
+        const ShadowData* fromShadow = (from->*m_getter)();
+        const ShadowData* toShadow = (to->*m_getter)();
+
+        // The only scenario where we can't interpolate is if specified items don't have the same shadow style.
+        while (fromShadow && toShadow) {
+            if (fromShadow->style() != toShadow->style())
+                return false;
+            fromShadow = fromShadow->next();
+            toShadow = toShadow->next();
+        }
+
+        return true;
+    }
+
     void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
     {
         const ShadowData* fromShadow = (from->*m_getter)();
         const ShadowData* toShadow = (to->*m_getter)();
+
+        if (!canInterpolate(from, to)) {
+            ASSERT(!progress || progress == 1.0);
+            auto* shadow = progress ? toShadow : fromShadow;
+            (destination->*m_setter)(shadow ? makeUnique<ShadowData>(*shadow) : nullptr, false);
+            return;
+        }
 
         int fromLength = shadowListLength(fromShadow);
         int toLength = shadowListLength(toShadow);
