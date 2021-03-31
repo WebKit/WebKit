@@ -1,3 +1,13 @@
+2021-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add test for SOCKS5 proxy SPI
+        https://bugs.webkit.org/show_bug.cgi?id=223964
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+
 2021-03-31  Aakash Jain  <aakash_jain@apple.com>
 
         Add build step to run layout tests for multiple iterations in guard malloc mode
