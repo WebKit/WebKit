@@ -1,3 +1,35 @@
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
+        Remove the Silently argument to WebAnimation::cancel()
+        https://bugs.webkit.org/show_bug.cgi?id=223992
+
+        Reviewed by Frédéric Wang.
+
+        The recent commit r275228 removed the use of the Silently argument in
+        AnimationTimeline::cancelDeclarativeAnimationsForStyleable(), which
+        was the only function that would eventually call into WebAnimation::cancel()
+        with a value other than the default, Silently::No.
+
+        So we remove that argument to WebAnimation::cancel(), its call sites and
+        WebAnimation::resetPendingTasks() which was called from it.
+
+        And since the Silently enum is no longer used outside of WebAnimation.cpp,
+        we move it to be private.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::elementWasRemoved):
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForStyleable):
+        * animation/AnimationTimeline.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::cancel):
+        * animation/DeclarativeAnimation.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::cancel):
+        (WebCore::WebAnimation::resetPendingTasks):
+        * animation/WebAnimation.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
 2021-03-31  Antti Koivisto  <antti@apple.com>
 
         Use :is() instead of :matches() on UA stylesheet

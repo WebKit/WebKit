@@ -215,7 +215,7 @@ void DeclarativeAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)
     WebAnimation::setTimeline(WTFMove(newTimeline));
 }
 
-void DeclarativeAnimation::cancel(Silently silently)
+void DeclarativeAnimation::cancel()
 {
     auto cancelationTime = 0_s;
     if (auto* animationEffect = effect()) {
@@ -223,7 +223,7 @@ void DeclarativeAnimation::cancel(Silently silently)
             cancelationTime = *activeTime;
     }
 
-    WebAnimation::cancel(silently);
+    WebAnimation::cancel();
 
     invalidateDOMEvents(cancelationTime);
 }

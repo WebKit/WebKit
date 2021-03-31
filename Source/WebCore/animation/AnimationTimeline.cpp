@@ -159,7 +159,7 @@ void AnimationTimeline::removeCSSAnimationCreatedByMarkup(const Styleable& style
 
 void AnimationTimeline::elementWasRemoved(const Styleable& styleable)
 {
-    cancelDeclarativeAnimationsForStyleable(styleable, WebAnimation::Silently::Yes);
+    cancelDeclarativeAnimationsForStyleable(styleable);
 }
 
 void AnimationTimeline::willChangeRendererForStyleable(const Styleable& styleable)
@@ -170,7 +170,7 @@ void AnimationTimeline::willChangeRendererForStyleable(const Styleable& styleabl
     }
 }
 
-void AnimationTimeline::cancelDeclarativeAnimationsForStyleable(const Styleable& styleable, WebAnimation::Silently)
+void AnimationTimeline::cancelDeclarativeAnimationsForStyleable(const Styleable& styleable)
 {
     if (auto* animations = styleable.animations()) {
         for (auto& animation : *animations) {

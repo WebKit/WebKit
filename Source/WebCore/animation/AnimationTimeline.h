@@ -64,7 +64,7 @@ public:
     void elementWasRemoved(const Styleable&);
 
     void willChangeRendererForStyleable(const Styleable&);
-    void cancelDeclarativeAnimationsForStyleable(const Styleable&, WebAnimation::Silently);
+    void cancelDeclarativeAnimationsForStyleable(const Styleable&);
 
     void animationWasAddedToStyleable(WebAnimation&, const Styleable&);
     void animationWasRemovedFromStyleable(WebAnimation&, const Styleable&);
