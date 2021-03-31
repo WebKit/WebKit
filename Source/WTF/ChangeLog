@@ -1,3 +1,15 @@
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
+        Remove CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED
+        https://bugs.webkit.org/show_bug.cgi?id=224000
+
+        Reviewed by Simon Fraser.
+
+        Since trunk is no longer maintained on macOS versions earlier than 10.15,
+        we can remove this compile-time flag.
+
+        * wtf/PlatformHave.h:
+
 2021-03-30  Chris Dumez  <cdumez@apple.com>
 
         Service Worker scripts use too much memory in the network process
