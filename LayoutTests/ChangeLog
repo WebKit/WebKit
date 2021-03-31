@@ -1,3 +1,12 @@
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION (r275227): [ macOS iOS Release ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=224006
+
+        Uneviewed test gardening.
+
+        * platform/mac/TestExpectations: Removed test expectations because EWS was not flagging this failure.
+
 2021-03-31  Youenn Fablet  <youenn@apple.com>
 
         In case WebRTC VTB decoder returns a null frame, mark the decoder as failing
