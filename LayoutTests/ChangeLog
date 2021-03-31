@@ -1,3 +1,14 @@
+2021-03-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Introduce PrivateClickMeasurementNetworkLoader
+        https://bugs.webkit.org/show_bug.cgi?id=222217
+        <rdar://74817863>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/privateClickMeasurement/resources/fraudPreventionTestURL.py:
+        Changes the token_public_key and unlinkable_token to be returned via JSON contents.
+
 2021-03-30  Robert Jenner  <jenner@apple.com>
 
         [ macOS Debug ] imported/w3c/web-platform-tests/cors/redirect-preflight.htm is a flakey text failure

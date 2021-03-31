@@ -121,12 +121,11 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-    m_privateClickMeasurement = makeUnique<PrivateClickMeasurementManager>(*this, networkProcess, parameters.sessionID);
-    m_privateClickMeasurement->setPingLoadFunction([this, weakThis = makeWeakPtr(this)](NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
+    m_privateClickMeasurement = makeUnique<PrivateClickMeasurementManager>(*this, networkProcess, parameters.sessionID, [weakThis = makeWeakPtr(this)] (auto&& loadParameters, auto&& completionHandler) {
         if (!weakThis)
             return;
-        // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
-        new PingLoad(m_networkProcess, m_sessionID, WTFMove(loadParameters), WTFMove(completionHandler));
+
+        PrivateClickMeasurementNetworkLoader::start(*weakThis, WTFMove(loadParameters), WTFMove(completionHandler));
     });
 #endif
 }

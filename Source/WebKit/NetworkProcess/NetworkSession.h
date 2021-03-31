@@ -27,6 +27,7 @@
 
 #include "NavigatingToAppBoundDomain.h"
 #include "PrefetchCache.h"
+#include "PrivateClickMeasurementNetworkLoader.h"
 #include "SandboxExtension.h"
 #include "ServiceWorkerSoftUpdateLoader.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -161,6 +162,9 @@ public:
 #if PLATFORM(COCOA)
     AppBoundNavigationTestingData& appBoundNavigationTestingData() { return m_appBoundNavigationTestingData; }
 #endif
+
+    void addPrivateClickMeasurementNetworkLoader(std::unique_ptr<PrivateClickMeasurementNetworkLoader>&& loader) { m_privateClickMeasurementNetworkLoaders.add(WTFMove(loader)); }
+    void removePrivateClickMeasurementNetworkLoader(PrivateClickMeasurementNetworkLoader* loader) { m_privateClickMeasurementNetworkLoaders.remove(loader); }
     
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
@@ -210,6 +214,8 @@ protected:
 #if PLATFORM(COCOA)
     AppBoundNavigationTestingData m_appBoundNavigationTestingData;
 #endif
+
+    HashSet<std::unique_ptr<PrivateClickMeasurementNetworkLoader>> m_privateClickMeasurementNetworkLoaders;
 };
 
 } // namespace WebKit
