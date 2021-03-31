@@ -1,3 +1,22 @@
+2021-03-30  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r274607): media controls script is visible in Web Inspector even without the engineering "Show WebKit-internal scripts" enabled
+        https://bugs.webkit.org/show_bug.cgi?id=223961
+
+        Reviewed by Yusuke Suzuki.
+
+        It turns out that Web Inspector will only ignore scripts that have a source URL directive
+        that matches `__InjectedScript_*.js`, not those that have a (source) URL matching that.
+
+        In addition to Web Inspector ignoring these scripts in the UI, it will also cause the
+        `Debugger` to not pause in scripts with a matching source URL directive (unless the
+        local build engineering only "Pause in WebKit-internal scripts" is enabled).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        Change the `ScriptSourceCode` here to not have a `URL` and have `make-js-file-arrays.py`
+        add a `//# sourceURL=__InjectedScript_*.js` to the contents before it's encoded.
+
 2021-03-30  Venky Dass  <yaranamavenkataramana@apple.com>
 
         Nullptr crash in Crash in WebCore::positionInParentBeforeNode(..) where a NULL check is missing.

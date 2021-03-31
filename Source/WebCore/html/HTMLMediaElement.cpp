@@ -7160,13 +7160,10 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
         if (functionValue.isCallable(vm))
             return true;
 
-        unsigned index = 0;
         for (auto& mediaControlsScript : mediaControlsScripts) {
             if (mediaControlsScript.isEmpty())
                 continue;
-            // Setting a scriptURL allows the source to be debuggable in the inspector.
-            URL scriptURL = URL({ }, makeString("__InjectedScript_mediaControlsScript"_s, ++index, ".js"));
-            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, WTFMove(scriptURL)), world);
+            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript), world);
             if (UNLIKELY(scope.exception())) {
                 auto* exception = scope.exception();
                 scope.clearException();

@@ -1,3 +1,21 @@
+2021-03-30  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r274607): media controls script is visible in Web Inspector even without the engineering "Show WebKit-internal scripts" enabled
+        https://bugs.webkit.org/show_bug.cgi?id=223961
+
+        Reviewed by Yusuke Suzuki.
+
+        It turns out that Web Inspector will only ignore scripts that have a source URL directive
+        that matches `__InjectedScript_*.js`, not those that have a (source) URL matching that.
+
+        In addition to Web Inspector ignoring these scripts in the UI, it will also cause the
+        `Debugger` to not pause in scripts with a matching source URL directive (unless the
+        local build engineering only "Pause in WebKit-internal scripts" is enabled).
+
+        * Scripts/make-js-file-arrays.py:
+        (main):
+        Add a `//# sourceURL=__InjectedScript_*.js` to the contents before it's encoded.
+
 2021-03-30  Sam Weinig  <weinig@apple.com>
 
         JSGlobalObject's m_customGetterFunctionMap and m_customSetterFunctionMap should be sets, not maps, and should use both the identifier and function pointer as the key
