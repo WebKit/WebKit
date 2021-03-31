@@ -136,7 +136,6 @@ $(PROJECT_DIR)/Modules/geolocation/PositionErrorCallback.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionOptions.idl
 $(PROJECT_DIR)/Modules/highlight/Highlight.idl
 $(PROJECT_DIR)/Modules/highlight/HighlightRegister.idl
-$(PROJECT_DIR)/Modules/indexeddb/DOMWindow+IndexedDatabase.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursor.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorDirection.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorWithValue.idl
@@ -150,7 +149,7 @@ $(PROJECT_DIR)/Modules/indexeddb/IDBRequest.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBTransaction.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBTransactionMode.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBVersionChangeEvent.idl
-$(PROJECT_DIR)/Modules/indexeddb/WorkerGlobalScope+IndexedDatabase.idl
+$(PROJECT_DIR)/Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/AudioConfiguration.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/ColorGamut.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/HdrMetadataType.idl

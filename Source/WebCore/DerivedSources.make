@@ -162,7 +162,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/geolocation/PositionOptions.idl \
     $(WebCore)/Modules/highlight/HighlightRegister.idl \
     $(WebCore)/Modules/highlight/Highlight.idl \
-    $(WebCore)/Modules/indexeddb/DOMWindow+IndexedDatabase.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
@@ -176,7 +175,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/indexeddb/IDBTransaction.idl \
     $(WebCore)/Modules/indexeddb/IDBTransactionMode.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
-    $(WebCore)/Modules/indexeddb/WorkerGlobalScope+IndexedDatabase.idl \
+    $(WebCore)/Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl \
     $(WebCore)/Modules/mediacapabilities/AudioConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/ColorGamut.idl \
     $(WebCore)/Modules/mediacapabilities/HdrMetadataType.idl \

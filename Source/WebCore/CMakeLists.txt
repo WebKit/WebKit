@@ -290,7 +290,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/highlight/Highlight.idl
     Modules/highlight/HighlightRegister.idl
 
-    Modules/indexeddb/DOMWindow+IndexedDatabase.idl
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl
     Modules/indexeddb/IDBCursorWithValue.idl
@@ -304,7 +303,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/indexeddb/IDBTransaction.idl
     Modules/indexeddb/IDBTransactionMode.idl
     Modules/indexeddb/IDBVersionChangeEvent.idl
-    Modules/indexeddb/WorkerGlobalScope+IndexedDatabase.idl
+    Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl
 
     Modules/mediacapabilities/AudioConfiguration.idl
     Modules/mediacapabilities/ColorGamut.idl

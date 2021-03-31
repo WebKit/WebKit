@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSDOMWindowCustom.h"
 
-#include "DOMWindowIndexedDatabase.h"
 #include "DOMWindowWebDatabase.h"
 #include "Frame.h"
 #include "HTMLDocument.h"

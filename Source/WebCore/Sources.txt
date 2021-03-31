@@ -68,7 +68,6 @@ Modules/highlight/AppHighlightRangeData.cpp
 Modules/highlight/AppHighlightStorage.cpp
 Modules/highlight/HighlightRegister.cpp
 Modules/highlight/Highlight.cpp
-Modules/indexeddb/DOMWindowIndexedDatabase.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp
 Modules/indexeddb/IDBDatabase.cpp
@@ -90,7 +89,7 @@ Modules/indexeddb/IDBRequestCompletionEvent.cpp
 Modules/indexeddb/IDBTransaction.cpp
 Modules/indexeddb/IDBValue.cpp
 Modules/indexeddb/IDBVersionChangeEvent.cpp
-Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
+Modules/indexeddb/WindowOrWorkerGlobalScopeIndexedDatabase.cpp
 Modules/indexeddb/client/IDBConnectionProxy.cpp
 Modules/indexeddb/client/IDBConnectionToServer.cpp
 Modules/indexeddb/client/TransactionOperation.cpp
