@@ -33,11 +33,13 @@
 
 namespace WebKit {
 
-class MediaSessionCoordinatorPrivateProxy
-    : public CanMakeWeakPtr<MediaSessionCoordinatorPrivateProxy>
-    , public RefCounted<MediaSessionCoordinatorPrivateProxy> {
+class MediaSessionCoordinatorProxyPrivate
+    : public CanMakeWeakPtr<MediaSessionCoordinatorProxyPrivate>
+    , public RefCounted<MediaSessionCoordinatorProxyPrivate> {
 public:
-    virtual ~MediaSessionCoordinatorPrivateProxy() = default;
+    virtual ~MediaSessionCoordinatorProxyPrivate() = default;
+
+    virtual String identifier() const = 0;
 
     virtual void seekTo(double, CompletionHandler<void(const WebCore::ExceptionData&)>&&) = 0;
     virtual void play(CompletionHandler<void(const WebCore::ExceptionData&)>&&) = 0;
@@ -47,11 +49,12 @@ public:
     virtual void positionStateChanged(const Optional<WebCore::MediaPositionState>&) = 0;
     virtual void readyStateChanged(WebCore::MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(WebCore::MediaSessionPlaybackState) = 0;
+    virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) = 0;
 
     virtual void setClient(WeakPtr<WebCore::MediaSessionCoordinatorClient> client) { m_client = client; }
 
 protected:
-    explicit MediaSessionCoordinatorPrivateProxy() = default;
+    explicit MediaSessionCoordinatorProxyPrivate() = default;
 
     WeakPtr<WebCore::MediaSessionCoordinatorClient> client() const { return m_client; }
 

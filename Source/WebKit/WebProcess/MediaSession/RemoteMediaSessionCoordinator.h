@@ -44,11 +44,11 @@ class WebPage;
 class RemoteMediaSessionCoordinator final : public WebCore::MediaSessionCoordinatorPrivate , public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteMediaSessionCoordinator> create(WebPage&);
+    static Ref<RemoteMediaSessionCoordinator> create(WebPage&, const String&);
     ~RemoteMediaSessionCoordinator();
 
 private:
-    explicit RemoteMediaSessionCoordinator(WebPage&);
+    explicit RemoteMediaSessionCoordinator(WebPage&, const String&);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -60,6 +60,9 @@ private:
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&);
 
     // MediaSessionCoordinatorPrivate overrides.
+    String identifier() const final { return m_identifier; }
+    void join(CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
+    void leave() final;
     void seekTo(double, CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
     void play(CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
     void pause(CompletionHandler<void(Optional<WebCore::Exception>&&)>&&) final;
@@ -68,11 +71,13 @@ private:
     void positionStateChanged(const Optional<WebCore::MediaPositionState>&) final;
     void readyStateChanged(WebCore::MediaSessionReadyState) final;
     void playbackStateChanged(WebCore::MediaSessionPlaybackState) final;
+    void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
     const char* logClassName() const { return "RemoteMediaSessionCoordinator"; }
     WTFLogChannel& logChannel() const;
 
     WebPage& m_page;
+    String m_identifier;
 };
 
 } // namespace WebKit

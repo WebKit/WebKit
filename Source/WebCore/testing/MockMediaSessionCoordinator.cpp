@@ -59,6 +59,17 @@ Optional<Exception> MockMediaSessionCoordinator::result() const
     return WTF::nullopt;
 }
 
+void MockMediaSessionCoordinator::join(CompletionHandler<void(Optional<Exception>&&)>&& callback)
+{
+    m_context->postTask([this, callback = WTFMove(callback)] (ScriptExecutionContext&) mutable {
+        callback(result());
+    });
+}
+
+void MockMediaSessionCoordinator::leave()
+{
+}
+
 void MockMediaSessionCoordinator::seekTo(double time, CompletionHandler<void(Optional<Exception>&&)>&& callback)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, time);
@@ -107,6 +118,12 @@ void MockMediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
     m_stateChangeListener->scheduleCallback(m_context.get(), "playbackStateChanged");
+}
+
+void MockMediaSessionCoordinator::coordinatorStateChanged(MediaSessionCoordinatorState state)
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "coordinatorStateChanged");
 }
 
 WTFLogChannel& MockMediaSessionCoordinator::logChannel() const

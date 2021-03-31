@@ -30,6 +30,7 @@
 
 #include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSMediaSessionCoordinatorState.h"
 #include "Logging.h"
 #include "MediaSession.h"
 #include "MediaSessionCoordinatorPrivate.h"
@@ -61,6 +62,48 @@ MediaSessionCoordinator::MediaSessionCoordinator(Ref<MediaSessionCoordinatorPriv
 
 MediaSessionCoordinator::~MediaSessionCoordinator() = default;
 
+void MediaSessionCoordinator::join(DOMPromiseDeferred<void>&& promise)
+{
+    auto identifier = LOGIDENTIFIER;
+    ALWAYS_LOG(identifier, m_state);
+
+    if (m_state != MediaSessionCoordinatorState::Waiting) {
+        ERROR_LOG(identifier, "invalid state");
+        promise.reject(Exception { InvalidStateError, makeString("Unable to join when state is ", convertEnumerationToString(m_state)) });
+        return;
+    }
+
+    m_privateCoordinator->join([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (Optional<Exception>&& exception) mutable {
+        if (!protectedThis->m_session) {
+            promise.reject(Exception { InvalidStateError });
+            return;
+        }
+
+        if (exception) {
+            protectedThis->logger().error(protectedThis->logChannel(), identifier, "coordinator.join failed!");
+            promise.reject(WTFMove(*exception));
+            return;
+        }
+
+        protectedThis->m_state = MediaSessionCoordinatorState::Joined;
+        protectedThis->m_privateCoordinator->coordinatorStateChanged(MediaSessionCoordinatorState::Joined);
+        promise.resolve();
+    });
+}
+
+ExceptionOr<void> MediaSessionCoordinator::leave()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (m_state != MediaSessionCoordinatorState::Joined)
+        return Exception { InvalidStateError, makeString("Unable to leave when state is ", convertEnumerationToString(m_state)) };
+
+    m_state = MediaSessionCoordinatorState::Closed;
+    m_privateCoordinator->leave();
+    m_privateCoordinator->coordinatorStateChanged(MediaSessionCoordinatorState::Closed);
+
+    return { };
+}
+
 void MediaSessionCoordinator::seekTo(double time, DOMPromiseDeferred<void>&& promise)
 {
     auto identifier = LOGIDENTIFIER;
@@ -72,7 +115,13 @@ void MediaSessionCoordinator::seekTo(double time, DOMPromiseDeferred<void>&& pro
         return;
     }
 
-    m_privateCoordinator->seekTo(time, [time, protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (Optional<Exception>&& exception) mutable {
+    if (m_state != MediaSessionCoordinatorState::Joined) {
+        ERROR_LOG(identifier, ".state is ", m_state);
+        promise.reject(Exception { InvalidStateError, makeString("Unable to seekTo when state is ", convertEnumerationToString(m_state)) });
+        return;
+    }
+
+    m_privateCoordinator->seekTo(time, [protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (Optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -83,9 +132,6 @@ void MediaSessionCoordinator::seekTo(double time, DOMPromiseDeferred<void>&& pro
             protectedThis->logger().error(protectedThis->logChannel(), identifier, "coordinator.seekTo failed!");
             return;
         }
-
-        // FIXME: should the promise reject if there isn't a registered 'seekTo' action handler?
-        protectedThis->internalSeekTo(time);
 
         promise.resolve();
     });
@@ -102,6 +148,12 @@ void MediaSessionCoordinator::play(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
+    if (m_state != MediaSessionCoordinatorState::Joined) {
+        ERROR_LOG(identifier, ".state is ", m_state);
+        promise.reject(Exception { InvalidStateError, makeString("Unable to play when state is ", convertEnumerationToString(m_state)) });
+        return;
+    }
+
     m_privateCoordinator->play([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (Optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
@@ -113,9 +165,6 @@ void MediaSessionCoordinator::play(DOMPromiseDeferred<void>&& promise)
             protectedThis->logger().error(protectedThis->logChannel(), identifier, "coordinator.play failed!");
             return;
         }
-
-        // FIXME: should the promise reject if there isn't a registered 'play' action handler?
-        protectedThis->internalPlay();
 
         promise.resolve();
     });
@@ -132,6 +181,12 @@ void MediaSessionCoordinator::pause(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
+    if (m_state != MediaSessionCoordinatorState::Joined) {
+        ERROR_LOG(identifier, ".state is ", m_state);
+        promise.reject(Exception { InvalidStateError, makeString("Unable to pause when state is ", convertEnumerationToString(m_state)) });
+        return;
+    }
+
     m_privateCoordinator->pause([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (Optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
@@ -143,9 +198,6 @@ void MediaSessionCoordinator::pause(DOMPromiseDeferred<void>&& promise)
             protectedThis->logger().error(protectedThis->logChannel(), identifier, "coordinator.pause failed!");
             return;
         }
-
-        // FIXME: should the promise reject if there isn't a registered 'pause' action handler?
-        protectedThis->internalPause();
 
         promise.resolve();
     });
@@ -162,7 +214,13 @@ void MediaSessionCoordinator::setTrack(const String& track, DOMPromiseDeferred<v
         return;
     }
 
-    m_privateCoordinator->setTrack(track, [track, protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (Optional<Exception>&& exception) mutable {
+    if (m_state != MediaSessionCoordinatorState::Joined) {
+        ERROR_LOG(identifier, ".state is ", m_state);
+        promise.reject(Exception { InvalidStateError, makeString("Unable to setTrack when state is ", convertEnumerationToString(m_state)) });
+        return;
+    }
+
+    m_privateCoordinator->setTrack(track, [protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (Optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -173,9 +231,6 @@ void MediaSessionCoordinator::setTrack(const String& track, DOMPromiseDeferred<v
             protectedThis->logger().error(protectedThis->logChannel(), identifier, "coordinator.setTrack failed!");
             return;
         }
-
-        // FIXME: should the promise reject if there isn't a registered 'setTrack' action handler?
-        protectedThis->internalSetTrack(track);
 
         promise.resolve();
     });
@@ -190,43 +245,89 @@ void MediaSessionCoordinator::setMediaSession(MediaSession* session)
         m_session->addObserver(*this);
 }
 
-void MediaSessionCoordinator::positionStateChanged(const Optional<MediaPositionState>& state)
+void MediaSessionCoordinator::positionStateChanged(const Optional<MediaPositionState>& positionState)
 {
-    if (!state) {
+    if (positionState)
+        ALWAYS_LOG(LOGIDENTIFIER, positionState.value());
+    else
+        ALWAYS_LOG(LOGIDENTIFIER, "{ }");
+
+    if (m_state != MediaSessionCoordinatorState::Joined)
+        return;
+
+    if (!positionState) {
         m_privateCoordinator->positionStateChanged({ });
         return;
     }
 
-    m_privateCoordinator->positionStateChanged(MediaPositionState { state->duration, state->playbackRate, state->position });
+    m_privateCoordinator->positionStateChanged(MediaPositionState { positionState->duration, positionState->playbackRate, positionState->position });
 }
 
-void MediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState state)
+void MediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState playbackState)
 {
-    m_privateCoordinator->playbackStateChanged(state);
+    ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", playbackState);
+
+    if (m_state != MediaSessionCoordinatorState::Joined)
+        return;
+
+    m_privateCoordinator->playbackStateChanged(playbackState);
 }
 
-void MediaSessionCoordinator::readyStateChanged(MediaSessionReadyState state)
+void MediaSessionCoordinator::readyStateChanged(MediaSessionReadyState readyState)
 {
-    m_privateCoordinator->readyStateChanged(state);
+    ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", readyState);
+
+    if (m_state != MediaSessionCoordinatorState::Joined)
+        return;
+
+    m_privateCoordinator->readyStateChanged(readyState);
 }
 
 void MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool)>&& completionHandler)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", time);
+
+    if (m_state != MediaSessionCoordinatorState::Joined) {
+        completionHandler(false);
+        return;
+    }
+
     completionHandler(internalSeekTo(time));
 }
 
 void MediaSessionCoordinator::playSession(CompletionHandler<void(bool)>&& completionHandler)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, m_state);
+
+    if (m_state != MediaSessionCoordinatorState::Joined) {
+        completionHandler(false);
+        return;
+    }
+
     completionHandler(internalPlay());
 }
 
 void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)> completionHandler)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, m_state);
+
+    if (m_state != MediaSessionCoordinatorState::Joined) {
+        completionHandler(false);
+        return;
+    }
+
     completionHandler(internalPause());
 }
 
 void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHandler<void(bool)> completionHandler)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", track);
+
+    if (m_state != MediaSessionCoordinatorState::Joined) {
+        completionHandler(false);
+        return;
+    }
+
     completionHandler(internalSetTrack(track));
 }
 

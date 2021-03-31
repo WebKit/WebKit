@@ -3233,6 +3233,7 @@ JSMediaKeysRequirement.cpp
 JSMediaList.cpp
 JSMediaMetadata.cpp
 JSMediaSessionCoordinator.cpp
+JSMediaSessionCoordinatorState.cpp
 JSMediaMetadataInit.cpp
 JSMediaPositionState.cpp
 JSMediaQueryList.cpp

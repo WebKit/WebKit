@@ -27,7 +27,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "ContextDestructionObserver.h"
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
 #include "MediaPositionState.h"
@@ -49,7 +49,7 @@ class MediaMetadata;
 class MediaSessionCoordinator;
 class Navigator;
 
-class MediaSession : public RefCounted<MediaSession> , public ContextDestructionObserver , public EventTargetWithInlineData {
+class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MediaSession> create(Navigator&);
@@ -124,11 +124,15 @@ private:
     void notifyActionHandlerObservers();
     void notifyReadyStateObservers();
 
+    // EventTarget
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
     EventTargetInterface eventTargetInterface() const final { return MediaSessionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final { return "MediaSession"; }
+    bool virtualHasPendingActivity() const final;
 
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
@@ -141,11 +145,11 @@ private:
     const void* m_logIdentifier;
 
     WeakHashSet<Observer> m_observers;
+    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     MediaSessionReadyState m_readyState { MediaSessionReadyState::HaveNothing };
     RefPtr<MediaSessionCoordinator> m_coordinator;
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 #endif
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)

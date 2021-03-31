@@ -1,3 +1,78 @@
+2021-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] MediaSessionCoordinator should have join and leave methods
+        https://bugs.webkit.org/show_bug.cgi?id=223955
+        <rdar://problem/76021588>
+
+        Reviewed by Jer Noble.
+        
+        Add 'join' and 'leave' methods to MediaSessionCoordinator so a page has to opt-in
+        to participating in a coordinated session and can leave at any time. Don't have 
+        the coordinator automatically call session methods when the private coordinator
+        finishes, just signal the promise and let the page handle it.
+
+        No new tests, updated media/media-session/mock-coordinator.html.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediasession/MediaMetadata.idl: Fix Conditional.
+        * Modules/mediasession/MediaMetadataPlaylistMixin.idl: Ditto.
+
+        * Modules/mediasession/MediaPositionState.h: Add logging template.
+        (WTF::LogArgument<WebCore::MediaPositionState>::toString):
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession): Switch from beging a ContextDestructionObserver
+        to an ActiveDOMObject to the wrapper won't be collected while an event dispatch
+        is pending.
+        (WebCore::MediaSession::virtualHasPendingActivity const): Prevent collection while
+        event dispatch is pending.
+        (WebCore::MediaSession::setPositionState): Improve logging.
+        (WebCore::MediaPositionState::toJSONString const):
+        * Modules/mediasession/MediaSession.h:
+        * Modules/mediasession/MediaSession.idl:
+
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::join): New.
+        (WebCore::MediaSessionCoordinator::leave): New.
+        (WebCore::MediaSessionCoordinator::seekTo): Reject unless state is 'joined'. Don't
+        call session method.
+        (WebCore::MediaSessionCoordinator::play): Ditto.
+        (WebCore::MediaSessionCoordinator::pause): Ditto.
+        (WebCore::MediaSessionCoordinator::setTrack): Ditto.
+        (WebCore::MediaSessionCoordinator::positionStateChanged):
+        (WebCore::MediaSessionCoordinator::playbackStateChanged):
+        (WebCore::MediaSessionCoordinator::readyStateChanged): Do nothing unless state is
+        'joined'. Improve logging.
+        (WebCore::MediaSessionCoordinator::seekSessionToTime): Ditto.
+        (WebCore::MediaSessionCoordinator::playSession): Ditto.
+        (WebCore::MediaSessionCoordinator::pauseSession): Ditto.
+        (WebCore::MediaSessionCoordinator::setSessionTrack): Ditto.
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        (WebCore::MediaSessionCoordinator::identifier const):
+        (WebCore::MediaSessionCoordinator::state const):
+        * Modules/mediasession/MediaSessionCoordinator.idl:
+        * Modules/mediasession/MediaSessionCoordinatorMixin.idl: Fix Conditional.
+
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.h: Declare new required methods.
+
+        * Modules/mediasession/MediaSessionCoordinatorState.h: Define states.
+        * Modules/mediasession/MediaSessionCoordinatorState.idl:
+
+        * Modules/mediasession/MediaSessionPlaylistMixin.idl: Fix Conditional.
+
+        * Sources.txt: Add JSMediaSessionCoordinatorState.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * testing/MockMediaSessionCoordinator.cpp:
+        (WebCore::MockMediaSessionCoordinator::join):
+        (WebCore::MockMediaSessionCoordinator::leave):
+        (WebCore::MockMediaSessionCoordinator::coordinatorStateChanged):
+        * testing/MockMediaSessionCoordinator.h:
+
 2021-03-31  Zalan Bujtas  <zalan@apple.com>
 
         Remove misleading FIXME comment in RenderBox::shouldComputeLogicalWidthFromAspectRatioAndInsets

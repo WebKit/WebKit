@@ -1,3 +1,57 @@
+2021-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] MediaSessionCoordinator should have join and leave methods
+        https://bugs.webkit.org/show_bug.cgi?id=223955
+        <rdar://problem/76021588>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/Media/MediaSessionCoordinatorProxyPrivate.h: Renamed from Source/WebKit/UIProcess/Media/MediaSessionCoordinatorPrivateProxy.h.
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::create):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::join):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::leave):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.h:
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createMediaSessionCoordinator):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp:
+        (WebKit::RemoteMediaSessionCoordinator::create):
+        (WebKit::RemoteMediaSessionCoordinator::RemoteMediaSessionCoordinator):
+        (WebKit::RemoteMediaSessionCoordinator::join):
+        (WebKit::RemoteMediaSessionCoordinator::leave):
+        (WebKit::RemoteMediaSessionCoordinator::coordinatorStateChanged):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createMediaSessionCoordinator):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * UIProcess/Media/MediaSessionCoordinatorProxyPrivate.h: Renamed from Source/WebKit/UIProcess/Media/MediaSessionCoordinatorPrivateProxy.h.
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::create):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.h:
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createMediaSessionCoordinator):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp:
+        (WebKit::RemoteMediaSessionCoordinator::create):
+        (WebKit::RemoteMediaSessionCoordinator::RemoteMediaSessionCoordinator):
+        (WebKit::RemoteMediaSessionCoordinator::coordinatorStateChanged):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createMediaSessionCoordinator):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Update a couple of icons in the file upload context menu

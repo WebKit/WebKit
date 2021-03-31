@@ -7387,7 +7387,7 @@ void WebPage::restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&& memor
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-void WebPage::createMediaSessionCoordinator(CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::createMediaSessionCoordinator(const String& identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto* document = m_mainFrame->coreFrame()->document();
     if (!document || !document->domWindow()) {
@@ -7396,7 +7396,7 @@ void WebPage::createMediaSessionCoordinator(CompletionHandler<void(bool)>&& comp
     }
 
     auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
-    auto coordinator = RemoteMediaSessionCoordinator::create(*this);
+    auto coordinator = RemoteMediaSessionCoordinator::create(*this, identifier);
     m_remoteMediaSessionCoordinator = coordinator.ptr();
     m_mediaSessionCoordinator = MediaSessionCoordinator::create(coordinator.get());
     session.setCoordinator(m_mediaSessionCoordinator.get());

@@ -38,6 +38,7 @@
 #include "MediaSessionCoordinator.h"
 #include "Navigator.h"
 #include "PlatformMediaSessionManager.h"
+#include <wtf/JSONValues.h>
 
 namespace WebCore {
 
@@ -81,19 +82,23 @@ Ref<MediaSession> MediaSession::create(Navigator& navigator)
 }
 
 MediaSession::MediaSession(Navigator& navigator)
-    : ContextDestructionObserver(navigator.scriptExecutionContext())
+    : ActiveDOMObject(navigator.scriptExecutionContext())
     , m_navigator(makeWeakPtr(navigator))
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
     , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
-#endif
 {
     m_logger = makeRefPtr(Document::sharedLogger());
     m_logIdentifier = nextLogIdentifier();
+    suspendIfNeeded();
 
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 
 MediaSession::~MediaSession() = default;
+
+bool MediaSession::virtualHasPendingActivity() const
+{
+    return m_asyncEventQueue->hasPendingActivity();
+}
 
 void MediaSession::setMetadata(RefPtr<MediaMetadata>&& metadata)
 {
@@ -212,7 +217,10 @@ void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
 
 ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& state)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    if (state)
+        ALWAYS_LOG(LOGIDENTIFIER, state.value());
+    else
+        ALWAYS_LOG(LOGIDENTIFIER, "{ }");
 
     if (!state) {
         m_positionState = WTF::nullopt;
@@ -314,6 +322,17 @@ void MediaSession::notifyReadyStateObservers()
     });
 }
 #endif
+
+String MediaPositionState::toJSONString() const
+{
+    auto object = JSON::Object::create();
+
+    object->setDouble("duration"_s, duration);
+    object->setDouble("playbackRate"_s, playbackRate);
+    object->setDouble("position"_s, position);
+
+    return object->toJSONString();
+}
 
 }
 

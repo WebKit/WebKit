@@ -180,6 +180,7 @@ $(PROJECT_DIR)/Modules/mediasession/MediaSessionActionDetails.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaSessionActionHandler.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaSessionCoordinator.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaSessionCoordinatorMixin.idl
+$(PROJECT_DIR)/Modules/mediasession/MediaSessionCoordinatorState.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaSessionPlaybackState.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaSessionPlaylistMixin.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaSessionReadyState.idl

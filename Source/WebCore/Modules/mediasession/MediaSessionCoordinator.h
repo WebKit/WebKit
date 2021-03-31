@@ -29,6 +29,7 @@
 
 #include "MediaSession.h"
 #include "MediaSessionCoordinatorPrivate.h"
+#include "MediaSessionCoordinatorState.h"
 #include <wtf/Logger.h>
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
@@ -44,6 +45,12 @@ class MediaSessionCoordinator
 public:
     WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(Ref<MediaSessionCoordinatorPrivate>&&);
     WEBCORE_EXPORT ~MediaSessionCoordinator();
+
+    void join(DOMPromiseDeferred<void>&&);
+    ExceptionOr<void> leave();
+
+    String identifier() const { return m_privateCoordinator->identifier(); }
+    MediaSessionCoordinatorState state() const { return m_state; }
 
     void seekTo(double, DOMPromiseDeferred<void>&&);
     void play(DOMPromiseDeferred<void>&&);
@@ -80,6 +87,7 @@ private:
     static const char* logClassName() { return "MediaSessionCoordinator"; }
 
     WeakPtr<MediaSession> m_session;
+    MediaSessionCoordinatorState m_state { MediaSessionCoordinatorState::Waiting };
     Ref<MediaSessionCoordinatorPrivate> m_privateCoordinator;
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

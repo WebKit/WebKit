@@ -329,7 +329,7 @@ class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class PageClient;
-class MediaSessionCoordinatorPrivateProxy;
+class MediaSessionCoordinatorProxyPrivate;
 class ProvisionalPageProxy;
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollingPerformanceData;
@@ -1888,7 +1888,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivateProxy>&&, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&&);
+    void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&&, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&&);
 #endif
 
 #if PLATFORM(COCOA)

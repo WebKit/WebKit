@@ -29,6 +29,13 @@
     Exposed=Window,
     ExportMacro=WEBCORE_EXPORT,
 ] interface MediaSessionCoordinator {
+
+    Promise<undefined> join();
+    undefined leave();
+
+    readonly attribute MediaSessionCoordinatorState state;
+    readonly attribute DOMString? identifier;
+
     Promise<undefined> seekTo(unrestricted double time);
     Promise<undefined> play();
     Promise<undefined> pause();

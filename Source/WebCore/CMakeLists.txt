@@ -338,6 +338,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasession/MediaSessionActionHandler.idl
     Modules/mediasession/MediaSessionCoordinator.idl
     Modules/mediasession/MediaSessionCoordinatorMixin.idl
+    Modules/mediasession/MediaSessionCoordinatorState.idl
     Modules/mediasession/MediaSessionPlaybackState.idl
     Modules/mediasession/MediaSessionPlaylistMixin.idl
     Modules/mediasession/MediaSessionReadyState.idl

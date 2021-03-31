@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=ENABLE_MEDIA_SESSION_PLAYLIST,
+    Conditional=MEDIA_SESSION_PLAYLIST,
     EnabledBySetting=MediaSessionPlaylist,
 ] interface mixin MediaSessionPlaylistMixin {
     [SetterCallWith=ScriptExecutionContext] attribute FrozenArray<MediaMetadata> playlist;

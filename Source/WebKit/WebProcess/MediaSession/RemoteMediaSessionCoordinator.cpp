@@ -45,13 +45,14 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-Ref<RemoteMediaSessionCoordinator> RemoteMediaSessionCoordinator::create(WebPage& page)
+Ref<RemoteMediaSessionCoordinator> RemoteMediaSessionCoordinator::create(WebPage& page, const String& identifier)
 {
-    return adoptRef(*new RemoteMediaSessionCoordinator(page));
+    return adoptRef(*new RemoteMediaSessionCoordinator(page, identifier));
 }
 
-RemoteMediaSessionCoordinator::RemoteMediaSessionCoordinator(WebPage& page)
+RemoteMediaSessionCoordinator::RemoteMediaSessionCoordinator(WebPage& page, const String& identifier)
     : m_page(page)
+    , m_identifier(identifier)
 {
     WebProcess::singleton().addMessageReceiver(Messages::RemoteMediaSessionCoordinator::messageReceiverName(), m_page.identifier(), *this);
 }
@@ -59,6 +60,29 @@ RemoteMediaSessionCoordinator::RemoteMediaSessionCoordinator(WebPage& page)
 RemoteMediaSessionCoordinator::~RemoteMediaSessionCoordinator()
 {
     WebProcess::singleton().removeMessageReceiver(Messages::RemoteMediaSessionCoordinator::messageReceiverName(), m_page.identifier());
+}
+
+void RemoteMediaSessionCoordinator::join(CompletionHandler<void(Optional<WebCore::Exception>&&)>&& callback)
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    m_page.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinatorProxy::Join { }, [weakThis = makeWeakPtr(this), callback = WTFMove(callback)](auto&& exception) mutable {
+        if (!weakThis) {
+            callback(Exception { InvalidStateError });
+            return;
+        }
+
+        if (exception) {
+            callback(Exception { exception->code, WTFMove(exception->message) });
+            return;
+        }
+
+        callback({ });
+    }, 0);
+}
+
+void RemoteMediaSessionCoordinator::leave()
+{
+    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::Leave { }, 0);
 }
 
 void RemoteMediaSessionCoordinator::seekTo(double time, CompletionHandler<void(Optional<WebCore::Exception>&&)>&& callback)
@@ -149,6 +173,12 @@ void RemoteMediaSessionCoordinator::playbackStateChanged(WebCore::MediaSessionPl
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
     m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::PlaybackStateChanged { state }, 0);
+}
+
+void RemoteMediaSessionCoordinator::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
+    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::CoordinatorStateChanged { state }, 0);
 }
 
 void RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool)>&& completionHandler)

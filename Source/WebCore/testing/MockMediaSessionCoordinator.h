@@ -47,6 +47,11 @@ public:
 private:
     MockMediaSessionCoordinator(ScriptExecutionContext&, RefPtr<StringCallback>&&);
 
+    String identifier() const final { return "Mock Coordinator"; }
+
+    void join(CompletionHandler<void(Optional<Exception>&&)>&&) final;
+    void leave() final;
+
     void seekTo(double, CompletionHandler<void(Optional<Exception>&&)>&&) final;
     void play(CompletionHandler<void(Optional<Exception>&&)>&&) final;
     void pause(CompletionHandler<void(Optional<Exception>&&)>&&) final;
@@ -55,6 +60,7 @@ private:
     void positionStateChanged(const Optional<MediaPositionState>&) final;
     void readyStateChanged(MediaSessionReadyState) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
+    void coordinatorStateChanged(MediaSessionCoordinatorState) final;
 
     const char* logClassName() const { return "MockMediaSessionCoordinator"; }
     WTFLogChannel& logChannel() const;

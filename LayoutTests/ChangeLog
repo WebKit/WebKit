@@ -1,3 +1,14 @@
+2021-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] MediaSessionCoordinator should have join and leave methods
+        https://bugs.webkit.org/show_bug.cgi?id=223955
+        <rdar://problem/76021588>
+
+        Reviewed by Jer Noble.
+
+        * media/media-session/mock-coordinator-expected.txt:
+        * media/media-session/mock-coordinator.html:
+
 2021-03-31  Robert Jenner  <jenner@apple.com>
 
         REGRESSION (r275227): [ macOS iOS Release ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html is a constant failure

@@ -635,7 +635,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LastNavigationWasAppBound() -> (bool wasAppBound) Async
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    CreateMediaSessionCoordinator() -> (bool success) Async
+    CreateMediaSessionCoordinator(String identifier) -> (bool success) Async
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)

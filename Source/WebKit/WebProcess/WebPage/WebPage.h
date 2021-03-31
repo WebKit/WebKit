@@ -1413,7 +1413,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    void createMediaSessionCoordinator(CompletionHandler<void(bool)>&&);
+    void createMediaSessionCoordinator(const String&, CompletionHandler<void(bool)>&&);
 #endif
 
     void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }

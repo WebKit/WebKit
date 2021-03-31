@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=MEDIA_SESSION,
-    Exposed=Window,
-    ImplementationLacksVTable,
-] interface MediaMetadata {
-    [CallWith=ScriptExecutionContext] constructor(optional MediaMetadataInit init);
-    attribute DOMString title;
-    attribute DOMString artist;
-    attribute DOMString album;
-    [SetterCallWith=ScriptExecutionContext] attribute FrozenArray<MediaImage> artwork;
+#pragma once
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+
+namespace WebCore {
+
+enum class MediaSessionCoordinatorState : uint8_t {
+    Waiting,
+    Joined,
+    Closed,
 };
 
-MediaMetadata includes MediaMetadataPlaylistMixin;
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::MediaSessionCoordinatorState> {
+    using values = EnumValues<
+        WebCore::MediaSessionCoordinatorState,
+        WebCore::MediaSessionCoordinatorState::Waiting,
+        WebCore::MediaSessionCoordinatorState::Joined,
+        WebCore::MediaSessionCoordinatorState::Closed
+    >;
+};
+
+}
+
+#endif // ENABLE(MEDIA_SESSION_COORDINATOR)

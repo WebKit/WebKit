@@ -214,6 +214,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediasession/MediaSessionActionHandler.idl \
     $(WebCore)/Modules/mediasession/MediaSessionCoordinator.idl \
     $(WebCore)/Modules/mediasession/MediaSessionCoordinatorMixin.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionCoordinatorState.idl \
     $(WebCore)/Modules/mediasession/MediaSessionPlaybackState.idl \
     $(WebCore)/Modules/mediasession/MediaSessionPlaylistMixin.idl \
     $(WebCore)/Modules/mediasession/MediaSessionReadyState.idl \

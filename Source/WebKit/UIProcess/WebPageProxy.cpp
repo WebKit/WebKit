@@ -297,7 +297,7 @@
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-#include "MediaSessionCoordinatorPrivateProxy.h"
+#include "MediaSessionCoordinatorProxyPrivate.h"
 #include "RemoteMediaSessionCoordinatorProxy.h"
 #endif
 
@@ -10383,11 +10383,11 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivateProxy>&& privateCoordinator, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&& completionHandler)
+void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&& completionHandler)
 {
     ASSERT(!m_mediaSessionCoordinatorProxy);
 
-    sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
+    sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
 
         if (!weakThis || !success) {
             completionHandler({ });

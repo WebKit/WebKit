@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
-#include "MediaSessionCoordinatorPrivateProxy.h"
+#include "MediaSessionCoordinatorProxyPrivate.h"
 #include "RemoteMediaSessionCoordinatorMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -39,12 +39,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<RemoteMediaSessionCoordinatorProxy> RemoteMediaSessionCoordinatorProxy::create(WebPageProxy& webPageProxy, Ref<MediaSessionCoordinatorPrivateProxy>&& privateCoordinator)
+RefPtr<RemoteMediaSessionCoordinatorProxy> RemoteMediaSessionCoordinatorProxy::create(WebPageProxy& webPageProxy, Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator)
 {
     return adoptRef(*new RemoteMediaSessionCoordinatorProxy(webPageProxy, WTFMove(privateCoordinator)));
 }
 
-RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy(WebPageProxy& webPageProxy, Ref<MediaSessionCoordinatorPrivateProxy>&& privateCoordinator)
+RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy(WebPageProxy& webPageProxy, Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator)
     : m_webPageProxy(webPageProxy)
     , m_privateCoordinator(WTFMove(privateCoordinator))
     , m_logger(m_webPageProxy.logger())
@@ -58,6 +58,23 @@ RemoteMediaSessionCoordinatorProxy::~RemoteMediaSessionCoordinatorProxy()
     m_webPageProxy.process().removeMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
 
+void RemoteMediaSessionCoordinatorProxy::join(CompletionHandler<void(const WebCore::ExceptionData&)>&&)
+{
+    auto identifier = LOGIDENTIFIER;
+    ALWAYS_LOG(identifier);
+
+    m_privateCoordinator->join([identifier] (const WebCore::ExceptionData&& exception) mutable {
+        ALWAYS_LOG(identifier, "completion");
+        completionHandler(WTFMove(exception));
+    });
+}
+
+void RemoteMediaSessionCoordinatorProxy::leave()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    m_privateCoordinator->leave();
+}
 
 void RemoteMediaSessionCoordinatorProxy::coordinateSeekTo(double time, CompletionHandler<void(const WebCore::ExceptionData&)>&& completionHandler)
 {
@@ -139,6 +156,12 @@ void RemoteMediaSessionCoordinatorProxy::pauseSession(CompletionHandler<void(boo
 void RemoteMediaSessionCoordinatorProxy::setSessionTrack(const String& trackId, CompletionHandler<void(bool)> callback)
 {
     m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SetSessionTrack { trackId }, callback);
+}
+
+void RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_privateCoordinator->coordinatorStateChanged(state);
 }
 
 } // namespace WebKit

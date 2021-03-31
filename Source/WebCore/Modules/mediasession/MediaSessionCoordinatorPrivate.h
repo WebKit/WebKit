@@ -29,6 +29,7 @@
 
 #include "Exception.h"
 #include "MediaPositionState.h"
+#include "MediaSessionCoordinatorState.h"
 #include "MediaSessionPlaybackState.h"
 #include "MediaSessionReadyState.h"
 #include <wtf/Optional.h>
@@ -53,6 +54,11 @@ class MediaSessionCoordinatorPrivate : public RefCounted<MediaSessionCoordinator
 public:
     virtual ~MediaSessionCoordinatorPrivate() = default;
 
+    virtual String identifier() const = 0;
+
+    virtual void join(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
+    virtual void leave() = 0;
+
     virtual void seekTo(double, CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
     virtual void play(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
     virtual void pause(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
@@ -61,6 +67,7 @@ public:
     virtual void positionStateChanged(const Optional<MediaPositionState>&) = 0;
     virtual void readyStateChanged(MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(MediaSessionPlaybackState) = 0;
+    virtual void coordinatorStateChanged(MediaSessionCoordinatorState) = 0;
 
     void setLogger(const WTF::Logger&, const void*);
     virtual void setClient(WeakPtr<MediaSessionCoordinatorClient> client) { m_client = client;}

@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=ENABLE_MEDIA_SESSION_COORDINATOR,
+    Conditional=MEDIA_SESSION_COORDINATOR,
     EnabledBySetting=MediaSessionCoordinator,
 ] interface mixin MediaSessionCoordinatorMixin {
     readonly attribute MediaSessionCoordinator? coordinator;

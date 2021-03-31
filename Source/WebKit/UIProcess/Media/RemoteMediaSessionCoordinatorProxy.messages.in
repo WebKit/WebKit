@@ -26,6 +26,10 @@
 
 messages -> RemoteMediaSessionCoordinatorProxy NotRefCounted {
 
+    Join() -> (Optional<WebCore::ExceptionData> error) Async
+
+    Leave()
+
     CoordinateSeekTo(double time) -> (Optional<WebCore::ExceptionData> error) Async
 
     CoordinatePlay() -> (Optional<WebCore::ExceptionData> error) Async
@@ -39,6 +43,8 @@ messages -> RemoteMediaSessionCoordinatorProxy NotRefCounted {
     ReadyStateChanged(enum:uint8_t WebCore::MediaSessionReadyState state);
 
     PlaybackStateChanged(enum:uint8_t WebCore::MediaSessionPlaybackState state);
+
+    CoordinatorStateChanged(enum:uint8_t WebCore::MediaSessionCoordinatorState state);
 }
 
 #endif

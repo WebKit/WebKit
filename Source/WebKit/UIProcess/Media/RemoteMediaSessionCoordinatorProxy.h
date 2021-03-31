@@ -27,7 +27,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
-#include "MediaSessionCoordinatorPrivateProxy.h"
+#include "MediaSessionCoordinatorProxyPrivate.h"
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -46,19 +46,19 @@ class RemoteMediaSessionCoordinatorProxy
     , public WebCore::MediaSessionCoordinatorClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteMediaSessionCoordinatorProxy> create(WebPageProxy&, Ref<MediaSessionCoordinatorPrivateProxy>&&);
+    static Ref<RemoteMediaSessionCoordinatorProxy> create(WebPageProxy&, Ref<MediaSessionCoordinatorProxyPrivate>&&);
     ~RemoteMediaSessionCoordinatorProxy();
 
-    void seekTo(double);
-    void play();
-    void pause();
-    void setTrack(const String&);
+    void seekTo(double, CompletionHandler<void(bool)>&&);
+    void play(CompletionHandler<void(bool)>&&);
+    void pause(CompletionHandler<void(bool)>&&);
+    void setTrack(const String&, CompletionHandler<void(bool)>&&);
 
     using MediaSessionCoordinatorClient::weakPtrFactory;
     using WeakValueType = MediaSessionCoordinatorClient::WeakValueType;
 
 private:
-    explicit RemoteMediaSessionCoordinatorProxy(WebPageProxy&, Ref<MediaSessionCoordinatorPrivateProxy>&&);
+    explicit RemoteMediaSessionCoordinatorProxy(WebPageProxy&, Ref<MediaSessionCoordinatorProxyPrivate>&&);
 
     using CoordinateCompletionHandler = CompletionHandler<void(const WebCore::ExceptionData&)>;
 
@@ -66,6 +66,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
+    void join(CompletionHandler<void(const WebCore::ExceptionData&)>&&);
+    void leave();
     void coordinateSeekTo(double, CompletionHandler<void(const WebCore::ExceptionData&)>&&);
     void coordinatePlay(CompletionHandler<void(const WebCore::ExceptionData&)>&&);
     void coordinatePause(CompletionHandler<void(const WebCore::ExceptionData&)>&&);
@@ -73,6 +75,7 @@ private:
     void positionStateChanged(Optional<WebCore::MediaPositionState>);
     void readyStateChanged(WebCore::MediaSessionReadyState);
     void playbackStateChanged(WebCore::MediaSessionPlaybackState);
+    void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState);
 
     // MediaSessionCoordinatorClient
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
@@ -81,7 +84,7 @@ private:
     void setSessionTrack(const String&, CompletionHandler<void(bool)>) final;
 
     WebPageProxy& m_webPageProxy;
-    Ref<MediaSessionCoordinatorPrivateProxy> m_privateCoordinator;
+    Ref<MediaSessionCoordinatorProxyPrivate> m_privateCoordinator;
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 };
