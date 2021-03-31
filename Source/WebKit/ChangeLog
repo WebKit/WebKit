@@ -1,5 +1,18 @@
 2021-03-31  Youenn Fablet  <youenn@apple.com>
 
+        Make use of NSURLSessionWebSocket.sendCloseCode if available
+        https://bugs.webkit.org/show_bug.cgi?id=223999
+
+        Reviewed by Alex Christensen.
+
+        If available, we just call sendCloseCode, cancel will happen when NetworkSocketChannel is destroyed.
+        Covered by LayoutTests/http/tests/websocket/tests/hybi/client-close-2.html.
+
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::close):
+
+2021-03-31  Youenn Fablet  <youenn@apple.com>
+
         Send WebSocket cocoa authentication challenge to AuthenticationManager
         https://bugs.webkit.org/show_bug.cgi?id=223998
 

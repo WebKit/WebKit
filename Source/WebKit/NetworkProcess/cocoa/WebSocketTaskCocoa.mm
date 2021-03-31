@@ -144,6 +144,10 @@ void WebSocketTask::close(int32_t code, const String& reason)
         code = 1005;
     auto utf8 = reason.utf8();
     auto nsData = adoptNS([[NSData alloc] initWithBytes:utf8.data() length:utf8.length()]);
+    if ([m_task respondsToSelector:@selector(_sendCloseCode:reason:)]) {
+        [m_task _sendCloseCode:(NSURLSessionWebSocketCloseCode)code reason:nsData.get()];
+        return;
+    }
     [m_task cancelWithCloseCode:(NSURLSessionWebSocketCloseCode)code reason:nsData.get()];
 }
 
