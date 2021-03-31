@@ -1,5 +1,14 @@
 2021-03-30  Robert Jenner  <jenner@apple.com>
 
+        [mac-wk2] LayoutTest fast/mediastream/getUserMedia-webaudio.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=170960
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to include Failure.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
         [ macOS ] inspector/protocol/condition.html is a flakey timeout
         https://bugs.webkit.org/show_bug.cgi?id=223975
 
