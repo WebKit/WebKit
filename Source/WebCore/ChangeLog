@@ -1,3 +1,12 @@
+2021-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add deprecation macros.
+
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        (WebCore::certificatesMatch):
+        (WebCore::CertificateInfo::certificateChainFromSecTrust):
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate const):
+
 2021-03-31  Antoine Quint  <graouts@webkit.org>
 
         Remove CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED

@@ -2126,8 +2126,11 @@ static bool isTestServerTrust(SecTrustRef trust)
         return false;
     if (SecTrustGetCertificateCount(trust) != 1)
         return false;
+    // FIXME: Adopt replacement where available.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (![adoptNS((NSString *)SecCertificateCopySubjectSummary(SecTrustGetCertificateAtIndex(trust, 0))) isEqualToString:@"Me"])
         return false;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     return true;
 }
 

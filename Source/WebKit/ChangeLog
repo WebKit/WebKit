@@ -1,3 +1,13 @@
+2021-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add deprecation macros.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::encodeNSError):
+        * UIProcess/Authentication/mac/WebCredentialMac.mm:
+        (WebKit::leafCertificate):
+        (WebKit::chain):
+
 2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKContentView should support UIKit protocol methods for becoming focused

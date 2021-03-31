@@ -39,8 +39,11 @@ using namespace WebCore;
 static SecCertificateRef leafCertificate(const CertificateInfo& certificateInfo)
 {
 #if HAVE(SEC_TRUST_SERIALIZATION)
+    // FIXME: Adopt replacement where available.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (certificateInfo.type() == CertificateInfo::Type::Trust)
         return SecTrustGetCertificateAtIndex(certificateInfo.trust(), 0);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     ASSERT(certificateInfo.type() == CertificateInfo::Type::CertificateChain);
     ASSERT(CFArrayGetCount(certificateInfo.certificateChain()));
@@ -56,8 +59,11 @@ static NSArray *chain(const CertificateInfo& certificateInfo)
             return nil;
 
         NSMutableArray *array = [NSMutableArray array];
+        // FIXME: Adopt replacement where available.
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         for (CFIndex i = 1; i < count; ++i)
             [array addObject:(id)SecTrustGetCertificateAtIndex(certificateInfo.trust(), i)];
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
         return array;
     }
