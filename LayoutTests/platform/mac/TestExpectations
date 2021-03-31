@@ -2292,3 +2292,5 @@ webkit.org/b/223966 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 webkit.org/b/223973 [ Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html [ Pass Failure ]
 
 webkit.org/b/223975 inspector/protocol/condition.html [ Pass Timeout ]
+
+webkit.org/b/220754 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
