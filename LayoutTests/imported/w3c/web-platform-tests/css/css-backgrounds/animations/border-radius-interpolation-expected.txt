@@ -167,28 +167,28 @@ FAIL Web Animations: property <border-top-left-radius> from [10px] to [100%] at 
 FAIL Web Animations: property <border-top-left-radius> from [10px] to [100%] at (0.6) should be [calc(4px + 60%)] assert_equals: expected "calc ( 60 % + 4px ) " but got "calc ( ( 10px * 0.4 ) + ( 100 % * 0.6 ) ) "
 PASS Web Animations: property <border-top-left-radius> from [10px] to [100%] at (1) should be [100%]
 FAIL Web Animations: property <border-top-left-radius> from [10px] to [100%] at (1.5) should be [calc(-5px + 150%)] assert_equals: expected "calc ( 150 % - 5px ) " but got "calc ( ( 10px * - 0.5 ) + ( 100 % * 1.5 ) ) "
-FAIL CSS Transitions: property <border-top-left-radius> from [20px] to [10px 30px] at (-2) should be [40px 0px] assert_equals: expected "0px " but got "40px 0px "
+PASS CSS Transitions: property <border-top-left-radius> from [20px] to [10px 30px] at (-2) should be [40px 0px]
 PASS CSS Transitions: property <border-top-left-radius> from [20px] to [10px 30px] at (-0.3) should be [23px 17px]
 PASS CSS Transitions: property <border-top-left-radius> from [20px] to [10px 30px] at (0) should be [20px]
 PASS CSS Transitions: property <border-top-left-radius> from [20px] to [10px 30px] at (0.3) should be [17px 23px]
 PASS CSS Transitions: property <border-top-left-radius> from [20px] to [10px 30px] at (0.6) should be [14px 26px]
 PASS CSS Transitions: property <border-top-left-radius> from [20px] to [10px 30px] at (1) should be [10px 30px]
 PASS CSS Transitions: property <border-top-left-radius> from [20px] to [10px 30px] at (1.5) should be [5px 35px]
-FAIL CSS Transitions with transition: all: property <border-top-left-radius> from [20px] to [10px 30px] at (-2) should be [40px 0px] assert_equals: expected "0px " but got "40px 0px "
+PASS CSS Transitions with transition: all: property <border-top-left-radius> from [20px] to [10px 30px] at (-2) should be [40px 0px]
 PASS CSS Transitions with transition: all: property <border-top-left-radius> from [20px] to [10px 30px] at (-0.3) should be [23px 17px]
 PASS CSS Transitions with transition: all: property <border-top-left-radius> from [20px] to [10px 30px] at (0) should be [20px]
 PASS CSS Transitions with transition: all: property <border-top-left-radius> from [20px] to [10px 30px] at (0.3) should be [17px 23px]
 PASS CSS Transitions with transition: all: property <border-top-left-radius> from [20px] to [10px 30px] at (0.6) should be [14px 26px]
 PASS CSS Transitions with transition: all: property <border-top-left-radius> from [20px] to [10px 30px] at (1) should be [10px 30px]
 PASS CSS Transitions with transition: all: property <border-top-left-radius> from [20px] to [10px 30px] at (1.5) should be [5px 35px]
-FAIL CSS Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (-2) should be [40px 0px] assert_equals: expected "0px " but got "40px 0px "
+PASS CSS Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (-2) should be [40px 0px]
 PASS CSS Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (-0.3) should be [23px 17px]
 PASS CSS Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (0) should be [20px]
 PASS CSS Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (0.3) should be [17px 23px]
 PASS CSS Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (0.6) should be [14px 26px]
 PASS CSS Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (1) should be [10px 30px]
 PASS CSS Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (1.5) should be [5px 35px]
-FAIL Web Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (-2) should be [40px 0px] assert_equals: expected "0px " but got "40px 0px "
+PASS Web Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (-2) should be [40px 0px]
 PASS Web Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (-0.3) should be [23px 17px]
 PASS Web Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (0) should be [20px]
 PASS Web Animations: property <border-top-left-radius> from [20px] to [10px 30px] at (0.3) should be [17px 23px]

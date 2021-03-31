@@ -1,5 +1,19 @@
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
+        Computed style for a border-radius corner should never be 0px when the provided width isn't 0px
+        https://bugs.webkit.org/show_bug.cgi?id=223927
+
+        Reviewed by Dean Jackson.
+
+        If "border-top-left-radius: 40px 0px" is provided, the computed style would return "0px" since
+        BuilderConverter::convertRadius() would treat either of the dimensions for the radius being 0
+        as both being 0.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertRadius):
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
         Fix interpolation of box-shadow and text-shadow CSS properties
         https://bugs.webkit.org/show_bug.cgi?id=223924
 

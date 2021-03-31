@@ -1,5 +1,20 @@
 2021-03-30  Antoine Quint  <graouts@webkit.org>
 
+        Computed style for a border-radius corner should never be 0px when the provided width isn't 0px
+        https://bugs.webkit.org/show_bug.cgi?id=223927
+
+        Reviewed by Dean Jackson.
+
+        Mark 5 tests as PASS results as a result of returning the correct computed style for
+        "border-top-left-radius: 40px 0px". This is importing a change made to WPT via
+        https://github.com/web-platform-tests/wpt/pull/28310.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-radius-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-radius-computed.html:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
         Fix interpolation of box-shadow and text-shadow CSS properties
         https://bugs.webkit.org/show_bug.cgi?id=223924
 

@@ -337,9 +337,6 @@ inline LengthSize BuilderConverter::convertRadius(BuilderState& builderState, co
 
     ASSERT(!radius.width.isNegative());
     ASSERT(!radius.height.isNegative());
-    if (radius.width.isZero() || radius.height.isZero())
-        return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
-
     return radius;
 }
 
