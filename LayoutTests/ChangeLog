@@ -1,3 +1,12 @@
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223973
+
+        unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Failure while test is reviewed.
+
 2021-03-30  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur WK1 Debug] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.html  is a flaky failure
