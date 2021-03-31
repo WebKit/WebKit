@@ -1,3 +1,33 @@
+2021-03-31  Chris Lord  <clord@igalia.com>
+
+        Make FontCache self-contained (remove static global variables)
+        https://bugs.webkit.org/show_bug.cgi?id=223995
+
+        Reviewed by Darin Adler.
+
+        This refactors FontCache so that the iOS font lock, the
+        FontPlatformDataCache, the FontDataCache, the FontVerticalDataCache,
+        the FontSelector clients list and the generation counter all live on
+        FontCache instead of in static global variables.
+
+        No new tests, no change in behavior.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::FontCache):
+        (WebCore::FontPlatformDataCacheKey::isHashTableDeletedValue const):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::verticalData):
+        (WebCore::FontCache::fontForPlatformData):
+        (WebCore::FontCache::purgeInactiveFontDataIfNeeded):
+        (WebCore::FontCache::purgeInactiveFontData):
+        (WebCore::FontCache::fontCount):
+        (WebCore::FontCache::inactiveFontCount):
+        (WebCore::FontCache::addClient):
+        (WebCore::FontCache::removeClient):
+        (WebCore::FontCache::invalidate):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::generation const):
+
 2021-03-31  Sam Weinig  <weinig@apple.com>
 
         Merge DOMWindow+IndexedDatabase.idl and WorkerGlobalScope+IndexedDatabase.idl into a single WindowOrWorkerGlobalScope+IndexedDatabase.idl to match the IndexedDB spec

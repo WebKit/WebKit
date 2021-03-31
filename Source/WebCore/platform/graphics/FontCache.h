@@ -40,6 +40,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/AtomStringHash.h>
@@ -47,6 +48,11 @@
 
 #if PLATFORM(COCOA)
 #include "FontCacheCoreText.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#include <wtf/Lock.h>
+#include <wtf/RecursiveLockAdapter.h>
 #endif
 
 #if OS(WINDOWS)
@@ -58,11 +64,15 @@
 namespace WebCore {
 
 class FontCascade;
-class FontPlatformData;
 class FontSelector;
 class OpenTypeVerticalData;
 class Font;
 enum class IsForPlatformFont : uint8_t;
+struct FontDataCacheKeyHash;
+struct FontDataCacheKeyTraits;
+struct FontPlatformDataCacheKey;
+struct FontPlatformDataCacheKeyHash;
+struct FontPlatformDataCacheKeyHashTraits;
 
 #if PLATFORM(WIN)
 #if USE(IMLANG_FONT_LINK2)
@@ -208,6 +218,12 @@ struct FontCascadeCacheKeyHashTraits : WTF::GenericHashTraits<WebCore::FontCasca
 
 using FontCascadeCache = HashMap<FontCascadeCacheKey, std::unique_ptr<FontCascadeCacheEntry>, FontCascadeCacheKeyHash, FontCascadeCacheKeyHashTraits>;
 
+typedef HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyHashTraits> FontPlatformDataCache;
+typedef HashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
+#if ENABLE(OPENTYPE_VERTICAL)
+typedef HashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontVerticalDataCache;
+#endif
+
 class FontCache {
     friend class WTF::NeverDestroyed<FontCache>;
 
@@ -245,7 +261,7 @@ public:
     void addClient(FontSelector&);
     void removeClient(FontSelector&);
 
-    unsigned short generation();
+    unsigned short generation() const { return m_generation; }
     WEBCORE_EXPORT void invalidate();
 
     WEBCORE_EXPORT size_t fontCount();
@@ -306,7 +322,19 @@ private:
     
     bool m_shouldMockBoldSystemFontForAccessibility { false };
 
+    HashSet<FontSelector*> m_clients;
+    UniqueRef<FontPlatformDataCache> m_fontPlatformDataCache;
+    UniqueRef<FontDataCache> m_fontDataCache;
+#if ENABLE(OPENTYPE_VERTICAL)
+    UniqueRef<FontVerticalDataCache> m_fontVerticalDataCache;
+#endif
     FontCascadeCache m_fontCascadeCache;
+
+    unsigned short m_generation { 0 };
+
+#if PLATFORM(IOS_FAMILY)
+    RecursiveLock m_fontLock;
+#endif
 
 #if PLATFORM(COCOA)
     ListHashSet<String> m_seenFamiliesForPrewarming;
