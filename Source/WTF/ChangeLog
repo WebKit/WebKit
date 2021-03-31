@@ -1,3 +1,13 @@
+2021-03-31  Sam Weinig  <weinig@apple.com>
+
+        Ease experimentation by enabling <model> if SEPARATED_MODEL is being used
+        https://bugs.webkit.org/show_bug.cgi?id=224011
+
+        Reviewed by Tim Horton.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        There is little point to experimenting with SEPARATED_MODEL if <model> is disabled.
+
 2021-03-31  Antoine Quint  <graouts@webkit.org>
 
         Remove CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED
