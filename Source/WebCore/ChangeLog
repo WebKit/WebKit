@@ -1,3 +1,17 @@
+2021-03-31  Venky Dass  <yaranamavenkataramana@apple.com>
+
+        Null pointer access crash in WebCore::makeBoundaryPoint(..)
+        https://bugs.webkit.org/show_bug.cgi?id=223977
+
+        Reviewed by Darin Adler.
+
+        In makeBoundaryPoint, position.containerNode() can be nullptr even if position.isNull() was false 
+
+        Test: LayoutTests/editing/inserting/crash-make-boundary-point.html
+
+        * dom/Position.cpp:
+        (WebCore::makeBoundaryPoint):
+
 2021-03-31  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] MediaSessionCoordinator should have join and leave methods
