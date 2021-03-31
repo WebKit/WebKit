@@ -1,3 +1,24 @@
+2021-03-31  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: The NetworkProcess fails to relaunch after it crashes
+        https://bugs.webkit.org/show_bug.cgi?id=224022
+        <rdar://75148724>
+
+        Reviewed by Darin Adler.
+
+        NetworkProcessProxy::networkProcessCrashed() failed to clear defaultNetworkProcess() like we do on
+        network process termination (in NetworkProcessProxy::didTerminate()). As a result, upon a
+        network process crash, WebsiteDataStore::networkProcessCrashed() would get called and
+        properly clear WebsiteDataStore::m_networkProcess. However, when calling
+        WebsiteDataStore::networkProcess() later on, it would re-initialize m_networkProcess with
+        the same dead NetworkProcessProxy, since networkProcessForSession() relies on
+        NetworkProcessProxy::defaultNetworkProcess().
+
+        No new tests, will land an API test shortly as a follow-up.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+
 2021-03-31  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] MediaSessionCoordinator should have join and leave methods

@@ -348,6 +348,9 @@ void NetworkProcessProxy::renameOriginInWebsiteData(PAL::SessionID sessionID, co
 
 void NetworkProcessProxy::networkProcessCrashed()
 {
+    if (defaultProcess() == this)
+        defaultProcess() = nullptr;
+
     clearCallbackStates();
 
     Ref<NetworkProcessProxy> protectedThis(*this);
