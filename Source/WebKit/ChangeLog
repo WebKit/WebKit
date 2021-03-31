@@ -1,3 +1,69 @@
+2021-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Fall back to context menu presentation after long pressing image overlay text
+        https://bugs.webkit.org/show_bug.cgi?id=223967
+        <rdar://problem/76028620>
+
+        Reviewed by Tim Horton.
+
+        Add support for this behavior; see <rdar://problem/76028620> for more details.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Add a couple of new flags (`isSelected` and `isImageOverlayText`) to indicate whether the interaction is over
+        selected text, and also whether the interaction is over text in an image overlay, respectively.
+
+        * Shared/ios/InteractionInformationRequest.cpp:
+        (WebKit::InteractionInformationRequest::encode const):
+        (WebKit::InteractionInformationRequest::decode):
+        (WebKit::InteractionInformationRequest::isValidForRequest const):
+
+        Add a new position information request option to ignore user agent shadow root content.
+
+        * Shared/ios/InteractionInformationRequest.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+        Add a flag that's set when `_imageExtractionTimeoutGestureRecognizer` is recognized, and is about to present a
+        context menu, and is unset upon starting the context menu presentation.
+
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView gestureRecognizer:shouldRequireFailureOfGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldBeRequiredToFailByGestureRecognizer:]):
+
+        Make the timeout gesture (`_imageExtractionTimeoutGestureRecognizer`) require the failure of the context menu
+        initiation gesture, such that this image extraction timeout gesture won't trigger if the context menu has
+        already been triggered.
+
+        (-[WKContentView _invalidateCurrentPositionInformation]):
+        (-[WKContentView _didCommitLoadForMainFrame]):
+
+        Pull logic for resetting cached position information into a helper, and call it inside
+        `-_didCommitLoadForMainFrame`.
+
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+
+        Reset the new flag (`_contextMenuWasTriggeredByImageExtractionTimeout`) if necessary, and use its existing value
+        to determine whether we should ignore UA shadow root content when performing a hit-test for the context menu
+        configuration.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::imageRendererAndImage):
+        (WebKit::imagePositionInformation):
+        (WebKit::elementPositionInformation):
+
+        Additionally supply the image URL and image data if `includeImageData` is set, even if the hit-tested node is
+        just a text node underneath an image element's overlay.
+
+        (WebKit::selectionPositionInformation):
+        (WebKit::WebPage::positionInformation):
+
+        Add support for the new position information flags.
+
 2021-03-30  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(m_sendPort) in IPC::Connection::open() when running some iOS unit tests

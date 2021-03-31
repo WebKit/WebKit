@@ -908,6 +908,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _isChangingFocus = NO;
     _isBlurringFocusedElement = NO;
 
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
+    _contextMenuWasTriggeredByImageExtractionTimeout = NO;
+#endif
+
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
     _dataListTextSuggestions = nil;
@@ -963,6 +967,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _activeTextInteractionCount = 0;
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
+
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
+    _contextMenuWasTriggeredByImageExtractionTimeout = NO;
+#endif
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
@@ -2307,6 +2315,11 @@ static Class tapAndAHalfRecognizerClass()
     if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
+    if (gestureRecognizer == _imageExtractionTimeoutGestureRecognizer && otherGestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
+        return YES;
+#endif
+
     return NO;
 }
 
@@ -2314,6 +2327,11 @@ static Class tapAndAHalfRecognizerClass()
 {
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
+
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
+    if (gestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships] && otherGestureRecognizer == _imageExtractionTimeoutGestureRecognizer)
+        return YES;
+#endif
 
     return NO;
 }
@@ -3046,6 +3064,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     [self _elementDidBlur];
     _page->clearSelection();
+}
+
+- (void)_invalidateCurrentPositionInformation
+{
+    _hasValidPositionInformation = NO;
+    _positionInformation = { };
 }
 
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
@@ -4493,8 +4517,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _textInteractionDidChangeFocusedElement = NO;
     _activeTextInteractionCount = 0;
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
-    _hasValidPositionInformation = NO;
-    _positionInformation = { };
+    [self _invalidateCurrentPositionInformation];
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
@@ -9954,13 +9977,19 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 - (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
 {
+#if ENABLE(IMAGE_EXTRACTION)
+    BOOL triggeredByImageExtractionTimeout = std::exchange(_contextMenuWasTriggeredByImageExtractionTimeout, NO);
+#else
+    BOOL triggeredByImageExtractionTimeout = NO;
+#endif
+
     if (!_webView)
         return completion(nil);
 
     if (!self.webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
-    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion)] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
+    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion), triggeredByImageExtractionTimeout] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf || proceedWithImageExtraction == WebKit::ProceedWithImageExtraction::Yes) {
             completion(nil);
@@ -9976,6 +10005,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([interaction locationInView:strongSelf.get()]) };
         request.includeSnapshot = true;
         request.includeLinkIndicator = true;
+        request.disallowUserAgentShadowContent = triggeredByImageExtractionTimeout;
         request.linkIndicatorShouldHaveLegacyMargins = ![strongSelf _shouldUseContextMenus];
 
         [strongSelf doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(strongSelf.get()), completion] (WebKit::InteractionInformationAtPosition) {

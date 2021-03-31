@@ -42,6 +42,7 @@ void InteractionInformationRequest::encode(IPC::Encoder& encoder) const
     encoder << includeHasDoubleClickHandler;
     encoder << includeImageData;
     encoder << linkIndicatorShouldHaveLegacyMargins;
+    encoder << disallowUserAgentShadowContent;
 }
 
 bool InteractionInformationRequest::decode(IPC::Decoder& decoder, InteractionInformationRequest& result)
@@ -67,6 +68,9 @@ bool InteractionInformationRequest::decode(IPC::Decoder& decoder, InteractionInf
     if (!decoder.decode(result.linkIndicatorShouldHaveLegacyMargins))
         return false;
 
+    if (!decoder.decode(result.disallowUserAgentShadowContent))
+        return false;
+
     return true;
 }
 
@@ -89,6 +93,9 @@ bool InteractionInformationRequest::isValidForRequest(const InteractionInformati
         return false;
 
     if (other.linkIndicatorShouldHaveLegacyMargins != linkIndicatorShouldHaveLegacyMargins)
+        return false;
+
+    if (other.disallowUserAgentShadowContent != disallowUserAgentShadowContent)
         return false;
 
     return (other.point - point).diagonalLengthSquared() <= radius * radius;
