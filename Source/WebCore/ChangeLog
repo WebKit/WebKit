@@ -1,3 +1,15 @@
+2021-03-31  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: CSS Grid overlay track sizes are incorrect when inline styles are applied to the element
+        https://bugs.webkit.org/show_bug.cgi?id=223908
+
+        Reviewed by BJ Burg.
+
+        Add checking the inline style attributes on an element when collecting authored track sizes for grid overlays.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::authoredGridTrackSizes):
+
 2021-03-31  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkerContextData should not be saved both on ServiceWorkerThread & ServiceWorkerGlobalScope

@@ -35,6 +35,7 @@
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
+#include "CSSStyleDeclaration.h"
 #include "DOMCSSNamespace.h"
 #include "DOMTokenList.h"
 #include "Element.h"
@@ -1494,20 +1495,24 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
 
 static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirection direction, unsigned expectedTrackCount)
 {
-    if (!is<Element>(node))
+    if (!is<StyledElement>(node))
         return { };
-    
-    auto element = downcast<Element>(node);
-    auto styleRules = element->styleResolver().styleRulesForElement(element);
-    styleRules.reverse();
-    RefPtr<CSSValue> cssValue;
-    for (auto styleRule : styleRules) {
-        ASSERT(styleRule);
-        if (!styleRule)
-            continue;
-        cssValue = styleRule->properties().getPropertyCSSValue(direction == GridTrackSizingDirection::ForColumns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows);
-        if (cssValue)
-            break;
+
+    auto element = downcast<StyledElement>(node);
+    auto directionCSSPropertyID = direction == GridTrackSizingDirection::ForColumns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows;
+    RefPtr<CSSValue> cssValue = element->cssomStyle().getPropertyCSSValueInternal(directionCSSPropertyID);
+
+    if (!cssValue) {
+        auto styleRules = element->styleResolver().styleRulesForElement(element);
+        styleRules.reverse();
+        for (auto styleRule : styleRules) {
+            ASSERT(styleRule);
+            if (!styleRule)
+                continue;
+            cssValue = styleRule->properties().getPropertyCSSValue(directionCSSPropertyID);
+            if (cssValue)
+                break;
+        }
     }
     
     if (!cssValue || !is<CSSValueList>(cssValue))
