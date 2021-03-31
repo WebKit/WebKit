@@ -1,3 +1,24 @@
+2021-03-31  Youenn Fablet  <youenn@apple.com>
+
+        Send WebSocket cocoa authentication challenge to AuthenticationManager
+        https://bugs.webkit.org/show_bug.cgi?id=223998
+
+        Reviewed by Alex Christensen.
+
+        In case of authentication challenge related to WebSocketTask, send it to the AuthenticationManager for evaluation.
+        Minor refactoring to reuse the same completion handler as for network data tasks.
+        Covered by LayoutTests/http/tests/websocket/tests/hybi/simple-wss.html with NSURLSessionWebSocket code path enabled.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost):
+        (WebKit::CompletionHandler<void):
+        (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge):
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        (WebKit::WebSocketTask::pageID const):
+        (WebKit::WebSocketTask::partition const):
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+
 2021-03-31  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkerContextData should not be saved both on ServiceWorkerThread & ServiceWorkerGlobalScope

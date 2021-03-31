@@ -1557,33 +1557,11 @@ bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::A
     return WebCore::certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
 }
 
-void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWrapper, const WebCore::AuthenticationChallenge& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
-{
-    if (!networkDataTask) {
-#if HAVE(NSURLSESSION_WEBSOCKET)
-        if (auto* webSocketTask = sessionWrapper.webSocketDataTaskMap.get(taskIdentifier)) {
-            // FIXME: Handle challenges for web socket.
-            completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, { });
-            return;
-        }
-#endif
-        auto downloadID = sessionWrapper.downloadMap.get(taskIdentifier);
-        if (downloadID) {
-            if (auto* download = networkProcess().downloadManager().download(downloadID)) {
-                WebCore::AuthenticationChallenge authenticationChallenge { challenge };
-                // Received an authentication challenge for a download being resumed.
-                download->didReceiveChallenge(authenticationChallenge, WTFMove(completionHandler));
-                return;
-            }
-        }
-        LOG(NetworkSession, "%llu didReceiveChallenge completionHandler (cancel)", taskIdentifier);
-        completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-        return;
-    }
 
-    auto sessionID = this->sessionID();
+static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)> createChallengeCompletionHandler(Ref<NetworkProcess>&& networkProcess, PAL::SessionID sessionID,  const WebCore::AuthenticationChallenge& challenge, const String& partition, uint64_t taskIdentifier, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
+ {
     WebCore::AuthenticationChallenge authenticationChallenge { challenge };
-    auto challengeCompletionHandler = [completionHandler = WTFMove(completionHandler), networkProcess = makeRef(networkProcess()), sessionID, authenticationChallenge, taskIdentifier, partition = networkDataTask->partition()](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
+    return [completionHandler = WTFMove(completionHandler), networkProcess = WTFMove(networkProcess), sessionID, authenticationChallenge, taskIdentifier, partition](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
 #if !LOG_DISABLED
         LOG(NetworkSession, "%llu didReceiveChallenge completionHandler %d", taskIdentifier, disposition);
 #else
@@ -1609,13 +1587,40 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
 #endif
         completionHandler(disposition, credential);
     };
+}
 
+void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWrapper, const WebCore::AuthenticationChallenge& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
+{
+    if (!networkDataTask) {
+#if HAVE(NSURLSESSION_WEBSOCKET)
+        if (auto* webSocketTask = sessionWrapper.webSocketDataTaskMap.get(taskIdentifier)) {
+            auto challengeCompletionHandler = createChallengeCompletionHandler(networkProcess(), sessionID(), challenge, webSocketTask->partition(), 0, WTFMove(completionHandler));
+            networkProcess().authenticationManager().didReceiveAuthenticationChallenge(sessionID(), webSocketTask->pageID(), nullptr, challenge, negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
+
+            return;
+        }
+#endif
+        auto downloadID = sessionWrapper.downloadMap.get(taskIdentifier);
+        if (downloadID) {
+            if (auto* download = networkProcess().downloadManager().download(downloadID)) {
+                WebCore::AuthenticationChallenge authenticationChallenge { challenge };
+                // Received an authentication challenge for a download being resumed.
+                download->didReceiveChallenge(authenticationChallenge, WTFMove(completionHandler));
+                return;
+            }
+        }
+        LOG(NetworkSession, "%llu didReceiveChallenge completionHandler (cancel)", taskIdentifier);
+        completionHandler(AuthenticationChallengeDisposition::Cancel, { });
+        return;
+    }
+
+    auto challengeCompletionHandler = createChallengeCompletionHandler(networkProcess(), sessionID(), challenge, networkDataTask->partition(), taskIdentifier, WTFMove(completionHandler));
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes
         && fastServerTrustEvaluationEnabled()
         && !networkDataTask->isTopLevelNavigation())
         return challengeCompletionHandler(AuthenticationChallengeDisposition::Cancel, { });
 
-    networkDataTask->didReceiveChallenge(WTFMove(authenticationChallenge), negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
+    networkDataTask->didReceiveChallenge(WebCore::AuthenticationChallenge { challenge }, negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
 }
 
 DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
@@ -1645,7 +1650,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     [nsRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
 
     RetainPtr<NSURLSessionWebSocketTask> task = [sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
-    return makeUnique<WebSocketTask>(channel, WTFMove(task));
+    return makeUnique<WebSocketTask>(channel, webPageProxyID, request, WTFMove(task));
 }
 
 void NetworkSessionCocoa::addWebSocketTask(WebPageProxyIdentifier webPageProxyID, WebSocketTask& task)
