@@ -247,12 +247,22 @@ bool RenderTreeBuilder::Table::childRequiresTable(const RenderElement& parent, c
     return false;
 }
 
+static inline bool canCollapseNextSibling(const RenderBox& previousSibling, const RenderBox& nextSibling)
+{
+    if (!previousSibling.isAnonymous() || !nextSibling.isAnonymous())
+        return false;
+    auto* previousSiblingFirstInFlowChild = previousSibling.firstInFlowChild();
+    auto* nextSiblingFirstInFlowChild = nextSibling.firstInFlowChild();
+    // Do not try to collapse and move inline level boxes over to a container with block level boxes (and vice versa).
+    return !previousSiblingFirstInFlowChild || !nextSiblingFirstInFlowChild || previousSiblingFirstInFlowChild->isInline() == nextSiblingFirstInFlowChild->isInline();
+}
+
 template <typename Parent, typename Child>
 RenderPtr<RenderObject> RenderTreeBuilder::Table::collapseAndDetachAnonymousNextSibling(Parent* parent, Child* previousSibling, Child* nextSibling)
 {
     if (!parent || !previousSibling || !nextSibling)
         return { };
-    if (!previousSibling->isAnonymous() || !nextSibling->isAnonymous())
+    if (!canCollapseNextSibling(*previousSibling, *nextSibling))
         return { };
     m_builder.moveAllChildren(*nextSibling, *previousSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
     return m_builder.detach(*parent, *nextSibling);

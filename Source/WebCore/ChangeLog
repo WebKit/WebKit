@@ -1,3 +1,25 @@
+2021-03-31  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Do not merge anonymous table cells with mismatching children types
+        https://bugs.webkit.org/show_bug.cgi?id=223979
+        <rdar://76003320>
+
+        Reviewed by Antti Koivisto.
+
+        A table cell (as it establishes a block formatting context) should only contain either
+        inline or block level inflow boxes.
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::firstInFlowChild const):
+        (WebCore::RenderElement::lastInFlowChild const):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isInFlow const):
+        (WebCore::RenderObject::previousInFlowSibling const):
+        (WebCore::RenderObject::nextInFlowSibling const):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::canCollapseNextSibling):
+        (WebCore::RenderTreeBuilder::Table::collapseAndDetachAnonymousNextSibling):
+
 2021-03-31  Antti Koivisto  <antti@apple.com>
 
         Animated pseudo element style resolved against wrong parent style
